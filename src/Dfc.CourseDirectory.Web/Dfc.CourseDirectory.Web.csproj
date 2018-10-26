@@ -11,10 +11,8 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\css\" />
-    <Folder Include="wwwroot\dist\js\" />
-    <Folder Include="wwwroot\images\" />
     <Folder Include="wwwroot\scss\partials\" />
-    <Folder Include="wwwroot\vendor\js\" />
+    <Folder Include="wwwroot\vendor\" />
   </ItemGroup>
 
 </Project>

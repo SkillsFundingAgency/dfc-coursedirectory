@@ -26,12 +26,11 @@ paths.css = paths.webroot + "css/**/*.css";
 paths.cssDest = paths.webroot + "css/";
 paths.minCss = paths.webroot + "css/**/*.min.css";
 paths.dist = paths.webroot + "dist/";
-paths.concatJsDest = paths.dist + "js/site.min.js";
-paths.concatCssDest = paths.dist + "css/site.min.css";
-paths.vendorJsDest = paths.webroot + "vendor/js/";
+paths.concatJsDest = paths.dist + "site.min.js";
+paths.concatCssDest = paths.dist + "site.min.css";
+paths.vendorJsDest = paths.webroot + "vendor/";
 paths.vendorJsGovUkFrontend = paths.vendorJsDest + "govuk-frontend/all.js";
 paths.vendorJsGovUkFrontendDest = paths.vendorJsDest + "govuk-frontend/all.min.js";
-paths.vendorAssetsGovUkFrontendDest = paths.dist + "css/assets/";
 
 // dependencies
 
@@ -50,16 +49,10 @@ var jsVendorDeps = {
     }
 };
 
-var asestsVendorDeps = {
-    "govuk-frontend": {
-        "assets/**/*": ""
-    }
-};
-
 // tasks
 
 gulp.task("clean:js", function (cb) {
-    rimraf(paths.concatJsDest, cb);
+    rimraf(paths.concatJsDest + "", cb);
 });
 
 gulp.task("clean:js:vendor", function (cb) {
@@ -69,10 +62,6 @@ gulp.task("clean:js:vendor", function (cb) {
 gulp.task("clean:css", function (cb) {
     rimraf(paths.css, cb);
     rimraf(paths.concatCssDest, cb);
-});
-
-gulp.task("clean:assets:vendor:govuk-frontend", function (cb) {
-    rimraf(paths.vendorAssetsGovUkFrontendDest, cb);
 });
 
 gulp.task("sass", function () {
@@ -125,22 +114,6 @@ gulp.task("js:vendor", function () {
     return merge(streams);
 });
 
-gulp.task("assets:vendor:govuk-frontend", function () {
-    var streams = [];
-
-    for (var prop in asestsVendorDeps) {
-        console.log("Getting vendor assets for: " + prop);
-        for (var itemProp in asestsVendorDeps[prop]) {
-            console.log("node_modules/" + prop + "/" + itemProp);
-            console.log(paths.vendorAssetsGovUkFrontendDest + asestsVendorDeps[prop][itemProp]);
-            streams.push(gulp.src("node_modules/" + prop + "/" + itemProp)
-                .pipe(gulp.dest(paths.vendorAssetsGovUkFrontendDest + asestsVendorDeps[prop][itemProp])));
-        }
-    }
-
-    return merge(streams);
-});
-
 // watches
 
 gulp.task("css:watch", function () {
@@ -161,13 +134,12 @@ gulp.task("js:watch", function () {
 
 // commands
 
-gulp.task("clean", gulp.parallel("clean:js", "clean:js:vendor", "clean:css", "clean:assets:vendor:govuk-frontend"));
+gulp.task("clean", gulp.parallel("clean:js", "clean:js:vendor", "clean:css"));
 gulp.task("min", gulp.parallel("min:js", "min:js:vendor:govuk-frontend", "min:css"));
 
 gulp.task("dev", 
     gulp.series(
         "clean", 
-        "assets:vendor:govuk-frontend", 
         "sass",
         "js:vendor",
         "min",
@@ -181,7 +153,6 @@ gulp.task("dev",
 gulp.task("prod",
     gulp.series(
         "clean",
-        "assets:vendor:govuk-frontend",
         "sass",
         "js:vendor",
         "eslint",
