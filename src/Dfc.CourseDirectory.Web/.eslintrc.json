@@ -4,6 +4,6 @@
     "browser": true
   },
   "globals": {
-    "jquery": true
+    "jQuery": true
   }
 }

@@ -1,0 +1,31 @@
+﻿
+<environment include="Development">
+    <script src="~/vendor/jquery/jquery.min.js"></script>
+    <script src="~/vendor/jquery-validation/jquery.validate.min.js"></script>
+    <script src="~/vendor/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+</environment>
+<environment exclude="Development">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8= sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT sha512-+NqPlbbtM1QqiK8ZAo4Yrj2c4lNQoGv8P79DPtKzj++l5jnN39rHA/xsqn8zE9l0uSoxaCdrOgFs6yjyfbBxSg=="
+            crossorigin="anonymous"
+            asp-fallback-src="~/vendor/js/jquery/jquery.min.js"
+            asp-fallback-test="window.jQuery"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.min.js"
+            integrity="sha256-F6h55Qw6sweK+t7SiOJX+2bpSAa3b/fnlrVCJvmEj1A= sha384-rZfj/ogBloos6wzLGpPkkOr/gpkBNLZ6b6yLy4o+ok+t/SAKlL5mvXLr0OXNi1Hp sha512-O/nUTF5mdFkhEoQHFn9N5wmgYyW323JO6v8kr6ltSRKriZyTr/8417taVWeabVS4iONGk2V444QD0P2cwhuTkg=="
+            crossorigin="anonymous"
+            asp-fallback-src="~/vendor/js/jquery-validation/jquery.validate.min.js"
+            asp-fallback-test="window.jQuery && window.jQuery.validator"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.10/jquery.validate.unobtrusive.min.js"
+            integrity="sha256-zkVFxDCBA0K+Fl6QZDRpD0G+GQ+TfuGv7xXkIAM69h8= sha384-y9k3BO+hbWD6gTgtfMyg1egwFmd2oEgQ0fALVtFnCl9F6j6mCh+oCa0P0h+aj7Ii sha512-NXbC1gvJ3cB+Q34x7VOHFPlStTinrmIeOUL8ZhZNSd0Sf4gG+0ZcC+7POvrnjuSyD9uGGMq7RppmDi0emY8o8g=="
+            crossorigin="anonymous"
+            asp-fallback-src="~/vendor/js/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"
+            asp-fallback-test="window.jQuery && window.jQuery.validator && window.jQuery.validator.unobtrusive"></script>
+</environment>
+
+<script src="~/vendor/govuk-frontend/all.min.js"></script>
+
+<script>
+    document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');
+</script>
+
+<script src="~/dist/site.min.js" asp-append-version="true"></script>
