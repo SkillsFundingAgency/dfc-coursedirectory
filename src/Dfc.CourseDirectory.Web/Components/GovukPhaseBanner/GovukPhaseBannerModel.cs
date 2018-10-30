@@ -7,17 +7,10 @@ namespace Dfc.CourseDirectory.Web.Components.GovukPhaseBanner
 {
     public class GovukPhaseBannerModel
     {
-        private const string TAG = "alpha";
-        private const string LINK_URL = "#";
-        private const string LINK_TEXT = "feedback";
-
-        public bool IsVisible { get; set; }
-        public string Tag { get; set; }
-        public string LinkUrl { get; set; }
-        public string LinkText { get; set; }
-
-        public GovukPhaseBannerModel(bool isVisible = false) 
-            : this(isVisible, TAG, LINK_URL, LINK_TEXT) { }
+        public bool IsVisible { get; }
+        public string Tag { get; }
+        public string LinkUrl { get; }
+        public string LinkText { get; }
 
         public GovukPhaseBannerModel(
             bool isVisible,
