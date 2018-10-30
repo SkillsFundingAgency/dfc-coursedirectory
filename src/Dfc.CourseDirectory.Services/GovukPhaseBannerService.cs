@@ -19,7 +19,7 @@ namespace Dfc.CourseDirectory.Services
 
         public IGovukPhaseBannerSettings GetSettings(bool? isVisible, string tag, string linkUrl, string linkText)
         {
-            var actualIsVisible = isVisible.HasValue ? isVisible.Value : _settings.IsVisible;
+            var actualIsVisible = isVisible ?? _settings.IsVisible;
             var actualTag = string.IsNullOrWhiteSpace(tag) ? _settings.Tag : tag;
             var actualLinkUrl = string.IsNullOrWhiteSpace(linkUrl) ? _settings.LinkUrl : linkUrl;
             var actualLinkText = string.IsNullOrWhiteSpace(linkText) ? _settings.LinkText : linkText;
