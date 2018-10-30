@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Services;
+using Dfc.CourseDirectory.Services.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -40,6 +42,10 @@ namespace Dfc.CourseDirectory.Web
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
+
+            services.AddOptions();
+            services.Configure<GovukPhaseBannerSettings>(Configuration.GetSection("GovukPhaseBannerSettings"));
+            services.AddScoped<IGovukPhaseBannerService, GovukPhaseBannerService>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }

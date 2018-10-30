@@ -17,4 +17,8 @@
     <Folder Include="wwwroot\vendor\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Dfc.CourseDirectory.Services\Dfc.CourseDirectory.Services.csproj" />
+  </ItemGroup>
+
 </Project>
