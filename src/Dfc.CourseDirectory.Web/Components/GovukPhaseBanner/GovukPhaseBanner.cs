@@ -1,11 +1,18 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Threading.Tasks;
 
 namespace Dfc.CourseDirectory.Web.Components.GovukPhaseBanner
 {
     public class GovukPhaseBanner : ViewComponent
     {
-        public GovukPhaseBanner() { }
+        private readonly ILogger<GovukPhaseBanner> _logger;
+
+        public GovukPhaseBanner(ILogger<GovukPhaseBanner> logger)
+        {
+            _logger = logger;
+        }
 
         public async Task<IViewComponentResult> InvokeAsync(
             bool isVisible,
@@ -13,6 +20,8 @@ namespace Dfc.CourseDirectory.Web.Components.GovukPhaseBanner
             string linkUrl,
             string linkText)
         {
+            _logger.LogInformation("This is a sample log message!!!");
+            _logger.LogError(new Exception("Ooow something went wrong....arrrrgh!?!"), "log this exception!");
             return View("~/Components/GovukPhaseBanner/Default.cshtml", new GovukPhaseBannerModel(isVisible));
         }
     }
