@@ -1,63 +1,121 @@
 ﻿using Dfc.CourseDirectory.Services.Interfaces;
 using System;
+using System.Text;
 
 namespace Dfc.CourseDirectory.Services
 {
     public class LarsSearchFilterBuilder : ILarsSearchFilterBuilder
     {
-        public ILarsSearchFilterBuilder And(string value)
+        private static StringBuilder _sb;
+
+        public LarsSearchFilterBuilder() : this(new StringBuilder()) { }
+
+        private LarsSearchFilterBuilder(StringBuilder stringBuilder)
         {
-            throw new NotImplementedException();
+            _sb = stringBuilder;
+        }
+
+        public ILarsSearchFilterBuilder And()
+        {
+            _sb.Append(" and");
+            return this;
         }
 
         public string Build()
         {
-            throw new NotImplementedException();
+            return _sb.ToString().Trim();
         }
 
         public ILarsSearchFilterBuilder EqualTo(string value)
         {
-            throw new NotImplementedException();
+            if (value != null)
+            {
+                _sb.Append($" eq '{value}'");
+            }
+
+            return this;
+        }
+
+        public ILarsSearchFilterBuilder Field(string value)
+        {
+            if (value != null)
+            {
+                _sb.Append($" {value}");
+            }
+
+            return this;
         }
 
         public ILarsSearchFilterBuilder GreaterThan(string value)
         {
-            throw new NotImplementedException();
+            if (value != null)
+            {
+                _sb.Append($" gt '{value}'");
+            }
+
+            return this;
         }
 
         public ILarsSearchFilterBuilder GreatherThanOrEqualTo(string value)
         {
-            throw new NotImplementedException();
+            if (value != null)
+            {
+                _sb.Append($" ge '{value}'");
+            }
+
+            return this;
         }
 
         public ILarsSearchFilterBuilder LessThan(string value)
         {
-            throw new NotImplementedException();
+            if (value != null)
+            {
+                _sb.Append($" lt '{value}'");
+            }
+
+            return this;
         }
 
         public ILarsSearchFilterBuilder LessThanOrEqualTo(string value)
         {
-            throw new NotImplementedException();
+            if (value != null)
+            {
+                _sb.Append($" le '{value}'");
+            }
+
+            return this;
         }
 
-        public ILarsSearchFilterBuilder Not(string value)
+        public ILarsSearchFilterBuilder Not()
         {
-            throw new NotImplementedException();
+            _sb.Append($" not");
+            return this;
         }
 
         public ILarsSearchFilterBuilder NotEqualTo(string value)
         {
-            throw new NotImplementedException();
+            if (value != null)
+            {
+                _sb.Append($" ne '{value}'");
+            }
+
+            return this;
         }
 
-        public ILarsSearchFilterBuilder Or(string value)
+        public ILarsSearchFilterBuilder Or()
         {
-            throw new NotImplementedException();
+            _sb.Append($" or");
+            return this;
         }
 
         public ILarsSearchFilterBuilder StartsWith(string value)
         {
-            throw new NotImplementedException();
+            if (value != null)
+            {
+                _sb.Append($" {value}*");
+            }
+
+            return this;
         }
     }
 }

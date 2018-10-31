@@ -2,9 +2,10 @@
 {
     public interface ILarsSearchFilterBuilder
     {
-        ILarsSearchFilterBuilder And(string value);
-        ILarsSearchFilterBuilder Or(string value);
-        ILarsSearchFilterBuilder Not(string value);
+        ILarsSearchFilterBuilder Field(string value);
+        ILarsSearchFilterBuilder And();
+        ILarsSearchFilterBuilder Or();
+        ILarsSearchFilterBuilder Not();
         ILarsSearchFilterBuilder StartsWith(string value);
         ILarsSearchFilterBuilder EqualTo(string value);
         ILarsSearchFilterBuilder NotEqualTo(string value);
