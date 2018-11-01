@@ -26,8 +26,9 @@ paths.css = paths.webroot + "css/**/*.css";
 paths.cssDest = paths.webroot + "css/";
 paths.minCss = paths.webroot + "css/**/*.min.css";
 paths.dist = paths.webroot + "dist/";
-paths.concatJsDest = paths.dist + "site.min.js";
-paths.concatCssDest = paths.dist + "site.min.css";
+paths.concatJsDest = paths.dist + "site.js";
+paths.concatMinJsDest = paths.dist + "site.min.js";
+paths.concatMinCssDest = paths.dist + "site.min.css";
 paths.vendorJsDest = paths.webroot + "vendor/";
 paths.vendorJsGovUkFrontend = paths.vendorJsDest + "govuk-frontend/all.js";
 paths.vendorJsGovUkFrontendDest = paths.vendorJsDest + "govuk-frontend/all.min.js";
@@ -52,7 +53,7 @@ var jsVendorDeps = {
 // tasks
 
 gulp.task("clean:js", function (cb) {
-    rimraf(paths.concatJsDest + "", cb);
+    rimraf(paths.concatMinJsDest + "", cb);
 });
 
 gulp.task("clean:js:vendor", function (cb) {
@@ -61,7 +62,7 @@ gulp.task("clean:js:vendor", function (cb) {
 
 gulp.task("clean:css", function (cb) {
     rimraf(paths.css, cb);
-    rimraf(paths.concatCssDest, cb);
+    rimraf(paths.concatMinCssDest, cb);
 });
 
 gulp.task("sass", function () {
@@ -70,9 +71,15 @@ gulp.task("sass", function () {
         .pipe(gulp.dest(paths.cssDest));
 });
 
+gulp.task("js", function () {
+    return gulp.src([paths.js], { base: "." })
+        .pipe(concat(paths.concatJsDest))
+        .pipe(gulp.dest("."));
+});
+
 gulp.task("min:js", function () {
     return gulp.src([paths.js, "!" + paths.minJs], { base: "." })
-        .pipe(concat(paths.concatJsDest))
+        .pipe(concat(paths.concatMinJsDest))
         .pipe(uglify())
         .pipe(gulp.dest("."));
 });
@@ -86,7 +93,7 @@ gulp.task("min:js:vendor:govuk-frontend", function () {
 
 gulp.task("min:css", function () {
     return gulp.src([paths.css, "!" + paths.minCss])
-        .pipe(concat(paths.concatCssDest))
+        .pipe(concat(paths.concatMinCssDest))
         .pipe(cssmin())
         .pipe(gulp.dest("."));
 });
@@ -142,7 +149,7 @@ gulp.task("dev",
         "clean", 
         "sass",
         "js:vendor",
-        "min",
+        "js",
         gulp.parallel(
             "css:watch", 
             "sass:watch", 
