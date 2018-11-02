@@ -44,8 +44,13 @@ namespace Dfc.CourseDirectory.Web
             });
 
             services.AddOptions();
+
             services.Configure<GovukPhaseBannerSettings>(Configuration.GetSection("GovukPhaseBannerSettings"));
             services.AddScoped<IGovukPhaseBannerService, GovukPhaseBannerService>();
+
+            services.Configure<LarsSearchSettings>(Configuration.GetSection("LarsSearchSettings"));
+            services.AddScoped<ILarsSearchService, LarsSearchService>();
+
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
