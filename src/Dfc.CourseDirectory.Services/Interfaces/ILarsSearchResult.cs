@@ -5,9 +5,9 @@ namespace Dfc.CourseDirectory.Services.Interfaces
     public interface ILarsSearchResult
     {
         string ODataContext { get; }
-        int ODataCount { get; }
-        ILarsSearchFacets SearchFacets { get; }
-        IEnumerable<ILarsSearchResultItem> Value { get; }
+        int? ODataCount { get; }
+        LarsSearchFacets SearchFacets { get; }
+        IEnumerable<LarsSearchResultItem> Value { get; }
     }
 }
 
