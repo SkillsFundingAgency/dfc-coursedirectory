@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Dfc.CourseDirectory.Services.Enums;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -13,7 +14,15 @@ namespace Dfc.CourseDirectory.Services.Tests
         public async void SearchAsync_Just_to_help_me_dev()
         {
             // arrange
-            var criteria = new LarsSearchCriteria("business Management", null, null, false);
+            var criteria = new LarsSearchCriteria(
+                "business Management", 
+                null, 
+                new LarsSearchFacet[] 
+                {
+                    LarsSearchFacet.NotionalNVQLevelv2,
+                    LarsSearchFacet.AwardOrgCode
+                }, 
+                true);
             var settings = new LarsSearchSettings()
             {
                 ApiUrl = "https://dfc-larsearch.search.windows.net/indexes/index-lars-awardorg/docs/search",

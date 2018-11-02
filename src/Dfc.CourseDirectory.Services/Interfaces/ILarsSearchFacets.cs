@@ -6,7 +6,7 @@ namespace Dfc.CourseDirectory.Services.Interfaces
     {
         string NotionalNVQLevelv2ODataType { get; }
         string AwardOrgCodeODataType { get; }
-        IEnumerable<ISearchFacet> NotionalNVQLevelv2 { get; }
-        IEnumerable<ISearchFacet> AwardOrgCode { get; }
+        IEnumerable<SearchFacet> NotionalNVQLevelv2 { get; }
+        IEnumerable<SearchFacet> AwardOrgCode { get; }
     }
 }

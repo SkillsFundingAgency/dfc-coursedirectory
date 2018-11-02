@@ -1,6 +1,7 @@
 ﻿using Dfc.CourseDirectory.Services.Interfaces;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
@@ -37,6 +38,14 @@ namespace Dfc.CourseDirectory.Services
                 var content = new StringContent(criteria.ToJson(), Encoding.UTF8, "application/json");
                 var response = await _httpClient.PostAsync(_uri, content);
                 var json = await response.Content.ReadAsStringAsync();
+                var settings = new JsonSerializerSettings
+                {
+                    ContractResolver = new AtDotcaseContractResolver()
+                };
+
+                var result = JsonConvert.DeserializeObject<LarsSearchResult>(json, settings);
+
+                return result;
             }
             catch (Exception e)
             {
@@ -76,6 +85,8 @@ namespace Dfc.CourseDirectory.Services
             {
                 ContractResolver = new LowercaseContractResolver()
             };
+
+            settings.Converters.Add(new StringEnumConverter() { CamelCaseText = false });
 
             var result = JsonConvert.SerializeObject(extendee, settings);
 
