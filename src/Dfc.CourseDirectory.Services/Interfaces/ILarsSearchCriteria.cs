@@ -8,6 +8,6 @@ namespace Dfc.CourseDirectory.Services.Interfaces
         string Search { get; }
         string Filter { get; }
         IEnumerable<LarsSearchFacet> Facets { get; }
-        bool IncludeCount { get; }
+        bool Count { get; }
     }
 }
