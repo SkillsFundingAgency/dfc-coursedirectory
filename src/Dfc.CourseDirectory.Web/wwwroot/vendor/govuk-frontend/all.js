@@ -34,6 +34,7 @@ function generateUniqueID () {
 }
 
 (function(undefined) {
+
 // Detection from https://github.com/Financial-Times/polyfill-service/blob/master/packages/polyfill-library/polyfills/Window/detect.js
 var detect = ('Window' in this);
 
@@ -49,10 +50,12 @@ if ((typeof WorkerGlobalScope === "undefined") && (typeof importScripts !== "fun
 		}
 	}(this));
 }
+
 })
 .call('object' === typeof window && window || 'object' === typeof self && self || 'object' === typeof global && global || {});
 
 (function(undefined) {
+
 // Detection from https://github.com/Financial-Times/polyfill-service/blob/master/packages/polyfill-library/polyfills/Document/detect.js
 var detect = ("Document" in this);
 
@@ -60,19 +63,26 @@ if (detect) return
 
 // Polyfill from https://cdn.polyfill.io/v2/polyfill.js?features=Document&flags=always
 if ((typeof WorkerGlobalScope === "undefined") && (typeof importScripts !== "function")) {
+
 	if (this.HTMLDocument) { // IE8
+
 		// HTMLDocument is an extension of Document.  If the browser has HTMLDocument but not Document, the former will suffice as an alias for the latter.
 		this.Document = this.HTMLDocument;
+
 	} else {
+
 		// Create an empty function to act as the missing constructor for the document object, attach the document object as its prototype.  The function needs to be anonymous else it is hoisted and causes the feature detect to prematurely pass, preventing the assignments below being made.
 		this.Document = this.HTMLDocument = document.constructor = (new Function('return function Document() {}')());
 		this.Document.prototype = document;
 	}
 }
+
+
 })
 .call('object' === typeof window && window || 'object' === typeof self && self || 'object' === typeof global && global || {});
 
 (function(undefined) {
+
 // Detection from https://github.com/Financial-Times/polyfill-service/blob/master/packages/polyfill-library/polyfills/Element/detect.js
 var detect = ('Element' in this && 'HTMLElement' in this);
 
@@ -80,6 +90,7 @@ if (detect) return
 
 // Polyfill from https://cdn.polyfill.io/v2/polyfill.js?features=Element&flags=always
 (function () {
+
 	// IE8
 	if (window.Element && !window.HTMLElement) {
 		window.HTMLElement = window.Element;
@@ -179,10 +190,12 @@ if (detect) return
 	// remove sandboxed iframe
 	document.removeChild(vbody);
 }());
+
 })
 .call('object' === typeof window && window || 'object' === typeof self && self || 'object' === typeof global && global || {});
 
 (function(undefined) {
+
 // Detection from https://github.com/Financial-Times/polyfill-service/blob/master/packages/polyfill-library/polyfills/Object/defineProperty/detect.js
 var detect = (
   // In IE8, defineProperty could only act on DOM elements, so full support
@@ -202,11 +215,13 @@ if (detect) return
 
 // Polyfill from https://cdn.polyfill.io/v2/polyfill.js?features=Object.defineProperty&flags=always
 (function (nativeDefineProperty) {
+
 	var supportsAccessors = Object.prototype.hasOwnProperty('__defineGetter__');
 	var ERR_ACCESSORS_NOT_SUPPORTED = 'Getters & setters cannot be defined on this javascript engine';
 	var ERR_VALUE_ACCESSORS = 'A property cannot both have accessors and be writable or have a value';
 
 	Object.defineProperty = function defineProperty(object, property, descriptor) {
+
 		// Where native support exists, assume it
 		if (nativeDefineProperty && (object === window || object === document || object === Element.prototype || object instanceof Element)) {
 			return nativeDefineProperty(object, property, descriptor);
@@ -267,13 +282,16 @@ if (detect) return
 .call('object' === typeof window && window || 'object' === typeof self && self || 'object' === typeof global && global || {});
 
 (function(undefined) {
+
 // Detection from https://github.com/Financial-Times/polyfill-service/blob/master/packages/polyfill-library/polyfills/Event/detect.js
 var detect = (
   (function(global) {
+
   	if (!('Event' in global)) return false;
   	if (typeof global.Event === 'function') return true;
 
   	try {
+
   		// In IE 9-11, the Event object exists but cannot be instantiated
   		new Event('click');
   		return true;
@@ -508,6 +526,7 @@ if (detect) return
 		});
 	}
 }());
+
 })
 .call('object' === typeof window && window || 'object' === typeof self && self || 'object' === typeof global && global || {});
 
@@ -598,6 +617,7 @@ Button.prototype.init = function () {
           //   15.3.4.5.3.
           var bound;
           var binder = function () {
+
               if (this instanceof bound) {
                   // 15.3.4.5.2 [[Construct]]
                   // When the [[Construct]] internal method of a function object,
@@ -623,6 +643,7 @@ Button.prototype.init = function () {
                       return result;
                   }
                   return this;
+
               } else {
                   // 15.3.4.5.1 [[Call]]
                   // When the [[Call]] internal method of a function object, F,
@@ -647,7 +668,9 @@ Button.prototype.init = function () {
                       that,
                       array_concat.call(args, array_slice.call(arguments))
                   );
+
               }
+
           };
 
           // 15. If the [[Class]] internal property of Target is "Function", then
@@ -859,6 +882,7 @@ Details.prototype.destroy = function (node) {
 };
 
 (function(undefined) {
+
     // Detection from https://raw.githubusercontent.com/Financial-Times/polyfill-service/master/packages/polyfill-library/polyfills/DOMTokenList/detect.js
     var detect = (
       'DOMTokenList' in this && (function (x) {
@@ -900,6 +924,7 @@ Details.prototype.destroy = function (node) {
             dpSupport = false;
           }
 
+
           var _DOMTokenList = function (el, prop) {
             var that = this;
             var tokens = [];
@@ -911,8 +936,10 @@ Details.prototype.destroy = function (node) {
                 preop();
                 return tokens[i];
               }, false);
+
             };
             var reindex = function () {
+
               /** Define getter functions for array-like access to the tokenList's contents. */
               if (length >= maxLength)
                 for (; maxLength < length; ++maxLength) {
@@ -936,6 +963,7 @@ Details.prototype.destroy = function (node) {
                     error.name = "InvalidCharacterError";
                     throw error;
                   }
+
 
               /** Split the new value apart by whitespace*/
               if (typeof el[prop] === "object") {
@@ -1113,10 +1141,13 @@ Details.prototype.destroy = function (node) {
           }
         };
       }());
+
     }(this));
+
 }).call('object' === typeof window && window || 'object' === typeof self && self || 'object' === typeof global && global || {});
 
 (function(undefined) {
+
     // Detection from https://raw.githubusercontent.com/Financial-Times/polyfill-service/8717a9e04ac7aff99b4980fbedead98036b0929a/packages/polyfill-library/polyfills/Element/prototype/classList/detect.js
     var detect = (
       'document' in this && "classList" in document.documentElement && 'Element' in this && 'classList' in Element.prototype && (function () {
@@ -1149,6 +1180,7 @@ Details.prototype.destroy = function (node) {
       }
       /** Polyfills a property with a DOMTokenList */
       var addProp = function (o, name, attr) {
+
         defineGetter(o.prototype, name, function () {
           var tokenList;
 
@@ -1168,6 +1200,7 @@ Details.prototype.destroy = function (node) {
            * select lists).
            */
           if (false === dpSupport) {
+
             var visage;
             var mirror = addProp.mirror || document.createElement("div");
             var reflections = mirror.childNodes;
@@ -1200,6 +1233,7 @@ Details.prototype.destroy = function (node) {
       addProp(global.HTMLAnchorElement, "relList", "rel");
       addProp(global.HTMLAreaElement, "relList", "rel");
     }(this));
+
 }).call('object' === typeof window && window || 'object' === typeof self && self || 'object' === typeof global && global || {});
 
 function CharacterCount ($module) {
@@ -1874,4 +1908,5 @@ exports.ErrorSummary = ErrorSummary;
 exports.Header = Header;
 exports.Radios = Radios;
 exports.Tabs = Tabs;
+
 })));
