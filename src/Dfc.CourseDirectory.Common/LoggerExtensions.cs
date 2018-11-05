@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
 using System.Net.Http;
@@ -13,11 +14,11 @@ namespace Dfc.CourseDirectory.Common
 
             if (httpResponseMessage.IsSuccessStatusCode)
             {
-                logger.LogInformation(message, httpResponseMessage);
+                logger.LogInformationObject(message, httpResponseMessage);
             }
             else
             {
-                logger.LogWarning(message, httpResponseMessage);
+                logger.LogWarning(message + " {0}", JsonConvert.SerializeObject(httpResponseMessage));
             }
         }
 
@@ -25,14 +26,14 @@ namespace Dfc.CourseDirectory.Common
         {
             if (exception == null) throw new ArgumentNullException(nameof(exception));
 
-            logger.LogError(exception, message);
+            logger.LogError(exception + " {0}", message);
         }
 
         public static void LogException<TCategoryName>(this ILogger<TCategoryName> logger, Exception exception)
         {
             if (exception == null) throw new ArgumentNullException(nameof(exception));
 
-            logger.LogException(string.Empty, exception);
+            logger.LogException(string.Empty + " {0}", exception);
         }
 
         public static void LogMethodEnter<TCategoryName>(this ILogger<TCategoryName> logger)
@@ -40,7 +41,7 @@ namespace Dfc.CourseDirectory.Common
             if (logger.IsEnabled(LogLevel.Debug))
             {
                 var method = new StackFrame(1).GetMethod();
-                logger.LogDebug("Entering method.", method.ToString());
+                logger.LogDebug("Entering method. {0}", method.DeclaringType.ToString());
             }
         }
 
@@ -49,8 +50,25 @@ namespace Dfc.CourseDirectory.Common
             if (logger.IsEnabled(LogLevel.Debug))
             {
                 var method = new StackFrame(1).GetMethod();
-                logger.LogDebug("Exiting method.", method.ToString());
+                logger.LogDebug("Exiting method. {0}", method.DeclaringType.ToString());
             }
+        }
+
+        public static void LogInformationObject<TCategoryName>(this ILogger<TCategoryName> logger, string message, object obj)
+        {
+            string json;
+
+            if (obj is string)
+            {
+                var maxLength = 4096; // This may change but it is a best guess for now.
+                json = ((string)obj)?.Substring(0, Math.Min(((string)obj).Length, maxLength));
+            }
+            else
+            {
+                json = JsonConvert.SerializeObject(obj);
+            }
+
+            logger.LogInformation(message + " {0}", json);
         }
     }
 }

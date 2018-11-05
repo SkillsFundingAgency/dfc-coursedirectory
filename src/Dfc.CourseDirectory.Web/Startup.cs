@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System.Net.Http;
 
 namespace Dfc.CourseDirectory.Web
 {
@@ -43,6 +44,8 @@ namespace Dfc.CourseDirectory.Web
             services.Configure<GovukPhaseBannerSettings>(Configuration.GetSection("GovukPhaseBannerSettings"));
             services.AddScoped<IGovukPhaseBannerService, GovukPhaseBannerService>();
 
+            services.AddTransient((provider) => new HttpClient());
+
             services.Configure<LarsSearchSettings>(Configuration.GetSection("LarsSearchSettings"));
             services.AddScoped<ILarsSearchService, LarsSearchService>();
 
@@ -52,7 +55,7 @@ namespace Dfc.CourseDirectory.Web
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            loggerFactory.AddApplicationInsights(app.ApplicationServices, LogLevel.Information);
+            loggerFactory.AddApplicationInsights(app.ApplicationServices, LogLevel.Debug);
 
             if (env.IsDevelopment())
             {

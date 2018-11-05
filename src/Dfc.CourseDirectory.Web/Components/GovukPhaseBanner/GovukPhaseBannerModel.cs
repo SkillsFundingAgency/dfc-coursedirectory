@@ -24,5 +24,7 @@ namespace Dfc.CourseDirectory.Web.Components.GovukPhaseBanner
             LinkUrl = linkUrl;
             LinkText = linkText;
         }
+
+        public GovukPhaseBannerModel() { }
     }
 }
