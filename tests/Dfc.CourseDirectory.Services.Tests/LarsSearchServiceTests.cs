@@ -1,9 +1,8 @@
 ﻿using Dfc.CourseDirectory.Services.Enums;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
+using Moq;
 using System.Net.Http;
-using System.Text;
 using Xunit;
 
 namespace Dfc.CourseDirectory.Services.Tests
@@ -15,14 +14,17 @@ namespace Dfc.CourseDirectory.Services.Tests
         {
             // arrange
             var criteria = new LarsSearchCriteria(
-                "business Management", 
-                null, 
-                new LarsSearchFacet[] 
+                "business Management",
+                true,
+                "NotionalNVQLevelv2 eq '4' and AwardOrgCode eq 'NONE'",
+                new LarsSearchFacet[]
                 {
                     LarsSearchFacet.NotionalNVQLevelv2,
                     LarsSearchFacet.AwardOrgCode
-                }, 
-                true);
+                });
+
+            var mockLogger = new Mock<ILogger<LarsSearchService>>();
+
             var settings = new LarsSearchSettings()
             {
                 ApiUrl = "https://dfc-larsearch.search.windows.net/indexes/index-lars-awardorg/docs/search",
@@ -30,7 +32,8 @@ namespace Dfc.CourseDirectory.Services.Tests
                 ApiVersion = "2017-11-11",
                 Indexes = "index-lars-awardorg"
             };
-            var service = new LarsSearchService(new HttpClient(), Options.Create(settings));
+
+            var service = new LarsSearchService(mockLogger.Object, new HttpClient(), Options.Create(settings));
 
             // act
             var actual = await service.SearchAsync(criteria);

@@ -1,4 +1,3 @@
-using System;
 using Xunit;
 
 namespace Dfc.CourseDirectory.Web.Tests
@@ -8,7 +7,6 @@ namespace Dfc.CourseDirectory.Web.Tests
         [Fact]
         public void Test1()
         {
-
         }
     }
 }

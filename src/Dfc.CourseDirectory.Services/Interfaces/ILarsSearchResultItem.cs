@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Dfc.CourseDirectory.Services.Interfaces
+﻿namespace Dfc.CourseDirectory.Services.Interfaces
 {
     public interface ILarsSearchResultItem
     {
@@ -22,11 +18,9 @@ namespace Dfc.CourseDirectory.Services.Interfaces
     }
 }
 
-
 /*
- 
-    {
 
+    {
             "@search.score": 0.46396017,
 
             "LearnAimRef": "Z0008964",
@@ -53,5 +47,5 @@ namespace Dfc.CourseDirectory.Services.Interfaces
 
             "AwardOrgName": "Generic award - no awarding body"
         }
-     
+
 */

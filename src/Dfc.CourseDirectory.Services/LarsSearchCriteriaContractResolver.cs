@@ -2,7 +2,7 @@
 
 namespace Dfc.CourseDirectory.Services
 {
-    public class LowercaseContractResolver : DefaultContractResolver
+    public class LarsSearchCriteriaContractResolver : PrivateSetterContractResolver
     {
         protected override string ResolvePropertyName(string propertyName)
         {
