@@ -1,29 +1,37 @@
-﻿using Dfc.CourseDirectory.Services.Enums;
+﻿using Dfc.CourseDirectory.Common;
+using Dfc.CourseDirectory.Services.Enums;
 using Dfc.CourseDirectory.Services.Interfaces;
-using System;
 using System.Collections.Generic;
 
 namespace Dfc.CourseDirectory.Services
 {
-    public class LarsSearchCriteria : ILarsSearchCriteria
+    public class LarsSearchCriteria : ValueObject<LarsSearchCriteria>, ILarsSearchCriteria
     {
         public string Search { get; }
+        public bool Count { get; }
         public string Filter { get; }
         public IEnumerable<LarsSearchFacet> Facets { get; }
-        public bool Count { get; }
 
         public LarsSearchCriteria(
             string search,
-            string filter,
-            IEnumerable<LarsSearchFacet> facets,
-            bool count)
+            bool count = false,
+            string filter = null,
+            IEnumerable<LarsSearchFacet> facets = null)
         {
-            if (string.IsNullOrWhiteSpace(search)) throw new ArgumentException("Cannot be null, empty or whitespace only.", nameof(search));
+            Throw.IfNullOrWhiteSpace(search, nameof(search));
 
             Search = search;
+            Count = count;
             Filter = filter;
             Facets = facets;
-            Count = count;
+        }
+
+        protected override IEnumerable<object> GetEqualityComponents()
+        {
+            yield return Search;
+            yield return Count;
+            yield return Filter;
+            yield return Facets;
         }
     }
 }

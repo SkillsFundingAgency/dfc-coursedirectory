@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Dfc.CourseDirectory.Common.Interfaces;
 using System.Threading.Tasks;
 
 namespace Dfc.CourseDirectory.Services.Interfaces
 {
     public interface ILarsSearchService
     {
-        ILarsSearchResult Search(ILarsSearchCriteria criteria);
-        Task<ILarsSearchResult> SearchAsync(ILarsSearchCriteria criteria);
+        Task<IResult<ILarsSearchResult>> SearchAsync(ILarsSearchCriteria criteria);
     }
 }

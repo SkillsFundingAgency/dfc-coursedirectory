@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Dfc.CourseDirectory.Web.Models;
 using Microsoft.AspNetCore.Mvc;
-using Dfc.CourseDirectory.Web.Models;
+using System.Diagnostics;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {

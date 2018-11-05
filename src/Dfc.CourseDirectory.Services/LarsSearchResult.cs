@@ -1,18 +1,33 @@
-﻿using Dfc.CourseDirectory.Services.Interfaces;
-using System;
+﻿using Dfc.CourseDirectory.Common;
+using Dfc.CourseDirectory.Services.Interfaces;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Dfc.CourseDirectory.Services
 {
-    public class LarsSearchResult : ILarsSearchResult
+    public class LarsSearchResult : ValueObject<LarsSearchResult>, ILarsSearchResult
     {
-        public string ODataContext { get; set; }
+        public string ODataContext { get; }
+        public int? ODataCount { get; }
+        public LarsSearchFacets SearchFacets { get; }
+        public IEnumerable<LarsSearchResultItem> Value { get; }
 
-        public int? ODataCount { get; set; }
+        public LarsSearchResult(
+            string oDataContext,
+            int? oDataCount,
+            LarsSearchFacets larsSearchFacets,
+            IEnumerable<LarsSearchResultItem> value)
+        {
+            Throw.IfNullOrWhiteSpace(oDataContext, nameof(oDataContext));
+            if (oDataCount.HasValue) Throw.IfLessThan(0, oDataCount.Value, nameof(oDataCount));
+            Throw.IfNull(value, nameof(value));
+        }
 
-        public LarsSearchFacets SearchFacets { get; set; }
-
-        public IEnumerable<LarsSearchResultItem> Value { get; set; }
+        protected override IEnumerable<object> GetEqualityComponents()
+        {
+            yield return ODataContext;
+            yield return ODataCount;
+            yield return SearchFacets;
+            yield return Value;
+        }
     }
 }

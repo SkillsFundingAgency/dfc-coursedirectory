@@ -1,4 +1,7 @@
-﻿using Dfc.CourseDirectory.Services.Interfaces;
+﻿using Dfc.CourseDirectory.Common;
+using Dfc.CourseDirectory.Common.Interfaces;
+using Dfc.CourseDirectory.Services.Interfaces;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -14,46 +17,76 @@ namespace Dfc.CourseDirectory.Services
 {
     public class LarsSearchService : ILarsSearchService
     {
+        private readonly ILogger<LarsSearchService> _logger;
         private readonly HttpClient _httpClient;
         private readonly Uri _uri;
 
-        public LarsSearchService(HttpClient httpClient, IOptions<LarsSearchSettings> settings)
+        public LarsSearchService(
+            ILogger<LarsSearchService> logger,
+            HttpClient httpClient,
+            IOptions<LarsSearchSettings> settings)
         {
-            _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-            if (settings == null) throw new ArgumentNullException(nameof(settings));
+            Throw.IfNull(logger, nameof(logger));
+            Throw.IfNull(httpClient, nameof(httpClient));
+            Throw.IfNull(settings, nameof(settings));
 
-            _httpClient = _httpClient.Setup(settings.Value);
+            _logger = logger;
+            _httpClient = httpClient.Setup(settings.Value);
             _uri = settings.Value.ToUri();
         }
 
-        public ILarsSearchResult Search(ILarsSearchCriteria criteria)
+        public async Task<IResult<ILarsSearchResult>> SearchAsync(ILarsSearchCriteria criteria)
         {
-            throw new NotImplementedException();
-        }
+            Throw.IfNull(criteria, nameof(criteria));
 
-        public async Task<ILarsSearchResult> SearchAsync(ILarsSearchCriteria criteria)
-        {
+            _logger.LogMethodEnter();
+
             try
             {
+                _logger.LogInformation("Lars search criteria.", criteria);
+                _logger.LogInformation("Lars search uri.", _uri);
+
                 var content = new StringContent(criteria.ToJson(), Encoding.UTF8, "application/json");
                 var response = await _httpClient.PostAsync(_uri, content);
-                var json = await response.Content.ReadAsStringAsync();
-                var settings = new JsonSerializerSettings
+
+                _logger.LogHttpResponseMessage("Lars search service http response.", response);
+
+                if (response.IsSuccessStatusCode)
                 {
-                    ContractResolver = new AtDotcaseContractResolver()
-                };
+                    var json = await response.Content.ReadAsStringAsync();
 
-                var result = JsonConvert.DeserializeObject<LarsSearchResult>(json, settings);
+                    _logger.LogInformation("Lars search service json response.", json);
 
-                return result;
+                    var settings = new JsonSerializerSettings
+                    {
+                        ContractResolver = new LarsSearchResultContractResolver()
+                    };
+
+                    var searchResult = JsonConvert.DeserializeObject<LarsSearchResult>(json, settings);
+
+                    return Result.Ok<ILarsSearchResult>(searchResult);
+                }
+                else
+                {
+                    return Result.Fail<ILarsSearchResult>("Lars search service unsuccessfull http response.");
+                }
+            }
+            catch (HttpRequestException hre)
+            {
+                _logger.LogException("Lars search service http request error.", hre);
+
+                return Result.Fail<ILarsSearchResult>("Lars search service http request error.");
             }
             catch (Exception e)
             {
-                // TODO: log the exception
-                throw e;
-            }
+                _logger.LogException("Lars search service unknown error.", e);
 
-            throw new NotImplementedException();
+                return Result.Fail<ILarsSearchResult>("Lars search service unknown error.");
+            }
+            finally
+            {
+                _logger.LogMethodExit();
+            }
         }
     }
 
@@ -83,7 +116,7 @@ namespace Dfc.CourseDirectory.Services
         {
             var settings = new JsonSerializerSettings
             {
-                ContractResolver = new LowercaseContractResolver()
+                ContractResolver = new LarsSearchCriteriaContractResolver()
             };
 
             settings.Converters.Add(new StringEnumConverter() { CamelCaseText = false });

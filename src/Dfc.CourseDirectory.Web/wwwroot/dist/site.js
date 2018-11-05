@@ -7,9 +7,7 @@
 'use strict';
 
 (function ($) {
-
 	$.fn.addTriggersToJqueryValidate = function () {
-
 		// Loop thru the elements that we jQuery validate is attached to
 		// and return the loop, so jQuery function chaining will work.
 		return this.each(function () {
@@ -28,7 +26,7 @@
 			else
 				form.data('jQueryValidateTriggersAdded', true);
 
-			// Override the function that validates the whole form to trigger a 
+			// Override the function that validates the whole form to trigger a
 			// formValidation event and either formValidationSuccess or formValidationError
 			var oldForm = validator.form;
 			validator.form = function () {
@@ -39,7 +37,7 @@
 				return result;
 			};
 
-			// Override the function that validates the whole element to trigger a 
+			// Override the function that validates the whole element to trigger a
 			// elementValidation event and either elementValidationSuccess or elementValidationError
 			var oldElement = validator.element;
 			validator.element = function (element) {
@@ -54,12 +52,11 @@
 	/* Below here are helper methods for calling .bind() for you */
 
 	$.fn.extend({
-
-		// Wouldn't it be nice if, when the full form's validation runs, it triggers the 
+		// Wouldn't it be nice if, when the full form's validation runs, it triggers the
 		// element* validation events?  Well, that's what this does!
 		//
-		// NOTE: This is VERY coupled with jquery.validation.unobtrusive and uses its 
-		//       element attributes to figure out which fields use validation and 
+		// NOTE: This is VERY coupled with jquery.validation.unobtrusive and uses its
+		//       element attributes to figure out which fields use validation and
 		//       whether or not they're currently valid.
 		//
 		triggerElementValidationsOnFormValidation: function () {
@@ -128,5 +125,4 @@
 			});
 		}
 	});
-
 })(jQuery);

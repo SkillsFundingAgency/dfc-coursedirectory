@@ -1,5 +1,4 @@
 ﻿using Dfc.CourseDirectory.Services.Interfaces;
-using System;
 
 namespace Dfc.CourseDirectory.Services
 {

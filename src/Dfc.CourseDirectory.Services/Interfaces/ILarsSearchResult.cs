@@ -10,4 +10,3 @@ namespace Dfc.CourseDirectory.Services.Interfaces
         IEnumerable<LarsSearchResultItem> Value { get; }
     }
 }
-

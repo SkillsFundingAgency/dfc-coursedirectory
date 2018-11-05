@@ -1,5 +1,4 @@
 ﻿using Dfc.CourseDirectory.Services.Interfaces;
-using System;
 using System.Text;
 
 namespace Dfc.CourseDirectory.Services
@@ -8,7 +7,9 @@ namespace Dfc.CourseDirectory.Services
     {
         private static StringBuilder _sb;
 
-        public LarsSearchFilterBuilder() : this(new StringBuilder()) { }
+        public LarsSearchFilterBuilder() : this(new StringBuilder())
+        {
+        }
 
         private LarsSearchFilterBuilder(StringBuilder stringBuilder)
         {

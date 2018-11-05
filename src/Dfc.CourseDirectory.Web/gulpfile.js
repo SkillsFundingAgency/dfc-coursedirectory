@@ -144,16 +144,16 @@ gulp.task("js:watch", function () {
 gulp.task("clean", gulp.parallel("clean:js", "clean:js:vendor", "clean:css"));
 gulp.task("min", gulp.parallel("min:js", "min:js:vendor:govuk-frontend", "min:css"));
 
-gulp.task("dev", 
+gulp.task("dev",
     gulp.series(
-        "clean", 
+        "clean",
         "sass",
         "js:vendor",
         "js",
         gulp.parallel(
-            "css:watch", 
-            "sass:watch", 
-            "js:watch", 
+            "css:watch",
+            "sass:watch",
+            "js:watch",
             "eslint:watch"))
 );
 
@@ -165,4 +165,3 @@ gulp.task("prod",
         "eslint",
         "min")
 );
-

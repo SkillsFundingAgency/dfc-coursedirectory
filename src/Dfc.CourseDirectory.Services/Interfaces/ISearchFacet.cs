@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Dfc.CourseDirectory.Services.Interfaces
+﻿namespace Dfc.CourseDirectory.Services.Interfaces
 {
     public interface ISearchFacet
     {

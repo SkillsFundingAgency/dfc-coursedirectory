@@ -9,7 +9,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.Web.Tes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.Services", "src\Dfc.CourseDirectory.Services\Dfc.CourseDirectory.Services.csproj", "{E12E0977-5EDE-4358-8ECA-5D7B346A0226}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dfc.CourseDirectory.Services.Tests", "tests\Dfc.CourseDirectory.Services.Tests\Dfc.CourseDirectory.Services.Tests.csproj", "{74C4A183-086D-4EC3-B43F-717F1FA61753}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.Services.Tests", "tests\Dfc.CourseDirectory.Services.Tests\Dfc.CourseDirectory.Services.Tests.csproj", "{74C4A183-086D-4EC3-B43F-717F1FA61753}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dfc.CourseDirectory.Common", "src\Dfc.CourseDirectory.Common\Dfc.CourseDirectory.Common.csproj", "{1ABC0C0E-7FC6-4AFD-B5D3-16968304AE0F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dfc.CourseDirectory.Common.Tests", "tests\Dfc.CourseDirectory.Common.Tests\Dfc.CourseDirectory.Common.Tests.csproj", "{82E321DA-94C0-44AA-8956-204DF68ED729}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +37,14 @@ Global
 		{74C4A183-086D-4EC3-B43F-717F1FA61753}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{74C4A183-086D-4EC3-B43F-717F1FA61753}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{74C4A183-086D-4EC3-B43F-717F1FA61753}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1ABC0C0E-7FC6-4AFD-B5D3-16968304AE0F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1ABC0C0E-7FC6-4AFD-B5D3-16968304AE0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1ABC0C0E-7FC6-4AFD-B5D3-16968304AE0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1ABC0C0E-7FC6-4AFD-B5D3-16968304AE0F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{82E321DA-94C0-44AA-8956-204DF68ED729}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{82E321DA-94C0-44AA-8956-204DF68ED729}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{82E321DA-94C0-44AA-8956-204DF68ED729}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{82E321DA-94C0-44AA-8956-204DF68ED729}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

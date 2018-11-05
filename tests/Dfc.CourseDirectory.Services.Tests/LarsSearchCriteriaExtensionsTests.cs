@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Xunit;
+﻿using Xunit;
 
 namespace Dfc.CourseDirectory.Services.Tests
 {
@@ -12,7 +9,7 @@ namespace Dfc.CourseDirectory.Services.Tests
         {
             // arrange
             var expected = "";
-            var criteria = new LarsSearchCriteria("some value", null, null, false);
+            var criteria = new LarsSearchCriteria("some value");
 
             // act
             var actual = criteria.ToJson();

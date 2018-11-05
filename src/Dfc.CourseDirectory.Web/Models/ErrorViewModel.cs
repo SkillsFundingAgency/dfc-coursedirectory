@@ -1,5 +1,3 @@
-using System;
-
 namespace Dfc.CourseDirectory.Web.Models
 {
     public class ErrorViewModel
