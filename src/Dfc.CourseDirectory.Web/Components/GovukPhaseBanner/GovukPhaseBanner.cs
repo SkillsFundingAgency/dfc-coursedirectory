@@ -1,4 +1,5 @@
-﻿using Dfc.CourseDirectory.Services.Interfaces;
+﻿using Dfc.CourseDirectory.Common;
+using Dfc.CourseDirectory.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -24,16 +25,29 @@ namespace Dfc.CourseDirectory.Web.Components.GovukPhaseBanner
             string linkUrl,
             string linkText)
         {
-            var settings = _service.GetSettings(isVisible, tag, linkUrl, linkText);
+            _logger.LogMethodEnter();
 
-            var model = new GovukPhaseBannerModel(
-                settings.IsVisible,
-                settings.Tag,
-                settings.LinkUrl,
-                settings.LinkText);
+            var model = new GovukPhaseBannerModel();
 
-            _logger.LogInformation("This is a sample log message!!!");
-            _logger.LogError(new Exception("Ooow something went wrong....arrrrgh!?!"), "log this exception!");
+            try
+            {
+                var settings = _service.GetSettings(isVisible, tag, linkUrl, linkText);
+
+                model = new GovukPhaseBannerModel(
+                    settings.IsVisible,
+                    settings.Tag,
+                    settings.LinkUrl,
+                    settings.LinkText);
+            }
+            catch (Exception e)
+            {
+                _logger.LogException("Gov uk phase banner model creation error.", e);
+            }
+            finally
+            {
+                _logger.LogMethodExit();
+            }
+
             return View("~/Components/GovukPhaseBanner/Default.cshtml", model);
         }
     }

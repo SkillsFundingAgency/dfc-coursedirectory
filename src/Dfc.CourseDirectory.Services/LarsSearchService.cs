@@ -43,8 +43,8 @@ namespace Dfc.CourseDirectory.Services
 
             try
             {
-                _logger.LogInformation("Lars search criteria.", criteria);
-                _logger.LogInformation("Lars search uri.", _uri);
+                _logger.LogInformationObject("Lars search criteria.", criteria);
+                _logger.LogInformationObject("Lars search uri.", _uri);
 
                 var content = new StringContent(criteria.ToJson(), Encoding.UTF8, "application/json");
                 var response = await _httpClient.PostAsync(_uri, content);
@@ -55,7 +55,7 @@ namespace Dfc.CourseDirectory.Services
                 {
                     var json = await response.Content.ReadAsStringAsync();
 
-                    _logger.LogInformation("Lars search service json response.", json);
+                    _logger.LogInformationObject("Lars search service json response.", json);
 
                     var settings = new JsonSerializerSettings
                     {
