@@ -150,6 +150,8 @@ gulp.task("dev",
         "sass",
         "js:vendor",
         "js",
+        "min:css",
+        "min:js:vendor:govuk-frontend",
         gulp.parallel(
             "css:watch",
             "sass:watch",
