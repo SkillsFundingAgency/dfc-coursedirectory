@@ -1,4 +1,6 @@
-﻿@model Dfc.CourseDirectory.Web.Components.LarsSearch.LarsSearchModel;
+﻿@using Dfc.CourseDirectory.Web.Components.LarsSearchResult;
+
+@model Dfc.CourseDirectory.Web.Components.LarsSearch.LarsSearchModel;
 
 <div class="lars-search">
     <div class="govuk-form-group">
@@ -10,5 +12,7 @@
         </span>
         <input class="govuk-input" id="LarsSearchTerm" name="LarsSearchTerm" type="text">
     </div>
-    <div class="lars-search-results-placeholder"></div>
+    <div class="lars-search-results-container">
+        @await Component.InvokeAsync(nameof(LarsSearchResult))
+    </div>
 </div>
