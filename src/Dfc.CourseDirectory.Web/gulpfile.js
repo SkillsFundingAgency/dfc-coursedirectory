@@ -136,8 +136,9 @@ gulp.task("eslint:watch", function () {
 });
 
 gulp.task("js:watch", function () {
-    gulp.watch([paths.js], gulp.series("min:js"));
+    gulp.watch([paths.js], gulp.series("js"));
 });
+
 
 // commands
 

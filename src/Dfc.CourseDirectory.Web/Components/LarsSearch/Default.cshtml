@@ -12,7 +12,8 @@
         </span>
         <input class="govuk-input" id="LarsSearchTerm" name="LarsSearchTerm" type="text">
     </div>
-    <div class="lars-search-results-container">
+    <div id="LarsSearchResultContainer">
         @await Component.InvokeAsync(nameof(LarsSearchResult))
     </div>
 </div>
+
