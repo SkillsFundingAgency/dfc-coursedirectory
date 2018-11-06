@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Dfc.CourseDirectory.Common
 {
@@ -42,6 +41,7 @@ namespace Dfc.CourseDirectory.Common
             if (argument > limit)
                 throw new ArgumentOutOfRangeException($"{name} cannot be greater than {limit}.", name);
         }
+
         public static void IfLessThan(decimal limit, decimal argument, string name)
         {
             if (argument < limit)

@@ -1,4 +1,4 @@
-﻿using System;
+﻿using Dfc.CourseDirectory.Common;
 
 namespace Dfc.CourseDirectory.Web.Components.GovukPhaseBanner
 {
@@ -15,9 +15,9 @@ namespace Dfc.CourseDirectory.Web.Components.GovukPhaseBanner
             string linkUrl,
             string linkText)
         {
-            if (string.IsNullOrWhiteSpace(tag)) throw new ArgumentException("Cannot be null, empty or whitespace only.", nameof(tag));
-            if (string.IsNullOrWhiteSpace(linkUrl)) throw new ArgumentException("Cannot be null, empty or whitespace only.", nameof(linkUrl));
-            if (string.IsNullOrWhiteSpace(linkText)) throw new ArgumentException("Cannot be null, empty or whitespace only.", nameof(linkText));
+            Throw.IfNullOrWhiteSpace(tag, nameof(tag));
+            Throw.IfNullOrWhiteSpace(linkUrl, nameof(linkUrl));
+            Throw.IfNullOrWhiteSpace(linkText, nameof(linkText));
 
             IsVisible = isVisible;
             Tag = tag;
@@ -25,6 +25,8 @@ namespace Dfc.CourseDirectory.Web.Components.GovukPhaseBanner
             LinkText = linkText;
         }
 
-        public GovukPhaseBannerModel() { }
+        public GovukPhaseBannerModel()
+        {
+        }
     }
 }
