@@ -6,7 +6,9 @@ namespace Dfc.CourseDirectory.Web.Components.LarsSearchResult
     {
         public IViewComponentResult Invoke(LarsSearchResultModel model)
         {
-            return View("~/Components/LarsSearchResult/Default.cshtml", model);
+            var actualModel = model ?? new LarsSearchResultModel();
+
+            return View("~/Components/LarsSearchResult/Default.cshtml", actualModel);
         }
     }
 }
