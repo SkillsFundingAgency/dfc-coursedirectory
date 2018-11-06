@@ -56,7 +56,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 model = new Components.LarsSearchResult.LarsSearchResultModel(result.Error);
             }
 
-            return ViewComponent("LarsSearchResult", model);
+            return ViewComponent(nameof(LarsSearchResult), model);
         }
     }
 }
