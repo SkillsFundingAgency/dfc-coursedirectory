@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Dfc.CourseDirectory.Services;
+﻿using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {

@@ -1,7 +1,6 @@
-﻿using System;
+﻿using Dfc.CourseDirectory.Common;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Dfc.CourseDirectory.Web.Components
 {
@@ -13,11 +12,12 @@ namespace Dfc.CourseDirectory.Web.Components
         public ViewComponentModel()
             : this(new string[] { })
         {
-
         }
 
         public ViewComponentModel(IEnumerable<string> errors)
         {
+            Throw.IfNull(errors, nameof(errors));
+
             Errors = errors;
         }
     }
