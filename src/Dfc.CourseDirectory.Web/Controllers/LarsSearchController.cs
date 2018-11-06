@@ -31,22 +31,20 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 foreach (var item in result.Value.Value)
                 {
-                    items.Add(new Components.LarsSearchResult.LarsSearchResultItemModel
-                    {
-                        SearchScore = item.SearchScore,
-                        LearnAimRef = item.LearnAimRef,
-                        LearnAimRefTitle = item.LearnAimRefTitle,
-                        NotionalNVQLevelv2 = item.NotionalNVQLevelv2,
-                        AwardOrgCode = item.AwardOrgCode,
-                        LearnDirectClassSystemCode1 = item.LearnDirectClassSystemCode1,
-                        LearnDirectClassSystemCode2 = item.LearnDirectClassSystemCode2,
-                        SectorSubjectAreaTier1 = item.SectorSubjectAreaTier1,
-                        SectorSubjectAreaTier2 = item.SectorSubjectAreaTier2,
-                        GuidedLearningHours = item.GuidedLearningHours,
-                        TotalQualificationTime = item.TotalQualificationTime,
-                        UnitType = item.UnitType,
-                        AwardOrgName = item.AwardOrgName
-                    });
+                    items.Add(new Components.LarsSearchResult.LarsSearchResultItemModel(
+                        item.SearchScore,
+                        item.LearnAimRef,
+                        item.LearnAimRefTitle,
+                        item.NotionalNVQLevelv2,
+                        item.AwardOrgCode,
+                        item.LearnDirectClassSystemCode1,
+                        item.LearnDirectClassSystemCode2,
+                        item.SectorSubjectAreaTier1,
+                        item.SectorSubjectAreaTier2,
+                        item.GuidedLearningHours,
+                        item.TotalQualificationTime,
+                        item.UnitType,
+                        item.AwardOrgName));
                 }
 
                 model = new Components.LarsSearchResult.LarsSearchResultModel(searchTerm, items);
