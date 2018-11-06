@@ -20,13 +20,16 @@
 }
 else
 {
-    <table class="govuk-table">
-        <caption class="govuk-table__caption">Search results for: @Model.SearchTerm</caption>
+    <table class="govuk-table govuk-!-font-size-14">
+        <caption class="govuk-table__caption govuk-!-font-weight-regular govuk-!-font-size-16">
+            Search results for: 
+            <span class="govuk-!-font-weight-bold">@Model.SearchTerm</span>
+        </caption>
         <thead class="govuk-table__head">
             <tr class="govuk-table__row">
-                <th class="govuk-table__header" scope="col">Learning Aim Ref.</th>
-                <th class="govuk-table__header" scope="col">Learning Aim Title</th>
-                <th class="govuk-table__header" scope="col">NVQ Level V2</th>
+                <th class="govuk-table__header" scope="col" width="14%">Learning Aim Ref.</th>
+                <th class="govuk-table__header" scope="col" width="45%">Learning Aim Title</th>
+                <th class="govuk-table__header" scope="col" width="12%">NVQ Level V2</th>
                 <th class="govuk-table__header" scope="col">Award Org.</th>
             </tr>
         </thead>
