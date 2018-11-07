@@ -1,5 +1,7 @@
 ﻿using Dfc.CourseDirectory.Services;
+using Dfc.CourseDirectory.Services.Enums;
 using Dfc.CourseDirectory.Services.Interfaces;
+using Dfc.CourseDirectory.Web.Components.LarsSearchResult;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
@@ -22,23 +24,85 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         public async Task<IActionResult> Index(string searchTerm)
         {
-            Components.LarsSearchResult.LarsSearchResultModel model;
+            LarsSearchResultModel model;
 
             if (string.IsNullOrWhiteSpace(searchTerm))
             {
-                model = new Components.LarsSearchResult.LarsSearchResultModel();
+                model = new LarsSearchResultModel();
             }
             else
             {
-                var criteria = new LarsSearchCriteria(searchTerm);
+                var criteria = new LarsSearchCriteria(
+                    searchTerm, 
+                    true, 
+                    null, 
+                    new LarsSearchFacet[] 
+                    {
+                        LarsSearchFacet.AwardOrgCode,
+                        LarsSearchFacet.NotionalNVQLevelv2
+                    });
                 var result = await _larsSearchService.SearchAsync(criteria);
-                var items = new List<Components.LarsSearchResult.LarsSearchResultItemModel>();
+                var items = new List<LarsSearchResultItemModel>();
 
                 if (result.IsSuccess && result.HasValue)
                 {
+                    int? totalCount = result.Value.ODataCount;
+                    var filters = new List<LarsSearchFilterModel>();
+
+                    if(result.Value.SearchFacets != null)
+                    {
+                        var notionalNVQLevelv2Facets = new List<LarsFilterItemModel>();
+                        var notionalNVQLevelv2FacetName = "NotionalNVQLevelv2Filter";
+                        var notionalNVQLevelv2IdCount = 0;
+
+                        foreach (var item in result.Value.SearchFacets.NotionalNVQLevelv2)
+                        {
+                            notionalNVQLevelv2Facets.Add(new LarsFilterItemModel
+                            {
+                                Id = $"{notionalNVQLevelv2FacetName}-{notionalNVQLevelv2IdCount++}",
+                                Name = notionalNVQLevelv2FacetName,
+                                Text = $"Level {item.Value}",
+                                Value = item.Value,
+                                Count = item.Count
+                            });
+                        }
+
+                        var notionalNVQLevelv2 = new LarsSearchFilterModel
+                        {
+                            Title = "Notional NVQ Level v2",
+                            Items = notionalNVQLevelv2Facets
+                        };
+
+                        filters.Add(notionalNVQLevelv2);
+
+                        var awardOrgCodeFacets = new List<LarsFilterItemModel>();
+                        var awardOrgCodeFacetName = "AwardOrgCodeFilter";
+                        var awardOrgCodeIdCount = 0;
+
+                        foreach (var item in result.Value.SearchFacets.AwardOrgCode)
+                        {
+                            awardOrgCodeFacets.Add(new LarsFilterItemModel
+                            {
+                                Id = $"{awardOrgCodeFacetName}-{awardOrgCodeIdCount++}",
+                                Name = awardOrgCodeFacetName,
+                                Text = item.Value,
+                                Value = item.Value,
+                                Count = item.Count
+                            });
+                        }
+
+                        var awardOrgCode = new LarsSearchFilterModel
+                        {
+                            Title = "Award Org Code",
+                            Items = awardOrgCodeFacets
+                        };
+
+                        filters.Add(awardOrgCode);
+                    }
+
                     foreach (var item in result.Value.Value)
                     {
-                        items.Add(new Components.LarsSearchResult.LarsSearchResultItemModel(
+                        items.Add(new LarsSearchResultItemModel(
                             item.SearchScore,
                             item.LearnAimRef,
                             item.LearnAimRefTitle,
@@ -54,15 +118,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
                             item.AwardOrgName));
                     }
 
-                    model = new Components.LarsSearchResult.LarsSearchResultModel(searchTerm, items);
+                    model = new LarsSearchResultModel(searchTerm, items, filters, totalCount);
                 }
                 else
                 {
-                    model = new Components.LarsSearchResult.LarsSearchResultModel(result.Error);
+                    model = new LarsSearchResultModel(result.Error);
                 }
             }
 
-            return ViewComponent(nameof(LarsSearchResult), model);
+            return ViewComponent(nameof(Components.LarsSearchResult.LarsSearchResult), model);
         }
     }
 }
