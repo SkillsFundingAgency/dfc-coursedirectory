@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 
-namespace Dfc.CourseDirectory.Web.Components.GovukPhaseBanner
+namespace Dfc.CourseDirectory.Web.ViewComponents.GovukPhaseBanner
 {
     public class GovukPhaseBanner : ViewComponent
     {
@@ -48,7 +48,7 @@ namespace Dfc.CourseDirectory.Web.Components.GovukPhaseBanner
                 _logger.LogMethodExit();
             }
 
-            return View("~/Components/GovukPhaseBanner/Default.cshtml", model);
+            return View("~/ViewComponents/GovukPhaseBanner/Default.cshtml", model);
         }
     }
 }

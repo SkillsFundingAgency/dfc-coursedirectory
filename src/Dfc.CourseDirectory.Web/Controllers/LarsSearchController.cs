@@ -1,7 +1,7 @@
-﻿using Dfc.CourseDirectory.Services;
-using Dfc.CourseDirectory.Services.Enums;
+﻿using Dfc.CourseDirectory.Services.Enums;
 using Dfc.CourseDirectory.Services.Interfaces;
-using Dfc.CourseDirectory.Web.Components.LarsSearchResult;
+using Dfc.CourseDirectory.Web.RequestModels;
+using Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
@@ -22,25 +22,22 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _larsSearchService = larsSearchService;
         }
 
-        public async Task<IActionResult> Index(string searchTerm)
+        public async Task<IActionResult> Index([FromQuery] LarsSearchRequestModel requestModel)
         {
             LarsSearchResultModel model;
 
-            if (string.IsNullOrWhiteSpace(searchTerm))
+            if (requestModel == null)
             {
                 model = new LarsSearchResultModel();
             }
             else
             {
-                var criteria = new LarsSearchCriteria(
-                    searchTerm, 
-                    true, 
-                    null, 
-                    new LarsSearchFacet[] 
-                    {
-                        LarsSearchFacet.AwardOrgCode,
-                        LarsSearchFacet.NotionalNVQLevelv2
-                    });
+                var criteria = requestModel.ToLarsSearchCriteria(true, new LarsSearchFacet[]
+                {
+                    LarsSearchFacet.AwardOrgCode,
+                    LarsSearchFacet.NotionalNVQLevelv2
+                });
+
                 var result = await _larsSearchService.SearchAsync(criteria);
                 var items = new List<LarsSearchResultItemModel>();
 
@@ -49,7 +46,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     int? totalCount = result.Value.ODataCount;
                     var filters = new List<LarsSearchFilterModel>();
 
-                    if(result.Value.SearchFacets != null)
+                    if (result.Value.SearchFacets != null)
                     {
                         var notionalNVQLevelv2Facets = new List<LarsFilterItemModel>();
                         var notionalNVQLevelv2FacetName = "NotionalNVQLevelv2Filter";
@@ -63,7 +60,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
                                 Name = notionalNVQLevelv2FacetName,
                                 Text = $"Level {item.Value}",
                                 Value = item.Value,
-                                Count = item.Count
+                                Count = item.Count,
+                                IsSelected = requestModel.IsFilterSelected(
+                                    nameof(requestModel.NotionalNVQLevelv2Filter),
+                                    item.Value)
                             });
                         }
 
@@ -87,7 +87,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
                                 Name = awardOrgCodeFacetName,
                                 Text = item.Value,
                                 Value = item.Value,
-                                Count = item.Count
+                                Count = item.Count,
+                                IsSelected = requestModel.IsFilterSelected(
+                                    nameof(requestModel.AwardOrgCodeFilter),
+                                    item.Value)
                             });
                         }
 
@@ -118,7 +121,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                             item.AwardOrgName));
                     }
 
-                    model = new LarsSearchResultModel(searchTerm, items, filters, totalCount);
+                    model = new LarsSearchResultModel(requestModel.SearchTerm, items, filters, totalCount);
                 }
                 else
                 {
@@ -126,7 +129,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 }
             }
 
-            return ViewComponent(nameof(Components.LarsSearchResult.LarsSearchResult), model);
+            return ViewComponent(nameof(ViewComponents.LarsSearchResult.LarsSearchResult), model);
         }
     }
 }

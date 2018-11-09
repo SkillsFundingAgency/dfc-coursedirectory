@@ -1,4 +1,4 @@
-namespace Dfc.CourseDirectory.Web.Models
+namespace Dfc.CourseDirectory.Web.ViewModels
 {
     public class ErrorViewModel
     {

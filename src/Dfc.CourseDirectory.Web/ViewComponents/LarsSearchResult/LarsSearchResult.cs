@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace Dfc.CourseDirectory.Web.Components.LarsSearchResult
+namespace Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult
 {
     public class LarsSearchResult : ViewComponent
     {
@@ -8,7 +8,7 @@ namespace Dfc.CourseDirectory.Web.Components.LarsSearchResult
         {
             var actualModel = model ?? new LarsSearchResultModel();
 
-            return View("~/Components/LarsSearchResult/Default.cshtml", actualModel);
+            return View("~/ViewComponents/LarsSearchResult/Default.cshtml", actualModel);
         }
     }
 }

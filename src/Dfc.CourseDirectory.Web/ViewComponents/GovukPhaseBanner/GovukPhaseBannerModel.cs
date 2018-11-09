@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using Dfc.CourseDirectory.Common;
+using Dfc.CourseDirectory.Web.ViewComponents.Interfaces;
+using System.Collections.Generic;
 using System.Linq;
-using Dfc.CourseDirectory.Common;
-using Dfc.CourseDirectory.Web.Components.Interfaces;
 
-namespace Dfc.CourseDirectory.Web.Components.GovukPhaseBanner
+namespace Dfc.CourseDirectory.Web.ViewComponents.GovukPhaseBanner
 {
     public class GovukPhaseBannerModel : ValueObject<GovukPhaseBannerModel>, IViewComponentModel
     {

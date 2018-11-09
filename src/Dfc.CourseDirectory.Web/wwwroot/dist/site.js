@@ -7,131 +7,130 @@
 'use strict';
 
 (function ($) {
-	$.fn.addTriggersToJqueryValidate = function () {
-		// Loop thru the elements that we jQuery validate is attached to
-		// and return the loop, so jQuery function chaining will work.
-		return this.each(function () {
-			var form = $(this);
+    $.fn.addTriggersToJqueryValidate = function () {
+        // Loop thru the elements that we jQuery validate is attached to
+        // and return the loop, so jQuery function chaining will work.
+        return this.each(function () {
+            var form = $(this);
 
-			// Grab this element's validator object (if it has one)
-			var validator = form.data('validator');
+            // Grab this element's validator object (if it has one)
+            var validator = form.data('validator');
 
-			// Only run this code if there's a validator associated with this element
-			if (!validator)
-				return;
+            // Only run this code if there's a validator associated with this element
+            if (!validator)
+                return;
 
-			// Only add these triggers to each element once
-			if (form.data('jQueryValidateTriggersAdded'))
-				return;
-			else
-				form.data('jQueryValidateTriggersAdded', true);
+            // Only add these triggers to each element once
+            if (form.data('jQueryValidateTriggersAdded'))
+                return;
+            else
+                form.data('jQueryValidateTriggersAdded', true);
 
-			// Override the function that validates the whole form to trigger a
-			// formValidation event and either formValidationSuccess or formValidationError
-			var oldForm = validator.form;
-			validator.form = function () {
-				var result = oldForm.apply(this, arguments);
-				var form = this.currentForm;
-				$(form).trigger((result == true) ? 'formValidationSuccess' : 'formValidationError', form);
-				$(form).trigger('formValidation', [form, result]);
-				return result;
-			};
+            // Override the function that validates the whole form to trigger a
+            // formValidation event and either formValidationSuccess or formValidationError
+            var oldForm = validator.form;
+            validator.form = function () {
+                var result = oldForm.apply(this, arguments);
+                var form = this.currentForm;
+                $(form).trigger((result == true) ? 'formValidationSuccess' : 'formValidationError', form);
+                $(form).trigger('formValidation', [form, result]);
+                return result;
+            };
 
-			// Override the function that validates the whole element to trigger a
-			// elementValidation event and either elementValidationSuccess or elementValidationError
-			var oldElement = validator.element;
-			validator.element = function (element) {
-				var result = oldElement.apply(this, arguments);
-				$(element).trigger((result == true) ? 'elementValidationSuccess' : 'elementValidationError', element);
-				$(element).trigger('elementValidation', [element, result]);
-				return result;
-			};
-		});
-	};
+            // Override the function that validates the whole element to trigger a
+            // elementValidation event and either elementValidationSuccess or elementValidationError
+            var oldElement = validator.element;
+            validator.element = function (element) {
+                var result = oldElement.apply(this, arguments);
+                $(element).trigger((result == true) ? 'elementValidationSuccess' : 'elementValidationError', element);
+                $(element).trigger('elementValidation', [element, result]);
+                return result;
+            };
+        });
+    };
 
-	/* Below here are helper methods for calling .bind() for you */
+    /* Below here are helper methods for calling .bind() for you */
 
-	$.fn.extend({
-		// Wouldn't it be nice if, when the full form's validation runs, it triggers the
-		// element* validation events?  Well, that's what this does!
-		//
-		// NOTE: This is VERY coupled with jquery.validation.unobtrusive and uses its
-		//       element attributes to figure out which fields use validation and
-		//       whether or not they're currently valid.
-		//
-		triggerElementValidationsOnFormValidation: function () {
-			return this.each(function () {
-				$(this).bind('formValidation', function (e, form) {
-					$(form).find('*[data-val=true]').each(function (i, field) {
-						if ($(field).hasClass('input-validation-error')) {
-							$(field).trigger('elementValidationError', field);
-							$(field).trigger('elementValidation', [field, false]);
-						} else {
-							$(field).trigger('elementValidationSuccess', field);
-							$(field).trigger('elementValidation', [field, true]);
-						}
-					});
-				});
-			});
-		},
+    $.fn.extend({
+        // Wouldn't it be nice if, when the full form's validation runs, it triggers the
+        // element* validation events?  Well, that's what this does!
+        //
+        // NOTE: This is VERY coupled with jquery.validation.unobtrusive and uses its
+        //       element attributes to figure out which fields use validation and
+        //       whether or not they're currently valid.
+        //
+        triggerElementValidationsOnFormValidation: function () {
+            return this.each(function () {
+                $(this).bind('formValidation', function (e, form) {
+                    $(form).find('*[data-val=true]').each(function (i, field) {
+                        if ($(field).hasClass('input-validation-error')) {
+                            $(field).trigger('elementValidationError', field);
+                            $(field).trigger('elementValidation', [field, false]);
+                        } else {
+                            $(field).trigger('elementValidationSuccess', field);
+                            $(field).trigger('elementValidation', [field, true]);
+                        }
+                    });
+                });
+            });
+        },
 
-		formValidation: function (fn) {
-			return this.each(function () {
-				$(this).bind('formValidation', function (e, element, result) { fn(element, result); });
-			});
-		},
+        formValidation: function (fn) {
+            return this.each(function () {
+                $(this).bind('formValidation', function (e, element, result) { fn(element, result); });
+            });
+        },
 
-		formValidationSuccess: function (fn) {
-			return this.each(function () {
-				$(this).bind('formValidationSuccess', function (e, element) { fn(element); });
-			});
-		},
+        formValidationSuccess: function (fn) {
+            return this.each(function () {
+                $(this).bind('formValidationSuccess', function (e, element) { fn(element); });
+            });
+        },
 
-		formValidationError: function (fn) {
-			return this.each(function () {
-				$(this).bind('formValidationError', function (e, element) { fn(element); });
-			});
-		},
+        formValidationError: function (fn) {
+            return this.each(function () {
+                $(this).bind('formValidationError', function (e, element) { fn(element); });
+            });
+        },
 
-		formValidAndInvalid: function (valid, invalid) {
-			return this.each(function () {
-				$(this).bind('formValidationSuccess', function (e, element) { valid(element); });
-				$(this).bind('formValidationError', function (e, element) { invalid(element); });
-			});
-		},
+        formValidAndInvalid: function (valid, invalid) {
+            return this.each(function () {
+                $(this).bind('formValidationSuccess', function (e, element) { valid(element); });
+                $(this).bind('formValidationError', function (e, element) { invalid(element); });
+            });
+        },
 
-		elementValidation: function (fn) {
-			return this.each(function () {
-				$(this).bind('elementValidation', function (e, element, result) { fn(element, result); });
-			});
-		},
+        elementValidation: function (fn) {
+            return this.each(function () {
+                $(this).bind('elementValidation', function (e, element, result) { fn(element, result); });
+            });
+        },
 
-		elementValidationSuccess: function (fn) {
-			return this.each(function () {
-				$(this).bind('elementValidationSuccess', function (e, element) { fn(element); });
-			});
-		},
+        elementValidationSuccess: function (fn) {
+            return this.each(function () {
+                $(this).bind('elementValidationSuccess', function (e, element) { fn(element); });
+            });
+        },
 
-		elementValidationError: function (fn) {
-			return this.each(function () {
-				$(this).bind('elementValidationError', function (e, element) { fn(element); });
-			});
-		},
+        elementValidationError: function (fn) {
+            return this.each(function () {
+                $(this).bind('elementValidationError', function (e, element) { fn(element); });
+            });
+        },
 
-		elementValidAndInvalid: function (valid, invalid) {
-			return this.each(function () {
-				$(this).bind('elementValidationSuccess', function (e, element) { valid(element); });
-				$(this).bind('elementValidationError', function (e, element) { invalid(element); });
-			});
-		}
-	});
+        elementValidAndInvalid: function (valid, invalid) {
+            return this.each(function () {
+                $(this).bind('elementValidationSuccess', function (e, element) { valid(element); });
+                $(this).bind('elementValidationError', function (e, element) { invalid(element); });
+            });
+        }
+    });
 })(jQuery);
 /* eslint-disable no-console */
 
 "use strict";
 
 (function ($) {
-
     var debounce = function (cb, delay) {
         var inDebounce;
         return function () {
@@ -144,40 +143,66 @@
         };
     };
 
-    var doSearch = function (payload, success) {
-        $.get("/LarsSearch", payload, success);
+    var isNullOrWhitespace = function (input) {
+        if (typeof input === 'undefined' || input == null) return true;
+        return input.replace(/\s/g, '').length < 1;
+    }
+
+    var replaceAll = function (search, find, replace) {
+        return search.split(find).join(replace);
     };
 
-    var assignEventsToNotionalNvqLevelV2Checkboxes = function () {
-        var $notionalNvqLevelV2Checkboxes = $("input[name='NotionalNVQLevelv2Filter']:checkbox");
+    var makeRequest = function (payload, success) {
+        console.log(payload);
+        var qs = $.param(payload);
+        qs = replaceAll(qs, "%5B%5D", "");
+        $.get("/LarsSearch?" + qs, success);
+    };
 
-        $notionalNvqLevelV2Checkboxes.on("click", function () {
-            var $allCheckedNotionalNvqLevelV2Checkboxes = $("input[name='NotionalNVQLevelv2Filter']:checkbox:checked");
-            console.log($allCheckedNotionalNvqLevelV2Checkboxes);
+    var removeSearchResults = function () {
+        var $larsSearchResultContainer = $("#LarsSearchResultContainer");
+        $larsSearchResultContainer.html("");
+    };
 
-            doSearch({
-                SearchTerm: $larsSearchTerm.val(),
-                NotionalNVQLevelv2Filter: $allCheckedNotionalNvqLevelV2Checkboxes.map(function () {
-                    return $(this).val();
-                }).get()
-            }, onSucess);
-        });
+    var replaceSearchResult = function (searchResults) {
+        var $larsSearchResultContainer = $("#LarsSearchResultContainer");
+        $larsSearchResultContainer.html("");
+        $larsSearchResultContainer.html(searchResults);
     };
 
     var $larsSearchTerm = $("#LarsSearchTerm");
-    var $larsSearchResultContainer = $("#LarsSearchResultContainer");
 
-    var onSucess = function (data) {
-        $larsSearchResultContainer.html("");
-        $larsSearchResultContainer.html(data);
-        assignEventsToNotionalNvqLevelV2Checkboxes();
+    var doSearch = function () {
+        if (isNullOrWhitespace($larsSearchTerm.val())) {
+            removeSearchResults();
+        } else {
+            var $allCheckedNotionalNvqLevelV2FilterCheckboxes = $("input[name='NotionalNVQLevelv2Filter']:checkbox:checked");
+            var $allCheckedAwardOrgCodeFilterCheckboxes = $("input[name='AwardOrgCodeFilter']:checkbox:checked");
+
+            makeRequest({
+                SearchTerm: $larsSearchTerm.val(),
+                NotionalNVQLevelv2Filter: $allCheckedNotionalNvqLevelV2FilterCheckboxes.map(function () {
+                    return $(this).val();
+                }).get(),
+                AwardOrgCodeFilter: $allCheckedAwardOrgCodeFilterCheckboxes.map(function () {
+                    return $(this).val();
+                }).get()
+            }, onSucess);
+        }
     };
 
-    $larsSearchTerm.on("keyup", debounce(function () {
-        console.log($larsSearchTerm.val());
-        doSearch({
-            SearchTerm: $larsSearchTerm.val()
-        }, onSucess);
-    }, 400));
+    var assignEventsToAllCheckboxes = function () {
+        var $notionalNvqLevelV2FilterCheckboxes = $("input[name='NotionalNVQLevelv2Filter']:checkbox");
+        var $awardOrgCodeFilterCheckboxes = $("input[name='AwardOrgCodeFilter']:checkbox");
 
+        $notionalNvqLevelV2FilterCheckboxes.on("click", doSearch);
+        $awardOrgCodeFilterCheckboxes.on("click", doSearch);
+    };
+
+    var onSucess = function (data) {
+        replaceSearchResult(data);
+        assignEventsToAllCheckboxes();
+    };
+
+    $larsSearchTerm.on("keyup", debounce(doSearch, 400));
 })(jQuery);

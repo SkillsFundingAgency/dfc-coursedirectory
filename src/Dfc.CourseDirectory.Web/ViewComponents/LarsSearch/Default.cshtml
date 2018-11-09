@@ -1,6 +1,6 @@
-﻿@using Dfc.CourseDirectory.Web.Components.LarsSearchResult;
+﻿@using Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult;
 
-@model Dfc.CourseDirectory.Web.Components.LarsSearch.LarsSearchModel;
+@model Dfc.CourseDirectory.Web.ViewComponents.LarsSearch.LarsSearchModel;
 
 <div class="lars-search">
 
@@ -21,6 +21,4 @@
     <div id="LarsSearchResultContainer">
         @await Component.InvokeAsync(nameof(LarsSearchResult))
     </div>
-
 </div>
-

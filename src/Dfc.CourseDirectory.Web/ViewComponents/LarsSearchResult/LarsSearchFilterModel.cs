@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Dfc.CourseDirectory.Web.Components.LarsSearchResult
+namespace Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult
 {
     public class LarsSearchFilterModel
     {
