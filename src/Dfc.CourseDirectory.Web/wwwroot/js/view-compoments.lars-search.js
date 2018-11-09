@@ -71,9 +71,28 @@
         $awardOrgCodeFilterCheckboxes.on("click", doSearch);
     };
 
+    var assignEventToClearAllFiltersLink = function () {
+        var $clearAllFiltersLink = $("#ClearAllFilters");
+
+        $clearAllFiltersLink.on("click", function (e) {
+            e.preventDefault();
+            var $allCheckedFilterCheckboxes = $("input[name='NotionalNVQLevelv2Filter']:checkbox:checked, input[name='AwardOrgCodeFilter']:checkbox:checked");
+            var allCheckedFilterCheckboxesLength = $allCheckedFilterCheckboxes.length;
+
+            for (var i = 0; i < allCheckedFilterCheckboxesLength; i++) {
+                if (i === (allCheckedFilterCheckboxesLength - 1)) {
+                    $($allCheckedFilterCheckboxes[i]).trigger("click");
+                } else {
+                    $($allCheckedFilterCheckboxes[i]).prop('checked', false);
+                }
+            }
+        });
+    };
+
     var onSucess = function (data) {
         replaceSearchResult(data);
         assignEventsToAllCheckboxes();
+        assignEventToClearAllFiltersLink();
     };
 
     $larsSearchTerm.on("keyup", debounce(doSearch, 400));
