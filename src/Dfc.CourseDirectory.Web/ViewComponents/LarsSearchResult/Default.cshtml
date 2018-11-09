@@ -30,6 +30,13 @@
 
             @if (Model.Filters != null)
             {
+                if (Model.HasSelectedFilters)
+                {
+                    <div class="govuk-form-group">
+                        <a class="govuk-link" id="ClearAllFilters" href="">Clear all filters</a>
+                    </div>
+                }
+
                 foreach (var filter in Model.Filters)
                 {
                     <div class="govuk-form-group govuk-!-font-size-14">
