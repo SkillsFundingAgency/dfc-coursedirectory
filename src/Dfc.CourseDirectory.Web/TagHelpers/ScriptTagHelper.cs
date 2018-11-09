@@ -1,13 +1,9 @@
 ﻿using Microsoft.AspNetCore.Razor.TagHelpers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Dfc.CourseDirectory.Web.TagHelpers
 {
-    [HtmlTargetElement("script", Attributes="on-content-loaded")]
+    [HtmlTargetElement("script", Attributes = "on-content-loaded")]
     public class ScriptTagHelper : TagHelper
     {
         public bool OnContentLoaded { get; set; } = false;

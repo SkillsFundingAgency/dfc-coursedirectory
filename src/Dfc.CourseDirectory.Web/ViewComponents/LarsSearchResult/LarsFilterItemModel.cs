@@ -1,4 +1,4 @@
-﻿namespace Dfc.CourseDirectory.Web.Components.LarsSearchResult
+﻿namespace Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult
 {
     public class LarsFilterItemModel
     {
@@ -7,5 +7,6 @@
         public string Text { get; set; }
         public string Value { get; set; }
         public int Count { get; set; }
+        public bool IsSelected { get; set; }
     }
 }

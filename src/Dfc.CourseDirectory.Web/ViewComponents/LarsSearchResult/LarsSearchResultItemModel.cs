@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using Dfc.CourseDirectory.Common;
+using Dfc.CourseDirectory.Web.ViewComponents.Interfaces;
+using System.Collections.Generic;
 using System.Linq;
-using Dfc.CourseDirectory.Common;
-using Dfc.CourseDirectory.Web.Components.Interfaces;
 
-namespace Dfc.CourseDirectory.Web.Components.LarsSearchResult
+namespace Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult
 {
     public class LarsSearchResultItemModel : ValueObject<LarsSearchResultItemModel>, IViewComponentModel
     {
@@ -57,6 +57,7 @@ namespace Dfc.CourseDirectory.Web.Components.LarsSearchResult
         {
             Errors = new string[] { };
         }
+
         public LarsSearchResultItemModel(string error)
         {
             Errors = new string[] { error };

@@ -1,5 +1,6 @@
-﻿@model Dfc.CourseDirectory.Web.Components.LarsSearchResult.LarsSearchResultModel;
+﻿@using Dfc.CourseDirectory.Web.ViewComponents.Extensions
 
+@model Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult.LarsSearchResultModel;
 
 <div class="govuk-grid-row">
 
@@ -46,19 +47,17 @@
                                 @foreach (var item in filter.Items)
                                 {
                                     <div class="govuk-checkboxes__item">
-                                        <input class="govuk-checkboxes__input" id="@item.Id" name="@item.Name" type="checkbox" value="@item.Value">
+                                        <input class="govuk-checkboxes__input" id="@item.Id" name="@item.Name" type="checkbox" value="@item.Value" @item.IsSelected.ThenCheck()>
                                         <label class="govuk-label govuk-checkboxes__label govuk-!-font-size-14" for="@item.Id">
                                             @item.Text (@item.Count)
                                         </label>
                                     </div>
                                 }
-
                             </div>
                         </fieldset>
                     </div>
                 }
             }
-
         </div>
 
         <div class="govuk-grid-column-three-quarters">

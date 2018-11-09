@@ -139,7 +139,6 @@ gulp.task("js:watch", function () {
     gulp.watch([paths.js], gulp.series("js"));
 });
 
-
 // commands
 
 gulp.task("clean", gulp.parallel("clean:js", "clean:js:vendor", "clean:css"));

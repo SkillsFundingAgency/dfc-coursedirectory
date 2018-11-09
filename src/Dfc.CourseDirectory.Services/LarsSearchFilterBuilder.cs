@@ -11,7 +11,7 @@ namespace Dfc.CourseDirectory.Services
         {
         }
 
-        private LarsSearchFilterBuilder(StringBuilder stringBuilder)
+        public LarsSearchFilterBuilder(StringBuilder stringBuilder)
         {
             _sb = stringBuilder;
         }

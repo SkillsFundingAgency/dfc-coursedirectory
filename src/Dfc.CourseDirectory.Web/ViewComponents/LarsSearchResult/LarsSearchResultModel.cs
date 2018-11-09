@@ -1,17 +1,19 @@
 ﻿using Dfc.CourseDirectory.Common;
-using Dfc.CourseDirectory.Web.Components.Interfaces;
+using Dfc.CourseDirectory.Web.ViewComponents.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Dfc.CourseDirectory.Web.Components.LarsSearchResult
+namespace Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult
 {
     public class LarsSearchResultModel : ValueObject<LarsSearchResultModel>, IViewComponentModel
     {
         public bool HasErrors => Errors.Count() > 0;
         public IEnumerable<string> Errors { get; }
         public string SearchTerm { get; }
+        public string OriginalSearchTerm { get; }
         public IEnumerable<LarsSearchResultItemModel> Items { get; }
         public IEnumerable<LarsSearchFilterModel> Filters { get; }
+        public bool HasSelectedFilters => Filters.SelectMany(x => x.Items).Any(x => x.IsSelected);
         public int? TotalCount { get; }
 
         public LarsSearchResultModel()
@@ -37,6 +39,7 @@ namespace Dfc.CourseDirectory.Web.Components.LarsSearchResult
 
             Errors = new string[] { };
             SearchTerm = searchTerm;
+            OriginalSearchTerm = searchTerm;
             Items = items;
             Filters = filters ?? new LarsSearchFilterModel[] { };
             TotalCount = totalCount;
@@ -47,8 +50,10 @@ namespace Dfc.CourseDirectory.Web.Components.LarsSearchResult
             yield return HasErrors;
             yield return Errors;
             yield return SearchTerm;
+            yield return OriginalSearchTerm;
             yield return Items;
             yield return Filters;
+            yield return HasSelectedFilters;
             yield return TotalCount;
         }
     }
