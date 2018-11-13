@@ -22,12 +22,12 @@
 }
 else if (Model.Items.Count() > 0)
 {
-    <div class="pagination">
+    <nav class="pagination" role="navigation" aria-label="Pagination navigation">
         <ul>
             @foreach (var item in Model.Items)
             {
-                <li><a class="@item.CssClass" href="@item.Url">@item.Text</a></li>
+                <li><a class="govuk-link" href="@item.Url" aria-label="Goto page @item.Text">@item.Text</a></li>
             }
         </ul>
-    </div>
+    </nav>
 }
