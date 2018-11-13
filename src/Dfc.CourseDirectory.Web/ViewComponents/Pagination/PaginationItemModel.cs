@@ -1,15 +1,40 @@
-﻿using System;
+﻿using Dfc.CourseDirectory.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Dfc.CourseDirectory.Web.ViewComponents.Pagination
 {
-    public class PaginationItemModel
+    public class PaginationItemModel : ValueObject<PaginationItemModel>
     {
-        public string Url { get; set; }
-        public string Text { get; set; }
-        public string CssClass { get; set; }
-        public bool IsEnabled { get; set; }
+        public string Url { get; }
+        public string Text { get; }
+        public string AriaLabel { get; }
+        public bool IsCurrent { get; }
+
+        public PaginationItemModel(
+            string url,
+            string text,
+            string ariaLabel,
+            bool isCurrent = false)
+        {
+            Throw.IfNullOrWhiteSpace(url, nameof(url));
+            Throw.IfNullOrWhiteSpace(text, nameof(text));
+            Throw.IfNullOrWhiteSpace(ariaLabel, nameof(ariaLabel));
+
+            Url = url;
+            Text = text;
+            AriaLabel = ariaLabel;
+            IsCurrent = isCurrent;
+        }
+
+        protected override IEnumerable<object> GetEqualityComponents()
+        {
+            yield return Url;
+            yield return Text;
+            yield return AriaLabel;
+            yield return IsCurrent;
+        }
     }
 }
