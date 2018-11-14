@@ -93,7 +93,16 @@
                     }
                 </tbody>
             </table>
-            @*@await Component.InvokeAsync(nameof(Pagination))*@
+            @await Component.InvokeAsync(nameof(Pagination),
+            new
+            {
+                url = Model.Url,
+                pageParamName = Model.PageParamName,
+                totalNoOfItems = Model.TotalCount,
+                itemsPerPage = Model.ItemsPerPage,
+                noOfPagesToDisplay = 10,
+                isSliding = true
+            })
         </div>
     }
 </div>

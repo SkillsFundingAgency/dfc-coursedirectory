@@ -1,0 +1,144 @@
+﻿using Dfc.CourseDirectory.Web.ViewComponents.Pagination;
+using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.WebUtilities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Dfc.CourseDirectory.Web.Helpers
+{
+    public class PaginationHelper : IPaginationHelper
+    {
+        public int GetTotalNoOfPages(
+            int totalNoOfItems,
+            int itemsPerPage)
+        {
+            if (totalNoOfItems <= itemsPerPage || totalNoOfItems == 0 || itemsPerPage == 0) return 1;
+
+            return (int)Math.Ceiling((decimal)totalNoOfItems / itemsPerPage);
+        }
+
+        public bool TryGetPrevious(
+            string url,
+            string pageParamName,
+            int currentPageNo,
+            out PaginationItemModel paginationItemModel)
+        {
+            paginationItemModel = null;
+            if (currentPageNo <= 1) return false;
+
+            var pageNo = currentPageNo - 1;
+            var ariaLabel = $"Goto the previous page, page {pageNo}";
+            var urlWithPageNo = GetUrlWithPageNo(url, pageParamName, pageNo);
+
+            paginationItemModel = new PaginationItemModel(
+                urlWithPageNo,
+                "Previous",
+                ariaLabel);
+
+            return true;
+        }
+
+        public bool TryGetNext(
+            string url,
+            string pageParamName,
+            int currentPageNo,
+            int totalNoOfPages,
+            out PaginationItemModel paginationItemModel)
+        {
+            paginationItemModel = null;
+            if (currentPageNo >= totalNoOfPages) return false;
+
+            var pageNo = currentPageNo + 1;
+            var ariaLabel = $"Goto the next page, page {pageNo}";
+            var urlWithPageNo = GetUrlWithPageNo(url, pageParamName, pageNo);
+
+            paginationItemModel = new PaginationItemModel(
+                urlWithPageNo,
+                "Next",
+                ariaLabel);
+
+            return true;
+        }
+
+        public IEnumerable<PaginationItemModel> GetPages(
+            string url,
+            string pageParamName,
+            int currentPageNo,
+            PageBoundary pageBoundary)
+        {
+            var pages = new List<PaginationItemModel>();
+
+            for (var i = pageBoundary.StartAt; i <= pageBoundary.NoOfPagesToDisplay; i++)
+            {
+                var urlWithPageNo = GetUrlWithPageNo(url, pageParamName, i);
+                pages.Add(new PaginationItemModel(
+                    urlWithPageNo,
+                    i.ToString(),
+                    GetPageAriaLabel(currentPageNo, i),
+                    i == currentPageNo));
+            }
+
+            return pages;
+        }
+
+        internal string GetPageAriaLabel(
+            int currentPageNo, 
+            int pageNo)
+        {
+            if (pageNo == currentPageNo)
+            {
+                return $"Current page, page {pageNo}";
+            }
+
+            return $"Goto page {pageNo}";
+        }
+
+        internal string GetUrlWithPageNo(
+            string url,
+            string pageParamName,
+            int pageNo)
+        {
+            var ub = new UriBuilder(url);
+            var query = QueryHelpers.ParseQuery(ub.Query);
+            var items = query
+                .SelectMany(
+                    x => x.Value,
+                    (col, value) => new KeyValuePair<string, string>(col.Key, value))
+                .ToList();
+
+            items.RemoveAll(x => x.Key == pageParamName);
+
+            var qb = new QueryBuilder(items)
+            {
+                { pageParamName, pageNo.ToString() }
+            };
+
+            ub.Query = qb.ToQueryString().ToString();
+
+            return ub.ToString();
+        }
+
+        public int GetCurrentPageNo(
+            string url, 
+            string pageParamName, 
+            int defaultPageNo = 1)
+        {
+            var ub = new UriBuilder(url);
+            var query = QueryHelpers.ParseQuery(ub.Query);
+            var currentPage = defaultPageNo;
+
+            if (query.ContainsKey(pageParamName))
+            {
+                var queryValue = query.GetValueOrDefault(pageParamName);
+
+                if (int.TryParse(queryValue, out int parsed) && parsed > defaultPageNo)
+                {
+                    currentPage = parsed;
+                }
+            }
+
+            return currentPage;
+        }
+    }
+}
