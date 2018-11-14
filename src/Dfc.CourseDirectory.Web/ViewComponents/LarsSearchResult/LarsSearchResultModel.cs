@@ -12,9 +12,12 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult
         public string SearchTerm { get; }
         public string OriginalSearchTerm { get; }
         public IEnumerable<LarsSearchResultItemModel> Items { get; }
+        public string Url { get; }
+        public string PageParamName { get; }
+        public int ItemsPerPage { get; }
         public IEnumerable<LarsSearchFilterModel> Filters { get; }
         public bool HasSelectedFilters => Filters.SelectMany(x => x.Items).Any(x => x.IsSelected);
-        public int? TotalCount { get; }
+        public int TotalCount { get; }
 
         public LarsSearchResultModel()
         {
@@ -31,16 +34,26 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult
         public LarsSearchResultModel(
             string searchTerm,
             IEnumerable<LarsSearchResultItemModel> items,
-            IEnumerable<LarsSearchFilterModel> filters = null,
-            int? totalCount = null)
+            string url,
+            string pageParamName,
+            int itemsPerPage,
+            int totalCount,
+            IEnumerable<LarsSearchFilterModel> filters = null)
         {
             Throw.IfNullOrWhiteSpace(searchTerm, nameof(searchTerm));
             Throw.IfNull(items, nameof(items));
+            Throw.IfNullOrWhiteSpace(url, nameof(url));
+            Throw.IfNullOrWhiteSpace(pageParamName, nameof(pageParamName));
+            Throw.IfLessThan(1, itemsPerPage, nameof(itemsPerPage));
+            Throw.IfLessThan(0, totalCount, nameof(totalCount));
 
             Errors = new string[] { };
             SearchTerm = searchTerm;
-            OriginalSearchTerm = searchTerm;
+            OriginalSearchTerm = searchTerm; // YAGNI ???
             Items = items;
+            Url = url;
+            PageParamName = pageParamName;
+            ItemsPerPage = itemsPerPage;
             Filters = filters ?? new LarsSearchFilterModel[] { };
             TotalCount = totalCount;
         }
@@ -52,6 +65,9 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult
             yield return SearchTerm;
             yield return OriginalSearchTerm;
             yield return Items;
+            yield return Url;
+            yield return PageParamName;
+            yield return ItemsPerPage;
             yield return Filters;
             yield return HasSelectedFilters;
             yield return TotalCount;

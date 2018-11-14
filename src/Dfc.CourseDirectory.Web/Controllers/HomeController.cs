@@ -23,7 +23,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _larsSearchService = larsSearchService;
         }
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
             _logger.LogMethodEnter();
             _logger.LogTrace("0");
@@ -32,18 +32,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _logger.LogWarning("3");
             _logger.LogError("4");
             _logger.LogCritical("5");
-
-            var criteria = new LarsSearchCriteria(
-                "business Management",
-                true,
-                "NotionalNVQLevelv2 eq '4' and AwardOrgCode eq 'NONE'",
-                new LarsSearchFacet[]
-                {
-                    LarsSearchFacet.NotionalNVQLevelv2,
-                    LarsSearchFacet.AwardOrgCode
-                });
-
-            var actual = await _larsSearchService.SearchAsync(criteria);
 
             return View();
         }

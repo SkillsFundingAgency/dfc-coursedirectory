@@ -6,7 +6,7 @@
         string ApiVersion { get; }
         string ApiKey { get; }
         string Indexes { get; }
-        int PerPage { get; }
+        int ItemsPerPage { get; }
         string PageParamName { get; }
     }
 }

@@ -1,4 +1,6 @@
-﻿@model Dfc.CourseDirectory.Web.ViewComponents.Pagination.PaginationModel;
+﻿@using Dfc.CourseDirectory.Web.ViewComponents.Extensions;
+
+@model Dfc.CourseDirectory.Web.ViewComponents.Pagination.PaginationModel;
 
 @if (Model.HasErrors)
 {
@@ -26,7 +28,7 @@ else if (Model.Items.Count() > 0)
         <ul>
             @foreach (var item in Model.Items)
             {
-                <li><a class="govuk-link" href="@item.Url" aria-label="Goto page @item.Text">@item.Text</a></li>
+                <li><a class="govuk-link pagination__item" href="@item.Url" aria-label="@item.AriaLabel" @item.IsCurrent.ThenAriaCurrent()>@item.Text</a></li>
             }
         </ul>
     </nav>

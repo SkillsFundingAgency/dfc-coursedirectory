@@ -1,9 +1,13 @@
-﻿using Dfc.CourseDirectory.Services.Enums;
+﻿using Dfc.CourseDirectory.Services;
+using Dfc.CourseDirectory.Services.Enums;
 using Dfc.CourseDirectory.Services.Interfaces;
+using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.RequestModels;
 using Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -12,14 +16,20 @@ namespace Dfc.CourseDirectory.Web.Controllers
     public class LarsSearchController : Controller
     {
         private readonly ILogger<LarsSearchController> _logger;
-        public ILarsSearchService _larsSearchService { get; }
+        private readonly ILarsSearchService _larsSearchService;
+        private readonly ILarsSearchSettings _larsSearchSettings;
+        private readonly IPaginationHelper _paginationHelper;
 
         public LarsSearchController(
             ILogger<LarsSearchController> logger,
-            ILarsSearchService larsSearchService)
+            ILarsSearchService larsSearchService,
+            IOptions<LarsSearchSettings> larsSearchSettings,
+            IPaginationHelper paginationHelper)
         {
             _logger = logger;
             _larsSearchService = larsSearchService;
+            _larsSearchSettings = larsSearchSettings.Value;
+            _paginationHelper = paginationHelper;
         }
 
         public async Task<IActionResult> Index([FromQuery] LarsSearchRequestModel requestModel)
@@ -32,18 +42,23 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
             else
             {
-                var criteria = requestModel.ToLarsSearchCriteria(true, new LarsSearchFacet[]
-                {
-                    LarsSearchFacet.AwardOrgCode,
-                    LarsSearchFacet.NotionalNVQLevelv2
-                });
+                var criteria = requestModel.ToLarsSearchCriteria(
+                    _paginationHelper.GetCurrentPageNo(
+                        UriHelper.GetDisplayUrl(Request),
+                        _larsSearchSettings.PageParamName),
+                    _larsSearchSettings.ItemsPerPage,
+                    new LarsSearchFacet[]
+                    {
+                        LarsSearchFacet.AwardOrgCode,
+                        LarsSearchFacet.NotionalNVQLevelv2
+                    });
 
                 var result = await _larsSearchService.SearchAsync(criteria);
                 var items = new List<LarsSearchResultItemModel>();
 
                 if (result.IsSuccess && result.HasValue)
                 {
-                    int? totalCount = result.Value.ODataCount;
+                    int totalCount = result.Value.ODataCount ?? 0;
                     var filters = new List<LarsSearchFilterModel>();
 
                     if (result.Value.SearchFacets != null)
@@ -121,7 +136,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
                             item.AwardOrgName));
                     }
 
-                    model = new LarsSearchResultModel(requestModel.SearchTerm, items, filters, totalCount);
+                    model = new LarsSearchResultModel(
+                        requestModel.SearchTerm, 
+                        items,
+                        UriHelper.GetDisplayUrl(Request),
+                        _larsSearchSettings.PageParamName,
+                        _larsSearchSettings.ItemsPerPage,
+                        totalCount,
+                        filters);
                 }
                 else
                 {

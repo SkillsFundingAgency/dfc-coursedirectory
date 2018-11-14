@@ -6,5 +6,10 @@
         {
             return extendee ? "checked=\"checked\"" : string.Empty;
         }
+
+        public static string ThenAriaCurrent(this bool extendee)
+        {
+            return extendee ? "aria-current=\"true\"" : string.Empty;
+        }
     }
 }
