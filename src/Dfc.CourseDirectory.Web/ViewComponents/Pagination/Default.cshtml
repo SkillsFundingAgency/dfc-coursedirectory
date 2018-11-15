@@ -28,7 +28,7 @@ else if (Model.Items.Count() > 0)
         <ul>
             @foreach (var item in Model.Items)
             {
-                <li><a class="govuk-link pagination__item" href="@item.Url" aria-label="@item.AriaLabel" @item.IsCurrent.ThenAriaCurrent()>@item.Text</a></li>
+                <li><a class="govuk-link pagination__item @item.IsCurrent.ThenCssClasses("pagination__item--current")" href="@item.Url" aria-label="@item.AriaLabel" @item.IsCurrent.ThenAriaCurrent()>@item.Text</a></li>
             }
         </ul>
     </nav>

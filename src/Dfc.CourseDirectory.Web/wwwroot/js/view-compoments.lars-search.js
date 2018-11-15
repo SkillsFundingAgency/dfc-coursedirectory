@@ -24,11 +24,16 @@
         return search.split(find).join(replace);
     };
 
-    var makeRequest = function (payload, success) {
+    var makeRequestWithPayload = function (payload, success) {
         console.log(payload);
         var qs = $.param(payload);
         qs = replaceAll(qs, "%5B%5D", "");
         $.get("/LarsSearch?" + qs, success);
+    };
+
+    var makeRequestWithUrl = function (url, success) {
+        console.log(url);
+        $.get(url, success);
     };
 
     var removeSearchResults = function () {
@@ -51,7 +56,7 @@
             var $allCheckedNotionalNvqLevelV2FilterCheckboxes = $("input[name='NotionalNVQLevelv2Filter']:checkbox:checked");
             var $allCheckedAwardOrgCodeFilterCheckboxes = $("input[name='AwardOrgCodeFilter']:checkbox:checked");
 
-            makeRequest({
+            makeRequestWithPayload({
                 SearchTerm: $larsSearchTerm.val(),
                 NotionalNVQLevelv2Filter: $allCheckedNotionalNvqLevelV2FilterCheckboxes.map(function () {
                     return $(this).val();
@@ -89,11 +94,22 @@
         });
     };
 
+    var assignEventsToLarsSearchPagination = function () {
+        var $larsSearchResultPaginationItems = $("#LarsSearchResultContainer .pagination .pagination__item");
+        $larsSearchResultPaginationItems.on("click", function (e) {
+            e.preventDefault();
+            var url = $(e.target).attr("href");
+            makeRequestWithUrl(url, onSucess);
+        });
+    };
+
     var onSucess = function (data) {
         replaceSearchResult(data);
         assignEventsToAllCheckboxes();
         assignEventToClearAllFiltersLink();
+        assignEventsToLarsSearchPagination();
     };
 
     $larsSearchTerm.on("keyup", debounce(doSearch, 400));
+
 })(jQuery);

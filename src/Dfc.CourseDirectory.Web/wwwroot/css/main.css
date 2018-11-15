@@ -1,4 +1,4 @@
-﻿@charset "UTF-8";
+@charset "UTF-8";
 .govuk-link {
   font-family: "nta", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -5404,4 +5404,28 @@
   .govuk-\!-width-one-quarter {
     width: 25% !important;
   }
+}
+
+.pagination {
+  text-align: right;
+}
+
+.pagination ul {
+  padding: 0px;
+}
+
+.pagination ul li {
+  display: inline-block;
+}
+
+.pagination .pagination__item {
+  padding: 0 0.125em;
+}
+
+.pagination .pagination__item.pagination__item--current {
+  text-decoration: none;
+}
+
+.pagination .pagination__item.pagination__item--current:hover {
+  text-decoration: underline;
 }

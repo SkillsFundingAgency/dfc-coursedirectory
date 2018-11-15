@@ -69,7 +69,7 @@ namespace Dfc.CourseDirectory.Web.Helpers
         {
             var pages = new List<PaginationItemModel>();
 
-            for (var i = pageBoundary.StartAt; i <= pageBoundary.NoOfPagesToDisplay; i++)
+            for (var i = pageBoundary.StartAt; i <= pageBoundary.EndAt; i++)
             {
                 var urlWithPageNo = GetUrlWithPageNo(url, pageParamName, i);
                 pages.Add(new PaginationItemModel(
