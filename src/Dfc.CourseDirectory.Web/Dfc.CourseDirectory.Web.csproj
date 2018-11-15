@@ -2,9 +2,13 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
-    <AssemblyVersion>1.0.18318.0556</AssemblyVersion>
-    <FileVersion>1.0.18318.0556</FileVersion>
+    <AssemblyVersion>1.0.18319.0136</AssemblyVersion>
+    <FileVersion>1.0.18319.0136</FileVersion>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Remove="wwwroot\scss\partials\view-components.pagination" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.5.1" />

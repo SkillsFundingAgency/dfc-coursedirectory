@@ -11,5 +11,10 @@
         {
             return extendee ? "aria-current=\"true\"" : string.Empty;
         }
+
+        public static string ThenCssClasses(this bool extendee, string cssClasses)
+        {
+            return extendee ? cssClasses : string.Empty;
+        }
     }
 }
