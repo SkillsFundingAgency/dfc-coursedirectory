@@ -1,9 +1,4 @@
-﻿using Dfc.CourseDirectory.Services.Enums;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Moq;
-using System.Net.Http;
-using Xunit;
+﻿using Xunit;
 
 namespace Dfc.CourseDirectory.Services.Tests
 {

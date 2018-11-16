@@ -1,6 +1,4 @@
-﻿using System.Linq;
-
-namespace Dfc.CourseDirectory.Web.RequestModels
+﻿namespace Dfc.CourseDirectory.Web.RequestModels
 {
     public class LarsSearchRequestModel
     {
