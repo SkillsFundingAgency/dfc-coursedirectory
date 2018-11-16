@@ -1,4 +1,5 @@
-﻿using Dfc.CourseDirectory.Web.ViewComponents.Pagination;
+﻿using Dfc.CourseDirectory.Common;
+using Dfc.CourseDirectory.Web.ViewComponents.Pagination;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.WebUtilities;
 using System;
@@ -65,11 +66,12 @@ namespace Dfc.CourseDirectory.Web.Helpers
             string url,
             string pageParamName,
             int currentPageNo,
-            PageBoundary pageBoundary)
+            int startAt,
+            int endAt)
         {
             var pages = new List<PaginationItemModel>();
 
-            for (var i = pageBoundary.StartAt; i <= pageBoundary.EndAt; i++)
+            for (var i = startAt; i <= endAt; i++)
             {
                 var urlWithPageNo = GetUrlWithPageNo(url, pageParamName, i);
                 pages.Add(new PaginationItemModel(
@@ -139,6 +141,39 @@ namespace Dfc.CourseDirectory.Web.Helpers
             }
 
             return currentPage;
+        }
+
+        public (int, int) GetStartAtEndAt(
+            int totalNoOfPages,
+            int noOfPagesToDisplay,
+            int currentPageNo,
+            bool isSliding)
+        {
+            Throw.IfLessThan(1, totalNoOfPages, nameof(totalNoOfPages));
+            Throw.IfLessThan(1, noOfPagesToDisplay, nameof(noOfPagesToDisplay));
+            Throw.IfLessThan(1, currentPageNo, nameof(currentPageNo));
+
+            var startAt = 1;
+            var endAt = totalNoOfPages < noOfPagesToDisplay
+                ? totalNoOfPages
+                : noOfPagesToDisplay;
+
+            if (isSliding && totalNoOfPages >= noOfPagesToDisplay)
+            {
+                var ceiling = (int)Math.Ceiling((decimal)noOfPagesToDisplay / 2);
+
+                if (ceiling <= currentPageNo)
+                {
+                    startAt = (currentPageNo + 1 - ceiling) >= (totalNoOfPages - noOfPagesToDisplay)
+                        ? totalNoOfPages - noOfPagesToDisplay + 1
+                        : currentPageNo + 1 - ceiling;
+                    endAt = (noOfPagesToDisplay - 1 + startAt) < totalNoOfPages
+                        ? noOfPagesToDisplay - 1 + startAt
+                        : totalNoOfPages;
+                }
+            }
+
+            return (startAt, endAt);
         }
     }
 }
