@@ -25,8 +25,12 @@ namespace Dfc.CourseDirectory.Web.Helpers
             int currentPageNo,
             out PaginationItemModel paginationItemModel)
         {
+            Throw.IfNullOrWhiteSpace(url, nameof(url));
+            Throw.IfNullOrWhiteSpace(pageParamName, nameof(pageParamName));
+            Throw.IfLessThan(1, currentPageNo, nameof(currentPageNo));
+
             paginationItemModel = null;
-            if (currentPageNo <= 1) return false;
+            if (currentPageNo == 1) return false;
 
             var pageNo = currentPageNo - 1;
             var ariaLabel = $"Goto the previous page, page {pageNo}";
@@ -47,6 +51,11 @@ namespace Dfc.CourseDirectory.Web.Helpers
             int totalNoOfPages,
             out PaginationItemModel paginationItemModel)
         {
+            Throw.IfNullOrWhiteSpace(url, nameof(url));
+            Throw.IfNullOrWhiteSpace(pageParamName, nameof(pageParamName));
+            Throw.IfLessThan(1, currentPageNo, nameof(currentPageNo));
+            Throw.IfLessThan(1, totalNoOfPages, nameof(totalNoOfPages));
+
             paginationItemModel = null;
             if (currentPageNo >= totalNoOfPages) return false;
 
@@ -69,6 +78,12 @@ namespace Dfc.CourseDirectory.Web.Helpers
             int startAt,
             int endAt)
         {
+            Throw.IfNullOrWhiteSpace(url, nameof(url));
+            Throw.IfNullOrWhiteSpace(pageParamName, nameof(pageParamName));
+            Throw.IfLessThan(1, currentPageNo, nameof(currentPageNo));
+            Throw.IfLessThan(1, startAt, nameof(startAt));
+            Throw.IfLessThan(1, endAt, nameof(endAt));
+
             var pages = new List<PaginationItemModel>();
 
             for (var i = startAt; i <= endAt; i++)
@@ -88,6 +103,9 @@ namespace Dfc.CourseDirectory.Web.Helpers
             int currentPageNo, 
             int pageNo)
         {
+            Throw.IfLessThan(1, currentPageNo, nameof(currentPageNo));
+            Throw.IfLessThan(1, pageNo, nameof(pageNo));
+
             if (pageNo == currentPageNo)
             {
                 return $"Current page, page {pageNo}";
@@ -101,6 +119,10 @@ namespace Dfc.CourseDirectory.Web.Helpers
             string pageParamName,
             int pageNo)
         {
+            Throw.IfNullOrWhiteSpace(url, nameof(url));
+            Throw.IfNullOrWhiteSpace(pageParamName, nameof(pageParamName));
+            Throw.IfLessThan(1, pageNo, nameof(pageNo));
+
             var ub = new UriBuilder(url);
             var query = QueryHelpers.ParseQuery(ub.Query);
             var items = query
@@ -126,6 +148,10 @@ namespace Dfc.CourseDirectory.Web.Helpers
             string pageParamName, 
             int defaultPageNo = 1)
         {
+            Throw.IfNullOrWhiteSpace(url, nameof(url));
+            Throw.IfNullOrWhiteSpace(pageParamName, nameof(pageParamName));
+            Throw.IfLessThan(1, defaultPageNo, nameof(defaultPageNo));
+
             var ub = new UriBuilder(url);
             var query = QueryHelpers.ParseQuery(ub.Query);
             var currentPage = defaultPageNo;
