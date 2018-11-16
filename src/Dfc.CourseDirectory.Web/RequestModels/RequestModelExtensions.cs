@@ -17,8 +17,9 @@ namespace Dfc.CourseDirectory.Web.RequestModels
             IEnumerable<LarsSearchFacet> facets)
         {
             var searchTerm = extendee.SearchTerm;
-            var notionalNVQLevelv2FilterCount = extendee.NotionalNVQLevelv2Filter.Count();
             var awardOrgCodeFilterCount = extendee.AwardOrgCodeFilter.Count();
+            var notionalNVQLevelv2FilterCount = extendee.NotionalNVQLevelv2Filter.Count();
+            var sectorSubjectAreaTier1FilterFilterCount = extendee.SectorSubjectAreaTier1Filter.Count();
             var sb = new StringBuilder();
 
             for (var i = 0; i < notionalNVQLevelv2FilterCount; i++)
@@ -60,6 +61,28 @@ namespace Dfc.CourseDirectory.Web.RequestModels
                 }
             }
 
+            if (sb.Length > 0 && extendee.SectorSubjectAreaTier1Filter.Any())
+            {
+                new LarsSearchFilterBuilder(sb).And();
+            }
+
+            for (var i = 0; i < sectorSubjectAreaTier1FilterFilterCount; i++)
+            {
+                if (sectorSubjectAreaTier1FilterFilterCount > 1)
+                {
+                    new LarsSearchFilterBuilder(sb)
+                        .Field("SectorSubjectAreaTier1")
+                        .EqualTo(extendee.SectorSubjectAreaTier1Filter[i])
+                        .Or();
+                }
+                else
+                {
+                    new LarsSearchFilterBuilder(sb)
+                        .Field("SectorSubjectAreaTier1")
+                        .EqualTo(extendee.SectorSubjectAreaTier1Filter[i]);
+                }
+            }
+
             var skip = currentPageNo == 1 ? 0 : itemsPerPage * (currentPageNo - 1);
 
             var criteria = new LarsSearchCriteria(
@@ -87,6 +110,12 @@ namespace Dfc.CourseDirectory.Web.RequestModels
                 && extendee.NotionalNVQLevelv2Filter.Any())
             {
                 return extendee.NotionalNVQLevelv2Filter.Contains(value);
+            }
+
+            if (filterName == nameof(extendee.SectorSubjectAreaTier1Filter)
+                && extendee.SectorSubjectAreaTier1Filter.Any())
+            {
+                return extendee.SectorSubjectAreaTier1Filter.Contains(value);
             }
 
             return false;

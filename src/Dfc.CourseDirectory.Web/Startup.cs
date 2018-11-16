@@ -42,12 +42,12 @@ namespace Dfc.CourseDirectory.Web
 
             services.AddOptions();
 
-            services.Configure<GovukPhaseBannerSettings>(Configuration.GetSection("GovukPhaseBannerSettings"));
+            services.Configure<GovukPhaseBannerSettings>(Configuration.GetSection(nameof(GovukPhaseBannerSettings)));
             services.AddScoped<IGovukPhaseBannerService, GovukPhaseBannerService>();
 
             services.AddTransient((provider) => new HttpClient());
 
-            services.Configure<LarsSearchSettings>(Configuration.GetSection("LarsSearchSettings"));
+            services.Configure<LarsSearchSettings>(Configuration.GetSection(nameof(LarsSearchSettings)));
             services.AddScoped<ILarsSearchService, LarsSearchService>();
 
             services.AddScoped<IPaginationHelper, PaginationHelper>();

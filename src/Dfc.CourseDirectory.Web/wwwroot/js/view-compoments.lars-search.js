@@ -55,6 +55,7 @@
         } else {
             var $allCheckedNotionalNvqLevelV2FilterCheckboxes = $("input[name='NotionalNVQLevelv2Filter']:checkbox:checked");
             var $allCheckedAwardOrgCodeFilterCheckboxes = $("input[name='AwardOrgCodeFilter']:checkbox:checked");
+            var $allSectorSubjectAreaTier1FilterCheckboxes = $("input[name='SectorSubjectAreaTier1Filter']:checkbox:checked");
 
             makeRequestWithPayload({
                 SearchTerm: $larsSearchTerm.val(),
@@ -62,6 +63,9 @@
                     return $(this).val();
                 }).get(),
                 AwardOrgCodeFilter: $allCheckedAwardOrgCodeFilterCheckboxes.map(function () {
+                    return $(this).val();
+                }).get(),
+                SectorSubjectAreaTier1Filter: $allSectorSubjectAreaTier1FilterCheckboxes.map(function () {
                     return $(this).val();
                 }).get()
             }, onSucess);
@@ -71,9 +75,11 @@
     var assignEventsToAllCheckboxes = function () {
         var $notionalNvqLevelV2FilterCheckboxes = $("input[name='NotionalNVQLevelv2Filter']:checkbox");
         var $awardOrgCodeFilterCheckboxes = $("input[name='AwardOrgCodeFilter']:checkbox");
+        var $sectorSubjectAreaTier1FilterCheckboxes = $("input[name='SectorSubjectAreaTier1Filter']:checkbox");
 
         $notionalNvqLevelV2FilterCheckboxes.on("click", doSearch);
         $awardOrgCodeFilterCheckboxes.on("click", doSearch);
+        $sectorSubjectAreaTier1FilterCheckboxes.on("click", doSearch);
     };
 
     var assignEventToClearAllFiltersLink = function () {
@@ -81,7 +87,7 @@
 
         $clearAllFiltersLink.on("click", function (e) {
             e.preventDefault();
-            var $allCheckedFilterCheckboxes = $("input[name='NotionalNVQLevelv2Filter']:checkbox:checked, input[name='AwardOrgCodeFilter']:checkbox:checked");
+            var $allCheckedFilterCheckboxes = $("input[name='NotionalNVQLevelv2Filter']:checkbox:checked, input[name='AwardOrgCodeFilter']:checkbox:checked, input[name='SectorSubjectAreaTier1Filter']:checkbox");
             var allCheckedFilterCheckboxesLength = $allCheckedFilterCheckboxes.length;
 
             for (var i = 0; i < allCheckedFilterCheckboxesLength; i++) {

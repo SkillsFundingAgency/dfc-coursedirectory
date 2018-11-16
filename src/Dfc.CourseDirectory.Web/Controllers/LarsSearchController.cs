@@ -50,7 +50,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     new LarsSearchFacet[]
                     {
                         LarsSearchFacet.AwardOrgCode,
-                        LarsSearchFacet.NotionalNVQLevelv2
+                        LarsSearchFacet.NotionalNVQLevelv2,
+                        LarsSearchFacet.SectorSubjectAreaTier1
                     });
 
                 var result = await _larsSearchService.SearchAsync(criteria);
@@ -58,7 +59,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                 if (result.IsSuccess && result.HasValue)
                 {
-                    int totalCount = result.Value.ODataCount ?? 0;
+                    var totalCount = result.Value.ODataCount ?? 0;
                     var filters = new List<LarsSearchFilterModel>();
 
                     if (result.Value.SearchFacets != null)
@@ -82,13 +83,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
                             });
                         }
 
-                        var notionalNVQLevelv2 = new LarsSearchFilterModel
+                        var notionalNVQLevelv2Filter = new LarsSearchFilterModel
                         {
                             Title = "Notional NVQ Level v2",
                             Items = notionalNVQLevelv2Facets
                         };
 
-                        filters.Add(notionalNVQLevelv2);
+                        filters.Add(notionalNVQLevelv2Filter);
 
                         var awardOrgCodeFacets = new List<LarsFilterItemModel>();
                         var awardOrgCodeFacetName = "AwardOrgCodeFilter";
@@ -109,13 +110,41 @@ namespace Dfc.CourseDirectory.Web.Controllers
                             });
                         }
 
-                        var awardOrgCode = new LarsSearchFilterModel
+                        var awardOrgCodeFilter = new LarsSearchFilterModel
                         {
                             Title = "Award Org Code",
                             Items = awardOrgCodeFacets
                         };
 
-                        filters.Add(awardOrgCode);
+                        filters.Add(awardOrgCodeFilter);
+
+
+                        var sectorSubjectAreaTier1Facets = new List<LarsFilterItemModel>();
+                        var sectorSubjectAreaTier1FacetName = "SectorSubjectAreaTier1Filter";
+                        var sectorSubjectAreaTier1IdCount = 0;
+
+                        foreach (var item in result.Value.SearchFacets.SectorSubjectAreaTier1)
+                        {
+                            sectorSubjectAreaTier1Facets.Add(new LarsFilterItemModel
+                            {
+                                Id = $"{sectorSubjectAreaTier1FacetName}-{sectorSubjectAreaTier1IdCount++}",
+                                Name = sectorSubjectAreaTier1FacetName,
+                                Text = item.Value,
+                                Value = item.Value,
+                                Count = item.Count,
+                                IsSelected = requestModel.IsFilterSelected(
+                                    nameof(requestModel.SectorSubjectAreaTier1Filter),
+                                    item.Value)
+                            });
+                        }
+
+                        var sectorSubjectAreaTier1Filter = new LarsSearchFilterModel
+                        {
+                            Title = "Sector Subject Area Tier 1",
+                            Items = sectorSubjectAreaTier1Facets
+                        };
+
+                        filters.Add(sectorSubjectAreaTier1Filter);
                     }
 
                     foreach (var item in result.Value.Value)
