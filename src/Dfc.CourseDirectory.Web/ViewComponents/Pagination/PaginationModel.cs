@@ -15,9 +15,8 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Pagination
         public PaginationModel()
         {
             Errors = new string[] { };
-            Items = new PaginationItemModel[] 
+            Items = new PaginationItemModel[]
             {
-                
             };
         }
 

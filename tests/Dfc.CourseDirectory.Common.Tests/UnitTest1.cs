@@ -1,4 +1,3 @@
-using System;
 using Xunit;
 
 namespace Dfc.CourseDirectory.Common.Tests
@@ -8,7 +7,6 @@ namespace Dfc.CourseDirectory.Common.Tests
         [Fact]
         public void Test1()
         {
-
         }
     }
 }

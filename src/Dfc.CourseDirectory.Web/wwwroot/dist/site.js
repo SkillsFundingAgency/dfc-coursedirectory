@@ -239,5 +239,4 @@
     };
 
     $larsSearchTerm.on("keyup", debounce(doSearch, 400));
-
 })(jQuery);

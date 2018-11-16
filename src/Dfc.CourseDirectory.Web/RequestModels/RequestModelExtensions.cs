@@ -60,7 +60,7 @@ namespace Dfc.CourseDirectory.Web.RequestModels
                 }
             }
 
-            var skip = currentPageNo == 1 ? 0 : itemsPerPage * (currentPageNo -1); 
+            var skip = currentPageNo == 1 ? 0 : itemsPerPage * (currentPageNo - 1);
 
             var criteria = new LarsSearchCriteria(
                 string.Join("+", searchTerm.Split(' ').Select(x => x.Trim()).Where(x => !string.IsNullOrWhiteSpace(x))),

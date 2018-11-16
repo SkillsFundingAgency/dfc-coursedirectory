@@ -1,12 +1,9 @@
 ﻿using Dfc.CourseDirectory.Common;
-using Dfc.CourseDirectory.Services;
-using Dfc.CourseDirectory.Services.Enums;
 using Dfc.CourseDirectory.Services.Interfaces;
 using Dfc.CourseDirectory.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
-using System.Threading.Tasks;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {

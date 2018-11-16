@@ -99,8 +99,8 @@ namespace Dfc.CourseDirectory.Web.Helpers
             return pages;
         }
 
-        internal string GetPageAriaLabel(
-            int currentPageNo, 
+        internal static string GetPageAriaLabel(
+            int currentPageNo,
             int pageNo)
         {
             Throw.IfLessThan(1, currentPageNo, nameof(currentPageNo));
@@ -114,7 +114,7 @@ namespace Dfc.CourseDirectory.Web.Helpers
             return $"Goto page {pageNo}";
         }
 
-        internal string GetUrlWithPageNo(
+        internal static string GetUrlWithPageNo(
             string url,
             string pageParamName,
             int pageNo)
@@ -144,8 +144,8 @@ namespace Dfc.CourseDirectory.Web.Helpers
         }
 
         public int GetCurrentPageNo(
-            string url, 
-            string pageParamName, 
+            string url,
+            string pageParamName,
             int defaultPageNo = 1)
         {
             Throw.IfNullOrWhiteSpace(url, nameof(url));

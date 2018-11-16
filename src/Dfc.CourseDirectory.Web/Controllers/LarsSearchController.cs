@@ -137,7 +137,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     }
 
                     model = new LarsSearchResultModel(
-                        requestModel.SearchTerm, 
+                        requestModel.SearchTerm,
                         items,
                         UriHelper.GetDisplayUrl(Request),
                         _larsSearchSettings.PageParamName,
