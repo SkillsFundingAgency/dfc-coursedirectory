@@ -19,6 +19,7 @@ namespace Dfc.CourseDirectory.Services
         {
             Throw.IfNullOrWhiteSpace(oDataContext, nameof(oDataContext));
             if (oDataCount.HasValue) Throw.IfLessThan(0, oDataCount.Value, nameof(oDataCount));
+            Throw.IfNull(larsSearchFacets, nameof(larsSearchFacets));
             Throw.IfNull(value, nameof(value));
         }
 

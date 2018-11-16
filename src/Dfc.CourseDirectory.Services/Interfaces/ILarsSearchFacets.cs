@@ -4,9 +4,11 @@ namespace Dfc.CourseDirectory.Services.Interfaces
 {
     public interface ILarsSearchFacets
     {
-        string NotionalNVQLevelv2ODataType { get; }
+        IEnumerable<SearchFacet> AwardOrgCode { get; }
         string AwardOrgCodeODataType { get; }
         IEnumerable<SearchFacet> NotionalNVQLevelv2 { get; }
-        IEnumerable<SearchFacet> AwardOrgCode { get; }
+        string NotionalNVQLevelv2ODataType { get; }
+        IEnumerable<SearchFacet> SectorSubjectAreaTier1 { get; }
+        string SectorSubjectAreaTier1ODataType { get; }
     }
 }

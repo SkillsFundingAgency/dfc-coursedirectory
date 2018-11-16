@@ -3,6 +3,7 @@
     public enum LarsSearchFacet
     {
         NotionalNVQLevelv2 = 0,
-        AwardOrgCode = 1
+        AwardOrgCode = 1,
+        SectorSubjectAreaTier1 = 3
     }
 }
