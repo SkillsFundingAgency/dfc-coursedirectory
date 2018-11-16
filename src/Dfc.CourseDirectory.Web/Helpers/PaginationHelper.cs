@@ -10,65 +10,30 @@ namespace Dfc.CourseDirectory.Web.Helpers
 {
     public class PaginationHelper : IPaginationHelper
     {
-        public int GetTotalNoOfPages(
-            int totalNoOfItems,
-            int itemsPerPage)
-        {
-            if (totalNoOfItems <= itemsPerPage || totalNoOfItems == 0 || itemsPerPage == 0) return 1;
-
-            return (int)Math.Ceiling((decimal)totalNoOfItems / itemsPerPage);
-        }
-
-        public bool TryGetPrevious(
+        public int GetCurrentPageNo(
             string url,
             string pageParamName,
-            int currentPageNo,
-            out PaginationItemModel paginationItemModel)
+            int defaultPageNo = 1)
         {
             Throw.IfNullOrWhiteSpace(url, nameof(url));
             Throw.IfNullOrWhiteSpace(pageParamName, nameof(pageParamName));
-            Throw.IfLessThan(1, currentPageNo, nameof(currentPageNo));
+            Throw.IfLessThan(1, defaultPageNo, nameof(defaultPageNo));
 
-            paginationItemModel = null;
-            if (currentPageNo == 1) return false;
+            var ub = new UriBuilder(url);
+            var query = QueryHelpers.ParseQuery(ub.Query);
+            var currentPage = defaultPageNo;
 
-            var pageNo = currentPageNo - 1;
-            var ariaLabel = $"Goto the previous page, page {pageNo}";
-            var urlWithPageNo = GetUrlWithPageNo(url, pageParamName, pageNo);
+            if (query.ContainsKey(pageParamName))
+            {
+                var queryValue = query.GetValueOrDefault(pageParamName);
 
-            paginationItemModel = new PaginationItemModel(
-                urlWithPageNo,
-                "Previous",
-                ariaLabel);
+                if (int.TryParse(queryValue, out int parsed) && parsed > defaultPageNo)
+                {
+                    currentPage = parsed;
+                }
+            }
 
-            return true;
-        }
-
-        public bool TryGetNext(
-            string url,
-            string pageParamName,
-            int currentPageNo,
-            int totalNoOfPages,
-            out PaginationItemModel paginationItemModel)
-        {
-            Throw.IfNullOrWhiteSpace(url, nameof(url));
-            Throw.IfNullOrWhiteSpace(pageParamName, nameof(pageParamName));
-            Throw.IfLessThan(1, currentPageNo, nameof(currentPageNo));
-            Throw.IfLessThan(1, totalNoOfPages, nameof(totalNoOfPages));
-
-            paginationItemModel = null;
-            if (currentPageNo >= totalNoOfPages) return false;
-
-            var pageNo = currentPageNo + 1;
-            var ariaLabel = $"Goto the next page, page {pageNo}";
-            var urlWithPageNo = GetUrlWithPageNo(url, pageParamName, pageNo);
-
-            paginationItemModel = new PaginationItemModel(
-                urlWithPageNo,
-                "Next",
-                ariaLabel);
-
-            return true;
+            return currentPage;
         }
 
         public IEnumerable<PaginationItemModel> GetPages(
@@ -99,6 +64,99 @@ namespace Dfc.CourseDirectory.Web.Helpers
             return pages;
         }
 
+        public (int, int) GetStartAtEndAt(
+            int totalNoOfPages,
+            int noOfPagesToDisplay,
+            int currentPageNo,
+            bool isSliding)
+        {
+            Throw.IfLessThan(1, totalNoOfPages, nameof(totalNoOfPages));
+            Throw.IfLessThan(1, noOfPagesToDisplay, nameof(noOfPagesToDisplay));
+            Throw.IfLessThan(1, currentPageNo, nameof(currentPageNo));
+
+            var startAt = 1;
+            var endAt = totalNoOfPages < noOfPagesToDisplay
+                ? totalNoOfPages
+                : noOfPagesToDisplay;
+
+            if (isSliding && totalNoOfPages >= noOfPagesToDisplay)
+            {
+                var ceiling = (int)Math.Ceiling((decimal)noOfPagesToDisplay / 2);
+
+                if (ceiling <= currentPageNo)
+                {
+                    startAt = (currentPageNo + 1 - ceiling) >= (totalNoOfPages - noOfPagesToDisplay)
+                        ? totalNoOfPages - noOfPagesToDisplay + 1
+                        : currentPageNo + 1 - ceiling;
+                    endAt = (noOfPagesToDisplay - 1 + startAt) < totalNoOfPages
+                        ? noOfPagesToDisplay - 1 + startAt
+                        : totalNoOfPages;
+                }
+            }
+
+            return (startAt, endAt);
+        }
+
+        public int GetTotalNoOfPages(
+                                    int totalNoOfItems,
+            int itemsPerPage)
+        {
+            if (totalNoOfItems <= itemsPerPage || totalNoOfItems == 0 || itemsPerPage == 0) return 1;
+
+            return (int)Math.Ceiling((decimal)totalNoOfItems / itemsPerPage);
+        }
+
+        public bool TryGetNext(
+            string url,
+            string pageParamName,
+            int currentPageNo,
+            int totalNoOfPages,
+            out PaginationItemModel paginationItemModel)
+        {
+            Throw.IfNullOrWhiteSpace(url, nameof(url));
+            Throw.IfNullOrWhiteSpace(pageParamName, nameof(pageParamName));
+            Throw.IfLessThan(1, currentPageNo, nameof(currentPageNo));
+            Throw.IfLessThan(1, totalNoOfPages, nameof(totalNoOfPages));
+
+            paginationItemModel = null;
+            if (currentPageNo >= totalNoOfPages) return false;
+
+            var pageNo = currentPageNo + 1;
+            var ariaLabel = $"Goto the next page, page {pageNo}";
+            var urlWithPageNo = GetUrlWithPageNo(url, pageParamName, pageNo);
+
+            paginationItemModel = new PaginationItemModel(
+                urlWithPageNo,
+                "Next",
+                ariaLabel);
+
+            return true;
+        }
+
+        public bool TryGetPrevious(
+                    string url,
+            string pageParamName,
+            int currentPageNo,
+            out PaginationItemModel paginationItemModel)
+        {
+            Throw.IfNullOrWhiteSpace(url, nameof(url));
+            Throw.IfNullOrWhiteSpace(pageParamName, nameof(pageParamName));
+            Throw.IfLessThan(1, currentPageNo, nameof(currentPageNo));
+
+            paginationItemModel = null;
+            if (currentPageNo == 1) return false;
+
+            var pageNo = currentPageNo - 1;
+            var ariaLabel = $"Goto the previous page, page {pageNo}";
+            var urlWithPageNo = GetUrlWithPageNo(url, pageParamName, pageNo);
+
+            paginationItemModel = new PaginationItemModel(
+                urlWithPageNo,
+                "Previous",
+                ariaLabel);
+
+            return true;
+        }
         internal static string GetPageAriaLabel(
             int currentPageNo,
             int pageNo)
@@ -141,65 +199,6 @@ namespace Dfc.CourseDirectory.Web.Helpers
             ub.Query = qb.ToQueryString().ToString();
 
             return ub.ToString();
-        }
-
-        public int GetCurrentPageNo(
-            string url,
-            string pageParamName,
-            int defaultPageNo = 1)
-        {
-            Throw.IfNullOrWhiteSpace(url, nameof(url));
-            Throw.IfNullOrWhiteSpace(pageParamName, nameof(pageParamName));
-            Throw.IfLessThan(1, defaultPageNo, nameof(defaultPageNo));
-
-            var ub = new UriBuilder(url);
-            var query = QueryHelpers.ParseQuery(ub.Query);
-            var currentPage = defaultPageNo;
-
-            if (query.ContainsKey(pageParamName))
-            {
-                var queryValue = query.GetValueOrDefault(pageParamName);
-
-                if (int.TryParse(queryValue, out int parsed) && parsed > defaultPageNo)
-                {
-                    currentPage = parsed;
-                }
-            }
-
-            return currentPage;
-        }
-
-        public (int, int) GetStartAtEndAt(
-            int totalNoOfPages,
-            int noOfPagesToDisplay,
-            int currentPageNo,
-            bool isSliding)
-        {
-            Throw.IfLessThan(1, totalNoOfPages, nameof(totalNoOfPages));
-            Throw.IfLessThan(1, noOfPagesToDisplay, nameof(noOfPagesToDisplay));
-            Throw.IfLessThan(1, currentPageNo, nameof(currentPageNo));
-
-            var startAt = 1;
-            var endAt = totalNoOfPages < noOfPagesToDisplay
-                ? totalNoOfPages
-                : noOfPagesToDisplay;
-
-            if (isSliding && totalNoOfPages >= noOfPagesToDisplay)
-            {
-                var ceiling = (int)Math.Ceiling((decimal)noOfPagesToDisplay / 2);
-
-                if (ceiling <= currentPageNo)
-                {
-                    startAt = (currentPageNo + 1 - ceiling) >= (totalNoOfPages - noOfPagesToDisplay)
-                        ? totalNoOfPages - noOfPagesToDisplay + 1
-                        : currentPageNo + 1 - ceiling;
-                    endAt = (noOfPagesToDisplay - 1 + startAt) < totalNoOfPages
-                        ? noOfPagesToDisplay - 1 + startAt
-                        : totalNoOfPages;
-                }
-            }
-
-            return (startAt, endAt);
         }
     }
 }
