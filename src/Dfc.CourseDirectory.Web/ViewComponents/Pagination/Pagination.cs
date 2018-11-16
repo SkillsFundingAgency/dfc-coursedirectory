@@ -23,7 +23,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Pagination
         {
             var totalNoOfPages = _paginationHelper.GetTotalNoOfPages(totalNoOfItems, itemsPerPage);
             var currentPageNo = _paginationHelper.GetCurrentPageNo(url, pageParamName);
-            var boundary = new PageBoundary(totalNoOfPages, noOfPagesToDisplay, currentPageNo, isSliding);
+            var (startAt, endAt) = _paginationHelper.GetStartAtEndAt(totalNoOfPages, noOfPagesToDisplay, currentPageNo, isSliding);
             var items = new List<PaginationItemModel>();
 
             if (_paginationHelper.TryGetPrevious(url, pageParamName, currentPageNo, out PaginationItemModel previous))
@@ -31,7 +31,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Pagination
                 items.Add(previous);
             }
 
-            items.AddRange(_paginationHelper.GetPages(url, pageParamName, currentPageNo, boundary));
+            items.AddRange(_paginationHelper.GetPages(url, pageParamName, currentPageNo, startAt, endAt));
 
             if (_paginationHelper.TryGetNext(url, pageParamName, currentPageNo, totalNoOfPages, out PaginationItemModel next))
             {
