@@ -117,6 +117,30 @@
               {
                 "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
                 "value": "[reference('courseDirectoryAppInsights').outputs.InstrumentationKey.value]"
+              },
+              {
+                "name": "ApiUrl",
+                "value": "https://dfc-larsearch.search.windows.net/indexes/azuresql-index/docs/search"
+              },
+              {
+                "name": "ApiKey",
+                "value": "B60E6C1EB35B630F22F471375AF2FD23"
+              },
+              {
+                "name": "ApiVersion",
+                "value": "2017-11-11"
+              },
+              {
+                "name": "Indexes",
+                "value": "azuresql-index"
+              },
+              {
+                "name": "ItemsPerPage",
+                "value": 10
+              },
+              {
+                "name": "PageParamName",
+                "value": "PageNo"
               }
             ]
           }
