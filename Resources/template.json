@@ -157,10 +157,6 @@
               {
                 "name": "LarsSearchSettings__PageParamName",
                 "value": "PageNo"
-              },
-              {
-                "name": "Logging__LogLevel__Default = Debug",
-                "value": "Debug"
               }
             ]
           }
