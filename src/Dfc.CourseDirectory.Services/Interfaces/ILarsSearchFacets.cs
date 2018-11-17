@@ -10,5 +10,7 @@ namespace Dfc.CourseDirectory.Services.Interfaces
         string NotionalNVQLevelv2ODataType { get; }
         IEnumerable<SearchFacet> SectorSubjectAreaTier1 { get; }
         string SectorSubjectAreaTier1ODataType { get; }
+        IEnumerable<SearchFacet> SectorSubjectAreaTier2 { get; }
+        string SectorSubjectAreaTier2ODataType { get; }
     }
 }
