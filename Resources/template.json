@@ -119,27 +119,43 @@
                 "value": "[reference('courseDirectoryAppInsights').outputs.InstrumentationKey.value]"
               },
               {
-                "name": "ApiUrl",
+                "name": "GovukPhaseBannerSettings__IsVisible",
+                "value": true
+              },
+              {
+                "name": "GovukPhaseBannerSettings__Tag",
+                "value": "alpha"
+              },
+              {
+                "name": "GovukPhaseBannerSettings__LinkUrl",
+                "value": "#"
+              },
+              {
+                "name": "GovukPhaseBannerSettings__LinkText",
+                "value": "feedback"
+              },
+              {
+                "name": "LarsSearchSettings__ApiUrl",
                 "value": "https://dfc-larsearch.search.windows.net/indexes/azuresql-index/docs/search"
               },
               {
-                "name": "ApiKey",
+                "name": "LarsSearchSettings__ApiKey",
                 "value": "B60E6C1EB35B630F22F471375AF2FD23"
               },
               {
-                "name": "ApiVersion",
+                "name": "LarsSearchSettings__ApiVersion",
                 "value": "2017-11-11"
               },
               {
-                "name": "Indexes",
+                "name": "LarsSearchSettings__Indexes",
                 "value": "azuresql-index"
               },
               {
-                "name": "ItemsPerPage",
+                "name": "LarsSearchSettings__ItemsPerPage",
                 "value": 10
               },
               {
-                "name": "PageParamName",
+                "name": "LarsSearchSettings__PageParamName",
                 "value": "PageNo"
               }
             ]
