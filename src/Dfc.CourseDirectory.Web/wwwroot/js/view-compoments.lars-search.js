@@ -56,6 +56,7 @@
             var $allCheckedNotionalNvqLevelV2FilterCheckboxes = $("input[name='NotionalNVQLevelv2Filter']:checkbox:checked");
             var $allCheckedAwardOrgCodeFilterCheckboxes = $("input[name='AwardOrgCodeFilter']:checkbox:checked");
             var $allSectorSubjectAreaTier1FilterCheckboxes = $("input[name='SectorSubjectAreaTier1Filter']:checkbox:checked");
+            var $allSectorSubjectAreaTier2FilterCheckboxes = $("input[name='SectorSubjectAreaTier2Filter']:checkbox:checked");
 
             makeRequestWithPayload({
                 SearchTerm: $larsSearchTerm.val(),
@@ -67,6 +68,9 @@
                 }).get(),
                 SectorSubjectAreaTier1Filter: $allSectorSubjectAreaTier1FilterCheckboxes.map(function () {
                     return $(this).val();
+                }).get(),
+                SectorSubjectAreaTier2Filter: $allSectorSubjectAreaTier2FilterCheckboxes.map(function () {
+                    return $(this).val();
                 }).get()
             }, onSucess);
         }
@@ -76,10 +80,12 @@
         var $notionalNvqLevelV2FilterCheckboxes = $("input[name='NotionalNVQLevelv2Filter']:checkbox");
         var $awardOrgCodeFilterCheckboxes = $("input[name='AwardOrgCodeFilter']:checkbox");
         var $sectorSubjectAreaTier1FilterCheckboxes = $("input[name='SectorSubjectAreaTier1Filter']:checkbox");
+        var $sectorSubjectAreaTier2FilterCheckboxes = $("input[name='SectorSubjectAreaTier2Filter']:checkbox");
 
         $notionalNvqLevelV2FilterCheckboxes.on("click", doSearch);
         $awardOrgCodeFilterCheckboxes.on("click", doSearch);
         $sectorSubjectAreaTier1FilterCheckboxes.on("click", doSearch);
+        $sectorSubjectAreaTier2FilterCheckboxes.on("click", doSearch);
     };
 
     var assignEventToClearAllFiltersLink = function () {
@@ -87,7 +93,7 @@
 
         $clearAllFiltersLink.on("click", function (e) {
             e.preventDefault();
-            var $allCheckedFilterCheckboxes = $("input[name='NotionalNVQLevelv2Filter']:checkbox:checked, input[name='AwardOrgCodeFilter']:checkbox:checked, input[name='SectorSubjectAreaTier1Filter']:checkbox");
+            var $allCheckedFilterCheckboxes = $("input[name='NotionalNVQLevelv2Filter']:checkbox:checked, input[name='AwardOrgCodeFilter']:checkbox:checked, input[name='SectorSubjectAreaTier1Filter']:checkbox, input[name='SectorSubjectAreaTier2Filter']:checkbox");
             var allCheckedFilterCheckboxesLength = $allCheckedFilterCheckboxes.length;
 
             for (var i = 0; i < allCheckedFilterCheckboxesLength; i++) {

@@ -19,7 +19,8 @@ namespace Dfc.CourseDirectory.Web.RequestModels
             var searchTerm = extendee.SearchTerm;
             var awardOrgCodeFilterCount = extendee.AwardOrgCodeFilter.Count();
             var notionalNVQLevelv2FilterCount = extendee.NotionalNVQLevelv2Filter.Count();
-            var sectorSubjectAreaTier1FilterFilterCount = extendee.SectorSubjectAreaTier1Filter.Count();
+            var sectorSubjectAreaTier1FilterCount = extendee.SectorSubjectAreaTier1Filter.Count();
+            var sectorSubjectAreaTier2FilterCount = extendee.SectorSubjectAreaTier2Filter.Count();
             var sb = new StringBuilder();
 
             for (var i = 0; i < notionalNVQLevelv2FilterCount; i++)
@@ -66,9 +67,9 @@ namespace Dfc.CourseDirectory.Web.RequestModels
                 new LarsSearchFilterBuilder(sb).And();
             }
 
-            for (var i = 0; i < sectorSubjectAreaTier1FilterFilterCount; i++)
+            for (var i = 0; i < sectorSubjectAreaTier1FilterCount; i++)
             {
-                if (sectorSubjectAreaTier1FilterFilterCount > 1)
+                if (sectorSubjectAreaTier1FilterCount > 1)
                 {
                     new LarsSearchFilterBuilder(sb)
                         .Field("SectorSubjectAreaTier1")
@@ -80,6 +81,28 @@ namespace Dfc.CourseDirectory.Web.RequestModels
                     new LarsSearchFilterBuilder(sb)
                         .Field("SectorSubjectAreaTier1")
                         .EqualTo(extendee.SectorSubjectAreaTier1Filter[i]);
+                }
+            }
+
+            if (sb.Length > 0 && extendee.SectorSubjectAreaTier2Filter.Any())
+            {
+                new LarsSearchFilterBuilder(sb).And();
+            }
+
+            for (var i = 0; i < sectorSubjectAreaTier2FilterCount; i++)
+            {
+                if (sectorSubjectAreaTier2FilterCount > 1)
+                {
+                    new LarsSearchFilterBuilder(sb)
+                        .Field("SectorSubjectAreaTier2")
+                        .EqualTo(extendee.SectorSubjectAreaTier2Filter[i])
+                        .Or();
+                }
+                else
+                {
+                    new LarsSearchFilterBuilder(sb)
+                        .Field("SectorSubjectAreaTier2")
+                        .EqualTo(extendee.SectorSubjectAreaTier2Filter[i]);
                 }
             }
 

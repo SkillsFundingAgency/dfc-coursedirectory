@@ -4,6 +4,7 @@
     {
         NotionalNVQLevelv2 = 0,
         AwardOrgCode = 1,
-        SectorSubjectAreaTier1 = 3
+        SectorSubjectAreaTier1 = 2,
+        SectorSubjectAreaTier2 = 3,
     }
 }

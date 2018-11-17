@@ -51,7 +51,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     {
                         LarsSearchFacet.AwardOrgCode,
                         LarsSearchFacet.NotionalNVQLevelv2,
-                        LarsSearchFacet.SectorSubjectAreaTier1
+                        LarsSearchFacet.SectorSubjectAreaTier1,
+                        LarsSearchFacet.SectorSubjectAreaTier2
                     });
 
                 var result = await _larsSearchService.SearchAsync(criteria);
@@ -118,7 +119,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                         filters.Add(awardOrgCodeFilter);
 
-
                         var sectorSubjectAreaTier1Facets = new List<LarsFilterItemModel>();
                         var sectorSubjectAreaTier1FacetName = "SectorSubjectAreaTier1Filter";
                         var sectorSubjectAreaTier1IdCount = 0;
@@ -145,6 +145,33 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         };
 
                         filters.Add(sectorSubjectAreaTier1Filter);
+
+                        var sectorSubjectAreaTier2Facets = new List<LarsFilterItemModel>();
+                        var sectorSubjectAreaTier2FacetName = "SectorSubjectAreaTier2Filter";
+                        var sectorSubjectAreaTier2IdCount = 0;
+
+                        foreach (var item in result.Value.SearchFacets.SectorSubjectAreaTier2)
+                        {
+                            sectorSubjectAreaTier2Facets.Add(new LarsFilterItemModel
+                            {
+                                Id = $"{sectorSubjectAreaTier2FacetName}-{sectorSubjectAreaTier2IdCount++}",
+                                Name = sectorSubjectAreaTier2FacetName,
+                                Text = item.Value,
+                                Value = item.Value,
+                                Count = item.Count,
+                                IsSelected = requestModel.IsFilterSelected(
+                                    nameof(requestModel.SectorSubjectAreaTier2Filter),
+                                    item.Value)
+                            });
+                        }
+
+                        var sectorSubjectAreaTier2Filter = new LarsSearchFilterModel
+                        {
+                            Title = "Sector Subject Area Tier 2",
+                            Items = sectorSubjectAreaTier2Facets
+                        };
+
+                        filters.Add(sectorSubjectAreaTier2Filter);
                     }
 
                     foreach (var item in result.Value.Value)
