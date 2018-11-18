@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Dfc.CourseDirectory.Web.Helpers
 {
@@ -43,46 +42,53 @@ namespace Dfc.CourseDirectory.Web.Helpers
             return criteria;
         }
 
-        public LarsSearchFilterModel GetLarsSearchFilterModel(
-            string title,
-            string facetName,
-            Func<string, string> textStrategy,
-            IEnumerable<SearchFacet> searchFacets,
-            IEnumerable<string> selectedValues)
+        public IEnumerable<LarsSearchFilterModel> GetLarsSearchFilterModels(
+            LarsSearchFacets larsSearchFacets,
+            LarsSearchRequestModel larsSearchRequestModel)
         {
-            Throw.IfNullOrWhiteSpace(title, nameof(title));
-            Throw.IfNullOrWhiteSpace(facetName, nameof(facetName));
-            Throw.IfNull(textStrategy, nameof(textStrategy));
-            Throw.IfNull(selectedValues, nameof(selectedValues));
+            var filters = new List<LarsSearchFilterModel>();
 
-            var items = new List<LarsSearchFilterItemModel>();
-            var count = 0;
+            var notionalNVQLevelv2Filter = GetLarsSearchFilterModel(
+                "Notional NVQ Level v2",
+                "NotionalNVQLevelv2Filter",
+                (value) => $"Level {value}",
+                larsSearchFacets.NotionalNVQLevelv2,
+                larsSearchRequestModel.NotionalNVQLevelv2Filter);
 
-            foreach (var item in searchFacets)
-            {
-                items.Add(new LarsSearchFilterItemModel
-                {
-                    Id = $"{facetName}-{count++}",
-                    Name = facetName,
-                    Text = textStrategy?.Invoke(item.Value),
-                    Value = item.Value,
-                    Count = item.Count,
-                    IsSelected = selectedValues.Contains(item.Value)
-                });
-            }
+            var awardOrgCodeFilter = GetLarsSearchFilterModel(
+                "Award Org Code",
+                "AwardOrgCodeFilter",
+                (value) => value,
+                larsSearchFacets.AwardOrgCode,
+                larsSearchRequestModel.AwardOrgCodeFilter);
 
-            var model = new LarsSearchFilterModel
-            {
-                Title = title,
-                Items = items
-            };
+            var sectorSubjectAreaTier1Filter = GetLarsSearchFilterModel(
+                "Sector Subject Area Tier 1",
+                "SectorSubjectAreaTier1Filter",
+                (value) => value,
+                larsSearchFacets.SectorSubjectAreaTier1,
+                larsSearchRequestModel.SectorSubjectAreaTier1Filter);
 
-            return model;
+            var sectorSubjectAreaTier2Filter = GetLarsSearchFilterModel(
+                "Sector Subject Area Tier 2",
+                "SectorSubjectAreaTier2Filter",
+                (value) => value,
+                larsSearchFacets.SectorSubjectAreaTier2,
+                larsSearchRequestModel.SectorSubjectAreaTier2Filter);
+
+            filters.Add(notionalNVQLevelv2Filter);
+            filters.Add(awardOrgCodeFilter);
+            filters.Add(sectorSubjectAreaTier1Filter);
+            filters.Add(sectorSubjectAreaTier2Filter);
+
+            return filters;
         }
 
-        public IEnumerable<LarsSearchResultItemModel> GetLarsSearchResultItemModel(
+        public IEnumerable<LarsSearchResultItemModel> GetLarsSearchResultItemModels(
             IEnumerable<LarsSearchResultItem> larsSearchResultItems)
         {
+            Throw.IfNull(larsSearchResultItems, nameof(larsSearchResultItems));
+
             var items = new List<LarsSearchResultItemModel>();
 
             foreach (var item in larsSearchResultItems)
@@ -144,6 +150,43 @@ namespace Dfc.CourseDirectory.Web.Helpers
                     .Split(' ')
                     .Select(x => x.Trim())
                     .Where(x => !string.IsNullOrWhiteSpace(x)));
+        }
+
+        internal static LarsSearchFilterModel GetLarsSearchFilterModel(
+            string title,
+            string facetName,
+            Func<string, string> textStrategy,
+            IEnumerable<SearchFacet> searchFacets,
+            IEnumerable<string> selectedValues)
+        {
+            Throw.IfNullOrWhiteSpace(title, nameof(title));
+            Throw.IfNullOrWhiteSpace(facetName, nameof(facetName));
+            Throw.IfNull(textStrategy, nameof(textStrategy));
+            Throw.IfNull(selectedValues, nameof(selectedValues));
+
+            var items = new List<LarsSearchFilterItemModel>();
+            var count = 0;
+
+            foreach (var item in searchFacets)
+            {
+                items.Add(new LarsSearchFilterItemModel
+                {
+                    Id = $"{facetName}-{count++}",
+                    Name = facetName,
+                    Text = textStrategy?.Invoke(item.Value),
+                    Value = item.Value,
+                    Count = item.Count,
+                    IsSelected = selectedValues.Contains(item.Value)
+                });
+            }
+
+            var model = new LarsSearchFilterModel
+            {
+                Title = title,
+                Items = items
+            };
+
+            return model;
         }
     }
 }
