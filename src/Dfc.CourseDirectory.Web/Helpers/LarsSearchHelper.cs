@@ -46,6 +46,9 @@ namespace Dfc.CourseDirectory.Web.Helpers
             LarsSearchFacets larsSearchFacets,
             LarsSearchRequestModel larsSearchRequestModel)
         {
+            Throw.IfNull(larsSearchFacets, nameof(larsSearchFacets));
+            Throw.IfNull(larsSearchRequestModel, nameof(larsSearchRequestModel));
+
             var filters = new List<LarsSearchFilterModel>();
 
             var notionalNVQLevelv2Filter = GetLarsSearchFilterModel(
@@ -113,37 +116,43 @@ namespace Dfc.CourseDirectory.Web.Helpers
         }
 
         internal static StringBuilder BuildUpFilterStringBuilder(
-            StringBuilder sb,
+            StringBuilder stringBuilder,
             string fieldName,
             string[] filters)
         {
-            if (sb.Length > 0 && filters.Length > 0)
+            Throw.IfNull(stringBuilder, nameof(stringBuilder));
+            Throw.IfNullOrWhiteSpace(fieldName, nameof(fieldName));
+            Throw.IfNullOrEmpty(filters, nameof(filters));
+
+            if (stringBuilder.Length > 0 && filters.Length > 0)
             {
-                new LarsSearchFilterBuilder(sb).And();
+                new LarsSearchFilterBuilder(stringBuilder).And();
             }
 
             for (var i = 0; i < filters.Length; i++)
             {
                 if (i == 0 && filters.Length > 1)
                 {
-                    new LarsSearchFilterBuilder(sb)
+                    new LarsSearchFilterBuilder(stringBuilder)
                         .Field(fieldName)
                         .EqualTo(filters[i])
                         .Or();
                 }
                 else
                 {
-                    new LarsSearchFilterBuilder(sb)
+                    new LarsSearchFilterBuilder(stringBuilder)
                         .Field(fieldName)
                         .EqualTo(filters[i]);
                 }
             }
 
-            return sb;
+            return stringBuilder;
         }
 
         internal static string FormatSearchTerm(string searchTerm)
         {
+            Throw.IfNullOrWhiteSpace(searchTerm, nameof(searchTerm));
+
             return string.Join(
                 "+",
                 searchTerm
