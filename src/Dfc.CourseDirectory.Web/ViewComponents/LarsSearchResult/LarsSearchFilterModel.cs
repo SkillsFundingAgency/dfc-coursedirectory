@@ -1,10 +1,28 @@
-﻿using System.Collections.Generic;
+﻿using Dfc.CourseDirectory.Common;
+using System.Collections.Generic;
 
 namespace Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult
 {
-    public class LarsSearchFilterModel
+    public class LarsSearchFilterModel : ValueObject<LarsSearchFilterModel>
     {
-        public string Title { get; set; }
-        public IEnumerable<LarsSearchFilterItemModel> Items { get; set; }
+        public string Title { get; }
+        public IEnumerable<LarsSearchFilterItemModel> Items { get; }
+
+        public LarsSearchFilterModel(
+            string title,
+            IEnumerable<LarsSearchFilterItemModel> items)
+        {
+            Throw.IfNullOrWhiteSpace(title, nameof(title));
+            Throw.IfNullOrEmpty(items, nameof(items));
+
+            Title = title;
+            Items = items;
+        }
+
+        protected override IEnumerable<object> GetEqualityComponents()
+        {
+            yield return Title;
+            yield return Items;
+        }
     }
 }

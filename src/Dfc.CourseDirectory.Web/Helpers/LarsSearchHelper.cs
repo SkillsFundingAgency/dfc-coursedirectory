@@ -178,22 +178,16 @@ namespace Dfc.CourseDirectory.Web.Helpers
 
             foreach (var item in searchFacets)
             {
-                items.Add(new LarsSearchFilterItemModel
-                {
-                    Id = $"{facetName}-{count++}",
-                    Name = facetName,
-                    Text = textStrategy?.Invoke(item.Value),
-                    Value = item.Value,
-                    Count = item.Count,
-                    IsSelected = selectedValues.Contains(item.Value)
-                });
+                items.Add(new LarsSearchFilterItemModel(
+                    $"{facetName}-{count++}",
+                    facetName,
+                    textStrategy?.Invoke(item.Value),
+                    item.Value,
+                    item.Count,
+                    selectedValues.Contains(item.Value)));
             }
 
-            var model = new LarsSearchFilterModel
-            {
-                Title = title,
-                Items = items
-            };
+            var model = new LarsSearchFilterModel(title, items);
 
             return model;
         }
