@@ -44,7 +44,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 var criteria = requestModel.ToLarsSearchCriteria(
                     _paginationHelper.GetCurrentPageNo(
-                        UriHelper.GetDisplayUrl(Request),
+                        Request.GetDisplayUrl(),
                         _larsSearchSettings.PageParamName),
                     _larsSearchSettings.ItemsPerPage,
                     new LarsSearchFacet[]
@@ -195,7 +195,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     model = new LarsSearchResultModel(
                         requestModel.SearchTerm,
                         items,
-                        UriHelper.GetDisplayUrl(Request),
+                        Request.GetDisplayUrl(),
                         _larsSearchSettings.PageParamName,
                         _larsSearchSettings.ItemsPerPage,
                         totalCount,
