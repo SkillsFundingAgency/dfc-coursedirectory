@@ -65,13 +65,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                     if (result.Value.SearchFacets != null)
                     {
-                        var notionalNVQLevelv2Facets = new List<LarsFilterItemModel>();
+                        var notionalNVQLevelv2Facets = new List<LarsSearchFilterItemModel>();
                         var notionalNVQLevelv2FacetName = "NotionalNVQLevelv2Filter";
                         var notionalNVQLevelv2IdCount = 0;
 
                         foreach (var item in result.Value.SearchFacets.NotionalNVQLevelv2)
                         {
-                            notionalNVQLevelv2Facets.Add(new LarsFilterItemModel
+                            notionalNVQLevelv2Facets.Add(new LarsSearchFilterItemModel
                             {
                                 Id = $"{notionalNVQLevelv2FacetName}-{notionalNVQLevelv2IdCount++}",
                                 Name = notionalNVQLevelv2FacetName,
@@ -92,13 +92,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                         filters.Add(notionalNVQLevelv2Filter);
 
-                        var awardOrgCodeFacets = new List<LarsFilterItemModel>();
+                        var awardOrgCodeFacets = new List<LarsSearchFilterItemModel>();
                         var awardOrgCodeFacetName = "AwardOrgCodeFilter";
                         var awardOrgCodeIdCount = 0;
 
                         foreach (var item in result.Value.SearchFacets.AwardOrgCode)
                         {
-                            awardOrgCodeFacets.Add(new LarsFilterItemModel
+                            awardOrgCodeFacets.Add(new LarsSearchFilterItemModel
                             {
                                 Id = $"{awardOrgCodeFacetName}-{awardOrgCodeIdCount++}",
                                 Name = awardOrgCodeFacetName,
@@ -119,13 +119,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                         filters.Add(awardOrgCodeFilter);
 
-                        var sectorSubjectAreaTier1Facets = new List<LarsFilterItemModel>();
+                        var sectorSubjectAreaTier1Facets = new List<LarsSearchFilterItemModel>();
                         var sectorSubjectAreaTier1FacetName = "SectorSubjectAreaTier1Filter";
                         var sectorSubjectAreaTier1IdCount = 0;
 
                         foreach (var item in result.Value.SearchFacets.SectorSubjectAreaTier1)
                         {
-                            sectorSubjectAreaTier1Facets.Add(new LarsFilterItemModel
+                            sectorSubjectAreaTier1Facets.Add(new LarsSearchFilterItemModel
                             {
                                 Id = $"{sectorSubjectAreaTier1FacetName}-{sectorSubjectAreaTier1IdCount++}",
                                 Name = sectorSubjectAreaTier1FacetName,
@@ -146,13 +146,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                         filters.Add(sectorSubjectAreaTier1Filter);
 
-                        var sectorSubjectAreaTier2Facets = new List<LarsFilterItemModel>();
+                        var sectorSubjectAreaTier2Facets = new List<LarsSearchFilterItemModel>();
                         var sectorSubjectAreaTier2FacetName = "SectorSubjectAreaTier2Filter";
                         var sectorSubjectAreaTier2IdCount = 0;
 
                         foreach (var item in result.Value.SearchFacets.SectorSubjectAreaTier2)
                         {
-                            sectorSubjectAreaTier2Facets.Add(new LarsFilterItemModel
+                            sectorSubjectAreaTier2Facets.Add(new LarsSearchFilterItemModel
                             {
                                 Id = $"{sectorSubjectAreaTier2FacetName}-{sectorSubjectAreaTier2IdCount++}",
                                 Name = sectorSubjectAreaTier2FacetName,

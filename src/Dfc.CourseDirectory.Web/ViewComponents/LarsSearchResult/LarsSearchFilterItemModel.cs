@@ -1,6 +1,6 @@
 ﻿namespace Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult
 {
-    public class LarsFilterItemModel
+    public class LarsSearchFilterItemModel
     {
         public string Id { get; set; }
         public string Name { get; set; }
