@@ -38,7 +38,9 @@
     "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
     "appInsightsName": "[concat(parameters('projectPrefix'),'-ai')]",
     "appServiceName": "[concat(parameters('projectPrefix'),'-as')]",
-    "appServicePlanName": "[concat(parameters('projectPrefix'),'-asp')]"
+    "appServicePlanName": "[concat(parameters('projectPrefix'),'-asp')]",
+    "cosmosDbName": "[concat(parameters('projectPrefix'),'-cdb')]",
+    "azureSearchName": "[concat(parameters('projectPrefix'),'-sch')]"
   },
   "resources": [
     {
@@ -140,7 +142,7 @@
               },
               {
                 "name": "LarsSearchSettings__ApiKey",
-                "value": "B60E6C1EB35B630F22F471375AF2FD23"
+                "value": "8A6148AD67F251D39562FF4591FAED1B"
               },
               {
                 "name": "LarsSearchSettings__ApiVersion",
@@ -179,6 +181,46 @@
           }
         }
       }
+    },
+    {
+      "apiVersion": "2017-05-10",
+      "name": "providerPortalCosmos",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('deploymentUrlBase'),'cosmos-db.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "cosmosDbName": {
+            "value": "[variables('cosmosDbName')]"
+          },
+          "cosmosDbType": {
+            "value": "GlobalDocumentDB"
+          },
+          "defaultConsistencyLevel": {
+            "value": "Eventual"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "2017-05-10",
+      "name": "providerPortalSearch",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('deploymentUrlBase'),'azure-search.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "azureSearchName": {
+            "value": "[variables('azureSearchName')]"
+          }
+        }
+      }
     }
   ],
   "outputs": {
@@ -197,6 +239,14 @@
     "appServiceName": {
       "type": "string",
       "value": "[variables('appServiceName')]"
+    },
+    "cosmosDbName": {
+      "type": "string",
+      "value": "[variables('cosmosDbName')]"
+    },
+    "azureSearchName": {
+      "type": "string",
+      "value": "[variables('azureSearchName')]"
     }
   }
 }
