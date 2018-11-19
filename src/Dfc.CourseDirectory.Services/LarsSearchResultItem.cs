@@ -1,9 +1,10 @@
-﻿using Dfc.CourseDirectory.Common;
+﻿using System.Collections.Generic;
+using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Services.Interfaces;
 
 namespace Dfc.CourseDirectory.Services
 {
-    public class LarsSearchResultItem : ILarsSearchResultItem
+    public class LarsSearchResultItem : ValueObject<LarsSearchResultItem>, ILarsSearchResultItem
     {
         public decimal SearchScore { get; }
         public string LearnAimRef { get; }
@@ -34,14 +35,38 @@ namespace Dfc.CourseDirectory.Services
             Throw.IfLessThan(0, searchScore, nameof(searchScore));
             Throw.IfNullOrWhiteSpace(learnAimRef, nameof(learnAimRef));
             Throw.IfNullOrWhiteSpace(notionalNVQLevelv2, nameof(notionalNVQLevelv2));
-            Throw.IfNullOrWhiteSpace(notionalNVQLevelv2, nameof(notionalNVQLevelv2));
             Throw.IfNullOrWhiteSpace(awardOrgCode, nameof(awardOrgCode));
             Throw.IfNullOrWhiteSpace(learnDirectClassSystemCode1, nameof(learnDirectClassSystemCode1));
             Throw.IfNullOrWhiteSpace(learnDirectClassSystemCode2, nameof(learnDirectClassSystemCode2));
-            Throw.IfNullOrWhiteSpace(guidedLearningHours, nameof(guidedLearningHours));
+            //Throw.IfNullOrWhiteSpace(guidedLearningHours, nameof(guidedLearningHours));
             //Throw.IfNullOrWhiteSpace(totalQualificationTime, nameof(totalQualificationTime));
-            //Throw.IfNullOrWhiteSpace(unitType, nameof(unitType));
+            Throw.IfNullOrWhiteSpace(unitType, nameof(unitType));
             Throw.IfNullOrWhiteSpace(awardOrgName, nameof(awardOrgName));
+
+            SearchScore = searchScore;
+            LearnAimRef = learnAimRef;
+            NotionalNVQLevelv2 = notionalNVQLevelv2;
+            AwardOrgCode = awardOrgCode;
+            LearnDirectClassSystemCode1 = learnDirectClassSystemCode1;
+            LearnDirectClassSystemCode2 = learnDirectClassSystemCode2;
+            GuidedLearningHours = guidedLearningHours;
+            TotalQualificationTime = totalQualificationTime;
+            UnitType = unitType;
+            AwardOrgName = AwardOrgName;
+        }
+
+        protected override IEnumerable<object> GetEqualityComponents()
+        {
+            yield return SearchScore;
+            yield return LearnAimRef;
+            yield return NotionalNVQLevelv2;
+            yield return AwardOrgCode;
+            yield return LearnDirectClassSystemCode1;
+            yield return LearnDirectClassSystemCode2;
+            yield return GuidedLearningHours;
+            yield return TotalQualificationTime;
+            yield return UnitType;
+            yield return AwardOrgName;
         }
     }
 }
