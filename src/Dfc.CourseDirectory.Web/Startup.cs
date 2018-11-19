@@ -50,6 +50,7 @@ namespace Dfc.CourseDirectory.Web
             services.Configure<LarsSearchSettings>(Configuration.GetSection(nameof(LarsSearchSettings)));
             services.AddScoped<ILarsSearchService, LarsSearchService>();
 
+            services.AddScoped<ILarsSearchHelper, LarsSearchHelper>();
             services.AddScoped<IPaginationHelper, PaginationHelper>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);

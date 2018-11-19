@@ -122,7 +122,7 @@ namespace Dfc.CourseDirectory.Web.Helpers
         {
             Throw.IfNull(stringBuilder, nameof(stringBuilder));
             Throw.IfNullOrWhiteSpace(fieldName, nameof(fieldName));
-            Throw.IfNullOrEmpty(filters, nameof(filters));
+            Throw.IfNull(filters, nameof(filters));
 
             if (stringBuilder.Length > 0 && filters.Length > 0)
             {
