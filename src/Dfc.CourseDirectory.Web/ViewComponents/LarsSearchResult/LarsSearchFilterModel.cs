@@ -13,7 +13,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult
             IEnumerable<LarsSearchFilterItemModel> items)
         {
             Throw.IfNullOrWhiteSpace(title, nameof(title));
-            Throw.IfNullOrEmpty(items, nameof(items));
+            Throw.IfNull(items, nameof(items));
 
             Title = title;
             Items = items;
