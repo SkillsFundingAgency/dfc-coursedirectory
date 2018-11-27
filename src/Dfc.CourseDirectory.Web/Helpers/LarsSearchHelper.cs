@@ -153,12 +153,13 @@ namespace Dfc.CourseDirectory.Web.Helpers
         {
             Throw.IfNullOrWhiteSpace(searchTerm, nameof(searchTerm));
 
-            return string.Join(
-                "+",
-                searchTerm
-                    .Split(' ')
-                    .Select(x => x.Trim())
-                    .Where(x => !string.IsNullOrWhiteSpace(x)));
+            var split = searchTerm
+                .Split(' ')
+                .Select(x => x.Trim())
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .ToList();
+
+            return split.Count() > 1 ? string.Join("*+", split) + "*" : $"{split[0]}*";
         }
 
         internal static LarsSearchFilterModel GetLarsSearchFilterModel(
