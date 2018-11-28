@@ -3,7 +3,7 @@ using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.Interfaces;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.RequestModels;
-using Dfc.CourseDirectory.Web.ViewComponents.Venue;
+using Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -22,7 +22,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             ILogger<VenueSearchController> logger,
             IOptions<VenueSearchSettings> venueSearchSettings,
             IVenueSearchService venueSearchService,
-            VenueSearchHelper venueSearchHelper)
+            IVenueSearchHelper venueSearchHelper)
         {
             Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(venueSearchService, nameof(venueSearchSettings));

@@ -2,7 +2,7 @@
 using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.Interfaces;
 using Dfc.CourseDirectory.Web.RequestModels;
-using Dfc.CourseDirectory.Web.ViewComponents.Venue;
+using Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult;
 using System;
 using System.Collections.Generic;
 using System.Linq;
