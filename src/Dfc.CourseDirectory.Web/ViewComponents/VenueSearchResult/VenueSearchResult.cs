@@ -1,4 +1,4 @@
-﻿using Dfc.CourseDirectory.Web.ViewComponents.Venue;
+﻿using Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -10,6 +10,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult
     public class VenueSearchResult : ViewComponent
     {
         public IViewComponentResult Invoke(VenueSearchResultModel model)
+
         {
             var actualModel = model ?? new VenueSearchResultModel();
 

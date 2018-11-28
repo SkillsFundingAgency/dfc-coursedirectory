@@ -1,4 +1,4 @@
-﻿@using Dfc.CourseDirectory.Web.ViewComponents.VenueList
+﻿@using Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult;
 @model Dfc.CourseDirectory.Web.ViewComponents.VenueSearch.VenueSearchModel;
 
 
@@ -21,6 +21,6 @@
     </div>
 
     <div id="VenueSearchResultContainer">
-        @await Component.InvokeAsync(nameof(VenueList))
+        @await Component.InvokeAsync(nameof(VenueSearchResult))
     </div>
 </div>
