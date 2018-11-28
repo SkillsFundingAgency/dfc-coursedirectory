@@ -28,4 +28,10 @@
     <ProjectReference Include="..\Dfc.CourseDirectory.Services\Dfc.CourseDirectory.Services.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="ViewComponents\VenueSearch\Default.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+  </ItemGroup>
+
 </Project>
