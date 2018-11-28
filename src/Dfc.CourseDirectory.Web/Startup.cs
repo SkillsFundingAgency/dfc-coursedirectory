@@ -53,6 +53,9 @@ namespace Dfc.CourseDirectory.Web
             services.AddScoped<ILarsSearchHelper, LarsSearchHelper>();
             services.AddScoped<IPaginationHelper, PaginationHelper>();
 
+            services.Configure<VenueSearchSettings>(Configuration.GetSection(nameof(VenueSearchSettings)));
+            services.AddScoped<IVenueSearchService, VenueSearchService>();
+            services.AddScoped<IVenueSearchHelper, VenueSearchHelper>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 

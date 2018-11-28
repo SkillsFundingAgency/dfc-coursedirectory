@@ -79,7 +79,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     model = new LarsSearchResultModel(result.Error);
                 }
             }
-
+            _logger.LogMethodExit();
             return ViewComponent(nameof(ViewComponents.LarsSearchResult.LarsSearchResult), model);
         }
     }

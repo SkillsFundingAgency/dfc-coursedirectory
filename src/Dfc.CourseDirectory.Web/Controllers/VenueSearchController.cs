@@ -1,85 +1,72 @@
 ﻿using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Services;
-using Dfc.CourseDirectory.Services.Enums;
 using Dfc.CourseDirectory.Services.Interfaces;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.RequestModels;
-using Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult;
-using Microsoft.AspNetCore.Http.Extensions;
+using Dfc.CourseDirectory.Web.ViewComponents.Venue;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Web.ViewComponents.VenueList;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
     public class VenueSearchController : Controller
     {
-        private readonly ILogger<LarsSearchController> _logger;
+        private readonly ILogger<VenueSearchController> _logger;
+        private readonly IVenueSearchSettings _venueSearchSettings;
+        private readonly IVenueSearchService _venueSearchService;
+        private readonly IVenueSearchHelper _venueSearchHelper;
 
         public VenueSearchController(
-            ILogger<LarsSearchController> logger)
+            ILogger<VenueSearchController> logger,
+            IOptions<VenueSearchSettings> venueSearchSettings,
+            IVenueSearchService venueSearchService,
+            VenueSearchHelper venueSearchHelper)
         {
             Throw.IfNull(logger, nameof(logger));
+            Throw.IfNull(venueSearchService, nameof(venueSearchSettings));
+            Throw.IfNull(venueSearchService, nameof(venueSearchService));
 
             _logger = logger;
+            _venueSearchSettings = venueSearchSettings.Value;
+            _venueSearchService = venueSearchService;
+            _venueSearchHelper = venueSearchHelper;
         }
-
-        public async Task<IActionResult> Index([FromQuery] string SearchTerm)
+        public async Task<IActionResult> Index([FromQuery] VenueSearchRequestModel requestModel)
         {
-            VenueListModel model = new VenueListModel();
+            VenueSearchResultModel model;
 
-            if (string.IsNullOrEmpty(SearchTerm))
+            _logger.LogMethodEnter();
+            _logger.LogInformationObject("Model", requestModel);
+
+            if (requestModel == null)
             {
-           
+                model = new VenueSearchResultModel();
             }
             else
             {
-                //TODO SERVICE CALL??
+                var criteria = _venueSearchHelper.GetVenueSearchCriteria(
+                    requestModel);
 
+                var result = await _venueSearchService.SearchAsync(criteria);
 
-                var venues = new List<VenueItemModel>();
-
-                var venue = new VenueItemModel()
+                if(result.IsSuccess && result.HasValue)
                 {
-                    VenueName = "Stratford campus",
-                    AddressLine1 = "Welfare Road",
-                    AddressLine2 = "Stratford",
-                    AddressLine3 = "Greater London",
-                    PostCode = "E15 4H"
-                };
-
-                venues.Add(venue);
-
-                venue = new VenueItemModel()
+                    var items = _venueSearchHelper.GetVenueSearchResultItemModels(result.Value.Value);
+                    model = new VenueSearchResultModel(
+                        requestModel.SearchTerm, 
+                        items);
+                }
+                else
                 {
-                    VenueName = "Eastleigh campus",
-                    AddressLine1 = "Chestnut Avenue",
-                    AddressLine2 = "Eastleigh",
-                    AddressLine3 = "Hampshire",
-                    PostCode = "SO50 5FS"
-                };
-
-                venues.Add(venue);
-
-                venue = new VenueItemModel()
-                {
-                    VenueName = "Salford campus",
-                    AddressLine1 = "Lissadel Street",
-                    AddressLine2 = "Salford",
-                    PostCode = "M6 6AP"
-                };
-
-                venues.Add(venue);
-
-                model.Venues = venues.ToList();
+                    model = new VenueSearchResultModel(result.Error);
+                }
             }
 
-            return ViewComponent(nameof(ViewComponents.VenueList), model);
+            _logger.LogMethodExit();
+            return ViewComponent(nameof(ViewComponents.VenueSearchResult.VenueSearchResult), model);
+            
         }
     }
 }
