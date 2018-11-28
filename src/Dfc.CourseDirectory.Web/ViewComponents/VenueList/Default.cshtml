@@ -2,29 +2,34 @@
 
 @model Dfc.CourseDirectory.Web.ViewComponents.VenueList.VenueListModel;
 
+
+
+
 <div class="venue-list">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
-            <div class="govuk-tabs" data-module="tabs">
-                @*<h2 class="govuk-tabs__title">
-                        Contents
-                    </h2>*@
-                <ul class="govuk-tabs__list" role="tablist">
-                    <li class="govuk-tabs__list-item" role="presentation">
-                        <a class="govuk-tabs__tab" href="#live" id="tab_live" role="tab" aria-controls="live" tabindex="0" aria-selected="true">
-                            Live
-                        </a>
-                    </li>
-                    <li class="govuk-tabs__list-item" role="presentation">
-                        <a class="govuk-tabs__tab" href="#archived" id="tab_archived" role="tab" aria-controls="archived" tabindex="-1" aria-selected="false">
-                            Archived
-                        </a>
-                    </li>
+           
+            @if (Model.Venues != null)
+            {
+                <div class="govuk-tabs" data-module="tabs">
+                    <h2 class="govuk-tabs__title">
+                            Contents
+                        </h2>
+                    <ul class="govuk-tabs__list" role="tablist">
+                        <li class="govuk-tabs__list-item" role="presentation">
+                            <a class="govuk-tabs__tab" href="#live" id="tab_live" role="tab" aria-controls="live" tabindex="0" aria-selected="true">
+                                Live
+                            </a>
+                        </li>
+                        <li class="govuk-tabs__list-item" role="presentation">
+                            <a class="govuk-tabs__tab" href="#archived" id="tab_archived" role="tab" aria-controls="archived" tabindex="-1" aria-selected="false">
+                                Archived
+                            </a>
+                        </li>
 
-                </ul>
+                    </ul>
 
-                <section class="govuk-tabs__panel" id="live" role="tabpanel" aria-labelledby="tab_live">
-                    <div class="form-group govuk-checkboxes">
+                    <section class="govuk-tabs__panel" id="live" role="tabpanel" aria-labelledby="tab_live">
 
                         @foreach (var venue in Model.Venues)
                         {
@@ -41,25 +46,38 @@
                                 </label>
                             </div>
                         }
-                    </div>
-                    <div class="govuk-form-group" style="margin-top:30px;">
-                    </div>
-                    <a href="your-venues-archive-confirm">Archive happy path</a>
-                </section>
 
-                <section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="archived" role="tabpanel" aria-labelledby="tab_archived">
+                        <a href="your-venues-archive-confirm">Archive happy path</a>
+                    </section>
 
-                   
+                    <section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="archived" role="tabpanel" aria-labelledby="tab_archived">
+                        
+                        <div class="govuk-checkboxes__item">
+                            <label class="govuk-label govuk-checkboxes__label" for="study0">
+                                NOT FROM SERVICE<br>
+                                NOT FROM SERVICE<br>
+                                NOT FROM SERVICE<br>
+                                NOT FROM SERVICE<br>
+                                NOT FROM SERVICE<br><a href="">Edit</a>
 
-                </section>
 
-            </div>
-            <div class="govuk-form-group" style="margin-top:30px;">
-                <a href="add-venue" role="button" class="govuk-button">
-                    + Add new venue
-                </a>
-            </div>
+                                <br><a href="">Archive</a>
+                            </label>
+                        </div>
 
+                    </section>
+
+                </div>
+                <div class="govuk-form-group" style="margin-top: 30px;">
+                    <a href="add-venue" role="button" class="govuk-button">
+                        + Add new venue
+                    </a>
+                </div>
+            }
+            else
+            {
+
+            }
 
         </div>
     </div>

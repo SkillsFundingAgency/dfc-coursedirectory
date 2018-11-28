@@ -1,4 +1,5 @@
 using Dfc.CourseDirectory.Web.ViewComponents.VenueList;
+using Dfc.CourseDirectory.Web.ViewComponents.VenueSearch;
 using Microsoft.AspNetCore.Mvc.ViewComponents;
 using Xunit;
 
@@ -9,10 +10,10 @@ namespace Dfc.CourseDirectory.Web.Tests
         [Fact]
         public void VenueList_Returns_A_List_Of_Venues()
         {
-            var viewComponent = new VenueList();
+            var viewComponent = new VenueSearch();
 
             //Act
-            var result = viewComponent.Invoke(new VenueListModel()) as ViewViewComponentResult;
+            var result = viewComponent.Invoke() as ViewViewComponentResult;
 
             //Assert
             Assert.IsType<ViewViewComponentResult>(result);

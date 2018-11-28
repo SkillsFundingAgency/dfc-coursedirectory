@@ -1,4 +1,6 @@
-﻿@model Dfc.CourseDirectory.Web.ViewComponents.VenueSearch.VenueSearchModel;
+﻿@using Dfc.CourseDirectory.Web.ViewComponents.VenueList
+@model Dfc.CourseDirectory.Web.ViewComponents.VenueSearch.VenueSearchModel;
+
 
 <div class="venue-search">
 
@@ -8,13 +10,17 @@
                 <label class="govuk-label" for="name">
                     UK PRN
                 </label>
-               
+
                 <input class="govuk-input" id="UKPrn" name="UKPrn" type="text">
+
+                <button type="submit" class="govuk-button" id="search">
+                    Search
+                </button>
             </div>
         </div>
     </div>
 
     <div id="VenueSearchResultContainer">
-        @*@await Component.InvokeAsync(nameof(LarsSearchResult))*@
+        @await Component.InvokeAsync(nameof(VenueList))
     </div>
 </div>
