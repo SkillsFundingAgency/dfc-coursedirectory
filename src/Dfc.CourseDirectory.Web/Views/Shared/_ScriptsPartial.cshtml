@@ -2,7 +2,7 @@
     <script src="~/vendor/jquery/jquery.min.js"></script>
     <script src="~/vendor/jquery-validation/jquery.validate.min.js"></script>
     <script src="~/vendor/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
-    <script src="~/vendor/govuk-frontend/all.min.js"></script>
+    <script src="~/vendor/govuk-frontend/all.js"></script>
     <script src="~/dist/site.js" asp-append-version="true"></script>
 </environment>
 <environment exclude="Development">
@@ -27,4 +27,13 @@
 
 <script>
     document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');
+
+    // Warn about using the kit in production
+    if (window.console && window.console.info) {
+        window.console.info('GOV.UK Prototype Kit - do not use for production');
+    }
+
+    $(document).ready(function () {
+        window.GOVUKFrontend.initAll();
+    });
 </script>
