@@ -13,10 +13,10 @@ namespace Dfc.CourseDirectory.Web.Tests
         [Fact]
         public void GetVenueSearchCriteria_Helper_Test()
         {
-            IVenueSearchHelper _helper = new VenueSearchHelper();
-            IVenueSearchCriteria criteria = new VenueSearchCriteria("222222");
-            VenueSearchRequestModel model = new VenueSearchRequestModel();
-            _helper.GetVenueSearchCriteria(model);
+            //IVenueSearchHelper _helper = new VenueSearchHelper();
+            //IVenueSearchCriteria criteria = new VenueSearchCriteria("222222");
+            //VenueSearchRequestModel model = new VenueSearchRequestModel();
+            //_helper.GetVenueSearchCriteria(model);
   
         
         }

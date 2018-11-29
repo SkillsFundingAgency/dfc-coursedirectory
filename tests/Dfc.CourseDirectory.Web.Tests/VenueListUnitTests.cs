@@ -1,4 +1,3 @@
-using Dfc.CourseDirectory.Web.ViewComponents.VenueList;
 using Dfc.CourseDirectory.Web.ViewComponents.VenueSearch;
 using Microsoft.AspNetCore.Mvc.ViewComponents;
 using Xunit;
