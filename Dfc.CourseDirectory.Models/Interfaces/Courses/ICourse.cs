@@ -1,9 +1,6 @@
-﻿using Dfc.CourseDirectory.Models.Models.Providers;
+﻿using Dfc.CourseDirectory.Models.Models.Courses;
+using Dfc.CourseDirectory.Models.Models.Providers;
 using Dfc.CourseDirectory.Models.Models.Qualifications;
-using Dfc.CourseDirectory.Models.Models.Venues;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Dfc.CourseDirectory.Models.Interfaces.Courses
 {
@@ -11,7 +8,7 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Courses
     {
         Provider Provider { get; }
         Qualification Qualification { get; }
-        Venue Venue { get; }
-
+        CourseData CourseData { get; }
+        CourseText CourseText { get; }
     }
 }
