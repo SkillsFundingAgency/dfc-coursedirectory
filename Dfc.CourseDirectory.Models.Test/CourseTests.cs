@@ -3,8 +3,6 @@ using Dfc.CourseDirectory.Models.Models.Providers;
 using Dfc.CourseDirectory.Models.Models.Qualifications;
 using Dfc.CourseDirectory.Models.Models.Venues;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Xunit;
 
 namespace Dfc.CourseDirectory.Models.Test
@@ -12,7 +10,7 @@ namespace Dfc.CourseDirectory.Models.Test
     public class CourseTests
     {
         [Fact]
-        public void Create_And_Assign_Values()
+        public void Create_Course()
         {
             Contactaddress address = new Contactaddress();
             Contactpersonaldetails details = new Contactpersonaldetails();
@@ -21,16 +19,73 @@ namespace Dfc.CourseDirectory.Models.Test
             Providercontact[] contact = new Providercontact[1];
             Provider prov = new Provider(contact, alias, verDetail);
 
+            Venue venue = new Venue("s", 2, 2, 2, "ss", "ss", "ss", "ss", "ss", "ss", "ss", "ss");
+            DateTime[] times = new DateTime[20180411];
+            CourseInformation info = new CourseInformation(
+                times,
+                "StudyMode",
+                "Attendance",
+                "CourseID",
+                "CourseURL",
+                "Pattern",
+                "Requirements");
+            CourseData data = new CourseData(venue, info);
+
             Qualification qual = new Qualification("ss", "ss", "ss", "ss", "ss");
-            Venue venue = new Venue("ss", 2, 2, 2, "xx", "xx", "xx", "xx", "aa", "\\", "ss", "ss");
+
+            CourseText text = new CourseText(
+                "CourseTitle",
+                "Learn",
+                "How",
+                "Why"
+                );
             Course course = new Course(
                 provider: prov,
-                venue: venue,
-                qualification: qual
-                //courseData,
-                //courseText,
-                //courseInformation
+                qualification: qual,
+                data: data,
+                text: text
                 );
+        }
+
+        [Fact]
+        public void Create_Course_Text()
+        {
+            CourseText text = new CourseText(
+                "CourseTitle",
+                "Learn",
+                "How",
+                "Why"
+                );
+        }
+
+        [Fact]
+        public void Create_Course_Information()
+        {
+            DateTime[] times = new DateTime[20180411];
+            CourseInformation info = new CourseInformation(
+                times,
+                "StudyMode",
+                "Attendance",
+                "CourseID",
+                "CourseURL",
+                "Pattern",
+                "Requirements");
+        }
+
+        [Fact]
+        public void Create_Course_Data()
+        {
+            Venue venue = new Venue("s", 2, 2, 2, "ss", "ss", "ss", "ss", "ss", "ss", "ss", "ss");
+            DateTime[] times = new DateTime[20180411];
+            CourseInformation info = new CourseInformation(
+                times,
+                "StudyMode",
+                "Attendance",
+                "CourseID",
+                "CourseURL",
+                "Pattern",
+                "Requirements");
+            CourseData data = new CourseData(venue, info);
         }
     }
 }
