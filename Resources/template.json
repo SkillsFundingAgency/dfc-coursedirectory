@@ -159,6 +159,18 @@
               {
                 "name": "LarsSearchSettings__PageParamName",
                 "value": "PageNo"
+              },
+              {
+                "name": "PostCodeSearchSettings__FindAddressesBaseUrl",
+                "value": "http://services.postcodeanywhere.co.uk/CapturePlus/Interactive/Find/2.1/json.ws?"
+              },
+              {
+                "name": "PostCodeSearchSettings__RetrieveAddressBaseUrl",
+                "value": "http://services.postcodeanywhere.co.uk/CapturePlus/Interactive/Retrieve/2.1/json.ws?"
+              },
+              {
+                "name": "PostCodeSearchSettings__Key",
+                "value": "TN52-GB92-TU79-KK96"
               }
             ]
           }
