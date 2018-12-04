@@ -1,0 +1,26 @@
+﻿@using Dfc.CourseDirectory.Web.ViewComponents.PostCodeSearch
+@model Dfc.CourseDirectory.Web.ViewComponents.AddVenue.AddVenueModel;
+
+<div class="add-venue">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <div class="govuk-form-group" style="clear:both;">
+                <label class="govuk-label" for="sub">
+                    Venue name
+                </label>
+                <input class="govuk-input" id="name" name="name" type="text">
+
+            </div>
+
+            <div id="PostCodeSearchContainer">
+                @await Component.InvokeAsync(nameof(PostCodeSearch), Model)
+            </div>
+
+
+
+
+        </div>
+
+    </div>
+
+</div>

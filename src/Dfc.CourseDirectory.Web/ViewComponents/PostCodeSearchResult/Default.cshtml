@@ -1,0 +1,41 @@
+﻿@using Dfc.CourseDirectory.Web.ViewComponents.Extensions
+@using Dfc.CourseDirectory.Web.ViewComponents.Pagination;
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model Dfc.CourseDirectory.Web.ViewComponents.PostCodeSearchResult.PostCodeSearchResultModel;
+
+<form id="registerFormId" asp-controller="Venue" asp-action="ConfirmSelection" method="get">
+    @if (Model.Items.Any())
+    {
+        <fieldset class="govuk-fieldset">
+
+            <div class="govuk-form-group">
+                <h3>
+                    <a href="#" id="ClickChange" class="govuk-link" style="margin-left: 10px;font-weight: 300">Change</a>
+                </h3>
+                @{
+                    var message = ($"{Model.Items.Count().ToString()} Addresses Found");
+                    if (Model.Items.Count() == 1)
+                    {
+                        message = ($"{Model.Items.Count().ToString()} Address Found");
+                    }
+
+                    <select class="govuk-select based" style="width: 40%" asp-for="PostCode"
+                            asp-items="@(new SelectList(Model.Items,"Id","AddressLine1"))">
+                        <option>@message</option>
+                    </select>
+                }
+            </div>
+
+        </fieldset>
+
+        <a class="govuk-link" href="add-venue1">I cannot find my address in the list</a>
+
+        <div class="govuk-form-group">
+            <button type="submit" class="govuk-button">
+                Continue
+            </button>
+      
+        </div>
+    }
+</form>
