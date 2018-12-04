@@ -98,7 +98,6 @@ namespace Dfc.CourseDirectory.Services
     {
         internal static Uri ToUri(this IVenueSearchSettings extendee)
         {
-            //https://dfc-dev-prov-venue-fa.azurewebsites.net/api/GetVenuesByPRN?code=V0NA6ETyLGHZelFrpJaXcLyVUWxM5OqSOZGHHXS7an5R2FCt84QI1Q==
             return new Uri($"{extendee.ApiUrl + extendee.ApiKey}");
             //return new Uri($"{extendee.ApiUrl}?api-version={extendee.ApiVersion}");
         }
