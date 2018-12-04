@@ -8,6 +8,6 @@ namespace Dfc.CourseDirectory.Services.Interfaces
     {
         string ApiUrl { get; }
         //string ApiVersion { get; }
-        //string ApiKey { get; }
+        string ApiKey { get; }
     }
 }
