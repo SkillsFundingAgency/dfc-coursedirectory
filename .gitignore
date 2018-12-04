@@ -278,3 +278,4 @@ __pycache__/
 /automatedtests/ESFA.UI.Specflow.Framework/Project/Tests/TestSupport/SecurityTests.cs
 /automatedtests/APITests
 src/Dfc.CourseDirectory.Web/appsettings.Development.json
+c/source/repos/dfc-coursedirectory3/src/Dfc.CourseDirectory.Web/appsettings.Development.json
