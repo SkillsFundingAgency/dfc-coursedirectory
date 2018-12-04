@@ -7,6 +7,12 @@
     },
     "storageAccountName": {
       "value": "dfcfoocdstr"
+    },
+    "venueApiUrl": {
+      "value": "https://my.api.net/api/test?code="
+    },
+    "venueApiKey": {
+      "value": "not-a-real-key"
     }
   }
 }
