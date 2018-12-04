@@ -31,7 +31,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             return View();
         }
-
-       
+        
+        public IActionResult ConfirmSelection()
+        {
+            return View();
+        }
     }
 }
