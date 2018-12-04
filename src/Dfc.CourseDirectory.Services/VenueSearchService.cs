@@ -43,7 +43,10 @@ namespace Dfc.CourseDirectory.Services
                 _logger.LogInformationObject("Venue search criteria.", criteria);
                 _logger.LogInformationObject("Venue search URI", _uri);
 
-                var response = await _httpClient.GetAsync(_uri + criteria.Search + "/venues");
+
+                //var toJson = criteria.ToJson();
+                var content = new StringContent(criteria.ToJson(), Encoding.UTF8, "application/json");
+                var response = await _httpClient.PostAsync(_uri, content);
 
                 _logger.LogHttpResponseMessage("Venue search service http response", response);
 
@@ -95,7 +98,8 @@ namespace Dfc.CourseDirectory.Services
     {
         internal static Uri ToUri(this IVenueSearchSettings extendee)
         {
-            return new Uri($"{extendee.ApiUrl}");
+            //https://dfc-dev-prov-venue-fa.azurewebsites.net/api/GetVenuesByPRN?code=V0NA6ETyLGHZelFrpJaXcLyVUWxM5OqSOZGHHXS7an5R2FCt84QI1Q==
+            return new Uri($"{extendee.ApiUrl + extendee.ApiKey}");
             //return new Uri($"{extendee.ApiUrl}?api-version={extendee.ApiVersion}");
         }
     }
@@ -103,17 +107,20 @@ namespace Dfc.CourseDirectory.Services
     {
         internal static string ToJson(this IVenueSearchCriteria extendee)
         {
-            var settings = new JsonSerializerSettings
+
+            VenueSearchJson json = new VenueSearchJson
             {
-                ContractResolver = new VenueSearchCriteriaContractResolver()
+                PRN = extendee.Search
             };
-
-            settings.Converters.Add(new StringEnumConverter() { CamelCaseText = false });
-
-            var result = JsonConvert.SerializeObject(extendee, settings);
+            var result = JsonConvert.SerializeObject(json);
 
             return result;
         }
+    }
+
+    internal class VenueSearchJson
+    {
+        public string PRN { get; set; }
     }
 
 }
