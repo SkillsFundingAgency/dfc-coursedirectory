@@ -279,3 +279,4 @@ __pycache__/
 /automatedtests/APITests
 src/Dfc.CourseDirectory.Web/appsettings.Development.json
 c/source/repos/dfc-coursedirectory3/src/Dfc.CourseDirectory.Web/appsettings.Development.json
+/src/Dfc.CourseDirectory.Web/package-lock.json
