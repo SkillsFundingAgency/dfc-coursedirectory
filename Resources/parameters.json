@@ -8,6 +8,12 @@
     "storageAccountName": {
       "value": "dfcfoocdstr"
     },
+    "postcodeApiUrl": {
+      "value": "https://my.api.net/api/postcode?"
+    },
+    "postcodeApiKey": {
+      "value": "not-a-real-key"
+    },
     "venueApiUrl": {
       "value": "https://my.api.net/api/test?code="
     },

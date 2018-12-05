@@ -14,6 +14,18 @@
         "description": "Name of the project storage account (as it follows a different naming convention)"
       }
     },
+    "postcodeApiUrl": {
+      "type": "string",
+      "metadata": {
+        "description": "API URL for the postcode search"
+      }
+    },
+    "postcodeApiKey": {
+      "type": "securestring",
+      "metadata": {
+        "description": "API host key (code) needed to access the postcode search"
+      }
+    },
     "venueApiUrl": {
       "type": "string",
       "metadata": {
@@ -178,11 +190,11 @@
               },
               {
                 "name": "PostCodeSearchSettings__RetrieveAddressBaseUrl",
-                "value": "http://services.postcodeanywhere.co.uk/CapturePlus/Interactive/Retrieve/2.1/json.ws?"
+                "value": "[parameters('postcodeApiUrl')]"
               },
               {
                 "name": "PostCodeSearchSettings__Key",
-                "value": "TN52-GB92-TU79-KK96"
+                "value": "[parameters('postcodeApiKey')]"
               },
               {
                 "name": "VenueSearchSettings__ApiUrl",
