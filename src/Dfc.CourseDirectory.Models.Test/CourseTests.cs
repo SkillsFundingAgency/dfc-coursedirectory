@@ -12,80 +12,40 @@ namespace Dfc.CourseDirectory.Models.Test
         [Fact]
         public void Create_Course()
         {
-            Contactaddress address = new Contactaddress();
-            Contactpersonaldetails details = new Contactpersonaldetails();
-            Provideralias[] alias = new Provideralias[1];
-            Verificationdetail[] verDetail = new Verificationdetail[1];
-            Providercontact[] contact = new Providercontact[1];
-            Provider prov = new Provider(contact, alias, verDetail);
+            //Contactaddress address = new Contactaddress();
+            //Contactpersonaldetails details = new Contactpersonaldetails();
+            //Provideralias[] alias = new Provideralias[1];
+            //Verificationdetail[] verDetail = new Verificationdetail[1];
+            //Providercontact[] contact = new Providercontact[1];
+            //Provider prov = new Provider(contact, alias, verDetail);
 
-            Venue venue = new Venue("s", 2, 2, 2, "ss", "ss", "ss", "ss", "ss", "ss", "ss", "ss");
-            DateTime[] times = new DateTime[20180411];
-            CourseInformation info = new CourseInformation(
-                times,
-                "StudyMode",
-                "Attendance",
-                "CourseID",
-                "CourseURL",
-                "Pattern",
-                "Requirements");
-            CourseData data = new CourseData(venue, info);
+            //Venue venue = new Venue("s", 2, 2, 2, "ss", "ss", "ss", "ss", "ss", "ss", "ss", "ss");
+            //DateTime[] times = new DateTime[20180411];
+            //CourseInformation info = new CourseInformation(
+            //    times,
+            //    "StudyMode",
+            //    "Attendance",
+            //    "CourseID",
+            //    "CourseURL",
+            //    "Pattern",
+            //    "Requirements");
+            //CourseRun data = new CourseRun(venue, info);
 
-            Qualification qual = new Qualification("ss", "ss", "ss", "ss", "ss");
+            //Qualification qual = new Qualification("ss", "ss", "ss", "ss", "ss");
 
-            CourseText text = new CourseText(
-                "CourseTitle",
-                "Learn",
-                "How",
-                "Why"
-                );
-            Course course = new Course(
-                provider: prov,
-                qualification: qual,
-                data: data,
-                text: text
-                );
+            //CourseText text = new CourseText(
+            //    "CourseTitle",
+            //    "Learn",
+            //    "How",
+            //    "Why"
+            //    );
+            //Course course = new Course(
+            //    provider: prov,
+            //    qualification: qual,
+            //    data: data,
+            //    text: text
+            //    );
         }
 
-        [Fact]
-        public void Create_Course_Text()
-        {
-            CourseText text = new CourseText(
-                "CourseTitle",
-                "Learn",
-                "How",
-                "Why"
-                );
-        }
-
-        [Fact]
-        public void Create_Course_Information()
-        {
-            DateTime[] times = new DateTime[20180411];
-            CourseInformation info = new CourseInformation(
-                times,
-                "StudyMode",
-                "Attendance",
-                "CourseID",
-                "CourseURL",
-                "Pattern",
-                "Requirements");
-        }
-
-        [Fact]
-        public void Create_Course_Data()
-        {
-            Venue venue = new Venue("s", 2, 2, 2, "ss", "ss", "ss", "ss", "ss", "ss", "ss", "ss");
-            DateTime[] times = new DateTime[20180411];
-            CourseInformation info = new CourseInformation(
-                times,
-                "StudyMode",
-                "Attendance",
-                "CourseID",
-                "CourseURL",
-                "Pattern",
-                "Requirements");
-            CourseData data = new CourseData(venue, info);
-        }
     }
 }
