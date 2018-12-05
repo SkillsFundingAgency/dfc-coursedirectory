@@ -29,7 +29,7 @@ namespace Dfc.CourseDirectory.Models.Test
                 "CourseURL",
                 "Pattern",
                 "Requirements");
-            CourseData data = new CourseData(venue, info);
+            CourseRun data = new CourseRun(venue, info);
 
             Qualification qual = new Qualification("ss", "ss", "ss", "ss", "ss");
 
@@ -85,7 +85,7 @@ namespace Dfc.CourseDirectory.Models.Test
                 "CourseURL",
                 "Pattern",
                 "Requirements");
-            CourseData data = new CourseData(venue, info);
+            CourseRun data = new CourseRun(venue, info);
         }
     }
 }

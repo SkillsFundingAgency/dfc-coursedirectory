@@ -11,5 +11,13 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Qualifications
         string TotalQualificationTime { get; }
         string UnitType { get; }
         string AwardOrgName { get; }
+        string LearnAimRef { get; }
+        string LearnAimRefTitle { get; }
+        string LearnDirectClassSystemCode1 { get; }
+        string LearnDirectClassSystemCode2 { get; }
+        string SectorSubjectAreaTier1 { get; }
+        string SectorSubjectAreaTier2 { get; }
+        string GuidedLearningHours { get; }
+
     }
 }

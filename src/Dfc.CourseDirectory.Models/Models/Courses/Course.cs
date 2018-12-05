@@ -2,40 +2,39 @@
 using Dfc.CourseDirectory.Models.Interfaces.Courses;
 using Dfc.CourseDirectory.Models.Models.Providers;
 using Dfc.CourseDirectory.Models.Models.Qualifications;
+using System;
 using System.Collections.Generic;
 
 namespace Dfc.CourseDirectory.Models.Models.Courses
 {
     public class Course : ValueObject<Course>, ICourse
     {
-        public Provider Provider { get; }
-        public Qualification Qualification { get; }
+        public Guid ID { get; }
+        public QuAP QuAP { get; }
         public CourseData CourseData { get; }
-        public CourseText CourseText { get; }
+        public IEnumerable<CourseRun> CourseRun { get; }
 
         public Course(
-            Provider provider,
-            Qualification qualification,
+            Guid id,
+            QuAP quAP,
             CourseData data,
-            CourseText text)
+            IEnumerable<CourseRun> run)
         {
-            Throw.IfNull(provider, nameof(provider));
-            Throw.IfNull(qualification, nameof(qualification));
+            Throw.IfNull(id, nameof(id));
+            Throw.IfNull(quAP, nameof(quAP));
             Throw.IfNull(data, nameof(data));
-            Throw.IfNull(text, nameof(text));
+            Throw.IfNull(data, nameof(run));
 
-            Provider = provider;
-            Qualification = qualification;
+            ID = id;
+            QuAP = quAP;
             CourseData = data;
-            CourseText = text;
         }
 
         protected override IEnumerable<object> GetEqualityComponents()
         {
-            yield return Provider;
-            yield return Qualification;
+            yield return ID;
+            yield return QuAP;
             yield return CourseData;
-            yield return CourseText;
         }
     }
 }
