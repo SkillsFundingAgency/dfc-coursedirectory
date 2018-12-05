@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\Dfc.CourseDirectory.Common\Dfc.CourseDirectory.Common.csproj" />
+    <ProjectReference Include="..\Dfc.CourseDirectory.Common\Dfc.CourseDirectory.Common.csproj" />
   </ItemGroup>
 
 </Project>

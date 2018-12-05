@@ -1,4 +1,4 @@
-@charset "UTF-8";
+﻿@charset "UTF-8";
 .govuk-link {
   font-family: "nta", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -5428,4 +5428,94 @@
 
 .pagination .pagination__item.pagination__item--current:hover {
   text-decoration: underline;
+}
+
+
+
+.form-group-error {
+    margin-right: 15px;
+    border-left: 4px solid #b10e1e;
+    padding-left: 10px;
+}
+
+@media (min-width: 641px) {
+    .form-group-error {
+        border-left: 5px solid #b10e1e;
+        padding-left: 15px;
+    }
+}
+
+.form-control-error, .input-validation-error {
+    border: 4px solid #b10e1e;
+}
+
+.error-message, .field-validation-error {
+    font-family: "nta", Arial, sans-serif;
+    font-weight: 700;
+    text-transform: none;
+    font-size: 16px;
+    line-height: 1.25;
+    color: #b10e1e;
+    display: block;
+    clear: both;
+    margin: 0;
+    padding: 2px 0;
+}
+
+@media (min-width: 641px) {
+    .error-message, .field-validation-error {
+        font-size: 19px;
+        line-height: 1.31579;
+    }
+}
+
+.form-label .error-message, .form-label .field-validation-error,
+.form-label-bold .error-message,
+.form-label-bold .field-validation-error {
+    padding-top: 4px;
+    padding-bottom: 0;
+}
+
+.error-summary {
+    border: 4px solid #b10e1e;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    padding: 15px 10px;
+}
+
+@media (min-width: 641px) {
+    .error-summary {
+        border: 5px solid #b10e1e;
+        margin-top: 30px;
+        margin-bottom: 30px;
+        padding: 20px 15px 15px;
+    }
+}
+
+.error-summary:focus {
+    outline: 3px solid #ffbf47;
+}
+
+.error-summary .error-summary-heading {
+    margin-top: 0;
+}
+
+.error-summary p {
+    margin-bottom: 10px;
+}
+
+.error-summary .error-summary-list {
+    padding-left: 0;
+}
+
+@media (min-width: 641px) {
+    .error-summary .error-summary-list li {
+        margin-bottom: 5px;
+    }
+}
+
+.error-summary .error-summary-list a {
+    color: #b10e1e;
+    font-weight: bold;
+    text-decoration: underline;
 }

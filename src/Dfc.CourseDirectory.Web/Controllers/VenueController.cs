@@ -22,6 +22,19 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return View();
         }
 
-       
+        public IActionResult AddVenue()
+        {
+            return View();
+        }
+
+        public IActionResult PostCodeSearch()
+        {
+            return View();
+        }
+        
+        public IActionResult ConfirmSelection()
+        {
+            return View();
+        }
     }
 }

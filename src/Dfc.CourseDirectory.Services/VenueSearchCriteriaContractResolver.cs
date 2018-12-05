@@ -9,7 +9,7 @@ namespace Dfc.CourseDirectory.Services
     {
         protected override string ResolvePropertyName(string propertyName)
         {
-            return propertyName.ToLower();
+            return propertyName.ToUpper();
         }
     }
 }
