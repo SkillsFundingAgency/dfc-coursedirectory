@@ -4,35 +4,39 @@
 
 (function ($) {
 
-    $('#registerFormId').addTriggersToJqueryValidate().triggerElementValidationsOnFormValidation();
+    $('#postCodeSearchForm').addTriggersToJqueryValidate().triggerElementValidationsOnFormValidation();
 
 
     $('#PostCode').elementValidation(function (element, result) {
+        //alert("FIRED");
         var errorClass = 'error';
         var formGroup = $(element).closest('.form-group');
-
+        //alert(formGroup);
         if (formGroup) {
             if (!formGroup.hasClass(errorClass) && result === false) {
+                //alert("addclass");
                 formGroup.addClass(errorClass);
             } else if (formGroup.hasClass(errorClass) && result === true) {
+                //alert("removeclass");
                 formGroup.removeClass(errorClass);
             }
         }
     });
 
-    $('#PostCode').on('blur', function () {
-        var errorClass = 'error';
-        var formGroup = $(this).closest('.form-group');
-        var validationMessage = $('span[data-valmsg-for="PostCode"]');
-        var isEmpty = $(this).val().length === 0;
+   // $('#PostCode').on('blur', function () {
+       // alert("error");
+        //    var errorClass = 'error';
+        //    var formGroup = $(this).closest('.form-group');
+        //    var validationMessage = $('span[data-valmsg-for="PostCode"]');
+        //    var isEmpty = $(this).val().length === 0;
 
-        if (isEmpty && formGroup) {
-            if (formGroup.hasClass(errorClass)) {
-                formGroup.removeClass(errorClass);
-                validationMessage.removeClass('field-validation-error').html('');
-            }
-        }
-    });
+        //    if (isEmpty && formGroup) {
+        //        if (formGroup.hasClass(errorClass)) {
+        //            formGroup.removeClass(errorClass);
+        //            validationMessage.removeClass('field-validation-error').html('');
+        //        }
+        //    }
+    //});
     var debounce = function (cb, delay) {
         var inDebounce;
         return function () {
