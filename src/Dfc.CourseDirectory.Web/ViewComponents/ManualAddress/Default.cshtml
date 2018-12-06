@@ -1,0 +1,82 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model Dfc.CourseDirectory.Web.ViewComponents.AddVenueManual.AddVenueManualModel;
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <div class="govuk-form-group" style="clear: both;">
+            <label class="govuk-label" for="venue-name">
+                Venue name
+            </label>
+            <span asp-validation-for="VenueName"></span>
+
+            <input class="govuk-input" asp-for="VenueName"
+                   autocomplete="off"
+                   type="text"
+                   value="@Model.VenueName" />
+        </div>
+
+        <h2 class="govuk-heading-m">
+            Venue address
+        </h2>
+
+        <div class="govuk-form-group">
+            <div class="govuk-form-group" style="clear: both;">
+                <label class="govuk-label" for="building-street">
+                    Building and street*
+                </label>
+            </div>
+            <span asp-validation-for="AddressLine1"></span>
+            <input class="govuk-input" asp-for="AddressLine1"
+                   autocomplete="off"
+                   type="text"
+                   value="@Model.AddressLine1" />
+        </div>
+        <div class="govuk-form-group">
+            <span asp-validation-for="AddressLine2"></span>
+            <input class="govuk-input" asp-for="AddressLine2"
+                   autocomplete="off"
+                   type="text"
+                   value="@Model.AddressLine2" />
+        </div>
+
+        <div class="govuk-form-group">
+            <div class="govuk-form-group" style="clear: both;">
+                <label class="govuk-label" for="town-city">
+                    Town or city*
+                </label>
+            </div>
+            <span asp-validation-for="TownCity"></span>
+            <input class="govuk-input govuk-!-width-two-thirds" asp-for="TownCity"
+                   autocomplete="off"
+                   type="text"
+                   value="@Model.TownCity" />
+        </div>
+
+        <div class="govuk-form-group">
+            <div class="govuk-form-group" style="clear: both;">
+                <label class="govuk-label" for="county">
+                    County
+                </label>
+            </div>
+            <span asp-validation-for="County"></span>
+            <input class="govuk-input govuk-!-width-two-thirds" asp-for="County"
+                   autocomplete="off"
+                   type="text"
+                   value="@Model.County" />
+        </div>
+
+        <div class="govuk-form-group">
+            <div class="govuk-form-group" style="clear: both;">
+                <label class="govuk-label" for="county">
+                    Postcode*
+                </label>
+            </div>
+            <span asp-validation-for="Postcode"></span>
+            <input class="govuk-input govuk-input--width-10" asp-for="Postcode"
+                   autocomplete="off"
+                   type="text"
+                   value="@Model.Postcode" />
+        </div>
+
+    </div>
+</div>
