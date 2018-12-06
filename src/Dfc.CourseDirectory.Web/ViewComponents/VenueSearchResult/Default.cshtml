@@ -45,17 +45,17 @@
                                         {
                                             @venue.AddressLine2 <br />
                                         }
-                                        @if (!string.IsNullOrWhiteSpace(@venue.AddressLine3))
+                                        @if (!string.IsNullOrWhiteSpace(@venue.Town))
                                         {
-                                            @venue.AddressLine3 <br />
+                                            @venue.Town <br />
                                         }
-                                        @*@if (!string.IsNullOrWhiteSpace(@venue.AddressLine1))
+                                        @if (!string.IsNullOrWhiteSpace(@venue.County))
                                         {
-                                            @venue.AddressLine1 <br />
-                                        }*@
+                                            @venue.County <br />
+                                        }
                                         @if (!string.IsNullOrWhiteSpace(@venue.PostCode))
                                         {
-                                            @venue.PostCode <br />
+                                            @venue.PostCode
                                         }
 
                                        <br><a href="">Edit</a>
