@@ -7,7 +7,7 @@ namespace Dfc.CourseDirectory.Services.Interfaces
     public interface IProviderSearchSettings
     {
         string ApiUrl { get; }
-        //string ApiVersion { get; }
+        string ApiVersion { get; }
         string ApiKey { get; }
     }
 }

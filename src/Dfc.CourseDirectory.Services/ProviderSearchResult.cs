@@ -21,18 +21,5 @@ namespace Dfc.CourseDirectory.Services
         {
             yield return Value;
         }
-
-        //public ProviderSearchResultItem Value { get; set; }
-
-        //public ProviderSearchResult(
-        //    ProviderSearchResultItem value)
-        //{
-        //    Throw.IfNull(value, nameof(value));
-        //}
-
-        //protected override IEnumerable<object> GetEqualityComponents()
-        //{
-        //    yield return Value;
-        //}
     }
 }

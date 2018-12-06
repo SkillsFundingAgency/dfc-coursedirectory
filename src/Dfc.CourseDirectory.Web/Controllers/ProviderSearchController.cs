@@ -61,12 +61,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     model = new ProviderSearchResultModel(
                         requestModel.SearchTerm,
                         result.Value.Value);
-                    
-
-                    //var items = _providerSearchHelper.GetProviderSearchResultItemModels(result.Value.Value);
-                    //model = new ProviderSearchResultModel(
-                    //    requestModel.SearchTerm,
-                    //    items);
                 }
                 else
                 {

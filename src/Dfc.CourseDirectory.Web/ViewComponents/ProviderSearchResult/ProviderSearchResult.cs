@@ -9,7 +9,6 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.ProviderSearchResult
     public class ProviderSearchResult : ViewComponent
     {
         public IViewComponentResult Invoke(ProviderSearchResultModel model)
-
         {
             var actualModel = model ?? new ProviderSearchResultModel();
 

@@ -13,7 +13,6 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.ProviderSearchResult
         public bool HasErrors => Errors.Count() > 0;
         public IEnumerable<string> Errors { get; }
         public string SearchTerm { get; }
-        //public IEnumerable<ProviderSearchResultItemModel> Items { get; }
         public IEnumerable<Provider> Items { get; set; }
 
         public ProviderSearchResultModel()
@@ -30,7 +29,6 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.ProviderSearchResult
 
         public ProviderSearchResultModel(
             string searchTerm,
-            //IEnumerable<ProviderSearchResultItemModel> items
             IEnumerable<Provider> items)
         {
             Throw.IfNullOrWhiteSpace(searchTerm, nameof(searchTerm));

@@ -58,19 +58,13 @@ namespace Dfc.CourseDirectory.Services
 
                     _logger.LogInformationObject("Provider search service json response", json);
 
-                    // ProviderSearchResultContractResolver => NOT needed
-                    //var settings = new JsonSerializerSettings
-                    //{
-                    //    ContractResolver = new ProviderSearchResultContractResolver()
-                    //};
-                    //var providers = JsonConvert.DeserializeObject<IEnumerable<ProviderSearchResultItem>>(json, settings);
                     var providers = JsonConvert.DeserializeObject<IEnumerable<Provider>>(json);
 
                     var searchResult = new ProviderSearchResult(providers)
                     {
                         Value = providers
                     };
-                    //searchResult.Value = providers;
+
                     return Result.Ok<IProviderSearchResult>(searchResult);
                 }
                 else

@@ -25,24 +25,6 @@ namespace Dfc.CourseDirectory.Web.Helpers
             return criteria;
         }
 
-        //public IEnumerable<Provider> GetProviderSearchResultItemModels(
-        //   IEnumerable<Provider> providerSearchResultItems)
-        //{
-        //    Throw.IfNull(providerSearchResultItems, nameof(providerSearchResultItems));
-
-        //    var items = new List<Provider>();
-
-        //    foreach (var item in providerSearchResultItems)
-        //    {
-        //        items.Add(new Provider(
-        //            item.UnitedKingdomProviderReferenceNumber,
-        //            item.ProviderName,
-        //            item.ProviderStatus));
-        //    }
-
-        //    return items;
-        //}
-
         internal static string FormatSearchTerm(string searchTerm)
         {
             Throw.IfNullOrWhiteSpace(searchTerm, nameof(searchTerm));

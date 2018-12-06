@@ -8,6 +8,5 @@ namespace Dfc.CourseDirectory.Services.Interfaces
     public interface IProviderSearchResult
     {
         IEnumerable<Provider> Value { get; }
-        //ProviderSearchResultItem Value { get; }
     }
 }
