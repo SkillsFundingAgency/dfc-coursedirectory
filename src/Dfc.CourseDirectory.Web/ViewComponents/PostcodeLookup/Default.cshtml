@@ -73,6 +73,7 @@
             var $postcodeLookupContainer = $(".view-component-postcode-lookup").parent();
 
             var $form = $postcodeLookupContainer.closest("form");
+
             $form.addTriggersToJqueryValidate().triggerElementValidationsOnFormValidation();
 
             var $postcode = $("#Postcode");
@@ -146,8 +147,15 @@
                 replaceSearchResult(data);
             };
 
-            $findAddress.on("click", debounce(doSearch, 400));
-            $change.on("click", debounce(goBack, 400));
+            $findAddress.on("click", function (e) {
+                e.preventDefault();
+                doSearch();
+            });
+
+            $change.on("click", function (e) {
+                e.preventDefault();
+                goBack();
+            });
         });
 
     } (jQuery));
