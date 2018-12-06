@@ -23,7 +23,7 @@ namespace Dfc.CourseDirectory.Services.Tests
             var settings = new ProviderSearchSettings()
             {
                 ApiUrl = "https://dfc-dev-prov-ukrlp-fa.azurewebsites.net/api/GetProviderByPRN?code=",
-                ApiKey = "jwh7p/n4Af4PmAiCx4Ux8gtKZ/z2mzGb2YfABJCoW9NJhHa5FXQXpw=="
+                ApiKey = ""
             };
 
             var service = new ProviderSearchService(mockLogger.Object, new HttpClient(), Options.Create(settings));
@@ -53,7 +53,7 @@ namespace Dfc.CourseDirectory.Services.Tests
             var settings = new ProviderSearchSettings()
             {
                 ApiUrl = "https://dfc-dev-prov-ukrlp-fa.azurewebsites.net/api/GetProviderByPRN?code=",
-                ApiKey = "jwh7p/n4Af4PmAiCx4Ux8gtKZ/z2mzGb2YfABJCoW9NJhHa5FXQXpw=="
+                ApiKey = ""
             };
 
             var service = new ProviderSearchService(mockLogger.Object, new HttpClient(), Options.Create(settings));
@@ -82,7 +82,7 @@ namespace Dfc.CourseDirectory.Services.Tests
             var settings = new ProviderSearchSettings()
             {
                 ApiUrl = "IsFailurehttps://dfc-dev-prov-ukrlp-fa.azurewebsites.net/api/GetProviderByPRN?code=",
-                ApiKey = "jwh7p/n4Af4PmAiCx4Ux8gtKZ/z2mzGb2YfABJCoW9NJhHa5FXQXpw=="
+                ApiKey = ""
             };
 
             var service = new ProviderSearchService(mockLogger.Object, new HttpClient(), Options.Create(settings));
