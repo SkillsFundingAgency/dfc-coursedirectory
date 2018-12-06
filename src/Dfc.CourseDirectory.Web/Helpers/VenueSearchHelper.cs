@@ -38,7 +38,8 @@ namespace Dfc.CourseDirectory.Web.Helpers
                     item.VenueName,
                     item.Address1,
                     item.Address2,
-                    item.Address3,
+                    item.Town,
+                    item.County,
                     item.PostCode));
             }
 

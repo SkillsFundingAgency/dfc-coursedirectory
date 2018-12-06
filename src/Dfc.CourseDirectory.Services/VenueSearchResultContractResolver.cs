@@ -12,16 +12,16 @@ namespace Dfc.CourseDirectory.Services
         var names = new Dictionary<string, string>
             {
                 { "ID", "id" },
-                { "UKPRN", "ukprn" },
-                { "ProviderID", "provideR_ID" },
-                { "VenueID", "venuE_ID" },
-                { "VenueName", "venuE_NAME" },
-                { "ProvVenueID", "proV_VENUE_ID" },
-                { "Address1", "addresS_1" },
-                { "Address2", "addresS_2" },
-                { "Town", "town" },
-                { "County", "county" },
-                { "PostCode", "postcode" },
+                { "UKPRN", "UKPRN" },
+                { "ProviderID", "PROVIDER_ID" },
+                { "VenueID", "VENUE_ID" },
+                { "VenueName", "VENUE_NAME" },
+                { "ProvVenueID", "PROV_VENUE_ID" },
+                { "Address1", "ADDRESS_1" },
+                { "Address2", "ADDRESS_2" },
+                { "Town", "TOWN" },
+                { "County", "COUNTY" },
+                { "PostCode", "POSTCODE" },
                 { "Value", "value"}
             };
 
