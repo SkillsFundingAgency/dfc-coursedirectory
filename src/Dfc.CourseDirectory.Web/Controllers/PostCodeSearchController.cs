@@ -58,7 +58,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 var items = _postCodeSearchHelper.GetPostCodeSearchResultItemModels(searchResult.Value.Value);
                 model = new PostCodeSearchResultModel(
-                    requestModel.PostCode,
+                    requestModel.PostCode,null,null,
                     items);
             }
             else

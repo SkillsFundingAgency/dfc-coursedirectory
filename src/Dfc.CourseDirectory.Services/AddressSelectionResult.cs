@@ -46,8 +46,6 @@ namespace Dfc.CourseDirectory.Services
         {
             Throw.IfNullOrWhiteSpace(id, nameof(id));
             Throw.IfNullOrWhiteSpace(line1, nameof(line1));
-            Throw.IfNullOrWhiteSpace(line2, nameof(line2));
-            Throw.IfNullOrWhiteSpace(city, nameof(city));
             Throw.IfNullOrWhiteSpace(county, nameof(county));
             Throw.IfNullOrWhiteSpace(postcode, nameof(postcode));
             Errors = new string[] { };
