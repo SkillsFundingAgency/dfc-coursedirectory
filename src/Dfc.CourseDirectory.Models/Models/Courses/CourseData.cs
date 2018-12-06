@@ -1,30 +1,36 @@
 ﻿using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Models.Interfaces.Courses;
-using Dfc.CourseDirectory.Models.Models.Venues;
+using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Dfc.CourseDirectory.Models.Models.Courses
 {
     public class CourseData : ValueObject<CourseData>, ICourseData
     {
-        public Venue Venue { get; }
-        public CourseInformation Information { get; }
+        public Guid ID { get; }
+        public Guid CourseID { get; }
+        public string CourseTitle { get; }
 
         public CourseData(
-            Venue venue,
-            CourseInformation info)
+            Guid id,
+            Guid courseID,
+            string courseTitle)
         {
-            Throw.IfNull(venue, nameof(venue));
-            Throw.IfNull(info, nameof(info));
+            Throw.IfNull(id, nameof(id));
+            Throw.IfNull(id, nameof(courseID));
+            Throw.IfNullOrWhiteSpace(courseTitle, nameof(courseTitle));
 
-            Venue = venue;
-            Information = info;
+            ID = id;
+            CourseID = courseID;
+            CourseTitle = courseTitle;
         }
-
         protected override IEnumerable<object> GetEqualityComponents()
         {
-            yield return Venue;
-            yield return Information;
+            yield return ID;
+            yield return CourseID;
+            yield return CourseTitle;
+
         }
     }
 }

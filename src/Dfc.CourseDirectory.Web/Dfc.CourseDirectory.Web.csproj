@@ -29,6 +29,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="ViewComponents\AddressSelectionConfirmation\Default.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="ViewComponents\VenueSearch\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
