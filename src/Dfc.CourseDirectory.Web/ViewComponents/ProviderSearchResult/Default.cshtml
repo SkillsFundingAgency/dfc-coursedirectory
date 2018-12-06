@@ -1,0 +1,73 @@
+﻿@using Dfc.CourseDirectory.Web.ViewComponents.Extensions
+@using Dfc.CourseDirectory.Web.ViewComponents.Pagination;
+@model Dfc.CourseDirectory.Web.ViewComponents.ProviderSearchResult.ProviderSearchResultModel;
+
+<div class="venue-list">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+
+            @if (Model.Items.Any())
+            {
+                <div class="govuk-tabs" data-module="tabs">
+                    <h2 class="govuk-tabs__title">
+                        Contents
+                    </h2>
+                    <ul class="govuk-tabs__list" role="tablist">
+                        <li class="govuk-tabs__list-item" role="presentation">
+                            <a class="govuk-tabs__tab" href="#live" id="tab_live" role="tab" aria-controls="live" tabindex="0" aria-selected="true">
+                                PROVIDER
+                            </a>
+                        </li>
+
+                    </ul>
+
+                    <section class="govuk-tabs__panel" id="live" role="tabpanel" aria-labelledby="tab_live">
+
+                        @foreach (var provider in Model.Items)
+                        {
+                            <div class="govuk-checkboxes__item">
+                                <label class="govuk-label govuk-checkboxes__label" for="study0">
+                                    @provider.UnitedKingdomProviderReferenceNumber<br>
+                                    @provider.ProviderName<br>
+                                    @provider.ProviderStatus<br>
+                                    @provider.VerificationDetails[0].VerificationAuthority<br>
+                                    @provider.VerificationDetails[0].VerificationID<br>
+                                </label>
+                            </div>
+                        }
+
+                    </section>
+
+                    <section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="archived" role="tabpanel" aria-labelledby="tab_archived">
+
+                        <div class="govuk-checkboxes__item">
+                            <label class="govuk-label govuk-checkboxes__label" for="study0">
+                                NOT FROM SERVICE<br>
+
+
+                                <br>
+                            </label>
+                        </div>
+
+                    </section>
+
+                </div>
+                <div class="govuk-form-group" style="margin-top: 30px;">
+                    <a href="add-venue" role="button" class="govuk-button">
+                        + Add Provider
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="govuk-form-group" style="margin-top: 30px;">
+                    @foreach(var error in Model.Errors)
+                    {
+                        <span>@error</span><br />
+                    }
+                </div>
+            }
+
+        </div>
+    </div>
+</div>

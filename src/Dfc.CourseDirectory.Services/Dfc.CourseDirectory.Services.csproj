@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Dfc.CourseDirectory.Common\Dfc.CourseDirectory.Common.csproj" />
+    <ProjectReference Include="..\Dfc.CourseDirectory.Models\Dfc.CourseDirectory.Models.csproj" />
   </ItemGroup>
 
 </Project>

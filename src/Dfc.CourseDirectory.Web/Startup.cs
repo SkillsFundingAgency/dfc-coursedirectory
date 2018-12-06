@@ -62,6 +62,10 @@ namespace Dfc.CourseDirectory.Web
             services.Configure<VenueSearchSettings>(Configuration.GetSection(nameof(VenueSearchSettings)));
             services.AddScoped<IVenueSearchService, VenueSearchService>();
             services.AddScoped<IVenueSearchHelper, VenueSearchHelper>();
+
+            services.Configure<ProviderSearchSettings>(Configuration.GetSection(nameof(ProviderSearchSettings)));
+            services.AddScoped<IProviderSearchService, ProviderSearchService>();
+            services.AddScoped<IProviderSearchHelper, ProviderSearchHelper>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
