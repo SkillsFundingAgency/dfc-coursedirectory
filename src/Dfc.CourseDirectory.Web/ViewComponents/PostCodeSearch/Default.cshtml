@@ -3,39 +3,42 @@
 
 @model Dfc.CourseDirectory.Web.ViewComponents.PostCodeSearch.PostCodeSearchModel;
 
-<form id="postCodeSearchForm">
-    <fieldset class="govuk-fieldset">
-        <h2 class="govuk-heading-m">
-            Venue address
-        </h2>
-        <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
 
-        </legend>
+<div class="govuk-grid-row">
 
-        <div class="column-full">
+    <div class="govuk-grid-column-full">
 
-            <div class="form-group">
+        <fieldset class="govuk-fieldset">
+            <h2 class="govuk-heading-m">
+                Venue address
+            </h2>
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+
+            </legend>
+
+            <div class="govuk-form-group">
                 <label class="govuk-label" for="address-postcode">
                     Venue postcode
                 </label>
                 <span asp-validation-for="PostCode"></span>
 
                 <input class="govuk-input govuk-input--width-10" asp-for="PostCode"
-                       class="postcode-search"
                        autocomplete="off"
                        type="text"
                        value="@Model.PostCode" />
             </div>
 
-        </div>
+            <button class="govuk-button" id="postcode-search" type="button">
+                Find address
+            </button>
+            <br>
 
-        <button type="submit" class="govuk-button" id="postcode-search">
-            Find address
-        </button>
+        </fieldset>
 
-        <br>
+      
+        <a href="add-venue1" class="govuk-link">Enter address manually</a>
+		
+    </div>	
 
-        <a class="govuk-link" href="add-venue-manual">Enter address manually</a>
+</div>
 
-    </fieldset>
-</form>

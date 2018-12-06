@@ -1,11 +1,13 @@
-﻿using Dfc.CourseDirectory.Models.Models.Courses;
-using Dfc.CourseDirectory.Models.Models.Venues;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace Dfc.CourseDirectory.Models.Interfaces.Courses
 {
     public interface ICourseData
     {
-        Venue Venue { get; }
-        CourseInformation Information { get; }
+        Guid ID { get; }
+        Guid CourseID { get; }
+        string CourseTitle { get; }
     }
 }

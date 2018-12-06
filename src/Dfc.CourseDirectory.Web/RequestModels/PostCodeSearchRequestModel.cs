@@ -4,9 +4,6 @@
     {
         public string PostCode { get; set; }
 
-        public PostCodeSearchRequestModel()
-        {
-
-        }
+       
     }
 }

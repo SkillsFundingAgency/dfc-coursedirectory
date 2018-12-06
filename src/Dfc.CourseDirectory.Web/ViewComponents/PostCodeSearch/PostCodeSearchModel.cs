@@ -5,7 +5,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.PostCodeSearch
 {
     public class PostCodeSearchModel
     {
-        [Required]
+        //[Required]
         public string PostCode { get; set; }
     }
 }

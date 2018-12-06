@@ -37,10 +37,28 @@
                                 <div class="govuk-checkboxes__item">
                                     <label class="govuk-label govuk-checkboxes__label" for="study0">
                                         @venue.VenueName<br>
-                                        @venue.AddressLine1<br>
-                                        @venue.AddressLine2<br>
-                                        @venue.AddressLine3<br>
-                                        @venue.PostCode<br><a href="">Edit</a>
+                                        @if (!string.IsNullOrWhiteSpace(@venue.AddressLine1))
+                                        {
+                                            @venue.AddressLine1 <br />
+                                        }
+                                        @if (!string.IsNullOrWhiteSpace(@venue.AddressLine2))
+                                        {
+                                            @venue.AddressLine2 <br />
+                                        }
+                                        @if (!string.IsNullOrWhiteSpace(@venue.Town))
+                                        {
+                                            @venue.Town <br />
+                                        }
+                                        @if (!string.IsNullOrWhiteSpace(@venue.County))
+                                        {
+                                            @venue.County <br />
+                                        }
+                                        @if (!string.IsNullOrWhiteSpace(@venue.PostCode))
+                                        {
+                                            @venue.PostCode
+                                        }
+
+                                       <br><a href="">Edit</a>
 
 
                                         <br><a href="">Archive</a>

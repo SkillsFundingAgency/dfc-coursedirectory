@@ -1,0 +1,71 @@
+﻿@using Dfc.CourseDirectory.Web.ViewComponents.Extensions
+@using Dfc.CourseDirectory.Web.ViewComponents.Pagination;
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model Dfc.CourseDirectory.Web.ViewComponents.AddressSelectionConfirmation.AddressSelectionConfirmationModel;
+
+<form id="postCodeSearchResultForm" asp-controller="Venue" asp-action="ConfirmSelection" method="get">
+    <div class="govuk-grid-row">
+
+        <div class="govuk-grid-column-full">
+
+
+
+
+            <table class="govuk-table">
+
+                <tbody>
+                    <tr>
+
+                        <th class="govuk-table__header" scope="col">Name</th>
+                        <td class="govuk-table__cell">@Model.VenueName</td>
+                        <td class="govuk-table__cell">  <a href="add-venue4"> Change</a><span class="govuk-visually-hidden"> name</span></td>
+
+
+                    </tr>
+                    <tr>
+
+                        <th class="govuk-table__header" scope="col">Venue address</th>
+                        <td class="govuk-table__cell">
+                            @Model.AddressLine1<br>
+                            @if (!String.IsNullOrEmpty(Model.AddressLine2))
+                            {
+                                @Model.AddressLine2<br>
+                            }
+                            @if (!String.IsNullOrEmpty(Model.Town))
+                            {
+                                @Model.Town<br>
+                            }
+                            @if (!String.IsNullOrEmpty(Model.County))
+                            {
+                                @Model.County<br>
+                            }
+
+                            @Model.PostCode
+                        </td>
+                        <td class="govuk-table__cell">  <a href="add-venue5"> Change</a><span class="govuk-visually-hidden"> name</span></td>
+
+
+                    </tr>
+                </tbody>
+            </table>
+
+
+
+
+
+
+
+            <div class="govuk-form-group">
+
+                <p>By submitting you confirm your venue name and address are correct.</p>
+         
+                <a href="../venue" role="button" class="govuk-button">
+                    Continue
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+</form>
