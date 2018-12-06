@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -62,11 +63,13 @@ namespace Dfc.CourseDirectory.Services
                         ContractResolver = new VenueSearchResultContractResolver()
                     };
                     var venues  = JsonConvert.DeserializeObject<IEnumerable<VenueSearchResultItem>>(json, settings);
+
                     var searchResult = new VenueSearchResult(venues)
                     {
-                        Value = venues
+                        Value = venues.OrderBy(x => x.VenueName)
                     };
-                    //searchResult.Value = venues;
+                    
+
                     return Result.Ok<IVenueSearchResult>(searchResult);
                 }
                 else
