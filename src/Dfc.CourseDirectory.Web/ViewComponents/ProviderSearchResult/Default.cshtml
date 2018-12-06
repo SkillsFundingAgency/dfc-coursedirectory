@@ -6,7 +6,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
 
-            @if (Model.Items.Any())
+            @if (Model.Items.Any() && Model.Items.FirstOrDefault() != null)
             {
                 <div class="govuk-tabs" data-module="tabs">
                     <h2 class="govuk-tabs__title">
@@ -61,9 +61,16 @@
             else
             {
                 <div class="govuk-form-group" style="margin-top: 30px;">
-                    @foreach(var error in Model.Errors)
+                    @if (Model.Errors.Any())
                     {
-                        <span>@error</span><br />
+                        foreach (var error in Model.Errors)
+                        {
+                            <span>@error</span><br />
+                        }
+                    }
+                    @if (Model.ServiceWasCalled)
+                    {
+                        <span>No results found</span>
                     }
                 </div>
             }

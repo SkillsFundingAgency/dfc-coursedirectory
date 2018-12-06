@@ -51,11 +51,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
             else
             {
-                var criteria = _providerSearchHelper.GetProviderSearchCriteria(
-                    requestModel);
+                var criteria = _providerSearchHelper.GetProviderSearchCriteria(requestModel);
 
                 var result = await _providerSearchService.SearchAsync(criteria);
-
+                
                 if (result.IsSuccess && result.HasValue)
                 {
                     model = new ProviderSearchResultModel(
@@ -66,6 +65,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 {
                     model = new ProviderSearchResultModel(result.Error);
                 }
+                model.ServiceWasCalled = true;
             }
 
             _logger.LogMethodExit();

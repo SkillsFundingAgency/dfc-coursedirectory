@@ -72,7 +72,6 @@ namespace Dfc.CourseDirectory.Services
                     return Result.Fail<IProviderSearchResult>("Provider search service unsuccessful http response");
                 }
             }
-
             catch (HttpRequestException hre)
             {
                 _logger.LogException("Provider search service http request error", hre);
@@ -88,7 +87,6 @@ namespace Dfc.CourseDirectory.Services
             {
                 _logger.LogMethodExit();
             }
-
         }
     }
 
@@ -97,14 +95,13 @@ namespace Dfc.CourseDirectory.Services
         internal static Uri ToUri(this IProviderSearchSettings extendee)
         {
             return new Uri($"{extendee.ApiUrl + extendee.ApiKey}");
-            //return new Uri($"{extendee.ApiUrl}?api-version={extendee.ApiVersion}");
         }
     }
+
     internal static class ProviderSearchCriteriaExtensions
     {
         internal static string ToJson(this IProviderSearchCriteria extendee)
         {
-
             ProviderSearchJson json = new ProviderSearchJson
             {
                 PRN = extendee.Search

@@ -15,6 +15,8 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.ProviderSearchResult
         public string SearchTerm { get; }
         public IEnumerable<Provider> Items { get; set; }
 
+        public bool ServiceWasCalled { get; set; } 
+
         public ProviderSearchResultModel()
         {
             Errors = new string[] { };
