@@ -73,13 +73,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             var addressSelectionConfirmationModel = new AddressSelectionConfirmationModel
             {
-                VenueName = model.VenueName,
+                VenueName = model.VenueName.Trim(),
                 Id = model.Id,
                 PostCode = model.Postcode,
-                Town = model.TownCity,
-                AddressLine1 = model.AddressLine1,
-                AddressLine2 = model.AddressLine2,
-                County = model.County
+                Town = model.TownCity.Trim(),
+                AddressLine1 = model.AddressLine1.Trim(),
+                AddressLine2 = model.AddressLine2.Trim(),
+                County = model.County.Trim()
             };
 
             return View(addressSelectionConfirmationModel);
