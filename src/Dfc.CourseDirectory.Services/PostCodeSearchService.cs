@@ -146,8 +146,8 @@ namespace Dfc.CourseDirectory.Services
 
                     var searchResult = new AddressSelectionResult(address[0].Id, 
                         address[0].Line1, 
-                        String.IsNullOrEmpty(address[0].Line2) ? address[0].City: address[0].Line2,
-                        String.IsNullOrEmpty(address[0].Line2) ? string.Empty : address[0].Line2, 
+                        address[0].Line2,
+                        address[0].City,
                         address[0].County,
                         address[0].PostCode);
                   

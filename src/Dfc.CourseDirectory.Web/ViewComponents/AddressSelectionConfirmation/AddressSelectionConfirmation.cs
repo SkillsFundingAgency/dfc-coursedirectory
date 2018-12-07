@@ -1,14 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Dfc.CourseDirectory.Web.ViewComponents.AddressSelectionConfirmation;
+using Dfc.CourseDirectory.Web.ViewComponents.PostCodeSearchResult;
+using Microsoft.AspNetCore.Mvc;
 
-namespace Dfc.CourseDirectory.Web.ViewComponents.PostCodeSearchResult
+namespace Dfc.CourseDirectory.Web.ViewComponents.AddressSelectionConfirmation
 {
     public class AddressSelectionConfirmation : ViewComponent
     {
-        public IViewComponentResult Invoke(PostCodeSearchResultModel model)
+        public IViewComponentResult Invoke(AddressSelectionConfirmationModel model)
         {
-            var actualModel = model ?? new PostCodeSearchResultModel();
 
-            return View("~/ViewComponents/PostCodeSearchResult/Default.cshtml", actualModel);
+            return View("~/ViewComponents/AddressSelectionConfirmation/Default.cshtml", model);
         }
     }
 }

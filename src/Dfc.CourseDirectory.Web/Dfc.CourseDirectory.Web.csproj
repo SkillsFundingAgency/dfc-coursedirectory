@@ -19,7 +19,6 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\css\" />
-    <Folder Include="wwwroot\scss\partials\" />
     <Folder Include="wwwroot\vendor\" />
   </ItemGroup>
 
