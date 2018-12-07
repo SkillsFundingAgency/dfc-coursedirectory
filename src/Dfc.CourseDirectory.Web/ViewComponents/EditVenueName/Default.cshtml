@@ -2,28 +2,36 @@
 
 @model Dfc.CourseDirectory.Web.ViewComponents.EditVenueName.EditVenueNameModel
 
+@*For Data Persistence*@
+@Html.HiddenFor(x => x.Id)
+@Html.HiddenFor(x => x.AddressLine1)
+@Html.HiddenFor(x => x.AddressLine2)
+@Html.HiddenFor(x => x.Town)
+@Html.HiddenFor(x => x.County)
+@Html.HiddenFor(x => x.PostCode)
+
 <div id="edit-venue">
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-full">
-                
-                    <div class="govuk-form-group" style="clear:both;">
-                        <div class="govuk-form-group">
-                            <div class="govuk-form-group">
-                                <label class="govuk-label" asp-for="VenueName"></label>
-                                <span asp-validation-for="VenueName"></span>
-                                <input asp-for="VenueName" value="@Model.VenueName" 
-                                    class="govuk-input" 
-                                    type="text"  
-                                    autocomplete="off" />
-                            </div>
-                        </div>
-                    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+
+            <div class="govuk-form-group" style="clear:both;">
+                <div class="govuk-form-group">
                     <div class="govuk-form-group">
-                        <button type="submit" class="govuk-button">Continue</button>
+                        <label class="govuk-label" asp-for="VenueName"></label>
+                        <span asp-validation-for="VenueName"></span>
+                        <input asp-for="VenueName" value="@Model.VenueName"
+                               class="govuk-input"
+                               type="text"
+                               autocomplete="off" />
                     </div>
-                
+                </div>
             </div>
+            <div class="govuk-form-group">
+                <button type="submit" class="govuk-button">Continue</button>
+            </div>
+
         </div>
+    </div>
 </div>
 
 

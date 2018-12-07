@@ -4,10 +4,8 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.EditVenueName
 {
     public class EditVenueName : ViewComponent
     {
-        public IViewComponentResult Invoke()
+        public IViewComponentResult Invoke(EditVenueNameModel model)
         {
-            var model = new EditVenueNameModel();
-
             return View("~/ViewComponents/EditVenueName/Default.cshtml", model);
         }
     }
