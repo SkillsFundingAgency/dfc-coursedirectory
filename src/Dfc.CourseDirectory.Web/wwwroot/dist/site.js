@@ -492,3 +492,22 @@
 
     $SearchButton.on("click", debounce(doSearch, 400));
 })(jQuery);
+
+(function ($) {
+    $('#edit-venue-form').addTriggersToJqueryValidate().triggerElementValidationsOnFormValidation();
+    $('#venue-name').elementValidation(function (element, result) {
+        //alert("FIRED");
+        var errorClass = 'error';
+        var formGroup = $(element).closest('.form-group');
+        //alert(formGroup);
+        if (formGroup) {
+            if (!formGroup.hasClass(errorClass) && result === false) {
+                //alert("addclass");
+                formGroup.addClass(errorClass);
+            } else if (formGroup.hasClass(errorClass) && result === true) {
+                //alert("removeclass");
+                formGroup.removeClass(errorClass);
+            }
+        }
+    });
+})(jQuery);

@@ -36,5 +36,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             return View();
         }
+        public IActionResult EditVenueName()
+        {
+            return View();
+        }
     }
 }

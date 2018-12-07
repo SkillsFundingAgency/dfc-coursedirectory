@@ -1,5 +1,4 @@
-﻿using Dfc.CourseDirectory.Web.ViewModels;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace Dfc.CourseDirectory.Web.ViewComponents.EditVenueName
 {
@@ -7,7 +6,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.EditVenueName
     {
         public IViewComponentResult Invoke()
         {
-            var model = new EditAddressViewModel();
+            var model = new EditVenueNameModel();
 
             return View("~/ViewComponents/EditVenueName/Default.cshtml", model);
         }
