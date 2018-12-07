@@ -105,5 +105,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return View("index", model);
         }
 
+        public async Task<IActionResult> AddAddressManually()
+        {
+            return View();
+        }
     }
 }
