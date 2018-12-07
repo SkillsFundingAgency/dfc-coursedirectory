@@ -31,13 +31,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         public async Task<IActionResult> Index()
         {
-            VenueAdd venue= new VenueAdd("Address1","Address2","town","venuename","county","b71 4du");
-          var t= await _venueAddService.AddAsync(venue);
             return View();
         }
 
         public IActionResult AddVenue()
         {
+            //VenueAdd venue = new VenueAdd("Address1", "Address2", "town", "venuename", "county", "b71 4du");
+            //var t = await _venueAddService.AddAsync(venue);
             return View();
         }
 
