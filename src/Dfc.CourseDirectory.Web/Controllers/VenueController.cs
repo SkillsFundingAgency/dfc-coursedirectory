@@ -14,19 +14,25 @@ namespace Dfc.CourseDirectory.Web.Controllers
     {
         private readonly ILogger<VenueController> _logger;
         private readonly IPostCodeSearchService _postCodeSearchService;
+        private readonly IVenueAddService _venueAddService;
 
         public VenueController(
             ILogger<VenueController> logger,
-            IPostCodeSearchService postCodeSearchService)
+            IPostCodeSearchService postCodeSearchService,
+                IVenueAddService venueAddService)
         {
             Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(postCodeSearchService, nameof(postCodeSearchService));
+            Throw.IfNull(venueAddService, nameof(venueAddService));
             _logger = logger;
             _postCodeSearchService = postCodeSearchService;
+            _venueAddService = venueAddService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            VenueAdd venue= new VenueAdd("Address1","Address2","town","venuename","county","b71 4du");
+           var t= await _venueAddService.AddAsync(venue);
             return View();
         }
 
