@@ -135,6 +135,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             };
             return View(editModel);
         }
+
         [HttpPost]
         public IActionResult EditVenueName(EditVenueNameModel model)
         {
@@ -156,6 +157,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
             };
 
             return View(addressSelectionConfirmationModel);
+        }
+
+        public async Task<IActionResult> AddAddressManually()
+        {
+            return View();
         }
     }
 }
