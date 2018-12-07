@@ -7,7 +7,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.ManualAddress
     {
         public IViewComponentResult Invoke()
         {
-            var model = new AddVenueManualModel();
+            var model = new ManualAddressModel();
 
             return View("~/ViewComponents/ManualAddress/Default.cshtml", model);
         }

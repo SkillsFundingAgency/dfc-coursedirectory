@@ -3,9 +3,8 @@ using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.Interfaces;
 using Dfc.CourseDirectory.Web.ViewComponents.AddressSelectionConfirmation;
-using Dfc.CourseDirectory.Web.ViewComponents.AddVenueManual;
+using Dfc.CourseDirectory.Web.ViewComponents.ManualAddress;
 using Dfc.CourseDirectory.Web.ViewComponents.PostCodeSearchResult;
-using Dfc.CourseDirectory.Web.ViewComponents.VenueSearch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -70,7 +69,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult ConfirmManualSelection(AddVenueManualModel model)
+        public IActionResult ConfirmManualSelection(ManualAddressModel model)
         {
             var addressSelectionConfirmationModel = new AddressSelectionConfirmationModel
             {

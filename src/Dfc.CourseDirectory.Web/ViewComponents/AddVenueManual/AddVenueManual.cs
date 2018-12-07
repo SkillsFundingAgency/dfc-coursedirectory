@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Dfc.CourseDirectory.Web.ViewComponents.ManualAddress;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Dfc.CourseDirectory.Web.ViewComponents.AddVenueManual
 {
@@ -6,7 +7,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.AddVenueManual
     {
         public IViewComponentResult Invoke()
         {
-            var model = new AddVenueManualModel();
+            var model = new ManualAddressModel();
 
             return View("~/ViewComponents/AddVenueManual/Default.cshtml", model);
         }

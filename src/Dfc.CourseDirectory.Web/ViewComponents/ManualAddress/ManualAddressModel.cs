@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Dfc.CourseDirectory.Web.ViewComponents.AddVenueManual
+namespace Dfc.CourseDirectory.Web.ViewComponents.ManualAddress
 {
-    public class AddVenueManualModel
+    public class ManualAddressModel
     {
         public string Id { get; set; }
         [Required(ErrorMessage = "Venue name is required") ]
