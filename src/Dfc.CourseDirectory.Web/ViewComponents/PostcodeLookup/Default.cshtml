@@ -12,7 +12,7 @@
         <label class="govuk-label govuk-!-font-weight-bold" for="Postcode">
             Postcode
         </label>
-        <span asp-validation-for="Postcode">@string.Join(" ", Model.Errors)</span>
+        <span asp-validation-for="Postcode" class="govuk-body">@string.Join(" ", Model.Errors)</span>
         <input asp-for="Postcode" 
             value="@Model.Postcode"
             class="govuk-input govuk-input--width-10 govuk-input--error">
@@ -50,7 +50,7 @@
             <label class="govuk-label govuk-!-font-weight-bold" for="PostcodeLookupPostcode">
                 Postcode
             </label>
-            <span asp-validation-for="Postcode"></span>
+            <span asp-validation-for="Postcode" class="govuk-body"></span>
             <input asp-for="Postcode"
                    value="@Model.Postcode"
                    class="govuk-input govuk-input--width-10 ">
