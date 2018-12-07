@@ -59,11 +59,13 @@
     }
   },
   "variables": {
-    "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
+    "dasDeploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
+    "dfcDeploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/dfc-devops/master/ArmTemplates/",
     "appInsightsName": "[concat(parameters('projectPrefix'),'-ai')]",
     "appServiceName": "[concat(parameters('projectPrefix'),'-as')]",
     "appServicePlanName": "[concat(parameters('projectPrefix'),'-asp')]",
-    "cosmosDbName": "[concat(parameters('projectPrefix'),'-cdb')]",
+    "cosmosDbSQLName": "[concat(parameters('projectPrefix'),'-cdb-01')]",
+    "cosmosDbGremlinName": "[concat(parameters('projectPrefix'),'-cdb-02')]",
     "azureSearchName": "[concat(parameters('projectPrefix'),'-sch')]"
   },
   "resources": [
@@ -74,7 +76,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'),'application-insights.json')]",
+          "uri": "[concat(variables('dasDeploymentUrlBase'),'application-insights.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -94,7 +96,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'),'app-service-plan.json')]",
+          "uri": "[concat(variables('dasDeploymentUrlBase'),'app-service-plan.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -122,7 +124,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'),'app-service.json')]",
+          "uri": "[concat(variables('dasDeploymentUrlBase'),'app-service.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -220,7 +222,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'),'storage-account-arm.json')]",
+          "uri": "[concat(variables('dasDeploymentUrlBase'),'storage-account-arm.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -232,20 +234,43 @@
     },
     {
       "apiVersion": "2017-05-10",
-      "name": "providerPortalCosmos",
+      "name": "providerPortalCosmosSQL",
       "type": "Microsoft.Resources/deployments",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'),'cosmos-db.json')]",
+          "uri": "[concat(variables('dfcDeploymentUrlBase'),'cosmos-db.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
           "cosmosDbName": {
-            "value": "[variables('cosmosDbName')]"
+            "value": "[variables('cosmosDbSQLName')]"
           },
-          "cosmosDbType": {
-            "value": "GlobalDocumentDB"
+          "cosmosApiType": {
+            "value": "SQL"
+          },
+          "defaultConsistencyLevel": {
+            "value": "Eventual"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "2017-05-10",
+      "name": "providerPortalCosmosGremlin",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('dfcDeploymentUrlBase'),'cosmos-db.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "cosmosDbName": {
+            "value": "[variables('cosmosDbGremlinName')]"
+          },
+          "cosmosApiType": {
+            "value": "Gremlin"
           },
           "defaultConsistencyLevel": {
             "value": "Eventual"
@@ -260,7 +285,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'),'azure-search.json')]",
+          "uri": "[concat(variables('dasDeploymentUrlBase'),'azure-search.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -288,9 +313,13 @@
       "type": "string",
       "value": "[variables('appServiceName')]"
     },
-    "cosmosDbName": {
+    "cosmosDbSQLName": {
       "type": "string",
-      "value": "[variables('cosmosDbName')]"
+      "value": "[variables('cosmosDbSQLName')]"
+    },
+    "cosmosDbGremlinName": {
+      "type": "string",
+      "value": "[variables('cosmosDbGremlinName')]"
     },
     "azureSearchName": {
       "type": "string",

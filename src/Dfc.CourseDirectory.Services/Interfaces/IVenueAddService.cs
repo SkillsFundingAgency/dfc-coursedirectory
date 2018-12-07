@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace Dfc.CourseDirectory.Services.Interfaces
 {
-    public interface IVenueSearchService
+    public interface IVenueAddService
     {
-        Task<IResult<IVenueSearchResult>> SearchAsync(IVenueSearchCriteria criteria);
-
-
+        Task<IResult<IVenueAddResultItem>> AddAsync(IVenueAdd venue);
     }
 }

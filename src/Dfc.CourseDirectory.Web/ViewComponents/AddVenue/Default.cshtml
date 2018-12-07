@@ -1,5 +1,4 @@
-﻿@using Dfc.CourseDirectory.Web.ViewComponents.PostCodeSearch
-@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+﻿@using Dfc.CourseDirectory.Web.ViewComponents.PostcodeLookup;
 @model Dfc.CourseDirectory.Web.ViewComponents.AddVenue.AddVenueModel;
 
 <form id="postCodeSearchResultForm" asp-controller="Venue" asp-action="ConfirmSelection" method="post">
@@ -7,38 +6,20 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
                 <div class="govuk-form-group" style="clear:both;">
-
-                    <label class="govuk-label" for="address-postcode">
+                    <label class="govuk-label" for="sub">
                         Venue name
                     </label>
-                    <span asp-validation-for="VenueName"></span>
-
-                    <input class="govuk-input" asp-for="VenueName"
-                           autocomplete="off"
-                           type="text"
-                           value="@Model.VenueName" />
-
+                    <input class="govuk-input" id="name" name="name" type="text">
                 </div>
-
-
-
-
-
-                <div id="PostCodeSearchContainer">
-                    @await Component.InvokeAsync(nameof(PostCodeSearch), Model)
+                <div id="PostcodeLookupContainer">
+                    @await Component.InvokeAsync(nameof(PostcodeLookup), new PostcodeLookupModel())
                 </div>
-
-
                 <div class="govuk-form-group">
                     <button type="submit" class="govuk-button" id="">
                         Continue
                     </button>
-
                 </div>
-
             </div>
-
         </div>
-
     </div>
 </form>
