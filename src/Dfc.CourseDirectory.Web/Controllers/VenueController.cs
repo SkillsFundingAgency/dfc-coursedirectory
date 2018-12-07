@@ -4,8 +4,8 @@ using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.Interfaces;
 using Dfc.CourseDirectory.Web.ViewComponents.AddressSelectionConfirmation;
 using Dfc.CourseDirectory.Web.ViewComponents.EditVenueName;
+using Dfc.CourseDirectory.Web.ViewComponents.ManualAddress;
 using Dfc.CourseDirectory.Web.ViewComponents.PostCodeSearchResult;
-using Dfc.CourseDirectory.Web.ViewComponents.VenueSearch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -74,6 +74,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
 
+
+        public IActionResult AddVenueManual()
+        {
+            return View();
+        }
+        
         [HttpPost]
         public async Task<IActionResult> ConfirmSelection(PostCodeSearchResultModel model)
         {
@@ -134,6 +140,23 @@ namespace Dfc.CourseDirectory.Web.Controllers
         public IActionResult EditVenueName(EditVenueNameModel model)
         {
             return View();
+        }
+
+        [HttpPost]
+        public IActionResult ConfirmManualSelection(ManualAddressModel model)
+        {
+            var addressSelectionConfirmationModel = new AddressSelectionConfirmationModel
+            {
+                VenueName = model.VenueName.Trim(),
+                Id = model.Id,
+                PostCode = model.Postcode,
+                Town = model.TownCity.Trim(),
+                AddressLine1 = model.AddressLine1.Trim(),
+                AddressLine2 = model.AddressLine2.Trim(),
+                County = model.County.Trim()
+            };
+
+            return View(addressSelectionConfirmationModel);
         }
 
         public async Task<IActionResult> AddAddressManually()
