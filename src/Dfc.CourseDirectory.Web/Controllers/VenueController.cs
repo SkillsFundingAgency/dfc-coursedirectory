@@ -32,7 +32,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         public async Task<IActionResult> Index()
         {
             VenueAdd venue= new VenueAdd("Address1","Address2","town","venuename","county","b71 4du");
-           var t= await _venueAddService.AddAsync(venue);
+          var t= await _venueAddService.AddAsync(venue);
             return View();
         }
 
@@ -45,11 +45,38 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             return View();
         }
-        
+
+        [HttpGet]
+        public async Task<IActionResult> ConfirmSelection()
+        {
+            //DEBUG
+            PostCodeSearchResultModel model = new PostCodeSearchResultModel();
+            model.VenueName = "test venue name";
+            model.Id = "GB|RM|B|51879423";
+            AddressSelectionCriteria criteria = new AddressSelectionCriteria(model.Id);
+
+            var retrievedAddress = await _postCodeSearchService.RetrieveAsync(criteria);
+
+            AddressSelectionConfirmationModel addressSelectionConfirmationModel =
+                new AddressSelectionConfirmationModel
+                {
+                    VenueName = model.VenueName,
+                    Id = model.Id,
+                    PostCode = retrievedAddress.Value.PostCode,
+                    Town = retrievedAddress.Value.City,
+                    AddressLine1 = retrievedAddress.Value.Line1,
+                    AddressLine2 = retrievedAddress.Value.Line2,
+                    County = retrievedAddress.Value.County
+                };
+
+            return View(addressSelectionConfirmationModel);
+        }
+
+
         [HttpPost]
         public async Task<IActionResult> ConfirmSelection(PostCodeSearchResultModel model)
         {
-           
+
             AddressSelectionCriteria criteria  = new AddressSelectionCriteria(model.Id);
 
             var retrievedAddress = await _postCodeSearchService.RetrieveAsync(criteria);
@@ -68,5 +95,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             return View(addressSelectionConfirmationModel);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> SaveVenue(PostCodeSearchResultModel model)
+        {
+
+          
+
+            return View("index", model);
+        }
+
     }
 }
