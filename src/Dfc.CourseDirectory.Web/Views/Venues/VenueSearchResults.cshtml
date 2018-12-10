@@ -1,0 +1,8 @@
+﻿
+@using Dfc.CourseDirectory.Web.ViewComponents.VenueSearch
+@using Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult
+@model Dfc.CourseDirectory.Web.ViewModels.VenueSearchResultsViewModel;
+
+
+@await Component.InvokeAsync(nameof(VenueSearchResult),Model.Result)
+

@@ -4,10 +4,18 @@
 @model Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult.VenueSearchResultModel;
 
 
-<form id="venueSearchResultForm" asp-controller="Venue" asp-action="AddVenue" method="post">
+<form id="venueSearchResultForm" asp-controller="Venues" asp-action="AddVenue" method="get">
     @if (Model.Items.Any() && Model.NewItem != null)
     {
-        <p style="padding: 15px 20px; border: 4px solid #11813e" id="qual"><span class="govuk-heading-m">New venue added:</span>@Model.NewItem.VenueName, @Model.NewItem.AddressLine2, @Model.NewItem.PostCode @Model.NewItem.PostCode</p>
+        <p style="padding: 15px 20px; border: 4px solid #11813e" id="qual">
+            <span class="govuk-heading-m">New venue added:</span>
+            @Model.NewItem.VenueName,
+            @Model.NewItem.AddressLine1,
+            @Model.NewItem.AddressLine2,
+            @Model.NewItem.Town,
+            @Model.NewItem.County,
+            @Model.NewItem.PostCode
+        </p>
     }
   
     <div class="venue-list">

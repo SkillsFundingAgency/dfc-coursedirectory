@@ -34,6 +34,9 @@
     <Content Update="ViewComponents\VenueSearch\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\Venues\VenueSearchResults.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Venue\VenueSearchResults.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

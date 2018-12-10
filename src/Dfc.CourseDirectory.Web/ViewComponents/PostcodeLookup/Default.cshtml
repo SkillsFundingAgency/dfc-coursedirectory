@@ -1,162 +1,176 @@
-﻿@using Dfc.CourseDirectory.Web.ViewComponents.PostcodeLookup;
+﻿@model Dfc.CourseDirectory.Web.ViewComponents.PostcodeLookup.PostcodeLookupModel
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
-@model Dfc.CourseDirectory.Web.ViewComponents.PostcodeLookup.PostcodeLookupModel
-
-<div class="view-component-postcode-lookup">
-
-    @if (Model.HasErrors)
-    {
-    <div class="govuk-form-group govuk-form-group--error">
-        <label class="govuk-label govuk-!-font-weight-bold" for="Postcode">
-            Postcode
-        </label>
-        <span asp-validation-for="Postcode" class="govuk-body">@string.Join(" ", Model.Errors)</span>
-        <input asp-for="Postcode" 
-            value="@Model.Postcode"
-            class="govuk-input govuk-input--width-10 govuk-input--error">
-    </div>
-        <div class="govuk-form-group">
-            <button type="button" class="govuk-button" id="PostcodeLookupFindAddress">
-                Find address
-            </button>
-        </div>
-    }
-    else if (Model.Items.Any())
+<div class="postcode-lookup__component">
+    @if (Model.HasItems)
     {
         <div class="govuk-form-group">
-            <label class="govuk-label govuk-!-font-weight-bold">
-                Postcode
+            <label class="govuk-label">
+                @Model.PostcodeLabelText
             </label>
-            <span class="govuk-body govuk-!-font-weight-bold govuk-!-width-one-quarter">
+            <label class="govuk-body govuk-!-font-size-24 govuk-!-font-weight-bold">
                 @Model.Postcode
-            </span>
-            <a class="govuk-body govuk-link" id="PostcodeLookupChange" href="#">Change</a>
+            </label>
+            <a href="#" class="govuk-link">Change</a>
         </div>
         <div class="govuk-form-group">
-            <select class="govuk-select govuk-input--width-20">
-                <option value="">Please select</option>
-                @foreach (var item in Model.Items)
-                {
-                    <option value="@item.Id">@item.Text</option>
-                }
+            <span asp-validation-for="@Model.PostcodeId" class="govuk-error-message"></span>
+            <select asp-items="@Model.Items" asp-for="@Model.PostcodeId" class="govuk-select govuk-!-width-one-half" required>
+                <option value="">@Model.NoneSelectedText</option>
             </select>
         </div>
+
+        <script>
+            (function ($) {
+                $(function () {
+                    var formGroupErrorClass = "govuk-form-group--error";
+                    var elementErrorClass = "govuk-input--error";
+                    var $elementPostcodeId = $("#@nameof(Model.PostcodeId)");
+                    var $validationMessagePostcodeId = $elementPostcodeId.prev("[data-valmsg-for='@nameof(Model.PostcodeId)']");
+                    $validationMessagePostcodeId.css("margin-bottom", "0");
+                    var $formGroupPostcodeId = $elementPostcodeId.closest(".govuk-form-group");
+                    var $container = $elementPostcodeId.closest(".postcode-lookup__component").parent();
+                    var $link = $container.find("a");
+
+                    var $form = $elementPostcodeId.closest("form");
+                    $form.addTriggersToJqueryValidate().triggerElementValidationsOnFormValidation();
+                    var validator = $form.validate();
+
+                    $elementPostcodeId.on("blur", function () {
+                        var result = validator.element($elementPostcodeId);
+
+                        if (result) {
+                            $elementPostcodeId.removeClass(elementErrorClass);
+                            $formGroupPostcodeId.removeClass(formGroupErrorClass);
+                            $validationMessagePostcodeId.hide();
+                            $validationMessagePostcodeId.css("margin-bottom", "0");
+                        } else {
+                            $elementPostcodeId.addClass(elementErrorClass);
+                            $formGroupPostcodeId.addClass(formGroupErrorClass);
+                            $validationMessagePostcodeId.show();
+                            $validationMessagePostcodeId.css("margin-bottom", "15px");
+                        }
+                    });
+
+                    $elementPostcodeId.elementValidation(function (element, result) {
+                        if (!$formGroupPostcodeId.hasClass(formGroupErrorClass)) {
+                            $validationMessagePostcodeId.hide();
+                        }
+
+                        if (result) {
+                            $elementPostcodeId.removeClass(elementErrorClass);
+                            $formGroupPostcodeId.removeClass(formGroupErrorClass);
+                            $validationMessagePostcodeId.css("margin-bottom", "0");
+                        }
+                    });
+
+                    var makeRequest = function (cb) {
+                        $.get("/PostcodeLookup/Default", cb);
+                    };
+
+                    var onSucess = function (data) {
+                        $container.html("");
+                        $container.html(data);
+                    };
+
+                    $link.on("click", function (e) {
+                        e.preventDefault();
+                        makeRequest(onSucess);
+                    });
+                });
+            })(jQuery);
+        </script>
     }
     else
     {
         <div class="govuk-form-group">
-            <label class="govuk-label govuk-!-font-weight-bold" for="PostcodeLookupPostcode">
-                Postcode
+            <label class="govuk-label" asp-for="@Model.Postcode">
+                @Model.PostcodeLabelText
             </label>
-            <span asp-validation-for="Postcode" class="govuk-body"></span>
-            <input asp-for="Postcode"
-                   value="@Model.Postcode"
-                   class="govuk-input govuk-input--width-10 ">
+            @if (!string.IsNullOrWhiteSpace(Model.PostcodeHintText))
+            {
+                <span class="govuk-hint">
+                    @Model.PostcodeHintText
+                </span>
+            }
+            <span asp-validation-for="@Model.Postcode" class="govuk-error-message"></span>
+            <input class="govuk-input govuk-input--width-10" asp-for="@Model.Postcode" type="text" aria-describedby="@Model.PostcodeAriaDescribedBy">
         </div>
         <div class="govuk-form-group">
-            <button type="button" class="govuk-button" id="PostcodeLookupFindAddress">
-                Find address
+            <button type="button" class="govuk-button">
+                @Model.ButtonText
             </button>
         </div>
+
+        <script>
+            (function ($) {
+                $(function () {
+                    var formGroupErrorClass = "govuk-form-group--error";
+                    var elementErrorClass = "govuk-input--error";
+
+                    var $elementPostcode = $("#@nameof(Model.Postcode)");
+                    var $validationMessagePostcode = $elementPostcode.prev("[data-valmsg-for='@nameof(Model.Postcode)']");
+                    $validationMessagePostcode.css("margin-bottom", "0");
+                    var $formGroupPostcode = $elementPostcode.closest(".govuk-form-group");
+                    var $button = $formGroupPostcode.next(".govuk-form-group").find("button");
+                    var $container = $elementPostcode.closest(".postcode-lookup__component").parent();
+
+                    var $form = $elementPostcode.closest("form");
+                    $form.addTriggersToJqueryValidate().triggerElementValidationsOnFormValidation();
+                    var validator = $form.validate();
+
+                    $elementPostcode.on("blur", function () {
+                        var result = validator.element($elementPostcode);
+
+                        if (result) {
+                            $elementPostcode.removeClass(elementErrorClass);
+                            $formGroupPostcode.removeClass(formGroupErrorClass);
+                            $validationMessagePostcode.hide();
+                            $validationMessagePostcode.css("margin-bottom", "0");
+                        } else {
+                            $elementPostcode.addClass(elementErrorClass);
+                            $formGroupPostcode.addClass(formGroupErrorClass);
+                            $validationMessagePostcode.show();
+                            $validationMessagePostcode.css("margin-bottom", "15px");
+                        }
+                    });
+
+                    $elementPostcode.elementValidation(function (element, result) {
+                        if (!$formGroupPostcode.hasClass(formGroupErrorClass)) {
+                            $validationMessagePostcode.hide();
+                        }
+
+                        if (result) {
+                            $elementPostcode.removeClass(elementErrorClass);
+                            $formGroupPostcode.removeClass(formGroupErrorClass);
+                            $validationMessagePostcode.css("margin-bottom", "0");
+                        }
+                    });
+
+                    var makeRequestWithPayload = function (payload, cb) {
+                        var qs = $.param(payload);
+                        $.get("/PostcodeLookup?" + qs, cb);
+                    };
+
+                    var onSucess = function (data) {
+                        $container.html("");
+                        $container.html(data);
+                    };
+
+                    $button.on("click", function (e) {
+                        e.preventDefault();
+                        $elementPostcode.trigger("blur");
+                        var result = validator.element($elementPostcode);
+
+                        if (result) {
+                            makeRequestWithPayload({
+                                Postcode: $elementPostcode.val()
+                            }, onSucess);
+                        }
+                    });
+                });
+            })(jQuery);
+        </script>
     }
-
 </div>
-<script>
-    "use strict";
-
-    (function ($) {
-
-        $(function () {
-
-            var $postcodeLookupContainer = $(".view-component-postcode-lookup").parent();
-
-            var $form = $postcodeLookupContainer.closest("form");
-
-            $form.addTriggersToJqueryValidate().triggerElementValidationsOnFormValidation();
-
-            var $postcode = $("#Postcode");
-            var $change = $("#PostcodeLookupChange");
-            var $findAddress = $("#PostcodeLookupFindAddress");
-
-            $postcode.elementValidation(function (element, result) {
-                var errorClass = 'error';
-                var formGroup = $(element).closest('.govuk-form-group');
-
-                if (formGroup) {
-                    if (!formGroup.hasClass(errorClass) && result === false) {
-                        formGroup.addClass(errorClass);
-                    } else if (formGroup.hasClass(errorClass) && result === true) {
-                        formGroup.removeClass(errorClass);
-                    }
-                }
-            });
-
-            var debounce = function (cb, delay) {
-                var inDebounce;
-                return function () {
-                    var context = this;
-                    var args = arguments;
-                    clearTimeout(inDebounce);
-                    inDebounce = setTimeout(function () {
-                        cb.apply(context, args);
-                    }, delay);
-                };
-            };
-
-            var isNullOrWhitespace = function (input) {
-                if (typeof input === 'undefined' || input == null) return true;
-                return input.replace(/\s/g, '').length < 1;
-            }
-
-            var makeRequestWithPayload = function (payload, success) {
-                console.log(payload);
-                var qs = $.param(payload);
-                $.get("/PostcodeLookup?" + qs, success);
-            };
-
-            var removeSearchResults = function () {
-                $postcodeLookupContainer.html("");
-            };
-
-            var replaceSearchResult = function (searchResults) {
-                $postcodeLookupContainer.html("");
-                $postcodeLookupContainer.html(searchResults);
-            };
-
-            var doSearch = function () {
-                if ($form.valid()) {
-                    if (isNullOrWhitespace($postcode.val())) {
-                        removeSearchResults();
-                    } else {
-                        makeRequestWithPayload({
-                            Postcode: $postcode.val(),
-                        }, onSucess);
-                    }
-                }
-            };
-
-            var goBack = function () {
-                makeRequestWithPayload({
-                    Postcode: "",
-                }, onSucess);
-            };
-
-            var onSucess = function (data) {
-                replaceSearchResult(data);
-            };
-
-            $findAddress.on("click", function (e) {
-                e.preventDefault();
-                doSearch();
-            });
-
-            $change.on("click", function (e) {
-                e.preventDefault();
-                goBack();
-            });
-        });
-
-    } (jQuery));
-</script>

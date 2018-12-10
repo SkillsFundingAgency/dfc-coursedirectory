@@ -1,5 +1,4 @@
-﻿using Dfc.CourseDirectory.Common;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,9 +10,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.PostcodeLookup
     {
         public IViewComponentResult Invoke(PostcodeLookupModel model)
         {
-            var actualModel = model;
-
-            return View("~/ViewComponents/PostcodeLookup/Default.cshtml", actualModel);
+            return View("~/ViewComponents/PostcodeLookup/Default.cshtml", model);
         }
     }
 }

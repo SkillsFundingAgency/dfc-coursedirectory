@@ -67,7 +67,7 @@ namespace Dfc.CourseDirectory.Web
             services.Configure<VenueAddSettings>(Configuration.GetSection(nameof(VenueAddSettings)));
             services.AddScoped<IVenueAddService, VenueAddService>();
 
-            services.AddScoped<IPostcodeLookupHelper, PostcodeLookupHelper>();
+            //services.AddScoped<IPostcodeLookupHelper, PostcodeLookupHelper>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }

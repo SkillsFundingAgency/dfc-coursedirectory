@@ -1,14 +1,15 @@
-﻿using Dfc.CourseDirectory.Web.ViewComponents.AddVenueManual;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Dfc.CourseDirectory.Web.ViewComponents.ManualAddress
 {
     public class ManualAddress : ViewComponent
     {
-        public IViewComponentResult Invoke()
+        public IViewComponentResult Invoke(ManualAddressModel model)
         {
-            var model = new ManualAddressModel();
-
             return View("~/ViewComponents/ManualAddress/Default.cshtml", model);
         }
     }
