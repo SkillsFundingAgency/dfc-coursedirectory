@@ -1,5 +1,6 @@
 ﻿@using Dfc.CourseDirectory.Web.ViewComponents.PostcodeLookup;
 @model Dfc.CourseDirectory.Web.ViewComponents.AddVenue.AddVenueModel;
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 <form id="postCodeSearchResultForm" asp-controller="Venue" asp-action="ConfirmSelection" method="post">
     <div class="add-venue">
@@ -18,6 +19,9 @@
                     <button type="submit" class="govuk-button" id="">
                         Continue
                     </button>
+                </div>
+                <div class="govuk-form-group">
+                    <a class="govuk-link" href="AddVenueManual">I cannot find my post code</a>
                 </div>
             </div>
         </div>

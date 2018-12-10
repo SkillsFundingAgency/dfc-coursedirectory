@@ -5,6 +5,8 @@ using Dfc.CourseDirectory.Services.Interfaces;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.RequestModels;
 using Dfc.CourseDirectory.Web.ViewComponents.AddressSelectionConfirmation;
+using Dfc.CourseDirectory.Web.ViewComponents.EditVenueName;
+using Dfc.CourseDirectory.Web.ViewComponents.ManualAddress;
 using Dfc.CourseDirectory.Web.ViewComponents.PostCodeSearchResult;
 using Dfc.CourseDirectory.Web.ViewComponents.VenueSearch;
 using Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult;
@@ -54,6 +56,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         public IActionResult AddVenue()
         {
+            //VenueAdd venue = new VenueAdd("Address1", "Address2", "town", "venuename", "county", "b71 4du");
+            //var t = await _venueAddService.AddAsync(venue);
             return View();
         }
 
@@ -91,6 +95,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
 
+
+        public IActionResult AddVenueManual()
+        {
+            return View();
+        }
+        
         [HttpPost]
         public async Task<IActionResult> ConfirmSelection(PostCodeSearchResultModel model)
         {
@@ -145,12 +155,61 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 resultModel = new VenueSearchResultModel(result.Error);
             }
 
-            
-            //return ViewComponent(nameof(ViewComponents.VenueSearchResult.VenueSearchResult ), resultModel);
+            return View("index", model);
+        }
+        [HttpGet]
+        public IActionResult EditVenueName(AddressSelectionConfirmationModel model)
+        {
+            AddressSelectionConfirmationModel override_model = new AddressSelectionConfirmationModel
+            {
+                Id = "",
+                VenueName = "My House",
+                AddressLine1 = "222",
+                AddressLine2 = "eee",
+                Town = "ff",
+                County = "dd",
+                PostCode = "dggg"
+            };
 
-            return View("VenueSearchResults", resultModel);
+            EditVenueNameModel editModel = new EditVenueNameModel
+            {
+                Id = override_model.Id,
+                VenueName = override_model.VenueName,
+                AddressLine1 = override_model.AddressLine1,
+                AddressLine2 = override_model.AddressLine2,
+                Town = override_model.Town,
+                County = override_model.County,
+                PostCode = override_model.PostCode
+            };
+            return View(editModel);
         }
 
+        [HttpPost]
+        public IActionResult EditVenueName(EditVenueNameModel model)
+        {
+            return View();
+        }
 
+        [HttpPost]
+        public IActionResult ConfirmManualSelection(ManualAddressModel model)
+        {
+            var addressSelectionConfirmationModel = new AddressSelectionConfirmationModel
+            {
+                VenueName = model.VenueName == null ? model.VenueName : model.VenueName.Trim(),
+                Id = model.Id,
+                PostCode = model.Postcode,
+                Town = model.TownCity == null ? model.TownCity : model.TownCity.Trim() ,
+                AddressLine1 = model.AddressLine1 == null ? model.AddressLine1 : model.AddressLine1.Trim(),
+                AddressLine2 = model.AddressLine2 == null ? model.AddressLine2 : model.AddressLine2.Trim(),
+                County = model.County == null ? model.County : model.County.Trim() 
+            };
+
+            return View(addressSelectionConfirmationModel);
+        }
+
+        public async Task<IActionResult> AddAddressManually()
+        {
+            return View();
+        }
     }
 }

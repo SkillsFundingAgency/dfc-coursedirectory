@@ -32,7 +32,7 @@ namespace Dfc.CourseDirectory.Services
             _logger = logger;
             _httpClient = httpClient;
             
-            _uri = settings.Value.ToUri();
+            //_uri = settings.Value.ToUri();
         }
         public async Task<IResult<IVenueAddResultItem>> AddAsync(IVenueAdd venue)
         {
