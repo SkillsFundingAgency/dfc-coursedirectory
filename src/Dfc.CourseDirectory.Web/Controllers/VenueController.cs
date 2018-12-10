@@ -147,13 +147,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             var addressSelectionConfirmationModel = new AddressSelectionConfirmationModel
             {
-                VenueName = model.VenueName.Trim(),
+                VenueName = model.VenueName == null ? model.VenueName : model.VenueName.Trim(),
                 Id = model.Id,
                 PostCode = model.Postcode,
-                Town = model.TownCity.Trim(),
-                AddressLine1 = model.AddressLine1.Trim(),
-                AddressLine2 = model.AddressLine2.Trim(),
-                County = model.County.Trim()
+                Town = model.TownCity == null ? model.TownCity : model.TownCity.Trim() ,
+                AddressLine1 = model.AddressLine1 == null ? model.AddressLine1 : model.AddressLine1.Trim(),
+                AddressLine2 = model.AddressLine2 == null ? model.AddressLine2 : model.AddressLine2.Trim(),
+                County = model.County == null ? model.County : model.County.Trim() 
             };
 
             return View(addressSelectionConfirmationModel);
