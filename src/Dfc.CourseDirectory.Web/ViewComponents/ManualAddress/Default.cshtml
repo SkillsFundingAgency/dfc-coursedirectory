@@ -22,7 +22,7 @@
         <div class="govuk-form-group">
             <div class="govuk-form-group" style="clear: both;">
                 <label class="govuk-label" for="building-street">
-                    Building and street*
+                    Address Line 1*
                 </label>
             </div>
             <span asp-validation-for="AddressLine1"></span>
@@ -32,11 +32,16 @@
                    value="@Model.AddressLine1" />
         </div>
         <div class="govuk-form-group">
+            <div class="govuk-form-group" style="clear: both;">
+                <label class="govuk-label" for="addressLine2">
+                    Address Line 2
+                </label>
+            </div>
             <span asp-validation-for="AddressLine2"></span>
             <input class="govuk-input" asp-for="AddressLine2"
                    autocomplete="off"
                    type="text"
-                   value="@Model.AddressLine2" />
+                   value="@Model.AddressLine2"/>
         </div>
 
         <div class="govuk-form-group">
