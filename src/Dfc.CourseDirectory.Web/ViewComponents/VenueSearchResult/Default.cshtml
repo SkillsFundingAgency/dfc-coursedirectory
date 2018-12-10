@@ -5,12 +5,16 @@
 
 
 <form id="venueSearchResultForm" asp-controller="Venue" asp-action="AddVenue" method="post">
-
+    @if (Model.Items.Any() && Model.NewItem != null)
+    {
+        <p style="padding: 15px 20px; border: 4px solid #11813e" id="qual"><span class="govuk-heading-m">New venue added:</span>@Model.NewItem.VenueName, @Model.NewItem.AddressLine2, @Model.NewItem.PostCode @Model.NewItem.PostCode</p>
+    }
+  
     <div class="venue-list">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
 
-                @if (Model.Items != null)
+                @if (Model.Items.Any())
                 {
                     <div class="govuk-tabs" data-module="tabs">
                         <h2 class="govuk-tabs__title">
@@ -58,7 +62,7 @@
                                             @venue.PostCode
                                         }
 
-                                       <br><a href="">Edit</a>
+                                        <br><a href="">Edit</a>
 
 
                                         <br><a href="">Archive</a>

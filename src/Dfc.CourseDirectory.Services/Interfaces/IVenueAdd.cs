@@ -12,5 +12,7 @@ namespace Dfc.CourseDirectory.Services.Interfaces
         string TOWN { get; }
         string COUNTY { get; }
         string POSTCODE { get; }
+
+        string UKPRN { get; }
     }
 }

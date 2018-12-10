@@ -25,7 +25,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             IVenueSearchHelper venueSearchHelper)
         {
             Throw.IfNull(logger, nameof(logger));
-            Throw.IfNull(venueSearchService, nameof(venueSearchSettings));
+            Throw.IfNull(venueSearchSettings, nameof(venueSearchSettings));
             Throw.IfNull(venueSearchService, nameof(venueSearchService));
 
             _logger = logger;
@@ -56,7 +56,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     var items = _venueSearchHelper.GetVenueSearchResultItemModels(result.Value.Value);
                     model = new VenueSearchResultModel(
                         requestModel.SearchTerm, 
-                        items);
+                        items,null);
                 }
                 else
                 {
