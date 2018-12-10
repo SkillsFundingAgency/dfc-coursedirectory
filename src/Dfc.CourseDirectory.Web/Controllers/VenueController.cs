@@ -153,7 +153,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 Town = model.TownCity == null ? model.TownCity : model.TownCity.Trim() ,
                 AddressLine1 = model.AddressLine1 == null ? model.AddressLine1 : model.AddressLine1.Trim(),
                 AddressLine2 = model.AddressLine2 == null ? model.AddressLine2 : model.AddressLine2.Trim(),
-                County = model.County == null ? model.County : model.County.Trim()
+                County = model.County == null ? model.County : model.County.Trim() 
             };
 
             return View(addressSelectionConfirmationModel);
