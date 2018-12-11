@@ -7,6 +7,7 @@ using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.Interfaces;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.RequestModels;
+using Dfc.CourseDirectory.Web.ViewComponents.EditVenueName;
 using Dfc.CourseDirectory.Web.ViewComponents.Shared;
 using Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult;
 using Dfc.CourseDirectory.Web.ViewModels;
@@ -126,5 +127,18 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             return View("VenueSearchResults", viewModel);
         }
+
+        [HttpPost]
+        public IActionResult EditVenueName (EditVenueNameRequestModel model)
+        {
+            EditVenueNameModel vModel = new EditVenueNameModel {
+                VenueName = model.VenueName,
+                PostcodeId = model.Address.Id,
+                Address = model.Address
+            };
+            return View(vModel);
+        }
+
+        
     }
 }
