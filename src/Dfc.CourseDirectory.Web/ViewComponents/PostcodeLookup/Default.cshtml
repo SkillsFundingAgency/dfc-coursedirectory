@@ -21,6 +21,12 @@
             </select>
         </div>
 
+        <div class="govuk-form-group">
+            <button class="govuk-button" type="submit" id="venueAddressConfirmationSelection">
+                Continue
+            </button>
+        </div>
+
         <script>
             (function ($) {
                 $(function () {
@@ -36,6 +42,17 @@
                     var $form = $elementPostcodeId.closest("form");
                     $form.addTriggersToJqueryValidate().triggerElementValidationsOnFormValidation();
                     var validator = $form.validate();
+
+                    var $continue = $("#venueAddressConfirmationSelection");
+                    $continue.on("click", function (e) {
+                        //$form = $continue.closest("form");
+                        var $venueName = $("#VenueName");
+                        $venueName.trigger("blur");
+                        var $postcode = $("#Postcode");
+                        $postcode.trigger("blur");
+                        var $postcodeId = $("#PostcodeId");
+                        $postcodeId.trigger("blur");
+                    });
 
                     $elementPostcodeId.on("blur", function () {
                         var result = validator.element($elementPostcodeId);
