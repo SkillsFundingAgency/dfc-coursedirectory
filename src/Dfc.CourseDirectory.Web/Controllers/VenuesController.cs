@@ -8,6 +8,7 @@ using Dfc.CourseDirectory.Services.Interfaces;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.RequestModels;
 using Dfc.CourseDirectory.Web.ViewComponents.EditVenueName;
+using Dfc.CourseDirectory.Web.ViewComponents.ManualAddress;
 using Dfc.CourseDirectory.Web.ViewComponents.Shared;
 using Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult;
 using Dfc.CourseDirectory.Web.ViewModels;
@@ -126,6 +127,25 @@ namespace Dfc.CourseDirectory.Web.Controllers
             };
 
             return View("VenueSearchResults", viewModel);
+        }
+
+        [HttpPost]
+        public IActionResult VenueAddressManualConfirmation(AddVenueSelectionConfirmationRequestModel model)
+        {
+            var viewModel = new VenueAddressSelectionConfirmationViewModel
+            {
+                VenueName = model.VenueName,
+                Address = new AddressModel
+                {
+                    AddressLine1 = model.AddressLine1,
+                    AddressLine2 = model.AddressLine2,
+                    TownOrCity = model.TownOrCity,
+                    County = model.County,
+                    Postcode = model.Postcode
+                }
+            };
+
+            return View(viewModel);
         }
 
         [HttpPost]

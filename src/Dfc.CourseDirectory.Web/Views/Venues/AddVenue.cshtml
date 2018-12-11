@@ -1,47 +1,41 @@
 ﻿@using Dfc.CourseDirectory.Web.ViewComponents.VenueName
 @using Dfc.CourseDirectory.Web.ViewComponents.PostcodeLookup
 
-<h1>Add Venue (Postcode lookup)</h1>
+<div class="govuk-grid-row">
 
-<form asp-controller="Venues" asp-action="VenueAddressSelectionConfirmation" method="post">
-    @await Component.InvokeAsync(nameof(VenueName), new VenueNameModel
-    {
-        LabelText = "Venue name",
-        HintText = "Please enter the venue name.",
-        AriaDescribedBy = "Please enter the venue name.",
-        
-    })
+    <div class="govuk-grid-column-full">
+        <h1 class="govuk-heading-l" style="padding-top: 20px;">
+            Add a venue
+        </h1>
 
-    <div>
-        @await Component.InvokeAsync(nameof(PostcodeLookup), new PostcodeLookupModel
-        {
-            PostcodeLabelText = "Postcode",
-            PostcodeAriaDescribedBy = "Please enter the postcode.",
-            ButtonText = "Find address"
-        })
+        <form asp-controller="Venues" asp-action="VenueAddressSelectionConfirmation" method="post">
+            @await Component.InvokeAsync(nameof(VenueName), new VenueNameModel
+            {
+                LabelText = "Venue name",
+                HintText = "Please enter the venue name.",
+                AriaDescribedBy = "Please enter the venue name."
+            })
+
+            <div>
+                @await Component.InvokeAsync(nameof(PostcodeLookup), new PostcodeLookupModel
+                {
+                    PostcodeLabelText = "Postcode",
+                    PostcodeAriaDescribedBy = "Please enter the postcode.",
+                    ButtonText = "Find address"
+                })
+            </div>
+            <div class="govuk-form-group">
+                <a id="manualLink" class="govuk-link" asp-controller="Venues" asp-action="AddVenueManualAddress">Enter address manually</a>
+            </div>
+
+        </form>
     </div>
-    <div class="govuk-form-group">
-        <a class="govuk-link" asp-controller="Venues" asp-action="AddVenueManualAddress">I cannot find my post code</a>
-    </div>
-    <div class="govuk-form-group">
-        <button class="govuk-button" type="submit" id="venueAddressConfirmationSelection">
-            Continue
-        </button>
-    </div>
-</form>
+</div>
+
 <script>
     (function ($) {
         $(function () {
-            var $continue = $("#venueAddressConfirmationSelection");
-            $continue.on("click", function (e) {
-                //$form = $continue.closest("form");
-                var $venueName = $("#VenueName");
-                $venueName.trigger("blur");
-                var $postcode = $("#Postcode");
-                $postcode.trigger("blur");
-                var $postcodeId = $("#PostcodeId");
-                $postcodeId.trigger("blur");
-            });
+          
         });
-    }) (jQuery);
+    })(jQuery);
 </script>
