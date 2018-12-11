@@ -60,9 +60,9 @@ namespace Dfc.CourseDirectory.Services
                     {
                         ContractResolver = new VenueSearchResultContractResolver()
                     };
-                    var venues = JsonConvert.DeserializeObject<IEnumerable<VenueSearchResultItem>>(json, settings).ToList();
+                    var venues = JsonConvert.DeserializeObject<IEnumerable<VenueSearchResultItem>>(json, settings).OrderBy(x => x.VenueName).ToList();
 
-                    venues.OrderBy(x => x.VenueName);
+                   
                     if (!String.IsNullOrEmpty(criteria.NewAddressId))
                     {
                         var newVenueIndex = venues.FindIndex(x => x.ID == criteria.NewAddressId);
