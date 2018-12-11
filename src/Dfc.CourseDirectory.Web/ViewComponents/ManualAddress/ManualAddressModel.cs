@@ -27,7 +27,6 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.ManualAddress
         public string TownOrCityHintText { get; set; }
         public string TownOrCityAriaDescribedBy { get; set; }
 
-        [Required(AllowEmptyStrings = false, ErrorMessage = "Enter a county")]
         [MaxLength(150, ErrorMessage = "County must be 150 characters or less")]
         [RegularExpression("[a-zA-Z\\.\\-']+(?: [a-zA-Z\\.\\-']+)*$", ErrorMessage = "County must only include letters a to z, numbers, hyphens, spaces, full-stops, and or apostrophes")]
         public string County { get; set; }

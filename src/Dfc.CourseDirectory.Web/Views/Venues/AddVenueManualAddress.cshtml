@@ -2,7 +2,7 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.ManualAddress
 
 <h2>Add Venue (Manual address)</h2>
-<form>
+<form asp-controller="Venues" asp-action="VenueAddressManualConfirmation" method="post">
     @await Component.InvokeAsync(nameof(VenueName), new VenueNameModel
     {
         LabelText = "Venue name",
@@ -12,8 +12,9 @@
 
     @await Component.InvokeAsync(nameof(ManualAddress), new ManualAddressModel
     {
-        AddressLine1LabelText = "Building and street",
+        AddressLine1LabelText = "Address Line 1",
         AddressLine1AriaDescribedBy = "Please enter the building and street line 1 of 2.",
+        AddressLine2LabelText = "Address Line 2",
         AddressLine2AriaDescribedBy = "Please enter the building and street line 2 of 2.",
         TownOrCityLabelText = "Town or city",
         TownOrCityAriaDescribedBy = "Please enter the town or city.",
@@ -22,4 +23,9 @@
         PostcodeLabelText = "Postcode",
         PostcodeAriaDescribedBy = "Please enter the postcode.",
     })
+    <div class="govuk-form-group">
+        <button type="submit" class="govuk-button" id="">
+            Continue
+        </button>
+    </div>
 </form>
