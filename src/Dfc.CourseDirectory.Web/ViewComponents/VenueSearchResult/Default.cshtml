@@ -57,9 +57,8 @@
                                         {
                                             @venue.PostCode
                                         }
-
-                                       <br><a href="">Edit</a>
-
+                                        @Html.ActionLink(linkText: "Send", controllerName: "Venue", actionName: "editvenuename", htmlAttributes: venue, routeValues: null)
+                                        <br><a href="">Edit</a>
 
                                         <br><a href="">Archive</a>
                                     </label>

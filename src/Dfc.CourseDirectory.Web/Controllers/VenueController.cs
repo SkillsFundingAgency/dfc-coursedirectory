@@ -6,6 +6,7 @@ using Dfc.CourseDirectory.Web.ViewComponents.AddressSelectionConfirmation;
 using Dfc.CourseDirectory.Web.ViewComponents.EditVenueName;
 using Dfc.CourseDirectory.Web.ViewComponents.PostCodeSearchResult;
 using Dfc.CourseDirectory.Web.ViewComponents.VenueSearch;
+using Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -104,7 +105,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return View("index", model);
         }
         [HttpGet]
-        public IActionResult EditVenueName(AddressSelectionConfirmationModel model)
+        public IActionResult EditVenueName(VenueSearchResultItemModel venue)
         {
             AddressSelectionConfirmationModel override_model = new AddressSelectionConfirmationModel
             {
@@ -135,7 +136,38 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             return View();
         }
+        //[HttpGet]
+        //public IActionResult EditVenueName(AddressSelectionConfirmationModel model)
+        //{
+        //    AddressSelectionConfirmationModel override_model = new AddressSelectionConfirmationModel
+        //    {
+        //        Id = "",
+        //        VenueName = "My House",
+        //        AddressLine1 = "222",
+        //        AddressLine2 = "eee",
+        //        Town = "ff",
+        //        County = "dd",
+        //        PostCode = "dggg"
+        //    };
 
+        //    EditVenueNameModel editModel = new EditVenueNameModel
+        //    {
+        //        Id = override_model.Id,
+        //        VenueName = override_model.VenueName,
+        //        AddressLine1 = override_model.AddressLine1,
+        //        AddressLine2 = override_model.AddressLine2,
+        //        Town = override_model.Town,
+        //        County = override_model.County,
+        //        PostCode = override_model.PostCode
+        //    };
+        //    return View(editModel);
+        //}
+
+        //[HttpPost]
+        //public IActionResult EditVenueName(EditVenueNameModel model)
+        //{
+        //    return View();
+        //}
         public async Task<IActionResult> AddAddressManually()
         {
             return View();
