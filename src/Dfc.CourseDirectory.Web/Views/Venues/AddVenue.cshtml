@@ -1,0 +1,46 @@
+﻿@using Dfc.CourseDirectory.Web.ViewComponents.VenueName
+@using Dfc.CourseDirectory.Web.ViewComponents.PostcodeLookup
+
+<h1>Add Venue (Postcode lookup)</h1>
+
+<form asp-controller="Venues" asp-action="VenueAddressSelectionConfirmation" method="post">
+    @await Component.InvokeAsync(nameof(VenueName), new VenueNameModel
+    {
+        LabelText = "Venue name",
+        HintText = "Please enter the venue name.",
+        AriaDescribedBy = "Please enter the venue name."
+    })
+
+    <div>
+        @await Component.InvokeAsync(nameof(PostcodeLookup), new PostcodeLookupModel
+        {
+            PostcodeLabelText = "Postcode",
+            PostcodeAriaDescribedBy = "Please enter the postcode.",
+            ButtonText = "Find address"
+        })
+    </div>
+    <div class="govuk-form-group">
+        <a class="govuk-link" asp-controller="Venues" asp-action="AddVenueManualAddress">I cannot find my post code</a>
+    </div>
+    <div class="govuk-form-group">
+        <button class="govuk-button" type="submit" id="venueAddressConfirmationSelection">
+            Continue
+        </button>
+    </div>
+</form>
+<script>
+    (function ($) {
+        $(function () {
+            var $continue = $("#venueAddressConfirmationSelection");
+            $continue.on("click", function (e) {
+                //$form = $continue.closest("form");
+                var $venueName = $("#VenueName");
+                $venueName.trigger("blur");
+                var $postcode = $("#Postcode");
+                $postcode.trigger("blur");
+                var $postcodeId = $("#PostcodeId");
+                $postcodeId.trigger("blur");
+            });
+        });
+    }) (jQuery);
+</script>

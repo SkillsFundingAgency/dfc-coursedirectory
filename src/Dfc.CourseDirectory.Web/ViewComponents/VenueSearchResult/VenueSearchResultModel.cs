@@ -12,30 +12,36 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult
         public bool HasErrors => Errors.Count() > 0;
         public IEnumerable<string> Errors { get; }
         public string SearchTerm { get; }
+        public VenueSearchResultItemModel NewItem { get; }
         public IEnumerable<VenueSearchResultItemModel> Items { get; }
 
         public VenueSearchResultModel()
         {
             Errors = new string[] { };
             Items = new VenueSearchResultItemModel[] { };
+            NewItem = null;
         }
 
         public VenueSearchResultModel(string error)
         {
             Errors = new string[] { error };
             Items = new VenueSearchResultItemModel[] { };
+            NewItem = null;
         }
 
         public VenueSearchResultModel(
             string searchTerm,
-            IEnumerable<VenueSearchResultItemModel> items)
+            IEnumerable<VenueSearchResultItemModel> items,
+            VenueSearchResultItemModel newItem)
         {
             Throw.IfNullOrWhiteSpace(searchTerm, nameof(searchTerm));
             Throw.IfNull(items, nameof(items));
 
             Errors = new string[] { };
             SearchTerm = searchTerm;
+            NewItem = newItem;
             Items = items;
+            NewItem = newItem;
         }
         protected override IEnumerable<object> GetEqualityComponents()
         {
@@ -43,6 +49,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult
             yield return Errors;
             yield return SearchTerm;
             yield return Items;
+            yield return NewItem;
         }
     }
 

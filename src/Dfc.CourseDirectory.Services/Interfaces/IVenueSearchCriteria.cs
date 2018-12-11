@@ -7,5 +7,7 @@ namespace Dfc.CourseDirectory.Services.Interfaces
     public interface IVenueSearchCriteria
     {
         string Search { get; }
+
+        string NewAddressId { get; }
     }
 }

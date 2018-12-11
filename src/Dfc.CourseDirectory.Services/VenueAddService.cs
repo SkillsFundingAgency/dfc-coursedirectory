@@ -32,7 +32,7 @@ namespace Dfc.CourseDirectory.Services
             _logger = logger;
             _httpClient = httpClient;
             
-            //_uri = settings.Value.ToUri();
+            _uri = settings.Value.ToUri();
         }
         public async Task<IResult<IVenueAddResultItem>> AddAsync(IVenueAdd venue)
         {
@@ -102,28 +102,7 @@ namespace Dfc.CourseDirectory.Services
     {
         internal static Uri ToUri(this IVenueAddSettings extendee)
         {
-            return new Uri($"{extendee.ApiUrl + "/addvenue?code=" + extendee.ApiKey}");
-            //return new Uri($"{extendee.ApiUrl}?api-version={extendee.ApiVersion}");
+            return new Uri($"{extendee.ApiUrl}{extendee.ApiKey}");
         }
     }
-    //internal static class VenueAddExtensions
-    //{
-    //    internal static string ToJson(this IVenueAdd extendee)
-    //    {
-
-    //        VenueSearchJson json = new VenueSearchJson
-    //        {
-    //            PRN = extendee.Search
-    //        };
-    //        var result = JsonConvert.SerializeObject(json);
-
-    //        return result;
-    //    }
-    //}
-
-    //internal class VenueSearchJson
-    //{
-    //    public string PRN { get; set; }
-    //}
-
 }

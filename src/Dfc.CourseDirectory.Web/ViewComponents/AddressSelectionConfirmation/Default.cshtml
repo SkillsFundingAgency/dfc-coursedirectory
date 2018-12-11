@@ -4,13 +4,10 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @model Dfc.CourseDirectory.Web.ViewComponents.AddressSelectionConfirmation.AddressSelectionConfirmationModel;
 
-<form id="postCodeSearchResultForm" asp-controller="Venue" asp-action="SaveVenue" method="post">
+<form id="postCodeSearchResultForm" asp-controller="Venue" asp-action="AddVenueConfirmation" method="post">
     <div class="govuk-grid-row">
 
         <div class="govuk-grid-column-full">
-
-
-
 
             <table class="govuk-table">
 
@@ -18,7 +15,10 @@
                     <tr>
 
                         <th class="govuk-table__header" scope="col">Name</th>
-                        <td class="govuk-table__cell">@Model.VenueName</td>
+                        <td class="govuk-table__cell">
+                            <input asp-for="VenueName" type="hidden" />
+                            <label asp-for="VenueName"></label>
+                        </td>
                         <td class="govuk-table__cell">  <a href="add-venue4"> Change</a><span class="govuk-visually-hidden"> name</span></td>
 
 
@@ -27,21 +27,26 @@
 
                         <th class="govuk-table__header" scope="col">Venue address</th>
                         <td class="govuk-table__cell">
-                            @Model.AddressLine1<br>
+                            <input asp-for="AddressLine1" type="hidden" />
+                            <label asp-for="AddressLine1"></label><br>
                             @if (!String.IsNullOrEmpty(Model.AddressLine2))
                             {
-                                @Model.AddressLine2<br>
+                                <input asp-for="AddressLine2" type="hidden" />
+                                <label asp-for="AddressLine2"></label><br>
                             }
                             @if (!String.IsNullOrEmpty(Model.Town))
                             {
-                                @Model.Town<br>
+                                <input asp-for="Town" type="hidden" />
+                                <label asp-for="Town"></label><br>
                             }
                             @if (!String.IsNullOrEmpty(Model.County))
                             {
-                                @Model.County<br>
+                                <input asp-for="County" type="hidden" />
+                                <label asp-for="County"></label><br>
                             }
-
-                            @Model.PostCode
+                            
+                            <input asp-for="PostCode" type="hidden" />
+                            <label asp-for="PostCode"></label><br>
                         </td>
                         <td class="govuk-table__cell">  <a href="add-venue5"> Change</a><span class="govuk-visually-hidden"> name</span></td>
 
@@ -50,19 +55,18 @@
                 </tbody>
             </table>
 
-
-
-
-
-
-
             <div class="govuk-form-group">
 
                 <p>By submitting you confirm your venue name and address are correct.</p>
          
-                <a href="../venue" role="button" class="govuk-button">
+                @*<a href="../venue" role="button" class="govuk-button">
                     Continue
-                </a>
+                </a>*@
+                
+                
+                <button type="submit" class="govuk-button" id="">
+                    Continue
+                </button>
             </div>
 
         </div>

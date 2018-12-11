@@ -1,5 +1,4 @@
-﻿using Dfc.CourseDirectory.Common;
-using Dfc.CourseDirectory.Web.ViewComponents.Interfaces;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -8,54 +7,26 @@ using System.Threading.Tasks;
 
 namespace Dfc.CourseDirectory.Web.ViewComponents.PostcodeLookup
 {
-    public class PostcodeLookupModel : /*ValueObject<PostcodeLookupModel>,*/ IViewComponentModel
+    public class PostcodeLookupModel
     {
-        private const string _locationError = "Enter a full and valid postcode";
-
-        public bool HasErrors => Errors.Count() > 0;
-        public IEnumerable<string> Errors { get; }
-
-        [Display(Name = "Postcode")]
-        [RegularExpression(@"([a-zA-Z][0-9]|[a-zA-Z][0-9][0-9]|[a-zA-Z][a-zA-Z][0-9]|[a-zA-Z][a-zA-Z][0-9][0-9]|[a-zA-Z][0-9][a-zA-Z]|[a-zA-Z][a-zA-Z][0-9][a-zA-Z]) ([0-9][abdefghjklmnpqrstuwxyzABDEFGHJLMNPQRSTUWXYZ][abdefghjklmnpqrstuwxyzABDEFGHJLMNPQRSTUWXYZ])", ErrorMessage = _locationError)]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Enter a postcode")]
+        [MaxLength(8, ErrorMessage = "Postcode must be 8 characters or less")]
+        [RegularExpression("([a-zA-Z][0-9]|[a-zA-Z][0-9][0-9]|[a-zA-Z][a-zA-Z][0-9]|[a-zA-Z][a-zA-Z][0-9][0-9]|[a-zA-Z][0-9][a-zA-Z]|[a-zA-Z][a-zA-Z][0-9][a-zA-Z]) ([0-9][abdefghjklmnpqrstuwxyzABDEFGHJLMNPQRSTUWXYZ][abdefghjklmnpqrstuwxyzABDEFGHJLMNPQRSTUWXYZ])", ErrorMessage = "Postcode must be a valid formet and only include letters a to z, numbers and spaces")]
         public string Postcode { get; set; }
-        public IEnumerable<PostcodeLookupItemModel> Items { get; set; }
+        public string PostcodeLabelText { get; set; }
+        public string PostcodeHintText { get; set; }
+        public string PostcodeAriaDescribedBy { get; set; }
+        public string ButtonText { get; set; }
+        public IEnumerable<SelectListItem> Items { get; set; }
+        public bool HasItems => Items != null && Items.Any();
+        public string NoneSelectedText => HasItems ? $"{Items.Count()} addresses found" : string.Empty;
+
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Select an address")]
+        public string PostcodeId { get; set; }
 
         public PostcodeLookupModel()
         {
-            Errors = new string[] { };
-            Items = new PostcodeLookupItemModel[] { };
+            Items = new SelectListItem[] { };
         }
-
-        public PostcodeLookupModel(
-            string postcode,
-            string error)
-        {
-            Throw.IfNullOrWhiteSpace(postcode, nameof(postcode)); // should this be some check via regex for a valid postcode ???
-            Throw.IfNullOrWhiteSpace(error, nameof(error));
-
-            Errors = new string[] { error };
-            Postcode = postcode;
-            Items = new PostcodeLookupItemModel[] { };
-        }
-
-        public PostcodeLookupModel(
-            string postcode,
-            IEnumerable<PostcodeLookupItemModel> items)
-        {
-            Throw.IfNullOrWhiteSpace(postcode, nameof(postcode)); // should this be some check via regex for a valid postcode ???
-            Throw.IfNull(items, nameof(items));
-
-            Errors = new string[] { };
-            Postcode = postcode;
-            Items = items;
-        }
-
-        //protected override IEnumerable<object> GetEqualityComponents()
-        //{
-        //    yield return HasErrors;
-        //    yield return Errors;
-        //    yield return Postcode;
-        //    yield return Items;
-        //}
     }
 }

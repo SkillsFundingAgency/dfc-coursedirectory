@@ -18,20 +18,24 @@ namespace Dfc.CourseDirectory.Services
 
         public string POSTCODE { get; }
 
+        public string UKPRN { get; }
+
         public VenueAdd(
             string address_1,
             string address_2,
             string town,
             string venue_name,
             string county,
-            string postcode)
+            string postcode,
+            string ukprn)
         {
             Throw.IfNullOrWhiteSpace(address_1, nameof(address_1));
-            Throw.IfNullOrWhiteSpace(address_2, nameof(address_2));
+            //Throw.IfNullOrWhiteSpace(address_2, nameof(address_2));
             Throw.IfNullOrWhiteSpace(town, nameof(town));
             Throw.IfNullOrWhiteSpace(venue_name, nameof(venue_name));
             Throw.IfNullOrWhiteSpace(county, nameof(county));
             Throw.IfNullOrWhiteSpace(postcode, nameof(postcode));
+            Throw.IfNullOrWhiteSpace(ukprn, nameof(ukprn));
 
             ADDRESS_1 = address_1;
             ADDRESS_2 = address_2;
@@ -39,6 +43,7 @@ namespace Dfc.CourseDirectory.Services
             VENUE_NAME = venue_name;
             COUNTY = county;
             POSTCODE = postcode;
+            UKPRN= ukprn;
 
         }
         protected override IEnumerable<object> GetEqualityComponents()
@@ -49,6 +54,7 @@ namespace Dfc.CourseDirectory.Services
             yield return VENUE_NAME;
             yield return COUNTY;
             yield return POSTCODE;
+            yield return UKPRN;
         }
     }
 }
