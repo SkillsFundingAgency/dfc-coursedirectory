@@ -5,14 +5,14 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.ManualAddress
     public class ManualAddressModel
     {
         [Required(AllowEmptyStrings = false, ErrorMessage = "Enter a building and street")]
-        [MaxLength(150, ErrorMessage = "Building and street must be 150 characters or less")]
+        [MaxLength(100, ErrorMessage = "Building and street must be 100 characters or less")]
         [RegularExpression("[a-zA-Z0-9']+(?: [a-zA-Z\\.\\-]+)*$", ErrorMessage = "Building and street must only include letters a to z, numbers, hyphens and spaces")]
         public string AddressLine1 { get; set; }
         public string AddressLine1LabelText { get; set; }
         public string AddressLine1HintText { get; set; }
         public string AddressLine1AriaDescribedBy { get; set; }
 
-        [MaxLength(150, ErrorMessage = "Building and street (line 2) must be 150 characters or less")]
+        [MaxLength(100, ErrorMessage = "Building and street (line 2) must be 100 characters or less")]
         [RegularExpression("[a-zA-Z0-9']+(?: [a-zA-Z\\.\\-]+)*$", ErrorMessage = "Building and street (line 2) must only include letters a to z, numbers, hyphens and spaces")]
         public string AddressLine2 { get; set; }
         public string AddressLine2LabelText { get; set; }
@@ -20,14 +20,14 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.ManualAddress
         public string AddressLine2AriaDescribedBy { get; set; }
 
         [Required(AllowEmptyStrings = false, ErrorMessage = "Enter a town or city")]
-        [MaxLength(150, ErrorMessage = "Town or city must be 150 characters or less")]
+        [MaxLength(75, ErrorMessage = "Town or city must be 75 characters or less")]
         [RegularExpression("[a-zA-Z\\.\\-']+(?: [a-zA-Z\\.\\-']+)*$", ErrorMessage = "Town or city must only include letters a to z, numbers, hyphens, spaces, full-stops, and or apostrophes")]
         public string TownOrCity { get; set; }
         public string TownOrCityLabelText { get; set; }
         public string TownOrCityHintText { get; set; }
         public string TownOrCityAriaDescribedBy { get; set; }
 
-        [MaxLength(150, ErrorMessage = "County must be 150 characters or less")]
+        [MaxLength(75, ErrorMessage = "County must be 75 characters or less")]
         [RegularExpression("[a-zA-Z\\.\\-']+(?: [a-zA-Z\\.\\-']+)*$", ErrorMessage = "County must only include letters a to z, numbers, hyphens, spaces, full-stops, and or apostrophes")]
         public string County { get; set; }
         public string CountyLabelText { get; set; }
