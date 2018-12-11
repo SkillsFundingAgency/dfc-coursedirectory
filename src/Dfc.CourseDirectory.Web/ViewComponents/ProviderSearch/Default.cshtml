@@ -25,7 +25,7 @@
                             </div>
                             @*<form action="@ViewBag.Target" class="site-search ui-front" id="header-search" method="post">*@
                             <div class="header-search-content">
-                                <form class="site-search ui-front" id="header-search" method="post">
+                                <form action="/Provider" class="site-search ui-front" id="header-search" method="post">
                                     <div class="search-input-wrapper govuk-form-group">
                                         @*<input class="govuk-input govuk-!-width-three-quarters search-input js-search-focus" id="UKPrn" name="UKPrn" type="search" value="">*@
                                         
@@ -64,35 +64,35 @@
             var formGroupErrorClass = "govuk-form-group--error";
             var elementErrorClass = "govuk-input--error";
             var $elementSearchTerm = $("#@nameof(Model.SearchTerm)");
-            var $validationMessageVenueName = $elementSearchTerm.prev("[data-valmsg-for='@nameof(Model.SearchTerm)']");
-            $validationMessageVenueName.css("margin-bottom", "0");
-            var $formGroupVenueName = $elementSearchTerm.closest('.govuk-form-group');
+            var $validationMessageSearchTerm = $elementSearchTerm.prev("[data-valmsg-for='@nameof(Model.SearchTerm)']");
+            $validationMessageSearchTerm.css("margin-bottom", "0");
+            var $formGroupSearchTerm = $elementSearchTerm.closest('.govuk-form-group');
             var $form = $elementSearchTerm.closest("form");
             $form.addTriggersToJqueryValidate().triggerElementValidationsOnFormValidation();
             var validator = $form.validate();
             $elementSearchTerm.on("blur", function () {
                 var result = validator.element($elementSearchTerm);
-                alert("Alert" + result);
+                alert("Alert" + $elementSearchTerm.val());
                 if (result) {
                     $elementSearchTerm.removeClass(elementErrorClass);
-                    $formGroupVenueName.removeClass(formGroupErrorClass);
-                    $validationMessageVenueName.hide();
-                    $validationMessageVenueName.css("margin-bottom", "0");
+                    $formGroupSearchTerm.removeClass(formGroupErrorClass);
+                    $validationMessageSearchTerm.hide();
+                    $validationMessageSearchTerm.css("margin-bottom", "0");
                 } else {
                     $elementSearchTerm.addClass(elementErrorClass);
-                    $formGroupVenueName.addClass(formGroupErrorClass);
-                    $validationMessageVenueName.show();
-                    $validationMessageVenueName.css("margin-bottom", "15px");
+                    $formGroupSearchTerm.addClass(formGroupErrorClass);
+                    $validationMessageSearchTerm.show();
+                    $validationMessageSearchTerm.css("margin-bottom", "15px");
                 }
             });
             $elementSearchTerm.elementValidation(function (element, result) {
-                if (!$formGroupVenueName.hasClass(formGroupErrorClass)) {
-                    $validationMessageVenueName.hide();
+                if (!$formGroupSearchTerm.hasClass(formGroupErrorClass)) {
+                    $validationMessageSearchTerm.hide();
                 }
                 if (result) {
                     $elementSearchTerm.removeClass(elementErrorClass);
-                    $formGroupVenueName.removeClass(formGroupErrorClass);
-                    $validationMessageVenueName.css("margin-bottom", "0");
+                    $formGroupSearchTerm.removeClass(formGroupErrorClass);
+                    $validationMessageSearchTerm.css("margin-bottom", "0");
                 }
             });
         });
