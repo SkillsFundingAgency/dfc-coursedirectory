@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -19,6 +20,7 @@ namespace Dfc.CourseDirectory.Services
         private readonly ILogger<PostCodeSearchService> _logger;
         private readonly HttpClient _httpClient;
         private readonly Uri _uri;
+        private readonly Uri _retrieveUri;
         private readonly String _APIKey;
 
         public PostCodeSearchService(
@@ -33,6 +35,7 @@ namespace Dfc.CourseDirectory.Services
             _logger = logger;
             _httpClient = httpClient;
             _uri = settings.Value.ToUri();
+            _retrieveUri = settings.Value.ToRetrieveUri();
             _APIKey = settings.Value.Key;
         }
 
@@ -100,6 +103,79 @@ namespace Dfc.CourseDirectory.Services
                 _logger.LogMethodExit();
             }
         }
+
+
+        public async Task<IResult<IAddressSelectionResult>> RetrieveAsync(IAddressSelectionCriteria criteria)
+        {
+            Throw.IfNull(criteria, nameof(criteria));
+
+            _logger.LogMethodEnter();
+
+            try
+            {
+                _logger.LogInformationObject("Address selection criteria.", criteria);
+                _logger.LogInformationObject("Address retrieve uri.", _uri);
+                // string id = "GB|RM|B|51879423";
+                //var RetrieveAddressBaseUrl = @"http://services.postcodeanywhere.co.uk/CapturePlus/Interactive/Retrieve/2.1/json.ws?";
+
+                var addressRetrieveRequest = String.Concat(
+
+                            _retrieveUri,
+
+                            "&Key=" + System.Web.HttpUtility.UrlEncode(_APIKey),
+
+                            "&Id=" + System.Web.HttpUtility.UrlEncode(criteria.Id)
+
+                        );
+
+                var response = await _httpClient.GetAsync(addressRetrieveRequest);
+
+                _logger.LogHttpResponseMessage("Address retrieve service http response", response);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+
+                    var settings = new JsonSerializerSettings
+                    {
+                        ContractResolver = new AddressSelectionResultContractResolver()
+                    };
+
+                    var address =
+                        JsonConvert.DeserializeObject<IEnumerable<AddressSelectionResult>>(json, settings).ToList();
+
+                    var searchResult = new AddressSelectionResult(address[0].Id, 
+                        address[0].Line1, 
+                        address[0].Line2,
+                        address[0].City,
+                        address[0].County,
+                        address[0].PostCode);
+                  
+                    return Result.Ok<IAddressSelectionResult>(searchResult);
+                }
+                else
+                {
+                    return Result.Fail<IAddressSelectionResult>("PostCode search service unsuccessful http response");
+                }
+            }
+
+            catch (HttpRequestException hre)
+            {
+                _logger.LogException("Address retrieve service http request error.", hre);
+
+                return Result.Fail<IAddressSelectionResult>("Address retrieve service http request error.");
+            }
+            catch (Exception e)
+            {
+                _logger.LogException("Address retrieve service unknown error.", e);
+
+                return Result.Fail<IAddressSelectionResult>("Address retrieve service unknown error.");
+            }
+            finally
+            {
+                _logger.LogMethodExit();
+            }
+        }
     }
 
     internal static class PostCodeSearchSettingsExtensions
@@ -107,6 +183,11 @@ namespace Dfc.CourseDirectory.Services
         internal static Uri ToUri(this IPostCodeSearchSettings extendee)
         {
             return new Uri($"{extendee.FindAddressesBaseUrl}");
+        }
+
+        internal static Uri ToRetrieveUri(this IPostCodeSearchSettings extendee)
+        {
+            return new Uri($"{extendee.RetrieveAddressBaseUrl}");
         }
 
         internal static String APIKey(this IPostCodeSearchSettings extendee)

@@ -3,38 +3,42 @@
 
 @model Dfc.CourseDirectory.Web.ViewComponents.PostCodeSearch.PostCodeSearchModel;
 
-<fieldset class="govuk-fieldset">
-    <h2 class="govuk-heading-m">
-        Venue address
-    </h2>
-    <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
 
-    </legend>
+<div class="govuk-grid-row">
 
-    <div class="column-full">
+    <div class="govuk-grid-column-full">
 
-        <div class="govuk-form-group">
-            <label class="govuk-label" for="address-postcode">
-                Venue postcode
-            </label>
-            <span asp-validation-for="PostCode"></span>
+        <fieldset class="govuk-fieldset">
+            <h2 class="govuk-heading-m">
+                Venue address
+            </h2>
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
 
-            <input class="govuk-input govuk-input--width-10" asp-for="PostCode"
-                   class="postcode-search"
-                   autocomplete="off"
-                   type="text"
-                   value="@Model.PostCode" />
-        </div>
+            </legend>
 
-    </div>
+            <div class="govuk-form-group">
+                <label class="govuk-label" for="address-postcode">
+                    Venue postcode
+                </label>
+                <span asp-validation-for="PostCode"></span>
 
-    <button type="submit" class="govuk-button" id="postcode-search">
-        Find address
-    </button>
+                <input class="govuk-input govuk-input--width-10" asp-for="PostCode"
+                       autocomplete="off"
+                       type="text"
+                       value="@Model.PostCode" />
+            </div>
 
-    <br>
+            <button class="govuk-button" id="postcode-search" type="button">
+                Find address
+            </button>
+            <br>
 
-    <a class="govuk-link" href="add-venue-manual">Enter address manually</a>
+        </fieldset>
 
-</fieldset>
+      
+        <a class="govuk-link" href="AddVenueManual">Enter address manually</a>
+		
+    </div>	
+
+</div>
 

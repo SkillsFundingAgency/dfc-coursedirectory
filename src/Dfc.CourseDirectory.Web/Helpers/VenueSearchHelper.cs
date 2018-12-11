@@ -22,7 +22,7 @@ namespace Dfc.CourseDirectory.Web.Helpers
             Throw.IfNull(venueSearchRequestModel, nameof(venueSearchRequestModel));
 
             //var criteria = new VenueSearchCriteria(FormatSearchTerm(venueSearchRequestModel.SearchTerm));
-            var criteria = new VenueSearchCriteria(venueSearchRequestModel.SearchTerm);
+            var criteria = new VenueSearchCriteria(venueSearchRequestModel.SearchTerm, venueSearchRequestModel.NewAddressId);
             return criteria;
         }
         public IEnumerable<VenueSearchResultItemModel> GetVenueSearchResultItemModels(
@@ -38,7 +38,8 @@ namespace Dfc.CourseDirectory.Web.Helpers
                     item.VenueName,
                     item.Address1,
                     item.Address2,
-                    item.Address3,
+                    item.Town,
+                    item.County,
                     item.PostCode));
             }
 

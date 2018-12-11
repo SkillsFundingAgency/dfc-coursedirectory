@@ -48,13 +48,17 @@ namespace Dfc.CourseDirectory.Web.Controllers
             PostCodeSearchResultModel model;
 
             PostCodeSearchCriteria criteria = new PostCodeSearchCriteria(requestModel.PostCode);
+
             var searchResult = await _postCodeSearchService.SearchAsync(criteria);
+
+            AddressSelectionCriteria criteria1 = new AddressSelectionCriteria("GB|RM|B|51879423");
+            var x = await _postCodeSearchService.RetrieveAsync(criteria1);
 
             if (searchResult.IsSuccess && searchResult.HasValue)
             {
                 var items = _postCodeSearchHelper.GetPostCodeSearchResultItemModels(searchResult.Value.Value);
                 model = new PostCodeSearchResultModel(
-                    requestModel.PostCode,
+                    requestModel.PostCode,null,null,
                     items);
             }
             else

@@ -1,81 +1,118 @@
 ﻿@using Dfc.CourseDirectory.Web.ViewComponents.Extensions
 @using Dfc.CourseDirectory.Web.ViewComponents.Pagination;
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @model Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult.VenueSearchResultModel;
 
-<div class="venue-list">
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
 
-            @if (Model.Items != null)
-            {
-                <div class="govuk-tabs" data-module="tabs">
-                    <h2 class="govuk-tabs__title">
-                        Contents
-                    </h2>
-                    <ul class="govuk-tabs__list" role="tablist">
-                        <li class="govuk-tabs__list-item" role="presentation">
-                            <a class="govuk-tabs__tab" href="#live" id="tab_live" role="tab" aria-controls="live" tabindex="0" aria-selected="true">
-                                Live
-                            </a>
-                        </li>
-                        <li class="govuk-tabs__list-item" role="presentation">
-                            <a class="govuk-tabs__tab" href="#archived" id="tab_archived" role="tab" aria-controls="archived" tabindex="-1" aria-selected="false">
-                                Archived
-                            </a>
-                        </li>
+<form id="venueSearchResultForm" asp-controller="Venues" asp-action="AddVenue" method="get">
+    @if (Model.Items.Any() && Model.NewItem != null)
+    {
+        <p style="padding: 15px 20px; border: 4px solid #11813e" id="qual">
+            <span class="govuk-heading-m">New venue added:</span>
+            @Model.NewItem.VenueName,
+            @Model.NewItem.AddressLine1,
+            @Model.NewItem.AddressLine2,
+            @Model.NewItem.Town,
+            @Model.NewItem.County,
+            @Model.NewItem.PostCode
+        </p>
+    }
+  
+    <div class="venue-list">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
 
-                    </ul>
+                @if (Model.Items.Any())
+                {
+                    <div class="govuk-tabs" data-module="tabs">
+                        <h2 class="govuk-tabs__title">
+                            Contents
+                        </h2>
+                        <ul class="govuk-tabs__list" role="tablist">
+                            <li class="govuk-tabs__list-item" role="presentation">
+                                <a class="govuk-tabs__tab" href="#live" id="tab_live" role="tab" aria-controls="live" tabindex="0" aria-selected="true">
+                                    Live
+                                </a>
+                            </li>
+                            <li class="govuk-tabs__list-item" role="presentation">
+                                <a class="govuk-tabs__tab" href="#archived" id="tab_archived" role="tab" aria-controls="archived" tabindex="-1" aria-selected="false">
+                                    Archived
+                                </a>
+                            </li>
 
-                    <section class="govuk-tabs__panel" id="live" role="tabpanel" aria-labelledby="tab_live">
+                        </ul>
 
-                        @foreach (var venue in Model.Items)
-                        {
+                        <section class="govuk-tabs__panel" id="live" role="tabpanel" aria-labelledby="tab_live">
+
+                            @foreach (var venue in Model.Items)
+                            {
+                                <div class="govuk-checkboxes__item">
+                                    <label class="govuk-label govuk-checkboxes__label" for="study0">
+                                        @venue.VenueName<br>
+                                        @if (!string.IsNullOrWhiteSpace(@venue.AddressLine1))
+                                        {
+                                            @venue.AddressLine1 <br />
+                                        }
+                                        @if (!string.IsNullOrWhiteSpace(@venue.AddressLine2))
+                                        {
+                                            @venue.AddressLine2 <br />
+                                        }
+                                        @if (!string.IsNullOrWhiteSpace(@venue.Town))
+                                        {
+                                            @venue.Town <br />
+                                        }
+                                        @if (!string.IsNullOrWhiteSpace(@venue.County))
+                                        {
+                                            @venue.County <br />
+                                        }
+                                        @if (!string.IsNullOrWhiteSpace(@venue.PostCode))
+                                        {
+                                            @venue.PostCode
+                                        }
+
+                                        <br><a href="">Edit</a>
+
+
+                                        <br><a href="">Archive</a>
+                                    </label>
+                                </div>
+                            }
+
+                            <a href="your-venues-archive-confirm">Archive happy path</a>
+                        </section>
+
+                        <section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="archived" role="tabpanel" aria-labelledby="tab_archived">
+
                             <div class="govuk-checkboxes__item">
                                 <label class="govuk-label govuk-checkboxes__label" for="study0">
-                                    @venue.VenueName<br>
-                                    @venue.AddressLine1<br>
-                                    @venue.AddressLine2<br>
-                                    @venue.AddressLine3<br>
-                                    @venue.PostCode<br><a href="">Edit</a>
+                                    NOT FROM SERVICE<br>
+                                    NOT FROM SERVICE<br>
+                                    NOT FROM SERVICE<br>
+                                    NOT FROM SERVICE<br>
+                                    NOT FROM SERVICE<br><a href="">Edit</a>
 
 
                                     <br><a href="">Archive</a>
                                 </label>
                             </div>
-                        }
 
-                        <a href="your-venues-archive-confirm">Archive happy path</a>
-                    </section>
+                        </section>
 
-                    <section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="archived" role="tabpanel" aria-labelledby="tab_archived">
-
-                        <div class="govuk-checkboxes__item">
-                            <label class="govuk-label govuk-checkboxes__label" for="study0">
-                                NOT FROM SERVICE<br>
-                                NOT FROM SERVICE<br>
-                                NOT FROM SERVICE<br>
-                                NOT FROM SERVICE<br>
-                                NOT FROM SERVICE<br><a href="">Edit</a>
+                    </div>
+                    <div class="govuk-form-group" style="margin-top: 30px;">
+                        <button type="submit" class="govuk-button">
+                            + Add new venue
+                        </button>
+                    </div>
 
 
-                                <br><a href="">Archive</a>
-                            </label>
-                        </div>
+                }
+                else
+                {
 
-                    </section>
+                }
 
-                </div>
-                <div class="govuk-form-group" style="margin-top: 30px;">
-                    <a href="add-venue" role="button" class="govuk-button">
-                        + Add new venue
-                    </a>
-                </div>
-            }
-            else
-            {
-
-            }
-
+            </div>
         </div>
     </div>
-</div>
+</form>

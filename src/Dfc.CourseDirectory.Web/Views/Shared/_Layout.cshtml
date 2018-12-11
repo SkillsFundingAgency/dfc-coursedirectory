@@ -17,6 +17,7 @@
     <link href="~/dist/site.min.css" rel="stylesheet" />
 
     <meta property="og:image" content="~/assets/images/govuk-opengraph-image.png">
+    <partial name="_ScriptsPartial" />
 </head>
 
 <body class="govuk-template__body app-body-class">
@@ -38,7 +39,18 @@
     </div>
 
     <partial name="_GovukFooterPartial" />
-    <partial name="_ScriptsPartial" />
+    <script>
+        document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');
+
+        // Warn about using the kit in production
+        if (window.console && window.console.info) {
+            window.console.info('GOV.UK Prototype Kit - do not use for production');
+        }
+
+        $(document).ready(function () {
+            window.GOVUKFrontend.initAll();
+        });
+    </script>
     @RenderSection("Scripts", required: false)
 </body>
 </html>

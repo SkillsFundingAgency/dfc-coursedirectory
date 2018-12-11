@@ -1,0 +1,41 @@
+﻿@using Dfc.CourseDirectory.Web.ViewComponents.VenueName
+@using Dfc.CourseDirectory.Web.ViewComponents.PostcodeLookup
+
+<div class="govuk-grid-row">
+
+    <div class="govuk-grid-column-full">
+        <h1 class="govuk-heading-l" style="padding-top: 20px;">
+            Add a venue
+        </h1>
+
+        <form asp-controller="Venues" asp-action="VenueAddressSelectionConfirmation" method="post">
+            @await Component.InvokeAsync(nameof(VenueName), new VenueNameModel
+            {
+                LabelText = "Venue name",
+                HintText = "Please enter the venue name.",
+                AriaDescribedBy = "Please enter the venue name."
+            })
+
+            <div>
+                @await Component.InvokeAsync(nameof(PostcodeLookup), new PostcodeLookupModel
+                {
+                    PostcodeLabelText = "Postcode",
+                    PostcodeAriaDescribedBy = "Please enter the postcode.",
+                    ButtonText = "Find address"
+                })
+            </div>
+            <div class="govuk-form-group">
+                <a id="manualLink" class="govuk-link" asp-controller="Venues" asp-action="AddVenueManualAddress">Enter address manually</a>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<script>
+    (function ($) {
+        $(function () {
+          
+        });
+    })(jQuery);
+</script>

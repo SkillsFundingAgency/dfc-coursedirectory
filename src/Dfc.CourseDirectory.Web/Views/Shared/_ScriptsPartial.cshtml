@@ -25,15 +25,3 @@
     <script src="~/dist/site.min.js" asp-append-version="true"></script>
 </environment>
 
-<script>
-    document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');
-
-    // Warn about using the kit in production
-    if (window.console && window.console.info) {
-        window.console.info('GOV.UK Prototype Kit - do not use for production');
-    }
-
-    $(document).ready(function () {
-        window.GOVUKFrontend.initAll();
-    });
-</script>

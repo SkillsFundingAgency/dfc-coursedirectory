@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Dfc.CourseDirectory.Models\Dfc.CourseDirectory.Models.csproj" />
     <ProjectReference Include="..\..\src\Dfc.CourseDirectory.Web\Dfc.CourseDirectory.Web.csproj" />
   </ItemGroup>
 

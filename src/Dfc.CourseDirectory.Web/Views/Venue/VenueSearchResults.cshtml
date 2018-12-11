@@ -1,0 +1,12 @@
+﻿
+@using Dfc.CourseDirectory.Web.ViewComponents.VenueSearch
+@using Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult
+@model Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult.VenueSearchResultModel;
+
+
+    @await Component.InvokeAsync(nameof(VenueSearchResult),Model)
+
+    @*<h1 class="govuk-heading-xl">Your venues</h1>
+
+        @await Component.InvokeAsync(nameof(VenueList))*@
+

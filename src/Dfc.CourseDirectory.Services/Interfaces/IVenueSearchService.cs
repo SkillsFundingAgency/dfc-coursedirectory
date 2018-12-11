@@ -9,5 +9,7 @@ namespace Dfc.CourseDirectory.Services.Interfaces
     public interface IVenueSearchService
     {
         Task<IResult<IVenueSearchResult>> SearchAsync(IVenueSearchCriteria criteria);
+
+
     }
 }
