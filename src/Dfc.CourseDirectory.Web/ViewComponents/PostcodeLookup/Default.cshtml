@@ -30,6 +30,13 @@
         <script>
             (function ($) {
                 $(function () {
+
+                    var $continueButton = $("#venueAddressConfirmationSelection");
+                    var $manualLink = $("#manualLink");
+                    if ($continueButton !== undefined) {
+                        $manualLink.text("I cannot find my address in the list");
+                    }
+
                     var formGroupErrorClass = "govuk-form-group--error";
                     var elementErrorClass = "govuk-input--error";
                     var $elementPostcodeId = $("#@nameof(Model.PostcodeId)");
