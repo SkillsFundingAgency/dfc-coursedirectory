@@ -37,7 +37,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.ManualAddress
 
         [Required(AllowEmptyStrings = false, ErrorMessage = "Enter a postcode")]
         [MaxLength(8, ErrorMessage = "Postcode must be 8 characters or less")]
-        [RegularExpression("([a-zA-Z][0-9]|[a-zA-Z][0-9][0-9]|[a-zA-Z][a-zA-Z][0-9]|[a-zA-Z][a-zA-Z][0-9][0-9]|[a-zA-Z][0-9][a-zA-Z]|[a-zA-Z][a-zA-Z][0-9][a-zA-Z]) ([0-9][abdefghjklmnpqrstuwxyzABDEFGHJLMNPQRSTUWXYZ][abdefghjklmnpqrstuwxyzABDEFGHJLMNPQRSTUWXYZ])", ErrorMessage = "Postcode must be a valid formet and only include letters a to z, numbers and spaces")]
+        [RegularExpression("([a-zA-Z][0-9]|[a-zA-Z][0-9][0-9]|[a-zA-Z][a-zA-Z][0-9]|[a-zA-Z][a-zA-Z][0-9][0-9]|[a-zA-Z][0-9][a-zA-Z]|[a-zA-Z][a-zA-Z][0-9][a-zA-Z]) ([0-9][abdefghjklmnpqrstuwxyzABDEFGHJLMNPQRSTUWXYZ][abdefghjklmnpqrstuwxyzABDEFGHJLMNPQRSTUWXYZ])", ErrorMessage = "Postcode must be a valid format and only include letters a to z, numbers and spaces")]
         public string Postcode { get; set; }
         public string PostcodeLabelText { get; set; }
         public string PostcodeHintText { get; set; }
