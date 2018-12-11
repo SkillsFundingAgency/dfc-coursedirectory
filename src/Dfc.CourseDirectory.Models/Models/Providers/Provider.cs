@@ -7,6 +7,7 @@ namespace Dfc.CourseDirectory.Models.Models.Providers
 {
     public class Provider : IProvider
     {
+        public Guid id { get; set; }
         public string UnitedKingdomProviderReferenceNumber { get; set; }
         public string ProviderName { get; set; }
         public string ProviderStatus { get; set; }
@@ -17,6 +18,7 @@ namespace Dfc.CourseDirectory.Models.Models.Providers
         public object ProviderAssociations { get; set; }
         public IProvideralias[] ProviderAliases { get; set; }
         public IVerificationdetail[] VerificationDetails { get; set; }
+        public Registered Registered { get; set; }
 
         public Provider(Providercontact[] providercontact, Provideralias[] provideraliases, Verificationdetail[] verificationdetails)
         {
@@ -25,5 +27,12 @@ namespace Dfc.CourseDirectory.Models.Models.Providers
             VerificationDetails = verificationdetails;
 
         }
+    }
+
+    public enum Registered
+    {
+        Registered = 0,
+        Onboarded = 1,
+        Unregistered = 2
     }
 }

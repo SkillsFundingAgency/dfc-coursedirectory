@@ -15,6 +15,10 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.ProviderSearchResult
         public string SearchTerm { get; }
         public IEnumerable<Provider> Items { get; set; }
 
+        public string AddressTypeL{ get; set; }
+        public string TelephoneTypeL { get; set; }
+        public string WebTypeL { get; set; }
+        public string EmailTypeL { get; set; }
         public bool ServiceWasCalled { get; set; } 
 
         public ProviderSearchResultModel()
