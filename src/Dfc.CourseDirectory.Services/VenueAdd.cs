@@ -33,7 +33,7 @@ namespace Dfc.CourseDirectory.Services
             //Throw.IfNullOrWhiteSpace(address_2, nameof(address_2));
             Throw.IfNullOrWhiteSpace(town, nameof(town));
             Throw.IfNullOrWhiteSpace(venue_name, nameof(venue_name));
-            Throw.IfNullOrWhiteSpace(county, nameof(county));
+            //Throw.IfNullOrWhiteSpace(county, nameof(county));
             Throw.IfNullOrWhiteSpace(postcode, nameof(postcode));
             Throw.IfNullOrWhiteSpace(ukprn, nameof(ukprn));
 
