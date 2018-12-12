@@ -55,7 +55,13 @@ namespace Dfc.CourseDirectory.Services
 
                      "&Key=" + System.Web.HttpUtility.UrlEncode(_APIKey),
 
-                     "&SearchTerm=" + System.Web.HttpUtility.UrlEncode(criteria.Search)
+                     "&SearchTerm='" + System.Web.HttpUtility.UrlEncode(criteria.Search.ToUpper()) + "'",
+                     "&SearchFor=PostalCodes",
+                     "&LastId=",
+                     "&Country=GBR",
+                     "&LanguagePreference=EN", 
+                     "&MaxSuggestions=",
+                     "&MaxResults="
 
                  );
 
