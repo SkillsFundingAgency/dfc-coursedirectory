@@ -41,6 +41,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
         public async Task<IActionResult> Index([FromQuery] ProviderSearchRequestModel requestModel)
         {
+            //requestModel.SearchTerm = "10028213";
             ProviderSearchResultModel model;
 
             _logger.LogMethodEnter();
@@ -123,9 +124,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
             string ResultText = string.Empty;
             bool Success = true;
 
+            // For Development and Testing TODO. Clear on ready
+            // ajaxRequest.ProviderId = "00000000-0000-0000-0000-000000000000";
+
             if (string.IsNullOrEmpty(ajaxRequest.ProviderId))
             {
-                ResultText = "ProviderId was not passed to our system";
+                ResultText = "ProviderId was NOT passed to our system";
                 Success = false;
             }
             else if (ajaxRequest.ProviderId.Equals("00000000-0000-0000-0000-000000000000", StringComparison.InvariantCultureIgnoreCase))
@@ -137,7 +141,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 try
                 {
-                    ResultText = "Success - We have onboarded the Provider - " + ajaxRequest.ProviderId;
+                    //var result = await _providerSearchService.OnboardProvider(ajaxRequest.ProviderId);
+                    ResultText = "Provider added  - " + ajaxRequest.ProviderId;
                 }
                 catch (Exception ex)
                 {

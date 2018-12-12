@@ -122,8 +122,17 @@ else
                 success: function (data) {
                     $('#OnBoardingAjaxCallResult').html(data.resultText);
                     $('#OnBoardingAjaxCallResult').show();
-                    $('#RegisteredStatusText').html("<b>Onboarded</b>");
-                    $('#RegisteredStatusText').css('color', 'green');
+                   
+                    if (data.success == true) {
+                        $('#RegisteredStatusText').html("<b>Onboarded</b>");
+                        $('#RegisteredStatusText').css('color', 'green');
+                        //$('#OnBoardingAjaxCallResult').removeClass("sad");
+                        $('#OnBoardingAjaxCallResult').addClass("happy");
+                    }
+                    else {
+                        //$('#OnBoardingAjaxCallResult').removeClass("happy");
+                        $('#OnBoardingAjaxCallResult').addClass("sad");
+                    }
                 },
                 error: function (xhr, ajaxOptions, thrownError) {
                     $('#OnBoardingAjaxCallResult').html(xhr + ", " + ajaxOptions + ", " + thrownError);

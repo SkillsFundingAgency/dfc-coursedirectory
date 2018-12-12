@@ -23,9 +23,9 @@
                                 <h1 class="govuk-heading-xl">@ViewBag.Title</h1>
                                 <p class="govuk-heading-m">@ViewBag.Subtext</p>
                             </div>
-                            @*<form action="@ViewBag.Target" class="site-search ui-front" id="header-search" method="post">*@
+                            
                             <div class="header-search-content">
-                                <form action="/Provider" class="site-search ui-front" id="header-search" method="post">
+                                <form class="site-search ui-front" id="header-search">
                                     <div class="search-input-wrapper govuk-form-group">
                                         @*<input class="govuk-input govuk-!-width-three-quarters search-input js-search-focus" id="UKPrn" name="UKPrn" type="search" value="">*@
                                         
@@ -37,15 +37,15 @@
                                             </span>
                                         }
                                         <span asp-validation-for="@Model.SearchTerm" class="govuk-error-message"></span>
-                                        <input class="govuk-input govuk-!-width-three-quarters search-input js-search-focus" asp-for="@Model.SearchTerm" type="text" aria-describedby="@Model.AriaDescribedBy" id="UKPrn" name="UKPrn" >
+                                        <input class="govuk-input govuk-!-width-three-quarters search-input js-search-focus" asp-for="@Model.SearchTerm" type="text" aria-describedby="@Model.AriaDescribedBy">
 
-                                        <button type="submit" class="govuk-button" id="searchProvider">
+                                        <button type="button" class="govuk-button" id="searchProvider">
                                             Search
                                         </button>
                                     </div>
                                 </form>
                             </div>
-                            @*</form>*@
+                            
                         </div>
                     </div>
                 </div>
@@ -60,7 +60,7 @@
 <script>
     (function ($) {
         $(function () {
-            alert("Start");
+
             var formGroupErrorClass = "govuk-form-group--error";
             var elementErrorClass = "govuk-input--error";
             var $elementSearchTerm = $("#@nameof(Model.SearchTerm)");
@@ -72,18 +72,26 @@
             var validator = $form.validate();
             $elementSearchTerm.on("blur", function () {
                 var result = validator.element($elementSearchTerm);
-                alert("Alert" + $elementSearchTerm.val());
                 if (result) {
                     $elementSearchTerm.removeClass(elementErrorClass);
                     $formGroupSearchTerm.removeClass(formGroupErrorClass);
                     $validationMessageSearchTerm.hide();
                     $validationMessageSearchTerm.css("margin-bottom", "0");
+
+                    //GetProviderSearchResults();
+
                 } else {
                     $elementSearchTerm.addClass(elementErrorClass);
                     $formGroupSearchTerm.addClass(formGroupErrorClass);
                     $validationMessageSearchTerm.show();
                     $validationMessageSearchTerm.css("margin-bottom", "15px");
                 }
+
+                //alert($elementSearchTerm.valid());
+                //if ($elementSearchTerm.valid()) {
+                //    alert($elementSearchTerm.valid());
+                //    GetProviderSearchResults();
+                //}
             });
             $elementSearchTerm.elementValidation(function (element, result) {
                 if (!$formGroupSearchTerm.hasClass(formGroupErrorClass)) {
@@ -95,6 +103,85 @@
                     $validationMessageSearchTerm.css("margin-bottom", "0");
                 }
             });
+
+            
+            $("#searchProvider").on("click", function (e) {
+                e.preventDefault();
+                $elementSearchTerm.trigger("blur");
+            });
+
+            GetProviderSearchResults();
         });
+
     })(jQuery);
+
+    function GetProviderSearchResults() {
+
+        var debounce = function (cb, delay) {
+            var inDebounce;
+            return function () {
+                var context = this;
+                var args = arguments;
+                clearTimeout(inDebounce);
+                inDebounce = setTimeout(function () {
+                    cb.apply(context, args);
+                }, delay);
+            };
+        };
+
+        var isNullOrWhitespace = function (input) {
+            if (typeof input === 'undefined' || input == null) return true;
+            return input.replace(/\s/g, '').length < 1;
+        }
+
+        var replaceAll = function (search, find, replace) {
+            return search.split(find).join(replace);
+        };
+
+        var makeRequestWithPayload = function (payload, success) {
+            console.log(payload);
+            var qs = $.param(payload);
+            qs = replaceAll(qs, "%5B%5D", "");
+            $.get("/ProviderSearch?" + qs, success);
+        };
+
+        var removeSearchResults = function () {
+            var $venueSearchResultContainer = $("#ProviderSearchResultContainer");
+            $venueSearchResultContainer.html("");
+        };
+
+        var replaceSearchResult = function (searchResults) {
+            var $venueSearchResultContainer = $("#ProviderSearchResultContainer");
+            $venueSearchResultContainer.html("");
+            $venueSearchResultContainer.html(searchResults);
+        };
+
+        var $SearchTerm = $("#SearchTerm");
+        var $SearchButton = $("#searchProvider");
+
+        var doSearch = function () {
+            if (isNullOrWhitespace($SearchTerm.val())) {
+                removeSearchResults();
+
+            } else {
+                if ($SearchTerm.valid()) {
+                    makeRequestWithPayload({
+                        SearchTerm: $SearchTerm.val()
+                    }, onSucess);
+                }
+                else {
+                    removeSearchResults();
+                }
+            }
+        };
+
+        var onSucess = function (data) {
+            replaceSearchResult(data);
+
+            //TODO MUST!!! RUN THIS AFTER CHANGING THE DOM
+            window.GOVUKFrontend.initAll();
+        };
+
+        $SearchButton.on("click", debounce(doSearch, 400));
+    };
 </script>
