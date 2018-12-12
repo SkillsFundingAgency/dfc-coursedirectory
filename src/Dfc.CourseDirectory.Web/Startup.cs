@@ -1,5 +1,4 @@
-﻿using System;
-using Dfc.CourseDirectory.Services;
+﻿using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.Interfaces;
 using Dfc.CourseDirectory.Web.Helpers;
 using Microsoft.AspNetCore.Builder;
@@ -10,8 +9,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Net.Http;
-using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.Caching.Redis;
 
 namespace Dfc.CourseDirectory.Web
 {
