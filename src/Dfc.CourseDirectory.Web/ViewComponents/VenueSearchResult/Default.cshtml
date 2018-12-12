@@ -17,7 +17,7 @@
             @Model.NewItem.PostCode
         </p>
     }
-  
+
     <div class="venue-list">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
@@ -51,19 +51,23 @@
                                         @venue.VenueName<br>
                                         @if (!string.IsNullOrWhiteSpace(@venue.AddressLine1))
                                         {
-                                            @venue.AddressLine1 <br />
+                                            @venue.AddressLine1
+                                            <br/>
                                         }
                                         @if (!string.IsNullOrWhiteSpace(@venue.AddressLine2))
                                         {
-                                            @venue.AddressLine2 <br />
+                                            @venue.AddressLine2
+                                            <br/>
                                         }
                                         @if (!string.IsNullOrWhiteSpace(@venue.Town))
                                         {
-                                            @venue.Town <br />
+                                            @venue.Town
+                                            <br/>
                                         }
                                         @if (!string.IsNullOrWhiteSpace(@venue.County))
                                         {
-                                            @venue.County <br />
+                                            @venue.County
+                                            <br/>
                                         }
                                         @if (!string.IsNullOrWhiteSpace(@venue.PostCode))
                                         {

@@ -1,4 +1,5 @@
-﻿using Dfc.CourseDirectory.Services;
+﻿using System;
+using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.Interfaces;
 using Dfc.CourseDirectory.Web.Helpers;
 using Microsoft.AspNetCore.Builder;
@@ -9,6 +10,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Net.Http;
+using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Redis;
 
 namespace Dfc.CourseDirectory.Web
 {
@@ -71,9 +74,11 @@ namespace Dfc.CourseDirectory.Web
             services.Configure<VenueAddSettings>(Configuration.GetSection(nameof(VenueAddSettings)));
             services.AddScoped<IVenueAddService, VenueAddService>();
 
-            //services.AddScoped<IPostcodeLookupHelper, PostcodeLookupHelper>();
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddSessionStateTempDataProvider();
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddDistributedMemoryCache();
+            services.AddSession(options => {
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -93,8 +98,8 @@ namespace Dfc.CourseDirectory.Web
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            app.UseCookiePolicy();
-
+           // app.UseCookiePolicy();
+            app.UseSession();
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
