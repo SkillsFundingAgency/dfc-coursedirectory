@@ -44,6 +44,18 @@
         "description": "API host key (code) needed to access the function app (REST API)"
       }
     },
+    "providerSearchApiUrl": {
+      "type": "string",
+      "metadata": {
+        "description": "API URL for the venue search"
+      }
+    },
+    "providerSearchApiKey": {
+      "type": "securestring",
+      "metadata": {
+        "description": "API host key (code) needed to access the function app (REST API)"
+      }
+    },
     "appServicePlanSize": {
       "type": "string",
       "defaultValue": "1",
@@ -226,6 +238,18 @@
               },
               {
                 "name": "VenueAddSettings__ApiVersion",
+                "value": ""
+              },
+              {
+                "name": "ProviderSearchSettings__ApiUrl",
+                "value": "[parameters('providerSearchApiUrl')]"
+              },
+              {
+                "name": "ProviderSearchSettings__ApiKey",
+                "value": "[parameters('providerSearchApiKey')]"
+              },
+              {
+                "name": "ProviderSearchSettings__ApiVersion",
                 "value": ""
               }
             ]
