@@ -7,88 +7,74 @@
 
 @if (Model.Items.Any() && Model.Items.FirstOrDefault() != null)
 {
-<div class="govuk-width-container govuk-!-margin-top-4">
-    <span class="govuk-caption-xl"> Course Provider</span>
-    <h1 class="govuk-heading-xl">Provider Details</h1>
-    @foreach (var provider in Model.Items)
-    {
-        if (!provider.ProviderStatus.Equals("Active", StringComparison.InvariantCultureIgnoreCase))
+    <div class="govuk-width-container govuk-!-margin-top-4">
+        <span class="govuk-caption-xl"> Course Provider</span>
+        <h1 class="govuk-heading-xl">Provider Details</h1>
+        @foreach (var provider in Model.Items)
         {
-            <div class="success-container hide show" style="border: 3px solid green; margin: 10px; padding: 10px;">
-                <a class="govuk-breadcrumbs__link">
-                    <h3 class="govuk-heading-s">Provider Status is @provider.ProviderStatus => NOT ACTIVE = CAN NOT ADD IT</h3>
-                </a>
-            </div>
+            if (!provider.ProviderStatus.Equals("Active", StringComparison.InvariantCultureIgnoreCase))
+            {
+                <div class="success-container hide show" style="border: 3px solid green; margin: 10px; padding: 10px;">
+                    <a class="govuk-breadcrumbs__link">
+                        <h3 class="govuk-heading-s">Provider Status is @provider.ProviderStatus => NOT ACTIVE = CAN NOT ADD IT</h3>
+                    </a>
+                </div>
+            }
+
+            if (provider.Registered.Equals(Registered.Onboarded))
+            {
+                <div class="success-container hide show" style="border: 3px solid green; margin: 10px; padding: 10px;">
+                    <a class="govuk-breadcrumbs__link">
+                        <h3 class="govuk-heading-s">IT IS ALREADY ONBOARDED = CAN NOT ADD IT</h3>
+                    </a>
+                </div>
+            }
+
+            <input type="hidden" value="@provider.id" id="ProviderId" />
+            <div id="OnBoardingAjaxCallResult" class="success-container hide show govuk-heading-s" style="border: 3px solid green; margin: 10px; padding: 10px; display: none;"></div>
+
+            <table class="govuk-table">
+                <tbody class="govuk-table__body">
+                    <tr class="govuk-table__row">
+                        <th class="govuk-table__header" scope="row">Course Directory Status</th>
+                        <td class="govuk-table__cell"><span id="RegisteredStatusText">@provider.Registered</span></td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <th class="govuk-table__header" scope="row">UKPRN Status</th>
+                        <td class="govuk-table__cell">@provider.ProviderStatus</td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <th class="govuk-table__header" scope="row">UKPRN</th>
+                        <td class="govuk-table__cell">@provider.UnitedKingdomProviderReferenceNumber</td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <th class="govuk-table__header" scope="row">Name</th>
+                        <td class="govuk-table__cell">@provider.ProviderName</td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <th class="govuk-table__header" scope="row">Address</th>
+                        <td class="govuk-table__cell"><span>@Model.AddressTypeL</span></td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <th class="govuk-table__header" scope="row">Web</th>
+                        <td class="govuk-table__cell">@Model.WebTypeL</td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <th class="govuk-table__header" scope="row">Email</th>
+                        <td class="govuk-table__cell">@Model.EmailTypeL</td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <th class="govuk-table__header" scope="row">Telephone</th>
+                        <td class="govuk-table__cell">@Model.TelephoneTypeL</td>
+                    </tr>
+                </tbody>
+            </table>
+            if (provider.ProviderStatus.Equals("Active", StringComparison.InvariantCultureIgnoreCase) && !provider.Registered.Equals(Registered.Onboarded))
+            {
+                <a id="btnOnboardProvider" onclick="OnBoardProvider(); return false;" href="#" class="govuk-button"><span id="btnOnboardProviderText">Add Provider</span></a>
+            }
         }
-
-        if (provider.Registered.Equals(Registered.Onboarded))
-        {
-            <div class="success-container hide show" style="border: 3px solid green; margin: 10px; padding: 10px;">
-                <a class="govuk-breadcrumbs__link">
-                    <h3 class="govuk-heading-s">IT IS ALREADY ONBOARDED = CAN NOT ADD IT</h3>
-                </a>
-            </div>
-        }
-
-        <input type="hidden" value="@provider.id" id="ProviderId" />
-        <div id="OnBoardingAjaxCallResult" class="success-container hide show govuk-heading-s" style="border: 3px solid green; margin: 10px; padding: 10px; display: none;"></div>
-
-        <table class="govuk-table">
-            <tbody class="govuk-table__body">
-                <tr class="govuk-table__row">
-                    <th class="govuk-table__header" scope="row">Course Directory Status</th>
-                    <td class="govuk-table__cell"><span id="RegisteredStatusText">@provider.Registered</span></td>
-                </tr>
-                <tr class="govuk-table__row">
-                    <th class="govuk-table__header" scope="row">UKPRN Status</th>
-                    <td class="govuk-table__cell">@provider.ProviderStatus</td>
-                </tr>
-                @*<tr class="govuk-table__row">
-            <th class="govuk-table__header" scope="row">ID</th>
-            <td class="govuk-table__cell">@provider.id</td>
-        </tr>*@
-                <tr class="govuk-table__row">
-                    <th class="govuk-table__header" scope="row">UKPRN</th>
-                    <td class="govuk-table__cell">@provider.UnitedKingdomProviderReferenceNumber</td>
-                </tr>
-                <tr class="govuk-table__row">
-                    <th class="govuk-table__header" scope="row">Name</th>
-                    <td class="govuk-table__cell">@provider.ProviderName</td>
-                </tr>
-                <tr class="govuk-table__row">
-                    <th class="govuk-table__header" scope="row">Address</th>
-                    <td class="govuk-table__cell"><span>@Model.AddressTypeL</span></td>
-                </tr>
-                <tr class="govuk-table__row">
-                    <th class="govuk-table__header" scope="row">Web</th>
-                    <td class="govuk-table__cell">@Model.WebTypeL</td>
-                </tr>
-                <tr class="govuk-table__row">
-                    <th class="govuk-table__header" scope="row">Email</th>
-                    <td class="govuk-table__cell">@Model.EmailTypeL</td>
-                </tr>
-                <tr class="govuk-table__row">
-                    <th class="govuk-table__header" scope="row">Telephone</th>
-                    <td class="govuk-table__cell">@Model.TelephoneTypeL</td>
-                </tr>
-                @*<tr class="govuk-table__row">
-            <th class="govuk-table__header" scope="row">Date Created</th>
-            <td class="govuk-table__cell">01/01/2018</td>
-        </tr>
-        <tr class="govuk-table__row">
-            <th class="govuk-table__header" scope="row">Date Edited</th>
-            <td class="govuk-table__cell">01/06/2018</td>
-        </tr>*@
-            </tbody>
-        </table>
-        if (provider.ProviderStatus.Equals("Active", StringComparison.InvariantCultureIgnoreCase) && !provider.Registered.Equals(Registered.Onboarded))
-        {
-            @*<a href="/providers/AddResultsSuccess/" role="button" class="govuk-button">Add Provider</a>*@
-            <a id="btnOnboardProvider" onclick="OnBoardProvider(); return false;" href="#" class="govuk-button"><span id="btnOnboardProviderText">Add Provider</span></a>
-        }
-    }
-</div>
-
+    </div>
 }
 else
 {
@@ -107,45 +93,41 @@ else
     </div>
 }
 
-    <script type="text/javascript">
+<script type="text/javascript">
 
-        function OnBoardProvider() {
-       
-            $.ajax({
-                url: '/ProviderSearch/OnBoardProvider',
-                type: "POST",
-                dataType: "json",
-                data: JSON.stringify({
-                    ProviderId: $('#ProviderId').val()
-                }),
-                contentType: "application/json; charset=utf-8",
-                success: function (data) {
-                    $('#OnBoardingAjaxCallResult').html(data.resultText);
-                    $('#OnBoardingAjaxCallResult').show();
-                   
-                    if (data.success == true) {
-                        $('#RegisteredStatusText').html("<b>Onboarded</b>");
-                        $('#RegisteredStatusText').css('color', 'green');
-                        //$('#OnBoardingAjaxCallResult').removeClass("sad");
-                        $('#OnBoardingAjaxCallResult').addClass("happy");
-                    }
-                    else {
-                        //$('#OnBoardingAjaxCallResult').removeClass("happy");
-                        $('#OnBoardingAjaxCallResult').addClass("sad");
-                    }
-                },
-                error: function (xhr, ajaxOptions, thrownError) {
-                    $('#OnBoardingAjaxCallResult').html(xhr + ", " + ajaxOptions + ", " + thrownError);
+    function OnBoardProvider() {
+
+        $.ajax({
+            url: '/ProviderSearch/OnBoardProvider',
+            type: "POST",
+            dataType: "json",
+            data: JSON.stringify({
+                ProviderId: $('#ProviderId').val()
+            }),
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+                $('#OnBoardingAjaxCallResult').html(data.resultText);
+                $('#OnBoardingAjaxCallResult').show();
+
+                if (data.success == true) {
+                    $('#RegisteredStatusText').html("<b>Onboarded</b>");
+                    $('#RegisteredStatusText').css('color', 'green');
+                    $('#OnBoardingAjaxCallResult').addClass("happy");
                 }
-            });
+                else {
+                    $('#OnBoardingAjaxCallResult').addClass("sad");
+                }
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                $('#OnBoardingAjaxCallResult').html(xhr + ", " + ajaxOptions + ", " + thrownError);
+            }
+        });
 
-            //$('#btnOnboardProvider').prop("onclick", null);
-            //$('#btnOnboardProviderText').html("You have initiated OnBoarding of the Provider. Please wait for the result");
-            $('#btnOnboardProvider').hide();
+        $('#btnOnboardProvider').hide();
 
-            return false;
-        }
-    </script>
+        return false;
+    }
+</script>
 
 
 

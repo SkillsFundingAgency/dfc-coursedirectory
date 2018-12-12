@@ -1,10 +1,8 @@
 ﻿using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Models.Models.Providers;
 using Dfc.CourseDirectory.Web.ViewComponents.Interfaces;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Dfc.CourseDirectory.Web.ViewComponents.ProviderSearchResult
 {
