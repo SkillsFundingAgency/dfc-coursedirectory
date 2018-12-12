@@ -1,3 +1,18 @@
-﻿<h1 class="govuk-heading-xl">Customised page template</h1>
+﻿<h1 class="govuk-heading-xl">Provider Search</h1>
 
-@await Component.InvokeAsync(nameof(LarsSearch))
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <div class="govuk-form-group">
+           
+            <label class="govuk-label" for="name">
+                UK PRN - Holding Page for Provider integration
+            </label>
+
+            <input class="govuk-input" id="UKPrn" name="UKPrn" type="text">
+
+            <button type="submit" class="govuk-button" id="search">
+                Search
+            </button>
+        </div>
+    </div>
+</div>

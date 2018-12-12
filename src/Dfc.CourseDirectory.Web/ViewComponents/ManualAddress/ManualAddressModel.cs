@@ -4,16 +4,16 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.ManualAddress
 {
     public class ManualAddressModel
     {
-        [Required(AllowEmptyStrings = false, ErrorMessage = "Enter a building and street")]
-        [MaxLength(100, ErrorMessage = "Building and street must be 100 characters or less")]
-        [RegularExpression("[a-zA-Z0-9']+(?: [a-zA-Z\\.\\-]+)*$", ErrorMessage = "Building and street must only include letters a to z, numbers, hyphens and spaces")]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Enter a address line 1")]
+        [MaxLength(100, ErrorMessage = "Address line 1 must be 100 characters or less")]
+        [RegularExpression("[a-zA-Z0-9']+(?: [a-zA-Z\\.\\-]+)*$", ErrorMessage = "Address line 1 must only include letters a to z, numbers, hyphens and spaces")]
         public string AddressLine1 { get; set; }
         public string AddressLine1LabelText { get; set; }
         public string AddressLine1HintText { get; set; }
         public string AddressLine1AriaDescribedBy { get; set; }
 
-        [MaxLength(100, ErrorMessage = "Building and street (line 2) must be 100 characters or less")]
-        [RegularExpression("[a-zA-Z0-9']+(?: [a-zA-Z\\.\\-]+)*$", ErrorMessage = "Building and street (line 2) must only include letters a to z, numbers, hyphens and spaces")]
+        [MaxLength(100, ErrorMessage = "Address line 2 must be 100 characters or less")]
+        [RegularExpression("[a-zA-Z0-9']+(?: [a-zA-Z\\.\\-]+)*$", ErrorMessage = "Address  line 2 must only include letters a to z, numbers, hyphens and spaces")]
         public string AddressLine2 { get; set; }
         public string AddressLine2LabelText { get; set; }
         public string AddressLine2HintText { get; set; }
@@ -36,7 +36,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.ManualAddress
 
         [Required(AllowEmptyStrings = false, ErrorMessage = "Enter a postcode")]
         [MaxLength(8, ErrorMessage = "Postcode must be 8 characters or less")]
-        [RegularExpression("([abcdefghijklmnoprstuwyzABCDEFGHIJKLMNOPRSTUWYZ][0-9]|[abcdefghijklmnoprstuwyzABCDEFGHIJKLMNOPRSTUWYZ][0-9][0-9]|[abcdefghijklmnoprstuwyzABCDEFGHIJKLMNOPRSTUWYZ][abcdefghklmnopqrstuvwxyABCDEFGHKLMNOPQRSTUVWXY][0-9]|[abcdefghijklmnoprstuwyzABCDEFGHIJKLMNOPRSTUWYZ][abcdefghklmnopqrstuvwxyABCDEFGHKLMNOPQRSTUVWXY][0-9][0-9]|[abcdefghijklmnoprstuwyzABCDEFGHIJKLMNOPRSTUWYZ][0-9][abcdefghklmnopqrstuvwxyABCDEFGHKLMNOPQRSTUVWXY]|[abcdefghijklmnoprstuwyzABCDEFGHIJKLMNOPRSTUWYZ][abcdefghklmnopqrstuvwxyABCDEFGHKLMNOPQRSTUVWXY][0-9][abcdefghjkstuwABCDEFGHJKSTUW]) ([0-9][abdefghjlnpqrstuwxyzABDEFGHJLNPQRSTUWXYZ][abdefghjlnpqrstuwxyzABDEFGHJLNPQRSTUWXYZ])", ErrorMessage = "Postcode must be a valid format and only include letters a to z, numbers and spaces")]
+        [RegularExpression("([abcdefghijklmnoprstuwyzABCDEFGHIJKLMNOPRSTUWYZ][0-9]|[abcdefghijklmnoprstuwyzABCDEFGHIJKLMNOPRSTUWYZ][0-9][0-9]|[abcdefghijklmnoprstuwyzABCDEFGHIJKLMNOPRSTUWYZ][abcdefghklmnopqrstuvwxyABCDEFGHKLMNOPQRSTUVWXY][0-9]|[abcdefghijklmnoprstuwyzABCDEFGHIJKLMNOPRSTUWYZ][abcdefghklmnopqrstuvwxyABCDEFGHKLMNOPQRSTUVWXY][0-9][0-9]|[abcdefghijklmnoprstuwyzABCDEFGHIJKLMNOPRSTUWYZ][0-9][abcdefghklmnopqrstuvwxyABCDEFGHKLMNOPQRSTUVWXY]|[abcdefghijklmnoprstuwyzABCDEFGHIJKLMNOPRSTUWYZ][abcdefghklmnopqrstuvwxyABCDEFGHKLMNOPQRSTUVWXY][0-9][abehmnprvwxyABEHMNPRVWXY]) ([0-9][abdefghjlnpqrstuwxyzABDEFGHJLNPQRSTUWXYZ][abdefghjlnpqrstuwxyzABDEFGHJLNPQRSTUWXYZ])", ErrorMessage = "Postcode must be a valid format and only include letters a to z, numbers and spaces")]
         public string Postcode { get; set; }
         public string PostcodeLabelText { get; set; }
         public string PostcodeHintText { get; set; }

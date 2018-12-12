@@ -66,6 +66,10 @@ namespace Dfc.CourseDirectory.Web
             services.AddScoped<IVenueSearchService, VenueSearchService>();
             services.AddScoped<IVenueSearchHelper, VenueSearchHelper>();
 
+            services.Configure<ProviderSearchSettings>(Configuration.GetSection(nameof(ProviderSearchSettings)));
+            services.AddScoped<IProviderSearchService, ProviderSearchService>();
+            services.AddScoped<IProviderSearchHelper, ProviderSearchHelper>();
+
 
             services.Configure<VenueAddSettings>(Configuration.GetSection(nameof(VenueAddSettings)));
             services.AddScoped<IVenueAddService, VenueAddService>();
@@ -101,6 +105,10 @@ namespace Dfc.CourseDirectory.Web
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
+
+                routes.MapRoute(
+                    name: "onboardprovider",
+                    template: "{controller=ProviderSearch}/{action=OnBoardProvider}/{id?}");  //"restartsitefinity/{controller}/{action}", new { controller = "AdminPanel", action = "RestartSitefinity", id = string.Empty });
             });
         }
     }

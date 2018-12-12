@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="ViewComponents\ProviderSearchResult\ProviderSearchResultItemModel.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Remove="wwwroot\scss\partials\view-components.pagination" />
   </ItemGroup>
 
@@ -31,6 +35,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="ViewComponents\ProviderSearchResult\Default.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="ViewComponents\ProviderSearch\Default.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="ViewComponents\AddressSelectionConfirmation\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
@@ -41,6 +51,9 @@
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\Venue\VenueSearchResults.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Provider\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
   </ItemGroup>
