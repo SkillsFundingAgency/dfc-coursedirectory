@@ -47,13 +47,13 @@
     "providerSearchApiUrl": {
       "type": "string",
       "metadata": {
-        "description": "API URL for the venue search"
+        "description": "API URL for the provider search"
       }
     },
     "providerSearchApiKey": {
       "type": "securestring",
       "metadata": {
-        "description": "API host key (code) needed to access the function app (REST API)"
+        "description": "API host key (code) needed to access the provider seach function app (REST API)"
       }
     },
     "appServicePlanSize": {
