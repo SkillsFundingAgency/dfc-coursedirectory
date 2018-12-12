@@ -1,12 +1,13 @@
 ﻿@using Dfc.CourseDirectory.Web.ViewComponents.VenueName
 @using Dfc.CourseDirectory.Web.ViewComponents.ManualAddress
 
-<h2>Add Venue (Manual address)</h2>
+<h1 class="govuk-heading-l" style="padding-top: 20px;">
+    Add venue
+</h1>
 <form asp-controller="Venues" asp-action="VenueAddressManualConfirmation" method="post">
     @await Component.InvokeAsync(nameof(VenueName), new VenueNameModel
     {
         LabelText = "Venue name",
-        HintText = "Please enter the venue name.",
         AriaDescribedBy = "Please enter the venue name."
     })
 
