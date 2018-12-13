@@ -5406,6 +5406,10 @@
   }
 }
 
+p {
+  font-family: “nta”, Arial, sans-serif;
+}
+
 .input-validation-error {
   border: 4px solid #b10e1e;
 }
