@@ -18,7 +18,7 @@ namespace Dfc.CourseDirectory.Models.Models.Providers
         public object ProviderAssociations { get; set; }
         public IProvideralias[] ProviderAliases { get; set; }
         public IVerificationdetail[] VerificationDetails { get; set; }
-        public Registered Registered { get; set; }
+        public Status Status { get; set; }
 
         public Provider(Providercontact[] providercontact, Provideralias[] provideraliases, Verificationdetail[] verificationdetails)
         {
@@ -29,7 +29,7 @@ namespace Dfc.CourseDirectory.Models.Models.Providers
         }
     }
 
-    public enum Registered
+    public enum Status
     {
         Registered = 0,
         Onboarded = 1,
