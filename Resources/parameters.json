@@ -15,16 +15,19 @@
       "value": "not-a-real-key"
     },
     "venueSearchApiUrl": {
-      "value": "https://my.api.net/api/search?code="
+      "value": "https://my.api.net/api/venue/search?code="
     },
     "venueAddApiUrl": {
-      "value": "https://my.api.net/api/add?code="
+      "value": "https://my.api.net/api/venue/add?code="
     },
     "venueApiKey": {
       "value": "not-a-real-key"
     },
     "providerSearchApiUrl": {
-      "value": "https://my.api.net/api/search?code="
+      "value": "https://my.api.net/api/provider/search?code="
+    },
+    "providerAddApiUrl": {
+      "value": "https://my.api.net/api/provider/add?code="
     },
     "providerSearchApiKey": {
       "value": "not-a-real-key"
