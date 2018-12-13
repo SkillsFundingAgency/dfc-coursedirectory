@@ -10,7 +10,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.VenueName
     {
         [Required(AllowEmptyStrings = false, ErrorMessage = "Enter a venue name")]
         [MaxLength(255, ErrorMessage = "Venue name must be 255 characters or less")]
-        [RegularExpression(@"^(\w+\s?)*\s*$", ErrorMessage = "Venue name must cannot have leading, trailing or multiple spaces")]
+        [RegularExpression(@"^(\w+\s?)*\s*$", ErrorMessage = "Venue name must not have any leading, trailing or contain multiple consecutive spaces")]
         public string VenueName { get; set; }
         public string LabelText { get; set; }
         public string HintText { get; set; }
