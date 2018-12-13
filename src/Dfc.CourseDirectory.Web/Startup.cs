@@ -70,6 +70,8 @@ namespace Dfc.CourseDirectory.Web
             services.AddScoped<IProviderSearchService, ProviderSearchService>();
             services.AddScoped<IProviderSearchHelper, ProviderSearchHelper>();
 
+            services.Configure<ProviderAddSettings>(Configuration.GetSection(nameof(ProviderAddSettings)));
+            services.AddScoped<IProviderAddService, ProviderAddService>();
 
             services.Configure<VenueAddSettings>(Configuration.GetSection(nameof(VenueAddSettings)));
             services.AddScoped<IVenueAddService, VenueAddService>();

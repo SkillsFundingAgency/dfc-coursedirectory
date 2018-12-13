@@ -20,31 +20,35 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly ILogger<ProviderSearchController> _logger;
         private readonly IProviderSearchSettings _providerSearchSettings;
         private readonly IProviderSearchService _providerSearchService;
+        private readonly IProviderAddService _providerAddService;
         private readonly IProviderSearchHelper _providerSearchHelper;
 
         public ProviderSearchController(
             ILogger<ProviderSearchController> logger,
             IOptions<ProviderSearchSettings> providerSearchSettings,
             IProviderSearchService providerSearchService,
+            IProviderAddService providerAddService,
             IProviderSearchHelper providerSearchHelper
             )
         {
             Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(providerSearchSettings, nameof(providerSearchSettings));
             Throw.IfNull(providerSearchService, nameof(providerSearchService));
+            Throw.IfNull(providerAddService, nameof(providerAddService));
             Throw.IfNull(providerSearchHelper, nameof(providerSearchHelper));
 
             _logger = logger;
             _providerSearchSettings = providerSearchSettings.Value;
             _providerSearchService = providerSearchService;
+            _providerAddService = providerAddService;
             _providerSearchHelper = providerSearchHelper;
         }
         public async Task<IActionResult> Index([FromQuery] ProviderSearchRequestModel requestModel)
         {
-            ProviderSearchResultModel model;
-
             _logger.LogMethodEnter();
-            _logger.LogInformationObject("Model", requestModel);
+            _logger.LogInformationObject("RequestModel", requestModel);
+
+            ProviderSearchResultModel model;
 
             if (requestModel == null)
             {
@@ -112,18 +116,20 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     }
                 }
             }
-
+            _logger.LogInformationObject("Model", model);
             _logger.LogMethodExit();
             return ViewComponent(nameof(ViewComponents.ProviderSearchResult.ProviderSearchResult), model);
         }
 
         [HttpPost]
-        public JsonResult OnBoardProvider([FromBody] ProviderAjaxRequestModel ajaxRequest) 
+        public async Task<JsonResult> OnBoardProvider([FromBody] ProviderAjaxRequestModel ajaxRequest) 
         {
+            _logger.LogMethodEnter();
+            _logger.LogInformationObject("RequestModel", ajaxRequest);
             string ResultText = string.Empty;
             bool Success = true;
 
-            // For Development and Testing TODO. Clear on ready
+            // For DEVELOPMENT & TESTING => TODO To Be Removed
             // ajaxRequest.ProviderId = "00000000-0000-0000-0000-000000000000";
 
             if (string.IsNullOrEmpty(ajaxRequest.ProviderId))
@@ -140,8 +146,18 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 try
                 {
-                    //var result = await _providerSearchService.OnboardProvider(ajaxRequest.ProviderId);
-                    ResultText = "Provider added  - " + ajaxRequest.ProviderId;
+                    // TODO - UpdatedBy will be updated with the name of logged person
+                    ProviderAdd providerAdd = new ProviderAdd(new Guid(ajaxRequest.ProviderId), (int)Status.Onboarded, "ProviderPortal - Add Provider");
+                    var result = await _providerAddService.AddProviderAsync(providerAdd);
+                    if (result.IsSuccess && result.HasValue)
+                    {
+                        ResultText = "Provider added.";
+                    }
+                    else
+                    {
+                        ResultText = "Provider Add Service did NOT return a result.";
+                        Success = false;
+                    }                   
                 }
                 catch (Exception ex)
                 {
@@ -150,6 +166,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 }
             }
 
+            _logger.LogInformation("Success", Success);
+            _logger.LogInformation("ResultText", ResultText);
+            _logger.LogMethodExit();
             return Json(new { success = Success,  resultText = ResultText });
         }
     }
