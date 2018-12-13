@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -17,12 +18,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly IVenueSearchSettings _venueSearchSettings;
         private readonly IVenueSearchService _venueSearchService;
         private readonly IVenueSearchHelper _venueSearchHelper;
+        private readonly IHttpContextAccessor _contextAccessor;
+        private ISession _session => _contextAccessor.HttpContext.Session;
 
         public VenueSearchController(
             ILogger<VenueSearchController> logger,
             IOptions<VenueSearchSettings> venueSearchSettings,
             IVenueSearchService venueSearchService,
-            IVenueSearchHelper venueSearchHelper)
+            IVenueSearchHelper venueSearchHelper,
+            IHttpContextAccessor contextAccessor)
         {
             Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(venueSearchSettings, nameof(venueSearchSettings));
@@ -32,9 +36,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _venueSearchSettings = venueSearchSettings.Value;
             _venueSearchService = venueSearchService;
             _venueSearchHelper = venueSearchHelper;
+            _contextAccessor = contextAccessor;
         }
         public async Task<IActionResult> Index([FromQuery] VenueSearchRequestModel requestModel)
         {
+            _session.SetString("UKPRN", requestModel.SearchTerm);
+           
+
             VenueSearchResultModel model;
 
             _logger.LogMethodEnter();

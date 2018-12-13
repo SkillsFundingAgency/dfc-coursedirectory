@@ -41,7 +41,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
         public async Task<IActionResult> Index([FromQuery] ProviderSearchRequestModel requestModel)
         {
-            //requestModel.SearchTerm = "10028213";
             ProviderSearchResultModel model;
 
             _logger.LogMethodEnter();
@@ -82,7 +81,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                                             + " " + providerContactTypeL.FirstOrDefault()?.ContactAddress.StreetDescription + ", ";
                         }
                         string AddressLine2 = string.Empty;
-                        if (providerContactTypeL.FirstOrDefault()?.ContactAddress.Locality != null) //!string.IsNullOrEmpty(providerContactTypeL.FirstOrDefault()?.ContactAddress.Locality?.ToString()))
+                        if (providerContactTypeL.FirstOrDefault()?.ContactAddress.Locality != null) 
                         {
                             AddressLine2 = providerContactTypeL.FirstOrDefault()?.ContactAddress.Locality.ToString() + ", ";
                         }
@@ -106,10 +105,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         model.EmailTypeL = providerContactTypeL.FirstOrDefault()?.ContactEmail;
 
                         // For DEVELOPMENT & TESTING => TODO To Be Removed
-                        if (provider.UnitedKingdomProviderReferenceNumber.Equals("10057206", StringComparison.InvariantCultureIgnoreCase))
-                            provider.ProviderStatus = "NotActive";
-                        if (provider.UnitedKingdomProviderReferenceNumber.Equals("10057217", StringComparison.InvariantCultureIgnoreCase))
-                            provider.Registered = Registered.Onboarded;
+                        //if (provider.UnitedKingdomProviderReferenceNumber.Equals("10057206", StringComparison.InvariantCultureIgnoreCase))
+                        //    provider.ProviderStatus = "NotActive";
+                        //if (provider.UnitedKingdomProviderReferenceNumber.Equals("10057217", StringComparison.InvariantCultureIgnoreCase))
+                        //    provider.Registered = Registered.Onboarded;
                     }
                 }
             }
