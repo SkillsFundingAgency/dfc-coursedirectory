@@ -29,7 +29,7 @@
     "providerAddApiUrl": {
       "value": "https://my.api.net/api/provider/add?code="
     },
-    "providerSearchApiKey": {
+    "providerApiKey": {
       "value": "not-a-real-key"
     }
   }
