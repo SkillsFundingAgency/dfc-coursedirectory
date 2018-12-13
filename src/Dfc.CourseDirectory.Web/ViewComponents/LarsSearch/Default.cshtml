@@ -8,12 +8,15 @@
         <div class="govuk-grid-column-full">
             <div class="govuk-form-group">
                 <label class="govuk-label" for="name">
-                    Learning Aims Reference Service Search
+                    Enter a search term or LARS/QAN number to begin
                 </label>
-                <span class="govuk-hint">
+                @*<span class="govuk-hint">
                     Just start typing and we will find all the matching LARS courses.
-                </span>
-                <input class="govuk-input" id="LarsSearchTerm" name="LarsSearchTerm" type="text">
+                </span>*@
+                <input class="govuk-input govuk-!-width-three-quarters search-input" id="LarsSearchTerm" name="LarsSearchTerm" type="text">
+                <button type="button" class="govuk-button" id="searchQualification">
+                    Search
+                </button>
             </div>
         </div>
     </div>
@@ -41,7 +44,7 @@
 
             var isNullOrWhitespace = function(input) {
                 if (typeof input === 'undefined' || input == null) return true;
-                return input.replace(/\s/g, '').length < 1;
+                return input.replace(/\s/g, '').length < 3;
             }
 
             var replaceAll = function(search, find, replace) {
