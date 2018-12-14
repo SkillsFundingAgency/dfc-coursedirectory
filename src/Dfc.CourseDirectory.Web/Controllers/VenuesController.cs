@@ -26,9 +26,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
     {
         private readonly ILogger<VenuesController> _logger;
         private readonly IPostCodeSearchService _postCodeSearchService;
-        private readonly IVenueAddService _venueAddService;
-        private readonly IVenueSearchSettings _venueSearchSettings;
-        private readonly IVenueSearchService _venueSearchService;
+        private readonly IVenueServiceSettings _venueServiceSettings;
         private readonly IVenueSearchHelper _venueSearchHelper;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IVenueService _venueService;
@@ -37,26 +35,20 @@ namespace Dfc.CourseDirectory.Web.Controllers
         public VenuesController(
             ILogger<VenuesController> logger,
             IPostCodeSearchService postCodeSearchService,
-            IVenueAddService venueAddService,
-            IOptions<VenueSearchSettings> venueSearchSettings,
-            IVenueSearchService venueSearchService,
+            IOptions<VenueServiceSettings> venueSearchSettings,
             IVenueSearchHelper venueSearchHelper,
             IHttpContextAccessor contextAccessor,
             IVenueService venueService)
         {
             Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(postCodeSearchService, nameof(postCodeSearchService));
-            Throw.IfNull(venueAddService, nameof(venueAddService));
             Throw.IfNull(venueSearchSettings, nameof(venueSearchSettings));
-            Throw.IfNull(venueSearchService, nameof(venueSearchService));
             Throw.IfNull(contextAccessor, nameof(contextAccessor));
             Throw.IfNull(venueService, nameof(venueService));
 
             _logger = logger;
             _postCodeSearchService = postCodeSearchService;
-            _venueAddService = venueAddService;
-            _venueSearchSettings = venueSearchSettings.Value;
-            _venueSearchService = venueSearchService;
+            _venueServiceSettings = venueSearchSettings.Value;
             _venueSearchHelper = venueSearchHelper;
             _contextAccessor = contextAccessor;
             _venueService = venueService;
@@ -140,7 +132,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             var UKPRN = _session.GetString("UKPRN");
             VenueAdd venue = new VenueAdd(requestModel.AddressLine1, requestModel.AddressLine2, requestModel.TownOrCity, requestModel.VenueName, requestModel.County, requestModel.Postcode, UKPRN);
-            var addedVenue = await _venueAddService.AddAsync(venue);
+            var addedVenue = await _venueService.AddAsync(venue);
 
             VenueSearchResultModel resultModel;
 
@@ -149,7 +141,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             mod.NewAddressId = addedVenue.Value.Id;
 
             var criteria = _venueSearchHelper.GetVenueSearchCriteria(mod);
-            var result = await _venueSearchService.SearchAsync(criteria);
+            var result = await _venueService.SearchAsync(criteria);
 
             VenueSearchResultItemModel newItem = new VenueSearchResultItemModel(requestModel.VenueName, requestModel.AddressLine1, requestModel.AddressLine2, requestModel.TownOrCity, requestModel.County, requestModel.Postcode, mod.NewAddressId);
 

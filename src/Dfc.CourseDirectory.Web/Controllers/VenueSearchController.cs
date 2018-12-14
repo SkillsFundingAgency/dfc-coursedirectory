@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Services.Interfaces.VenueService;
+using Dfc.CourseDirectory.Services.VenueService;
 using Microsoft.AspNetCore.Http;
 
 namespace Dfc.CourseDirectory.Web.Controllers
@@ -15,26 +17,26 @@ namespace Dfc.CourseDirectory.Web.Controllers
     public class VenueSearchController : Controller
     {
         private readonly ILogger<VenueSearchController> _logger;
-        private readonly IVenueSearchSettings _venueSearchSettings;
-        private readonly IVenueSearchService _venueSearchService;
+        private readonly IVenueServiceSettings _venueServiceSettings;
+        private readonly IVenueService _venueService;
         private readonly IVenueSearchHelper _venueSearchHelper;
         private readonly IHttpContextAccessor _contextAccessor;
         private ISession _session => _contextAccessor.HttpContext.Session;
 
         public VenueSearchController(
             ILogger<VenueSearchController> logger,
-            IOptions<VenueSearchSettings> venueSearchSettings,
-            IVenueSearchService venueSearchService,
+            IOptions<VenueServiceSettings> venueServiceSettings,
+            IVenueService venueService,
             IVenueSearchHelper venueSearchHelper,
             IHttpContextAccessor contextAccessor)
         {
             Throw.IfNull(logger, nameof(logger));
-            Throw.IfNull(venueSearchSettings, nameof(venueSearchSettings));
-            Throw.IfNull(venueSearchService, nameof(venueSearchService));
+            Throw.IfNull(venueServiceSettings, nameof(venueServiceSettings));
+            Throw.IfNull(venueService, nameof(venueService));
 
             _logger = logger;
-            _venueSearchSettings = venueSearchSettings.Value;
-            _venueSearchService = venueSearchService;
+            _venueServiceSettings = venueServiceSettings.Value;
+            _venueService = venueService;
             _venueSearchHelper = venueSearchHelper;
             _contextAccessor = contextAccessor;
         }
@@ -57,7 +59,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 var criteria = _venueSearchHelper.GetVenueSearchCriteria(
                     requestModel);
 
-                var result = await _venueSearchService.SearchAsync(criteria);
+                var result = await _venueService.SearchAsync(criteria);
 
                 if(result.IsSuccess && result.HasValue)
                 {

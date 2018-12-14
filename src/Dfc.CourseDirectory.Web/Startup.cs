@@ -63,8 +63,6 @@ namespace Dfc.CourseDirectory.Web
             services.AddScoped<ILarsSearchHelper, LarsSearchHelper>();
             services.AddScoped<IPaginationHelper, PaginationHelper>();
 
-            services.Configure<VenueSearchSettings>(Configuration.GetSection(nameof(VenueSearchSettings)));
-            services.AddScoped<IVenueSearchService, VenueSearchService>();
             services.AddScoped<IVenueSearchHelper, VenueSearchHelper>();
 
             services.Configure<ProviderSearchSettings>(Configuration.GetSection(nameof(ProviderSearchSettings)));
@@ -74,10 +72,7 @@ namespace Dfc.CourseDirectory.Web
             services.Configure<ProviderAddSettings>(Configuration.GetSection(nameof(ProviderAddSettings)));
             services.AddScoped<IProviderAddService, ProviderAddService>();
 
-            services.Configure<VenueAddSettings>(Configuration.GetSection(nameof(VenueAddSettings)));
-            services.AddScoped<IVenueAddService, VenueAddService>();
-
-            services.Configure<GetVenueByIdSettings>(Configuration.GetSection(nameof(GetVenueByIdSettings)));
+            services.Configure<VenueServiceSettings>(Configuration.GetSection(nameof(VenueServiceSettings)));
             services.AddScoped<IVenueService, VenueService>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddSessionStateTempDataProvider();

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Dfc.CourseDirectory.Services.Interfaces.VenueService
 {
-    public interface IGetVenueByIdSettings
+    public interface IVenueServiceSettings
     {
         string ApiUrl { get; }
         string ApiKey { get; }

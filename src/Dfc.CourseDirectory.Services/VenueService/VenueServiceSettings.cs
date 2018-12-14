@@ -3,7 +3,7 @@ using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 
 namespace Dfc.CourseDirectory.Services.VenueService
 {
-    public class GetVenueByIdSettings : IGetVenueByIdSettings
+    public class VenueServiceSettings : IVenueServiceSettings
     {
         public string ApiUrl { get; set; }
         public string ApiKey { get; set; }

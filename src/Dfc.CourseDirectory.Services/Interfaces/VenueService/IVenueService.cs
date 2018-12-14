@@ -10,6 +10,10 @@ namespace Dfc.CourseDirectory.Services.Interfaces.VenueService
     {
         Task<IResult<IGetVenueByIdResult>> GetVenueByIdAsync(IGetVenueByIdCriteria criteria);
 
+        Task<IResult<IVenueSearchResult>> SearchAsync(IVenueSearchCriteria criteria);
+
+        Task<IResult<IVenueAddResultItem>> AddAsync(IVenueAdd venue);
+
 
     }
 }
