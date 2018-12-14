@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.Interfaces;
+using Dfc.CourseDirectory.Services.Interfaces.VenueService;
+using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.RequestModels;
 using Dfc.CourseDirectory.Web.ViewComponents.EditVenueAddress;
@@ -29,6 +31,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly IVenueSearchService _venueSearchService;
         private readonly IVenueSearchHelper _venueSearchHelper;
         private readonly IHttpContextAccessor _contextAccessor;
+        private readonly IVenueService _venueService;
         private ISession _session => _contextAccessor.HttpContext.Session;
 
         public VenuesController(
@@ -38,7 +41,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
             IOptions<VenueSearchSettings> venueSearchSettings,
             IVenueSearchService venueSearchService,
             IVenueSearchHelper venueSearchHelper,
-            IHttpContextAccessor contextAccessor)
+            IHttpContextAccessor contextAccessor,
+            IVenueService venueService)
         {
             Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(postCodeSearchService, nameof(postCodeSearchService));
@@ -46,6 +50,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             Throw.IfNull(venueSearchSettings, nameof(venueSearchSettings));
             Throw.IfNull(venueSearchService, nameof(venueSearchService));
             Throw.IfNull(contextAccessor, nameof(contextAccessor));
+            Throw.IfNull(venueService, nameof(venueService));
 
             _logger = logger;
             _postCodeSearchService = postCodeSearchService;
@@ -54,6 +59,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _venueSearchService = venueSearchService;
             _venueSearchHelper = venueSearchHelper;
             _contextAccessor = contextAccessor;
+            _venueService = venueService;
         }
 
         public IActionResult Index()
@@ -69,6 +75,35 @@ namespace Dfc.CourseDirectory.Web.Controllers
         public IActionResult AddVenueManualAddress()
         {
             return View();
+        }
+
+        public async Task<IActionResult> EditVenue(string Id)
+        {
+            var viewModel = new VenueAddressSelectionConfirmationViewModel();
+
+            GetVenueByIdCriteria criteria  = new GetVenueByIdCriteria(Id);
+
+            var getVenueByIdResult = await _venueService.GetVenueByIdAsync(criteria);
+            if (getVenueByIdResult.IsSuccess && getVenueByIdResult.HasValue)
+            {
+                viewModel.VenueName = getVenueByIdResult.Value.VenueName;
+                viewModel.Address = new AddressModel
+                {
+                    Id = getVenueByIdResult.Value.ID,
+                    AddressLine1 = getVenueByIdResult.Value.Address1,
+                    AddressLine2 = getVenueByIdResult.Value.Address2,
+                    TownOrCity = getVenueByIdResult.Value.Town,
+                    County = getVenueByIdResult.Value.County,
+                    Postcode = getVenueByIdResult.Value.PostCode
+                };
+            }
+            else
+            {
+                viewModel.Error = getVenueByIdResult.Error;
+            }
+
+
+            return View("VenueAddressSelectionConfirmation", viewModel);
         }
 
         public async Task<IActionResult> VenueAddressSelectionConfirmation(VenueAddressSelectionConfirmationRequestModel requestModel)
@@ -111,13 +146,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             VenueSearchRequestModel mod = new VenueSearchRequestModel();
             mod.SearchTerm = UKPRN;
-            // mod.SearchTerm = "10028015";
             mod.NewAddressId = addedVenue.Value.Id;
 
             var criteria = _venueSearchHelper.GetVenueSearchCriteria(mod);
             var result = await _venueSearchService.SearchAsync(criteria);
 
-            VenueSearchResultItemModel newItem = new VenueSearchResultItemModel(requestModel.VenueName, requestModel.AddressLine1, requestModel.AddressLine2, requestModel.TownOrCity, requestModel.County, requestModel.Postcode);
+            VenueSearchResultItemModel newItem = new VenueSearchResultItemModel(requestModel.VenueName, requestModel.AddressLine1, requestModel.AddressLine2, requestModel.TownOrCity, requestModel.County, requestModel.Postcode, mod.NewAddressId);
 
             if (result.IsSuccess && result.HasValue)
             {

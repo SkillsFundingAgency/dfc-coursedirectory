@@ -10,6 +10,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Net.Http;
+using Dfc.CourseDirectory.Services.Interfaces.VenueService;
+using Dfc.CourseDirectory.Services.VenueService;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Redis;
 
@@ -73,6 +75,9 @@ namespace Dfc.CourseDirectory.Web
 
             services.Configure<VenueAddSettings>(Configuration.GetSection(nameof(VenueAddSettings)));
             services.AddScoped<IVenueAddService, VenueAddService>();
+
+            services.Configure<GetVenueByIdSettings>(Configuration.GetSection(nameof(GetVenueByIdSettings)));
+            services.AddScoped<IVenueService, VenueService>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddSessionStateTempDataProvider();
 
