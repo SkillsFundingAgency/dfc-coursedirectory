@@ -8,8 +8,16 @@
 
   <ItemGroup>
     <Compile Remove="Interfaces\IProviderSearchResultItem.cs" />
+    <Compile Remove="Interfaces\IVenueAddService.cs" />
+    <Compile Remove="Interfaces\IVenueAddSettings.cs" />
+    <Compile Remove="Interfaces\IVenueSearchService.cs" />
+    <Compile Remove="Interfaces\IVenueSearchSettings.cs" />
     <Compile Remove="ProviderSearchResultContractResolver.cs" />
     <Compile Remove="ProviderSearchResultItem.cs" />
+    <Compile Remove="VenueAddService.cs" />
+    <Compile Remove="VenueAddSettings.cs" />
+    <Compile Remove="VenueSearchService.cs" />
+    <Compile Remove="VenueSearchSettings.cs" />
   </ItemGroup>
 
   <ItemGroup>

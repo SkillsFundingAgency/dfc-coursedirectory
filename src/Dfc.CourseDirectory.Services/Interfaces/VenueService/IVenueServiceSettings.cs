@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Dfc.CourseDirectory.Services.Interfaces
+namespace Dfc.CourseDirectory.Services.Interfaces.VenueService
 {
-    public interface IVenueAddSettings
+    public interface IVenueServiceSettings
     {
         string ApiUrl { get; }
         string ApiKey { get; }

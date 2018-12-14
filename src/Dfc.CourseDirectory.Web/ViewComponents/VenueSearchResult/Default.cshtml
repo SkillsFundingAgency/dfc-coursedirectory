@@ -74,8 +74,9 @@
                                             @venue.PostCode
                                         }
 
-                                        <br><a href="">Edit</a>
-
+                                        <br>
+                                        <a asp-controller="venues" asp-action="EditVenue" asp-route-id=@venue.Id class="govuk-link">Edit</a>
+                                       
 
                                         <br><a href="">Archive</a>
                                     </label>

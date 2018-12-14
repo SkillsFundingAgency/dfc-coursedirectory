@@ -9,6 +9,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Net.Http;
+using Dfc.CourseDirectory.Services.Interfaces.VenueService;
+using Dfc.CourseDirectory.Services.VenueService;
+using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Redis;
 
 namespace Dfc.CourseDirectory.Web
 {
@@ -59,8 +63,6 @@ namespace Dfc.CourseDirectory.Web
             services.AddScoped<ILarsSearchHelper, LarsSearchHelper>();
             services.AddScoped<IPaginationHelper, PaginationHelper>();
 
-            services.Configure<VenueSearchSettings>(Configuration.GetSection(nameof(VenueSearchSettings)));
-            services.AddScoped<IVenueSearchService, VenueSearchService>();
             services.AddScoped<IVenueSearchHelper, VenueSearchHelper>();
 
             services.Configure<ProviderSearchSettings>(Configuration.GetSection(nameof(ProviderSearchSettings)));
@@ -70,8 +72,8 @@ namespace Dfc.CourseDirectory.Web
             services.Configure<ProviderAddSettings>(Configuration.GetSection(nameof(ProviderAddSettings)));
             services.AddScoped<IProviderAddService, ProviderAddService>();
 
-            services.Configure<VenueAddSettings>(Configuration.GetSection(nameof(VenueAddSettings)));
-            services.AddScoped<IVenueAddService, VenueAddService>();
+            services.Configure<VenueServiceSettings>(Configuration.GetSection(nameof(VenueServiceSettings)));
+            services.AddScoped<IVenueService, VenueService>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddSessionStateTempDataProvider();
 

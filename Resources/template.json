@@ -26,13 +26,7 @@
         "description": "API host key (code) needed to access the postcode search"
       }
     },
-    "venueSearchApiUrl": {
-      "type": "string",
-      "metadata": {
-        "description": "API URL for the venue search"
-      }
-    },
-    "venueAddApiUrl": {
+    "venueServiceApiUrl": {
       "type": "string",
       "metadata": {
         "description": "API URL for the venue search"
@@ -50,7 +44,13 @@
         "description": "API URL for the provider search"
       }
     },
-    "providerSearchApiKey": {
+    "providerAddApiUrl": {
+      "type": "string",
+      "metadata": {
+        "description": "API URL for the provider search"
+      }
+    },
+    "providerApiKey": {
       "type": "securestring",
       "metadata": {
         "description": "API host key (code) needed to access the provider seach function app (REST API)"
@@ -217,27 +217,15 @@
                 "value": "[parameters('postcodeApiKey')]"
               },
               {
-                "name": "VenueSearchSettings__ApiUrl",
-                "value": "[parameters('venueSearchApiUrl')]"
+                "name": "VenueServiceSettings__ApiUrl",
+                "value": "[parameters('venueServiceApiUrl')]"
               },
               {
-                "name": "VenueSearchSettings__ApiKey",
+                "name": "VenueServiceSettings__ApiKey",
                 "value": "[parameters('venueApiKey')]"
               },
               {
-                "name": "VenueSearchSettings__ApiVersion",
-                "value": ""
-              },
-              {
-                "name": "VenueAddSettings__ApiUrl",
-                "value": "[parameters('venueAddApiUrl')]"
-              },
-              {
-                "name": "VenueAddSettings__ApiKey",
-                "value": "[parameters('venueApiKey')]"
-              },
-              {
-                "name": "VenueAddSettings__ApiVersion",
+                "name": "VenueServiceSettings__ApiVersion",
                 "value": ""
               },
               {
@@ -246,10 +234,22 @@
               },
               {
                 "name": "ProviderSearchSettings__ApiKey",
-                "value": "[parameters('providerSearchApiKey')]"
+                "value": "[parameters('providerApiKey')]"
               },
               {
                 "name": "ProviderSearchSettings__ApiVersion",
+                "value": ""
+              },
+              {
+                "name": "ProviderAddSettings__ApiUrl",
+                "value": "[parameters('providerAddApiUrl')]"
+              },
+              {
+                "name": "ProviderAddSettings__ApiKey",
+                "value": "[parameters('providerApiKey')]"
+              },
+              {
+                "name": "ProviderAddSettings__ApiVersion",
                 "value": ""
               }
             ]

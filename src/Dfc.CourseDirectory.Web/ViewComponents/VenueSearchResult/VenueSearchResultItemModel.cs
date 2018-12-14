@@ -15,6 +15,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult
         public string Town { get; }
         public string County { get; }
         public string PostCode { get; }
+        public string Id { get; }
 
         public VenueSearchResultItemModel(
             string venueName,
@@ -22,7 +23,8 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult
             string addressLine2,
             string town,
             string county,
-            string postCode)
+            string postCode,
+            string id)
         {
             Errors = new string[] { };
             VenueName = venueName;
@@ -31,6 +33,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult
             Town = town;
             County = county;
             PostCode = postCode;
+            Id = id;
         }
 
         public VenueSearchResultItemModel()
@@ -53,6 +56,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult
             yield return Town;
             yield return County;
             yield return PostCode;
+            yield return Id;
 
 
         }
