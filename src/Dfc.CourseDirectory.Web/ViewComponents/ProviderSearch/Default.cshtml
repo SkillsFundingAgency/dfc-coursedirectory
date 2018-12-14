@@ -6,46 +6,53 @@
 @{
     ViewData["Title"] = "Add a Provider";
     ViewData["Subtext"] = "Enter UKPRN number";
+    ViewData["Placeholder"] = "Enter UKPRN number";
 }
 
-<div class="venue-search">
-    <div class="cd-hero-green">
-        <div class="govuk-width-container">
-            <header class="cd-hero-search">
-                <div class="content-container">
-                    <div class="grid-row" data-sf-element="Row">
-                        <div class="column-two-thirds">
-                            <div>
-                                <h1 class="govuk-heading-xl">@ViewBag.Title</h1>
-                                <p class="govuk-heading-m">@ViewBag.Subtext</p>
-                            </div>
-                            <div class="header-search-content">
-                                <form class="site-search ui-front" id="header-search">
-                                    <div class="search-input-wrapper govuk-form-group">
-                                        @if (!string.IsNullOrWhiteSpace(Model.HintText))
-                                        {
-                                            <span class="govuk-hint">
-                                                @Model.HintText
-                                            </span>
-                                        }
-                                        <span asp-validation-for="@Model.SearchTerm" class="govuk-error-message"></span>
-                                        <input class="govuk-input govuk-!-width-three-quarters search-input js-search-focus" asp-for="@Model.SearchTerm" type="text" aria-describedby="@Model.AriaDescribedBy">
-                                        <button type="button" class="govuk-button" id="searchProvider">
-                                            Search
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
 
+<div class="cd-hero-green">
+    <div class="govuk-width-container">
+        <header class="cd-hero-search">
+            <div class="content-container">
+
+                <div class="govuk-breadcrumbs">
+                    <ol class="govuk-breadcrumbs__list">
+                        <li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="your-courses">Home</a></li>
+                        <li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="Providers">Providers</li>
+                        <li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link">@ViewBag.Title</li>
+                    </ol>
+                </div>
+                <div class="grid-row" data-sf-element="Row">
+                    <div class="column-two-thirds">
+                        <div>
+                            <h1 class="govuk-heading-l govuk-!-margin-top-4">@ViewBag.Title</h1>
+                            <p class="column-two-thirds govuk-heading-m">@ViewBag.Subtext</p>
                         </div>
+                        <form class="site-search ui-front" id="header-search">
+                            <div class="header-search-content">
+                                <div class="search-input-wrapper">
+                                    @if (!string.IsNullOrWhiteSpace(Model.HintText))
+                                    {
+                                        <span class="govuk-hint">
+                                            @Model.HintText
+                                        </span>
+                                    }
+                                    <span asp-validation-for="@Model.SearchTerm" class="govuk-error-message"></span>
+                                    <input class="govuk-input govuk-!-width-three-quarters search-input js-search-focus" asp-for="@Model.SearchTerm" type="text" aria-describedby="@Model.AriaDescribedBy" placeholder="@ViewBag.Placeholder">
+                                    <div class="cd-c-search__item cd-search__submit-wrapper">
+                                        <button type="button" class=" submit" id="searchProvider">Search</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
-            </header>
-        </div>
+            </div>
+        </header>
     </div>
-    <div id="ProviderSearchResultContainer">
-        @await Component.InvokeAsync(nameof(ProviderSearchResult))
-    </div>
+</div>
+<div id="ProviderSearchResultContainer">
+    @await Component.InvokeAsync(nameof(ProviderSearchResult))
 </div>
 
 <script>

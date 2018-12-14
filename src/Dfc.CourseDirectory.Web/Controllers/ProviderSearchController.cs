@@ -107,12 +107,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         model.TelephoneTypeL = providerContactTypeL.FirstOrDefault()?.ContactTelephone1;
                         model.WebTypeL = providerContactTypeL.FirstOrDefault()?.ContactWebsiteAddress;
                         model.EmailTypeL = providerContactTypeL.FirstOrDefault()?.ContactEmail;
-
-                        // For DEVELOPMENT & TESTING => TODO To Be Removed
-                        //if (provider.UnitedKingdomProviderReferenceNumber.Equals("10057206", StringComparison.InvariantCultureIgnoreCase))
-                        //    provider.ProviderStatus = "NotActive";
-                        //if (provider.UnitedKingdomProviderReferenceNumber.Equals("10057217", StringComparison.InvariantCultureIgnoreCase))
-                        //    provider.Registered = Registered.Onboarded;
                     }
                 }
             }
@@ -128,9 +122,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _logger.LogInformationObject("RequestModel", ajaxRequest);
             string ResultText = string.Empty;
             bool Success = true;
-
-            // For DEVELOPMENT & TESTING => TODO To Be Removed
-            // ajaxRequest.ProviderId = "00000000-0000-0000-0000-000000000000";
 
             if (string.IsNullOrEmpty(ajaxRequest.ProviderId))
             {

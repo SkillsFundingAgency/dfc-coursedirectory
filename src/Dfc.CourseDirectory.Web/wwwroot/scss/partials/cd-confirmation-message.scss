@@ -1,0 +1,28 @@
+﻿.success-container {
+    border: 2px solid #28a197;
+    position: relative;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.success-close {
+    position: absolute;
+    right: 16px;
+    top: 6px;
+}
+
+.success-container p {
+    color: black;
+}
+
+.failure-container {
+    border: 2px solid red;
+    position: relative;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    color: red;
+}
+
+.failure-container h1 {
+    color: red;
+}
