@@ -11,8 +11,8 @@ using Microsoft.Extensions.Logging;
 using System.Net.Http;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 using Dfc.CourseDirectory.Services.VenueService;
-using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.Caching.Redis;
+using Dfc.CourseDirectory.Services.ProviderService;
+using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 
 namespace Dfc.CourseDirectory.Web
 {
@@ -65,12 +65,9 @@ namespace Dfc.CourseDirectory.Web
 
             services.AddScoped<IVenueSearchHelper, VenueSearchHelper>();
 
-            services.Configure<ProviderSearchSettings>(Configuration.GetSection(nameof(ProviderSearchSettings)));
-            services.AddScoped<IProviderSearchService, ProviderSearchService>();
+            services.Configure<ProviderServiceSettings>(Configuration.GetSection(nameof(ProviderServiceSettings)));
+            services.AddScoped<IProviderService, ProviderService>();
             services.AddScoped<IProviderSearchHelper, ProviderSearchHelper>();
-
-            services.Configure<ProviderAddSettings>(Configuration.GetSection(nameof(ProviderAddSettings)));
-            services.AddScoped<IProviderAddService, ProviderAddService>();
 
             services.Configure<VenueServiceSettings>(Configuration.GetSection(nameof(VenueServiceSettings)));
             services.AddScoped<IVenueService, VenueService>();
@@ -109,7 +106,7 @@ namespace Dfc.CourseDirectory.Web
 
                 routes.MapRoute(
                     name: "onboardprovider",
-                    template: "{controller=ProviderSearch}/{action=OnBoardProvider}/{id?}");  //"restartsitefinity/{controller}/{action}", new { controller = "AdminPanel", action = "RestartSitefinity", id = string.Empty });
+                    template: "{controller=ProviderSearch}/{action=OnBoardProvider}/{id?}");
             });
         }
     }
