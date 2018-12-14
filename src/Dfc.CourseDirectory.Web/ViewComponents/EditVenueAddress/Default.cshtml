@@ -18,13 +18,16 @@
                                 @await Component.InvokeAsync(nameof(PostcodeLookup), new PostcodeLookupModel
                                 {
                                     Postcode = Model.Address.Postcode,
-                                    PostcodeLabelText = "Postcode",
+                                    PostcodeLabelText = "Venue postcode",
                                     PostcodeAriaDescribedBy = "Please enter the postcode.",
                                     ButtonText = "Find address"
                                 })
 
                             </div>
                         </div>
+                    </div>
+                    <div class="govuk-form-group">
+                        <a id="manualLink" class="govuk-link" asp-controller="Venues" asp-action="AddVenueManualAddress">Enter address manually</a>
                     </div>
                 </div>
             </div>

@@ -1,16 +1,12 @@
 ﻿@using Dfc.CourseDirectory.Web.ViewComponents.ProviderSearchResult;
 @model Dfc.CourseDirectory.Web.ViewComponents.ProviderSearch.ProviderSearchModel;
-@*Dfc.CourseDirectory.Web.RequestModels.ProviderSearchRequestModel;
-    Dfc.CourseDirectory.Web.ViewComponents.ProviderSearch.ProviderSearchModel; Dfc.CourseDirectory.Web.RequestModels.ProviderSearchRequestModel;*@
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @{
     ViewData["Title"] = "Add a Provider";
     ViewData["Subtext"] = "Enter UKPRN number";
-    //ViewData["Target"] = "/providers/AddResults/";
 }
-
 
 <div class="venue-search">
     <div class="cd-hero-green">
@@ -23,13 +19,9 @@
                                 <h1 class="govuk-heading-xl">@ViewBag.Title</h1>
                                 <p class="govuk-heading-m">@ViewBag.Subtext</p>
                             </div>
-                            
                             <div class="header-search-content">
                                 <form class="site-search ui-front" id="header-search">
                                     <div class="search-input-wrapper govuk-form-group">
-                                        @*<input class="govuk-input govuk-!-width-three-quarters search-input js-search-focus" id="UKPrn" name="UKPrn" type="search" value="">*@
-                                        
-                                        @*<label class="govuk-label" asp-for="@Model.SearchTerm">@Model.LabelText</label>*@
                                         @if (!string.IsNullOrWhiteSpace(Model.HintText))
                                         {
                                             <span class="govuk-hint">
@@ -38,14 +30,13 @@
                                         }
                                         <span asp-validation-for="@Model.SearchTerm" class="govuk-error-message"></span>
                                         <input class="govuk-input govuk-!-width-three-quarters search-input js-search-focus" asp-for="@Model.SearchTerm" type="text" aria-describedby="@Model.AriaDescribedBy">
-
                                         <button type="button" class="govuk-button" id="searchProvider">
                                             Search
                                         </button>
                                     </div>
                                 </form>
                             </div>
-                            
+
                         </div>
                     </div>
                 </div>
@@ -64,6 +55,7 @@
             var formGroupErrorClass = "govuk-form-group--error";
             var elementErrorClass = "govuk-input--error";
             var $elementSearchTerm = $("#@nameof(Model.SearchTerm)");
+            var $providerSearchResultContainer = $("#ProviderSearchResultContainer");
             var $validationMessageSearchTerm = $elementSearchTerm.prev("[data-valmsg-for='@nameof(Model.SearchTerm)']");
             $validationMessageSearchTerm.css("margin-bottom", "0");
             var $formGroupSearchTerm = $elementSearchTerm.closest('.govuk-form-group');
@@ -77,21 +69,12 @@
                     $formGroupSearchTerm.removeClass(formGroupErrorClass);
                     $validationMessageSearchTerm.hide();
                     $validationMessageSearchTerm.css("margin-bottom", "0");
-
-                    //GetProviderSearchResults();
-
                 } else {
                     $elementSearchTerm.addClass(elementErrorClass);
                     $formGroupSearchTerm.addClass(formGroupErrorClass);
                     $validationMessageSearchTerm.show();
                     $validationMessageSearchTerm.css("margin-bottom", "15px");
                 }
-
-                //alert($elementSearchTerm.valid());
-                //if ($elementSearchTerm.valid()) {
-                //    alert($elementSearchTerm.valid());
-                //    GetProviderSearchResults();
-                //}
             });
             $elementSearchTerm.elementValidation(function (element, result) {
                 if (!$formGroupSearchTerm.hasClass(formGroupErrorClass)) {
@@ -104,84 +87,28 @@
                 }
             });
 
-            
+            var makeRequestWithPayload = function (payload, cb) {
+                var qs = $.param(payload);
+                $.get("/ProviderSearch?" + qs, cb);
+            };
+            var onSucess = function (data) {
+                $providerSearchResultContainer.html("");
+                $providerSearchResultContainer.html(data);
+            };
+
             $("#searchProvider").on("click", function (e) {
                 e.preventDefault();
                 $elementSearchTerm.trigger("blur");
-            });
-
-            GetProviderSearchResults();
-        });
-
-    })(jQuery);
-
-    function GetProviderSearchResults() {
-
-        var debounce = function (cb, delay) {
-            var inDebounce;
-            return function () {
-                var context = this;
-                var args = arguments;
-                clearTimeout(inDebounce);
-                inDebounce = setTimeout(function () {
-                    cb.apply(context, args);
-                }, delay);
-            };
-        };
-
-        var isNullOrWhitespace = function (input) {
-            if (typeof input === 'undefined' || input == null) return true;
-            return input.replace(/\s/g, '').length < 1;
-        }
-
-        var replaceAll = function (search, find, replace) {
-            return search.split(find).join(replace);
-        };
-
-        var makeRequestWithPayload = function (payload, success) {
-            console.log(payload);
-            var qs = $.param(payload);
-            qs = replaceAll(qs, "%5B%5D", "");
-            $.get("/ProviderSearch?" + qs, success);
-        };
-
-        var removeSearchResults = function () {
-            var $venueSearchResultContainer = $("#ProviderSearchResultContainer");
-            $venueSearchResultContainer.html("");
-        };
-
-        var replaceSearchResult = function (searchResults) {
-            var $venueSearchResultContainer = $("#ProviderSearchResultContainer");
-            $venueSearchResultContainer.html("");
-            $venueSearchResultContainer.html(searchResults);
-        };
-
-        var $SearchTerm = $("#SearchTerm");
-        var $SearchButton = $("#searchProvider");
-
-        var doSearch = function () {
-            if (isNullOrWhitespace($SearchTerm.val())) {
-                removeSearchResults();
-
-            } else {
-                if ($SearchTerm.valid()) {
+                var result = validator.element($elementSearchTerm);
+                if (result) {
                     makeRequestWithPayload({
-                        SearchTerm: $SearchTerm.val()
+                        SearchTerm: $elementSearchTerm.val()
                     }, onSucess);
                 }
                 else {
-                    removeSearchResults();
+                    $providerSearchResultContainer.html("");
                 }
-            }
-        };
-
-        var onSucess = function (data) {
-            replaceSearchResult(data);
-
-            //TODO MUST!!! RUN THIS AFTER CHANGING THE DOM
-            window.GOVUKFrontend.initAll();
-        };
-
-        $SearchButton.on("click", debounce(doSearch, 400));
-    };
+            });
+        });
+    })(jQuery);
 </script>

@@ -19,6 +19,6 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Providers
         object ProviderAssociations { get; set; }
         IProvideralias[] ProviderAliases { get; set; }
         IVerificationdetail[] VerificationDetails { get; set; }
-        Registered Registered { get; set; }
+        Status Status { get; set; }
     }
 }

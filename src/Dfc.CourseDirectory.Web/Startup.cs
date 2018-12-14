@@ -1,5 +1,4 @@
-﻿using System;
-using Dfc.CourseDirectory.Services;
+﻿using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.Interfaces;
 using Dfc.CourseDirectory.Web.Helpers;
 using Microsoft.AspNetCore.Builder;
@@ -72,6 +71,8 @@ namespace Dfc.CourseDirectory.Web
             services.AddScoped<IProviderSearchService, ProviderSearchService>();
             services.AddScoped<IProviderSearchHelper, ProviderSearchHelper>();
 
+            services.Configure<ProviderAddSettings>(Configuration.GetSection(nameof(ProviderAddSettings)));
+            services.AddScoped<IProviderAddService, ProviderAddService>();
 
             services.Configure<VenueAddSettings>(Configuration.GetSection(nameof(VenueAddSettings)));
             services.AddScoped<IVenueAddService, VenueAddService>();
