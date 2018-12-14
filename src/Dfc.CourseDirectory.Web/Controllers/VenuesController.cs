@@ -55,12 +55,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         public IActionResult Index()
-        { 
+        {
             return View();
         }
 
         public IActionResult AddVenue()
         {
+            _session.SetString("IsEdit", "false");
             return View();
         }
 
@@ -71,9 +72,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         public async Task<IActionResult> EditVenue(string Id)
         {
+
+            _session.SetString("IsEdit", "true");
+
             var viewModel = new VenueAddressSelectionConfirmationViewModel();
 
-            GetVenueByIdCriteria criteria  = new GetVenueByIdCriteria(Id);
+
+            GetVenueByIdCriteria criteria = new GetVenueByIdCriteria(Id);
 
             var getVenueByIdResult = await _venueService.GetVenueByIdAsync(criteria);
             if (getVenueByIdResult.IsSuccess && getVenueByIdResult.HasValue)
@@ -81,7 +86,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 viewModel.VenueName = getVenueByIdResult.Value.VenueName;
                 viewModel.Address = new AddressModel
                 {
-                    Id = getVenueByIdResult.Value.ID,
+                    //Id = getVenueByIdResult.Value.ID,
                     AddressLine1 = getVenueByIdResult.Value.Address1,
                     AddressLine2 = getVenueByIdResult.Value.Address2,
                     TownOrCity = getVenueByIdResult.Value.Town,
@@ -94,6 +99,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 viewModel.Error = getVenueByIdResult.Error;
             }
 
+            viewModel.Id = Id;
 
             return View("VenueAddressSelectionConfirmation", viewModel);
         }
@@ -101,24 +107,49 @@ namespace Dfc.CourseDirectory.Web.Controllers
         public async Task<IActionResult> VenueAddressSelectionConfirmation(VenueAddressSelectionConfirmationRequestModel requestModel)
         {
             var viewModel = new VenueAddressSelectionConfirmationViewModel();
-            var criteria = new AddressSelectionCriteria(requestModel.PostcodeId);
-            var searchResult = await _postCodeSearchService.RetrieveAsync(criteria);
 
-            if (searchResult.IsSuccess && searchResult.HasValue)
+            if (!string.IsNullOrEmpty(requestModel.PostcodeId))
             {
-                viewModel.Address = new AddressModel
+                var criteria = new AddressSelectionCriteria(requestModel.PostcodeId);
+                var searchResult = await _postCodeSearchService.RetrieveAsync(criteria);
+
+                if (searchResult.IsSuccess && searchResult.HasValue)
                 {
-                    Id = searchResult.Value.Id,
-                    AddressLine1 = searchResult.Value.Line1,
-                    AddressLine2 = searchResult.Value.Line2,
-                    TownOrCity = searchResult.Value.City,
-                    County = searchResult.Value.County,
-                    Postcode = searchResult.Value.PostCode
-                };
+                    viewModel.Address = new AddressModel
+                    {
+                        Id = searchResult.Value.Id,
+                        AddressLine1 = searchResult.Value.Line1,
+                        AddressLine2 = searchResult.Value.Line2,
+                        TownOrCity = searchResult.Value.City,
+                        County = searchResult.Value.County,
+                        Postcode = searchResult.Value.PostCode
+                    };
+                }
+                else
+                {
+                    viewModel.Error = searchResult.Error;
+                }
             }
             else
             {
-                viewModel.Error = searchResult.Error;
+                if (!string.IsNullOrEmpty(requestModel.Id))
+                {
+                    var criteria = new GetVenueByIdCriteria(requestModel.Id);
+                    var getVenueByIdResult = await _venueService.GetVenueByIdAsync(criteria);
+
+                    if (getVenueByIdResult.IsSuccess && getVenueByIdResult.HasValue)
+                    {
+                        viewModel.Address = new AddressModel
+                        {
+                            //Id = getVenueByIdResult.Value.ID,
+                            AddressLine1 = getVenueByIdResult.Value.Address1,
+                            AddressLine2 = getVenueByIdResult.Value.Address2,
+                            TownOrCity = getVenueByIdResult.Value.Town,
+                            County = getVenueByIdResult.Value.County,
+                            Postcode = getVenueByIdResult.Value.PostCode
+                        };
+                    }
+                }
             }
 
             viewModel.VenueName = requestModel.VenueName;
@@ -131,14 +162,23 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
 
             var UKPRN = _session.GetString("UKPRN");
-            VenueAdd venue = new VenueAdd(requestModel.AddressLine1, requestModel.AddressLine2, requestModel.TownOrCity, requestModel.VenueName, requestModel.County, requestModel.Postcode, UKPRN);
-            var addedVenue = await _venueService.AddAsync(venue);
-
-            VenueSearchResultModel resultModel;
-
             VenueSearchRequestModel mod = new VenueSearchRequestModel();
             mod.SearchTerm = UKPRN;
-            mod.NewAddressId = addedVenue.Value.Id;
+
+            if (requestModel.Id != null)
+            {
+                UpdatedVenue venue = new UpdatedVenue(requestModel.Id, requestModel.AddressLine1, requestModel.AddressLine2, requestModel.TownOrCity, requestModel.VenueName, requestModel.County, requestModel.Postcode);
+                var updatedVenue = await _venueService.UpdateAsync(venue);
+                mod.NewAddressId = updatedVenue.Value.Id;
+            }
+            else
+            {
+                VenueAdd venue = new VenueAdd(requestModel.AddressLine1, requestModel.AddressLine2, requestModel.TownOrCity, requestModel.VenueName, requestModel.County, requestModel.Postcode, UKPRN);
+                var addedVenue = await _venueService.AddAsync(venue);
+                mod.NewAddressId = addedVenue.Value.Id;
+            }
+
+            VenueSearchResultModel resultModel;
 
             var criteria = _venueSearchHelper.GetVenueSearchCriteria(mod);
             var result = await _venueService.SearchAsync(criteria);
@@ -185,12 +225,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult EditVenueName (EditVenueRequestModel requestModel)
+        public IActionResult EditVenueName(EditVenueRequestModel requestModel)
         {
-            EditVenueNameModel model = new EditVenueNameModel {
+            EditVenueNameModel model = new EditVenueNameModel
+            {
                 VenueName = requestModel.VenueName,
                 PostcodeId = requestModel.Address.Id,
-                Address = requestModel.Address
+                Address = requestModel.Address,
+                Id = requestModel.Id
             };
             return View(model);
         }

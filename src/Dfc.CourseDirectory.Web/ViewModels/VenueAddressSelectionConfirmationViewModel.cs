@@ -12,5 +12,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels
         public string Error { get; set; }
         public string VenueName { get; set; }
         public AddressModel Address { get; set; }
+
+        public string Id { get; set; }
     }
 }

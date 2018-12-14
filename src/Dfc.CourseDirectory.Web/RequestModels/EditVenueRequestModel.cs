@@ -7,5 +7,7 @@ namespace Dfc.CourseDirectory.Web.RequestModels
         public string VenueName { get; set; }
         public string PostcodeId { get; set; }
         public AddressModel Address { get; set; }
+
+        public string Id { get; set; }
     }
 }

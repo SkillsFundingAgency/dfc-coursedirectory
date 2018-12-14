@@ -15,6 +15,8 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.EditVenueName
         public string PostcodeId { get; set; }
         public AddressModel Address { get; set; }
 
+        public string Id { get; set; }
+
     }
 
 }
