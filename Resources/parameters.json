@@ -14,11 +14,8 @@
     "postcodeApiKey": {
       "value": "not-a-real-key"
     },
-    "venueSearchApiUrl": {
-      "value": "https://my.api.net/api/venue/search?code="
-    },
-    "venueAddApiUrl": {
-      "value": "https://my.api.net/api/venue/add?code="
+    "venueServiceApiUrl": {
+      "value": "https://my.api.net/api/venue/"
     },
     "venueApiKey": {
       "value": "not-a-real-key"
