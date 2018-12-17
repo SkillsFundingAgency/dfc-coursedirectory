@@ -7,6 +7,7 @@ namespace Dfc.CourseDirectory.Web.RequestModels
 {
     public class AddVenueSelectionConfirmationRequestModel
     {
+        public string Id { get; set; }
         public string VenueName { get; set; }
         public string AddressLine1 { get; set; }
         public string AddressLine2 { get; set; }

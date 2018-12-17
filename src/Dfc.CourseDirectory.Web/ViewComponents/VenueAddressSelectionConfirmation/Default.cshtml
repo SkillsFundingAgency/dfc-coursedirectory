@@ -4,7 +4,8 @@
 
 <form id="postCodeSearchResultForm" asp-controller="Venues" method="post">
     <div class="govuk-grid-row">
-
+        
+        @Html.HiddenFor(x => x.Id)
         @Html.HiddenFor(x => x.Address)
         @Html.HiddenFor(x => x.Address.Id)
         @Html.HiddenFor(x => x.Address.AddressLine1)

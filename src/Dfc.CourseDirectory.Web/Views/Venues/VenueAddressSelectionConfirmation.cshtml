@@ -1,12 +1,31 @@
 ﻿@using Dfc.CourseDirectory.Web.ViewComponents.VenueAddressSelectionConfirmation
+@using Microsoft.AspNetCore.Http
 
 @model Dfc.CourseDirectory.Web.ViewModels.VenueAddressSelectionConfirmationViewModel
 
-<h1 class="govuk-heading-xl">Add a venue</h1>
+@{
+    var edit = Context.Session.GetString("IsEdit");
 
+    if (edit != null)
+    {
+        if (edit == "false")
+        {
+            <h1 class="govuk-heading-xl">Add a venue</h1>
+        }
+        else
+        {
+            <h1 class="govuk-heading-xl">Edit venue details</h1>
+        }
+    }
+    else
+    {
+        <h1 class="govuk-heading-xl">Add a venue</h1>
+    }
+}
 
 @await Component.InvokeAsync(nameof(VenueAddressSelectionConfirmation), new VenueAddressSelectionConfirmationModel
-{
-    Address = Model.Address,
-    VenueName = Model.VenueName
-})
+    {
+        Id = Model.Id,
+        Address = Model.Address,
+        VenueName = Model.VenueName
+    })

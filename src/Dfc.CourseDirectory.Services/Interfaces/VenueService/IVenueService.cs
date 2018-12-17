@@ -14,6 +14,8 @@ namespace Dfc.CourseDirectory.Services.Interfaces.VenueService
 
         Task<IResult<IVenueAddResultItem>> AddAsync(IVenueAdd venue);
 
+        Task<IResult<IUpdatedVenueResult>> UpdateAsync(IUpdatedVenue venue);
+
 
     }
 }

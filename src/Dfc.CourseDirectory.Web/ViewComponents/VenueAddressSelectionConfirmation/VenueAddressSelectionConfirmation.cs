@@ -10,7 +10,9 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.VenueAddressSelectionConfirmati
     {
         public IViewComponentResult Invoke(VenueAddressSelectionConfirmationModel model)
         {
-            return View("~/ViewComponents/VenueAddressSelectionConfirmation/Default.cshtml", model);
+            var actualModel = model ?? new VenueAddressSelectionConfirmationModel();
+
+            return View("~/ViewComponents/VenueAddressSelectionConfirmation/Default.cshtml", actualModel);
         }
     }
 }

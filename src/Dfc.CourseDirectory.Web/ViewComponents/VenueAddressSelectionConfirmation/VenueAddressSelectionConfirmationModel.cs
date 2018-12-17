@@ -8,6 +8,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.VenueAddressSelectionConfirmati
 {
     public class VenueAddressSelectionConfirmationModel
     {
+        public string Id { get; set; }
         public string VenueName { get; set; }
         public AddressModel Address { get; set; }
     }
