@@ -6,6 +6,13 @@ using System.Text;
 
 namespace Dfc.CourseDirectory.Models.Models.Venues
 {
+    public enum VenueStatus
+    {
+        Active = 0,
+        Archived = 1,
+        Uknown = 99
+    }
+
     public class Venue : ValueObject<Venue> , IVenue
     {
         public string ID { get; }
@@ -20,6 +27,10 @@ namespace Dfc.CourseDirectory.Models.Models.Venues
         public string Town { get; }
         public string County { get; }
         public string PostCode { get; }
+        public VenueStatus Status { get; }
+        public DateTime DateAdded { get; }
+        public DateTime DateUpdated { get; }
+        public string UpdatedBy { get; }
 
         public Venue(
             string id,
@@ -33,7 +44,11 @@ namespace Dfc.CourseDirectory.Models.Models.Venues
             string address3,
             string town,
             string county,
-            string postcode)
+            string postcode,
+            VenueStatus status,
+            string updatedBy,
+            DateTime dateAdded,
+            DateTime dateUpdated)
         {
             Throw.IfNullOrWhiteSpace(id, nameof(id));
             Throw.IfLessThan(0, ukPrn, nameof(ukPrn));
@@ -46,6 +61,8 @@ namespace Dfc.CourseDirectory.Models.Models.Venues
             Throw.IfNullOrWhiteSpace(address1, nameof(address3));
             Throw.IfNullOrWhiteSpace(town, nameof(town));
             Throw.IfNullOrWhiteSpace(postcode, nameof(postcode));
+            Throw.IfNullOrWhiteSpace(updatedBy, nameof(updatedBy));
+
 
             ID = id;
             UKPRN = ukPrn;
@@ -59,6 +76,10 @@ namespace Dfc.CourseDirectory.Models.Models.Venues
             Town = town;
             County = county;
             PostCode = postcode;
+            Status = status;
+            UpdatedBy = updatedBy;
+            DateAdded = dateAdded;
+            DateUpdated = dateUpdated;
 
         }
         protected override IEnumerable<object> GetEqualityComponents()
@@ -75,6 +96,10 @@ namespace Dfc.CourseDirectory.Models.Models.Venues
             yield return Town;
             yield return County;
             yield return PostCode;
+            yield return Status;
+            yield return UpdatedBy;
+            yield return DateAdded;
+            yield return DateUpdated;
         }
     }
 }

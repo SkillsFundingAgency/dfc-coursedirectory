@@ -175,7 +175,7 @@ namespace Dfc.CourseDirectory.Services.VenueService
                     {
                         ContractResolver = new VenueSearchResultContractResolver()
                     };
-                    var venues = JsonConvert.DeserializeObject<IEnumerable<VenueSearchResultItem>>(json, settings).OrderBy(x => x.VenueName).ToList();
+                    var venues = JsonConvert.DeserializeObject<IEnumerable<Venue>>(json, settings).OrderBy(x => x.VenueName).ToList();
 
 
                     if (!String.IsNullOrEmpty(criteria.NewAddressId))
