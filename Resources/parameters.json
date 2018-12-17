@@ -26,6 +26,9 @@
     "providerAddApiUrl": {
       "value": "https://my.api.net/api/provider/add?code="
     },
+    "providerApiUrl": {
+      "value": "https://my.api.net/api/provider/"
+    },
     "providerApiKey": {
       "value": "not-a-real-key"
     }
