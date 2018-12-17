@@ -79,30 +79,22 @@
                 noOfPagesToDisplay = 10,
                 isSliding = true
             })
-            <table class="govuk-table govuk-!-font-size-14">
-                <caption class="govuk-table__caption govuk-heading-s govuk-!-font-weight-regular">
+            <div class="govuk-table govuk-!-font-size-14">
+                <div class="govuk-table__caption govuk-heading-s govuk-!-font-weight-regular">
                     Found <span class="govuk-!-font-weight-bold">@Model.TotalCount</span> results for <span class="govuk-!-font-weight-bold">@Model.SearchTerm</span>
-                </caption>
-                <thead class="govuk-table__head">
-                    <tr class="govuk-table__row">
-                        <th class="govuk-table__header" scope="col" width="19%">Learning Aim Ref.</th>
-                        <th class="govuk-table__header" scope="col" width="40%">Learning Aim Title</th>
-                        <th class="govuk-table__header" scope="col" width="15%">NVQ Level V2</th>
-                        <th class="govuk-table__header" scope="col">Award Org.</th>
-                    </tr>
-                </thead>
-                <tbody class="govuk-table__body">
-                    @foreach (var item in Model.Items)
-                    {
-                        <tr class="govuk-table__row">
-                            <td class="govuk-table__cell">@item.LearnAimRef</td>
-                            <td class="govuk-table__cell">@item.LearnAimRefTitle</td>
-                            <td class="govuk-table__cell">@item.NotionalNVQLevelv2</td>
-                            <td class="govuk-table__cell">@item.AwardOrgName (@item.AwardOrgCode)</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+                </div>
+
+                @foreach (var item in Model.Items)
+                {
+                    <div class="cd-lars-search-result__container">
+                        <h3 class="govuk-heading-m">@item.LearnAimRefTitle</h3>
+                        <p class="govuk-body">LARS/QAN:<span class="govuk-!-font-weight-bold">@item.LearnAimRef</span></p>
+                        <p class="govuk-body">Level: <span class="govuk-!-font-weight-bold">@item.NotionalNVQLevelv2</span></p>
+                        <p class="govuk-body"><span class="govuk-!-font-weight-bold">@item.AwardOrgName (@item.AwardOrgCode)</span></p>
+                        <p class="govuk-body"><a class="govuk-link" href="#">Add this qualification</a></p>
+                    </div>
+                }
+            </div>
             @await Component.InvokeAsync(nameof(Pagination),
             new
             {
