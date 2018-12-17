@@ -13,14 +13,14 @@
             if (!provider.ProviderStatus.Equals("Active", StringComparison.InvariantCultureIgnoreCase))
             {
                 <div class="success-container">
-                    <h1 class="govuk-heading-m">Provider is NOT active on UKPRN system and cannot be added to portal</h1>
+                    <h1 class="govuk-heading-m">UKPRN has been deactivated and cannot be added to the Course Directory</h1>
                 </div>
             }
 
             if (provider.Status.Equals(Status.Onboarded))
             {
                 <div class="success-container">
-                    <h1 class="govuk-heading-m">Provider already added to portal</h1>
+                    <h1 class="govuk-heading-m">A Provider record for the entered UKPRN has already been on-boarded within the Course Directory.</h1>
                 </div>
             }
 

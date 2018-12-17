@@ -105,6 +105,17 @@
 
             $("#searchProvider").on("click", function (e) {
                 e.preventDefault();
+                ValidateAndSearchForProvider();
+            });
+
+            $(document).keypress(function (e) {
+                if (e.which == 13) {
+                    e.preventDefault();
+                    ValidateAndSearchForProvider();
+                }
+            });
+
+            function ValidateAndSearchForProvider() {
                 $elementSearchTerm.trigger("blur");
                 var result = validator.element($elementSearchTerm);
                 if (result) {
@@ -115,7 +126,7 @@
                 else {
                     $providerSearchResultContainer.html("");
                 }
-            });
+            }
         });
     })(jQuery);
 </script>

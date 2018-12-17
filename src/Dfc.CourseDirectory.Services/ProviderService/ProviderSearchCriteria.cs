@@ -1,10 +1,9 @@
 ﻿using Dfc.CourseDirectory.Common;
-using Dfc.CourseDirectory.Services.Interfaces;
-using System;
+using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 using System.Collections.Generic;
-using System.Text;
 
-namespace Dfc.CourseDirectory.Services
+
+namespace Dfc.CourseDirectory.Services.ProviderService
 {
     public class ProviderSearchCriteria : ValueObject<ProviderSearchCriteria>, IProviderSearchCriteria
     {
