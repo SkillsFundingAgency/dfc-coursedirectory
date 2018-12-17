@@ -184,6 +184,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     requestModel.Postcode, 
                     VenueStatus.Live,
                     "Simon",
+                    DateTime.Now,
                     DateTime.Now
                     );
 

@@ -50,7 +50,10 @@ namespace Dfc.CourseDirectory.Models.Models.Venues
 
         public Venue(
             int ukPrn,
+            //int providerID,
+            //int venueID,
             string venueName,
+           // string provVenueID,
             string address1,
             string address2,
             string address3,
@@ -59,49 +62,10 @@ namespace Dfc.CourseDirectory.Models.Models.Venues
             string postcode,
             VenueStatus status,
             string updatedBy,
-            DateTime dateAdded)
+            DateTime dateAdded,
+            DateTime dateUpdated)
         {
-            Throw.IfLessThan(0, ukPrn, nameof(ukPrn));
-            Throw.IfNullOrWhiteSpace(venueName, nameof(venueName));
-            Throw.IfNullOrWhiteSpace(address1, nameof(address1));
-            Throw.IfNullOrWhiteSpace(address1, nameof(address2));
-            Throw.IfNullOrWhiteSpace(address1, nameof(address3));
-            Throw.IfNullOrWhiteSpace(town, nameof(town));
-            Throw.IfNullOrWhiteSpace(postcode, nameof(postcode));
-            Throw.IfNullOrWhiteSpace(updatedBy, nameof(updatedBy));
-
-            UKPRN = ukPrn;
-            VenueName = venueName;
-            Address1 = address1;
-            Address2 = address2;
-            Address3 = address3;
-            Town = town;
-            County = county;
-            PostCode = postcode;
-            Status = status;
-            UpdatedBy = updatedBy;
-            DateAdded = dateAdded;
-        }
-
-        public Venue(
-            string id)
-            //int ukPrn,
-            //int providerID,
-            //int venueID,
-            //string venueName,
-            //string provVenueID,
-            //string address1,
-            //string address2,
-            //string address3,
-            //string town,
-            //string county,
-            //string postcode,
-            //VenueStatus status,
-            //string updatedBy,
-            //DateTime dateAdded,
-            //DateTime dateUpdated)
-        {
-            //Throw.IfNullOrWhiteSpace(ID, nameof(ID));
+            //Throw.IfNullOrWhiteSpace(id, nameof(id));
             //Throw.IfLessThan(0, ukPrn, nameof(ukPrn));
             //Throw.IfLessThan(0, providerID, nameof(providerID));
             //Throw.IfLessThan(0, venueID, nameof(venueID));
@@ -114,22 +78,76 @@ namespace Dfc.CourseDirectory.Models.Models.Venues
             //Throw.IfNullOrWhiteSpace(postcode, nameof(postcode));
             //Throw.IfNullOrWhiteSpace(updatedBy, nameof(updatedBy));
 
+
+            UKPRN = ukPrn;
+           // ProviderID = providerID;
+           // VenueID = venueID;
+            VenueName = venueName;
+           // ProvVenueID = provVenueID;
+            Address1 = address1;
+            Address2 = address2;
+            Address3 = address3;
+            Town = town;
+            County = county;
+            PostCode = postcode;
+            Status = status;
+            UpdatedBy = updatedBy;
+            DateAdded = dateAdded;
+            DateUpdated = dateUpdated;
+
+        }
+
+
+        [JsonConstructor]
+        public Venue(
+            string id,
+            int ukPrn,
+            int providerID,
+            int venueID,
+            string venueName,
+            string provVenueID,
+            string address1,
+            string address2,
+            string address3,
+            string town,
+            string county,
+            string postcode,
+            VenueStatus status,
+            string updatedBy,
+            DateTime dateAdded,
+            DateTime dateUpdated)
+        {
+            //Throw.IfNullOrWhiteSpace(id, nameof(id));
+            //Throw.IfLessThan(0, ukPrn, nameof(ukPrn));
+            //Throw.IfLessThan(0, providerID, nameof(providerID));
+            //Throw.IfLessThan(0, venueID, nameof(venueID));
+            //Throw.IfNullOrWhiteSpace(venueName, nameof(venueName));
+            //Throw.IfNullOrWhiteSpace(provVenueID, nameof(provVenueID));
+            //Throw.IfNullOrWhiteSpace(address1, nameof(address1));
+            //Throw.IfNullOrWhiteSpace(address1, nameof(address2));
+            //Throw.IfNullOrWhiteSpace(address1, nameof(address3));
+            //Throw.IfNullOrWhiteSpace(town, nameof(town));
+            //Throw.IfNullOrWhiteSpace(postcode, nameof(postcode));
+            //Throw.IfNullOrWhiteSpace(updatedBy, nameof(updatedBy));
+
+
             ID = id;
-            //UKPRN = ukPrn;
-            //ProviderID = providerID;
-            //VenueID = venueID;
-            //VenueName = venueName;
-            //ProvVenueID = provVenueID;
-            //Address1 = address1;
-            //Address2 = address2;
-            //Address3 = address3;
-            //Town = town;
-            //County = county;
-            //PostCode = postcode;
-            //Status = status;
-            //UpdatedBy = updatedBy;
-            //DateAdded = dateAdded;
-            //DateUpdated = dateUpdated;
+            UKPRN = ukPrn;
+            ProviderID = providerID;
+            VenueID = venueID;
+            VenueName = venueName;
+            ProvVenueID = provVenueID;
+            Address1 = address1;
+            Address2 = address2;
+            Address3 = address3;
+            Town = town;
+            County = county;
+            PostCode = postcode;
+            Status = status;
+            UpdatedBy = updatedBy;
+            DateAdded = dateAdded;
+            DateUpdated = dateUpdated;
+
         }
 
         protected override IEnumerable<object> GetEqualityComponents()
