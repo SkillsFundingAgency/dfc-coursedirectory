@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Models.Interfaces.Venues;
 
 namespace Dfc.CourseDirectory.Services.Interfaces.VenueService
 {
@@ -12,7 +13,7 @@ namespace Dfc.CourseDirectory.Services.Interfaces.VenueService
 
         Task<IResult<IVenueSearchResult>> SearchAsync(IVenueSearchCriteria criteria);
 
-        Task<IResult<IVenueAddResultItem>> AddAsync(IVenueAdd venue);
+        Task<IResult<IVenue>> AddAsync(IVenue venue);
 
         Task<IResult<IUpdatedVenueResult>> UpdateAsync(IUpdatedVenue venue);
 

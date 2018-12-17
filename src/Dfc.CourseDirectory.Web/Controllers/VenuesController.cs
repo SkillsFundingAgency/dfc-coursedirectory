@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Common;
+using Dfc.CourseDirectory.Models.Models.Venues;
 using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.Interfaces;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
@@ -161,9 +162,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
         public async Task<IActionResult> AddVenueSelectionConfirmation(AddVenueSelectionConfirmationRequestModel requestModel)
         {
 
-            var UKPRN = _session.GetString("UKPRN");
+            var UKPRN = _session.GetInt32("UKPRN").Value;
             VenueSearchRequestModel mod = new VenueSearchRequestModel();
-            mod.SearchTerm = UKPRN;
+            mod.SearchTerm = UKPRN.ToString();
 
             if (requestModel.Id != null)
             {
@@ -173,9 +174,22 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
             else
             {
-                VenueAdd venue = new VenueAdd(requestModel.AddressLine1, requestModel.AddressLine2, requestModel.TownOrCity, requestModel.VenueName, requestModel.County, requestModel.Postcode, UKPRN);
+                Venue venue = new Venue(UKPRN,
+                    requestModel.VenueName,
+                    requestModel.AddressLine1, 
+                    requestModel.AddressLine2, 
+                    null,
+                    requestModel.TownOrCity,
+                    requestModel.County, 
+                    requestModel.Postcode, 
+                    VenueStatus.Live,
+                    "Simon",
+                    DateTime.Now
+                    );
+
                 var addedVenue = await _venueService.AddAsync(venue);
-                mod.NewAddressId = addedVenue.Value.Id;
+
+                mod.NewAddressId = addedVenue.Value.ID;
             }
 
             VenueSearchResultModel resultModel;

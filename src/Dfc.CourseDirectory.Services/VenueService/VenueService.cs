@@ -12,6 +12,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Models.Interfaces.Venues;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 
 namespace Dfc.CourseDirectory.Services.VenueService
@@ -218,7 +219,7 @@ namespace Dfc.CourseDirectory.Services.VenueService
 
         }
 
-        public async Task<IResult<IVenueAddResultItem>> AddAsync(IVenueAdd venue)
+        public async Task<IResult<IVenue>> AddAsync(IVenue venue)
         {
             Throw.IfNull(venue, nameof(venue));
             _logger.LogMethodEnter();
@@ -241,26 +242,26 @@ namespace Dfc.CourseDirectory.Services.VenueService
 
                     _logger.LogInformationObject("Venue add service json response", json);
 
-                    var venueResult = JsonConvert.DeserializeObject<VenueAddResultItem>(json);
+                    var venueResult = JsonConvert.DeserializeObject<Venue>(json);
 
-                    return Result.Ok<IVenueAddResultItem>(venueResult);
+                    return Result.Ok<IVenue>(venueResult);
                 }
                 else
                 {
-                    return Result.Fail<IVenueAddResultItem>("Venue add service unsuccessful http response");
+                    return Result.Fail<IVenue>("Venue add service unsuccessful http response");
                 }
             }
 
             catch (HttpRequestException hre)
             {
                 _logger.LogException("Venue add service http request error", hre);
-                return Result.Fail<IVenueAddResultItem>("Venue add service http request error.");
+                return Result.Fail<IVenue>("Venue add service http request error.");
             }
             catch (Exception e)
             {
                 _logger.LogException("Venue add service unknown error.", e);
 
-                return Result.Fail<IVenueAddResultItem>("Venue add service unknown error.");
+                return Result.Fail<IVenue>("Venue add service unknown error.");
             }
             finally
             {
