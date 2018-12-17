@@ -14,17 +14,17 @@
     "postcodeApiKey": {
       "value": "not-a-real-key"
     },
-    "venueServiceApiUrl": {
+    "venueApiUrl": {
       "value": "https://my.api.net/api/venue/"
     },
     "venueApiKey": {
       "value": "not-a-real-key"
     },
-    "providerSearchApiUrl": {
-      "value": "https://my.api.net/api/provider/search?code="
+    "larsApiUrl": {
+      "value": "https://dfc-foo-prov-sch.search.windows.net/indexes/lars/docs/search"
     },
-    "providerAddApiUrl": {
-      "value": "https://my.api.net/api/provider/add?code="
+    "larsApiKey": {
+      "value": "not-a-real-key"
     },
     "providerApiUrl": {
       "value": "https://my.api.net/api/provider/"
