@@ -34,11 +34,11 @@
                                     Live
                                 </a>
                             </li>
-                            <li class="govuk-tabs__list-item" role="presentation">
+                            @*<li class="govuk-tabs__list-item" role="presentation">
                                 <a class="govuk-tabs__tab" href="#archived" id="tab_archived" role="tab" aria-controls="archived" tabindex="-1" aria-selected="false">
                                     Archived
                                 </a>
-                            </li>
+                            </li>*@
 
                         </ul>
 
@@ -76,9 +76,6 @@
 
                                         <br>
                                         <a asp-controller="venues" asp-action="EditVenue" asp-route-id=@venue.Id class="govuk-link">Edit</a>
-                                       
-
-                                        <br><a href="">Archive</a>
                                     </label>
                                 </div>
                             }
@@ -86,7 +83,7 @@
                             <a href="your-venues-archive-confirm">Archive happy path</a>
                         </section>
 
-                        <section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="archived" role="tabpanel" aria-labelledby="tab_archived">
+                        @*<section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="archived" role="tabpanel" aria-labelledby="tab_archived">
 
                             <div class="govuk-checkboxes__item">
                                 <label class="govuk-label govuk-checkboxes__label" for="study0">
@@ -101,7 +98,7 @@
                                 </label>
                             </div>
 
-                        </section>
+                        </section>*@
 
                     </div>
                     <div class="govuk-form-group" style="margin-top: 30px;">

@@ -63,6 +63,7 @@
 
                     $elementPostcodeId.on("blur", function () {
                         var result = validator.element($elementPostcodeId);
+                        var $postcodeIdSpanError = $("#PostcodeId-error");
 
                         if (result) {
                             $elementPostcodeId.removeClass(elementErrorClass);
@@ -72,6 +73,8 @@
                         } else {
                             $elementPostcodeId.addClass(elementErrorClass);
                             $formGroupPostcodeId.addClass(formGroupErrorClass);
+                            $postcodeIdSpanError.html("");
+                            $postcodeIdSpanError.html($elementPostcodeId.data("val-required"));
                             $validationMessagePostcodeId.show();
                             $validationMessagePostcodeId.css("margin-bottom", "15px");
                         }
@@ -82,10 +85,15 @@
                             $validationMessagePostcodeId.hide();
                         }
 
+                        var $postcodeIdSpanError = $("#PostcodeId-error");
+
                         if (result) {
                             $elementPostcodeId.removeClass(elementErrorClass);
                             $formGroupPostcodeId.removeClass(formGroupErrorClass);
                             $validationMessagePostcodeId.css("margin-bottom", "0");
+                        } else {
+                            $postcodeIdSpanError.html("");
+                            $postcodeIdSpanError.html($elementPostcodeId.data("val-required"));
                         }
                     });
 
