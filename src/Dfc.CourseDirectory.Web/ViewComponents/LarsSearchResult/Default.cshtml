@@ -69,6 +69,7 @@
         </div>
 
         <div class="govuk-grid-column-three-quarters">
+
             @await Component.InvokeAsync(nameof(Pagination),
             new
             {
@@ -80,7 +81,7 @@
                 isSliding = true
             })
             <div class="govuk-table govuk-!-font-size-14">
-                <div class="govuk-table__caption govuk-heading-s govuk-!-font-weight-regular">
+                <div class="govuk-heading-s govuk-!-font-weight-regular">
                     Found <span class="govuk-!-font-weight-bold">@Model.TotalCount</span> results for <span class="govuk-!-font-weight-bold">@Model.SearchTerm</span>
                 </div>
 
@@ -88,9 +89,9 @@
                 {
                     <div class="cd-lars-search-result__container">
                         <h3 class="govuk-heading-m">@item.LearnAimRefTitle</h3>
-                        <p class="govuk-body">LARS/QAN:<span class="govuk-!-font-weight-bold">@item.LearnAimRef</span></p>
-                        <p class="govuk-body">Level: <span class="govuk-!-font-weight-bold">@item.NotionalNVQLevelv2</span></p>
-                        <p class="govuk-body"><span class="govuk-!-font-weight-bold">@item.AwardOrgName (@item.AwardOrgCode)</span></p>
+                        <p class="govuk-body">LARS/QAN:<span class="govuk-!-font-weight-bold"> @item.LearnAimRef</span></p>
+                        <p class="govuk-body">Level: <span class="govuk-!-font-weight-bold"> @item.NotionalNVQLevelv2</span></p>
+                        <p class="govuk-body">Awarding body:<span class="govuk-!-font-weight-bold"> @item.AwardOrgCode</span></p>
                         <p class="govuk-body"><a class="govuk-link" href="#">Add this qualification</a></p>
                     </div>
                 }

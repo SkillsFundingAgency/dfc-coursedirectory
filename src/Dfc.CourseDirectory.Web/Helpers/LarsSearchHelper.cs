@@ -52,14 +52,14 @@ namespace Dfc.CourseDirectory.Web.Helpers
             var filters = new List<LarsSearchFilterModel>();
 
             var notionalNVQLevelv2Filter = GetLarsSearchFilterModel(
-                "Notional NVQ Level v2",
+                "Qualification Level",
                 "NotionalNVQLevelv2Filter",
                 (value) => $"Level {value}",
                 larsSearchFacets.NotionalNVQLevelv2,
                 larsSearchRequestModel.NotionalNVQLevelv2Filter);
 
             var awardOrgCodeFilter = GetLarsSearchFilterModel(
-                "Award Org Code",
+                "Awarding Organisation",
                 "AwardOrgCodeFilter",
                 (value) => value,
                 larsSearchFacets.AwardOrgCode,
