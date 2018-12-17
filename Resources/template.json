@@ -50,6 +50,12 @@
         "description": "API URL for the provider search"
       }
     },
+    "providerApiUrl": {
+      "type": "string",
+      "metadata": {
+        "description": "API URL for the provider services"
+      }
+    },
     "providerApiKey": {
       "type": "securestring",
       "metadata": {
@@ -251,6 +257,14 @@
               {
                 "name": "ProviderAddSettings__ApiVersion",
                 "value": ""
+              },
+              {
+                "name": "ProviderServiceSettings__ApiUrl",
+                "value": "[parameters('providerApiUrl')]"
+              },
+              {
+                "name": "ProviderServiceSettings__ApiKey",
+                "value": "[parameters('providerApiKey')]"
               }
             ]
           }

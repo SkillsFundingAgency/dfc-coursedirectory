@@ -1,14 +1,12 @@
 ﻿using Dfc.CourseDirectory.Common.Interfaces;
 using Dfc.CourseDirectory.Models.Interfaces.Providers;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace Dfc.CourseDirectory.Services.Interfaces
+namespace Dfc.CourseDirectory.Services.Interfaces.ProviderService
 {
-    public interface IProviderAddService
+    public interface IProviderService
     {
+        Task<IResult<IProviderSearchResult>> GetProviderByPRNAsync(IProviderSearchCriteria criteria);
         Task<IResult<IProvider>> AddProviderAsync(IProviderAdd provider);
     }
 }
