@@ -1,4 +1,5 @@
-﻿using Dfc.CourseDirectory.Common;
+﻿using System;
+using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.Interfaces;
 using Dfc.CourseDirectory.Web.Helpers;
@@ -42,7 +43,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
         public async Task<IActionResult> Index([FromQuery] VenueSearchRequestModel requestModel)
         {
-            _session.SetString("UKPRN", requestModel.SearchTerm);
+            _session.SetInt32("UKPRN", Convert.ToInt32(requestModel.SearchTerm));
            
 
             VenueSearchResultModel model;

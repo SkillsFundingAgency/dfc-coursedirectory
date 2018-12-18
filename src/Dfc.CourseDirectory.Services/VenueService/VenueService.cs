@@ -12,6 +12,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Models.Interfaces.Venues;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 
 namespace Dfc.CourseDirectory.Services.VenueService
@@ -43,7 +44,7 @@ namespace Dfc.CourseDirectory.Services.VenueService
             _addVenueUri = settings.Value.ToAddVenueUri();
         }
 
-        public async Task<IResult<IUpdatedVenueResult>> UpdateAsync(IUpdatedVenue venue)
+        public async Task<IResult<IVenue>> UpdateAsync(IVenue venue)
         {
             Throw.IfNull(venue, nameof(venue));
             _logger.LogMethodEnter();
@@ -64,28 +65,28 @@ namespace Dfc.CourseDirectory.Services.VenueService
                 {
                     var json = await response.Content.ReadAsStringAsync();
 
-                    _logger.LogInformationObject("Venue add service json response", json);
+                    _logger.LogInformationObject("Venue update service json response", json);
 
-                    var venueResult = JsonConvert.DeserializeObject<UpdatedVenueResult>(json);
+                    var venueResult = JsonConvert.DeserializeObject<Venue>(json);
 
-                    return Result.Ok<IUpdatedVenueResult>(venueResult);
+                    return Result.Ok<IVenue>(venueResult);
                 }
                 else
                 {
-                    return Result.Fail<IUpdatedVenueResult>("Venue add service unsuccessful http response");
+                    return Result.Fail<IVenue>("Venue update service unsuccessful http response");
                 }
             }
 
             catch (HttpRequestException hre)
             {
-                _logger.LogException("Venue add service http request error", hre);
-                return Result.Fail<IUpdatedVenueResult>("Venue add service http request error.");
+                _logger.LogException("Venue update service http request error", hre);
+                return Result.Fail<IVenue>("Venue update service http request error.");
             }
             catch (Exception e)
             {
-                _logger.LogException("Venue add service unknown error.", e);
+                _logger.LogException("Venue update service unknown error.", e);
 
-                return Result.Fail<IUpdatedVenueResult>("Venue add service unknown error.");
+                return Result.Fail<IVenue>("Venue update service unknown error.");
             }
             finally
             {
@@ -95,53 +96,53 @@ namespace Dfc.CourseDirectory.Services.VenueService
         }
 
 
-        public async Task<IResult<IGetVenueByIdResult>> GetVenueByIdAsync(IGetVenueByIdCriteria criteria)
+        public async Task<IResult<IVenue>> GetVenueByIdAsync(IGetVenueByIdCriteria criteria)
         {
             Throw.IfNull(criteria, nameof(criteria));
             _logger.LogMethodEnter();
 
             try
             {
-                _logger.LogInformationObject("Venue search criteria.", criteria);
-                _logger.LogInformationObject("Venue search URI", _getVenueByIdUri);
+                _logger.LogInformationObject("Get Venue By Id criteria.", criteria);
+                _logger.LogInformationObject("Get Venue By Id URI", _getVenueByIdUri);
 
                 var content = new StringContent(criteria.ToJson(), Encoding.UTF8, "application/json");
                 
                 var response = await _httpClient.PostAsync(_getVenueByIdUri, content);
 
-                _logger.LogHttpResponseMessage("Venue search service http response", response);
+                _logger.LogHttpResponseMessage("Get Venue By Id service http response", response);
 
                 if (response.IsSuccessStatusCode)
                 {
                     var json = await response.Content.ReadAsStringAsync();
 
-                    _logger.LogInformationObject("Venue search service json response", json);
+                    _logger.LogInformationObject("Get Venue By Id service json response", json);
 
                     var settings = new JsonSerializerSettings
                     {
                         ContractResolver = new VenueSearchResultContractResolver()
                     };
-                    var venue = JsonConvert.DeserializeObject<GetVenueByIdResult>(json, settings);
+                    var venue = JsonConvert.DeserializeObject<Venue>(json, settings);
 
                    
-                    return Result.Ok<IGetVenueByIdResult>(venue);
+                    return Result.Ok<IVenue>(venue);
                 }
                 else
                 {
-                    return Result.Fail<IGetVenueByIdResult>("Venue search service unsuccessful http response");
+                    return Result.Fail<IVenue>("Get Venue ByI d service unsuccessful http response");
                 }
             }
 
             catch (HttpRequestException hre)
             {
-                _logger.LogException("Venue search service http request error", hre);
-                return Result.Fail<IGetVenueByIdResult>("Venue search service http request error.");
+                _logger.LogException("Get Venue By Id service http request error", hre);
+                return Result.Fail<IVenue>("Get Venue By Id service http request error.");
             }
             catch (Exception e)
             {
-                _logger.LogException("Venue search service unknown error.", e);
+                _logger.LogException("Get Venue By Id service unknown error.", e);
 
-                return Result.Fail<IGetVenueByIdResult>("Venue search service unknown error.");
+                return Result.Fail<IVenue>("Get Venue By Id service unknown error.");
             }
             finally
             {
@@ -175,7 +176,7 @@ namespace Dfc.CourseDirectory.Services.VenueService
                     {
                         ContractResolver = new VenueSearchResultContractResolver()
                     };
-                    var venues = JsonConvert.DeserializeObject<IEnumerable<VenueSearchResultItem>>(json, settings).OrderBy(x => x.VenueName).ToList();
+                    var venues = JsonConvert.DeserializeObject<IEnumerable<Venue>>(json, settings).OrderBy(x => x.VenueName).ToList();
 
 
                     if (!String.IsNullOrEmpty(criteria.NewAddressId))
@@ -218,7 +219,7 @@ namespace Dfc.CourseDirectory.Services.VenueService
 
         }
 
-        public async Task<IResult<IVenueAddResultItem>> AddAsync(IVenueAdd venue)
+        public async Task<IResult<IVenue>> AddAsync(IVenue venue)
         {
             Throw.IfNull(venue, nameof(venue));
             _logger.LogMethodEnter();
@@ -241,26 +242,26 @@ namespace Dfc.CourseDirectory.Services.VenueService
 
                     _logger.LogInformationObject("Venue add service json response", json);
 
-                    var venueResult = JsonConvert.DeserializeObject<VenueAddResultItem>(json);
+                    var venueResult = JsonConvert.DeserializeObject<Venue>(json);
 
-                    return Result.Ok<IVenueAddResultItem>(venueResult);
+                    return Result.Ok<IVenue>(venueResult);
                 }
                 else
                 {
-                    return Result.Fail<IVenueAddResultItem>("Venue add service unsuccessful http response");
+                    return Result.Fail<IVenue>("Venue add service unsuccessful http response");
                 }
             }
 
             catch (HttpRequestException hre)
             {
                 _logger.LogException("Venue add service http request error", hre);
-                return Result.Fail<IVenueAddResultItem>("Venue add service http request error.");
+                return Result.Fail<IVenue>("Venue add service http request error.");
             }
             catch (Exception e)
             {
                 _logger.LogException("Venue add service unknown error.", e);
 
-                return Result.Fail<IVenueAddResultItem>("Venue add service unknown error.");
+                return Result.Fail<IVenue>("Venue add service unknown error.");
             }
             finally
             {
