@@ -1,0 +1,123 @@
+﻿.cd-lars-search-result__container {
+    border:1px solid #ececec;
+    margin-bottom:1rem;
+    padding: 1rem;
+}
+
+
+.sort-list {
+    display: flex;
+    flex-direction: row;
+    justify-content: right;
+}
+
+ul.sort-list {
+    margin: 0;
+    padding-inline-start: 1rem;
+    list-style-type: none;
+}
+
+.sort-list .sort-list-item {
+    padding: 0 .5rem;
+}
+
+.sort-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
+.accordion-controls li div {
+    display: none;
+}
+
+.accordion-controls button {
+    width: 100%;
+    border-top: 1px solid red;
+    padding: 1rem;
+    text-align: left;
+}
+
+.accordion-controls {
+    padding-inline-start: 0;
+}
+
+
+
+
+.accordian {
+    border-bottom: 1px solid #bfc1c3;
+}
+
+.accordian article {
+    border-top: 1px solid #bfc1c3;
+}
+
+.accordian article:last-of-type {
+}
+
+/* Accordian headers */
+.section-title {
+    display: block;
+    margin: 0;
+}
+
+
+
+
+.section-title {
+    display: block;
+    margin: 0;
+}
+
+
+
+.section-title:hover,
+.section-title:focus {
+    background-color: #f8f8f8;
+}
+
+.section-title:hover {
+    cursor: pointer;
+}
+
+.section-title h3 {
+    position: relative;
+    color: black;
+    padding: 0.5em 0;
+    margin: 0;
+}
+
+.section-title h3 span {
+    position: absolute;
+    right: 4px;
+}
+
+.section-title:last-of-type {
+    border: none;
+}
+
+.controls {
+    display: flex;
+    justify-content: space-between;
+}
+
+.controls span {
+    color: #005ea5;
+}
+
+/* collapsing-section */
+.collapsing-section {
+    display: none;
+}
+
+.collapsing-section.open {
+    padding-bottom: 1rem;
+}
+
+.collapsing-section p {
+    margin: 0;
+}
+
+
+

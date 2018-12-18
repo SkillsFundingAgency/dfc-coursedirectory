@@ -14,5 +14,6 @@ namespace Dfc.CourseDirectory.Web.ViewModels
         public AddressModel Address { get; set; }
 
         public string Id { get; set; }
+
     }
 }

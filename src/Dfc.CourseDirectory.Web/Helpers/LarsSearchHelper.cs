@@ -52,37 +52,22 @@ namespace Dfc.CourseDirectory.Web.Helpers
             var filters = new List<LarsSearchFilterModel>();
 
             var notionalNVQLevelv2Filter = GetLarsSearchFilterModel(
-                "Notional NVQ Level v2",
+                "Qualification Level",
                 "NotionalNVQLevelv2Filter",
                 (value) => $"Level {value}",
                 larsSearchFacets.NotionalNVQLevelv2,
                 larsSearchRequestModel.NotionalNVQLevelv2Filter);
 
             var awardOrgCodeFilter = GetLarsSearchFilterModel(
-                "Award Org Code",
+                "Awarding Organisation",
                 "AwardOrgCodeFilter",
                 (value) => value,
                 larsSearchFacets.AwardOrgCode,
                 larsSearchRequestModel.AwardOrgCodeFilter);
 
-            var sectorSubjectAreaTier1Filter = GetLarsSearchFilterModel(
-                "Sector Subject Area Tier 1",
-                "SectorSubjectAreaTier1Filter",
-                (value) => value,
-                larsSearchFacets.SectorSubjectAreaTier1,
-                larsSearchRequestModel.SectorSubjectAreaTier1Filter);
-
-            var sectorSubjectAreaTier2Filter = GetLarsSearchFilterModel(
-                "Sector Subject Area Tier 2",
-                "SectorSubjectAreaTier2Filter",
-                (value) => value,
-                larsSearchFacets.SectorSubjectAreaTier2,
-                larsSearchRequestModel.SectorSubjectAreaTier2Filter);
 
             filters.Add(notionalNVQLevelv2Filter);
             filters.Add(awardOrgCodeFilter);
-            filters.Add(sectorSubjectAreaTier1Filter);
-            filters.Add(sectorSubjectAreaTier2Filter);
 
             return filters;
         }

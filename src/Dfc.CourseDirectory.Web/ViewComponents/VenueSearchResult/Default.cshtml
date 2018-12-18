@@ -8,7 +8,14 @@
     @if (Model.Items.Any() && Model.NewItem != null)
     {
         <p style="padding: 15px 20px; border: 4px solid #11813e" id="qual">
-            <span class="govuk-heading-m">New venue added:</span>
+            @if (Model.Updated)
+            {
+            <span class="govuk-heading-m">Your venue updated:</span>
+            }
+            else
+            {
+                <span class="govuk-heading-m">New venue added:</span>
+            }
             @Model.NewItem.VenueName,
             @Model.NewItem.AddressLine1,
             @Model.NewItem.AddressLine2,
@@ -34,11 +41,7 @@
                                     Live
                                 </a>
                             </li>
-                            @*<li class="govuk-tabs__list-item" role="presentation">
-                                <a class="govuk-tabs__tab" href="#archived" id="tab_archived" role="tab" aria-controls="archived" tabindex="-1" aria-selected="false">
-                                    Archived
-                                </a>
-                            </li>*@
+                         
 
                         </ul>
 
@@ -47,7 +50,7 @@
                             @foreach (var venue in Model.Items)
                             {
                                 <div class="govuk-checkboxes__item">
-                                    <label class="govuk-label govuk-checkboxes__label" for="study0">
+                                    <label class="govuk-label" for="study0">
                                         @venue.VenueName<br>
                                         @if (!string.IsNullOrWhiteSpace(@venue.AddressLine1))
                                         {
@@ -83,22 +86,7 @@
                             <a href="your-venues-archive-confirm">Archive happy path</a>
                         </section>
 
-                        @*<section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="archived" role="tabpanel" aria-labelledby="tab_archived">
-
-                            <div class="govuk-checkboxes__item">
-                                <label class="govuk-label govuk-checkboxes__label" for="study0">
-                                    NOT FROM SERVICE<br>
-                                    NOT FROM SERVICE<br>
-                                    NOT FROM SERVICE<br>
-                                    NOT FROM SERVICE<br>
-                                    NOT FROM SERVICE<br><a href="">Edit</a>
-
-
-                                    <br><a href="">Archive</a>
-                                </label>
-                            </div>
-
-                        </section>*@
+                      
 
                     </div>
                     <div class="govuk-form-group" style="margin-top: 30px;">
@@ -109,10 +97,8 @@
 
 
                 }
-                else
-                {
 
-                }
+
 
             </div>
         </div>
