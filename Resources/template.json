@@ -26,7 +26,7 @@
         "description": "API host key (code) needed to access the postcode search"
       }
     },
-    "venueServiceApiUrl": {
+    "venueApiUrl": {
       "type": "string",
       "metadata": {
         "description": "API URL for the venue search"
@@ -38,16 +38,22 @@
         "description": "API host key (code) needed to access the function app (REST API)"
       }
     },
-    "providerSearchApiUrl": {
+    "larsApiUrl": {
       "type": "string",
       "metadata": {
         "description": "API URL for the provider search"
       }
     },
-    "providerAddApiUrl": {
+    "larsApiKey": {
       "type": "string",
       "metadata": {
         "description": "API URL for the provider search"
+      }
+    },
+    "providerApiUrl": {
+      "type": "string",
+      "metadata": {
+        "description": "API URL for the provider services"
       }
     },
     "providerApiKey": {
@@ -182,11 +188,11 @@
               },
               {
                 "name": "LarsSearchSettings__ApiUrl",
-                "value": "https://dfc-larsearch.search.windows.net/indexes/azuresql-index/docs/search"
+                "value": "[parameters('larsApiUrl')]"
               },
               {
                 "name": "LarsSearchSettings__ApiKey",
-                "value": "8A6148AD67F251D39562FF4591FAED1B"
+                "value": "[parameters('larsApiKey')]"
               },
               {
                 "name": "LarsSearchSettings__ApiVersion",
@@ -218,7 +224,7 @@
               },
               {
                 "name": "VenueServiceSettings__ApiUrl",
-                "value": "[parameters('venueServiceApiUrl')]"
+                "value": "[parameters('venueApiUrl')]"
               },
               {
                 "name": "VenueServiceSettings__ApiKey",
@@ -229,28 +235,12 @@
                 "value": ""
               },
               {
-                "name": "ProviderSearchSettings__ApiUrl",
-                "value": "[parameters('providerSearchApiUrl')]"
+                "name": "ProviderServiceSettings__ApiUrl",
+                "value": "[parameters('providerApiUrl')]"
               },
               {
-                "name": "ProviderSearchSettings__ApiKey",
+                "name": "ProviderServiceSettings__ApiKey",
                 "value": "[parameters('providerApiKey')]"
-              },
-              {
-                "name": "ProviderSearchSettings__ApiVersion",
-                "value": ""
-              },
-              {
-                "name": "ProviderAddSettings__ApiUrl",
-                "value": "[parameters('providerAddApiUrl')]"
-              },
-              {
-                "name": "ProviderAddSettings__ApiKey",
-                "value": "[parameters('providerApiKey')]"
-              },
-              {
-                "name": "ProviderAddSettings__ApiVersion",
-                "value": ""
               }
             ]
           }

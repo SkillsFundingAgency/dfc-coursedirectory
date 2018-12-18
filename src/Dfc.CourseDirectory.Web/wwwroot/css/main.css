@@ -5452,20 +5452,7 @@ p {
 }
 
 .cd-hero-search {
-  color: white;
   padding: 0.5rem 0 2rem 0;
-}
-
-.cd-hero-search .govuk-breadcrumbs {
-  color: white;
-}
-
-.cd-hero-search .govuk-breadcrumbs a {
-  color: white;
-}
-
-.cd-hero-search .govuk-breadcrumbs__list-item:before {
-  border-color: white;
 }
 
 .cd-hero-search__label {
@@ -5482,33 +5469,11 @@ p {
 
 .search-input[type="search"] {
   border: 0;
-}
-
-.cd-hero-green {
-  background-color: #28a197;
-}
-
-.cd-hero-green h1, .cd-hero-green p {
-  color: white;
-}
-
-.cd-search__submit-wrapper {
-  background-color: black;
-}
-
-.cd-search__submit {
-  position: relative;
-  padding: 0;
-  width: 40px;
-  height: 40px;
-  background-image: url(https://assets.publishing.service.gov.uk/frontend/govuk_publishing_componen…utton-ca89b2a….png);
-  background-repeat: no-repeat;
-  background-position: 2px 50%;
-  text-indent: -5000px;
-  overflow: hidden;
+  display: flex;
 }
 
 .submit {
+  display: inline-flex;
   height: 40px;
   width: 40px;
   cursor: pointer;
@@ -5525,6 +5490,34 @@ p {
   color: white;
   z-index: 900;
   position: relative;
+}
+
+.cd-hero-green {
+  background-color: #28a197;
+}
+
+.cd-hero-green h1, .cd-hero-green p {
+  color: white;
+}
+
+.cd-hero-grey {
+  background-color: #f8f8f8;
+}
+
+.cd-search__submit-wrapper {
+  background-color: black;
+}
+
+.cd-search__submit {
+  position: relative;
+  padding: 0;
+  width: 40px;
+  height: 40px;
+  background-image: url(https://assets.publishing.service.gov.uk/frontend/govuk_publishing_componen…utton-ca89b2a….png);
+  background-repeat: no-repeat;
+  background-position: 2px 50%;
+  text-indent: -5000px;
+  overflow: hidden;
 }
 
 .success-container {
@@ -5554,4 +5547,121 @@ p {
 
 .failure-container h1 {
   color: red;
+}
+
+.cd-lars-search-result__container {
+  border: 1px solid #ececec;
+  margin-bottom: 1rem;
+  padding: 1rem;
+}
+
+.sort-list {
+  display: flex;
+  flex-direction: row;
+  justify-content: right;
+}
+
+ul.sort-list {
+  margin: 0;
+  padding-inline-start: 1rem;
+  list-style-type: none;
+}
+
+.sort-list .sort-list-item {
+  padding: 0 .5rem;
+}
+
+.sort-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+.accordion-controls li div {
+  display: none;
+}
+
+.accordion-controls button {
+  width: 100%;
+  border-top: 1px solid red;
+  padding: 1rem;
+  text-align: left;
+}
+
+.accordion-controls {
+  padding-inline-start: 0;
+}
+
+.accordian {
+  border-bottom: 1px solid #bfc1c3;
+}
+
+.accordian article {
+  border-top: 1px solid #bfc1c3;
+}
+
+/* Accordian headers */
+.section-title {
+  display: block;
+  margin: 0;
+}
+
+.section-title {
+  display: block;
+  margin: 0;
+}
+
+.section-title:hover,
+.section-title:focus {
+  background-color: #f8f8f8;
+}
+
+.section-title:hover {
+  cursor: pointer;
+}
+
+.section-title h3 {
+  position: relative;
+  color: black;
+  padding: 0.5em 0;
+  margin: 0;
+}
+
+.section-title h3 span {
+  position: absolute;
+  right: 4px;
+}
+
+.section-title:last-of-type {
+  border: none;
+}
+
+.controls {
+  display: flex;
+  justify-content: space-between;
+}
+
+.controls span {
+  color: #005ea5;
+}
+
+/* collapsing-section */
+.collapsing-section {
+  display: none;
+}
+
+.collapsing-section.open {
+  padding-bottom: 1rem;
+}
+
+.collapsing-section p {
+  margin: 0;
+}
+
+.link--button {
+  border: none;
+  color: #005ea5;
+  font-size: 1.1875rem;
+  text-decoration: underline;
+  background-color: transparent;
 }
