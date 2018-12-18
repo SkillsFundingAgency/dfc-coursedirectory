@@ -6,6 +6,8 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.EditVenueAddress
     {
         public string VenueName { get; set; }
         public string PostcodeId { get; set; }
+
+        public string Id { get; set; }
         public AddressModel Address { get; set; }
     }
 }

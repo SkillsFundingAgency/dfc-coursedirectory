@@ -4,6 +4,8 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.ManualAddress
 {
     public class ManualAddressModel
     {
+        public string  Id { get; set; }
+
         [Required(AllowEmptyStrings = false, ErrorMessage = "Enter address line 1")]
         [MaxLength(100, ErrorMessage = "Address line 1 must be 100 characters or less")]
         [RegularExpression("[a-zA-Z0-9']+(?: [a-zA-Z\\.\\-]+)*$", ErrorMessage = "Address line 1 must only include letters a to z, numbers, hyphens and spaces")]

@@ -4,18 +4,9 @@
 @model Dfc.CourseDirectory.Web.ViewModels.VenueAddressSelectionConfirmationViewModel
 
 @{
-    var edit = Context.Session.GetString("IsEdit");
-
-    if (edit != null)
+    if (Model.Id != null)
     {
-        if (edit == "false")
-        {
-            <h1 class="govuk-heading-xl">Add a venue</h1>
-        }
-        else
-        {
-            <h1 class="govuk-heading-xl">Edit venue details</h1>
-        }
+        <h1 class="govuk-heading-xl">Edit venue details</h1>
     }
     else
     {
