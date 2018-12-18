@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Dfc.CourseDirectory.Services
+namespace Dfc.CourseDirectory.Services.VenueService
 {
     public class VenueSearchResultContractResolver : PrivateSetterContractResolver
     {
@@ -15,7 +15,7 @@ namespace Dfc.CourseDirectory.Services
                 { "UKPRN", "UKPRN" },
                 { "ProviderID", "PROVIDER_ID" },
                 { "VenueID", "VENUE_ID" },
-                { "VenueName", "VENUE_NAME" },
+                { "Venue_Name", "VENUE_NAME" },
                 { "ProvVenueID", "PROV_VENUE_ID" },
                 { "Address1", "ADDRESS_1" },
                 { "Address2", "ADDRESS_2" },

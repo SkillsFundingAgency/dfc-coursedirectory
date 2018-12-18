@@ -190,15 +190,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> AddVenueSelectionConfirmation(AddVenueSelectionConfirmationRequestModel requestModel)
         {
-
             var UKPRN = _session.GetInt32("UKPRN").Value;
             VenueSearchRequestModel mod = new VenueSearchRequestModel();
             mod.SearchTerm = UKPRN.ToString();
 
             if (requestModel.Id != null)
             {
-                //UpdatedVenue venue = new UpdatedVenue(requestModel.Id, requestModel.AddressLine1, requestModel.AddressLine2, requestModel.TownOrCity, requestModel.VenueName, requestModel.County, requestModel.Postcode);
-
                 Venue venue = new Venue(
                     requestModel.Id,
                     UKPRN,

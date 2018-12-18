@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using Dfc.CourseDirectory.Models.Models.Venues;
 
-namespace Dfc.CourseDirectory.Services
+namespace Dfc.CourseDirectory.Services.VenueService
 {
     public class VenueSearchResult : ValueObject<VenueSearchResult>, IVenueSearchResult
     {

@@ -1,5 +1,5 @@
 ﻿using Dfc.CourseDirectory.Common;
-using Dfc.CourseDirectory.Services;
+using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Services.Interfaces;
 using Dfc.CourseDirectory.Web.RequestModels;
 using Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult;
