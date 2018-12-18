@@ -94,7 +94,11 @@
                 if (result) {
                     $elementSearchTerm.removeClass(elementErrorClass);
                     $formGroupSearchTerm.removeClass(formGroupErrorClass);
+                    $searchForm.removeClass("govuk-form-group, govuk-form-group--error");
                     $validationMessageSearchTerm.css("margin-bottom", "0");
+                }
+                else {
+                    $searchForm.addClass("govuk-form-group, govuk-form-group--error");
                 }
             });
 
