@@ -76,6 +76,7 @@
                 if (result) {
                     $elementSearchTerm.removeClass(elementErrorClass);
                     $formGroupSearchTerm.removeClass(formGroupErrorClass);
+                    $searchForm.removeClass("govuk-form-group, govuk-form-group--error");
                     $validationMessageSearchTerm.hide();
                     $validationMessageSearchTerm.css("margin-bottom", "0");
                 } else {
@@ -93,7 +94,11 @@
                 if (result) {
                     $elementSearchTerm.removeClass(elementErrorClass);
                     $formGroupSearchTerm.removeClass(formGroupErrorClass);
+                    $searchForm.removeClass("govuk-form-group, govuk-form-group--error");
                     $validationMessageSearchTerm.css("margin-bottom", "0");
+                }
+                else {
+                    $searchForm.addClass("govuk-form-group, govuk-form-group--error");
                 }
             });
 
@@ -125,9 +130,21 @@
                     makeRequestWithPayload({
                         SearchTerm: $elementSearchTerm.val()
                     }, onSucess);
+
+                    $elementSearchTerm.removeClass(elementErrorClass);
+                    $formGroupSearchTerm.removeClass(formGroupErrorClass);
+                    $searchForm.removeClass("govuk-form-group, govuk-form-group--error");
+                    $validationMessageSearchTerm.hide();
+                    $validationMessageSearchTerm.css("margin-bottom", "0");
                 }
                 else {
                     $providerSearchResultContainer.html("");
+
+                    $elementSearchTerm.addClass(elementErrorClass);
+                    $formGroupSearchTerm.addClass(formGroupErrorClass);
+                    $searchForm.addClass("govuk-form-group, govuk-form-group--error");
+                    $validationMessageSearchTerm.show();
+                    $validationMessageSearchTerm.css("margin-bottom", "15px");
                 }
             }
         });
