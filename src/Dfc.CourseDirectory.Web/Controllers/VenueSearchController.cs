@@ -66,7 +66,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     var items = _venueSearchHelper.GetVenueSearchResultItemModels(result.Value.Value);
                     model = new VenueSearchResultModel(
                         requestModel.SearchTerm, 
-                        items,null);
+                        items,null,false);
                 }
                 else
                 {

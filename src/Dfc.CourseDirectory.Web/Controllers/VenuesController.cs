@@ -61,28 +61,54 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         public IActionResult AddVenue()
         {
-            _session.SetString("IsEdit", "false");
+            //_session.SetString("IsEdit", "false");
             return View();
         }
 
-        public IActionResult AddVenueManualAddress()
+        public async Task<IActionResult> AddVenueManualAddress(string Id)
         {
-            return View();
+            var viewModel = new VenueAddressSelectionConfirmationViewModel();
+
+            if (Id != null)
+            {
+                GetVenueByIdCriteria criteria = new GetVenueByIdCriteria(Id);
+
+                var getVenueByIdResult = await _venueService.GetVenueByIdAsync(criteria);
+                if (getVenueByIdResult.IsSuccess && getVenueByIdResult.HasValue)
+                {
+                    viewModel.Id = Id;
+                    viewModel.VenueName = getVenueByIdResult.Value.VenueName;
+                    viewModel.Address = new AddressModel
+                    {
+                        AddressLine1 = getVenueByIdResult.Value.Address1,
+                        AddressLine2 = getVenueByIdResult.Value.Address2,
+                        TownOrCity = getVenueByIdResult.Value.Town,
+                        County = getVenueByIdResult.Value.County,
+                        Postcode = getVenueByIdResult.Value.PostCode
+                    };
+                }
+                else
+                {
+                    viewModel.Error = getVenueByIdResult.Error;
+                }
+
+            }
+
+            viewModel.Id = Id;
+
+            return View(viewModel);
         }
 
         public async Task<IActionResult> EditVenue(string Id)
         {
-
-            _session.SetString("IsEdit", "true");
-
             var viewModel = new VenueAddressSelectionConfirmationViewModel();
-
 
             GetVenueByIdCriteria criteria = new GetVenueByIdCriteria(Id);
 
             var getVenueByIdResult = await _venueService.GetVenueByIdAsync(criteria);
             if (getVenueByIdResult.IsSuccess && getVenueByIdResult.HasValue)
             {
+                viewModel.Id = Id;
                 viewModel.VenueName = getVenueByIdResult.Value.VenueName;
                 viewModel.Address = new AddressModel
                 {
@@ -124,6 +150,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         County = searchResult.Value.County,
                         Postcode = searchResult.Value.PostCode
                     };
+                    viewModel.Id = requestModel.Id;
                 }
                 else
                 {
@@ -149,6 +176,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                             Postcode = getVenueByIdResult.Value.PostCode
                         };
                     }
+
+                    viewModel.Id = requestModel.Id;
                 }
             }
 
@@ -188,9 +217,20 @@ namespace Dfc.CourseDirectory.Web.Controllers
             if (result.IsSuccess && result.HasValue)
             {
                 var items = _venueSearchHelper.GetVenueSearchResultItemModels(result.Value.Value);
-                resultModel = new VenueSearchResultModel(
-                    mod.SearchTerm,
-                    items, newItem);
+
+                if (requestModel.Id != null)
+                {
+                    resultModel = new VenueSearchResultModel(
+                        mod.SearchTerm,
+                        items, newItem,true);
+                }
+                else
+                {
+                    resultModel = new VenueSearchResultModel(
+                        mod.SearchTerm,
+                        items, newItem,false);
+                }
+                   
             }
             else
             {
@@ -210,6 +250,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             var viewModel = new VenueAddressSelectionConfirmationViewModel
             {
+                Id = model.Id,
                 VenueName = model.VenueName,
                 Address = new AddressModel
                 {
@@ -242,6 +283,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             EditVenueAddressModel model = new EditVenueAddressModel
             {
+                Id = requestModel.Id,
                 VenueName = requestModel.VenueName,
                 PostcodeId = requestModel.Address.Id,
                 Address = requestModel.Address
