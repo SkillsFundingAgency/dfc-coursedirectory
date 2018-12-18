@@ -1,3 +1,48 @@
-﻿<h1 class="govuk-heading-xl">Find a Qualification</h1>
+﻿@{
+    Layout = "_LayoutfullWidthHero";
+    ViewData["Title"] = "Find a Qualification";
+    ViewData["Subtext"] = "Enter a search term or LARS/QAN number to begin";
+    ViewData["Placeholder"] = "Search";
+}
 
+<div class="cd-hero-grey">
+    <div class="govuk-width-container">
+        <header class="cd-hero-search">
+            <div class="content-container">
+
+                <div class="govuk-breadcrumbs">
+                    <ol class="govuk-breadcrumbs__list">
+                        <li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="your-courses">Home</a></li>
+                        <li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="Providers">Qualifications</li>
+                        <li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link">@ViewBag.Title</li>
+                    </ol>
+                </div>
+                <div class="grid-row" data-sf-element="Row">
+                    <div class="column-two-thirds">
+                        <div>
+                            <h1 class="govuk-heading-l govuk-!-margin-top-4">@ViewBag.Title</h1>
+                            <p class="column-two-thirds govuk-heading-m">@ViewBag.Subtext</p>
+                        </div>
+                        <form class="site-search ui-front" id="header-search">
+
+                            <div class="search-input-wrapper">
+
+
+                                <input class="govuk-input govuk-!-width-three-quarters search-input js-search-focus" placeholder="@ViewBag.Placeholder" id="LarsSearchTerm" name="LarsSearchTerm" type="text">
+                                <div class="cd-c-search__item cd-search__submit-wrapper">
+                                    <button type="button" class=" submit" id="searchQualification">Search</button>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+    </div>
+    </header>
+</div>
+</div>
+@*<div class="cd-hero-grey">
+    <h1 class="govuk-heading-xl">Find a Qualification</h1>
+</div>*@
 @await Component.InvokeAsync(nameof(LarsSearch))

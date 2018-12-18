@@ -27,8 +27,13 @@
     }
     else if (Model.Items.Count() > 0)
     {
-        <div class="govuk-grid-column-one-quarter">
 
+        <div class="govuk-heading-s govuk-!-font-weight-regular">
+            Found <span class="govuk-!-font-weight-bold">@Model.TotalCount</span> results for <span class="govuk-!-font-weight-bold">@Model.SearchTerm</span>
+        </div>
+
+        <div class="govuk-grid-column-one-quarter">
+            <h3>filter controls here</h3>
             @if (Model.Filters != null)
             {
                 if (Model.HasSelectedFilters)
@@ -48,7 +53,7 @@
                             @*<div class="govuk-form-group govuk-!-font-size-14">*@
                             <span id="@tab" tabindex="0" class="section-title" aria-controls="@panel" role="tab">
                                 <h3 class="govuk-heading-s">
-                                    @filter.Title 
+                                    @filter.Title
                                     <span>+</span>
                                 </h3>
                             </span>
@@ -67,7 +72,7 @@
                                         }
                                     </div>
                                 </fieldset>
-                            </div> 
+                            </div>
                             @*</div>*@
 
                         </article>
@@ -80,19 +85,16 @@
         <div class="govuk-grid-column-three-quarters">
 
             @await Component.InvokeAsync(nameof(Pagination),
-                new
-                {
-                    url = Model.Url,
-                    pageParamName = Model.PageParamName,
-                    totalNoOfItems = Model.TotalCount,
-                    itemsPerPage = Model.ItemsPerPage,
-                    noOfPagesToDisplay = 10,
-                    isSliding = true
-                })
+                     new
+                     {
+                         url = Model.Url,
+                         pageParamName = Model.PageParamName,
+                         totalNoOfItems = Model.TotalCount,
+                         itemsPerPage = Model.ItemsPerPage,
+                         noOfPagesToDisplay = 10,
+                         isSliding = true
+                     })
             <div class="govuk-table govuk-!-font-size-14">
-                <div class="govuk-heading-s govuk-!-font-weight-regular">
-                    Found <span class="govuk-!-font-weight-bold">@Model.TotalCount</span> results for <span class="govuk-!-font-weight-bold">@Model.SearchTerm</span>
-                </div>
 
                 @foreach (var item in Model.Items)
                 {
@@ -106,15 +108,15 @@
                 }
             </div>
             @await Component.InvokeAsync(nameof(Pagination),
-                new
-                {
-                    url = Model.Url,
-                    pageParamName = Model.PageParamName,
-                    totalNoOfItems = Model.TotalCount,
-                    itemsPerPage = Model.ItemsPerPage,
-                    noOfPagesToDisplay = 10,
-                    isSliding = true
-                })
+                     new
+                     {
+                         url = Model.Url,
+                         pageParamName = Model.PageParamName,
+                         totalNoOfItems = Model.TotalCount,
+                         itemsPerPage = Model.ItemsPerPage,
+                         noOfPagesToDisplay = 10,
+                         isSliding = true
+                     })
         </div>
     }
     else if (!string.IsNullOrWhiteSpace(Model.SearchTerm) && !Model.Items.Any())
