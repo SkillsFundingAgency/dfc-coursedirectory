@@ -3809,15 +3809,15 @@
 }
 
 .govuk-skip-link {
-  position: absolute !important;
-  width: 1px !important;
-  height: 1px !important;
-  margin: -1px !important;
-  overflow: hidden !important;
-  clip: rect(0 0 0 0) !important;
-  -webkit-clip-path: inset(50%) !important;
-  clip-path: inset(50%) !important;
-  white-space: nowrap !important;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  -webkit-clip-path: inset(50%);
+  clip-path: inset(50%);
+  white-space: nowrap;
   font-family: "nta", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -3829,15 +3829,15 @@
 }
 
 .govuk-skip-link:active, .govuk-skip-link:focus {
-  position: static !important;
-  width: auto !important;
-  height: auto !important;
-  margin: inherit !important;
-  overflow: visible !important;
-  clip: auto !important;
-  -webkit-clip-path: none !important;
-  clip-path: none !important;
-  white-space: inherit !important;
+  position: static;
+  width: auto;
+  height: auto;
+  margin: inherit;
+  overflow: visible;
+  clip: auto;
+  -webkit-clip-path: none;
+  clip-path: none;
+  white-space: inherit;
 }
 
 @media print {
@@ -4069,17 +4069,17 @@
 }
 
 .govuk-warning-text__assistive {
-  position: absolute !important;
-  width: 1px !important;
-  height: 1px !important;
-  margin: -1px !important;
-  padding: 0 !important;
-  overflow: hidden !important;
-  clip: rect(0 0 0 0) !important;
-  -webkit-clip-path: inset(50%) !important;
-  clip-path: inset(50%) !important;
-  border: 0 !important;
-  white-space: nowrap !important;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  -webkit-clip-path: inset(50%);
+  clip-path: inset(50%);
+  border: 0;
+  white-space: nowrap;
 }
 
 .govuk-warning-text__icon {
@@ -4127,41 +4127,41 @@
 }
 
 .govuk-visually-hidden {
-  position: absolute !important;
-  width: 1px !important;
-  height: 1px !important;
-  margin: -1px !important;
-  padding: 0 !important;
-  overflow: hidden !important;
-  clip: rect(0 0 0 0) !important;
-  -webkit-clip-path: inset(50%) !important;
-  clip-path: inset(50%) !important;
-  border: 0 !important;
-  white-space: nowrap !important;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  -webkit-clip-path: inset(50%);
+  clip-path: inset(50%);
+  border: 0;
+  white-space: nowrap;
 }
 
 .govuk-visually-hidden-focusable {
-  position: absolute !important;
-  width: 1px !important;
-  height: 1px !important;
-  margin: -1px !important;
-  overflow: hidden !important;
-  clip: rect(0 0 0 0) !important;
-  -webkit-clip-path: inset(50%) !important;
-  clip-path: inset(50%) !important;
-  white-space: nowrap !important;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  -webkit-clip-path: inset(50%);
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 .govuk-visually-hidden-focusable:active, .govuk-visually-hidden-focusable:focus {
-  position: static !important;
-  width: auto !important;
-  height: auto !important;
-  margin: inherit !important;
-  overflow: visible !important;
-  clip: auto !important;
-  -webkit-clip-path: none !important;
-  clip-path: none !important;
-  white-space: inherit !important;
+  position: static;
+  width: auto;
+  height: auto;
+  margin: inherit;
+  overflow: visible;
+  clip: auto;
+  -webkit-clip-path: none;
+  clip-path: none;
+  white-space: inherit;
 }
 
 .govuk-\!-display-inline {
@@ -5452,20 +5452,7 @@ p {
 }
 
 .cd-hero-search {
-  color: white;
   padding: 0.5rem 0 2rem 0;
-}
-
-.cd-hero-search .govuk-breadcrumbs {
-  color: white;
-}
-
-.cd-hero-search .govuk-breadcrumbs a {
-  color: white;
-}
-
-.cd-hero-search .govuk-breadcrumbs__list-item:before {
-  border-color: white;
 }
 
 .cd-hero-search__label {
@@ -5482,33 +5469,11 @@ p {
 
 .search-input[type="search"] {
   border: 0;
-}
-
-.cd-hero-green {
-  background-color: #28a197;
-}
-
-.cd-hero-green h1, .cd-hero-green p {
-  color: white;
-}
-
-.cd-search__submit-wrapper {
-  background-color: black;
-}
-
-.cd-search__submit {
-  position: relative;
-  padding: 0;
-  width: 40px;
-  height: 40px;
-  background-image: url(https://assets.publishing.service.gov.uk/frontend/govuk_publishing_componen…utton-ca89b2a….png);
-  background-repeat: no-repeat;
-  background-position: 2px 50%;
-  text-indent: -5000px;
-  overflow: hidden;
+  display: flex;
 }
 
 .submit {
+  display: inline-flex;
   height: 40px;
   width: 40px;
   cursor: pointer;
@@ -5525,6 +5490,34 @@ p {
   color: white;
   z-index: 900;
   position: relative;
+}
+
+.cd-hero-green {
+  background-color: #28a197;
+}
+
+.cd-hero-green h1, .cd-hero-green p {
+  color: white;
+}
+
+.cd-hero-grey {
+  background-color: #f8f8f8;
+}
+
+.cd-search__submit-wrapper {
+  background-color: black;
+}
+
+.cd-search__submit {
+  position: relative;
+  padding: 0;
+  width: 40px;
+  height: 40px;
+  background-image: url(https://assets.publishing.service.gov.uk/frontend/govuk_publishing_componen…utton-ca89b2a….png);
+  background-repeat: no-repeat;
+  background-position: 2px 50%;
+  text-indent: -5000px;
+  overflow: hidden;
 }
 
 .success-container {
