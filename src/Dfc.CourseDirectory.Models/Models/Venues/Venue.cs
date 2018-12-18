@@ -18,6 +18,7 @@ namespace Dfc.CourseDirectory.Models.Models.Venues
     {
         //[JsonProperty("id", Required = Required.AllowNull)]
         //[JsonIgnore]
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string ID { get; }
         public int UKPRN { get; }
         [JsonProperty("PROVIDER_ID", Required = Required.AllowNull)]
@@ -118,16 +119,13 @@ namespace Dfc.CourseDirectory.Models.Models.Venues
             DateTime dateAdded,
             DateTime dateUpdated)
         {
-            //Throw.IfNullOrWhiteSpace(id, nameof(id));
-            //Throw.IfLessThan(0, ukPrn, nameof(ukPrn));
+            Throw.IfNullOrWhiteSpace(id, nameof(id));
+            Throw.IfLessThan(0, ukPrn, nameof(ukPrn));
             //Throw.IfLessThan(0, providerID, nameof(providerID));
             //Throw.IfLessThan(0, venueID, nameof(venueID));
             //Throw.IfNullOrWhiteSpace(venueName, nameof(venueName));
             //Throw.IfNullOrWhiteSpace(provVenueID, nameof(provVenueID));
             //Throw.IfNullOrWhiteSpace(address1, nameof(address1));
-            //Throw.IfNullOrWhiteSpace(address1, nameof(address2));
-            //Throw.IfNullOrWhiteSpace(address1, nameof(address3));
-            //Throw.IfNullOrWhiteSpace(town, nameof(town));
             //Throw.IfNullOrWhiteSpace(postcode, nameof(postcode));
             //Throw.IfNullOrWhiteSpace(updatedBy, nameof(updatedBy));
 
