@@ -9,13 +9,13 @@ namespace Dfc.CourseDirectory.Services.Interfaces.VenueService
 {
     public interface IVenueService
     {
-        Task<IResult<IGetVenueByIdResult>> GetVenueByIdAsync(IGetVenueByIdCriteria criteria);
+        Task<IResult<IVenue>> GetVenueByIdAsync(IGetVenueByIdCriteria criteria);
 
         Task<IResult<IVenueSearchResult>> SearchAsync(IVenueSearchCriteria criteria);
 
         Task<IResult<IVenue>> AddAsync(IVenue venue);
 
-        Task<IResult<IUpdatedVenueResult>> UpdateAsync(IUpdatedVenue venue);
+        Task<IResult<IVenue>> UpdateAsync(IVenue venue);
 
 
     }

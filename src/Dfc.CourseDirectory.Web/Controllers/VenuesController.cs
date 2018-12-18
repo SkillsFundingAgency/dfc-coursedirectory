@@ -168,13 +168,31 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             if (requestModel.Id != null)
             {
-                UpdatedVenue venue = new UpdatedVenue(requestModel.Id, requestModel.AddressLine1, requestModel.AddressLine2, requestModel.TownOrCity, requestModel.VenueName, requestModel.County, requestModel.Postcode);
+                //UpdatedVenue venue = new UpdatedVenue(requestModel.Id, requestModel.AddressLine1, requestModel.AddressLine2, requestModel.TownOrCity, requestModel.VenueName, requestModel.County, requestModel.Postcode);
+
+                Venue venue = new Venue(
+                    requestModel.Id,
+                    UKPRN,
+                    requestModel.VenueName,
+                    requestModel.AddressLine1,
+                    requestModel.AddressLine2,
+                    null,
+                    requestModel.TownOrCity,
+                    requestModel.County,
+                    requestModel.Postcode,
+                    VenueStatus.Live,
+                    "TestUser",
+                    DateTime.Now
+                );
+
                 var updatedVenue = await _venueService.UpdateAsync(venue);
-                mod.NewAddressId = updatedVenue.Value.Id;
+                mod.NewAddressId = updatedVenue.Value.ID;
             }
             else
             {
-                Venue venue = new Venue(UKPRN,
+                Venue venue = new Venue(
+                    null,
+                    UKPRN,
                     requestModel.VenueName,
                     requestModel.AddressLine1, 
                     requestModel.AddressLine2, 
@@ -183,7 +201,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     requestModel.County, 
                     requestModel.Postcode, 
                     VenueStatus.Live,
-                    "Simon",
+                    "TestUser",
                     DateTime.Now,
                     DateTime.Now
                     );

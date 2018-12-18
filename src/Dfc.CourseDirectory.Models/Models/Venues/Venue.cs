@@ -9,15 +9,15 @@ namespace Dfc.CourseDirectory.Models.Models.Venues
 {
     public enum VenueStatus
     {
-        Live = 0,
+        Live = 97,
         Archived = 98,
         Uknown = 99
     }
 
     public class Venue : ValueObject<Venue>, IVenue
     {
-        [JsonProperty("id", Required = Required.AllowNull)]
-        [JsonIgnore]
+        //[JsonProperty("id", Required = Required.AllowNull)]
+        //[JsonIgnore]
         public string ID { get; }
         public int UKPRN { get; }
         [JsonProperty("PROVIDER_ID", Required = Required.AllowNull)]
@@ -49,6 +49,7 @@ namespace Dfc.CourseDirectory.Models.Models.Venues
         public string UpdatedBy { get; }
 
         public Venue(
+            string id,
             int ukPrn,
             //int providerID,
             //int venueID,
@@ -78,7 +79,7 @@ namespace Dfc.CourseDirectory.Models.Models.Venues
             //Throw.IfNullOrWhiteSpace(postcode, nameof(postcode));
             //Throw.IfNullOrWhiteSpace(updatedBy, nameof(updatedBy));
 
-
+            ID = id;
             UKPRN = ukPrn;
            // ProviderID = providerID;
            // VenueID = venueID;
@@ -149,6 +150,59 @@ namespace Dfc.CourseDirectory.Models.Models.Venues
             DateUpdated = dateUpdated;
 
         }
+
+
+        public Venue(
+            string id,
+            int ukPrn,
+            //int providerID,
+            //int venueID,
+            string venueName,
+            //string provVenueID,
+            string address1,
+            string address2,
+            string address3,
+            string town,
+            string county,
+            string postcode,
+            VenueStatus status,
+            string updatedBy,
+            //DateTime dateAdded,
+            DateTime dateUpdated)
+        {
+            //Throw.IfNullOrWhiteSpace(id, nameof(id));
+            //Throw.IfLessThan(0, ukPrn, nameof(ukPrn));
+            //Throw.IfLessThan(0, providerID, nameof(providerID));
+            //Throw.IfLessThan(0, venueID, nameof(venueID));
+            //Throw.IfNullOrWhiteSpace(venueName, nameof(venueName));
+            //Throw.IfNullOrWhiteSpace(provVenueID, nameof(provVenueID));
+            //Throw.IfNullOrWhiteSpace(address1, nameof(address1));
+            //Throw.IfNullOrWhiteSpace(address1, nameof(address2));
+            //Throw.IfNullOrWhiteSpace(address1, nameof(address3));
+            //Throw.IfNullOrWhiteSpace(town, nameof(town));
+            //Throw.IfNullOrWhiteSpace(postcode, nameof(postcode));
+            //Throw.IfNullOrWhiteSpace(updatedBy, nameof(updatedBy));
+
+
+            ID = id;
+            UKPRN = ukPrn;
+            //ProviderID = providerID;
+            //VenueID = venueID;
+            VenueName = venueName;
+            //ProvVenueID = provVenueID;
+            Address1 = address1;
+            Address2 = address2;
+            Address3 = address3;
+            Town = town;
+            County = county;
+            PostCode = postcode;
+            Status = status;
+            UpdatedBy = updatedBy;
+            //DateAdded = dateAdded;
+            DateUpdated = dateUpdated;
+
+        }
+
 
         protected override IEnumerable<object> GetEqualityComponents()
         {
