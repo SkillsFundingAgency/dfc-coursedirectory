@@ -1,5 +1,5 @@
 ﻿using Dfc.CourseDirectory.Common;
-using Dfc.CourseDirectory.Services;
+using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Services.Interfaces;
 using Dfc.CourseDirectory.Web.RequestModels;
 using Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult;
@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Models.Models.Venues;
 
 [assembly: InternalsVisibleTo("Dfc.CourseDirectory.Services.Web.Tests")]
 
@@ -21,18 +22,17 @@ namespace Dfc.CourseDirectory.Web.Helpers
         {
             Throw.IfNull(venueSearchRequestModel, nameof(venueSearchRequestModel));
 
-            //var criteria = new VenueSearchCriteria(FormatSearchTerm(venueSearchRequestModel.SearchTerm));
             var criteria = new VenueSearchCriteria(venueSearchRequestModel.SearchTerm, venueSearchRequestModel.NewAddressId);
             return criteria;
         }
         public IEnumerable<VenueSearchResultItemModel> GetVenueSearchResultItemModels(
-           IEnumerable<VenueSearchResultItem> venueSearchResultItems)
+           IEnumerable<Venue> venueSearchResult)
         {
-            Throw.IfNull(venueSearchResultItems, nameof(venueSearchResultItems));
+            Throw.IfNull(venueSearchResult, nameof(venueSearchResult));
 
             var items = new List<VenueSearchResultItemModel>();
 
-            foreach (var item in venueSearchResultItems)
+            foreach (var item in venueSearchResult)
             {
                 items.Add(new VenueSearchResultItemModel(
                     item.VenueName,

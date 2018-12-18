@@ -3,16 +3,17 @@ using Dfc.CourseDirectory.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Dfc.CourseDirectory.Models.Models.Venues;
 
-namespace Dfc.CourseDirectory.Services
+namespace Dfc.CourseDirectory.Services.VenueService
 {
     public class VenueSearchResult : ValueObject<VenueSearchResult>, IVenueSearchResult
     {
         
-        public IEnumerable<VenueSearchResultItem> Value { get; set; }
+        public IEnumerable<Venue> Value { get; set; }
 
         public VenueSearchResult(
-            IEnumerable<VenueSearchResultItem> value)
+            IEnumerable<Venue> value)
         {
             Throw.IfNull(value, nameof(value));
         }

@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Dfc.CourseDirectory.Services
+namespace Dfc.CourseDirectory.Services.VenueService
 {
     public class VenueSearchCriteriaContractResolver : PrivateSetterContractResolver
     {
