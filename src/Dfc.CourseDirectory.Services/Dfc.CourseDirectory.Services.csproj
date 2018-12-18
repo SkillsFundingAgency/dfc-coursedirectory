@@ -12,8 +12,12 @@
     <Compile Remove="Interfaces\IVenueAddSettings.cs" />
     <Compile Remove="Interfaces\IVenueSearchService.cs" />
     <Compile Remove="Interfaces\IVenueSearchSettings.cs" />
+    <Compile Remove="Interfaces\ProviderService\IProviderAddService.cs" />
+    <Compile Remove="Interfaces\ProviderService\IProviderAddSettings.cs" />
     <Compile Remove="ProviderSearchResultContractResolver.cs" />
     <Compile Remove="ProviderSearchResultItem.cs" />
+    <Compile Remove="ProviderService\ProviderAddService.cs" />
+    <Compile Remove="ProviderService\ProviderAddSettings.cs" />
     <Compile Remove="VenueAddService.cs" />
     <Compile Remove="VenueAddSettings.cs" />
     <Compile Remove="VenueSearchService.cs" />

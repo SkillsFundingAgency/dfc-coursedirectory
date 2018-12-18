@@ -1,9 +1,8 @@
 ﻿using Dfc.CourseDirectory.Models.Models.Providers;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
-namespace Dfc.CourseDirectory.Services.Interfaces
+
+namespace Dfc.CourseDirectory.Services.Interfaces.ProviderService
 {
     public interface IProviderSearchResult
     {

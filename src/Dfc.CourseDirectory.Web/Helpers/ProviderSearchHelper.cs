@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using System.Runtime.CompilerServices;
 using Dfc.CourseDirectory.Common;
-using Dfc.CourseDirectory.Services.Interfaces;
 using Dfc.CourseDirectory.Web.RequestModels;
-using Dfc.CourseDirectory.Services;
-using Dfc.CourseDirectory.Web.ViewComponents.ProviderSearchResult;
-using Dfc.CourseDirectory.Models.Models.Providers;
+using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
+using Dfc.CourseDirectory.Services.ProviderService;
 
 [assembly: InternalsVisibleTo("Dfc.CourseDirectory.Services.Web.Tests")]
 

@@ -1,10 +1,24 @@
 ﻿@using Dfc.CourseDirectory.Web.ViewComponents.VenueName
 @using Dfc.CourseDirectory.Web.ViewComponents.ManualAddress
+@model Dfc.CourseDirectory.Web.ViewModels.VenueAddressSelectionConfirmationViewModel
+@{
+    if (Model.Id != null)
+    {
+        <h1 class="govuk-heading-l" style="padding-top: 20px;">
+            Edit venue
+        </h1>
+    }
+    else
+    {
+        <h1 class="govuk-heading-l" style="padding-top: 20px;">
+            Add venue
+        </h1>
+    }
+}
 
-<h1 class="govuk-heading-l" style="padding-top: 20px;">
-    Add venue
-</h1>
 <form asp-controller="Venues" asp-action="VenueAddressManualConfirmation" method="post">
+    
+
     @await Component.InvokeAsync(nameof(VenueName), new VenueNameModel
     {
         LabelText = "Venue name",
@@ -13,9 +27,10 @@
 
     @await Component.InvokeAsync(nameof(ManualAddress), new ManualAddressModel
     {
-        AddressLine1LabelText = "Address Line 1",
+        Id = @Model.Id,
+        AddressLine1LabelText = "Address line 1",
         AddressLine1AriaDescribedBy = "Please enter address line 1.",
-        AddressLine2LabelText = "Address Line 2",
+        AddressLine2LabelText = "Address line 2",
         AddressLine2AriaDescribedBy = "Please enter address line 2.",
         TownOrCityLabelText = "Town or city",
         TownOrCityAriaDescribedBy = "Please enter the town or city.",
