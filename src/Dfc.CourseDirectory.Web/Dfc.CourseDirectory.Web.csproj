@@ -7,6 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="ViewComponents\AddressSelectionConfirmation\**" />
+    <Compile Remove="Views\Venue\**" />
+    <Content Remove="ViewComponents\AddressSelectionConfirmation\**" />
+    <Content Remove="Views\Venue\**" />
+    <EmbeddedResource Remove="ViewComponents\AddressSelectionConfirmation\**" />
+    <EmbeddedResource Remove="Views\Venue\**" />
+    <None Remove="ViewComponents\AddressSelectionConfirmation\**" />
+    <None Remove="Views\Venue\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="ViewComponents\ProviderSearchResult\ProviderSearchResultItemModel.cs" />
   </ItemGroup>
 
@@ -41,16 +52,10 @@
     <Content Update="ViewComponents\ProviderSearch\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="ViewComponents\AddressSelectionConfirmation\Default.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
     <Content Update="ViewComponents\VenueSearch\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\Venues\VenueSearchResults.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
-    <Content Update="Views\Venue\VenueSearchResults.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\Provider\Index.cshtml">

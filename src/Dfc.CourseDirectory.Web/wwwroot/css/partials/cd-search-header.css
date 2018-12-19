@@ -1,19 +1,6 @@
 @charset "UTF-8";
 .cd-hero-search {
-  color: white;
   padding: 0.5rem 0 2rem 0;
-}
-
-.cd-hero-search .govuk-breadcrumbs {
-  color: white;
-}
-
-.cd-hero-search .govuk-breadcrumbs a {
-  color: white;
-}
-
-.cd-hero-search .govuk-breadcrumbs__list-item:before {
-  border-color: white;
 }
 
 .cd-hero-search__label {
@@ -30,33 +17,11 @@
 
 .search-input[type="search"] {
   border: 0;
-}
-
-.cd-hero-green {
-  background-color: #28a197;
-}
-
-.cd-hero-green h1, .cd-hero-green p {
-  color: white;
-}
-
-.cd-search__submit-wrapper {
-  background-color: black;
-}
-
-.cd-search__submit {
-  position: relative;
-  padding: 0;
-  width: 40px;
-  height: 40px;
-  background-image: url(https://assets.publishing.service.gov.uk/frontend/govuk_publishing_componen…utton-ca89b2a….png);
-  background-repeat: no-repeat;
-  background-position: 2px 50%;
-  text-indent: -5000px;
-  overflow: hidden;
+  display: flex;
 }
 
 .submit {
+  display: inline-flex;
   height: 40px;
   width: 40px;
   cursor: pointer;
@@ -73,4 +38,32 @@
   color: white;
   z-index: 900;
   position: relative;
+}
+
+.cd-hero-green {
+  background-color: #28a197;
+}
+
+.cd-hero-green h1, .cd-hero-green p {
+  color: white;
+}
+
+.cd-hero-grey {
+  background-color: #f8f8f8;
+}
+
+.cd-search__submit-wrapper {
+  background-color: black;
+}
+
+.cd-search__submit {
+  position: relative;
+  padding: 0;
+  width: 40px;
+  height: 40px;
+  background-image: url(https://assets.publishing.service.gov.uk/frontend/govuk_publishing_componen…utton-ca89b2a….png);
+  background-repeat: no-repeat;
+  background-position: 2px 50%;
+  text-indent: -5000px;
+  overflow: hidden;
 }
