@@ -74,17 +74,9 @@
             $elementSearchTerm.on("blur", function () {
                 var result = validator.element($elementSearchTerm);
                 if (result) {
-                    $elementSearchTerm.removeClass(elementErrorClass);
-                    $formGroupSearchTerm.removeClass(formGroupErrorClass);
-                    $searchForm.removeClass("govuk-form-group, govuk-form-group--error");
-                    $validationMessageSearchTerm.hide();
-                    $validationMessageSearchTerm.css("margin-bottom", "0");
+                    HideValidationErrorMessage();
                 } else {
-                    $elementSearchTerm.addClass(elementErrorClass);
-                    $formGroupSearchTerm.addClass(formGroupErrorClass);
-                    $searchForm.addClass("govuk-form-group, govuk-form-group--error");
-                    $validationMessageSearchTerm.show();
-                    $validationMessageSearchTerm.css("margin-bottom", "15px");
+                    ShowValidationErrorMessage();
                 }
             });
             $elementSearchTerm.elementValidation(function (element, result) {
@@ -92,13 +84,10 @@
                     $validationMessageSearchTerm.hide();
                 }
                 if (result) {
-                    $elementSearchTerm.removeClass(elementErrorClass);
-                    $formGroupSearchTerm.removeClass(formGroupErrorClass);
-                    $searchForm.removeClass("govuk-form-group, govuk-form-group--error");
-                    $validationMessageSearchTerm.css("margin-bottom", "0");
+                    HideValidationErrorMessage();
                 }
                 else {
-                    $searchForm.addClass("govuk-form-group, govuk-form-group--error");
+                    ShowValidationErrorMessage()
                 }
             });
 
@@ -131,21 +120,27 @@
                         SearchTerm: $elementSearchTerm.val()
                     }, onSucess);
 
-                    $elementSearchTerm.removeClass(elementErrorClass);
-                    $formGroupSearchTerm.removeClass(formGroupErrorClass);
-                    $searchForm.removeClass("govuk-form-group, govuk-form-group--error");
-                    $validationMessageSearchTerm.hide();
-                    $validationMessageSearchTerm.css("margin-bottom", "0");
+                    HideValidationErrorMessage();
                 }
                 else {
                     $providerSearchResultContainer.html("");
+                    ShowValidationErrorMessage();
+                }
+            }
 
+            function ShowValidationErrorMessage() {
                     $elementSearchTerm.addClass(elementErrorClass);
                     $formGroupSearchTerm.addClass(formGroupErrorClass);
                     $searchForm.addClass("govuk-form-group, govuk-form-group--error");
                     $validationMessageSearchTerm.show();
-                    $validationMessageSearchTerm.css("margin-bottom", "15px");
-                }
+                    $validationMessageSearchTerm.css("margin-bottom", "15px");              
+            }
+            function HideValidationErrorMessage() {
+                    $elementSearchTerm.removeClass(elementErrorClass);
+                    $formGroupSearchTerm.removeClass(formGroupErrorClass);
+                    $searchForm.removeClass("govuk-form-group, govuk-form-group--error");
+                    $validationMessageSearchTerm.hide();
+                    $validationMessageSearchTerm.css("margin-bottom", "0");              
             }
         });
     })(jQuery);
