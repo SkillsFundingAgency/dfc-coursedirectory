@@ -19,7 +19,7 @@ namespace Dfc.CourseDirectory.Services
 
         protected override IEnumerable<object> GetEqualityComponents()
         {
-            yield return Search;;
+            yield return Search;
         }
     }
 }
