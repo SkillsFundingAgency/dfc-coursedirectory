@@ -3,6 +3,18 @@
   padding: 0.5rem 0 2rem 0;
 }
 
+.cd-hero-green .govuk-breadcrumbs, .cd-hero-green .govuk-breadcrumbs__link, .cd-hero-green .govuk-breadcrumbs__list-item {
+  color: white;
+}
+
+.cd-hero-green .govuk-breadcrumbs__list-item:before {
+  border-color: white;
+}
+
+.cd-hero-green .search-input {
+  border-color: transparent;
+}
+
 .cd-hero-search__label {
   color: white;
 }
