@@ -3,7 +3,7 @@ using Dfc.CourseDirectory.Services.Enums;
 using Dfc.CourseDirectory.Services.Interfaces;
 using System.Collections.Generic;
 
-namespace Dfc.CourseDirectory.Services
+namespace Dfc.CourseDirectory.Services.VenueService
 {
     public class VenueSearchCriteria : ValueObject<VenueSearchCriteria>, IVenueSearchCriteria
     {
