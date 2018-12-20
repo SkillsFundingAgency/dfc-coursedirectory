@@ -9,6 +9,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Net.Http;
+using System.Threading.Tasks;
+using Dfc.CourseDirectory.Common.Settings;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Services.ProviderService;
@@ -45,6 +47,9 @@ namespace Dfc.CourseDirectory.Web
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
+
+            services.AddSingleton<IConfiguration>(Configuration);
+            services.Configure<VenueNameComponentSettings>(Configuration.GetSection("AppUISettings:VenueNameComponentSettings"));
 
             services.AddOptions();
 
@@ -113,6 +118,10 @@ namespace Dfc.CourseDirectory.Web
                     name: "onboardprovider",
                     template: "{controller=ProviderSearch}/{action=OnBoardProvider}/{id?}");
             });
+
+
         }
+
+    
     }
 }
