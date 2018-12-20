@@ -9,8 +9,8 @@
         string AwardOrgCode { get; }
         string LearnDirectClassSystemCode1 { get; }
         string LearnDirectClassSystemCode2 { get; }
-        string SectorSubjectAreaTier1 { get; }
-        string SectorSubjectAreaTier2 { get; }
+        //string SectorSubjectAreaTier1 { get; }
+        //string SectorSubjectAreaTier2 { get; }
         string GuidedLearningHours { get; }
         string TotalQualificationTime { get; }
         string UnitType { get; }

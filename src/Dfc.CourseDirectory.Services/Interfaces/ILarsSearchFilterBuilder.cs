@@ -24,6 +24,10 @@
 
         ILarsSearchFilterBuilder LessThanOrEqualTo(string value);
 
+        ILarsSearchFilterBuilder PrependOpeningBracket();
+
+        ILarsSearchFilterBuilder AppendClosingBracket();
+
         string Build();
     }
 }
