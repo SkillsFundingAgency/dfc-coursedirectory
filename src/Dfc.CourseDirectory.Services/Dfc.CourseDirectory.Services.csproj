@@ -10,6 +10,7 @@
     <Compile Remove="Interfaces\IProviderSearchResultItem.cs" />
     <Compile Remove="Interfaces\IVenueAddService.cs" />
     <Compile Remove="Interfaces\IVenueAddSettings.cs" />
+    <Compile Remove="Interfaces\IVenueSearchResultItem.cs" />
     <Compile Remove="Interfaces\IVenueSearchService.cs" />
     <Compile Remove="Interfaces\IVenueSearchSettings.cs" />
     <Compile Remove="Interfaces\ProviderService\IProviderAddService.cs" />
@@ -18,10 +19,17 @@
     <Compile Remove="ProviderSearchResultItem.cs" />
     <Compile Remove="ProviderService\ProviderAddService.cs" />
     <Compile Remove="ProviderService\ProviderAddSettings.cs" />
+    <Compile Remove="VenueAdd.cs" />
+    <Compile Remove="VenueAddResultItem.cs" />
     <Compile Remove="VenueAddService.cs" />
     <Compile Remove="VenueAddSettings.cs" />
+    <Compile Remove="VenueSearchResultItem.cs" />
     <Compile Remove="VenueSearchService.cs" />
     <Compile Remove="VenueSearchSettings.cs" />
+    <Compile Remove="VenueService\GetVenueByIdResult.cs" />
+    <Compile Remove="VenueService\GetVenueByIdResultContractResolver.cs" />
+    <Compile Remove="VenueService\UpdatedVenue.cs" />
+    <Compile Remove="VenueService\UpdatedVenueResult.cs" />
   </ItemGroup>
 
   <ItemGroup>
