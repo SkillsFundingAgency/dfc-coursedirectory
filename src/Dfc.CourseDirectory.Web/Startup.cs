@@ -15,6 +15,8 @@ using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Services.ProviderService;
 using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
+using Dfc.CourseDirectory.Services.CourseService;
+using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 
 namespace Dfc.CourseDirectory.Web
 {
@@ -76,6 +78,9 @@ namespace Dfc.CourseDirectory.Web
 
             services.Configure<VenueServiceSettings>(Configuration.GetSection(nameof(VenueServiceSettings)));
             services.AddScoped<IVenueService, VenueService>();
+
+            services.Configure<CourseServiceSettings>(Configuration.GetSection(nameof(CourseServiceSettings)));
+            services.AddScoped<ICourseService, CourseService>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddSessionStateTempDataProvider();
 
