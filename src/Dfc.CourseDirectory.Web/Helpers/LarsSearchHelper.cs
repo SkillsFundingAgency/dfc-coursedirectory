@@ -87,8 +87,6 @@ namespace Dfc.CourseDirectory.Web.Helpers
                     item.AwardOrgCode,
                     item.LearnDirectClassSystemCode1,
                     item.LearnDirectClassSystemCode2,
-                    //item.SectorSubjectAreaTier1,
-                    //item.SectorSubjectAreaTier2,
                     item.GuidedLearningHours,
                     item.TotalQualificationTime,
                     item.UnitType,
@@ -114,7 +112,6 @@ namespace Dfc.CourseDirectory.Web.Helpers
 
             for (var i = 0; i < filters.Length; i++)
             {
-                //if (i == 0 && filters.Length > 1)
                 if (filters.Length-1 > i)
                 {
                     if (i == 0)
