@@ -50,6 +50,8 @@ namespace Dfc.CourseDirectory.Web
 
             services.AddSingleton<IConfiguration>(Configuration);
             services.Configure<VenueNameComponentSettings>(Configuration.GetSection("AppUISettings:VenueNameComponentSettings"));
+            services.Configure<CourseForComponentSettings>(Configuration.GetSection("AppUISettings:CourseForComponentSettings"));
+            
 
             services.AddOptions();
 

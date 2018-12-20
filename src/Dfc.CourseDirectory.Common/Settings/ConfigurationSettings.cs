@@ -9,7 +9,7 @@ namespace Dfc.CourseDirectory.Common.Settings
         public string VenueName_Label { get; set; }
     }
 
-    public class Component2
+    public class CourseForComponentSettings
     {
         public int TextFieldMaxChars { get; set; }
     }
