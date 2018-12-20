@@ -25,7 +25,7 @@
             </div>
         </div>
     }
-    else if (Model.Items.Count() > 0)
+    else if (Model.Items.Any())
     {
 
         <div class="govuk-heading-s lars-search-results govuk-!-font-weight-regular">
@@ -33,13 +33,13 @@
         </div>
 
         <div class="govuk-grid-column-one-quarter">
-            <h3>filter controls here</h3>
+            @*<h3>filter controls here</h3>*@
             @if (Model.Filters != null)
             {
                 if (Model.HasSelectedFilters)
                 {
                     <div class="govuk-form-group">
-                        <a class="govuk-link" id="ClearAllFilters" href="">Clear all filters</a>
+                        <h3><a class="govuk-link" id="ClearAllFilters" href="">reset</a></h3>
                     </div>
                 }
                 int tabIndexCounter = 0;
