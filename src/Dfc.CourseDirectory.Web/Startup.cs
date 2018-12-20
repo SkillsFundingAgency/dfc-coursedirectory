@@ -9,10 +9,14 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Net.Http;
+using System.Threading.Tasks;
+using Dfc.CourseDirectory.Common.Settings;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Services.ProviderService;
 using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
+using Dfc.CourseDirectory.Services.CourseService;
+using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 
 namespace Dfc.CourseDirectory.Web
 {
@@ -44,6 +48,9 @@ namespace Dfc.CourseDirectory.Web
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+            services.AddSingleton<IConfiguration>(Configuration);
+            services.Configure<VenueNameComponentSettings>(Configuration.GetSection("AppUISettings:VenueNameComponentSettings"));
+
             services.AddOptions();
 
             services.Configure<GovukPhaseBannerSettings>(Configuration.GetSection(nameof(GovukPhaseBannerSettings)));
@@ -71,6 +78,9 @@ namespace Dfc.CourseDirectory.Web
 
             services.Configure<VenueServiceSettings>(Configuration.GetSection(nameof(VenueServiceSettings)));
             services.AddScoped<IVenueService, VenueService>();
+
+            services.Configure<CourseServiceSettings>(Configuration.GetSection(nameof(CourseServiceSettings)));
+            services.AddScoped<ICourseService, CourseService>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddSessionStateTempDataProvider();
 
@@ -108,6 +118,10 @@ namespace Dfc.CourseDirectory.Web
                     name: "onboardprovider",
                     template: "{controller=ProviderSearch}/{action=OnBoardProvider}/{id?}");
             });
+
+
         }
+
+    
     }
 }

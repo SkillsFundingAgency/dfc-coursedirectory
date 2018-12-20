@@ -1,0 +1,62 @@
+﻿@model Dfc.CourseDirectory.Web.ViewComponents.CourseName.CourseNameModel
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<div class="govuk-form-group">
+    <label class="govuk-label" asp-for="@Model.CourseName">
+        @Model.LabelText
+    </label>
+    @if (!string.IsNullOrWhiteSpace(Model.HintText))
+    {
+        <span class="govuk-hint">
+            @Model.HintText
+        </span>
+    }
+    <span asp-validation-for="@Model.CourseName" class="govuk-error-message"></span>
+    <input class="govuk-input" asp-for="@Model.CourseName" type="text" aria-describedby="@Model.AriaDescribedBy">
+</div>
+
+<script>
+    (function ($) {
+        $(function () {
+            var formGroupErrorClass = "govuk-form-group--error";
+            var elementErrorClass = "govuk-input--error";
+            var $elementCourseName = $("#@nameof(Model.CourseName)");
+            var $validationMessageCourseName = $elementCourseName.prev("[data-valmsg-for='@nameof(Model.CourseName)']");
+            $validationMessageCourseName.css("margin-bottom", "0");
+            var $formGroupCourseName = $elementCourseName.closest('.govuk-form-group');
+
+            var $form = $elementCourseName.closest("form");
+            $form.addTriggersToJqueryValidate().triggerElementValidationsOnFormValidation();
+            var validator = $form.validate();
+
+            $elementCourseName.on("blur", function () {
+                var result = validator.element($elementCourseName);
+
+                if (result) {
+                    $elementCourseName.removeClass(elementErrorClass);
+                    $formGroupCourseName.removeClass(formGroupErrorClass);
+                    $validationMessageCourseName.hide();
+                    $validationMessageCourseName.css("margin-bottom", "0");
+                } else {
+                    $elementCourseName.addClass(elementErrorClass);
+                    $formGroupCourseName.addClass(formGroupErrorClass);
+                    $validationMessageCourseName.show();
+                    $validationMessageCourseName.css("margin-bottom", "15px");
+                }
+            });
+
+            $elementVenueName.elementValidation(function (element, result) {
+                if (!$formGroupCourseName.hasClass(formGroupErrorClass)) {
+                    $validationMessageCourseName.hide();
+                }
+
+                if (result) {
+                    $elementCourseName.removeClass(elementErrorClass);
+                    $formGroupCourseName.removeClass(formGroupErrorClass);
+                    $validationMessageCourseName.css("margin-bottom", "0");
+                }
+            });
+        });
+    })(jQuery);
+</script>

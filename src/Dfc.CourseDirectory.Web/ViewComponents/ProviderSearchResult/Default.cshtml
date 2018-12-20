@@ -10,7 +10,7 @@
         <h1 class="govuk-heading-xl">Provider Details</h1>
         @foreach (var provider in Model.Items)
         {
-            if (!provider.ProviderStatus.Equals("Active", StringComparison.InvariantCultureIgnoreCase))
+            if (!(provider.ProviderStatus.Equals("Active", StringComparison.InvariantCultureIgnoreCase) || provider.ProviderStatus.Equals("Verified", StringComparison.InvariantCultureIgnoreCase)))
             {
                 <div class="success-container">
                     <h1 class="govuk-heading-m">UKPRN has been deactivated and cannot be added to the Course Directory</h1>
@@ -63,7 +63,7 @@
                     </tr>
                 </tbody>
             </table>
-            if (provider.ProviderStatus.Equals("Active", StringComparison.InvariantCultureIgnoreCase) && !provider.Status.Equals(Status.Onboarded))
+            if ((provider.ProviderStatus.Equals("Active", StringComparison.InvariantCultureIgnoreCase) || provider.ProviderStatus.Equals("Verified", StringComparison.InvariantCultureIgnoreCase)) && !provider.Status.Equals(Status.Onboarded))
             {
                 <a id="btnOnboardProvider" onclick="OnBoardProvider(); return false;" href="#" class="govuk-button"><span id="btnOnboardProviderText">Add Provider</span></a>
             }
