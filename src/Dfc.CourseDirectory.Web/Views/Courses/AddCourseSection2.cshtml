@@ -1,8 +1,20 @@
-﻿<h1 class="govuk-heading-xl">Add course section 2</h1>
+﻿@using Dfc.CourseDirectory.Web.ViewComponents.CourseName
+@using Dfc.CourseDirectory.Web.ViewComponents.UrlInput
+
+<h1 class="govuk-heading-xl">Add course section 2</h1>
 
 <form asp-controller="Courses" asp-action="AddCourse">
-    <input type="text" name="CourseName" id="CourseName" value="" />
-    <button type="submit">
-        Go to section2
-    </button>
+    @await Component.InvokeAsync(nameof(CourseName), new CourseNameModel
+    {
+        LabelText = "Course name",
+        HintText = "This is the name people will see when they search for your course.",
+        AriaDescribedBy = "Please enter the course name."
+    })
+
+    @await Component.InvokeAsync(nameof(UrlInput), new UrlInputModel
+    {
+        LabelText = "Url",
+        HintText = "Enter the url for this course",
+        AriaDescribedBy = "Enter the url for this course"
+    })
 </form>
