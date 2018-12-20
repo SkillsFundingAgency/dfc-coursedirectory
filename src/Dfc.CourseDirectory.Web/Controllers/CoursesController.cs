@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Web.RequestModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Dfc.CourseDirectory.Web.Controllers
@@ -18,7 +19,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return View();
         }
 
-        public IActionResult AddCourseSection2()
+        public IActionResult AddCourseSection2(AddCourseRequestModel requestModel)
         {
             return View();
         }
