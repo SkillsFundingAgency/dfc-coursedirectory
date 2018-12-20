@@ -2,9 +2,9 @@
 
 @model Dfc.CourseDirectory.Web.ViewComponents.LarsSearch.LarsSearchModel;
 
-<div class="lars-search">
+<div class="lars-search cd-hero-search">
 
-    <div class="govuk-grid-row">
+    @*<div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
             <div class="govuk-form-group">
                 <label class="govuk-label" for="name">
@@ -12,16 +12,16 @@
                 </label>
                 @*<span class="govuk-hint">
                     Just start typing and we will find all the matching LARS courses.
-                </span>*@
+                </span>
                 <input class="govuk-input govuk-!-width-three-quarters search-input" id="LarsSearchTerm" name="LarsSearchTerm" type="text">
                 <button type="button" class="govuk-button" id="searchQualification">
                     Search
                 </button>
             </div>
         </div>
-    </div>
+    </div>*@
 
-    <div id="LarsSearchResultContainer">
+    <div id="LarsSearchResultContainer" class="govuk-width-container">
         @await Component.InvokeAsync(nameof(LarsSearchResult))
     </div>
 </div>

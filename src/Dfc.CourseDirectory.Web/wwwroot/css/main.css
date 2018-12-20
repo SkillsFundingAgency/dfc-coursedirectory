@@ -172,10 +172,8 @@
   margin-top: 10px;
 }
 
-@media (min-width: 40.0625em) {
-  .govuk-list > li {
-    margin-bottom: 5px;
-  }
+.govuk-list > li {
+  margin-bottom: 5px;
 }
 
 .govuk-list--bullet {
@@ -186,6 +184,18 @@
 .govuk-list--number {
   padding-left: 20px;
   list-style-type: decimal;
+}
+
+.govuk-list--bullet > li,
+.govuk-list--number > li {
+  margin-bottom: 0;
+}
+
+@media (min-width: 40.0625em) {
+  .govuk-list--bullet > li,
+  .govuk-list--number > li {
+    margin-bottom: 5px;
+  }
 }
 
 .govuk-template {
@@ -2413,16 +2423,20 @@
 
 .govuk-footer__meta {
   display: -webkit-box;
+  display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
   margin-right: -15px;
   margin-left: -15px;
+  -webkit-flex-wrap: wrap;
   -ms-flex-wrap: wrap;
   flex-wrap: wrap;
   -webkit-box-align: end;
+  -webkit-align-items: flex-end;
   -ms-flex-align: end;
   align-items: flex-end;
   -webkit-box-pack: center;
+  -webkit-justify-content: center;
   -ms-flex-pack: center;
   justify-content: center;
 }
@@ -2435,12 +2449,14 @@
 
 .govuk-footer__meta-item--grow {
   -webkit-box-flex: 1;
+  -webkit-flex: 1;
   -ms-flex: 1;
   flex: 1;
 }
 
 @media (max-width: 40.0525em) {
   .govuk-footer__meta-item--grow {
+    -webkit-flex-basis: 320px;
     -ms-flex-preferred-size: 320px;
     flex-basis: 320px;
   }
@@ -2517,10 +2533,12 @@
 
 .govuk-footer__navigation {
   display: -webkit-box;
+  display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
   margin-right: -15px;
   margin-left: -15px;
+  -webkit-flex-wrap: wrap;
   -ms-flex-wrap: wrap;
   flex-wrap: wrap;
 }
@@ -2532,14 +2550,17 @@
   margin-left: 15px;
   vertical-align: top;
   -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
   -ms-flex-positive: 1;
   flex-grow: 1;
+  -webkit-flex-shrink: 1;
   -ms-flex-negative: 1;
   flex-shrink: 1;
 }
 
 @media (max-width: 48.0525em) {
   .govuk-footer__section {
+    -webkit-flex-basis: 200px;
     -ms-flex-preferred-size: 200px;
     flex-basis: 200px;
   }
@@ -2548,6 +2569,7 @@
 @media (min-width: 48.0625em) {
   .govuk-footer__section:first-child {
     -webkit-box-flex: 2;
+    -webkit-flex-grow: 2;
     -ms-flex-positive: 2;
     flex-grow: 2;
   }
@@ -2558,19 +2580,16 @@
   padding: 0;
   list-style: none;
   -webkit-column-gap: 30px;
-  -moz-column-gap: 30px;
   column-gap: 30px;
 }
 
 @media (min-width: 48.0625em) {
   .govuk-footer__list--columns-2 {
     -webkit-column-count: 2;
-    -moz-column-count: 2;
     column-count: 2;
   }
   .govuk-footer__list--columns-3 {
     -webkit-column-count: 3;
-    -moz-column-count: 3;
     column-count: 3;
   }
 }
@@ -4116,8 +4135,7 @@
 
 .govuk-warning-text__text {
   display: block;
-  margin-left: -15px;
-  padding-left: 65px;
+  padding-left: 50px;
 }
 
 .govuk-clearfix:after {
@@ -5452,20 +5470,7 @@ p {
 }
 
 .cd-hero-search {
-  color: white;
   padding: 0.5rem 0 2rem 0;
-}
-
-.cd-hero-search .govuk-breadcrumbs {
-  color: white;
-}
-
-.cd-hero-search .govuk-breadcrumbs a {
-  color: white;
-}
-
-.cd-hero-search .govuk-breadcrumbs__list-item:before {
-  border-color: white;
 }
 
 .cd-hero-search__label {
@@ -5482,33 +5487,11 @@ p {
 
 .search-input[type="search"] {
   border: 0;
-}
-
-.cd-hero-green {
-  background-color: #28a197;
-}
-
-.cd-hero-green h1, .cd-hero-green p {
-  color: white;
-}
-
-.cd-search__submit-wrapper {
-  background-color: black;
-}
-
-.cd-search__submit {
-  position: relative;
-  padding: 0;
-  width: 40px;
-  height: 40px;
-  background-image: url(https://assets.publishing.service.gov.uk/frontend/govuk_publishing_componen…utton-ca89b2a….png);
-  background-repeat: no-repeat;
-  background-position: 2px 50%;
-  text-indent: -5000px;
-  overflow: hidden;
+  display: flex;
 }
 
 .submit {
+  display: inline-flex;
   height: 40px;
   width: 40px;
   cursor: pointer;
@@ -5525,6 +5508,34 @@ p {
   color: white;
   z-index: 900;
   position: relative;
+}
+
+.cd-hero-green {
+  background-color: #28a197;
+}
+
+.cd-hero-green h1, .cd-hero-green p {
+  color: white;
+}
+
+.cd-hero-grey {
+  background-color: #dee0e2;
+}
+
+.cd-search__submit-wrapper {
+  background-color: black;
+}
+
+.cd-search__submit {
+  position: relative;
+  padding: 0;
+  width: 40px;
+  height: 40px;
+  background-image: url(https://assets.publishing.service.gov.uk/frontend/govuk_publishing_componen…utton-ca89b2a….png);
+  background-repeat: no-repeat;
+  background-position: 2px 50%;
+  text-indent: -5000px;
+  overflow: hidden;
 }
 
 .success-container {
@@ -5560,6 +5571,11 @@ p {
   border: 1px solid #ececec;
   margin-bottom: 1rem;
   padding: 1rem;
+}
+
+.lars-search-results {
+  margin-top: 1rem;
+  text-align: center;
 }
 
 .sort-list {
@@ -5663,4 +5679,12 @@ ul.sort-list {
 
 .collapsing-section p {
   margin: 0;
+}
+
+.link--button {
+  border: none;
+  color: #005ea5;
+  font-size: 1.1875rem;
+  text-decoration: underline;
+  background-color: transparent;
 }

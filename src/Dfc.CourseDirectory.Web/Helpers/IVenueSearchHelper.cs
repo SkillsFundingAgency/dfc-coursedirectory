@@ -6,12 +6,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Models.Models.Venues;
 
 namespace Dfc.CourseDirectory.Web.Helpers
 {
     public interface IVenueSearchHelper
     {
         IVenueSearchCriteria GetVenueSearchCriteria(VenueSearchRequestModel venueSearchRequestModel);
-        IEnumerable<VenueSearchResultItemModel> GetVenueSearchResultItemModels(IEnumerable<VenueSearchResultItem> venueSearchResultItems);
+        IEnumerable<VenueSearchResultItemModel> GetVenueSearchResultItemModels(IEnumerable<Venue> venueSearchResult);
     }
 }

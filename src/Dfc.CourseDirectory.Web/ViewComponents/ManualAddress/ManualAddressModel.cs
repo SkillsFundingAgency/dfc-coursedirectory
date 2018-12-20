@@ -8,14 +8,14 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.ManualAddress
 
         [Required(AllowEmptyStrings = false, ErrorMessage = "Enter address line 1")]
         [MaxLength(100, ErrorMessage = "Address line 1 must be 100 characters or less")]
-        [RegularExpression("[a-zA-Z0-9']+(?: [a-zA-Z\\.\\-]+)*$", ErrorMessage = "Address line 1 must only include letters a to z, numbers, hyphens and spaces")]
+        [RegularExpression(@"[a-zA-Z0-9\.\-']+(?: [a-zA-Z0-9\.\-']+)*$", ErrorMessage = "Address line 1 must only include letters a to z, numbers, hyphens and spaces")]
         public string AddressLine1 { get; set; }
         public string AddressLine1LabelText { get; set; }
         public string AddressLine1HintText { get; set; }
         public string AddressLine1AriaDescribedBy { get; set; }
 
         [MaxLength(100, ErrorMessage = "Address line 2 must be 100 characters or less")]
-        [RegularExpression("[a-zA-Z0-9']+(?: [a-zA-Z\\.\\-]+)*$", ErrorMessage = "Address line 2 must only include letters a to z, numbers, hyphens and spaces")]
+        [RegularExpression(@"[a-zA-Z0-9\.\-']+(?: [a-zA-Z0-9\.\-']+)*$", ErrorMessage = "Address line 2 must only include letters a to z, numbers, hyphens and spaces")]
         public string AddressLine2 { get; set; }
         public string AddressLine2LabelText { get; set; }
         public string AddressLine2HintText { get; set; }

@@ -12,7 +12,7 @@
             <label class="govuk-body govuk-!-font-size-24 govuk-!-font-weight-bold">
                 @Model.Postcode
             </label>
-            <a href="#" class="govuk-link">Change</a>
+            <a href="#" class="govuk-link" id="Change">Change</a>
         </div>
         <div class="govuk-form-group">
             <span asp-validation-for="@Model.PostcodeId" class="govuk-error-message"></span>
@@ -31,11 +31,17 @@
             (function ($) {
                 $(function () {
 
+                    //comment
                     var $continueButton = $("#venueAddressConfirmationSelection");
                     var $manualLink = $("#manualLink");
                     if ($continueButton !== undefined) {
                         $manualLink.text("I cannot find my address in the list");
                     }
+
+                    var $changeLink = $("#Change");
+                    $changeLink.on("click", function (e) {
+                        $manualLink.text("Enter address manually");
+                    });
 
                     var formGroupErrorClass = "govuk-form-group--error";
                     var elementErrorClass = "govuk-input--error";
