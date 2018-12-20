@@ -4,6 +4,20 @@
    
 }
 
+.cd-hero-green {
+    .govuk-breadcrumbs, .govuk-breadcrumbs__link, .govuk-breadcrumbs__list-item {
+        color: white;
+    }
+
+    .govuk-breadcrumbs__list-item:before {
+        border-color: white;
+    }
+
+    .search-input {
+        border-color:transparent;
+    }
+}
+
 .cd-hero-search__label {
     color: white;
 }
@@ -51,7 +65,7 @@
 }
 
 .cd-hero-grey {
-    background-color:#f8f8f8;
+    background-color: #dee0e2;
 }
 
 .cd-search__submit-wrapper {

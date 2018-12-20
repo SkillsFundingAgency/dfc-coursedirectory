@@ -4,6 +4,11 @@
   padding: 1rem;
 }
 
+.lars-search-results {
+  margin-top: 1rem;
+  text-align: center;
+}
+
 .sort-list {
   display: flex;
   flex-direction: row;
