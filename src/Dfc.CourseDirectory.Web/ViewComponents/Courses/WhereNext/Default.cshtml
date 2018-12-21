@@ -1,0 +1,68 @@
+﻿@using Dfc.CourseDirectory.Common.Settings
+@using Microsoft.Extensions.Options
+@model Dfc.CourseDirectory.Web.ViewComponents.Courses.WhereNext.WhereNextModel
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@inject IOptions<WhereNextComponentSettings> whereNextComponentSettings
+
+<div class="govuk-form-group">
+    <div class="govuk-character-count" data-module="character-count" data-maxlength=@whereNextComponentSettings.Value.TextFieldMaxChars>
+        <div class="govuk-form-group" style="margin-bottom: 0;padding-bottom: 0">
+            <label class="govuk-label" for="where-next">
+                @Model.LabelText
+            </label>
+            <span id="course-for-hint" class="govuk-hint">
+                @Model.HintText
+            </span>
+            <span asp-validation-for="@Model.WhereNext" class="govuk-error-message"></span>
+            <textarea asp-for="@Model.WhereNext" class="govuk-textarea js-character-count" rows="5"  type="text" aria-describedby="@Model.AriaDescribedBy"></textarea>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function ($) {
+        $(function () {
+            var formGroupErrorClass = "govuk-form-group--error";
+            var elementErrorClass = "govuk-input--error";
+            var $elementUrl = $("#@nameof(Model.WhereNext)");
+            var $validationMessageUrl = $elementUrl.prev("[data-valmsg-for='@nameof(Model.WhereNext)']");
+            $validationMessageUrl.css("margin-bottom", "0");
+            var $formGroupUrl = $elementUrl.closest('.govuk-form-group');
+
+            var $form = $elementUrl.closest("form");
+            $form.addTriggersToJqueryValidate().triggerElementValidationsOnFormValidation();
+            var validator = $form.validate();
+
+            $elementUrl.on("blur", function () {
+                var result = validator.element($elementUrl);
+
+                if (result) {
+                    $elementUrl.removeClass(elementErrorClass);
+                    $formGroupUrl.removeClass(formGroupErrorClass);
+                    $validationMessageUrl.hide();
+                    $validationMessageUrl.css("margin-bottom", "0");
+                } else {
+                    $elementUrl.addClass(elementErrorClass);
+                    $formGroupUrl.addClass(formGroupErrorClass);
+                    $validationMessageUrl.show();
+                    $validationMessageUrl.css("margin-bottom", "15px");
+                }
+            });
+
+            $elementUrl.elementValidation(function (element, result) {
+                if (!$formGroupUrl.hasClass(formGroupErrorClass)) {
+                    $validationMessageUrl.hide();
+                }
+
+                if (result) {
+                    $elementUrl.removeClass(elementErrorClass);
+                    $formGroupUrl.removeClass(formGroupErrorClass);
+                    $validationMessageUrl.css("margin-bottom", "0");
+                }
+            });
+
+        });
+    })(jQuery);
+</script>
+
