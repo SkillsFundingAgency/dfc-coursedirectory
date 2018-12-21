@@ -1,7 +1,11 @@
 ﻿
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseFor
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.EntryRequirements
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.HowAssessed
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.HowYouWillLearn
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatWillLearn
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatYouNeed
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhereNext
 
 @model Dfc.CourseDirectory.Web.ViewModels.AddCourseViewModel
 
@@ -17,11 +21,17 @@
 
     @await Component.InvokeAsync(nameof(CourseFor), Model.CourseFor)
 
-
     @await Component.InvokeAsync(nameof(EntryRequirements), Model.EntryRequirements)
 
-
     @await Component.InvokeAsync(nameof(WhatWillLearn), Model.WhatWillLearn)
+
+    @await Component.InvokeAsync(nameof(HowYouWillLearn), Model.HowYouWillLearn)
+    
+    @await Component.InvokeAsync(nameof(WhatYouNeed), Model.WhatYouNeed)
+    
+    @await Component.InvokeAsync(nameof(HowAssessed), Model.HowAssessed)
+    
+    @await Component.InvokeAsync(nameof(WhereNext), Model.WhereNext)
 
     <div class="govuk-form-group">
         <button type="submit" class="govuk-button" id="goToSection2">
@@ -34,8 +44,6 @@
 <script>
     (function ($) {
         $(function () {
-
-
             var $continue = $("#goToSection2");
             $continue.on("click", function (e) {
                 var $courseFor = $("#@nameof(Model.CourseFor)");
@@ -44,6 +52,14 @@
                 $entryRequirements.trigger("blur");
                 var $whatWillLearn = $("#@nameof(Model.WhatWillLearn)");
                 $whatWillLearn.trigger("blur");
+                var $howYouWillLearn = $("#@nameof(Model.HowYouWillLearn)");
+                $howYouWillLearn.trigger("blur");
+                var whatYouNeed = $("#@nameof(Model.WhatYouNeed)");
+                whatYouNeed.trigger("blur");
+                var howAssessed = $("#@nameof(Model.HowAssessed)");
+                whatYouNeed.trigger("blur");
+                var whereNext = $("#@nameof(Model.WhereNext)");
+                whereNext.trigger("blur");
             });
         });
     })(jQuery);
