@@ -37,6 +37,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="ViewComponents\Courses\CourseDeliveryType\" />
     <Folder Include="wwwroot\css\" />
     <Folder Include="wwwroot\vendor\" />
   </ItemGroup>
