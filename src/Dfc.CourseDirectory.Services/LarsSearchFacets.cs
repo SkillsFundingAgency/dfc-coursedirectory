@@ -19,29 +19,18 @@ namespace Dfc.CourseDirectory.Services
             IEnumerable<SearchFacet> awardOrgCode,
             string awardOrgCodeODataType,
             IEnumerable<SearchFacet> notionalNVQLevelv2,
-            string notionalNVQLevelv2ODataType,
-            IEnumerable<SearchFacet> sectorSubjectAreaTier1,
-            string sectorSubjectAreaTier1ODataType,
-            IEnumerable<SearchFacet> sectorSubjectAreaTier2,
-            string sectorSubjectAreaTier2ODataType)
+            string notionalNVQLevelv2ODataType
+            )
         {
             Throw.IfNullOrEmpty(awardOrgCode, nameof(awardOrgCode));
             Throw.IfNullOrWhiteSpace(awardOrgCodeODataType, nameof(awardOrgCodeODataType));
             Throw.IfNullOrEmpty(notionalNVQLevelv2, nameof(notionalNVQLevelv2));
             Throw.IfNullOrWhiteSpace(notionalNVQLevelv2ODataType, nameof(notionalNVQLevelv2ODataType));
-            Throw.IfNullOrEmpty(sectorSubjectAreaTier1, nameof(sectorSubjectAreaTier1));
-            Throw.IfNullOrWhiteSpace(sectorSubjectAreaTier1ODataType, nameof(sectorSubjectAreaTier1ODataType));
-            Throw.IfNullOrEmpty(sectorSubjectAreaTier2, nameof(sectorSubjectAreaTier2));
-            Throw.IfNullOrWhiteSpace(sectorSubjectAreaTier2ODataType, nameof(sectorSubjectAreaTier2ODataType));
 
             AwardOrgCode = awardOrgCode;
             AwardOrgCodeODataType = awardOrgCodeODataType;
             NotionalNVQLevelv2 = notionalNVQLevelv2;
             NotionalNVQLevelv2ODataType = notionalNVQLevelv2ODataType;
-            SectorSubjectAreaTier1 = sectorSubjectAreaTier1;
-            SectorSubjectAreaTier1ODataType = sectorSubjectAreaTier1ODataType;
-            SectorSubjectAreaTier2 = sectorSubjectAreaTier2;
-            SectorSubjectAreaTier2ODataType = sectorSubjectAreaTier2ODataType;
         }
 
         protected override IEnumerable<object> GetEqualityComponents()
@@ -50,10 +39,6 @@ namespace Dfc.CourseDirectory.Services
             yield return AwardOrgCodeODataType;
             yield return NotionalNVQLevelv2;
             yield return NotionalNVQLevelv2ODataType;
-            yield return SectorSubjectAreaTier1;
-            yield return SectorSubjectAreaTier1ODataType;
-            yield return SectorSubjectAreaTier2;
-            yield return SectorSubjectAreaTier2ODataType;
         }
     }
 }

@@ -13,8 +13,6 @@ namespace Dfc.CourseDirectory.Services
         public string AwardOrgCode { get; }
         public string LearnDirectClassSystemCode1 { get; }
         public string LearnDirectClassSystemCode2 { get; }
-        public string SectorSubjectAreaTier1 { get; }
-        public string SectorSubjectAreaTier2 { get; }
         public string GuidedLearningHours { get; }
         public string TotalQualificationTime { get; }
         public string UnitType { get; }
@@ -38,8 +36,6 @@ namespace Dfc.CourseDirectory.Services
             Throw.IfNullOrWhiteSpace(awardOrgCode, nameof(awardOrgCode));
             Throw.IfNullOrWhiteSpace(learnDirectClassSystemCode1, nameof(learnDirectClassSystemCode1));
             Throw.IfNullOrWhiteSpace(learnDirectClassSystemCode2, nameof(learnDirectClassSystemCode2));
-            //Throw.IfNullOrWhiteSpace(guidedLearningHours, nameof(guidedLearningHours));
-            //Throw.IfNullOrWhiteSpace(totalQualificationTime, nameof(totalQualificationTime));
             Throw.IfNullOrWhiteSpace(unitType, nameof(unitType));
             Throw.IfNullOrWhiteSpace(awardOrgName, nameof(awardOrgName));
 

@@ -14,8 +14,6 @@ namespace Dfc.CourseDirectory.Services
                 { "SearchFacets", "@search.facets" },
                 { "AwardOrgCodeODataType", "AwardOrgCode@odata.type" },
                 { "NotionalNVQLevelv2ODataType", "NotionalNVQLevelv2@odata.type" },
-                { "SectorSubjectAreaTier1ODataType", "SectorSubjectAreaTier1@odata.type" },
-                { "SectorSubjectAreaTier2ODataType", "SectorSubjectAreaTier2@odata.type" },
                 { "SearchScore", "@search.score" }
             };
 

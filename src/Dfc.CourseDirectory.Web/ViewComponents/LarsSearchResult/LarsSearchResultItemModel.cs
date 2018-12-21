@@ -16,8 +16,6 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult
         public string AwardOrgCode { get; }
         public string LearnDirectClassSystemCode1 { get; }
         public string LearnDirectClassSystemCode2 { get; }
-        public string SectorSubjectAreaTier1 { get; }
-        public string SectorSubjectAreaTier2 { get; }
         public string GuidedLearningHours { get; }
         public string TotalQualificationTime { get; }
         public string UnitType { get; }
@@ -31,8 +29,6 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult
             string awardOrgCode,
             string learnDirectClassSystemCode1,
             string learnDirectClassSystemCode2,
-            string sectorSubjectAreaTier1,
-            string sectorSubjectAreaTier2,
             string guidedLearningHours,
             string totalQualificationTime,
             string unitType,
@@ -46,7 +42,6 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult
             AwardOrgCode = awardOrgCode;
             LearnDirectClassSystemCode1 = learnDirectClassSystemCode1;
             LearnDirectClassSystemCode2 = learnDirectClassSystemCode2;
-            SectorSubjectAreaTier1 = sectorSubjectAreaTier1;
             GuidedLearningHours = guidedLearningHours;
             TotalQualificationTime = totalQualificationTime;
             UnitType = unitType;
@@ -74,7 +69,6 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult
             yield return AwardOrgCode;
             yield return LearnDirectClassSystemCode1;
             yield return LearnDirectClassSystemCode2;
-            yield return SectorSubjectAreaTier1;
             yield return GuidedLearningHours;
             yield return TotalQualificationTime;
             yield return UnitType;

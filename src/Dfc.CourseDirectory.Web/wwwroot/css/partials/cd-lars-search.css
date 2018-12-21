@@ -100,10 +100,6 @@ ul.sort-list {
 }
 
 /* collapsing-section */
-.collapsing-section {
-  display: none;
-}
-
 .collapsing-section.open {
   padding-bottom: 1rem;
 }
