@@ -7,26 +7,44 @@
 
 <form asp-controller="Courses" asp-action="AddCourseSection1" method="post">
 
-        <h1 class="govuk-heading-l" style="padding-top: 20px;">
-            Complete your qualification details
-        </h1>
+    <h1 class="govuk-heading-l" style="padding-top: 20px;">
+        Complete your qualification details
+    </h1>
 
-        <p style="padding: 15px 20px; border: 3px solid #009900;background-color:#fff;" id="qual--">Qualification added:<br> @Model.LearnAimRefTitle<br> Level: @Model.NotionalNVQLevelv2<br> Awarding organisation: @Model.AwardOrgCode<br> LARS/QAN: @Model.LearnAimRef</p>
+    <p style="padding: 15px 20px; border: 3px solid #009900;background-color:#fff;" id="qual--">Qualification added:<br> @Model.LearnAimRefTitle<br> Level: @Model.NotionalNVQLevelv2<br> Awarding organisation: @Model.AwardOrgCode<br> LARS/QAN: @Model.LearnAimRef</p>
 
-        <h3 class="govuk-heading-m">Course description</h3>
+    <h3 class="govuk-heading-m">Course description</h3>
 
-        @await Component.InvokeAsync(nameof(CourseFor), Model.CourseFor)
-
-
-        @await Component.InvokeAsync(nameof(EntryRequirements), Model.EntryRequirements)
+    @await Component.InvokeAsync(nameof(CourseFor), Model.CourseFor)
 
 
-        @await Component.InvokeAsync(nameof(WhatWillLearn), Model.WhatWIllLearn)
+    @await Component.InvokeAsync(nameof(EntryRequirements), Model.EntryRequirements)
 
-        <div class="govuk-form-group">
-            <button type="submit" class="govuk-button" id="go">
-                Next
-            </button>
-        </div>
+
+    @await Component.InvokeAsync(nameof(WhatWillLearn), Model.WhatWillLearn)
+
+    <div class="govuk-form-group">
+        <button type="submit" class="govuk-button" id="goToSection2">
+            Next
+        </button>
+    </div>
 
 </form>
+
+<script>
+    (function ($) {
+        $(function () {
+
+
+            var $continue = $("#goToSection2");
+            $continue.on("click", function (e) {
+                var $courseFor = $("#@nameof(Model.CourseFor)");
+                $courseFor.trigger("blur");
+                var $entryRequirements = $("#@nameof(Model.EntryRequirements)");
+                $entryRequirements.trigger("blur");
+                var $whatWillLearn = $("#@nameof(Model.WhatWillLearn)");
+                $whatWillLearn.trigger("blur");
+            });
+        });
+    })(jQuery);
+</script>

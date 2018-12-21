@@ -39,7 +39,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     HintText = "Please provide details of specific academic or vocational entry qualification requirements. Also do learners need specific skills, attributes or evidence? e.g. DBS clearance, driving licence",
                     AriaDescribedBy = "Please list entry requirements."
                 },
-                WhatWIllLearn = new WhatWillLearnModel()
+                WhatWillLearn = new WhatWillLearnModel()
                 {
                     LabelText = "What you’ll learn",
                     HintText = "Give learners a taste of this course. What are the main topics covered?",
@@ -52,7 +52,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpPost]
         public IActionResult AddCourseSection1(AddCourseSection1RequestModel model)
         {
-            return View();
+            return View("AddCourseSection2");
         }
 
 

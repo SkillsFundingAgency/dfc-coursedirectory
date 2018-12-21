@@ -6,9 +6,7 @@
 @inject IOptions<CourseForComponentSettings> courseForComponentSettings
 
 <div class="govuk-form-group">
-
     <div class="govuk-character-count" data-module="character-count" data-maxlength=@courseForComponentSettings.Value.TextFieldMaxChars>
-
         <div class="govuk-form-group" style="margin-bottom: 0;padding-bottom: 0">
             <label class="govuk-label" for="course-for">
                 @Model.LabelText
@@ -16,14 +14,8 @@
             <span id="course-for-hint" class="govuk-hint">
                 @Model.HintText
             </span>
-
             <span asp-validation-for="@Model.CourseFor" class="govuk-error-message"></span>
             <textarea asp-for="@Model.CourseFor" class="govuk-textarea js-character-count" rows="5"  type="text" aria-describedby="@Model.AriaDescribedBy"></textarea>
-
-            @*<span id="course-for-info" class="govuk-hint govuk-character-count__message" aria-live="polite">
-            You can enter up to @courseForComponentSettings.Value.TextFieldMaxChars characters
-        </span>*@
-
         </div>
     </div>
 </div>
@@ -69,6 +61,17 @@
                     $validationMessageUrl.css("margin-bottom", "0");
                 }
             });
+
+            //var $continue = $("#goToSection2");
+            //$continue.on("click", function (e) {
+            //    //$form = $continue.closest("form");
+            //    var $venueName = $("#VenueName");
+            //    $venueName.trigger("blur");
+            //    var $postcode = $("#Postcode");
+            //    $postcode.trigger("blur");
+            //    var $postcodeId = $("#PostcodeId");
+            //    $postcodeId.trigger("blur");
+            //});
         });
     })(jQuery);
 </script>

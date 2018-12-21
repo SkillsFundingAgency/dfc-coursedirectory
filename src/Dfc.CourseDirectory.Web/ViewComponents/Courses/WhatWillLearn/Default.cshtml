@@ -3,11 +3,11 @@
 @model Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatWillLearn.WhatWillLearnModel
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-@inject IOptions<CourseForComponentSettings> courseForComponentSettings
+@inject IOptions<WhatWillLearnComponentSettings> whatWilllLearnComponentSettings
 
 <div class="govuk-form-group">
 
-    <div class="govuk-character-count" data-module="character-count" data-maxlength=@courseForComponentSettings.Value.TextFieldMaxChars>
+    <div class="govuk-character-count" data-module="character-count" data-maxlength=@whatWilllLearnComponentSettings.Value.TextFieldMaxChars>
 
         <div class="govuk-form-group" style="margin-bottom: 0;padding-bottom: 0">
             <label class="govuk-label" for="what-will-learn">
@@ -16,13 +16,8 @@
             <span id="what-will-learn-hint" class="govuk-hint">
                 @Model.HintText
             </span>
-            
             <span asp-validation-for="@Model.WhatWillLearn" class="govuk-error-message"></span>
             <textarea asp-for="@Model.WhatWillLearn" class="govuk-textarea js-character-count" rows="5"  type="text" aria-describedby="@Model.AriaDescribedBy"></textarea>
-            @*<span id="what-will-learn-info" class="govuk-hint govuk-character-count__message" aria-live="polite">
-                 You can enter up to @courseForComponentSettings.Value.TextFieldMaxChars characters
-             </span>*@
-
         </div>
     </div>
 </div>

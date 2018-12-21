@@ -13,4 +13,16 @@ namespace Dfc.CourseDirectory.Common.Settings
     {
         public int TextFieldMaxChars { get; set; }
     }
+
+    public class EntryRequirementsComponentSettings
+    {
+        public int TextFieldMaxChars { get; set; }
+    }
+
+    public class WhatWillLearnComponentSettings
+    {
+        public int TextFieldMaxChars { get; set; }
+    }
 }
+
+

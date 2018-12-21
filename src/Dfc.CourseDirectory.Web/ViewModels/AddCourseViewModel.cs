@@ -21,6 +21,6 @@ namespace Dfc.CourseDirectory.Web.ViewModels
 
         public EntryRequirementsModel EntryRequirements { get; set; }
 
-        public WhatWillLearnModel WhatWIllLearn { get; set; }
+        public WhatWillLearnModel WhatWillLearn { get; set; }
     }
 }
