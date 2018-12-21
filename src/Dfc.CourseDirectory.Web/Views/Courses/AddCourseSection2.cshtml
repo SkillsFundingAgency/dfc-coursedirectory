@@ -1,9 +1,12 @@
-﻿@using Dfc.CourseDirectory.Web.ViewComponents.CourseName
+﻿
+@using Dfc.CourseDirectory.Web.ViewComponents.CourseName
+@using Dfc.CourseDirectory.Web.ViewComponents.CourseProviderReference
 @using Dfc.CourseDirectory.Web.ViewComponents.UrlInput
 @using Dfc.CourseDirectory.Web.ViewComponents.CostInput
 @using Dfc.CourseDirectory.Web.ViewComponents.CostDescription
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseDelivery
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseDeliveryType
+
 
 <h1 class="govuk-heading-xl">Add course section 2</h1>
 
@@ -13,6 +16,13 @@
         LabelText = "Course name",
         HintText = "This is the name people will see when they search for your course.",
         AriaDescribedBy = "Please enter the course name."
+    })
+
+    @await Component.InvokeAsync(nameof(CourseProviderReference), new CourseProviderReferenceModel
+    {
+        LabelText = "ID",
+        HintText = "This is how you identify a course in your internal system.",
+        AriaDescribedBy = "Please enter the ID for this course"
     })
     
     @await Component.InvokeAsync(nameof(CourseDeliveryType), new CourseDeliveryTypeModel
