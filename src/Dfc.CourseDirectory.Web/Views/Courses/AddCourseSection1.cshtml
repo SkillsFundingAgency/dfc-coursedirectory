@@ -1,13 +1,32 @@
-﻿@using Dfc.CourseDirectory.Web.ViewComponents.CourseFor
+﻿
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseFor
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.EntryRequirements
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatWillLearn
+
+@model Dfc.CourseDirectory.Web.ViewModels.AddCourseViewModel
+
+<form asp-controller="Courses" asp-action="AddCourseSection1" method="post">
+
+        <h1 class="govuk-heading-l" style="padding-top: 20px;">
+            Complete your qualification details
+        </h1>
+
+        <p style="padding: 15px 20px; border: 3px solid #009900;background-color:#fff;" id="qual--">Qualification added:<br> @Model.LearnAimRefTitle<br> Level: @Model.NotionalNVQLevelv2<br> Awarding organisation: @Model.AwardOrgCode<br> LARS/QAN: @Model.LearnAimRef</p>
+
+        <h3 class="govuk-heading-m">Course description</h3>
+
+        @await Component.InvokeAsync(nameof(CourseFor), Model.CourseFor)
 
 
-<h1 class="govuk-heading-xl">Add course section 1</h1>
+        @await Component.InvokeAsync(nameof(EntryRequirements), Model.EntryRequirements)
 
-<form asp-controller="Courses" asp-action="AddCourseSection2">
-    @await Component.InvokeAsync(nameof(CourseFor), new CourseForModel
-    {
-        LabelText = "Who is the course for?",
-        HintText = "who will attend this course",
-        AriaDescribedBy = "Please enter who this course is for."
-    })
+
+        @await Component.InvokeAsync(nameof(WhatWillLearn), Model.WhatWIllLearn)
+
+        <div class="govuk-form-group">
+            <button type="submit" class="govuk-button" id="go">
+                Next
+            </button>
+        </div>
+
 </form>

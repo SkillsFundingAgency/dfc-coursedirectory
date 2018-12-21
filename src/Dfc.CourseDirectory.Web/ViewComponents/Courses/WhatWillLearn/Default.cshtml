@@ -1,0 +1,74 @@
+﻿@using Dfc.CourseDirectory.Common.Settings
+@using Microsoft.Extensions.Options
+@model Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatWillLearn.WhatWillLearnModel
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@inject IOptions<CourseForComponentSettings> courseForComponentSettings
+
+<div class="govuk-form-group">
+
+    <div class="govuk-character-count" data-module="character-count" data-maxlength=@courseForComponentSettings.Value.TextFieldMaxChars>
+
+        <div class="govuk-form-group" style="margin-bottom: 0;padding-bottom: 0">
+            <label class="govuk-label" for="what-will-learn">
+                @Model.LabelText
+            </label>
+            <span id="what-will-learn-hint" class="govuk-hint">
+                @Model.HintText
+            </span>
+            
+            <span asp-validation-for="@Model.WhatWillLearn" class="govuk-error-message"></span>
+            <textarea asp-for="@Model.WhatWillLearn" class="govuk-textarea js-character-count" rows="5"  type="text" aria-describedby="@Model.AriaDescribedBy"></textarea>
+            @*<span id="what-will-learn-info" class="govuk-hint govuk-character-count__message" aria-live="polite">
+                 You can enter up to @courseForComponentSettings.Value.TextFieldMaxChars characters
+             </span>*@
+
+        </div>
+    </div>
+</div>
+
+<script>
+    (function ($) {
+        $(function () {
+            var formGroupErrorClass = "govuk-form-group--error";
+            var elementErrorClass = "govuk-input--error";
+            var $elementUrl = $("#@nameof(Model.WhatWillLearn)");
+            var $validationMessageUrl = $elementUrl.prev("[data-valmsg-for='@nameof(Model.WhatWillLearn)']");
+            $validationMessageUrl.css("margin-bottom", "0");
+            var $formGroupUrl = $elementUrl.closest('.govuk-form-group');
+
+            var $form = $elementUrl.closest("form");
+            $form.addTriggersToJqueryValidate().triggerElementValidationsOnFormValidation();
+            var validator = $form.validate();
+
+            $elementUrl.on("blur", function () {
+                var result = validator.element($elementUrl);
+
+                if (result) {
+                    $elementUrl.removeClass(elementErrorClass);
+                    $formGroupUrl.removeClass(formGroupErrorClass);
+                    $validationMessageUrl.hide();
+                    $validationMessageUrl.css("margin-bottom", "0");
+                } else {
+                    $elementUrl.addClass(elementErrorClass);
+                    $formGroupUrl.addClass(formGroupErrorClass);
+                    $validationMessageUrl.show();
+                    $validationMessageUrl.css("margin-bottom", "15px");
+                }
+            });
+
+            $elementUrl.elementValidation(function (element, result) {
+                if (!$formGroupUrl.hasClass(formGroupErrorClass)) {
+                    $validationMessageUrl.hide();
+                }
+
+                if (result) {
+                    $elementUrl.removeClass(elementErrorClass);
+                    $formGroupUrl.removeClass(formGroupErrorClass);
+                    $validationMessageUrl.css("margin-bottom", "0");
+                }
+            });
+        });
+    })(jQuery);
+</script>
+
