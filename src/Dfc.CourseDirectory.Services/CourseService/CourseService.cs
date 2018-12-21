@@ -32,7 +32,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             _logger = logger;
             _httpClient = httpClient;
 
-            _getWhatEverUri = settings.Value.ToGetWhatEverUri();
+            //_getWhatEverUri = settings.Value.ToGetWhatEverUri();
         }
 
         public Task<IResult<ICourse>> AddAsync(ICourse course)
