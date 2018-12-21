@@ -1,6 +1,7 @@
 ﻿@using Dfc.CourseDirectory.Web.ViewComponents.CourseName
 @using Dfc.CourseDirectory.Web.ViewComponents.UrlInput
 @using Dfc.CourseDirectory.Web.ViewComponents.CostInput
+@using Dfc.CourseDirectory.Web.ViewComponents.CostDescription
 
 <h1 class="govuk-heading-xl">Add course section 2</h1>
 
@@ -25,5 +26,12 @@
         LabelText = "Cost",
         HintText = "Enter the cost for this course",
         AriaDescribedBy = "Enter the cost for this course"
+    })
+
+    @await Component.InvokeAsync(nameof(CostDescription), new CostDescriptionModel
+    {
+        LabelText = "Cost description",
+        HintText = "Enter details of related to the cost of this course",
+        AriaDescribedBy = "Enter details of related to the cost of this course"
     })
 </form>

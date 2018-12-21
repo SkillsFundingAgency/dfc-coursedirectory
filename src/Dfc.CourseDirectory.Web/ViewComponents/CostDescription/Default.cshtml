@@ -1,0 +1,64 @@
+﻿@model Dfc.CourseDirectory.Web.ViewComponents.CostDescription.CostDescriptionModel
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<div class="govuk-character-count" data-module="character-count" data-maxlength="255">
+    <div class="govuk-form-group">
+        <label class="govuk-label" for="word-count">
+            @Model.LabelText
+        </label>
+        @if (!string.IsNullOrWhiteSpace(Model.HintText))
+        {
+            <span class="govuk-hint">
+                @Model.HintText
+            </span>
+        }
+        <span asp-validation-for="@Model.CostDescription" class="govuk-error-message"></span>
+        <textarea class="govuk-textarea js-character-count " asp-for="@Model.CostDescription" rows="5"></textarea>
+    </div>
+</div>
+
+<script>
+    (function ($) {
+        $(function () {
+            var formGroupErrorClass = "govuk-form-group--error";
+            var elementErrorClass = "govuk-input--error";
+            var $elementCostDescription = $("#@nameof(Model.CostDescription)");
+            var $validationMessageCostDescription = $elementCostDescription.prev("[data-valmsg-for='@nameof(Model.CostDescription)']");
+            $validationMessageCostDescription.css("margin-bottom", "0");
+            var $formGroupCostDescription = $elementCostDescription.closest('.govuk-form-group');
+
+            var $form = $elementCostDescription.closest("form");
+            $form.addTriggersToJqueryValidate().triggerElementValidationsOnFormValidation();
+            var validator = $form.validate();
+
+            $elementCostDescription.on("blur", function () {
+                var result = validator.element($elementCostDescription);
+
+                if (result) {
+                    $elementCostDescription.removeClass(elementErrorClass);
+                    $formGroupCostDescription.removeClass(formGroupErrorClass);
+                    $validationMessageCostDescription.hide();
+                    $validationMessageCostDescription.css("margin-bottom", "0");
+                } else {
+                    $elementCostDescription.addClass(elementErrorClass);
+                    $formGroupCostDescription.addClass(formGroupErrorClass);
+                    $validationMessageCostDescription.show();
+                    $validationMessageCostDescription.css("margin-bottom", "15px");
+                }
+            });
+
+            $elementCostDescription.elementValidation(function (element, result) {
+                if (!$formGroupCostDescription.hasClass(formGroupErrorClass)) {
+                    $validationMessageCostDescription.hide();
+                }
+
+                if (result) {
+                    $elementCostDescription.removeClass(elementErrorClass);
+                    $formGroupCostDescription.removeClass(formGroupErrorClass);
+                    $validationMessageCostDescription.css("margin-bottom", "0");
+                }
+            });
+        });
+    })(jQuery);
+</script>
