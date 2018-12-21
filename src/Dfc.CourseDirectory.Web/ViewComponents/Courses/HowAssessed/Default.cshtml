@@ -1,21 +1,21 @@
 ﻿@using Dfc.CourseDirectory.Common.Settings
 @using Microsoft.Extensions.Options
-@model Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseFor.CourseForModel
+@model Dfc.CourseDirectory.Web.ViewComponents.Courses.HowAssessed.HowAssessedModel
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-@inject IOptions<CourseForComponentSettings> courseForComponentSettings
+@inject IOptions<HowAssessedComponentSettings> howAssessedComponentSettings
 
 <div class="govuk-form-group">
-    <div class="govuk-character-count" data-module="character-count" data-maxlength=@courseForComponentSettings.Value.TextFieldMaxChars>
+    <div class="govuk-character-count" data-module="character-count" data-maxlength=@howAssessedComponentSettings.Value.TextFieldMaxChars>
         <div class="govuk-form-group" style="margin-bottom: 0;padding-bottom: 0">
-            <label class="govuk-label" for="course-for">
+            <label class="govuk-label" for="how-assessed">
                 @Model.LabelText
             </label>
             <span id="course-for-hint" class="govuk-hint">
                 @Model.HintText
             </span>
-            <span asp-validation-for="@Model.CourseFor" class="govuk-error-message"></span>
-            <textarea asp-for="@Model.CourseFor" class="govuk-textarea js-character-count" rows="5"  type="text" aria-describedby="@Model.AriaDescribedBy"></textarea>
+            <span asp-validation-for="@Model.HowAssessed" class="govuk-error-message"></span>
+            <textarea asp-for="@Model.HowAssessed" class="govuk-textarea js-character-count" rows="5"  type="text" aria-describedby="@Model.AriaDescribedBy"></textarea>
         </div>
     </div>
 </div>
@@ -25,8 +25,8 @@
         $(function () {
             var formGroupErrorClass = "govuk-form-group--error";
             var elementErrorClass = "govuk-input--error";
-            var $elementUrl = $("#@nameof(Model.CourseFor)");
-            var $validationMessageUrl = $elementUrl.prev("[data-valmsg-for='@nameof(Model.CourseFor)']");
+            var $elementUrl = $("#@nameof(Model.HowAssessed)");
+            var $validationMessageUrl = $elementUrl.prev("[data-valmsg-for='@nameof(Model.HowAssessed)']");
             $validationMessageUrl.css("margin-bottom", "0");
             var $formGroupUrl = $elementUrl.closest('.govuk-form-group');
 

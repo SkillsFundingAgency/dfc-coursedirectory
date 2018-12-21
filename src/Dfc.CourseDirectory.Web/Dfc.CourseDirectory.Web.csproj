@@ -51,6 +51,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="ViewComponents\Courses\WhereNext\Default.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="ViewComponents\Courses\HowAssessed\Default.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="ViewComponents\Courses\WhatYouNeed\Default.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="ViewComponents\Courses\HowYouWillLearn\Default.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="ViewComponents\Courses\WhatWillLearn\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
