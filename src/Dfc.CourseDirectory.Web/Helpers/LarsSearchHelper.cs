@@ -112,22 +112,21 @@ namespace Dfc.CourseDirectory.Web.Helpers
 
             for (var i = 0; i < filters.Length; i++)
             {
+                if (i == 0)
+                {
+                    new LarsSearchFilterBuilder(stringBuilder)
+                        .Field(fieldName)
+                        .EqualTo(filters[i])
+                        .Or().PrependOpeningBracket();
+                }
                 if (filters.Length-1 > i)
                 {
-                    if (i == 0)
-                    {
-                        new LarsSearchFilterBuilder(stringBuilder)
-                            .Field(fieldName)
-                            .EqualTo(filters[i])
-                            .Or().PrependOpeningBracket();
-                    }
-                    else
-                    {
-                        new LarsSearchFilterBuilder(stringBuilder)
-                            .Field(fieldName)
-                            .EqualTo(filters[i])
-                            .Or();
-                    }
+
+                    new LarsSearchFilterBuilder(stringBuilder)
+                        .Field(fieldName)
+                        .EqualTo(filters[i])
+                        .Or();
+                    
                 }
                 else
                 {
