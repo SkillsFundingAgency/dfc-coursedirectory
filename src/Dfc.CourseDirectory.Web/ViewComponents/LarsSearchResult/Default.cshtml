@@ -80,23 +80,25 @@
                         @*</article>
                     </section>*@
                     //tabIndexCounter++;
-
-                    <h3 class="accordion govuk-heading-s">@filter.Title</h3>
-                    <div class="panel">
-                        <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
-                            <div class="govuk-checkboxes">
-                                @foreach (var item in filter.Items)
-                                {
-                                    <div class="govuk-checkboxes__item">
-                                        <input class="govuk-checkboxes__input" id="@item.Id" name="@item.Name" type="checkbox" value="@item.Value" @item.IsSelected.ThenCheck()>
-                                        <label class="govuk-label govuk-checkboxes__label govuk-!-font-size-14" for="@item.Id">
-                                            @item.Text (@item.Count)
-                                        </label>
-                                    </div>
-                                }
-                            </div>
-                        </fieldset>
-                    </div>                                    
+                    <div class="govuk-form-group govuk-!-font-size-14">
+                        <div class="accordion govuk-heading-s">
+                            @*<div class="govuk-heading-s">*@@filter.Title@*</div>*@</div>
+                        <div class="panel">
+                            <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
+                                <div class="govuk-checkboxes">
+                                    @foreach (var item in filter.Items)
+                                    {
+                                        <div class="govuk-checkboxes__item">
+                                            <input class="govuk-checkboxes__input" id="@item.Id" name="@item.Name" type="checkbox" value="@item.Value" @item.IsSelected.ThenCheck()>
+                                            <label class="govuk-label govuk-checkboxes__label govuk-!-font-size-14" for="@item.Id">
+                                                @item.Text (@item.Count)
+                                            </label>
+                                        </div>
+                                    }
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
                 }
             }
         </div>

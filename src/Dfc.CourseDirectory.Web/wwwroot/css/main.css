@@ -5672,20 +5672,16 @@ ul.sort-list {
 }
 
 .accordion {
-  background-color: #eee;
   color: #444;
   cursor: pointer;
-  padding: 18px;
-  width: 100%;
+  padding: 0px;
   border: none;
-  text-align: left;
-  outline: none;
-  font-size: 15px;
   transition: 0.4s;
+  border-bottom: 1px solid #bfc1c3;
 }
 
-.active, .accordion:hover {
-  background-color: #ccc;
+.accordion:hover {
+  background-color: #f8f8f8;
 }
 
 .accordion:after {
@@ -5693,7 +5689,7 @@ ul.sort-list {
   color: #777;
   font-weight: bold;
   float: right;
-  margin-left: 5px;
+  background-color: white;
 }
 
 .active:after {
@@ -5701,7 +5697,6 @@ ul.sort-list {
 }
 
 .panel {
-  padding: 0 18px;
   background-color: white;
   display: block;
   overflow: hidden;
