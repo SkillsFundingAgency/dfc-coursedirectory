@@ -221,6 +221,12 @@
           "appServicePlanResourceGroup": {
             "value": "[resourcegroup().name]"
           },
+          "customHostName": {
+            "value": "[parameters('appHostName')]"
+          },
+          "certificateThumbprint": {
+            "value": "[if(greater(length(parameters('appHostName')),0),reference('courseDirectoryCertficate').outputs.certificateThumbprint.value,'')]"
+          },
           "deployStagingSlot": {
             "value": true
           },
