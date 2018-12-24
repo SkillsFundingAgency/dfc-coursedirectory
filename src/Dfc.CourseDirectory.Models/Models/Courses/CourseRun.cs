@@ -9,7 +9,7 @@ using Dfc.CourseDirectory.Models.Interfaces.Venues;
 using Dfc.CourseDirectory.Models.Interfaces.Courses;
 using Dfc.CourseDirectory.Models.Interfaces.Providers;
 using Dfc.CourseDirectory.Models.Interfaces.Qualifications;
-
+using System.ComponentModel;
 
 namespace Dfc.CourseDirectory.Models.Models.Courses
 {
@@ -28,10 +28,14 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
     }
     public enum AttendancePattern
     {
-        Daytime = 0,
-        Evening = 1,
-        Weekend = 2,
-        DayOrBlockRelease = 3
+        [Description("Daytime")]
+        Daytime = 1,
+        [Description("Evening")]
+        Evening = 2,
+        [Description("Weekend")]
+        Weekend = 3,
+        [Description("Day/Block Release")]
+        DayOrBlockRelease = 4
     }
 
     public class CourseRun : ValueObject<CourseRun>, ICourseRun
@@ -61,14 +65,7 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         public IVenue Venue { get; }
         public IProvider Provider { get; }
         public IQualification Qualification { get; }
-        //public string Price { get; }
-        //public string Duration { get; }
-        //public string StudyMode { get; }
-        //public string Attendance { get; }
-        //public Guid CourseID { get; }
-        //public string CourseURL { get; }
-        //public string Pattern { get; }
-        //public string Requirements { get; }
+
         public DateTime CreatedDate { get; }
         public string CreatedBy { get; }
         public DateTime UpdatedDate { get; }
@@ -108,7 +105,7 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         {
             //Throw.IfNullOrWhiteSpace(id, nameof(id));
             Throw.IfNullOrWhiteSpace(coursedescription, nameof(coursedescription));
-            Throw.IfNullOrWhiteSpace(entryrequirements, nameof(entryrequirements)); //Throw.IfNullOrWhiteSpace(requirements, nameof(requirements));
+            Throw.IfNullOrWhiteSpace(entryrequirements, nameof(entryrequirements)); 
             Throw.IfNullOrWhiteSpace(whatyoulllearn, nameof(whatyoulllearn));
             Throw.IfNullOrWhiteSpace(howyoulllearn, nameof(howyoulllearn));
             Throw.IfNullOrWhiteSpace(whatyoullneed, nameof(whatyoullneed));
@@ -127,10 +124,9 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
             Throw.IfNull(advancedlearnerloan, nameof(advancedlearnerloan));
             Throw.IfNull(durationunit, nameof(durationunit));
             Throw.IfNull(durationvalue, nameof(durationvalue));
-            Throw.IfLessThan(1, durationvalue, nameof(durationvalue)); //Throw.IfNullOrWhiteSpace(duration, nameof(duration));
-            Throw.IfNull(studymode, nameof(studymode)); //Throw.IfNullOrWhiteSpace(studymode, nameof(studymode));
-            Throw.IfNull(attendancepattern, nameof(attendancepattern)); //Throw.IfNullOrWhiteSpace(attendance, nameof(attendance));
-            //Throw.IfNullOrWhiteSpace(pattern, nameof(pattern));
+            Throw.IfLessThan(1, durationvalue, nameof(durationvalue)); 
+            Throw.IfNull(studymode, nameof(studymode)); 
+            Throw.IfNull(attendancepattern, nameof(attendancepattern)); 
             Throw.IfNull(venue, nameof(venue));
             Throw.IfNull(provider, nameof(provider));
             Throw.IfNull(qualification, nameof(qualification));
