@@ -2,6 +2,8 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.UrlInput
 @using Dfc.CourseDirectory.Web.ViewComponents.CostInput
 @using Dfc.CourseDirectory.Web.ViewComponents.CostDescription
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.Attendance
+@using Dfc.CourseDirectory.Models.Models.Courses
 
 <h1 class="govuk-heading-xl">Add course section 2</h1>
 
@@ -34,4 +36,12 @@
         HintText = "Enter details of related to the cost of this course",
         AriaDescribedBy = "Enter details of related to the cost of this course"
     })
+
+    @await Component.InvokeAsync(nameof(Attendance), new AttendanceModel
+    {
+        AttendanceMode = AttendancePattern.Daytime,
+        LabelText = "Attendance",
+        HintText = "Select the time of day the course takes place"
+    })
+
 </form>
