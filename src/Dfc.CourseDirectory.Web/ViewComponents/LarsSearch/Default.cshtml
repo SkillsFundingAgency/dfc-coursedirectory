@@ -158,6 +158,12 @@
             };
 
             $larsSearchTerm.on("keyup", debounce(doSearch, 400));
+
+            $(document).keypress(function (e) {
+                if (e.which === 13) {
+                    e.preventDefault();
+                }
+            });
         });
     })(jQuery);
 </script>

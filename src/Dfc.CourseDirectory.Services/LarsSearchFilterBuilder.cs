@@ -132,5 +132,12 @@ namespace Dfc.CourseDirectory.Services
 
             return this;
         }
+
+        public ILarsSearchFilterBuilder AppendOpeningBracket()
+        {
+            _sb.Append("(");
+
+            return this;
+        }
     }
 }

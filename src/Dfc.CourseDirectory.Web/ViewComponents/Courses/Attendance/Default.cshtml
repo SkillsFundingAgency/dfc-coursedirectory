@@ -1,0 +1,29 @@
+﻿@using Dfc.CourseDirectory.Models.Models.Courses;
+@using Dfc.CourseDirectory.Web.Helpers;
+
+@model Dfc.CourseDirectory.Web.ViewComponents.Courses.Attendance.AttendanceModel
+
+<div class="govuk-form-group" id="mode">
+    <fieldset class="govuk-fieldset" aria-describedby="changed-name-hint">
+        <label class="govuk-label">@Model.LabelText</label>
+        <span id="more-detail-hint" class="govuk-hint">@Model.HintText</span>
+        <div class="govuk-radios govuk-radios--inline" style="margin-bottom:30px;">
+            <div class="govuk-radios__item">
+                @Html.RadioButtonFor(m => m.AttendanceMode, AttendancePattern.Daytime, new { @class = "govuk-radios__input daynight" })
+                <label class="govuk-label govuk-radios__label" for="@AttendancePattern.Daytime">@AttendancePattern.Daytime</label>
+            </div>
+            <div class="govuk-radios__item">
+                @Html.RadioButtonFor(m => m.AttendanceMode, AttendancePattern.Evening, new { @class = "govuk-radios__input daynight" })
+                <label class="govuk-label govuk-radios__label" for="@AttendancePattern.Evening">@AttendancePattern.Evening</label>
+            </div>
+            <div class="govuk-radios__item">
+                @Html.RadioButtonFor(m => m.AttendanceMode, AttendancePattern.Weekend, new { @class = "govuk-radios__input daynight" })
+                <label class="govuk-label govuk-radios__label" for="@AttendancePattern.Weekend">@AttendancePattern.Weekend</label>
+            </div>
+            <div class="govuk-radios__item">
+                @Html.RadioButtonFor(m => m.AttendanceMode, AttendancePattern.DayOrBlockRelease, new { @class = "govuk-radios__input daynight" })
+                <label class="govuk-label govuk-radios__label" for="@AttendancePattern.DayOrBlockRelease">@WebHelper.GetEnumDescription(AttendancePattern.DayOrBlockRelease)</label>
+            </div>
+        </div>
+    </fieldset>
+</div>
