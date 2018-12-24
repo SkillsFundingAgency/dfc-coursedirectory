@@ -104,24 +104,34 @@ namespace Dfc.CourseDirectory.Web.Helpers
             Throw.IfNull(stringBuilder, nameof(stringBuilder));
             Throw.IfNullOrWhiteSpace(fieldName, nameof(fieldName));
             Throw.IfNull(filters, nameof(filters));
-
+            bool openingBracketAppended = false;
             if (stringBuilder.Length > 0 && filters.Length > 0)
             {
-                new LarsSearchFilterBuilder(stringBuilder).And();
+                new LarsSearchFilterBuilder(stringBuilder).And().AppendOpeningBracket();
+                openingBracketAppended = true;
             }
 
             for (var i = 0; i < filters.Length; i++)
             {
                 if (i == 0)
                 {
-                    new LarsSearchFilterBuilder(stringBuilder)
-                        .Field(fieldName)
-                        .EqualTo(filters[i])
-                        .Or().PrependOpeningBracket();
+                    if (openingBracketAppended)
+                    {
+                        new LarsSearchFilterBuilder(stringBuilder)
+                            .Field(fieldName)
+                            .EqualTo(filters[i])
+                            .Or();
+                    }
+                    else
+                    {
+                        new LarsSearchFilterBuilder(stringBuilder)
+                            .Field(fieldName)
+                            .EqualTo(filters[i])
+                            .Or().PrependOpeningBracket();
+                    }
                 }
                 if (filters.Length-1 > i)
                 {
-
                     new LarsSearchFilterBuilder(stringBuilder)
                         .Field(fieldName)
                         .EqualTo(filters[i])
