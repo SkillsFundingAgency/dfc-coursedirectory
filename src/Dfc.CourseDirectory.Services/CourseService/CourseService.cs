@@ -1,11 +1,16 @@
-﻿using Dfc.CourseDirectory.Common;
-using Dfc.CourseDirectory.Services.Interfaces.CourseService;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+﻿
 using System;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Dfc.CourseDirectory.Common;
+using Dfc.CourseDirectory.Common.Interfaces;
+using Dfc.CourseDirectory.Models.Interfaces.Courses;
+using Dfc.CourseDirectory.Services.Interfaces.CourseService;
+
 
 namespace Dfc.CourseDirectory.Services.CourseService
 {
@@ -27,10 +32,13 @@ namespace Dfc.CourseDirectory.Services.CourseService
             _logger = logger;
             _httpClient = httpClient;
 
-            _getWhatEverUri = settings.Value.ToGetWhatEverUri();
+            //_getWhatEverUri = settings.Value.ToGetWhatEverUri();
         }
 
-        // TODO - some real work methods;
+        public Task<IResult<ICourse>> AddAsync(ICourse course)
+        {
+            return null;
+        }
     }
 
     internal static class CourseServiceSettingsExtensions

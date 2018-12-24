@@ -1,7 +1,66 @@
 ﻿
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseFor
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.EntryRequirements
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.HowAssessed
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.HowYouWillLearn
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatWillLearn
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatYouNeed
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhereNext
 
-<h1 class="govuk-heading-xl">Add course section 1</h1>
+@model Dfc.CourseDirectory.Web.ViewModels.AddCourseViewModel
 
-<form asp-controller="Courses" asp-action="AddCourseSection2">
+<form asp-controller="Courses" asp-action="AddCourseSection1" method="post">
+
+    <h1 class="govuk-heading-l" style="padding-top: 20px;">
+        Complete your qualification details
+    </h1>
+
+    <p style="padding: 15px 20px; border: 3px solid #009900;background-color:#fff;" id="qual--">Qualification added:<br> @Model.LearnAimRefTitle<br> Level: @Model.NotionalNVQLevelv2<br> Awarding organisation: @Model.AwardOrgCode<br> LARS/QAN: @Model.LearnAimRef</p>
+
+    <h3 class="govuk-heading-m">Course description</h3>
+
+    @await Component.InvokeAsync(nameof(CourseFor), Model.CourseFor)
+
+    @await Component.InvokeAsync(nameof(EntryRequirements), Model.EntryRequirements)
+
+    @await Component.InvokeAsync(nameof(WhatWillLearn), Model.WhatWillLearn)
+
+    @await Component.InvokeAsync(nameof(HowYouWillLearn), Model.HowYouWillLearn)
+    
+    @await Component.InvokeAsync(nameof(WhatYouNeed), Model.WhatYouNeed)
+    
+    @await Component.InvokeAsync(nameof(HowAssessed), Model.HowAssessed)
+    
+    @await Component.InvokeAsync(nameof(WhereNext), Model.WhereNext)
+
+    <div class="govuk-form-group">
+        <button type="submit" class="govuk-button" id="goToSection2">
+            Next
+        </button>
+    </div>
 
 </form>
+
+<script>
+    (function ($) {
+        $(function () {
+            var $continue = $("#goToSection2");
+            $continue.on("click", function (e) {
+                var $courseFor = $("#@nameof(Model.CourseFor)");
+                $courseFor.trigger("blur");
+                var $entryRequirements = $("#@nameof(Model.EntryRequirements)");
+                $entryRequirements.trigger("blur");
+                var $whatWillLearn = $("#@nameof(Model.WhatWillLearn)");
+                $whatWillLearn.trigger("blur");
+                var $howYouWillLearn = $("#@nameof(Model.HowYouWillLearn)");
+                $howYouWillLearn.trigger("blur");
+                var whatYouNeed = $("#@nameof(Model.WhatYouNeed)");
+                whatYouNeed.trigger("blur");
+                var howAssessed = $("#@nameof(Model.HowAssessed)");
+                whatYouNeed.trigger("blur");
+                var whereNext = $("#@nameof(Model.WhereNext)");
+                whereNext.trigger("blur");
+            });
+        });
+    })(jQuery);
+</script>

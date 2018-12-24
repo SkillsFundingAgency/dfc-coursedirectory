@@ -27,8 +27,6 @@ namespace Dfc.CourseDirectory.Web.Helpers
 
             sb = BuildUpFilterStringBuilder(sb, "NotionalNVQLevelv2", larsSearchRequestModel.NotionalNVQLevelv2Filter);
             sb = BuildUpFilterStringBuilder(sb, "AwardOrgCode", larsSearchRequestModel.AwardOrgCodeFilter);
-            sb = BuildUpFilterStringBuilder(sb, "SectorSubjectAreaTier1", larsSearchRequestModel.SectorSubjectAreaTier1Filter);
-            sb = BuildUpFilterStringBuilder(sb, "SectorSubjectAreaTier2", larsSearchRequestModel.SectorSubjectAreaTier2Filter);
 
             var skip = currentPageNo == 1 ? 0 : itemsPerPage * (currentPageNo - 1);
 
@@ -89,8 +87,6 @@ namespace Dfc.CourseDirectory.Web.Helpers
                     item.AwardOrgCode,
                     item.LearnDirectClassSystemCode1,
                     item.LearnDirectClassSystemCode2,
-                    item.SectorSubjectAreaTier1,
-                    item.SectorSubjectAreaTier2,
                     item.GuidedLearningHours,
                     item.TotalQualificationTime,
                     item.UnitType,
@@ -108,26 +104,45 @@ namespace Dfc.CourseDirectory.Web.Helpers
             Throw.IfNull(stringBuilder, nameof(stringBuilder));
             Throw.IfNullOrWhiteSpace(fieldName, nameof(fieldName));
             Throw.IfNull(filters, nameof(filters));
-
+            bool openingBracketAppended = false;
             if (stringBuilder.Length > 0 && filters.Length > 0)
             {
-                new LarsSearchFilterBuilder(stringBuilder).And();
+                new LarsSearchFilterBuilder(stringBuilder).And().AppendOpeningBracket();
+                openingBracketAppended = true;
             }
 
             for (var i = 0; i < filters.Length; i++)
             {
-                if (i == 0 && filters.Length > 1)
+                if (i == 0)
+                {
+                    if (openingBracketAppended)
+                    {
+                        new LarsSearchFilterBuilder(stringBuilder)
+                            .Field(fieldName)
+                            .EqualTo(filters[i])
+                            .Or();
+                    }
+                    else
+                    {
+                        new LarsSearchFilterBuilder(stringBuilder)
+                            .Field(fieldName)
+                            .EqualTo(filters[i])
+                            .Or().PrependOpeningBracket();
+                    }
+                }
+                if (filters.Length-1 > i)
                 {
                     new LarsSearchFilterBuilder(stringBuilder)
                         .Field(fieldName)
                         .EqualTo(filters[i])
                         .Or();
+                    
                 }
                 else
                 {
                     new LarsSearchFilterBuilder(stringBuilder)
                         .Field(fieldName)
-                        .EqualTo(filters[i]);
+                        .EqualTo(filters[i]).AppendClosingBracket();
                 }
             }
 

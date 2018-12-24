@@ -114,8 +114,8 @@
                 var $sectorSubjectAreaTier1FilterCheckboxes = $("input[name='SectorSubjectAreaTier1Filter']:checkbox");
                 var $sectorSubjectAreaTier2FilterCheckboxes = $("input[name='SectorSubjectAreaTier2Filter']:checkbox");
 
-                $notionalNvqLevelV2FilterCheckboxes.on("click", doSearch);
-                $awardOrgCodeFilterCheckboxes.on("click", doSearch);
+                $notionalNvqLevelV2FilterCheckboxes.on("click", debounce(doSearch, 1500));
+                $awardOrgCodeFilterCheckboxes.on("click", debounce(doSearch, 1500));
                 $sectorSubjectAreaTier1FilterCheckboxes.on("click", doSearch);
                 $sectorSubjectAreaTier2FilterCheckboxes.on("click", doSearch);
             };
@@ -158,6 +158,12 @@
             };
 
             $larsSearchTerm.on("keyup", debounce(doSearch, 400));
+
+            $(document).keypress(function (e) {
+                if (e.which === 13) {
+                    e.preventDefault();
+                }
+            });
         });
     })(jQuery);
 </script>

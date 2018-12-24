@@ -17,8 +17,6 @@ namespace Dfc.CourseDirectory.Models.Models.Qualifications
         public string LearnAimRefTitle { get; }
         public string LearnDirectClassSystemCode1 { get; }
         public string LearnDirectClassSystemCode2 { get; }
-        public string SectorSubjectAreaTier1 { get; }
-        public string SectorSubjectAreaTier2 { get; }
         public string GuidedLearningHours { get; }
 
         public Qualification(
@@ -31,8 +29,6 @@ namespace Dfc.CourseDirectory.Models.Models.Qualifications
             string learnAimRefTitle,
             string learnDirectClassSystemCode1,
             string learnDirectClassSystemCode2,
-            string sectorSubjectAreaTier1,
-            string sectorSubjectAreaTier2,
             string guidedLearningHours)
         {
             Throw.IfNullOrWhiteSpace(notionalNVQLevelv2, nameof(notionalNVQLevelv2));
@@ -44,8 +40,6 @@ namespace Dfc.CourseDirectory.Models.Models.Qualifications
             Throw.IfNullOrWhiteSpace(learnAimRefTitle, nameof(learnAimRefTitle));
             Throw.IfNullOrWhiteSpace(learnDirectClassSystemCode1, nameof(learnDirectClassSystemCode1));
             Throw.IfNullOrWhiteSpace(learnDirectClassSystemCode2, nameof(learnDirectClassSystemCode2));
-            Throw.IfNullOrWhiteSpace(sectorSubjectAreaTier1, nameof(sectorSubjectAreaTier1));
-            Throw.IfNullOrWhiteSpace(sectorSubjectAreaTier2, nameof(sectorSubjectAreaTier2));
             Throw.IfNullOrWhiteSpace(guidedLearningHours, nameof(guidedLearningHours));
 
             NotionalNVQLevelv2 = notionalNVQLevelv2;
@@ -57,8 +51,6 @@ namespace Dfc.CourseDirectory.Models.Models.Qualifications
             LearnAimRefTitle = learnAimRefTitle;
             LearnDirectClassSystemCode1 = learnDirectClassSystemCode1;
             LearnDirectClassSystemCode2 = learnDirectClassSystemCode2;
-            SectorSubjectAreaTier1 = sectorSubjectAreaTier1;
-            SectorSubjectAreaTier2 = sectorSubjectAreaTier2;
             GuidedLearningHours = guidedLearningHours;
     }
         protected override IEnumerable<object> GetEqualityComponents()
@@ -72,8 +64,6 @@ namespace Dfc.CourseDirectory.Models.Models.Qualifications
             yield return LearnAimRefTitle;
             yield return LearnDirectClassSystemCode1;
             yield return LearnDirectClassSystemCode2;
-            yield return SectorSubjectAreaTier1;
-            yield return SectorSubjectAreaTier2;
             yield return GuidedLearningHours;
         }
 

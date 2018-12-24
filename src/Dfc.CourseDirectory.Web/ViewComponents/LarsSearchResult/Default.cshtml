@@ -1,6 +1,8 @@
 ﻿@using Dfc.CourseDirectory.Web.ViewComponents.Extensions
 @using Dfc.CourseDirectory.Web.ViewComponents.Pagination;
 
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
 @model Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult.LarsSearchResultModel;
 
 <div class="govuk-grid-row">
@@ -25,7 +27,7 @@
             </div>
         </div>
     }
-    else if (Model.Items.Count() > 0)
+    else if (Model.Items.Any())
     {
 
         <div class="govuk-heading-s lars-search-results govuk-!-font-weight-regular">
@@ -33,51 +35,35 @@
         </div>
 
         <div class="govuk-grid-column-one-quarter">
-            <h3>filter controls here</h3>
+            @*<h3>filter controls here</h3>*@
             @if (Model.Filters != null)
             {
                 if (Model.HasSelectedFilters)
                 {
                     <div class="govuk-form-group">
-                        <a class="govuk-link" id="ClearAllFilters" href="">Clear all filters</a>
+                        <h3><a class="govuk-link" id="ClearAllFilters" href="">reset</a></h3>
                     </div>
                 }
-                int tabIndexCounter = 0;
                 foreach (var filter in Model.Filters)
                 {
-                    string panel = "panel" + tabIndexCounter;
-                    string tab = "tab" + tabIndexCounter;
-                    <section class="accordian" role="tablist" aria-live="polite">
-                        <article>
-
-                            @*<div class="govuk-form-group govuk-!-font-size-14">*@
-                            <span id="@tab" tabindex="0" class="section-title" aria-controls="@panel" role="tab">
-                                <h3 class="govuk-heading-s">
-                                    @filter.Title
-                                    <span>+</span>
-                                </h3>
-                            </span>
-
-                            <div class="collapsing-section" id="@panel" aria-labelledby="@tab" role="tabpanel">
-                                <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
-                                    <div class="govuk-checkboxes">
-                                        @foreach (var item in filter.Items)
-                                        {
-                                            <div class="govuk-checkboxes__item">
-                                                <input class="govuk-checkboxes__input" id="@item.Id" name="@item.Name" type="checkbox" value="@item.Value" @item.IsSelected.ThenCheck()>
-                                                <label class="govuk-label govuk-checkboxes__label govuk-!-font-size-14" for="@item.Id">
-                                                    @item.Text (@item.Count)
-                                                </label>
-                                            </div>
-                                        }
-                                    </div>
-                                </fieldset>
-                            </div>
-                            @*</div>*@
-
-                        </article>
-                    </section>
-                    tabIndexCounter++;
+                    <div class="govuk-form-group govuk-!-font-size-14">
+                        <div class="accordion govuk-heading-s">@filter.Title</div>
+                        <div class="panel">
+                            <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
+                                <div class="govuk-checkboxes">
+                                    @foreach (var item in filter.Items)
+                                    {
+                                        <div class="govuk-checkboxes__item">
+                                            <input class="govuk-checkboxes__input" id="@item.Id" name="@item.Name" type="checkbox" value="@item.Value" @item.IsSelected.ThenCheck()>
+                                            <label class="govuk-label govuk-checkboxes__label govuk-!-font-size-14" for="@item.Id">
+                                                @item.Text (@item.Count)
+                                            </label>
+                                        </div>
+                                    }
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
                 }
             }
         </div>
@@ -96,6 +82,7 @@
                      })
             <div class="govuk-table govuk-!-font-size-14">
 
+
                 @foreach (var item in Model.Items)
                 {
                     <div class="cd-lars-search-result__container">
@@ -103,9 +90,13 @@
                         <p class="govuk-body">LARS/QAN:<span class="govuk-!-font-weight-bold"> @item.LearnAimRef</span></p>
                         <p class="govuk-body">Level: <span class="govuk-!-font-weight-bold"> @item.NotionalNVQLevelv2</span></p>
                         <p class="govuk-body">Awarding body:<span class="govuk-!-font-weight-bold"> @item.AwardOrgCode</span></p>
-                        <p class="govuk-body"><a class="govuk-link" href="#">Add this qualification</a></p>
+                        @*<p class="govuk-body"><a class="govuk-link" href="#">Add this qualification</a></p>*@
+
+                        <a asp-controller="Courses" asp-action="AddCourseSection1" asp-route-learnAimRef=@item.LearnAimRef asp-route-notionalNVQLevelv2=@item.NotionalNVQLevelv2 asp-route-awardOrgCode=@item.AwardOrgCode asp-route-learnAimRefTitle=@item.LearnAimRefTitle class="link--button" id="">Add this qualification</a>
+
                     </div>
                 }
+
             </div>
             @await Component.InvokeAsync(nameof(Pagination),
                      new
@@ -133,52 +124,23 @@
 </div>
 
 <script>
-    (function($) {
-        $(function() {
-            $(".section-title").on('focus',
-                function() {
-                    if (!$(this).data("mouseDown"))
-                        $(this).click();
-                });
+    (function ($) {
+        $(function () {
 
-            $(".section-title").on('mousedown',
-                function() {
-                    $(this).data("mouseDown", true);
-                });
+            var acc = document.getElementsByClassName("accordion");
+            var i;
 
-            $(".section-title").on('mouseup',
-                function() {
-                    $(this).removeData("mouseDown");
-                });
-
-            $(".section-title").on('click',
-                function() {
-                    if ($(this).hasClass('open')) {
-                        //Close the current section
-                        $(this).removeClass('open');
-                        $('.collapsing-section').slideUp();
-
+            for (i = 0; i < acc.length; i++) {
+                acc[i].addEventListener("click", function() {
+                    this.classList.toggle("active");
+                    var panel = this.nextElementSibling;
+                    if (panel.style.display === "none"){
+                        panel.style.display = "block";
                     } else {
-                        //close the prev section & open the newly click
-                        //$('.section-title').removeClass('open');
-                        //$('.collapsing-section').slideUp(); //Side up all sections that are open & remove their open class
-                        $(this).addClass('open');
-                        $('.collapsing-section').addClass('open');
-                        var sectionToOpen = $(this).next('.collapsing-section');
-                        $(sectionToOpen).slideDown();
-                    }
+                        panel.style.display = "none";
+                    } 
                 });
-
-
-            var toggle = false;
-            $('.btn').click(function() {
-                toggle = !toggle;
-                if (toggle) {
-                    $('#A').animate({ left: 0 });
-                } else {
-                    $('#A').animate({ left: -400 });
-                }
-            });
+            }
         });
     })(jQuery);
 </script>

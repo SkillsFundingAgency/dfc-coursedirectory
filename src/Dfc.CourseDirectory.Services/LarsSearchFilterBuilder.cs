@@ -118,5 +118,26 @@ namespace Dfc.CourseDirectory.Services
 
             return this;
         }
+
+        public ILarsSearchFilterBuilder PrependOpeningBracket()
+        {
+            _sb.Insert(0, "(");
+
+            return this;
+        }
+
+        public ILarsSearchFilterBuilder AppendClosingBracket()
+        {
+            _sb.Append(")");
+
+            return this;
+        }
+
+        public ILarsSearchFilterBuilder AppendOpeningBracket()
+        {
+            _sb.Append("(");
+
+            return this;
+        }
     }
 }
