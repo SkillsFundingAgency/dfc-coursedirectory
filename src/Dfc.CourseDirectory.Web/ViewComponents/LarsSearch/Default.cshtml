@@ -75,6 +75,7 @@
             };
 
             var $larsSearchTerm = $("#LarsSearchTerm");
+            var $buttonSearch = $("#searchQualification");
 
             var doSearch = function() {
                 if (isNullOrWhitespace($larsSearchTerm.val())) {
@@ -158,6 +159,7 @@
             };
 
             $larsSearchTerm.on("keyup", debounce(doSearch, 400));
+            $buttonSearch.on("click", doSearch);
 
             $(document).keypress(function (e) {
                 if (e.which === 13) {
