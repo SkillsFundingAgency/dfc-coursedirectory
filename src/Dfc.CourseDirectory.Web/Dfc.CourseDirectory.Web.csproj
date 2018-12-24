@@ -51,6 +51,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="ViewComponents\CourseProviderReference\Default.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="ViewComponents\Courses\WhereNext\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
