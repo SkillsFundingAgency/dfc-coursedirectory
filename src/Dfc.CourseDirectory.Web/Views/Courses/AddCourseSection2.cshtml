@@ -35,8 +35,8 @@
     @await Component.InvokeAsync(nameof(CostInput), new CostInputModel
     {
         LabelText = "Cost",
-        HintText = "Enter the cost for this course",
-        AriaDescribedBy = "Enter the cost for this course"
+        HintText = "Enter the cost for the course in pounds and pence e.g. 125.00",
+        AriaDescribedBy = "Enter the cost in pounds and pence"
     })
 
     @await Component.InvokeAsync(nameof(CostDescription), new CostDescriptionModel
