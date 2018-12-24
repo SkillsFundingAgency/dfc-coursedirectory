@@ -10,7 +10,6 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.CostInput
     {
         [Required(AllowEmptyStrings = false, ErrorMessage = "Enter the cost in pounds and pence")]
         [Range(0.01, 999999.99, ErrorMessage = "Maximum value for cost is £999,999.99")]
-        //[RegularExpression(@"^\d+(?:\.\d{3})*\.\d{2}$", ErrorMessage = "Maximum value for cost is £999,999.99")]
         public string Cost { get; set; }
         public string LabelText { get; set; }
         public string HintText { get; set; }
