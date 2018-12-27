@@ -8,8 +8,9 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Courses
 {
     public interface ICourse
     {
-        Guid ID { get; }
-        QuAP QuAP { get; }
+        Guid id { get; set; }
+        QuAP QuAP { get; set; }
+        CourseData CourseData { get; set; }
         IEnumerable<CourseRun> CourseRun { get; }
     }
 }

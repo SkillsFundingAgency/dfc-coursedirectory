@@ -8,8 +8,8 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Qualifications
 {
     public interface IQuAP
     {
-        Guid ID { get; }
+        Guid ID { get; set; }
         Qualification Qualification { get; }
-        Provider Provider { get; }
+        Provider Provider { get; set; }
     }
 }

@@ -25,7 +25,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-
+using Dfc.CourseDirectory.Models.Models.Qualifications;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -117,11 +117,35 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return View("AddCourseSection2");
         }
 
-
-
-
         public IActionResult AddCourseSection2(AddCourseRequestModel requestModel)
         {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddCourse(AddCoursePublishModel model)
+        {
+            // We will need to map the flat ModelView Structure to our hierarchical Course Model Structure
+            var firstCourseRun = new CourseRun
+            {
+                CourseDescription = "",
+                AttendancePattern = model.AttendanceMode
+            };
+            var course = new Course
+            {
+                id = Guid.NewGuid(),
+                QuAP = new QuAP(), 
+                CourseData = new CourseData
+                {
+                    ID = Guid.NewGuid(),
+                    CourseID = Guid.NewGuid(),
+                    CourseTitle = model.CourseName
+                },
+                CourseRun = new[] { firstCourseRun }
+            };
+
+            var result = await _courseService.AddCourseAsync(course);
+
             return View();
         }
     }

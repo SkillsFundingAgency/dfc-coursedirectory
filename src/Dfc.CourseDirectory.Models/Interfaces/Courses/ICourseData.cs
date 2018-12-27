@@ -6,8 +6,8 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Courses
 {
     public interface ICourseData
     {
-        Guid ID { get; }
-        Guid CourseID { get; }
-        string CourseTitle { get; }
+        Guid ID { get; set; }
+        Guid CourseID { get; set; }
+        string CourseTitle { get; set; }
     }
 }
