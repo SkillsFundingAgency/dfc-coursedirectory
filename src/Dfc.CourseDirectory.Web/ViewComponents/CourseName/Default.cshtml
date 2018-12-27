@@ -31,6 +31,9 @@
             var validator = $form.validate();
 
             $elementCourseName.on("blur", function () {
+                var trimmed = $elementCourseName.val().trim();
+                $elementCourseName.val(trimmed);
+
                 var result = validator.element($elementCourseName);
 
                 if (result) {

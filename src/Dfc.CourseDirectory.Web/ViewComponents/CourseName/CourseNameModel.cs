@@ -8,9 +8,9 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.CourseName
 {
     public class CourseNameModel
     {
-        [Required(AllowEmptyStrings = false, ErrorMessage = "Enter a course name")]
-        [MaxLength(255, ErrorMessage = "Course name must be 255 characters or less")]
-        [RegularExpression(@"^\S+(?: \S+)*$", ErrorMessage = "Course name must not have any leading, trailing or contain multiple consecutive spaces")]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Enter Course Name")]
+        [MaxLength(255, ErrorMessage = "The maximum length of Course Name is 255 characters")]
+        [RegularExpression(@"[a-zA-Z0-9 \¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\" + "\"" + "]+", ErrorMessage = "Invalid characters")]
         public string CourseName { get; set; }
         public string LabelText { get; set; }
         public string HintText { get; set; }

@@ -107,3 +107,35 @@ ul.sort-list {
 .collapsing-section p {
   margin: 0;
 }
+
+.accordion {
+  color: #444;
+  cursor: pointer;
+  padding: 0px;
+  border: none;
+  transition: 0.4s;
+  border-bottom: 1px solid #bfc1c3;
+}
+
+.accordion:hover {
+  background-color: #f8f8f8;
+}
+
+.accordion:after {
+  content: "\2212";
+  color: #777;
+  font-weight: bold;
+  float: right;
+  background-color: white;
+}
+
+.active:after {
+  content: '\002B';
+}
+
+.panel {
+  background-color: white;
+  display: block;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
+}

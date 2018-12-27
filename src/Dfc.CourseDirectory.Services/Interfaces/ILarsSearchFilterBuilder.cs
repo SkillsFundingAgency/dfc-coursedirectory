@@ -28,6 +28,8 @@
 
         ILarsSearchFilterBuilder AppendClosingBracket();
 
+        ILarsSearchFilterBuilder AppendOpeningBracket();
+
         string Build();
     }
 }

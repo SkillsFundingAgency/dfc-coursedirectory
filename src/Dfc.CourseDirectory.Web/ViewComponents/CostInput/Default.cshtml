@@ -13,7 +13,8 @@
         </span>
     }
     <span asp-validation-for="@Model.Cost" class="govuk-error-message"></span>
-    <input class="govuk-input govuk-input--width-5" asp-for="@Model.Cost" type="text" aria-describedby="@Model.AriaDescribedBy">
+    <span class="govuk-body">£ </span>
+    <input class="govuk-input govuk-input--width-10" style="display:inline;" asp-for="@Model.Cost" type="text" aria-describedby="@Model.AriaDescribedBy">
 </div>
 
 <script>
@@ -31,6 +32,13 @@
             var validator = $form.validate();
 
             $elementCost.on("blur", function () {
+                var trimmed = $elementCost.val().trim().replace(",", "");
+
+                if (trimmed !== "") {
+                    var formatted = parseFloat(Math.floor(trimmed * 100) / 100).toFixed(2);
+                    $elementCost.val(formatted);
+                }
+
                 var result = validator.element($elementCost);
 
                 if (result) {
