@@ -31,6 +31,9 @@
             var validator = $form.validate();
 
             $elementCourseProviderReference.on("blur", function () {
+                var trimmed = $elementCourseProviderReference.val().trim();
+                $elementCourseProviderReference.val(trimmed);
+
                 var result = validator.element($elementCourseProviderReference);
 
                 if (result) {
