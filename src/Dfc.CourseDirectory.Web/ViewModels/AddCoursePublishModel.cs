@@ -8,8 +8,6 @@ namespace Dfc.CourseDirectory.Web.ViewModels
 {
     public class AddCoursePublishModel
     {
-        public Course Course { get; set; }
-
         public string CourseName { get; set; }
         public AttendancePattern AttendanceMode { get; set; }
     }
