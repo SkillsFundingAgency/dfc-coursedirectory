@@ -1,0 +1,40 @@
+﻿@using Dfc.CourseDirectory.Common.Settings
+@using Microsoft.Extensions.Options
+@model Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseDeliveryType.CourseDeliveryTypeModel
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<div class="btn-gr">
+
+    <fieldset class="govuk-fieldset" aria-describedby="changed-name-hint">
+        <label class="govuk-label">@Model.LabelText</label>
+        <span id="more-detail-hint" class="govuk-hint">@Model.HintText</span>
+        <div class="govuk-radios govuk-radios--inline" style="margin-bottom: 30px;">
+
+            @foreach (var item in Model.DeliveryTypes.OrderBy(x=>x.Id))
+            {
+
+                if (item.Id == 0)
+                {
+                    <div class="govuk-radios__item">
+                        <input class="govuk-radios__input" name="changed-name2" type="radio" value="@item.DeliveryType" checked="">
+                        <label class="govuk-label govuk-radios__label" for="changed-name2">
+                            @item.DeliveryType
+                        </label>
+                    </div>
+                }
+            }
+        </div>
+    </fieldset>
+
+</div>
+
+<script>
+    (function ($) {
+        $(function () {
+
+
+        });
+    })(jQuery);
+</script>
+

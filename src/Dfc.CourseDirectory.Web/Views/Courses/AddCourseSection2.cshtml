@@ -6,6 +6,10 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.CostDescription
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.Attendance
 @using Dfc.CourseDirectory.Models.Models.Courses
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseDelivery
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseDeliveryType
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.Attendance
+@using Dfc.CourseDirectory.Models.Models.Courses
 
 
 <h1 class="govuk-heading-xl">Add course section 2</h1>
@@ -23,6 +27,32 @@
         LabelText = "ID",
         HintText = "This is how you identify a course in your internal system.",
         AriaDescribedBy = "Please enter the ID for this course"
+    })
+    
+    @await Component.InvokeAsync(nameof(CourseDeliveryType), new CourseDeliveryTypeModel
+    {
+        DeliveryTypes = new List<DeliveryTypeModel>()
+        {
+        
+            new DeliveryTypeModel()
+            {
+                Id=0,
+                DeliveryType = "Classroom based"
+            },
+            new DeliveryTypeModel()
+            {
+                Id=1,
+                DeliveryType = "Online"
+            },
+            new DeliveryTypeModel()
+            {
+                Id=2,
+                DeliveryType = "Work based"
+            }
+        },
+        LabelText = "Delivery Mode",
+        HintText = "Select how this course will be delivered",
+        AriaDescribedBy = "How the course will be delivered"
     })
 
     @await Component.InvokeAsync(nameof(UrlInput), new UrlInputModel
