@@ -22,12 +22,19 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
     }
     public enum StudyMode
     {
-        FullTime = 0,
-        PartTime = 1,
-        Flexible = 2
+        [Description("Undefined")]
+        Undefined = 0,
+        [Description("Full-time")]
+        FullTime = 1,
+        [Description("Part-time")]
+        PartTime = 2,
+        [Description("Flexible")]
+        Flexible = 3
     }
     public enum AttendancePattern
     {
+        [Description("Undefined")]
+        Undefined = 0,
         [Description("Daytime")]
         Daytime = 1,
         [Description("Evening")]
