@@ -307,6 +307,38 @@
               {
                 "name": "ProviderServiceSettings__ApiKey",
                 "value": "[parameters('providerApiKey')]"
+              },
+              {
+                "name": "AppUISettings__VenueNameComponentSettings__VenueName_Label",
+                "value": "Venue name"
+              },
+              {
+                "name": "AppUISettings__CourseForComponentSettings__TextFieldMaxChars",
+                "value": "500"
+              },
+              {
+                "name": "AppUISettings__EntryRequirementsComponentSettings__TextFieldMaxChars",
+                "value": "500"
+              },
+              {
+                "name": "AppUISettings__WhatWillLearnComponentSettings__TextFieldMaxChars",
+                "value": "500"
+              },
+              {
+                "name": "AppUISettings__HowYouWillLearnComponentSettings__TextFieldMaxChars",
+                "value": "500"
+              },
+              {
+                "name": "AppUISettings__WhatYouNeedComponentSettings__TextFieldMaxChars",
+                "value": "500"
+              },
+              {
+                "name": "AppUISettings__HowAssessedComponentSettings__TextFieldMaxChars",
+                "value": "500"
+              },
+              {
+                "name": "AppUISettings__WhereNextComponentSettings__TextFieldMaxChars",
+                "value": "500"
               }
             ]
           }
