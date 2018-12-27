@@ -1,0 +1,98 @@
+﻿@using Dfc.CourseDirectory.Common.Settings
+@using Microsoft.Extensions.Options
+@model Dfc.CourseDirectory.Web.ViewComponents.Courses.AddStartDate.AddStartDateModel
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@*<div class="govuk-form-group">
+    <div class="govuk-character-count" data-module="character-count" data-maxlength=@courseForComponentSettings.Value.TextFieldMaxChars>
+        <div class="govuk-form-group" style="margin-bottom: 0;padding-bottom: 0">
+            <label class="govuk-label" for="course-for">
+                @Model.LabelText
+            </label>
+            <span id="course-for-hint" class="govuk-hint">
+                @Model.HintText
+            </span>
+            <span asp-validation-for="@Model.CourseFor" class="govuk-error-message"></span>
+            <textarea asp-for="@Model.CourseFor" class="govuk-textarea js-character-count" rows="5"  type="text" aria-describedby="@Model.AriaDescribedBy"></textarea>
+        </div>
+    </div>
+</div>*@
+
+
+
+<fieldset class="govuk-fieldset" aria-describedby="changed-name-hint">
+
+    <div class="govuk-form-group" id="date">
+        <label class="govuk-label" for="sub" style="margin-bottom: 15px">
+            Start date
+        </label>
+        <span id="more-detail-hint" class="govuk-hint">Enter the start date of this course, if it has flexible start dates select the checkbox below </span>
+        <div class="govuk-radios govuk-radios--inline" style="margin-bottom:30px;">
+            <div class="govuk-radios__item ">
+                <input class="govuk-radios__input classroom govuuk-colour" name="changed-name2" type="radio" value="classroom" checked="" style="background: rgb(255, 255, 255);">
+                <label class="govuk-label govuk-radios__label" for="changed-name-1">
+
+                </label>
+            </div>
+        </div>
+
+
+        <div class="">
+            <!--<p> <input type="text" id="datepicker" class="govuk-input details" style="width:200px;"></p>-->
+            <label class="govuk-label govuk-date-input__label" for="dob-day" style="display: inline-block;width:60px;">
+                Day
+            </label>
+
+            <label class="govuk-label govuk-date-input__label" for="dob-month" style="display: inline-block;width:100px;">
+                Month
+            </label>
+
+            <label class="govuk-label govuk-date-input__label" for="dob-year" style="display: inline-block;width:60px;">
+                Year
+            </label>
+        </div>
+
+        <input type="text" class="govuk-input date" style="width:60px;">
+
+        <input type="text" class="govuk-input date" style="width:60px;">
+
+        <input type="text" class="govuk-input date" style="width:120px;">
+
+
+
+        <span id="more-detail-hint" class="govuk-hint" style="margin-top: 20px">Or select a flexible start date: </span>
+
+
+
+        <div class="govuk-radios__item">
+            <input class="govuk-radios__input classroom govuuk-colour" name="changed-name2" type="radio" value="classroom" style="background: rgb(43, 140, 196);">
+            <label class="govuk-label govuk-radios__label" for="changed-name-1">
+                Select a flexible start date
+
+            </label>
+        </div>
+
+
+
+        <!--<div class="govuk-checkboxes">
+            <div class="govuk-checkboxes__item">
+                <input class="govuk-checkboxes__input" id="waste-1" name="waste" type="checkbox" value="carcasses">
+                <label class="govuk-label govuk-checkboxes__label" for="waste-1">
+                    Flexible start date
+                </label>
+            </div>
+        </div>-->
+
+    </div>
+
+</fieldset>
+
+
+
+<script>
+    (function ($) {
+
+    })(jQuery);
+</script>
+
