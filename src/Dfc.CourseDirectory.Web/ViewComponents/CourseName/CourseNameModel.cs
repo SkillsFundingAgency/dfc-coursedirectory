@@ -10,7 +10,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.CourseName
     {
         [Required(AllowEmptyStrings = false, ErrorMessage = "Enter Course Name")]
         [MaxLength(255, ErrorMessage = "The maximum length of Course Name is 255 characters")]
-        [RegularExpression(@"[a-zA-Z0-9 \¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\" + "\"" + "]+", ErrorMessage = "Invalid characters")]
+        [RegularExpression(@"[a-zA-Z0-9 \¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\" + "\"" + @"\\]+", ErrorMessage = "Invalid characters")]
         public string CourseName { get; set; }
         public string LabelText { get; set; }
         public string HintText { get; set; }
