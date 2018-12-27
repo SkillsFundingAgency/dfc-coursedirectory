@@ -80,6 +80,34 @@
       "metadata": {
           "description": "Number of instances in the app service plan"
       }
+    },
+    "appHostName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Custom host name for the website"
+      }
+    },
+    "keyVaultName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Key vault where the certificate had been uploaded to - only used if appHostName is specified"
+      }
+    },
+    "keyVaultResourceGroup": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Resource group for the key vault - only used if appHostName is specified"
+      }
+    },
+    "certificateName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Certificate for the custom host name (must exist in key vault) - only used if appHostName is specified"
+      }
     }
   },
   "variables": {
@@ -90,7 +118,8 @@
     "appServicePlanName": "[concat(parameters('projectPrefix'),'-asp')]",
     "cosmosDbSQLName": "[concat(parameters('projectPrefix'),'-cdb-01')]",
     "cosmosDbGremlinName": "[concat(parameters('projectPrefix'),'-cdb-02')]",
-    "azureSearchName": "[concat(parameters('projectPrefix'),'-sch')]"
+    "azureSearchName": "[concat(parameters('projectPrefix'),'-sch')]",
+    "appServiceDependsOn": "[if(greater(length(parameters('appHostName')),0),'courseDirectoryCertficate','courseDirectoryAppInsights')]"
   },
   "resources": [
     {
@@ -138,12 +167,43 @@
     },
     {
       "apiVersion": "2017-05-10",
+      "name": "courseDirectoryCertficate",
+      "type": "Microsoft.Resources/deployments",
+      "condition": "[greater(length(parameters('appHostName')), 0)]",
+      "dependsOn": [
+        "courseDirectoryAppServicePlan"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('dasDeploymentUrlBase'),'app-service-certificate.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "keyVaultCertificateName": {
+            "value": "[parameters('certificateName')]"
+          },
+          "keyVaultName": {
+            "value": "[parameters('keyVaultName')]"
+          },
+          "keyVaultResourceGroup": {
+            "value": "[parameters('keyVaultResourceGroup')]"
+          },
+          "serverFarmId": {
+            "value": "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]"
+          }       
+        }
+      }
+    },
+    {
+      "apiVersion": "2017-05-10",
       "name": "courseDirectoryAppService",
       "type": "Microsoft.Resources/deployments",
       "dependsOn": [
         "courseDirectoryAppInsights",
         "courseDirectoryStorage",
-        "courseDirectoryAppServicePlan"
+        "courseDirectoryAppServicePlan",
+        "[variables('appServiceDependsOn')]"
       ],
       "properties": {
         "mode": "Incremental",
@@ -160,6 +220,12 @@
           },
           "appServicePlanResourceGroup": {
             "value": "[resourcegroup().name]"
+          },
+          "customHostName": {
+            "value": "[parameters('appHostName')]"
+          },
+          "certificateThumbprint": {
+            "value": "[if(greater(length(parameters('appHostName')),0),reference('courseDirectoryCertficate').outputs.certificateThumbprint.value,'')]"
           },
           "deployStagingSlot": {
             "value": true
