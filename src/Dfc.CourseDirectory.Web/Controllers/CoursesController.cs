@@ -114,6 +114,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpPost]
         public IActionResult AddCourseSection1(AddCourseSection1RequestModel model)
         {
+            _session.SetInt32("WhatEver", Convert.ToInt32("12345678"));
             return View("AddCourseSection2");
         }
 
@@ -125,6 +126,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> AddCourse(AddCoursePublishModel model)
         {
+
+            var whatEver = _session.GetInt32("WhatEver").Value;
+
+
             // We will need to map the flat ModelView Structure to our hierarchical Course Model Structure
             var firstCourseRun = new CourseRun
             {
