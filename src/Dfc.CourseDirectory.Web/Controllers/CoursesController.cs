@@ -59,6 +59,17 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         public IActionResult AddCourseSection1(string learnAimRef, string notionalNVQLevelv2, string awardOrgCode, string learnAimRefTitle)
         {
+            // TODO DELETE after testing
+            learnAimRef = "TEST - 302309";
+            notionalNVQLevelv2 = "TEST - 7";
+            awardOrgCode = "TEST - BOLTONIN";
+            learnAimRefTitle = "TEST - PGCE in Secondary (Mathematics) - Bradford College";
+
+            _session.SetString("LearnAimRef", learnAimRef);
+            _session.SetString("NotionalNVQLevelv2", notionalNVQLevelv2);
+            _session.SetString("AwardOrgCode", awardOrgCode);
+            _session.SetString("LearnAimRefTitle", learnAimRefTitle);
+
             AddCourseViewModel vm = new AddCourseViewModel
             {
                 AwardOrgCode = awardOrgCode,
@@ -114,7 +125,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpPost]
         public IActionResult AddCourseSection1(AddCourseSection1RequestModel model)
         {
-            _session.SetInt32("WhatEver", Convert.ToInt32("12345678"));
+            _session.SetString("CourseFor", model.CourseFor);
+            _session.SetString("EntryRequirements", model.EntryRequirements);
+            _session.SetString("WhatWillLearn", model.WhatWillLearn);
+            _session.SetString("HowYouWillLearn", model.HowYouWillLearn);
+            _session.SetString("WhatYouNeed", model.WhatYouNeed);
+            _session.SetString("HowAssessed", model.HowAssessed);
+            _session.SetString("WhereNext", model.WhereNext);
+
             return View("AddCourseSection2");
         }
 
@@ -126,32 +144,150 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> AddCourse(AddCoursePublishModel model)
         {
+            var learnAimRef = _session.GetString("LearnAimRef");
+            var notionalNVQLevelv2 = _session.GetString("NotionalNVQLevelv2");
+            var awardOrgCode = _session.GetString("AwardOrgCode");
+            var learnAimRefTitle = _session.GetString("LearnAimRefTitle");
 
-            var whatEver = _session.GetInt32("WhatEver").Value;
+            var courseFor = _session.GetString("CourseFor");
+            var entryRequirements = _session.GetString("EntryRequirements");
+            var whatWillLearn = _session.GetString("WhatWillLearn");
+            var howYouWillLearn = _session.GetString("HowYouWillLearn");
+            var whatYouNeed = _session.GetString("WhatYouNeed");
+            var howAssessed = _session.GetString("HowAssessed");
+            var whereNext = _session.GetString("WhereNext");
 
+
+            // TODO - Add error message, if use this check
+            if (string.IsNullOrEmpty(learnAimRef) ||
+                string.IsNullOrEmpty(notionalNVQLevelv2) ||
+                string.IsNullOrEmpty(awardOrgCode) ||
+                string.IsNullOrEmpty(learnAimRefTitle) ||
+                string.IsNullOrEmpty(courseFor) ||
+                string.IsNullOrEmpty(entryRequirements) ||
+                string.IsNullOrEmpty(whatWillLearn) ||
+                string.IsNullOrEmpty(howYouWillLearn) ||
+                string.IsNullOrEmpty(whatYouNeed) ||
+                string.IsNullOrEmpty(howAssessed) ||
+                string.IsNullOrEmpty(whereNext)
+              )
+            {
+                return RedirectToAction("AddCourseSection1", new { learnAimRef = learnAimRef, notionalNVQLevelv2 = notionalNVQLevelv2, awardOrgCode = awardOrgCode, learnAimRefTitle = learnAimRefTitle });
+            }
 
             // We will need to map the flat ModelView Structure to our hierarchical Course Model Structure
-            var firstCourseRun = new CourseRun
+
+            // For each Venue => Course Run
+            var courseRuns = new List<CourseRun>();
+            // It will come from Venue selection
+            var venueSelection = new int[] { 1234567, 7654321 };
+
+            foreach (var venue in venueSelection)
             {
-                CourseDescription = "",
-                AttendancePattern = model.AttendanceMode
-            };
+                var courseRun = new CourseRun
+                {
+                    // HOW ABOUT ID => id ????
+                    id = Guid.NewGuid(), // It was commented out
+                    VenueId = venue, // TOBE Decided
+
+                    CourseName = model.CourseName,
+                    ProviderCourseID = model.CourseProviderReference,
+
+                    CourseDescription = courseFor, // NO Editing
+                    EntryRequirments = entryRequirements, // NO Editing
+                    WhatYoullLearn = whatWillLearn, // NO Editing
+                    HowYoullLearn = howYouWillLearn, // NO Editing
+                    WhatYoullNeed = whatYouNeed, // NO Editing
+                                                 //WhatYoullNeedToBring = "NO CONTENT", // NO Editing => ATTENTION
+                    HowYoullBeAssessed = howAssessed, // NO Editing
+                    WhereNext = whereNext, // NO Editing
+                    DeliveryMode = "0", // TOBE COMPLETED, change string to DeliveryMode => Liam
+                    FlexibleStartDate = false, // // TOBE COMPLETED
+                    StartDate = DateTime.Now, // DateTime // TOBE COMPLETED
+                    CourseURL = model.Url,
+                    Cost = model.Cost, // decimal
+                    CostDescription = model.CostDescription,
+                    AdvancedLearnerLoan = model.AdvancedLearnerLoan, //bool // TOBE COMPLETED
+                    DurationUnit = model.DurationUnit, // DurationUnit // TOBE COMPLETED
+                    DurationValue = model.DurationValue, //int // TOBE COMPLETED
+                    StudyMode = model.StudyMode, // StudyMode // Its done to be MERGED
+                    AttendancePattern = model.AttendanceMode, // AttendancePattern
+
+                    // VenueID // We even don't store a VenueName as it can change ??? id or VENUE_ID ; or BOTH
+                    //            "id": "76748623-93f0-4ebd-8a37-0f0754822b7e",
+                    //              "UKPRN": 10000409,
+                    //              "PROVIDER_ID": 300015,
+                    //              "VENUE_ID": 3214721,
+                    //     \/
+                    //Venue { get; set; } // IVenue => ID & Name
+                    //Provider { get; set; } // IProvider => ID => ProviderUKLPR
+                    //Qualification { get; set; }  //IQualification => ID
+
+                    CreatedDate = DateTime.Now,
+                    CreatedBy = "ProviderPortal-AddCourse" // TODO - Change to the name of the logged person 
+                                                           // UpdatedDate { get; set; } => not now
+                                                           // UpdatedBy { get; set; } => not now
+                };
+
+                courseRuns.Add(courseRun);
+            }
+
+
+
+
             var course = new Course
             {
                 id = Guid.NewGuid(),
-                QuAP = new QuAP(), 
+
+                QualificationCourseTitle = learnAimRefTitle, // CourseData.CourseTitle
+                LearnAimRef = learnAimRef, // LARS / QAN: "302309" -??? INTIGER ?
+                NotionalNVQLevelv2 = notionalNVQLevelv2, // Level: "7" - ??? INTIGER ?
+                AwardOrgCode = awardOrgCode, // Awarding organisation: "BOLTONIN";
+                QualificationType = "Diploma", // ??? QualificationTypes => Diploma, Cerificate or EACH courserun
+
+                ProviderUKPRN = "10052996",
+
+
+                QuAP = new QuAP(),
+                // Guid ID /// ?????
+                // Qualification Qualification => 
+                // Provider Provider { get; set; }
                 CourseData = new CourseData
                 {
-                    ID = Guid.NewGuid(),
-                    CourseID = Guid.NewGuid(),
-                    CourseTitle = model.CourseName
+                    ID = Guid.NewGuid(), // ??? Why we need that? Isn't that the id above?
+                    CourseID = Guid.NewGuid(), // ???
+                    CourseTitle = learnAimRefTitle, // => Qualification added: PGCE in Secondary (Mathematics) - Bradford College
+                                                    // learnAimRef => LARS / QAN: "302309" -??? INTIGER ?
+                                                    //notionalNVQLevelv2 => Level: "7" - ??? INTIGER ?
+                                                    //awardOrgCode => Awarding organisation: "BOLTONIN";
+
+                    // Provider "UnitedKingdomProviderReferenceNumber" UKPRN: "10036651" => The beggining of ALL
+
+                    // ??? QualificationTypes => Diploma, Cerificate
                 },
-                CourseRun = new[] { firstCourseRun }
+                CourseRun = courseRuns // new[] { firstCourseRun }
             };
 
             var result = await _courseService.AddCourseAsync(course);
 
-            return View();
+            if (result.IsSuccess && result.HasValue)
+            {
+                // GOOD
+
+                // TODO Clear Session Variables
+                _session.Remove("LearnAimRef"); // and the rest 
+
+                return new EmptyResult();
+            }
+            else
+            {
+                // BAD
+
+                // TODO DEPENDS OF what you want to do => Clear Session Variables
+                _session.Remove("LearnAimRef"); // and the rest 
+
+                return new EmptyResult();
+            }
         }
     }
 }

@@ -40,7 +40,12 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
 
     public class CourseRun : ICourseRun // ValueObject<CourseRun>, ICourseRun
     {
+        // id was commented out
         //public Guid id { get; }
+        public Guid id { get; set; }
+        public int VenueId { get; set; }
+        public string CourseName { get; set; }
+        public string ProviderCourseID { get; set; }
         public string CourseDescription { get; set; }
         public string EntryRequirments { get; set; }
         public string WhatYoullLearn { get; set; }
@@ -49,8 +54,6 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         public string WhatYoullNeedToBring { get; set; }
         public string HowYoullBeAssessed { get; set; }
         public string WhereNext { get; set; }
-        public string CourseName { get; set; }
-        public string ProviderCourseID { get; set; }
         public string DeliveryMode { get; set; }
         public bool FlexibleStartDate { get; set; }
         public DateTime StartDate { get; set; }

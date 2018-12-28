@@ -11,6 +11,15 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
     public class Course : ICourse // ValueObject<Course>, ICourse
     {
         public Guid id { get; set; }
+
+        public string QualificationCourseTitle { get; set; } // CourseData.CourseTitle
+        public string LearnAimRef { get; set; } // LARS / QAN: "302309" -??? INTIGER ?
+        public string NotionalNVQLevelv2 { get; set; } // Level: "7" - ??? INTIGER ?
+        public string AwardOrgCode { get; set; } // Awarding organisation: "BOLTONIN";
+        public string QualificationType { get; set; } // ??? QualificationTypes => Diploma, Cerificate or EACH courserun
+
+        public string ProviderUKPRN { get; set; } // Or integer 8 digits 
+
         public QuAP QuAP { get; set; }
         public CourseData CourseData { get; set; }
         public IEnumerable<CourseRun> CourseRun { get; set; }
