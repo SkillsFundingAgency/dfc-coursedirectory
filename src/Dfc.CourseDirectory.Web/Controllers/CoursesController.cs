@@ -103,7 +103,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 },
                 WhereNext = new WhereNextModel()
                 {
-                    LabelText = "Where next?’",
+                    LabelText = "Where next?",
                     HintText = "What are the opportunities beyond this course? Progression to a higher level course, apprenticeship or direct entry to employment?",
                     AriaDescribedBy = "Please enter 'Where next?'"
                 }
