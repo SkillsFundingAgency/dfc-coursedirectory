@@ -9,6 +9,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Courses.HowAssessed
     public class HowAssessedModel
     {
         [MaxLength(500, ErrorMessage = "‘How you’ll be assessed' must be 500 characters or less")]
+        [RegularExpression(@"[a-zA-Z0-9 \¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\" + "\"" + @"\\]+", ErrorMessage = "Invalid characters")]
         public string HowAssessed { get; set; }
         public string LabelText { get; set; }
         public string HintText { get; set; }
