@@ -112,23 +112,18 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddCourseSection1(AddCourseViewModel model)
+        public IActionResult AddCourseSection1(AddCourseDetailsViewModel model)
         {
-            return View("AddCourseSection2", new AddCourseDetailsViewModel()
-            {
-                AwardOrgCode = model.AwardOrgCode,
-                LearnAimRef = model.LearnAimRef,
-                LearnAimRefTitle = model.LearnAimRefTitle,
-                NotionalNVQLevelv2 = model.NotionalNVQLevelv2,
-                CourseFor = model.CourseFor.CourseFor,
-                EntryRequirements = model.EntryRequirements.EntryRequirements
-
-            });
+            return View("AddCourseSection2", model);
         }
 
         [HttpPost]
         public IActionResult PublishCourse(AddCourseDetailsViewModel model)
         {
+
+            //TODO service call to save
+            //TODO wireup other properties on model
+            //TODO return to a different page/confirmation page
             return View("AddCourseSection2", model);
         }
 
