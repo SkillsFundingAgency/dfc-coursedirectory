@@ -5,48 +5,30 @@
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
-@*<div class="govuk-form-group">
-        <div class="govuk-character-count" data-module="character-count" data-maxlength=@courseForComponentSettings.Value.TextFieldMaxChars>
-            <div class="govuk-form-group" style="margin-bottom: 0;padding-bottom: 0">
-                <label class="govuk-label" for="course-for">
-                    @Model.LabelText
-                </label>
-                <span id="course-for-hint" class="govuk-hint">
-                    @Model.HintText
-                </span>
-                <span asp-validation-for="@Model.CourseFor" class="govuk-error-message"></span>
-                <textarea asp-for="@Model.CourseFor" class="govuk-textarea js-character-count" rows="5"  type="text" aria-describedby="@Model.AriaDescribedBy"></textarea>
-            </div>
-        </div>
-    </div>*@
-
-
-
 <fieldset class="govuk-fieldset" aria-describedby="changed-name-hint">
 
     <div class="govuk-form-group" id="date">
         <label class="govuk-label" for="sub" style="margin-bottom: 15px">
-            Start date
-        </label>
-        <span id="more-detail-hint" class="govuk-hint">Enter the start date of this course, if it has flexible start dates select the checkbox below </span>
-        @*<div class="govuk-radios govuk-radios--inline" style="margin-bottom:30px;">
-                <div class="govuk-radios__item ">
-                    <input class="govuk-radios__input classroom govuuk-colour" name="changed-name2" type="radio" value="classroom" checked="" style="background: rgb(255, 255, 255);">
-                    <label class="govuk-label govuk-radios__label" for="changed-name-1">
+            @Model.LabelText
 
-                    </label>
-                </div>
-            </div>*@
+        </label>
+        <span id="more-detail-hint" class="govuk-hint">@Model.SpecifiedDateHintText </span>
+
 
         <div class="govuk-radios__item">
-            @Html.RadioButtonFor(m => m.StartDateType, StartDateType.Specified, new { @class = "govuk-radios__input specified" })
-            <label class="govuk-label govuk-radios__label" for="@StartDateType.Specified">@StartDateType.Specified</label>
+            @Html.RadioButtonFor(m => m.StartDateType, StartDateType.SpecifiedStartDate, new { @class = "govuk-radios__input specified", id = @StartDateType.SpecifiedStartDate })
+            <label class="govuk-label govuk-radios__label" for="@StartDateType.SpecifiedStartDate"></label>
         </div>
 
-        <div class="govuk-form-group">
+        @Html.HiddenFor(x => x.StartDate)
+
+        <div class="govuk-form-group" id="startDateFormGroup">
             <span asp-validation-for="@Model.Day" class="govuk-error-message"></span>
             <span asp-validation-for="@Model.Month" class="govuk-error-message"></span>
             <span asp-validation-for="@Model.Year" class="govuk-error-message"></span>
+            <span class="govuk-error-message field-validation-error" id="invalidDate" style="display: none">
+                <span id="invalidDateMessage" class=""></span>
+            </span>
             <div class="dateFields">
                 <label class="govuk-label" asp-for="@Model.Day" aria-describedby="@Model.DayAriaDescribedBy" style="display: inline-block; width: 60px;">
                     @Model.DayLabelText
@@ -64,35 +46,12 @@
             <input class="govuk-input" asp-for="@Model.Year" type="text" style="width: 120px;">
         </div>
 
-
-
-
-        <span id="more-detail-hint" class="govuk-hint" style="margin-top: 20px">Or select a flexible start date: </span>
+        <span id="more-detail-hint" class="govuk-hint" style="margin-top: 20px">@Model.FlexibleDateHintText </span>
 
         <div class="govuk-radios__item">
-            @Html.RadioButtonFor(m => m.StartDateType, StartDateType.Flexible, new { @class = "govuk-radios__input flexible" })
-            <label class="govuk-label govuk-radios__label" for="@StartDateType.Flexible">@StartDateType.Flexible</label>
+            @Html.RadioButtonFor(m => m.StartDateType, StartDateType.FlexibleStartDate, new { @class = "govuk-radios__input flexible", id = @StartDateType.FlexibleStartDate })
+            <label class="govuk-label govuk-radios__label" for="@StartDateType.FlexibleStartDate">Select a flexible start date</label>
         </div>
-
-
-        @*<div class="govuk-radios__item">
-                <input class="govuk-radios__input classroom govuuk-colour" name="changed-name2" type="radio" value="classroom" style="background: rgb(43, 140, 196);">
-                <label class="govuk-label govuk-radios__label" for="changed-name-1">
-                    Select a flexible start date
-
-                </label>
-            </div>*@
-
-
-
-        <!--<div class="govuk-checkboxes">
-            <div class="govuk-checkboxes__item">
-                <input class="govuk-checkboxes__input" id="waste-1" name="waste" type="checkbox" value="carcasses">
-                <label class="govuk-label govuk-checkboxes__label" for="waste-1">
-                    Flexible start date
-                </label>
-            </div>
-        </div>-->
 
     </div>
 
@@ -102,7 +61,6 @@
 <script>
      (function ($) {
          $(function () {
-             debugger;
              var formGroupErrorClass = "govuk-form-group--error";
              var elementErrorClass = "govuk-input--error";
              var $elementUrl = $("#@nameof(Model.Day)");
@@ -119,17 +77,14 @@
 
              $validationMessageUrl.css("margin-bottom", "0");
              var $formGroupUrl = $elementUrl.closest('.govuk-form-group');
-            // var $formGroupUrlMonth = $monthElementUrl.closest('.govuk-form-group');
-            // var $formGroupUrlYear = $yearElementUrl.closest('.govuk-form-group');
 
 
              var $form = $elementUrl.closest("form");
              $form.addTriggersToJqueryValidate().triggerElementValidationsOnFormValidation();
              var validator = $form.validate();
 
-             debugger;
              $elementUrl.on("blur", function () {
-                
+
                  var result = validator.element($elementUrl);
                  var monthValidationResult = validator.element($monthElementUrl);
                  var yearValidationResult = validator.element($yearElementUrl);
@@ -154,36 +109,9 @@
                      $validationMessageUrl.show();
                      $validationMessageUrl.css("margin-bottom", "15px");
                  }
-
-                
-
-                 
-
-                 //if ($validationMessageUrlForMonth.visible()) {
-                 //   // $elementUrl.removeClass(elementErrorClass);
-                 //    //$formGroupUrl.removeClass(formGroupErrorClass);
-                 //    alert("A");
-                 //    $monthElementUrl.addClass(elementErrorClass);
-                 //    $formGroupUrlMonth.addClass(formGroupErrorClass);
-                 //}
-
-                 //var monthValidationResult = validator.element($monthElementUrl);
-                 //if (monthValidationResult) {
-                 //    $monthElementUrl.removeClass(elementErrorClass);
-                 //    $formGroupUrlMonth.removeClass(formGroupErrorClass);
-                 //    $validationMessageUrlForMonth.hide();
-                 //    $validationMessageUrlForMonth.css("margin-bottom", "0");
-                 //} else {
-                 //    $monthElementUrl.addClass(elementErrorClass);
-                 //    $formGroupUrlMonth.addClass(formGroupErrorClass);
-                 //    $validationMessageUrlForMonth.show();
-                 //    $validationMessageUrlForMonth.css("margin-bottom", "15px");
-                 //}
-
              });
-             debugger;
              $elementUrl.elementValidation(function (element, result) {
-                
+
                  if (!$formGroupUrl.hasClass(formGroupErrorClass)) {
                      $validationMessageUrl.hide();
                  }
@@ -193,51 +121,13 @@
                      $formGroupUrl.removeClass(formGroupErrorClass);
                      $validationMessageUrl.css("margin-bottom", "0");
                  }
-
-                 //var monthValidationResult = validator.element($monthElementUrl);
-                 //var yearValidationResult = validator.element($yearElementUrl);
-                 //if (monthValidationResult || yearValidationResult) {
-                 //    $formGroupUrl.removeClass(formGroupErrorClass);
-                 //} else {
-
-                 //    $formGroupUrl.addClass(formGroupErrorClass);
-                 //}
-
-                 //var monthValidationResult = validator.element($monthElementUrl);
-                 //var yearValidationResult = validator.element($yearElementUrl);
-
-                 //if (monthValidationResult || yearValidationResult) {
-                 //    $formGroupUrl.addClass(formGroupErrorClass);
-                 //}
-
-                 //if ($validationMessageUrlForMonth.visible()) {
-                 //    //$elementUrl.removeClass(elementErrorClass);
-                 //    //$formGroupUrl.removeClass(formGroupErrorClass);
-                 //    alert("B");
-                 //    $monthElementUrl.addClass(elementErrorClass);
-                 //    $formGroupUrlMonth.addClass(formGroupErrorClass);
-                 //}
-                 //var monthValidationResult = validator.element($monthElementUrl);
-
-                 //if (monthValidationResult) {
-                 //    $monthElementUrl.removeClass(elementErrorClass);
-                 //    $formGroupUrlMonth.removeClass(formGroupErrorClass);
-                 //    $validationMessageUrlForMonth.hide();
-                 //    $validationMessageUrlForMonth.css("margin-bottom", "0");
-                 //} else {
-                 //    $monthElementUrl.addClass(elementErrorClass);
-                 //    $formGroupUrlMonth.addClass(formGroupErrorClass);
-                 //    $validationMessageUrlForMonth.show();
-                 //    $validationMessageUrlForMonth.css("margin-bottom", "15px");
-                 //}
              });
 
 
 
 
-             debugger;
              $monthElementUrl.on("blur", function () {
-                 
+
                  var result = validator.element($monthElementUrl);
                  var dayValidationResult = validator.element($elementUrl);
                  var yearValidationResult = validator.element($yearElementUrl);
@@ -263,15 +153,14 @@
                  }
 
 
-                 
 
-            
+
+
 
 
              });
-             debugger;
              $monthElementUrl.elementValidation(function (element, result) {
-               
+
                  if (!$formGroupUrl.hasClass(formGroupErrorClass)) {
                      $validationMessageUrlForMonth.hide();
                  }
@@ -282,26 +171,105 @@
                      $validationMessageUrlForMonth.css("margin-bottom", "0");
                  }
 
-                 //var dayValidationResult = validator.element($elementUrl);
-                 //var yearValidationResult = validator.element($yearElementUrl);
 
 
-                 //if (dayValidationResult || yearValidationResult) {
-                 //    $formGroupUrl.addClass(formGroupErrorClass);
-                 //}
-                 //var dayValidationResult = validator.element($elementUrl);
+             });
 
-                 //if (dayValidationResult) {
-                 //    $elementUrl.removeClass(elementErrorClass);
-                 //    $formGroupUrl.removeClass(formGroupErrorClass);
-                 //    $validationMessageUrl.hide();
-                 //    $validationMessageUrl.css("margin-bottom", "0");
-                 //} else {
-                 //    $elementUrl.addClass(elementErrorClass);
-                 //    $formGroupUrl.addClass(formGroupErrorClass);
-                 //    $validationMessageUrl.show();
-                 //    $validationMessageUrl.css("margin-bottom", "15px");
-                 //}
+
+
+
+
+
+
+
+             $yearElementUrl.on("blur", function () {
+
+
+                 var result = validator.element($yearElementUrl);
+                 var dayValidationResult = validator.element($elementUrl);
+                 var monthValidationResult = validator.element($monthElementUrl);
+
+                 if (result) {
+                     $yearElementUrl.removeClass(elementErrorClass);
+                     $formGroupUrl.removeClass(formGroupErrorClass);
+                     $validationMessageUrlForYear.hide();
+                     $validationMessageUrlForYear.css("margin-bottom", "0");
+                     if ($elementUrl.val() !== "" || $monthElementUrl.val() !== "") {
+                         if (dayValidationResult || monthValidationResult) {
+                             $formGroupUrl.removeClass(formGroupErrorClass);
+                         } else {
+
+                             $formGroupUrl.addClass(formGroupErrorClass);
+                         }
+                     }
+
+                     if ($elementUrl.val() !== "" && $monthElementUrl.val() !== "" && $yearElementUrl.val() !== "") {
+                         var $invalidDate = $("#invalidDate");
+                         var $invalidDateMessage = $("#invalidDateMessage");
+                         var enteredDate = $elementUrl.val() + "/" + $monthElementUrl.val() + "/" + $yearElementUrl.val();
+
+                         var d = new Date();
+                         var currentDate = d.getFullYear() + "/" + (d.getMonth() + 1) + "/" + d.getDate();
+
+                         var futureDate = (d.getFullYear() +2) + "/" + (d.getMonth() + 1) + "/" + d.getDate();
+
+                         if (Date.parse(enteredDate) - Date.parse(currentDate) < 0) {
+                             $invalidDateMessage.text("Start Date cannot be earlier than today’s date");
+                             $yearElementUrl.addClass(elementErrorClass);
+                             $formGroupUrl.addClass(formGroupErrorClass);
+                             $invalidDate.show();
+                             $invalidDate.css("margin-bottom", "15px");
+                         } else {
+                             if (Date.parse(enteredDate) > Date.parse(futureDate)) {
+                                 $invalidDateMessage.text("Start Date cannot be later than 2 years from today’s date");
+                                 $yearElementUrl.addClass(elementErrorClass);
+                                 $formGroupUrl.addClass(formGroupErrorClass);
+                                 $invalidDate.show();
+                                 $invalidDate.css("margin-bottom", "15px");
+
+                             } else {
+                                 $invalidDate.hide();
+                                 $invalidDate.css("margin-bottom", "0");
+
+                                 var $starDateElement = $("#@nameof(Model.StartDate)");
+                                 $starDateElement.val(enteredDate);
+                             }
+                         }
+                     }
+
+
+
+                 } else {
+                     $yearElementUrl.addClass(elementErrorClass);
+                     $formGroupUrl.addClass(formGroupErrorClass);
+                     $validationMessageUrlForYear.show();
+                     $validationMessageUrlForYear.css("margin-bottom", "15px");
+                 }
+
+
+
+
+
+
+
+             });
+             $yearElementUrl.elementValidation(function (element, result) {
+
+
+
+
+                 if (!$formGroupUrl.hasClass(formGroupErrorClass)) {
+                     $validationMessageUrlForYear.hide();
+                 }
+
+                 if (result) {
+                     $yearElementUrl.removeClass(elementErrorClass);
+                     $formGroupUrl.removeClass(formGroupErrorClass);
+                     $validationMessageUrlForYear.css("margin-bottom", "0");
+                     }
+                     
+
+
 
              });
 

@@ -47,9 +47,9 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
     public enum StartDateType
     {
         [Description("Specified")]
-        Specified = 1,
-        [Description("Flexible")]
-        Flexible = 2,
+        SpecifiedStartDate = 1,
+        [Description("Select a flexible start date")]
+        FlexibleStartDate = 2,
     }
 
 

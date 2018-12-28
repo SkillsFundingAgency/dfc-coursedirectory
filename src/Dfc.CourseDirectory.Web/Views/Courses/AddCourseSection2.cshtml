@@ -9,17 +9,19 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseDelivery
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseDeliveryType
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.Attendance
+@using Dfc.CourseDirectory.Models.Models.Courses
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.AddStartDate
 
 @model Dfc.CourseDirectory.Web.ViewModels.AddCourseDetailsViewModel
 
 <form asp-controller="Courses" asp-action="PublishCourse">
 
-
     @Html.HiddenFor(x => x.AwardOrgCode)
     @Html.HiddenFor(x => x.LearnAimRef)
     @Html.HiddenFor(x => x.LearnAimRefTitle)
     @Html.HiddenFor(x => x.NotionalNVQLevelv2)
-    
+
     @Html.HiddenFor(x => x.CourseFor)
     @Html.HiddenFor(x => x.EntryRequirements)
     @Html.HiddenFor(x => x.WhatWillLearn)
@@ -27,11 +29,6 @@
     @Html.HiddenFor(x => x.WhatYouNeed)
     @Html.HiddenFor(x => x.HowAssessed)
     @Html.HiddenFor(x => x.WhereNext)
-    
-@using Dfc.CourseDirectory.Web.ViewComponents.Courses.Attendance
-@using Dfc.CourseDirectory.Models.Models.Courses
-@using Dfc.CourseDirectory.Web.ViewComponents.Courses.AddStartDate
-
 
     <h1 class="govuk-heading-l" style="padding-top: 20px;">
         Add course details
@@ -78,11 +75,11 @@
         HintText = "Select how this course will be delivered",
         AriaDescribedBy = "How the course will be delivered"
     })
-    
+
     @await Component.InvokeAsync(nameof(AddStartDate), new AddStartDateModel()
     {
-        
-        StartDateType = StartDateType.Specified,
+
+        StartDateType = StartDateType.SpecifiedStartDate,
         DayAriaDescribedBy = "",
         DayLabelText = "Day",
         MonthAriaDescribedBy = "",
@@ -90,9 +87,10 @@
         YearAriaDescribedBy = "",
         YearLabelText = "Year",
         AriaDescribedBy = "",
-        HintText = "",
-        LabelText = ""
-            
+        SpecifiedDateHintText = "Enter the start date of this course, if it has flexible start dates select the checkbox below",
+        FlexibleDateHintText = "Or select a flexible start date:",
+        LabelText = "Start date"
+
     })
 
     @await Component.InvokeAsync(nameof(UrlInput), new UrlInputModel
@@ -137,3 +135,106 @@
     </div>
 
 </form>
+
+<script>
+    (function ($) {
+        $(function () {
+
+            var formGroupErrorClass = "govuk-form-group--error";
+            var elementErrorClass = "govuk-input--error";
+            var $elementUrl = $("#@nameof(Model.Day)");
+
+            var $monthElementUrl = $("#@nameof(Model.Month)");
+
+            var $yearElementUrl = $("#@nameof(Model.Year)");
+
+            var $validationMessageUrl = $elementUrl.prev("[data-valmsg-for='@nameof(Model.Day)']");
+
+            var $validationMessageUrlForMonth = $elementUrl.prev("[data-valmsg-for='@nameof(Model.Month)']");
+
+            var $validationMessageUrlForYear = $elementUrl.prev("[data-valmsg-for='@nameof(Model.Year)']");
+
+            $validationMessageUrl.css("margin-bottom", "0");
+            var $formGroupUrl = $elementUrl.closest('.govuk-form-group');
+
+
+            var $form = $elementUrl.closest("form");
+            $form.addTriggersToJqueryValidate().triggerElementValidationsOnFormValidation();
+            var validator = $form.validate();
+
+
+
+             
+
+
+
+
+
+
+
+            var $publish = $("#publish");
+            $publish.on("click",
+                function (e) {
+                    var $invalidDate = $("#invalidDate");
+                    var $invalidDateMessage = $("#invalidDateMessage");
+                    $formGroupUrl.removeClass("govuk-form-group");
+                    $invalidDateMessage.text("Enter Date");
+                    $yearElementUrl.addClass(elementErrorClass);
+                    $formGroupUrl.addClass("govuk-form-group--error");
+                    $invalidDate.show();
+                    //$invalidDate.css("margin-bottom", "15px");
+
+                     if ($elementUrl.val() !== "" && $monthElementUrl.val() !== "" && $yearElementUrl.val() !== "") {
+                        
+                         var enteredDate = $elementUrl.val() + "/" + $monthElementUrl.val() + "/" + $yearElementUrl.val();
+
+                         var d = new Date();
+                         var currentDate = d.getFullYear() + "/" + (d.getMonth() + 1) + "/" + d.getDate();
+
+                         var futureDate = (d.getFullYear() +2) + "/" + (d.getMonth() + 1) + "/" + d.getDate();
+
+                         if (Date.parse(enteredDate) - Date.parse(currentDate) < 0) {
+                             $invalidDateMessage.text("Start Date cannot be earlier than today’s date");
+                             $yearElementUrl.addClass(elementErrorClass);
+                             $formGroupUrl.addClass(formGroupErrorClass);
+                             $invalidDate.show();
+                             $invalidDate.css("margin-bottom", "15px");
+                         } else {
+                             if (Date.parse(enteredDate) > Date.parse(futureDate)) {
+                                 $invalidDateMessage.text("Start Date cannot be later than 2 years from today’s date");
+                                 $yearElementUrl.addClass(elementErrorClass);
+                                 $formGroupUrl.addClass(formGroupErrorClass);
+                                 $invalidDate.show();
+                                 $invalidDate.css("margin-bottom", "15px");
+
+                             } else {
+                                 $invalidDate.hide();
+                                 $invalidDate.css("margin-bottom", "0");
+
+                                 var $starDateElement = $("#@nameof(Model.StartDate)");
+                                 $starDateElement.val(enteredDate);
+                             }
+                         }
+            }
+
+                });
+
+
+
+            @*$courseFor.trigger("blur");
+                var $entryRequirements = $("#@nameof(Model.EntryRequirements)");
+                $entryRequirements.trigger("blur");
+                var $whatWillLearn = $("#@nameof(Model.WhatWillLearn)");
+                $whatWillLearn.trigger("blur");
+                var $howYouWillLearn = $("#@nameof(Model.HowYouWillLearn)");
+                $howYouWillLearn.trigger("blur");
+                var whatYouNeed = $("#@nameof(Model.WhatYouNeed)");
+                whatYouNeed.trigger("blur");
+                var howAssessed = $("#@nameof(Model.HowAssessed)");
+                whatYouNeed.trigger("blur");
+                var whereNext = $("#@nameof(Model.WhereNext)");
+                whereNext.trigger("blur");*@
+
+        });
+    })(jQuery);
+</script>
