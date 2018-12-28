@@ -10,6 +10,7 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseDeliveryType
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.Attendance
 @using Dfc.CourseDirectory.Models.Models.Courses
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.AddStartDate
 
 
 <h1 class="govuk-heading-xl">Add course section 2</h1>
@@ -53,6 +54,22 @@
         LabelText = "Delivery Mode",
         HintText = "Select how this course will be delivered",
         AriaDescribedBy = "How the course will be delivered"
+    })
+    
+    @await Component.InvokeAsync(nameof(AddStartDate), new AddStartDateModel()
+    {
+        
+        StartDateType = StartDateType.Specified,
+        DayAriaDescribedBy = "",
+        DayLabelText = "Day",
+        MonthAriaDescribedBy = "",
+        MonthLabelText = "Month",
+        YearAriaDescribedBy = "",
+        YearLabelText = "Year",
+        AriaDescribedBy = "",
+        HintText = "",
+        LabelText = ""
+            
     })
 
     @await Component.InvokeAsync(nameof(UrlInput), new UrlInputModel

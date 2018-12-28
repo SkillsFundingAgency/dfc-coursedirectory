@@ -9,7 +9,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Courses.AddStartDate
 {
     public class AddStartDate : ViewComponent
     {
-        public IViewComponentResult Invoke(AddStartDate model)
+        public IViewComponentResult Invoke(AddStartDateModel model)
         {
             return View("~/ViewComponents/Courses/AddStartDate/Default.cshtml", model);
         }
