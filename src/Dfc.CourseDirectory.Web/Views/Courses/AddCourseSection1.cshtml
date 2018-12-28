@@ -10,7 +10,11 @@
 @model Dfc.CourseDirectory.Web.ViewModels.AddCourseViewModel
 
 <form asp-controller="Courses" asp-action="AddCourseSection1" method="post">
-
+    
+    @Html.HiddenFor(x=>x.AwardOrgCode)
+    @Html.HiddenFor(x=>x.LearnAimRef)
+    @Html.HiddenFor(x=>x.LearnAimRefTitle)
+    @Html.HiddenFor(x=>x.NotionalNVQLevelv2)
     <h1 class="govuk-heading-l" style="padding-top: 20px;">
         Complete your qualification details
     </h1>

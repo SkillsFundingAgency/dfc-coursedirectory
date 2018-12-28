@@ -103,7 +103,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 },
                 WhereNext = new WhereNextModel()
                 {
-                    LabelText = "Where next?’",
+                    LabelText = "Where next?",
                     HintText = "What are the opportunities beyond this course? Progression to a higher level course, apprenticeship or direct entry to employment?",
                     AriaDescribedBy = "Please enter 'Where next?'"
                 }
@@ -112,17 +112,32 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddCourseSection1(AddCourseSection1RequestModel model)
+        public IActionResult AddCourseSection1(AddCourseDetailsViewModel model)
         {
-            return View("AddCourseSection2");
+            return View("AddCourseSection2", model);
         }
 
+        [HttpPost]
+        public IActionResult PublishCourse(AddCourseDetailsViewModel model)
+        {
 
-
+            //TODO service call to save
+            //TODO wireup other properties on model
+            //TODO return to a different page/confirmation page
+            return View("AddCourseSection2", model);
+        }
 
         public IActionResult AddCourseSection2(AddCourseRequestModel requestModel)
         {
-            return View();
+            var model = new AddCourseDetailsViewModel()
+            {
+                LearnAimRef = "Test",
+                LearnAimRefTitle = "Test",
+                AwardOrgCode = "Test",
+                NotionalNVQLevelv2 = "Test"
+            };
+
+            return View(model);
         }
     }
 }
