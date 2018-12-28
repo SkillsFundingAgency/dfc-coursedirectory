@@ -35,6 +35,9 @@
             var validator = $form.validate();
 
             $elementUrl.on("blur", function () {
+                var trimmed = $elementUrl.val().trim();
+                $elementUrl.val(trimmed);
+
                 var result = validator.element($elementUrl);
 
                 if (result) {
