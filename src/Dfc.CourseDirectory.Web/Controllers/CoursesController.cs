@@ -112,17 +112,37 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddCourseSection1(AddCourseSection1RequestModel model)
+        public IActionResult AddCourseSection1(AddCourseViewModel model)
         {
-            return View("AddCourseSection2");
+            return View("AddCourseSection2", new AddCourseDetailsViewModel()
+            {
+                AwardOrgCode = model.AwardOrgCode,
+                LearnAimRef = model.LearnAimRef,
+                LearnAimRefTitle = model.LearnAimRefTitle,
+                NotionalNVQLevelv2 = model.NotionalNVQLevelv2,
+                CourseFor = model.CourseFor.CourseFor,
+                EntryRequirements = model.EntryRequirements.EntryRequirements
+
+            });
         }
 
-
-
+        [HttpPost]
+        public IActionResult PublishCourse(AddCourseDetailsViewModel model)
+        {
+            return View("AddCourseSection2", model);
+        }
 
         public IActionResult AddCourseSection2(AddCourseRequestModel requestModel)
         {
-            return View();
+            var model = new AddCourseDetailsViewModel()
+            {
+                LearnAimRef = "Test",
+                LearnAimRefTitle = "Test",
+                AwardOrgCode = "Test",
+                NotionalNVQLevelv2 = "Test"
+            };
+
+            return View(model);
         }
     }
 }
