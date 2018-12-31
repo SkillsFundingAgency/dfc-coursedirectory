@@ -9,6 +9,7 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseDelivery
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseDeliveryType
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode
+@using Dfc.CourseDirectory.Web.ViewComponents.AdvancedLearnerLoan
 
 @model Dfc.CourseDirectory.Web.ViewModels.AddCourseDetailsViewModel
 
@@ -96,22 +97,12 @@
         AriaDescribedBy = "Enter details of related to the cost of this course"
     })
 
-    <div class="govuk-form-group">
-        <fieldset class="govuk-fieldset" aria-describedby="advanced-learner-hint">
-            <label class="govuk-label" for="sub">
-                Advanced learner loan
-            </label>
-            <span id="more-detail-hint" class="govuk-hint">Select the checkbox below if Advanced Learner Loans are available for this course</span>
-            <div class="govuk-checkboxes">
-                <div class="govuk-checkboxes__item">
-                    <input class="govuk-checkboxes__input" type="checkbox">
-                    <label class="govuk-label govuk-checkboxes__label">
-                        Available
-                    </label>
-                </div>
-            </div>
-        </fieldset>
-    </div>
+    @await Component.InvokeAsync(nameof(AdvancedLearnerLoan), new AdvancedLearnerLoanModel
+    {
+        LabelText = "Advanced learner loan",
+        HintText = "Select the checkbox below if Advanced Learner Loans are available for this course",
+        AriaDescribedBy = "Select whether Advanced Learner Loan is available for this course"
+    })
 
     @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode.StudyMode), new StudyModeModel
     {
