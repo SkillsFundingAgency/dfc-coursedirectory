@@ -94,6 +94,8 @@ namespace Dfc.CourseDirectory.Web
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddSessionStateTempDataProvider();
 
             services.AddDistributedMemoryCache();
+
+            services.AddResponseCaching();
             services.AddSession(options => {
             });
         }
@@ -117,6 +119,26 @@ namespace Dfc.CourseDirectory.Web
             app.UseStaticFiles();
            // app.UseCookiePolicy();
             app.UseSession();
+
+            //Preventing ClickJacking Attacks
+            app.Use(async (context, next) =>
+            {
+                context.Response.Headers.Add("X-Frame-Options", "SAMEORIGIN");
+                context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
+
+                context.Response.GetTypedHeaders().CacheControl =
+                  new Microsoft.Net.Http.Headers.CacheControlHeaderValue()
+                  {
+                      NoCache = true,
+                      NoStore = true,
+                      MustRevalidate = true,
+                  };
+                context.Response.Headers[Microsoft.Net.Http.Headers.HeaderNames.Vary] =
+                    new string[] { "Pragma: no-cache" };
+
+                await next();
+            });
+
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
