@@ -9,6 +9,7 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseDelivery
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseDeliveryType
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode
+@using Dfc.CourseDirectory.Web.ViewComponents.AdvancedLearnerLoan
 
 @model Dfc.CourseDirectory.Web.ViewModels.AddCourseDetailsViewModel
 
@@ -19,7 +20,7 @@
     @Html.HiddenFor(x => x.LearnAimRef)
     @Html.HiddenFor(x => x.LearnAimRefTitle)
     @Html.HiddenFor(x => x.NotionalNVQLevelv2)
-    
+
     @Html.HiddenFor(x => x.CourseFor)
     @Html.HiddenFor(x => x.EntryRequirements)
     @Html.HiddenFor(x => x.WhatWillLearn)
@@ -27,7 +28,7 @@
     @Html.HiddenFor(x => x.WhatYouNeed)
     @Html.HiddenFor(x => x.HowAssessed)
     @Html.HiddenFor(x => x.WhereNext)
-    
+
 
     <h1 class="govuk-heading-l" style="padding-top: 20px;">
         Add course details
@@ -94,6 +95,13 @@
         LabelText = "Cost description",
         HintText = "Enter details of related to the cost of this course",
         AriaDescribedBy = "Enter details of related to the cost of this course"
+    })
+
+    @await Component.InvokeAsync(nameof(AdvancedLearnerLoan), new AdvancedLearnerLoanModel
+    {
+        LabelText = "Advanced learner loan",
+        HintText = "Select the checkbox below if Advanced Learner Loans are available for this course",
+        AriaDescribedBy = "Select whether Advanced Learner Loan is available for this course"
     })
 
     @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode.StudyMode), new StudyModeModel
