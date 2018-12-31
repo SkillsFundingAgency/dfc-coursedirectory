@@ -19,7 +19,7 @@
     @Html.HiddenFor(x => x.LearnAimRef)
     @Html.HiddenFor(x => x.LearnAimRefTitle)
     @Html.HiddenFor(x => x.NotionalNVQLevelv2)
-    
+
     @Html.HiddenFor(x => x.CourseFor)
     @Html.HiddenFor(x => x.EntryRequirements)
     @Html.HiddenFor(x => x.WhatWillLearn)
@@ -27,7 +27,7 @@
     @Html.HiddenFor(x => x.WhatYouNeed)
     @Html.HiddenFor(x => x.HowAssessed)
     @Html.HiddenFor(x => x.WhereNext)
-    
+
 
     <h1 class="govuk-heading-l" style="padding-top: 20px;">
         Add course details
@@ -95,6 +95,23 @@
         HintText = "Enter details of related to the cost of this course",
         AriaDescribedBy = "Enter details of related to the cost of this course"
     })
+
+    <div class="govuk-form-group">
+        <fieldset class="govuk-fieldset" aria-describedby="advanced-learner-hint">
+            <label class="govuk-label" for="sub">
+                Advanced learner loan
+            </label>
+            <span id="more-detail-hint" class="govuk-hint">Select the checkbox below if Advanced Learner Loans are available for this course</span>
+            <div class="govuk-checkboxes">
+                <div class="govuk-checkboxes__item">
+                    <input class="govuk-checkboxes__input" type="checkbox">
+                    <label class="govuk-label govuk-checkboxes__label">
+                        Available
+                    </label>
+                </div>
+            </div>
+        </fieldset>
+    </div>
 
     @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode.StudyMode), new StudyModeModel
     {
