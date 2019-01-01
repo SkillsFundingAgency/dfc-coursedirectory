@@ -10,6 +10,8 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseDeliveryType
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode
 @using Dfc.CourseDirectory.Web.ViewComponents.AdvancedLearnerLoan
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.Duration
+@using Duration = Dfc.CourseDirectory.Web.ViewComponents.Courses.Duration.Duration
 
 @model Dfc.CourseDirectory.Web.ViewModels.AddCourseDetailsViewModel
 
@@ -102,6 +104,37 @@
         LabelText = "Advanced learner loan",
         HintText = "Select the checkbox below if Advanced Learner Loans are available for this course",
         AriaDescribedBy = "Select whether Advanced Learner Loan is available for this course"
+    })
+
+    @await Component.InvokeAsync(nameof(Duration), new DurationModel
+    {
+        DurationUnits = new List<DurationUnitModel>()
+        {
+
+            new DurationUnitModel()
+            {
+                Id = 0,
+                DurationUnit = "Days"
+            },
+            new DurationUnitModel()
+            {
+                Id = 1,
+                DurationUnit = "Weeks"
+            },
+            new DurationUnitModel()
+            {
+                Id = 2,
+                DurationUnit = "Months"
+            },
+            new DurationUnitModel()
+            {
+                Id = 3,
+                DurationUnit = "Years"
+            }
+        },
+        LabelText = "Duration",
+        HintText = "Select the duration of the course",
+        AriaDescribedBy = "Select course duration"
     })
 
     @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode.StudyMode), new StudyModeModel

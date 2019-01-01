@@ -45,6 +45,18 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         DayOrBlockRelease = 4
     }
 
+    public enum Duration
+    {
+        [Description("Days")]
+        Days = 0,
+        [Description("Weeks")]
+        Weeks = 1,
+        [Description("Months")]
+        Months = 2,
+        [Description("Years")]
+        Years = 3,
+    }
+
     public class CourseRun : ValueObject<CourseRun>, ICourseRun
     {
         //public Guid id { get; }
