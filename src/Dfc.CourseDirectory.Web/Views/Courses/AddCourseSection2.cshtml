@@ -10,12 +10,11 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseDeliveryType
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.Attendance
-@using Dfc.CourseDirectory.Models.Models.Courses
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.AddStartDate
 
 @model Dfc.CourseDirectory.Web.ViewModels.AddCourseDetailsViewModel
 
-<form asp-controller="Courses" asp-action="PublishCourse">
+<form asp-controller="Courses" asp-action="PublishCourse" id="addCourseSection2">
 
     @Html.HiddenFor(x => x.AwardOrgCode)
     @Html.HiddenFor(x => x.LearnAimRef)
@@ -140,100 +139,131 @@
     (function ($) {
         $(function () {
 
-            var formGroupErrorClass = "govuk-form-group--error";
-            var elementErrorClass = "govuk-input--error";
-            var $elementUrl = $("#@nameof(Model.Day)");
+            var $formGroupErrorClass = "govuk-form-group--error";
+            var $elementErrorClass = "govuk-input--error";
+
+            var $dayElementUrl = $("#@nameof(Model.Day)");
 
             var $monthElementUrl = $("#@nameof(Model.Month)");
 
             var $yearElementUrl = $("#@nameof(Model.Year)");
 
-            var $validationMessageUrl = $elementUrl.prev("[data-valmsg-for='@nameof(Model.Day)']");
+            var $validationMessageUrlForDay = $("#invalidDay");
 
-            var $validationMessageUrlForMonth = $elementUrl.prev("[data-valmsg-for='@nameof(Model.Month)']");
+            var $validationMessageUrlForMonth = $("#invalidMonth");
 
-            var $validationMessageUrlForYear = $elementUrl.prev("[data-valmsg-for='@nameof(Model.Year)']");
+            var $validationMessageUrlForYear = $("#invalidYear");
 
-            $validationMessageUrl.css("margin-bottom", "0");
-            var $formGroupUrl = $elementUrl.closest('.govuk-form-group');
+            var $validationMessageForPast = $("#past");
+            var $validationMessageForFuture = $("#future");
 
+            var $validationMessageForRequired= $("#required");
 
-            var $form = $elementUrl.closest("form");
-            $form.addTriggersToJqueryValidate().triggerElementValidationsOnFormValidation();
-            var validator = $form.validate();
+            
 
-
-
-             
-
-
-
-
+            var $formGroupUrl = $dayElementUrl.closest('.govuk-form-group');
 
 
 
             var $publish = $("#publish");
             $publish.on("click",
                 function (e) {
-                    var $invalidDate = $("#invalidDate");
-                    var $invalidDateMessage = $("#invalidDateMessage");
-                    $formGroupUrl.removeClass("govuk-form-group");
-                    $invalidDateMessage.text("Enter Date");
-                    $yearElementUrl.addClass(elementErrorClass);
-                    $formGroupUrl.addClass("govuk-form-group--error");
-                    $invalidDate.show();
-                    //$invalidDate.css("margin-bottom", "15px");
+                    e.preventDefault();
 
-                     if ($elementUrl.val() !== "" && $monthElementUrl.val() !== "" && $yearElementUrl.val() !== "") {
+
+                  
+                
+                    var radioValue = $("input[name='StartDateType']:checked").val();
+                    if (radioValue.toUpperCase() === "SPECIFIEDSTARTDATE") {
+                        $validationMessageForRequired.hide();
+
+                        if ($dayElementUrl.val() !== "" && $monthElementUrl.val() !== "" && $yearElementUrl.val() !== "") {
+
+                            $("#addCourseSection2").submit();
+                        }
+
+                        if ($dayElementUrl.val() === "" && $monthElementUrl.val() === "" && $yearElementUrl.val() === "") {
+                            
+                            $formGroupUrl.addClass($formGroupErrorClass);
+                            $validationMessageForRequired.show();
+                        }
+
+                            if ($dayElementUrl.val() === "" || parseInt($dayElementUrl.val()) < 1 || parseInt($dayElementUrl.val()) > 31) {
+                                $dayElementUrl.addClass($elementErrorClass);
+                                $formGroupUrl.addClass($formGroupErrorClass);
+                                $validationMessageUrlForDay.show();
+                            }
                         
-                         var enteredDate = $elementUrl.val() + "/" + $monthElementUrl.val() + "/" + $yearElementUrl.val();
+      
+                            if ($monthElementUrl.val() === "" || parseInt($monthElementUrl.val()) < 1 || parseInt($monthElementUrl.val()) > 12) {
+                                $monthElementUrl.addClass($elementErrorClass);
+                                $formGroupUrl.addClass($formGroupErrorClass);
+                                $validationMessageUrlForMonth.show();
+                            }
+                        
 
-                         var d = new Date();
-                         var currentDate = d.getFullYear() + "/" + (d.getMonth() + 1) + "/" + d.getDate();
+       
+                            if ( ($yearElementUrl.val().length) < 4 || ($yearElementUrl.val().length) > 4) {
+                                $yearElementUrl.addClass($elementErrorClass);
+                                $formGroupUrl.addClass($formGroupErrorClass);
+                                $validationMessageUrlForYear.show();
+                            }
+                        
 
-                         var futureDate = (d.getFullYear() +2) + "/" + (d.getMonth() + 1) + "/" + d.getDate();
 
-                         if (Date.parse(enteredDate) - Date.parse(currentDate) < 0) {
-                             $invalidDateMessage.text("Start Date cannot be earlier than today’s date");
-                             $yearElementUrl.addClass(elementErrorClass);
-                             $formGroupUrl.addClass(formGroupErrorClass);
-                             $invalidDate.show();
-                             $invalidDate.css("margin-bottom", "15px");
-                         } else {
-                             if (Date.parse(enteredDate) > Date.parse(futureDate)) {
-                                 $invalidDateMessage.text("Start Date cannot be later than 2 years from today’s date");
-                                 $yearElementUrl.addClass(elementErrorClass);
-                                 $formGroupUrl.addClass(formGroupErrorClass);
-                                 $invalidDate.show();
-                                 $invalidDate.css("margin-bottom", "15px");
+                        if ($dayElementUrl.val() !== "" && $monthElementUrl.val() !== "" && $yearElementUrl.val() !== "") {
+                            var enteredDate = $dayElementUrl.val() + "/" + $monthElementUrl.val() + "/" + $yearElementUrl.val();
+                            $validationMessageForFuture.hide();
+                            $validationMessageForPast.hide();
+                            var d = new Date();
+                            var currentDate =
+                                d.getDate() +
+                                "/" +
+                                (d.getMonth() + 1) +
+                                "/" +
+                                (d.getFullYear());
 
-                             } else {
-                                 $invalidDate.hide();
-                                 $invalidDate.css("margin-bottom", "0");
+                            var futureDate =
+                                d.getDate() +
+                                "/" +
+                                (d.getMonth() + 1) +
+                                "/" +
+                                (d.getFullYear() + 2);
 
-                                 var $starDateElement = $("#@nameof(Model.StartDate)");
-                                 $starDateElement.val(enteredDate);
-                             }
-                         }
-            }
+                            if (Date.parse(enteredDate) - Date.parse(currentDate) < 0) {
+                                $formGroupUrl.addClass($formGroupErrorClass);
+                                $validationMessageForPast.show();
+                            } else {
+                                if (Date.parse(enteredDate) > Date.parse(futureDate)) {
+                                    $formGroupUrl.addClass($formGroupErrorClass);
+                                    $validationMessageForFuture.show();
+
+                                } else {
+                                    $validationMessageForFuture.hide();
+                                    $validationMessageForPast.hide();
+                                }
+                            }
+                        }
+
+
+                    } else {
+                        $dayElementUrl.removeClass($elementErrorClass);
+                        $monthElementUrl.removeClass($elementErrorClass);
+                        $yearElementUrl.removeClass($elementErrorClass);
+                        $formGroupUrl.removeClass($formGroupErrorClass);
+                        $validationMessageUrlForDay.hide();
+                        $validationMessageUrlForMonth.hide();
+                        $validationMessageUrlForYear.hide();
+                        $validationMessageForPast.hide();
+                        $validationMessageForFuture.hide();
+                        $validationMessageForRequired.hide();
+                        $("#addCourseSection2").submit();
+                    }
+                   
 
                 });
 
 
-
-            @*$courseFor.trigger("blur");
-                var $entryRequirements = $("#@nameof(Model.EntryRequirements)");
-                $entryRequirements.trigger("blur");
-                var $whatWillLearn = $("#@nameof(Model.WhatWillLearn)");
-                $whatWillLearn.trigger("blur");
-                var $howYouWillLearn = $("#@nameof(Model.HowYouWillLearn)");
-                $howYouWillLearn.trigger("blur");
-                var whatYouNeed = $("#@nameof(Model.WhatYouNeed)");
-                whatYouNeed.trigger("blur");
-                var howAssessed = $("#@nameof(Model.HowAssessed)");
-                whatYouNeed.trigger("blur");
-                var whereNext = $("#@nameof(Model.WhereNext)");
-                whereNext.trigger("blur");*@
 
         });
     })(jQuery);
