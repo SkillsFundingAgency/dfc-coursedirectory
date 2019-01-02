@@ -10,7 +10,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Courses.Duration
 {
     public class DurationModel
     {
-        public string Id { get; set; }
+        public int Id { get; set; }
         public List<DurationUnitModel> DurationUnits { get; set; }
 
         [Required(ErrorMessage = "Enter Duration")]
