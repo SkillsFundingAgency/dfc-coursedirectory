@@ -9,7 +9,6 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseDelivery
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseDeliveryType
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode
-@using Dfc.CourseDirectory.Web.ViewComponents.Courses.Attendance
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.AddStartDate
 @using Dfc.CourseDirectory.Web.ViewComponents.AdvancedLearnerLoan
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.Duration
@@ -17,164 +16,151 @@
 
 @model Dfc.CourseDirectory.Web.ViewModels.AddCourseDetailsViewModel
 
-<form asp-controller="Courses" asp-action="PublishCourse" id="addCourseSection2">
-
-    @Html.HiddenFor(x => x.AwardOrgCode)
-    @Html.HiddenFor(x => x.LearnAimRef)
-    @Html.HiddenFor(x => x.LearnAimRefTitle)
-    @Html.HiddenFor(x => x.NotionalNVQLevelv2)
-
-    @Html.HiddenFor(x => x.CourseFor)
-    @Html.HiddenFor(x => x.EntryRequirements)
-    @Html.HiddenFor(x => x.WhatWillLearn)
-    @Html.HiddenFor(x => x.HowYouWillLearn)
-    @Html.HiddenFor(x => x.WhatYouNeed)
-    @Html.HiddenFor(x => x.HowAssessed)
-    @Html.HiddenFor(x => x.WhereNext)
-
     <h1 class="govuk-heading-l" style="padding-top: 20px;">
         Add course details
     </h1>
 
     <p style="padding: 15px 20px; border: 3px solid #009900;background-color:#fff;" id="qual--">Qualification added:<br> @Model.LearnAimRefTitle<br> Level: @Model.NotionalNVQLevelv2<br> Awarding organisation: @Model.AwardOrgCode<br> LARS/QAN: @Model.LearnAimRef</p>
 
-    @await Component.InvokeAsync(nameof(CourseName), new CourseNameModel
-    {
-        LabelText = "Course name",
-        HintText = "This is the name people will see when they search for your course.",
-        AriaDescribedBy = "Please enter the course name."
-    })
+    <form asp-controller="Courses" asp-action="AddCourse">
+        @await Component.InvokeAsync(nameof(CourseName), new CourseNameModel
+        {
+            CourseName = Model.CourseName,
+            LabelText = "Course name",
+            HintText = "This is the name people will see when they search for your course.",
+            AriaDescribedBy = "Please enter the course name."
+        })
 
-    @await Component.InvokeAsync(nameof(CourseProviderReference), new CourseProviderReferenceModel
-    {
-        LabelText = "ID",
-        HintText = "This is how you identify a course in your internal system.",
-        AriaDescribedBy = "Please enter the ID for this course"
-    })
+        @await Component.InvokeAsync(nameof(CourseProviderReference), new CourseProviderReferenceModel
+        {
+            LabelText = "ID",
+            HintText = "This is how you identify a course in your internal system.",
+            AriaDescribedBy = "Please enter the ID for this course"
+        })
 
-    @await Component.InvokeAsync(nameof(CourseDeliveryType), new CourseDeliveryTypeModel
-    {
-        DeliveryTypes = new List<DeliveryTypeModel>()
+        @await Component.InvokeAsync(nameof(CourseDeliveryType), new CourseDeliveryTypeModel
+        {
+            DeliveryTypes = new List<DeliveryTypeModel>()
+            {
+
+                new DeliveryTypeModel()
+                {
+                    Id = 0,
+                    DeliveryType = "Classroom based"
+                },
+                new DeliveryTypeModel()
+                {
+                    Id = 1,
+                    DeliveryType = "Online"
+                },
+                new DeliveryTypeModel()
+                {
+                    Id = 2,
+                    DeliveryType = "Work based"
+                }
+            },
+            LabelText = "Delivery Mode",
+            HintText = "Select how this course will be delivered",
+            AriaDescribedBy = "How the course will be delivered"
+        })
+
+        @await Component.InvokeAsync(nameof(AddStartDate), new AddStartDateModel()
         {
 
-            new DeliveryTypeModel()
-            {
-                Id = 0,
-                DeliveryType = "Classroom based"
-            },
-            new DeliveryTypeModel()
-            {
-                Id = 1,
-                DeliveryType = "Online"
-            },
-            new DeliveryTypeModel()
-            {
-                Id = 2,
-                DeliveryType = "Work based"
-            }
-        },
-        LabelText = "Delivery Mode",
-        HintText = "Select how this course will be delivered",
-        AriaDescribedBy = "How the course will be delivered"
-    })
+            StartDateType = StartDateType.SpecifiedStartDate,
+            DayAriaDescribedBy = "",
+            DayLabelText = "Day",
+            MonthAriaDescribedBy = "",
+            MonthLabelText = "Month",
+            YearAriaDescribedBy = "",
+            YearLabelText = "Year",
+            AriaDescribedBy = "",
+            SpecifiedDateHintText = "Enter the start date of this course, if it has flexible start dates select the checkbox below",
+            FlexibleDateHintText = "Or select a flexible start date:",
+            LabelText = "Start date"
 
-    @await Component.InvokeAsync(nameof(AddStartDate), new AddStartDateModel()
-    {
+        })
 
-        StartDateType = StartDateType.SpecifiedStartDate,
-        DayAriaDescribedBy = "",
-        DayLabelText = "Day",
-        MonthAriaDescribedBy = "",
-        MonthLabelText = "Month",
-        YearAriaDescribedBy = "",
-        YearLabelText = "Year",
-        AriaDescribedBy = "",
-        SpecifiedDateHintText = "Enter the start date of this course, if it has flexible start dates select the checkbox below",
-        FlexibleDateHintText = "Or select a flexible start date:",
-        LabelText = "Start date"
-
-    })
-
-    @await Component.InvokeAsync(nameof(UrlInput), new UrlInputModel
-    {
-        LabelText = "URL",
-        HintText = "Enter the URL for this course",
-        AriaDescribedBy = "Enter the URL for this course"
-    })
-
-    @await Component.InvokeAsync(nameof(CostInput), new CostInputModel
-    {
-        LabelText = "Cost",
-        HintText = "Enter the cost for the course in pounds and pence e.g. 125.00",
-        AriaDescribedBy = "Enter the cost in pounds and pence"
-    })
-
-    @await Component.InvokeAsync(nameof(CostDescription), new CostDescriptionModel
-    {
-        LabelText = "Cost description",
-        HintText = "Enter details of related to the cost of this course",
-        AriaDescribedBy = "Enter details of related to the cost of this course"
-    })
-
-    @await Component.InvokeAsync(nameof(AdvancedLearnerLoan), new AdvancedLearnerLoanModel
-    {
-        LabelText = "Advanced learner loan",
-        HintText = "Select the checkbox below if Advanced Learner Loans are available for this course",
-        AriaDescribedBy = "Select whether Advanced Learner Loan is available for this course"
-    })
-
-    @await Component.InvokeAsync(nameof(Duration), new DurationModel
-    {
-        DurationUnits = new List<DurationUnitModel>()
+        @await Component.InvokeAsync(nameof(UrlInput), new UrlInputModel
         {
+            LabelText = "URL",
+            HintText = "Enter the URL for this course",
+            AriaDescribedBy = "Enter the URL for this course"
+        })
 
-            new DurationUnitModel()
+        @await Component.InvokeAsync(nameof(CostInput), new CostInputModel
+        {
+            LabelText = "Cost",
+            HintText = "Enter the cost for the course in pounds and pence e.g. 125.00",
+            AriaDescribedBy = "Enter the cost in pounds and pence"
+        })
+
+        @await Component.InvokeAsync(nameof(CostDescription), new CostDescriptionModel
+        {
+            LabelText = "Cost description",
+            HintText = "Enter details of related to the cost of this course",
+            AriaDescribedBy = "Enter details of related to the cost of this course"
+        })
+
+        @await Component.InvokeAsync(nameof(AdvancedLearnerLoan), new AdvancedLearnerLoanModel
+        {
+            LabelText = "Advanced learner loan",
+            HintText = "Select the checkbox below if Advanced Learner Loans are available for this course",
+            AriaDescribedBy = "Select whether Advanced Learner Loan is available for this course"
+        })
+
+        @await Component.InvokeAsync(nameof(Duration), new DurationModel
+        {
+            DurationUnits = new List<DurationUnitModel>()
             {
-                Id = 0,
-                DurationUnit = "Days"
+
+                new DurationUnitModel()
+                {
+                    Id = 0,
+                    DurationUnit = "Days"
+                },
+                new DurationUnitModel()
+                {
+                    Id = 1,
+                    DurationUnit = "Weeks"
+                },
+                new DurationUnitModel()
+                {
+                    Id = 2,
+                    DurationUnit = "Months"
+                },
+                new DurationUnitModel()
+                {
+                    Id = 3,
+                    DurationUnit = "Years"
+                }
             },
-            new DurationUnitModel()
-            {
-                Id = 1,
-                DurationUnit = "Weeks"
-            },
-            new DurationUnitModel()
-            {
-                Id = 2,
-                DurationUnit = "Months"
-            },
-            new DurationUnitModel()
-            {
-                Id = 3,
-                DurationUnit = "Years"
-            }
-        },
-        LabelText = "Duration",
-        HintText = "Select the duration of the course",
-        AriaDescribedBy = "Select course duration"
-    })
+            LabelText = "Duration",
+            HintText = "Select the duration of the course",
+            AriaDescribedBy = "Select course duration"
+        })
 
-    @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode.StudyMode), new StudyModeModel
-    {
-        StudyMode = Dfc.CourseDirectory.Models.Models.Courses.StudyMode.FullTime,
-        LabelText = "Full time or part time",
-        HintText = "Select the attendance pattern"
-    })
+        @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode.StudyMode), new StudyModeModel
+        {
+            StudyMode = Dfc.CourseDirectory.Models.Models.Courses.StudyMode.FullTime,
+            LabelText = "Full time or part time",
+            HintText = "Select the attendance pattern"
+        })
 
-    @await Component.InvokeAsync(nameof(Attendance), new AttendanceModel
-    {
-        AttendanceMode = AttendancePattern.Daytime,
-        LabelText = "Attendance",
-        HintText = "Select the time of day the course takes place"
-    })
+        @await Component.InvokeAsync(nameof(Attendance), new AttendanceModel
+        {
+            AttendanceMode = AttendancePattern.Daytime,
+            LabelText = "Attendance",
+            HintText = "Select the time of day the course takes place"
+        })
 
-    <div class="govuk-form-group">
-        <button type="submit" class="govuk-button" id="publish">
-            Publish
-        </button>
-    </div>
+        <div class="govuk-form-group">
+            <button type="submit" class="govuk-button" id="publish">
+                Publish
+            </button>
+        </div>
 
-</form>
+    </form>
 
 <script>
     (function ($) {
