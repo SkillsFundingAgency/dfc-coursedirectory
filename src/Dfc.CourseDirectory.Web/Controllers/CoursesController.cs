@@ -125,13 +125,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpPost]
         public IActionResult AddCourseSection1(AddCourseSection1RequestModel model)
         {
-            _session.SetString("CourseFor", model.CourseFor);
-            _session.SetString("EntryRequirements", model.EntryRequirements);
-            _session.SetString("WhatWillLearn", model.WhatWillLearn);
-            _session.SetString("HowYouWillLearn", model.HowYouWillLearn);
-            _session.SetString("WhatYouNeed", model.WhatYouNeed);
-            _session.SetString("HowAssessed", model.HowAssessed);
-            _session.SetString("WhereNext", model.WhereNext);
+            //_session.SetString("CourseFor", model.CourseFor);
+            //_session.SetString("EntryRequirements", model.EntryRequirements);
+            //_session.SetString("WhatWillLearn", model.WhatWillLearn);
+            //_session.SetString("HowYouWillLearn", model.HowYouWillLearn);
+            //_session.SetString("WhatYouNeed", model.WhatYouNeed);
+            //_session.SetString("HowAssessed", model.HowAssessed);
+            //_session.SetString("WhereNext", model.WhereNext);
 
             var viewModel = new AddCourseDetailsViewModel()
             {
