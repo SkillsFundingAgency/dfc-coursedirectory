@@ -1,23 +1,31 @@
 ﻿@using Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult
-<h1 class="govuk-heading-xl">Provider Search</h1>
+<h1 class="govuk-heading-l">Provider Search</h1>
 
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-full">
-        <div class="govuk-form-group">
-           
-            <label class="govuk-label" for="name">
+    <div>
+        <form class="site-search ui-front" id="header-search">
+            <label class="govuk-label" for="UKPrn">
                 UK PRN - Holding Page for Provider integration
             </label>
+            <div class="search-input-wrapper">
 
-            <input class="govuk-input" id="UKPrn" name="UKPrn" type="text">
+                <input class="govuk-input govuk-!-width-three-quarters search-input js-search-focus" placeholder="" id="UKPrn" name="UKPrn" type="text">
+                <div class="cd-c-search__item cd-search__submit-wrapper">
+                    <button type="button" class=" submit" id="search">Search</button>
+                </div>
+            </div>
+        </form>
 
-            <button type="submit" class="govuk-button" id="search">
-                Search
-            </button>
+        @*<div class="govuk-grid-column-full">
+            <div class="govuk-form-group">
+                <input class="govuk-input" id="UKPrn" name="UKPrn" type="text">
+
+                    <button type="submit" class="govuk-button" id="search">
+                        Search
+                    </button>
+            </div>
+        </div>*@
+
+        <div id="VenueSearchResultContainer">
+            @await Component.InvokeAsync(nameof(VenueSearchResult))
         </div>
     </div>
-    
-    <div id="VenueSearchResultContainer">
-        @await Component.InvokeAsync(nameof(VenueSearchResult))
-    </div>
-</div>
