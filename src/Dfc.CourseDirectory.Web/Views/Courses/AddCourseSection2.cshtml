@@ -11,6 +11,7 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.Attendance
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.AddStartDate
+@using Dfc.CourseDirectory.Web.ViewComponents.AdvancedLearnerLoan
 
 @model Dfc.CourseDirectory.Web.ViewModels.AddCourseDetailsViewModel
 
@@ -111,6 +112,13 @@
         LabelText = "Cost description",
         HintText = "Enter details of related to the cost of this course",
         AriaDescribedBy = "Enter details of related to the cost of this course"
+    })
+
+    @await Component.InvokeAsync(nameof(AdvancedLearnerLoan), new AdvancedLearnerLoanModel
+    {
+        LabelText = "Advanced learner loan",
+        HintText = "Select the checkbox below if Advanced Learner Loans are available for this course",
+        AriaDescribedBy = "Select whether Advanced Learner Loan is available for this course"
     })
 
     @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode.StudyMode), new StudyModeModel
