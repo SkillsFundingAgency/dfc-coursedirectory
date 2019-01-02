@@ -194,9 +194,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 var courseRun = new CourseRun
                 {
-                    // HOW ABOUT ID => id ????
-                    id = Guid.NewGuid(), // It was commented out
-                    VenueId = venue, // TOBE Decided
+                    Id = Guid.NewGuid(), 
+                    VenueId = venue, 
 
                     CourseName = model.CourseName,
                     ProviderCourseID = model.CourseProviderReference,
@@ -211,71 +210,38 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     DurationUnit = model.DurationUnit, // DurationUnit // TOBE COMPLETED
                     DurationValue = model.DurationValue, //int // TOBE COMPLETED
                     StudyMode = model.StudyMode, // StudyMode // Its done to be MERGED
-                    AttendancePattern = model.AttendanceMode, // AttendancePattern
-
-                    // VenueID // We even don't store a VenueName as it can change ??? id or VENUE_ID ; or BOTH
-                    //            "id": "76748623-93f0-4ebd-8a37-0f0754822b7e",
-                    //              "UKPRN": 10000409,
-                    //              "PROVIDER_ID": 300015,
-                    //              "VENUE_ID": 3214721,
-                    //     \/
-                    //Venue { get; set; } // IVenue => ID & Name
-                    //Provider { get; set; } // IProvider => ID => ProviderUKLPR
-                    //Qualification { get; set; }  //IQualification => ID
+                    AttendancePattern = model.AttendanceMode, // AttendancePattern                  
 
                     CreatedDate = DateTime.Now,
                     CreatedBy = "ProviderPortal-AddCourse" // TODO - Change to the name of the logged person 
-                                                           // UpdatedDate { get; set; } => not now
-                                                           // UpdatedBy { get; set; } => not now
                 };
 
                 courseRuns.Add(courseRun);
             }
 
-
-
-
             var course = new Course
             {
-                id = Guid.NewGuid(),
+                Id = Guid.NewGuid(),
 
-                QualificationCourseTitle = learnAimRefTitle, // CourseData.CourseTitle
-                LearnAimRef = learnAimRef, // LARS / QAN: "302309" -??? INTIGER ?
-                NotionalNVQLevelv2 = notionalNVQLevelv2, // Level: "7" - ??? INTIGER ?
-                AwardOrgCode = awardOrgCode, // Awarding organisation: "BOLTONIN";
+                QualificationCourseTitle = learnAimRefTitle, 
+                LearnAimRef = learnAimRef, 
+                NotionalNVQLevelv2 = notionalNVQLevelv2, 
+                AwardOrgCode = awardOrgCode, 
                 QualificationType = "Diploma", // ??? QualificationTypes => Diploma, Cerificate or EACH courserun
 
                 ProviderUKPRN = "10052996",
 
-                CourseDescription = courseFor, // NO Editing
-                EntryRequirments = entryRequirements, // NO Editing
-                WhatYoullLearn = whatWillLearn, // NO Editing
-                HowYoullLearn = howYouWillLearn, // NO Editing
-                WhatYoullNeed = whatYouNeed, // NO Editing
-                                             //WhatYoullNeedToBring = "NO CONTENT", // NO Editing => ATTENTION
-                HowYoullBeAssessed = howAssessed, // NO Editing
-                WhereNext = whereNext, // NO Editing
+                CourseDescription = courseFor, 
+                EntryRequirments = entryRequirements, 
+                WhatYoullLearn = whatWillLearn, 
+                HowYoullLearn = howYouWillLearn, 
+                WhatYoullNeed = whatYouNeed, 
+                HowYoullBeAssessed = howAssessed, 
+                WhereNext = whereNext, 
 
                 AdvancedLearnerLoan = model.AdvancedLearnerLoan, //bool // TOBE COMPLETED
-
-                //QuAP = new QuAP(),
-                // Guid ID /// ?????
-                // Qualification Qualification => 
-                // Provider Provider { get; set; }
-                //CourseData = new CourseData
-                //{
-                //    ID = Guid.NewGuid(), // ??? Why we need that? Isn't that the id above?
-                //    CourseID = Guid.NewGuid(), // ???
-                //    CourseTitle = learnAimRefTitle, // => Qualification added: PGCE in Secondary (Mathematics) - Bradford College
-                //                                    // learnAimRef => LARS / QAN: "302309" -??? INTIGER ?
-                //                                    //notionalNVQLevelv2 => Level: "7" - ??? INTIGER ?
-                //                                    //awardOrgCode => Awarding organisation: "BOLTONIN";
-
-                //    // Provider "UnitedKingdomProviderReferenceNumber" UKPRN: "10036651" => The beggining of ALL
-
-                //    // ??? QualificationTypes => Diploma, Cerificate
-                //},
-                CourseRuns = courseRuns // new[] { firstCourseRun }
+              
+                CourseRuns = courseRuns 
             };
 
             var result = await _courseService.AddCourseAsync(course);

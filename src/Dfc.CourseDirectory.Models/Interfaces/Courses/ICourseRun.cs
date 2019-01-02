@@ -10,25 +10,22 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Courses
 {
     public interface ICourseRun
     {
-        Guid id { get; set; }
+        Guid Id { get; set; }
         Guid VenueId { get; set; }
        
         string CourseName { get; set; }
-        string ProviderCourseID { get; set; } //string CourseID { get; }
+        string ProviderCourseID { get; set; } 
         string DeliveryMode { get; set; }
         bool FlexibleStartDate { get; set; }
         DateTime StartDate { get; set; }
         string CourseURL { get; set; }
-        decimal Cost { get; set; } //string Price { get; }
+        decimal Cost { get; set; } 
         string CostDescription { get; set; }
         DurationUnit DurationUnit { get; set; }
         int DurationValue { get; set; }
-        StudyMode StudyMode { get; set; } //string StudyMode { get; }
-        AttendancePattern AttendancePattern { get; set; } ////string Attendance { get; }
-        //string Pattern { get; }
-        //IVenue Venue { get; set; }
-        //IProvider Provider { get; set; }
-        //IQualification Qualification { get; set; }
+        StudyMode StudyMode { get; set; } 
+        AttendancePattern AttendancePattern { get; set; } 
+
         DateTime CreatedDate { get; set; }
         string CreatedBy { get; set; }
         DateTime UpdatedDate { get; set; }
