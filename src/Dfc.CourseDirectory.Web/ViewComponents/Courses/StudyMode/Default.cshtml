@@ -1,0 +1,26 @@
+﻿@using Dfc.CourseDirectory.Models.Models.Courses;
+@using Dfc.CourseDirectory.Web.Helpers;
+
+@model Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode.StudyModeModel
+
+
+<div class="govuk-form-group" id="time">
+    <fieldset class="govuk-fieldset" aria-describedby="changed-name-hint">
+        <label class="govuk-label">@Model.LabelText</label>
+        <span id="more-detail-hint" class="govuk-hint">@Model.HintText</span>
+        <div class="govuk-radios govuk-radios--inline" style="margin-bottom:30px;">
+            <div class="govuk-radios__item">
+                @Html.RadioButtonFor(m => m.StudyMode, StudyMode.FullTime, new { @class = "govuk-radios__input time", id = @StudyMode.FullTime })
+                <label class="govuk-label govuk-radios__label" for="@StudyMode.FullTime">@WebHelper.GetEnumDescription(@StudyMode.FullTime)</label>
+            </div>
+            <div class="govuk-radios__item">
+                @Html.RadioButtonFor(m => m.StudyMode, StudyMode.PartTime, new { @class = "govuk-radios__input time", id = @StudyMode.PartTime })
+                <label class="govuk-label govuk-radios__label" for="@StudyMode.PartTime">@WebHelper.GetEnumDescription(@StudyMode.PartTime)</label>
+            </div>
+            <div class="govuk-radios__item">
+                @Html.RadioButtonFor(m => m.StudyMode, StudyMode.Flexible, new { @class = "govuk-radios__input time", id = @StudyMode.Flexible })
+                <label class="govuk-label govuk-radios__label" for="@StudyMode.Flexible">@WebHelper.GetEnumDescription(@StudyMode.Flexible)</label>
+            </div>
+        </div>
+    </fieldset>
+</div>

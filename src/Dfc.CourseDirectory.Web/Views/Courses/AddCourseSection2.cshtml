@@ -6,12 +6,39 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.CostDescription
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.Attendance
 @using Dfc.CourseDirectory.Models.Models.Courses
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseDelivery
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseDeliveryType
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.Attendance
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.AddStartDate
+@using Dfc.CourseDirectory.Web.ViewComponents.AdvancedLearnerLoan
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.Duration
+@using Duration = Dfc.CourseDirectory.Web.ViewComponents.Courses.Duration.Duration
 
 @model Dfc.CourseDirectory.Web.ViewModels.AddCourseDetailsViewModel
 
-<h1 class="govuk-heading-xl">Add course section 2</h1>
+<form asp-controller="Courses" asp-action="PublishCourse" id="addCourseSection2">
 
-<p style="padding: 15px 20px; border: 3px solid #009900;background-color:#fff;" id="qual--">Qualification added:<br> @Model.LearnAimRefTitle<br> Level: @Model.NotionalNVQLevelv2<br> Awarding organisation: @Model.AwardOrgCode<br> LARS/QAN: @Model.LearnAimRef</p>
+    @Html.HiddenFor(x => x.AwardOrgCode)
+    @Html.HiddenFor(x => x.LearnAimRef)
+    @Html.HiddenFor(x => x.LearnAimRefTitle)
+    @Html.HiddenFor(x => x.NotionalNVQLevelv2)
+
+    @Html.HiddenFor(x => x.CourseFor)
+    @Html.HiddenFor(x => x.EntryRequirements)
+    @Html.HiddenFor(x => x.WhatWillLearn)
+    @Html.HiddenFor(x => x.HowYouWillLearn)
+    @Html.HiddenFor(x => x.WhatYouNeed)
+    @Html.HiddenFor(x => x.HowAssessed)
+    @Html.HiddenFor(x => x.WhereNext)
+
+    <h1 class="govuk-heading-l" style="padding-top: 20px;">
+        Add course details
+    </h1>
+
+    <p style="padding: 15px 20px; border: 3px solid #009900;background-color:#fff;" id="qual--">Qualification added:<br> @Model.LearnAimRefTitle<br> Level: @Model.NotionalNVQLevelv2<br> Awarding organisation: @Model.AwardOrgCode<br> LARS/QAN: @Model.LearnAimRef</p>
+
+
 
 <form asp-controller="Courses" asp-action="AddCourse">
     @await Component.InvokeAsync(nameof(CourseName), new CourseNameModel
@@ -27,6 +54,49 @@
         LabelText = "ID",
         HintText = "This is how you identify a course in your internal system.",
         AriaDescribedBy = "Please enter the ID for this course"
+    })
+
+    @await Component.InvokeAsync(nameof(CourseDeliveryType), new CourseDeliveryTypeModel
+    {
+        DeliveryTypes = new List<DeliveryTypeModel>()
+        {
+
+            new DeliveryTypeModel()
+            {
+                Id = 0,
+                DeliveryType = "Classroom based"
+            },
+            new DeliveryTypeModel()
+            {
+                Id = 1,
+                DeliveryType = "Online"
+            },
+            new DeliveryTypeModel()
+            {
+                Id = 2,
+                DeliveryType = "Work based"
+            }
+        },
+        LabelText = "Delivery Mode",
+        HintText = "Select how this course will be delivered",
+        AriaDescribedBy = "How the course will be delivered"
+    })
+
+    @await Component.InvokeAsync(nameof(AddStartDate), new AddStartDateModel()
+    {
+
+        StartDateType = StartDateType.SpecifiedStartDate,
+        DayAriaDescribedBy = "",
+        DayLabelText = "Day",
+        MonthAriaDescribedBy = "",
+        MonthLabelText = "Month",
+        YearAriaDescribedBy = "",
+        YearLabelText = "Year",
+        AriaDescribedBy = "",
+        SpecifiedDateHintText = "Enter the start date of this course, if it has flexible start dates select the checkbox below",
+        FlexibleDateHintText = "Or select a flexible start date:",
+        LabelText = "Start date"
+
     })
 
     @await Component.InvokeAsync(nameof(UrlInput), new UrlInputModel
@@ -50,6 +120,51 @@
         AriaDescribedBy = "Enter details of related to the cost of this course"
     })
 
+    @await Component.InvokeAsync(nameof(AdvancedLearnerLoan), new AdvancedLearnerLoanModel
+    {
+        LabelText = "Advanced learner loan",
+        HintText = "Select the checkbox below if Advanced Learner Loans are available for this course",
+        AriaDescribedBy = "Select whether Advanced Learner Loan is available for this course"
+    })
+
+    @await Component.InvokeAsync(nameof(Duration), new DurationModel
+    {
+        DurationUnits = new List<DurationUnitModel>()
+        {
+
+            new DurationUnitModel()
+            {
+                Id = 0,
+                DurationUnit = "Days"
+            },
+            new DurationUnitModel()
+            {
+                Id = 1,
+                DurationUnit = "Weeks"
+            },
+            new DurationUnitModel()
+            {
+                Id = 2,
+                DurationUnit = "Months"
+            },
+            new DurationUnitModel()
+            {
+                Id = 3,
+                DurationUnit = "Years"
+            }
+        },
+        LabelText = "Duration",
+        HintText = "Select the duration of the course",
+        AriaDescribedBy = "Select course duration"
+    })
+
+    @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode.StudyMode), new StudyModeModel
+    {
+        StudyMode = Dfc.CourseDirectory.Models.Models.Courses.StudyMode.FullTime,
+        LabelText = "Full time or part time",
+        HintText = "Select the attendance pattern"
+    })
+
     @await Component.InvokeAsync(nameof(Attendance), new AttendanceModel
     {
         AttendanceMode = AttendancePattern.Daytime,
@@ -57,6 +172,148 @@
         HintText = "Select the time of day the course takes place"
     })
 
+    <div class="govuk-form-group">
+        <button type="submit" class="govuk-button" id="publish">
+            Publish
+        </button>
+    </div>
+
+</form>
+
+<script>
+    (function ($) {
+        $(function () {
+
+            var $formGroupErrorClass = "govuk-form-group--error";
+            var $elementErrorClass = "govuk-input--error";
+
+            var $dayElementUrl = $("#@nameof(Model.Day)");
+
+            var $monthElementUrl = $("#@nameof(Model.Month)");
+
+            var $yearElementUrl = $("#@nameof(Model.Year)");
+
+            var $validationMessageUrlForDay = $("#invalidDay");
+
+            var $validationMessageUrlForMonth = $("#invalidMonth");
+
+            var $validationMessageUrlForYear = $("#invalidYear");
+
+            var $validationMessageForPast = $("#past");
+            var $validationMessageForFuture = $("#future");
+
+            var $validationMessageForRequired= $("#required");
+
+            
+
+            var $formGroupUrl = $dayElementUrl.closest('.govuk-form-group');
+
+
+
+            var $publish = $("#publish");
+            $publish.on("click",
+                function (e) {
+                    e.preventDefault();
+
+
+                    var $durationLength = $("#@nameof(Model.DurationLength)");
+                    $durationLength.trigger("blur");
+                
+                    var radioValue = $("input[name='StartDateType']:checked").val();
+                    if (radioValue.toUpperCase() === "SPECIFIEDSTARTDATE") {
+                        $validationMessageForRequired.hide();
+
+                        if ($dayElementUrl.val() !== "" && $monthElementUrl.val() !== "" && $yearElementUrl.val() !== "") {
+
+                            $("#addCourseSection2").submit();
+                        }
+
+                        if ($dayElementUrl.val() === "" && $monthElementUrl.val() === "" && $yearElementUrl.val() === "") {
+                            
+                            $formGroupUrl.addClass($formGroupErrorClass);
+                            $validationMessageForRequired.show();
+                        }
+
+                            if ($dayElementUrl.val() === "" || parseInt($dayElementUrl.val()) < 1 || parseInt($dayElementUrl.val()) > 31) {
+                                $dayElementUrl.addClass($elementErrorClass);
+                                $formGroupUrl.addClass($formGroupErrorClass);
+                                $validationMessageUrlForDay.show();
+                            }
+                        
+      
+                            if ($monthElementUrl.val() === "" || parseInt($monthElementUrl.val()) < 1 || parseInt($monthElementUrl.val()) > 12) {
+                                $monthElementUrl.addClass($elementErrorClass);
+                                $formGroupUrl.addClass($formGroupErrorClass);
+                                $validationMessageUrlForMonth.show();
+                            }
+                        
+
+       
+                            if ( ($yearElementUrl.val().length) < 4 || ($yearElementUrl.val().length) > 4) {
+                                $yearElementUrl.addClass($elementErrorClass);
+                                $formGroupUrl.addClass($formGroupErrorClass);
+                                $validationMessageUrlForYear.show();
+                            }
+                        
+
+
+                        if ($dayElementUrl.val() !== "" && $monthElementUrl.val() !== "" && $yearElementUrl.val() !== "") {
+                            var enteredDate = $dayElementUrl.val() + "/" + $monthElementUrl.val() + "/" + $yearElementUrl.val();
+                            $validationMessageForFuture.hide();
+                            $validationMessageForPast.hide();
+                            var d = new Date();
+                            var currentDate =
+                                d.getDate() +
+                                "/" +
+                                (d.getMonth() + 1) +
+                                "/" +
+                                (d.getFullYear());
+
+                            var futureDate =
+                                d.getDate() +
+                                "/" +
+                                (d.getMonth() + 1) +
+                                "/" +
+                                (d.getFullYear() + 2);
+
+                            if (Date.parse(enteredDate) - Date.parse(currentDate) < 0) {
+                                $formGroupUrl.addClass($formGroupErrorClass);
+                                $validationMessageForPast.show();
+                            } else {
+                                if (Date.parse(enteredDate) > Date.parse(futureDate)) {
+                                    $formGroupUrl.addClass($formGroupErrorClass);
+                                    $validationMessageForFuture.show();
+
+                                } else {
+                                    $validationMessageForFuture.hide();
+                                    $validationMessageForPast.hide();
+                                }
+                            }
+                        }
+
+
+                    } else {
+                        $dayElementUrl.removeClass($elementErrorClass);
+                        $monthElementUrl.removeClass($elementErrorClass);
+                        $yearElementUrl.removeClass($elementErrorClass);
+                        $formGroupUrl.removeClass($formGroupErrorClass);
+                        $validationMessageUrlForDay.hide();
+                        $validationMessageUrlForMonth.hide();
+                        $validationMessageUrlForYear.hide();
+                        $validationMessageForPast.hide();
+                        $validationMessageForFuture.hide();
+                        $validationMessageForRequired.hide();
+                        $("#addCourseSection2").submit();
+                    }
+                   
+
+                });
+
+
+
+        });
+    })(jQuery);
+</script>
 
     <div class="govuk-form-group">
         <button type="submit" class="govuk-button">

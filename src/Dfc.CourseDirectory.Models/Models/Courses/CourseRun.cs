@@ -34,6 +34,8 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
 
     public enum AttendancePattern
     {
+        [Description("Undefined")]
+        Undefined = 0,
         [Description("Daytime")]
         Daytime = 1,
         [Description("Evening")]
@@ -42,6 +44,26 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         Weekend = 3,
         [Description("Day/Block Release")]
         DayOrBlockRelease = 4
+    }
+    public enum StartDateType
+    {
+        [Description("Specified")]
+        SpecifiedStartDate = 1,
+        [Description("Select a flexible start date")]
+        FlexibleStartDate = 2,
+    }
+
+
+    public enum Duration
+    {
+        [Description("Days")]
+        Days = 0,
+        [Description("Weeks")]
+        Weeks = 1,
+        [Description("Months")]
+        Months = 2,
+        [Description("Years")]
+        Years = 3,
     }
 
     public class CourseRun : ICourseRun 
