@@ -12,6 +12,7 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.Attendance
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.AddStartDate
 @using Dfc.CourseDirectory.Web.ViewComponents.AdvancedLearnerLoan
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.Cost
 
 @model Dfc.CourseDirectory.Web.ViewModels.AddCourseDetailsViewModel
 
@@ -100,19 +101,28 @@
         AriaDescribedBy = "Enter the URL for this course"
     })
 
-    @await Component.InvokeAsync(nameof(CostInput), new CostInputModel
-    {
-        LabelText = "Cost",
-        HintText = "Enter the cost for the course in pounds and pence e.g. 125.00",
-        AriaDescribedBy = "Enter the cost in pounds and pence"
-    })
+    @await Component.InvokeAsync(nameof(Cost), new CostModel
+{
+    CostLabelText = "Cost",
+    CostHintText = "Enter the cost for the course in pounds and pence e.g. 125.00",
+    CostAriaDescribedBy = "Enter the cost in pounds and pence",
+    CostDescriptionLabelText = "Cost description",
+    CostDescriptionHintText = "Enter details of related to the cost of this course",
+    CostDescriptionAriaDescribedBy = "Enter details of related to the cost of this course"
+})
+    @*@await Component.InvokeAsync(nameof(CostInput), new CostInputModel
+        {
+            LabelText = "Cost",
+            HintText = "Enter the cost for the course in pounds and pence e.g. 125.00",
+            AriaDescribedBy = "Enter the cost in pounds and pence"
+        })
 
-    @await Component.InvokeAsync(nameof(CostDescription), new CostDescriptionModel
-    {
-        LabelText = "Cost description",
-        HintText = "Enter details of related to the cost of this course",
-        AriaDescribedBy = "Enter details of related to the cost of this course"
-    })
+        @await Component.InvokeAsync(nameof(CostDescription), new CostDescriptionModel
+        {
+            LabelText = "Cost description",
+            HintText = "Enter details of related to the cost of this course",
+            AriaDescribedBy = "Enter details of related to the cost of this course"
+        })*@
 
     @await Component.InvokeAsync(nameof(AdvancedLearnerLoan), new AdvancedLearnerLoanModel
     {
@@ -167,9 +177,17 @@
 
             var $validationMessageForRequired= $("#required");
 
-            
-
             var $formGroupUrl = $dayElementUrl.closest('.govuk-form-group');
+
+
+
+            var $elementCostDescription = $("#@nameof(Model.CostDescription)");
+           
+            var $elementCost = $("#@nameof(Model.Cost)");
+            var $formGroupCost = $elementCost.closest('.govuk-form-group');
+
+            var $validationMessageForCost= $("#invalidCost");
+            var $validationMessageForCostLength = $("#invalidCostLength");
 
 
 
@@ -178,9 +196,37 @@
                 function (e) {
                     e.preventDefault();
 
+                    var $courseName= $("#@nameof(Model.CourseName)");
+                    $courseName.trigger("blur");
 
-                  
-                
+
+
+                    if ($elementCost.val() === "") {
+                        if ($elementCostDescription.val() === "") {
+                            $elementCost.addClass($elementErrorClass);
+                            $validationMessageForCost.show();
+                            $formGroupCost.addClass($formGroupErrorClass);
+                        } else {
+                            $elementCost.removeClass($elementErrorClass);
+                            $validationMessageForCost.hide();
+                            $formGroupCost.removeClass($formGroupErrorClass);
+                        }
+                    } else {
+
+                        $validationMessageForCost.hide();
+                        $formGroupCost.removeClass(formGroupErrorClass);
+
+                        if ($elementCost.val().length < 1 || $elementCost.val().length > 9) {
+                            $elementCost.addClass(elementErrorClass);
+                            $validationMessageForCostLength.show();
+                            $formGroupCost.addClass(formGroupErrorClass);
+                        } else {
+                            $elementCost.removeClass(elementErrorClass);
+                            $validationMessageForCostLength.hide();
+                            $formGroupCost.removeClass(formGroupErrorClass);
+                        }
+                    }
+
                     var radioValue = $("input[name='StartDateType']:checked").val();
                     if (radioValue.toUpperCase() === "SPECIFIEDSTARTDATE") {
                         $validationMessageForRequired.hide();
@@ -191,7 +237,7 @@
                         }
 
                         if ($dayElementUrl.val() === "" && $monthElementUrl.val() === "" && $yearElementUrl.val() === "") {
-                            
+
                             $formGroupUrl.addClass($formGroupErrorClass);
                             $validationMessageForRequired.show();
                         }
@@ -201,22 +247,22 @@
                                 $formGroupUrl.addClass($formGroupErrorClass);
                                 $validationMessageUrlForDay.show();
                             }
-                        
-      
+
+
                             if ($monthElementUrl.val() === "" || parseInt($monthElementUrl.val()) < 1 || parseInt($monthElementUrl.val()) > 12) {
                                 $monthElementUrl.addClass($elementErrorClass);
                                 $formGroupUrl.addClass($formGroupErrorClass);
                                 $validationMessageUrlForMonth.show();
                             }
-                        
 
-       
+
+
                             if ( ($yearElementUrl.val().length) < 4 || ($yearElementUrl.val().length) > 4) {
                                 $yearElementUrl.addClass($elementErrorClass);
                                 $formGroupUrl.addClass($formGroupErrorClass);
                                 $validationMessageUrlForYear.show();
                             }
-                        
+
 
 
                         if ($dayElementUrl.val() !== "" && $monthElementUrl.val() !== "" && $yearElementUrl.val() !== "") {
@@ -267,7 +313,7 @@
                         $validationMessageForRequired.hide();
                         $("#addCourseSection2").submit();
                     }
-                   
+
 
                 });
 
