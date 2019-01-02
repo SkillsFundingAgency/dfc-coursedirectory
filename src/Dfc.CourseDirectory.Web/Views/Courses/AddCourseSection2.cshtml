@@ -107,6 +107,7 @@
 
         @await Component.InvokeAsync(nameof(Duration), new DurationModel
         {
+            
             DurationUnits = new List<DurationUnitModel>()
             {
 
@@ -131,6 +132,7 @@
                     DurationUnit = "Years"
                 }
             },
+            Id = 2,
             LabelText = "Duration",
             HintText = "Select the duration of the course",
             AriaDescribedBy = "Select course duration"
