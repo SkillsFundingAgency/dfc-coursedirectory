@@ -210,8 +210,8 @@
             $yearElementUrl.on("blur",
                 function () {
                     $validationMessageUrlForRequired.hide();
-                    $validationMessageUrlForPast.hide();
-                    $validationMessageUrlForFuture.hide();
+                    $validationMessageForPast.hide();
+                    $validationMessageForFuture.hide();
                     var radioValue = $("input[name='StartDateType']:checked").val();
                     if (radioValue.toUpperCase() === "SPECIFIEDSTARTDATE") {
                         if ($yearElementUrl.val() === "" ||

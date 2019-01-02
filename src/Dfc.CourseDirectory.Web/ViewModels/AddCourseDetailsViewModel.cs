@@ -45,5 +45,11 @@ namespace Dfc.CourseDirectory.Web.ViewModels
         public int Year { get; set; }
         public string DurationLength { get; set; }
 
+
+        public string Cost { get; set; }
+
+
+        public string CostDescription { get; set; }
+
     }
 }
