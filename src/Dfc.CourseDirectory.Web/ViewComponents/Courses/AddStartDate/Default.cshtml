@@ -1,0 +1,368 @@
+﻿@using Dfc.CourseDirectory.Common.Settings
+@using Dfc.CourseDirectory.Models.Models.Courses
+@using Microsoft.Extensions.Options
+@model Dfc.CourseDirectory.Web.ViewComponents.Courses.AddStartDate.AddStartDateModel
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<fieldset class="govuk-fieldset" aria-describedby="changed-name-hint">
+
+    <div class="govuk-form-group" id="date">
+        <label class="govuk-label" for="sub" style="margin-bottom: 15px">
+            @Model.LabelText
+
+        </label>
+        <span id="more-detail-hint" class="govuk-hint">@Model.SpecifiedDateHintText </span>
+
+
+        <div class="govuk-radios__item">
+            @Html.RadioButtonFor(m => m.StartDateType, StartDateType.SpecifiedStartDate, new { @class = "govuk-radios__input specified", id = @StartDateType.SpecifiedStartDate })
+            <label class="govuk-label govuk-radios__label" for="@StartDateType.SpecifiedStartDate"></label>
+        </div>
+
+        <div class="govuk-form-group" id="startDateFormGroup">
+            <span class="govuk-error-message field-validation-error" id="invalidDate" style="display: none;margin-bottom: 15px;">
+                <span id="invalidDateMessage" class=""></span>
+            </span>
+
+            <span class="govuk-error-message field-validation-error" id="invalidDay" style="display: none;margin-bottom: 15px;">
+                <span id="invalidDayMessage" class="">Day must be a number between 1 and 31</span>
+            </span>
+            <span class="govuk-error-message field-validation-error" id="invalidMonth" style="display: none;margin-bottom: 15px;">
+                <span id="invalidMonthMessage" class="">Month must be a number between 1 and 12</span>
+            </span>
+            <span class="govuk-error-message field-validation-error" id="invalidYear" style="display: none;margin-bottom: 15px;">
+                <span id="invalidYearMessage" class="">Year must be a valid 4 digit year</span>
+            </span>
+            <span class="govuk-error-message field-validation-error" id="past" style="display: none;margin-bottom: 15px;">
+                <span id="pastMessage" class="">Start Date cannot be earlier than today’s date</span>
+            </span>
+            <span class="govuk-error-message field-validation-error" id="future" style="display: none;margin-bottom: 15px;">
+                <span id="futureMessage" class="">Start Date cannot be later than 2 years from today’s date</span>
+            </span>
+            <span class="govuk-error-message field-validation-error" id="required" style="display: none;margin-bottom: 15px;">
+                <span id="requiredMessage" class="">Choose an actual Start Date or select ‘Flexible Start Date’</span>
+            </span>
+            <div class="dateFields">
+                <label class="govuk-label" asp-for="@Model.Day" aria-describedby="@Model.DayAriaDescribedBy" style="display: inline-block; width: 60px;">
+                    @Model.DayLabelText
+                </label>
+                <label class="govuk-label" asp-for="@Model.Month" aria-describedby="@Model.MonthAriaDescribedBy" style="display: inline-block; width: 60px;">
+                    @Model.MonthLabelText
+                </label>
+                <label class="govuk-label" asp-for="@Model.Year" aria-describedby="@Model.YearAriaDescribedBy" style="display: inline-block; width: 120px;">
+                    @Model.YearLabelText
+                </label>
+            </div>
+
+            <input class="govuk-input" asp-for="@Model.Day" type="text" style="width: 60px;">
+            <input class="govuk-input" asp-for="@Model.Month" type="text" style="width: 60px;">
+            <input class="govuk-input" asp-for="@Model.Year" type="text" style="width: 120px;">
+        </div>
+
+        <span id="more-detail-hint" class="govuk-hint" style="margin-top: 20px">@Model.FlexibleDateHintText </span>
+
+        <div class="govuk-radios__item">
+            @Html.RadioButtonFor(m => m.StartDateType, StartDateType.FlexibleStartDate, new { @class = "govuk-radios__input flexible", id = @StartDateType.FlexibleStartDate })
+            <label class="govuk-label govuk-radios__label" for="@StartDateType.FlexibleStartDate">Select a flexible start date</label>
+        </div>
+
+    </div>
+
+</fieldset>
+
+<script>
+    (function ($) {
+        $(function () {
+
+            var $formGroupErrorClass = "govuk-form-group--error";
+            var $elementErrorClass = "govuk-input--error";
+
+            var $dayElementUrl = $("#@nameof(Model.Day)");
+
+            var $monthElementUrl = $("#@nameof(Model.Month)");
+
+            var $yearElementUrl = $("#@nameof(Model.Year)");
+
+            var $validationMessageUrlForDay = $("#invalidDay");
+
+            var $validationMessageUrlForMonth = $("#invalidMonth");
+
+            var $validationMessageUrlForYear = $("#invalidYear");
+
+            var $validationMessageUrlForRequired = $("#required");
+
+            var $validationMessageForPast = $("#past");
+            var $validationMessageForFuture = $("#future");
+
+            var $formGroupUrl = $dayElementUrl.closest('.govuk-form-group');
+
+            $dayElementUrl.on("blur",
+                function() {
+                    var radioValue = $("input[name='StartDateType']:checked").val();
+                    if (radioValue.toUpperCase() === "SPECIFIEDSTARTDATE") {
+                        if ($dayElementUrl.val() === "" ||
+                            (parseInt($dayElementUrl.val()) < 1 || parseInt($dayElementUrl.val()) > 31)) {
+                            $dayElementUrl.addClass($elementErrorClass);
+                            $formGroupUrl.addClass($formGroupErrorClass);
+                            $validationMessageUrlForDay.show();
+                        } else {
+                            $dayElementUrl.removeClass($elementErrorClass);
+                            $validationMessageUrlForDay.hide();
+                            if ($validationMessageUrlForMonth.is(":visible") ||
+                                $validationMessageUrlForYear.is(":visible")) {
+                            } else {
+                                $formGroupUrl.removeClass($formGroupErrorClass);
+                            }
+                        }
+
+                    }
+                    else
+                    {
+                        $dayElementUrl.removeClass($elementErrorClass);
+
+                        $validationMessageUrlForDay.hide();
+                        if ($validationMessageUrlForMonth.is(":visible") ||
+                            $validationMessageUrlForYear.is(":visible")) {
+                        } else {
+                            $formGroupUrl.removeClass($formGroupErrorClass);
+                        }
+                    };
+
+                });
+
+            $monthElementUrl.on("blur",
+                function() {
+                    var radioValue = $("input[name='StartDateType']:checked").val();
+                    if (radioValue.toUpperCase() === "SPECIFIEDSTARTDATE") {
+                        if ($monthElementUrl.val() === "" ||
+                            (parseInt($monthElementUrl.val()) < 1 || parseInt($monthElementUrl.val()) > 12)) {
+                            $monthElementUrl.addClass($elementErrorClass);
+                            $formGroupUrl.addClass($formGroupErrorClass);
+                            $validationMessageUrlForMonth.show();
+                        } else {
+                            $monthElementUrl.removeClass($elementErrorClass);
+                            $validationMessageUrlForMonth.hide();
+                            if ($validationMessageUrlForDay.is(":visible") ||
+                                $validationMessageUrlForYear.is(":visible")) {
+                            } else {
+                                $formGroupUrl.removeClass($formGroupErrorClass);
+                            }
+                        }
+
+                    }
+                    else
+                    {
+                        $monthElementUrl.removeClass($elementErrorClass);
+
+                        $validationMessageUrlForMonth.hide();
+                        if ($validationMessageUrlForDay.is(":visible") ||
+                            $validationMessageUrlForYear.is(":visible")) {
+                        } else {
+                            $formGroupUrl.removeClass($formGroupErrorClass);
+                        }
+                    };
+
+                });
+
+            $dayElementUrl.on("keypress", function (event) {
+                var charCode = event.which ? event.which : event.keyCode;
+
+                if ($dayElementUrl.val().length >= 2) {
+                    return false;
+                };
+
+                if ((charCode >= 48 && charCode <= 57) || charCode === 46) {
+                    return true;
+                }
+
+                return false;
+            });
+
+            $monthElementUrl.on("keypress", function (event) {
+                var charCode = event.which ? event.which : event.keyCode;
+
+                if ($monthElementUrl.val().length >= 2) {
+                    return false;
+                };
+
+                if ((charCode >= 48 && charCode <= 57) || charCode === 46) {
+                    return true;
+                }
+
+                return false;
+            });
+
+            $yearElementUrl.on("keypress", function (event) {
+                var charCode = event.which ? event.which : event.keyCode;
+
+                if ($yearElementUrl.val().length >= 4) {
+                    return false;
+                };
+
+                if ((charCode >= 48 && charCode <= 57) || charCode === 46) {
+                    return true;
+                }
+
+                return false;
+            });
+
+            $yearElementUrl.on("blur",
+                function () {
+                    $validationMessageUrlForRequired.hide();
+                    $validationMessageUrlForPast.hide();
+                    $validationMessageUrlForFuture.hide();
+                    var radioValue = $("input[name='StartDateType']:checked").val();
+                    if (radioValue.toUpperCase() === "SPECIFIEDSTARTDATE") {
+                        if ($yearElementUrl.val() === "" ||
+                            (($yearElementUrl.val().length) < 4 || ($yearElementUrl.val().length) > 4)) {
+                            $yearElementUrl.addClass($elementErrorClass);
+                            $formGroupUrl.addClass($formGroupErrorClass);
+                            $validationMessageUrlForYear.show();
+                        } else {
+                            $yearElementUrl.removeClass($elementErrorClass);
+                            $validationMessageUrlForYear.hide();
+                            if ($validationMessageUrlForDay.is(":visible") ||
+                                $validationMessageUrlForMonth.is(":visible")) {
+                            } else {
+                                $formGroupUrl.removeClass($formGroupErrorClass);
+                            }
+                        }
+
+                        if ($dayElementUrl.val() !== "" && $monthElementUrl.val() !== "" && $yearElementUrl.val() !== "") {
+                            var enteredDate = $dayElementUrl.val() + "/" + $monthElementUrl.val() + "/" + $yearElementUrl.val();
+                            $validationMessageForFuture.hide();
+                            $validationMessageForPast.hide();
+                            var d = new Date();
+                            var currentDate = 
+                                d.getDate() +
+                                "/" +
+                                (d.getMonth() + 1) +
+                                    "/" +
+                                (d.getFullYear());
+
+                            var futureDate =
+                                d.getDate() +
+                                "/" +
+                                (d.getMonth() + 1) +
+                                    "/" +
+                                (d.getFullYear() + 2);
+
+                            if (Date.parse(enteredDate) - Date.parse(currentDate) < 0) {
+                                $formGroupUrl.addClass($formGroupErrorClass);
+                                $validationMessageForPast.show();
+                            } else {
+                                if (Date.parse(enteredDate) > Date.parse(futureDate)) {
+                                    $formGroupUrl.addClass($formGroupErrorClass);
+                                    $validationMessageForFuture.show();
+
+                                } else {
+                                    $validationMessageForFuture.hide();
+                                    $validationMessageForPast.hide();
+                                }
+                            }
+                        }
+
+                    }
+                    else
+                    {
+                        $yearElementUrl.removeClass($elementErrorClass);
+
+                        $validationMessageUrlForYear.hide();
+                        if ($validationMessageUrlForDay.is(":visible") ||
+                            $validationMessageUrlForMonth.is(":visible")) {
+                        } else {
+                            $formGroupUrl.removeClass($formGroupErrorClass);
+                        }
+                    };
+
+                });
+
+            var $startDateType = $("input[name='StartDateType']");
+            $startDateType.on("click",
+                function (e) {
+                    $validationMessageUrlForRequired.hide();
+                    var radioValue = $("input[name='StartDateType']:checked").val();
+                    if (radioValue.toUpperCase() === "SPECIFIEDSTARTDATE") {
+                        if ($dayElementUrl.val() === "") {
+
+                        } else {
+                            if (parseInt($dayElementUrl.val()) < 1 || parseInt($dayElementUrl.val()) > 31) {
+                                $dayElementUrl.addClass($elementErrorClass);
+                                $formGroupUrl.addClass($formGroupErrorClass);
+                                $validationMessageUrlForDay.show();
+                            }
+                        }
+                        if ($monthElementUrl.val() === "") {
+
+                        } else {
+                            if (parseInt($monthElementUrl.val()) < 1 || parseInt($monthElementUrl.val()) > 12) {
+                                $monthElementUrl.addClass($elementErrorClass);
+                                $formGroupUrl.addClass($formGroupErrorClass);
+                                $validationMessageUrlForMonth.show();
+                            }
+                        }
+
+                        if ($yearElementUrl.val() === "") {
+
+                        } else {
+                            if (($yearElementUrl.val().length) < 4 || ($yearElementUrl.val().length) > 4) {
+                                $yearElementUrl.addClass($elementErrorClass);
+                                $formGroupUrl.addClass($formGroupErrorClass);
+                                $validationMessageUrlForYear.show();
+                            }
+                        }
+
+
+                        if ($dayElementUrl.val() !== "" && $monthElementUrl.val() !== "" && $yearElementUrl.val() !== "") {
+                            var enteredDate = $dayElementUrl.val() + "/" + $monthElementUrl.val() + "/" + $yearElementUrl.val();
+                            $validationMessageForFuture.hide();
+                            $validationMessageForPast.hide();
+                            var d = new Date();
+                            var currentDate = 
+                                d.getDate() +
+                                    "/" +
+                                    (d.getMonth() + 1) +
+                                    "/" +
+                                    (d.getFullYear());
+
+                            var futureDate =
+                                d.getDate() +
+                                    "/" +
+                                    (d.getMonth() + 1) +
+                                    "/" +
+                                    (d.getFullYear() + 2);
+
+                             if (Date.parse(enteredDate) - Date.parse(currentDate) < 0) {
+                                 $formGroupUrl.addClass($formGroupErrorClass);
+                                 $validationMessageForPast.show();
+                             } else {
+                                 if (Date.parse(enteredDate) > Date.parse(futureDate)) {
+                                     $formGroupUrl.addClass($formGroupErrorClass);
+                                     $validationMessageForFuture.show();
+
+                                 } else {
+                                     $validationMessageForFuture.hide();
+                                     $validationMessageForPast.hide();
+                                 }
+                             }
+                        }
+
+
+                    } else {
+                        $dayElementUrl.removeClass($elementErrorClass);
+                        $monthElementUrl.removeClass($elementErrorClass);
+                        $yearElementUrl.removeClass($elementErrorClass);
+                        $formGroupUrl.removeClass($formGroupErrorClass);
+                        $validationMessageUrlForDay.hide();
+                        $validationMessageUrlForMonth.hide();
+                        $validationMessageUrlForYear.hide();
+                        $validationMessageForPast.hide();
+                        $validationMessageForFuture.hide();
+                        $validationMessageUrlForRequired.hide();
+                    }
+                });
+        });
+    })(jQuery);
+</script>
+

@@ -9,14 +9,15 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseDelivery
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseDeliveryType
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.Attendance
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.AddStartDate
 @using Dfc.CourseDirectory.Web.ViewComponents.AdvancedLearnerLoan
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.Duration
 @using Duration = Dfc.CourseDirectory.Web.ViewComponents.Courses.Duration.Duration
 
 @model Dfc.CourseDirectory.Web.ViewModels.AddCourseDetailsViewModel
 
-<form asp-controller="Courses" asp-action="PublishCourse">
-
+<form asp-controller="Courses" asp-action="PublishCourse" id="addCourseSection2">
 
     @Html.HiddenFor(x => x.AwardOrgCode)
     @Html.HiddenFor(x => x.LearnAimRef)
@@ -30,7 +31,6 @@
     @Html.HiddenFor(x => x.WhatYouNeed)
     @Html.HiddenFor(x => x.HowAssessed)
     @Html.HiddenFor(x => x.WhereNext)
-
 
     <h1 class="govuk-heading-l" style="padding-top: 20px;">
         Add course details
@@ -76,6 +76,23 @@
         LabelText = "Delivery Mode",
         HintText = "Select how this course will be delivered",
         AriaDescribedBy = "How the course will be delivered"
+    })
+
+    @await Component.InvokeAsync(nameof(AddStartDate), new AddStartDateModel()
+    {
+
+        StartDateType = StartDateType.SpecifiedStartDate,
+        DayAriaDescribedBy = "",
+        DayLabelText = "Day",
+        MonthAriaDescribedBy = "",
+        MonthLabelText = "Month",
+        YearAriaDescribedBy = "",
+        YearLabelText = "Year",
+        AriaDescribedBy = "",
+        SpecifiedDateHintText = "Enter the start date of this course, if it has flexible start dates select the checkbox below",
+        FlexibleDateHintText = "Or select a flexible start date:",
+        LabelText = "Start date"
+
     })
 
     @await Component.InvokeAsync(nameof(UrlInput), new UrlInputModel
@@ -162,11 +179,134 @@
 <script>
     (function ($) {
         $(function () {
+
+            var $formGroupErrorClass = "govuk-form-group--error";
+            var $elementErrorClass = "govuk-input--error";
+
+            var $dayElementUrl = $("#@nameof(Model.Day)");
+
+            var $monthElementUrl = $("#@nameof(Model.Month)");
+
+            var $yearElementUrl = $("#@nameof(Model.Year)");
+
+            var $validationMessageUrlForDay = $("#invalidDay");
+
+            var $validationMessageUrlForMonth = $("#invalidMonth");
+
+            var $validationMessageUrlForYear = $("#invalidYear");
+
+            var $validationMessageForPast = $("#past");
+            var $validationMessageForFuture = $("#future");
+
+            var $validationMessageForRequired= $("#required");
+
+            
+
+            var $formGroupUrl = $dayElementUrl.closest('.govuk-form-group');
+
+
+
             var $publish = $("#publish");
-            $publish.on("click", function (e) {
-                var $durationLength = $("#@nameof(Model.DurationLength)");
-                $durationLength.trigger("blur");
-            });
+            $publish.on("click",
+                function (e) {
+                    e.preventDefault();
+
+
+                    var $durationLength = $("#@nameof(Model.DurationLength)");
+                    $durationLength.trigger("blur");
+                
+                    var radioValue = $("input[name='StartDateType']:checked").val();
+                    if (radioValue.toUpperCase() === "SPECIFIEDSTARTDATE") {
+                        $validationMessageForRequired.hide();
+
+                        if ($dayElementUrl.val() !== "" && $monthElementUrl.val() !== "" && $yearElementUrl.val() !== "") {
+
+                            $("#addCourseSection2").submit();
+                        }
+
+                        if ($dayElementUrl.val() === "" && $monthElementUrl.val() === "" && $yearElementUrl.val() === "") {
+                            
+                            $formGroupUrl.addClass($formGroupErrorClass);
+                            $validationMessageForRequired.show();
+                        }
+
+                            if ($dayElementUrl.val() === "" || parseInt($dayElementUrl.val()) < 1 || parseInt($dayElementUrl.val()) > 31) {
+                                $dayElementUrl.addClass($elementErrorClass);
+                                $formGroupUrl.addClass($formGroupErrorClass);
+                                $validationMessageUrlForDay.show();
+                            }
+                        
+      
+                            if ($monthElementUrl.val() === "" || parseInt($monthElementUrl.val()) < 1 || parseInt($monthElementUrl.val()) > 12) {
+                                $monthElementUrl.addClass($elementErrorClass);
+                                $formGroupUrl.addClass($formGroupErrorClass);
+                                $validationMessageUrlForMonth.show();
+                            }
+                        
+
+       
+                            if ( ($yearElementUrl.val().length) < 4 || ($yearElementUrl.val().length) > 4) {
+                                $yearElementUrl.addClass($elementErrorClass);
+                                $formGroupUrl.addClass($formGroupErrorClass);
+                                $validationMessageUrlForYear.show();
+                            }
+                        
+
+
+                        if ($dayElementUrl.val() !== "" && $monthElementUrl.val() !== "" && $yearElementUrl.val() !== "") {
+                            var enteredDate = $dayElementUrl.val() + "/" + $monthElementUrl.val() + "/" + $yearElementUrl.val();
+                            $validationMessageForFuture.hide();
+                            $validationMessageForPast.hide();
+                            var d = new Date();
+                            var currentDate =
+                                d.getDate() +
+                                "/" +
+                                (d.getMonth() + 1) +
+                                "/" +
+                                (d.getFullYear());
+
+                            var futureDate =
+                                d.getDate() +
+                                "/" +
+                                (d.getMonth() + 1) +
+                                "/" +
+                                (d.getFullYear() + 2);
+
+                            if (Date.parse(enteredDate) - Date.parse(currentDate) < 0) {
+                                $formGroupUrl.addClass($formGroupErrorClass);
+                                $validationMessageForPast.show();
+                            } else {
+                                if (Date.parse(enteredDate) > Date.parse(futureDate)) {
+                                    $formGroupUrl.addClass($formGroupErrorClass);
+                                    $validationMessageForFuture.show();
+
+                                } else {
+                                    $validationMessageForFuture.hide();
+                                    $validationMessageForPast.hide();
+                                }
+                            }
+                        }
+
+
+                    } else {
+                        $dayElementUrl.removeClass($elementErrorClass);
+                        $monthElementUrl.removeClass($elementErrorClass);
+                        $yearElementUrl.removeClass($elementErrorClass);
+                        $formGroupUrl.removeClass($formGroupErrorClass);
+                        $validationMessageUrlForDay.hide();
+                        $validationMessageUrlForMonth.hide();
+                        $validationMessageUrlForYear.hide();
+                        $validationMessageForPast.hide();
+                        $validationMessageForFuture.hide();
+                        $validationMessageForRequired.hide();
+                        $("#addCourseSection2").submit();
+                    }
+                   
+
+                });
+
+
+
         });
     })(jQuery);
 </script>

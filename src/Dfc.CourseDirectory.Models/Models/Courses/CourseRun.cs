@@ -44,6 +44,14 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         [Description("Day/Block Release")]
         DayOrBlockRelease = 4
     }
+    public enum StartDateType
+    {
+        [Description("Specified")]
+        SpecifiedStartDate = 1,
+        [Description("Select a flexible start date")]
+        FlexibleStartDate = 2,
+    }
+
 
     public enum Duration
     {
