@@ -96,19 +96,7 @@
     CostDescriptionHintText = "Enter details of related to the cost of this course",
     CostDescriptionAriaDescribedBy = "Enter details of related to the cost of this course"
 })
-    @*@await Component.InvokeAsync(nameof(CostInput), new CostInputModel
-        {
-            LabelText = "Cost",
-            HintText = "Enter the cost for the course in pounds and pence e.g. 125.00",
-            AriaDescribedBy = "Enter the cost in pounds and pence"
-        })
-
-        @await Component.InvokeAsync(nameof(CostDescription), new CostDescriptionModel
-        {
-            LabelText = "Cost description",
-            HintText = "Enter details of related to the cost of this course",
-            AriaDescribedBy = "Enter details of related to the cost of this course"
-        })*@
+   
 
         @await Component.InvokeAsync(nameof(AdvancedLearnerLoan), new AdvancedLearnerLoanModel
         {
