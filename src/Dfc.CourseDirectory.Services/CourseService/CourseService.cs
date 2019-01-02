@@ -10,7 +10,8 @@ using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Common.Interfaces;
 using Dfc.CourseDirectory.Models.Interfaces.Courses;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
-
+using Newtonsoft.Json;
+using Dfc.CourseDirectory.Models.Models.Courses;
 
 namespace Dfc.CourseDirectory.Services.CourseService
 {
@@ -18,7 +19,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
     {
         private readonly ILogger<CourseService> _logger;
         private readonly HttpClient _httpClient;
-        private readonly Uri _getWhatEverUri;
+        private readonly Uri _addCourseUri;
 
         public CourseService(
             ILogger<CourseService> logger,
@@ -32,20 +33,66 @@ namespace Dfc.CourseDirectory.Services.CourseService
             _logger = logger;
             _httpClient = httpClient;
 
-            //_getWhatEverUri = settings.Value.ToGetWhatEverUri();
+            _addCourseUri = settings.Value.ToAddCourseUri();
         }
 
-        public Task<IResult<ICourse>> AddAsync(ICourse course)
+        public async Task<IResult<ICourse>> AddCourseAsync(ICourse course)
         {
-            return null;
+            _logger.LogMethodEnter();
+            Throw.IfNull(course, nameof(course));
+
+            try
+            {
+                _logger.LogInformationObject("Course add object.", course);
+                _logger.LogInformationObject("Course add URI", _addCourseUri);
+
+                var courseJson = JsonConvert.SerializeObject(course);
+
+                var content = new StringContent(courseJson, Encoding.UTF8, "application/json");
+                var response = await _httpClient.PostAsync(_addCourseUri, content);
+
+                _logger.LogHttpResponseMessage("Course add service http response", response);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+
+                    _logger.LogInformationObject("Course add service json response", json);
+
+
+                    var courseResult = JsonConvert.DeserializeObject<Course>(json);
+
+
+                    return Result.Ok<ICourse>(courseResult);
+                }
+                else
+                {
+                    return Result.Fail<ICourse>("Course add service unsuccessful http response");
+                }
+            }
+            catch (HttpRequestException hre)
+            {
+                _logger.LogException("Course add service http request error", hre);
+                return Result.Fail<ICourse>("Course add service http request error.");
+            }
+            catch (Exception e)
+            {
+                _logger.LogException("Course add service unknown error.", e);
+
+                return Result.Fail<ICourse>("Course add service unknown error.");
+            }
+            finally
+            {
+                _logger.LogMethodExit();
+            }
         }
     }
 
     internal static class CourseServiceSettingsExtensions
     {
-        internal static Uri ToGetWhatEverUri(this ICourseServiceSettings extendee)
+        internal static Uri ToAddCourseUri(this ICourseServiceSettings extendee)
         {
-            return new Uri($"{extendee.ApiUrl + "GetWhatEver?code=" + extendee.ApiKey}");
+            return new Uri($"{extendee.ApiUrl + "AddCourse?code=" + extendee.ApiKey}");
         }
     }
 }
