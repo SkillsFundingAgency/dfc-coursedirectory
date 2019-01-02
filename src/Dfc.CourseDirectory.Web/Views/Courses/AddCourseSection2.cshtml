@@ -12,6 +12,8 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.Attendance
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.AddStartDate
 @using Dfc.CourseDirectory.Web.ViewComponents.AdvancedLearnerLoan
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.Duration
+@using Duration = Dfc.CourseDirectory.Web.ViewComponents.Courses.Duration.Duration
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.Cost
 
 @model Dfc.CourseDirectory.Web.ViewModels.AddCourseDetailsViewModel
@@ -131,6 +133,37 @@
         AriaDescribedBy = "Select whether Advanced Learner Loan is available for this course"
     })
 
+    @await Component.InvokeAsync(nameof(Duration), new DurationModel
+    {
+        DurationUnits = new List<DurationUnitModel>()
+        {
+
+            new DurationUnitModel()
+            {
+                Id = 0,
+                DurationUnit = "Days"
+            },
+            new DurationUnitModel()
+            {
+                Id = 1,
+                DurationUnit = "Weeks"
+            },
+            new DurationUnitModel()
+            {
+                Id = 2,
+                DurationUnit = "Months"
+            },
+            new DurationUnitModel()
+            {
+                Id = 3,
+                DurationUnit = "Years"
+            }
+        },
+        LabelText = "Duration",
+        HintText = "Select the duration of the course",
+        AriaDescribedBy = "Select course duration"
+    })
+
     @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode.StudyMode), new StudyModeModel
     {
         StudyMode = Dfc.CourseDirectory.Models.Models.Courses.StudyMode.FullTime,
@@ -227,6 +260,9 @@
                         }
                     }
 
+                    var $durationLength = $("#@nameof(Model.DurationLength)");
+                    $durationLength.trigger("blur");
+                
                     var radioValue = $("input[name='StartDateType']:checked").val();
                     if (radioValue.toUpperCase() === "SPECIFIEDSTARTDATE") {
                         $validationMessageForRequired.hide();
