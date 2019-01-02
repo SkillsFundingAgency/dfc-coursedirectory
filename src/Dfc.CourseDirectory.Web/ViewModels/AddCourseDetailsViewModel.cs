@@ -2,7 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Permissions;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Models.Models.Courses;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseFor;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.EntryRequirements;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.HowAssessed;
@@ -33,6 +35,15 @@ namespace Dfc.CourseDirectory.Web.ViewModels
 
 
         public string CourseName { get; set; }
+
+        public DateTime StartDate { get; set; }
+
+        public StartDateType StartDateType { get; set; }
+
+        public int Day { get; set; }
+        public int Month { get; set; }
+        public int Year { get; set; }
+        public string DurationLength { get; set; }
 
     }
 }
