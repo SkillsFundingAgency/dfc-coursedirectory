@@ -3,36 +3,25 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @model Dfc.CourseDirectory.Web.ViewComponents.Courses.Duration.DurationModel
 
+
+
 <div class="govuk-form-group">
-    <fieldset class="govuk-fieldset" aria-describedby="dob-hint" role="group">
-        <label class="govuk-label" for="sub">
-            @Model.LabelText
-        </label>
-        <span id="more-detail-hint" class="govuk-hint">@Model.HintText</span>
-        <div class="govuk-date-input" id="dob">
+    <label class="govuk-label" asp-for="@Model.LabelText">
+        @Model.LabelText
+    </label>
+    @if (!string.IsNullOrWhiteSpace(Model.HintText))
+    {
+        <span class="govuk-hint">
+            @Model.HintText
+        </span>
+    }
+    <span asp-validation-for="@Model.DurationLength" class="govuk-error-message"></span>
 
-            <span asp-validation-for="@Model.DurationLength" class="govuk-error-message"></span>
-            <div class="govuk-date-input__item" style="margin-right:10px;">
-                <div class="govuk-form-group">
-
-                    <input pattern="[0-9]*" min="1" step="1" class="govuk-input govuk-input--width-2" style="display:inline;" asp-for="@Model.DurationLength" type="text" aria-describedby="@Model.AriaDescribedBy">
-                </div>
-            </div>
-
-
-            <div class="govuk-date-input__item" style="width:120px;">
-                <div class="govuk-form-group">
-
-                    <select class="govuk-select" asp-for="Id" style="width:120px;"
-                            asp-items="@(new SelectList(Model.DurationUnits,"Id","DurationUnit"))"></select>
-                </div>
-            </div>
-
-
-
-        </div>
-    </fieldset>
+    <input pattern="[0-9]*" min="1" step="1" class="govuk-input govuk-input--width-2" style="display:inline;" asp-for="@Model.DurationLength" type="text" aria-describedby="@Model.AriaDescribedBy">
+    <select class="govuk-select" asp-for="Id" style="width:120px;"
+            asp-items="@(new SelectList(Model.DurationUnits,"Id","DurationUnit"))"></select>
 </div>
+
 
 <script>
     (function ($) {
@@ -81,6 +70,10 @@
 
             $elementDurationLength.on("keypress", function (event) {
                 var charCode = event.which ? event.which : event.keyCode;
+
+                if ($elementDurationLength.val().length > 3) {
+                    return false;
+                }
 
                 if ((charCode >= 48 && charCode <= 57) || charCode === 46) {
                     return true;

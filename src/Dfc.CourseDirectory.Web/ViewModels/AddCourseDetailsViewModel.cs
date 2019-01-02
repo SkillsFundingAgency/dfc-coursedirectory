@@ -34,5 +34,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels
 
         public string CourseName { get; set; }
 
+        public string DurationLength { get; set; }
+
     }
 }

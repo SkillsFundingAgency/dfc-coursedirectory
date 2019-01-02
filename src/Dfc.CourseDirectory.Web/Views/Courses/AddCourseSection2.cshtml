@@ -158,3 +158,15 @@
     </div>
 
 </form>
+
+<script>
+    (function ($) {
+        $(function () {
+            var $publish = $("#publish");
+            $publish.on("click", function (e) {
+                var $durationLength = $("#@nameof(Model.DurationLength)");
+                $durationLength.trigger("blur");
+            });
+        });
+    })(jQuery);
+</script>
