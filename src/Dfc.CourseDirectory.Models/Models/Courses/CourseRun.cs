@@ -43,31 +43,23 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         // id was commented out
         //public Guid id { get; }
         public Guid id { get; set; }
-        public int VenueId { get; set; }
+        public Guid VenueId { get; set; }
         public string CourseName { get; set; }
         public string ProviderCourseID { get; set; }
-        public string CourseDescription { get; set; }
-        public string EntryRequirments { get; set; }
-        public string WhatYoullLearn { get; set; }
-        public string HowYoullLearn { get; set; }
-        public string WhatYoullNeed { get; set; }
-        public string WhatYoullNeedToBring { get; set; }
-        public string HowYoullBeAssessed { get; set; }
-        public string WhereNext { get; set; }
         public string DeliveryMode { get; set; }
         public bool FlexibleStartDate { get; set; }
         public DateTime StartDate { get; set; }
         public string CourseURL { get; set; }
         public decimal Cost { get; set; }
         public string CostDescription { get; set; }
-        public bool AdvancedLearnerLoan { get; set; }
+        
         public DurationUnit DurationUnit { get; set; }
         public int DurationValue { get; set; }
         public StudyMode StudyMode { get; set; }
         public AttendancePattern AttendancePattern { get; set; }
-        public IVenue Venue { get; set; }
-        public IProvider Provider { get; set; }
-        public IQualification Qualification { get; set; }
+        //public IVenue Venue { get; set; }
+        //public IProvider Provider { get; set; }
+        //public IQualification Qualification { get; set; }
 
         public DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }

@@ -7,12 +7,16 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.Attendance
 @using Dfc.CourseDirectory.Models.Models.Courses
 
+@model Dfc.CourseDirectory.Web.ViewModels.AddCourseDetailsViewModel
 
 <h1 class="govuk-heading-xl">Add course section 2</h1>
+
+<p style="padding: 15px 20px; border: 3px solid #009900;background-color:#fff;" id="qual--">Qualification added:<br> @Model.LearnAimRefTitle<br> Level: @Model.NotionalNVQLevelv2<br> Awarding organisation: @Model.AwardOrgCode<br> LARS/QAN: @Model.LearnAimRef</p>
 
 <form asp-controller="Courses" asp-action="AddCourse">
     @await Component.InvokeAsync(nameof(CourseName), new CourseNameModel
     {
+        CourseName = Model.CourseName,
         LabelText = "Course name",
         HintText = "This is the name people will see when they search for your course.",
         AriaDescribedBy = "Please enter the course name."

@@ -133,7 +133,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _session.SetString("HowAssessed", model.HowAssessed);
             _session.SetString("WhereNext", model.WhereNext);
 
-            return View("AddCourseSection2");
+            var viewModel = new AddCourseDetailsViewModel()
+            {
+                LearnAimRef = _session.GetString("LearnAimRef"),
+                LearnAimRefTitle = _session.GetString("LearnAimRefTitle"),
+                AwardOrgCode = _session.GetString("AwardOrgCode"),
+                NotionalNVQLevelv2 = _session.GetString("NotionalNVQLevelv2"),
+                CourseName = _session.GetString("LearnAimRefTitle")
+            };
+            return View("AddCourseSection2", viewModel);
         }
 
         public IActionResult AddCourseSection2(AddCourseRequestModel requestModel)
@@ -180,7 +188,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             // For each Venue => Course Run
             var courseRuns = new List<CourseRun>();
             // It will come from Venue selection
-            var venueSelection = new int[] { 1234567, 7654321 };
+            var venueSelection = new Guid[] { new Guid("86748623-93f0-4ebd-8a37-0f0754822b7e"), new Guid("96748623-93f0-4ebd-8a37-0f0754822b7e") };
 
             foreach (var venue in venueSelection)
             {
@@ -193,21 +201,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     CourseName = model.CourseName,
                     ProviderCourseID = model.CourseProviderReference,
 
-                    CourseDescription = courseFor, // NO Editing
-                    EntryRequirments = entryRequirements, // NO Editing
-                    WhatYoullLearn = whatWillLearn, // NO Editing
-                    HowYoullLearn = howYouWillLearn, // NO Editing
-                    WhatYoullNeed = whatYouNeed, // NO Editing
-                                                 //WhatYoullNeedToBring = "NO CONTENT", // NO Editing => ATTENTION
-                    HowYoullBeAssessed = howAssessed, // NO Editing
-                    WhereNext = whereNext, // NO Editing
+                    
                     DeliveryMode = "0", // TOBE COMPLETED, change string to DeliveryMode => Liam
                     FlexibleStartDate = false, // // TOBE COMPLETED
                     StartDate = DateTime.Now, // DateTime // TOBE COMPLETED
                     CourseURL = model.Url,
                     Cost = model.Cost, // decimal
                     CostDescription = model.CostDescription,
-                    AdvancedLearnerLoan = model.AdvancedLearnerLoan, //bool // TOBE COMPLETED
                     DurationUnit = model.DurationUnit, // DurationUnit // TOBE COMPLETED
                     DurationValue = model.DurationValue, //int // TOBE COMPLETED
                     StudyMode = model.StudyMode, // StudyMode // Its done to be MERGED
@@ -247,25 +247,35 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                 ProviderUKPRN = "10052996",
 
+                CourseDescription = courseFor, // NO Editing
+                EntryRequirments = entryRequirements, // NO Editing
+                WhatYoullLearn = whatWillLearn, // NO Editing
+                HowYoullLearn = howYouWillLearn, // NO Editing
+                WhatYoullNeed = whatYouNeed, // NO Editing
+                                             //WhatYoullNeedToBring = "NO CONTENT", // NO Editing => ATTENTION
+                HowYoullBeAssessed = howAssessed, // NO Editing
+                WhereNext = whereNext, // NO Editing
 
-                QuAP = new QuAP(),
+                AdvancedLearnerLoan = model.AdvancedLearnerLoan, //bool // TOBE COMPLETED
+
+                //QuAP = new QuAP(),
                 // Guid ID /// ?????
                 // Qualification Qualification => 
                 // Provider Provider { get; set; }
-                CourseData = new CourseData
-                {
-                    ID = Guid.NewGuid(), // ??? Why we need that? Isn't that the id above?
-                    CourseID = Guid.NewGuid(), // ???
-                    CourseTitle = learnAimRefTitle, // => Qualification added: PGCE in Secondary (Mathematics) - Bradford College
-                                                    // learnAimRef => LARS / QAN: "302309" -??? INTIGER ?
-                                                    //notionalNVQLevelv2 => Level: "7" - ??? INTIGER ?
-                                                    //awardOrgCode => Awarding organisation: "BOLTONIN";
+                //CourseData = new CourseData
+                //{
+                //    ID = Guid.NewGuid(), // ??? Why we need that? Isn't that the id above?
+                //    CourseID = Guid.NewGuid(), // ???
+                //    CourseTitle = learnAimRefTitle, // => Qualification added: PGCE in Secondary (Mathematics) - Bradford College
+                //                                    // learnAimRef => LARS / QAN: "302309" -??? INTIGER ?
+                //                                    //notionalNVQLevelv2 => Level: "7" - ??? INTIGER ?
+                //                                    //awardOrgCode => Awarding organisation: "BOLTONIN";
 
-                    // Provider "UnitedKingdomProviderReferenceNumber" UKPRN: "10036651" => The beggining of ALL
+                //    // Provider "UnitedKingdomProviderReferenceNumber" UKPRN: "10036651" => The beggining of ALL
 
-                    // ??? QualificationTypes => Diploma, Cerificate
-                },
-                CourseRun = courseRuns // new[] { firstCourseRun }
+                //    // ??? QualificationTypes => Diploma, Cerificate
+                //},
+                CourseRuns = courseRuns // new[] { firstCourseRun }
             };
 
             var result = await _courseService.AddCourseAsync(course);
