@@ -1,13 +1,26 @@
-﻿<h1 class="govuk-heading-xl">
-    Courses Index (YAGNI???)
-</h1>
+﻿@using Dfc.CourseDirectory.Web.ViewComponents.Courses.Cost
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.Line2
+@using Microsoft.CodeAnalysis.CSharp
+@model Dfc.CourseDirectory.Web.ViewModels.YourCoursesViewModel
 
-<ul>
+@*<h1 class="govuk-heading-xl">
+    Courses Index (YAGNI???)
+</h1>*@
+
+
+@foreach (var course in Model.YourCourses)
+{
+    @await Component.InvokeAsync(nameof(Line2), course)
+}
+
+
+
+@*<ul>
     <li>
         <a class="govuk-link" asp-controller="Courses" asp-action="AddCourseSection1">Add course section 1</a>
     </li>
     <li>
         <a class="govuk-link" asp-controller="Courses" asp-action="AddCourseSection2">Add course section 2</a>
     </li>
-</ul>
+</ul>*@
 

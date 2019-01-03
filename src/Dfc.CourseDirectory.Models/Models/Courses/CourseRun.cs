@@ -66,6 +66,16 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         Years = 3,
     }
 
+    public enum DeliveryType
+    {
+        [Description("Classroom")]
+        Classroom = 0,
+        [Description("Online")]
+        Online = 1,
+        [Description("Work based")]
+        Workbased = 2,
+    }
+
     public class CourseRun : ICourseRun 
     {
         public Guid Id { get; set; }

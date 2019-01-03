@@ -26,6 +26,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Dfc.CourseDirectory.Models.Models.Qualifications;
+using Dfc.CourseDirectory.Models.Models.Venues;
+using Dfc.CourseDirectory.Web.ViewComponents.Courses.Line2;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -54,7 +56,81 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         public IActionResult Index()
         {
-            return View();
+
+            //var UKPRN = _session.GetInt32("UKPRN").Value;
+
+
+            //VenueSearchResultModel model;
+
+            //if (requestModel == null)
+            //{
+            //    model = new VenueSearchResultModel();
+            //}
+            //else
+            //{
+            //    var criteria = _venueSearchHelper.GetVenueSearchCriteria(
+            //        requestModel);
+
+            //    var result = await _venueService.SearchAsync(criteria);
+
+            //    if (result.IsSuccess && result.HasValue)
+            //    {
+            //        var items = _venueSearchHelper.GetVenueSearchResultItemModels(result.Value.Value);
+            //        model = new VenueSearchResultModel(
+            //            requestModel.SearchTerm,
+            //            items, null, false);
+            //    }
+            //    else
+            //    {
+            //        model = new VenueSearchResultModel(result.Error);
+            //    }
+            //}
+
+
+            YourCoursesViewModel vm = new YourCoursesViewModel
+            {
+
+
+                
+                
+                YourCourses = new List<Line2Model>()
+                {
+                    new Line2Model()
+                    {
+                        CourseName = "Certificate in Child Development",
+                        CourseNameAriaDescribedBy = "",
+                        CourseNameLabel = "Course name",
+                        Id = "",
+                        IdAriaDescribedBy = "",
+                        IdLabel = "ID",
+                        DeliveryType = "Online",
+                        StartDate = "Flexible start date",
+                        StartDateLabel = "Start date",
+                        StartDateAriaDescribedBy = ""
+                        //Venues = new List<Venue>(){Dfc.CourseDirectory.Models.Models.Venues.Venue
+                        //{
+                        //    ID= Guid.NewGuid(),
+                            
+                        //} }
+
+                    },
+                    new Line2Model()
+                    {
+                        CourseName = "Certificate in Direct LEarning Support",
+                        CourseNameAriaDescribedBy = "",
+                        CourseNameLabel = "Course name",
+                        Id = "",
+                        IdAriaDescribedBy = "",
+                        IdLabel = "ID",
+                        DeliveryType = "Workbased",
+                        StartDate = "01/02/2020",
+                        StartDateLabel = "Start date",
+                        StartDateAriaDescribedBy = "",
+                    }
+                }
+            };
+
+            return View(vm);
         }
 
         public IActionResult AddCourseSection1(string learnAimRef, string notionalNVQLevelv2, string awardOrgCode, string learnAimRefTitle)
