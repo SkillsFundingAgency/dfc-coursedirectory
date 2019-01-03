@@ -106,7 +106,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         DeliveryType = "Online",
                         StartDate = "Flexible start date",
                         StartDateLabel = "Start date",
-                        StartDateAriaDescribedBy = ""
+                        StartDateAriaDescribedBy = "",
+                        Url = "https://coursedirectoryproviderportal.org.uk/Course/Create/50097453",
+                        UrlLabel = "URL",
+                        UrlAriaDescribedBy = ""
                         //Venues = new List<Venue>(){Dfc.CourseDirectory.Models.Models.Venues.Venue
                         //{
                         //    ID= Guid.NewGuid(),
@@ -126,6 +129,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         StartDate = "01/02/2020",
                         StartDateLabel = "Start date",
                         StartDateAriaDescribedBy = "",
+                        Url = "https://coursedirectoryproviderportal.org.uk/Course/Create/50097453",
+                        UrlLabel = "URL",
+                        UrlAriaDescribedBy = ""
                     }
                 }
             };

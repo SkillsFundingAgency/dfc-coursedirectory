@@ -30,18 +30,36 @@
             @Model.DeliveryTypes.ToSelectList<DeliveryType>(), new { id = "deliveryType", @class = "govuk-select" })
     </div>
 
-    @*    <div style="display: inline-block;padding-right: 10px">
-            <label class="govuk-label">Start date</label>
-            <input type="text" class="datepicker govuk-input hasDatepicker" placeholder="03/12/2018" value="Flexible start date" style="border: none;font-size: 14px;position: relative;width:130px;color:inherit;background-color: inherit;" readonly="" data-old="Flexible start date">
-        </div>*@
+    <div class="govuk-form-group" style="display: inline-block;padding-right: 10px">
+        <label class="govuk-label">@Model.StartDateLabel</label>
+        <input readonly="@(true)" style="width:130px;" class="govuk-input govuk-input--width-10" asp-for="@Model.StartDate" type="text" aria-describedby="@Model.StartDateAriaDescribedBy">
+
+    </div>
+
+
 
     @*<div class="govuk-form-group" style="display: inline-block;padding-right: 10px;width:230px;">
             <label class="govuk-label">Venue</label>
             <select class="govuk-select" name="venue"><option>Kent Innovation Centre</option></select>
+        </div>*@
+
+
+    <div class="govuk-form-group" style="display: inline-block;padding-right: 10px">
+        <label class="govuk-label">@Model.UrlLabel</label>
+        <a href="#" class="govuk-linkdata-url="https://coursedirectoryproviderportal.org.uk/Course/Create/50097453">View</a>
+        <div class="edit-url-cont">
+            @*<input class="govuk-input edit-url-input" type="text" readonly="" value="https://coursedirectoryproviderportal.org.uk/Course/Create/50097453">*@
+            
+            <input readonly="@(true)" class="govuk-input govuk-input--width-10" asp-for="@Model.Url" type="text" aria-describedby="@Model.UrlAriaDescribedBy">
+
+            <a href="#" class="govuk-link" style="margin-top:10px;float:left;">Close</a>
         </div>
+        
 
+  
+    </div>
 
-        <div style="display: inline-block;padding-right: 10px;width:80px;text-align:center;">
+    @*<div style="display: inline-block;padding-right: 10px;width:80px;text-align:center;">
             <label class="govuk-label" style="margin-bottom:18px;">URL</label>
             <a href="#" class="edit-btn open-url" data-url="https://coursedirectoryproviderportal.org.uk/Course/Create/50097453">View</a>
             <a href="#" class="edit-btn save-url">&nbsp;</a>

@@ -44,6 +44,16 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Courses.Line2
 
         public string UrlAriaDescribedBy { get; set; }
 
+        public string CostLabel { get; set; }
+        public string Cost { get; set; }
+
+        public string CostAriaDescribedBy { get; set; }
+
+        public string CostDetailLabel { get; set; }
+        public string CostDetail { get; set; }
+
+        public string CostDetailAriaDescribedBy { get; set; }
+
 
 
         public DeliveryType DeliveryTypes { get; set; }
