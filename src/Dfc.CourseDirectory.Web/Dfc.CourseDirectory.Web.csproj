@@ -58,6 +58,9 @@
     <Content Update="ViewComponents\Courses\Duration\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="ViewComponents\Courses\Cost\Default.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="ViewComponents\Courses\StudyMode\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
