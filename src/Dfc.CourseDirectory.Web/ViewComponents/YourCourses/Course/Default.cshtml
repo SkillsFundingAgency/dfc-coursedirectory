@@ -1,0 +1,33 @@
+﻿@model Dfc.CourseDirectory.Web.ViewModels.YourCoursesViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<div class="govuk-form-group">
+    <ul>
+        @foreach (var course in Model.Courses)
+        {
+            <li>
+                <h3 class="govuk-heading-m">
+                    @course.QualificationCourseTitle
+                </h3>
+                <p class="govuk-body-l">
+                    Level @course.NotionalNVQLevelv2, @course.AwardOrgCode, Lars: @course.LearnAimRef, @course.CourseDescription, @course.AdvancedLearnerLoan
+                </p>
+            </li>
+            @foreach (var courseRun in course.CourseRuns)
+            {
+                @*<p class="govuk-body-l">
+                    @courseRun.CourseName
+                    @* 
+                        /*
+                        * @await Component.Invoke(nameOf(CourseRun), courseRun);
+                        */
+                    </p>
+                    *@
+                    
+
+
+            }
+            
+        }
+    </ul>
+</div>

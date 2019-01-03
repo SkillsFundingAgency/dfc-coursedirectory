@@ -82,7 +82,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 {
                     id = Guid.NewGuid(),
                     VenueId = Guid.NewGuid(),
-                    CourseName = "GCE A Level in Further Mathematics",
+                    CourseName = "GCE A Level in Further Mathematics 2",
                     ProviderCourseID = "asfdf-someId-courseId-string-guid",
                     DeliveryMode = "Classroom based",
                     FlexibleStartDate = false,
@@ -107,7 +107,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 new Course
                 {
                     id = Guid.NewGuid(),
-                    QualificationCourseTitle = "GCE A Level in Further Mathematics",
+                    QualificationCourseTitle = "GCE A Level in Further Mathematics - Course",
                     LearnAimRef = "10060108",
                     NotionalNVQLevelv2 = "3",
                     AwardOrgCode = "CCEA",
@@ -130,7 +130,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 UKPRN = _session.GetInt32("UKPRN"),
                 Courses = course
             };
-            return View();
+            return View(vm);
         }
 
         public IActionResult AddCourseSection1(string learnAimRef, string notionalNVQLevelv2, string awardOrgCode, string learnAimRefTitle)
