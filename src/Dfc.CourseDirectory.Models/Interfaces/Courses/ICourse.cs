@@ -8,7 +8,7 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Courses
 {
     public interface ICourse
     {
-        Guid Id { get; set; }
+        Guid id { get; set; }
 
         string QualificationCourseTitle { get; set; } 
         string LearnAimRef { get; set; } 
@@ -16,7 +16,7 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Courses
         string AwardOrgCode { get; set; } 
         string QualificationType { get; set; } 
 
-        string ProviderUKPRN { get; set; } 
+        int ProviderUKPRN { get; set; } 
 
         string CourseDescription { get; set; }
         string EntryRequirments { get; set; } 
