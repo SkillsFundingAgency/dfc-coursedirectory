@@ -74,7 +74,7 @@
             YearAriaDescribedBy = "",
             YearLabelText = "Year",
             AriaDescribedBy = "",
-            SpecifiedDateHintText = "Enter the start date of this course, if it has flexible start dates select the checkbox below",
+            SpecifiedDateHintText = "e.g. 'For example, 30 9 2019",
             FlexibleDateHintText = "Or select a flexible start date:",
             LabelText = "Start date"
 
@@ -107,6 +107,7 @@
 
         @await Component.InvokeAsync(nameof(Duration), new DurationModel
         {
+            
             DurationUnits = new List<DurationUnitModel>()
             {
 
@@ -131,6 +132,7 @@
                     DurationUnit = "Years"
                 }
             },
+            Id = 2,
             LabelText = "Duration",
             HintText = "Select the duration of the course",
             AriaDescribedBy = "Select course duration"

@@ -71,11 +71,11 @@
             $elementDurationLength.on("keypress", function (event) {
                 var charCode = event.which ? event.which : event.keyCode;
 
-                if ($elementDurationLength.val().length > 3) {
+                if ($elementDurationLength.val().length >= 3) {
                     return false;
                 }
 
-                if ((charCode >= 48 && charCode <= 57) || charCode === 46) {
+                if ((charCode >= 48 && charCode <= 57)) {
                     return true;
                 }
 

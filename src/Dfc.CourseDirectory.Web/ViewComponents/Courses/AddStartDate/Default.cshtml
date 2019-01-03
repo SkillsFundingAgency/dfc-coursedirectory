@@ -17,7 +17,7 @@
 
         <div class="govuk-radios__item">
             @Html.RadioButtonFor(m => m.StartDateType, StartDateType.SpecifiedStartDate, new { @class = "govuk-radios__input specified", id = @StartDateType.SpecifiedStartDate })
-            <label class="govuk-label govuk-radios__label" for="@StartDateType.SpecifiedStartDate"></label>
+            <label class="govuk-label govuk-radios__label" for="@StartDateType.SpecifiedStartDate">Defined Start Date</label>
         </div>
 
         <div class="govuk-form-group" id="startDateFormGroup">
@@ -43,7 +43,7 @@
             <span class="govuk-error-message field-validation-error" id="required" style="display: none;margin-bottom: 15px;">
                 <span id="requiredMessage" class="">Choose an actual Start Date or select ‘Flexible Start Date’</span>
             </span>
-            <div class="dateFields">
+            <div class="dateFields" style="padding-left: 55px;">
                 <label class="govuk-label" asp-for="@Model.Day" aria-describedby="@Model.DayAriaDescribedBy" style="display: inline-block; width: 60px;">
                     @Model.DayLabelText
                 </label>
@@ -55,19 +55,19 @@
                 </label>
             </div>
 
-            <input class="govuk-input" asp-for="@Model.Day" type="text" style="width: 60px;">
-            <input class="govuk-input" asp-for="@Model.Month" type="text" style="width: 60px;">
-            <input class="govuk-input" asp-for="@Model.Year" type="text" style="width: 120px;">
+            <div class="inputDateFields" style="padding-left: 55px; margin-bottom: 25px;">
+                <input class="govuk-input" asp-for="@Model.Day" type="text" style="width: 60px;">
+                <input class="govuk-input" asp-for="@Model.Month" type="text" style="width: 60px;">
+                <input class="govuk-input" asp-for="@Model.Year" type="text" style="width: 120px;">
+            </div>
+
+
+            <div class="govuk-radios__item">
+                @Html.RadioButtonFor(m => m.StartDateType, StartDateType.FlexibleStartDate, new { @class = "govuk-radios__input flexible", id = @StartDateType.FlexibleStartDate })
+                <label class="govuk-label govuk-radios__label" for="@StartDateType.FlexibleStartDate">Flexible Start Date</label>
+            </div>
+
         </div>
-
-        <span id="more-detail-hint" class="govuk-hint" style="margin-top: 20px">@Model.FlexibleDateHintText </span>
-
-        <div class="govuk-radios__item">
-            @Html.RadioButtonFor(m => m.StartDateType, StartDateType.FlexibleStartDate, new { @class = "govuk-radios__input flexible", id = @StartDateType.FlexibleStartDate })
-            <label class="govuk-label govuk-radios__label" for="@StartDateType.FlexibleStartDate">Select a flexible start date</label>
-        </div>
-
-    </div>
 
 </fieldset>
 
@@ -172,7 +172,7 @@
                     return false;
                 };
 
-                if ((charCode >= 48 && charCode <= 57) || charCode === 46) {
+                if ((charCode >= 48 && charCode <= 57)) {
                     return true;
                 }
 
@@ -186,7 +186,7 @@
                     return false;
                 };
 
-                if ((charCode >= 48 && charCode <= 57) || charCode === 46) {
+                if ((charCode >= 48 && charCode <= 57) ) {
                     return true;
                 }
 
@@ -200,7 +200,7 @@
                     return false;
                 };
 
-                if ((charCode >= 48 && charCode <= 57) || charCode === 46) {
+                if ((charCode >= 48 && charCode <= 57) ) {
                     return true;
                 }
 
