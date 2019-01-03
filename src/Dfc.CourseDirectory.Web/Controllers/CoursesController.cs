@@ -59,12 +59,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         public IActionResult AddCourseSection1(string learnAimRef, string notionalNVQLevelv2, string awardOrgCode, string learnAimRefTitle)
         {
-            // TODO DELETE after testing
-            learnAimRef = "TEST - 302309";
-            notionalNVQLevelv2 = "TEST - 7";
-            awardOrgCode = "TEST - BOLTONIN";
-            learnAimRefTitle = "TEST - PGCE in Secondary (Mathematics) - Bradford College";
-
             _session.SetString("LearnAimRef", learnAimRef);
             _session.SetString("NotionalNVQLevelv2", notionalNVQLevelv2);
             _session.SetString("AwardOrgCode", awardOrgCode);
@@ -125,13 +119,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpPost]
         public IActionResult AddCourseSection1(AddCourseSection1RequestModel model)
         {
-            _session.SetString("CourseFor", model.CourseFor);
-            _session.SetString("EntryRequirements", model.EntryRequirements);
-            _session.SetString("WhatWillLearn", model.WhatWillLearn);
-            _session.SetString("HowYouWillLearn", model.HowYouWillLearn);
-            _session.SetString("WhatYouNeed", model.WhatYouNeed);
-            _session.SetString("HowAssessed", model.HowAssessed);
-            _session.SetString("WhereNext", model.WhereNext);
+            _session.SetString("CourseFor", model?.CourseFor);
+            _session.SetString("EntryRequirements", model?.EntryRequirements ?? string.Empty);
+            _session.SetString("WhatWillLearn", model?.WhatWillLearn ?? string.Empty);
+            _session.SetString("HowYouWillLearn", model?.HowYouWillLearn ?? string.Empty);
+            _session.SetString("WhatYouNeed", model?.WhatYouNeed ?? string.Empty);
+            _session.SetString("HowAssessed", model?.HowAssessed ?? string.Empty);
+            _session.SetString("WhereNext", model?.WhereNext ?? string.Empty);
 
             var viewModel = new AddCourseDetailsViewModel()
             {
@@ -171,13 +165,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 string.IsNullOrEmpty(notionalNVQLevelv2) ||
                 string.IsNullOrEmpty(awardOrgCode) ||
                 string.IsNullOrEmpty(learnAimRefTitle) ||
-                string.IsNullOrEmpty(courseFor) ||
-                string.IsNullOrEmpty(entryRequirements) ||
-                string.IsNullOrEmpty(whatWillLearn) ||
-                string.IsNullOrEmpty(howYouWillLearn) ||
-                string.IsNullOrEmpty(whatYouNeed) ||
-                string.IsNullOrEmpty(howAssessed) ||
-                string.IsNullOrEmpty(whereNext)
+                string.IsNullOrEmpty(courseFor)
               )
             {
                 return RedirectToAction("AddCourseSection1", new { learnAimRef = learnAimRef, notionalNVQLevelv2 = notionalNVQLevelv2, awardOrgCode = awardOrgCode, learnAimRefTitle = learnAimRefTitle });
@@ -190,27 +178,43 @@ namespace Dfc.CourseDirectory.Web.Controllers
             // It will come from Venue selection
             var venueSelection = new Guid[] { new Guid("86748623-93f0-4ebd-8a37-0f0754822b7e"), new Guid("96748623-93f0-4ebd-8a37-0f0754822b7e") };
 
+            bool flexibleStartDate = false;
+            DateTime specifiedStartDate = DateTime.MinValue;
+            if (model.StartDateType.Equals("SpecifiedStartDate", StringComparison.InvariantCultureIgnoreCase))
+            {
+                string day = model.Day.Length == 1 ? string.Concat("0", model.Day) : model.Day;
+                string month = model.Month.Length == 1 ? string.Concat("0", model.Month) : model.Month;
+                string startDate = string.Format("{0}-{1}-{2}", day, month, model.Year);
+                specifiedStartDate = DateTime.ParseExact(startDate, "dd-MM-yyyy", System.Globalization.CultureInfo.InvariantCulture);
+            }
+            else if (model.StartDateType.Equals("FlexibleStartDate", StringComparison.InvariantCultureIgnoreCase))
+            {
+                flexibleStartDate = true;
+            }
+            else
+            {
+                // StartDateType not defined - log it.
+            }
+
             foreach (var venue in venueSelection)
             {
                 var courseRun = new CourseRun
                 {
-                    Id = Guid.NewGuid(), 
-                    VenueId = venue, 
+                    id = Guid.NewGuid(),
+                    VenueId = venue,
 
                     CourseName = model.CourseName,
                     ProviderCourseID = model.CourseProviderReference,
-
-                    
-                    DeliveryMode = "0", // TOBE COMPLETED, change string to DeliveryMode => Liam
-                    FlexibleStartDate = false, // // TOBE COMPLETED
-                    StartDate = DateTime.Now, // DateTime // TOBE COMPLETED
+                    DeliveryMode = model.CourseDeliveryType,
+                    FlexibleStartDate = flexibleStartDate,
+                    StartDate = specifiedStartDate,
                     CourseURL = model.Url,
-                    Cost = model.Cost, // decimal
+                    Cost = model.Cost,
                     CostDescription = model.CostDescription,
-                    DurationUnit = model.DurationUnit, // DurationUnit // TOBE COMPLETED
-                    DurationValue = model.DurationValue, //int // TOBE COMPLETED
-                    StudyMode = model.StudyMode, // StudyMode // Its done to be MERGED
-                    AttendancePattern = model.AttendanceMode, // AttendancePattern                  
+                    DurationUnit = model.Id, // DurationUnit // TOBE COMPLETED
+                    DurationValue = model.DurationLength,
+                    StudyMode = model.StudyMode,
+                    AttendancePattern = model.AttendanceMode,
 
                     CreatedDate = DateTime.Now,
                     CreatedBy = "ProviderPortal-AddCourse" // TODO - Change to the name of the logged person 
@@ -219,39 +223,40 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 courseRuns.Add(courseRun);
             }
 
+            var UKPRN = _session.GetInt32("UKPRN").Value;
             var course = new Course
             {
-                Id = Guid.NewGuid(),
+                id = Guid.NewGuid(),
 
-                QualificationCourseTitle = learnAimRefTitle, 
-                LearnAimRef = learnAimRef, 
-                NotionalNVQLevelv2 = notionalNVQLevelv2, 
-                AwardOrgCode = awardOrgCode, 
+                QualificationCourseTitle = learnAimRefTitle,
+                LearnAimRef = learnAimRef,
+                NotionalNVQLevelv2 = notionalNVQLevelv2,
+                AwardOrgCode = awardOrgCode,
                 QualificationType = "Diploma", // ??? QualificationTypes => Diploma, Cerificate or EACH courserun
 
-                ProviderUKPRN = "10052996",
+                ProviderUKPRN = UKPRN, // Shall we do check for it 
 
-                CourseDescription = courseFor, 
-                EntryRequirments = entryRequirements, 
-                WhatYoullLearn = whatWillLearn, 
-                HowYoullLearn = howYouWillLearn, 
-                WhatYoullNeed = whatYouNeed, 
-                HowYoullBeAssessed = howAssessed, 
-                WhereNext = whereNext, 
+                CourseDescription = courseFor,
+                EntryRequirments = entryRequirements,
+                WhatYoullLearn = whatWillLearn,
+                HowYoullLearn = howYouWillLearn,
+                WhatYoullNeed = whatYouNeed,
+                HowYoullBeAssessed = howAssessed,
+                WhereNext = whereNext,
 
                 AdvancedLearnerLoan = model.AdvancedLearnerLoan, //bool // TOBE COMPLETED
-              
-                CourseRuns = courseRuns 
+
+                CourseRuns = courseRuns
             };
 
             var result = await _courseService.AddCourseAsync(course);
 
+            RemoveSessionVariables();
+
             if (result.IsSuccess && result.HasValue)
             {
                 // GOOD
-
-                // TODO Clear Session Variables
-                _session.Remove("LearnAimRef"); // and the rest 
+                // X number of courses
 
                 return new EmptyResult();
             }
@@ -260,10 +265,24 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 // BAD
 
                 // TODO DEPENDS OF what you want to do => Clear Session Variables
-                _session.Remove("LearnAimRef"); // and the rest 
-
                 return new EmptyResult();
             }
+        }
+
+        internal void RemoveSessionVariables()
+        {
+            _session.Remove("LearnAimRef");
+            _session.Remove("NotionalNVQLevelv2");
+            _session.Remove("AwardOrgCode");
+            _session.Remove("LearnAimRefTitle");
+
+            _session.Remove("CourseFor");
+            _session.Remove("EntryRequirements");
+            _session.Remove("WhatWillLearn");
+            _session.Remove("HowYouWillLearn");
+            _session.Remove("WhatYouNeed");
+            _session.Remove("HowAssessed");
+            _session.Remove("WhereNext");
         }
     }
 }
