@@ -31,6 +31,12 @@
     },
     "providerApiKey": {
       "value": "not-a-real-key"
+    },
+    "courseApiUrl": {
+      "value": "https://my.api.net/api/course/"
+    },
+    "courseApiKey": {
+      "value": "not-a-real-key"
     }
   }
 }
