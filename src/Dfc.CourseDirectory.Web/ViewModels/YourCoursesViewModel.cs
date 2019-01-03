@@ -1,14 +1,14 @@
-﻿using System;
+﻿using Dfc.CourseDirectory.Models.Models.Courses;
+using System;
 using System.Collections.Generic;
-using Dfc.CourseDirectory.Models.Models.Courses;
-using Dfc.CourseDirectory.Web.ViewComponents.Courses.Line2;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Dfc.CourseDirectory.Web.ViewModels
 {
     public class YourCoursesViewModel
     {
-
-        public List<Line2Model> YourCourses { get; set; }
-     
+        public int? UKPRN { get; set; }
+        public IEnumerable<Course> Courses { get; set; }
     }
 }

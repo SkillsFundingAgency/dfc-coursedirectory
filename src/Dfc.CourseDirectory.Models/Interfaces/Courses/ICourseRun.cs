@@ -10,7 +10,7 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Courses
 {
     public interface ICourseRun
     {
-        Guid Id { get; set; }
+        Guid id { get; set; }
         Guid VenueId { get; set; }
        
         string CourseName { get; set; }
