@@ -9,9 +9,23 @@
     margin-top: 0px;
     border-top: 2px solid;
     padding: 20px 0px 0px;
-    display: block;
     width: 100%;
-    float: left;
-    clear: both !important;
-    min-height:100px;
+    min-height: 100px;
+    display: flex;
+    flex-wrap: wrap;
+    > * {
+        margin-left: 10px;
+    }
+}
+
+.large {
+    width: 200px;
+}
+
+.medium {
+    width: 140px;
+}
+
+.small{
+    width:95px;
 }
