@@ -14,8 +14,8 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Courses
         Guid VenueId { get; set; }
        
         string CourseName { get; set; }
-        string ProviderCourseID { get; set; } 
-        string DeliveryMode { get; set; }
+        string ProviderCourseID { get; set; }
+        DeliveryMode DeliveryMode { get; set; }
         bool FlexibleStartDate { get; set; }
         DateTime StartDate { get; set; }
         string CourseURL { get; set; }
