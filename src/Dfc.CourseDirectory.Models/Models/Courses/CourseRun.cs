@@ -1,24 +1,32 @@
-﻿
-using System;
-using System.Collections.Generic;
-using Dfc.CourseDirectory.Common;
-using Dfc.CourseDirectory.Models.Models.Venues;
-using Dfc.CourseDirectory.Models.Models.Providers;
-using Dfc.CourseDirectory.Models.Models.Qualifications;
-using Dfc.CourseDirectory.Models.Interfaces.Venues;
+﻿using System;
 using Dfc.CourseDirectory.Models.Interfaces.Courses;
-using Dfc.CourseDirectory.Models.Interfaces.Providers;
-using Dfc.CourseDirectory.Models.Interfaces.Qualifications;
 using System.ComponentModel;
 
 namespace Dfc.CourseDirectory.Models.Models.Courses
 {
+    public enum DeliveryMode
+    {
+        [Description("Undefined")]
+        Undefined = 0,
+        [Description("Classroom based")]
+        ClassroomBased = 1,
+        [Description("Online")]
+        Online = 2,
+        [Description("Work based")]
+        WorkBased = 3
+    }
     public enum DurationUnit
     {
-        Day = 0,
-        Week = 1,
-        Month = 2,
-        Year = 3
+        [Description("Undefined")]
+        Undefined = 0,
+        [Description("Days")]
+        Days = 1,
+        [Description("Weeks")]
+        Weeks = 2,
+        [Description("Months")]
+        Months = 3,
+        [Description("Years")]
+        Years = 4
     }
     public enum StudyMode
     {
@@ -53,26 +61,13 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         FlexibleStartDate = 2,
     }
 
-
-    public enum Duration
-    {
-        [Description("Days")]
-        Days = 0,
-        [Description("Weeks")]
-        Weeks = 1,
-        [Description("Months")]
-        Months = 2,
-        [Description("Years")]
-        Years = 3,
-    }
-
     public class CourseRun : ICourseRun 
     {
         public Guid id { get; set; }
         public Guid VenueId { get; set; }
         public string CourseName { get; set; }
         public string ProviderCourseID { get; set; }
-        public string DeliveryMode { get; set; }
+        public DeliveryMode DeliveryMode { get; set; }
         public bool FlexibleStartDate { get; set; }
         public DateTime StartDate { get; set; }
         public string CourseURL { get; set; }

@@ -1,0 +1,18 @@
+﻿@using Dfc.CourseDirectory.Models.Models.Courses;
+@using Dfc.CourseDirectory.Web.Helpers;
+
+@model Dfc.CourseDirectory.Web.ViewComponents.Courses.DeliveryType.DeliveryTypeModel
+
+
+<div class="btn-gr">
+    <fieldset class="govuk-fieldset" aria-describedby="changed-name-hint">
+        <label class="govuk-label">@Model.LabelText</label>
+        <span id="more-detail-hint" class="govuk-hint">@Model.HintText</span>
+        <div class="govuk-radios govuk-radios--inline" style="margin-bottom: 30px;">
+            <div class="govuk-radios__item">
+                @Html.RadioButtonFor(m => m.DeliveryMode, DeliveryMode.ClassroomBased, new { @class = "govuk-radios__input", id = @DeliveryMode.ClassroomBased })
+                <label class="govuk-label govuk-radios__label" for="@DeliveryMode.ClassroomBased">@WebHelper.GetEnumDescription(DeliveryMode.ClassroomBased)</label>
+            </div>
+        </div>
+    </fieldset>
+</div>

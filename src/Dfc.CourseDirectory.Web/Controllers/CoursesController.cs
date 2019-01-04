@@ -5,13 +5,9 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Models.Models.Courses;
-using Dfc.CourseDirectory.Services;
-using Dfc.CourseDirectory.Services.Interfaces;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.CourseService;
-using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.RequestModels;
-using Dfc.CourseDirectory.Web.ViewComponents.CourseName;
 using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseFor;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.EntryRequirements;
@@ -20,12 +16,11 @@ using Dfc.CourseDirectory.Web.ViewComponents.Courses.HowYouWillLearn;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatWillLearn;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatYouNeed;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhereNext;
-using Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Dfc.CourseDirectory.Models.Models.Qualifications;
+
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -54,82 +49,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         public IActionResult Index()
         {
-            //STUB DATA -- TODO: Remove later
-            CourseRun[] courseRuns = new CourseRun[]
-            {
-                new CourseRun
-                {
-                      id = Guid.NewGuid(),
-                      VenueId = Guid.NewGuid(),
-                      CourseName = "GCE A Level in Further Mathematics",
-                      ProviderCourseID = "asfdf-someId-courseId-string-guid",
-                      DeliveryMode = "Classroom based",
-                      FlexibleStartDate = false,
-                      StartDate = Convert.ToDateTime("2021-04-03T00:00:00"),
-                      CourseURL = "http://www.bbc.co.uk",
-                      Cost = 125,
-                      CostDescription = "cost description",
-                      DurationUnit = DurationUnit.Month,
-                      DurationValue = 47,
-                      StudyMode = StudyMode.Flexible,
-                      AttendancePattern = AttendancePattern.DayOrBlockRelease,
-                      CreatedDate = Convert.ToDateTime("2019-01-03T11:17:02.514746+00:00"),
-                      CreatedBy = "ProviderPortal-AddCourse",
-                      UpdatedDate = Convert.ToDateTime("0001-01-01T00:00:00"),
-                      UpdatedBy = null
-                },
-                new CourseRun
-                {
-                    id = Guid.NewGuid(),
-                    VenueId = Guid.NewGuid(),
-                    CourseName = "GCE A Level in Further Mathematics",
-                    ProviderCourseID = "asfdf-someId-courseId-string-guid",
-                    DeliveryMode = "Classroom based",
-                    FlexibleStartDate = false,
-                    StartDate = Convert.ToDateTime("2021-04-03T00:00:00"),
-                    CourseURL = "http://www.bbc.co.uk",
-                    Cost = 125,
-                    CostDescription = "cost description",
-                    DurationUnit = DurationUnit.Month,
-                    DurationValue = 47,
-                    StudyMode = StudyMode.Flexible,
-                    AttendancePattern = AttendancePattern.DayOrBlockRelease,
-                    CreatedDate = Convert.ToDateTime("2019-01-03T11:17:02.514746+00:00"),
-                    CreatedBy = "ProviderPortal-AddCourse",
-                    UpdatedDate = Convert.ToDateTime("0001-01-01T00:00:00"),
-                    UpdatedBy = null
-                }
-            };
-           
-            
-            Course[] course = new Course[]
-            {
-                new Course
-                {
-                    id = Guid.NewGuid(),
-                    QualificationCourseTitle = "GCE A Level in Further Mathematics",
-                    LearnAimRef = "10060108",
-                    NotionalNVQLevelv2 = "3",
-                    AwardOrgCode = "CCEA",
-                    QualificationType = "Diploma",
-                    ProviderUKPRN = 10038911,
-                    CourseDescription = "Course description",
-                    EntryRequirments = "Entry requirements",
-                    WhatYoullLearn = "Give learners a taste of this course.",
-                    HowYoullLearn = "Will it be classroom based exercises",
-                    WhatYoullNeed = "Please detail anything your learners",
-                    HowYoullBeAssessed = "Please provide details of all the ways",
-                    WhereNext = "What are the opportunities beyond this course",
-                    AdvancedLearnerLoan = true,
-                    CourseRuns = courseRuns
-                }
-  
-            };
-            YourCoursesViewModel vm = new YourCoursesViewModel
-            {
-                UKPRN = _session.GetInt32("UKPRN"),
-                Courses = course
-            };
             return View();
         }
 
@@ -281,13 +200,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                     CourseName = model.CourseName,
                     ProviderCourseID = model.CourseProviderReference,
-                    DeliveryMode = model.CourseDeliveryType,
+                    DeliveryMode = model.DeliveryMode,
                     FlexibleStartDate = flexibleStartDate,
                     StartDate = specifiedStartDate,
                     CourseURL = model.Url,
                     Cost = model.Cost,
                     CostDescription = model.CostDescription,
-                    DurationUnit = model.Id, // DurationUnit // TOBE COMPLETED
+                    DurationUnit = model.Id,
                     DurationValue = model.DurationLength,
                     StudyMode = model.StudyMode,
                     AttendancePattern = model.AttendanceMode,
@@ -299,7 +218,17 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 courseRuns.Add(courseRun);
             }
 
-            var UKPRN = _session.GetInt32("UKPRN").Value;
+            // TODO: To be modified once we implement user management (Assign ProviderUKPRN to user)
+            int UKPRN = 0;
+            if (_session.GetInt32("UKPRN") != null)
+            {
+                UKPRN = _session.GetInt32("UKPRN").Value;
+            }
+            else
+            {
+                return RedirectToAction("Index", "Venues", new { errmsg = "No-UKPRN" });
+            }
+
             var course = new Course
             {
                 id = Guid.NewGuid(),
@@ -310,7 +239,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 AwardOrgCode = awardOrgCode,
                 QualificationType = "Diploma", // ??? QualificationTypes => Diploma, Cerificate or EACH courserun
 
-                ProviderUKPRN = UKPRN, // Shall we do check for it 
+                ProviderUKPRN = UKPRN, // TODO: ToBeChanged
 
                 CourseDescription = courseFor,
                 EntryRequirments = entryRequirements,
@@ -319,8 +248,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 WhatYoullNeed = whatYouNeed,
                 HowYoullBeAssessed = howAssessed,
                 WhereNext = whereNext,
-
-                AdvancedLearnerLoan = model.AdvancedLearnerLoan, //bool // TOBE COMPLETED
+                AdvancedLearnerLoan = model.AdvancedLearnerLoan,
 
                 CourseRuns = courseRuns
             };
@@ -331,17 +259,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             if (result.IsSuccess && result.HasValue)
             {
-                // GOOD
-                // X number of courses
-
-                return new EmptyResult();
+                return RedirectToAction("Index", new { status = "good", learnAimRef = learnAimRef, numberOfNewCourses = courseRuns?.Count });
             }
             else
             {
-                // BAD
-
-                // TODO DEPENDS OF what you want to do => Clear Session Variables
-                return new EmptyResult();
+                return RedirectToAction("Index", new { status = "bad", learnAimRef = learnAimRef, errmsg = result.Error });
             }
         }
 
