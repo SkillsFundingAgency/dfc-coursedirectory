@@ -132,7 +132,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 UKPRN = _session.GetInt32("UKPRN"),
                 Courses = course
             };
-            return View();
+            return View(vm);
         }
 
         public IActionResult AddCourseSection1(string learnAimRef, string notionalNVQLevelv2, string awardOrgCode, string learnAimRefTitle)

@@ -2,6 +2,7 @@
     Layout = "/Views/Shared/_Layout_YourCourses.cshtml";
 }
 
+@using Dfc.CourseDirectory.Models.Models.Courses
 @using Dfc.CourseDirectory.Web.ViewComponents.CourseName
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.Line2
 @model Dfc.CourseDirectory.Web.ViewModels.YourCoursesViewModel
@@ -18,8 +19,8 @@
     </div>
 </div>
 
-@foreach (var course in Model.YourCourses)
+@foreach (var course in Model.Courses)
 {
-    @await Component.InvokeAsync(nameof(Line2), course)
+    @await Component.InvokeAsync(nameof(CourseRun), course)
 }
 

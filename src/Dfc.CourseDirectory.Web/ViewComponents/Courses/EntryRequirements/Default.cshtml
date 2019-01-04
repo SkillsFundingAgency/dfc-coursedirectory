@@ -36,6 +36,9 @@
                 var trimmed = $elementUrl.val().trim();
                 $elementUrl.val(trimmed);
 
+
+
+
                 var result = validator.element($elementUrl);
 
                 if (result) {
@@ -49,6 +52,8 @@
                     $validationMessageUrl.show();
                     $validationMessageUrl.css("margin-bottom", "15px");
                 }
+
+
             });
 
             $elementUrl.elementValidation(function (element, result) {

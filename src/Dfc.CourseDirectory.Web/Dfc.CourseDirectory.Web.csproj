@@ -55,7 +55,7 @@
     <Content Update="ViewComponents\CourseProviderReference\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="ViewComponents\Courses\Line2\Default.cshtml">
+    <Content Update="ViewComponents\Courses\CourseRun\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="ViewComponents\Courses\Duration\Default.cshtml">

@@ -5,13 +5,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.Line2;
 
-namespace Dfc.CourseDirectory.Web.ViewComponents.Courses.Line2
+namespace Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseRun
 {
-    public class Line2 : ViewComponent
+    public class CourseRun : ViewComponent
     {
         public IViewComponentResult Invoke(Line2Model model)
         {
-            return View("~/ViewComponents/Courses/Line2/Default.cshtml", model);
+            return View("~/ViewComponents/Courses/CourseRun/Default.cshtml", model);
         }
     }
 }
