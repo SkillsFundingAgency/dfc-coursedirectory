@@ -103,7 +103,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 },
                 WhereNext = new WhereNextModel()
                 {
-                    LabelText = "Where next?’",
+                    LabelText = "Where next?",
                     HintText = "What are the opportunities beyond this course? Progression to a higher level course, apprenticeship or direct entry to employment?",
                     AriaDescribedBy = "Please enter 'Where next?'"
                 }
@@ -206,7 +206,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     CourseURL = model.Url,
                     Cost = model.Cost,
                     CostDescription = model.CostDescription,
-                    DurationUnit = model.Id, // DurationUnit // TOBE COMPLETED
+                    DurationUnit = model.Id, 
                     DurationValue = model.DurationLength,
                     StudyMode = model.StudyMode,
                     AttendancePattern = model.AttendanceMode,
@@ -239,7 +239,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 AwardOrgCode = awardOrgCode,
                 QualificationType = "Diploma", // ??? QualificationTypes => Diploma, Cerificate or EACH courserun
 
-                ProviderUKPRN = UKPRN, // Shall we do check for it 
+                ProviderUKPRN = UKPRN, // TODO: ToBeChanged
 
                 CourseDescription = courseFor,
                 EntryRequirments = entryRequirements,
@@ -248,8 +248,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 WhatYoullNeed = whatYouNeed,
                 HowYoullBeAssessed = howAssessed,
                 WhereNext = whereNext,
-
-                AdvancedLearnerLoan = model.AdvancedLearnerLoan, //bool // TOBE COMPLETED
+                AdvancedLearnerLoan = model.AdvancedLearnerLoan, 
 
                 CourseRuns = courseRuns
             };
