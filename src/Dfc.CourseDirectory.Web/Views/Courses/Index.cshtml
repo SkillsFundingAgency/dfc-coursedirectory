@@ -1,8 +1,9 @@
-﻿@{
+﻿@using Dfc.CourseDirectory.Web.ViewComponents.YourCourses.Course
+@model Dfc.CourseDirectory.Web.ViewModels.YourCoursesViewModel
+
+@{
     Layout = "/Views/Shared/_Layout_YourCourses.cshtml";
 }
-
-@model Dfc.CourseDirectory.Web.ViewModels.YourCoursesViewModel
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
         <div class="govuk-form-group">
@@ -22,6 +23,10 @@
                 }
 
             </form>
+        </div>
+        <div class="govuk-form-group">
+            @await Component.InvokeAsync(nameof(Course), Model)
+
         </div>
     </div>
 </div>
