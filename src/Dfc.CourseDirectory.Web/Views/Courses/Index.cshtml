@@ -12,15 +12,6 @@
                 <button id="cd-add-qual-button" type="submit" class="govuk-button">
                     Add a Qualification
                 </button>
-                
-                @foreach (var Course in Model.Courses)
-                {
-                    //do stuff for line 1
-                    foreach (var CourseRun in Course.CourseRuns)
-                    {
-                        @await Component.InvokeAsync(nameof(CourseRun), CourseRun)
-                    }
-                }
 
             </form>
         </div>
