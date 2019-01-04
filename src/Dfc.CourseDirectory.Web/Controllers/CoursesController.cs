@@ -49,6 +49,82 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         public IActionResult Index()
         {
+            //STUB DATA -- TODO: Remove later
+            CourseRun[] courseRuns = new CourseRun[]
+            {
+                new CourseRun
+                {
+                      id = Guid.NewGuid(),
+                      VenueId = Guid.NewGuid(),
+                      CourseName = "GCE A Level in Further Mathematics",
+                      ProviderCourseID = "asfdf-someId-courseId-string-guid",
+                      DeliveryMode = "Classroom based",
+                      FlexibleStartDate = false,
+                      StartDate = Convert.ToDateTime("2021-04-03T00:00:00"),
+                      CourseURL = "http://www.bbc.co.uk",
+                      Cost = 125,
+                      CostDescription = "cost description",
+                      DurationUnit = DurationUnit.Month,
+                      DurationValue = 47,
+                      StudyMode = StudyMode.Flexible,
+                      AttendancePattern = AttendancePattern.DayOrBlockRelease,
+                      CreatedDate = Convert.ToDateTime("2019-01-03T11:17:02.514746+00:00"),
+                      CreatedBy = "ProviderPortal-AddCourse",
+                      UpdatedDate = Convert.ToDateTime("0001-01-01T00:00:00"),
+                      UpdatedBy = null
+                },
+                new CourseRun
+                {
+                    id = Guid.NewGuid(),
+                    VenueId = Guid.NewGuid(),
+                    CourseName = "GCE A Level in Further Mathematics",
+                    ProviderCourseID = "asfdf-someId-courseId-string-guid",
+                    DeliveryMode = "Classroom based",
+                    FlexibleStartDate = false,
+                    StartDate = Convert.ToDateTime("2021-04-03T00:00:00"),
+                    CourseURL = "http://www.bbc.co.uk",
+                    Cost = 125,
+                    CostDescription = "cost description",
+                    DurationUnit = DurationUnit.Month,
+                    DurationValue = 47,
+                    StudyMode = StudyMode.Flexible,
+                    AttendancePattern = AttendancePattern.DayOrBlockRelease,
+                    CreatedDate = Convert.ToDateTime("2019-01-03T11:17:02.514746+00:00"),
+                    CreatedBy = "ProviderPortal-AddCourse",
+                    UpdatedDate = Convert.ToDateTime("0001-01-01T00:00:00"),
+                    UpdatedBy = null
+                }
+            };
+           
+            
+            Course[] course = new Course[]
+            {
+                new Course
+                {
+                    id = Guid.NewGuid(),
+                    QualificationCourseTitle = "GCE A Level in Further Mathematics",
+                    LearnAimRef = "10060108",
+                    NotionalNVQLevelv2 = "3",
+                    AwardOrgCode = "CCEA",
+                    QualificationType = "Diploma",
+                    ProviderUKPRN = 10038911,
+                    CourseDescription = "Course description",
+                    EntryRequirments = "Entry requirements",
+                    WhatYoullLearn = "Give learners a taste of this course.",
+                    HowYoullLearn = "Will it be classroom based exercises",
+                    WhatYoullNeed = "Please detail anything your learners",
+                    HowYoullBeAssessed = "Please provide details of all the ways",
+                    WhereNext = "What are the opportunities beyond this course",
+                    AdvancedLearnerLoan = true,
+                    CourseRuns = courseRuns
+                }
+  
+            };
+            YourCoursesViewModel vm = new YourCoursesViewModel
+            {
+                UKPRN = _session.GetInt32("UKPRN"),
+                Courses = course
+            };
             return View();
         }
 
@@ -200,33 +276,24 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                     CourseName = model.CourseName,
                     ProviderCourseID = model.CourseProviderReference,
-                    DeliveryMode = model.DeliveryMode,
-                    FlexibleStartDate = flexibleStartDate,
-                    StartDate = specifiedStartDate,
+
+                    
+                    DeliveryMode = "0", // TOBE COMPLETED, change string to DeliveryMode => Liam
+                    FlexibleStartDate = false, // // TOBE COMPLETED
+                    StartDate = DateTime.Now, // DateTime // TOBE COMPLETED
                     CourseURL = model.Url,
                     Cost = model.Cost,
                     CostDescription = model.CostDescription,
-                    DurationUnit = model.Id, 
-                    DurationValue = model.DurationLength,
-                    StudyMode = model.StudyMode,
-                    AttendancePattern = model.AttendanceMode,
+                    DurationUnit = model.DurationUnit, // DurationUnit // TOBE COMPLETED
+                    DurationValue = model.DurationValue, //int // TOBE COMPLETED
+                    StudyMode = model.StudyMode, // StudyMode // Its done to be MERGED
+                    AttendancePattern = model.AttendanceMode, // AttendancePattern                  
 
                     CreatedDate = DateTime.Now,
                     CreatedBy = "ProviderPortal-AddCourse" // TODO - Change to the name of the logged person 
                 };
 
                 courseRuns.Add(courseRun);
-            }
-
-            // TODO: To be modified once we implement user management (Assign ProviderUKPRN to user)
-            int UKPRN = 0;
-            if (_session.GetInt32("UKPRN") != null)
-            {
-                UKPRN = _session.GetInt32("UKPRN").Value;
-            }
-            else
-            {
-                return RedirectToAction("Index", "Venues", new { errmsg = "No-UKPRN" });
             }
 
             var course = new Course
@@ -239,18 +306,19 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 AwardOrgCode = awardOrgCode,
                 QualificationType = "Diploma", // ??? QualificationTypes => Diploma, Cerificate or EACH courserun
 
-                ProviderUKPRN = UKPRN, // TODO: ToBeChanged
+                ProviderUKPRN = "10052996",
 
-                CourseDescription = courseFor,
-                EntryRequirments = entryRequirements,
-                WhatYoullLearn = whatWillLearn,
-                HowYoullLearn = howYouWillLearn,
-                WhatYoullNeed = whatYouNeed,
-                HowYoullBeAssessed = howAssessed,
-                WhereNext = whereNext,
-                AdvancedLearnerLoan = model.AdvancedLearnerLoan, 
+                CourseDescription = courseFor, 
+                EntryRequirments = entryRequirements, 
+                WhatYoullLearn = whatWillLearn, 
+                HowYoullLearn = howYouWillLearn, 
+                WhatYoullNeed = whatYouNeed, 
+                HowYoullBeAssessed = howAssessed, 
+                WhereNext = whereNext, 
 
-                CourseRuns = courseRuns
+                AdvancedLearnerLoan = model.AdvancedLearnerLoan, //bool // TOBE COMPLETED
+              
+                CourseRuns = courseRuns 
             };
 
             var result = await _courseService.AddCourseAsync(course);
@@ -259,7 +327,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             if (result.IsSuccess && result.HasValue)
             {
-                return RedirectToAction("Index", new { status = "good", learnAimRef = learnAimRef, numberOfNewCourses = courseRuns?.Count });
+                // GOOD
+
+                // TODO Clear Session Variables
+                _session.Remove("LearnAimRef"); // and the rest 
+
+                return new EmptyResult();
             }
             else
             {
@@ -267,20 +340,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
         }
 
-        internal void RemoveSessionVariables()
-        {
-            _session.Remove("LearnAimRef");
-            _session.Remove("NotionalNVQLevelv2");
-            _session.Remove("AwardOrgCode");
-            _session.Remove("LearnAimRefTitle");
+                // TODO DEPENDS OF what you want to do => Clear Session Variables
+                _session.Remove("LearnAimRef"); // and the rest 
 
-            _session.Remove("CourseFor");
-            _session.Remove("EntryRequirements");
-            _session.Remove("WhatWillLearn");
-            _session.Remove("HowYouWillLearn");
-            _session.Remove("WhatYouNeed");
-            _session.Remove("HowAssessed");
-            _session.Remove("WhereNext");
+                return new EmptyResult();
+            }
         }
     }
 }
