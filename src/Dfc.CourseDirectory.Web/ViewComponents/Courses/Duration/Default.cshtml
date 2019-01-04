@@ -17,9 +17,11 @@
     }
     <span asp-validation-for="@Model.DurationLength" class="govuk-error-message"></span>
 
-    <input pattern="[0-9]*" min="1" step="1" class="govuk-input govuk-input--width-2" style="display:inline;" asp-for="@Model.DurationLength" type="text" aria-describedby="@Model.AriaDescribedBy">
-    <select class="govuk-select" asp-for="Id" style="width:120px;"
-            asp-items="@(new SelectList(Model.DurationUnits,"Id","DurationUnit"))"></select>
+    <div class="duration-container">
+        <input pattern="[0-9]*" min="1" step="1" class="govuk-input govuk-input--width-2" style="display:inline;" asp-for="@Model.DurationLength" type="text" aria-describedby="@Model.AriaDescribedBy">
+        <select class="govuk-select" asp-for="Id" style="width:120px;"
+                asp-items="@(new SelectList(Model.DurationUnits,"Id","DurationUnit"))"></select>
+    </div>
 </div>
 
 
