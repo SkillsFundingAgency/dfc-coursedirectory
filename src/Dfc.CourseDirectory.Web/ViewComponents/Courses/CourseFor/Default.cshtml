@@ -38,6 +38,10 @@
                 var trimmed = $elementUrl.val().trim();
                 $elementUrl.val(trimmed);
 
+                var $characterCount = $elementUrl.data("val-maxlength-max");
+                var $countMessage = $("#CourseFor-info");
+                $countMessage.text("You have " + ($characterCount - $elementUrl.val().length) + " characters remaining");
+
                 var result = validator.element($elementUrl);
 
                 if (result) {
