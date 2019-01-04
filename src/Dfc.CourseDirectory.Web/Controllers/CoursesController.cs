@@ -5,13 +5,9 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Models.Models.Courses;
-using Dfc.CourseDirectory.Services;
-using Dfc.CourseDirectory.Services.Interfaces;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.CourseService;
-using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.RequestModels;
-using Dfc.CourseDirectory.Web.ViewComponents.CourseName;
 using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseFor;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.EntryRequirements;
@@ -20,7 +16,6 @@ using Dfc.CourseDirectory.Web.ViewComponents.Courses.HowYouWillLearn;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatWillLearn;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatYouNeed;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhereNext;
-using Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -281,13 +276,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                     CourseName = model.CourseName,
                     ProviderCourseID = model.CourseProviderReference,
-                    DeliveryMode = model.CourseDeliveryType,
+                    DeliveryMode = model.DeliveryMode,
                     FlexibleStartDate = flexibleStartDate,
                     StartDate = specifiedStartDate,
                     CourseURL = model.Url,
                     Cost = model.Cost,
                     CostDescription = model.CostDescription,
-                    DurationUnit = model.Id, // DurationUnit // TOBE COMPLETED
+                    DurationUnit = model.Id,
                     DurationValue = model.DurationLength,
                     StudyMode = model.StudyMode,
                     AttendancePattern = model.AttendanceMode,
@@ -299,7 +294,17 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 courseRuns.Add(courseRun);
             }
 
-            var UKPRN = _session.GetInt32("UKPRN").Value;
+            // TODO: To be modified once we implement user management (Assign ProviderUKPRN to user)
+            int UKPRN = 0;
+            if (_session.GetInt32("UKPRN") != null)
+            {
+                UKPRN = _session.GetInt32("UKPRN").Value;
+            }
+            else
+            {
+                return RedirectToAction("Index", "Venues", new { errmsg = "No-UKPRN" });
+            }
+
             var course = new Course
             {
                 id = Guid.NewGuid(),
@@ -310,7 +315,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 AwardOrgCode = awardOrgCode,
                 QualificationType = "Diploma", // ??? QualificationTypes => Diploma, Cerificate or EACH courserun
 
-                ProviderUKPRN = UKPRN, // Shall we do check for it 
+                ProviderUKPRN = UKPRN, // TODO: ToBeChanged
 
                 CourseDescription = courseFor,
                 EntryRequirments = entryRequirements,
@@ -319,8 +324,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 WhatYoullNeed = whatYouNeed,
                 HowYoullBeAssessed = howAssessed,
                 WhereNext = whereNext,
-
-                AdvancedLearnerLoan = model.AdvancedLearnerLoan, //bool // TOBE COMPLETED
+                AdvancedLearnerLoan = model.AdvancedLearnerLoan,
 
                 CourseRuns = courseRuns
             };
@@ -331,17 +335,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             if (result.IsSuccess && result.HasValue)
             {
-                // GOOD
-                // X number of courses
-
-                return new EmptyResult();
+                return RedirectToAction("Index", new { status = "good", learnAimRef = learnAimRef, numberOfNewCourses = courseRuns?.Count });
             }
             else
             {
-                // BAD
-
-                // TODO DEPENDS OF what you want to do => Clear Session Variables
-                return new EmptyResult();
+                return RedirectToAction("Index", new { status = "bad", learnAimRef = learnAimRef, errmsg = result.Error });
             }
         }
 
