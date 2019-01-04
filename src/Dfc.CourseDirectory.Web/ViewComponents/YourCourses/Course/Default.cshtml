@@ -1,33 +1,46 @@
 ﻿@model Dfc.CourseDirectory.Web.ViewModels.YourCoursesViewModel
+@using System.Linq
+
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 <div class="govuk-form-group">
     <ul>
+        <li><hr class="govuk-section-break govuk-section-break--visible"></li>
         @foreach (var course in Model.Courses)
         {
             <li>
                 <h3 class="govuk-heading-m">
                     @course.QualificationCourseTitle
-                </h3>
-                <p class="govuk-body-l">
-                    Level @course.NotionalNVQLevelv2, @course.AwardOrgCode, Lars: @course.LearnAimRef, @course.CourseDescription, @course.AdvancedLearnerLoan
-                </p>
+                </h3><span class="govuk-body">(@course.CourseRuns.Count())</span>
+                <div class="govuk-form-group">
+                    <div class="govuk-form-group cd-course-text">
+                        <p class="govuk-body">
+                            Level @course.NotionalNVQLevelv2, @course.AwardOrgCode, Lars: @course.LearnAimRef, <a href="#">View course description</a><span class="cd-advanced-text">Advanced learner Loan Available</span> 
+                        </p>
+                    </div>
+                    <fieldset class="govuk-fieldset cd-course-checkbox" aria-describedby="nationality-hint nationality-error">
+                        <div class="govuk-checkboxes">
+                            <div class="govuk-checkboxes__item">
+
+                                <input class="govuk-checkboxes__input" id="nationality-1" name="nationality" type="checkbox" value="" checked="@course.AdvancedLearnerLoan" disabled="disabled" aria-describedby="iftionality-1-item-hint">
+                                <label class="govuk-label govuk-checkboxes__label" for="nationality-1"></label>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
             </li>
+            <li><hr class="govuk-section-break govuk-section-break--visible"></li>
             @foreach (var courseRun in course.CourseRuns)
             {
                 @*<p class="govuk-body-l">
-                    @courseRun.CourseName
-                    @* 
-                        /*
-                        * @await Component.Invoke(nameOf(CourseRun), courseRun);
-                        */
-                    </p>
-                    *@
-                    
-
-
+                @courseRun.CourseName
+                @*
+                    /*
+                    * @await Component.Invoke(nameOf(CourseRun), courseRun);
+                    */
+                </p>
+                *@
             }
-            
         }
     </ul>
 </div>

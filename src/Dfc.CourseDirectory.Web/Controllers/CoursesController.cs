@@ -57,74 +57,132 @@ namespace Dfc.CourseDirectory.Web.Controllers
             //STUB DATA -- TODO: Remove later
             CourseRun[] courseRuns = new CourseRun[]
             {
-                new CourseRun
-                {
-                      id = Guid.NewGuid(),
-                      VenueId = Guid.NewGuid(),
-                      CourseName = "GCE A Level in Further Mathematics",
-                      ProviderCourseID = "asfdf-someId-courseId-string-guid",
-                      DeliveryMode = "Classroom based",
-                      FlexibleStartDate = false,
-                      StartDate = Convert.ToDateTime("2021-04-03T00:00:00"),
-                      CourseURL = "http://www.bbc.co.uk",
-                      Cost = 125,
-                      CostDescription = "cost description",
-                      DurationUnit = DurationUnit.Month,
-                      DurationValue = 47,
-                      StudyMode = StudyMode.Flexible,
-                      AttendancePattern = AttendancePattern.DayOrBlockRelease,
-                      CreatedDate = Convert.ToDateTime("2019-01-03T11:17:02.514746+00:00"),
-                      CreatedBy = "ProviderPortal-AddCourse",
-                      UpdatedDate = Convert.ToDateTime("0001-01-01T00:00:00"),
-                      UpdatedBy = null
-                },
-                new CourseRun
-                {
-                    id = Guid.NewGuid(),
-                    VenueId = Guid.NewGuid(),
-                    CourseName = "GCE A Level in Further Mathematics 2",
-                    ProviderCourseID = "asfdf-someId-courseId-string-guid",
-                    DeliveryMode = "Classroom based",
-                    FlexibleStartDate = false,
-                    StartDate = Convert.ToDateTime("2021-04-03T00:00:00"),
-                    CourseURL = "http://www.bbc.co.uk",
-                    Cost = 125,
-                    CostDescription = "cost description",
-                    DurationUnit = DurationUnit.Month,
-                    DurationValue = 47,
-                    StudyMode = StudyMode.Flexible,
-                    AttendancePattern = AttendancePattern.DayOrBlockRelease,
-                    CreatedDate = Convert.ToDateTime("2019-01-03T11:17:02.514746+00:00"),
-                    CreatedBy = "ProviderPortal-AddCourse",
-                    UpdatedDate = Convert.ToDateTime("0001-01-01T00:00:00"),
-                    UpdatedBy = null
-                }
+               new CourseRun
+               {
+                     id = Guid.NewGuid(),
+                     VenueId = Guid.NewGuid(),
+                     CourseName = "GCE A Level in Further Mathematics",
+                     ProviderCourseID = "asfdf-someId-courseId-string-guid",
+                     DeliveryMode = "Classroom based",
+                     FlexibleStartDate = false,
+                     StartDate = Convert.ToDateTime("2021-04-03T00:00:00"),
+                     CourseURL = "http://www.bbc.co.uk",
+                     Cost = 125,
+                     CostDescription = "cost description",
+                     DurationUnit = DurationUnit.Month,
+                     DurationValue = 47,
+                     StudyMode = StudyMode.Flexible,
+                     AttendancePattern = AttendancePattern.DayOrBlockRelease,
+                     CreatedDate = Convert.ToDateTime("2019-01-03T11:17:02.514746+00:00"),
+                     CreatedBy = "ProviderPortal-AddCourse",
+                     UpdatedDate = Convert.ToDateTime("0001-01-01T00:00:00"),
+                     UpdatedBy = null
+               },
+               new CourseRun
+               {
+                   id = Guid.NewGuid(),
+                   VenueId = Guid.NewGuid(),
+                   CourseName = "GCE A Level in Further Mathematics",
+                   ProviderCourseID = "asfdf-someId-courseId-string-guid",
+                   DeliveryMode = "Classroom based",
+                   FlexibleStartDate = false,
+                   StartDate = Convert.ToDateTime("2021-04-03T00:00:00"),
+                   CourseURL = "http://www.bbc.co.uk",
+                   Cost = 125,
+                   CostDescription = "cost description",
+                   DurationUnit = DurationUnit.Month,
+                   DurationValue = 47,
+                   StudyMode = StudyMode.Flexible,
+                   AttendancePattern = AttendancePattern.DayOrBlockRelease,
+                   CreatedDate = Convert.ToDateTime("2019-01-03T11:17:02.514746+00:00"),
+                   CreatedBy = "ProviderPortal-AddCourse",
+                   UpdatedDate = Convert.ToDateTime("0001-01-01T00:00:00"),
+                   UpdatedBy = null
+               }
             };
-           
-            
+
+
             Course[] course = new Course[]
             {
-                new Course
-                {
-                    id = Guid.NewGuid(),
-                    QualificationCourseTitle = "GCE A Level in Further Mathematics - Course",
-                    LearnAimRef = "10060108",
-                    NotionalNVQLevelv2 = "3",
-                    AwardOrgCode = "CCEA",
-                    QualificationType = "Diploma",
-                    ProviderUKPRN = 10038911,
-                    CourseDescription = "Course description",
-                    EntryRequirments = "Entry requirements",
-                    WhatYoullLearn = "Give learners a taste of this course.",
-                    HowYoullLearn = "Will it be classroom based exercises",
-                    WhatYoullNeed = "Please detail anything your learners",
-                    HowYoullBeAssessed = "Please provide details of all the ways",
-                    WhereNext = "What are the opportunities beyond this course",
-                    AdvancedLearnerLoan = true,
-                    CourseRuns = courseRuns
-                }
-  
+               new Course
+               {
+                   id = Guid.NewGuid(),
+                   QualificationCourseTitle = "BA (Hons) in Education Studies",
+                   LearnAimRef = "10060108",
+                   NotionalNVQLevelv2 = "3",
+                   AwardOrgCode = "CCEA",
+                   QualificationType = "Diploma",
+                   ProviderUKPRN = 10038911,
+                   CourseDescription = "Course description",
+                   EntryRequirments = "Entry requirements",
+                   WhatYoullLearn = "Give learners a taste of this course.",
+                   HowYoullLearn = "Will it be classroom based exercises",
+                   WhatYoullNeed = "Please detail anything your learners",
+                   HowYoullBeAssessed = "Please provide details of all the ways",
+                   WhereNext = "What are the opportunities beyond this course",
+                   AdvancedLearnerLoan = true,
+                   CourseRuns = courseRuns
+               },
+               new Course
+               {
+                   id = Guid.NewGuid(),
+                   QualificationCourseTitle = "Diploma in Information Technology",
+                   LearnAimRef = "10060108",
+                   NotionalNVQLevelv2 = "3",
+                   AwardOrgCode = "CCEA",
+                   QualificationType = "Diploma",
+                   ProviderUKPRN = 10038911,
+                   CourseDescription = "Course description",
+                   EntryRequirments = "Entry requirements",
+                   WhatYoullLearn = "Give learners a taste of this course.",
+                   HowYoullLearn = "Will it be classroom based exercises",
+                   WhatYoullNeed = "Please detail anything your learners",
+                   HowYoullBeAssessed = "Please provide details of all the ways",
+                   WhereNext = "What are the opportunities beyond this course",
+                   AdvancedLearnerLoan = false,
+                   CourseRuns = courseRuns
+               },
+               new Course
+               {
+                   id = Guid.NewGuid(),
+                   QualificationCourseTitle = "Diploma in Administration",
+                   LearnAimRef = "10060108",
+                   NotionalNVQLevelv2 = "3",
+                   AwardOrgCode = "CCEA",
+                   QualificationType = "Diploma",
+                   ProviderUKPRN = 10038911,
+                   CourseDescription = "Course description",
+                   EntryRequirments = "Entry requirements",
+                   WhatYoullLearn = "Give learners a taste of this course.",
+                   HowYoullLearn = "Will it be classroom based exercises",
+                   WhatYoullNeed = "Please detail anything your learners",
+                   HowYoullBeAssessed = "Please provide details of all the ways",
+                   WhereNext = "What are the opportunities beyond this course",
+                   AdvancedLearnerLoan = true,
+                   CourseRuns = courseRuns
+               },
+               new Course
+               {
+                   id = Guid.NewGuid(),
+                   QualificationCourseTitle = "Diploma in Home Economics: Child Development ",
+                   LearnAimRef = "10060108",
+                   NotionalNVQLevelv2 = "3",
+                   AwardOrgCode = "CCEA",
+                   QualificationType = "Diploma",
+                   ProviderUKPRN = 10038911,
+                   CourseDescription = "Course description",
+                   EntryRequirments = "Entry requirements",
+                   WhatYoullLearn = "Give learners a taste of this course.",
+                   HowYoullLearn = "Will it be classroom based exercises",
+                   WhatYoullNeed = "Please detail anything your learners",
+                   HowYoullBeAssessed = "Please provide details of all the ways",
+                   WhereNext = "What are the opportunities beyond this course",
+                   AdvancedLearnerLoan = false,
+                   CourseRuns = courseRuns
+               }
+
             };
+
             YourCoursesViewModel vm = new YourCoursesViewModel
             {
                 UKPRN = _session.GetInt32("UKPRN"),
