@@ -1,17 +1,31 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Dfc.CourseDirectory.Web.ViewComponents.Courses.Line2;
+﻿using Dfc.CourseDirectory.Common;
+using Dfc.CourseDirectory.Models.Models.Courses;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+
 
 namespace Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseRun
 {
     public class CourseRun : ViewComponent
     {
-        public IViewComponentResult Invoke(Line2Model model)
+        private readonly IHttpContextAccessor _contextAccessor;
+        private ISession _session => _contextAccessor.HttpContext.Session;
+
+        public CourseRun(
+            IHttpContextAccessor contextAccessor)
         {
-            return View("~/ViewComponents/Courses/CourseRun/Default.cshtml", model);
+            Throw.IfNull(contextAccessor, nameof(contextAccessor));
+
+            _contextAccessor = contextAccessor;
+        }
+        public IViewComponentResult Invoke(Dfc.CourseDirectory.Models.Models.Courses.CourseRun model)
+        {
+            var UKPRN = _session.GetInt32("UKPRN");
+            CourseRunModel courseRunModel = new CourseRunModel()
+            {
+                courseRun = model
+            };
+            return View("~/ViewComponents/Courses/CourseRun/Default.cshtml", courseRunModel);
         }
     }
 }

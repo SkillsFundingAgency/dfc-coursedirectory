@@ -2,9 +2,6 @@
     Layout = "/Views/Shared/_Layout_YourCourses.cshtml";
 }
 
-@using Dfc.CourseDirectory.Models.Models.Courses
-@using Dfc.CourseDirectory.Web.ViewComponents.CourseName
-@using Dfc.CourseDirectory.Web.ViewComponents.Courses.Line2
 @model Dfc.CourseDirectory.Web.ViewModels.YourCoursesViewModel
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
@@ -14,13 +11,19 @@
                 <button id="cd-add-qual-button" type="submit" class="govuk-button">
                     Add a Qualification
                 </button>
+                
+                @foreach (var Course in Model.Courses)
+                {
+                    //do stuff for line 1
+                    foreach (var CourseRun in Course.CourseRuns)
+                    {
+                        @await Component.InvokeAsync(nameof(CourseRun), CourseRun)
+                    }
+                }
+
             </form>
         </div>
     </div>
 </div>
 
-@foreach (var course in Model.Courses)
-{
-    @await Component.InvokeAsync(nameof(CourseRun), course)
-}
 

@@ -25,9 +25,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Dfc.CourseDirectory.Models.Models.Qualifications;
-using Dfc.CourseDirectory.Models.Models.Venues;
-using Dfc.CourseDirectory.Web.ViewComponents.Courses.Line2;
+
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {

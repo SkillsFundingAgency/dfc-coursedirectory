@@ -1,22 +1,27 @@
 ﻿@using Dfc.CourseDirectory.Models.Models.Courses
 @using Dfc.CourseDirectory.Web.Helpers
-@model Dfc.CourseDirectory.Web.ViewComponents.Courses.Line2.Line2Model
+@model Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseRun.CourseRunModel
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
-<div style="margin-top: 0px; border-top: 2px solid; padding: 20px 0px 0px; display: block;" class="table-row">
+<li class="course-run-container">
 
 
 
 
 
     <div class="govuk-form-group" style="display: inline-block; padding-right: 10px;width:230px;">
-        <label class="govuk-label">@Model.CourseNameLabel</label>
-        <input readonly="@(true)" style="width:230px;" class="govuk-input" asp-for="@Model.CourseName" type="text" aria-describedby="@Model.CourseNameAriaDescribedBy">
+        <label class="govuk-label">Course name</label>
+        <input readonly="@(true)" style="width:230px;" class="govuk-input" asp-for="@Model.courseRun.CourseName" type="text" aria-describedby="course name">
 
     </div>
 
 
+    @*<div class="govuk-form-group" style="display: inline-block;padding-right: 10px;width:110px;">
+        <label class="govuk-label">Delivery</label>
+        @Html.DropDownListFor(m => m.DeliveryType,
+            @Model.DeliveryTypes.ToSelectList<DeliveryType>(), new { id = "deliveryType", @class = "govuk-select" })
+    </div>*@
 
     @*<div class="govuk-form-group" style="display: inline-block; padding-right: 10px;width:50px;">
         <label class="govuk-label">@Model.IdLabel</label>
@@ -24,11 +29,7 @@
 
     </div>
 
-    <div class="govuk-form-group" style="display: inline-block;padding-right: 10px;width:110px;">
-        <label class="govuk-label">Delivery</label>
-        @Html.DropDownListFor(m => m.DeliveryType,
-            @Model.DeliveryTypes.ToSelectList<DeliveryType>(), new { id = "deliveryType", @class = "govuk-select" })
-    </div>
+
 
     <div class="govuk-form-group" style="display: inline-block;padding-right: 10px">
         <label class="govuk-label">@Model.StartDateLabel</label>
@@ -57,7 +58,7 @@
         
 
   
-    @*</div>*@*@*@
+    @*</div>*@@*@
 
     @*<div style="display: inline-block;padding-right: 10px;width:80px;text-align:center;">
             <label class="govuk-label" style="margin-bottom:18px;">URL</label>
@@ -105,7 +106,7 @@
             <select name="mode" class="govuk-select"><option>Full-time</option></select>
         </div>*@
 
-</div>
+</li>
 
 <script>
     (function ($) {
