@@ -59,13 +59,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
                      VenueId = Guid.NewGuid(),
                      CourseName = "GCE A Level in Further Mathematics",
                      ProviderCourseID = "asfdf-someId-courseId-string-guid",
-                     DeliveryMode = "Classroom based",
+                     DeliveryMode = DeliveryMode.ClassroomBased,
                      FlexibleStartDate = false,
                      StartDate = Convert.ToDateTime("2021-04-03T00:00:00"),
                      CourseURL = "http://www.bbc.co.uk",
                      Cost = 125,
                      CostDescription = "cost description",
-                     DurationUnit = DurationUnit.Month,
+                     DurationUnit = DurationUnit.Months,
                      DurationValue = 47,
                      StudyMode = StudyMode.Flexible,
                      AttendancePattern = AttendancePattern.DayOrBlockRelease,
@@ -80,13 +80,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
                    VenueId = Guid.NewGuid(),
                    CourseName = "GCE A Level in Further Mathematics",
                    ProviderCourseID = "asfdf-someId-courseId-string-guid",
-                   DeliveryMode = "Classroom based",
+                   DeliveryMode = DeliveryMode.ClassroomBased,
                    FlexibleStartDate = false,
                    StartDate = Convert.ToDateTime("2021-04-03T00:00:00"),
                    CourseURL = "http://www.bbc.co.uk",
                    Cost = 125,
                    CostDescription = "cost description",
-                   DurationUnit = DurationUnit.Month,
+                   DurationUnit = DurationUnit.Months,
                    DurationValue = 47,
                    StudyMode = StudyMode.Flexible,
                    AttendancePattern = AttendancePattern.DayOrBlockRelease,
@@ -95,7 +95,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                    UpdatedDate = Convert.ToDateTime("0001-01-01T00:00:00"),
                    UpdatedBy = null
                }
-
+            };
+            Course[] course = new Course[]
+            {
 
                new Course
                {
