@@ -122,13 +122,24 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _session.SetString("HowAssessed", model?.HowAssessed ?? string.Empty);
             _session.SetString("WhereNext", model?.WhereNext ?? string.Empty);
 
+            int UKPRN = 0;
+            if (_session.GetInt32("UKPRN") != null)
+            {
+                UKPRN = _session.GetInt32("UKPRN").Value;
+            }
+            else
+            {
+                return RedirectToAction("Index", "Venues", new { errmsg = "No-UKPRN" });
+            }
+
             var viewModel = new AddCourseDetailsViewModel()
             {
                 LearnAimRef = _session.GetString("LearnAimRef"),
                 LearnAimRefTitle = _session.GetString("LearnAimRefTitle"),
                 AwardOrgCode = _session.GetString("AwardOrgCode"),
                 NotionalNVQLevelv2 = _session.GetString("NotionalNVQLevelv2"),
-                CourseName = _session.GetString("LearnAimRefTitle")
+                CourseName = _session.GetString("LearnAimRefTitle"),
+                ProviderUKPRN = UKPRN
             };
             return View("AddCourseSection2", viewModel);
         }
@@ -139,7 +150,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddCourse(AddCoursePublishModel model)
+        public async Task<IActionResult> AddCourse(AddCoursePublishModel model, Guid[] SelectedVenues)
         {
             var learnAimRef = _session.GetString("LearnAimRef");
             var notionalNVQLevelv2 = _session.GetString("NotionalNVQLevelv2");
@@ -163,15 +174,18 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 string.IsNullOrEmpty(courseFor)
               )
             {
-                return RedirectToAction("AddCourseSection1", new { learnAimRef = learnAimRef, notionalNVQLevelv2 = notionalNVQLevelv2, awardOrgCode = awardOrgCode, learnAimRefTitle = learnAimRefTitle });
+                return RedirectToAction("AddCourseSection1", new { learnAimRef = learnAimRef, notionalNVQLevelv2 = notionalNVQLevelv2, awardOrgCode = awardOrgCode, learnAimRefTitle = learnAimRefTitle, errmsg = "Course data is missing." });
+            }
+
+            if (SelectedVenues == null || SelectedVenues.Count() < 1)
+            {
+                return RedirectToAction("AddCourseSection1", new { learnAimRef = learnAimRef, notionalNVQLevelv2 = notionalNVQLevelv2, awardOrgCode = awardOrgCode, learnAimRefTitle = learnAimRefTitle, errmsg = "No Venue Selected." });
             }
 
             // We will need to map the flat ModelView Structure to our hierarchical Course Model Structure
 
             // For each Venue => Course Run
             var courseRuns = new List<CourseRun>();
-            // It will come from Venue selection
-            var venueSelection = new Guid[] { new Guid("86748623-93f0-4ebd-8a37-0f0754822b7e"), new Guid("96748623-93f0-4ebd-8a37-0f0754822b7e") };
 
             bool flexibleStartDate = false;
             DateTime specifiedStartDate = DateTime.MinValue;
@@ -189,9 +203,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
             else
             {
                 // StartDateType not defined - log it.
+                // specifiedStartDate will be DateTime.MinValue;
+                // and flexibleStartDate = false
             }
 
-            foreach (var venue in venueSelection)
+            foreach (var venue in SelectedVenues)
             {
                 var courseRun = new CourseRun
                 {

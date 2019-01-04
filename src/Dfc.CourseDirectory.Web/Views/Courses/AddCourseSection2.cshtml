@@ -4,8 +4,8 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.UrlInput
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.Attendance
 @using Dfc.CourseDirectory.Models.Models.Courses
-@*@using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseDeliveryType*@
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.DeliveryType
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.SelectVenue
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.AddStartDate
 @using Dfc.CourseDirectory.Web.ViewComponents.AdvancedLearnerLoan
@@ -60,6 +60,14 @@
         LabelText = "Start date"
     })
 
+    @await Component.InvokeAsync(nameof(SelectVenue), new SelectVenueModel
+    {
+        Ukprn = Model.ProviderUKPRN, 
+        LabelText = "Select course venue",
+        HintText = "Select all that apply.",
+        AriaDescribedBy = "Select all that apply."
+    })
+
     @await Component.InvokeAsync(nameof(UrlInput), new UrlInputModel
     {
         LabelText = "URL",
@@ -68,14 +76,14 @@
     })
 
     @await Component.InvokeAsync(nameof(Cost), new CostModel
-{
-    CostLabelText = "Cost",
-    CostHintText = "Enter the cost for the course in pounds and pence e.g. 125.00",
-    CostAriaDescribedBy = "Enter the cost in pounds and pence",
-    CostDescriptionLabelText = "Cost description",
-    CostDescriptionHintText = "Enter details of related to the cost of this course",
-    CostDescriptionAriaDescribedBy = "Enter details of related to the cost of this course"
-})
+    {
+        CostLabelText = "Cost",
+        CostHintText = "Enter the cost for the course in pounds and pence e.g. 125.00",
+        CostAriaDescribedBy = "Enter the cost in pounds and pence",
+        CostDescriptionLabelText = "Cost description",
+        CostDescriptionHintText = "Enter details of related to the cost of this course",
+        CostDescriptionAriaDescribedBy = "Enter details of related to the cost of this course"
+    })
 
 
     @await Component.InvokeAsync(nameof(AdvancedLearnerLoan), new AdvancedLearnerLoanModel
@@ -186,8 +194,6 @@
                     var $courseName= $("#@nameof(Model.CourseName)");
                     $courseName.trigger("blur");
 
-
-
                     if ($elementCost.val() === "") {
                         if ($elementCostDescription.val() === "") {
                             $elementCost.addClass($elementErrorClass);
@@ -198,7 +204,8 @@
                             $validationMessageForCost.hide();
                             $formGroupCost.removeClass($formGroupErrorClass);
                         }
-                    } else {
+                    }
+                    else {
 
                         $validationMessageForCost.hide();
                         $formGroupCost.removeClass($formGroupErrorClass);
@@ -301,7 +308,24 @@
                         $validationMessageForPast.hide();
                         $validationMessageForFuture.hide();
                         $validationMessageForRequired.hide();
-                        $("#addCourseSection2").submit();
+                       
+
+                        var checked_checkboxes = $("#SelectVenueCheckBoxes input[type=checkbox]:checked");
+                        if (checked_checkboxes.length == 0) {
+                            //Error => not valid
+                            //return false;
+                            $("#SelectVenueCheckBoxesError").text("Please select at least one Venue.");
+                            $("#VenueItemsCheckboxList").addClass($formGroupErrorClass);
+                            $("html, body").animate({ scrollTop: $("#VenueItemsCheckboxList").offset().top - 20 }, 'slow');
+                        }
+                        else {
+                            // Good submit it
+                            $("#SelectVenueCheckBoxesError").text("");
+                            $("#VenueItemsCheckboxList").removeClass($formGroupErrorClass);
+
+                            $("#addCourseSection2").submit();
+                        }
+
                     }
 
 

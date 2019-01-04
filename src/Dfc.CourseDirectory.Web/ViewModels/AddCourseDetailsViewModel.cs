@@ -22,6 +22,8 @@ namespace Dfc.CourseDirectory.Web.ViewModels
         public string AwardOrgCode { get; set; }
         public string LearnAimRefTitle { get; set; }
 
+        public int ProviderUKPRN { get; set; }
+
         public string CourseFor { get; set; }
 
         public string EntryRequirements { get; set; }
