@@ -10,5 +10,6 @@ namespace Dfc.CourseDirectory.Web.ViewModels
     {
         public int? UKPRN { get; set; }
         public IEnumerable<Course> Courses { get; set; }
+        
     }
 }
