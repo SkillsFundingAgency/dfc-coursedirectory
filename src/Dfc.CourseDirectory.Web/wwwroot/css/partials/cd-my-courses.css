@@ -5,3 +5,56 @@
 #cd-your-courses-heading {
   display: inline-block;
 }
+
+.govuk-form-group ul {
+  list-style-type: none;
+  margin-left: -36px;
+}
+
+.cd-course-text {
+  display: inline-block;
+}
+
+.cd-course-checkbox {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.cd-advanced-text {
+  padding: 0 10px 0 20px;
+}
+
+li h3.govuk-heading-m {
+  padding-top: 10px;
+  display: inline-block;
+}
+
+li span.govuk-body {
+  padding-left: 5px;
+}
+
+.course-run-container {
+  margin-top: 0px;
+  border-top: 2px solid;
+  padding: 20px 0px 0px;
+  width: 100%;
+  min-height: 100px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.course-run-container > * {
+  margin-left: 10px;
+}
+
+.large {
+  width: 200px;
+}
+
+.medium {
+  width: 140px;
+}
+
+.small {
+  width: 95px;
+}
