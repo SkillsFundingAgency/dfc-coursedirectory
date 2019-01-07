@@ -84,6 +84,9 @@
     <Content Update="ViewComponents\Courses\HowYouWillLearn\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+	 <Content Update="ViewComponents\Courses\SelectVenue\Default.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="ViewComponents\Courses\WhatWillLearn\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
