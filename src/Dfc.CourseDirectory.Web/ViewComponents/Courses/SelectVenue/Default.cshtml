@@ -1,0 +1,72 @@
+﻿@using Dfc.CourseDirectory.Common.Settings
+@using Microsoft.Extensions.Options
+@model Dfc.CourseDirectory.Web.ViewComponents.Courses.SelectVenue.SelectVenueModel
+ 
+  
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+ 
+<div class="govuk-form-group" id="VenueItemsCheckboxList">
+    <label class="govuk-label" for="select-venue">
+        @Model.LabelText
+    </label>
+    <span id="select-venue-hint" class="govuk-hint">
+        @Model.HintText
+    </span>
+    <form id="formx"></form>
+    
+    <form id="selecttest">
+        <input class="govuk-checkboxes__input" name="SelectedVenues" type="checkbox" required minlength="1" />
+        @*<span id="SelectVenueCheckBoxesError" class="govuk-error-message field-validation-valid" data-valmsg-for="VenueItems" data-valmsg-replace="true" style="margin-bottom: 0px;"></span>*@
+        
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <div class="govuk-checkboxes" id="SelectVenueCheckBoxes">
+                    @{ var i = 0; }
+                    @foreach (var item in @Model.VenueItems)
+                    {
+                        i++;
+                        <div class="govuk-checkboxes__item">
+                            <input class="govuk-checkboxes__input" id="VenueName-@i" name="SelectedVenues" type="checkbox" value="@item.Id" />
+                            <label class="govuk-label govuk-checkboxes__label" for="SelectedVenues">@item.VenueName</label>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    (function ($) {
+        $(function() {
+
+            window.jQuery.extend(window.jQuery.validator.messages,
+                {
+                    required: "Select a venue."
+                });
+
+            $("#selecttest").validate({
+                errorClass: "govuk-error-message",
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    var $venueItemsCheckboxList = $("#VenueItemsCheckboxList");
+                    var $formGroupUrl = $venueItemsCheckboxList.closest('.govuk-form-group');
+                    if (errors) {
+                        $formGroupUrl.addClass("govuk-form-group--error");
+                    } else {
+                        $formGroupUrl.removeClass("govuk-form-group--error");
+                    }
+                },
+                success: function() {
+                    var $venueItemsCheckboxList = $("#VenueItemsCheckboxList");
+                    var $formGroupUrl = $venueItemsCheckboxList.closest('.govuk-form-group');
+
+                    $formGroupUrl.removeClass("govuk-form-group--error");
+                }
+            });
+
+            //$("#selecttest").validate();
+            //$("#selecttest").submit();
+        });
+    })(jQuery);
+</script>
