@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.RequestModels;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -15,8 +17,10 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Courses.SelectVenue
         private readonly IVenueSearchHelper _venueSearchHelper;
         private readonly IVenueService _venueService;
         private readonly IVenueServiceSettings _venueServiceSettings;
+        private readonly IHttpContextAccessor _contextAccessor;
+        private ISession _session => _contextAccessor.HttpContext.Session;
 
-        public SelectVenue(IVenueSearchHelper venueSearchHelper, IVenueService venueService, IOptions<VenueServiceSettings> venueServiceSettings)
+        public SelectVenue(IVenueSearchHelper venueSearchHelper, IVenueService venueService, IOptions<VenueServiceSettings> venueServiceSettings, IHttpContextAccessor contextAccessor)
         {
             Throw.IfNull(venueService, nameof(venueService));
             Throw.IfNull(venueServiceSettings, nameof(venueServiceSettings));
@@ -24,11 +28,12 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Courses.SelectVenue
             _venueServiceSettings = venueServiceSettings.Value;
             _venueSearchHelper = venueSearchHelper;
             _venueService = venueService;
+            _contextAccessor = contextAccessor;
         }
         public async Task<IViewComponentResult> InvokeAsync(SelectVenueModel model)
         {
-            // do some gubbins here to retrieve venue
-            var requestModel = new VenueSearchRequestModel { SearchTerm = model.Ukprn.ToString() };
+            //var requestModel = new VenueSearchRequestModel { SearchTerm = model.Ukprn.ToString() };
+            var requestModel = new VenueSearchRequestModel { SearchTerm = _session.GetInt32("UKPRN").Value.ToString() };
             var criteria = _venueSearchHelper.GetVenueSearchCriteria(requestModel);
             var result = await _venueService.SearchAsync(criteria);
 
@@ -47,6 +52,12 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Courses.SelectVenue
 
                 model.VenueItems = venueItems;
             }
+
+            if (model.VenueItems.Count() == 1)
+            {
+                model.VenueItems.First().Checked = true;
+            }
+
             return View("~/ViewComponents/Courses/SelectVenue/Default.cshtml", model);
         }
     }

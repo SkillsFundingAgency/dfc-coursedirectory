@@ -60,13 +60,7 @@
         LabelText = "Start date"
     })
 
-    @await Component.InvokeAsync(nameof(SelectVenue), new SelectVenueModel
-    {
-        Ukprn = Model.ProviderUKPRN, 
-        LabelText = "Select course venue",
-        HintText = "Select all that apply.",
-        AriaDescribedBy = "Select all that apply."
-    })
+
 
     @await Component.InvokeAsync(nameof(UrlInput), new UrlInputModel
     {
@@ -139,6 +133,13 @@
         LabelText = "Attendance",
         HintText = "Select the time of day the course takes place"
     })
+    
+    @await Component.InvokeAsync(nameof(SelectVenue), new SelectVenueModel
+    {
+        LabelText = "Select course venue",
+        HintText = "Select all that apply.",
+        AriaDescribedBy = "Select all that apply."
+    })
 
     <div class="govuk-form-group">
         <button type="submit" class="govuk-button" id="publish">
@@ -190,7 +191,6 @@
             $publish.on("click",
                 function (e) {
                     e.preventDefault();
-
                     var $courseName= $("#@nameof(Model.CourseName)");
                     $courseName.trigger("blur");
 
@@ -327,6 +327,7 @@
                         }
 
                     }
+                    $("#selecttest").submit();
 
 
                 });
