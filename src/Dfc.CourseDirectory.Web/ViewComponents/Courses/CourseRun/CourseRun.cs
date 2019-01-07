@@ -42,6 +42,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseRun
 
                 var venues = await _service.SearchAsync(criteria);
 
+                 
                 foreach (var venue in venues.Value.Value)
                 {
                     var item = new SelectListItem
