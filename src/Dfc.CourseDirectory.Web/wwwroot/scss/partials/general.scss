@@ -5,3 +5,14 @@
     text-decoration: underline;
     background-color: transparent;
 }
+.login-options {
+    float: right;
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding-right: 10px;
+}
+#logout-btn {
+    display: inline-flex;
+}

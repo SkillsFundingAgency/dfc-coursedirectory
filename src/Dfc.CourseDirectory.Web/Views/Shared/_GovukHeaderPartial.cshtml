@@ -1,6 +1,6 @@
 ﻿<header class="govuk-header " role="banner" data-module="header">
+    <partial name="_LoginPartial" />
     <div class="govuk-header__container govuk-width-container">
-
         <div class="govuk-header__logo">
             <a href="#" class="govuk-header__link govuk-header__link--homepage">
                 <span class="govuk-header__logotype">
@@ -17,40 +17,47 @@
             </a>
         </div>
         <div class="govuk-header__content">
+            <div>
+                <a href="#" class="govuk-header__link govuk-header__link--service-name">
+                    Course Directory Provider Portal
+                </a>
+            </div>
 
-            <a href="#" class="govuk-header__link govuk-header__link--service-name">
-                Course Directory Provider Portal
-            </a>
 
             <button type="button" role="button" class="govuk-header__menu-button js-header-toggle" aria-controls="navigation" aria-label="Show or hide Top Level Navigation">Menu</button>
             <nav>
-                <ul id="navigation" class="govuk-header__navigation " aria-label="Top Level Navigation">
-                    <li class="govuk-header__navigation-item govuk-header__navigation-item--active">
-                        <a class="govuk-header__link" href="/">
-                            Home
-                        </a>
-                    </li>
-                    <li class="govuk-header__navigation-item">
-                        <a class="govuk-header__link" href="~/Qualifications">
-                            Qualifications
-                        </a>
-                    </li>
-                    <li class="govuk-header__navigation-item">
-                        <a class="govuk-header__link" href="/Venues">
-                            Venues
-                        </a>
-                    </li>
-                    <li class="govuk-header__navigation-item">
-                        <a class="govuk-header__link" href="/Provider">
-                            Add Provider
-                        </a>
-                    </li>
-                    <li class="govuk-header__navigation-item">
-                        <a class="govuk-header__link" href="/Courses">
-                            Courses
-                        </a>
-                    </li>
-                </ul>
+                @{
+                    if (User.Identity.IsAuthenticated)
+                    {
+                        <ul id="navigation" class="govuk-header__navigation " aria-label="Top Level Navigation">
+                            <li class="govuk-header__navigation-item govuk-header__navigation-item--active">
+                                <a class="govuk-header__link" href="/">
+                                    Home
+                                </a>
+                            </li>
+                            <li class="govuk-header__navigation-item">
+                                <a class="govuk-header__link" href="~/Qualifications">
+                                    Qualifications
+                                </a>
+                            </li>
+                            <li class="govuk-header__navigation-item">
+                                <a class="govuk-header__link" href="/Venues">
+                                    Venues
+                                </a>
+                            </li>
+                            <li class="govuk-header__navigation-item">
+                                <a class="govuk-header__link" href="/Provider">
+                                    Add Provider
+                                </a>
+                            </li>
+                            <li class="govuk-header__navigation-item">
+                                <a class="govuk-header__link" href="/Courses">
+                                    Courses
+                                </a>
+                            </li>
+                        </ul>
+                    }
+                }
             </nav>
         </div>
     </div>

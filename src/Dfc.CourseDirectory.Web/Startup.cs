@@ -17,6 +17,14 @@ using Dfc.CourseDirectory.Services.ProviderService;
 using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
+using Dfc.CourseDirectory.Data;
+using Microsoft.EntityFrameworkCore;
+using Dfc.CourseDirectory.Areas.Identity.Data;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using System;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
 
 namespace Dfc.CourseDirectory.Web
 {
@@ -91,7 +99,40 @@ namespace Dfc.CourseDirectory.Web
             services.Configure<CourseServiceSettings>(Configuration.GetSection(nameof(CourseServiceSettings)));
             services.AddScoped<ICourseService, CourseService>();
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddSessionStateTempDataProvider();
+            services.AddDbContext<ApplicationDbContext>(options =>
+              options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+
+            services.AddIdentity<DfcCourseDirectoryUser, IdentityRole>(options => {
+                options.Tokens.PasswordResetTokenProvider = TokenOptions.DefaultEmailProvider;
+                options.SignIn.RequireConfirmedEmail = true;
+            }).AddEntityFrameworkStores<ApplicationDbContext>()
+               .AddDefaultTokenProviders();
+
+            services.AddScoped<SignInManager<DfcCourseDirectoryUser>, SignInManager<DfcCourseDirectoryUser>>();
+
+            // using Microsoft.AspNetCore.Identity.UI.Services;
+            services.AddSingleton<IEmailSender, EmailSender>();
+            services.Configure<AuthMessageSenderOptions>(Configuration.GetSection("SendGrid"));
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                // Cookie settings
+                options.Cookie.HttpOnly = true;
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+
+                options.LoginPath = "/Identity/Account/Login";
+                options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+                options.SlidingExpiration = true;
+            });
+
+            services.AddMvc(options =>
+            {
+                var policy = new AuthorizationPolicyBuilder()
+                .RequireAuthenticatedUser()
+                .Build();
+                options.Filters.Add(new AuthorizeFilter(policy));
+            }).SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddSessionStateTempDataProvider();
 
             services.AddDistributedMemoryCache();
 
@@ -101,7 +142,8 @@ namespace Dfc.CourseDirectory.Web
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory,
+             IServiceProvider serviceProvider)
         {
             loggerFactory.AddApplicationInsights(app.ApplicationServices, LogLevel.Debug);
 
@@ -114,12 +156,13 @@ namespace Dfc.CourseDirectory.Web
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
+            var dbContext = serviceProvider.GetService<ApplicationDbContext>();
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
            // app.UseCookiePolicy();
             app.UseSession();
-
+            app.UseAuthentication();
             //Preventing ClickJacking Attacks
             app.Use(async (context, next) =>
             {

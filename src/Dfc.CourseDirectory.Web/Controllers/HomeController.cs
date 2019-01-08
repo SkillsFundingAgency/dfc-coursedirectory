@@ -1,6 +1,7 @@
 ﻿using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Services.Interfaces;
 using Dfc.CourseDirectory.Web.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
@@ -19,7 +20,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _logger = logger;
             _larsSearchService = larsSearchService;
         }
-
         public IActionResult Index()
         {
             _logger.LogMethodEnter();
