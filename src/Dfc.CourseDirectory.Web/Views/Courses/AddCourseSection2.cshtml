@@ -4,8 +4,8 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.UrlInput
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.Attendance
 @using Dfc.CourseDirectory.Models.Models.Courses
-@*@using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseDeliveryType*@
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.DeliveryType
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.SelectVenue
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.AddStartDate
 @using Dfc.CourseDirectory.Web.ViewComponents.AdvancedLearnerLoan
@@ -22,6 +22,14 @@
 <p style="padding: 15px 20px; border: 3px solid #009900;background-color:#fff;" id="qual--">Qualification added:<br> @Model.LearnAimRefTitle<br> Level: @Model.NotionalNVQLevelv2<br> Awarding organisation: @Model.AwardOrgCode<br> LARS/QAN: @Model.LearnAimRef</p>
 
 <form asp-controller="Courses" asp-action="AddCourse" id="addCourseSection2">
+
+    @await Component.InvokeAsync(nameof(SelectVenue), new SelectVenueModel
+    {
+       LabelText = "Select course venue",
+       HintText = "Select all that apply.",
+       AriaDescribedBy = "Select all that apply."
+    })
+
     @await Component.InvokeAsync(nameof(CourseName), new CourseNameModel
     {
         CourseName = Model.CourseName,
@@ -60,6 +68,8 @@
         LabelText = "Start date"
     })
 
+
+
     @await Component.InvokeAsync(nameof(UrlInput), new UrlInputModel
     {
         LabelText = "URL",
@@ -68,14 +78,14 @@
     })
 
     @await Component.InvokeAsync(nameof(Cost), new CostModel
-{
-    CostLabelText = "Cost",
-    CostHintText = "Enter the cost for the course in pounds and pence e.g. 125.00",
-    CostAriaDescribedBy = "Enter the cost in pounds and pence",
-    CostDescriptionLabelText = "Cost description",
-    CostDescriptionHintText = "Enter details of related to the cost of this course",
-    CostDescriptionAriaDescribedBy = "Enter details of related to the cost of this course"
-})
+    {
+        CostLabelText = "Cost",
+        CostHintText = "Enter the cost for the course in pounds and pence e.g. 125.00",
+        CostAriaDescribedBy = "Enter the cost in pounds and pence",
+        CostDescriptionLabelText = "Cost description",
+        CostDescriptionHintText = "Enter details of related to the cost of this course",
+        CostDescriptionAriaDescribedBy = "Enter details of related to the cost of this course"
+    })
 
 
     @await Component.InvokeAsync(nameof(AdvancedLearnerLoan), new AdvancedLearnerLoanModel
@@ -132,6 +142,8 @@
         HintText = "Select the time of day the course takes place"
     })
 
+
+
     <div class="govuk-form-group">
         <button type="submit" class="govuk-button" id="publish">
             Publish
@@ -182,11 +194,8 @@
             $publish.on("click",
                 function (e) {
                     e.preventDefault();
-
                     var $courseName= $("#@nameof(Model.CourseName)");
                     $courseName.trigger("blur");
-
-
 
                     if ($elementCost.val() === "") {
                         if ($elementCostDescription.val() === "") {
@@ -198,7 +207,8 @@
                             $validationMessageForCost.hide();
                             $formGroupCost.removeClass($formGroupErrorClass);
                         }
-                    } else {
+                    }
+                    else {
 
                         $validationMessageForCost.hide();
                         $formGroupCost.removeClass($formGroupErrorClass);
@@ -301,8 +311,26 @@
                         $validationMessageForPast.hide();
                         $validationMessageForFuture.hide();
                         $validationMessageForRequired.hide();
-                        $("#addCourseSection2").submit();
+                       
+
+                        var checked_checkboxes = $("#SelectVenueCheckBoxes input[type=checkbox]:checked");
+                        if (checked_checkboxes.length == 0) {
+                            //Error => not valid
+                            //return false;
+                            $("#SelectVenueCheckBoxesError").text("Please select at least one Venue.");
+                            $("#VenueItemsCheckboxList").addClass($formGroupErrorClass);
+                            $("html, body").animate({ scrollTop: $("#VenueItemsCheckboxList").offset().top - 20 }, 'slow');
+                        }
+                        else {
+                            // Good submit it
+                            $("#SelectVenueCheckBoxesError").text("");
+                            $("#VenueItemsCheckboxList").removeClass($formGroupErrorClass);
+
+                            $("#addCourseSection2").submit();
+                        }
+
                     }
+                    $("#selecttest").submit();
 
 
                 });

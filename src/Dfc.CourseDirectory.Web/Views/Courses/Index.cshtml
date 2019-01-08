@@ -6,6 +6,26 @@
 }
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
+        @if (ViewBag.Status != null && ViewBag.StatusMessage != null)
+        {
+            @if (ViewBag.Status.Equals("good", StringComparison.InvariantCultureIgnoreCase))
+            {
+                <div class="success-container">
+                    <h1 class="govuk-heading-m">@ViewBag.StatusMessage</h1>
+                </div>
+            }
+            else if (ViewBag.Status.Equals("bad", StringComparison.InvariantCultureIgnoreCase))
+            {
+                <div class="failure-container">
+                    <h1 class="govuk-heading-m">@ViewBag.StatusMessage</h1>
+                </div>
+            }
+            else
+            {
+                // unhandled status
+            }
+        }
+
         <div class="govuk-form-group">
             <form asp-action="Index" asp-controller="Qualifications" method="post">
                 <h1 id="cd-your-courses-heading" class="govuk-heading-l">Your courses</h1>
