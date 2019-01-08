@@ -7,7 +7,7 @@
   overflow-y: scroll;
 }
 
-#popup-flat.popup_content, #popup-descript {
+#popup-flat.popup_content, .popup_content {
   border: solid 1px #000 !important;
 }
 
@@ -15,7 +15,7 @@
   background-color: rgba(255, 255, 255, 0.6) !important;
 }
 
-#popup-flat, #popup-descript {
+#popup-flat, .popup_content {
   background-color: #fff;
   height: 60%;
   overflow-y: scroll;
@@ -30,7 +30,7 @@
   overflow-y: scroll;
 }
 
-#popup-flat.popup_content, #popup-descript {
+#popup-flat.popup_content, .popup_content {
   border: solid 1px #000 !important;
 }
 
@@ -38,52 +38,52 @@
   background-color: rgba(255, 255, 255, 0.6) !important;
 }
 
-#popup-flat, #popup-descript {
+#popup-flat, .popup_content {
   background-color: #fff;
   height: 60%;
   overflow-y: scroll;
 }
 
-#popup-descript_background {
-  opacity: 0;
-  visibility: hidden;
-  background-color: black;
-  position: fixed;
-  top: 0px;
-  right: 0px;
-  bottom: 0px;
-  left: 0px;
-  z-index: 100000;
+.popup_background {
+    opacity: 0;
+    visibility: hidden;
+    background-color: black;
+    position: fixed;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    z-index: 100000;
 }
 
-#popup-descript_wrapper {
-  opacity: 0;
-  visibility: hidden;
-  position: fixed;
-  overflow: auto;
-  z-index: 100001;
-  width: 100%;
-  height: 100%;
-  top: 0px;
-  left: 0px;
-  text-align: center;
-  display: none;
+.popup_wrapper {
+    opacity: 0;
+    visibility: hidden;
+    position: fixed;
+    overflow: auto;
+    z-index: 100001;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+    text-align: center;
+    display: none;
 }
 
-#popup-descript {
-  padding: 40px;
-  width: 50%;
-  background-color: white;
-  opacity: 0;
-  visibility: hidden;
-  display: inline-block;
-  outline: none;
-  text-align: left;
-  position: relative;
-  vertical-align: middle;
+.popup_content {
+    padding: 40px;
+    width: 50%;
+    background-color: white;
+    opacity: 0;
+    visibility: hidden;
+    display: inline-block;
+    outline: none;
+    text-align: left;
+    position: relative;
+    vertical-align: middle;
 }
 
-#close-preview {
+.close-preview {
   clear: both;
   display: block;
   position: relative;
