@@ -9,6 +9,7 @@ using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseFor;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.EntryRequirements;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.HowAssessed;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.HowYouWillLearn;
+using Dfc.CourseDirectory.Web.ViewComponents.Courses.SelectVenue;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatWillLearn;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatYouNeed;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhereNext;
@@ -52,6 +53,8 @@ namespace Dfc.CourseDirectory.Web.ViewModels
 
 
         public string CostDescription { get; set; }
+
+        public SelectVenueModel SelectVenue { get; set; }
 
     }
 }
