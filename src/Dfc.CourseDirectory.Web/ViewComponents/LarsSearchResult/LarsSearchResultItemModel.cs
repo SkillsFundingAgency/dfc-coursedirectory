@@ -20,6 +20,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult
         public string TotalQualificationTime { get; }
         public string UnitType { get; }
         public string AwardOrgName { get; }
+        public string LearnAimRefTypeDesc { get; }
 
         public LarsSearchResultItemModel(
             decimal searchScore,
@@ -32,7 +33,8 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult
             string guidedLearningHours,
             string totalQualificationTime,
             string unitType,
-            string awardOrgName)
+            string awardOrgName,
+            string learnAimRefTypeDesc)
         {
             Errors = new string[] { };
             SearchScore = searchScore;
@@ -46,6 +48,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult
             TotalQualificationTime = totalQualificationTime;
             UnitType = unitType;
             AwardOrgName = awardOrgName;
+            LearnAimRefTypeDesc = learnAimRefTypeDesc;
         }
 
         public LarsSearchResultItemModel()
@@ -73,6 +76,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult
             yield return TotalQualificationTime;
             yield return UnitType;
             yield return AwardOrgName;
+            yield return LearnAimRefTypeDesc;
         }
     }
 }

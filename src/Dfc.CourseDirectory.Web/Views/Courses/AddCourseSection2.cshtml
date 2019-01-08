@@ -23,13 +23,6 @@
 
 <form asp-controller="Courses" asp-action="AddCourse" id="addCourseSection2">
 
-    @*@await Component.InvokeAsync(nameof(SelectVenue), new SelectVenueModel
-        {
-           LabelText = "Select course venue",
-           HintText = "Select all that apply.",
-           AriaDescribedBy = "Select all that apply."
-        })*@
-
     @await Component.InvokeAsync(nameof(CourseName), new CourseNameModel
     {
         CourseName = Model.CourseName,
