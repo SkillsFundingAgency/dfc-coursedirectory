@@ -7,76 +7,69 @@
 <div class="govuk-form-group">
     <ul>
         <li><hr class="govuk-section-break govuk-section-break--visible"></li>
+        @{ var counter = 0; }
         @foreach (var course in Model.Courses)
         {
+
             <li>
                 <h3 class="govuk-heading-m">
                     @course.QualificationCourseTitle
                 </h3><span class="govuk-body">(@course.CourseRuns.Count())</span>
-                     <div class="govuk-form-group">
-                         <div class="govuk-form-group cd-course-text">
-                             <p class="govuk-body">
-                                 Level @course.NotionalNVQLevelv2, @course.AwardOrgCode, Lars: @course.LearnAimRef,
-                                 <a class="edit-btn open-descript" href="#">View course description</a>
-                                 <span class="cd-advanced-text">Advanced learner Loan Available</span>
-                             </p>
-                         </div>
-                         <fieldset class="govuk-fieldset cd-course-checkbox" aria-describedby="course-hint">
-                             <div class="govuk-checkboxes">
-                                 <div class="govuk-checkboxes__item">
+                <div class="govuk-form-group">
+                    <div class="govuk-form-group cd-course-text">
+                        <p class="govuk-body">
+                            Level @course.NotionalNVQLevelv2, @course.AwardOrgCode, Lars: @course.LearnAimRef,
+                            <a id="@counter" class="edit-btn open-descript" href="#">View course description</a>
+                            <span class="cd-advanced-text">Advanced learner Loan Available</span>
+                        </p>
+                    </div>
+                    <fieldset class="govuk-fieldset cd-course-checkbox" aria-describedby="course-hint">
+                        <div class="govuk-checkboxes">
+                            <div class="govuk-checkboxes__item">
 
-                                     <input class="govuk-checkboxes__input" type="checkbox" value="" checked="@course.AdvancedLearnerLoan" disabled="disabled">
-                                     <label class="govuk-label govuk-checkboxes__label"></label>
-                                 </div>
-                             </div>
-                         </fieldset>
-                         @{
-                                 var descriptionModel = new ModalPopupModel
-                                 {
-                                    CourseTitle = course.QualificationCourseTitle,
-                                    CourseDescription = course.CourseDescription,
-                                    EntryRequirements = course.EntryRequirments,
-                                    HowYoullBeAssessed = course.HowYoullBeAssessed,
-                                    HowYoullLearn = course.HowYoullLearn,
-                                    WhatYoullLearn = course.WhatYoullLearn,
-                                    WhatYoullNeed = course.WhatYoullNeed,
-                                    WhereNext = course.WhereNext
-                                 };
-                          }
-                        @await Component.InvokeAsync(nameof(ModalPopup), descriptionModel)
-                     </div>
+                                <input class="govuk-checkboxes__input" type="checkbox" value="" checked="@course.AdvancedLearnerLoan" disabled="disabled">
+                                <label class="govuk-label govuk-checkboxes__label"></label>
+                            </div>
+                        </div>
+                    </fieldset>
+                    @{
+                        var descriptionModel = new ModalPopupModel
+                        {
+                            ID = counter,
+                            CourseTitle = course.QualificationCourseTitle,
+                            CourseDescription = course.CourseDescription,
+                            EntryRequirements = course.EntryRequirments,
+                            HowYoullBeAssessed = course.HowYoullBeAssessed,
+                            HowYoullLearn = course.HowYoullLearn,
+                            WhatYoullLearn = course.WhatYoullLearn,
+                            WhatYoullNeed = course.WhatYoullNeed,
+                            WhereNext = course.WhereNext
+                        };
+                    }
+                    @await Component.InvokeAsync(nameof(ModalPopup), descriptionModel)
+                </div>
             </li>
             <li><hr class="govuk-section-break govuk-section-break--visible"></li>
             foreach (var courseRun in course.CourseRuns)
             {
                 @await Component.InvokeAsync(nameof(CourseRun), courseRun)
             }
+            counter++;
         }
     </ul>
 </div>
 <script src="https://cdn.rawgit.com/vast-engineering/jquery-popup-overlay/1.7.13/jquery.popupoverlay.js"></script>
 <script>
-    $('#popup-venue,#popup-preview', '#popup-descript').popup({
+    $('#popup-descript/*-0*/').popup({
         color: '#fff',
         transition: 'all 0.3s'
-    });
-
-    $("#preview").click(function (e) {
-        e.preventDefault();
-        $("html, body").css("overflow", "hidden");
-        $('#popup-preview').popup('show');
-    });
-
-    $("#close-preview").click(function (e) {
-        e.preventDefault();
-        $("html, body").css("overflow", "auto");
-        $('#popup-preview').popup('hide');
     });
 
     $(".open-descript").each(function (e) {
         $(this).click(function (e) {
             e.preventDefault();
             $("html, body").css("overflow", "hidden");
+            //$('#popup-descript-0').popup('show');
             $('#popup-descript').popup('show');
         });
     });

@@ -7,6 +7,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.ModalPopup
 {
     public class ModalPopupModel
     {
+        public int ID { get; set; }
         public string CourseTitle { get; set; }
         public string CourseDescription { get; set; }
         public string EntryRequirements { get; set; }
