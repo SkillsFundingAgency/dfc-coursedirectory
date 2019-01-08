@@ -47,8 +47,25 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _courseService = courseService;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string status, string learnAimRef, string numberOfNewCourses, string errmsg)
         {
+            if (!string.IsNullOrEmpty(status))
+            {
+                ViewData["Status"] = status;
+                if (status.Equals("good", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    ViewData["StatusMessage"] = string.Format("{0} New Course(s) created in Course Directory for LARS: {1}", numberOfNewCourses, learnAimRef);
+                }
+                else if (status.Equals("bad", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    ViewData["StatusMessage"] = errmsg;
+                }
+                else
+                {
+                    // unhandled status
+                }
+            }
+
             //STUB DATA -- TODO: Remove later
             CourseRun[] courseRuns = new CourseRun[]
             {
@@ -61,9 +78,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                       DeliveryMode = DeliveryMode.ClassroomBased,
                       FlexibleStartDate = false,
                       StartDate = Convert.ToDateTime("2021-04-03T00:00:00"),
-                      CourseURL = "http://www.bbc.co.uk",
+                      CourseURL = "http://www.google.co.uk",
                       Cost = 125,
-                      CostDescription = "cost description",
+                      CostDescription = "Number 1 Cost",
                       DurationUnit = DurationUnit.Months,
                       DurationValue = 47,
                       StudyMode = StudyMode.Flexible,
@@ -82,9 +99,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     DeliveryMode = DeliveryMode.WorkBased,
                     FlexibleStartDate = true,
                     //StartDate = Convert.ToDateTime("2021-04-03T00:00:00"),
-                    CourseURL = "http://www.bbc.co.uk",
-                    Cost = 125,
-                    CostDescription = "cost description",
+                    CourseURL = "http://www.microsoft.co.uk",
+                    Cost = 250,
+                    CostDescription = "Number 2 Cost",
                     DurationUnit = DurationUnit.Weeks,
                     DurationValue = 47,
                     StudyMode = StudyMode.FullTime,
@@ -128,12 +145,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return View(vm);
         }
 
-        public IActionResult AddCourseSection1(string learnAimRef, string notionalNVQLevelv2, string awardOrgCode, string learnAimRefTitle)
+        public IActionResult AddCourseSection1(string learnAimRef, string notionalNVQLevelv2, string awardOrgCode, string learnAimRefTitle, string learnAimRefTypeDesc)
         {
             _session.SetString("LearnAimRef", learnAimRef);
             _session.SetString("NotionalNVQLevelv2", notionalNVQLevelv2);
             _session.SetString("AwardOrgCode", awardOrgCode);
             _session.SetString("LearnAimRefTitle", learnAimRefTitle);
+            _session.SetString("LearnAimRefTypeDesc", learnAimRefTypeDesc);
 
             AddCourseViewModel vm = new AddCourseViewModel
             {
@@ -198,13 +216,24 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _session.SetString("HowAssessed", model?.HowAssessed ?? string.Empty);
             _session.SetString("WhereNext", model?.WhereNext ?? string.Empty);
 
+            int UKPRN = 0;
+            if (_session.GetInt32("UKPRN") != null)
+            {
+                UKPRN = _session.GetInt32("UKPRN").Value;
+            }
+            else
+            {
+                return RedirectToAction("Index", "Venues", new { errmsg = "No-UKPRN" });
+            }
+
             var viewModel = new AddCourseDetailsViewModel()
             {
                 LearnAimRef = _session.GetString("LearnAimRef"),
                 LearnAimRefTitle = _session.GetString("LearnAimRefTitle"),
                 AwardOrgCode = _session.GetString("AwardOrgCode"),
                 NotionalNVQLevelv2 = _session.GetString("NotionalNVQLevelv2"),
-                CourseName = _session.GetString("LearnAimRefTitle")
+                CourseName = _session.GetString("LearnAimRefTitle"),
+                ProviderUKPRN = UKPRN
             };
             return View("AddCourseSection2", viewModel);
         }
@@ -215,12 +244,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddCourse(AddCoursePublishModel model)
+        public async Task<IActionResult> AddCourse(AddCoursePublishModel model, Guid[] SelectedVenues)
         {
             var learnAimRef = _session.GetString("LearnAimRef");
             var notionalNVQLevelv2 = _session.GetString("NotionalNVQLevelv2");
             var awardOrgCode = _session.GetString("AwardOrgCode");
             var learnAimRefTitle = _session.GetString("LearnAimRefTitle");
+            var learnAimRefTypeDesc = _session.GetString("LearnAimRefTypeDesc");
 
             var courseFor = _session.GetString("CourseFor");
             var entryRequirements = _session.GetString("EntryRequirements");
@@ -236,18 +266,22 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 string.IsNullOrEmpty(notionalNVQLevelv2) ||
                 string.IsNullOrEmpty(awardOrgCode) ||
                 string.IsNullOrEmpty(learnAimRefTitle) ||
+                string.IsNullOrEmpty(learnAimRefTypeDesc) ||
                 string.IsNullOrEmpty(courseFor)
               )
             {
-                return RedirectToAction("AddCourseSection1", new { learnAimRef = learnAimRef, notionalNVQLevelv2 = notionalNVQLevelv2, awardOrgCode = awardOrgCode, learnAimRefTitle = learnAimRefTitle });
+                return RedirectToAction("AddCourseSection1", new { learnAimRef = learnAimRef, notionalNVQLevelv2 = notionalNVQLevelv2, awardOrgCode = awardOrgCode, learnAimRefTitle = learnAimRefTitle, errmsg = "Course data is missing." });
+            }
+
+            if (SelectedVenues == null || SelectedVenues.Count() < 1)
+            {
+                return RedirectToAction("AddCourseSection1", new { learnAimRef = learnAimRef, notionalNVQLevelv2 = notionalNVQLevelv2, awardOrgCode = awardOrgCode, learnAimRefTitle = learnAimRefTitle, errmsg = "No Venue Selected." });
             }
 
             // We will need to map the flat ModelView Structure to our hierarchical Course Model Structure
 
             // For each Venue => Course Run
             var courseRuns = new List<CourseRun>();
-            // It will come from Venue selection
-            var venueSelection = new Guid[] { new Guid("86748623-93f0-4ebd-8a37-0f0754822b7e"), new Guid("96748623-93f0-4ebd-8a37-0f0754822b7e") };
 
             bool flexibleStartDate = false;
             DateTime specifiedStartDate = DateTime.MinValue;
@@ -265,9 +299,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
             else
             {
                 // StartDateType not defined - log it.
+                // specifiedStartDate will be DateTime.MinValue;
+                // and flexibleStartDate = false
             }
 
-            foreach (var venue in venueSelection)
+            foreach (var venue in SelectedVenues)
             {
                 var courseRun = new CourseRun
                 {
@@ -313,10 +349,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 LearnAimRef = learnAimRef,
                 NotionalNVQLevelv2 = notionalNVQLevelv2,
                 AwardOrgCode = awardOrgCode,
-                QualificationType = "Diploma", // ??? QualificationTypes => Diploma, Cerificate or EACH courserun
-
+                QualificationType = learnAimRefTypeDesc, 
                 ProviderUKPRN = UKPRN, // TODO: ToBeChanged
-
                 CourseDescription = courseFor,
                 EntryRequirments = entryRequirements,
                 WhatYoullLearn = whatWillLearn,
@@ -349,6 +383,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _session.Remove("NotionalNVQLevelv2");
             _session.Remove("AwardOrgCode");
             _session.Remove("LearnAimRefTitle");
+            _session.Remove("LearnAimRefTypeDesc");
 
             _session.Remove("CourseFor");
             _session.Remove("EntryRequirements");
