@@ -112,7 +112,6 @@
                         $yearElementUrl.val();
 
                     if (!isValidDate(enteredDate)) {
-                        //$dayElementUrl.addClass($elementErrorClass);
                         $formGroupUrl.addClass($formGroupErrorClass);
 
                         $validationMessageUrlForInvalid.show();
@@ -245,77 +244,6 @@
                             }
                         }
 
-                        //if ($dayElementUrl.val() !== "" &&
-                        //    $monthElementUrl.val() !== "" &&
-                        //    $yearElementUrl.val() !== "") {
-                        //    var enteredDate = $dayElementUrl.val() +
-                        //        "/" +
-                        //        $monthElementUrl.val() +
-                        //        "/" +
-                        //        $yearElementUrl.val();
-
-                        //    if (!isValidDate(enteredDate)) {
-                        //        $monthElementUrl.addClass($elementErrorClass);
-                        //        $formGroupUrl.addClass($formGroupErrorClass);
-                        //        $validationMessageUrlForInvalid.show();
-                        //    } else {
-
-                        //        var bits = enteredDate.split('/');
-                        //        var enteredDateAsDate = new Date(bits[2] + '/' + bits[1] + '/' + bits[0]);
-
-                        //        $validationMessageForFuture.hide();
-                        //        $validationMessageForPast.hide();
-                        //        var d = new Date();
-                        //        var currentDate =
-                        //            d.getDate() +
-                        //            "/" +
-                        //            (d.getMonth() + 1) +
-                        //            "/" +
-                        //            (d.getFullYear());
-
-                        //        var futureDate =
-                        //            d.getDate() +
-                        //            "/" +
-                        //            (d.getMonth() + 1) +
-                        //            "/" +
-                        //            (d.getFullYear() + 2);
-
-                        //        var currentDateBits = currentDate.split('/');
-                        //        var currentDateAsDate = new Date(currentDateBits[2] +
-                        //            '/' +
-                        //            currentDateBits[1] +
-                        //            '/' +
-                        //            currentDateBits[0]);
-
-                        //        var futureDateBits = futureDate.split('/');
-                        //        var futureDateAsDate = new Date(futureDateBits[2] +
-                        //            '/' +
-                        //            futureDateBits[1] +
-                        //            '/' +
-                        //            futureDateBits[0]);
-
-
-                        //        if (Date.parse(enteredDateAsDate) - Date.parse(currentDateAsDate) < 0) {
-                        //            $formGroupUrl.addClass($formGroupErrorClass);
-                        //            $validationMessageForPast.show();
-                        //        } else {
-                        //            if (Date.parse(enteredDateAsDate) > Date.parse(futureDateAsDate)) {
-                        //                $formGroupUrl.addClass($formGroupErrorClass);
-                        //                $validationMessageForFuture.show();
-
-                        //            } else {
-                        //                $validationMessageUrlForDay.hide();
-                        //                $validationMessageUrlForMonth.hide();
-                        //                $validationMessageUrlForYear.hide();
-                        //                $validationMessageForFuture.hide();
-                        //                $validationMessageForPast.hide();
-                        //                $validationMessageUrlForInvalid.hide();
-                        //            }
-                        //        }
-                        //    }
-                        //}
-
-
                         dateChecker();
 
                     } else {
@@ -411,76 +339,7 @@
                             }
                         }
 
-                        //if ($dayElementUrl.val() !== "" &&
-                        //    $monthElementUrl.val() !== "" &&
-                        //    $yearElementUrl.val() !== "") {
-                        //    var enteredDate = $dayElementUrl.val() +
-                        //        "/" +
-                        //        $monthElementUrl.val() +
-                        //        "/" +
-                        //        $yearElementUrl.val();
-
-                        //    if (!isValidDate(enteredDate)) {
-                        //        $yearElementUrl.addClass($elementErrorClass);
-                        //        $formGroupUrl.addClass($formGroupErrorClass);
-                        //        $validationMessageUrlForInvalid.show();
-                        //    } else {
-
-                        //        var bits = enteredDate.split('/');
-                        //        var enteredDateAsDate = new Date(bits[2] + '/' + bits[1] + '/' + bits[0]);
-
-                        //        $validationMessageForFuture.hide();
-                        //        $validationMessageForPast.hide();
-                        //        var d = new Date();
-                        //        var currentDate =
-                        //            d.getDate() +
-                        //                "/" +
-                        //                (d.getMonth() + 1) +
-                        //                "/" +
-                        //                (d.getFullYear());
-
-                        //        var futureDate =
-                        //            d.getDate() +
-                        //                "/" +
-                        //                (d.getMonth() + 1) +
-                        //                "/" +
-                        //                (d.getFullYear() + 2);
-
-                        //        var currentDateBits = currentDate.split('/');
-                        //        var currentDateAsDate = new Date(currentDateBits[2] +
-                        //            '/' +
-                        //            currentDateBits[1] +
-                        //            '/' +
-                        //            currentDateBits[0]);
-
-                        //        var futureDateBits = futureDate.split('/');
-                        //        var futureDateAsDate = new Date(futureDateBits[2] +
-                        //            '/' +
-                        //            futureDateBits[1] +
-                        //            '/' +
-                        //            futureDateBits[0]);
-
-
-                        //        if (Date.parse(enteredDateAsDate) - Date.parse(currentDateAsDate) < 0) {
-                        //            $formGroupUrl.addClass($formGroupErrorClass);
-                        //            $validationMessageForPast.show();
-                        //        } else {
-                        //            if (Date.parse(enteredDateAsDate) > Date.parse(futureDateAsDate)) {
-                        //                $formGroupUrl.addClass($formGroupErrorClass);
-                        //                $validationMessageForFuture.show();
-
-                        //            } else {
-
-                        //                $validationMessageUrlForDay.hide();
-                        //                $validationMessageUrlForMonth.hide();
-                        //                $validationMessageUrlForYear.hide();
-                        //                $validationMessageForFuture.hide();
-                        //                $validationMessageForPast.hide();
-                        //                $validationMessageUrlForInvalid.hide();
-                        //            }
-                        //        }
-                        //    }
-                        //}
+                      
                         dateChecker();
 
 
@@ -532,47 +391,7 @@
                             }
                         }
 
-
-                        if ($dayElementUrl.val() !== "" &&
-                            $monthElementUrl.val() !== "" &&
-                            $yearElementUrl.val() !== "") {
-                            var enteredDate = $dayElementUrl.val() +
-                                "/" +
-                                $monthElementUrl.val() +
-                                "/" +
-                                $yearElementUrl.val();
-                            $validationMessageForFuture.hide();
-                            $validationMessageForPast.hide();
-                            var d = new Date();
-                            var currentDate =
-                                d.getDate() +
-                                    "/" +
-                                    (d.getMonth() + 1) +
-                                    "/" +
-                                    (d.getFullYear());
-
-                            var futureDate =
-                                d.getDate() +
-                                    "/" +
-                                    (d.getMonth() + 1) +
-                                    "/" +
-                                    (d.getFullYear() + 2);
-
-                            if (Date.parse(enteredDate) - Date.parse(currentDate) < 0) {
-                                $formGroupUrl.addClass($formGroupErrorClass);
-                                $validationMessageForPast.show();
-                            } else {
-                                if (Date.parse(enteredDate) > Date.parse(futureDate)) {
-                                    $formGroupUrl.addClass($formGroupErrorClass);
-                                    $validationMessageForFuture.show();
-
-                                } else {
-                                    $validationMessageForFuture.hide();
-                                    $validationMessageForPast.hide();
-                                }
-                            }
-                        }
-
+                        dateChecker();
 
                     } else {
                         $dayElementUrl.removeClass($elementErrorClass);
@@ -585,6 +404,7 @@
                         $validationMessageForPast.hide();
                         $validationMessageForFuture.hide();
                         $validationMessageUrlForRequired.hide();
+                        $validationMessageUrlForInvalid.hide();
                     }
                 });
         });

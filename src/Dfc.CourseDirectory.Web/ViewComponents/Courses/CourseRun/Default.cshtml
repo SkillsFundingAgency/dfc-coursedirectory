@@ -6,10 +6,6 @@
 
 <li class="course-run-container" id="course-run-@Model.courseRun.id">
 
-
-
-
-
     <div class="govuk-form-group large">
         <label class="govuk-label">Course name</label>
         <input readonly="@(true)" class="govuk-input" asp-for="@Model.courseRun.CourseName" type="text" aria-describedby="course name">
@@ -120,30 +116,13 @@
     (function ($) {
         $(function () {
 
-            var $urlLink = $("#URLLink");
-            var $urlSection = $("#inner");
-            var $closeLink = $("#closeLink");
-
-            //$urlLink.on("click", function (e) {
-            //    $urlLink.text("-");
-            //    $urlSection.show();
-            //});
-
-            //$closeLink.on("click", function (e) {
-            //    var id = $(this).attr("data-HREF-Id");
-            //    $('#' + id).hide();
-            //});
-
             $(".close").click(function(){
-
-                //$(".course-run-container").attr('style', 'min-height:auto');
-
 
                 var id = $(this).attr("data-HREF-Id");
 
                 var $courseRunContainer = $("#course-run-" + id);
 
-                $courseRunContainer.attr('style', 'min-height:auto');
+                $courseRunContainer.removeClass("popUpSectionHeight");
 
                 $('#' + id).hide();
             });
@@ -151,14 +130,11 @@
 
             $(".view").click(function(){
 
-               // $(".course-run-container").css('min-height', '160px');
                 var id = $(this).attr("data-HREF-Id");
 
                 var $courseRunContainer = $("#course-run-" + id);
 
-                //ar $courseRunContainer = "#course-run-" + id;
-
-                $courseRunContainer.css('min-height', '160px');
+                $courseRunContainer.addClass("popUpSectionHeight");
 
                 $('#' + id).show();
             });

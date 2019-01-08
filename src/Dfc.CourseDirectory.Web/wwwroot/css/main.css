@@ -5769,6 +5769,10 @@ li span.govuk-body {
   float: left;
 }
 
+.popUpSectionHeight {
+  min-height: 160px;
+}
+
 .duration-container {
   display: flex;
 }
