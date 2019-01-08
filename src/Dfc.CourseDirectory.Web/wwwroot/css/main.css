@@ -5727,7 +5727,7 @@ li span.govuk-body {
   border-top: 2px solid;
   padding: 20px 0px 0px;
   width: 100%;
-  min-height: 100px;
+  height: auto;
   display: flex;
   flex-wrap: wrap;
 }
@@ -5746,6 +5746,27 @@ li span.govuk-body {
 
 .small {
   width: 95px;
+}
+
+.popUpContainer {
+  display: inline-block;
+  padding-right: 10px;
+  width: 80px;
+  text-align: center;
+}
+
+.popUpSection {
+  position: absolute;
+  width: 300px;
+  height: auto;
+  background-color: #fff;
+  margin-top: 15px;
+  margin-left: 20px;
+}
+
+.close {
+  margin-top: 10px;
+  float: left;
 }
 
 .duration-container {
