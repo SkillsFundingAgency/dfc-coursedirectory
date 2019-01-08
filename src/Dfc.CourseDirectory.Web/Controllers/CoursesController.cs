@@ -47,8 +47,25 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _courseService = courseService;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string status, string learnAimRef, string numberOfNewCourses, string errmsg)
         {
+            if (!string.IsNullOrEmpty(status))
+            {
+                ViewData["Status"] = status;
+                if (status.Equals("good", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    ViewData["StatusMessage"] = string.Format("{0} New Course(s) created in Course Directory for LARS: {1}", numberOfNewCourses, learnAimRef);
+                }
+                else if (status.Equals("bad", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    ViewData["StatusMessage"] = errmsg;
+                }
+                else
+                {
+                    // unhandled status
+                }
+            }
+
             //STUB DATA -- TODO: Remove later
             CourseRun[] courseRuns = new CourseRun[]
             {
