@@ -7,12 +7,15 @@ using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Models.Models.Courses;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.CourseService;
+using Dfc.CourseDirectory.Services.Interfaces.VenueService;
+using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.RequestModels;
 using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseFor;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.EntryRequirements;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.HowAssessed;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.HowYouWillLearn;
+using Dfc.CourseDirectory.Web.ViewComponents.Courses.SelectVenue;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatWillLearn;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatYouNeed;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhereNext;
@@ -30,21 +33,27 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly ICourseService _courseService;
         private ISession _session => _contextAccessor.HttpContext.Session;
+        private readonly IVenueSearchHelper _venueSearchHelper;
+        private readonly IVenueService _venueService;
+
 
         public CoursesController(
             ILogger<CoursesController> logger,
             IOptions<CourseServiceSettings> courseSearchSettings,
             IHttpContextAccessor contextAccessor,
-            ICourseService courseService)
+            ICourseService courseService, IVenueSearchHelper venueSearchHelper, IVenueService venueService)
         {
             Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(courseSearchSettings, nameof(courseSearchSettings));
             Throw.IfNull(contextAccessor, nameof(contextAccessor));
             Throw.IfNull(courseService, nameof(courseService));
+            Throw.IfNull(venueService, nameof(venueService));
 
             _logger = logger;
             _contextAccessor = contextAccessor;
             _courseService = courseService;
+            _venueService = venueService;
+            _venueSearchHelper = venueSearchHelper;
         }
 
         public IActionResult Index(string status, string learnAimRef, string numberOfNewCourses, string errmsg)
@@ -112,8 +121,52 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     UpdatedBy = null
                 }
             };
-           
-            
+            CourseRun[] courseRuns2 = new CourseRun[]
+             {
+                new CourseRun
+                {
+                      id = Guid.NewGuid(),
+                      VenueId = new Guid("76748623-93f0-4ebd-8a37-0f0754822b7e"),
+                      CourseName = "GCE A Level in Further Mathematics 1",
+                      ProviderCourseID = "asfdf-someId-courseId-string-guid",
+                      DeliveryMode = DeliveryMode.ClassroomBased,
+                      FlexibleStartDate = false,
+                      StartDate = Convert.ToDateTime("2021-04-03T00:00:00"),
+                      CourseURL = "http://www.bbc.co.uk",
+                      Cost = 125,
+                      CostDescription = "cost description",
+                      DurationUnit = DurationUnit.Months,
+                      DurationValue = 47,
+                      StudyMode = StudyMode.Flexible,
+                      AttendancePattern = AttendancePattern.DayOrBlockRelease,
+                      CreatedDate = Convert.ToDateTime("2019-01-03T11:17:02.514746+00:00"),
+                      CreatedBy = "ProviderPortal-AddCourse",
+                      UpdatedDate = Convert.ToDateTime("0001-01-01T00:00:00"),
+                      UpdatedBy = null
+                },
+                new CourseRun
+                {
+                    id = Guid.NewGuid(),
+                    VenueId = new Guid("36ea2887-31ac-48cf-9d99-d267c5d464e6"),
+                    CourseName = "GCE A Level in Further Mathematics 2",
+                    ProviderCourseID = "asfdf-someId-courseId-string-guid",
+                    DeliveryMode = DeliveryMode.WorkBased,
+                    FlexibleStartDate = true,
+                    //StartDate = Convert.ToDateTime("2021-04-03T00:00:00"),
+                    CourseURL = "http://www.bbc.co.uk",
+                    Cost = 125,
+                    CostDescription = "cost description",
+                    DurationUnit = DurationUnit.Weeks,
+                    DurationValue = 47,
+                    StudyMode = StudyMode.FullTime,
+                    AttendancePattern = AttendancePattern.Evening,
+                    CreatedDate = Convert.ToDateTime("2019-01-03T11:17:02.514746+00:00"),
+                    CreatedBy = "ProviderPortal-AddCourse",
+                    UpdatedDate = Convert.ToDateTime("0001-01-01T00:00:00"),
+                    UpdatedBy = null
+                }
+             };
+
             Course[] course = new Course[]
             {
                 new Course
@@ -134,8 +187,27 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     WhereNext = "What are the opportunities beyond this course",
                     AdvancedLearnerLoan = true,
                     CourseRuns = courseRuns
+                },
+                new Course
+                {
+                    id = Guid.NewGuid(),
+                    QualificationCourseTitle = "Diploma in Information Technology ",
+                    LearnAimRef = "10060108",
+                    NotionalNVQLevelv2 = "3",
+                    AwardOrgCode = "CCEA",
+                    QualificationType = "Diploma",
+                    ProviderUKPRN = 10038911,
+                    CourseDescription = "Course description1",
+                    EntryRequirments = "Entry requirements1",
+                    WhatYoullLearn = "Give learners a taste of this course1.",
+                    HowYoullLearn = "Will it be classroom based exercises1",
+                    WhatYoullNeed = "Please detail anything your learners1",
+                    HowYoullBeAssessed = "Please provide details of all the ways1",
+                    WhereNext = "What are the opportunities beyond this course1",
+                    AdvancedLearnerLoan = true,
+                    CourseRuns = courseRuns2
                 }
-  
+
             };
             YourCoursesViewModel vm = new YourCoursesViewModel
             {
@@ -145,12 +217,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return View(vm);
         }
 
-        public IActionResult AddCourseSection1(string learnAimRef, string notionalNVQLevelv2, string awardOrgCode, string learnAimRefTitle)
+        public IActionResult AddCourseSection1(string learnAimRef, string notionalNVQLevelv2, string awardOrgCode, string learnAimRefTitle, string learnAimRefTypeDesc)
         {
             _session.SetString("LearnAimRef", learnAimRef);
             _session.SetString("NotionalNVQLevelv2", notionalNVQLevelv2);
             _session.SetString("AwardOrgCode", awardOrgCode);
             _session.SetString("LearnAimRefTitle", learnAimRefTitle);
+            _session.SetString("LearnAimRefTypeDesc", learnAimRefTypeDesc);
 
             AddCourseViewModel vm = new AddCourseViewModel
             {
@@ -205,7 +278,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddCourseSection1(AddCourseSection1RequestModel model)
+        public async Task<IActionResult> AddCourseSection1(AddCourseSection1RequestModel model)
         {
             _session.SetString("CourseFor", model?.CourseFor);
             _session.SetString("EntryRequirements", model?.EntryRequirements ?? string.Empty);
@@ -234,6 +307,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 CourseName = _session.GetString("LearnAimRefTitle"),
                 ProviderUKPRN = UKPRN
             };
+
+            viewModel.SelectVenue = await GetVenuesByUkprn(UKPRN);
+
             return View("AddCourseSection2", viewModel);
         }
 
@@ -249,6 +325,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             var notionalNVQLevelv2 = _session.GetString("NotionalNVQLevelv2");
             var awardOrgCode = _session.GetString("AwardOrgCode");
             var learnAimRefTitle = _session.GetString("LearnAimRefTitle");
+            var learnAimRefTypeDesc = _session.GetString("LearnAimRefTypeDesc");
 
             var courseFor = _session.GetString("CourseFor");
             var entryRequirements = _session.GetString("EntryRequirements");
@@ -264,6 +341,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 string.IsNullOrEmpty(notionalNVQLevelv2) ||
                 string.IsNullOrEmpty(awardOrgCode) ||
                 string.IsNullOrEmpty(learnAimRefTitle) ||
+                string.IsNullOrEmpty(learnAimRefTypeDesc) ||
                 string.IsNullOrEmpty(courseFor)
               )
             {
@@ -346,10 +424,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 LearnAimRef = learnAimRef,
                 NotionalNVQLevelv2 = notionalNVQLevelv2,
                 AwardOrgCode = awardOrgCode,
-                QualificationType = "Diploma", // ??? QualificationTypes => Diploma, Cerificate or EACH courserun
-
+                QualificationType = learnAimRefTypeDesc, 
                 ProviderUKPRN = UKPRN, // TODO: ToBeChanged
-
                 CourseDescription = courseFor,
                 EntryRequirments = entryRequirements,
                 WhatYoullLearn = whatWillLearn,
@@ -382,6 +458,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _session.Remove("NotionalNVQLevelv2");
             _session.Remove("AwardOrgCode");
             _session.Remove("LearnAimRefTitle");
+            _session.Remove("LearnAimRefTypeDesc");
 
             _session.Remove("CourseFor");
             _session.Remove("EntryRequirements");
@@ -390,6 +467,43 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _session.Remove("WhatYouNeed");
             _session.Remove("HowAssessed");
             _session.Remove("WhereNext");
+        }
+
+        private async Task<SelectVenueModel> GetVenuesByUkprn(int ukprn)
+        {
+            var selectVenue = new SelectVenueModel
+            {
+                LabelText = "Select course venue",
+                HintText = "Select all that apply.",
+                AriaDescribedBy = "Select all that apply.",
+                Ukprn = ukprn
+            };
+            var requestModel = new VenueSearchRequestModel { SearchTerm = ukprn.ToString() };
+            var criteria = _venueSearchHelper.GetVenueSearchCriteria(requestModel);
+            var result = await _venueService.SearchAsync(criteria);
+            if (result.IsSuccess && result.HasValue)
+            {
+                var items = _venueSearchHelper.GetVenueSearchResultItemModels(result.Value.Value);
+                var venueItems = new List<VenueItemModel>();
+                
+                foreach (var venueSearchResultItemModel in items)
+                {
+                    venueItems.Add(new VenueItemModel
+                    {
+                        Id = venueSearchResultItemModel.Id,
+                        VenueName = venueSearchResultItemModel.VenueName
+                    });
+                }
+
+                selectVenue.VenueItems = venueItems;
+                if (venueItems.Count == 1)
+                {
+                    selectVenue.HintText = string.Empty;
+                    selectVenue.AriaDescribedBy = string.Empty;
+                }
+            }
+
+            return selectVenue;
         }
     }
 }

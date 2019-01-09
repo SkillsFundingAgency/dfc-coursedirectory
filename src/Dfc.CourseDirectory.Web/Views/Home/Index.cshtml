@@ -1,31 +1,22 @@
-﻿@using Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult
-<h1 class="govuk-heading-l">Provider Search</h1>
+﻿@using Microsoft.AspNetCore.Http
+@using Dfc.CourseDirectory.Web.ViewComponents.ProviderSearch
+@inject IHttpContextAccessor HttpContextAccessor
 
-    <div>
-        <form class="site-search ui-front" id="header-search">
-            <label class="govuk-label" for="UKPrn">
-                UK PRN - Holding Page for Provider integration
-            </label>
-            <div class="search-input-wrapper">
+@{
+    var provSearch = HttpContextAccessor.HttpContext.Session.GetInt32("ProviderSearch");
+}
+<div>
 
-                <input class="govuk-input govuk-!-width-three-quarters search-input js-search-focus" placeholder="" id="UKPrn" name="UKPrn" type="text">
-                <div class="cd-c-search__item cd-search__submit-wrapper">
-                    <button type="button" class=" submit" id="search">Search</button>
-                </div>
-            </div>
-        </form>
-
-        @*<div class="govuk-grid-column-full">
-            <div class="govuk-form-group">
-                <input class="govuk-input" id="UKPrn" name="UKPrn" type="text">
-
-                    <button type="submit" class="govuk-button" id="search">
-                        Search
-                    </button>
-            </div>
-        </div>*@
-
-        <div id="VenueSearchResultContainer">
-            @await Component.InvokeAsync(nameof(VenueSearchResult))
-        </div>
+    <div class="govuk-breadcrumbs">
+        <ol class="govuk-breadcrumbs__list">
+            <li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="your-courses">Home</a></li>
+            <li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="Providers">Providers</li>
+            <li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link">@ViewBag.Title</li>
+        </ol>
     </div>
+    <h1 class="govuk-heading-l">Search Provider</h1>
+
+    <div id="VenueSearchResultContainer">
+        @await Component.InvokeAsync(nameof(ProviderSearch))
+    </div>
+</div>

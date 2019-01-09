@@ -1,14 +1,18 @@
 ﻿@model Dfc.CourseDirectory.Web.ViewModels.YourCoursesViewModel
 @using System.Linq
 @using Dfc.CourseDirectory.Models.Models.Courses
-
+@using Dfc.CourseDirectory.Web.ViewComponents.ModalPopup
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<script src="https://cdn.rawgit.com/vast-engineering/jquery-popup-overlay/1.7.13/jquery.popupoverlay.js"></script>
 
 <div class="govuk-form-group">
     <ul>
         <li><hr class="govuk-section-break govuk-section-break--visible"></li>
+        @{ var counter = 0; }
         @foreach (var course in Model.Courses)
         {
+
             <li>
                 <h3 class="govuk-heading-m">
                     @course.QualificationCourseTitle
@@ -16,18 +20,35 @@
                 <div class="govuk-form-group">
                     <div class="govuk-form-group cd-course-text">
                         <p class="govuk-body">
-                            Level @course.NotionalNVQLevelv2, @course.AwardOrgCode, Lars: @course.LearnAimRef, <a href="#">View course description</a><span class="cd-advanced-text">Advanced learner Loan Available</span>
+                            Level @course.NotionalNVQLevelv2, @course.AwardOrgCode, Lars: @course.LearnAimRef,
+                            <a id="@counter" class="edit-btn open-descript" href="#">View course description</a>
+                            <span class="cd-advanced-text">Advanced learner Loan Available</span>
                         </p>
                     </div>
-                    <fieldset class="govuk-fieldset cd-course-checkbox" aria-describedby="nationality-hint nationality-error">
+                    <fieldset class="govuk-fieldset cd-course-checkbox" aria-describedby="course-hint">
                         <div class="govuk-checkboxes">
                             <div class="govuk-checkboxes__item">
 
-                                <input class="govuk-checkboxes__input" id="nationality-1" name="nationality" type="checkbox" value="" checked="@course.AdvancedLearnerLoan" disabled="disabled" aria-describedby="iftionality-1-item-hint">
-                                <label class="govuk-label govuk-checkboxes__label" for="nationality-1"></label>
+                                <input class="govuk-checkboxes__input" type="checkbox" value="" checked="@course.AdvancedLearnerLoan" disabled="disabled">
+                                <label class="govuk-label govuk-checkboxes__label"></label>
                             </div>
                         </div>
                     </fieldset>
+                    @{
+                        var descriptionModel = new ModalPopupModel
+                        {
+                            ID = counter,
+                            CourseTitle = course.QualificationCourseTitle,
+                            CourseDescription = course.CourseDescription,
+                            EntryRequirements = course.EntryRequirments,
+                            HowYoullBeAssessed = course.HowYoullBeAssessed,
+                            HowYoullLearn = course.HowYoullLearn,
+                            WhatYoullLearn = course.WhatYoullLearn,
+                            WhatYoullNeed = course.WhatYoullNeed,
+                            WhereNext = course.WhereNext
+                        };
+                    }
+                    @await Component.InvokeAsync(nameof(ModalPopup), descriptionModel)
                 </div>
             </li>
             <li><hr class="govuk-section-break govuk-section-break--visible"></li>
@@ -35,6 +56,51 @@
             {
                 @await Component.InvokeAsync(nameof(CourseRun), courseRun)
             }
+            counter++;
         }
     </ul>
 </div>
+
+<script>
+    (function ($) {
+        $(function () {
+            $(".popup_content").popup({
+                color: "#fff",
+                transition: "all 0.3s"
+            });
+
+            $(".open-descript").each(function (i, elem) {
+                $(this).on("click", function (e) {
+                    e.preventDefault();
+
+                    var $modal = $("#popup-descript-" + elem.id);
+            
+                    console.log($modal);
+            
+                    $modal.popup("show");
+                });
+            });
+        });
+    })(jQuery);
+
+    //$('.popup_content').popup({
+    //    color: '#fff',
+    //    transition: 'all 0.3s'
+    //});
+
+    //$(".open-descript").each(function (e) {
+    //    $(this).click(function (e) {
+    //        e.preventDefault();
+    //        $("html, body").css("overflow", "hidden");
+    //        //$('#popup-descript-0').popup('show');
+    //        $('#popup-descript').popup('show');
+    //    });
+    //});
+
+    //$(".close-descript").click(function (e) {
+    //    e.preventDefault();
+    //    $("html, body").css("overflow", "auto");
+    //    $('#popup-descript').popup('hide');
+    //});
+
+</script>
