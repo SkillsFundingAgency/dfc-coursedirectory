@@ -1,4 +1,3 @@
-﻿
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,12 +6,15 @@ using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Models.Models.Courses;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.CourseService;
+using Dfc.CourseDirectory.Services.Interfaces.VenueService;
+using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.RequestModels;
 using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseFor;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.EntryRequirements;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.HowAssessed;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.HowYouWillLearn;
+using Dfc.CourseDirectory.Web.ViewComponents.Courses.SelectVenue;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatWillLearn;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatYouNeed;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhereNext;
@@ -30,21 +32,27 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly ICourseService _courseService;
         private ISession _session => _contextAccessor.HttpContext.Session;
+        private readonly IVenueSearchHelper _venueSearchHelper;
+        private readonly IVenueService _venueService;
+
 
         public CoursesController(
             ILogger<CoursesController> logger,
             IOptions<CourseServiceSettings> courseSearchSettings,
             IHttpContextAccessor contextAccessor,
-            ICourseService courseService)
+            ICourseService courseService, IVenueSearchHelper venueSearchHelper, IVenueService venueService)
         {
             Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(courseSearchSettings, nameof(courseSearchSettings));
             Throw.IfNull(contextAccessor, nameof(contextAccessor));
             Throw.IfNull(courseService, nameof(courseService));
+            Throw.IfNull(venueService, nameof(venueService));
 
             _logger = logger;
             _contextAccessor = contextAccessor;
             _courseService = courseService;
+            _venueService = venueService;
+            _venueSearchHelper = venueSearchHelper;
         }
 
         public IActionResult Index(string status, string learnAimRef, string numberOfNewCourses, string errmsg)
@@ -66,9 +74,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 }
             }
 
+
             ICourseSearchResult result = _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(10001800)).Result.Value; // _session.GetInt32("UKPRN").Value)).Result.Value;
-
-
             YourCoursesViewModel vm = new YourCoursesViewModel
             {
                 UKPRN = _session.GetInt32("UKPRN"),
@@ -142,7 +149,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddCourseSection1(AddCourseSection1RequestModel model)
+        public async Task<IActionResult> AddCourseSection1(AddCourseSection1RequestModel model)
         {
             _session.SetString("CourseFor", model?.CourseFor);
             _session.SetString("EntryRequirements", model?.EntryRequirements ?? string.Empty);
@@ -171,6 +178,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 CourseName = _session.GetString("LearnAimRefTitle"),
                 ProviderUKPRN = UKPRN
             };
+
+            viewModel.SelectVenue = await GetVenuesByUkprn(UKPRN);
+
             return View("AddCourseSection2", viewModel);
         }
 
@@ -328,6 +338,43 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _session.Remove("WhatYouNeed");
             _session.Remove("HowAssessed");
             _session.Remove("WhereNext");
+        }
+
+        private async Task<SelectVenueModel> GetVenuesByUkprn(int ukprn)
+        {
+            var selectVenue = new SelectVenueModel
+            {
+                LabelText = "Select course venue"
+                HintText = "Select all that apply.",
+                AriaDescribedBy = "Select all that apply.",
+                Ukprn = ukprn
+            };
+            var requestModel = new VenueSearchRequestModel { SearchTerm = ukprn.ToString() };
+            var criteria = _venueSearchHelper.GetVenueSearchCriteria(requestModel);
+            var result = await _venueService.SearchAsync(criteria);
+            if (result.IsSuccess && result.HasValue)
+            {
+                var items = _venueSearchHelper.GetVenueSearchResultItemModels(result.Value.Value);
+                var venueItems = new List<VenueItemModel>();
+                
+                foreach (var venueSearchResultItemModel in items)
+                {
+                    venueItems.Add(new VenueItemModel
+                    {
+                        Id = venueSearchResultItemModel.Id,
+                        VenueName = venueSearchResultItemModel.VenueName
+                    });
+                }
+
+                selectVenue.VenueItems = venueItems;
+                if (venueItems.Count == 1)
+                {
+                    selectVenue.HintText = string.Empty;
+                    selectVenue.AriaDescribedBy = string.Empty;
+                }
+            }
+
+            return selectVenue;
         }
     }
 }
