@@ -344,7 +344,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             var selectVenue = new SelectVenueModel
             {
-                LabelText = "Select course venue"
+                LabelText = "Select course venue",
                 HintText = "Select all that apply.",
                 AriaDescribedBy = "Select all that apply.",
                 Ukprn = ukprn
