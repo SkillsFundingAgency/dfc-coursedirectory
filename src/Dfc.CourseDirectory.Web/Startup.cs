@@ -17,6 +17,7 @@ using Dfc.CourseDirectory.Services.ProviderService;
 using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
+using System;
 
 namespace Dfc.CourseDirectory.Web
 {
@@ -97,6 +98,8 @@ namespace Dfc.CourseDirectory.Web
 
             services.AddResponseCaching();
             services.AddSession(options => {
+                options.IdleTimeout = TimeSpan.FromMinutes(20);
+                options.Cookie.HttpOnly = true;
             });
         }
 

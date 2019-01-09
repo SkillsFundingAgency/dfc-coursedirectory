@@ -4,6 +4,7 @@ using Dfc.CourseDirectory.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
+using Microsoft.AspNetCore.Http;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -11,13 +12,19 @@ namespace Dfc.CourseDirectory.Web.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly ILarsSearchService _larsSearchService;
+        private readonly IHttpContextAccessor _contextAccessor;
+        private ISession _session => _contextAccessor.HttpContext.Session;
 
         public HomeController(
             ILogger<HomeController> logger,
-            ILarsSearchService larsSearchService)
+            ILarsSearchService larsSearchService,
+            IHttpContextAccessor contextAccessor)
         {
             _logger = logger;
             _larsSearchService = larsSearchService;
+            _contextAccessor = contextAccessor;
+            //Set this todisplay the Search Provider fork of the ProviderSearchResult ViewComponent
+            _session.SetInt32("ProviderSearch", 1);
         }
 
         public IActionResult Index()
