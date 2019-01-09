@@ -134,14 +134,22 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     WhereNext = "What are the opportunities beyond this course",
                     AdvancedLearnerLoan = true,
                     CourseRuns = courseRuns
-                }
-  
+                }  
             };
+
+
+            ICourseSearchResult result = _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(10001800)).Result.Value; // _session.GetInt32("UKPRN").Value)).Result.Value;
+
+
             YourCoursesViewModel vm = new YourCoursesViewModel
             {
                 UKPRN = _session.GetInt32("UKPRN"),
-                Courses = course
+                Courses = from ICourseSearchOuterGrouping outerGroup in result.Value
+                          from ICourseSearchInnerGrouping innerGroup in outerGroup.Value
+                          from Course c in innerGroup.Value
+                          select c
             };
+
             return View(vm);
         }
 
