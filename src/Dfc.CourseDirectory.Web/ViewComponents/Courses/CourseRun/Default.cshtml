@@ -4,134 +4,200 @@
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
-<li class="course-run-container" id="course-run-@Model.courseRun.id">
-
-    <div class="govuk-form-group large">
-        <label class="govuk-label">Course name</label>
-        <input readonly="@(true)" class="govuk-input" asp-for="@Model.courseRun.CourseName" type="text" aria-describedby="course name">
-
-    </div>
-
-    <div class="govuk-form-group medium">
-        <label class="govuk-label">ID</label>
-        <input readonly="@(true)" class="govuk-input govuk-input--width-10" asp-for="@Model.courseRun.id" type="text" aria-describedby="id">
-
-    </div>
-
-
-    <div class="govuk-form-group medium">
-        <div>
-            <label class="govuk-label">Delivery</label>
-            <select asp-for="@Model.deliveryMode" asp-items="@Model.deliveryModes" class="govuk-select"></select>
-
+<form id="your-courses" asp-controller="Courses" asp-action="Index" method="post">
+    <li class="course-run-container" id="course-run-@Model.courseRun.id">
+        <div class="govuk-form-group large">
+            <label class="govuk-label">Course name</label>
+            <input data-id="course-name-@Model.courseRun.id" readonly="@(Model.Readonly)" class="govuk-input" asp-for="@Model.courseRun.CourseName" type="text" aria-describedby="course name">
 
         </div>
-    </div>
-    <div class="govuk-form-group medium">
-        <label class="govuk-label">Start date</label>
-        @if (Model.courseRun.FlexibleStartDate)
-        {
-            <input readonly="@(true)" class="govuk-input govuk-input--width-10" type="text" aria-describedby="start date" value="Flexible start date">
-        }
-        else
-        {
-            <div class="govuk-input govuk-input--width-10" aria-describedby="start date" readonly="@(true)">
-                @Model.courseRun.StartDate.ToString("dd/MM/yyyy")
+
+        <div class="govuk-form-group medium">
+            <label class="govuk-label">ID</label>
+            <input readonly="@(Model.Readonly)" class="govuk-input govuk-input--width-10" asp-for="@Model.courseRun.id" type="text" aria-describedby="id">
+
+        </div>
+
+
+        <div class="govuk-form-group medium">
+            <div>
+                <label class="govuk-label">Delivery</label>
+                <select asp-for="@Model.deliveryMode" asp-items="@Model.deliveryModes" class="govuk-select"></select>
+
+
             </div>
-        }
-
-
-    </div>
-
-    <div class="govuk-form-group medium">
-        <label class="govuk-label">Venue</label>
-        <select asp-for="@Model.VenueId" asp-items="@Model.venues" class="govuk-select"></select>
-
-
-    </div>
-
-    <div class="popUpContainer">
-        <label class="govuk-label" style="margin-bottom:18px;">URL</label>
-        <a href="#" id="URLLink" data-HREF-Id="@Model.courseRun.id" class="govuk-link view">View</a>
-        <div class="popUpSection" id="course-run-url-@Model.courseRun.id" style="display: none;">
-
-            <input readonly="@(true)" class="govuk-input" asp-for="@Model.courseRun.CourseURL" type="text" aria-describedby="url">
-
-            <a href="#" id="@Model.courseRun.id" data-HREF-Id="@Model.courseRun.id" class="govuk-link close" style="">Close</a>
         </div>
-    </div>
+        <div class="govuk-form-group medium">
+            <label class="govuk-label">Start date</label>
+            @if (Model.courseRun.FlexibleStartDate)
+            {
+                <input readonly="@(Model.Readonly)" class="govuk-input govuk-input--width-10" type="text" aria-describedby="start date" value="Flexible start date">
+            }
+            else
+            {
+                <div class="govuk-input govuk-input--width-10" aria-describedby="start date" readonly="@(true)">
+                    @Model.courseRun.StartDate.ToString("dd/MM/yyyy")
+                </div>
+            }
 
 
-
-
-    <div class="govuk-form-group small">
-        <label class="govuk-label">Cost</label>
-        @{
-            var costValue = "£" + Model.courseRun.Cost;
-            <input readonly="@(true)" class="govuk-input govuk-input--width-10" type="text" aria-describedby="start date" value=@costValue>
-        }
-
-    </div>
-
-
-    <div class="popUpContainer" style="width:100px">
-        <label class="govuk-label" style="margin-bottom:18px;">Cost detail</label>
-        <a href="#" id="CostDetailLink" data-HREF-Id="@Model.courseRun.id" class="govuk-link viewCostDesc">View</a>
-        <div class="popUpSection" id="course-run-cost-desc-@Model.courseRun.id" style="display: none;">
-
-            <input readonly="@(true)" class="govuk-input" asp-for="@Model.courseRun.CostDescription" type="text" aria-describedby="cost description">
-
-            <a href="#" data-HREF-Id="@Model.courseRun.id" class="govuk-link closeCostDesc" style="">Close</a>
         </div>
-    </div>
-    
 
-    @*<div class="govuk-form-group small" style="text-align:center;">
-        <label class="govuk-label" style="margin-bottom:18px;">Cost detail</label>
-        <a href="#" class="govuk-link" data-url="https://www.google.com">View</a>
-        @*<div class="edit-url-cont" style="display: none;">
-                <input class="govuk-input edit-url-input" type="text" readonly="" value="https://coursedirectoryproviderportal.org.uk/Course/Create/50097453">
-                <a href="#" class="edit-btn cancel-url" style="margin-top:10px;float:left;">Close</a>
+        <div class="govuk-form-group medium">
+            <label class="govuk-label">Venue</label>
+            <select asp-for="@Model.VenueId" asp-items="@Model.venues" class="govuk-select"></select>
+
+
+        </div>
+
+        <div class="popUpContainer">
+            <label class="govuk-label" style="margin-bottom: 18px;">URL</label>
+            <a href="#" id="URLLink" data-HREF-Id="@Model.courseRun.id" class="govuk-link view">View</a>
+            <div class="popUpSection" id="course-run-url-@Model.courseRun.id" style="display: none;">
+
+                <input readonly="@(Model.Readonly)" class="govuk-input" asp-for="@Model.courseRun.CourseURL" type="text" aria-describedby="url">
+
+                <a href="#" id="@Model.courseRun.id" data-HREF-Id="@Model.courseRun.id" class="govuk-link close" style="">Close</a>
             </div>
-    </div>*@
+        </div>
 
 
-    <div class="govuk-form-group small">
-        <label class="govuk-label">Duration</label>
-        <input readonly="@(true)" class="govuk-input govuk-input--width-10" asp-for="@Model.courseRun.DurationValue" type="text" aria-describedby="duration value">
-
-    </div>
 
 
-    <div class="govuk-form-group medium">
-        <label class="govuk-label">Duration Unit</label>
-        <select asp-for="@Model.durationUnit" asp-items="@Model.durationUnits" class="govuk-select"></select>
+        <div class="govuk-form-group small">
+            <label class="govuk-label">Cost</label>
+            @{
+                var costValue = "£" + Model.courseRun.Cost;
+                <input readonly="@(Model.Readonly)" class="govuk-input govuk-input--width-10" type="text" aria-describedby="start date" value=@costValue>
+            }
+
+        </div>
 
 
-    </div>
+        <div class="popUpContainer" style="width: 100px">
+            <label class="govuk-label" style="margin-bottom: 18px;">Cost detail</label>
+            <a href="#" id="CostDetailLink" data-HREF-Id="@Model.courseRun.id" class="govuk-link viewCostDesc">View</a>
+            <div class="popUpSection" id="course-run-cost-desc-@Model.courseRun.id" style="display: none;">
 
-    <div class="govuk-form-group medium">
-        <label class="govuk-label">Attendance</label>
-        <select asp-for="@Model.attendance" asp-items="@Model.attendances" class="govuk-select"></select>
+                <input readonly="@(Model.Readonly)" class="govuk-input" asp-for="@Model.courseRun.CostDescription" type="text" aria-describedby="cost description">
 
-
-    </div>
-
-    <div class="govuk-form-group medium">
-        <label class="govuk-label">Mode</label>
-        <select asp-for="@Model.mode" asp-items="@Model.modes" class="govuk-select"></select>
+                <a href="#" data-HREF-Id="@Model.courseRun.id" class="govuk-link closeCostDesc" style="">Close</a>
+            </div>
+        </div>
 
 
-    </div>
+        @*<div class="govuk-form-group small" style="text-align:center;">
+                <label class="govuk-label" style="margin-bottom:18px;">Cost detail</label>
+                <a href="#" class="govuk-link" data-url="https://www.google.com">View</a>
+                @*<div class="edit-url-cont" style="display: none;">
+                        <input class="govuk-input edit-url-input" type="text" readonly="" value="https://coursedirectoryproviderportal.org.uk/Course/Create/50097453">
+                        <a href="#" class="edit-btn cancel-url" style="margin-top:10px;float:left;">Close</a>
+                    </div>
+            </div>*@
 
 
-</li>
+        <div class="govuk-form-group small">
+            <label class="govuk-label">Duration</label>
+            <input readonly="@(Model.Readonly)" class="govuk-input govuk-input--width-10" asp-for="@Model.courseRun.DurationValue" type="text" aria-describedby="duration value">
+
+        </div>
+
+
+        <div class="govuk-form-group medium">
+            <label class="govuk-label">Duration Unit</label>
+            <select asp-for="@Model.durationUnit" asp-items="@Model.durationUnits" class="govuk-select"></select>
+
+
+        </div>
+
+        <div class="govuk-form-group medium">
+            <label class="govuk-label">Attendance</label>
+            <select asp-for="@Model.attendance" asp-items="@Model.attendances" class="govuk-select"></select>
+
+
+        </div>
+
+        <div class="govuk-form-group medium">
+            <label class="govuk-label">Mode</label>
+            <select asp-for="@Model.mode" asp-items="@Model.modes" class="govuk-select"></select>
+
+
+        </div>
+
+        <div id="btns-course-run-@Model.courseRun.id" class="govuk-form-group medium" style="display: none;">
+            <section id="btns" class="btns btns3" style="margin-bottom: 10px; width: 400px;">
+
+
+                <button id="save-button" type="submit" class="govuk-button">
+                    Save
+                </button>
+
+
+                <a href="#" class="govuk-button discard" data-id="@Model.courseRun.id">Discard</a>
+
+
+
+
+            </section>
+        </div>
+
+    </li>
+</form>
 
 <script>
     (function ($) {
         $(function () {
 
-            $(".close").click(function(){
+            var $id = $("#id").text();
+
+            var $courseName = $("#course-run-" + $id + "-course-name");
+
+            $('form').find(':input').each(function(i, elem) {
+                var input = $(elem);
+                input.data('initialState', input.val());
+            });
+
+            //course-run-fec18ee1-e5b7-412c-baf5-7b763a84992d-course-name
+
+            $(".govuk-input").on('input', function (e) {
+                //var id = $(this).attr("data-id");
+                var $rowId = $(this).closest(".course-run-container").attr("id");
+
+                var $btn = $("#btns-" + $rowId);
+
+                $btn.css("display", "block");
+
+            });
+
+            //$("#courseRun_CourseName").on('change',
+            //    '#btn2',
+            //    function() {
+            //        $("#btns").css("display", "block");
+            //    });
+            //$courseName.change(function () {
+            //    $("#btns").css("display", "block");
+            //});
+
+            $(".discard").click(function () {
+
+                //var id = $(this).attr("data-id");
+                //var $courseName = $("#course-name-" + id);
+                //$courseName.val($courseName.val());
+                //$('your-courses').reset();
+
+                $('form').find(':input').each(function(i, elem) {
+                    var input = $(elem);
+                    input.val(input.data('initialState'));
+                });
+
+                var  $id = $(this).attr("data-id");
+
+                var $btn = $("#btns-course-run-" + $id);
+                $btn.css("display", "none");
+            });
+
+
+            $(".close").click(function () {
 
                 var id = $(this).attr("data-HREF-Id");
                 var $courseRunContainer = $("#course-run-" + id);
@@ -143,7 +209,7 @@
             });
 
 
-            $(".view").click(function() {
+            $(".view").click(function () {
 
                 var id = $(this).attr("data-HREF-Id");
                 var $courseRunContainer = $("#course-run-" + id);
@@ -159,7 +225,7 @@
                 $courseRunCUrl.show();
             });
 
-            $(".closeCostDesc").click(function(){
+            $(".closeCostDesc").click(function () {
 
                 var id = $(this).attr("data-HREF-Id");
 
@@ -173,7 +239,7 @@
             });
 
 
-            $(".viewCostDesc").click(function(){
+            $(".viewCostDesc").click(function () {
 
                 var id = $(this).attr("data-HREF-Id");
                 var $courseRunContainer = $("#course-run-" + id);

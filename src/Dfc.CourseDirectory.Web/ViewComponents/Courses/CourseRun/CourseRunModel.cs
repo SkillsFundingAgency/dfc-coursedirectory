@@ -9,6 +9,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseRun
 {
     public class CourseRunModel
     {
+        public bool Readonly { get; set; }
         public Dfc.CourseDirectory.Models.Models.Courses.CourseRun courseRun { get; set; }
 
         public List<SelectListItem> deliveryModes { get; set; }

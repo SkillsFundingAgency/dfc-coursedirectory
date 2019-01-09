@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Models.Models.Courses;
@@ -127,6 +128,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseRun
 
             CourseRunModel courseRunModel = new CourseRunModel()
             {
+                Readonly = Convert.ToBoolean(_session.GetString("Reasonly")),
                 VenueId = model.VenueId,
                 venues = courseRunVenues,
                 courseRun = model,
