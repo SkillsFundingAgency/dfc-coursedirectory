@@ -1,4 +1,3 @@
-﻿
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -75,145 +74,17 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 }
             }
 
-            //STUB DATA -- TODO: Remove later
-            CourseRun[] courseRuns = new CourseRun[]
-            {
-                new CourseRun
-                {
-                      id = Guid.NewGuid(),
-                      VenueId = new Guid("76748623-93f0-4ebd-8a37-0f0754822b7e"),
-                      CourseName = "GCE A Level in Further Mathematics 1",
-                      ProviderCourseID = "asfdf-someId-courseId-string-guid",
-                      DeliveryMode = DeliveryMode.ClassroomBased,
-                      FlexibleStartDate = false,
-                      StartDate = Convert.ToDateTime("2021-04-03T00:00:00"),
-                      CourseURL = "http://www.google.co.uk",
-                      Cost = 125,
-                      CostDescription = "Number 1 Cost",
-                      DurationUnit = DurationUnit.Months,
-                      DurationValue = 47,
-                      StudyMode = StudyMode.Flexible,
-                      AttendancePattern = AttendancePattern.DayOrBlockRelease,
-                      CreatedDate = Convert.ToDateTime("2019-01-03T11:17:02.514746+00:00"),
-                      CreatedBy = "ProviderPortal-AddCourse",
-                      UpdatedDate = Convert.ToDateTime("0001-01-01T00:00:00"),
-                      UpdatedBy = null
-                },
-                new CourseRun
-                {
-                    id = Guid.NewGuid(),
-                    VenueId = new Guid("36ea2887-31ac-48cf-9d99-d267c5d464e6"),
-                    CourseName = "GCE A Level in Further Mathematics 2",
-                    ProviderCourseID = "asfdf-someId-courseId-string-guid",
-                    DeliveryMode = DeliveryMode.WorkBased,
-                    FlexibleStartDate = true,
-                    //StartDate = Convert.ToDateTime("2021-04-03T00:00:00"),
-                    CourseURL = "http://www.microsoft.co.uk",
-                    Cost = 250,
-                    CostDescription = "Number 2 Cost",
-                    DurationUnit = DurationUnit.Weeks,
-                    DurationValue = 47,
-                    StudyMode = StudyMode.FullTime,
-                    AttendancePattern = AttendancePattern.Evening,
-                    CreatedDate = Convert.ToDateTime("2019-01-03T11:17:02.514746+00:00"),
-                    CreatedBy = "ProviderPortal-AddCourse",
-                    UpdatedDate = Convert.ToDateTime("0001-01-01T00:00:00"),
-                    UpdatedBy = null
-                }
-            };
-            CourseRun[] courseRuns2 = new CourseRun[]
-             {
-                new CourseRun
-                {
-                      id = Guid.NewGuid(),
-                      VenueId = new Guid("76748623-93f0-4ebd-8a37-0f0754822b7e"),
-                      CourseName = "GCE A Level in Further Mathematics 1",
-                      ProviderCourseID = "asfdf-someId-courseId-string-guid",
-                      DeliveryMode = DeliveryMode.ClassroomBased,
-                      FlexibleStartDate = false,
-                      StartDate = Convert.ToDateTime("2021-04-03T00:00:00"),
-                      CourseURL = "http://www.bbc.co.uk",
-                      Cost = 125,
-                      CostDescription = "cost description",
-                      DurationUnit = DurationUnit.Months,
-                      DurationValue = 47,
-                      StudyMode = StudyMode.Flexible,
-                      AttendancePattern = AttendancePattern.DayOrBlockRelease,
-                      CreatedDate = Convert.ToDateTime("2019-01-03T11:17:02.514746+00:00"),
-                      CreatedBy = "ProviderPortal-AddCourse",
-                      UpdatedDate = Convert.ToDateTime("0001-01-01T00:00:00"),
-                      UpdatedBy = null
-                },
-                new CourseRun
-                {
-                    id = Guid.NewGuid(),
-                    VenueId = new Guid("36ea2887-31ac-48cf-9d99-d267c5d464e6"),
-                    CourseName = "GCE A Level in Further Mathematics 2",
-                    ProviderCourseID = "asfdf-someId-courseId-string-guid",
-                    DeliveryMode = DeliveryMode.WorkBased,
-                    FlexibleStartDate = true,
-                    //StartDate = Convert.ToDateTime("2021-04-03T00:00:00"),
-                    CourseURL = "http://www.bbc.co.uk",
-                    Cost = 125,
-                    CostDescription = "cost description",
-                    DurationUnit = DurationUnit.Weeks,
-                    DurationValue = 47,
-                    StudyMode = StudyMode.FullTime,
-                    AttendancePattern = AttendancePattern.Evening,
-                    CreatedDate = Convert.ToDateTime("2019-01-03T11:17:02.514746+00:00"),
-                    CreatedBy = "ProviderPortal-AddCourse",
-                    UpdatedDate = Convert.ToDateTime("0001-01-01T00:00:00"),
-                    UpdatedBy = null
-                }
-             };
 
-            Course[] course = new Course[]
-            {
-                new Course
-                {
-                    id = Guid.NewGuid(),
-                    QualificationCourseTitle = "GCE A Level in Further Mathematics",
-                    LearnAimRef = "10060108",
-                    NotionalNVQLevelv2 = "3",
-                    AwardOrgCode = "CCEA",
-                    QualificationType = "Diploma",
-                    ProviderUKPRN = 10038911,
-                    CourseDescription = "Course description",
-                    EntryRequirments = "Entry requirements",
-                    WhatYoullLearn = "Give learners a taste of this course.",
-                    HowYoullLearn = "Will it be classroom based exercises",
-                    WhatYoullNeed = "Please detail anything your learners",
-                    HowYoullBeAssessed = "Please provide details of all the ways",
-                    WhereNext = "What are the opportunities beyond this course",
-                    AdvancedLearnerLoan = true,
-                    CourseRuns = courseRuns
-                },
-                new Course
-                {
-                    id = Guid.NewGuid(),
-                    QualificationCourseTitle = "Diploma in Information Technology ",
-                    LearnAimRef = "10060108",
-                    NotionalNVQLevelv2 = "3",
-                    AwardOrgCode = "CCEA",
-                    QualificationType = "Diploma",
-                    ProviderUKPRN = 10038911,
-                    CourseDescription = "Course description1",
-                    EntryRequirments = "Entry requirements1",
-                    WhatYoullLearn = "Give learners a taste of this course1.",
-                    HowYoullLearn = "Will it be classroom based exercises1",
-                    WhatYoullNeed = "Please detail anything your learners1",
-                    HowYoullBeAssessed = "Please provide details of all the ways1",
-                    WhereNext = "What are the opportunities beyond this course1",
-                    AdvancedLearnerLoan = true,
-                    CourseRuns = courseRuns2
-                }
-
-            };
+            ICourseSearchResult result = _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(10001800)).Result.Value; // _session.GetInt32("UKPRN").Value)).Result.Value;
             YourCoursesViewModel vm = new YourCoursesViewModel
             {
                 UKPRN = _session.GetInt32("UKPRN"),
-                Courses = course
+                Courses = from ICourseSearchOuterGrouping outerGroup in result.Value
+                          from ICourseSearchInnerGrouping innerGroup in outerGroup.Value
+                          from Course c in innerGroup.Value
+                          select c
             };
+
             return View(vm);
         }
 
