@@ -13,7 +13,6 @@ namespace Dfc.CourseDirectory.Services.CourseService
         public IEnumerable<ICourseSearchOuterGrouping> Value { get; set; }
 
         public CourseSearchResult(
-            //IEnumerable<CourseSearchOuterGrouping> value)
             IEnumerable<IEnumerable<IEnumerable<Course>>> courses)
         {
             Throw.IfNull(courses, nameof(courses));
@@ -33,20 +32,9 @@ namespace Dfc.CourseDirectory.Services.CourseService
         public IEnumerable<ICourseSearchInnerGrouping> Value { get; set; }
 
         public CourseSearchOuterGrouping(
-            //IEnumerable<CourseInnerSearchResultGrouping> value)
             IEnumerable<IEnumerable<Course>> courses)
         {
             Throw.IfNullOrEmpty(courses, nameof(courses));
-            //Throw.IfNullOrEmpty(value.FirstOrDefault()?.Value, nameof(value));
-
-            ////List<List<CourseInnerSearchResultGrouping>> listOuter = new List<List<CourseInnerSearchResultGrouping>>();
-            //List<CourseInnerSearchResultGrouping> list = new List<CourseInnerSearchResultGrouping>();
-
-            //foreach (IEnumerable<IEnumerable<Course>> outerGroup in courses) {
-            //    foreach (IEnumerable<Course> innerGroup in outerGroup) {
-            //        list.Add(new CourseInnerSearchResultGrouping(innerGroup));
-            //    }                
-            //}
             
             Value = courses.Select(c => new CourseSearchInnerResultGrouping(c));
             QualType = courses?.FirstOrDefault()?.FirstOrDefault()?.QualificationType;
