@@ -7,6 +7,7 @@ using Dfc.CourseDirectory.Models.Models.Courses;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
+using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.RequestModels;
 using Dfc.CourseDirectory.Web.ViewModels;
@@ -20,6 +21,7 @@ using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatYouNeed;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhereNext;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -55,8 +57,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _venueSearchHelper = venueSearchHelper;
         }
 
-        public IActionResult Index(string status, string learnAimRef, string numberOfNewCourses, string errmsg)
+        public async Task<IActionResult> Index(string status, string learnAimRef, string numberOfNewCourses, string errmsg)
         {
+
+            var deliveryModes = new List<SelectListItem>();
+            var durationUnits = new List<SelectListItem>();
+            var attendances = new List<SelectListItem>();
+            var modes = new List<SelectListItem>();
+
+
             if (!string.IsNullOrEmpty(status))
             {
                 ViewData["Status"] = status;
@@ -75,15 +84,108 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
 
 
-            ICourseSearchResult result = _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(10001800)).Result.Value; // _session.GetInt32("UKPRN").Value)).Result.Value;
+
+            var courseRunVenues = new List<SelectListItem>();
+
+            var UKPRN = _session.GetInt32("UKPRN");
+            if (UKPRN.HasValue)
+            {
+                VenueSearchCriteria criteria = new VenueSearchCriteria(UKPRN.ToString(), null);
+
+                var venues = await _venueService.SearchAsync(criteria);
+
+                foreach (var venue in venues.Value.Value)
+                {
+                    var item = new SelectListItem
+                        { Text = venue.VenueName, Value = venue.ID };
+
+                    courseRunVenues.Add(item);
+                };
+            }
+
+            foreach (DeliveryMode eVal in DeliveryMode.GetValues(typeof(DeliveryMode)))
+            {
+                if (eVal.ToString().ToUpper() != "UNDEFINED")
+                {
+                    var item = new SelectListItem
+                    { Text = System.Enum.GetName(typeof(DeliveryMode), eVal), Value = eVal.ToString() };
+
+                    //if (model.courseRun.DeliveryMode.ToString() == eVal.ToString())
+                    //{
+                    //    item.Selected = true;
+                    //}
+
+                    deliveryModes.Add(item);
+                }
+            };
+
+            foreach (DurationUnit eVal in DurationUnit.GetValues(typeof(DurationUnit)))
+            {
+                if (eVal.ToString().ToUpper() != "UNDEFINED")
+                {
+                    var item = new SelectListItem
+                    { Text = System.Enum.GetName(typeof(DurationUnit), eVal), Value = eVal.ToString() };
+
+                    //if (model.courseRun.DurationUnit.ToString() == eVal.ToString())
+                    //{
+                    //    item.Selected = true;
+                    //}
+
+                    durationUnits.Add(item);
+                }
+            };
+
+            foreach (AttendancePattern eVal in AttendancePattern.GetValues(typeof(AttendancePattern)))
+            {
+                if (eVal.ToString().ToUpper() != "UNDEFINED")
+                {
+                    var item = new SelectListItem
+                    { Text = System.Enum.GetName(typeof(AttendancePattern), eVal), Value = eVal.ToString() };
+
+                    //if (model.courseRun.AttendancePattern.ToString() == eVal.ToString())
+                    //{
+                    //    item.Selected = true;
+                    //}
+
+                    attendances.Add(item);
+                }
+            };
+
+            foreach (Dfc.CourseDirectory.Models.Models.Courses.StudyMode eVal in Dfc.CourseDirectory.Models.Models.Courses.StudyMode.GetValues(typeof(Dfc.CourseDirectory.Models.Models.Courses.StudyMode)))
+            {
+                if (eVal.ToString().ToUpper() != "UNDEFINED")
+                {
+                    var item = new SelectListItem
+                    { Text = System.Enum.GetName(typeof(Dfc.CourseDirectory.Models.Models.Courses.StudyMode), eVal), Value = eVal.ToString() };
+
+                    //if (model.courseRun.StudyMode.ToString() == eVal.ToString())
+                    //{
+                    //    item.Selected = true;
+                    //}
+
+                    modes.Add(item);
+                }
+            };
+
+
+
+
+            ICourseSearchResult result = _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(10002130)).Result.Value; // _session.GetInt32("UKPRN").Value)).Result.Value;
             YourCoursesViewModel vm = new YourCoursesViewModel
             {
                 UKPRN = _session.GetInt32("UKPRN"),
                 Courses = from ICourseSearchOuterGrouping outerGroup in result.Value
                           from ICourseSearchInnerGrouping innerGroup in outerGroup.Value
                           from Course c in innerGroup.Value
-                          select c
+                          select c,
+                Venues = courseRunVenues
             };
+
+
+            vm.deliveryModes = deliveryModes;
+            vm.durationUnits = durationUnits;
+            vm.attendances = attendances;
+            vm.modes = modes;
 
             return View(vm);
         }
