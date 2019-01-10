@@ -39,9 +39,6 @@ namespace Dfc.CourseDirectory.Services.CourseService
         }
 
 
-
-
-        //public async Task<IResult<dynamic>> GetYourCoursesByUKPRNAsync(ICourseSearchCriteria criteria)
         public async Task<IResult<ICourseSearchResult>> GetYourCoursesByUKPRNAsync(ICourseSearchCriteria criteria)
         {
             Throw.IfNull(criteria, nameof(criteria));
@@ -56,8 +53,6 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 if (!criteria.UKPRN.HasValue)
                     return Result.Fail<ICourseSearchResult>("Get your courses unknown UKRLP");
 
-                //var content = new StringContent(JsonConvert.SerializeObject(criteria), Encoding.UTF8, "application/json");
-                //var response = await _httpClient.PostAsync(_getYourCoursesUri, content);
                 var response = await _httpClient.GetAsync(new Uri(_getYourCoursesUri.AbsoluteUri + "&UKPRN=" + criteria.UKPRN));
                 _logger.LogHttpResponseMessage("Get your courses service http response", response);
 
