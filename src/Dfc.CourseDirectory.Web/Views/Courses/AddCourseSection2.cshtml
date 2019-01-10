@@ -217,6 +217,9 @@
             var $validationMessageForCostLength = $("#invalidCostLength");
 
             var $checkboxes = $("#SelectVenueCheckBoxes input[type=checkbox]");
+            var $formVenuesIsValid = false;
+            var $formStartDateIsValid = false;
+            var $formCostIsValid = false;
 
             $checkboxes.change(function () {
                 var $validationMessageForVenues = $("#invalidVenuesChecked");
@@ -226,9 +229,11 @@
                 if (countedCheckedCheckboxes === 0) {
                     $formGroupVenues.addClass("govuk-form-group--error");
                     $validationMessageForVenues.show();
+                    $formVenuesIsValid = false;
                 } else {
                     $formGroupVenues.removeClass("govuk-form-group--error");
                     $validationMessageForVenues.hide();
+                    $formVenuesIsValid = true;
                 }
             });
 
@@ -246,10 +251,12 @@
                             $elementCost.addClass($elementErrorClass);
                             $validationMessageForCost.show();
                             $formGroupCost.addClass($formGroupErrorClass);
+                            $formCostIsValid = false;
                         } else {
                             $elementCost.removeClass($elementErrorClass);
                             $validationMessageForCost.hide();
                             $formGroupCost.removeClass($formGroupErrorClass);
+                            $formCostIsValid = true;
                         }
                     } else {
 
@@ -260,14 +267,16 @@
                             $elementCost.addClass($elementErrorClass);
                             $validationMessageForCostLength.show();
                             $formGroupCost.addClass($formGroupErrorClass);
+                            $formCostIsValid = false;
                         } else {
                             $elementCost.removeClass($elementErrorClass);
                             $validationMessageForCostLength.hide();
                             $formGroupCost.removeClass($formGroupErrorClass);
+                            $formCostIsValid = true;
                         }
                     }
 
-                    var $durationLength = $("#@nameof(Model.DurationLength)");
+                    var $durationLength =  $("#@nameof(Model.DurationLength)");
                     $durationLength.trigger("blur");
 
                     var radioValue = $("input[name='StartDateType']:checked").val();
@@ -278,7 +287,7 @@
                             $monthElementUrl.val() !== "" &&
                             $yearElementUrl.val() !== "") {
 
-                            $("#addCourseSection2").submit();
+                            $formStartDateIsValid = true;
                         }
 
                         if ($dayElementUrl.val() === "" &&
@@ -287,6 +296,7 @@
 
                             $formGroupUrl.addClass($formGroupErrorClass);
                             $validationMessageForRequired.show();
+                            $formStartDateIsValid = false;
                         }
 
                         if ($dayElementUrl.val() === "" ||
@@ -295,6 +305,7 @@
                             $dayElementUrl.addClass($elementErrorClass);
                             $formGroupUrl.addClass($formGroupErrorClass);
                             $validationMessageUrlForDay.show();
+                            $formStartDateIsValid = false;
                         }
 
 
@@ -304,6 +315,7 @@
                             $monthElementUrl.addClass($elementErrorClass);
                             $formGroupUrl.addClass($formGroupErrorClass);
                             $validationMessageUrlForMonth.show();
+                            $formStartDateIsValid = false;
                         }
 
 
@@ -311,6 +323,7 @@
                             $yearElementUrl.addClass($elementErrorClass);
                             $formGroupUrl.addClass($formGroupErrorClass);
                             $validationMessageUrlForYear.show();
+                            $formStartDateIsValid = false;
                         }
 
 
@@ -342,10 +355,12 @@
                             if (Date.parse(enteredDate) - Date.parse(currentDate) < 0) {
                                 $formGroupUrl.addClass($formGroupErrorClass);
                                 $validationMessageForPast.show();
+                                $formStartDateIsValid = false;
                             } else {
                                 if (Date.parse(enteredDate) > Date.parse(futureDate)) {
                                     $formGroupUrl.addClass($formGroupErrorClass);
                                     $validationMessageForFuture.show();
+                                    $formStartDateIsValid = false;
 
                                 } else {
                                     $validationMessageForFuture.hide();
@@ -366,6 +381,10 @@
                         $validationMessageForPast.hide();
                         $validationMessageForFuture.hide();
                         $validationMessageForRequired.hide();
+                        $formStartDateIsValid = true;
+                    }
+
+                    if ($formVenuesIsValid & $formCostIsValid & $formStartDateIsValid) {
                         $("#addCourseSection2").submit();
                     }
                 });
