@@ -169,16 +169,21 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
 
 
+            // Get courses (and runs) for PRN, grouped by qualification type, then within that by LARS ref
+            int? ukprn = _session.GetInt32("UKPRN");
+            ICourseSearchResult result = (!ukprn.HasValue ? null :
+                                          _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(ukprn))
+                                                        .Result.Value);
 
             ICourseSearchResult result = _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(10002130)).Result.Value; // _session.GetInt32("UKPRN").Value)).Result.Value;
             YourCoursesViewModel vm = new YourCoursesViewModel
             {
-                UKPRN = _session.GetInt32("UKPRN"),
-                Courses = from ICourseSearchOuterGrouping outerGroup in result.Value
-                          from ICourseSearchInnerGrouping innerGroup in outerGroup.Value
-                          from Course c in innerGroup.Value
-                          select c,
-                Venues = courseRunVenues
+                UKPRN = ukprn,
+                Courses = (result == null ? new Course[] { } :
+                           from ICourseSearchOuterGrouping outerGroup in result.Value
+                           from ICourseSearchInnerGrouping innerGroup in outerGroup.Value
+                           from Course c in innerGroup.Value
+                           select c)
             };
 
 
