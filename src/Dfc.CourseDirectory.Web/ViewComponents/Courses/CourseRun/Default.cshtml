@@ -8,7 +8,7 @@
     <li class="course-run-container" id="course-run-@Model.courseRun.id">
         <div class="govuk-form-group large">
             <label class="govuk-label">Course name</label>
-            <input data-id="course-name-@Model.courseRun.id" readonly="@(Model.Readonly)" class="govuk-input" asp-for="@Model.courseRun.CourseName" type="text" aria-describedby="course name">
+            <input readonly="@(Model.Readonly)" class="govuk-input" asp-for="@Model.courseRun.CourseName" type="text" aria-describedby="course name">
 
         </div>
 
@@ -35,9 +35,11 @@
             }
             else
             {
-                <div class="govuk-input govuk-input--width-10" aria-describedby="start date" readonly="@(true)">
-                    @Model.courseRun.StartDate.ToString("dd/MM/yyyy")
-                </div>
+                {
+                    var startDate = Model.courseRun.StartDate.ToString("dd/MM/yyyy");
+                    <input readonly="@(Model.Readonly)" class="govuk-input govuk-input--width-10" type="text" aria-describedby="start date" value=@startDate>
+                }
+
             }
 
 
@@ -148,49 +150,72 @@
     (function ($) {
         $(function () {
 
-            var $id = $("#id").text();
-
-            var $courseName = $("#course-run-" + $id + "-course-name");
-
-            $('form').find(':input').each(function(i, elem) {
+            $('form').find(':input').each(function (i, elem) {
                 var input = $(elem);
                 input.data('initialState', input.val());
             });
 
-            //course-run-fec18ee1-e5b7-412c-baf5-7b763a84992d-course-name
-
-            $(".govuk-input").on('input', function (e) {
-                //var id = $(this).attr("data-id");
+            $(".govuk-select ").on('change', function (e) {
                 var $rowId = $(this).closest(".course-run-container").attr("id");
 
-                var $btn = $("#btns-" + $rowId);
+                $("div[id^='btns-course-run']").each(function (index) {
+                    var $id = $(this).attr("id").substr(5, $(this).attr("id").length - 5);
 
-                $btn.css("display", "block");
+                    if ($id !== $rowId) {
+                        if ($("#btns-" + $id).is(":visible")) {
+                            $("#btns-" + $id).hide();
+
+                            $('form').find(':input').each(function (i, elem) {
+                                var input = $(elem);
+                                input.val(input.data('initialState'));
+                            });
+                        }
+                    } else {
+                        if ($("#btns-" + $id).is(":visible")) {
+
+                        } else {
+                            $("#btns-" + $id).css("display", "block");
+                        }
+                    }
+                });
 
             });
 
-            //$("#courseRun_CourseName").on('change',
-            //    '#btn2',
-            //    function() {
-            //        $("#btns").css("display", "block");
-            //    });
-            //$courseName.change(function () {
-            //    $("#btns").css("display", "block");
-            //});
+            $(".govuk-input").on('input', function (e) {
+                var $rowId = $(this).closest(".course-run-container").attr("id");
+
+                $("div[id^='btns-course-run']").each(function (index) {
+                    var $id = $(this).attr("id").substr(5, $(this).attr("id").length - 5);
+
+                    if ($id !== $rowId) {
+                        if ($("#btns-" + $id).is(":visible")) {
+                            $("#btns-" + $id).hide();
+
+                            $('form').find(':input').each(function (i, elem) {
+                                var input = $(elem);
+                                input.val(input.data('initialState'));
+                            });
+
+                        }
+                    } else {
+                        if ($("#btns-" + $id).is(":visible")) {
+
+                        } else {
+                            $("#btns-" + $id).css("display", "block");
+                        }
+                    }
+                });
+
+            });
 
             $(".discard").click(function () {
 
-                //var id = $(this).attr("data-id");
-                //var $courseName = $("#course-name-" + id);
-                //$courseName.val($courseName.val());
-                //$('your-courses').reset();
-
-                $('form').find(':input').each(function(i, elem) {
+                $('form').find(':input').each(function (i, elem) {
                     var input = $(elem);
                     input.val(input.data('initialState'));
                 });
 
-                var  $id = $(this).attr("data-id");
+                var $id = $(this).attr("data-id");
 
                 var $btn = $("#btns-course-run-" + $id);
                 $btn.css("display", "none");
