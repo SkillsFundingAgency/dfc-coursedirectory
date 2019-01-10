@@ -97,7 +97,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 foreach (var venue in venues.Value.Value)
                 {
                     var item = new SelectListItem
-                        { Text = venue.VenueName, Value = venue.ID };
+                    { Text = venue.VenueName, Value = venue.ID };
 
                     courseRunVenues.Add(item);
                 };
@@ -110,11 +110,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     var item = new SelectListItem
                     { Text = System.Enum.GetName(typeof(DeliveryMode), eVal), Value = eVal.ToString() };
 
-                    //if (model.courseRun.DeliveryMode.ToString() == eVal.ToString())
-                    //{
-                    //    item.Selected = true;
-                    //}
-
                     deliveryModes.Add(item);
                 }
             };
@@ -125,11 +120,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 {
                     var item = new SelectListItem
                     { Text = System.Enum.GetName(typeof(DurationUnit), eVal), Value = eVal.ToString() };
-
-                    //if (model.courseRun.DurationUnit.ToString() == eVal.ToString())
-                    //{
-                    //    item.Selected = true;
-                    //}
 
                     durationUnits.Add(item);
                 }
@@ -142,32 +132,20 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     var item = new SelectListItem
                     { Text = System.Enum.GetName(typeof(AttendancePattern), eVal), Value = eVal.ToString() };
 
-                    //if (model.courseRun.AttendancePattern.ToString() == eVal.ToString())
-                    //{
-                    //    item.Selected = true;
-                    //}
-
                     attendances.Add(item);
                 }
             };
 
-            foreach (Dfc.CourseDirectory.Models.Models.Courses.StudyMode eVal in Dfc.CourseDirectory.Models.Models.Courses.StudyMode.GetValues(typeof(Dfc.CourseDirectory.Models.Models.Courses.StudyMode)))
+            foreach (Dfc.CourseDirectory.Models.Models.Courses.StudyMode eVal in Enum.GetValues(typeof(Dfc.CourseDirectory.Models.Models.Courses.StudyMode)))
             {
                 if (eVal.ToString().ToUpper() != "UNDEFINED")
                 {
                     var item = new SelectListItem
                     { Text = System.Enum.GetName(typeof(Dfc.CourseDirectory.Models.Models.Courses.StudyMode), eVal), Value = eVal.ToString() };
 
-                    //if (model.courseRun.StudyMode.ToString() == eVal.ToString())
-                    //{
-                    //    item.Selected = true;
-                    //}
-
                     modes.Add(item);
                 }
             };
-
-
 
             // Get courses (and runs) for PRN, grouped by qualification type, then within that by LARS ref
             int? ukprn = _session.GetInt32("UKPRN");
@@ -175,22 +153,19 @@ namespace Dfc.CourseDirectory.Web.Controllers
                                           _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(ukprn))
                                                         .Result.Value);
 
-            ICourseSearchResult result = _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(10002130)).Result.Value; // _session.GetInt32("UKPRN").Value)).Result.Value;
             YourCoursesViewModel vm = new YourCoursesViewModel
             {
                 UKPRN = ukprn,
                 Courses = (result == null ? new Course[] { } :
-                           from ICourseSearchOuterGrouping outerGroup in result.Value
-                           from ICourseSearchInnerGrouping innerGroup in outerGroup.Value
-                           from Course c in innerGroup.Value
-                           select c)
+                      from ICourseSearchOuterGrouping outerGroup in result.Value
+                      from ICourseSearchInnerGrouping innerGroup in outerGroup.Value
+                      from Course c in innerGroup.Value
+                      select c),
+                deliveryModes = deliveryModes,
+                durationUnits = durationUnits,
+                attendances = attendances,
+                modes = modes
             };
-
-
-            vm.deliveryModes = deliveryModes;
-            vm.durationUnits = durationUnits;
-            vm.attendances = attendances;
-            vm.modes = modes;
 
             return View(vm);
         }
@@ -402,7 +377,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 LearnAimRef = learnAimRef,
                 NotionalNVQLevelv2 = notionalNVQLevelv2,
                 AwardOrgCode = awardOrgCode,
-                QualificationType = learnAimRefTypeDesc, 
+                QualificationType = learnAimRefTypeDesc,
                 ProviderUKPRN = UKPRN, // TODO: ToBeChanged
                 CourseDescription = courseFor,
                 EntryRequirments = entryRequirements,
@@ -463,7 +438,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 var items = _venueSearchHelper.GetVenueSearchResultItemModels(result.Value.Value);
                 var venueItems = new List<VenueItemModel>();
-                
+
                 foreach (var venueSearchResultItemModel in items)
                 {
                     venueItems.Add(new VenueItemModel
