@@ -280,3 +280,6 @@ __pycache__/
 src/Dfc.CourseDirectory.Web/appsettings.Development.json
 c/source/repos/dfc-coursedirectory3/src/Dfc.CourseDirectory.Web/appsettings.Development.json
 /src/Dfc.CourseDirectory.Web/package-lock.json
+/src/Dfc.CourseDirectory.Web/Controllers/AccountController.cs
+/src/Dfc.CourseDirectory.Web/Views/Account/UserProfile.cshtml
+/src/Dfc.CourseDirectory.Web/Views/UserAuth/Index.cshtml
