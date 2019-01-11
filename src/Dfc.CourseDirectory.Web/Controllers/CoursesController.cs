@@ -7,6 +7,7 @@ using Dfc.CourseDirectory.Models.Models.Courses;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
+using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.RequestModels;
 using Dfc.CourseDirectory.Web.ViewModels;
@@ -20,6 +21,7 @@ using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatYouNeed;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhereNext;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -55,8 +57,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _venueSearchHelper = venueSearchHelper;
         }
 
-        public IActionResult Index(string status, string learnAimRef, string numberOfNewCourses, string errmsg)
+        public async Task<IActionResult> Index(string status, string learnAimRef, string numberOfNewCourses, string errmsg)
         {
+
+            var deliveryModes = new List<SelectListItem>();
+            var durationUnits = new List<SelectListItem>();
+            var attendances = new List<SelectListItem>();
+            var modes = new List<SelectListItem>();
+
+
             if (!string.IsNullOrEmpty(status))
             {
                 ViewData["Status"] = status;
@@ -74,21 +83,88 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 }
             }
 
+
+
+            var courseRunVenues = new List<SelectListItem>();
+
+            var UKPRN = _session.GetInt32("UKPRN");
+            if (UKPRN.HasValue)
+            {
+                VenueSearchCriteria criteria = new VenueSearchCriteria(UKPRN.ToString(), null);
+
+                var venues = await _venueService.SearchAsync(criteria);
+
+                foreach (var venue in venues.Value.Value)
+                {
+                    var item = new SelectListItem
+                    { Text = venue.VenueName, Value = venue.ID };
+
+                    courseRunVenues.Add(item);
+                };
+            }
+
+            foreach (DeliveryMode eVal in DeliveryMode.GetValues(typeof(DeliveryMode)))
+            {
+                if (eVal.ToString().ToUpper() != "UNDEFINED")
+                {
+                    var item = new SelectListItem
+                    { Text = System.Enum.GetName(typeof(DeliveryMode), eVal), Value = eVal.ToString() };
+
+                    deliveryModes.Add(item);
+                }
+            };
+
+            foreach (DurationUnit eVal in DurationUnit.GetValues(typeof(DurationUnit)))
+            {
+                if (eVal.ToString().ToUpper() != "UNDEFINED")
+                {
+                    var item = new SelectListItem
+                    { Text = System.Enum.GetName(typeof(DurationUnit), eVal), Value = eVal.ToString() };
+
+                    durationUnits.Add(item);
+                }
+            };
+
+            foreach (AttendancePattern eVal in AttendancePattern.GetValues(typeof(AttendancePattern)))
+            {
+                if (eVal.ToString().ToUpper() != "UNDEFINED")
+                {
+                    var item = new SelectListItem
+                    { Text = System.Enum.GetName(typeof(AttendancePattern), eVal), Value = eVal.ToString() };
+
+                    attendances.Add(item);
+                }
+            };
+
+            foreach (Dfc.CourseDirectory.Models.Models.Courses.StudyMode eVal in Enum.GetValues(typeof(Dfc.CourseDirectory.Models.Models.Courses.StudyMode)))
+            {
+                if (eVal.ToString().ToUpper() != "UNDEFINED")
+                {
+                    var item = new SelectListItem
+                    { Text = System.Enum.GetName(typeof(Dfc.CourseDirectory.Models.Models.Courses.StudyMode), eVal), Value = eVal.ToString() };
+
+                    modes.Add(item);
+                }
+            };
+
             // Get courses (and runs) for PRN, grouped by qualification type, then within that by LARS ref
             int? ukprn = _session.GetInt32("UKPRN");
             ICourseSearchResult result = (!ukprn.HasValue ? null :
                                           _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(ukprn))
                                                         .Result.Value);
 
-            // Viewmodel expects flat array so flatten for now
             YourCoursesViewModel vm = new YourCoursesViewModel
             {
                 UKPRN = ukprn,
                 Courses = (result == null ? new Course[] { } :
-                           from ICourseSearchOuterGrouping outerGroup in result.Value
-                           from ICourseSearchInnerGrouping innerGroup in outerGroup.Value
-                           from Course c in innerGroup.Value
-                           select c)
+                      from ICourseSearchOuterGrouping outerGroup in result.Value
+                      from ICourseSearchInnerGrouping innerGroup in outerGroup.Value
+                      from Course c in innerGroup.Value
+                      select c),
+                deliveryModes = deliveryModes,
+                durationUnits = durationUnits,
+                attendances = attendances,
+                modes = modes
             };
 
             return View(vm);
@@ -301,7 +377,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 LearnAimRef = learnAimRef,
                 NotionalNVQLevelv2 = notionalNVQLevelv2,
                 AwardOrgCode = awardOrgCode,
-                QualificationType = learnAimRefTypeDesc, 
+                QualificationType = learnAimRefTypeDesc,
                 ProviderUKPRN = UKPRN, // TODO: ToBeChanged
                 CourseDescription = courseFor,
                 EntryRequirments = entryRequirements,
@@ -362,7 +438,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 var items = _venueSearchHelper.GetVenueSearchResultItemModels(result.Value.Value);
                 var venueItems = new List<VenueItemModel>();
-                
+
                 foreach (var venueSearchResultItemModel in items)
                 {
                     venueItems.Add(new VenueItemModel
