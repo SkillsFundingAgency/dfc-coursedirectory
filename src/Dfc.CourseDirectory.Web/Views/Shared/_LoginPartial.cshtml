@@ -34,10 +34,11 @@ else
 <div class="login-options">
     <ul>
         <li class="govuk-header__navigation-item">
-            <a class="govuk-header__link" asp-area="Identity" asp-page="/Account/Register">Register</a>
+            @*<a class="govuk-header__link" asp-area="Identity" asp-page="/Account/Register">Register</a>*@
         </li>
         <li class="govuk-header__navigation-item">
-            <a class="govuk-header__link" asp-area="Identity" asp-page="/Account/Login">Login</a>
+            @*<a class="govuk-header__link" asp-area="Identity" asp-page="/Account/Login">Login</a>*@
+            <a asp-controller="Auth" asp-action="Login">Login</a>
         </li>
     </ul>
 </div>
