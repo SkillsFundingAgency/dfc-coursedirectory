@@ -164,7 +164,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 deliveryModes = deliveryModes,
                 durationUnits = durationUnits,
                 attendances = attendances,
-                modes = modes
+                modes = modes,
+                Venues = courseRunVenues
             };
 
             return View(vm);
