@@ -156,11 +156,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             YourCoursesViewModel vm = new YourCoursesViewModel
             {
                 UKPRN = ukprn,
-                Courses = (result == null ? new Course[] { } :
-                      from ICourseSearchOuterGrouping outerGroup in result.Value
-                      from ICourseSearchInnerGrouping innerGroup in outerGroup.Value
-                      from Course c in innerGroup.Value
-                      select c),
+                Courses = result,
                 deliveryModes = deliveryModes,
                 durationUnits = durationUnits,
                 attendances = attendances,
