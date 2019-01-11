@@ -14,7 +14,7 @@
 
         <div class="govuk-form-group">
             <label class="govuk-label">ID</label>
-            <input readonly="@(Model.Readonly)" class="govuk-input govuk-input--width-10" asp-for="@Model.courseRun.id" type="text" aria-describedby="id">
+            <input readonly="@(Model.Readonly)" class="govuk-input govuk-input--width-10" asp-for="@Model.courseRun.ProviderCourseID" type="text" aria-describedby="id" style="width: 100px;">
 
         </div>
 
@@ -31,13 +31,13 @@
             <label class="govuk-label">Start date</label>
             @if (Model.courseRun.FlexibleStartDate)
             {
-                <input readonly="@(Model.Readonly)" class="govuk-input govuk-input--width-10" type="text" aria-describedby="start date" value="Flexible start date">
+                <input readonly="@(Model.Readonly)" class="govuk-input govuk-input--width-10" type="text" aria-describedby="start date" value="Flexible start date" style="width: 120px;">
             }
             else
             {
                 {
                     var startDate = Model.courseRun.StartDate.ToString("dd/MM/yyyy");
-                    <input readonly="@(Model.Readonly)" class="govuk-input govuk-input--width-10" type="text" aria-describedby="start date" value=@startDate>
+                    <input readonly="@(Model.Readonly)" class="govuk-input govuk-input--width-10" type="text" aria-describedby="start date" value=@startDate style="width: 120px;">
                 }
 
             }
@@ -64,26 +64,26 @@
         </div>
 
 
-    <div class="govuk-form-group">
+        <div class="govuk-form-group">
 
-        <div style="display: inline-block">
-            <label class="govuk-label">Cost</label>
-            <div style="position: relative">
-                <span class="govuk-body" style="position: absolute; left: -10px;top: 8px;">
-                    £
-                </span>
+            <div style="display: inline-block">
+                <label class="govuk-label">Cost</label>
+                <div style="position: relative">
+                    <span class="govuk-body" style="position: absolute; left: -10px;top: 8px;">
+                        £
+                    </span>
+                </div>
+
+                <input id="cost" class="govuk-input govuk-input--width-10" style="display: inline;margin-left: 10px;width:75px" asp-for="@Model.courseRun.Cost" type="text">
             </div>
-
-            <input id="cost" class="govuk-input govuk-input--width-10" style="display: inline;margin-left: 10px;" asp-for="@Model.courseRun.Cost" type="text">
         </div>
-    </div>
 
 
 
-    <div class="popUpContainer" style="width:100px">
-        <label class="govuk-label" style="margin-bottom:18px;">Cost detail</label>
-        <a href="#" id="CostDetailLink" data-HREF-Id="@Model.courseRun.id" class="govuk-link viewCostDesc">View</a>
-        <div class="popUpSection" id="course-run-cost-desc-@Model.courseRun.id" style="display: none;">
+        <div class="popUpContainer" style="width:100px">
+            <label class="govuk-label" style="margin-bottom:18px;">Cost detail</label>
+            <a href="#" id="CostDetailLink" data-HREF-Id="@Model.courseRun.id" class="govuk-link viewCostDesc">View</a>
+            <div class="popUpSection" id="course-run-cost-desc-@Model.courseRun.id" style="display: none;">
 
                 <input readonly="@(Model.Readonly)" class="govuk-input" asp-for="@Model.courseRun.CostDescription" type="text" aria-describedby="cost description">
 
@@ -104,47 +104,55 @@
 
         <div class="govuk-form-group small">
             <label class="govuk-label">Duration</label>
-            <input readonly="@(Model.Readonly)" class="govuk-input govuk-input--width-10" asp-for="@Model.courseRun.DurationValue" type="text" aria-describedby="duration value">
+            <input readonly="@(Model.Readonly)" class="govuk-input" asp-for="@Model.courseRun.DurationValue" type="text" aria-describedby="duration value" style="width: 75px;">
 
         </div>
 
 
-    <div class="govuk-form-group">
-        <label class="govuk-label">Duration Unit</label>
-        <select asp-for="@Model.durationUnit" asp-items="@Model.durationUnits" class="govuk-select"></select>
+        <div class="govuk-form-group">
+            <label class="govuk-label">Duration Unit</label>
+            <select asp-for="@Model.durationUnit" asp-items="@Model.durationUnits" class="govuk-select"></select>
 
 
         </div>
 
-    <div class="govuk-form-group">
-        <label class="govuk-label">Attendance</label>
-        <select asp-for="@Model.attendance" asp-items="@Model.attendances" class="govuk-select"></select>
+        <div class="govuk-form-group">
+            <label class="govuk-label">Attendance</label>
+            <select asp-for="@Model.attendance" asp-items="@Model.attendances" class="govuk-select"></select>
 
 
         </div>
 
-    <div class="govuk-form-group">
-        <label class="govuk-label">Mode</label>
-        <select asp-for="@Model.mode" asp-items="@Model.modes" class="govuk-select"></select>
+        <div class="govuk-form-group">
+            <label class="govuk-label">Mode</label>
+            <select asp-for="@Model.mode" asp-items="@Model.modes" class="govuk-select"></select>
 
 
         </div>
 
-        <div id="btns-course-run-@Model.courseRun.id" class="govuk-form-group medium" style="display: none;">
-            <section id="btns" class="btns btns3" style="margin-bottom: 10px; width: 400px;">
+        @*<div id="btns-course-run-@Model.courseRun.id" class="govuk-form-group medium" style="display: none;">
+                <section id="btns" class="btns btns3" style="margin-bottom: 10px; width: 400px;">
 
 
-                <button id="save-button" type="submit" class="govuk-button">
-                    Save
-                </button>
+                    <button id="save-button" type="submit" class="govuk-button">
+                        Save
+                    </button>
 
 
-                <a href="#" class="govuk-button discard" data-id="@Model.courseRun.id">Discard</a>
+                    <a href="#" class="govuk-button discard" data-id="@Model.courseRun.id">Discard</a>
 
 
 
 
-            </section>
+                </section>
+            </div>*@
+
+
+        <div id="btns-course-run-@Model.courseRun.id" style="display: none; margin-bottom: 5px;width: 400px;margin-left:0px">
+            <button id="save-button" type="submit" class="govuk-button">
+                Save
+            </button>
+            <a href="#" class="govuk-link discard" style="display:inline-block;margin-top:10px;" data-id="@Model.courseRun.id">Discard</a>
         </div>
 
     </li>
@@ -162,25 +170,43 @@
             $(".govuk-select ").on('change', function (e) {
                 var $rowId = $(this).closest(".course-run-container").attr("id");
 
+                if ($("#btns-" + $rowId).is(":visible")) {
+
+                } else {
+                   
+                    $("#btns-" + $rowId).css("display", "block");
+                }
+
+                $("li[id^='course-run']").each(function (index) {
+                    var $courseRunId = $(this).attr("id").substr(11, $(this).attr("id").length - 11);
+
+
+                    $("#course-run-" + $courseRunId).removeClass("unselected-courses");
+
+                    //if ($("#btns-" + $id).is(":visible")) {
+
+                    //} else {
+                    //    $("#btns-" + $id).css("display", "block");
+                    //}
+
+                });
+
                 $("div[id^='btns-course-run']").each(function (index) {
                     var $id = $(this).attr("id").substr(5, $(this).attr("id").length - 5);
 
                     if ($id !== $rowId) {
+                        var $justTheId = $id.substr(11, $id.length - 11);
+                        $("#course-run-" + $justTheId).addClass("unselected-courses");
+
                         if ($("#btns-" + $id).is(":visible")) {
                             $("#btns-" + $id).hide();
 
-                            $('form').find(':input').each(function (i, elem) {
+                            $("#course-run-" + $justTheId).find(':input').each(function (i, elem) {
                                 var input = $(elem);
                                 input.val(input.data('initialState'));
                             });
                         }
-                    } else {
-                        if ($("#btns-" + $id).is(":visible")) {
-
-                        } else {
-                            $("#btns-" + $id).css("display", "block");
-                        }
-                    }
+                    } 
                 });
 
             });
@@ -188,24 +214,27 @@
             $(".govuk-input").on('input', function (e) {
                 var $rowId = $(this).closest(".course-run-container").attr("id");
 
+                if ($("#btns-" + $rowId).is(":visible")) {
+
+                } else {
+
+                    $("#btns-" + $rowId).css("display", "block");
+                }
+
                 $("div[id^='btns-course-run']").each(function (index) {
                     var $id = $(this).attr("id").substr(5, $(this).attr("id").length - 5);
 
                     if ($id !== $rowId) {
+                        var $justTheId = $id.substr(11, $id.length - 11);
+                        $("#course-run-" + $justTheId).addClass("unselected-courses");
+
                         if ($("#btns-" + $id).is(":visible")) {
                             $("#btns-" + $id).hide();
 
-                            $('form').find(':input').each(function (i, elem) {
+                            $("#course-run-" + $justTheId).find(':input').each(function (i, elem) {
                                 var input = $(elem);
                                 input.val(input.data('initialState'));
                             });
-
-                        }
-                    } else {
-                        if ($("#btns-" + $id).is(":visible")) {
-
-                        } else {
-                            $("#btns-" + $id).css("display", "block");
                         }
                     }
                 });
@@ -214,10 +243,36 @@
 
             $(".discard").click(function () {
 
-                $('form').find(':input').each(function (i, elem) {
+                var $id = $(this).closest(".course-run-container").attr("id");
+
+                var $justTheId = $id.substr(11, $id.length - 11);
+                //$('form').find(':input').each(function (i, elem) {
+                //    var input = $(elem);
+                //    input.val(input.data('initialState'));
+                //});
+
+
+
+                $("#course-run-" + $justTheId).find(':input').each(function (i, elem) {
                     var input = $(elem);
                     input.val(input.data('initialState'));
                 });
+
+
+                $("li[id^='course-run']").each(function (index) {
+                    var $courseRunId = $(this).attr("id").substr(11, $(this).attr("id").length - 11);
+
+
+                    $("#course-run-" + $courseRunId).removeClass("unselected-courses");
+
+                    //if ($("#btns-" + $id).is(":visible")) {
+
+                    //} else {
+                    //    $("#btns-" + $id).css("display", "block");
+                    //}
+
+                });
+
 
                 var $id = $(this).attr("data-id");
 

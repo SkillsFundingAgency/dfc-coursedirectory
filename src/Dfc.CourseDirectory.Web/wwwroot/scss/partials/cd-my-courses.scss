@@ -15,6 +15,7 @@
 
 .cd-course-text {
     display: inline-block;
+    Margin-bottom: -10px;
 }
 
 .cd-course-checkbox {
@@ -96,6 +97,11 @@ li {
 
 .popUpSectionHeight{
     min-height:160px;
+}
+
+.unselected-courses{
+    opacity:0.5;
+    background-color:lightgrey;
 }
 
 

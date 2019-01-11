@@ -166,10 +166,18 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 deliveryModes = deliveryModes,
                 durationUnits = durationUnits,
                 attendances = attendances,
-                modes = modes
+                modes = modes,
+                Venues = courseRunVenues
             };
 
             return View(vm);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Index(CourseRunModel model)
+        {
+
+            return View();
         }
 
         public IActionResult AddCourseSection1(string learnAimRef, string notionalNVQLevelv2, string awardOrgCode, string learnAimRefTitle, string learnAimRefTypeDesc)

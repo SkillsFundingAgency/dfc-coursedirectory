@@ -5702,6 +5702,7 @@ ul.sort-list {
 
 .cd-course-text {
   display: inline-block;
+  Margin-bottom: -10px;
 }
 
 .cd-course-checkbox {
@@ -5776,6 +5777,11 @@ li span.govuk-body {
 
 .popUpSectionHeight {
   min-height: 160px;
+}
+
+.unselected-courses {
+  opacity: 0.5;
+  background-color: lightgrey;
 }
 
 .duration-container {
