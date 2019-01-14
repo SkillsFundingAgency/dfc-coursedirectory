@@ -136,7 +136,7 @@
         $(function () {
 
             $(".close").click(function(){
-
+                event.preventDefault();
                 var id = $(this).attr("data-HREF-Id");
                 var $courseRunContainer = $("#course-run-" + id);
                 var $courseRunCUrl = $("#course-run-url-" + id);
@@ -148,7 +148,7 @@
 
 
             $(".view").click(function() {
-
+                event.preventDefault();
                 var id = $(this).attr("data-HREF-Id");
                 var $courseRunContainer = $("#course-run-" + id);
                 var $courseRunCostDesc = $("#course-run-cost-desc-" + id);
@@ -164,7 +164,7 @@
             });
 
             $(".closeCostDesc").click(function(){
-
+                event.preventDefault();
                 var id = $(this).attr("data-HREF-Id");
 
                 var $courseRunContainer = $("#course-run-" + id);
@@ -178,7 +178,7 @@
 
 
             $(".viewCostDesc").click(function(){
-
+                event.preventDefault();
                 var id = $(this).attr("data-HREF-Id");
                 var $courseRunContainer = $("#course-run-" + id);
                 var $courseRunCostDesc = $("#course-run-cost-desc-" + id);
