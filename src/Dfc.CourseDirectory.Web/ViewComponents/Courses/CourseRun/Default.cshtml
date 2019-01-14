@@ -36,7 +36,7 @@
         else
         {
             <div class="govuk-input govuk-input--width-10" aria-describedby="start date" readonly="@(true)">
-                @Model.courseRun.StartDate.ToString("dd/MM/yyyy")
+                @Model.courseRun.StartDate?.ToString("dd/MM/yyyy")
             </div>
         }
 

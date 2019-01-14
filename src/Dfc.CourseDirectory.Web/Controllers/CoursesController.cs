@@ -385,7 +385,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 WhereNext = whereNext,
                 AdvancedLearnerLoan = model.AdvancedLearnerLoan,
 
-                CourseRuns = courseRuns
+                CourseRuns = courseRuns,
+
+                CreatedDate = DateTime.Now,
+                CreatedBy = "ProviderPortal-AddCourse" // TODO - Change to the name of the logged person
             };
 
             var result = await _courseService.AddCourseAsync(course);
