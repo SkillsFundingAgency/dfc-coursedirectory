@@ -121,16 +121,16 @@ namespace Dfc.CourseDirectory.Web
                             // new access token and refresh token
                             var refreshToken = refreshTokenClaim.Value;
 
-                            var clientId = Configuration["auth:oidc:clientId"];
+                            var clientId = Configuration.GetSection("auth:oidc:clientId");
                             const string envKeyClientSecret = "DFE_SIGNIN_CLIENT_SECRET";
-                            var clientSecret = Configuration[envKeyClientSecret];
-                            if (string.IsNullOrWhiteSpace(clientSecret))
+                            var clientSecret = Configuration.GetSection(envKeyClientSecret);
+                            if (string.IsNullOrWhiteSpace(clientSecret.ToString()))
                             {
                                 throw new Exception("Missing environment variable " + envKeyClientSecret + " - get this from the DfE Sign-in team.");
                             }
-                            var tokenEndpoint = Configuration["auth:oidc:tokenEndpoint"];
+                            var tokenEndpoint = Configuration.GetSection("auth:oidc:tokenEndpoint").ToString();
 
-                            var client = new TokenClient(tokenEndpoint, clientId, clientSecret);
+                            var client = new TokenClient(tokenEndpoint, clientId.ToString(), clientSecret.ToString());
                             var response = await client.RequestRefreshTokenAsync(refreshToken, new { client_secret = clientSecret });
 
                             if (!response.IsError)
@@ -162,11 +162,11 @@ namespace Dfc.CourseDirectory.Web
             }).AddOpenIdConnect(options =>
             {
                 options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.MetadataAddress = Configuration["auth:oidc:metadataAddress"];
+                options.MetadataAddress = Configuration.GetSection("auth:oidc:metadataAddress").ToString();
 
-                options.ClientId = Configuration["auth:oidc:clientId"];
+                options.ClientId = Configuration.GetSection("auth:oidc:clientId").ToString();
                 const string envKeyClientSecret = "DFE_SIGNIN_CLIENT_SECRET";
-                var clientSecret = Configuration[envKeyClientSecret];
+                var clientSecret = Configuration.GetSection(envKeyClientSecret).ToString();
                 if (string.IsNullOrWhiteSpace(clientSecret))
                 {
                     throw new Exception("Missing environment variable " + envKeyClientSecret + " - get this from the DfE Sign-in team.");
@@ -188,8 +188,8 @@ namespace Dfc.CourseDirectory.Web
                 options.Scope.Add("offline_access");
 
                 options.SaveTokens = true;
-                options.CallbackPath = new PathString(Configuration["auth:oidc:callbackPath"]);
-                options.SignedOutCallbackPath = new PathString(Configuration["auth:oidc:signedOutCallbackPath"]);
+                options.CallbackPath = new PathString(Configuration.GetSection("auth:oidc:callbackPath").ToString());
+                options.SignedOutCallbackPath = new PathString(Configuration.GetSection("auth:oidc:signedOutCallbackPath").ToString());
                 options.SecurityTokenValidator = new JwtSecurityTokenHandler
                 {
                     InboundClaimTypeMap = new Dictionary<string, string>(),
@@ -244,7 +244,7 @@ namespace Dfc.CourseDirectory.Web
                         return Task.CompletedTask;
                     },
 
-                    // that event is called after the OIDC middleware received the auhorisation code,
+                    // that event is called after the OIDC middleware received the authorisation code,
                     // redeemed it for an access token and a refresh token,
                     // and validated the identity token
                     OnTokenValidated = x =>
