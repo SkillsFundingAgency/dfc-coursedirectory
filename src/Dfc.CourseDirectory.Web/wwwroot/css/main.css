@@ -5702,6 +5702,7 @@ ul.sort-list {
 
 .cd-course-text {
   display: inline-block;
+  Margin-bottom: -10px;
 }
 
 .cd-course-checkbox {
