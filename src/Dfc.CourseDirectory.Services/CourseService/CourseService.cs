@@ -21,6 +21,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
         private readonly HttpClient _httpClient;
         private readonly Uri _addCourseUri;
         private readonly Uri _getYourCoursesUri;
+        private readonly Uri _updateCourseUri;
 
         public CourseService(
             ILogger<CourseService> logger,
@@ -36,6 +37,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
 
             _addCourseUri = settings.Value.ToAddCourseUri();
             _getYourCoursesUri = settings.Value.ToGetYourCoursesUri();
+            _updateCourseUri = settings.Value.ToUpdateCourseUri();
         }
 
 
@@ -139,6 +141,59 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 _logger.LogMethodExit();
             }
         }
+
+
+
+        public async Task<IResult<ICourse>> UpdateCourseAsync(ICourse course)
+        {
+            _logger.LogMethodEnter();
+            Throw.IfNull(course, nameof(course));
+
+            try
+            {
+                _logger.LogInformationObject("Course update object.", course);
+                _logger.LogInformationObject("Course update URI", _updateCourseUri);
+
+                var courseJson = JsonConvert.SerializeObject(course);
+
+                var content = new StringContent(courseJson, Encoding.UTF8, "application/json");
+                var response = await _httpClient.PostAsync(_updateCourseUri, content);
+
+                _logger.LogHttpResponseMessage("Course update service http response", response);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+
+                    _logger.LogInformationObject("Course update service json response", json);
+
+
+                    var courseResult = JsonConvert.DeserializeObject<Course>(json);
+
+
+                    return Result.Ok<ICourse>(courseResult);
+                }
+                else
+                {
+                    return Result.Fail<ICourse>("Course update service unsuccessful http response");
+                }
+            }
+            catch (HttpRequestException hre)
+            {
+                _logger.LogException("Course update service http request error", hre);
+                return Result.Fail<ICourse>("Course update service http request error.");
+            }
+            catch (Exception e)
+            {
+                _logger.LogException("Course update service unknown error.", e);
+
+                return Result.Fail<ICourse>("Course update service unknown error.");
+            }
+            finally
+            {
+                _logger.LogMethodExit();
+            }
+        }
     }
 
     internal static class CourseServiceSettingsExtensions
@@ -151,6 +206,11 @@ namespace Dfc.CourseDirectory.Services.CourseService
         internal static Uri ToGetYourCoursesUri(this ICourseServiceSettings extendee)
         {
             return new Uri($"{extendee.ApiUrl + "GetGroupedCoursesByUKPRN?code=" + extendee.ApiKey}");
+        }
+
+        internal static Uri ToUpdateCourseUri(this ICourseServiceSettings extendee)
+        {
+            return new Uri($"{extendee.ApiUrl + "UpdateCode?code=" + extendee.ApiKey}");
         }
     }
 }
