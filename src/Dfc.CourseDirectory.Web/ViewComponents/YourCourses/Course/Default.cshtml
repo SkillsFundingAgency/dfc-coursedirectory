@@ -68,7 +68,7 @@
                     @{
                         foreach (var courseRun in course.CourseRuns.OrderBy(cr => cr.StartDate)
                                                                    .ThenBy(cr2 => cr2.FlexibleStartDate)
-                                                                   .ThenBy(cr3 => Model.Venues.FirstOrDefault(v => v.Value == cr3.VenueId.ToString())?.Text))
+                                                                   .ThenBy(cr3 => Model.Venues.FirstOrDefault(v => v.Value == cr3.VenueId.ToString())?.Text) )
                         {
                             var courseRunModel = new CourseRunModel
                             {
