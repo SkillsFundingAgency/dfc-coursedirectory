@@ -9,7 +9,7 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Courses
     public interface ICourse
     {
         Guid id { get; set; }
-
+        int? CourseId { get; set; }
         string QualificationCourseTitle { get; set; } 
         string LearnAimRef { get; set; } 
         string NotionalNVQLevelv2 { get; set; } 
@@ -29,5 +29,10 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Courses
         bool AdvancedLearnerLoan { get; set; }
 
         IEnumerable<CourseRun> CourseRuns { get; }
+
+        DateTime CreatedDate { get; set; }
+        string CreatedBy { get; set; }
+        DateTime? UpdatedDate { get; set; }
+        string UpdatedBy { get; set; }
     }
 }

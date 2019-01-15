@@ -7,7 +7,7 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
     public class Course : ICourse 
     {
         public Guid id { get; set; }
-
+        public int? CourseId { get; set; }
         public string QualificationCourseTitle { get; set; } 
         public string LearnAimRef { get; set; } 
         public string NotionalNVQLevelv2 { get; set; } 
@@ -27,5 +27,10 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         public bool AdvancedLearnerLoan { get; set; }
       
         public IEnumerable<CourseRun> CourseRuns { get; set; }
+
+        public DateTime CreatedDate { get; set; }
+        public string CreatedBy { get; set; }
+        public DateTime? UpdatedDate { get; set; }
+        public string UpdatedBy { get; set; }
     }
 }
