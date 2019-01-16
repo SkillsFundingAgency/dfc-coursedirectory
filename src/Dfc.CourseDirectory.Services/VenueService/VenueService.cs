@@ -166,6 +166,9 @@ namespace Dfc.CourseDirectory.Services.VenueService
 
                 _logger.LogHttpResponseMessage("Venue search service http response", response);
 
+                if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+                    return Result.Ok<IVenueSearchResult>(new VenueSearchResult(new List<Venue>()));
+
                 if (response.IsSuccessStatusCode)
                 {
                     var json = await response.Content.ReadAsStringAsync();
@@ -188,15 +191,10 @@ namespace Dfc.CourseDirectory.Services.VenueService
                         venues.Insert(0, newVenueItem);
                     }
 
-                    var searchResult = new VenueSearchResult(venues)
-                    {
-                        Value = venues
-                    };
-
+                    var searchResult = new VenueSearchResult(venues);
                     return Result.Ok<IVenueSearchResult>(searchResult);
-                }
-                else
-                {
+
+                } else {
                     return Result.Fail<IVenueSearchResult>("Venue search service unsuccessful http response");
                 }
             }

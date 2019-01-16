@@ -80,10 +80,10 @@
 
 
 
-        <div class="popUpContainer" style="width:100px">
-            <label class="govuk-label" style="margin-bottom:18px;">Cost detail</label>
-            <a href="#" id="CostDetailLink" data-HREF-Id="@Model.courseRun.id" class="govuk-link viewCostDesc">View</a>
-            <div class="popUpSection" id="course-run-cost-desc-@Model.courseRun.id" style="display: none;">
+    <div class="popUpContainer" style="width:150px">
+        <label class="govuk-label" style="margin-bottom:18px;">Cost Description</label>
+        <a href="#" id="CostDetailLink" data-HREF-Id="@Model.courseRun.id" class="govuk-link viewCostDesc">View</a>
+        <div class="popUpSection" id="course-run-cost-desc-@Model.courseRun.id" style="display: none;">
 
                 <input readonly="@(Model.Readonly)" class="govuk-input" asp-for="@Model.courseRun.CostDescription" type="text" aria-describedby="cost description">
 
@@ -109,9 +109,9 @@
         </div>
 
 
-        <div class="govuk-form-group">
-            <label class="govuk-label">Duration Unit</label>
-            <select asp-for="@Model.durationUnit" asp-items="@Model.durationUnits" class="govuk-select"></select>
+    <div class="govuk-form-group" style="width: 150px">
+        <label class="govuk-label">Duration Unit</label>
+        <select asp-for="@Model.durationUnit" asp-items="@Model.durationUnits" class="govuk-select"></select>
 
 
         </div>
@@ -293,8 +293,8 @@
             });
 
 
-            $(".view").click(function () {
-
+            $(".view").click(function() {
+                event.preventDefault();
                 var id = $(this).attr("data-HREF-Id");
                 var $courseRunContainer = $("#course-run-" + id);
                 var $courseRunCostDesc = $("#course-run-cost-desc-" + id);
@@ -309,8 +309,8 @@
                 $courseRunCUrl.show();
             });
 
-            $(".closeCostDesc").click(function () {
-
+            $(".closeCostDesc").click(function(){
+                event.preventDefault();
                 var id = $(this).attr("data-HREF-Id");
 
                 var $courseRunContainer = $("#course-run-" + id);
@@ -323,8 +323,8 @@
             });
 
 
-            $(".viewCostDesc").click(function () {
-
+            $(".viewCostDesc").click(function(){
+                event.preventDefault();
                 var id = $(this).attr("data-HREF-Id");
                 var $courseRunContainer = $("#course-run-" + id);
                 var $courseRunCostDesc = $("#course-run-cost-desc-" + id);

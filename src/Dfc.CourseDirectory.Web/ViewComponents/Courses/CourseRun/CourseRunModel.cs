@@ -21,7 +21,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseRun
 
         public List<SelectListItem> venues { get; set; }
 
-        public Guid VenueId { get; set; }
+        public Guid? VenueId { get; set; }
         public DeliveryMode deliveryMode { get; set; }
 
         public DurationUnit durationUnit { get; set; }

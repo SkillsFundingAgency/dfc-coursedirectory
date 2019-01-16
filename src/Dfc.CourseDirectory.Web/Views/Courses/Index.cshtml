@@ -1,5 +1,7 @@
-﻿@using Dfc.CourseDirectory.Web.ViewComponents.YourCourses.Course
+﻿
+@using Dfc.CourseDirectory.Web.ViewComponents.YourCourses.Course
 @model Dfc.CourseDirectory.Web.ViewModels.YourCoursesViewModel
+
 
 @{
     Layout = "/Views/Shared/_Layout_YourCourses.cshtml";
@@ -28,7 +30,16 @@
 
         <div class="govuk-form-group">
             <form asp-action="Index" asp-controller="Qualifications" method="post">
-                <h1 id="cd-your-courses-heading" class="govuk-heading-l">Your courses</h1>
+                <h1 id="cd-your-courses-heading" class="govuk-heading-l">Your courses&nbsp;</h1>
+                <span class="govuk-body">(
+                @{
+                    var outers = Model.Courses.Value;
+                    var inners = outers.SelectMany(o => o.Value);
+                    var courses = inners.SelectMany(i => i.Value);
+                    var courseruns = courses.SelectMany(c => c.CourseRuns);
+                    @courseruns.Count()
+                }
+                )</span>
                 <button id="cd-add-qual-button" type="submit" class="govuk-button">
                     Add a Qualification
                 </button>
