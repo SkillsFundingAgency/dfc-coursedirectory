@@ -32,7 +32,7 @@
                     <ul>
                         @*<li><hr class="govuk-section-break govuk-section-break--visible"></li>*@
                         <li>
-                            <h3 class="active accordion govuk-heading-l" data-row-type="courserun" style="font-size: 22px;font-weight: bold;font-family: nta,Arial,sans-serif;">
+                            <h3 class="active accordion govuk-heading-l" data-row-type="courserun" style="font-size: 22px;font-weight: bold; font-family: nta, Arial, sans-serif; border-style: none">
                                 @course.QualificationCourseTitle  <span class="govuk-body">(@course.CourseRuns.Count())</span>
                             </h3>
                             @*<span class="" style="cursor:pointer;font-size:50px; float: right;font-weight: bold">+</span>*@
@@ -43,7 +43,9 @@
                                         <a id="@counter" class="edit-btn open-descript" href="#">View course description</a>
                                         <span class="cd-advanced-text">Advanced learner Loan Available</span>
                                     </p>
+
                                 </div>
+
                                 <fieldset class="govuk-fieldset cd-course-checkbox" aria-describedby="course-hint">
                                     <div class="govuk-checkboxes">
                                         <div class="govuk-checkboxes__item">
@@ -68,6 +70,7 @@
                                     };
                                 }
                                 @await Component.InvokeAsync(nameof(ModalPopup), descriptionModel)
+                                <hr class="govuk-section-break govuk-section-break--visible">
                             </div>
                             
                             <ul style="display:none">
