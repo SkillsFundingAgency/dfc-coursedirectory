@@ -15,19 +15,20 @@
 
 <div class="govuk-form-group">
     @{ var counter = 0; }
-    @foreach (ICourseSearchOuterGrouping outerGroup in Model.Courses.Value)
+    @foreach (ICourseSearchOuterGrouping outerGroup in Model.Courses.Value.OrderBy(o => o.QualType))
     {
         @*<div class="accordion govuk-heading-s">TEST</div>*@
         <br />
         @*<span class="" style="cursor:pointer;font-size:50px; float: right;font-weight: bold">+</span>*@
 
-        <h2 class="active accordion govuk-heading-l" data-row-type="coursetitle">@outerGroup.QualType <span class="govuk-body count">(@outerGroup.Value.SelectMany(o => o.Value.SelectMany(i => i.CourseRuns)).Count())</span></h2>
-        @*<span class="govuk-body count">(@outerGroup.Value.SelectMany(o => o.Value.SelectMany(i => i.CourseRuns)).Count())</span>*@
+        <h2 class="active accordion govuk-heading-l" data-row-type="coursetitle">@outerGroup.QualType
+            <span class="govuk-body count">(@outerGroup.Value.SelectMany(o => o.Value.SelectMany(i => i.CourseRuns)).Count())</span>
+        </h2>
 
         <div style="display: none;">
             @foreach (ICourseSearchInnerGrouping innerGroup in outerGroup.Value)
             {
-                foreach (Course course in innerGroup.Value)
+                foreach (Course course in innerGroup.Value.OrderBy(c => c.QualificationCourseTitle))
                 {
                     <ul>
                         @*<li><hr class="govuk-section-break govuk-section-break--visible"></li>*@
@@ -75,7 +76,9 @@
                             
                             <ul style="display:none">
                                 @{
-                                    foreach (var courseRun in course.CourseRuns)
+                                    foreach (var courseRun in course.CourseRuns.OrderBy(cr => cr.StartDate)
+                                                                   .ThenBy(cr2 => cr2.FlexibleStartDate)
+                                                                   .ThenBy(cr3 => Model.Venues.FirstOrDefault(v => v.Value == cr3.VenueId.ToString())?.Text))
                                     {
 
                                         var courseRunModel = new CourseRunModel
@@ -92,7 +95,7 @@
                                             venues = Model.Venues,
                                             courseRun = courseRun
                                         };
-                                        
+
                                             @await Component.InvokeAsync(nameof(CourseRun), courseRunModel)
                                       
                                     }
