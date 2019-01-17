@@ -158,20 +158,22 @@
         AriaDescribedBy = "Select course duration"
     })
 
-    @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode.StudyMode), new StudyModeModel
-    {
-        StudyMode = Dfc.CourseDirectory.Models.Models.Courses.StudyMode.FullTime,
-        LabelText = "Full time or part time",
-        HintText = "Select the attendance pattern"
-    })
-
-    @await Component.InvokeAsync(nameof(Attendance), new AttendanceModel
-    {
-        AttendanceMode = AttendancePattern.Daytime,
-        LabelText = "Attendance",
-        HintText = "Select the time of day the course takes place"
-    })
-
+    <div id="FullPartTimeRadioButtons">
+        @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode.StudyMode), new StudyModeModel
+        {
+            StudyMode = Dfc.CourseDirectory.Models.Models.Courses.StudyMode.FullTime,
+            LabelText = "Full time or part time",
+            HintText = "Select the attendance pattern"
+        })
+    </div>
+    <div id="AttendancePatternRadioButtons">
+        @await Component.InvokeAsync(nameof(Attendance), new AttendanceModel
+        {
+            AttendanceMode = AttendancePattern.Daytime,
+            LabelText = "Attendance",
+            HintText = "Select the time of day the course takes place"
+        })
+    </div>
     <div class="govuk-form-group">
         <button type="submit" class="govuk-button" id="publish">
             Publish
@@ -221,6 +223,36 @@
             var $formStartDateIsValid = false;
             var $formCostIsValid = false;
 
+            var $deliveryRadios = $("#DeliveryModeRadioButtons input[type=radio]");
+
+            $deliveryRadios.change(function () {
+                var $venueItemsCheckboxList = $("#VenueItemsCheckboxList");
+                var $fullPartTimeRadioButtons = $("#FullPartTimeRadioButtons");
+                var $attendancePatternRadioButtons = $("#AttendancePatternRadioButtons");
+                var $specifiedStartDate = $("#SpecifiedStartDate");
+                var $flexibleStartDate = $("#FlexibleStartDate");
+
+                $venueItemsCheckboxList.toggle();
+                $fullPartTimeRadioButtons.toggle();
+                $attendancePatternRadioButtons.toggle();
+
+                switch (this.id) {
+                    case "ClassroomBased":
+                        {
+                            $specifiedStartDate.prop("checked", true);
+                            $flexibleStartDate.prop("checked", false);
+                            break;
+                        }
+                    case "Online":
+                        {
+                            $flexibleStartDate.prop("checked", true);
+                            $specifiedStartDate.prop("checked", false);
+                            break;
+                        }
+                }
+
+           
+            });
             $checkboxes.change(function () {
                 var $validationMessageForVenues = $("#invalidVenuesChecked");
                 var $venueItemsCheckboxList = $("#VenueItemsCheckboxList");
