@@ -10,25 +10,31 @@
 
 <script src="https://cdn.rawgit.com/vast-engineering/jquery-popup-overlay/1.7.13/jquery.popupoverlay.js"></script>
 
-<form asp-action="Index" asp-controller="Courses" method="post">
-    <div class="govuk-form-group">
-        @{ var counter = 0; }
-        @foreach (ICourseSearchOuterGrouping outerGroup in Model.Courses.Value)
-        {
-            <br />
-            <h2 class="govuk-heading-l">@outerGroup.QualType</h2>
-            <span class="govuk-body">(@outerGroup.Value.SelectMany(o => o.Value.SelectMany(i => i.CourseRuns)).Count())</span>
 
+<div class="govuk-form-group">
+    @{ var counter = 0; }
+    @foreach (ICourseSearchOuterGrouping outerGroup in Model.Courses.Value)
+    {
+        <br />
+        <h2 class="govuk-heading-l">@outerGroup.QualType</h2>
+        <span class="govuk-body">(@outerGroup.Value.SelectMany(o => o.Value.SelectMany(i => i.CourseRuns)).Count())</span>
+
+        <h2 class="active accordion govuk-heading-l" data-row-type="coursetitle">@outerGroup.QualType
+            <span class="govuk-body count">(@outerGroup.Value.SelectMany(o => o.Value.SelectMany(i => i.CourseRuns)).Count())</span>
+        </h2>
+
+        <div style="display: none;">
             @foreach (ICourseSearchInnerGrouping innerGroup in outerGroup.Value)
             {
-                @foreach (Course course in innerGroup.Value)
+                foreach (Course course in innerGroup.Value.OrderBy(c => c.QualificationCourseTitle))
                 {
                     <ul>
-                        <li><hr class="govuk-section-break govuk-section-break--visible"></li>
+                        @*<li><hr class="govuk-section-break govuk-section-break--visible"></li>*@
                         <li>
-                            <h3 class="govuk-heading-m">
-                                @course.QualificationCourseTitle
-                            </h3><span class="govuk-body">(@course.CourseRuns.Count())</span>
+                            <h3 class="active accordion govuk-heading-l" data-row-type="courserun" style="font-size: 22px;font-weight: bold; font-family: nta, Arial, sans-serif; border-style: none">
+                                @course.QualificationCourseTitle  <span class="govuk-body">(@course.CourseRuns.Count())</span>
+                            </h3>
+                            @*<span class="" style="cursor:pointer;font-size:50px; float: right;font-weight: bold">+</span>*@
                             <div class="govuk-form-group">
                                 <div class="govuk-form-group cd-course-text">
                                     <p class="govuk-body">
@@ -36,7 +42,9 @@
                                         <a id="@counter" class="edit-btn open-descript" href="#">View course description</a>
                                         <span class="cd-advanced-text">Advanced learner Loan Available</span>
                                     </p>
+
                                 </div>
+
                                 <fieldset class="govuk-fieldset cd-course-checkbox" aria-describedby="course-hint">
                                     <div class="govuk-checkboxes">
                                         <div class="govuk-checkboxes__item">
@@ -61,45 +69,85 @@
                                     };
                                 }
                                 @await Component.InvokeAsync(nameof(ModalPopup), descriptionModel)
+                                <hr class="govuk-section-break govuk-section-break--visible">
                             </div>
+                            
+                            <ul style="display:none">
+                                @{
+                                    foreach (var courseRun in course.CourseRuns.OrderBy(cr => cr.StartDate)
+                                                                   .ThenBy(cr2 => cr2.FlexibleStartDate)
+                                                                   .ThenBy(cr3 => Model.Venues.FirstOrDefault(v => v.Value == cr3.VenueId.ToString())?.Text))
+                                    {
+
+                                        var courseRunModel = new CourseRunModel
+                                        {
+                                            attendances = Model.attendances,
+                                            deliveryModes = Model.deliveryModes,
+                                            durationUnits = Model.durationUnits,
+                                            modes = Model.modes,
+                                            attendance = courseRun.AttendancePattern,
+                                            deliveryMode = courseRun.DeliveryMode,
+                                            durationUnit = courseRun.DurationUnit,
+                                            mode = courseRun.StudyMode,
+                                            VenueId = courseRun.VenueId,
+                                            venues = Model.Venues,
+                                            courseRun = courseRun
+                                        };
+
+                                            @await Component.InvokeAsync(nameof(CourseRun), courseRunModel)
+                                      
+                                    }
+
+                                    counter++;
+                                }
+                            </ul>
                         </li>
                         <li><hr class="govuk-section-break govuk-section-break--visible"></li>
 
-                        @{
-                            foreach (var courseRun in course.CourseRuns)
-                            {
-
-                                var courseRunModel = new CourseRunModel
-                                {
-                                    attendances = Model.attendances,
-                                    deliveryModes = Model.deliveryModes,
-                                    durationUnits = Model.durationUnits,
-                                    modes = Model.modes,
-                                    attendance = courseRun.AttendancePattern,
-                                    deliveryMode = courseRun.DeliveryMode,
-                                    durationUnit = courseRun.DurationUnit,
-                                    mode = courseRun.StudyMode,
-                                    VenueId = courseRun.VenueId,
-                                    venues = Model.Venues,
-                                    courseRun = courseRun
-                                };
-
-                                @await Component.InvokeAsync(nameof(CourseRun), courseRunModel)
-                            }
-
-                            counter++;
-                        }
+                       
                     </ul>
                 }
             }
             <br />
-        }
-    </div>
-</form>
+        </div>
+    }
+</div>
 
 <script>
     (function ($) {
         $(function () {
+
+            var acc = document.getElementsByClassName("accordion");
+            var i;
+
+            for (i = 0; i < acc.length; i++) {
+                acc[i].addEventListener("click", function () {
+                    var $att = $(this).attr("data-row-type");
+
+                    if ($att==="courserun") {
+                        this.classList.toggle("active");
+                        var panel1 = this.nextElementSibling;
+                        var panel = panel1.nextElementSibling;
+                        //var panel = panel1.nextElementSibling;
+                        if (panel.style.display === "none") {
+                            panel.style.display = "block";
+                        } else {
+                            panel.style.display = "none";
+                        }
+                    } else {
+                        this.classList.toggle("active");
+                        var panel = this.nextElementSibling;
+                        //var panel = panel1.nextElementSibling;
+                        if (panel.style.display === "none") {
+                            panel.style.display = "block";
+                        } else {
+                            panel.style.display = "none";
+                        }
+                    }
+
+                });
+            }
+
             $(".popup_content").popup({
                 color: "#fff",
                 transition: "all 0.3s"
