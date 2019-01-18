@@ -19,10 +19,10 @@
         </div>
 
 
-        <div class="govuk-form-group">
-            <div>
-                <label class="govuk-label">Delivery</label>
-                <select asp-for="@Model.deliveryMode" asp-items="@Model.deliveryModes" class="govuk-select"></select>
+    <div class="govuk-form-group">
+
+        <label class="govuk-label">Delivery</label>
+        <select asp-for="@Model.deliveryMode" asp-items="@Model.deliveryModes" class="govuk-select"></select>
 
 
             </div>
@@ -36,8 +36,9 @@
             else
             {
                 {
-                    var startDate = Model.courseRun.StartDate.ToString("dd/MM/yyyy");
-                    <input readonly="@(Model.Readonly)" class="govuk-input govuk-input--width-10" type="text" aria-describedby="start date" value=@startDate style="width: 120px;">
+                    <div class="govuk-input govuk-input--width-10" aria-describedby="start date" readonly="@(Model.Readonly)">
+                        @Model.courseRun.StartDate?.ToString("dd/MM/yyyy")
+                    </div>
                 }
 
             }
@@ -293,7 +294,7 @@
             });
 
 
-            $(".view").click(function() {
+            $(".view").click(function () {
                 event.preventDefault();
                 var id = $(this).attr("data-HREF-Id");
                 var $courseRunContainer = $("#course-run-" + id);
@@ -309,7 +310,7 @@
                 $courseRunCUrl.show();
             });
 
-            $(".closeCostDesc").click(function(){
+            $(".closeCostDesc").click(function () {
                 event.preventDefault();
                 var id = $(this).attr("data-HREF-Id");
 
@@ -323,7 +324,7 @@
             });
 
 
-            $(".viewCostDesc").click(function(){
+            $(".viewCostDesc").click(function () {
                 event.preventDefault();
                 var id = $(this).attr("data-HREF-Id");
                 var $courseRunContainer = $("#course-run-" + id);

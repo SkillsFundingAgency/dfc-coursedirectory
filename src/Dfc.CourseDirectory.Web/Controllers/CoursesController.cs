@@ -59,6 +59,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _venueSearchHelper = venueSearchHelper;
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Index(CourseRunModel model)
+        {
+            return View();
+        }
+
         public async Task<IActionResult> Index(string status, string learnAimRef, string numberOfNewCourses, string errmsg)
         {
 
