@@ -12,6 +12,7 @@ using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.RequestModels;
 using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseFor;
+using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseRun;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.EntryRequirements;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.HowAssessed;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.HowYouWillLearn;
@@ -24,6 +25,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using CourseRun = Dfc.CourseDirectory.Models.Models.Courses.CourseRun;
 
 
 namespace Dfc.CourseDirectory.Web.Controllers
@@ -55,6 +57,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _courseService = courseService;
             _venueService = venueService;
             _venueSearchHelper = venueSearchHelper;
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Index(CourseRunModel model)
+        {
+            return View();
         }
 
         public async Task<IActionResult> Index(string status, string learnAimRef, string numberOfNewCourses, string errmsg)
