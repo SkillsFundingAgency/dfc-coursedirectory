@@ -387,6 +387,10 @@
                     if ($formVenuesIsValid & $formCostIsValid & $formStartDateIsValid) {
                         $("#addCourseSection2").submit();
                     }
+                    var errorArray = $("[class*='--error'");
+                    if (errorArray.length > 0) {
+                        $('html, body').scrollTop($('#' + errorArray[0].id).offset().top);
+                    }
                 });
         });
     })(jQuery);
