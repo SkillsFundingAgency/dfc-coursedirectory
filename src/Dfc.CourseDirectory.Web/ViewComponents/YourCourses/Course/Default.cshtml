@@ -16,8 +16,6 @@
     @foreach (ICourseSearchOuterGrouping outerGroup in Model.Courses.Value)
     {
         <br />
-        <h2 class="govuk-heading-l">@outerGroup.QualType</h2>
-        <span class="govuk-body">(@outerGroup.Value.SelectMany(o => o.Value.SelectMany(i => i.CourseRuns)).Count())</span>
 
         <h2 class="active accordion govuk-heading-l" data-row-type="coursetitle">@outerGroup.QualType
             <span class="govuk-body count">(@outerGroup.Value.SelectMany(o => o.Value.SelectMany(i => i.CourseRuns)).Count())</span>

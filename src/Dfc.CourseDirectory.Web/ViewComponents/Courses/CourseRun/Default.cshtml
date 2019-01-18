@@ -4,198 +4,195 @@
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
-<form asp-action="Index" asp-controller="Courses" method="post">
-    <li class="course-run-container" id="course-run-@Model.courseRun.id">
+<li class="course-run-container" id="course-run-@Model.courseRun.id">
 
-        <button class="gov-uk-b" type="submit">Save</button>
-        <div class="govuk-form-group">
-            <label class="">Course name</label>
-            <input readonly="@(true)" class="govuk-input" asp-for="@Model.courseRun.CourseName" type="text" aria-describedby="course name">
+    <div class="govuk-form-group">
+        <label class="govuk-label">Course name</label>
+        <input readonly="@(true)" class="govuk-input" asp-for="@Model.courseRun.CourseName" type="text" aria-describedby="course name">
 
-        </div>
+    </div>
 
-        <div class="govuk-form-group">
-            <label class="govuk-label">ID</label>
-            <input readonly="@(true)" class="govuk-input govuk-input--width-10" asp-for="@Model.courseRun.ProviderCourseID" type="text" aria-describedby="id" style="width:100px">
+    <div class="govuk-form-group">
+        <label class="govuk-label">ID</label>
+        <input readonly="@(true)" class="govuk-input govuk-input--width-10" asp-for="@Model.courseRun.ProviderCourseID" type="text" aria-describedby="id" style="width:100px">
 
-        </div>
+    </div>
 
 
-        <div class="govuk-form-group">
-            <div>
-                <label class="govuk-label">Delivery</label>
-                <select asp-for="@Model.deliveryMode" asp-items="@Model.deliveryModes" class="govuk-select"></select>
+    <div class="govuk-form-group">
+
+        <label class="govuk-label">Delivery</label>
+        <select asp-for="@Model.deliveryMode" asp-items="@Model.deliveryModes" class="govuk-select"></select>
 
 
+    </div>
+    <div class="govuk-form-group">
+        <label class="govuk-label">Start date</label>
+        @if (Model.courseRun.FlexibleStartDate)
+        {
+            <input readonly="@(true)" class="govuk-input govuk-input--width-10" type="text" aria-describedby="start date" value="Flexible start date">
+        }
+        else
+        {
+            <div class="govuk-input govuk-input--width-10" aria-describedby="start date" readonly="@(true)">
+                @Model.courseRun.StartDate?.ToString("dd/MM/yyyy")
             </div>
+        }
+
+
+    </div>
+
+    <div class="govuk-form-group">
+        <label class="govuk-label">Venue</label>
+        <select asp-for="@Model.VenueId" asp-items="@Model.venues" class="govuk-select"></select>
+
+
+    </div>
+
+    <div class="popUpContainer">
+        <label class="govuk-label" style="margin-bottom:18px;">URL</label>
+        <a href="#" id="URLLink" data-HREF-Id="@Model.courseRun.id" class="govuk-link view">View</a>
+        <div class="popUpSection" id="course-run-url-@Model.courseRun.id" style="display: none;">
+
+            <input readonly="@(true)" class="govuk-input" asp-for="@Model.courseRun.CourseURL" type="text" aria-describedby="url">
+
+            <a href="#" id="@Model.courseRun.id" data-HREF-Id="@Model.courseRun.id" class="govuk-link close" style="">Close</a>
         </div>
-        <div class="govuk-form-group">
-            <label class="govuk-label">Start date</label>
-            @if (Model.courseRun.FlexibleStartDate)
-            {
-                <input readonly="@(true)" class="govuk-input govuk-input--width-10" type="text" aria-describedby="start date" value="Flexible start date">
-            }
-            else
-            {
-                <div class="govuk-input govuk-input--width-10" aria-describedby="start date" readonly="@(true)">
-                    @Model.courseRun.StartDate?.ToString("dd/MM/yyyy")
+    </div>
+
+
+    <div class="govuk-form-group">
+
+        <div style="display: inline-block">
+            <label class="govuk-label">Cost</label>
+            <div style="position: relative">
+                <span class="govuk-body" style="position: absolute; left: -10px;top: 8px;">
+                    £
+                </span>
+            </div>
+
+            <input id="cost" class="govuk-input govuk-input--width-10" style="display: inline;margin-left: 10px;width:75px" asp-for="@Model.courseRun.Cost" type="text">
+        </div>
+    </div>
+
+
+
+    <div class="popUpContainer" style="width:150px">
+        <label class="govuk-label" style="margin-bottom:18px;">Cost Description</label>
+        <a href="#" id="CostDetailLink" data-HREF-Id="@Model.courseRun.id" class="govuk-link viewCostDesc">View</a>
+        <div class="popUpSection" id="course-run-cost-desc-@Model.courseRun.id" style="display: none;">
+
+            <input readonly="@(true)" class="govuk-input" asp-for="@Model.courseRun.CostDescription" type="text" aria-describedby="cost description">
+
+            <a href="#" data-HREF-Id="@Model.courseRun.id" class="govuk-link closeCostDesc" style="">Close</a>
+        </div>
+    </div>
+
+
+    @*<div class="govuk-form-group small" style="text-align:center;">
+            <label class="govuk-label" style="margin-bottom:18px;">Cost detail</label>
+            <a href="#" class="govuk-link" data-url="https://www.google.com">View</a>
+            @*<div class="edit-url-cont" style="display: none;">
+                    <input class="govuk-input edit-url-input" type="text" readonly="" value="https://coursedirectoryproviderportal.org.uk/Course/Create/50097453">
+                    <a href="#" class="edit-btn cancel-url" style="margin-top:10px;float:left;">Close</a>
                 </div>
-            }
+        </div>*@
 
 
-        </div>
+    <div class="govuk-form-group small">
+        <label class="govuk-label">Duration</label>
+        <input readonly="@(true)" class="govuk-input govuk-input--width-10" asp-for="@Model.courseRun.DurationValue" type="text" aria-describedby="duration value" style="width: 50px">
 
-        <div class="govuk-form-group">
-            <label class="govuk-label">Venue</label>
-            <select asp-for="@Model.VenueId" asp-items="@Model.venues" class="govuk-select"></select>
-
-
-        </div>
-
-        <div class="popUpContainer">
-            <label class="govuk-label" style="margin-bottom:18px;">URL</label>
-            <a href="#" id="URLLink" data-HREF-Id="@Model.courseRun.id" class="govuk-link view">View</a>
-            <div class="popUpSection" id="course-run-url-@Model.courseRun.id" style="display: none;">
-
-                <input readonly="@(true)" class="govuk-input" asp-for="@Model.courseRun.CourseURL" type="text" aria-describedby="url">
-
-                <a href="#" id="@Model.courseRun.id" data-HREF-Id="@Model.courseRun.id" class="govuk-link close" style="">Close</a>
-            </div>
-        </div>
+    </div>
 
 
-        <div class="govuk-form-group">
-
-            <div style="display: inline-block">
-                <label class="govuk-label">Cost</label>
-                <div style="position: relative">
-                    <span class="govuk-body" style="position: absolute; left: -10px;top: 8px;">
-                        £
-                    </span>
-                </div>
-
-                <input id="cost" class="govuk-input govuk-input--width-10" style="display: inline;margin-left: 10px;width:75px" asp-for="@Model.courseRun.Cost" type="text">
-            </div>
-        </div>
+    <div class="govuk-form-group" style="width: 150px">
+        <label class="govuk-label">Duration Unit</label>
+        <select asp-for="@Model.durationUnit" asp-items="@Model.durationUnits" class="govuk-select"></select>
 
 
+    </div>
 
-        <div class="popUpContainer" style="width:150px">
-            <label class="govuk-label" style="margin-bottom:18px;">Cost Description</label>
-            <a href="#" id="CostDetailLink" data-HREF-Id="@Model.courseRun.id" class="govuk-link viewCostDesc">View</a>
-            <div class="popUpSection" id="course-run-cost-desc-@Model.courseRun.id" style="display: none;">
-
-                <input readonly="@(true)" class="govuk-input" asp-for="@Model.courseRun.CostDescription" type="text" aria-describedby="cost description">
-
-                <a href="#" data-HREF-Id="@Model.courseRun.id" class="govuk-link closeCostDesc" style="">Close</a>
-            </div>
-        </div>
+    <div class="govuk-form-group">
+        <label class="govuk-label">Attendance</label>
+        <select asp-for="@Model.attendance" asp-items="@Model.attendances" class="govuk-select"></select>
 
 
-        @*<div class="govuk-form-group small" style="text-align:center;">
-                <label class="govuk-label" style="margin-bottom:18px;">Cost detail</label>
-                <a href="#" class="govuk-link" data-url="https://www.google.com">View</a>
-                @*<div class="edit-url-cont" style="display: none;">
-                        <input class="govuk-input edit-url-input" type="text" readonly="" value="https://coursedirectoryproviderportal.org.uk/Course/Create/50097453">
-                        <a href="#" class="edit-btn cancel-url" style="margin-top:10px;float:left;">Close</a>
-                    </div>
-            </div>*@
+    </div>
+
+    <div class="govuk-form-group">
+        <label class="govuk-label">Mode</label>
+        <select asp-for="@Model.mode" asp-items="@Model.modes" class="govuk-select"></select>
 
 
-        <div class="govuk-form-group small">
-            <label class="govuk-label">Duration</label>
-            <input readonly="@(true)" class="govuk-input govuk-input--width-10" asp-for="@Model.courseRun.DurationValue" type="text" aria-describedby="duration value" style="width: 50px">
-
-        </div>
+    </div>
 
 
-        <div class="govuk-form-group" style="width: 150px">
-            <label class="govuk-label">Duration Unit</label>
-            <select asp-for="@Model.durationUnit" asp-items="@Model.durationUnits" class="govuk-select"></select>
+</li>
 
+<script>
+    (function ($) {
+        $(function () {
 
-        </div>
+            $(".close").click(function () {
+                event.preventDefault();
+                var id = $(this).attr("data-HREF-Id");
+                var $courseRunContainer = $("#course-run-" + id);
+                var $courseRunCUrl = $("#course-run-url-" + id);
 
-        <div class="govuk-form-group">
-            <label class="govuk-label">Attendance</label>
-            <select asp-for="@Model.attendance" asp-items="@Model.attendances" class="govuk-select"></select>
+                $courseRunContainer.removeClass("popUpSectionHeight");
 
-
-        </div>
-
-        <div class="govuk-form-group">
-            <label class="govuk-label">Mode</label>
-            <select asp-for="@Model.mode" asp-items="@Model.modes" class="govuk-select"></select>
-
-
-        </div>
-
-
-    </li>
-    </form>
-    <script>
-        (function ($) {
-            $(function () {
-
-                $(".close").click(function () {
-                    event.preventDefault();
-                    var id = $(this).attr("data-HREF-Id");
-                    var $courseRunContainer = $("#course-run-" + id);
-                    var $courseRunCUrl = $("#course-run-url-" + id);
-
-                    $courseRunContainer.removeClass("popUpSectionHeight");
-
-                    $courseRunCUrl.hide();
-                });
-
-
-                $(".view").click(function () {
-                    event.preventDefault();
-                    var id = $(this).attr("data-HREF-Id");
-                    var $courseRunContainer = $("#course-run-" + id);
-                    var $courseRunCostDesc = $("#course-run-cost-desc-" + id);
-                    var $courseRunCUrl = $("#course-run-url-" + id);
-
-                    $courseRunContainer.addClass("popUpSectionHeight");
-
-                    if ($courseRunCostDesc.is(":visible")) {
-                        $courseRunCostDesc.hide();
-                    };
-
-                    $courseRunCUrl.show();
-                });
-
-                $(".closeCostDesc").click(function () {
-                    event.preventDefault();
-                    var id = $(this).attr("data-HREF-Id");
-
-                    var $courseRunContainer = $("#course-run-" + id);
-
-                    $courseRunContainer.removeClass("popUpSectionHeight");
-
-                    var $courseRunCostDesc = $("#course-run-cost-desc-" + id);
-
-                    $courseRunCostDesc.hide();
-                });
-
-
-                $(".viewCostDesc").click(function () {
-                    event.preventDefault();
-                    var id = $(this).attr("data-HREF-Id");
-                    var $courseRunContainer = $("#course-run-" + id);
-                    var $courseRunCostDesc = $("#course-run-cost-desc-" + id);
-                    var $courseRunCUrl = $("#course-run-url-" + id);
-
-                    $courseRunContainer.addClass("popUpSectionHeight");
-
-                    if ($courseRunCUrl.is(":visible")) {
-                        $courseRunCUrl.hide();
-                    };
-
-                    $courseRunCostDesc.show();
-                });
-
-
+                $courseRunCUrl.hide();
             });
-        })(jQuery);
-    </script>
+
+
+            $(".view").click(function () {
+                event.preventDefault();
+                var id = $(this).attr("data-HREF-Id");
+                var $courseRunContainer = $("#course-run-" + id);
+                var $courseRunCostDesc = $("#course-run-cost-desc-" + id);
+                var $courseRunCUrl = $("#course-run-url-" + id);
+
+                $courseRunContainer.addClass("popUpSectionHeight");
+
+                if ($courseRunCostDesc.is(":visible")) {
+                    $courseRunCostDesc.hide();
+                };
+
+                $courseRunCUrl.show();
+            });
+
+            $(".closeCostDesc").click(function () {
+                event.preventDefault();
+                var id = $(this).attr("data-HREF-Id");
+
+                var $courseRunContainer = $("#course-run-" + id);
+
+                $courseRunContainer.removeClass("popUpSectionHeight");
+
+                var $courseRunCostDesc = $("#course-run-cost-desc-" + id);
+
+                $courseRunCostDesc.hide();
+            });
+
+
+            $(".viewCostDesc").click(function () {
+                event.preventDefault();
+                var id = $(this).attr("data-HREF-Id");
+                var $courseRunContainer = $("#course-run-" + id);
+                var $courseRunCostDesc = $("#course-run-cost-desc-" + id);
+                var $courseRunCUrl = $("#course-run-url-" + id);
+
+                $courseRunContainer.addClass("popUpSectionHeight");
+
+                if ($courseRunCUrl.is(":visible")) {
+                    $courseRunCUrl.hide();
+                };
+
+                $courseRunCostDesc.show();
+            });
+
+
+        });
+    })(jQuery);
+</script>
