@@ -20,12 +20,11 @@
 
 
     <div class="govuk-form-group">
-        <div>
-            <label class="govuk-label">Delivery</label>
-            <select asp-for="@Model.deliveryMode" asp-items="@Model.deliveryModes" class="govuk-select"></select>
+
+        <label class="govuk-label">Delivery</label>
+        <select asp-for="@Model.deliveryMode" asp-items="@Model.deliveryModes" class="govuk-select"></select>
 
 
-        </div>
     </div>
     <div class="govuk-form-group">
         <label class="govuk-label">Start date</label>
@@ -88,16 +87,16 @@
             <a href="#" data-HREF-Id="@Model.courseRun.id" class="govuk-link closeCostDesc" style="">Close</a>
         </div>
     </div>
-    
+
 
     @*<div class="govuk-form-group small" style="text-align:center;">
-        <label class="govuk-label" style="margin-bottom:18px;">Cost detail</label>
-        <a href="#" class="govuk-link" data-url="https://www.google.com">View</a>
-        @*<div class="edit-url-cont" style="display: none;">
-                <input class="govuk-input edit-url-input" type="text" readonly="" value="https://coursedirectoryproviderportal.org.uk/Course/Create/50097453">
-                <a href="#" class="edit-btn cancel-url" style="margin-top:10px;float:left;">Close</a>
-            </div>
-    </div>*@
+            <label class="govuk-label" style="margin-bottom:18px;">Cost detail</label>
+            <a href="#" class="govuk-link" data-url="https://www.google.com">View</a>
+            @*<div class="edit-url-cont" style="display: none;">
+                    <input class="govuk-input edit-url-input" type="text" readonly="" value="https://coursedirectoryproviderportal.org.uk/Course/Create/50097453">
+                    <a href="#" class="edit-btn cancel-url" style="margin-top:10px;float:left;">Close</a>
+                </div>
+        </div>*@
 
 
     <div class="govuk-form-group small">
@@ -135,7 +134,7 @@
     (function ($) {
         $(function () {
 
-            $(".close").click(function(){
+            $(".close").click(function () {
                 event.preventDefault();
                 var id = $(this).attr("data-HREF-Id");
                 var $courseRunContainer = $("#course-run-" + id);
@@ -147,7 +146,7 @@
             });
 
 
-            $(".view").click(function() {
+            $(".view").click(function () {
                 event.preventDefault();
                 var id = $(this).attr("data-HREF-Id");
                 var $courseRunContainer = $("#course-run-" + id);
@@ -163,7 +162,7 @@
                 $courseRunCUrl.show();
             });
 
-            $(".closeCostDesc").click(function(){
+            $(".closeCostDesc").click(function () {
                 event.preventDefault();
                 var id = $(this).attr("data-HREF-Id");
 
@@ -177,7 +176,7 @@
             });
 
 
-            $(".viewCostDesc").click(function(){
+            $(".viewCostDesc").click(function () {
                 event.preventDefault();
                 var id = $(this).attr("data-HREF-Id");
                 var $courseRunContainer = $("#course-run-" + id);

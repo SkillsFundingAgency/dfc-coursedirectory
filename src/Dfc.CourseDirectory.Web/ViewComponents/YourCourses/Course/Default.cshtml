@@ -11,15 +11,11 @@
 <script src="https://cdn.rawgit.com/vast-engineering/jquery-popup-overlay/1.7.13/jquery.popupoverlay.js"></script>
 
 
-
-
 <div class="govuk-form-group">
     @{ var counter = 0; }
-    @foreach (ICourseSearchOuterGrouping outerGroup in Model.Courses.Value.OrderBy(o => o.QualType))
+    @foreach (ICourseSearchOuterGrouping outerGroup in Model.Courses.Value)
     {
-        @*<div class="accordion govuk-heading-s">TEST</div>*@
         <br />
-        @*<span class="" style="cursor:pointer;font-size:50px; float: right;font-weight: bold">+</span>*@
 
         <h2 class="active accordion govuk-heading-l" data-row-type="coursetitle">@outerGroup.QualType
             <span class="govuk-body count">(@outerGroup.Value.SelectMany(o => o.Value.SelectMany(i => i.CourseRuns)).Count())</span>

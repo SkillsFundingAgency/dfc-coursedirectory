@@ -18,6 +18,7 @@ using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using System;
+using Microsoft.AspNetCore.Http.Features;
 
 namespace Dfc.CourseDirectory.Web
 {
@@ -95,6 +96,8 @@ namespace Dfc.CourseDirectory.Web
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddSessionStateTempDataProvider();
 
             services.AddDistributedMemoryCache();
+
+            services.Configure<FormOptions>(x => x.ValueCountLimit = 2048);
 
             services.AddResponseCaching();
             services.AddSession(options => {
