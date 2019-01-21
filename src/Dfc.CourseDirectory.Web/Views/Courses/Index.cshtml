@@ -10,48 +10,52 @@
     <div class="govuk-grid-column-full">
         @if (ViewBag.Status != null && ViewBag.StatusMessage != null)
         {
-            if (ViewBag.Status.Equals("good", StringComparison.InvariantCultureIgnoreCase))
+            switch (ViewBag.Status.ToUpper())
             {
-                <div class="success-container">
-                    <h1 class="govuk-heading-m">@ViewBag.StatusMessage</h1>
-                </div>
-            }
-            else if (ViewBag.Status.Equals("bad", StringComparison.InvariantCultureIgnoreCase))
-            {
-                <div class="failure-container">
-                    <h1 class="govuk-heading-m">@ViewBag.StatusMessage</h1>
-                </div>
-            }
-            else
-            {
-                // unhandled status
+                case "GOOD":
+                case "UPDATE":
+                    <div class="success-container">
+                        <h1 class="govuk-heading-m">@ViewBag.StatusMessage</h1>
+                    </div>
+                    break;
+                case "BAD":
+                    <div class="failure-container">
+                        <h1 class="govuk-heading-m">@ViewBag.StatusMessage</h1>
+                    </div>
+                    break;
             }
         }
 
-        <div class="govuk-form-group">
-            <form asp-action="Index" asp-controller="Qualifications" method="post">
-                <h1 id="cd-your-courses-heading" class="govuk-heading-l">Your courses&nbsp;</h1>
-                <span class="govuk-body">(
-                    @{
-                        var outers = Model.Courses.Value;
-                        var inners = outers.SelectMany(o => o.Value);
-                        var courses = inners.SelectMany(i => i.Value);
-                        var courseruns = courses.SelectMany(c => c.CourseRuns);
-                        @courseruns.Count()
-                    }
-                    )</span>
-                <button id="cd-add-qual-button" type="submit" class="govuk-button">
-                    Add a Qualification
-                </button>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <div class="govuk-form-group">
+                    <form asp-action="Index" asp-controller="Qualifications" method="post">
+                        <h1 id="cd-your-courses-heading" class="govuk-heading-l">Your courses&nbsp;</h1>
+                        <span class="govuk-body">
+                            (
+                            @{
+                                var outers = Model.Courses.Value;
+                                var inners = outers.SelectMany(o => o.Value);
+                                var courses = inners.SelectMany(i => i.Value);
+                                var courseruns = courses.SelectMany(c => c.CourseRuns);
+                                @courseruns.Count()
+                            }
+                            )
+                        </span>
+                        <button id="cd-add-qual-button" type="submit" class="govuk-button">
+                            Add a Qualification
+                        </button>
 
-            </form>
+                    </form>
+                </div>
+            </div>
         </div>
 
-            <div class="govuk-form-group">
-                @await Component.InvokeAsync(nameof(Course), Model)
 
-            </div>
-       
+        @await Component.InvokeAsync(nameof(Course), Model)
+
+
+
     </div>
 </div>
 

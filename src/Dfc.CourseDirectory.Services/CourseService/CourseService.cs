@@ -210,7 +210,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
 
         internal static Uri ToUpdateCourseUri(this ICourseServiceSettings extendee)
         {
-            return new Uri($"{extendee.ApiUrl + "Update?code=" + extendee.ApiKey}");
+            return new Uri($"{extendee.ApiUrl + "UpdateCourse?code=" + extendee.ApiKey}");
         }
     }
 }

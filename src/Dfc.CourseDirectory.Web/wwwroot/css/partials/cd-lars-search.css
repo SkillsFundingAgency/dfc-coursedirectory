@@ -121,26 +121,26 @@ ul.sort-list {
   background-color: #f8f8f8;
 }
 
-    .accordion:after {
-        content: "\203A";
-        color: #777;
-        font-weight: bold;
-        float: right;
-        background-color: white;
-        -webkit-transform: rotate(270deg);
-        -moz-transform: rotate(270deg);
-        -ms-transform: rotate(270deg);
-        -o-transform: rotate(270deg);
-        transform: rotate(270deg);
-    }
+.accordion:after {
+  content: "\2039";
+  color: #777;
+  font-weight: bold;
+  float: right;
+  background-color: white;
+  -webkit-transform: rotate(-270deg);
+  -moz-transform: rotate(-270deg);
+  -ms-transform: rotate(-270deg);
+  -o-transform: rotate(-270deg);
+  transform: rotate(-270deg);
+}
 
 .active:after {
-    content: '\203A';
-    -webkit-transform: rotate(90deg);
+  content: '\203A';
+  /*-webkit-transform: rotate(90deg);
     -moz-transform: rotate(90deg);
     -ms-transform: rotate(90deg);
     -o-transform: rotate(90deg);
-    transform: rotate(90deg);
+    transform: rotate(90deg);*/
 }
 
 .panel {

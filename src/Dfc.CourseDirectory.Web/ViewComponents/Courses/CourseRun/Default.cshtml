@@ -5,234 +5,292 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 <form id="your-courses" asp-controller="Courses" asp-action="Index" method="post">
-    <li class="course-run-container" id="course-run-@Model.courseRun.id">
-        <div class="govuk-form-group">
-            <label class="govuk-label">Course name</label>
-            <input readonly="@(Model.Readonly)" class="govuk-input" asp-for="@Model.courseRun.CourseName" type="text" aria-describedby="course name">
 
-        </div>
+    @Html.HiddenFor(x => x.CourseId)
+    @Html.HiddenFor(x => x.courseRun.id)
+    @Html.HiddenFor(x => x.courseRun.FlexibleStartDate)
 
-        <div class="govuk-form-group">
-            <label class="govuk-label">ID</label>
-            <input readonly="@(Model.Readonly)" class="govuk-input govuk-input--width-10" asp-for="@Model.courseRun.ProviderCourseID" type="text" aria-describedby="id" style="width: 100px;">
+    @*<li class="course-run-container" id="course-run-@Model.courseRun.id">*@
+    <div id="course-run-@Model.courseRun.id" class="govuk-grid-row course-run-container" data-courserun-id="course-run-@Model.courseRun.id">
+        <div class="govuk-grid-column-full">
+            <div class="govuk-form-group" style="margin: 10px; display:inline-block">
+                <label class="govuk-label">Course name</label>
+                <input readonly="@(Model.Readonly)" class="govuk-input" asp-for="@Model.courseRun.CourseName" type="text" aria-describedby="course name">
 
-        </div>
+            </div>
+
+            <div class="govuk-form-group" style="margin:10px; display:inline-block">
+                <label class="govuk-label">ID</label>
+                <input readonly="@(Model.Readonly)" class="govuk-input govuk-input--width-10" asp-for="@Model.courseRun.ProviderCourseID" type="text" aria-describedby="id" style="width: 100px;">
+
+            </div>
 
 
-    <div class="govuk-form-group">
+            <div class="govuk-form-group" style="margin:10px; display:inline-block">
 
-        <label class="govuk-label">Delivery</label>
-        <select asp-for="@Model.deliveryMode" asp-items="@Model.deliveryModes" class="govuk-select"></select>
+                <label class="govuk-label">Delivery</label>
+                <select asp-for="@Model.courseRun.DeliveryMode" asp-items="@Model.deliveryModes" class="govuk-select"></select>
+
 
 
             </div>
-        </div>
-        <div class="govuk-form-group">
-            <label class="govuk-label">Start date</label>
-            @if (Model.courseRun.FlexibleStartDate)
-            {
-                <input readonly="@(Model.Readonly)" class="govuk-input govuk-input--width-10" type="text" aria-describedby="start date" value="Flexible start date" style="width: 120px;">
-            }
-            else
-            {
+            <div class="govuk-form-group" style="margin: 10px; display:inline-block">
+                <label class="govuk-label">Start date</label>
+                @if (Model.courseRun.FlexibleStartDate)
                 {
-                    <div class="govuk-input govuk-input--width-10" aria-describedby="start date" readonly="@(Model.Readonly)">
-                        @Model.courseRun.StartDate?.ToString("dd/MM/yyyy")
-                    </div>
+                    <input readonly="@(Model.Readonly)" class="govuk-input govuk-input--width-10" type="text" aria-describedby="start date" value="Flexible start date" style="width: 120px;">
+                }
+                else
+                {
+                    {
+                        <div class="govuk-input govuk-input--width-10" aria-describedby="start date" readonly="@(Model.Readonly)">
+                            @Model.courseRun.StartDate?.ToString("dd/MM/yyyy")
+                        </div>
+                    }
+
                 }
 
-            }
 
-
-        </div>
-
-        <div class="govuk-form-group">
-            <label class="govuk-label">Venue</label>
-            <select asp-for="@Model.VenueId" asp-items="@Model.venues" class="govuk-select"></select>
-
-
-        </div>
-
-        <div class="popUpContainer">
-            <label class="govuk-label" style="margin-bottom: 18px;">URL</label>
-            <a href="#" id="URLLink" data-HREF-Id="@Model.courseRun.id" class="govuk-link view">View</a>
-            <div class="popUpSection" id="course-run-url-@Model.courseRun.id" style="display: none;">
-
-                <input readonly="@(Model.Readonly)" class="govuk-input" asp-for="@Model.courseRun.CourseURL" type="text" aria-describedby="url">
-
-                <a href="#" id="@Model.courseRun.id" data-HREF-Id="@Model.courseRun.id" class="govuk-link close" style="">Close</a>
             </div>
-        </div>
+
+            <div class="govuk-form-group" style="margin: 10px; display:inline-block">
+                <label class="govuk-label">Venue</label>
+                <select asp-for="@Model.courseRun.VenueId" asp-items="@Model.venues" class="govuk-select"></select>
 
 
-        <div class="govuk-form-group">
+            </div>
 
-            <div style="display: inline-block">
-                <label class="govuk-label">Cost</label>
-                <div style="position: relative">
-                    <span class="govuk-body" style="position: absolute; left: -10px;top: 8px;">
-                        £
-                    </span>
+            <div class="popUpContainer">
+                <label class="govuk-label" style="margin-bottom: 18px;">URL</label>
+                <a href="#" id="URLLink" data-HREF-Id="@Model.courseRun.id" class="govuk-link view">View</a>
+                <div class="popUpSection" id="course-run-url-@Model.courseRun.id" style="display: none;">
+
+                    <input readonly="@(Model.Readonly)" class="govuk-input" asp-for="@Model.courseRun.CourseURL" type="text" aria-describedby="url">
+
+                    <a href="#" id="@Model.courseRun.id" data-HREF-Id="@Model.courseRun.id" class="govuk-link close" style="">Close</a>
                 </div>
-
-                <input id="cost" class="govuk-input govuk-input--width-10" style="display: inline;margin-left: 10px;width:75px" asp-for="@Model.courseRun.Cost" type="text">
             </div>
-        </div>
 
 
+            <div class="govuk-form-group" style="margin: 10px; display:inline-block">
 
-    <div class="popUpContainer" style="width:150px">
-        <label class="govuk-label" style="margin-bottom:18px;">Cost Description</label>
-        <a href="#" id="CostDetailLink" data-HREF-Id="@Model.courseRun.id" class="govuk-link viewCostDesc">View</a>
-        <div class="popUpSection" id="course-run-cost-desc-@Model.courseRun.id" style="display: none;">
-
-                <input readonly="@(Model.Readonly)" class="govuk-input" asp-for="@Model.courseRun.CostDescription" type="text" aria-describedby="cost description">
-
-                <a href="#" data-HREF-Id="@Model.courseRun.id" class="govuk-link closeCostDesc" style="">Close</a>
-            </div>
-        </div>
-
-
-        @*<div class="govuk-form-group small" style="text-align:center;">
-                <label class="govuk-label" style="margin-bottom:18px;">Cost detail</label>
-                <a href="#" class="govuk-link" data-url="https://www.google.com">View</a>
-                @*<div class="edit-url-cont" style="display: none;">
-                        <input class="govuk-input edit-url-input" type="text" readonly="" value="https://coursedirectoryproviderportal.org.uk/Course/Create/50097453">
-                        <a href="#" class="edit-btn cancel-url" style="margin-top:10px;float:left;">Close</a>
+                <div style="display: inline-block">
+                    <label class="govuk-label">Cost</label>
+                    <div style="position: relative">
+                        <span class="govuk-body" style="position: absolute; left: -10px; top: 8px;">
+                            £
+                        </span>
                     </div>
-            </div>*@
+
+                    <input readonly="@(Model.Readonly)" id="cost" class="govuk-input govuk-input--width-10" style="display: inline; margin-left: 10px; width: 75px" asp-for="@Model.courseRun.Cost" type="text">
+                </div>
+            </div>
 
 
-        <div class="govuk-form-group small">
-            <label class="govuk-label">Duration</label>
-            <input readonly="@(Model.Readonly)" class="govuk-input" asp-for="@Model.courseRun.DurationValue" type="text" aria-describedby="duration value" style="width: 75px;">
 
+            <div class="popUpContainer" style="width: 150px;margin: 10px; display:inline-block">
+                <label class="govuk-label" style="margin-bottom: 18px;">Cost Description</label>
+                <a href="#" id="CostDetailLink" data-HREF-Id="@Model.courseRun.id" class="govuk-link viewCostDesc">View</a>
+                <div class="popUpSection" id="course-run-cost-desc-@Model.courseRun.id" style="display: none;">
+
+                    <input readonly="@(Model.Readonly)" class="govuk-input" asp-for="@Model.courseRun.CostDescription" type="text" aria-describedby="cost description">
+
+                    <a href="#" data-HREF-Id="@Model.courseRun.id" class="govuk-link closeCostDesc" style="">Close</a>
+                </div>
+            </div>
+
+
+
+
+            <div class="govuk-form-group small" style="margin: 10px; display:inline-block">
+                <label class="govuk-label">Duration</label>
+                <input readonly="@(Model.Readonly)" class="govuk-input" asp-for="@Model.courseRun.DurationValue" type="text" aria-describedby="duration value" style="width: 75px;">
+
+            </div>
+
+
+            <div class="govuk-form-group" style="width: 150px;margin: 10px; display:inline-block">
+                <label class="govuk-label">Duration Unit</label>
+                <select asp-for="@Model.courseRun.DurationUnit" asp-items="@Model.durationUnits" class="govuk-select"></select>
+
+
+            </div>
+
+            <div class="govuk-form-group" style="margin: 10px; display:inline-block">
+                <label class="govuk-label">Attendance</label>
+                <select asp-for="@Model.courseRun.AttendancePattern" asp-items="@Model.attendances" class="govuk-select"></select>
+
+
+            </div>
+
+            <div class="govuk-form-group" style="margin: 10px; display:inline-block">
+                <label class="govuk-label">Mode</label>
+                <select asp-for="@Model.courseRun.StudyMode" asp-items="@Model.modes" class="govuk-select"></select>
+
+
+            </div>
+
+            @*<div id="btns-course-run-@Model.courseRun.id" class="govuk-form-group medium" style="display: none;">
+                    <section id="btns" class="btns btns3" style="margin-bottom: 10px; width: 400px;">
+
+
+                        <button id="save-button" type="submit" class="govuk-button">
+                            Save
+                        </button>
+
+
+                        <a href="#" class="govuk-button discard" data-id="@Model.courseRun.id">Discard</a>
+
+
+
+
+                    </section>
+                </div>*@
         </div>
-
-
-    <div class="govuk-form-group" style="width: 150px">
-        <label class="govuk-label">Duration Unit</label>
-        <select asp-for="@Model.durationUnit" asp-items="@Model.durationUnits" class="govuk-select"></select>
-
-
-        </div>
-
-        <div class="govuk-form-group">
-            <label class="govuk-label">Attendance</label>
-            <select asp-for="@Model.attendance" asp-items="@Model.attendances" class="govuk-select"></select>
-
-
-        </div>
-
-        <div class="govuk-form-group">
-            <label class="govuk-label">Mode</label>
-            <select asp-for="@Model.mode" asp-items="@Model.modes" class="govuk-select"></select>
-
-
-        </div>
-
-        @*<div id="btns-course-run-@Model.courseRun.id" class="govuk-form-group medium" style="display: none;">
-                <section id="btns" class="btns btns3" style="margin-bottom: 10px; width: 400px;">
-
-
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <div class="govuk-form-group" style="margin: 10px; display:inline-block">
+                <div id="btns-course-run-@Model.courseRun.id" style="display: none; margin-bottom: 5px; width: 400px; margin-left: 0px">
                     <button id="save-button" type="submit" class="govuk-button">
                         Save
                     </button>
+                    <a href="#" class="govuk-link discard" style="display: inline-block; margin-top: 10px;" data-id="@Model.courseRun.id">Discard</a>
+                </div>
 
-
-                    <a href="#" class="govuk-button discard" data-id="@Model.courseRun.id">Discard</a>
-
-
-
-
-                </section>
-            </div>*@
-
-
-        <div id="btns-course-run-@Model.courseRun.id" style="display: none; margin-bottom: 5px;width: 400px;margin-left:0px">
-            <button id="save-button" type="submit" class="govuk-button">
-                Save
-            </button>
-            <a href="#" class="govuk-link discard" style="display:inline-block;margin-top:10px;" data-id="@Model.courseRun.id">Discard</a>
+            </div>
         </div>
+    </div>
+    <hr class="govuk-section-break govuk-section-break--visible">
 
-    </li>
 </form>
 
 <script>
     (function ($) {
         $(function () {
 
+
+
             $('form').find(':input').each(function (i, elem) {
                 var input = $(elem);
                 input.data('initialState', input.val());
             });
 
-            $(".govuk-select ").on('change', function (e) {
-                var $rowId = $(this).closest(".course-run-container").attr("id");
+            //$(".govuk-select ").on('change', function (e) {
+            //    var $rowId = $(this).closest(".course-run-container").attr("id");
 
-                if ($("#btns-" + $rowId).is(":visible")) {
+            //    if ($("#btns-" + $rowId).is(":visible")) {
+
+            //    } else {
+
+            //        $("#btns-" + $rowId).css("display", "block");
+            //    }
+
+            //    $("li[id^='course-run']").each(function (index) {
+            //        var $courseRunId = $(this).attr("id").substr(11, $(this).attr("id").length - 11);
+
+
+            //        $("#course-run-" + $courseRunId).removeClass("unselected-courses");
+
+            //        //if ($("#btns-" + $id).is(":visible")) {
+
+            //        //} else {
+            //        //    $("#btns-" + $id).css("display", "block");
+            //        //}
+
+            //    });
+
+            //    $("div[id^='btns-course-run']").each(function (index) {
+            //        var $id = $(this).attr("id").substr(5, $(this).attr("id").length - 5);
+
+            //        if ($id !== $rowId) {
+            //            var $justTheId = $id.substr(11, $id.length - 11);
+            //            $("#course-run-" + $justTheId).addClass("unselected-courses");
+
+            //            if ($("#btns-" + $id).is(":visible")) {
+            //                $("#btns-" + $id).hide();
+
+            //                $("#course-run-" + $justTheId).find(':input').each(function (i, elem) {
+            //                    var input = $(elem);
+            //                    input.val(input.data('initialState'));
+            //                });
+            //            }
+            //        }
+            //    });
+
+            //});
+
+            $(".govuk-select ").on('change', function (e) {
+
+                var $courseRunId = $(this).closest(".course-run-container").attr("id").substr(11, $(".course-run-container").attr("id").length - 11);
+
+                console.log($courseRunId);
+
+                if ($("#btns-course-run-" + $courseRunId).is(":visible")) {
 
                 } else {
-                   
-                    $("#btns-" + $rowId).css("display", "block");
+
+                    $("#btns-course-run-" + $courseRunId).css("display", "block");
                 }
 
-                $("li[id^='course-run']").each(function (index) {
-                    var $courseRunId = $(this).attr("id").substr(11, $(this).attr("id").length - 11);
-
-
-                    $("#course-run-" + $courseRunId).removeClass("unselected-courses");
-
-                    //if ($("#btns-" + $id).is(":visible")) {
-
-                    //} else {
-                    //    $("#btns-" + $id).css("display", "block");
-                    //}
-
-                });
-
                 $("div[id^='btns-course-run']").each(function (index) {
-                    var $id = $(this).attr("id").substr(5, $(this).attr("id").length - 5);
+                    var $id = $(this).attr("id").substr(16, $(this).attr("id").length - 16);
+                    console.log($id);
 
-                    if ($id !== $rowId) {
-                        var $justTheId = $id.substr(11, $id.length - 11);
-                        $("#course-run-" + $justTheId).addClass("unselected-courses");
+                    if ($id !== $courseRunId) {
+                        $("#course-run-" + $id).addClass("unselected-courses");
 
-                        if ($("#btns-" + $id).is(":visible")) {
-                            $("#btns-" + $id).hide();
+                        $("#course-run-" + $id).find(':input').each(function (i, elem) {
+                            //$(elem).disabled = 'disabled';
+                            // this.disabled = 'disabled';
+                            $(elem).attr('disabled', true);
 
-                            $("#course-run-" + $justTheId).find(':input').each(function (i, elem) {
+                        });
+
+                        if ($("#btns-course-run-" + $id).is(":visible")) {
+                            $("#btns-course-run-" + $id).hide();
+
+                            $("#course-run-" + $id).find(':input').each(function (i, elem) {
                                 var input = $(elem);
                                 input.val(input.data('initialState'));
                             });
                         }
-                    } 
+                    }
                 });
 
             });
 
             $(".govuk-input").on('input', function (e) {
-                var $rowId = $(this).closest(".course-run-container").attr("id");
 
-                if ($("#btns-" + $rowId).is(":visible")) {
+                var $courseRunId = $(this).closest(".course-run-container").attr("id").substr(11, $(".course-run-container").attr("id").length - 11);
+
+                console.log($courseRunId);
+
+                if ($("#btns-course-run-" + $courseRunId).is(":visible")) {
 
                 } else {
 
-                    $("#btns-" + $rowId).css("display", "block");
+                    $("#btns-course-run-" + $courseRunId).css("display", "block");
                 }
 
                 $("div[id^='btns-course-run']").each(function (index) {
-                    var $id = $(this).attr("id").substr(5, $(this).attr("id").length - 5);
+                    var $id = $(this).attr("id").substr(16, $(this).attr("id").length - 16);
+                    console.log($id);
 
-                    if ($id !== $rowId) {
-                        var $justTheId = $id.substr(11, $id.length - 11);
-                        $("#course-run-" + $justTheId).addClass("unselected-courses");
+                    if ($id !== $courseRunId) {
+                        $("#course-run-" + $id).addClass("unselected-courses");
 
-                        if ($("#btns-" + $id).is(":visible")) {
-                            $("#btns-" + $id).hide();
+                        $("#course-run-" + $id).find(':input').each(function (i, elem) {
+                            //$(elem).disabled = 'disabled';
+                           // this.disabled = 'disabled';
+                            $(elem).attr('disabled', true);
 
-                            $("#course-run-" + $justTheId).find(':input').each(function (i, elem) {
+                        });
+
+                        if ($("#btns-course-run-" + $id).is(":visible")) {
+                            $("#btns-course-run-" + $id).hide();
+
+                            $("#course-run-" + $id).find(':input').each(function (i, elem) {
                                 var input = $(elem);
                                 input.val(input.data('initialState'));
                             });
@@ -243,10 +301,13 @@
             });
 
             $(".discard").click(function () {
+                event.preventDefault();
+                var $container = $(this).closest('.govuk-grid-row').prev();
+               
 
-                var $id = $(this).closest(".course-run-container").attr("id");
-
-                var $justTheId = $id.substr(11, $id.length - 11);
+                var $courseRunId = $container.attr("id").substr(11, $container.attr("id").length - 11);
+                console.log("discard" + $courseRunId);
+                //var $justTheId = $id.substr(11, $id.length - 11);
                 //$('form').find(':input').each(function (i, elem) {
                 //    var input = $(elem);
                 //    input.val(input.data('initialState'));
@@ -254,17 +315,21 @@
 
 
 
-                $("#course-run-" + $justTheId).find(':input').each(function (i, elem) {
+                $("div[id^='course-run-']").find(':input').each(function (i, elem) {
                     var input = $(elem);
                     input.val(input.data('initialState'));
+                    $(elem).prop("disabled", false);
+                    $(elem).removeAttr("disabled");
+                    //this.disabled = '';
+                    //$(elem).prop('disabled', false);
                 });
 
 
-                $("li[id^='course-run']").each(function (index) {
-                    var $courseRunId = $(this).attr("id").substr(11, $(this).attr("id").length - 11);
+                $("div[id^='course-run-']").each(function (index) {
+                   // var $courseRunId = $(this).attr("id").substr(11, $(this).attr("id").length - 11);
 
-
-                    $("#course-run-" + $courseRunId).removeClass("unselected-courses");
+                    $(this).removeClass("unselected-courses");
+                    //$("#course-run" + $courseRunId).removeClass("unselected-courses");
 
                     //if ($("#btns-" + $id).is(":visible")) {
 
@@ -275,15 +340,14 @@
                 });
 
 
-                var $id = $(this).attr("data-id");
+                //var $id = $(this).attr("data-id");
 
-                var $btn = $("#btns-course-run-" + $id);
-                $btn.css("display", "none");
+                var $btn = $("#btns-course-run-" + $courseRunId).css("display", "none");
             });
 
 
             $(".close").click(function () {
-
+                event.preventDefault();
                 var id = $(this).attr("data-HREF-Id");
                 var $courseRunContainer = $("#course-run-" + id);
                 var $courseRunCUrl = $("#course-run-url-" + id);
