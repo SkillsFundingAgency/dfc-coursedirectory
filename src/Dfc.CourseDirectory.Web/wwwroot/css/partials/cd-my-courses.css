@@ -36,8 +36,6 @@ li span.govuk-body {
 
 .course-run-container {
   margin-top: 0px;
-  border-top: 2px solid;
-  padding: 20px 0px 0px;
   width: 100%;
   height: auto;
   display: flex;
@@ -88,4 +86,9 @@ li span.govuk-body {
 
 .popUpSectionHeight {
   min-height: 160px;
+}
+
+.unselected-courses {
+  opacity: 0.5;
+  background-color: lightgrey;
 }

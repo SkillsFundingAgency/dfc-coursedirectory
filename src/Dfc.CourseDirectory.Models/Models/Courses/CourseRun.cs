@@ -1,6 +1,7 @@
 ﻿using System;
 using Dfc.CourseDirectory.Models.Interfaces.Courses;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace Dfc.CourseDirectory.Models.Models.Courses
 {
@@ -66,6 +67,8 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         public Guid id { get; set; }
         public int? CourseInstanceId { get; set; }
         public Guid? VenueId { get; set; }
+
+        [Required]
         public string CourseName { get; set; }
         public string ProviderCourseID { get; set; }
         public DeliveryMode DeliveryMode { get; set; }

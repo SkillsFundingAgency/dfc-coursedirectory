@@ -62,7 +62,48 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Index(CourseRunModel model)
         {
-            return View();
+            var UKPRN = _session.GetInt32("UKPRN");
+            if (UKPRN.HasValue)
+            {
+                ICourseSearchResult coursesByUKPRN = (!UKPRN.HasValue
+                    ? null
+                    : _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(UKPRN))
+                        .Result.Value);
+
+                var courses = coursesByUKPRN.Value.SelectMany(o => o.Value).SelectMany(i => i.Value).ToList();
+
+                var course = courses.SingleOrDefault(x => x.id == model.CourseId);
+
+                var courserun = course.CourseRuns.SingleOrDefault(x => x.id == model.courseRun.id);
+
+                if (courserun != null)
+                {
+                    courserun.DurationUnit = model.courseRun.DurationUnit;
+                    courserun.AttendancePattern = model.courseRun.AttendancePattern;
+                    courserun.DeliveryMode = model.courseRun.DeliveryMode;
+                    courserun.FlexibleStartDate = model.courseRun.FlexibleStartDate;
+                    courserun.StudyMode = model.courseRun.StudyMode;
+                    courserun.Cost = model.courseRun.Cost;
+                    courserun.CostDescription = model.courseRun.CostDescription;
+                    courserun.CourseName = model.courseRun.CourseName;
+                    courserun.CourseURL = model.courseRun.CourseURL;
+                    courserun.DurationValue = model.courseRun.DurationValue;
+                    courserun.ProviderCourseID = model.courseRun.ProviderCourseID;
+                    courserun.StartDate = model.courseRun.StartDate;
+                    courserun.VenueId = model.courseRun.VenueId;
+
+
+                    var updatedCourses = await _courseService.UpdateCourseAsync(course);
+
+                }
+                else
+                {
+                    return RedirectToAction("Index", new { status = "bad", learnAimRef = "", numberOfNewCourses = "", errmsg = "No course run" });
+                }
+               
+            }
+
+            return RedirectToAction("Index", new { status = "update", learnAimRef ="", numberOfNewCourses ="", errmsg =""}); 
         }
 
         public async Task<IActionResult> Index(string status, string learnAimRef, string numberOfNewCourses, string errmsg)
@@ -77,18 +118,22 @@ namespace Dfc.CourseDirectory.Web.Controllers
             if (!string.IsNullOrEmpty(status))
             {
                 ViewData["Status"] = status;
-                if (status.Equals("good", StringComparison.InvariantCultureIgnoreCase))
+                switch (status.ToUpper())
                 {
-                    ViewData["StatusMessage"] = string.Format("{0} New Course(s) created in Course Directory for LARS: {1}", numberOfNewCourses, learnAimRef);
+                    case "GOOD":
+                        ViewData["StatusMessage"] = string.Format("{0} New Course(s) created in Course Directory for LARS: {1}", numberOfNewCourses, learnAimRef);
+                        break;
+                    case "BAD":
+                        ViewData["StatusMessage"] = errmsg;
+                        break;
+                    case "UPDATE":
+                        ViewData["StatusMessage"] = string.Format("Course run updated in Course Directory");
+                        break;
+                    default:
+                        break;
+
                 }
-                else if (status.Equals("bad", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    ViewData["StatusMessage"] = errmsg;
-                }
-                else
-                {
-                    // unhandled status
-                }
+
             }
 
 
@@ -174,6 +219,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             return View(vm);
         }
+
 
         public IActionResult AddCourseSection1(string learnAimRef, string notionalNVQLevelv2, string awardOrgCode, string learnAimRefTitle, string learnAimRefTypeDesc)
         {
