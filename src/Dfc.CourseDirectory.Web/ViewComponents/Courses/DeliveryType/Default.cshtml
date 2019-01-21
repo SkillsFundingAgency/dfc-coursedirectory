@@ -8,10 +8,18 @@
     <fieldset class="govuk-fieldset" aria-describedby="changed-name-hint">
         <label class="govuk-label">@Model.LabelText</label>
         <span id="more-detail-hint" class="govuk-hint">@Model.HintText</span>
-        <div class="govuk-radios govuk-radios--inline" style="margin-bottom: 30px;">
+        <div id="DeliveryModeRadioButtons" class="govuk-radios govuk-radios--inline" style="margin-bottom: 30px;">
             <div class="govuk-radios__item">
                 @Html.RadioButtonFor(m => m.DeliveryMode, DeliveryMode.ClassroomBased, new { @class = "govuk-radios__input", id = @DeliveryMode.ClassroomBased })
                 <label class="govuk-label govuk-radios__label" for="@DeliveryMode.ClassroomBased">@WebHelper.GetEnumDescription(DeliveryMode.ClassroomBased)</label>
+            </div>
+            <div class="govuk-radios__item">
+                @Html.RadioButtonFor(m => m.DeliveryMode, DeliveryMode.Online, new { @class = "govuk-radios__input", id = @DeliveryMode.Online })
+                <label class="govuk-label govuk-radios__label" for="@DeliveryMode.Online">@WebHelper.GetEnumDescription(DeliveryMode.Online)</label>
+            </div>
+            <div class="govuk-radios__item">
+                @Html.RadioButtonFor(m => m.DeliveryMode, DeliveryMode.WorkBased, new { @class = "govuk-radios__input", id = @DeliveryMode.WorkBased })
+                <label class="govuk-label govuk-radios__label" for="@DeliveryMode.WorkBased">@WebHelper.GetEnumDescription(DeliveryMode.WorkBased)</label>
             </div>
         </div>
     </fieldset>
