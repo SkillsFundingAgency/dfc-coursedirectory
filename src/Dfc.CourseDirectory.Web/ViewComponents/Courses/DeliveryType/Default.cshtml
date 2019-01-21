@@ -17,6 +17,10 @@
                 @Html.RadioButtonFor(m => m.DeliveryMode, DeliveryMode.Online, new { @class = "govuk-radios__input", id = @DeliveryMode.Online })
                 <label class="govuk-label govuk-radios__label" for="@DeliveryMode.Online">@WebHelper.GetEnumDescription(DeliveryMode.Online)</label>
             </div>
+            <div class="govuk-radios__item">
+                @Html.RadioButtonFor(m => m.DeliveryMode, DeliveryMode.WorkBased, new { @class = "govuk-radios__input", id = @DeliveryMode.WorkBased })
+                <label class="govuk-label govuk-radios__label" for="@DeliveryMode.WorkBased">@WebHelper.GetEnumDescription(DeliveryMode.WorkBased)</label>
+            </div>
         </div>
     </fieldset>
 </div>
