@@ -1,5 +1,7 @@
 ﻿@using Dfc.CourseDirectory.Common.Settings
-@using Dfc.CourseDirectory.Web.ViewComponents.VenueSearch
+@using Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult
+@model Dfc.CourseDirectory.Web.ViewModels.VenueSearchResultsViewModel
+                                          
 @using Microsoft.Extensions.Options
 
 <div>
@@ -9,6 +11,8 @@
             <li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="Venues">Venues</a></li>
         </ol>
     </div>
-    <h1 class="govuk-heading-l">Venue Search </h1>
-    @await Component.InvokeAsync(nameof(VenueSearch))
+
+    <h1 class="govuk-heading-xl">Your Venues</h1>
+
+    @await Component.InvokeAsync(nameof(VenueSearchResult), Model.Result)
 </div>
