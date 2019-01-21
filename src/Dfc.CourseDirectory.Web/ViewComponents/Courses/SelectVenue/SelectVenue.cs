@@ -32,33 +32,40 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Courses.SelectVenue
         }
         public async Task<IViewComponentResult> InvokeAsync(SelectVenueModel model)
         {
-            //var requestModel = new VenueSearchRequestModel { SearchTerm = model.Ukprn.ToString() };
-            var requestModel = new VenueSearchRequestModel { SearchTerm = _session.GetInt32("UKPRN").Value.ToString() };
-            var criteria = _venueSearchHelper.GetVenueSearchCriteria(requestModel);
-            var result = await _venueService.SearchAsync(criteria);
-
-            if (result.IsSuccess && result.HasValue)
+            var UKPRN = _session.GetInt32("UKPRN");
+            if (UKPRN.HasValue)
             {
-                var items = _venueSearchHelper.GetVenueSearchResultItemModels(result.Value.Value);
-                var venueItems = new List<VenueItemModel>();
-                foreach (var venueSearchResultItemModel in items)
+                var requestModel = new VenueSearchRequestModel { SearchTerm = _session.GetInt32("UKPRN").Value.ToString() };
+                var criteria = _venueSearchHelper.GetVenueSearchCriteria(requestModel);
+                var result = await _venueService.SearchAsync(criteria);
+
+                if (result.IsSuccess && result.HasValue)
                 {
-                    venueItems.Add(new VenueItemModel
+                    var items = _venueSearchHelper.GetVenueSearchResultItemModels(result.Value.Value);
+                    var venueItems = new List<VenueItemModel>();
+                    foreach (var venueSearchResultItemModel in items)
                     {
-                        Id = venueSearchResultItemModel.Id,
-                        VenueName = venueSearchResultItemModel.VenueName
-                    });
+                        venueItems.Add(new VenueItemModel
+                        {
+                            Id = venueSearchResultItemModel.Id,
+                            VenueName = venueSearchResultItemModel.VenueName
+                        });
+                    }
+
+                    model.VenueItems = venueItems;
                 }
 
-                model.VenueItems = venueItems;
-            }
+                if (model.VenueItems.Count() == 1)
+                {
+                    model.VenueItems.First().Checked = true;
+                }
 
-            if (model.VenueItems.Count() == 1)
+                return View("~/ViewComponents/Courses/SelectVenue/Default.cshtml", model);
+            }
+            else
             {
-                model.VenueItems.First().Checked = true;
+                return View("Home", new { errmsg = "No-UKPRN" });
             }
-
-            return View("~/ViewComponents/Courses/SelectVenue/Default.cshtml", model);
         }
     }
 }

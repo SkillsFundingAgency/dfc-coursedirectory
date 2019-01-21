@@ -102,6 +102,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     courseRunVenues.Add(item);
                 };
             }
+            else
+            {
+                return RedirectToAction("Index", "Home", new { errmsg = "No-UKPRN" });
+            }
 
             foreach (DeliveryMode eVal in DeliveryMode.GetValues(typeof(DeliveryMode)))
             {
@@ -149,22 +153,29 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             // Get courses (and runs) for PRN, grouped by qualification type, then within that by LARS ref
             int? ukprn = _session.GetInt32("UKPRN");
-            ICourseSearchResult result = (!ukprn.HasValue ? null :
-                                          _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(ukprn))
-                                                        .Result.Value);
-
-            YourCoursesViewModel vm = new YourCoursesViewModel
+            if (ukprn.HasValue)
             {
-                UKPRN = ukprn,
-                Courses = result,
-                deliveryModes = deliveryModes,
-                durationUnits = durationUnits,
-                attendances = attendances,
-                modes = modes,
-                Venues = courseRunVenues
-            };
+                ICourseSearchResult result = (!ukprn.HasValue ? null :
+                                              _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(ukprn))
+                                                            .Result.Value);
 
-            return View(vm);
+                YourCoursesViewModel vm = new YourCoursesViewModel
+                {
+                    UKPRN = ukprn,
+                    Courses = result,
+                    deliveryModes = deliveryModes,
+                    durationUnits = durationUnits,
+                    attendances = attendances,
+                    modes = modes,
+                    Venues = courseRunVenues
+                };
+
+                return View(vm);
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home", new { errmsg = "No-UKPRN" });
+            }
         }
 
         public IActionResult AddCourseSection1(string learnAimRef, string notionalNVQLevelv2, string awardOrgCode, string learnAimRefTitle, string learnAimRefTypeDesc)
@@ -245,7 +256,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
             else
             {
-                return RedirectToAction("Index", "Venues", new { errmsg = "No-UKPRN" });
+                return RedirectToAction("Index", "Home", new { errmsg = "No-UKPRN" });
             }
 
             var viewModel = new AddCourseDetailsViewModel()
@@ -357,13 +368,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             // TODO: To be modified once we implement user management (Assign ProviderUKPRN to user)
             int UKPRN = 0;
-            if (_session.GetInt32("UKPRN") != null)
+            if (_session.GetInt32("UKPRN").HasValue)
             {
                 UKPRN = _session.GetInt32("UKPRN").Value;
             }
             else
             {
-                return RedirectToAction("Index", "Venues", new { errmsg = "No-UKPRN" });
+                return RedirectToAction("Index", "Home", new { errmsg = "No-UKPRN" });
             }
 
             var course = new Course
