@@ -1,6 +1,4 @@
-﻿using Dfc.CourseDirectory.Areas.Identity.Data;
-using Dfc.CourseDirectory.Common.Settings;
-using Dfc.CourseDirectory.Data;
+﻿using Dfc.CourseDirectory.Common.Settings;
 using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces;
@@ -13,15 +11,11 @@ using Dfc.CourseDirectory.Web.Helpers;
 using IdentityModel.Client;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Authorization;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -58,6 +52,9 @@ namespace Dfc.CourseDirectory.Web
         {
             services.AddSingleton(Configuration);
             services.AddApplicationInsightsTelemetry(Configuration);
+
+
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddSessionStateTempDataProvider();
 
             services.Configure<CookiePolicyOptions>(options =>
             {
@@ -121,14 +118,14 @@ namespace Dfc.CourseDirectory.Web
                             // new access token and refresh token
                             var refreshToken = refreshTokenClaim.Value;
 
-                            var clientId = Configuration.GetSection("auth:oidc:clientId");
-                            const string envKeyClientSecret = "DFE_SIGNIN_CLIENT_SECRET";
-                            var clientSecret = Configuration.GetSection(envKeyClientSecret);
+                            var clientId = Configuration.GetSection("DFESignInSettings:ClientID");
+                            const string envKeyClientSecret = "DFESignInSettings:ClientSecret";
+                            var clientSecret = Configuration.GetSection(nameof(envKeyClientSecret));
                             if (string.IsNullOrWhiteSpace(clientSecret.ToString()))
                             {
                                 throw new Exception("Missing environment variable " + envKeyClientSecret + " - get this from the DfE Sign-in team.");
                             }
-                            var tokenEndpoint = Configuration.GetSection("auth:oidc:tokenEndpoint").ToString();
+                            var tokenEndpoint = Configuration.GetSection("DFESignInSettings:TokenEndpoint").Value;
 
                             var client = new TokenClient(tokenEndpoint, clientId.ToString(), clientSecret.ToString());
                             var response = await client.RequestRefreshTokenAsync(refreshToken, new { client_secret = clientSecret });
@@ -162,17 +159,18 @@ namespace Dfc.CourseDirectory.Web
             }).AddOpenIdConnect(options =>
             {
                 options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.MetadataAddress = Configuration.GetSection("auth:oidc:metadataAddress").ToString();
+                options.MetadataAddress = Configuration.GetSection("DFESignInSettings:MetadataAddress").Value;
+                options.RequireHttpsMetadata = false;
 
-                options.ClientId = Configuration.GetSection("auth:oidc:clientId").ToString();
-                const string envKeyClientSecret = "DFE_SIGNIN_CLIENT_SECRET";
-                var clientSecret = Configuration.GetSection(envKeyClientSecret).ToString();
-                if (string.IsNullOrWhiteSpace(clientSecret))
+                options.ClientId = Configuration.GetSection("DFESignInSettings:ClientID").Value;
+                const string envKeyClientSecret = "DFESignInSettings:ClientSecret";
+                var clientSecret = Configuration.GetSection(envKeyClientSecret).Value;
+                if (string.IsNullOrWhiteSpace(clientSecret.ToString()))
                 {
                     throw new Exception("Missing environment variable " + envKeyClientSecret + " - get this from the DfE Sign-in team.");
                 }
 
-                options.ClientSecret = clientSecret;
+                options.ClientSecret = clientSecret.ToString();
                 options.ResponseType = OpenIdConnectResponseType.Code;
                 options.GetClaimsFromUserInfoEndpoint = true;
 
@@ -188,8 +186,8 @@ namespace Dfc.CourseDirectory.Web
                 options.Scope.Add("offline_access");
 
                 options.SaveTokens = true;
-                options.CallbackPath = new PathString(Configuration.GetSection("auth:oidc:callbackPath").ToString());
-                options.SignedOutCallbackPath = new PathString(Configuration.GetSection("auth:oidc:signedOutCallbackPath").ToString());
+                options.CallbackPath = new PathString(Configuration.GetSection("DFESignInSettings:CallbackPath").Value);
+                options.SignedOutCallbackPath = new PathString(Configuration.GetSection("DFESignInSettings:SignedOutCallbackPath").Value);
                 options.SecurityTokenValidator = new JwtSecurityTokenHandler
                 {
                     InboundClaimTypeMap = new Dictionary<string, string>(),
@@ -297,40 +295,9 @@ namespace Dfc.CourseDirectory.Web
             services.Configure<CourseServiceSettings>(Configuration.GetSection(nameof(CourseServiceSettings)));
             services.AddScoped<ICourseService, CourseService>();
 
-            services.AddDbContext<ApplicationDbContext>(options =>
-              options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
 
-            services.AddIdentity<DfcCourseDirectoryUser, IdentityRole>(options => {
-                options.Tokens.PasswordResetTokenProvider = TokenOptions.DefaultEmailProvider;
-                options.SignIn.RequireConfirmedEmail = true;
-            }).AddEntityFrameworkStores<ApplicationDbContext>()
-               .AddDefaultTokenProviders();
-
-            services.AddScoped<SignInManager<DfcCourseDirectoryUser>, SignInManager<DfcCourseDirectoryUser>>();
-
-            // using Microsoft.AspNetCore.Identity.UI.Services;
-            services.AddSingleton<IEmailSender, EmailSender>();
-            services.Configure<AuthMessageSenderOptions>(Configuration.GetSection("SendGrid"));
-
-            services.ConfigureApplicationCookie(options =>
-            {
-                // Cookie settings
-                options.Cookie.HttpOnly = true;
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
-
-                options.LoginPath = "/Identity/Account/Login";
-                options.AccessDeniedPath = "/Identity/Account/AccessDenied";
-                options.SlidingExpiration = true;
-            });
-
-            services.AddMvc(options =>
-            {
-                var policy = new AuthorizationPolicyBuilder()
-                .RequireAuthenticatedUser()
-                .Build();
-                options.Filters.Add(new AuthorizeFilter(policy));
-            }).SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddSessionStateTempDataProvider();
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddSessionStateTempDataProvider();
 
             services.AddDistributedMemoryCache();
 
@@ -356,13 +323,18 @@ namespace Dfc.CourseDirectory.Web
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
-            var dbContext = serviceProvider.GetService<ApplicationDbContext>();
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
            // app.UseCookiePolicy();
             app.UseSession();
             app.UseAuthentication();
+            // hotfix
+            // workaround for bug in DfE sign in
+            // which appends a trailing slash
+            app.UseRewriter(new RewriteOptions()
+                .AddRedirect("^auth/cb/?.*", "auth/cb"));
+
             //Preventing ClickJacking Attacks
             app.Use(async (context, next) =>
             {

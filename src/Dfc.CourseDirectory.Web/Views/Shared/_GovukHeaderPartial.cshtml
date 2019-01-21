@@ -1,5 +1,4 @@
 ﻿<header class="govuk-header " role="banner" data-module="header">
-    <partial name="_LoginPartial" />
     <div class="govuk-header__container govuk-width-container">
         <div class="govuk-header__logo">
             <a href="#" class="govuk-header__link govuk-header__link--homepage">
@@ -26,38 +25,68 @@
 
             <button type="button" role="button" class="govuk-header__menu-button js-header-toggle" aria-controls="navigation" aria-label="Show or hide Top Level Navigation">Menu</button>
             <nav>
-                @{
-                    if (User.Identity.IsAuthenticated)
-                    {
-                        <ul id="navigation" class="govuk-header__navigation " aria-label="Top Level Navigation">
-                            <li class="govuk-header__navigation-item govuk-header__navigation-item--active">
-                                <a class="govuk-header__link" href="/">
-                                    Home
-                                </a>
-                            </li>
-                            <li class="govuk-header__navigation-item">
-                                <a class="govuk-header__link" href="~/Qualifications">
-                                    Qualifications
-                                </a>
-                            </li>
-                            <li class="govuk-header__navigation-item">
-                                <a class="govuk-header__link" href="/Venues">
-                                    Venues
-                                </a>
-                            </li>
-                            <li class="govuk-header__navigation-item">
-                                <a class="govuk-header__link" href="/Provider">
-                                    Add Provider
-                                </a>
-                            </li>
-                            <li class="govuk-header__navigation-item">
-                                <a class="govuk-header__link" href="/Courses">
-                                    Courses
-                                </a>
-                            </li>
-                        </ul>
+                <ul id="navigation" class="govuk-header__navigation " aria-label="Top Level Navigation">
+                    <li class="govuk-header__navigation-item govuk-header__navigation-item--active">
+                        <a class="govuk-header__link" href="/">
+                            Home
+                        </a>
+                    </li>
+                    <li class="govuk-header__navigation-item">
+                        <a class="govuk-header__link" href="~/Qualifications">
+                            Qualifications
+                        </a>
+                    </li>
+                    <li class="govuk-header__navigation-item">
+                        <a class="govuk-header__link" href="/Venues">
+                            Venues
+                        </a>
+                    </li>
+                    <li class="govuk-header__navigation-item">
+                        <a class="govuk-header__link" href="/Provider">
+                            Add Provider
+                        </a>
+                    </li>
+                    <li class="govuk-header__navigation-item">
+                        <a class="govuk-header__link" href="/Courses">
+                            Courses
+                        </a>
+                    </li>
+
+                    @{
+                        string name = null;
+                        if (User.Identity.IsAuthenticated)
+                        {
+                            var nameClaim = User.Claims.FirstOrDefault(c => c.Type == "given_name");
+                            name = nameClaim?.Value;
+                        }
+
                     }
-                }
+
+                    <h2>Hello @(name ?? "Stranger")</h2>
+
+                    <ul class="nav navbar-nav navbar-left">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li><a href="@Url.Action("WhoAmI", "Auth")">Your Profile</a></li>
+                            <li><a asp-controller="Auth" asp-action="Logout">Logout</a></li>
+
+                            <li>
+                                <a href="@Url.Action("Imported", "Home")">Imported</a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("Index", "Courses")">Courses listing</a>
+
+                            </li>
+
+
+                        }
+                        else
+                        {
+                            <li><a asp-controller="Auth" asp-action="Login">Login</a></li>
+                           
+                        }
+                    </ul>
+                </ul>
             </nav>
         </div>
     </div>
