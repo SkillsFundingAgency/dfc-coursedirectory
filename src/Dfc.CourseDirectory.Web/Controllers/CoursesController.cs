@@ -91,7 +91,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     courserun.ProviderCourseID = model.courseRun.ProviderCourseID;
                     courserun.StartDate = model.courseRun.StartDate;
                     courserun.VenueId = model.courseRun.VenueId;
-
+                    courserun.UpdatedDate=DateTime.Now;
+                    
 
                     var updatedCourses = await _courseService.UpdateCourseAsync(course);
 
@@ -405,7 +406,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     DeliveryMode = model.DeliveryMode,
                     FlexibleStartDate = flexibleStartDate,
                     StartDate = specifiedStartDate,
-                    CourseURL = model.Url,
+                    CourseURL = model.Url.ToLower(),
                     Cost = model.Cost,
                     CostDescription = model.CostDescription,
                     DurationUnit = model.Id,
