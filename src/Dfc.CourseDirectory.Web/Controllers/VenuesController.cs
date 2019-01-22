@@ -261,6 +261,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     requestModel.TownOrCity,
                     requestModel.County,
                     requestModel.Postcode,
+                    0,0,
                     VenueStatus.Live,
                     "TestUser",
                     DateTime.Now
@@ -281,6 +282,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     requestModel.TownOrCity,
                     requestModel.County, 
                     requestModel.Postcode, 
+                    0,
+                    0,
                     VenueStatus.Live,
                     "TestUser",
                     DateTime.Now,
