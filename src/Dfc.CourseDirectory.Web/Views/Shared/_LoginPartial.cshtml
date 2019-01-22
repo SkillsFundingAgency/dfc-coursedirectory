@@ -9,20 +9,26 @@
 }
 
 
-
-
 @if (User.Identity.IsAuthenticated)
 {
 <div class="login-options">
-    <li>Hello @(name ?? "Stranger")</li>
-    <li class="govuk-header__navigation-item"><a href="@Url.Action("WhoAmI", "Auth")">Your Profile</a></li>
-    <li class="govuk-header__navigation-item"><a asp-controller="Auth" asp-action="Logout">Logout</a></li>
+    <li class="govuk-header__navigation-item">
+        Hello @(name ?? "Stranger")
+    </li>
+    <li class="govuk-header__navigation-item">
+        <a class="govuk-header__link" href="@Url.Action("WhoAmI", "Auth")">Your Profile</a>
+    </li>
+    <li class="govuk-header__navigation-item">
+        <a class="govuk-header__link" asp-controller="Auth" asp-action="Logout">Logout</a>
+    </li>
 </div>
 }
 
 else
 {
     <div class="login-options">
-        <li class="govuk-header__navigation-item"><a asp-controller="Auth" asp-action="Login">Login</a></li>
+        <li class="govuk-header__navigation-item">
+            <a class="govuk-header__link" asp-controller="Auth" asp-action="Login">Login</a>
+        </li>
     </div>
 }
