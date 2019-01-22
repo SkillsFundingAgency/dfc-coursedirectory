@@ -32,7 +32,7 @@ namespace Dfc.CourseDirectory.Web
     public class Startup
     {
         public IConfiguration Configuration { get; }
-        private readonly Microsoft.Extensions.Logging.ILogger _logger;
+        private readonly ILogger _logger;
         private readonly IHostingEnvironment _env;
         public Startup(IHostingEnvironment env, ILoggerFactory logFactory)
         {

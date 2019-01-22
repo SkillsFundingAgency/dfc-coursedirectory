@@ -62,30 +62,20 @@
 
                     }
 
-                    <h2>Hello @(name ?? "Stranger")</h2>
-
-                    <ul class="nav navbar-nav navbar-left">
-                        @if (User.Identity.IsAuthenticated)
-                        {
-                            <li><a href="@Url.Action("WhoAmI", "Auth")">Your Profile</a></li>
-                            <li><a asp-controller="Auth" asp-action="Logout">Logout</a></li>
-
-                            <li>
-                                <a href="@Url.Action("Imported", "Home")">Imported</a>
-                            </li>
-                            <li>
-                                <a href="@Url.Action("Index", "Courses")">Courses listing</a>
-
-                            </li>
+                    <li><h2>Hello @(name ?? "Stranger")</h2></li>
 
 
-                        }
-                        else
-                        {
-                            <li><a asp-controller="Auth" asp-action="Login">Login</a></li>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <li><a href="@Url.Action("WhoAmI", "Auth")">Your Profile</a></li>
+                        <li><a asp-controller="Auth" asp-action="Logout">Logout</a></li>
+                    }
+                    else
+                    {
+                        <li><a asp-controller="Auth" asp-action="Login">Login</a></li>
                            
-                        }
-                    </ul>
+                    }
+                    
                 </ul>
             </nav>
         </div>

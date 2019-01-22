@@ -18,24 +18,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [Authorize]
         public ActionResult WhoAmI()
         {
-            var claims = User.Claims.ToList();
-            var model = new WhoAmIViewModel { RawClaims = claims };
-            const string organisationClaimType = "organisation";
-            var orgs = claims.Where(c => c.Type == organisationClaimType).ToList();
-            if (orgs.Count > 1)
-            {
-                throw new NotSupportedException("multiple " + organisationClaimType + " claims found");
-            }
-            if (orgs.Count == 1)
-            {
-                var json = orgs.Single().Value;
-                if (json != "{}")
-                {
-                    //var org = JsonConvert.DeserializeObject<OrgClaim>(json);
-                    //model.Org = org;
-                }
-            }
-            return View(model);
+            return View(User as ClaimsPrincipal);
         }
 
         public async Task Login(string returnUrl = "/")
@@ -70,11 +53,5 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             return RedirectToAction("WhoAmI");
         }
-    }
-
-    public class WhoAmIViewModel
-    {
-        public IEnumerable<Claim> RawClaims { get; set; }
-        //public OrgClaim Org { get; set; }
     }
 }
