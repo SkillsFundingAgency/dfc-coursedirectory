@@ -92,3 +92,7 @@ li span.govuk-body {
   opacity: 0.5;
   background-color: lightgrey;
 }
+
+select:disabled {
+  background-color: #ebebe4;
+}
