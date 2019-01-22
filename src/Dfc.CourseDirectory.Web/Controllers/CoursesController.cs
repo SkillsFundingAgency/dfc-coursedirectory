@@ -26,7 +26,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using CourseRun = Dfc.CourseDirectory.Models.Models.Courses.CourseRun;
-
+using Dfc.CourseDirectory.Web.ViewComponents.Courses.SelectRegion;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -324,6 +324,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             };
 
             viewModel.SelectVenue = await GetVenuesByUkprn(UKPRN);
+            viewModel.SelectRegion = GetRegions();
 
             return View("AddCourseSection2", viewModel);
         }
@@ -522,6 +523,73 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
 
             return selectVenue;
+        }
+
+        private SelectRegionModel GetRegions()
+        {
+            return new SelectRegionModel
+            {
+                LabelText = "Select course region",
+                HintText = "For example, South West",
+                AriaDescribedBy = "Select all that apply.",
+                RegionItems = new RegionItemModel[]
+                {
+                    new RegionItemModel
+                    {
+                        Id = 1.ToString(),
+                        Checked = false,
+                        RegionName = "North East"
+                    },
+                    new RegionItemModel
+                    {
+                        Id = 2.ToString(),
+                        Checked = false,
+                        RegionName = "North West"
+                    },
+                    new RegionItemModel
+                    {
+                        Id = 3.ToString(),
+                        Checked = false,
+                        RegionName = "Yorkshire and The Humber"
+                    },
+                    new RegionItemModel
+                    {
+                        Id = 4.ToString(),
+                        Checked = false,
+                        RegionName = "East Midlands"
+                    },
+                    new RegionItemModel
+                    {
+                        Id = 5.ToString(),
+                        Checked = false,
+                        RegionName = "West Midlands"
+                    },
+                    new RegionItemModel
+                    {
+                        Id = 6.ToString(),
+                        Checked = false,
+                        RegionName = "East of England"
+                    },
+                    new RegionItemModel
+                    {
+                        Id = 7.ToString(),
+                        Checked = false,
+                        RegionName = "London"
+                    },
+                    new RegionItemModel
+                    {
+                        Id = 8.ToString(),
+                        Checked = false,
+                        RegionName = "South West"
+                    },
+                    new RegionItemModel
+                    {
+                        Id = 9.ToString(),
+                        Checked = false,
+                        RegionName = "South West"
+                    }
+                }
+            };
         }
     }
 }

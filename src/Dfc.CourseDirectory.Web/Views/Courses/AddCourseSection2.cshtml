@@ -100,6 +100,44 @@
         </div>
     </div>
 
+    <div class="govuk-form-group" id="RegionItemsCheckboxList">
+        <label class="govuk-label" for="select-region">
+            @Model.SelectRegion.LabelText
+        </label>
+        <span id="select-region-hint" class="govuk-hint">
+            @Model.SelectRegion.HintText
+        </span>
+        <span class="govuk-error-message field-validation-error" id="invalidRegionsChecked" style="display: none;margin-bottom: 15px;">
+            <span id="invalidRegionsCheckedMessage" class="">Select a region.</span>
+        </span>
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <div class="govuk-checkboxes" id="SelectRegionCheckBoxes">
+                    @{ var j = 0; }
+                    @if (Model.SelectRegion.RegionItems.Count() == 1)
+                    {
+                        <div class="govuk-checkboxes__item">
+                            <input class="govuk-checkboxes__input" id="RegionName-@j" name="SelectedRegions" type="checkbox" value="@Model.SelectRegion.RegionItems.First().Id" checked="checked" onclick="return false;" />
+                            <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@Model.SelectRegion.RegionItems.First().RegionName</label>
+                        </div>
+                    }
+                    else
+                    {
+                        foreach (var item in Model.SelectRegion.RegionItems)
+                        {
+                            j++;
+                            <div class="govuk-checkboxes__item">
+                                <input class="govuk-checkboxes__input" id="RegionName-@j" name="SelectedRegions" type="checkbox" value="@item.Id" />
+                                <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@item.RegionName</label>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
     @await Component.InvokeAsync(nameof(UrlInput), new UrlInputModel
     {
         LabelText = "URL",
