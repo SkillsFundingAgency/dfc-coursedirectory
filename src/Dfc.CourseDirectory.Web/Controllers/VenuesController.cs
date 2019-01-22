@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Common;
+using Dfc.CourseDirectory.Models.Models.Onspd;
 using Dfc.CourseDirectory.Models.Models.Venues;
 using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.Interfaces;
+using Dfc.CourseDirectory.Services.Interfaces.OnspdService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
+using Dfc.CourseDirectory.Services.OnspdService;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.RequestModels;
@@ -31,6 +34,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly IVenueSearchHelper _venueSearchHelper;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IVenueService _venueService;
+        private readonly IOnspdService _onspdService;
         private ISession _session => _contextAccessor.HttpContext.Session;
 
         public VenuesController(
@@ -39,13 +43,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
             IOptions<VenueServiceSettings> venueSearchSettings,
             IVenueSearchHelper venueSearchHelper,
             IHttpContextAccessor contextAccessor,
-            IVenueService venueService)
+            IVenueService venueService,
+            IOnspdService onspdService)
         {
             Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(postCodeSearchService, nameof(postCodeSearchService));
             Throw.IfNull(venueSearchSettings, nameof(venueSearchSettings));
             Throw.IfNull(contextAccessor, nameof(contextAccessor));
             Throw.IfNull(venueService, nameof(venueService));
+            Throw.IfNull(onspdService, nameof(onspdService));
 
             _logger = logger;
             _postCodeSearchService = postCodeSearchService;
@@ -53,6 +59,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _venueSearchHelper = venueSearchHelper;
             _contextAccessor = contextAccessor;
             _venueService = venueService;
+            _onspdService = onspdService;
         }
         /// <summary>
         /// Need to return a VenueSearchResultModel within the VenueSearchResultModel
@@ -249,6 +256,21 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 SearchTerm = UKPRN.Value.ToString()
             };
 
+            decimal latitude = 0;
+            decimal longitude = 0;
+            
+            if (!string.IsNullOrWhiteSpace(requestModel.Postcode))
+            {
+                var onspdSearchCriteria = new OnspdSearchCriteria(requestModel.Postcode);
+                var onspdResult = _onspdService.GetOnspdData(onspdSearchCriteria);
+                if (onspdResult.IsSuccess && onspdResult.HasValue)
+                {
+                    var onspd = onspdResult.Value.Value;
+                    latitude = onspd.lat;
+                    longitude = onspd.@long;
+                }
+            }
+
             if (requestModel.Id != null)
             {
                 Venue venue = new Venue(
@@ -261,7 +283,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     requestModel.TownOrCity,
                     requestModel.County,
                     requestModel.Postcode,
-                    0,0,
+                    latitude,
+                    longitude,
                     VenueStatus.Live,
                     "TestUser",
                     DateTime.Now
@@ -281,9 +304,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     null,
                     requestModel.TownOrCity,
                     requestModel.County, 
-                    requestModel.Postcode, 
-                    0,
-                    0,
+                    requestModel.Postcode,
+                    latitude,
+                    longitude,
                     VenueStatus.Live,
                     "TestUser",
                     DateTime.Now,

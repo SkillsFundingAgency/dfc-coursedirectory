@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Models.Interfaces.Onspd;
 
@@ -8,25 +7,25 @@ namespace Dfc.CourseDirectory.Models.Models.Onspd
 {
     public class Onspd : ValueObject<Onspd>, IOnspd
     {
-        public string pcd { get; }
-        public string pcd2 { get; }
-        public string pcds { get; }
-        public string dointr { get; }
-        public string doterm { get; }
-        public string oscty { get; }
-        public string oslaua { get; }
-        public string osward { get; }
-        public string prsh { get; }
-        public string ctry { get; }
-        public string rgn { get; }
-        public decimal lat { get; }
-        public decimal @long { get; }
-        public string Parish { get; }
-        public string LocalAuthority { get; }
-        public string Region { get; }
-        public string County { get; }
-        public string Country { get; }
-        public DateTime updated { get; }
+        public string pcd { get; set; }
+        public string pcd2 { get; set; }
+        public string pcds { get; set; }
+        public string dointr { get; set; }
+        public string doterm { get; set; }
+        public string oscty { get; set; }
+        public string oslaua { get; set; }
+        public string osward { get; set; }
+        public string prsh { get; set; }
+        public string ctry { get; set; }
+        public string rgn { get; set; }
+        public decimal lat { get; set; }
+        public decimal @long { get; set; }
+        public string Parish { get; set; }
+        public string LocalAuthority { get; set; }
+        public string Region { get; set; }
+        public string County { get; set; }
+        public string Country { get; set; }
+        public DateTime updated { get; set; }
 
         protected override IEnumerable<object> GetEqualityComponents()
         {
