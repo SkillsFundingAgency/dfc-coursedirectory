@@ -580,7 +580,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     {
                         Id = 8.ToString(),
                         Checked = false,
-                        RegionName = "South West"
+                        RegionName = "South East"
                     },
                     new RegionItemModel
                     {

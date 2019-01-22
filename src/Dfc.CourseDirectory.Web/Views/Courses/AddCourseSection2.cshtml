@@ -256,12 +256,16 @@
             var $validationMessageForCost= $("#invalidCost");
             var $validationMessageForCostLength = $("#invalidCostLength");
 
-            var $checkboxes = $("#SelectVenueCheckBoxes input[type=checkbox]");
+            var $venueCheckboxes = $("#SelectVenueCheckBoxes input[type=checkbox]");
+            var $regionCheckboxes = $("#SelectRegionCheckBoxes input[type=checkbox]");
             var $formVenuesIsValid = false;
+            var $formRegionsIsValid = false;
             var $formStartDateIsValid = false;
             var $formCostIsValid = false;
 
             var $deliveryRadios = $("#DeliveryModeRadioButtons input[type=radio]");
+            var $regionItemsCheckboxList = $("#RegionItemsCheckboxList");
+            $regionItemsCheckboxList.hide();
 
             $deliveryRadios.change(function () {
                 var $venueItemsCheckboxList = $("#VenueItemsCheckboxList");
@@ -278,6 +282,7 @@
                             $specifiedStartDate.prop("checked", true);
                             $flexibleStartDate.prop("checked", false);
                             $venueItemsCheckboxList.show();
+                            $regionItemsCheckboxList.hide();
                             $fullPartTimeRadioButtons.show();
                             $attendancePatternRadioButtons.show();
                             break;
@@ -287,6 +292,7 @@
                             $flexibleStartDate.prop("checked", true);
                             $specifiedStartDate.prop("checked", false);
                             $venueItemsCheckboxList.hide();
+                            $regionItemsCheckboxList.hide();
                             $fullPartTimeRadioButtons.hide();
                             $attendancePatternRadioButtons.hide();
                             break;
@@ -296,6 +302,7 @@
                             $flexibleStartDate.prop("checked", true);
                             $specifiedStartDate.prop("checked", false);
                             $venueItemsCheckboxList.hide();
+                            $regionItemsCheckboxList.show();
                             $fullPartTimeRadioButtons.hide();
                             $attendancePatternRadioButtons.hide();
                             break;
@@ -304,11 +311,11 @@
 
            
             });
-            $checkboxes.change(function () {
+            $venueCheckboxes.change(function () {
                 var $validationMessageForVenues = $("#invalidVenuesChecked");
                 var $venueItemsCheckboxList = $("#VenueItemsCheckboxList");
                 var $formGroupVenues = $venueItemsCheckboxList.closest('.govuk-form-group');
-                var countedCheckedCheckboxes = $checkboxes.filter(':checked').length;
+                var countedCheckedCheckboxes = $venueCheckboxes.filter(':checked').length;
 
                 if ($(this).is(":visible")) {
                     if (countedCheckedCheckboxes === 0) {
@@ -330,11 +337,36 @@
 
             });
 
+            $regionCheckboxes.change(function () {
+                var $validationMessageForRegions = $("#invalidRegionsChecked");
+                var $formGroupRegions = $regionItemsCheckboxList.closest('.govuk-form-group');
+                var countedCheckedCheckboxes = $regionCheckboxes.filter(':checked').length;
+
+                if ($(this).is(":visible")) {
+                    if (countedCheckedCheckboxes === 0) {
+                        $formGroupRegions.addClass("govuk-form-group--error");
+                        $validationMessageForRegions.show();
+                        $formRegionsIsValid = false;
+                    }
+                    else {
+                        $formGroupRegions.removeClass("govuk-form-group--error");
+                        $validationMessageForRegions.hide();
+                        $formRegionsIsValid = true;
+                    }
+                }
+                else {
+                    $formGroupRegions.removeClass("govuk-form-group--error");
+                    $validationMessageForRegions.hide();
+                    $formRegionsIsValid = true;
+                }
+            });
+
             var $publish = $("#publish");
             $publish.on("click",
                 function(e) {
                     e.preventDefault();
-                    $checkboxes.trigger("change");
+                    $venueCheckboxes.trigger("change");
+                    $regionCheckboxes.trigger("change");
 
                     var $courseName = $("#@nameof(Model.CourseName)");
                     $courseName.trigger("blur");
@@ -477,9 +509,10 @@
                         $formStartDateIsValid = true;
                     }
 
-                    if ($formVenuesIsValid & $formCostIsValid & $formStartDateIsValid) {
+                    if (($formVenuesIsValid || $formRegionsIsValid) & $formCostIsValid & $formStartDateIsValid) {
                         $("#addCourseSection2").submit();
                     }
+
                     var errorArray = $("[class*='--error'");
                     if (errorArray.length > 0) {
                         $('html, body').scrollTop($('#' + errorArray[0].id).offset().top);
