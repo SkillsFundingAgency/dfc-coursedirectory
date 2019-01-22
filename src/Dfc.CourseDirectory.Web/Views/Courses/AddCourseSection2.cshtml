@@ -207,7 +207,7 @@
             var $validationMessageForRequired= $("#required");
 
             var $formGroupUrl = $dayElementUrl.closest('.govuk-form-group');
-
+    
 
 
             var $elementCostDescription = $("#@nameof(Model.CostDescription)");
@@ -232,21 +232,34 @@
                 var $specifiedStartDate = $("#SpecifiedStartDate");
                 var $flexibleStartDate = $("#FlexibleStartDate");
 
-                $venueItemsCheckboxList.toggle();
-                $fullPartTimeRadioButtons.toggle();
-                $attendancePatternRadioButtons.toggle();
+
 
                 switch (this.id) {
                     case "ClassroomBased":
                         {
                             $specifiedStartDate.prop("checked", true);
                             $flexibleStartDate.prop("checked", false);
+                            $venueItemsCheckboxList.show();
+                            $fullPartTimeRadioButtons.show();
+                            $attendancePatternRadioButtons.show();
                             break;
                         }
                     case "Online":
                         {
                             $flexibleStartDate.prop("checked", true);
                             $specifiedStartDate.prop("checked", false);
+                            $venueItemsCheckboxList.hide();
+                            $fullPartTimeRadioButtons.hide();
+                            $attendancePatternRadioButtons.hide();
+                            break;
+                        }
+                    case "WorkBased":
+                        {
+                            $flexibleStartDate.prop("checked", true);
+                            $specifiedStartDate.prop("checked", false);
+                            $venueItemsCheckboxList.hide();
+                            $fullPartTimeRadioButtons.hide();
+                            $attendancePatternRadioButtons.hide();
                             break;
                         }
                 }
@@ -258,15 +271,25 @@
                 var $venueItemsCheckboxList = $("#VenueItemsCheckboxList");
                 var $formGroupVenues = $venueItemsCheckboxList.closest('.govuk-form-group');
                 var countedCheckedCheckboxes = $checkboxes.filter(':checked').length;
-                if (countedCheckedCheckboxes === 0) {
-                    $formGroupVenues.addClass("govuk-form-group--error");
-                    $validationMessageForVenues.show();
-                    $formVenuesIsValid = false;
-                } else {
+
+                if ($(this).is(":visible")) {
+                    if (countedCheckedCheckboxes === 0) {
+                        $formGroupVenues.addClass("govuk-form-group--error");
+                        $validationMessageForVenues.show();
+                        $formVenuesIsValid = false;
+                    }
+                    else {
+                        $formGroupVenues.removeClass("govuk-form-group--error");
+                        $validationMessageForVenues.hide();
+                        $formVenuesIsValid = true;
+                    }
+                }
+                else {
                     $formGroupVenues.removeClass("govuk-form-group--error");
                     $validationMessageForVenues.hide();
                     $formVenuesIsValid = true;
                 }
+
             });
 
             var $publish = $("#publish");
@@ -418,6 +441,10 @@
 
                     if ($formVenuesIsValid & $formCostIsValid & $formStartDateIsValid) {
                         $("#addCourseSection2").submit();
+                    }
+                    var errorArray = $("[class*='--error'");
+                    if (errorArray.length > 0) {
+                        $('html, body').scrollTop($('#' + errorArray[0].id).offset().top);
                     }
                 });
         });
