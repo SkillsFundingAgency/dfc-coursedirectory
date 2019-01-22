@@ -1,0 +1,28 @@
+﻿@{
+    string name = null;
+    if (User.Identity.IsAuthenticated)
+    {
+        var nameClaim = User.Claims.FirstOrDefault(c => c.Type == "given_name");
+        name = nameClaim?.Value;
+    }
+
+}
+
+
+
+
+@if (User.Identity.IsAuthenticated)
+{
+<div class="login-options">
+    <li>Hello @(name ?? "Stranger")</li>
+    <li class="govuk-header__navigation-item"><a href="@Url.Action("WhoAmI", "Auth")">Your Profile</a></li>
+    <li class="govuk-header__navigation-item"><a asp-controller="Auth" asp-action="Logout">Logout</a></li>
+</div>
+}
+
+else
+{
+    <div class="login-options">
+        <li class="govuk-header__navigation-item"><a asp-controller="Auth" asp-action="Login">Login</a></li>
+    </div>
+}

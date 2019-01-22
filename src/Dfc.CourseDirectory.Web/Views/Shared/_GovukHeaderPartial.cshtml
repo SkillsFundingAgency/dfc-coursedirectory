@@ -1,4 +1,5 @@
 ﻿<header class="govuk-header " role="banner" data-module="header">
+    <partial name="_LoginPartial" />
     <div class="govuk-header__container govuk-width-container">
         <div class="govuk-header__logo">
             <a href="#" class="govuk-header__link govuk-header__link--homepage">
@@ -51,31 +52,6 @@
                             Courses
                         </a>
                     </li>
-
-                    @{
-                        string name = null;
-                        if (User.Identity.IsAuthenticated)
-                        {
-                            var nameClaim = User.Claims.FirstOrDefault(c => c.Type == "given_name");
-                            name = nameClaim?.Value;
-                        }
-
-                    }
-
-                    <li><h2>Hello @(name ?? "Stranger")</h2></li>
-
-
-                    @if (User.Identity.IsAuthenticated)
-                    {
-                        <li><a href="@Url.Action("WhoAmI", "Auth")">Your Profile</a></li>
-                        <li><a asp-controller="Auth" asp-action="Logout">Logout</a></li>
-                    }
-                    else
-                    {
-                        <li><a asp-controller="Auth" asp-action="Login">Login</a></li>
-                           
-                    }
-                    
                 </ul>
             </nav>
         </div>
