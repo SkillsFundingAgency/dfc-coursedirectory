@@ -1,4 +1,3 @@
-﻿
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,10 +7,12 @@ using Dfc.CourseDirectory.Models.Models.Courses;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
+using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.RequestModels;
 using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseFor;
+using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseRun;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.EntryRequirements;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.HowAssessed;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.HowYouWillLearn;
@@ -21,8 +22,10 @@ using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatYouNeed;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhereNext;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using CourseRun = Dfc.CourseDirectory.Models.Models.Courses.CourseRun;
 
 
 namespace Dfc.CourseDirectory.Web.Controllers
@@ -56,166 +59,179 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _venueSearchHelper = venueSearchHelper;
         }
 
-        public IActionResult Index(string status, string learnAimRef, string numberOfNewCourses, string errmsg)
+        [HttpPost]
+        public async Task<IActionResult> Index(CourseRunModel model)
         {
-            if (!string.IsNullOrEmpty(status))
+            var UKPRN = _session.GetInt32("UKPRN");
+            if (UKPRN.HasValue)
             {
-                ViewData["Status"] = status;
-                if (status.Equals("good", StringComparison.InvariantCultureIgnoreCase))
+                ICourseSearchResult coursesByUKPRN = (!UKPRN.HasValue
+                    ? null
+                    : _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(UKPRN))
+                        .Result.Value);
+
+                var courses = coursesByUKPRN.Value.SelectMany(o => o.Value).SelectMany(i => i.Value).ToList();
+
+                var course = courses.SingleOrDefault(x => x.id == model.CourseId);
+
+                var courserun = course.CourseRuns.SingleOrDefault(x => x.id == model.courseRun.id);
+
+                if (courserun != null)
                 {
-                    ViewData["StatusMessage"] = string.Format("{0} New Course(s) created in Course Directory for LARS: {1}", numberOfNewCourses, learnAimRef);
-                }
-                else if (status.Equals("bad", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    ViewData["StatusMessage"] = errmsg;
+                    courserun.DurationUnit = model.courseRun.DurationUnit;
+                    courserun.AttendancePattern = model.courseRun.AttendancePattern;
+                    courserun.DeliveryMode = model.courseRun.DeliveryMode;
+                    courserun.FlexibleStartDate = model.courseRun.FlexibleStartDate;
+                    courserun.StudyMode = model.courseRun.StudyMode;
+                    courserun.Cost = model.courseRun.Cost;
+                    courserun.CostDescription = model.courseRun.CostDescription;
+                    courserun.CourseName = model.courseRun.CourseName;
+                    courserun.CourseURL = model.courseRun.CourseURL;
+                    courserun.DurationValue = model.courseRun.DurationValue;
+                    courserun.ProviderCourseID = model.courseRun.ProviderCourseID;
+                    courserun.StartDate = model.courseRun.StartDate;
+                    courserun.VenueId = model.courseRun.VenueId;
+                    courserun.UpdatedDate=DateTime.Now;
+                    
+
+                    var updatedCourses = await _courseService.UpdateCourseAsync(course);
+
                 }
                 else
                 {
-                    // unhandled status
+                    return RedirectToAction("Index", new { status = "bad", learnAimRef = "", numberOfNewCourses = "", errmsg = "No course run" });
                 }
+               
             }
 
-            //STUB DATA -- TODO: Remove later
-            CourseRun[] courseRuns = new CourseRun[]
-            {
-                new CourseRun
-                {
-                      id = Guid.NewGuid(),
-                      VenueId = new Guid("76748623-93f0-4ebd-8a37-0f0754822b7e"),
-                      CourseName = "GCE A Level in Further Mathematics 1",
-                      ProviderCourseID = "asfdf-someId-courseId-string-guid",
-                      DeliveryMode = DeliveryMode.ClassroomBased,
-                      FlexibleStartDate = false,
-                      StartDate = Convert.ToDateTime("2021-04-03T00:00:00"),
-                      CourseURL = "http://www.google.co.uk",
-                      Cost = 125,
-                      CostDescription = "Number 1 Cost",
-                      DurationUnit = DurationUnit.Months,
-                      DurationValue = 47,
-                      StudyMode = StudyMode.Flexible,
-                      AttendancePattern = AttendancePattern.DayOrBlockRelease,
-                      CreatedDate = Convert.ToDateTime("2019-01-03T11:17:02.514746+00:00"),
-                      CreatedBy = "ProviderPortal-AddCourse",
-                      UpdatedDate = Convert.ToDateTime("0001-01-01T00:00:00"),
-                      UpdatedBy = null
-                },
-                new CourseRun
-                {
-                    id = Guid.NewGuid(),
-                    VenueId = new Guid("36ea2887-31ac-48cf-9d99-d267c5d464e6"),
-                    CourseName = "GCE A Level in Further Mathematics 2",
-                    ProviderCourseID = "asfdf-someId-courseId-string-guid",
-                    DeliveryMode = DeliveryMode.WorkBased,
-                    FlexibleStartDate = true,
-                    //StartDate = Convert.ToDateTime("2021-04-03T00:00:00"),
-                    CourseURL = "http://www.microsoft.co.uk",
-                    Cost = 250,
-                    CostDescription = "Number 2 Cost",
-                    DurationUnit = DurationUnit.Weeks,
-                    DurationValue = 47,
-                    StudyMode = StudyMode.FullTime,
-                    AttendancePattern = AttendancePattern.Evening,
-                    CreatedDate = Convert.ToDateTime("2019-01-03T11:17:02.514746+00:00"),
-                    CreatedBy = "ProviderPortal-AddCourse",
-                    UpdatedDate = Convert.ToDateTime("0001-01-01T00:00:00"),
-                    UpdatedBy = null
-                }
-            };
-            CourseRun[] courseRuns2 = new CourseRun[]
-             {
-                new CourseRun
-                {
-                      id = Guid.NewGuid(),
-                      VenueId = new Guid("76748623-93f0-4ebd-8a37-0f0754822b7e"),
-                      CourseName = "GCE A Level in Further Mathematics 1",
-                      ProviderCourseID = "asfdf-someId-courseId-string-guid",
-                      DeliveryMode = DeliveryMode.ClassroomBased,
-                      FlexibleStartDate = false,
-                      StartDate = Convert.ToDateTime("2021-04-03T00:00:00"),
-                      CourseURL = "http://www.bbc.co.uk",
-                      Cost = 125,
-                      CostDescription = "cost description",
-                      DurationUnit = DurationUnit.Months,
-                      DurationValue = 47,
-                      StudyMode = StudyMode.Flexible,
-                      AttendancePattern = AttendancePattern.DayOrBlockRelease,
-                      CreatedDate = Convert.ToDateTime("2019-01-03T11:17:02.514746+00:00"),
-                      CreatedBy = "ProviderPortal-AddCourse",
-                      UpdatedDate = Convert.ToDateTime("0001-01-01T00:00:00"),
-                      UpdatedBy = null
-                },
-                new CourseRun
-                {
-                    id = Guid.NewGuid(),
-                    VenueId = new Guid("36ea2887-31ac-48cf-9d99-d267c5d464e6"),
-                    CourseName = "GCE A Level in Further Mathematics 2",
-                    ProviderCourseID = "asfdf-someId-courseId-string-guid",
-                    DeliveryMode = DeliveryMode.WorkBased,
-                    FlexibleStartDate = true,
-                    //StartDate = Convert.ToDateTime("2021-04-03T00:00:00"),
-                    CourseURL = "http://www.bbc.co.uk",
-                    Cost = 125,
-                    CostDescription = "cost description",
-                    DurationUnit = DurationUnit.Weeks,
-                    DurationValue = 47,
-                    StudyMode = StudyMode.FullTime,
-                    AttendancePattern = AttendancePattern.Evening,
-                    CreatedDate = Convert.ToDateTime("2019-01-03T11:17:02.514746+00:00"),
-                    CreatedBy = "ProviderPortal-AddCourse",
-                    UpdatedDate = Convert.ToDateTime("0001-01-01T00:00:00"),
-                    UpdatedBy = null
-                }
-             };
-
-            Course[] course = new Course[]
-            {
-                new Course
-                {
-                    id = Guid.NewGuid(),
-                    QualificationCourseTitle = "GCE A Level in Further Mathematics",
-                    LearnAimRef = "10060108",
-                    NotionalNVQLevelv2 = "3",
-                    AwardOrgCode = "CCEA",
-                    QualificationType = "Diploma",
-                    ProviderUKPRN = 10038911,
-                    CourseDescription = "Course description",
-                    EntryRequirments = "Entry requirements",
-                    WhatYoullLearn = "Give learners a taste of this course.",
-                    HowYoullLearn = "Will it be classroom based exercises",
-                    WhatYoullNeed = "Please detail anything your learners",
-                    HowYoullBeAssessed = "Please provide details of all the ways",
-                    WhereNext = "What are the opportunities beyond this course",
-                    AdvancedLearnerLoan = true,
-                    CourseRuns = courseRuns
-                },
-                new Course
-                {
-                    id = Guid.NewGuid(),
-                    QualificationCourseTitle = "Diploma in Information Technology ",
-                    LearnAimRef = "10060108",
-                    NotionalNVQLevelv2 = "3",
-                    AwardOrgCode = "CCEA",
-                    QualificationType = "Diploma",
-                    ProviderUKPRN = 10038911,
-                    CourseDescription = "Course description1",
-                    EntryRequirments = "Entry requirements1",
-                    WhatYoullLearn = "Give learners a taste of this course1.",
-                    HowYoullLearn = "Will it be classroom based exercises1",
-                    WhatYoullNeed = "Please detail anything your learners1",
-                    HowYoullBeAssessed = "Please provide details of all the ways1",
-                    WhereNext = "What are the opportunities beyond this course1",
-                    AdvancedLearnerLoan = true,
-                    CourseRuns = courseRuns2
-                }
-
-            };
-            YourCoursesViewModel vm = new YourCoursesViewModel
-            {
-                UKPRN = _session.GetInt32("UKPRN"),
-                Courses = course
-            };
-            return View(vm);
+            return RedirectToAction("Index", new { status = "update", learnAimRef ="", numberOfNewCourses ="", errmsg =""}); 
         }
+
+        public async Task<IActionResult> Index(string status, string learnAimRef, string numberOfNewCourses, string errmsg)
+        {
+
+            var deliveryModes = new List<SelectListItem>();
+            var durationUnits = new List<SelectListItem>();
+            var attendances = new List<SelectListItem>();
+            var modes = new List<SelectListItem>();
+
+
+            if (!string.IsNullOrEmpty(status))
+            {
+                ViewData["Status"] = status;
+                switch (status.ToUpper())
+                {
+                    case "GOOD":
+                        ViewData["StatusMessage"] = string.Format("{0} New Course(s) created in Course Directory for LARS: {1}", numberOfNewCourses, learnAimRef);
+                        break;
+                    case "BAD":
+                        ViewData["StatusMessage"] = errmsg;
+                        break;
+                    case "UPDATE":
+                        ViewData["StatusMessage"] = string.Format("Course run updated in Course Directory");
+                        break;
+                    default:
+                        break;
+
+                }
+
+            }
+
+
+
+            var courseRunVenues = new List<SelectListItem>();
+
+            var UKPRN = _session.GetInt32("UKPRN");
+            if (UKPRN.HasValue)
+            {
+                VenueSearchCriteria criteria = new VenueSearchCriteria(UKPRN.ToString(), null);
+
+                var venues = await _venueService.SearchAsync(criteria);
+
+                foreach (var venue in venues.Value.Value)
+                {
+                    var item = new SelectListItem
+                    { Text = venue.VenueName, Value = venue.ID };
+
+                    courseRunVenues.Add(item);
+                };
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home", new { errmsg = "No-UKPRN" });
+            }
+
+            foreach (DeliveryMode eVal in DeliveryMode.GetValues(typeof(DeliveryMode)))
+            {
+                if (eVal.ToString().ToUpper() != "UNDEFINED")
+                {
+                    var item = new SelectListItem
+                    { Text = System.Enum.GetName(typeof(DeliveryMode), eVal), Value = eVal.ToString() };
+
+                    deliveryModes.Add(item);
+                }
+            };
+
+            foreach (DurationUnit eVal in DurationUnit.GetValues(typeof(DurationUnit)))
+            {
+                if (eVal.ToString().ToUpper() != "UNDEFINED")
+                {
+                    var item = new SelectListItem
+                    { Text = System.Enum.GetName(typeof(DurationUnit), eVal), Value = eVal.ToString() };
+
+                    durationUnits.Add(item);
+                }
+            };
+
+            foreach (AttendancePattern eVal in AttendancePattern.GetValues(typeof(AttendancePattern)))
+            {
+                if (eVal.ToString().ToUpper() != "UNDEFINED")
+                {
+                    var item = new SelectListItem
+                    { Text = System.Enum.GetName(typeof(AttendancePattern), eVal), Value = eVal.ToString() };
+
+                    attendances.Add(item);
+                }
+            };
+
+            foreach (Dfc.CourseDirectory.Models.Models.Courses.StudyMode eVal in Enum.GetValues(typeof(Dfc.CourseDirectory.Models.Models.Courses.StudyMode)))
+            {
+                if (eVal.ToString().ToUpper() != "UNDEFINED")
+                {
+                    var item = new SelectListItem
+                    { Text = System.Enum.GetName(typeof(Dfc.CourseDirectory.Models.Models.Courses.StudyMode), eVal), Value = eVal.ToString() };
+
+                    modes.Add(item);
+                }
+            };
+
+            // Get courses (and runs) for PRN, grouped by qualification type, then within that by LARS ref
+            int? ukprn = _session.GetInt32("UKPRN");
+            if (ukprn.HasValue)
+            {
+                ICourseSearchResult result = (!ukprn.HasValue ? null :
+                                              _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(ukprn))
+                                                            .Result.Value);
+
+                YourCoursesViewModel vm = new YourCoursesViewModel
+                {
+                    UKPRN = ukprn,
+                    Courses = result,
+                    deliveryModes = deliveryModes,
+                    durationUnits = durationUnits,
+                    attendances = attendances,
+                    modes = modes,
+                    Venues = courseRunVenues
+                };
+
+                return View(vm);
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home", new { errmsg = "No-UKPRN" });
+            }
+        }
+
 
         public IActionResult AddCourseSection1(string learnAimRef, string notionalNVQLevelv2, string awardOrgCode, string learnAimRefTitle, string learnAimRefTypeDesc)
         {
@@ -295,7 +311,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
             else
             {
-                return RedirectToAction("Index", "Venues", new { errmsg = "No-UKPRN" });
+                return RedirectToAction("Index", "Home", new { errmsg = "No-UKPRN" });
             }
 
             var viewModel = new AddCourseDetailsViewModel()
@@ -390,7 +406,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     DeliveryMode = model.DeliveryMode,
                     FlexibleStartDate = flexibleStartDate,
                     StartDate = specifiedStartDate,
-                    CourseURL = model.Url,
+                    CourseURL = model.Url.ToLower(),
                     Cost = model.Cost,
                     CostDescription = model.CostDescription,
                     DurationUnit = model.Id,
@@ -407,13 +423,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             // TODO: To be modified once we implement user management (Assign ProviderUKPRN to user)
             int UKPRN = 0;
-            if (_session.GetInt32("UKPRN") != null)
+            if (_session.GetInt32("UKPRN").HasValue)
             {
                 UKPRN = _session.GetInt32("UKPRN").Value;
             }
             else
             {
-                return RedirectToAction("Index", "Venues", new { errmsg = "No-UKPRN" });
+                return RedirectToAction("Index", "Home", new { errmsg = "No-UKPRN" });
             }
 
             var course = new Course
@@ -424,7 +440,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 LearnAimRef = learnAimRef,
                 NotionalNVQLevelv2 = notionalNVQLevelv2,
                 AwardOrgCode = awardOrgCode,
-                QualificationType = learnAimRefTypeDesc, 
+                QualificationType = learnAimRefTypeDesc,
                 ProviderUKPRN = UKPRN, // TODO: ToBeChanged
                 CourseDescription = courseFor,
                 EntryRequirments = entryRequirements,
@@ -435,7 +451,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 WhereNext = whereNext,
                 AdvancedLearnerLoan = model.AdvancedLearnerLoan,
 
-                CourseRuns = courseRuns
+                CourseRuns = courseRuns,
+
+                CreatedDate = DateTime.Now,
+                CreatedBy = "ProviderPortal-AddCourse" // TODO - Change to the name of the logged person
             };
 
             var result = await _courseService.AddCourseAsync(course);
@@ -485,7 +504,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 var items = _venueSearchHelper.GetVenueSearchResultItemModels(result.Value.Value);
                 var venueItems = new List<VenueItemModel>();
-                
+
                 foreach (var venueSearchResultItemModel in items)
                 {
                     venueItems.Add(new VenueItemModel

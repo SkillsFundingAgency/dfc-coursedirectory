@@ -1,4 +1,6 @@
-﻿@model Dfc.CourseDirectory.Web.ViewComponents.ModalPopup.ModalPopupModel
+﻿
+@model Dfc.CourseDirectory.Web.ViewComponents.ModalPopup.ModalPopupModel
+
 
 <div id="@Model.ID">
     <div class="popup_align">
@@ -23,9 +25,9 @@
                                 Who is the course for?
                                 <span id="more-detail-hint" class="govuk-hint">who will attend this course  </span>
                             </label>
-                            <textarea class="govuk-textarea descript" id="descript" name="descript" rows="6" readonly="">@Model.CourseDescription</textarea>
+                            <textarea class="govuk-textarea descript" id="popup-descript-@{@Model.ID}" name="popup-descript-@{@Model.ID}" rows="5" readonly="">@Model.CourseDescription</textarea>
                             <span id="with-hint-info" class="govuk-hint govuk-character-count__message" aria-live="polite">
-                                You can enter up to 200 characters
+                                You can enter up to 500 characters
                             </span>
                         </div>
 
@@ -34,9 +36,9 @@
                                 Entry requirements
                                 <span id="more-detail-hint" class="govuk-hint">List entry requirements</span>
                             </label>
-                            <textarea class="govuk-textarea descript" id="next" name="next" rows="6" readonly="">@Model.EntryRequirements</textarea>
+                            <textarea class="govuk-textarea descript" id="popup-entry-reqs-@{@Model.ID}" name="popup-entry-reqs-@{@Model.ID}" rows="5" readonly="">@Model.EntryRequirements</textarea>
                             <span id="with-hint-info" class="govuk-hint govuk-character-count__message" aria-live="polite">
-                                You can enter up to 200 characters
+                                You can enter up to 500 characters
                             </span>
                         </div>
 
@@ -45,9 +47,9 @@
                                 What you’ll learn
                                 <span id="more-detail-hint" class="govuk-hint">Details of topics covered on the course</span>
                             </label>
-                            <textarea class="govuk-textarea descript" id="learn" name="learn" rows="7" readonly="">@Model.WhatYoullLearn</textarea>
+                            <textarea class="govuk-textarea descript" id="popup-what-learn-@{@Model.ID}" name="popup-what-learn-@{@Model.ID}" rows="5" readonly="">@Model.WhatYoullLearn</textarea>
                             <span id="with-hint-info" class="govuk-hint govuk-character-count__message" aria-live="polite">
-                                You can enter up to 200 characters
+                                You can enter up to 500 characters
                             </span>
                         </div>
 
@@ -56,9 +58,9 @@
                                 How you’ll learn
                                 <span id="more-detail-hint" class="govuk-hint">Describe the delivery of the course</span>
                             </label>
-                            <textarea class="govuk-textarea descript" id="how" name="how" rows="6" readonly="">@Model.HowYoullLearn</textarea>
+                            <textarea class="govuk-textarea descript" id="popup-how-learn-@{@Model.ID}" name="popup-how-learn-@{@Model.ID}" rows="5" readonly="">@Model.HowYoullLearn</textarea>
                             <span id="with-hint-info" class="govuk-hint govuk-character-count__message" aria-live="polite">
-                                You can enter up to 200 characters
+                                You can enter up to 500 characters
                             </span>
                         </div>
 
@@ -67,9 +69,9 @@
                                 What you'll need to bring
                                 <span id="more-detail-hint" class="govuk-hint">List any tools or apparatus Learners will need to bring</span>
                             </label>
-                            <textarea class="govuk-textarea descript" id="how" name="how" rows="6" readonly="">@Model.WhatYoullNeed</textarea>
+                            <textarea class="govuk-textarea descript" id="popup-what-bring-@{@Model.ID}" name="popup-what-bring-@{@Model.ID}" rows="5" readonly="">@Model.WhatYoullNeed</textarea>
                             <span id="with-hint-info" class="govuk-hint govuk-character-count__message" aria-live="polite">
-                                You can enter up to 200 characters
+                                You can enter up to 500 characters
                             </span>
                         </div>
                         <div class="govuk-form-group">
@@ -79,9 +81,9 @@
                                     Describe the assesment methods used to assess this course
                                 </span>
                             </label>
-                            <textarea class="govuk-textarea descript" id="how" name="how" rows="6" readonly="">@Model.HowYoullBeAssessed</textarea>
+                            <textarea class="govuk-textarea descript" id="popup-how-assessed-@{@Model.ID}" name="popup-how-assessed-@{@Model.ID}" rows="5" readonly="">@Model.HowYoullBeAssessed</textarea>
                             <span id="with-hint-info" class="govuk-hint govuk-character-count__message" aria-live="polite">
-                                You can enter up to 200 characters
+                                You can enter up to 500 characters
                             </span>
                         </div>
                         <div class="govuk-form-group">
@@ -89,9 +91,9 @@
                                 Where next?
                                 <span id="more-detail-hint" class="govuk-hint">What are the next destinations for learners</span>
                             </label>
-                            <textarea class="govuk-textarea descript" id="next" name="next" rows="6" readonly="">@Model.WhereNext</textarea>
+                            <textarea class="govuk-textarea descript" id="popup-next-@{@Model.ID}" name="popup-next-@{@Model.ID}" rows="5" readonly="">@Model.WhereNext</textarea>
                             <span id="with-hint-info" class="govuk-hint govuk-character-count__message" aria-live="polite">
-                                You can enter up to 200 characters
+                                You can enter up to 500 characters
                             </span>
                         </div>
                     </div>
