@@ -22,6 +22,7 @@
 <p style="padding: 15px 20px; border: 3px solid #009900;background-color:#fff;" id="qual--">Qualification added:<br> @Model.LearnAimRefTitle<br> Level: @Model.NotionalNVQLevelv2<br> Awarding organisation: @Model.AwardOrgCode<br> LARS/QAN: @Model.LearnAimRef</p>
 
 <form asp-controller="Courses" asp-action="AddCourse" id="addCourseSection2">
+    
 
     @await Component.InvokeAsync(nameof(CourseName), new CourseNameModel
     {
@@ -103,7 +104,7 @@
     @await Component.InvokeAsync(nameof(UrlInput), new UrlInputModel
     {
         LabelText = "URL",
-        HintText = "Enter the URL for this course",
+        HintText = "Enter the URL for this course e.g. http://www.google.com",
         AriaDescribedBy = "Enter the URL for this course"
     })
 
