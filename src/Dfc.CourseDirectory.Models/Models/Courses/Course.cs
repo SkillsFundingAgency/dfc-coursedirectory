@@ -1,40 +1,36 @@
-﻿using Dfc.CourseDirectory.Common;
-using Dfc.CourseDirectory.Models.Interfaces.Courses;
-using Dfc.CourseDirectory.Models.Models.Providers;
-using Dfc.CourseDirectory.Models.Models.Qualifications;
+﻿using Dfc.CourseDirectory.Models.Interfaces.Courses;
 using System;
 using System.Collections.Generic;
 
 namespace Dfc.CourseDirectory.Models.Models.Courses
 {
-    public class Course : ValueObject<Course>, ICourse
+    public class Course : ICourse 
     {
-        public Guid ID { get; }
-        public QuAP QuAP { get; }
-        public CourseData CourseData { get; }
-        public IEnumerable<CourseRun> CourseRun { get; }
+        public Guid id { get; set; }
+        public int? CourseId { get; set; }
+        public string QualificationCourseTitle { get; set; } 
+        public string LearnAimRef { get; set; } 
+        public string NotionalNVQLevelv2 { get; set; } 
+        public string AwardOrgCode { get; set; } 
+        public string QualificationType { get; set; } 
 
-        public Course(
-            Guid id,
-            QuAP quAP,
-            CourseData data,
-            IEnumerable<CourseRun> run)
-        {
-            Throw.IfNull(id, nameof(id));
-            Throw.IfNull(quAP, nameof(quAP));
-            Throw.IfNull(data, nameof(data));
-            Throw.IfNull(data, nameof(run));
+        public int ProviderUKPRN { get; set; } 
 
-            ID = id;
-            QuAP = quAP;
-            CourseData = data;
-        }
+        public string CourseDescription { get; set; }
+        public string EntryRequirments { get; set; }
+        public string WhatYoullLearn { get; set; }
+        public string HowYoullLearn { get; set; }
+        public string WhatYoullNeed { get; set; }
+        public string HowYoullBeAssessed { get; set; }
+        public string WhereNext { get; set; }
 
-        protected override IEnumerable<object> GetEqualityComponents()
-        {
-            yield return ID;
-            yield return QuAP;
-            yield return CourseData;
-        }
+        public bool AdvancedLearnerLoan { get; set; }
+      
+        public IEnumerable<CourseRun> CourseRuns { get; set; }
+
+        public DateTime CreatedDate { get; set; }
+        public string CreatedBy { get; set; }
+        public DateTime? UpdatedDate { get; set; }
+        public string UpdatedBy { get; set; }
     }
 }

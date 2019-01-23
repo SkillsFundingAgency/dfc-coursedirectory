@@ -5455,18 +5455,6 @@ p {
   padding: 0.5rem 0 2rem 0;
 }
 
-.cd-hero-green .govuk-breadcrumbs, .cd-hero-green .govuk-breadcrumbs__link, .cd-hero-green .govuk-breadcrumbs__list-item {
-  color: white;
-}
-
-.cd-hero-green .govuk-breadcrumbs__list-item:before {
-  border-color: white;
-}
-
-.cd-hero-green .search-input {
-  border-color: transparent;
-}
-
 .cd-hero-search__label {
   color: white;
 }
@@ -5504,18 +5492,6 @@ p {
   position: relative;
 }
 
-.cd-hero-green {
-  background-color: #28a197;
-}
-
-.cd-hero-green h1, .cd-hero-green p {
-  color: white;
-}
-
-.cd-hero-grey {
-  background-color: #dee0e2;
-}
-
 .cd-search__submit-wrapper {
   background-color: black;
 }
@@ -5533,7 +5509,8 @@ p {
 }
 
 .success-container {
-  border: 2px solid #28a197;
+  border: 5px solid #006435;
+  position: relative;
   position: relative;
   padding: 1rem;
   margin-bottom: 1rem;
@@ -5685,15 +5662,25 @@ ul.sort-list {
 }
 
 .accordion:after {
-  content: "\2212";
+  content: "\2039";
   color: #777;
   font-weight: bold;
   float: right;
   background-color: white;
+  -webkit-transform: rotate(-270deg);
+  -moz-transform: rotate(-270deg);
+  -ms-transform: rotate(-270deg);
+  -o-transform: rotate(-270deg);
+  transform: rotate(-270deg);
 }
 
 .active:after {
-  content: '\002B';
+  content: '\203A';
+  /*-webkit-transform: rotate(90deg);
+    -moz-transform: rotate(90deg);
+    -ms-transform: rotate(90deg);
+    -o-transform: rotate(90deg);
+    transform: rotate(90deg);*/
 }
 
 .panel {
@@ -5709,4 +5696,111 @@ ul.sort-list {
   font-size: 1.1875rem;
   text-decoration: underline;
   background-color: transparent;
+}
+
+#cd-add-qual-button {
+  float: right;
+}
+
+#cd-your-courses-heading {
+  display: inline-block;
+}
+
+.govuk-form-group ul {
+  list-style-type: none;
+  margin-left: -36px;
+}
+
+.cd-course-text {
+  display: inline-block;
+  Margin-bottom: -10px;
+}
+
+.cd-course-checkbox {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.cd-advanced-text {
+  padding: 0 10px 0 20px;
+}
+
+li h3.govuk-heading-m {
+  padding-top: 10px;
+  display: inline-block;
+}
+
+li span.govuk-body {
+  padding-left: 5px;
+}
+
+.course-run-container {
+  margin-top: 0px;
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.course-run-container > * {
+  margin-left: 10px;
+}
+
+.large {
+  width: 200px;
+}
+
+.medium {
+  width: 140px;
+}
+
+.small {
+  width: 95px;
+}
+
+.popUpContainer {
+  display: inline-block;
+  padding-right: 10px;
+  width: 80px;
+  text-align: center;
+}
+
+.popUpSection {
+  position: absolute;
+  width: 300px;
+  height: auto;
+  background-color: #fff;
+  margin-top: 15px;
+  margin-left: 20px;
+}
+
+.close {
+  margin-top: 10px;
+  float: left;
+}
+
+.closeCostDesc {
+  margin-top: 10px;
+  float: left;
+}
+
+.popUpSectionHeight {
+  min-height: 160px;
+}
+
+.unselected-courses {
+  opacity: 0.5;
+  background-color: lightgrey;
+}
+
+select:disabled {
+  background-color: #ebebe4;
+}
+
+.duration-container {
+  display: flex;
+}
+
+.duration-container select {
+  margin-left: 10px;
 }

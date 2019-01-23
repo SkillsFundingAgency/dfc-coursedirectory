@@ -10,6 +10,9 @@ namespace Dfc.CourseDirectory.Services.Interfaces.CourseService
 {
     public interface ICourseService
     {
-        Task<IResult<ICourse>> AddAsync(ICourse course);
+        Task<IResult<ICourse>> AddCourseAsync(ICourse course);
+        Task<IResult<ICourseSearchResult>> GetYourCoursesByUKPRNAsync(ICourseSearchCriteria criteria);
+
+        Task<IResult<ICourse>> UpdateCourseAsync(ICourse course);
     }
 }

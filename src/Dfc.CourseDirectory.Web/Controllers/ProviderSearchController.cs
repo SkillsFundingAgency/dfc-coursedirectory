@@ -11,6 +11,7 @@ using Dfc.CourseDirectory.Web.ViewComponents.ProviderSearchResult;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Http;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -20,12 +21,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly IProviderServiceSettings _providerServiceSettings;
         private readonly IProviderService _providerService;
         private readonly IProviderSearchHelper _providerSearchHelper;
+        private readonly IHttpContextAccessor _contextAccessor;
+        private ISession _session => _contextAccessor.HttpContext.Session;
 
         public ProviderSearchController(
             ILogger<ProviderSearchController> logger,
             IOptions<ProviderServiceSettings> providerServiceSettings,
             IProviderService providerService,
-            IProviderSearchHelper providerSearchHelper
+            IProviderSearchHelper providerSearchHelper,
+            IHttpContextAccessor contextAccessor
             )
         {
             Throw.IfNull(logger, nameof(logger));
@@ -37,11 +41,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _providerServiceSettings = providerServiceSettings.Value;
             _providerService = providerService;
             _providerSearchHelper = providerSearchHelper;
+            _contextAccessor = contextAccessor;
         }
         public async Task<IActionResult> Index([FromQuery] ProviderSearchRequestModel requestModel)
         {
             _logger.LogMethodEnter();
             _logger.LogInformationObject("RequestModel", requestModel);
+            //Set the UKPRN here in session
+            _session.SetInt32("UKPRN", Convert.ToInt32(requestModel.SearchTerm));
 
             ProviderSearchResultModel model;
 
@@ -102,6 +109,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         model.TelephoneTypeL = providerContactTypeL.FirstOrDefault()?.ContactTelephone1;
                         model.WebTypeL = providerContactTypeL.FirstOrDefault()?.ContactWebsiteAddress;
                         model.EmailTypeL = providerContactTypeL.FirstOrDefault()?.ContactEmail;
+
                     }
                 }
             }

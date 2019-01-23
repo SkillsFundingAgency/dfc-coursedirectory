@@ -42,6 +42,10 @@ namespace Dfc.CourseDirectory.Models.Models.Venues
         public string County { get; }
         [JsonProperty("POSTCODE")]
         public string PostCode { get; }
+        [JsonProperty("LATITUDE")]
+        public decimal Latitude { get; set; }
+        [JsonProperty("LONGITUDE")]
+        public decimal Longitude { get; set; }
         public VenueStatus Status { get; }
         public DateTime DateAdded { get; }
         public DateTime DateUpdated { get; }
@@ -57,6 +61,8 @@ namespace Dfc.CourseDirectory.Models.Models.Venues
             string town,
             string county,
             string postcode,
+            decimal latitude,
+            decimal longitude,
             VenueStatus status,
             string updatedBy,
             DateTime dateAdded,
@@ -78,6 +84,8 @@ namespace Dfc.CourseDirectory.Models.Models.Venues
             Town = town;
             County = county;
             PostCode = postcode;
+            Latitude = latitude;
+            Longitude = longitude;
             Status = status;
             UpdatedBy = updatedBy;
             DateAdded = dateAdded;
@@ -100,6 +108,8 @@ namespace Dfc.CourseDirectory.Models.Models.Venues
             string town,
             string county,
             string postcode,
+            decimal latitude,
+            decimal longitude,
             VenueStatus status,
             string updatedBy,
             DateTime dateAdded,
@@ -128,6 +138,8 @@ namespace Dfc.CourseDirectory.Models.Models.Venues
             Town = town;
             County = county;
             PostCode = postcode;
+            Latitude = latitude;
+            Longitude = longitude;
             Status = status;
             UpdatedBy = updatedBy;
             DateAdded = dateAdded;
@@ -146,6 +158,8 @@ namespace Dfc.CourseDirectory.Models.Models.Venues
             string town,
             string county,
             string postcode,
+            decimal latitude,
+            decimal longitude,
             VenueStatus status,
             string updatedBy,
             DateTime dateUpdated)
@@ -173,6 +187,8 @@ namespace Dfc.CourseDirectory.Models.Models.Venues
             Town = town;
             County = county;
             PostCode = postcode;
+            Latitude = latitude;
+            Longitude = longitude;
             Status = status;
             UpdatedBy = updatedBy;
             DateUpdated = dateUpdated;
@@ -194,6 +210,8 @@ namespace Dfc.CourseDirectory.Models.Models.Venues
             yield return Town;
             yield return County;
             yield return PostCode;
+            yield return Latitude;
+            yield return Longitude;
             yield return Status;
             yield return UpdatedBy;
             yield return DateAdded;

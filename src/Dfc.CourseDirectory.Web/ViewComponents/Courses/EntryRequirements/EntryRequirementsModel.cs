@@ -9,7 +9,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Courses.EntryRequirements
     public class EntryRequirementsModel
     {
         [MaxLength(500, ErrorMessage = "Entry requirements must be 500 characters or less")]
-        [RegularExpression(@"[a-zA-Z0-9 \¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\" + "\"" + @"\\]+", ErrorMessage = "Invalid characters")]
+        [RegularExpression(@"[a-zA-Z0-9 /\r\n?|\n\¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\" + "\"" + @"\\]+", ErrorMessage = "Entry requirements contains invalid characters")]
 
         public string EntryRequirements { get; set; }
         public string LabelText { get; set; }

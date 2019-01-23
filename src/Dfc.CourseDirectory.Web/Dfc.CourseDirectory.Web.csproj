@@ -27,6 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="FontAwesome" Version="4.7.0" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.5.1" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.1.1" PrivateAssets="All" />
@@ -37,7 +38,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ViewComponents\Courses\CourseDeliveryType\" />
     <Folder Include="wwwroot\css\" />
     <Folder Include="wwwroot\vendor\" />
   </ItemGroup>
@@ -55,7 +55,16 @@
     <Content Update="ViewComponents\CourseProviderReference\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="ViewComponents\Courses\DeliveryType\Default.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="ViewComponents\Courses\CourseRun\Default.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="ViewComponents\Courses\Duration\Default.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="ViewComponents\Courses\Cost\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="ViewComponents\Courses\StudyMode\Default.cshtml">
@@ -74,6 +83,9 @@
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="ViewComponents\Courses\HowYouWillLearn\Default.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+	 <Content Update="ViewComponents\Courses\SelectVenue\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="ViewComponents\Courses\WhatWillLearn\Default.cshtml">

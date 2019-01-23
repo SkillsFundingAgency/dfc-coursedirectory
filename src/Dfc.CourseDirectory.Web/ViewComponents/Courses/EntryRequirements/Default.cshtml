@@ -36,6 +36,26 @@
                 var trimmed = $elementUrl.val().trim();
                 $elementUrl.val(trimmed);
 
+                var $characterCountValue = $elementUrl.data("val-maxlength-max");
+                var $countMessage = $("#EntryRequirements-info");
+
+                var $actualCharacterCount = $characterCountValue - $elementUrl.val().length;
+
+                if ($actualCharacterCount <= 0) {
+
+                } else {
+
+                    if ($actualCharacterCount === 1) {
+                        $countMessage.text("You have " +
+                            $actualCharacterCount +
+                            " character remaining");
+                    } else {
+                        $countMessage.text("You have " +
+                            $actualCharacterCount +
+                            " characters remaining");
+                    }
+                }
+
                 var result = validator.element($elementUrl);
 
                 if (result) {
@@ -49,6 +69,8 @@
                     $validationMessageUrl.show();
                     $validationMessageUrl.css("margin-bottom", "15px");
                 }
+
+
             });
 
             $elementUrl.elementValidation(function (element, result) {

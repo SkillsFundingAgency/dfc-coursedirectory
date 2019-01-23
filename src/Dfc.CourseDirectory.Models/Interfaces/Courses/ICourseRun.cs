@@ -10,35 +10,26 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Courses
 {
     public interface ICourseRun
     {
-        //Guid id { get; }
-        string CourseDescription { get; }
-        string EntryRequirments { get; } //Requirements { get; }
-        string WhatYoullLearn { get; }
-        string HowYoullLearn { get; }
-        string WhatYoullNeed { get; }
-        string WhatYoullNeedToBring { get; }
-        string HowYoullBeAssessed { get; }
-        string WhereNext { get; }
-        string CourseName { get; }
-        string ProviderCourseID { get; } //string CourseID { get; }
-        string DeliveryMode { get; }
-        bool FlexibleStartDate { get; }
-        DateTime StartDate { get; }
-        string CourseURL { get; }
-        decimal Cost { get; } //string Price { get; }
-        string CostDescription { get; }
-        bool AdvancedLearnerLoan { get; }
-        DurationUnit DurationUnit { get; }
-        int DurationValue { get; }
-        StudyMode StudyMode { get; } //string StudyMode { get; }
-        AttendancePattern AttendancePattern { get; } ////string Attendance { get; }
-        //string Pattern { get; }
-        IVenue Venue { get; }
-        IProvider Provider { get; }
-        IQualification Qualification { get; }
-        DateTime CreatedDate { get; }
-        string CreatedBy { get; }
-        DateTime UpdatedDate { get; }
-        string UpdatedBy { get; }
+        Guid id { get; set; }
+        int? CourseInstanceId { get; set; }
+        Guid? VenueId { get; set; }
+       
+        string CourseName { get; set; }
+        string ProviderCourseID { get; set; }
+        DeliveryMode DeliveryMode { get; set; }
+        bool FlexibleStartDate { get; set; }
+        DateTime? StartDate { get; set; }
+        string CourseURL { get; set; }
+        decimal? Cost { get; set; } 
+        string CostDescription { get; set; }
+        DurationUnit DurationUnit { get; set; }
+        int? DurationValue { get; set; }
+        StudyMode StudyMode { get; set; } 
+        AttendancePattern AttendancePattern { get; set; } 
+
+        DateTime CreatedDate { get; set; }
+        string CreatedBy { get; set; }
+        DateTime? UpdatedDate { get; set; }
+        string UpdatedBy { get; set; }
     }
 }
