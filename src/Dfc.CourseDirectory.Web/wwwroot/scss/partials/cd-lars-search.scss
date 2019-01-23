@@ -1,8 +1,8 @@
-﻿.cd-lars-search-result__container {
-    border:1px solid #ececec;
-    margin-bottom:1rem;
+﻿$govuk-border-colour: #bfc1c3;
+.cd-lars-search-result__container {
+    border: 1px solid $govuk-border-colour;
+    margin-bottom: 1rem;
     padding: 1rem;
-
 }
 .lars-search-results {
     margin-top:1rem;
