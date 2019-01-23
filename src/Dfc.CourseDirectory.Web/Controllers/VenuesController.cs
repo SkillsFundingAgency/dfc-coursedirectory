@@ -34,7 +34,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly IVenueSearchHelper _venueSearchHelper;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IVenueService _venueService;
-        private readonly IOnspdService _onspdService;
+        private readonly IOnspdSearchHelper _onspdSearchHelper;
         private ISession _session => _contextAccessor.HttpContext.Session;
 
         public VenuesController(
@@ -44,14 +44,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
             IVenueSearchHelper venueSearchHelper,
             IHttpContextAccessor contextAccessor,
             IVenueService venueService,
-            IOnspdService onspdService)
+            IOnspdSearchHelper onspdSearchHelper)
         {
             Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(postCodeSearchService, nameof(postCodeSearchService));
             Throw.IfNull(venueSearchSettings, nameof(venueSearchSettings));
             Throw.IfNull(contextAccessor, nameof(contextAccessor));
             Throw.IfNull(venueService, nameof(venueService));
-            Throw.IfNull(onspdService, nameof(onspdService));
 
             _logger = logger;
             _postCodeSearchService = postCodeSearchService;
@@ -59,7 +58,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _venueSearchHelper = venueSearchHelper;
             _contextAccessor = contextAccessor;
             _venueService = venueService;
-            _onspdService = onspdService;
+            _onspdSearchHelper = onspdSearchHelper;
         }
         /// <summary>
         /// Need to return a VenueSearchResultModel within the VenueSearchResultModel
@@ -256,20 +255,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 SearchTerm = UKPRN.Value.ToString()
             };
 
-            decimal latitude = 0;
-            decimal longitude = 0;
-            
-            if (!string.IsNullOrWhiteSpace(requestModel.Postcode))
-            {
-                var onspdSearchCriteria = new OnspdSearchCriteria(requestModel.Postcode);
-                var onspdResult = _onspdService.GetOnspdData(onspdSearchCriteria);
-                if (onspdResult.IsSuccess && onspdResult.HasValue)
-                {
-                    var onspd = onspdResult.Value.Value;
-                    latitude = onspd.lat;
-                    longitude = onspd.@long;
-                }
-            }
+            var onspd = _onspdSearchHelper.GetOnsPostcodeData(requestModel.Postcode);
+            var latitude = onspd.lat;
+            var longitude = onspd.@long;
 
             if (requestModel.Id != null)
             {
