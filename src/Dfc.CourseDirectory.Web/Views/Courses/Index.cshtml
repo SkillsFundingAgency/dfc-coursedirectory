@@ -1,81 +1,13 @@
-﻿
-@using Dfc.CourseDirectory.Web.ViewComponents.YourCourses.Course
-@model Dfc.CourseDirectory.Web.ViewModels.YourCoursesViewModel
+﻿<h1 class="govuk-heading-xl">
+    Courses Index (YAGNI???)
+</h1>
 
-
-@{
-    Layout = "/Views/Shared/_Layout_YourCourses.cshtml";
-}
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-full">
-        @*@if (ViewBag.Status != null && ViewBag.StatusMessage != null)
-        {
-            switch (ViewBag.Status.ToUpper())
-            {
-                case "GOOD":
-                case "UPDATE":
-                    <div class="success-container">
-                        <h1 class="govuk-heading-m">@ViewBag.StatusMessage</h1>
-                    </div>
-                    break;
-                case "BAD":
-                    <div class="failure-container">
-                        <h1 class="govuk-heading-m">@ViewBag.StatusMessage</h1>
-                    </div>
-                    break;
-            }
-        }*@
-
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-full">
-                <div class="govuk-form-group">
-                    <form asp-action="Index" asp-controller="Qualifications" method="post">
-                        <h1 id="cd-your-courses-heading" class="govuk-heading-l">Your courses&nbsp;</h1>
-                        <span class="govuk-body">
-                            (
-                            @{
-                                var outers = Model.Courses.Value;
-                                var inners = outers.SelectMany(o => o.Value);
-                                var courses = inners.SelectMany(i => i.Value);
-                                var courseruns = courses.SelectMany(c => c.CourseRuns);
-                                @courseruns.Count()
-                            }
-                            )
-                        </span>
-                        
-                        @if (ViewBag.Status != null && ViewBag.StatusMessage != null)
-                        {
-                            switch (ViewBag.Status.ToUpper())
-                            {
-                                case "GOOD":
-                                case "UPDATE":
-                                    <div class="success-container">
-                                        <h1 class="govuk-heading-m" style="font-size: 24px; font-weight: 700">@ViewBag.StatusMessage</h1>
-                                    </div>
-                                    break;
-                                case "BAD":
-                                    <div class="failure-container">
-                                        <h1 class="govuk-heading-m">@ViewBag.StatusMessage</h1>
-                                    </div>
-                                    break;
-                            }
-                        }
-
-                        <button id="cd-add-qual-button" type="submit" class="govuk-button">
-                            Add a Qualification
-                        </button>
-
-                    </form>
-                </div>
-            </div>
-        </div>
-
-
-        @await Component.InvokeAsync(nameof(Course), Model)
-
-
-
-    </div>
-</div>
-
+<ul>
+    <li>
+        <a class="govuk-link" asp-controller="Courses" asp-action="AddCourseSection1">Add course section 1</a>
+    </li>
+    <li>
+        <a class="govuk-link" asp-controller="Courses" asp-action="AddCourseSection2">Add course section 2</a>
+    </li>
+</ul>
 

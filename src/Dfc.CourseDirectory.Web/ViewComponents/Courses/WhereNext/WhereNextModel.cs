@@ -9,7 +9,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Courses.WhereNext
     public class WhereNextModel
     {
         [MaxLength(500, ErrorMessage = "'Where next' must be 500 characters or less")]
-        [RegularExpression(@"[a-zA-Z0-9 /\r\n?|\n\¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\" + "\"" + @"\\]+", ErrorMessage = "Where next contains invalid characters")]
+        [RegularExpression(@"[a-zA-Z0-9 \¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\" + "\"" + @"\\]+", ErrorMessage = "Invalid characters")]
         public string WhereNext { get; set; }
         public string LabelText { get; set; }
         public string HintText { get; set; }

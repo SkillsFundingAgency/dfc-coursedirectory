@@ -1,18 +1,5 @@
 ﻿@using Dfc.CourseDirectory.Common.Settings
-@using Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult
-@model Dfc.CourseDirectory.Web.ViewModels.VenueSearchResultsViewModel
-                                          
+@using Dfc.CourseDirectory.Web.ViewComponents.VenueSearch
 @using Microsoft.Extensions.Options
 
-<div>
-    <div class="govuk-breadcrumbs">
-        <ol class="govuk-breadcrumbs__list">
-            <li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="">Home</a></li>
-            <li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="Venues">Venues</a></li>
-        </ol>
-    </div>
-
-    <h1 class="govuk-heading-xl">Your Venues</h1>
-
-    @await Component.InvokeAsync(nameof(VenueSearchResult), Model.Result)
-</div>
+@await Component.InvokeAsync(nameof(VenueSearch))

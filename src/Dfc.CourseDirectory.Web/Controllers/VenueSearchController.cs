@@ -41,22 +41,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _venueSearchHelper = venueSearchHelper;
             _contextAccessor = contextAccessor;
         }
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index([FromQuery] VenueSearchRequestModel requestModel)
         {
-            int UKPRN = 0;
-            if (_session.GetInt32("UKPRN").HasValue)
-            {
-                UKPRN = _session.GetInt32("UKPRN").Value;
-            }
-            else
-            {
-                return RedirectToAction("Index", "Home", new { errmsg = "No-UKPRN" });
-            }
+            _session.SetInt32("UKPRN", Convert.ToInt32(requestModel.SearchTerm));
+           
 
-            VenueSearchRequestModel requestModel = new VenueSearchRequestModel
-            {
-                SearchTerm = UKPRN.ToString()
-            };
             VenueSearchResultModel model;
 
             _logger.LogMethodEnter();
@@ -68,7 +57,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
             else
             {
-                var criteria = _venueSearchHelper.GetVenueSearchCriteria(requestModel);
+                var criteria = _venueSearchHelper.GetVenueSearchCriteria(
+                    requestModel);
 
                 var result = await _venueService.SearchAsync(criteria);
 

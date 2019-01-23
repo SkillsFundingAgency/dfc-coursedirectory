@@ -16,7 +16,6 @@ namespace Dfc.CourseDirectory.Services.VenueService
             IEnumerable<Venue> value)
         {
             Throw.IfNull(value, nameof(value));
-            Value = value;
         }
 
         protected override IEnumerable<object> GetEqualityComponents()

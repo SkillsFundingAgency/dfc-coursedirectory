@@ -9,7 +9,6 @@ using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseFor;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.EntryRequirements;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.HowAssessed;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.HowYouWillLearn;
-using Dfc.CourseDirectory.Web.ViewComponents.Courses.SelectVenue;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatWillLearn;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatYouNeed;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhereNext;
@@ -22,8 +21,6 @@ namespace Dfc.CourseDirectory.Web.ViewModels
         public string NotionalNVQLevelv2 { get; set; }
         public string AwardOrgCode { get; set; }
         public string LearnAimRefTitle { get; set; }
-
-        public int ProviderUKPRN { get; set; }
 
         public string CourseFor { get; set; }
 
@@ -47,14 +44,6 @@ namespace Dfc.CourseDirectory.Web.ViewModels
         public int Month { get; set; }
         public int Year { get; set; }
         public string DurationLength { get; set; }
-
-
-        public string Cost { get; set; }
-
-
-        public string CostDescription { get; set; }
-
-        public SelectVenueModel SelectVenue { get; set; }
 
     }
 }

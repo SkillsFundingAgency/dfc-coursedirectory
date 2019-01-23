@@ -17,7 +17,6 @@ namespace Dfc.CourseDirectory.Services
         public string TotalQualificationTime { get; }
         public string UnitType { get; }
         public string AwardOrgName { get; }
-        public string LearnAimRefTypeDesc { get; }
 
         public LarsSearchResultItem(
             decimal searchScore,
@@ -29,8 +28,7 @@ namespace Dfc.CourseDirectory.Services
             string guidedLearningHours,
             string totalQualificationTime,
             string unitType,
-            string awardOrgName,
-            string learnAimRefTypeDesc)
+            string awardOrgName)
         {
             Throw.IfLessThan(0, searchScore, nameof(searchScore));
             Throw.IfNullOrWhiteSpace(learnAimRef, nameof(learnAimRef));
@@ -40,7 +38,6 @@ namespace Dfc.CourseDirectory.Services
             Throw.IfNullOrWhiteSpace(learnDirectClassSystemCode2, nameof(learnDirectClassSystemCode2));
             Throw.IfNullOrWhiteSpace(unitType, nameof(unitType));
             Throw.IfNullOrWhiteSpace(awardOrgName, nameof(awardOrgName));
-            Throw.IfNullOrWhiteSpace(learnAimRefTypeDesc, nameof(learnAimRefTypeDesc));
 
             SearchScore = searchScore;
             LearnAimRef = learnAimRef;
@@ -52,7 +49,6 @@ namespace Dfc.CourseDirectory.Services
             TotalQualificationTime = totalQualificationTime;
             UnitType = unitType;
             AwardOrgName = AwardOrgName;
-            LearnAimRefTypeDesc = learnAimRefTypeDesc;
         }
 
         protected override IEnumerable<object> GetEqualityComponents()
@@ -67,7 +63,6 @@ namespace Dfc.CourseDirectory.Services
             yield return TotalQualificationTime;
             yield return UnitType;
             yield return AwardOrgName;
-            yield return LearnAimRefTypeDesc;
         }
     }
 }

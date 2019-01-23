@@ -1,22 +1,23 @@
-﻿@using Microsoft.AspNetCore.Http
-@using Dfc.CourseDirectory.Web.ViewComponents.ProviderSearch
-@inject IHttpContextAccessor HttpContextAccessor
+﻿@using Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult
+<h1 class="govuk-heading-xl">Provider Search</h1>
 
-@{
-    var provSearch = HttpContextAccessor.HttpContext.Session.GetInt32("ProviderSearch");
-}
-<div>
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <div class="govuk-form-group">
+           
+            <label class="govuk-label" for="name">
+                UK PRN - Holding Page for Provider integration
+            </label>
 
-    <div class="govuk-breadcrumbs">
-        <ol class="govuk-breadcrumbs__list">
-            <li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="your-courses">Home</a></li>
-            <li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="Providers">Providers</li>
-            <li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link">@ViewBag.Title</li>
-        </ol>
+            <input class="govuk-input" id="UKPrn" name="UKPrn" type="text">
+
+            <button type="submit" class="govuk-button" id="search">
+                Search
+            </button>
+        </div>
     </div>
-    <h1 class="govuk-heading-l">Search Provider</h1>
-
+    
     <div id="VenueSearchResultContainer">
-        @await Component.InvokeAsync(nameof(ProviderSearch))
+        @await Component.InvokeAsync(nameof(VenueSearchResult))
     </div>
 </div>

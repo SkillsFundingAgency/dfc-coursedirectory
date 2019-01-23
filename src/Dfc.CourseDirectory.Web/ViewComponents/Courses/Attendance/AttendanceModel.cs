@@ -9,7 +9,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Courses.Attendance
 {
     public class AttendanceModel
     {
-        [Required(ErrorMessage = "Select Attendance Mode")]
+        [Required(ErrorMessage = "Enter Attendance Mode")]
         public AttendancePattern AttendanceMode { get; set; }
         public string LabelText { get; set; }
         public string HintText { get; set; }

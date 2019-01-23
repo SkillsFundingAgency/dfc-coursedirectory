@@ -1,33 +1,24 @@
-﻿using System;
+﻿
+using System;
+using System.Collections.Generic;
+using Dfc.CourseDirectory.Common;
+using Dfc.CourseDirectory.Models.Models.Venues;
+using Dfc.CourseDirectory.Models.Models.Providers;
+using Dfc.CourseDirectory.Models.Models.Qualifications;
+using Dfc.CourseDirectory.Models.Interfaces.Venues;
 using Dfc.CourseDirectory.Models.Interfaces.Courses;
+using Dfc.CourseDirectory.Models.Interfaces.Providers;
+using Dfc.CourseDirectory.Models.Interfaces.Qualifications;
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 
 namespace Dfc.CourseDirectory.Models.Models.Courses
 {
-    public enum DeliveryMode
-    {
-        [Description("Undefined")]
-        Undefined = 0,
-        [Description("Classroom based")]
-        ClassroomBased = 1,
-        [Description("Online")]
-        Online = 2,
-        [Description("Work based")]
-        WorkBased = 3
-    }
     public enum DurationUnit
     {
-        [Description("Undefined")]
-        Undefined = 0,
-        [Description("Days")]
-        Days = 1,
-        [Description("Weeks")]
-        Weeks = 2,
-        [Description("Months")]
-        Months = 3,
-        [Description("Years")]
-        Years = 4
+        Day = 0,
+        Week = 1,
+        Month = 2,
+        Year = 3
     }
     public enum StudyMode
     {
@@ -40,7 +31,6 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         [Description("Flexible")]
         Flexible = 3
     }
-
     public enum AttendancePattern
     {
         [Description("Undefined")]
@@ -56,40 +46,186 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
     }
     public enum StartDateType
     {
-        [Description("Defined Start Date")]
+        [Description("Specified")]
         SpecifiedStartDate = 1,
         [Description("Select a flexible start date")]
         FlexibleStartDate = 2,
     }
 
-    public class CourseRun : ICourseRun 
+
+    public enum Duration
     {
-        public Guid id { get; set; }
-        public int? CourseInstanceId { get; set; }
-        public Guid? VenueId { get; set; }
+        [Description("Days")]
+        Days = 0,
+        [Description("Weeks")]
+        Weeks = 1,
+        [Description("Months")]
+        Months = 2,
+        [Description("Years")]
+        Years = 3,
+    }
 
-        [Required(AllowEmptyStrings = false, ErrorMessage = "Enter Course Name")]
-        [MaxLength(255, ErrorMessage = "The maximum length of Course Name is 255 characters")]
-        [RegularExpression(@"[a-zA-Z0-9 \¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\" + "\"" + @"\\]+", ErrorMessage = "Course Name contains invalid characters")]
-        public string CourseName { get; set; }
+    public class CourseRun : ValueObject<CourseRun>, ICourseRun
+    {
+        //public Guid id { get; }
+        public string CourseDescription { get; }
+        public string EntryRequirments { get; }
+        public string WhatYoullLearn { get; }
+        public string HowYoullLearn { get; }
+        public string WhatYoullNeed { get; }
+        public string WhatYoullNeedToBring { get; }
+        public string HowYoullBeAssessed { get; }
+        public string WhereNext { get; }
+        public string CourseName { get; }
+        public string ProviderCourseID { get; }
+        public string DeliveryMode { get; }
+        public bool FlexibleStartDate { get; }
+        public DateTime StartDate { get; }
+        public string CourseURL { get; }
+        public decimal Cost { get; }
+        public string CostDescription { get; }
+        public bool AdvancedLearnerLoan { get; }
+        public DurationUnit DurationUnit { get; }
+        public int DurationValue { get; }
+        public StudyMode StudyMode { get; }
+        public AttendancePattern AttendancePattern { get; }
+        public IVenue Venue { get; }
+        public IProvider Provider { get; }
+        public IQualification Qualification { get; }
 
-        [MaxLength(255, ErrorMessage = "The maximum length of 'ID' is 255 characters")]
-        [RegularExpression(@"[a-zA-Z0-9 \¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\" + "\"" + @"\\]+", ErrorMessage = "ID contains invalid characters")]
-        public string ProviderCourseID { get; set; }
-        public DeliveryMode DeliveryMode { get; set; }
-        public bool FlexibleStartDate { get; set; }
-        public DateTime? StartDate { get; set; }
-        public string CourseURL { get; set; }
-        public decimal? Cost { get; set; }
-        public string CostDescription { get; set; }       
-        public DurationUnit DurationUnit { get; set; }
-        public int? DurationValue { get; set; }
-        public StudyMode StudyMode { get; set; }
-        public AttendancePattern AttendancePattern { get; set; }
+        public DateTime CreatedDate { get; }
+        public string CreatedBy { get; }
+        public DateTime UpdatedDate { get; }
+        public string UpdatedBy { get; }
 
-        public DateTime CreatedDate { get; set; }
-        public string CreatedBy { get; set; }
-        public DateTime? UpdatedDate { get; set; }
-        public string UpdatedBy { get; set; }
+        public CourseRun(
+            //Guid id,
+            string coursedescription,
+            string entryrequirements, //requirements
+            string whatyoulllearn,
+            string howyoulllearn,
+            string whatyoullneed,
+            string whatyoullneedtobring,
+            string howyoullbeassessed,
+            string wherenext,
+            string coursename,
+            string providercourseID, //string courseID
+            string deliverymode,
+            bool flexiblestartdate,
+            DateTime startdate,
+            string courseURL,
+            decimal cost, //string price,
+            string costdescription,
+            bool advancedlearnerloan,
+            DurationUnit durationunit,
+            int durationvalue, //string duration,
+            StudyMode studymode, //string studymode,
+            AttendancePattern attendancepattern, //string attendance,
+            //string pattern,
+            IVenue venue,
+            IProvider provider,
+            IQualification qualification,
+            DateTime createddate,
+            string createdby,
+            DateTime updateddate,
+            string updatedby)
+        {
+            //Throw.IfNullOrWhiteSpace(id, nameof(id));
+            Throw.IfNullOrWhiteSpace(coursedescription, nameof(coursedescription));
+            Throw.IfNullOrWhiteSpace(entryrequirements, nameof(entryrequirements)); 
+            Throw.IfNullOrWhiteSpace(whatyoulllearn, nameof(whatyoulllearn));
+            Throw.IfNullOrWhiteSpace(howyoulllearn, nameof(howyoulllearn));
+            Throw.IfNullOrWhiteSpace(whatyoullneed, nameof(whatyoullneed));
+            Throw.IfNullOrWhiteSpace(whatyoullneedtobring, nameof(whatyoullneedtobring));
+            Throw.IfNullOrWhiteSpace(howyoullbeassessed, nameof(howyoullbeassessed));
+            Throw.IfNullOrWhiteSpace(wherenext, nameof(wherenext));
+            Throw.IfNullOrWhiteSpace(coursename, nameof(coursename));
+            Throw.IfNullOrWhiteSpace(providercourseID, nameof(providercourseID));
+            Throw.IfNullOrWhiteSpace(deliverymode, nameof(deliverymode));
+            Throw.IfNull(flexiblestartdate, nameof(flexiblestartdate));
+            Throw.IfNull(startdate, nameof(startdate));
+            Throw.IfNullOrWhiteSpace(courseURL, nameof(courseURL));
+            Throw.IfNull(cost, nameof(cost));
+            Throw.IfLessThan(0, cost, nameof(cost)); //Throw.IfNullOrWhiteSpace(price, nameof(price));
+            Throw.IfNullOrWhiteSpace(costdescription, nameof(costdescription));
+            Throw.IfNull(advancedlearnerloan, nameof(advancedlearnerloan));
+            Throw.IfNull(durationunit, nameof(durationunit));
+            Throw.IfNull(durationvalue, nameof(durationvalue));
+            Throw.IfLessThan(1, durationvalue, nameof(durationvalue)); 
+            Throw.IfNull(studymode, nameof(studymode)); 
+            Throw.IfNull(attendancepattern, nameof(attendancepattern)); 
+            Throw.IfNull(venue, nameof(venue));
+            Throw.IfNull(provider, nameof(provider));
+            Throw.IfNull(qualification, nameof(qualification));
+            Throw.IfNull(createddate, nameof(createddate));
+            Throw.IfNullOrWhiteSpace(createdby, nameof(createdby));
+            Throw.IfNull(updateddate, nameof(updateddate));
+            Throw.IfNullOrWhiteSpace(updatedby, nameof(updatedby));
+
+            //id = id;
+            CourseDescription = coursedescription;
+            EntryRequirments = entryrequirements; //Requirements = requirements;
+            WhatYoullLearn = whatyoulllearn;
+            HowYoullLearn =  howyoulllearn;
+            WhatYoullNeed = whatyoullneed;
+            WhatYoullNeedToBring = whatyoullneedtobring;
+            HowYoullBeAssessed = howyoullbeassessed;
+            WhereNext = wherenext;
+            CourseName = coursename;
+            ProviderCourseID = providercourseID; //CourseID = courseID;
+            DeliveryMode = deliverymode;
+            FlexibleStartDate = flexiblestartdate;
+            StartDate = startdate;
+            CourseURL = courseURL;
+            Cost = cost; // Price = price;
+            CostDescription = costdescription;
+            AdvancedLearnerLoan = advancedlearnerloan;
+            DurationUnit = durationunit;
+            DurationValue = durationvalue;
+            StudyMode = studymode;
+            AttendancePattern = attendancepattern; //Attendance = attendance;
+            //Pattern = pattern;
+            Venue = venue;
+            Provider = provider;
+            Qualification = qualification;
+            CreatedDate = createddate;
+            CreatedBy = createdby;
+            UpdatedDate = updateddate;
+            UpdatedBy = updatedby;
+        }
+
+        protected override IEnumerable<object> GetEqualityComponents()
+        {
+            //yield return id;
+            yield return CourseDescription;
+            yield return EntryRequirments; // Requirements;
+            yield return WhatYoullLearn;
+            yield return HowYoullLearn;
+            yield return WhatYoullNeed;
+            yield return WhatYoullNeedToBring;
+            yield return HowYoullBeAssessed;
+            yield return WhereNext;
+            yield return CourseName;
+            yield return ProviderCourseID; //CourseID
+            yield return DeliveryMode;
+            yield return FlexibleStartDate;
+            yield return StartDate;
+            yield return CourseURL;
+            yield return Cost; // Price;
+            yield return CostDescription;
+            yield return AdvancedLearnerLoan;
+            yield return DurationUnit;
+            yield return DurationValue; // Duration;
+            yield return StudyMode;
+            yield return AttendancePattern; //yield return Attendance;
+            //yield return Pattern;
+            yield return Venue;
+            yield return Provider;
+            yield return Qualification;
+            yield return CreatedDate;
+            yield return CreatedBy;
+            yield return UpdatedDate;
+            yield return UpdatedBy;
+        }
     }
 }

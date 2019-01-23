@@ -90,8 +90,7 @@ namespace Dfc.CourseDirectory.Web.Helpers
                     item.GuidedLearningHours,
                     item.TotalQualificationTime,
                     item.UnitType,
-                    item.AwardOrgName,
-                    item.LearnAimRefTypeDesc));
+                    item.AwardOrgName));
             }
 
             return items;

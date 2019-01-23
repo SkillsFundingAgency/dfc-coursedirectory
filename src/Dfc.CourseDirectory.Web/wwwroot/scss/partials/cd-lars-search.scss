@@ -136,25 +136,15 @@ ul.sort-list {
 }
 
 .accordion:after {
-    content: "\2039";
+    content: "\2212";
     color: #777;
     font-weight: bold;
     float: right;
     background-color: white;
-    -webkit-transform: rotate(-270deg);
-    -moz-transform: rotate(-270deg);
-    -ms-transform: rotate(-270deg);
-    -o-transform: rotate(-270deg);
-    transform: rotate(-270deg);
 }
 
 .active:after {
-    content: '\203A';
-    /*-webkit-transform: rotate(90deg);
-    -moz-transform: rotate(90deg);
-    -ms-transform: rotate(90deg);
-    -o-transform: rotate(90deg);
-    transform: rotate(90deg);*/
+    content: '\002B';
 }
 
 .panel {

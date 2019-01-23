@@ -4,101 +4,103 @@
 @model Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult.VenueSearchResultModel;
 
 
-<div class="govuk-width-container govuk-!-margin-top-4">
-    <form id="venueSearchResultForm" asp-controller="Venues" asp-action="AddVenue" method="get">
-        @if (Model.Items.Any() && Model.NewItem != null)
-        {
-            <p style="padding: 15px 20px; border: 4px solid #11813e" id="qual">
-                @if (Model.Updated)
+<form id="venueSearchResultForm" asp-controller="Venues" asp-action="AddVenue" method="get">
+    @if (Model.Items.Any() && Model.NewItem != null)
+    {
+        <p style="padding: 15px 20px; border: 4px solid #11813e" id="qual">
+            @if (Model.Updated)
+            {
+            <span class="govuk-heading-m">Your venue updated:</span>
+            }
+            else
+            {
+                <span class="govuk-heading-m">New venue added:</span>
+            }
+            @Model.NewItem.VenueName,
+            @Model.NewItem.AddressLine1,
+            @Model.NewItem.AddressLine2,
+            @Model.NewItem.Town,
+            @Model.NewItem.County,
+            @Model.NewItem.PostCode
+        </p>
+    }
+
+    <div class="venue-list">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+
+                @if (Model.Items.Any())
                 {
-                    <span class="govuk-heading-m">Your venue updated:</span>
+                    <div class="govuk-tabs" data-module="tabs">
+                        <h2 class="govuk-tabs__title">
+                            Contents
+                        </h2>
+                        <ul class="govuk-tabs__list" role="tablist">
+                            <li class="govuk-tabs__list-item" role="presentation">
+                                <a class="govuk-tabs__tab" href="#live" id="tab_live" role="tab" aria-controls="live" tabindex="0" aria-selected="true">
+                                    Live
+                                </a>
+                            </li>
+                         
+
+                        </ul>
+
+                        <section class="govuk-tabs__panel" id="live" role="tabpanel" aria-labelledby="tab_live">
+
+                            @foreach (var venue in Model.Items)
+                            {
+                                <div class="govuk-checkboxes__item">
+                                    <label class="govuk-label" for="study0">
+                                        @venue.VenueName<br>
+                                        @if (!string.IsNullOrWhiteSpace(@venue.AddressLine1))
+                                        {
+                                            @venue.AddressLine1
+                                            <br/>
+                                        }
+                                        @if (!string.IsNullOrWhiteSpace(@venue.AddressLine2))
+                                        {
+                                            @venue.AddressLine2
+                                            <br/>
+                                        }
+                                        @if (!string.IsNullOrWhiteSpace(@venue.Town))
+                                        {
+                                            @venue.Town
+                                            <br/>
+                                        }
+                                        @if (!string.IsNullOrWhiteSpace(@venue.County))
+                                        {
+                                            @venue.County
+                                            <br/>
+                                        }
+                                        @if (!string.IsNullOrWhiteSpace(@venue.PostCode))
+                                        {
+                                            @venue.PostCode
+                                        }
+
+                                        <br>
+                                        <a asp-controller="venues" asp-action="EditVenue" asp-route-id=@venue.Id class="govuk-link">Edit</a>
+                                    </label>
+                                </div>
+                            }
+
+                            <a href="your-venues-archive-confirm">Archive happy path</a>
+                        </section>
+
+                      
+
+                    </div>
+                    <div class="govuk-form-group" style="margin-top: 30px;">
+                        <button type="submit" class="govuk-button">
+                            + Add new venue
+                        </button>
+                    </div>
+
+
                 }
-                else
-                {
-                    <span class="govuk-heading-m">New venue added:</span>
-                }
-                @Model.NewItem.VenueName,
-                @Model.NewItem.AddressLine1,
-                @Model.NewItem.AddressLine2,
-                @Model.NewItem.Town,
-                @Model.NewItem.County,
-                @Model.NewItem.PostCode
-            </p>
-        }
-
-        <div class="venue-list">
-            <div class="govuk-grid-row">
-                <div class="govuk-grid-column-full">
-
-                    @if (Model.Items.Any())
-                    {
-                        <div class="govuk-tabs" data-module="tabs">
-                            <h2 class="govuk-tabs__title">
-                                Contents
-                            </h2>
-                            <ul class="govuk-tabs__list" role="tablist">
-                                <li class="govuk-tabs__list-item" role="presentation">
-                                    <a class="govuk-tabs__tab" href="#live" id="tab_live" role="tab" aria-controls="live" tabindex="0" aria-selected="true">
-                                        Live
-                                    </a>
-                                </li>
-
-
-                            </ul>
-
-                            <section class="govuk-tabs__panel" id="live" role="tabpanel" aria-labelledby="tab_live">
-
-                                @foreach (var venue in Model.Items)
-                                {
-                                    <div class="govuk-checkboxes__item">
-                                        <label class="govuk-label" for="study0">
-                                            @venue.VenueName<br>
-                                            @if (!string.IsNullOrWhiteSpace(@venue.AddressLine1))
-                                            {
-                                                @venue.AddressLine1
-                                                <br />
-                                            }
-                                            @if (!string.IsNullOrWhiteSpace(@venue.AddressLine2))
-                                            {
-                                                @venue.AddressLine2
-                                                <br />
-                                            }
-                                            @if (!string.IsNullOrWhiteSpace(@venue.Town))
-                                            {
-                                                @venue.Town
-                                                <br />
-                                            }
-                                            @if (!string.IsNullOrWhiteSpace(@venue.County))
-                                            {
-                                                @venue.County
-                                                <br />
-                                            }
-                                            @if (!string.IsNullOrWhiteSpace(@venue.PostCode))
-                                            {
-                                                @venue.PostCode
-                                            }
-
-                                            <br>
-                                            <a asp-controller="venues" asp-action="EditVenue" asp-route-id=@venue.Id class="govuk-link">Edit</a>
-                                        </label>
-                                    </div>
-                                }
-                            </section>
-
-                        </div>
-                        <div class="govuk-form-group" style="margin-top: 30px;">
-                            <button type="submit" class="govuk-button">
-                                Add new venue
-                            </button>
-                        </div>
-
-
-                    }
 
 
 
-                </div>
             </div>
         </div>
-    </form>
-</div>
+    </div>
+</form>

@@ -62,18 +62,6 @@
         "description": "API host key (code) needed to access the provider seach function app (REST API)"
       }
     },
-    "courseApiUrl": {
-      "type": "string",
-      "metadata": {
-        "description": "API URL for the course services"
-      }
-    },
-    "courseApiKey": {
-      "type": "securestring",
-      "metadata": {
-        "description": "API host key (code) needed to access the course service function app (REST API)"
-      }
-    },
     "appServicePlanSize": {
       "type": "string",
       "defaultValue": "1",
@@ -319,14 +307,6 @@
               {
                 "name": "ProviderServiceSettings__ApiKey",
                 "value": "[parameters('providerApiKey')]"
-              },
-              {
-                "name": "CourseServiceSettings__ApiUrl",
-                "value": "[parameters('courseApiUrl')]"
-              },
-              {
-                "name": "CourseServiceSettings__ApiKey",
-                "value": "[parameters('courseApiKey')]"
               },
               {
                 "name": "AppUISettings__VenueNameComponentSettings__VenueName_Label",
