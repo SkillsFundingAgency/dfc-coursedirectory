@@ -406,7 +406,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     DeliveryMode = model.DeliveryMode,
                     FlexibleStartDate = flexibleStartDate,
                     StartDate = specifiedStartDate,
-                    CourseURL = model.Url.ToLower(),
+                    CourseURL = model.Url?.ToLower(),
                     Cost = model.Cost,
                     CostDescription = model.CostDescription,
                     DurationUnit = model.Id,
