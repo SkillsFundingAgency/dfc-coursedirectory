@@ -27,7 +27,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using CourseRun = Dfc.CourseDirectory.Models.Models.Courses.CourseRun;
 
-
 namespace Dfc.CourseDirectory.Web.Controllers
 {
     public class CoursesController : Controller
@@ -406,7 +405,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     DeliveryMode = model.DeliveryMode,
                     FlexibleStartDate = flexibleStartDate,
                     StartDate = specifiedStartDate,
-                    CourseURL = model.Url.ToLower(),
+                    CourseURL = model.Url?.ToLower(),
                     Cost = model.Cost,
                     CostDescription = model.CostDescription,
                     DurationUnit = model.Id,
