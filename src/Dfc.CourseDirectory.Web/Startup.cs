@@ -97,6 +97,7 @@ namespace Dfc.CourseDirectory.Web
 
             services.Configure<OnspdSearchSettings>(Configuration.GetSection(nameof(OnspdSearchSettings)));
             services.AddScoped<IOnspdService, OnspdService>();
+            services.AddScoped<IOnspdSearchHelper, OnspdSearchHelper>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddSessionStateTempDataProvider();
 
