@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Common.Interfaces;
 using Dfc.CourseDirectory.Models.Models.Onspd;
@@ -66,7 +64,7 @@ namespace Dfc.CourseDirectory.Services.OnspdService
             return indexClient;
         }
 
-        private static Onspd RunQuery(ISearchIndexClient indexClient, string postcode)
+        public Onspd RunQuery(ISearchIndexClient indexClient, string postcode)
         {
             SearchParameters parameters;
             DocumentSearchResult<Onspd> results;
