@@ -10,17 +10,16 @@
     @Html.HiddenFor(x => x.courseRun.id)
     @Html.HiddenFor(x => x.courseRun.FlexibleStartDate)
 
-    @*<li class="course-run-container" id="course-run-@Model.courseRun.id">*@
-    <div id="course-run-@Model.courseRun.id" class="govuk-grid-row course-run-container" data-courserun-id="course-run-@Model.courseRun.id">
+    <div id="course-run-@Model.courseRun.id" class="course-run-container" data-courserun-id="course-run-@Model.courseRun.id">
         <div class="govuk-grid-column-full">
-            <div class="govuk-form-group" style="margin: 10px; display:inline-block">
+            <div class="govuk-form-group" style="margin-right: 5px; display:inline-block">
                 <label class="govuk-label">Course name</label>
                 <span asp-validation-for="@Model.courseRun.CourseName" class="govuk-error-message"></span>
                 <input readonly="@(Model.Readonly)" class="govuk-input" asp-for="@Model.courseRun.CourseName" type="text" aria-describedby="course name">
 
             </div>
 
-            <div class="govuk-form-group" style="margin:10px; display:inline-block">
+            <div class="govuk-form-group" style="margin-right: 5px; display:inline-block">
                 <label class="govuk-label">ID</label>
                 <span asp-validation-for="@Model.courseRun.ProviderCourseID" class="govuk-error-message"></span>
                 <input readonly="@(Model.Readonly)" class="govuk-input govuk-input--width-10" asp-for="@Model.courseRun.ProviderCourseID" type="text" aria-describedby="id" style="width: 100px;">
@@ -28,7 +27,7 @@
             </div>
 
 
-            <div class="govuk-form-group" style="margin:10px; display:inline-block">
+            <div class="govuk-form-group" style="margin-right: 5px; display:inline-block">
 
                 <label class="govuk-label">Delivery</label>
                 <select asp-for="@Model.courseRun.DeliveryMode" asp-items="@Model.deliveryModes" class="govuk-select"></select>
@@ -36,7 +35,7 @@
 
 
             </div>
-            <div class="govuk-form-group" style="margin: 10px; display:inline-block">
+            <div class="govuk-form-group" style="margin-right: 5px; display:inline-block">
                 <label class="govuk-label">Start date</label>
                 @if (Model.courseRun.FlexibleStartDate)
                 {
@@ -55,7 +54,7 @@
 
             </div>
 
-            <div class="govuk-form-group" style="margin: 10px; display:inline-block">
+            <div class="govuk-form-group" style="margin-right: 5px; display:inline-block">
                 <label class="govuk-label">Venue</label>
                 <select asp-for="@Model.courseRun.VenueId" asp-items="@Model.venues" class="govuk-select"></select>
 
@@ -74,7 +73,7 @@
             </div>
 
 
-            <div class="govuk-form-group" style="margin: 10px; display:inline-block">
+            <div class="govuk-form-group" style="margin-right: 5px; display:inline-block">
 
                 <div style="display: inline-block">
                     <label class="govuk-label">Cost</label>
@@ -104,7 +103,7 @@
 
 
 
-            <div class="govuk-form-group small" style="margin: 10px; display:inline-block">
+            <div class="govuk-form-group small" style="margin-right: 5px; display:inline-block">
                 <label class="govuk-label">Duration</label>
                 <input readonly="@(Model.Readonly)" class="govuk-input" asp-for="@Model.courseRun.DurationValue" type="text" aria-describedby="duration value" style="width: 75px;">
 
@@ -118,14 +117,14 @@
 
             </div>
 
-            <div class="govuk-form-group" style="margin: 10px; display:inline-block">
+            <div class="govuk-form-group" style="margin-right: 5px; display:inline-block">
                 <label class="govuk-label">Attendance</label>
                 <select asp-for="@Model.courseRun.AttendancePattern" asp-items="@Model.attendances" class="govuk-select"></select>
 
 
             </div>
 
-            <div class="govuk-form-group" style="margin: 10px; display:inline-block">
+            <div class="govuk-form-group" style="margin-right: 5px; display:inline-block">
                 <label class="govuk-label">Mode</label>
                 <select asp-for="@Model.courseRun.StudyMode" asp-items="@Model.modes" class="govuk-select"></select>
 
@@ -152,7 +151,7 @@
     </div>
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
-            <div class="govuk-form-group" style="margin: 10px; display:inline-block">
+            <div class="govuk-form-group" style="margin-right: 5px; display:inline-block">
                 <div id="btns-course-run-@Model.courseRun.id" style="display: none; margin-bottom: 5px; width: 400px; margin-left: 0px">
                     <button id="save-button" type="submit" class="govuk-button">
                         Save
