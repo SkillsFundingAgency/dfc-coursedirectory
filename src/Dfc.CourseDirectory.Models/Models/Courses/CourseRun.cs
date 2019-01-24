@@ -39,6 +39,7 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         PartTime = 2,
         [Description("Flexible")]
         Flexible = 3
+
     }
 
     public enum AttendancePattern

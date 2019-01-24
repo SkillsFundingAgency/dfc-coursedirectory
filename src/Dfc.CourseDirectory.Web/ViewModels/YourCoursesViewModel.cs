@@ -13,6 +13,11 @@ namespace Dfc.CourseDirectory.Web.ViewModels
     public class YourCoursesViewModel
     {
         public int? UKPRN { get; set; }
+
+        public Guid? UpdatedCourseId { get; set; }
+
+        public Guid? CourseRunId { get; set; }
+
         public ICourseSearchResult Courses { get; set; }
         public List<SelectListItem> Venues { get; set; }
 
