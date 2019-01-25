@@ -47,42 +47,57 @@
                             </ul>
 
                             <section class="govuk-tabs__panel" id="live" role="tabpanel" aria-labelledby="tab_live">
+                                <table class="govuk-table">
+                                    <thead class="govuk-table__head">
+                                        <tr class="govuk-table__row">
+                                            <th class="govuk-table__header" scope="col">Venue</th> 
+                                            <th class="govuk-table__header" scope="col">Address</th>
+                                            <th class="govuk-table__header" scope="col">Postcode</th>
+                                            <th class="govuk-table__header" scope="col"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="govuk-table__body">
+                                        @foreach (var venue in Model.Items)
+                                        {
+                                            <tr class="govuk-table__row">
+                                                <td class="govuk-table__cell">
+                                                    @venue.VenueName
+                                                </td>
+                                                <td class="govuk-table__cell">
+                                                    @if (!string.IsNullOrWhiteSpace(venue.AddressLine1))
+                                                    {
+                                                        @venue.AddressLine1
+                                                        <br />
+                                                    }
+                                                    @if (!string.IsNullOrWhiteSpace(venue.AddressLine2))
+                                                    {
+                                                        @venue.AddressLine2
+                                                        <br />
+                                                    }
+                                                    @if (!string.IsNullOrWhiteSpace(venue.Town))
+                                                    {
+                                                        @venue.Town
+                                                        <br />
+                                                    }
+                                                    @if (!string.IsNullOrWhiteSpace(venue.County))
+                                                    {
+                                                        @venue.County
+                                                    }
+                                                </td>
+                                                <td class="govuk-table__cell">
+                                                    @if (!string.IsNullOrWhiteSpace(venue.PostCode))
+                                                    {
+                                                        @venue.PostCode
+                                                    }
+                                                </td>
+                                                <td class="govuk-table__cell">
+                                                    <a asp-controller="venues" asp-action="EditVenue" asp-route-id=@venue.Id class="govuk-link">Edit</a>
+                                                </td>
+                                            </tr>
+                                        }
 
-                                @foreach (var venue in Model.Items)
-                                {
-                                    <div class="govuk-checkboxes__item">
-                                        <label class="govuk-label" for="study0">
-                                            @venue.VenueName<br>
-                                            @if (!string.IsNullOrWhiteSpace(@venue.AddressLine1))
-                                            {
-                                                @venue.AddressLine1
-                                                <br />
-                                            }
-                                            @if (!string.IsNullOrWhiteSpace(@venue.AddressLine2))
-                                            {
-                                                @venue.AddressLine2
-                                                <br />
-                                            }
-                                            @if (!string.IsNullOrWhiteSpace(@venue.Town))
-                                            {
-                                                @venue.Town
-                                                <br />
-                                            }
-                                            @if (!string.IsNullOrWhiteSpace(@venue.County))
-                                            {
-                                                @venue.County
-                                                <br />
-                                            }
-                                            @if (!string.IsNullOrWhiteSpace(@venue.PostCode))
-                                            {
-                                                @venue.PostCode
-                                            }
-
-                                            <br>
-                                            <a asp-controller="venues" asp-action="EditVenue" asp-route-id=@venue.Id class="govuk-link">Edit</a>
-                                        </label>
-                                    </div>
-                                }
+                                    </tbody>
+                                </table>
                             </section>
 
                         </div>
@@ -91,12 +106,7 @@
                                 Add new venue
                             </button>
                         </div>
-
-
                     }
-
-
-
                 </div>
             </div>
         </div>
