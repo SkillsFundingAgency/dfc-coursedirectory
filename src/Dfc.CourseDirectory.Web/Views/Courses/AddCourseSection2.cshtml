@@ -60,7 +60,7 @@
         FlexibleDateHintText = "Or select a flexible start date:",
         LabelText = "Start date"
     })
-    
+
     @*No view component here in order to get checkbox list validation to work without it's own form*@
     <div class="govuk-form-group" id="VenueItemsCheckboxList">
         <label class="govuk-label" for="select-venue">
@@ -86,14 +86,14 @@
                     }
                     else
                     {
-                         foreach (var item in Model.SelectVenue.VenueItems)
-                         {
-                             i++;
-                             <div class="govuk-checkboxes__item">
-                                 <input class="govuk-checkboxes__input" id="VenueName-@i" name="SelectedVenues" type="checkbox" value="@item.Id"/>
-                                 <label class="govuk-label govuk-checkboxes__label" for="SelectedVenues">@item.VenueName</label>
-                             </div>
-                         }
+                        foreach (var item in Model.SelectVenue.VenueItems)
+                        {
+                            i++;
+                            <div class="govuk-checkboxes__item">
+                                <input class="govuk-checkboxes__input" id="VenueName-@i" name="SelectedVenues" type="checkbox" value="@item.Id" />
+                                <label class="govuk-label govuk-checkboxes__label" for="SelectedVenues">@item.VenueName</label>
+                            </div>
+                        }
                     }
                 </div>
             </div>

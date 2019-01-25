@@ -17,7 +17,7 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         public int ProviderUKPRN { get; set; } 
 
         public string CourseDescription { get; set; }
-        public string EntryRequirments { get; set; }
+        public string EntryRequirements { get; set; }
         public string WhatYoullLearn { get; set; }
         public string HowYoullLearn { get; set; }
         public string WhatYoullNeed { get; set; }
@@ -25,7 +25,7 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         public string WhereNext { get; set; }
 
         public bool AdvancedLearnerLoan { get; set; }
-      
+
         public IEnumerable<CourseRun> CourseRuns { get; set; }
 
         public DateTime CreatedDate { get; set; }
