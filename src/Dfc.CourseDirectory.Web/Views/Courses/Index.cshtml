@@ -5,26 +5,17 @@
 
 @{
     Layout = "/Views/Shared/_Layout_YourCourses.cshtml";
+    ViewData["Title"] = "Your Courses";
 }
 <div class="govuk-grid-row">
+    <div class="govuk-breadcrumbs">
+        <ol class="govuk-breadcrumbs__list">
+            <li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="">Home</a></li>
+            <li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="Courses">Courses</a></li>
+            <li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link">@ViewBag.Title</li>
+        </ol>
+    </div>
     <div class="govuk-grid-column-full">
-        @if (ViewBag.Status != null && ViewBag.StatusMessage != null)
-        {
-            switch (ViewBag.Status.ToUpper())
-            {
-                case "GOOD":
-                case "UPDATE":
-                    <div class="success-container">
-                        <h1 class="govuk-heading-m">@ViewBag.StatusMessage</h1>
-                    </div>
-                    break;
-                case "BAD":
-                    <div class="failure-container">
-                        <h1 class="govuk-heading-m">@ViewBag.StatusMessage</h1>
-                    </div>
-                    break;
-            }
-        }
 
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
@@ -42,6 +33,25 @@
                             }
                             )
                         </span>
+
+                        @if (ViewBag.Status != null && ViewBag.StatusMessage != null)
+                        {
+                            switch (ViewBag.Status.ToUpper())
+                            {
+                                case "GOOD":
+                                case "UPDATE":
+                                    <div class="success-container">
+                                        <h1 class="govuk-heading-m" style="font-size: 24px; font-weight: 700">@ViewBag.StatusMessage</h1>
+                                    </div>
+                                    break;
+                                case "BAD":
+                                    <div class="failure-container">
+                                        <h1 class="govuk-heading-m">@ViewBag.StatusMessage</h1>
+                                    </div>
+                                    break;
+                            }
+                        }
+
                         <button id="cd-add-qual-button" type="submit" class="govuk-button">
                             Add a Qualification
                         </button>

@@ -27,7 +27,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _session.SetInt32("ProviderSearch", 1);
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string errmsg)
         {
             _logger.LogMethodEnter();
             _logger.LogTrace("0");
@@ -37,6 +37,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _logger.LogError("4");
             _logger.LogCritical("5");
 
+            ViewBag.StatusMessage = errmsg;
             return View();
         }
 

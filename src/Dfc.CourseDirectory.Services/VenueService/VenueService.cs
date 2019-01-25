@@ -306,7 +306,6 @@ namespace Dfc.CourseDirectory.Services.VenueService
                     return Result.Fail<IVenue>("Venue add service unsuccessful http response");
                 }
             }
-
             catch (HttpRequestException hre)
             {
                 _logger.LogException("Venue add service http request error", hre);

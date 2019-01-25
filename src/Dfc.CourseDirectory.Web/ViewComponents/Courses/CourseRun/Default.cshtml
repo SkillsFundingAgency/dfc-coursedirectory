@@ -10,23 +10,24 @@
     @Html.HiddenFor(x => x.courseRun.id)
     @Html.HiddenFor(x => x.courseRun.FlexibleStartDate)
 
-    @*<li class="course-run-container" id="course-run-@Model.courseRun.id">*@
-    <div id="course-run-@Model.courseRun.id" class="govuk-grid-row course-run-container" data-courserun-id="course-run-@Model.courseRun.id">
+    <div id="course-run-@Model.courseRun.id" class="course-run-container" data-courserun-id="course-run-@Model.courseRun.id">
         <div class="govuk-grid-column-full">
-            <div class="govuk-form-group" style="margin: 10px; display:inline-block">
+            <div class="govuk-form-group" style="margin-right: 5px; display:inline-block">
                 <label class="govuk-label">Course name</label>
+                <span asp-validation-for="@Model.courseRun.CourseName" class="govuk-error-message"></span>
                 <input readonly="@(Model.Readonly)" class="govuk-input" asp-for="@Model.courseRun.CourseName" type="text" aria-describedby="course name">
 
             </div>
 
-            <div class="govuk-form-group" style="margin:10px; display:inline-block">
+            <div class="govuk-form-group" style="margin-right: 5px; display:inline-block">
                 <label class="govuk-label">ID</label>
+                <span asp-validation-for="@Model.courseRun.ProviderCourseID" class="govuk-error-message"></span>
                 <input readonly="@(Model.Readonly)" class="govuk-input govuk-input--width-10" asp-for="@Model.courseRun.ProviderCourseID" type="text" aria-describedby="id" style="width: 100px;">
 
             </div>
 
 
-            <div class="govuk-form-group" style="margin:10px; display:inline-block">
+            <div class="govuk-form-group" style="margin-right: 5px; display:inline-block">
 
                 <label class="govuk-label">Delivery</label>
                 <select asp-for="@Model.courseRun.DeliveryMode" asp-items="@Model.deliveryModes" class="govuk-select"></select>
@@ -34,7 +35,7 @@
 
 
             </div>
-            <div class="govuk-form-group" style="margin: 10px; display:inline-block">
+            <div class="govuk-form-group" style="margin-right: 5px; display:inline-block">
                 <label class="govuk-label">Start date</label>
                 @if (Model.courseRun.FlexibleStartDate)
                 {
@@ -53,7 +54,7 @@
 
             </div>
 
-            <div class="govuk-form-group" style="margin: 10px; display:inline-block">
+            <div class="govuk-form-group" style="margin-right: 5px; display:inline-block">
                 <label class="govuk-label">Venue</label>
                 <select asp-for="@Model.courseRun.VenueId" asp-items="@Model.venues" class="govuk-select"></select>
 
@@ -72,7 +73,7 @@
             </div>
 
 
-            <div class="govuk-form-group" style="margin: 10px; display:inline-block">
+            <div class="govuk-form-group" style="margin-right: 5px; display:inline-block">
 
                 <div style="display: inline-block">
                     <label class="govuk-label">Cost</label>
@@ -102,7 +103,7 @@
 
 
 
-            <div class="govuk-form-group small" style="margin: 10px; display:inline-block">
+            <div class="govuk-form-group small" style="margin-right: 5px; display:inline-block">
                 <label class="govuk-label">Duration</label>
                 <input readonly="@(Model.Readonly)" class="govuk-input" asp-for="@Model.courseRun.DurationValue" type="text" aria-describedby="duration value" style="width: 75px;">
 
@@ -116,14 +117,14 @@
 
             </div>
 
-            <div class="govuk-form-group" style="margin: 10px; display:inline-block">
+            <div class="govuk-form-group" style="margin-right: 5px; display:inline-block">
                 <label class="govuk-label">Attendance</label>
                 <select asp-for="@Model.courseRun.AttendancePattern" asp-items="@Model.attendances" class="govuk-select"></select>
 
 
             </div>
 
-            <div class="govuk-form-group" style="margin: 10px; display:inline-block">
+            <div class="govuk-form-group" style="margin-right: 5px; display:inline-block">
                 <label class="govuk-label">Mode</label>
                 <select asp-for="@Model.courseRun.StudyMode" asp-items="@Model.modes" class="govuk-select"></select>
 
@@ -150,12 +151,13 @@
     </div>
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
-            <div class="govuk-form-group" style="margin: 10px; display:inline-block">
+            <div class="govuk-form-group" style="margin-right: 5px; display:inline-block">
                 <div id="btns-course-run-@Model.courseRun.id" style="display: none; margin-bottom: 5px; width: 400px; margin-left: 0px">
                     <button id="save-button" type="submit" class="govuk-button">
                         Save
                     </button>
                     <a href="#" class="govuk-link discard" style="display: inline-block; margin-top: 10px;" data-id="@Model.courseRun.id">Discard</a>
+                    <a href="#" class="govuk-link preview" style="display: inline-block; margin-top: 10px;" data-id="@Model.courseRun.id">Preview</a>
                 </div>
 
             </div>
@@ -169,62 +171,57 @@
     (function ($) {
         $(function () {
 
+            var formGroupErrorClass = "govuk-form-group--error";
+            var elementErrorClass = "govuk-input--error";
+            var $elementUrl = $("#@nameof(Model.courseRun.CourseName)");
 
+            $(".govuk-input").on("blur", function () {
+                var elem = $(this);
+
+                var trimmed = elem.val().trim();
+                elem.val(trimmed);
+
+                if (elem.attr("id") != undefined) {
+
+                var elementName = elem.attr("id").split("_")[1];
+
+                var $validationMessageCourseName = elem.prev('[data-valmsg-for="' + elementName + '"]');
+
+                $validationMessageCourseName.css("margin-bottom", "0");
+                var $formGroupCourseName = elem.closest('.govuk-form-group');
+
+                var $form = elem.closest("form");
+                $form.addTriggersToJqueryValidate().triggerElementValidationsOnFormValidation();
+                var validator = $form.validate();
+
+                var result = validator.element(elem);
+
+                if (result) {
+
+                    elem.removeClass(elementErrorClass);
+                    $formGroupCourseName.removeClass(formGroupErrorClass);
+                    $validationMessageCourseName.hide();
+                    $validationMessageCourseName.css("margin-bottom", "0");
+                } else {
+                    elem.addClass(elementErrorClass);
+                    $formGroupCourseName.addClass(formGroupErrorClass);
+                    $validationMessageCourseName.show();
+                    $validationMessageCourseName.css("margin-bottom", "15px");
+                }
+                    }
+            });
 
             $('form').find(':input').each(function (i, elem) {
                 var input = $(elem);
                 input.data('initialState', input.val());
             });
-
-            //$(".govuk-select ").on('change', function (e) {
-            //    var $rowId = $(this).closest(".course-run-container").attr("id");
-
-            //    if ($("#btns-" + $rowId).is(":visible")) {
-
-            //    } else {
-
-            //        $("#btns-" + $rowId).css("display", "block");
-            //    }
-
-            //    $("li[id^='course-run']").each(function (index) {
-            //        var $courseRunId = $(this).attr("id").substr(11, $(this).attr("id").length - 11);
-
-
-            //        $("#course-run-" + $courseRunId).removeClass("unselected-courses");
-
-            //        //if ($("#btns-" + $id).is(":visible")) {
-
-            //        //} else {
-            //        //    $("#btns-" + $id).css("display", "block");
-            //        //}
-
-            //    });
-
-            //    $("div[id^='btns-course-run']").each(function (index) {
-            //        var $id = $(this).attr("id").substr(5, $(this).attr("id").length - 5);
-
-            //        if ($id !== $rowId) {
-            //            var $justTheId = $id.substr(11, $id.length - 11);
-            //            $("#course-run-" + $justTheId).addClass("unselected-courses");
-
-            //            if ($("#btns-" + $id).is(":visible")) {
-            //                $("#btns-" + $id).hide();
-
-            //                $("#course-run-" + $justTheId).find(':input').each(function (i, elem) {
-            //                    var input = $(elem);
-            //                    input.val(input.data('initialState'));
-            //                });
-            //            }
-            //        }
-            //    });
-
-            //});
+;
 
             $(".govuk-select ").on('change', function (e) {
 
                 var $courseRunId = $(this).closest(".course-run-container").attr("id").substr(11, $(".course-run-container").attr("id").length - 11);
 
-                console.log($courseRunId);
+                //console.log($courseRunId);
 
                 if ($("#btns-course-run-" + $courseRunId).is(":visible")) {
 
@@ -240,12 +237,10 @@
                     if ($id !== $courseRunId) {
                         $("#course-run-" + $id).addClass("unselected-courses");
 
-                        $("#course-run-" + $id).find(':input').each(function (i, elem) {
-                            //$(elem).disabled = 'disabled';
-                            // this.disabled = 'disabled';
-                            $(elem).attr('disabled', true);
+                        //$("#course-run-" + $id).find(':input').each(function (i, elem) {
+                        //    $(elem).attr('disabled', true);
 
-                        });
+                        //});
 
                         if ($("#btns-course-run-" + $id).is(":visible")) {
                             $("#btns-course-run-" + $id).hide();
@@ -264,7 +259,7 @@
 
                 var $courseRunId = $(this).closest(".course-run-container").attr("id").substr(11, $(".course-run-container").attr("id").length - 11);
 
-                console.log($courseRunId);
+               // console.log($courseRunId);
 
                 if ($("#btns-course-run-" + $courseRunId).is(":visible")) {
 
@@ -280,12 +275,10 @@
                     if ($id !== $courseRunId) {
                         $("#course-run-" + $id).addClass("unselected-courses");
 
-                        $("#course-run-" + $id).find(':input').each(function (i, elem) {
-                            //$(elem).disabled = 'disabled';
-                           // this.disabled = 'disabled';
-                            $(elem).attr('disabled', true);
+                        //$("#course-run-" + $id).find(':input').each(function (i, elem) {
+                        //    $(elem).attr('disabled', true);
 
-                        });
+                        //});
 
                         if ($("#btns-course-run-" + $id).is(":visible")) {
                             $("#btns-course-run-" + $id).hide();
@@ -293,6 +286,7 @@
                             $("#course-run-" + $id).find(':input').each(function (i, elem) {
                                 var input = $(elem);
                                 input.val(input.data('initialState'));
+
                             });
                         }
                     }
@@ -303,44 +297,22 @@
             $(".discard").click(function () {
                 event.preventDefault();
                 var $container = $(this).closest('.govuk-grid-row').prev();
-               
 
                 var $courseRunId = $container.attr("id").substr(11, $container.attr("id").length - 11);
-                console.log("discard" + $courseRunId);
-                //var $justTheId = $id.substr(11, $id.length - 11);
-                //$('form').find(':input').each(function (i, elem) {
-                //    var input = $(elem);
-                //    input.val(input.data('initialState'));
-                //});
+               // console.log("discard" + $courseRunId);
 
-
-
-                $("div[id^='course-run-']").find(':input').each(function (i, elem) {
+                $("#course-run-" + $courseRunId).find(':input').each(function (i, elem) {
+               // $("div[id^='course-run-'+ $courseRunId]").find(':input').each(function (i, elem) {
                     var input = $(elem);
                     input.val(input.data('initialState'));
-                    $(elem).prop("disabled", false);
-                    $(elem).removeAttr("disabled");
-                    //this.disabled = '';
-                    //$(elem).prop('disabled', false);
+                    //$(elem).prop("disabled", false);
+                    //$(elem).removeAttr("disabled");
+                    //$(elem).trigger("blur");
                 });
-
 
                 $("div[id^='course-run-']").each(function (index) {
-                   // var $courseRunId = $(this).attr("id").substr(11, $(this).attr("id").length - 11);
-
                     $(this).removeClass("unselected-courses");
-                    //$("#course-run" + $courseRunId).removeClass("unselected-courses");
-
-                    //if ($("#btns-" + $id).is(":visible")) {
-
-                    //} else {
-                    //    $("#btns-" + $id).css("display", "block");
-                    //}
-
                 });
-
-
-                //var $id = $(this).attr("data-id");
 
                 var $btn = $("#btns-course-run-" + $courseRunId).css("display", "none");
             });
@@ -403,7 +375,6 @@
 
                 $courseRunCostDesc.show();
             });
-
 
         });
     })(jQuery);

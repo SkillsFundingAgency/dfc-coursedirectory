@@ -40,6 +40,7 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         PartTime = 2,
         [Description("Flexible")]
         Flexible = 3
+
     }
 
     public enum AttendancePattern
@@ -69,8 +70,13 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         public int? CourseInstanceId { get; set; }
         public Guid? VenueId { get; set; }
 
-        [Required]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Enter Course Name")]
+        [MaxLength(255, ErrorMessage = "The maximum length of Course Name is 255 characters")]
+        [RegularExpression(@"[a-zA-Z0-9 \¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\" + "\"" + @"\\]+", ErrorMessage = "Course Name contains invalid characters")]
         public string CourseName { get; set; }
+
+        [MaxLength(255, ErrorMessage = "The maximum length of 'ID' is 255 characters")]
+        [RegularExpression(@"[a-zA-Z0-9 \¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\" + "\"" + @"\\]+", ErrorMessage = "ID contains invalid characters")]
         public string ProviderCourseID { get; set; }
         public DeliveryMode DeliveryMode { get; set; }
         public bool FlexibleStartDate { get; set; }

@@ -1,0 +1,72 @@
+﻿$success: #006435;
+$info: #005ea5;
+$warning: #f47738;
+$focus: #ffbf47;
+
+.cd-success-summary,
+.cd-warning-summary,
+.cd-info-summary {
+    font-family: nta,Arial,sans-serif;
+    padding: .5em 1.5em;
+    margin-bottom: 2em;
+    font-weight: 700;
+    font-size: 19px;
+
+    &:focus {
+        outline: $focus solid 3px;
+        outline-offset: 0;
+    }
+}
+
+.cd-success-summary {
+
+    border: 5px solid $success;
+    
+    .cd-success-summary__title {
+        font-weight: 700;
+    }
+
+    .cd-success-summary__body {
+        color: $success;
+
+
+        .cd-success-summary__list a {
+            color: $success;
+        }
+    }
+}
+
+
+ .cd-warning-summary {
+
+    border: 5px solid $warning;
+
+    .cd-warning-summary__title {
+        font-weight: 700;
+    }
+
+    .cd-warning-summary__body {
+        color: $warning;
+
+        .cd-warning-summary__list a {
+            color: $warning;
+        }
+    }
+}
+
+.cd-info-summary {
+  
+    border: 5px solid $info;
+
+    .cd-info-summary__title {
+        font-weight: 700;
+    }
+
+    .cd-info-summary__body {
+        color: $info;
+
+        .cd-info-summary__list a {
+            color: $info;
+        }
+    }
+}

@@ -71,7 +71,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         .Result.Value);
 
                 var courses = coursesByUKPRN.Value.SelectMany(o => o.Value).SelectMany(i => i.Value).ToList();
-
+                
                 var course = courses.SingleOrDefault(x => x.id == model.CourseId);
 
                 var courserun = course.CourseRuns.SingleOrDefault(x => x.id == model.courseRun.id);
@@ -91,7 +91,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     courserun.ProviderCourseID = model.courseRun.ProviderCourseID;
                     courserun.StartDate = model.courseRun.StartDate;
                     courserun.VenueId = model.courseRun.VenueId;
-
+                    courserun.UpdatedDate=DateTime.Now;
+                    
 
                     var updatedCourses = await _courseService.UpdateCourseAsync(course);
 
@@ -103,10 +104,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
                
             }
 
-            return RedirectToAction("Index", new { status = "update", learnAimRef ="", numberOfNewCourses ="", errmsg =""}); 
+            return RedirectToAction("Index", new { status = "update", learnAimRef ="", numberOfNewCourses ="", errmsg ="", updatedCourseId = model.CourseId});
         }
 
-        public async Task<IActionResult> Index(string status, string learnAimRef, string numberOfNewCourses, string errmsg)
+        public async Task<IActionResult> Index(string status, string learnAimRef, string numberOfNewCourses, string errmsg,Guid? updatedCourseId)
         {
 
             var deliveryModes = new List<SelectListItem>();
@@ -157,7 +158,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
             else
             {
-                return RedirectToAction("Index", "Home", new { errmsg = "No-UKPRN" });
+                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
 
             foreach (DeliveryMode eVal in DeliveryMode.GetValues(typeof(DeliveryMode)))
@@ -198,10 +199,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 if (eVal.ToString().ToUpper() != "UNDEFINED")
                 {
                     var item = new SelectListItem
-                    { Text = System.Enum.GetName(typeof(Dfc.CourseDirectory.Models.Models.Courses.StudyMode), eVal), Value = eVal.ToString() };
+                        { Text = WebHelper.GetEnumDescription(eVal) }; // System.Enum.GetName(typeof(Dfc.CourseDirectory.Models.Models.Courses.StudyMode), eVal), Value = eVal.ToString() };
 
                     modes.Add(item);
                 }
+
             };
 
             // Get courses (and runs) for PRN, grouped by qualification type, then within that by LARS ref
@@ -214,6 +216,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                 YourCoursesViewModel vm = new YourCoursesViewModel
                 {
+                    UpdatedCourseId= updatedCourseId ?? null,
                     UKPRN = ukprn,
                     Courses = result,
                     deliveryModes = deliveryModes,
@@ -227,7 +230,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
             else
             {
-                return RedirectToAction("Index", "Home", new { errmsg = "No-UKPRN" });
+                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
         }
 
@@ -310,7 +313,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
             else
             {
-                return RedirectToAction("Index", "Home", new { errmsg = "No-UKPRN" });
+                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
 
             var viewModel = new AddCourseDetailsViewModel()
@@ -403,7 +406,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     DeliveryMode = model.DeliveryMode,
                     FlexibleStartDate = flexibleStartDate,
                     StartDate = specifiedStartDate,
-                    CourseURL = model.Url,
+                    CourseURL = model.Url?.ToLower(),
                     Cost = model.Cost,
                     CostDescription = model.CostDescription,
                     DurationUnit = model.Id,
@@ -454,7 +457,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
             else
             {
-                return RedirectToAction("Index", "Home", new { errmsg = "No-UKPRN" });
+                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
 
             var course = new Course

@@ -5,6 +5,7 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseRun
 @using Dfc.CourseDirectory.Web.ViewComponents.ModalPopup
 @using Dfc.CourseDirectory.Models.Models.Courses
+@using Microsoft.CodeAnalysis
 @using CourseRun = Dfc.CourseDirectory.Models.Models.Courses.CourseRun
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
@@ -14,54 +15,83 @@
 @{ var counter = 0; }
 @foreach (ICourseSearchOuterGrouping outerGroup in Model.Courses.Value)
 {
-    <br />
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
             <div class="govuk-form-group">
-                <h2 class="active accordion govuk-heading-l" data-row-type="coursetitle">
-                    @outerGroup.QualType
-                    <span class="govuk-body count">(@outerGroup.Value.SelectMany(o => o.Value.SelectMany(i => i.CourseRuns)).Count())</span>
-                </h2>
+                @{
+                    var qualificationClassName = "accordion govuk-heading-l active";
+
+
+                    if (Model.UpdatedCourseId.HasValue)
+                    {
+                        if (outerGroup.Value.Any(x => x.Value.Any(y => y.id == Model.UpdatedCourseId)))
+                        {
+                            qualificationClassName = "accordion govuk-heading-l";
+                        }
+
+                    }
+
+                    <h2 class="@qualificationClassName" data-row-type="coursetitle">
+                        @outerGroup.QualType
+                        <span class="govuk-body count">(@outerGroup.Value.SelectMany(o => o.Value.SelectMany(i => i.CourseRuns)).Count())</span>
+                    </h2>
+                }
             </div>
         </div>
     </div>
-
-
-    <div style="display: none;">
-        @foreach (ICourseSearchInnerGrouping innerGroup in outerGroup.Value)
+    {
+        var displayStyle = "display: none;";
+        if (qualificationClassName == "accordion govuk-heading-l")
         {
-            foreach (Course course in innerGroup.Value.OrderBy(c => c.QualificationCourseTitle))
-            {
-                <div class="govuk-grid-row">
-                    <div class="govuk-grid-column-full">
+            displayStyle = "display:block;";
+        }
+        <div style="@displayStyle">
 
-                        @*<li><hr class="govuk-section-break govuk-section-break--visible"></li>*@
-                        <div class="govuk-form-group">
-                            <h3 class="active accordion govuk-heading-l" data-row-type="courserun" style="font-size: 22px; font-weight: bold; font-family: nta, Arial, sans-serif; border-style: none">
-                                @course.QualificationCourseTitle <span class="govuk-body">(@course.CourseRuns.Count())</span>
-                            </h3>
+            @foreach (ICourseSearchInnerGrouping innerGroup in outerGroup.Value)
+            {
+                foreach (Course course in innerGroup.Value.OrderBy(c => c.QualificationCourseTitle))
+                {
+                    <div class="govuk-grid-row">
+                        <div class="govuk-grid-column-full">
+
+                            <div class="govuk-form-group">
+                                @{
+                                    var expand = false;
+                                    var className = "accordion govuk-heading-l active";
+                                    if (Model.UpdatedCourseId.HasValue)
+                                    {
+                                        if (course.id == Model.UpdatedCourseId)
+                                        {
+                                            expand = true;
+                                            className = "accordion govuk-heading-l";
+                                        }
+                                    }
+
+                                    <h3 class="@className" data-row-type="courserun" style="font-size: 22px; font-weight: bold; font-family: nta, Arial, sans-serif; border-style: none">
+                                        @course.QualificationCourseTitle <span class="govuk-body">(@course.CourseRuns.Count())</span>
+                                    </h3>
+
+                                }
+
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                @*<span class="" style="cursor:pointer;font-size:50px; float: right;font-weight: bold">+</span>*@
+                    <div class="govuk-grid-row">
+                        <div class="govuk-grid-column-full">
 
-                <div class="govuk-grid-row">
-                    <div class="govuk-grid-column-full">
-                        <br/>
+                            <div class="govuk-form-group cd-course-text">
+                                <p class="govuk-body">
+                                    Level @course.NotionalNVQLevelv2, @course.AwardOrgCode, Lars: @course.LearnAimRef,
+                                    <a id="@counter" class="edit-btn open-descript" href="#">View course description</a>
+                                    <span class="cd-advanced-text">Advanced learner Loan Available</span>
+                                </p>
 
-                        <div class="govuk-form-group cd-course-text">
-                            <p class="govuk-body">
-                                Level @course.NotionalNVQLevelv2, @course.AwardOrgCode, Lars: @course.LearnAimRef,
-                                <a id="@counter" class="edit-btn open-descript" href="#">View course description</a>
-                                <span class="cd-advanced-text">Advanced learner Loan Available</span>
-                            </p>
+                            </div>
 
-                        </div>
-
-                        <fieldset class="govuk-fieldset cd-course-checkbox" aria-describedby="course-hint">
-                            <div class="govuk-checkboxes">
-                                <div class="govuk-checkboxes__item">
+                            <fieldset class="govuk-fieldset cd-course-checkbox" aria-describedby="course-hint">
+                                <div class="govuk-checkboxes">
+                                    <div class="govuk-checkboxes__item">
 
                                     <input class="govuk-checkboxes__input" type="checkbox" value="" checked="@course.AdvancedLearnerLoan" disabled="disabled">
                                     <label class="govuk-label govuk-checkboxes__label"></label>
@@ -89,41 +119,139 @@
                     @*<hr class="govuk-section-break govuk-section-break--visible">*@
                 </div>
 
-
-                <div class="govuk-grid-row" style="display:none">
-                    <div class="govuk-grid-column-full">
-                        @{
-                            foreach (var courseRun in course.CourseRuns.OrderBy(cr => cr.StartDate)
-                                .ThenBy(cr2 => cr2.FlexibleStartDate)
-                                .ThenBy(cr3 => Model.Venues.FirstOrDefault(v => v.Value == cr3.VenueId.ToString())?.Text))
-                            {
-
-                                var courseRunModel = new CourseRunModel
+                    var displayCourseRunStyle = "display: none;";
+                    if (expand)
+                    {
+                        displayCourseRunStyle = "display:block;";
+                    }
+                    <div class="govuk-grid-row" style="@displayCourseRunStyle">
+                        <div class="govuk-grid-column-full">
+                            @{
+                                foreach (var courseRun in course.CourseRuns.OrderBy(cr => cr.CourseName))
                                 {
-                                    CourseId = course.id,
-                                    attendances = Model.attendances,
-                                    deliveryModes = Model.deliveryModes,
-                                    durationUnits = Model.durationUnits,
-                                    modes = Model.modes,
-                                    venues = Model.Venues,
-                                    courseRun = courseRun
-                                };
+                                    var courseRunModel = new CourseRunModel
+                                    {
+                                        CourseId = course.id,
+                                        attendances = Model.attendances,
+                                        deliveryModes = Model.deliveryModes,
+                                        durationUnits = Model.durationUnits,
+                                        modes = Model.modes,
+                                        venues = Model.Venues,
+                                        courseRun = courseRun
+                                    };
 
-                                @await Component.InvokeAsync(nameof(CourseRun), courseRunModel)
-
+                                    @await Component.InvokeAsync(nameof(CourseRun), courseRunModel)
+                                }
+                                counter++;
                             }
-
-                            counter++;
-                        }
+                        </div>
                     </div>
-                </div>
-
-
-
+                }
             }
-        }
-        <br />
-    </div>
+
+        </div>
+    }
+
+
+
+
+    @*<div style="display: none;">
+            @foreach (ICourseSearchInnerGrouping innerGroup in outerGroup.Value)
+            {
+                foreach (Course course in innerGroup.Value.OrderBy(c => c.QualificationCourseTitle))
+                {
+                    <div class="govuk-grid-row">
+                        <div class="govuk-grid-column-full">
+
+                            <div class="govuk-form-group">
+                                @{
+                                    var className = "active accordion govuk-heading-l";
+                                    if (Model.CourseId.HasValue)
+                                    {
+                                        if (course.id == Model.CourseId)
+                                        {
+                                            className = "accordion govuk-heading-l";
+                                        }
+                                    }
+
+                                    <h3 class="@className" data-row-type="courserun" style="font-size: 22px; font-weight: bold; font-family: nta, Arial, sans-serif; border-style: none">
+                                        @course.QualificationCourseTitle <span class="govuk-body">(@course.CourseRuns.Count())</span>
+                                    </h3>
+
+                                }
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="govuk-grid-row">
+                        <div class="govuk-grid-column-full">
+                            <br />
+
+                            <div class="govuk-form-group cd-course-text">
+                                <p class="govuk-body">
+                                    Level @course.NotionalNVQLevelv2, @course.AwardOrgCode, Lars: @course.LearnAimRef,
+                                    <a id="@counter" class="edit-btn open-descript" href="#">View course description</a>
+                                    <span class="cd-advanced-text">Advanced learner Loan Available</span>
+                                </p>
+
+                            </div>
+
+                            <fieldset class="govuk-fieldset cd-course-checkbox" aria-describedby="course-hint">
+                                <div class="govuk-checkboxes">
+                                    <div class="govuk-checkboxes__item">
+
+                                        <input class="govuk-checkboxes__input" type="checkbox" value="" checked="@course.AdvancedLearnerLoan" disabled="disabled">
+                                        <label class="govuk-label govuk-checkboxes__label"></label>
+                                    </div>
+                                </div>
+                            </fieldset>
+                            <hr class="govuk-section-break govuk-section-break--visible" style=margin-top: 10px">
+                            @{
+                                var descriptionModel = new ModalPopupModel
+                                {
+                                    ID = counter,
+                                    CourseTitle = course.QualificationCourseTitle,
+                                    CourseDescription = course.CourseDescription,
+                                    EntryRequirements = course.EntryRequirments,
+                                    HowYoullBeAssessed = course.HowYoullBeAssessed,
+                                    HowYoullLearn = course.HowYoullLearn,
+                                    WhatYoullLearn = course.WhatYoullLearn,
+                                    WhatYoullNeed = course.WhatYoullNeed,
+                                    WhereNext = course.WhereNext
+                                };
+                            }
+                            @await Component.InvokeAsync(nameof(ModalPopup), descriptionModel)
+                        </div>
+                    </div>
+
+
+                    <div class="govuk-grid-row" style="display:none">
+                        <div class="govuk-grid-column-full">
+                            @{
+                                foreach (var courseRun in course.CourseRuns.OrderBy(cr => cr.CourseName))
+                                {
+                                    var courseRunModel = new CourseRunModel
+                                    {
+                                        CourseId = course.id,
+                                        attendances = Model.attendances,
+                                        deliveryModes = Model.deliveryModes,
+                                        durationUnits = Model.durationUnits,
+                                        modes = Model.modes,
+                                        venues = Model.Venues,
+                                        courseRun = courseRun
+                                    };
+
+                                    @await Component.InvokeAsync(nameof(CourseRun), courseRunModel)
+                                }
+                                counter++;
+                            }
+                        </div>
+                    </div>
+                }
+            }
+            <br />
+        </div>*@
 }
 
 
@@ -182,24 +310,24 @@
         });
     })(jQuery);
 
-                    //$('.popup_content').popup({
-                    //    color: '#fff',
-                    //    transition: 'all 0.3s'
-                    //});
+                                //$('.popup_content').popup({
+                                //    color: '#fff',
+                                //    transition: 'all 0.3s'
+                                //});
 
-                    //$(".open-descript").each(function (e) {
-                    //    $(this).click(function (e) {
-                    //        e.preventDefault();
-                    //        $("html, body").css("overflow", "hidden");
-                    //        //$('#popup-descript-0').popup('show');
-                    //        $('#popup-descript').popup('show');
-                    //    });
-                    //});
+                                //$(".open-descript").each(function (e) {
+                                //    $(this).click(function (e) {
+                                //        e.preventDefault();
+                                //        $("html, body").css("overflow", "hidden");
+                                //        //$('#popup-descript-0').popup('show');
+                                //        $('#popup-descript').popup('show');
+                                //    });
+                                //});
 
-                    //$(".close-descript").click(function (e) {
-                    //    e.preventDefault();
-                    //    $("html, body").css("overflow", "auto");
-                    //    $('#popup-descript').popup('hide');
-                    //});
+                                //$(".close-descript").click(function (e) {
+                                //    e.preventDefault();
+                                //    $("html, body").css("overflow", "auto");
+                                //    $('#popup-descript').popup('hide');
+                                //});
 
 </script>
