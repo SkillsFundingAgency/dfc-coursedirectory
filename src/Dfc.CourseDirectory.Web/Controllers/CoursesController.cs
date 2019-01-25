@@ -70,7 +70,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         .Result.Value);
 
                 var courses = coursesByUKPRN.Value.SelectMany(o => o.Value).SelectMany(i => i.Value).ToList();
-
+                
                 var course = courses.SingleOrDefault(x => x.id == model.CourseId);
 
                 var courserun = course.CourseRuns.SingleOrDefault(x => x.id == model.courseRun.id);
@@ -103,10 +103,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
                
             }
 
-            return RedirectToAction("Index", new { status = "update", learnAimRef ="", numberOfNewCourses ="", errmsg =""}); 
+            return RedirectToAction("Index", new { status = "update", learnAimRef ="", numberOfNewCourses ="", errmsg ="", updatedCourseId = model.CourseId});
         }
 
-        public async Task<IActionResult> Index(string status, string learnAimRef, string numberOfNewCourses, string errmsg)
+        public async Task<IActionResult> Index(string status, string learnAimRef, string numberOfNewCourses, string errmsg,Guid? updatedCourseId)
         {
 
             var deliveryModes = new List<SelectListItem>();
@@ -198,10 +198,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 if (eVal.ToString().ToUpper() != "UNDEFINED")
                 {
                     var item = new SelectListItem
-                    { Text = System.Enum.GetName(typeof(Dfc.CourseDirectory.Models.Models.Courses.StudyMode), eVal), Value = eVal.ToString() };
+                        { Text = WebHelper.GetEnumDescription(eVal) }; // System.Enum.GetName(typeof(Dfc.CourseDirectory.Models.Models.Courses.StudyMode), eVal), Value = eVal.ToString() };
 
                     modes.Add(item);
                 }
+
             };
 
             // Get courses (and runs) for PRN, grouped by qualification type, then within that by LARS ref
@@ -214,6 +215,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                 YourCoursesViewModel vm = new YourCoursesViewModel
                 {
+                    UpdatedCourseId= updatedCourseId ?? null,
                     UKPRN = ukprn,
                     Courses = result,
                     deliveryModes = deliveryModes,
