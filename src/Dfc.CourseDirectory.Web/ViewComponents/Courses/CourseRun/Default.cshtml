@@ -221,7 +221,7 @@
 
                 var $courseRunId = $(this).closest(".course-run-container").attr("id").substr(11, $(".course-run-container").attr("id").length - 11);
 
-                console.log($courseRunId);
+                //console.log($courseRunId);
 
                 if ($("#btns-course-run-" + $courseRunId).is(":visible")) {
 
@@ -237,10 +237,10 @@
                     if ($id !== $courseRunId) {
                         $("#course-run-" + $id).addClass("unselected-courses");
 
-                        $("#course-run-" + $id).find(':input').each(function (i, elem) {
-                            $(elem).attr('disabled', true);
+                        //$("#course-run-" + $id).find(':input').each(function (i, elem) {
+                        //    $(elem).attr('disabled', true);
 
-                        });
+                        //});
 
                         if ($("#btns-course-run-" + $id).is(":visible")) {
                             $("#btns-course-run-" + $id).hide();
@@ -259,7 +259,7 @@
 
                 var $courseRunId = $(this).closest(".course-run-container").attr("id").substr(11, $(".course-run-container").attr("id").length - 11);
 
-                console.log($courseRunId);
+               // console.log($courseRunId);
 
                 if ($("#btns-course-run-" + $courseRunId).is(":visible")) {
 
@@ -275,10 +275,10 @@
                     if ($id !== $courseRunId) {
                         $("#course-run-" + $id).addClass("unselected-courses");
 
-                        $("#course-run-" + $id).find(':input').each(function (i, elem) {
-                            $(elem).attr('disabled', true);
+                        //$("#course-run-" + $id).find(':input').each(function (i, elem) {
+                        //    $(elem).attr('disabled', true);
 
-                        });
+                        //});
 
                         if ($("#btns-course-run-" + $id).is(":visible")) {
                             $("#btns-course-run-" + $id).hide();
@@ -299,14 +299,15 @@
                 var $container = $(this).closest('.govuk-grid-row').prev();
 
                 var $courseRunId = $container.attr("id").substr(11, $container.attr("id").length - 11);
-                console.log("discard" + $courseRunId);
+               // console.log("discard" + $courseRunId);
 
-                $("div[id^='course-run-']").find(':input').each(function (i, elem) {
+                $("#course-run-" + $courseRunId).find(':input').each(function (i, elem) {
+               // $("div[id^='course-run-'+ $courseRunId]").find(':input').each(function (i, elem) {
                     var input = $(elem);
                     input.val(input.data('initialState'));
-                    $(elem).prop("disabled", false);
-                    $(elem).removeAttr("disabled");
-                    $(elem).trigger("blur");
+                    //$(elem).prop("disabled", false);
+                    //$(elem).removeAttr("disabled");
+                    //$(elem).trigger("blur");
                 });
 
                 $("div[id^='course-run-']").each(function (index) {
