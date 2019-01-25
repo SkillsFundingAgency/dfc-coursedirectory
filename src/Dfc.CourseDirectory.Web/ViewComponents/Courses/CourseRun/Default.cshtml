@@ -232,7 +232,7 @@
 
                 $("div[id^='btns-course-run']").each(function (index) {
                     var $id = $(this).attr("id").substr(16, $(this).attr("id").length - 16);
-                    console.log($id);
+                   // console.log($id);
 
                     if ($id !== $courseRunId) {
                         $("#course-run-" + $id).addClass("unselected-courses");
