@@ -17,6 +17,7 @@ using Dfc.CourseDirectory.Web.ViewComponents.EditVenueAddress;
 using Dfc.CourseDirectory.Web.ViewComponents.EditVenueName;
 using Dfc.CourseDirectory.Web.ViewComponents.ManualAddress;
 using Dfc.CourseDirectory.Web.ViewComponents.Shared;
+using Dfc.CourseDirectory.Web.ViewComponents.VenueName;
 using Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult;
 using Dfc.CourseDirectory.Web.ViewModels;
 using Microsoft.AspNetCore.Http;
@@ -82,16 +83,16 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
         private async Task<VenueSearchResultsViewModel> GetVenues(int ukprn)
         {
-            return await GetVenues(ukprn, string.Empty);
+            return await GetVenues(ukprn, null, false);
         }
-        private async Task<VenueSearchResultsViewModel> GetVenues(int ukprn, string venueID)
+        private async Task<VenueSearchResultsViewModel> GetVenues(int ukprn, VenueSearchResultItemModel newVenue, bool updated)
         {
             VenueSearchRequestModel requestModel = new VenueSearchRequestModel
             {
                 SearchTerm = ukprn.ToString()
             };
 
-            if(!string.IsNullOrWhiteSpace(venueID)) requestModel.NewAddressId = venueID;
+          
 
             VenueSearchResultModel model;
             var criteria = _venueSearchHelper.GetVenueSearchCriteria(requestModel);
@@ -101,7 +102,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 var items = _venueSearchHelper.GetVenueSearchResultItemModels(result.Value.Value);
                 model = new VenueSearchResultModel(
                     requestModel.SearchTerm,
-                    items, null, false);
+                    items, newVenue, updated);
             }
             else
             {
@@ -245,15 +246,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
         public async Task<IActionResult> AddVenueSelectionConfirmation(AddVenueSelectionConfirmationRequestModel requestModel)
         {
             var UKPRN = _session.GetInt32("UKPRN");
+
+            bool updated = false;
             string venueID = string.Empty;
             if (!UKPRN.HasValue)
             {
                 return RedirectToAction("Index", "Home", new { errmsg = "No-UKPRN" });
             }
-            VenueSearchRequestModel mod = new VenueSearchRequestModel
-            {
-                SearchTerm = UKPRN.Value.ToString()
-            };
+            
 
             var onspd = _onspdSearchHelper.GetOnsPostcodeData(requestModel.Postcode);
             var latitude = onspd.lat;
@@ -279,7 +279,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 );
 
                 var updatedVenue = await _venueService.UpdateAsync(venue);
+                updated = true;
                 venueID = updatedVenue.Value.ID;
+              
             }
             else
             {
@@ -303,15 +305,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                 var addedVenue = await _venueService.AddAsync(venue);
 
-                mod.NewAddressId = addedVenue.Value.ID;
+                venueID = addedVenue.Value.ID;
             }
+            //Since we are updating or adding lets pass the model to the GetVenues method
+            VenueSearchResultItemModel newItem = new VenueSearchResultItemModel(requestModel.VenueName, requestModel.AddressLine1, requestModel.AddressLine2, requestModel.TownOrCity, requestModel.County, requestModel.Postcode, venueID);
 
-           
-            return View("VenueSearchResults", await GetVenues(UKPRN.Value, venueID));
-
-            //return View("VenueSearchResults", viewModel);
+            return View("VenueSearchResults", await GetVenues(UKPRN.Value, newItem, updated));
         }
-
         [HttpPost]
         public IActionResult VenueAddressManualConfirmation(AddVenueSelectionConfirmationRequestModel model)
         {
