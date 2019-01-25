@@ -93,29 +93,31 @@
                                 <div class="govuk-checkboxes">
                                     <div class="govuk-checkboxes__item">
 
-                                        <input class="govuk-checkboxes__input" type="checkbox" value="" checked="@course.AdvancedLearnerLoan" disabled="disabled">
-                                        <label class="govuk-label govuk-checkboxes__label"></label>
-                                    </div>
+                                    <input class="govuk-checkboxes__input" type="checkbox" value="" checked="@course.AdvancedLearnerLoan" disabled="disabled">
+                                    <label class="govuk-label govuk-checkboxes__label"></label>
                                 </div>
-                            </fieldset>
-                            <hr class="govuk-section-break govuk-section-break--visible" style="margin-top: 5px">
-                            @{
-                                var descriptionModel = new ModalPopupModel
-                                {
-                                    ID = counter,
-                                    CourseTitle = course.QualificationCourseTitle,
-                                    CourseDescription = course.CourseDescription,
-                                    EntryRequirements = course.EntryRequirments,
-                                    HowYoullBeAssessed = course.HowYoullBeAssessed,
-                                    HowYoullLearn = course.HowYoullLearn,
-                                    WhatYoullLearn = course.WhatYoullLearn,
-                                    WhatYoullNeed = course.WhatYoullNeed,
-                                    WhereNext = course.WhereNext
-                                };
-                            }
-                            @await Component.InvokeAsync(nameof(ModalPopup), descriptionModel)
-                        </div>
+                            </div>
+                        </fieldset>
+                        <hr class="govuk-section-break govuk-section-break--visible" style=margin-top:  10px">
+                        @{
+                            var descriptionModel = new ModalPopupModel
+                            {
+                                ID = counter,
+                                CourseTitle = course.QualificationCourseTitle,
+                                CourseDescription = course.CourseDescription,
+                                EntryRequirements = course.EntryRequirements,
+                                HowYoullBeAssessed = course.HowYoullBeAssessed,
+                                HowYoullLearn = course.HowYoullLearn,
+                                WhatYoullLearn = course.WhatYoullLearn,
+                                WhatYoullNeed = course.WhatYoullNeed,
+                                WhereNext = course.WhereNext
+                            };
+                        }
+                        @await Component.InvokeAsync(nameof(ModalPopup), descriptionModel)
+                        @*<hr class="govuk-section-break govuk-section-break--visible">*@
                     </div>
+                    @*<hr class="govuk-section-break govuk-section-break--visible">*@
+                </div>
 
                     var displayCourseRunStyle = "display: none;";
                     if (expand)

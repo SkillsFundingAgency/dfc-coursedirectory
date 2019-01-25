@@ -61,7 +61,7 @@
         FlexibleDateHintText = "Or select a flexible start date:",
         LabelText = "Start date"
     })
-    
+
     @*No view component here in order to get checkbox list validation to work without it's own form*@
     <div class="govuk-form-group" id="VenueItemsCheckboxList">
         <label class="govuk-label" for="select-venue">
@@ -87,14 +87,52 @@
                     }
                     else
                     {
-                         foreach (var item in Model.SelectVenue.VenueItems)
-                         {
-                             i++;
-                             <div class="govuk-checkboxes__item">
-                                 <input class="govuk-checkboxes__input" id="VenueName-@i" name="SelectedVenues" type="checkbox" value="@item.Id"/>
-                                 <label class="govuk-label govuk-checkboxes__label" for="SelectedVenues">@item.VenueName</label>
-                             </div>
-                         }
+                        foreach (var item in Model.SelectVenue.VenueItems)
+                        {
+                            i++;
+                            <div class="govuk-checkboxes__item">
+                                <input class="govuk-checkboxes__input" id="VenueName-@i" name="SelectedVenues" type="checkbox" value="@item.Id" />
+                                <label class="govuk-label govuk-checkboxes__label" for="SelectedVenues">@item.VenueName</label>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="govuk-form-group" id="RegionItemsCheckboxList">
+        <label class="govuk-label" for="select-region">
+            @Model.SelectRegion.LabelText
+        </label>
+        <span id="select-region-hint" class="govuk-hint">
+            @Model.SelectRegion.HintText
+        </span>
+        <span class="govuk-error-message field-validation-error" id="invalidRegionsChecked" style="display: none;margin-bottom: 15px;">
+            <span id="invalidRegionsCheckedMessage" class="">Select a region.</span>
+        </span>
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <div class="govuk-checkboxes" id="SelectRegionCheckBoxes">
+                    @{ var j = 0; }
+                    @if (Model.SelectRegion.RegionItems.Count() == 1)
+                    {
+                        <div class="govuk-checkboxes__item">
+                            <input class="govuk-checkboxes__input" id="RegionName-@j" name="SelectedRegions" type="checkbox" value="@Model.SelectRegion.RegionItems.First().Id" checked="checked" onclick="return false;" />
+                            <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@Model.SelectRegion.RegionItems.First().RegionName</label>
+                        </div>
+                    }
+                    else
+                    {
+                        foreach (var item in Model.SelectRegion.RegionItems)
+                        {
+                            j++;
+                            <div class="govuk-checkboxes__item">
+                                <input class="govuk-checkboxes__input" id="RegionName-@j" name="SelectedRegions" type="checkbox" value="@item.Id" />
+                                <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@item.RegionName</label>
+                            </div>
+                        }
                     }
                 </div>
             </div>
@@ -219,12 +257,16 @@
             var $validationMessageForCost= $("#invalidCost");
             var $validationMessageForCostLength = $("#invalidCostLength");
 
-            var $checkboxes = $("#SelectVenueCheckBoxes input[type=checkbox]");
+            var $venueCheckboxes = $("#SelectVenueCheckBoxes input[type=checkbox]");
+            var $regionCheckboxes = $("#SelectRegionCheckBoxes input[type=checkbox]");
             var $formVenuesIsValid = false;
+            var $formRegionsIsValid = false;
             var $formStartDateIsValid = false;
             var $formCostIsValid = false;
 
             var $deliveryRadios = $("#DeliveryModeRadioButtons input[type=radio]");
+            var $regionItemsCheckboxList = $("#RegionItemsCheckboxList");
+            $regionItemsCheckboxList.hide();
 
             $deliveryRadios.change(function () {
                 var $venueItemsCheckboxList = $("#VenueItemsCheckboxList");
@@ -241,6 +283,7 @@
                             $specifiedStartDate.prop("checked", true);
                             $flexibleStartDate.prop("checked", false);
                             $venueItemsCheckboxList.show();
+                            $regionItemsCheckboxList.hide();
                             $fullPartTimeRadioButtons.show();
                             $attendancePatternRadioButtons.show();
                             break;
@@ -250,6 +293,7 @@
                             $flexibleStartDate.prop("checked", true);
                             $specifiedStartDate.prop("checked", false);
                             $venueItemsCheckboxList.hide();
+                            $regionItemsCheckboxList.hide();
                             $fullPartTimeRadioButtons.hide();
                             $attendancePatternRadioButtons.hide();
                             break;
@@ -259,6 +303,7 @@
                             $flexibleStartDate.prop("checked", true);
                             $specifiedStartDate.prop("checked", false);
                             $venueItemsCheckboxList.hide();
+                            $regionItemsCheckboxList.show();
                             $fullPartTimeRadioButtons.hide();
                             $attendancePatternRadioButtons.hide();
                             break;
@@ -267,11 +312,11 @@
 
            
             });
-            $checkboxes.change(function () {
+            $venueCheckboxes.change(function () {
                 var $validationMessageForVenues = $("#invalidVenuesChecked");
                 var $venueItemsCheckboxList = $("#VenueItemsCheckboxList");
                 var $formGroupVenues = $venueItemsCheckboxList.closest('.govuk-form-group');
-                var countedCheckedCheckboxes = $checkboxes.filter(':checked').length;
+                var countedCheckedCheckboxes = $venueCheckboxes.filter(':checked').length;
 
                 if ($(this).is(":visible")) {
                     if (countedCheckedCheckboxes === 0) {
@@ -293,11 +338,36 @@
 
             });
 
+            $regionCheckboxes.change(function () {
+                var $validationMessageForRegions = $("#invalidRegionsChecked");
+                var $formGroupRegions = $regionItemsCheckboxList.closest('.govuk-form-group');
+                var countedCheckedCheckboxes = $regionCheckboxes.filter(':checked').length;
+
+                if ($(this).is(":visible")) {
+                    if (countedCheckedCheckboxes === 0) {
+                        $formGroupRegions.addClass("govuk-form-group--error");
+                        $validationMessageForRegions.show();
+                        $formRegionsIsValid = false;
+                    }
+                    else {
+                        $formGroupRegions.removeClass("govuk-form-group--error");
+                        $validationMessageForRegions.hide();
+                        $formRegionsIsValid = true;
+                    }
+                }
+                else {
+                    $formGroupRegions.removeClass("govuk-form-group--error");
+                    $validationMessageForRegions.hide();
+                    $formRegionsIsValid = true;
+                }
+            });
+
             var $publish = $("#publish");
             $publish.on("click",
                 function(e) {
                     e.preventDefault();
-                    $checkboxes.trigger("change");
+                    $venueCheckboxes.trigger("change");
+                    $regionCheckboxes.trigger("change");
 
                     var $courseName = $("#@nameof(Model.CourseName)");
                     $courseName.trigger("blur");
@@ -440,9 +510,10 @@
                         $formStartDateIsValid = true;
                     }
 
-                    if ($formVenuesIsValid & $formCostIsValid & $formStartDateIsValid) {
+                    if (($formVenuesIsValid || $formRegionsIsValid) & $formCostIsValid & $formStartDateIsValid) {
                         $("#addCourseSection2").submit();
                     }
+
                     var errorArray = $("[class*='--error'");
                     if (errorArray.length > 0) {
                         $('html, body').scrollTop($('#' + errorArray[0].id).offset().top);

@@ -26,6 +26,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using CourseRun = Dfc.CourseDirectory.Models.Models.Courses.CourseRun;
+using Dfc.CourseDirectory.Web.ViewComponents.Courses.SelectRegion;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -233,7 +234,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
         }
 
-
+        [HttpGet]
         public IActionResult AddCourseSection1(string learnAimRef, string notionalNVQLevelv2, string awardOrgCode, string learnAimRefTitle, string learnAimRefTypeDesc)
         {
             _session.SetString("LearnAimRef", learnAimRef);
@@ -326,17 +327,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
             };
 
             viewModel.SelectVenue = await GetVenuesByUkprn(UKPRN);
+            viewModel.SelectRegion = GetRegions();
 
             return View("AddCourseSection2", viewModel);
         }
 
-        public IActionResult AddCourseSection2(AddCourseRequestModel requestModel)
-        {
-            return View();
-        }
-
         [HttpPost]
-        public async Task<IActionResult> AddCourse(AddCoursePublishModel model, Guid[] SelectedVenues)
+        public async Task<IActionResult> AddCourse(AddCourseRequestModel model)
         {
             var learnAimRef = _session.GetString("LearnAimRef");
             var notionalNVQLevelv2 = _session.GetString("NotionalNVQLevelv2");
@@ -365,13 +362,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 return RedirectToAction("AddCourseSection1", new { learnAimRef = learnAimRef, notionalNVQLevelv2 = notionalNVQLevelv2, awardOrgCode = awardOrgCode, learnAimRefTitle = learnAimRefTitle, errmsg = "Course data is missing." });
             }
 
-            if (SelectedVenues == null || SelectedVenues.Count() < 1)
+            if (model.DeliveryMode == DeliveryMode.ClassroomBased)
             {
-                return RedirectToAction("AddCourseSection1", new { learnAimRef = learnAimRef, notionalNVQLevelv2 = notionalNVQLevelv2, awardOrgCode = awardOrgCode, learnAimRefTitle = learnAimRefTitle, errmsg = "No Venue Selected." });
+                if (model.SelectedVenues == null || model.SelectedVenues.Count() < 1)
+                {
+                    return RedirectToAction("AddCourseSection1", new { learnAimRef = learnAimRef, notionalNVQLevelv2 = notionalNVQLevelv2, awardOrgCode = awardOrgCode, learnAimRefTitle = learnAimRefTitle, errmsg = "No Venue Selected." });
+                }
             }
 
             // We will need to map the flat ModelView Structure to our hierarchical Course Model Structure
-
             // For each Venue => Course Run
             var courseRuns = new List<CourseRun>();
 
@@ -395,7 +394,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 // and flexibleStartDate = false
             }
 
-            foreach (var venue in SelectedVenues)
+            foreach (var venue in model.SelectedVenues)
             {
                 var courseRun = new CourseRun
                 {
@@ -414,9 +413,37 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     DurationValue = model.DurationLength,
                     StudyMode = model.StudyMode,
                     AttendancePattern = model.AttendanceMode,
-
+                    Regions = model.SelectedRegions,
                     CreatedDate = DateTime.Now,
                     CreatedBy = "ProviderPortal-AddCourse" // TODO - Change to the name of the logged person 
+                };
+
+                courseRuns.Add(courseRun);
+            }
+
+            if (model.DeliveryMode == DeliveryMode.WorkBased 
+                && model.SelectedRegions != null 
+                && model.SelectedRegions.Any())
+            {
+                var courseRun = new CourseRun
+                {
+                    id = Guid.NewGuid(),
+
+                    CourseName = model.CourseName,
+                    ProviderCourseID = model.CourseProviderReference,
+                    DeliveryMode = model.DeliveryMode,
+                    FlexibleStartDate = flexibleStartDate,
+                    StartDate = specifiedStartDate,
+                    CourseURL = model.Url,
+                    Cost = model.Cost,
+                    CostDescription = model.CostDescription,
+                    DurationUnit = model.Id,
+                    DurationValue = model.DurationLength,
+                    StudyMode = model.StudyMode,
+                    AttendancePattern = model.AttendanceMode,
+                    Regions = model.SelectedRegions,
+                    CreatedDate = DateTime.Now,
+                    CreatedBy = "ProviderPortal-AddCourse"
                 };
 
                 courseRuns.Add(courseRun);
@@ -444,7 +471,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 QualificationType = learnAimRefTypeDesc,
                 ProviderUKPRN = UKPRN, // TODO: ToBeChanged
                 CourseDescription = courseFor,
-                EntryRequirments = entryRequirements,
+                EntryRequirements = entryRequirements,
                 WhatYoullLearn = whatWillLearn,
                 HowYoullLearn = howYouWillLearn,
                 WhatYoullNeed = whatYouNeed,
@@ -524,6 +551,103 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
 
             return selectVenue;
+        }
+
+        private SelectRegionModel GetRegions()
+        {
+            return new SelectRegionModel
+            {
+                LabelText = "Select course region",
+                HintText = "For example, South West",
+                AriaDescribedBy = "Select all that apply.",
+                RegionItems = new RegionItemModel[]
+                {
+                    new RegionItemModel
+                    {
+                        Id = "E12000001",
+                        Checked = false,
+                        RegionName = "North East"
+                    },
+                    new RegionItemModel
+                    {
+                        Id = "E12000002",
+                        Checked = false,
+                        RegionName = "North West"
+                    },
+                    new RegionItemModel
+                    {
+                        Id = "E12000003",
+                        Checked = false,
+                        RegionName = "Yorkshire and The Humber"
+                    },
+                    new RegionItemModel
+                    {
+                        Id = "E12000004",
+                        Checked = false,
+                        RegionName = "East Midlands"
+                    },
+                    new RegionItemModel
+                    {
+                        Id = "E12000005",
+                        Checked = false,
+                        RegionName = "West Midlands"
+                    },
+                    new RegionItemModel
+                    {
+                        Id = "E12000006",
+                        Checked = false,
+                        RegionName = "East of England"
+                    },
+                    new RegionItemModel
+                    {
+                        Id = "E12000007",
+                        Checked = false,
+                        RegionName = "London"
+                    },
+                    new RegionItemModel
+                    {
+                        Id = "E12000008",
+                        Checked = false,
+                        RegionName = "South East"
+                    },
+                    new RegionItemModel
+                    {
+                        Id = "E12000009",
+                        Checked = false,
+                        RegionName = "South West"
+                    },
+                    new RegionItemModel
+                    {
+                        Id = "L99999999",
+                        Checked = false,
+                        RegionName = "(pseudo) Channel Islands"
+                    },
+                    new RegionItemModel
+                    {
+                        Id = "M99999999",
+                        Checked = false,
+                        RegionName = "(pseudo) Isle of Man"
+                    },
+                    new RegionItemModel
+                    {
+                        Id = "N99999999",
+                        Checked = false,
+                        RegionName = "(pseudo) Northern Ireland"
+                    },
+                    new RegionItemModel
+                    {
+                        Id = "S99999999",
+                        Checked = false,
+                        RegionName = "(pseudo) Scotland"
+                    },
+                    new RegionItemModel
+                    {
+                        Id = "W99999999",
+                        Checked = false,
+                        RegionName = "(pseudo) Wales"
+                    }
+                }
+            };
         }
     }
 }

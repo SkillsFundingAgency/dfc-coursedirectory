@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Models.Models.Courses;
 using Dfc.CourseDirectory.Web.ViewModels;
 
 namespace Dfc.CourseDirectory.Web.RequestModels
@@ -9,7 +10,22 @@ namespace Dfc.CourseDirectory.Web.RequestModels
     public class AddCourseRequestModel
     {
         public string CourseName { get; set; }
+        public string CourseProviderReference { get; set; }
+        public DeliveryMode DeliveryMode { get; set; }
+        public string StartDateType { get; set; }
+        public string Day { get; set; }
+        public string Month { get; set; }
+        public string Year { get; set; }
+        public string Url { get; set; }
+        public decimal Cost { get; set; }
+        public string CostDescription { get; set; }
+        public bool AdvancedLearnerLoan { get; set; }
+        public DurationUnit Id { get; set; }
+        public int DurationLength { get; set; }
+        public StudyMode StudyMode { get; set; }
+        public AttendancePattern AttendanceMode { get; set; }
 
-        public AddCourseViewModel CourseInfo { get; set; }
+        public Guid[] SelectedVenues { get; set; }
+        public string[] SelectedRegions { get; set; }
     }
 }

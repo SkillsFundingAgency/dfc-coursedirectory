@@ -2,6 +2,7 @@
 using Dfc.CourseDirectory.Models.Interfaces.Courses;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 
 namespace Dfc.CourseDirectory.Models.Models.Courses
 {
@@ -59,7 +60,7 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
     {
         [Description("Defined Start Date")]
         SpecifiedStartDate = 1,
-        [Description("Select a flexible start date")]
+        [Description("Select a flexible start date")] 
         FlexibleStartDate = 2,
     }
 
@@ -87,6 +88,7 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         public int? DurationValue { get; set; }
         public StudyMode StudyMode { get; set; }
         public AttendancePattern AttendancePattern { get; set; }
+        public IEnumerable<string> Regions { get; set; }
 
         public DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }
