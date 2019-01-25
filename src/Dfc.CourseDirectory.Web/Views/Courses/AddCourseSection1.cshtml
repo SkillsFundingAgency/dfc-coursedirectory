@@ -10,17 +10,25 @@
 @model Dfc.CourseDirectory.Web.ViewModels.AddCourseViewModel
 
 <form asp-controller="Courses" asp-action="AddCourseSection1" method="post">
-    
-    @Html.HiddenFor(x=>x.AwardOrgCode)
-    @Html.HiddenFor(x=>x.LearnAimRef)
-    @Html.HiddenFor(x=>x.LearnAimRefTitle)
-    @Html.HiddenFor(x=>x.NotionalNVQLevelv2)
+
+    @Html.HiddenFor(x => x.AwardOrgCode)
+    @Html.HiddenFor(x => x.LearnAimRef)
+    @Html.HiddenFor(x => x.LearnAimRefTitle)
+    @Html.HiddenFor(x => x.NotionalNVQLevelv2)
     <h1 class="govuk-heading-l" style="padding-top: 20px;">
         Complete your qualification details
     </h1>
 
-    <p style="padding: 15px 20px; border: 3px solid #009900;background-color:#fff;" id="qual--">Qualification added:<br> @Model.LearnAimRefTitle<br> Level: @Model.NotionalNVQLevelv2<br> Awarding organisation: @Model.AwardOrgCode<br> LARS/QAN: @Model.LearnAimRef</p>
 
+    @*<p style="padding: 15px 20px; border: 3px solid #009900;background-color:#fff;" id="qual--">Qualification added:<br> @Model.LearnAimRefTitle<br> Level: @Model.NotionalNVQLevelv2<br> Awarding organisation: @Model.AwardOrgCode<br> LARS/QAN: @Model.LearnAimRef</p>*@
+    <div class="cd-info-summary" aria-labelledby="info-summary-title" role="alert" tabindex="-1" data-module="info-summary">
+        <h2 class="cd-info-summary__title" id="info-summary-title">
+            Qualification added
+        </h2>
+        <div class="cd-info-summary__body">
+            <p>@Model.LearnAimRefTitle<br> Level: @Model.NotionalNVQLevelv2<br> Awarding organisation: @Model.AwardOrgCode<br> LARS/QAN: @Model.LearnAimRef</p>
+        </div>
+    </div>
     <h3 class="govuk-heading-m">Course description</h3>
 
     @await Component.InvokeAsync(nameof(CourseFor), Model.CourseFor)
@@ -30,11 +38,11 @@
     @await Component.InvokeAsync(nameof(WhatWillLearn), Model.WhatWillLearn)
 
     @await Component.InvokeAsync(nameof(HowYouWillLearn), Model.HowYouWillLearn)
-    
+
     @await Component.InvokeAsync(nameof(WhatYouNeed), Model.WhatYouNeed)
-    
+
     @await Component.InvokeAsync(nameof(HowAssessed), Model.HowAssessed)
-    
+
     @await Component.InvokeAsync(nameof(WhereNext), Model.WhereNext)
 
     <div class="govuk-form-group">
