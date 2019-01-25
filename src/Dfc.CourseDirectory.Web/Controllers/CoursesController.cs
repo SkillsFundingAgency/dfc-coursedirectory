@@ -157,7 +157,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
             else
             {
-                return RedirectToAction("Index", "Home", new { errmsg = "No-UKPRN" });
+                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
 
             foreach (DeliveryMode eVal in DeliveryMode.GetValues(typeof(DeliveryMode)))
@@ -229,7 +229,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
             else
             {
-                return RedirectToAction("Index", "Home", new { errmsg = "No-UKPRN" });
+                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
         }
 
@@ -312,7 +312,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
             else
             {
-                return RedirectToAction("Index", "Home", new { errmsg = "No-UKPRN" });
+                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
 
             var viewModel = new AddCourseDetailsViewModel()
@@ -430,7 +430,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
             else
             {
-                return RedirectToAction("Index", "Home", new { errmsg = "No-UKPRN" });
+                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
 
             var course = new Course

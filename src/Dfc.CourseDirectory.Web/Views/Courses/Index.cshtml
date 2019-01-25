@@ -5,8 +5,16 @@
 
 @{
     Layout = "/Views/Shared/_Layout_YourCourses.cshtml";
+    ViewData["Title"] = "Your Courses";
 }
 <div class="govuk-grid-row">
+    <div class="govuk-breadcrumbs">
+        <ol class="govuk-breadcrumbs__list">
+            <li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="">Home</a></li>
+            <li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="Courses">Courses</a></li>
+            <li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link">@ViewBag.Title</li>
+        </ol>
+    </div>
     <div class="govuk-grid-column-full">
 
         <div class="govuk-grid-row">
@@ -25,7 +33,7 @@
                             }
                             )
                         </span>
-                        
+
                         @if (ViewBag.Status != null && ViewBag.StatusMessage != null)
                         {
                             switch (ViewBag.Status.ToUpper())

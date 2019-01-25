@@ -8,22 +8,41 @@
     <form id="venueSearchResultForm" asp-controller="Venues" asp-action="AddVenue" method="get">
         @if (Model.Items.Any() && Model.NewItem != null)
         {
-            <p style="padding: 15px 20px; border: 4px solid #11813e" id="qual">
-                @if (Model.Updated)
-                {
-                    <span class="govuk-heading-m">Your venue updated:</span>
-                }
-                else
-                {
-                    <span class="govuk-heading-m">New venue added:</span>
-                }
-                @Model.NewItem.VenueName,
-                @Model.NewItem.AddressLine1,
-                @Model.NewItem.AddressLine2,
-                @Model.NewItem.Town,
-                @Model.NewItem.County,
-                @Model.NewItem.PostCode
-            </p>
+        <p style="padding: 15px 20px; border: 4px solid #11813e" id="qual">
+            @if (Model.Updated)
+            {
+                <span class="govuk-heading-m">Your venue updated:</span>
+            }
+            else
+            {
+                <span class="govuk-heading-m">New venue added:</span>
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.NewItem.VenueName))
+            {
+                @string.Concat(Model.NewItem.VenueName, ", ");
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.NewItem.AddressLine1))
+            {
+                @string.Concat(@Model.NewItem.AddressLine1, ", ");
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.NewItem.AddressLine2))
+            {
+                @string.Concat(@Model.NewItem.AddressLine2, ", ");
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.NewItem.Town))
+            {
+                @string.Concat(@Model.NewItem.Town, ", ");
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.NewItem.County))
+            {
+                @string.Concat(@Model.NewItem.County, ", ");
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.NewItem.PostCode))
+            {
+                @Model.NewItem.PostCode;
+            }
+
+        </p>
         }
 
         <div class="venue-list">
