@@ -23,20 +23,25 @@
         {
             <h1 class="govuk-heading-xl">@provider.ProviderName</h1>
         }
-
-        if (!(provider.ProviderStatus.Equals("Active", StringComparison.InvariantCultureIgnoreCase) || provider.ProviderStatus.Equals("Verified", StringComparison.InvariantCultureIgnoreCase)))
+        else
         {
-            <div class="success-container">
-                <h1 class="govuk-heading-m">UKPRN has been deactivated and cannot be added to the Course Directory</h1>
-            </div>
+            if (provider.Status.Equals(Status.Onboarded))
+            {
+                <div class="success-container">
+                    <h1 class="govuk-heading-m">A Provider record for the entered UKPRN has already been on-boarded within the Course Directory.</h1>
+                </div>
+            }
+            if (!(provider.ProviderStatus.Equals("Active", StringComparison.InvariantCultureIgnoreCase) || provider.ProviderStatus.Equals("Verified", StringComparison.InvariantCultureIgnoreCase)))
+            {
+                <div class="success-container">
+                    <h1 class="govuk-heading-m">UKPRN has been deactivated and cannot be added to the Course Directory</h1>
+                </div>
+            }
         }
 
-        if (provider.Status.Equals(Status.Onboarded))
-        {
-            <div class="success-container">
-                <h1 class="govuk-heading-m">A Provider record for the entered UKPRN has already been on-boarded within the Course Directory.</h1>
-            </div>
-        }
+
+
+
 
         <input type="hidden" value="@provider.id" id="ProviderId" />
         <div id="OnBoardingAjaxCallResult" style="display: none;"></div>
@@ -55,10 +60,13 @@
                     <th class="govuk-table__header" scope="row">UKPRN</th>
                     <td class="govuk-table__cell">@provider.UnitedKingdomProviderReferenceNumber</td>
                 </tr>
-                <tr class="govuk-table__row">
-                    <th class="govuk-table__header" scope="row">Name</th>
-                    <td class="govuk-table__cell">@provider.ProviderName</td>
-                </tr>
+                @if (provSearch == 0)
+                {
+                    <tr class="govuk-table__row">
+                        <th class="govuk-table__header" scope="row">Name</th>
+                        <td class="govuk-table__cell">@provider.ProviderName</td>
+                    </tr>
+                }
                 <tr class="govuk-table__row">
                     <th class="govuk-table__header" scope="row">Address</th>
                     <td class="govuk-table__cell"><span>@Model.AddressTypeL</span></td>
@@ -88,10 +96,16 @@
         {
             <a id="btnOnboardProvider" onclick="OnBoardProvider(); return false;" href="#" class="govuk-button"><span id="btnOnboardProviderText">Add Provider</span></a>
         }
-        else if (provSearch == 1)
+        else if (provSearch == 1 && provider.Status.Equals(Status.Onboarded))
         {
             <a id="btnShowCourses" href="/Courses" class="govuk-button"><span id="btnShowCoursesText">View Courses</span></a>
-           
+
+        }
+        else if (!provider.Status.Equals(Status.Onboarded))
+        {
+            <div class="failure-container">
+                    <h1 class="govuk-heading-m">This Provider record for the entered UKPRN has not been on-boarded to the Course Directory.</h1>
+            </div>
         }
     }
 </div>

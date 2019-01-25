@@ -4,18 +4,25 @@
 
 @{
     var provSearch = HttpContextAccessor.HttpContext.Session.GetInt32("ProviderSearch");
+    ViewData["Title"] = "Find a Provider";
 }
 <div>
 
     <div class="govuk-breadcrumbs">
         <ol class="govuk-breadcrumbs__list">
-            <li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="your-courses">Home</a></li>
-            <li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="Providers">Providers</li>
+            <li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="#">Home</a></li>
+            <li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="Courses">Providers</a></li>
             <li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link">@ViewBag.Title</li>
+
         </ol>
     </div>
     <h1 class="govuk-heading-l">Search Provider</h1>
-
+    @if (ViewBag.StatusMessage != null)
+    {
+        <div class="failure-container">
+            <h1 class="govuk-heading-m" style="font-size: 24px; font-weight: 700">@ViewBag.StatusMessage</h1>
+        </div>
+    }
     <div id="VenueSearchResultContainer">
         @await Component.InvokeAsync(nameof(ProviderSearch))
     </div>

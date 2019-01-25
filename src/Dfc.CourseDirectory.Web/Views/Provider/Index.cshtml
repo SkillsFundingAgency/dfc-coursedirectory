@@ -2,6 +2,10 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.ProviderSearch
 
 
+@{
+  
+    ViewData["Title"] = "Add Provider";
+}
 
 <div>
     <div class="govuk-breadcrumbs">
@@ -12,7 +16,7 @@
         </ol>
     </div>
     <h1 class="govuk-heading-l">Add Provider </h1>
-   
+
     <div id="VenueSearchResultContainer">
         @await Component.InvokeAsync(nameof(ProviderSearch))
     </div>

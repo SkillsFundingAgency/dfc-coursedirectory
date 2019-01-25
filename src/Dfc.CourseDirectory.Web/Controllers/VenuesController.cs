@@ -75,7 +75,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
             else
             {
-                return RedirectToAction("Index", "Home", new { errmsg = "No-UKPRN" });
+                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
 
            
@@ -251,7 +251,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             string venueID = string.Empty;
             if (!UKPRN.HasValue)
             {
-                return RedirectToAction("Index", "Home", new { errmsg = "No-UKPRN" });
+                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
             
 
