@@ -47,7 +47,56 @@
                             </ul>
 
                             <section class="govuk-tabs__panel" id="live" role="tabpanel" aria-labelledby="tab_live">
+                                <table class="govuk-table">
+                                    <thead class="govuk-table__head">
+                                        <tr class="govuk-table__row">
+                                            <th class="govuk-table__header" scope="col">line 1</th> 
+                                            <th class="govuk-table__header" scope="col">city/town</th>
+                                            <th class="govuk-table__header" scope="col">postcode</th>
+                                            <th class="govuk-table__header" scope="col"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="govuk-table__body">
+                                        @foreach (var venue in Model.Items)
+                                        {
+                                            <tr class="govuk-table__row">
+                                                <td class="govuk-table__cell">
+                                                    @venue.VenueName
+                                                    @if (!string.IsNullOrWhiteSpace(@venue.AddressLine1))
+                                                    {
+                                                        @venue.AddressLine1
+                                                    }
+                                                </td>
+                                                <td class="govuk-table__cell">
+                                                    @if (!string.IsNullOrWhiteSpace(@venue.AddressLine2))
+                                                    {
+                                                        @venue.AddressLine2
+                                                    }
+                                                    <br />
+                                                    @if (!string.IsNullOrWhiteSpace(@venue.Town))
+                                                    {
+                                                        @venue.Town
+                                                    }
+                                                    @if (!string.IsNullOrWhiteSpace(@venue.County))
+                                                    {
+                                                        @venue.County
+                                                        <br />
+                                                    }
+                                                </td>
+                                                <td class="govuk-table__cell">
+                                                    @if (!string.IsNullOrWhiteSpace(@venue.PostCode))
+                                                    {
+                                                        @venue.PostCode
+                                                    }
+                                                </td>
+                                                <td class="govuk-table__cell">
+                                                    <a asp-controller="venues" asp-action="EditVenue" asp-route-id=@venue.Id class="govuk-link">Edit</a>
+                                                </td>
+                                            </tr>
+                                        }
 
+                                    </tbody>
+                                </table>
                                 @foreach (var venue in Model.Items)
                                 {
                                     <div class="govuk-checkboxes__item">
