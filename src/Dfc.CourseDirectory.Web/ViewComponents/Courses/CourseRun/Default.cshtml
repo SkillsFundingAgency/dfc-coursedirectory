@@ -9,7 +9,7 @@
     @Html.HiddenFor(x => x.CourseId)
     @Html.HiddenFor(x => x.courseRun.id)
     @Html.HiddenFor(x => x.courseRun.FlexibleStartDate)
-
+  
     <div id="course-run-@Model.courseRun.id" class="course-run-container" data-courserun-id="course-run-@Model.courseRun.id">
         <div class="govuk-grid-column-full">
             <div class="govuk-form-group" style="margin-right: 5px; display:inline-block">
@@ -44,9 +44,9 @@
                 else
                 {
                     {
-                        <div class="govuk-input govuk-input--width-10" aria-describedby="start date" readonly="@(Model.Readonly)">
-                            @Model.courseRun.StartDate?.ToString("dd/MM/yyyy")
-                        </div>
+
+                        <input readonly="@(Model.Readonly)" class="govuk-input govuk-input--width-10" type="text" aria-describedby="start date" style="width: 120px;"  asp-for="@Model.courseRun.StartDate">
+
                     }
 
                 }
@@ -82,6 +82,7 @@
                             £
                         </span>
                     </div>
+
 
                     <input readonly="@(Model.Readonly)" id="cost" class="govuk-input govuk-input--width-10" style="display: inline; margin-left: 10px; width: 75px" asp-for="@Model.courseRun.Cost" type="text">
                 </div>
