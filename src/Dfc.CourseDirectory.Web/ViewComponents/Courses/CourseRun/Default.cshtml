@@ -106,6 +106,7 @@
 
             <div class="govuk-form-group small" style="margin-right: 5px; display:inline-block">
                 <label class="govuk-label">Duration</label>
+                <span asp-validation-for="@Model.courseRun.DurationValue" class="govuk-error-message"></span>
                 <input readonly="@(Model.Readonly)" class="govuk-input" asp-for="@Model.courseRun.DurationValue" type="text" aria-describedby="duration value" style="width: 75px;">
 
             </div>
