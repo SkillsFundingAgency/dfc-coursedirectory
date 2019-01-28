@@ -172,6 +172,9 @@
             var formGroupErrorClass = "govuk-form-group--error";
             var elementErrorClass = "govuk-input--error";
 
+            var $validationMessageForCost = $("#invalidCost");
+            var $validationMessageForCostLength = $("#invalidCostLength");
+
             $("#cost").on("keypress", function (event) {
                 var charCode = event.which ? event.which : event.keyCode;
 
@@ -192,8 +195,7 @@
 
                     var $elemCostDescription = $("#costdescription");
                     var $formGroupCost = elem.closest('.govuk-form-group');
-                    var $validationMessageForCost = $("#invalidCost");
-                    var $validationMessageForCostLength = $("#invalidCostLength");
+
 
                     trimmed = elem.val().trim().replace(",", "");
 
@@ -451,6 +453,46 @@
 
                 $courseRunCostDesc.show();
             });
+
+
+
+
+
+
+            var $save = $("#save-button");
+            $save.on("click",
+                function (e) {
+                    e.preventDefault();
+                    var $elementCost = $("#cost");
+                    var $elementCostDescription = $("#costdescription");
+                    var $formGroupCost = $elementCost.closest('.govuk-form-group');
+
+                    if ($elementCost.val() === "") {
+                        if ($elementCostDescription.val() === "") {
+                            $elementCost.addClass(elementErrorClass);
+                            $validationMessageForCost.show();
+                            $formGroupCost.addClass(formGroupErrorClass);
+                        } else {
+                            $elementCost.removeClass(elementErrorClass);
+                            $validationMessageForCost.hide();
+                            $formGroupCost.removeClass(formGroupErrorClass);
+                        }
+                    } else {
+
+                        $validationMessageForCost.hide();
+                        $formGroupCost.removeClass(formGroupErrorClass);
+
+                        if ($elementCost.val().length < 1 || $elementCost.val().length > 9) {
+                            $elementCost.addClass(elementErrorClass);
+                            $validationMessageForCostLength.show();
+                            $formGroupCost.addClass(formGroupErrorClass);
+                        } else {
+                            $elementCost.removeClass(elementErrorClass);
+                            $validationMessageForCostLength.hide();
+                            $formGroupCost.removeClass(formGroupErrorClass);
+                        }
+                    }
+                });
 
         });
     })(jQuery);
