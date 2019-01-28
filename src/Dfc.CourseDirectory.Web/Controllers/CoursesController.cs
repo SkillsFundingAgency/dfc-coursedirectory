@@ -89,7 +89,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     courserun.CourseURL = model.courseRun.CourseURL;
                     courserun.DurationValue = model.courseRun.DurationValue;
                     courserun.ProviderCourseID = model.courseRun.ProviderCourseID;
-                    courserun.StartDate = model.courseRun.StartDate;
+                   // courserun.StartDate = model.courseRun.StartDate;
                     courserun.VenueId = model.courseRun.VenueId;
                     courserun.UpdatedDate=DateTime.Now;
                     
@@ -166,7 +166,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 if (eVal.ToString().ToUpper() != "UNDEFINED")
                 {
                     var item = new SelectListItem
-                    { Text = System.Enum.GetName(typeof(DeliveryMode), eVal), Value = eVal.ToString() };
+                        { Text = WebHelper.GetEnumDescription(eVal) };
 
                     deliveryModes.Add(item);
                 }
@@ -177,7 +177,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 if (eVal.ToString().ToUpper() != "UNDEFINED")
                 {
                     var item = new SelectListItem
-                    { Text = System.Enum.GetName(typeof(DurationUnit), eVal), Value = eVal.ToString() };
+                        { Text = WebHelper.GetEnumDescription(eVal) };
 
                     durationUnits.Add(item);
                 }
@@ -188,7 +188,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 if (eVal.ToString().ToUpper() != "UNDEFINED")
                 {
                     var item = new SelectListItem
-                    { Text = System.Enum.GetName(typeof(AttendancePattern), eVal), Value = eVal.ToString() };
+                        { Text = WebHelper.GetEnumDescription(eVal) };
 
                     attendances.Add(item);
                 }
@@ -199,7 +199,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 if (eVal.ToString().ToUpper() != "UNDEFINED")
                 {
                     var item = new SelectListItem
-                        { Text = WebHelper.GetEnumDescription(eVal) }; // System.Enum.GetName(typeof(Dfc.CourseDirectory.Models.Models.Courses.StudyMode), eVal), Value = eVal.ToString() };
+                        { Text = WebHelper.GetEnumDescription(eVal) }; 
 
                     modes.Add(item);
                 }

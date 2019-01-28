@@ -80,8 +80,11 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         public string ProviderCourseID { get; set; }
         public DeliveryMode DeliveryMode { get; set; }
         public bool FlexibleStartDate { get; set; }
+
+        [DisplayFormat(DataFormatString = "{0:d}", ApplyFormatInEditMode = true)]
         public DateTime? StartDate { get; set; }
         public string CourseURL { get; set; }
+        [DisplayFormat(DataFormatString = "{0:N}", ApplyFormatInEditMode = true)]
         public decimal? Cost { get; set; }
         public string CostDescription { get; set; }       
         public DurationUnit DurationUnit { get; set; }
