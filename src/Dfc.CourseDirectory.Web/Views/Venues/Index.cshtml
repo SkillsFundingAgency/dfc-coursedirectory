@@ -1,18 +1,21 @@
 ﻿@using Dfc.CourseDirectory.Common.Settings
 @using Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult
 @model Dfc.CourseDirectory.Web.ViewModels.VenueSearchResultsViewModel
-                                          
+
 @using Microsoft.Extensions.Options
+@{
+    ViewData["Title"] = "Your Venues";
+}
+    <div>
+        <div class="govuk-breadcrumbs">
+            <ol class="govuk-breadcrumbs__list">
+                <li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="">Home</a></li>
+                <li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="Venues">Venues</a></li>
+                <li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link">@ViewBag.Title</li>
+            </ol>
+        </div>
 
-<div>
-    <div class="govuk-breadcrumbs">
-        <ol class="govuk-breadcrumbs__list">
-            <li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="">Home</a></li>
-            <li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="Venues">Venues</a></li>
-        </ol>
+        <h1 class="govuk-heading-xl">Your Venues</h1>
+
+        @await Component.InvokeAsync(nameof(VenueSearchResult), Model.Result)
     </div>
-
-    <h1 class="govuk-heading-xl">Your Venues</h1>
-
-    @await Component.InvokeAsync(nameof(VenueSearchResult), Model.Result)
-</div>

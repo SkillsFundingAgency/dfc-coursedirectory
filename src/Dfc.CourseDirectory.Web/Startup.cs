@@ -34,6 +34,8 @@ using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using System;
+using Dfc.CourseDirectory.Services.Interfaces.OnspdService;
+using Dfc.CourseDirectory.Services.OnspdService;
 using Microsoft.AspNetCore.Http.Features;
 
 namespace Dfc.CourseDirectory.Web
@@ -304,7 +306,9 @@ namespace Dfc.CourseDirectory.Web
             services.Configure<CourseServiceSettings>(Configuration.GetSection(nameof(CourseServiceSettings)));
             services.AddScoped<ICourseService, CourseService>();
 
-
+            services.Configure<OnspdSearchSettings>(Configuration.GetSection(nameof(OnspdSearchSettings)));
+            services.AddScoped<IOnspdService, OnspdService>();
+            services.AddScoped<IOnspdSearchHelper, OnspdSearchHelper>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddSessionStateTempDataProvider();
 

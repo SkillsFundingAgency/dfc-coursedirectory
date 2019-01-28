@@ -2,6 +2,7 @@
 using Dfc.CourseDirectory.Models.Interfaces.Courses;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 
 namespace Dfc.CourseDirectory.Models.Models.Courses
 {
@@ -39,6 +40,7 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         PartTime = 2,
         [Description("Flexible")]
         Flexible = 3
+
     }
 
     public enum AttendancePattern
@@ -58,7 +60,7 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
     {
         [Description("Defined Start Date")]
         SpecifiedStartDate = 1,
-        [Description("Select a flexible start date")]
+        [Description("Select a flexible start date")] 
         FlexibleStartDate = 2,
     }
 
@@ -78,14 +80,20 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         public string ProviderCourseID { get; set; }
         public DeliveryMode DeliveryMode { get; set; }
         public bool FlexibleStartDate { get; set; }
+
+        [DisplayFormat(DataFormatString = "{0:d}", ApplyFormatInEditMode = true)]
         public DateTime? StartDate { get; set; }
         public string CourseURL { get; set; }
+        [DisplayFormat(DataFormatString = "{0:N}", ApplyFormatInEditMode = true)]
         public decimal? Cost { get; set; }
         public string CostDescription { get; set; }       
         public DurationUnit DurationUnit { get; set; }
+        [Required(ErrorMessage = "Enter Duration")]
+        [RegularExpression("^([0-9]|[0-9][0-9]|[0-9][0-9][0-9])$", ErrorMessage = "Duration must be numeric and maximum length is 3 digits")]
         public int? DurationValue { get; set; }
         public StudyMode StudyMode { get; set; }
         public AttendancePattern AttendancePattern { get; set; }
+        public IEnumerable<string> Regions { get; set; }
 
         public DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }
