@@ -620,37 +620,38 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         Id = "E12000009",
                         Checked = false,
                         RegionName = "South West"
-                    },
-                    new RegionItemModel
-                    {
-                        Id = "L99999999",
-                        Checked = false,
-                        RegionName = "(pseudo) Channel Islands"
-                    },
-                    new RegionItemModel
-                    {
-                        Id = "M99999999",
-                        Checked = false,
-                        RegionName = "(pseudo) Isle of Man"
-                    },
-                    new RegionItemModel
-                    {
-                        Id = "N99999999",
-                        Checked = false,
-                        RegionName = "(pseudo) Northern Ireland"
-                    },
-                    new RegionItemModel
-                    {
-                        Id = "S99999999",
-                        Checked = false,
-                        RegionName = "(pseudo) Scotland"
-                    },
-                    new RegionItemModel
-                    {
-                        Id = "W99999999",
-                        Checked = false,
-                        RegionName = "(pseudo) Wales"
                     }
+
+                    //,new RegionItemModel
+                    //{
+                    //    Id = "L99999999",
+                    //    Checked = false,
+                    //    RegionName = "(pseudo) Channel Islands"
+                    //},
+                    //new RegionItemModel
+                    //{
+                    //    Id = "M99999999",
+                    //    Checked = false,
+                    //    RegionName = "(pseudo) Isle of Man"
+                    //},
+                    //new RegionItemModel
+                    //{
+                    //    Id = "N99999999",
+                    //    Checked = false,
+                    //    RegionName = "(pseudo) Northern Ireland"
+                    //},
+                    //new RegionItemModel
+                    //{
+                    //    Id = "S99999999",
+                    //    Checked = false,
+                    //    RegionName = "(pseudo) Scotland"
+                    //},
+                    //new RegionItemModel
+                    //{
+                    //    Id = "W99999999",
+                    //    Checked = false,
+                    //    RegionName = "(pseudo) Wales"
+                    //}
                 }
             };
         }
