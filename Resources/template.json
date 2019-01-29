@@ -415,19 +415,19 @@
                 "value": "500"
               },
               {
-                "name": "OnspdSearchSettings_SearchServiceName",
+                "name": "OnspdSearchSettings__SearchServiceName",
                 "value": "[parameters('searchDomain')]"
               },
               {
-                "name": "OnspdSearchSettings_SearchServiceAdminApiKey",
+                "name": "OnspdSearchSettings__SearchServiceAdminApiKey",
                 "value": "[parameters('searchAdminKey')]"
               },
               {
-                "name": "OnspdSearchSettings_SearchServiceQueryApiKey",
+                "name": "OnspdSearchSettings__SearchServiceQueryApiKey",
                 "value": "[parameters('searchQueryKey')]"
               },
               {
-                "name": "OnspdSearchSettings_IndexName",
+                "name": "OnspdSearchSettings__IndexName",
                 "value": "onspd"
               },
               {
