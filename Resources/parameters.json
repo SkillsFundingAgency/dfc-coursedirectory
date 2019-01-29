@@ -37,6 +37,33 @@
     },
     "courseApiKey": {
       "value": "not-a-real-key"
+    },
+    "searchDomain": {
+      "value": "search.example.net"
+    },
+    "searchAdminKey": {
+      "value": "not-a-real-key"
+    },
+    "searchQueryKey": {
+      "value": "not-a-real-key"
+    },
+    "dfeClientID": {
+      "value": "letmein"
+    },
+    "dfeClientSecret": {
+      "value": "not-a-real-secret"
+    },
+    "dfeEndpointUrl": {
+      "value": "https://test.dfe.net/token"
+    },
+    "dfeMetadataUrl": {
+      "value": "https://test.dfe.net/.well-known/openid-configuration"
+    },
+    "dfeCallBackPath": {
+      "value": "/auth"
+    },
+    "dfeSignedOutPath": {
+      "value": "/signout"
     }
   }
 }

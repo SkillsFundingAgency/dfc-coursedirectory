@@ -28,6 +28,7 @@
 
   <ItemGroup>
     <PackageReference Include="FontAwesome" Version="4.7.0" />
+    <PackageReference Include="IdentityModel" Version="3.10.5" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.5.1" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.1.1" PrivateAssets="All" />
@@ -95,6 +96,9 @@
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="ViewComponents\Courses\CourseFor\Default.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="ViewComponents\Notification\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="ViewComponents\ProviderSearchResult\Default.cshtml">
