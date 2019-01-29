@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Dfc.CourseDirectory.Models.Models.Courses
 {
-    public class Course : ICourse 
+    public class Course : ICourse, ICloneable
     {
         public Guid id { get; set; }
         public int? CourseId { get; set; }
@@ -32,5 +32,21 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         public string CreatedBy { get; set; }
         public DateTime? UpdatedDate { get; set; }
         public string UpdatedBy { get; set; }
+
+
+        public Course Clone() {
+            return (Course)this.MemberwiseClone();
+        }
+
+        object ICloneable.Clone() {
+            return Clone();
+        }
+
+        public Course WithNoCourseRuns()
+        {
+            Course empty = (Course)this.MemberwiseClone();
+            empty.CourseRuns = new List<CourseRun>();
+            return empty;
+        }
     }
 }
