@@ -27,27 +27,27 @@
             <button type="button" role="button" class="govuk-header__menu-button js-header-toggle" aria-controls="navigation" aria-label="Show or hide Top Level Navigation">Menu</button>
             <nav>
                 <ul id="navigation" class="govuk-header__navigation " aria-label="Top Level Navigation">
-                    <li class="govuk-header__navigation-item govuk-header__navigation-item--active">
+                    <li class="govuk-header__navigation-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Home" ? "govuk-header__navigation-item--active" : "")">
                         <a class="govuk-header__link" href="/">
                             Home
                         </a>
                     </li>
-                    <li class="govuk-header__navigation-item">
+                    <li class="govuk-header__navigation-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Qualifications" ? "govuk-header__navigation-item--active" : "")">
                         <a class="govuk-header__link" href="~/Qualifications">
                             Qualifications
                         </a>
                     </li>
-                    <li class="govuk-header__navigation-item">
+                    <li class="govuk-header__navigation-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Venues" ? "govuk-header__navigation-item--active" : "")">
                         <a class="govuk-header__link" href="/Venues">
                             Venues
                         </a>
                     </li>
-                    <li class="govuk-header__navigation-item">
+                    <li class="govuk-header__navigation-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Provider" ? "govuk-header__navigation-item--active" : "")">
                         <a class="govuk-header__link" href="/Provider">
                             Add Provider
                         </a>
                     </li>
-                    <li class="govuk-header__navigation-item">
+                    <li class="govuk-header__navigation-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Courses" ? "govuk-header__navigation-item--active" : "")">
                         <a class="govuk-header__link" href="/Courses">
                             Courses
                         </a>
