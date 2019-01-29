@@ -81,6 +81,9 @@
                 <span class="govuk-error-message field-validation-error" id="invalidCostLength" style="display: none;margin-bottom: 15px;">
                     <span id="invalidCostLengthMessage" class="">Maximum value for cost is £999,999.99</span>
                 </span>
+                <span class="govuk-error-message field-validation-error" id="missingCostAndDescription" style="display: none;margin-bottom: 15px;">
+                    <span id="invalidCostMessage" class="">Enter Cost or Cost detail</span>
+                </span>
                 <span class="govuk-body">£</span>
                 <input readonly="@(Model.Readonly)" id="cost" class="govuk-input govuk-input--width-10" style="display: inline; margin-left: 10px; width: 75px" asp-for="@Model.courseRun.Cost" type="text">
             </div>
@@ -175,6 +178,7 @@
 
             var $validationMessageForCost = $("#invalidCost");
             var $validationMessageForCostLength = $("#invalidCostLength");
+            var $validationMessageForMissingCostAndDescription = $("#missingCostAndDescription");
 
             $("#cost").on("keypress", function (event) {
                 var charCode = event.which ? event.which : event.keyCode;
@@ -197,6 +201,12 @@
                     var $elemCostDescription = $("#costdescription");
                     var $formGroupCost = elem.closest('.govuk-form-group');
 
+                    $validationMessageForCost.hide();
+                    $validationMessageForCostLength.hide();
+                    $validationMessageForMissingCostAndDescription.hide();
+
+                    elem.removeClass(elementErrorClass);
+                    $formGroupCost.removeClass(formGroupErrorClass);
 
                     trimmed = elem.val().trim().replace(",", "");
 
@@ -226,7 +236,7 @@
                             if (elem.val() === "") {
                                 if ($elemCostDescription.val() === "") {
                                     elem.addClass(elementErrorClass);
-                                    $validationMessageForCost.show();
+                                    $validationMessageForMissingCostAndDescription.show();
                                     $formGroupCost.addClass(formGroupErrorClass);
                                 } else {
                                     elem.removeClass(elementErrorClass);
@@ -462,14 +472,22 @@
                 function (e) {
                     e.preventDefault();
 
+                    $validationMessageForCost.hide();
+                    $validationMessageForCostLength.hide();
+                    $validationMessageForMissingCostAndDescription.hide();
+                   
+
                     var $elementCost = $("#cost");
                     var $elementCostDescription = $("#costdescription");
                     var $formGroupCost = $elementCost.closest('.govuk-form-group');
 
+                    $elementCost.removeClass(elementErrorClass);
+                    $formGroupCost.removeClass(formGroupErrorClass);
+
                     if ($elementCost.val() === "") {
                         if ($elementCostDescription.val() === "") {
                             $elementCost.addClass(elementErrorClass);
-                            $validationMessageForCost.show();
+                            $validationMessageForMissingCostAndDescription.show();
                             $formGroupCost.addClass(formGroupErrorClass);
                         } else {
                             $elementCost.removeClass(elementErrorClass);
