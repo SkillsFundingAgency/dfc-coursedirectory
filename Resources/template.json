@@ -74,6 +74,60 @@
         "description": "API host key (code) needed to access the course service function app (REST API)"
       }
     },
+    "searchDomain": {
+      "type": "string",
+      "metadata": {
+        "description": "URL for the search services"
+      }
+    },
+    "searchAdminKey": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Admin key for updating seach (REST API)"
+      }
+    },
+    "searchQueryKey": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Query key for reading seach (REST API)"
+      }
+    },
+    "dfeClientID": {
+      "type": "string",
+      "metadata": {
+        "description": "DfE Signin client ID"
+      }
+    },
+    "dfeClientSecret": {
+      "type": "securestring",
+      "metadata": {
+        "description": "DfE Signin client secret (key)"
+      }
+    },
+    "dfeEndpointUrl": {
+      "type": "string",
+      "metadata": {
+        "description": "DfE Signin URL"
+      }
+    },
+    "dfeMetadataUrl": {
+      "type": "string",
+      "metadata": {
+        "description": "DfE Signin metadata URL"
+      }
+    },
+    "dfeCallBackPath": {
+      "type": "string",
+      "metadata": {
+        "description": "Path in URL that DfE Signin calls back after authentication"
+      }
+    },
+    "dfeSignedOutPath": {
+      "type": "string",
+      "metadata": {
+        "description": "Path in URL that DfE Signin calls back after sign out"
+      }
+    },
     "appServicePlanSize": {
       "type": "string",
       "defaultValue": "1",
@@ -359,6 +413,46 @@
               {
                 "name": "AppUISettings__WhereNextComponentSettings__TextFieldMaxChars",
                 "value": "500"
+              },
+              {
+                "name": "OnspdSearchSettings_SearchServiceName",
+                "value": "[parameters('searchDomain')]"
+              },
+              {
+                "name": "OnspdSearchSettings_SearchServiceAdminApiKey",
+                "value": "[parameters('searchAdminKey')]"
+              },
+              {
+                "name": "OnspdSearchSettings_SearchServiceQueryApiKey",
+                "value": "[parameters('searchQueryKey')]"
+              },
+              {
+                "name": "OnspdSearchSettings_IndexName",
+                "value": "onspd"
+              },
+              {
+                "name": "DFESignInSettings__ClientID",
+                "value": "[parameters('dfeClientID')]"
+              },
+              {
+                "name": "DFESignInSettings__ClientSecret",
+                "value": "[parameters('dfeClientSecret')]"
+              },
+              {
+                "name": "DFESignInSettings__TokenEndpoint",
+                "value": "[parameters('dfeEndpointUrl')]"
+              },
+              {
+                "name": "DFESignInSettings__MetadataAddress",
+                "value": "[parameters('dfeMetadataUrl')]"
+              },
+              {
+                "name": "DFESignInSettings__CallbackPath",
+                "value": "[parameters('dfeCallBackPath')]"
+              },
+              {
+                "name": "DFESignInSettings__SignedOutCallbackPath",
+                "value": "[parameters('dfeSignedOutPath')]"
               }
             ]
           }
