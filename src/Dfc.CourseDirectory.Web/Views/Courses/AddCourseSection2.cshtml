@@ -12,6 +12,7 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.Duration
 @using Duration = Dfc.CourseDirectory.Web.ViewComponents.Courses.Duration.Duration
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.Cost
+@using Dfc.CourseDirectory.Web.ViewComponents.Notification
 
 @model Dfc.CourseDirectory.Web.ViewModels.AddCourseDetailsViewModel
 
@@ -19,7 +20,13 @@
     Add course details
 </h1>
 
-<p style="padding: 15px 20px; border: 3px solid #009900;background-color:#fff;" id="qual--">Qualification added:<br> @Model.LearnAimRefTitle<br> Level: @Model.NotionalNVQLevelv2<br> Awarding organisation: @Model.AwardOrgCode<br> LARS/QAN: @Model.LearnAimRef</p>
+@await Component.InvokeAsync(nameof(Notification), new NotificationModel
+{
+
+    NotificationTitle = "Qualification added",
+    NotificationMessage = @Model.LearnAimRefTitle + "<br>" + "Level: " + @Model.NotionalNVQLevelv2 + "<br> Awarding organisation: " + @Model.AwardOrgCode + "<br> LARS / QAN: " + @Model.LearnAimRef,
+    ClassType = "info-summary"
+});
 
 <form asp-controller="Courses" asp-action="AddCourse" id="addCourseSection2">
     
