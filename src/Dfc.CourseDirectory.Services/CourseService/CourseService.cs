@@ -194,7 +194,9 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 _logger.LogMethodExit();
             }
         }
+        
     }
+    
 
     internal static class CourseServiceSettingsExtensions
     {
