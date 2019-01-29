@@ -152,7 +152,7 @@
         <div class="govuk-grid-column-full">
             <div class="govuk-form-group" style="margin-right: 5px; display:inline-block">
                 <div id="btns-course-run-@Model.courseRun.id" style="display: none; margin-bottom: 5px; width: 400px; margin-left: 0px">
-                    <button id="save-button" type="submit" class="govuk-button">
+                    <button type="submit" class="govuk-button" id="save">
                         Save
                     </button>
                     <a href="#" class="govuk-link discard" style="display: inline-block; margin-top: 10px;" data-id="@Model.courseRun.id">Discard</a>
@@ -311,28 +311,28 @@
                     $("#btns-course-run-" + $courseRunId).css("display", "block");
                 }
 
-                $("div[id^='btns-course-run']").each(function (index) {
-                    var $id = $(this).attr("id").substr(16, $(this).attr("id").length - 16);
-                    // console.log($id);
+                //$("div[id^='btns-course-run']").each(function (index) {
+                //    var $id = $(this).attr("id").substr(16, $(this).attr("id").length - 16);
+                //    // console.log($id);
 
-                    if ($id !== $courseRunId) {
-                        $("#course-run-" + $id).addClass("unselected-courses");
+                //    if ($id !== $courseRunId) {
+                //        //$("#course-run-" + $id).addClass("unselected-courses");
 
-                        //$("#course-run-" + $id).find(':input').each(function (i, elem) {
-                        //    $(elem).attr('disabled', true);
+                //        //$("#course-run-" + $id).find(':input').each(function (i, elem) {
+                //        //    $(elem).attr('disabled', true);
 
-                        //});
+                //        //});
 
-                        if ($("#btns-course-run-" + $id).is(":visible")) {
-                            $("#btns-course-run-" + $id).hide();
+                //        if ($("#btns-course-run-" + $id).is(":visible")) {
+                //            $("#btns-course-run-" + $id).hide();
 
-                            $("#course-run-" + $id).find(':input').each(function (i, elem) {
-                                var input = $(elem);
-                                input.val(input.data('initialState'));
-                            });
-                        }
-                    }
-                });
+                //            $("#course-run-" + $id).find(':input').each(function (i, elem) {
+                //                var input = $(elem);
+                //                input.val(input.data('initialState'));
+                //            });
+                //        }
+                //    }
+                //});
 
             });
 
@@ -347,29 +347,29 @@
                     $("#btns-course-run-" + $courseRunId).css("display", "block");
                 }
 
-                $("div[id^='btns-course-run']").each(function (index) {
-                    var $id = $(this).attr("id").substr(16, $(this).attr("id").length - 16);
-                    //console.log($id);
+                //$("div[id^='btns-course-run']").each(function (index) {
+                //    var $id = $(this).attr("id").substr(16, $(this).attr("id").length - 16);
+                //    //console.log($id);
 
-                    if ($id !== $courseRunId) {
-                        $("#course-run-" + $id).addClass("unselected-courses");
+                //    if ($id !== $courseRunId) {
+                //       // $("#course-run-" + $id).addClass("unselected-courses");
 
-                        //$("#course-run-" + $id).find(':input').each(function (i, elem) {
-                        //    $(elem).attr('disabled', true);
+                //        //$("#course-run-" + $id).find(':input').each(function (i, elem) {
+                //        //    $(elem).attr('disabled', true);
 
-                        //});
+                //        //});
 
-                        if ($("#btns-course-run-" + $id).is(":visible")) {
-                            $("#btns-course-run-" + $id).hide();
+                //        if ($("#btns-course-run-" + $id).is(":visible")) {
+                //            $("#btns-course-run-" + $id).hide();
 
-                            $("#course-run-" + $id).find(':input').each(function (i, elem) {
-                                var input = $(elem);
-                                input.val(input.data('initialState'));
+                //            $("#course-run-" + $id).find(':input').each(function (i, elem) {
+                //                var input = $(elem);
+                //                input.val(input.data('initialState'));
 
-                            });
-                        }
-                    }
-                });
+                //            });
+                //        }
+                //    }
+                //});
 
             });
 
@@ -389,9 +389,9 @@
                     $(elem).trigger("blur");
                 });
 
-                $("div[id^='course-run-']").each(function (index) {
-                    $(this).removeClass("unselected-courses");
-                });
+                //$("div[id^='course-run-']").each(function (index) {
+                //    $(this).removeClass("unselected-courses");
+                //});
 
                 var $btn = $("#btns-course-run-" + $courseRunId).css("display", "none");
             });
@@ -457,13 +457,11 @@
 
 
 
-
-
-
-            var $save = $("#save-button");
-            $save.on("click",
+            var $publish = $("#save");
+            $publish.on("click",
                 function (e) {
                     e.preventDefault();
+
                     var $elementCost = $("#cost");
                     var $elementCostDescription = $("#costdescription");
                     var $formGroupCost = $elementCost.closest('.govuk-form-group');
@@ -491,8 +489,12 @@
                             $elementCost.removeClass(elementErrorClass);
                             $validationMessageForCostLength.hide();
                             $formGroupCost.removeClass(formGroupErrorClass);
+
+                            $("#your-courses").submit();
                         }
                     }
+
+                    
                 });
 
         });
