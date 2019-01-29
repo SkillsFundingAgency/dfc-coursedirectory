@@ -395,31 +395,36 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 // and flexibleStartDate = false
             }
 
-            foreach (var venue in model.SelectedVenues)
+            if (model.DeliveryMode == DeliveryMode.ClassroomBased
+                && model.SelectedVenues != null
+                && model.SelectedVenues.Any())
             {
-                var courseRun = new CourseRun
+                foreach (var venue in model.SelectedVenues)
                 {
-                    id = Guid.NewGuid(),
-                    VenueId = venue,
+                    var courseRun = new CourseRun
+                    {
+                        id = Guid.NewGuid(),
+                        VenueId = venue,
 
-                    CourseName = model.CourseName,
-                    ProviderCourseID = model.CourseProviderReference,
-                    DeliveryMode = model.DeliveryMode,
-                    FlexibleStartDate = flexibleStartDate,
-                    StartDate = specifiedStartDate,
-                    CourseURL = model.Url?.ToLower(),
-                    Cost = model.Cost,
-                    CostDescription = model.CostDescription,
-                    DurationUnit = model.Id,
-                    DurationValue = model.DurationLength,
-                    StudyMode = model.StudyMode,
-                    AttendancePattern = model.AttendanceMode,
-                    Regions = model.SelectedRegions,
-                    CreatedDate = DateTime.Now,
-                    CreatedBy = "ProviderPortal-AddCourse" // TODO - Change to the name of the logged person 
-                };
+                        CourseName = model.CourseName,
+                        ProviderCourseID = model.CourseProviderReference,
+                        DeliveryMode = model.DeliveryMode,
+                        FlexibleStartDate = flexibleStartDate,
+                        StartDate = specifiedStartDate,
+                        CourseURL = model.Url?.ToLower(),
+                        Cost = model.Cost,
+                        CostDescription = model.CostDescription,
+                        DurationUnit = model.Id,
+                        DurationValue = model.DurationLength,
+                        StudyMode = model.StudyMode,
+                        AttendancePattern = model.AttendanceMode,
+                        Regions = model.SelectedRegions,
+                        CreatedDate = DateTime.Now,
+                        CreatedBy = "ProviderPortal-AddCourse" // TODO - Change to the name of the logged person 
+                    };
 
-                courseRuns.Add(courseRun);
+                    courseRuns.Add(courseRun);
+                }
             }
 
             if (model.DeliveryMode == DeliveryMode.WorkBased 
