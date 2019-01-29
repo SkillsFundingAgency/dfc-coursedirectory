@@ -100,8 +100,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     return RedirectToAction("Index", new { status = "bad", learnAimRef = "", numberOfNewCourses = "", errmsg = "No course run" });
                 }               
             }
-            return Redirect("/");
-            //return RedirectToAction("Index", new { status = "update", learnAimRef ="", numberOfNewCourses ="", errmsg ="", updatedCourseId = model.CourseId});
+           
+            return RedirectToAction("Index", new { status = "update", learnAimRef ="", numberOfNewCourses ="", errmsg ="", updatedCourseId = model.CourseId});
         }
 
 
