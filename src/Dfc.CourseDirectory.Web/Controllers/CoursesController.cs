@@ -96,25 +96,88 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                     var updatedCourses = await _courseService.UpdateCourseAsync(course);
 
-                }
-                else
-                {
+                } else {
                     return RedirectToAction("Index", new { status = "bad", learnAimRef = "", numberOfNewCourses = "", errmsg = "No course run" });
-                }
-               
+                }               
             }
-
             return RedirectToAction("Index", new { status = "update", learnAimRef ="", numberOfNewCourses ="", errmsg ="", updatedCourseId = model.CourseId});
         }
 
-        public async Task<IActionResult> Index(string status, string learnAimRef, string numberOfNewCourses, string errmsg,Guid? updatedCourseId)
+
+
+
+        public async Task<JsonResult> Test1(int prn)
+        {
+            _session.SetInt32("UKPRN", prn);
+            IActionResult view = await GetYourCoursesViewModelAsync("", "", "", "", null);
+            YourCoursesViewModel vm = (YourCoursesViewModel)(((ViewResult)view).Model);
+            return new JsonResult(vm);
+        }
+
+        public async Task<JsonResult> Test2(int prn)
+        {
+            _session.SetInt32("UKPRN", prn);
+            IActionResult view = await GetYourCoursesViewModelAsync("", "", "", "", null);
+            YourCoursesViewModel vm = (YourCoursesViewModel)(((ViewResult)view).Model);
+            //vm.Courses.Value = vm.Courses.Value.Select(c => new CourseSearchOuterGrouping(c.Value, c.QualType)); //new CourseSearchResult(vm.Courses.Value);
+            IEnumerable<ICourseSearchOuterGrouping> outers = vm.Courses.Value.Select(c => new CourseSearchOuterGrouping(c.Value, c.QualType));
+            return new JsonResult(outers); //vm);
+        }
+
+        public async Task<JsonResult> Test3(int prn, string qualType)
+        {
+            _session.SetInt32("UKPRN", prn);
+            IActionResult view = await GetYourCoursesViewModelAsync("", "", "", "", null);
+            YourCoursesViewModel vm = (YourCoursesViewModel)(((ViewResult)view).Model);
+            IEnumerable<ICourseSearchInnerGrouping> inners = vm.Courses.Value.FirstOrDefault(o => o.QualType == qualType)
+                                                                             .Value
+                                                                             .Select(i => new CourseSearchInnerResultGrouping(i.LARSRef));
+            return new JsonResult(inners);
+        }
+
+        public async Task<JsonResult> Test4(int prn, string qualType, string larsRef)
+        {
+            _session.SetInt32("UKPRN", prn);
+            IActionResult view = await GetYourCoursesViewModelAsync("", "", "", "", null);
+            YourCoursesViewModel vm = (YourCoursesViewModel)(((ViewResult)view).Model);
+            IEnumerable<Course> courses = vm.Courses.Value.FirstOrDefault(o => o.QualType == qualType)
+                                                          .Value
+                                                          .FirstOrDefault(i => i.LARSRef == larsRef)
+                                                          .Value
+                                                          .Select(c => c.WithNoCourseRuns());
+            return new JsonResult(courses);
+        }
+
+        //public async Task<IActionResult> Level1(string status, string learnAimRef, string numberOfNewCourses, string errmsg, Guid? updatedCourseId)
+        //{
+        //    IActionResult view = await GetYourCoursesViewModelAsync(status, learnAimRef, numberOfNewCourses, errmsg, updatedCourseId);
+        //    YourCoursesViewModel vm = (YourCoursesViewModel)(((ViewResult)view).Model);
+        //    return View(new YourCoursesViewModel() {
+        //        UpdatedCourseId = vm.UpdatedCourseId,
+        //        UKPRN = vm.UKPRN,
+        //        deliveryModes = vm.deliveryModes,
+        //        durationUnits = vm.durationUnits,
+        //        attendances = vm.attendances,
+        //        modes = vm.modes,
+        //        Venues = vm.Venues,
+        //        Courses = new CourseSearchResult(vm.Courses.Value) //.Select(x => new CourseSearchOuterGrouping(x, false))
+        //    });
+        //}
+
+
+        public async Task<IActionResult> Index(string status, string learnAimRef, string numberOfNewCourses, string errmsg, Guid? updatedCourseId)
+        {
+            IActionResult view = await GetYourCoursesViewModelAsync(status, learnAimRef, numberOfNewCourses, errmsg, updatedCourseId);
+            return view;
+        }
+
+        private async Task<IActionResult> GetYourCoursesViewModelAsync(string status, string learnAimRef, string numberOfNewCourses, string errmsg, Guid? updatedCourseId)
         {
 
             var deliveryModes = new List<SelectListItem>();
             var durationUnits = new List<SelectListItem>();
             var attendances = new List<SelectListItem>();
             var modes = new List<SelectListItem>();
-
 
             if (!string.IsNullOrEmpty(status))
             {
@@ -132,92 +195,65 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         break;
                     default:
                         break;
-
                 }
-
             }
 
+            List<SelectListItem> courseRunVenues = new List<SelectListItem>();
+            int? UKPRN = _session.GetInt32("UKPRN");
 
-
-            var courseRunVenues = new List<SelectListItem>();
-
-            var UKPRN = _session.GetInt32("UKPRN");
-            if (UKPRN.HasValue)
-            {
+            if (UKPRN.HasValue) {
                 VenueSearchCriteria criteria = new VenueSearchCriteria(UKPRN.ToString(), null);
-
                 var venues = await _venueService.SearchAsync(criteria);
 
-                foreach (var venue in venues.Value.Value)
-                {
-                    var item = new SelectListItem
-                    { Text = venue.VenueName, Value = venue.ID };
-
+                foreach (var venue in venues.Value.Value) {
+                    var item = new SelectListItem { Text = venue.VenueName, Value = venue.ID };
                     courseRunVenues.Add(item);
                 };
-            }
-            else
-            {
+            } else {
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
 
-            foreach (DeliveryMode eVal in DeliveryMode.GetValues(typeof(DeliveryMode)))
-            {
-                if (eVal.ToString().ToUpper() != "UNDEFINED")
-                {
-                    var item = new SelectListItem
-                        { Text = WebHelper.GetEnumDescription(eVal) };
-
+            foreach (DeliveryMode eVal in DeliveryMode.GetValues(typeof(DeliveryMode))) {
+                if (eVal.ToString().ToUpper() != "UNDEFINED") {
+                    var item = new SelectListItem { Text = WebHelper.GetEnumDescription(eVal) };
                     deliveryModes.Add(item);
                 }
             };
 
-            foreach (DurationUnit eVal in DurationUnit.GetValues(typeof(DurationUnit)))
-            {
-                if (eVal.ToString().ToUpper() != "UNDEFINED")
-                {
-                    var item = new SelectListItem
-                        { Text = WebHelper.GetEnumDescription(eVal) };
-
+            foreach (DurationUnit eVal in DurationUnit.GetValues(typeof(DurationUnit))) {
+                if (eVal.ToString().ToUpper() != "UNDEFINED") {
+                    var item = new SelectListItem { Text = WebHelper.GetEnumDescription(eVal) };
                     durationUnits.Add(item);
                 }
             };
 
-            foreach (AttendancePattern eVal in AttendancePattern.GetValues(typeof(AttendancePattern)))
-            {
-                if (eVal.ToString().ToUpper() != "UNDEFINED")
-                {
-                    var item = new SelectListItem
-                        { Text = WebHelper.GetEnumDescription(eVal) };
-
+            foreach (AttendancePattern eVal in AttendancePattern.GetValues(typeof(AttendancePattern))) {
+                if (eVal.ToString().ToUpper() != "UNDEFINED") {
+                    var item = new SelectListItem { Text = WebHelper.GetEnumDescription(eVal) };
                     attendances.Add(item);
                 }
             };
 
-            foreach (Dfc.CourseDirectory.Models.Models.Courses.StudyMode eVal in Enum.GetValues(typeof(Dfc.CourseDirectory.Models.Models.Courses.StudyMode)))
-            {
-                if (eVal.ToString().ToUpper() != "UNDEFINED")
-                {
-                    var item = new SelectListItem
-                        { Text = WebHelper.GetEnumDescription(eVal) }; 
-
+            foreach (Dfc.CourseDirectory.Models.Models.Courses.StudyMode eVal in Enum.GetValues(typeof(Dfc.CourseDirectory.Models.Models.Courses.StudyMode))) {
+                if (eVal.ToString().ToUpper() != "UNDEFINED") {
+                    var item = new SelectListItem { Text = WebHelper.GetEnumDescription(eVal) };
                     modes.Add(item);
                 }
-
             };
 
             // Get courses (and runs) for PRN, grouped by qualification type, then within that by LARS ref
-            int? ukprn = _session.GetInt32("UKPRN");
-            if (ukprn.HasValue)
+            //int? ukprn = _session.GetInt32("UKPRN");
+            if (UKPRN.HasValue)
             {
-                ICourseSearchResult result = (!ukprn.HasValue ? null :
-                                              _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(ukprn))
+                ICourseSearchResult result = (!UKPRN.HasValue ? null :
+                                              _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(UKPRN))
                                                             .Result.Value);
+
 
                 YourCoursesViewModel vm = new YourCoursesViewModel
                 {
                     UpdatedCourseId= updatedCourseId ?? null,
-                    UKPRN = ukprn,
+                    UKPRN = UKPRN,
                     Courses = result,
                     deliveryModes = deliveryModes,
                     durationUnits = durationUnits,
@@ -227,9 +263,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 };
 
                 return View(vm);
-            }
-            else
-            {
+
+            } else {
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
         }
