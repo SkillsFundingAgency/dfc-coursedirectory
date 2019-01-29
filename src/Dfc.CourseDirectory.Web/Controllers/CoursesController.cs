@@ -104,7 +104,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                
             }
 
-            return RedirectToAction("Index", new { status = "update", learnAimRef ="", numberOfNewCourses ="", errmsg ="", updatedCourseId = model.CourseId});
+            return Redirect("/");
+            //return RedirectToAction("Index", new { status = "update", learnAimRef ="", numberOfNewCourses ="", errmsg ="", updatedCourseId = model.CourseId});
         }
 
         public async Task<IActionResult> Index(string status, string learnAimRef, string numberOfNewCourses, string errmsg,Guid? updatedCourseId)
