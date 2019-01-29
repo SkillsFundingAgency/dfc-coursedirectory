@@ -20,6 +20,14 @@ namespace Dfc.CourseDirectory.Services.CourseService
             Value = courses.Select(c => new CourseSearchOuterGrouping(c));
         }
 
+        public CourseSearchResult(
+            IEnumerable<ICourseSearchOuterGrouping> courses)
+        {
+            Throw.IfNull(courses, nameof(courses));
+
+            Value = courses.Select(c => new CourseSearchOuterGrouping(c.Value, c.QualType));
+        }
+
         protected override IEnumerable<object> GetEqualityComponents()
         {
             yield return Value;
@@ -31,13 +39,21 @@ namespace Dfc.CourseDirectory.Services.CourseService
         public string QualType { get; set; }
         public IEnumerable<ICourseSearchInnerGrouping> Value { get; set; }
 
+        public CourseSearchOuterGrouping(IEnumerable<ICourseSearchInnerGrouping> courses, string qualType)
+        {
+            Throw.IfNullOrEmpty(qualType, nameof(qualType));
+            QualType = qualType;
+            Value = courses.Select(c => new CourseSearchInnerResultGrouping(c.LARSRef));
+        }
+
         public CourseSearchOuterGrouping(
             IEnumerable<IEnumerable<Course>> courses)
+            //bool PopulateChildren = true)
         {
-            Throw.IfNullOrEmpty(courses, nameof(courses));
-            
-            Value = courses.Select(c => new CourseSearchInnerResultGrouping(c));
+            Throw.IfNull(courses, nameof(courses));
+
             QualType = courses?.FirstOrDefault()?.FirstOrDefault()?.QualificationType;
+            Value = courses.Select(c => new CourseSearchInnerResultGrouping(c));
         }
 
         protected override IEnumerable<object> GetEqualityComponents()
@@ -52,10 +68,18 @@ namespace Dfc.CourseDirectory.Services.CourseService
         public string LARSRef { get; set; }
         public IEnumerable<Course> Value { get; set; }
 
+        public CourseSearchInnerResultGrouping(string larsRef)
+        {
+            Throw.IfNullOrEmpty(larsRef, nameof(larsRef));
+
+            LARSRef = larsRef;
+            Value = new List<Course>();
+        }
+
         public CourseSearchInnerResultGrouping(
             IEnumerable<Course> value)
         {
-            Throw.IfNullOrEmpty(value, nameof(value));
+            Throw.IfNull(value, nameof(value));
 
             Value = value;
             LARSRef = value?.FirstOrDefault()?.LearnAimRef;
