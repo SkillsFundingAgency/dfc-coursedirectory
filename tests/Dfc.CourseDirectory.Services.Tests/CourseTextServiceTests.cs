@@ -2,92 +2,61 @@
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
 using System.Text;
 using Xunit;
 using Dfc.CourseDirectory.Services.CourseTextService;
+using Dfc.CourseDirectory.Services.ProviderService;
+using Microsoft.Extensions.Options;
+
 namespace Dfc.CourseDirectory.Services.Tests
 {
     public class CourseTextServiceTests
     {
-        //string url = "http://localhost:7071/api/GetCourseTextByLARS";
+       
+        private CourseTextServiceSettings settings;
+        public CourseTextServiceTests()
+        {
+            settings = new CourseTextServiceSettings()
+            {
+                //ApiUrl = "https://dfc-dev-prov-venue-fa.azurewebsites.net/api/",
+                ApiUrl = "http://localhost:7071/api/", //DEBUG URL
+                ApiKey = ""
+            };
+        }
+
         //[Fact]
-        //private async void SearchForProviderIsSuccess()
+        //private async void GetExemplarTextForValidLARSIsSuccess()
         //{
-        //    var mockLogger = new Mock<ILogger<CourseTextService>>();
+        //    var mockLogger = new Mock<ILogger<CourseTextService.CourseTextService>>();
 
-        //    var criteria = new ProviderSearchCriteria("10028217");
+        //    var criteria = new CourseTextServiceCriteria("5004767X");
 
-        //    var settings = new ProviderSearchSettings()
-        //    {
-        //        ApiUrl = "https://dfc-dev-prov-ukrlp-fa.azurewebsites.net/api/GetProviderByPRN?code=",
-        //        ApiKey = ""
-        //    };
-
-        //    var service = new ProviderSearchService(mockLogger.Object, new HttpClient(), Options.Create(settings));
+        //    var service = new CourseTextService.CourseTextService(mockLogger.Object, new HttpClient(), Options.Create(settings));
 
         //    //// act
-        //    var actual = await service.SearchAsync(criteria);
-
-        //    bool ValidReturnedProvider = false;
-        //    foreach (var item in actual.Value.Value)
-        //    {
-        //        if (item != null)
-        //            ValidReturnedProvider = true;
-        //    }
+        //    var actual = await service.GetCourseTextByLARS(criteria);
 
         //    Assert.True(actual.IsSuccess);
-        //    Assert.True(ValidReturnedProvider);
+        //    Assert.True(actual.Value.Value.Count()==1);
         //}
 
         //[Fact]
         //private async void SearchForProviderIsSuccessNoResult()
         //{
-        //    //var mockLogger = new Mock<ILogger<ProviderSearchService>>();
+        //    var mockLogger = new Mock<ILogger<CourseTextService.CourseTextService>>();
 
+        //    var criteria = new CourseTextServiceCriteria("blah");
 
-        //    //var criteria = new ProviderSearchCriteria("AbraKadabra");
+        //    var service = new CourseTextService.CourseTextService(mockLogger.Object, new HttpClient(), Options.Create(settings));
 
-        //    //var settings = new ProviderSearchSettings()
-        //    //{
-        //    //    ApiUrl = "https://dfc-dev-prov-ukrlp-fa.azurewebsites.net/api/GetProviderByPRN?code=",
-        //    //    ApiKey = ""
-        //    //};
+        //    //// act
+        //    var actual = await service.GetCourseTextByLARS(criteria);
 
-        //    //var service = new ProviderSearchService(mockLogger.Object, new HttpClient(), Options.Create(settings));
-
-        //    ////// act
-        //    //var actual = await service.SearchAsync(criteria);
-
-        //    //bool ValidReturnedProvider = false;
-        //    //foreach (var item in actual.Value.Value)
-        //    //{
-        //    //    if (item != null)
-        //    //        ValidReturnedProvider = true;
-        //    //}
-
-        //    //Assert.True(actual.IsSuccess);
-        //    //Assert.False(ValidReturnedProvider); // Does NOT find provider => Assert.False
+        //    Assert.True(actual.IsSuccess);
+        //    Assert.True(!actual.Value.Value.Any());
         //}
 
-        //[Fact]
-        //private async void SearchForProviderIsFailure()
-        //{
-        //    //var mockLogger = new Mock<ILogger<ProviderSearchService>>();
-
-        //    //var criteria = new ProviderSearchCriteria("10028217");
-
-        //    //var settings = new ProviderSearchSettings()
-        //    //{
-        //    //    ApiUrl = "IsFailurehttps://dfc-dev-prov-ukrlp-fa.azurewebsites.net/api/GetProviderByPRN?code=",
-        //    //    ApiKey = ""
-        //    //};
-
-        //    //var service = new ProviderSearchService(mockLogger.Object, new HttpClient(), Options.Create(settings));
-
-        //    ////// act
-        //    //var actual = await service.SearchAsync(criteria);
-
-        //    //Assert.True(actual.IsFailure);
-        //}
     }
 }

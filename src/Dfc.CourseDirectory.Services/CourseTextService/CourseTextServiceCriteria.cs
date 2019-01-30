@@ -11,7 +11,7 @@ namespace Dfc.CourseDirectory.Services.CourseTextService
         public string LARSRef { get; set; }
         public CourseTextServiceCriteria(string larsRef)
         {
-            Throw.IfNullOrWhiteSpace(LARSRef, nameof(LARSRef));
+            Throw.IfNullOrWhiteSpace(larsRef, nameof(larsRef));
             LARSRef = larsRef;
         }
         protected override IEnumerable<object> GetEqualityComponents()
