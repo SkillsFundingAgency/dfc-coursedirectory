@@ -15,7 +15,11 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.Notification
 
 @model Dfc.CourseDirectory.Web.ViewModels.AddCourseDetailsViewModel
-
+@*<a href="@Url.Action("BackToAddCourseSection1", "Courses")" class="govuk-back-link">Back to Section 1</a>*@
+@*<form asp-controller="Courses" asp-action="BackToAddCourseSection1">
+    <button class="govuk-back-link" type="submit">Back to Section 1</button>
+</form>
+<br>*@
 <h1 class="govuk-heading-l" style="padding-top: 20px;">
     Add course details
 </h1>
@@ -221,9 +225,11 @@
         })
     </div>
     <div class="govuk-form-group">
-        <button type="submit" class="govuk-button" id="publish">
+        <button name="submitButton" type="submit" class="govuk-button" id="publish" value="publish">
             Publish
         </button>
+        <button name="submitButton" class="govuk-button" type="submit" value="back">Back to Section 1</button>
+        <a name="submitButton" href="@Url.Action("AddCourse")" class="govuk-back-link" type="submit" value="backLink">Back to Section 1</a>
     </div>
 
 </form>
