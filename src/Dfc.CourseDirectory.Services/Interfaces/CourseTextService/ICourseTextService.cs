@@ -9,6 +9,6 @@ namespace Dfc.CourseDirectory.Services.Interfaces.CourseTextService
 {
     public interface ICourseTextService
     {
-        Task<IResult<ICourse>> GetCourseTextByLARS(ICourse course, string LARSRef);
+        Task<IResult<IEnumerable<ICourseTextSearchResult>>> GetCourseTextByLARS(ICourseTextSearchCriteria criteria, string LARSRef);
     }
 }

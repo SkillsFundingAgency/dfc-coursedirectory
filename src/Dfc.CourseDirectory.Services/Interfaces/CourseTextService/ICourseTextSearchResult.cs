@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Dfc.CourseDirectory.Services.Interfaces.CourseTextService
 {
-    interface ICourseTextSearchResult
+   public interface ICourseTextSearchResult
     {
         Guid ID { get; }
         string QualificationCourseTitle { get; }

@@ -15,90 +15,89 @@ using System.Threading.Tasks;
 
 namespace Dfc.CourseDirectory.Services.CourseTextService
 {
-    public class CourseTextService 
+    public class CourseTextService// : ICourseTextService
     {
-        //    private readonly ILogger<CourseTextService> _logger;
-        //    private readonly HttpClient _httpClient;
-        //    private readonly Uri _getYourCourseTextUri;
+        private readonly ILogger<CourseTextService> _logger;
+        private readonly HttpClient _httpClient;
+        private readonly Uri _getYourCourseTextUri;
 
 
-        //    public CourseTextService(
-        //        ILogger<CourseTextService> logger,
-        //        HttpClient httpClient,
-        //        IOptions<CourseTextServiceSettings> settings)
-        //    {
-        //        Throw.IfNull(logger, nameof(logger));
-        //        Throw.IfNull(httpClient, nameof(httpClient));
-        //        Throw.IfNull(settings, nameof(settings));
+        public CourseTextService(
+            ILogger<CourseTextService> logger,
+            HttpClient httpClient,
+            IOptions<CourseTextServiceSettings> settings)
+        {
+            Throw.IfNull(logger, nameof(logger));
+            Throw.IfNull(httpClient, nameof(httpClient));
+            Throw.IfNull(settings, nameof(settings));
 
-        //        _logger = logger;
-        //        _httpClient = httpClient;
+            _logger = logger;
+            _httpClient = httpClient;
 
-        //        _getYourCourseTextUri = settings.Value.GetCourseTextUri();
+            _getYourCourseTextUri = settings.Value.GetCourseTextUri();
 
-        //    }
+        }
 
-        //    public async Task<IEnumerable<ICourseSearchResult>> GetCourseTextByLARS(ICourseTextSearchCriteria criteria)
-        //    {
-        //        Throw.IfNull(criteria, nameof(criteria));
-        //        Throw.IfNullOrWhiteSpace(criteria.LARSRef, nameof(criteria.LARSRef));
-        //        _logger.LogMethodEnter();
+        public async Task<Result<IEnumerable<CourseTextSearchResult>>> GetCourseTextByLARS(ICourseTextSearchCriteria criteria, string LARSRef)
+        {
+            Throw.IfNull(criteria, nameof(criteria));
+            Throw.IfNullOrWhiteSpace(criteria.LARSRef, nameof(criteria.LARSRef));
+            _logger.LogMethodEnter();
 
-        //        try
-        //        {
-        //            _logger.LogInformationObject("Course Text Criteria", criteria);
-        //            _logger.LogInformationObject("Course Text URI", _getYourCourseTextUri);
+            try
+            {
+                _logger.LogInformationObject("Course Text Criteria", criteria);
+                _logger.LogInformationObject("Course Text URI", _getYourCourseTextUri);
 
-        //            if (criteria.LARSRef == "")
-        //                return Result.Fail<ICourseSearchResult>("Blank LARS Ref");
+                if (criteria.LARSRef == "")
+                    return Result.Fail<IEnumerable<CourseTextSearchResult>>("Blank LARS Ref");
 
-        //            var response = await _httpClient.GetAsync(new Uri(_getYourCourseTextUri.AbsoluteUri + "&LARS=" + criteria.LARSRef));
-        //            _logger.LogHttpResponseMessage("Get your courses service http response", response);
+                var response = await _httpClient.GetAsync(new Uri(_getYourCourseTextUri.AbsoluteUri + "&LARS=" + criteria.LARSRef));
+                _logger.LogHttpResponseMessage("Get your courses service http response", response);
 
-        //            if (response.IsSuccessStatusCode)
-        //            {
-        //                var json = await response.Content.ReadAsStringAsync();
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
 
-        //                if (!json.StartsWith("["))
-        //                    json = "[" + json + "]";
+                    if (!json.StartsWith("["))
+                        json = "[" + json + "]";
 
-        //                _logger.LogInformationObject("Get your courses service json response", json);
-        //                IEnumerable<CourseTextSearchResult> courses = JsonConvert.DeserializeObject<IEnumerable<CourseTextSearchResult>>(json);
+                    _logger.LogInformationObject("Get your courses service json response", json);
+                    var courses = JsonConvert.DeserializeObject<IEnumerable<CourseTextSearchResult>>(json);
 
+                    return Result.Ok(courses);
 
-        //                return Result.Ok<IEnumerable<CourseTextSearchResult>>(courses);
+                }
+                else
+                {
+                    return Result.Fail<IEnumerable<CourseTextSearchResult>>("Get your courses service unsuccessful http response");
+                }
 
-        //            }
-        //            else
-        //            {
-        //                return Result.Fail<ICourseSearchResult>("Get your courses service unsuccessful http response");
-        //            }
+            }
+            catch (HttpRequestException hre)
+            {
+                _logger.LogException("Get your courses service http request error", hre);
+                return Result.Fail<IEnumerable<CourseTextSearchResult>>("Get your courses service http request error.");
 
-        //        }
-        //        catch (HttpRequestException hre)
-        //        {
-        //            _logger.LogException("Get your courses service http request error", hre);
-        //            return Result.Fail<ICourseSearchResult>("Get your courses service http request error.");
+            }
+            catch (Exception e)
+            {
+                _logger.LogException("Get your courses service unknown error.", e);
+                return Result.Fail<IEnumerable<CourseTextSearchResult>>("Get your courses service unknown error.");
 
-        //        }
-        //        catch (Exception e)
-        //        {
-        //            _logger.LogException("Get your courses service unknown error.", e);
-        //            return Result.Fail<ICourseSearchResult>("Get your courses service unknown error.");
+            }
+            finally
+            {
+                _logger.LogMethodExit();
+            }
+        }
 
-        //        }
-        //        finally
-        //        {
-        //            _logger.LogMethodExit();
-        //        }
-        //    }
-
-        //}
-        //internal static class CourseServiceSettingsExtensions
-        //{
-        //    internal static Uri GetCourseTextUri(this ICourseTextServiceSettings extendee)
-        //    {
-        //        return new Uri($"{extendee.ApiUrl + "GetCourseTextByLARS?code=" + extendee.ApiKey}");
-        //    }
+    }
+    internal static class CourseServiceSettingsExtensions
+    {
+        internal static Uri GetCourseTextUri(this ICourseTextServiceSettings extendee)
+        {
+            return new Uri($"{extendee.ApiUrl + "GetCourseTextByLARS?code=" + extendee.ApiKey}");
+        }
     }
 }
