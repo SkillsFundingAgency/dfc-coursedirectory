@@ -7,15 +7,14 @@
 
 <div class="cd-hero-green">
     <div class="govuk-width-container">
-        <a href="javascript: history.go(-1)" class="govuk-back-link">Back</a>
         <header class="cd-hero-search">
             <div class="content-container">
 
                 <div class="govuk-breadcrumbs">
                     <ol class="govuk-breadcrumbs__list">
                         <li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="">Home</a></li>
-                        <li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="Qualifications">Qualifications</li>
-                        <li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link">@ViewBag.Title</li>
+                        <li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="Qualifications">Qualifications</a></li>
+                        <li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link">@ViewBag.Title</a></li>
                     </ol>
                 </div>
                 <div class="grid-row" data-sf-element="Row">
@@ -39,11 +38,12 @@
                     </div>
                 </div>
             </div>
+
+        </header>
     </div>
-    </header>
 </div>
-</div>
+
 @*<div class="cd-hero-grey">
-    <h1 class="govuk-heading-xl">Find a Qualification</h1>
-</div>*@
+        <h1 class="govuk-heading-xl">Find a Qualification</h1>
+    </div>*@
 @await Component.InvokeAsync(nameof(LarsSearch))

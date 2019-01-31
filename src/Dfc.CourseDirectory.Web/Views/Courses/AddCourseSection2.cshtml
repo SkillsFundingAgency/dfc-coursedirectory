@@ -30,7 +30,7 @@
     NotificationTitle = "Qualification added",
     NotificationMessage = @Model.LearnAimRefTitle + "<br>" + "Level: " + @Model.NotionalNVQLevelv2 + "<br> Awarding organisation: " + @Model.AwardOrgCode + "<br> LARS / QAN: " + @Model.LearnAimRef,
     ClassType = "info-summary"
-});
+})
 
 <form asp-controller="Courses" asp-action="AddCourse" id="addCourseSection2">
     
@@ -312,14 +312,16 @@
             var $regionItemsCheckboxList = $("#RegionItemsCheckboxList");
             $regionItemsCheckboxList.hide();
 
+            var isClassroomBased = true;
+            var isOnline = false;
+            var isWorkBased = false;
+
             $deliveryRadios.change(function () {
                 var $venueItemsCheckboxList = $("#VenueItemsCheckboxList");
                 var $fullPartTimeRadioButtons = $("#FullPartTimeRadioButtons");
                 var $attendancePatternRadioButtons = $("#AttendancePatternRadioButtons");
                 var $specifiedStartDate = $("#SpecifiedStartDate");
                 var $flexibleStartDate = $("#FlexibleStartDate");
-
-
 
                 switch (this.id) {
                     case "ClassroomBased":
@@ -330,6 +332,9 @@
                             $regionItemsCheckboxList.hide();
                             $fullPartTimeRadioButtons.show();
                             $attendancePatternRadioButtons.show();
+                            isClassroomBased = true;
+                            isOnline = false;
+                            isWorkBased = false;
                             break;
                         }
                     case "Online":
@@ -340,6 +345,9 @@
                             $regionItemsCheckboxList.hide();
                             $fullPartTimeRadioButtons.hide();
                             $attendancePatternRadioButtons.hide();
+                            isClassroomBased = false;
+                            isOnline = true;
+                            isWorkBased = false;
                             break;
                         }
                     case "WorkBased":
@@ -350,6 +358,9 @@
                             $regionItemsCheckboxList.show();
                             $fullPartTimeRadioButtons.hide();
                             $attendancePatternRadioButtons.hide();
+                            isClassroomBased = false;
+                            isOnline = false;
+                            isWorkBased = true;
                             break;
                         }
                 }
@@ -560,7 +571,19 @@
                         $formStartDateIsValid = true;
                     }
 
-                    if (($formVenuesIsValid || $formRegionsIsValid) & $formCostIsValid & $formStartDateIsValid) {
+                    //if (($formVenuesIsValid || $formRegionsIsValid) & $formCostIsValid & $formStartDateIsValid) {
+                    //    $("#addCourseSection2").submit();
+                    //}
+
+                    if (isClassroomBased && $formVenuesIsValid && $formCostIsValid && $formStartDateIsValid) {
+                        $("#addCourseSection2").submit();
+                    }
+
+                    if (isOnline && $formCostIsValid && $formStartDateIsValid) {
+                        $("#addCourseSection2").submit();
+                    }
+
+                    if (isWorkBased && $formRegionsIsValid && $formCostIsValid && $formStartDateIsValid) {
                         $("#addCourseSection2").submit();
                     }
 
