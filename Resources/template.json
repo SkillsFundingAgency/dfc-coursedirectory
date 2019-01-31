@@ -74,6 +74,60 @@
         "description": "API host key (code) needed to access the course service function app (REST API)"
       }
     },
+    "searchDomain": {
+      "type": "string",
+      "metadata": {
+        "description": "URL for the search services"
+      }
+    },
+    "searchAdminKey": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Admin key for updating seach (REST API)"
+      }
+    },
+    "searchQueryKey": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Query key for reading seach (REST API)"
+      }
+    },
+    "dfeClientID": {
+      "type": "string",
+      "metadata": {
+        "description": "DfE Signin client ID"
+      }
+    },
+    "dfeClientSecret": {
+      "type": "securestring",
+      "metadata": {
+        "description": "DfE Signin client secret (key)"
+      }
+    },
+    "dfeEndpointUrl": {
+      "type": "string",
+      "metadata": {
+        "description": "DfE Signin URL"
+      }
+    },
+    "dfeMetadataUrl": {
+      "type": "string",
+      "metadata": {
+        "description": "DfE Signin metadata URL"
+      }
+    },
+    "dfeCallBackPath": {
+      "type": "string",
+      "metadata": {
+        "description": "Path in URL that DfE Signin calls back after authentication"
+      }
+    },
+    "dfeSignedOutPath": {
+      "type": "string",
+      "metadata": {
+        "description": "Path in URL that DfE Signin calls back after sign out"
+      }
+    },
     "appServicePlanSize": {
       "type": "string",
       "defaultValue": "1",
@@ -100,25 +154,18 @@
         "description": "Custom host name for the website"
       }
     },
-    "keyVaultName": {
+    "certificateResourceGroup": {
       "type": "string",
       "defaultValue": "",
       "metadata": {
-        "description": "Key vault where the certificate had been uploaded to - only used if appHostName is specified"
-      }
-    },
-    "keyVaultResourceGroup": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "Resource group for the key vault - only used if appHostName is specified"
+        "description": "Resource group for the certificate - only used if appHostName is specified"
       }
     },
     "certificateName": {
       "type": "string",
       "defaultValue": "",
       "metadata": {
-        "description": "Certificate for the custom host name (must exist in key vault) - only used if appHostName is specified"
+        "description": "Certificate for the custom host name - only used if appHostName is specified"
       }
     }
   },
@@ -128,10 +175,8 @@
     "appInsightsName": "[concat(parameters('projectPrefix'),'-ai')]",
     "appServiceName": "[concat(parameters('projectPrefix'),'-as')]",
     "appServicePlanName": "[concat(parameters('projectPrefix'),'-asp')]",
-    "cosmosDbSQLName": "[concat(parameters('projectPrefix'),'-cdb-01')]",
-    "cosmosDbGremlinName": "[concat(parameters('projectPrefix'),'-cdb-02')]",
-    "azureSearchName": "[concat(parameters('projectPrefix'),'-sch')]",
-    "appServiceDependsOn": "[if(greater(length(parameters('appHostName')),0),'courseDirectoryCertficate','courseDirectoryAppInsights')]"
+    "cosmosDbSQLName": "[concat(parameters('projectPrefix'),'-cdb')]",
+    "azureSearchName": "[concat(parameters('projectPrefix'),'-sch')]"
   },
   "resources": [
     {
@@ -156,12 +201,29 @@
     },
     {
       "apiVersion": "2017-05-10",
+      "name": "courseDirectoryStorage",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('dfcDeploymentUrlBase'),'storage-account.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "storageAccountName": {
+            "value": "[parameters('storageAccountName')]"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "2017-05-10",
       "name": "courseDirectoryAppServicePlan",
       "type": "Microsoft.Resources/deployments",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(variables('dasDeploymentUrlBase'),'app-service-plan.json')]",
+          "uri": "[concat(variables('dfcDeploymentUrlBase'),'app-service-plan.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -179,48 +241,17 @@
     },
     {
       "apiVersion": "2017-05-10",
-      "name": "courseDirectoryCertficate",
-      "type": "Microsoft.Resources/deployments",
-      "condition": "[greater(length(parameters('appHostName')), 0)]",
-      "dependsOn": [
-        "courseDirectoryAppServicePlan"
-      ],
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('dasDeploymentUrlBase'),'app-service-certificate.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "keyVaultCertificateName": {
-            "value": "[parameters('certificateName')]"
-          },
-          "keyVaultName": {
-            "value": "[parameters('keyVaultName')]"
-          },
-          "keyVaultResourceGroup": {
-            "value": "[parameters('keyVaultResourceGroup')]"
-          },
-          "serverFarmId": {
-            "value": "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]"
-          }       
-        }
-      }
-    },
-    {
-      "apiVersion": "2017-05-10",
       "name": "courseDirectoryAppService",
       "type": "Microsoft.Resources/deployments",
       "dependsOn": [
         "courseDirectoryAppInsights",
         "courseDirectoryStorage",
-        "courseDirectoryAppServicePlan",
-        "[variables('appServiceDependsOn')]"
+        "courseDirectoryAppServicePlan"
       ],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(variables('dasDeploymentUrlBase'),'app-service.json')]",
+          "uri": "[concat(variables('dfcDeploymentUrlBase'),'app-service.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -237,7 +268,7 @@
             "value": "[parameters('appHostName')]"
           },
           "certificateThumbprint": {
-            "value": "[if(greater(length(parameters('appHostName')),0),reference('courseDirectoryCertficate').outputs.certificateThumbprint.value,'')]"
+            "value": "[if(greater(length(parameters('appHostName')),0),reference(resourceId(parameters('certificateResourceGroup'), 'Microsoft.Web/certificates', parameters('certificateName')), '2016-03-01').Thumbprint,'')]"
           },
           "deployStagingSlot": {
             "value": true
@@ -359,25 +390,48 @@
               {
                 "name": "AppUISettings__WhereNextComponentSettings__TextFieldMaxChars",
                 "value": "500"
+              },
+              {
+                "name": "OnspdSearchSettings__SearchServiceName",
+                "value": "[parameters('searchDomain')]"
+              },
+              {
+                "name": "OnspdSearchSettings__SearchServiceAdminApiKey",
+                "value": "[parameters('searchAdminKey')]"
+              },
+              {
+                "name": "OnspdSearchSettings__SearchServiceQueryApiKey",
+                "value": "[parameters('searchQueryKey')]"
+              },
+              {
+                "name": "OnspdSearchSettings__IndexName",
+                "value": "onspd"
+              },
+              {
+                "name": "DFESignInSettings__ClientID",
+                "value": "[parameters('dfeClientID')]"
+              },
+              {
+                "name": "DFESignInSettings__ClientSecret",
+                "value": "[parameters('dfeClientSecret')]"
+              },
+              {
+                "name": "DFESignInSettings__TokenEndpoint",
+                "value": "[parameters('dfeEndpointUrl')]"
+              },
+              {
+                "name": "DFESignInSettings__MetadataAddress",
+                "value": "[parameters('dfeMetadataUrl')]"
+              },
+              {
+                "name": "DFESignInSettings__CallbackPath",
+                "value": "[parameters('dfeCallBackPath')]"
+              },
+              {
+                "name": "DFESignInSettings__SignedOutCallbackPath",
+                "value": "[parameters('dfeSignedOutPath')]"
               }
             ]
-          }
-        }
-      }
-    },
-    {
-      "apiVersion": "2017-05-10",
-      "name": "courseDirectoryStorage",
-      "type": "Microsoft.Resources/deployments",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('dasDeploymentUrlBase'),'storage-account-arm.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "storageAccountName": {
-            "value": "[parameters('storageAccountName')]"
           }
         }
       }
@@ -398,29 +452,6 @@
           },
           "cosmosApiType": {
             "value": "SQL"
-          },
-          "defaultConsistencyLevel": {
-            "value": "Eventual"
-          }
-        }
-      }
-    },
-    {
-      "apiVersion": "2017-05-10",
-      "name": "providerPortalCosmosGremlin",
-      "type": "Microsoft.Resources/deployments",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('dfcDeploymentUrlBase'),'cosmos-db.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "cosmosDbName": {
-            "value": "[variables('cosmosDbGremlinName')]"
-          },
-          "cosmosApiType": {
-            "value": "Gremlin"
           },
           "defaultConsistencyLevel": {
             "value": "Eventual"
@@ -466,10 +497,6 @@
     "cosmosDbSQLName": {
       "type": "string",
       "value": "[variables('cosmosDbSQLName')]"
-    },
-    "cosmosDbGremlinName": {
-      "type": "string",
-      "value": "[variables('cosmosDbGremlinName')]"
     },
     "azureSearchName": {
       "type": "string",
