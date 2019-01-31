@@ -455,6 +455,32 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 courseRuns.Add(courseRun);
             }
 
+            if (model.DeliveryMode == DeliveryMode.Online)
+            {
+                var courseRun = new CourseRun
+                {
+                    id = Guid.NewGuid(),
+
+                    CourseName = model.CourseName,
+                    ProviderCourseID = model.CourseProviderReference,
+                    DeliveryMode = model.DeliveryMode,
+                    FlexibleStartDate = flexibleStartDate,
+                    StartDate = specifiedStartDate,
+                    CourseURL = model.Url,
+                    Cost = model.Cost,
+                    CostDescription = model.CostDescription,
+                    DurationUnit = model.Id,
+                    DurationValue = model.DurationLength,
+                    StudyMode = model.StudyMode,
+                    AttendancePattern = model.AttendanceMode,
+                    Regions = GetRegions().RegionItems.Select(x => x.Id),
+                    CreatedDate = DateTime.Now,
+                    CreatedBy = "ProviderPortal-AddCourse"
+                };
+
+                courseRuns.Add(courseRun);
+            }
+
             // TODO: To be modified once we implement user management (Assign ProviderUKPRN to user)
             int UKPRN = 0;
             if (_session.GetInt32("UKPRN").HasValue)
