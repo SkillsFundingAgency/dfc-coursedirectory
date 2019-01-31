@@ -45,6 +45,7 @@
 
     @await Component.InvokeAsync(nameof(CourseProviderReference), new CourseProviderReferenceModel
     {
+        CourseProviderReference = Model.CourseProviderReference,
         LabelText = "ID",
         HintText = "This is how you identify a course in your internal system.",
         AriaDescribedBy = "Please enter the ID for this course"
@@ -52,28 +53,31 @@
 
     @await Component.InvokeAsync(nameof(DeliveryType), new DeliveryTypeModel
     {
-       DeliveryMode = DeliveryMode.ClassroomBased,
+       DeliveryMode = Model.DeliveryMode,
        LabelText = "Delivery Mode",
        HintText = "Select how this course will be delivered",
        AriaDescribedBy = "How the course will be delivered"
     })
 
-    @await Component.InvokeAsync(nameof(AddStartDate), new AddStartDateModel()
-    {
-        StartDateType = StartDateType.SpecifiedStartDate,
-        DayAriaDescribedBy = "",
-        DayLabelText = "Day",
-        MonthAriaDescribedBy = "",
-        MonthLabelText = "Month",
-        YearAriaDescribedBy = "",
-        YearLabelText = "Year",
-        AriaDescribedBy = "",
-        SpecifiedDateHintText = "e.g. 'For example, 30 9 2019",
-        FlexibleDateHintText = "Or select a flexible start date:",
-        LabelText = "Start date"
-    })
+@await Component.InvokeAsync(nameof(AddStartDate), new AddStartDateModel()
+{
+    StartDateType = Model.StartDateType,
+    Day = Model.Day.ToString(),
+    Month = Model.Month.ToString(),
+    Year = Model.Year.ToString(),
+    DayAriaDescribedBy = "",
+    DayLabelText = "Day",
+    MonthAriaDescribedBy = "",
+    MonthLabelText = "Month",
+    YearAriaDescribedBy = "",
+    YearLabelText = "Year",
+    AriaDescribedBy = "",
+    SpecifiedDateHintText = "e.g. 'For example, 30 9 2019",
+    FlexibleDateHintText = "Or select a flexible start date:",
+    LabelText = "Start date"
+})
 
-    @*No view component here in order to get checkbox list validation to work without it's own form*@
+@*No view component here in order to get checkbox list validation to work without it's own form*@
     <div class="govuk-form-group" id="VenueItemsCheckboxList">
         <label class="govuk-label" for="select-venue">
             @Model.SelectVenue.LabelText
@@ -101,10 +105,20 @@
                         foreach (var item in Model.SelectVenue.VenueItems)
                         {
                             i++;
-                            <div class="govuk-checkboxes__item">
-                                <input class="govuk-checkboxes__input" id="VenueName-@i" name="SelectedVenues" type="checkbox" value="@item.Id" />
-                                <label class="govuk-label govuk-checkboxes__label" for="SelectedVenues">@item.VenueName</label>
-                            </div>
+                            if (item.Checked.HasValue && item.Checked.Value)
+                            {
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="VenueName-@i" name="SelectedVenues" type="checkbox" value="@item.Id" checked="checked"/>
+                                    <label class="govuk-label govuk-checkboxes__label" for="SelectedVenues">@item.VenueName</label>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="VenueName-@i" name="SelectedVenues" type="checkbox" value="@item.Id"/>
+                                    <label class="govuk-label govuk-checkboxes__label" for="SelectedVenues">@item.VenueName</label>
+                                </div>
+                            }
                         }
                     }
                 </div>
@@ -139,10 +153,21 @@
                         foreach (var item in Model.SelectRegion.RegionItems)
                         {
                             j++;
-                            <div class="govuk-checkboxes__item">
-                                <input class="govuk-checkboxes__input" id="RegionName-@j" name="SelectedRegions" type="checkbox" value="@item.Id" />
-                                <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@item.RegionName</label>
-                            </div>
+                            if (item.Checked.HasValue && item.Checked.Value)
+                            {
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="RegionName-@j" name="SelectedRegions" type="checkbox" value="@item.Id" checked="checked" />
+                                    <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@item.RegionName</label>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="RegionName-@j" name="SelectedRegions" type="checkbox" value="@item.Id"/>
+                                    <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@item.RegionName</label>
+                                </div>
+                            }
+
                         }
                     }
                 </div>
@@ -152,6 +177,7 @@
 
     @await Component.InvokeAsync(nameof(UrlInput), new UrlInputModel
     {
+        Url = Model.Url,
         LabelText = "URL",
         HintText = "Enter the URL for this course e.g. http://www.google.com",
         AriaDescribedBy = "Enter the URL for this course"
@@ -159,6 +185,8 @@
 
     @await Component.InvokeAsync(nameof(Cost), new CostModel
     {
+        Cost = Model.Cost,
+        CostDescription = Model.CostDescription,
         CostLabelText = "Cost",
         CostHintText = "Enter the cost for the course in pounds and pence e.g. 125.00",
         CostAriaDescribedBy = "Enter the cost in pounds and pence",
@@ -170,6 +198,7 @@
 
     @await Component.InvokeAsync(nameof(AdvancedLearnerLoan), new AdvancedLearnerLoanModel
     {
+        AdvancedLearnerLoan = Model.AdvancedLearnerLoan,
         LabelText = "Advanced learner loan",
         HintText = "Select the checkbox below if Advanced Learner Loans are available for this course",
         AriaDescribedBy = "Select whether Advanced Learner Loan is available for this course"
@@ -202,7 +231,8 @@
                 DurationUnit = "Years"
             }
         },
-        Id = 3,
+        DurationLength = Model.DurationLength,
+        Id = Model.DurationUnitId,
         LabelText = "Duration",
         HintText = "Select the duration of the course",
         AriaDescribedBy = "Select course duration"
@@ -211,7 +241,7 @@
     <div id="FullPartTimeRadioButtons">
         @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode.StudyMode), new StudyModeModel
         {
-            StudyMode = Dfc.CourseDirectory.Models.Models.Courses.StudyMode.FullTime,
+            StudyMode = Model.StudyMode,
             LabelText = "Full time or part time",
             HintText = "Select the attendance pattern"
         })
@@ -219,7 +249,7 @@
     <div id="AttendancePatternRadioButtons">
         @await Component.InvokeAsync(nameof(Attendance), new AttendanceModel
         {
-            AttendanceMode = AttendancePattern.Daytime,
+            AttendanceMode = Model.AttendanceMode,
             LabelText = "Attendance",
             HintText = "Select the time of day the course takes place"
         })
@@ -229,7 +259,8 @@
             Publish
         </button>
         <button name="submitButton" class="govuk-button" type="submit" value="back">Back to Section 1</button>
-        <a name="submitButton" href="@Url.Action("AddCourse")" class="govuk-back-link" type="submit" value="backLink">Back to Section 1</a>
+        <a class="govuk-link" href="#" id="submitBackLink">Back to Section 1</a>
+        @*<a id="submitBackLink" name="submitButton" href="#" class="govuk-back-link" type="submit" value="backLink">Back to Section 1</a>*@
     </div>
 
 </form>
@@ -373,6 +404,12 @@
                     $validationMessageForRegions.hide();
                     $formRegionsIsValid = true;
                 }
+            });
+
+            var $backLink = $("#submitBackLink");
+            $backLink.click(function () {
+                $("#addCourseSection2").attr("action", "BackToAddCourseSection1");
+                $("#addCourseSection2").submit();
             });
 
             var $publish = $("#publish");
