@@ -6,6 +6,8 @@ using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Models.Models.Courses;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.CourseService;
+using Dfc.CourseDirectory.Services.CourseTextService;
+using Dfc.CourseDirectory.Services.Interfaces.CourseTextService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Helpers;
@@ -38,25 +40,27 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private ISession _session => _contextAccessor.HttpContext.Session;
         private readonly IVenueSearchHelper _venueSearchHelper;
         private readonly IVenueService _venueService;
-
+        private readonly ICourseTextService _courseTextService;
 
         public CoursesController(
             ILogger<CoursesController> logger,
             IOptions<CourseServiceSettings> courseSearchSettings,
             IHttpContextAccessor contextAccessor,
-            ICourseService courseService, IVenueSearchHelper venueSearchHelper, IVenueService venueService)
+            ICourseService courseService, IVenueSearchHelper venueSearchHelper, IVenueService venueService, ICourseTextService courseTextService)
         {
             Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(courseSearchSettings, nameof(courseSearchSettings));
             Throw.IfNull(contextAccessor, nameof(contextAccessor));
             Throw.IfNull(courseService, nameof(courseService));
             Throw.IfNull(venueService, nameof(venueService));
+            Throw.IfNull(courseTextService, nameof(courseTextService));
 
             _logger = logger;
             _contextAccessor = contextAccessor;
             _courseService = courseService;
             _venueService = venueService;
             _venueSearchHelper = venueSearchHelper;
+            _courseTextService = courseTextService;
         }
 
         [HttpPost]
@@ -235,13 +239,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult AddCourseSection1(string learnAimRef, string notionalNVQLevelv2, string awardOrgCode, string learnAimRefTitle, string learnAimRefTypeDesc)
+        public async Task<IActionResult> AddCourseSection1(string learnAimRef, string notionalNVQLevelv2, string awardOrgCode, string learnAimRefTitle, string learnAimRefTypeDesc)
         {
             _session.SetString("LearnAimRef", learnAimRef);
             _session.SetString("NotionalNVQLevelv2", notionalNVQLevelv2);
             _session.SetString("AwardOrgCode", awardOrgCode);
             _session.SetString("LearnAimRefTitle", learnAimRefTitle);
             _session.SetString("LearnAimRefTypeDesc", learnAimRefTypeDesc);
+
+            var courseText = await _courseTextService.GetCourseTextByLARS(new CourseTextServiceCriteria(learnAimRef));
 
             AddCourseViewModel vm = new AddCourseViewModel
             {
@@ -253,43 +259,50 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 {
                     LabelText = "Who is the course for?",
                     HintText = "Please provide useful information that helps a learner to make a decision about the suitability of this course. For example learners new to the subject / sector or those with some experience? Any age restrictions?",
-                    AriaDescribedBy = "Please enter who this course is for."
+                    AriaDescribedBy = "Please enter who this course is for.",
+                    CourseFor = courseText?.Value?.CourseDescription
                 },
                 EntryRequirements = new EntryRequirementsModel()
                 {
                     LabelText = "Entry requirements",
                     HintText = "Please provide details of specific academic or vocational entry qualification requirements. Also do learners need specific skills, attributes or evidence? e.g. DBS clearance, driving licence",
-                    AriaDescribedBy = "Please list entry requirements."
+                    AriaDescribedBy = "Please list entry requirements.",
+                    EntryRequirements = courseText?.Value?.EntryRequirments
                 },
                 WhatWillLearn = new WhatWillLearnModel()
                 {
                     LabelText = "What you’ll learn",
                     HintText = "Give learners a taste of this course. What are the main topics covered?",
-                    AriaDescribedBy = "Please enter what will be learned"
+                    AriaDescribedBy = "Please enter what will be learned",
+                    WhatWillLearn = courseText?.Value?.WhatYoullLearn
                 },
                 HowYouWillLearn = new HowYouWillLearnModel()
                 {
                     LabelText = "How you’ll learn",
                     HintText = "Will it be classroom based exercises, practical on the job, practical but in a simulated work environment, online or a mixture of methods?",
-                    AriaDescribedBy = "Please enter how you’ll learn"
+                    AriaDescribedBy = "Please enter how you’ll learn",
+                    HowYouWillLearn = courseText?.Value?.HowYoullLearn
                 },
                 WhatYouNeed = new WhatYouNeedModel()
                 {
                     LabelText = "What you’ll need to bring",
                     HintText = "Please detail anything your learners will need to provide or pay for themselves such as uniform, personal protective clothing, tools or kit",
-                    AriaDescribedBy = "Please enter what you need"
+                    AriaDescribedBy = "Please enter what you need",
+                    WhatYouNeed = courseText?.Value?.WhatYoullNeed
                 },
                 HowAssessed = new HowAssessedModel()
                 {
                     LabelText = "How you’ll be assessed",
                     HintText = "Please provide details of all the ways your learners will be assessed for this course. E.g. assessment in the workplace, written assignments, group or individual project work, exam, portfolio of evidence, multiple choice tests.",
-                    AriaDescribedBy = "Please enter 'How you’ll be assessed'"
+                    AriaDescribedBy = "Please enter 'How you’ll be assessed'",
+                    HowAssessed = courseText?.Value?.HowYoullBeAssessed
                 },
                 WhereNext = new WhereNextModel()
                 {
                     LabelText = "Where next?",
                     HintText = "What are the opportunities beyond this course? Progression to a higher level course, apprenticeship or direct entry to employment?",
-                    AriaDescribedBy = "Please enter 'Where next?'"
+                    AriaDescribedBy = "Please enter 'Where next?'",
+                    WhereNext = courseText?.Value?.WhereNext
                 }
             };
             return View(vm);

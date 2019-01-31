@@ -38,7 +38,7 @@ namespace Dfc.CourseDirectory.Services.CourseTextService
 
         }
 
-        public async Task<IResult<ICourseTextSearchResult>> GetCourseTextByLARS(ICourseTextSearchCriteria criteria)
+        public async Task<IResult<ICourseText>> GetCourseTextByLARS(ICourseTextSearchCriteria criteria)
         {
             Throw.IfNull(criteria, nameof(criteria));
             Throw.IfNullOrWhiteSpace(criteria.LARSRef, nameof(criteria.LARSRef));
@@ -50,7 +50,7 @@ namespace Dfc.CourseDirectory.Services.CourseTextService
                 _logger.LogInformationObject("Course Text URI", _getYourCourseTextUri);
 
                 if (criteria.LARSRef == "")
-                    return Result.Fail<ICourseTextSearchResult>("Blank LARS Ref");
+                    return Result.Fail<ICourseText>("Blank LARS Ref");
 
                 var response = await _httpClient.GetAsync(new Uri(_getYourCourseTextUri.AbsoluteUri + "&LARS=" + criteria.LARSRef));
                 _logger.LogHttpResponseMessage("Get your courses service http response", response);
@@ -59,30 +59,28 @@ namespace Dfc.CourseDirectory.Services.CourseTextService
                 {
                     var json = await response.Content.ReadAsStringAsync();
 
-                    if (!json.StartsWith("["))
-                        json = "[" + json + "]";
-
                     _logger.LogInformationObject("Get your courses service json response", json);
-                    var courses = JsonConvert.DeserializeObject<IEnumerable<CourseText>>(json);
+                    var courseText = JsonConvert.DeserializeObject<CourseText>(json);
 
-                        return Result.Ok<ICourseTextSearchResult>(new CourseTextSearchResult(courses));
+                    return Result.Ok<ICourseText>(courseText);
+
                 }
                 else
-                {;
-                    return Result.Fail<ICourseTextSearchResult>("Get your courses service unsuccessful http response");
+                {
+                    return Result.Fail<ICourseText>("Get your courses service unsuccessful http response");
                 }
 
             }
             catch (HttpRequestException hre)
             {
                 _logger.LogException("Get your courses service http request error", hre);
-                return Result.Fail<ICourseTextSearchResult>("Get your courses service http request error.");
+                return Result.Fail<ICourseText>("Get your courses service http request error.");
 
             }
             catch (Exception e)
             {
                 _logger.LogException("Get your courses service unknown error.", e);
-                return Result.Fail<ICourseTextSearchResult>("Get your courses service unknown error.");
+                return Result.Fail<ICourseText>("Get your courses service unknown error.");
             }
             finally
             {

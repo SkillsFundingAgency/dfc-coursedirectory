@@ -26,37 +26,36 @@ namespace Dfc.CourseDirectory.Services.Tests
             };
         }
 
-        //[Fact]
-        //private async void GetExemplarTextForValidLARSIsSuccess()
-        //{
-        //    var mockLogger = new Mock<ILogger<CourseTextService.CourseTextService>>();
+        [Fact]
+        private async void GetExemplarTextForValidLARSIsSuccess()
+        {
+            //var mockLogger = new Mock<ILogger<CourseTextService.CourseTextService>>();
 
-        //    var criteria = new CourseTextServiceCriteria("5004767X");
+            //var criteria = new CourseTextServiceCriteria("5004767X");
 
-        //    var service = new CourseTextService.CourseTextService(mockLogger.Object, new HttpClient(), Options.Create(settings));
+            //var service = new CourseTextService.CourseTextService(mockLogger.Object, new HttpClient(), Options.Create(settings));
 
-        //    //// act
-        //    var actual = await service.GetCourseTextByLARS(criteria);
+            ////// act
+            //var actual = await service.GetCourseTextByLARS(criteria);
 
-        //    Assert.True(actual.IsSuccess);
-        //    Assert.True(actual.Value.Value.Count()==1);
-        //}
+            //Assert.True(actual.IsSuccess);
+            //Assert.True(actual.Value.LearnAimRef== "5004767X");
+        }
 
-        //[Fact]
-        //private async void SearchForProviderIsSuccessNoResult()
-        //{
-        //    var mockLogger = new Mock<ILogger<CourseTextService.CourseTextService>>();
+        [Fact]
+        private async void SearchForProviderIsSuccessNoResult()
+        {
+            //var mockLogger = new Mock<ILogger<CourseTextService.CourseTextService>>();
 
-        //    var criteria = new CourseTextServiceCriteria("blah");
+            //var criteria = new CourseTextServiceCriteria("blah");
 
-        //    var service = new CourseTextService.CourseTextService(mockLogger.Object, new HttpClient(), Options.Create(settings));
+            //var service = new CourseTextService.CourseTextService(mockLogger.Object, new HttpClient(), Options.Create(settings));
 
-        //    //// act
-        //    var actual = await service.GetCourseTextByLARS(criteria);
+            ////// act
+            //var actual = await service.GetCourseTextByLARS(criteria);
 
-        //    Assert.True(actual.IsSuccess);
-        //    Assert.True(!actual.Value.Value.Any());
-        //}
+            //Assert.True(actual.IsFailure);
+        }
 
     }
 }
