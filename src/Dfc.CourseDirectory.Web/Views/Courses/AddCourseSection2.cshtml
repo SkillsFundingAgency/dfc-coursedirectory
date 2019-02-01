@@ -58,9 +58,9 @@
     @await Component.InvokeAsync(nameof(AddStartDate), new AddStartDateModel()
     {
         StartDateType = Model.StartDateType,
-        Day = Model.Day.ToString(),
-        Month = Model.Month.ToString(),
-        Year = Model.Year.ToString(),
+        Day = Model.Day != 0 ? Model.Day.ToString() : string.Empty,
+        Month = Model.Month != 0 ? Model.Month.ToString() : string.Empty,
+        Year = Model.Year != 0 ? Model.Year.ToString() : string.Empty,
         DayAriaDescribedBy = "",
         DayLabelText = "Day",
         MonthAriaDescribedBy = "",
