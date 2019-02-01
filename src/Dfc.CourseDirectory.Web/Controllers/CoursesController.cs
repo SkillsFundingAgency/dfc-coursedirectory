@@ -344,8 +344,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _session.SetString("HowAssessed", model?.HowAssessed ?? string.Empty);
             _session.SetString("WhereNext", model?.WhereNext ?? string.Empty);
 
-            //_session.SetObject("AddCourseSection2", model);
-            //var test = _session.GetObject<AddCourseSection1RequestModel>("AddCourseSection2");
+            _session.SetObject("AddCourseSection1", model);
             var addCourseSection2Session = _session.GetObject<AddCourseRequestModel>("AddCourseSection2");
 
 
@@ -420,10 +419,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpPost]
         public IActionResult BackToAddCourseSection1(AddCourseRequestModel model)
         {
-            // save the state
             _session.SetObject("AddCourseSection2", model);
-
-            // get the AddCourseSection1 out of state
             var addCourseSection1 = _session.GetObject<AddCourseSection1RequestModel>("AddCourseSection1");
             
             AddCourseViewModel courseViewModel = new AddCourseViewModel()

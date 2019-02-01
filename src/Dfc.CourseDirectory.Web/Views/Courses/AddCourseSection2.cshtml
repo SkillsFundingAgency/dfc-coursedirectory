@@ -13,13 +13,9 @@
 @using Duration = Dfc.CourseDirectory.Web.ViewComponents.Courses.Duration.Duration
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.Cost
 @using Dfc.CourseDirectory.Web.ViewComponents.Notification
+@using Dfc.CourseDirectory.Web.ViewComponents.Extensions
 
 @model Dfc.CourseDirectory.Web.ViewModels.AddCourseDetailsViewModel
-@*<a href="@Url.Action("BackToAddCourseSection1", "Courses")" class="govuk-back-link">Back to Section 1</a>*@
-@*<form asp-controller="Courses" asp-action="BackToAddCourseSection1">
-    <button class="govuk-back-link" type="submit">Back to Section 1</button>
-</form>
-<br>*@
 <h1 class="govuk-heading-l" style="padding-top: 20px;">
     Add course details
 </h1>
@@ -33,7 +29,7 @@
 })
 
 <form asp-controller="Courses" asp-action="AddCourse" id="addCourseSection2">
-    
+
 
     @await Component.InvokeAsync(nameof(CourseName), new CourseNameModel
     {
@@ -59,74 +55,64 @@
        AriaDescribedBy = "How the course will be delivered"
     })
 
-@await Component.InvokeAsync(nameof(AddStartDate), new AddStartDateModel()
-{
-    StartDateType = Model.StartDateType,
-    Day = Model.Day.ToString(),
-    Month = Model.Month.ToString(),
-    Year = Model.Year.ToString(),
-    DayAriaDescribedBy = "",
-    DayLabelText = "Day",
-    MonthAriaDescribedBy = "",
-    MonthLabelText = "Month",
-    YearAriaDescribedBy = "",
-    YearLabelText = "Year",
-    AriaDescribedBy = "",
-    SpecifiedDateHintText = "e.g. 'For example, 30 9 2019",
-    FlexibleDateHintText = "Or select a flexible start date:",
-    LabelText = "Start date"
-})
+    @await Component.InvokeAsync(nameof(AddStartDate), new AddStartDateModel()
+    {
+        StartDateType = Model.StartDateType,
+        Day = Model.Day.ToString(),
+        Month = Model.Month.ToString(),
+        Year = Model.Year.ToString(),
+        DayAriaDescribedBy = "",
+        DayLabelText = "Day",
+        MonthAriaDescribedBy = "",
+        MonthLabelText = "Month",
+        YearAriaDescribedBy = "",
+        YearLabelText = "Year",
+        AriaDescribedBy = "",
+        SpecifiedDateHintText = "e.g. 'For example, 30 9 2019",
+        FlexibleDateHintText = "Or select a flexible start date:",
+        LabelText = "Start date"
+    })
 
-@*No view component here in order to get checkbox list validation to work without it's own form*@
-    <div class="govuk-form-group" id="VenueItemsCheckboxList">
-        <label class="govuk-label" for="select-venue">
-            @Model.SelectVenue.LabelText
-        </label>
-        <span id="select-venue-hint" class="govuk-hint">
-            @Model.SelectVenue.HintText
-        </span>
-        <span class="govuk-error-message field-validation-error" id="invalidVenuesChecked" style="display: none;margin-bottom: 15px;">
-            <span id="invalidVenuesCheckedMessage" class="">Select a venue.</span>
-        </span>
+    @*No view component here in order to get checkbox list validation to work without it's own form*@
+<div class="govuk-form-group" id="VenueItemsCheckboxList" style="@Model.DeliveryMode.IfNotClassroomBasedDisplayNone()" >
+    <label class="govuk-label" for="select-venue">
+        @Model.SelectVenue.LabelText
+    </label>
+    <span id="select-venue-hint" class="govuk-hint">
+        @Model.SelectVenue.HintText
+    </span>
+    <span class="govuk-error-message field-validation-error" id="invalidVenuesChecked" style="display: none; margin-bottom: 15px;">
+        <span id="invalidVenuesCheckedMessage" class="">Select a venue.</span>
+    </span>
 
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-full">
-                <div class="govuk-checkboxes" id="SelectVenueCheckBoxes">
-                    @{ var i = 0; }
-                    @if (Model.SelectVenue.VenueItems.Count() == 1)
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <div class="govuk-checkboxes" id="SelectVenueCheckBoxes">
+                @{ var i = 0; }
+                @if (Model.SelectVenue.VenueItems.Count() == 1)
+                {
+                    <div class="govuk-checkboxes__item">
+                        <input class="govuk-checkboxes__input" id="VenueName-@i" name="SelectedVenues" type="checkbox" value="@Model.SelectVenue.VenueItems.First().Id" checked="checked" onclick="return false;" />
+                        <label class="govuk-label govuk-checkboxes__label" for="SelectedVenues">@Model.SelectVenue.VenueItems.First().VenueName</label>
+                    </div>
+                }
+                else
+                {
+                    foreach (var item in Model.SelectVenue.VenueItems)
                     {
+                        i++;
                         <div class="govuk-checkboxes__item">
-                            <input class="govuk-checkboxes__input" id="VenueName-@i" name="SelectedVenues" type="checkbox" value="@Model.SelectVenue.VenueItems.First().Id" checked="checked" onclick="return false;" />
-                            <label class="govuk-label govuk-checkboxes__label" for="SelectedVenues">@Model.SelectVenue.VenueItems.First().VenueName</label>
+                            <input class="govuk-checkboxes__input" id="VenueName-@i" name="SelectedVenues" type="checkbox" value="@item.Id" @item.Checked.ThenNullableCheck()/>
+                            <label class="govuk-label govuk-checkboxes__label" for="SelectedVenues">@item.VenueName</label>
                         </div>
                     }
-                    else
-                    {
-                        foreach (var item in Model.SelectVenue.VenueItems)
-                        {
-                            i++;
-                            if (item.Checked.HasValue && item.Checked.Value)
-                            {
-                                <div class="govuk-checkboxes__item">
-                                    <input class="govuk-checkboxes__input" id="VenueName-@i" name="SelectedVenues" type="checkbox" value="@item.Id" checked="checked"/>
-                                    <label class="govuk-label govuk-checkboxes__label" for="SelectedVenues">@item.VenueName</label>
-                                </div>
-                            }
-                            else
-                            {
-                                <div class="govuk-checkboxes__item">
-                                    <input class="govuk-checkboxes__input" id="VenueName-@i" name="SelectedVenues" type="checkbox" value="@item.Id"/>
-                                    <label class="govuk-label govuk-checkboxes__label" for="SelectedVenues">@item.VenueName</label>
-                                </div>
-                            }
-                        }
-                    }
-                </div>
+                }
             </div>
         </div>
     </div>
+</div>
 
-    <div class="govuk-form-group" id="RegionItemsCheckboxList">
+    <div class="govuk-form-group" id="RegionItemsCheckboxList" style="@Model.DeliveryMode.IfNotWorkBasedDisplayNone()">
         <label class="govuk-label" for="select-region">
             @Model.SelectRegion.LabelText
         </label>
@@ -153,21 +139,10 @@
                         foreach (var item in Model.SelectRegion.RegionItems)
                         {
                             j++;
-                            if (item.Checked.HasValue && item.Checked.Value)
-                            {
-                                <div class="govuk-checkboxes__item">
-                                    <input class="govuk-checkboxes__input" id="RegionName-@j" name="SelectedRegions" type="checkbox" value="@item.Id" checked="checked" />
-                                    <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@item.RegionName</label>
-                                </div>
-                            }
-                            else
-                            {
-                                <div class="govuk-checkboxes__item">
-                                    <input class="govuk-checkboxes__input" id="RegionName-@j" name="SelectedRegions" type="checkbox" value="@item.Id"/>
-                                    <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@item.RegionName</label>
-                                </div>
-                            }
-
+                            <div class="govuk-checkboxes__item">
+                                <input class="govuk-checkboxes__input" id="RegionName-@j" name="SelectedRegions" type="checkbox" value="@item.Id" @item.Checked.ThenNullableCheck()/>
+                                <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@item.RegionName</label>
+                            </div>
                         }
                     }
                 </div>
@@ -290,7 +265,7 @@
             var $validationMessageForRequired= $("#required");
 
             var $formGroupUrl = $dayElementUrl.closest('.govuk-form-group');
-    
+
 
 
             var $elementCostDescription = $("#@nameof(Model.CostDescription)");
@@ -310,7 +285,7 @@
 
             var $deliveryRadios = $("#DeliveryModeRadioButtons input[type=radio]");
             var $regionItemsCheckboxList = $("#RegionItemsCheckboxList");
-            $regionItemsCheckboxList.hide();
+            //$regionItemsCheckboxList.hide();
 
             var isClassroomBased = true;
             var isOnline = false;
@@ -325,7 +300,7 @@
 
                 switch (this.id) {
                     case "ClassroomBased":
-                        {
+                    {
                             $specifiedStartDate.prop("checked", true);
                             $flexibleStartDate.prop("checked", false);
                             $venueItemsCheckboxList.show();
@@ -365,7 +340,7 @@
                         }
                 }
 
-           
+
             });
             $venueCheckboxes.change(function () {
                 var $validationMessageForVenues = $("#invalidVenuesChecked");
