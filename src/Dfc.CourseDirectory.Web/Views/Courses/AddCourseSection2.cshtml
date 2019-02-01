@@ -233,9 +233,8 @@
         <button name="submitButton" type="submit" class="govuk-button" id="publish" value="publish">
             Publish
         </button>
-        <button name="submitButton" class="govuk-button" type="submit" value="back">Back to Section 1</button>
+        <a class="govuk-link" href="#" id="previewLink">Preview</a>
         <a class="govuk-link" href="#" id="submitBackLink">Back to Section 1</a>
-        @*<a id="submitBackLink" name="submitButton" href="#" class="govuk-back-link" type="submit" value="backLink">Back to Section 1</a>*@
     </div>
 
 </form>
@@ -395,6 +394,12 @@
             var $backLink = $("#submitBackLink");
             $backLink.click(function () {
                 $("#addCourseSection2").attr("action", "BackToAddCourseSection1");
+                $("#addCourseSection2").submit();
+            });
+
+            var $previewLink = $("#previewLink");
+            $previewLink.click(function() {
+                $("#addCourseSection2").attr("action", "Preview");
                 $("#addCourseSection2").submit();
             });
 

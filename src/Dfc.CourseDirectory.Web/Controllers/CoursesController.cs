@@ -495,6 +495,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         [HttpPost]
+        public IActionResult Preview(AddCourseRequestModel model)
+        {
+            // save page 2
+            _session.SetObject("AddCourseSection2", model);
+
+            return new EmptyResult();
+        }
+
+        [HttpPost]
         public async Task<IActionResult> AddCourse(AddCourseRequestModel model)
         {
             var learnAimRef = _session.GetString("LearnAimRef");
