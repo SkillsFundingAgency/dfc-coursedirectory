@@ -28,7 +28,9 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         [Description("Months")]
         Months = 3,
         [Description("Years")]
-        Years = 4
+        Years = 4,
+        [Description("Hours")]
+        Hours = 5
     }
     public enum StudyMode
     {

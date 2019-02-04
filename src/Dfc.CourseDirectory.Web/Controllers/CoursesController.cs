@@ -376,7 +376,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 viewModel.CostDescription = addCourseSection2Session.CostDescription;
                 viewModel.AdvancedLearnerLoan = addCourseSection2Session.AdvancedLearnerLoan;
                 viewModel.DurationLength = addCourseSection2Session.DurationLength.ToString();
-                viewModel.DurationUnitId = (int) addCourseSection2Session.Id;
+
+                viewModel.DurationUnit = addCourseSection2Session.DurationUnit;
+
                 viewModel.StudyMode = addCourseSection2Session.StudyMode;
                 viewModel.AttendanceMode = addCourseSection2Session.AttendanceMode;
                 // venues
@@ -398,7 +400,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
             else
             {
-                viewModel.DurationUnitId = (int)DurationUnit.Months;
+                viewModel.DurationUnit = DurationUnit.Months;
                 viewModel.StudyMode = StudyMode.FullTime;
                 viewModel.AttendanceMode = AttendancePattern.Daytime;
                 viewModel.DeliveryMode = DeliveryMode.ClassroomBased;
@@ -576,7 +578,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         CourseURL = model.Url?.ToLower(),
                         Cost = model.Cost,
                         CostDescription = model.CostDescription,
-                        DurationUnit = model.Id,
+                        DurationUnit = model.DurationUnit,
                         DurationValue = model.DurationLength,
                         StudyMode = model.StudyMode,
                         AttendancePattern = model.AttendanceMode,
@@ -605,7 +607,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     CourseURL = model.Url,
                     Cost = model.Cost,
                     CostDescription = model.CostDescription,
-                    DurationUnit = model.Id,
+                    DurationUnit = model.DurationUnit,
                     DurationValue = model.DurationLength,
                     StudyMode = model.StudyMode,
                     AttendancePattern = model.AttendanceMode,
@@ -631,7 +633,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     CourseURL = model.Url,
                     Cost = model.Cost,
                     CostDescription = model.CostDescription,
-                    DurationUnit = model.Id,
+                    DurationUnit = model.DurationUnit,
                     DurationValue = model.DurationLength,
                     StudyMode = model.StudyMode,
                     AttendancePattern = model.AttendanceMode,
