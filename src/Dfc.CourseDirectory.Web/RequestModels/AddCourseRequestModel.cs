@@ -20,7 +20,7 @@ namespace Dfc.CourseDirectory.Web.RequestModels
         public decimal Cost { get; set; }
         public string CostDescription { get; set; }
         public bool AdvancedLearnerLoan { get; set; }
-        public DurationUnit Id { get; set; }
+        public DurationUnit DurationUnit { get; set; }
         public int DurationLength { get; set; }
         public StudyMode StudyMode { get; set; }
         public AttendancePattern AttendanceMode { get; set; }
