@@ -13,9 +13,9 @@
 @using Duration = Dfc.CourseDirectory.Web.ViewComponents.Courses.Duration.Duration
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.Cost
 @using Dfc.CourseDirectory.Web.ViewComponents.Notification
+@using Dfc.CourseDirectory.Web.ViewComponents.Extensions
 
 @model Dfc.CourseDirectory.Web.ViewModels.AddCourseDetailsViewModel
-
 <h1 class="govuk-heading-l" style="padding-top: 20px;">
     Add course details
 </h1>
@@ -29,7 +29,7 @@
 })
 
 <form asp-controller="Courses" asp-action="AddCourse" id="addCourseSection2">
-    
+
 
     @await Component.InvokeAsync(nameof(CourseName), new CourseNameModel
     {
@@ -41,6 +41,7 @@
 
     @await Component.InvokeAsync(nameof(CourseProviderReference), new CourseProviderReferenceModel
     {
+        CourseProviderReference = Model.CourseProviderReference,
         LabelText = "ID",
         HintText = "This is how you identify a course in your internal system.",
         AriaDescribedBy = "Please enter the ID for this course"
@@ -48,7 +49,7 @@
 
     @await Component.InvokeAsync(nameof(DeliveryType), new DeliveryTypeModel
     {
-       DeliveryMode = DeliveryMode.ClassroomBased,
+       DeliveryMode = Model.DeliveryMode,
        LabelText = "Delivery Mode",
        HintText = "Select how this course will be delivered",
        AriaDescribedBy = "How the course will be delivered"
@@ -56,7 +57,10 @@
 
     @await Component.InvokeAsync(nameof(AddStartDate), new AddStartDateModel()
     {
-        StartDateType = StartDateType.SpecifiedStartDate,
+        StartDateType = Model.StartDateType,
+        Day = Model.Day != 0 ? Model.Day.ToString() : string.Empty,
+        Month = Model.Month != 0 ? Model.Month.ToString() : string.Empty,
+        Year = Model.Year != 0 ? Model.Year.ToString() : string.Empty,
         DayAriaDescribedBy = "",
         DayLabelText = "Day",
         MonthAriaDescribedBy = "",
@@ -70,45 +74,45 @@
     })
 
     @*No view component here in order to get checkbox list validation to work without it's own form*@
-    <div class="govuk-form-group" id="VenueItemsCheckboxList">
-        <label class="govuk-label" for="select-venue">
-            @Model.SelectVenue.LabelText
-        </label>
-        <span id="select-venue-hint" class="govuk-hint">
-            @Model.SelectVenue.HintText
-        </span>
-        <span class="govuk-error-message field-validation-error" id="invalidVenuesChecked" style="display: none;margin-bottom: 15px;">
-            <span id="invalidVenuesCheckedMessage" class="">Select a venue.</span>
-        </span>
+<div class="govuk-form-group" id="VenueItemsCheckboxList" style="@Model.DeliveryMode.IfNotClassroomBasedDisplayNone()" >
+    <label class="govuk-label" for="select-venue">
+        @Model.SelectVenue.LabelText
+    </label>
+    <span id="select-venue-hint" class="govuk-hint">
+        @Model.SelectVenue.HintText
+    </span>
+    <span class="govuk-error-message field-validation-error" id="invalidVenuesChecked" style="display: none; margin-bottom: 15px;">
+        <span id="invalidVenuesCheckedMessage" class="">Select a venue.</span>
+    </span>
 
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-full">
-                <div class="govuk-checkboxes" id="SelectVenueCheckBoxes">
-                    @{ var i = 0; }
-                    @if (Model.SelectVenue.VenueItems.Count() == 1)
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <div class="govuk-checkboxes" id="SelectVenueCheckBoxes">
+                @{ var i = 0; }
+                @if (Model.SelectVenue.VenueItems.Count() == 1)
+                {
+                    <div class="govuk-checkboxes__item">
+                        <input class="govuk-checkboxes__input" id="VenueName-@i" name="SelectedVenues" type="checkbox" value="@Model.SelectVenue.VenueItems.First().Id" checked="checked" onclick="return false;" />
+                        <label class="govuk-label govuk-checkboxes__label" for="SelectedVenues">@Model.SelectVenue.VenueItems.First().VenueName</label>
+                    </div>
+                }
+                else
+                {
+                    foreach (var item in Model.SelectVenue.VenueItems)
                     {
+                        i++;
                         <div class="govuk-checkboxes__item">
-                            <input class="govuk-checkboxes__input" id="VenueName-@i" name="SelectedVenues" type="checkbox" value="@Model.SelectVenue.VenueItems.First().Id" checked="checked" onclick="return false;" />
-                            <label class="govuk-label govuk-checkboxes__label" for="SelectedVenues">@Model.SelectVenue.VenueItems.First().VenueName</label>
+                            <input class="govuk-checkboxes__input" id="VenueName-@i" name="SelectedVenues" type="checkbox" value="@item.Id" @item.Checked.ThenNullableCheck()/>
+                            <label class="govuk-label govuk-checkboxes__label" for="SelectedVenues">@item.VenueName</label>
                         </div>
                     }
-                    else
-                    {
-                        foreach (var item in Model.SelectVenue.VenueItems)
-                        {
-                            i++;
-                            <div class="govuk-checkboxes__item">
-                                <input class="govuk-checkboxes__input" id="VenueName-@i" name="SelectedVenues" type="checkbox" value="@item.Id" />
-                                <label class="govuk-label govuk-checkboxes__label" for="SelectedVenues">@item.VenueName</label>
-                            </div>
-                        }
-                    }
-                </div>
+                }
             </div>
         </div>
     </div>
+</div>
 
-    <div class="govuk-form-group" id="RegionItemsCheckboxList">
+    <div class="govuk-form-group" id="RegionItemsCheckboxList" style="@Model.DeliveryMode.IfNotWorkBasedDisplayNone()">
         <label class="govuk-label" for="select-region">
             @Model.SelectRegion.LabelText
         </label>
@@ -136,7 +140,7 @@
                         {
                             j++;
                             <div class="govuk-checkboxes__item">
-                                <input class="govuk-checkboxes__input" id="RegionName-@j" name="SelectedRegions" type="checkbox" value="@item.Id" />
+                                <input class="govuk-checkboxes__input" id="RegionName-@j" name="SelectedRegions" type="checkbox" value="@item.Id" @item.Checked.ThenNullableCheck()/>
                                 <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@item.RegionName</label>
                             </div>
                         }
@@ -148,6 +152,7 @@
 
     @await Component.InvokeAsync(nameof(UrlInput), new UrlInputModel
     {
+        Url = Model.Url,
         LabelText = "URL",
         HintText = "Enter the URL for this course e.g. http://www.google.com",
         AriaDescribedBy = "Enter the URL for this course"
@@ -155,6 +160,8 @@
 
     @await Component.InvokeAsync(nameof(Cost), new CostModel
     {
+        Cost = Model.Cost,
+        CostDescription = Model.CostDescription,
         CostLabelText = "Cost",
         CostHintText = "Enter the cost for the course in pounds and pence e.g. 125.00",
         CostAriaDescribedBy = "Enter the cost in pounds and pence",
@@ -166,6 +173,7 @@
 
     @await Component.InvokeAsync(nameof(AdvancedLearnerLoan), new AdvancedLearnerLoanModel
     {
+        AdvancedLearnerLoan = Model.AdvancedLearnerLoan,
         LabelText = "Advanced learner loan",
         HintText = "Select the checkbox below if Advanced Learner Loans are available for this course",
         AriaDescribedBy = "Select whether Advanced Learner Loan is available for this course"
@@ -198,7 +206,8 @@
                 DurationUnit = "Years"
             }
         },
-        Id = 3,
+        DurationLength = Model.DurationLength,
+        Id = Model.DurationUnitId,
         LabelText = "Duration",
         HintText = "Select the duration of the course",
         AriaDescribedBy = "Select course duration"
@@ -207,7 +216,7 @@
     <div id="FullPartTimeRadioButtons">
         @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode.StudyMode), new StudyModeModel
         {
-            StudyMode = Dfc.CourseDirectory.Models.Models.Courses.StudyMode.FullTime,
+            StudyMode = Model.StudyMode,
             LabelText = "Full time or part time",
             HintText = "Select the attendance pattern"
         })
@@ -215,15 +224,17 @@
     <div id="AttendancePatternRadioButtons">
         @await Component.InvokeAsync(nameof(Attendance), new AttendanceModel
         {
-            AttendanceMode = AttendancePattern.Daytime,
+            AttendanceMode = Model.AttendanceMode,
             LabelText = "Attendance",
             HintText = "Select the time of day the course takes place"
         })
     </div>
     <div class="govuk-form-group">
-        <button type="submit" class="govuk-button" id="publish">
+        <button name="submitButton" type="submit" class="govuk-button" id="publish" value="publish">
             Publish
         </button>
+        <a class="govuk-link" href="#" id="previewLink">Preview</a>
+        <a class="govuk-link" href="#" id="submitBackLink">Back to Section 1</a>
     </div>
 
 </form>
@@ -253,7 +264,7 @@
             var $validationMessageForRequired= $("#required");
 
             var $formGroupUrl = $dayElementUrl.closest('.govuk-form-group');
-    
+
 
 
             var $elementCostDescription = $("#@nameof(Model.CostDescription)");
@@ -273,7 +284,7 @@
 
             var $deliveryRadios = $("#DeliveryModeRadioButtons input[type=radio]");
             var $regionItemsCheckboxList = $("#RegionItemsCheckboxList");
-            $regionItemsCheckboxList.hide();
+            //$regionItemsCheckboxList.hide();
 
             var isClassroomBased = true;
             var isOnline = false;
@@ -288,7 +299,7 @@
 
                 switch (this.id) {
                     case "ClassroomBased":
-                        {
+                    {
                             $specifiedStartDate.prop("checked", true);
                             $flexibleStartDate.prop("checked", false);
                             $venueItemsCheckboxList.show();
@@ -328,7 +339,7 @@
                         }
                 }
 
-           
+
             });
             $venueCheckboxes.change(function () {
                 var $validationMessageForVenues = $("#invalidVenuesChecked");
@@ -378,6 +389,18 @@
                     $validationMessageForRegions.hide();
                     $formRegionsIsValid = true;
                 }
+            });
+
+            var $backLink = $("#submitBackLink");
+            $backLink.click(function () {
+                $("#addCourseSection2").attr("action", "BackToAddCourseSection1");
+                $("#addCourseSection2").submit();
+            });
+
+            var $previewLink = $("#previewLink");
+            $previewLink.click(function() {
+                $("#addCourseSection2").attr("action", "Preview");
+                $("#addCourseSection2").submit();
             });
 
             var $publish = $("#publish");
