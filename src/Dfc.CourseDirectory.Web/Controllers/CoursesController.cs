@@ -336,14 +336,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> AddCourseSection1(AddCourseSection1RequestModel model)
         {
-            _session.SetString("CourseFor", model?.CourseFor);
-            _session.SetString("EntryRequirements", model?.EntryRequirements ?? string.Empty);
-            _session.SetString("WhatWillLearn", model?.WhatWillLearn ?? string.Empty);
-            _session.SetString("HowYouWillLearn", model?.HowYouWillLearn ?? string.Empty);
-            _session.SetString("WhatYouNeed", model?.WhatYouNeed ?? string.Empty);
-            _session.SetString("HowAssessed", model?.HowAssessed ?? string.Empty);
-            _session.SetString("WhereNext", model?.WhereNext ?? string.Empty);
-
             _session.SetObject("AddCourseSection1", model);
             var addCourseSection2Session = _session.GetObject<AddCourseRequestModel>("AddCourseSection2");
 
@@ -380,7 +372,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 viewModel.Month = Convert.ToInt32(addCourseSection2Session.Month);
                 viewModel.Year = Convert.ToInt32(addCourseSection2Session.Year);
                 viewModel.Url = addCourseSection2Session.Url;
-                viewModel.Cost = addCourseSection2Session.Cost.ToString(CultureInfo.InvariantCulture);
+                viewModel.Cost = addCourseSection2Session.Cost == 0 ? string.Empty : addCourseSection2Session.Cost.ToString(CultureInfo.InvariantCulture);
                 viewModel.CostDescription = addCourseSection2Session.CostDescription;
                 viewModel.AdvancedLearnerLoan = addCourseSection2Session.AdvancedLearnerLoan;
                 viewModel.DurationLength = addCourseSection2Session.DurationLength.ToString();
@@ -430,7 +422,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 NotionalNVQLevelv2 = _session.GetString("NotionalNVQLevelv2"),
                 CourseFor = new CourseForModel
                 {
-                    CourseFor = _session.GetString("CourseFor"),
                     LabelText = "Who is the course for?",
                     HintText =
                         "Please provide useful information that helps a learner to make a decision about the suitability of this course. For example learners new to the subject / sector or those with some experience? Any age restrictions?",
@@ -512,13 +503,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
             var learnAimRefTitle = _session.GetString("LearnAimRefTitle");
             var learnAimRefTypeDesc = _session.GetString("LearnAimRefTypeDesc");
 
-            var courseFor = _session.GetString("CourseFor");
-            var entryRequirements = _session.GetString("EntryRequirements");
-            var whatWillLearn = _session.GetString("WhatWillLearn");
-            var howYouWillLearn = _session.GetString("HowYouWillLearn");
-            var whatYouNeed = _session.GetString("WhatYouNeed");
-            var howAssessed = _session.GetString("HowAssessed");
-            var whereNext = _session.GetString("WhereNext");
+            var addCourseSection1 = _session.GetObject<AddCourseSection1RequestModel>("AddCourseSection1");
+            var courseFor = addCourseSection1.CourseFor;
+            var entryRequirements = addCourseSection1.EntryRequirements;
+            var whatWillLearn = addCourseSection1.WhatWillLearn;
+            var howYouWillLearn = addCourseSection1.HowYouWillLearn;
+            var whatYouNeed = addCourseSection1.WhatYouNeed;
+            var howAssessed = addCourseSection1.HowAssessed;
+            var whereNext = addCourseSection1.WhereNext;
 
 
             // TODO - Add error message, if use this check
@@ -709,13 +701,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _session.Remove("LearnAimRefTitle");
             _session.Remove("LearnAimRefTypeDesc");
 
-            _session.Remove("CourseFor");
-            _session.Remove("EntryRequirements");
-            _session.Remove("WhatWillLearn");
-            _session.Remove("HowYouWillLearn");
-            _session.Remove("WhatYouNeed");
-            _session.Remove("HowAssessed");
-            _session.Remove("WhereNext");
+            _session.Remove("AddCourseSection1");
+            _session.Remove("AddCourseSection2");
         }
 
         private async Task<SelectVenueModel> GetVenuesByUkprn(int ukprn)
