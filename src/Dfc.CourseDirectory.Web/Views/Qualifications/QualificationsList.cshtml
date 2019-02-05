@@ -1,0 +1,10 @@
+﻿@model IEnumerable<string>;
+
+<ul>
+    @foreach (var type in Model)
+    {
+        <li>
+            <a asp-controller="Qualifications" asp-action="Courses" asp-route-qualificationType="@type">@type</a>
+        </li>
+    }
+</ul>
