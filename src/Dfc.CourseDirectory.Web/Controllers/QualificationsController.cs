@@ -48,7 +48,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             IActionResult view = await GetCoursesViewModelAsync("", "", "", "", null);
             CoursesViewModel vm = (CoursesViewModel)(((ViewResult)view).Model);
 
-           IEnumerable<CoursesForQualificationAndCountViewModel> coursesForQualifcationsWithCourseRunsCount = vm.Courses.Value.FirstOrDefault(o => o.QualType == qualificationType)
+           IEnumerable<CoursesForQualificationAndCountViewModel> coursesForQualifcationsWithCourseRunsCount = vm.Courses.Value.FirstOrDefault(o => String.Equals(o.QualType, qualificationType, StringComparison.CurrentCultureIgnoreCase))
                ?.Value
                 .Select(c => new CoursesForQualificationAndCountViewModel
                {
