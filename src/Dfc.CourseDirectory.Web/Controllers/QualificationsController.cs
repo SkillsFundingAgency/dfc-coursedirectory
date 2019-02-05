@@ -47,6 +47,36 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return View();
         }
 
+        public IActionResult QualificationsList()
+        {
+            var qualificationTypes = new List<string>();
+            var UKPRN = _session.GetInt32("UKPRN");
+
+            if (UKPRN.HasValue)
+            {
+                var coursesByUKPRN = !UKPRN.HasValue
+                    ? null
+                    : _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(UKPRN))
+                        .Result.Value;
+
+                foreach (var a in coursesByUKPRN.Value)
+                {
+                    foreach (var b in a.Value)
+                    {
+                        foreach (var c in b.Value)
+                        {
+                            qualificationTypes.Add(c.QualificationType);
+                        }
+                    }
+                }
+
+                qualificationTypes = qualificationTypes.Distinct().ToList();
+            }
+
+
+            return View(qualificationTypes);
+        }
+
         public async Task<IActionResult> Courses(string qualificationType)
         {
             IActionResult view = await GetCoursesViewModelAsync("", "", "", "", null);
