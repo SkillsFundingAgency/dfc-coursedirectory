@@ -75,21 +75,19 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         public async Task<IActionResult> Courses(string qualificationType)
         {
-            var x =HttpUtility.UrlDecode(qualificationType);
             IActionResult view = await GetCoursesViewModelAsync("", "", "", "", null);
             CoursesViewModel vm = (CoursesViewModel)(((ViewResult)view).Model);
-           // IEnumerable<ICourseSearchInnerGrouping> coursesForQualifcation = vm.Courses.Value.FirstOrDefault(o => o.QualType == qualificationType).Value.Select(i => new CourseSearchInnerResultGrouping(i.LARSRef));
 
-            //var courses = vm.Courses.Value.FirstOrDefault(o => o.QualType == qualificationType)
-            //    .Value
-            //    .Select(t => new CourseSearchInnerGrouping { Course = t.Value});
+           IEnumerable<CoursesForQualificationAndCountViewModel> coursesForQualifcationsWithCourseRunsCount = vm.Courses.Value.FirstOrDefault(o => String.Equals(o.QualType, qualificationType, StringComparison.CurrentCultureIgnoreCase))
+               ?.Value
+                .Select(c => new CoursesForQualificationAndCountViewModel
+               {
+                   Course = c.Value.FirstOrDefault(),
+                   CourseRunCount = c.Value.SelectMany(d => d.CourseRuns).Count(),
+                   CourseRuns = c.Value.FirstOrDefault()?.CourseRuns
+               }).ToList();
 
-
-            //IEnumerable<Course> courses = vm.Courses.Value.FirstOrDefault(o => o.QualType == qualificationType)
-            //    .Value
-            //    .Select(c => c.WithNoCourseRuns());
-
-            return View("Courses");
+            return View("Courses", coursesForQualifcationsWithCourseRunsCount);
         }
 
 
