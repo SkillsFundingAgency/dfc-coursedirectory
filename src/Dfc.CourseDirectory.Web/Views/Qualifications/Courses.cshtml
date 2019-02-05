@@ -1,0 +1,11 @@
+﻿
+@model IEnumerable<Dfc.CourseDirectory.Models.Models.Courses.Course>
+
+@foreach (var x in Model)
+{
+    @x.CourseDescription
+    @x.QualificationType
+    @x.QualificationCourseTitle
+    @x.AdvancedLearnerLoan
+    @x.LearnAimRef
+}
