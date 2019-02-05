@@ -40,7 +40,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private ISession _session => _contextAccessor.HttpContext.Session;
         private readonly IVenueSearchHelper _venueSearchHelper;
         private readonly IVenueService _venueService;
-
+        private const string SessionAddCourseSection1 = "AddCourseSection1";
+        private const string SessionAddCourseSection2 = "AddCourseSection2";
 
         public CoursesController(
             ILogger<CoursesController> logger,
@@ -336,8 +337,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> AddCourseSection1(AddCourseSection1RequestModel model)
         {
-            _session.SetObject("AddCourseSection1", model);
-            var addCourseSection2Session = _session.GetObject<AddCourseRequestModel>("AddCourseSection2");
+            _session.SetObject(SessionAddCourseSection1, model);
+            var addCourseSection2Session = _session.GetObject<AddCourseRequestModel>(SessionAddCourseSection2);
 
 
             int UKPRN = 0;
@@ -413,8 +414,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpPost]
         public IActionResult BackToAddCourseSection1(AddCourseRequestModel model)
         {
-            _session.SetObject("AddCourseSection2", model);
-            var addCourseSection1 = _session.GetObject<AddCourseSection1RequestModel>("AddCourseSection1");
+            _session.SetObject(SessionAddCourseSection2, model);
+            var addCourseSection1 = _session.GetObject<AddCourseSection1RequestModel>(SessionAddCourseSection1);
             
             AddCourseViewModel courseViewModel = new AddCourseViewModel()
             {
@@ -491,7 +492,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         public IActionResult Preview(AddCourseRequestModel model)
         {
             // save page 2
-            _session.SetObject("AddCourseSection2", model);
+            _session.SetObject(SessionAddCourseSection2, model);
 
             return new EmptyResult();
         }
@@ -505,7 +506,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             var learnAimRefTitle = _session.GetString("LearnAimRefTitle");
             var learnAimRefTypeDesc = _session.GetString("LearnAimRefTypeDesc");
 
-            var addCourseSection1 = _session.GetObject<AddCourseSection1RequestModel>("AddCourseSection1");
+            var addCourseSection1 = _session.GetObject<AddCourseSection1RequestModel>(SessionAddCourseSection1);
             var courseFor = addCourseSection1.CourseFor;
             var entryRequirements = addCourseSection1.EntryRequirements;
             var whatWillLearn = addCourseSection1.WhatWillLearn;
@@ -695,6 +696,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
         }
 
+        [HttpPost]
+        public IActionResult Publish()
+        {
+            var addCourseSection1 = _session.GetObject<AddCourseSection1RequestModel>(SessionAddCourseSection1);
+            var addCourseSection2 = _session.GetObject<AddCourseRequestModel>(SessionAddCourseSection2);
+
+            return View("Summary");
+        }
+
         internal void RemoveSessionVariables()
         {
             _session.Remove("LearnAimRef");
@@ -703,8 +713,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _session.Remove("LearnAimRefTitle");
             _session.Remove("LearnAimRefTypeDesc");
 
-            _session.Remove("AddCourseSection1");
-            _session.Remove("AddCourseSection2");
+            _session.Remove(SessionAddCourseSection1);
+            _session.Remove(SessionAddCourseSection2);
         }
 
         private async Task<SelectVenueModel> GetVenuesByUkprn(int ukprn)
