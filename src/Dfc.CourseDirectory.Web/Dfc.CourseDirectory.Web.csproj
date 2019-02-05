@@ -110,6 +110,9 @@
     <Content Update="ViewComponents\VenueSearch\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\Qualifications\Courses.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Venues\VenueSearchResults.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
