@@ -42,6 +42,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly IVenueService _venueService;
         private const string SessionAddCourseSection1 = "AddCourseSection1";
         private const string SessionAddCourseSection2 = "AddCourseSection2";
+        private const string SessionVenues = "Venues";
+        private const string SessionRegions = "Regions";
 
         public CoursesController(
             ILogger<CoursesController> logger,
@@ -363,6 +365,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             viewModel.SelectVenue = await GetVenuesByUkprn(UKPRN);
             viewModel.SelectRegion = GetRegions();
+
+            _session.SetObject(SessionVenues, viewModel.SelectVenue);
+            _session.SetObject(SessionRegions, viewModel.SelectRegion);
 
             if (addCourseSection2Session != null)
             {
@@ -697,12 +702,18 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult Publish()
+        public IActionResult Publish(AddCourseRequestModel model)
         {
-            var addCourseSection1 = _session.GetObject<AddCourseSection1RequestModel>(SessionAddCourseSection1);
-            var addCourseSection2 = _session.GetObject<AddCourseRequestModel>(SessionAddCourseSection2);
+            _session.SetObject(SessionAddCourseSection2, model);
+            var summaryViewModel = new AddCourseSummaryViewModel
+            {
+                Section1 = _session.GetObject<AddCourseSection1RequestModel>(SessionAddCourseSection1),
+                Section2 = model,
+                Venues = _session.GetObject<SelectVenueModel>(SessionVenues),
+                Region = _session.GetObject<SelectRegionModel>(SessionRegions)
+            };
 
-            return View("Summary");
+            return View("Summary", summaryViewModel);
         }
 
         internal void RemoveSessionVariables()
@@ -715,6 +726,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             _session.Remove(SessionAddCourseSection1);
             _session.Remove(SessionAddCourseSection2);
+            _session.Remove(SessionVenues);
+            _session.Remove(SessionRegions);
         }
 
         private async Task<SelectVenueModel> GetVenuesByUkprn(int ukprn)
