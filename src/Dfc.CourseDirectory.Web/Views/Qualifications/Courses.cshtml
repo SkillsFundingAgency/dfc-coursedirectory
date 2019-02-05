@@ -1,14 +1,23 @@
 ﻿
+@using Dfc.CourseDirectory.Services.Interfaces.VenueService
+@using Dfc.CourseDirectory.Services.VenueService
 @using Dfc.CourseDirectory.Web.Helpers
 @model IEnumerable<CoursesForQualificationAndCountViewModel>
-
+@inject IVenueService venueService
 <div id="Cd-course-list" class="govuk-body">
     <h1 class="govuk-heading-xl"></h1>
 
+    @{
+        var TotalCourseRunCount = 0;
+        foreach (var courseRunCount in Model)
+        {
+            TotalCourseRunCount += courseRunCount.CourseRunCount;
+        }
+    }
     <div class="govuk-details">
         <div class="">
             <div class="">
-                <span>Diploma (10)</span>
+                <span>@Model.FirstOrDefault()?.QualificationType (@TotalCourseRunCount)</span>
             </div>
         </div>
         <div class="govuk-details__text">
@@ -42,7 +51,7 @@
                             <div id="accordion-default-content-1" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-1">
                                 @foreach (var a in x.CourseRuns)
                                 {
-                                    
+
                                     <div class="cd-course--list">
                                         <div class="govuk-form-group">
                                             <label class="govuk-label" for="name">
@@ -61,14 +70,30 @@
                                                 Delivery
                                             </label>
                                             <label asp-for="@a.DeliveryMode">@WebHelper.GetEnumDescription(a.DeliveryMode)</label>
-                  
+
                                         </div>
-                                        <div class="govuk-form-group">
-                                            <label class="govuk-label" for="sort">
-                                                Venue
-                                            </label>
-                                            <label>NA</label>
-                                        </div>
+                                        
+                                        @{
+                                            var venueName = await venueService.GetVenueByIdAsync(new GetVenueByIdCriteria(a.VenueId.ToString()));
+
+                                        }
+                                        @if (venueName.HasValue)
+                                        {
+                                            <div class="govuk-form-group">
+                                                <label class="govuk-label" for="sort">
+                                                    Venue
+                                                </label>
+                                                <label>
+                                                  
+
+                                               
+                                                    @venueName.Value.VenueName
+
+
+                                                </label>
+
+                                            </div>
+                                        }
                                         <div class="govuk-form-group">
                                             <label class="govuk-label" for="sort">
                                                 Mode
@@ -81,15 +106,15 @@
                                             </label>
                                             <label asp-for="@a.AttendancePattern">@WebHelper.GetEnumDescription(a.AttendancePattern)</label>
                                         </div>
-                                        <a href="/courses/editcourse">edit</a>
+                                        <a href="#">edit</a>
                                     </div>
                                 }
                             </div>
 
 
 
-                            
-                        
+
+
 
 
                         </div>

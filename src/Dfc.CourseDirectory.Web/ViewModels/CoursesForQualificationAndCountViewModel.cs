@@ -10,5 +10,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels
         public int CourseRunCount { get; set; }
 
         public IEnumerable<CourseRun> CourseRuns { get; set; }
+
+        public string QualificationType { get; set; }
     }
 }
