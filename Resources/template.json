@@ -509,6 +509,9 @@
         "parameters": {
           "azureSearchName": {
             "value": "[variables('azureSearchName')]"
+          },
+          "azureSearchSku": {
+            "value": "standard"
           }
         }
       }
