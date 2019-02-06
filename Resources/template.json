@@ -45,7 +45,7 @@
       }
     },
     "larsApiKey": {
-      "type": "string",
+      "type": "securestring",
       "metadata": {
         "description": "API URL for the provider search"
       }
@@ -154,24 +154,30 @@
         "description": "Custom host name for the website"
       }
     },
-    "certificateResourceGroup": {
+    "keyVaultName": {
       "type": "string",
       "defaultValue": "",
       "metadata": {
-        "description": "Resource group for the certificate - only used if appHostName is specified"
+        "description": "Key vault with the certificate in - only used if appHostName is specified"
+      }
+    },
+    "keyVaultResourceGroup": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().name]",
+      "metadata": {
+        "description": "Resource group for the key vault - only used if appHostName is specified"
       }
     },
     "certificateName": {
       "type": "string",
       "defaultValue": "",
       "metadata": {
-        "description": "Certificate for the custom host name - only used if appHostName is specified"
+          "description": "Name of the secret (certificate) as it appears in key vault - only used if appHostName is specified"
       }
     }
   },
   "variables": {
-    "dasDeploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
-    "dfcDeploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/dfc-devops/master/ArmTemplates/",
+    "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/dfc-devops/master/ArmTemplates/",
     "appInsightsName": "[concat(parameters('projectPrefix'),'-ai')]",
     "appServiceName": "[concat(parameters('projectPrefix'),'-as')]",
     "appServicePlanName": "[concat(parameters('projectPrefix'),'-asp')]",
@@ -186,7 +192,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(variables('dasDeploymentUrlBase'),'application-insights.json')]",
+          "uri": "[concat(variables('deploymentUrlBase'),'application-insights.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -206,7 +212,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(variables('dfcDeploymentUrlBase'),'storage-account.json')]",
+          "uri": "[concat(variables('deploymentUrlBase'),'storage-account.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -223,7 +229,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(variables('dfcDeploymentUrlBase'),'app-service-plan.json')]",
+          "uri": "[concat(variables('deploymentUrlBase'),'app-service-plan.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -240,10 +246,41 @@
       }
     },
     {
+      "name": "courseDirectoryCertificates",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2017-05-10",
+      "condition": "[greater(length(parameters('appHostName')),0)]",
+      "dependsOn": [
+        "courseDirectoryAppServicePlan"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('deploymentUrlBase'),'certificate.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "keyVaultName": {
+            "value": "[parameters('keyVaultName')]"
+          },
+          "keyVaultCertificateName": {
+            "value": "[parameters('certificateName')]"
+          },
+          "keyVaultResourceGroup": {
+            "value": "[parameters('keyVaultResourceGroup')]"
+          },
+          "serverFarmId": {
+            "value": "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]"
+          }
+        }
+      }
+    },
+    {
       "apiVersion": "2017-05-10",
       "name": "courseDirectoryAppService",
       "type": "Microsoft.Resources/deployments",
       "dependsOn": [
+        "courseDirectoryCertificates",
         "courseDirectoryAppInsights",
         "courseDirectoryStorage",
         "courseDirectoryAppServicePlan"
@@ -251,7 +288,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(variables('dfcDeploymentUrlBase'),'app-service.json')]",
+          "uri": "[concat(variables('deploymentUrlBase'),'app-service.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -268,7 +305,7 @@
             "value": "[parameters('appHostName')]"
           },
           "certificateThumbprint": {
-            "value": "[if(greater(length(parameters('appHostName')),0),reference(resourceId(parameters('certificateResourceGroup'), 'Microsoft.Web/certificates', parameters('certificateName')), '2016-03-01').Thumbprint,'')]"
+            "value": "[if(greater(length(parameters('appHostName')),0), reference('courseDirectoryCertificates').outputs.certificateThumbprint.value, '')]"
           },
           "deployStagingSlot": {
             "value": true
@@ -443,7 +480,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(variables('dfcDeploymentUrlBase'),'cosmos-db.json')]",
+          "uri": "[concat(variables('deploymentUrlBase'),'cosmos-db.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -466,12 +503,15 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(variables('dasDeploymentUrlBase'),'azure-search.json')]",
+          "uri": "[concat(variables('deploymentUrlBase'),'azure-search.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
           "azureSearchName": {
             "value": "[variables('azureSearchName')]"
+          },
+          "azureSearchSku": {
+            "value": "standard"
           }
         }
       }
