@@ -20,7 +20,7 @@
 
         ILarsSearchFilterBuilder LessThan(string value);
 
-        ILarsSearchFilterBuilder GreatherThanOrEqualTo(string value);
+        ILarsSearchFilterBuilder GreaterThanOrEqualTo(string value);
 
         ILarsSearchFilterBuilder LessThanOrEqualTo(string value);
 

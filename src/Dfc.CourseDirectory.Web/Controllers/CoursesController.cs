@@ -77,7 +77,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         .Result.Value);
 
                 var courses = coursesByUKPRN.Value.SelectMany(o => o.Value).SelectMany(i => i.Value).ToList();
-                
+
                 var course = courses.SingleOrDefault(x => x.id == model.CourseId);
 
                 var courserun = course.CourseRuns.SingleOrDefault(x => x.id == model.courseRun.id);
@@ -95,19 +95,21 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     courserun.CourseURL = model.courseRun.CourseURL;
                     courserun.DurationValue = model.courseRun.DurationValue;
                     courserun.ProviderCourseID = model.courseRun.ProviderCourseID;
-                   // courserun.StartDate = model.courseRun.StartDate;
+                    // courserun.StartDate = model.courseRun.StartDate;
                     courserun.VenueId = model.courseRun.VenueId;
-                    courserun.UpdatedDate=DateTime.Now;
-                    
+                    courserun.UpdatedDate = DateTime.Now;
+
 
                     var updatedCourses = await _courseService.UpdateCourseAsync(course);
 
-                } else {
+                }
+                else
+                {
                     return RedirectToAction("Index", new { status = "bad", learnAimRef = "", numberOfNewCourses = "", errmsg = "No course run" });
-                }               
+                }
             }
-           
-            return RedirectToAction("Index", new { status = "update", learnAimRef ="", numberOfNewCourses ="", errmsg ="", updatedCourseId = model.CourseId});
+
+            return RedirectToAction("Index", new { status = "update", learnAimRef = "", numberOfNewCourses = "", errmsg = "", updatedCourseId = model.CourseId });
         }
 
 
@@ -136,9 +138,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _session.SetInt32("UKPRN", prn);
             IActionResult view = await GetYourCoursesViewModelAsync("", "", "", "", null);
             YourCoursesViewModel vm = (YourCoursesViewModel)(((ViewResult)view).Model);
-            IEnumerable<ICourseSearchInnerGrouping> inners = vm.Courses.Value.FirstOrDefault(o => o.QualType == qualType)
+            var inners = vm.Courses.Value.FirstOrDefault(o => o.QualType == qualType)
                                                                              .Value
-                                                                             .Select(i => new CourseSearchInnerResultGrouping(i.LARSRef));
+                                                                             .Select(t => new { Course = t.Value, Text = t.LARSRef });
+
+
             return new JsonResult(inners);
         }
 
@@ -208,41 +212,53 @@ namespace Dfc.CourseDirectory.Web.Controllers
             List<SelectListItem> courseRunVenues = new List<SelectListItem>();
             int? UKPRN = _session.GetInt32("UKPRN");
 
-            if (UKPRN.HasValue) {
+            if (UKPRN.HasValue)
+            {
                 VenueSearchCriteria criteria = new VenueSearchCriteria(UKPRN.ToString(), null);
                 var venues = await _venueService.SearchAsync(criteria);
 
-                foreach (var venue in venues.Value.Value) {
+                foreach (var venue in venues.Value.Value)
+                {
                     var item = new SelectListItem { Text = venue.VenueName, Value = venue.ID };
                     courseRunVenues.Add(item);
                 };
-            } else {
+            }
+            else
+            {
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
 
-            foreach (DeliveryMode eVal in DeliveryMode.GetValues(typeof(DeliveryMode))) {
-                if (eVal.ToString().ToUpper() != "UNDEFINED") {
+            foreach (DeliveryMode eVal in DeliveryMode.GetValues(typeof(DeliveryMode)))
+            {
+                if (eVal.ToString().ToUpper() != "UNDEFINED")
+                {
                     var item = new SelectListItem { Text = WebHelper.GetEnumDescription(eVal) };
                     deliveryModes.Add(item);
                 }
             };
 
-            foreach (DurationUnit eVal in DurationUnit.GetValues(typeof(DurationUnit))) {
-                if (eVal.ToString().ToUpper() != "UNDEFINED") {
+            foreach (DurationUnit eVal in DurationUnit.GetValues(typeof(DurationUnit)))
+            {
+                if (eVal.ToString().ToUpper() != "UNDEFINED")
+                {
                     var item = new SelectListItem { Text = WebHelper.GetEnumDescription(eVal) };
                     durationUnits.Add(item);
                 }
             };
 
-            foreach (AttendancePattern eVal in AttendancePattern.GetValues(typeof(AttendancePattern))) {
-                if (eVal.ToString().ToUpper() != "UNDEFINED") {
+            foreach (AttendancePattern eVal in AttendancePattern.GetValues(typeof(AttendancePattern)))
+            {
+                if (eVal.ToString().ToUpper() != "UNDEFINED")
+                {
                     var item = new SelectListItem { Text = WebHelper.GetEnumDescription(eVal) };
                     attendances.Add(item);
                 }
             };
 
-            foreach (Dfc.CourseDirectory.Models.Models.Courses.StudyMode eVal in Enum.GetValues(typeof(Dfc.CourseDirectory.Models.Models.Courses.StudyMode))) {
-                if (eVal.ToString().ToUpper() != "UNDEFINED") {
+            foreach (Dfc.CourseDirectory.Models.Models.Courses.StudyMode eVal in Enum.GetValues(typeof(Dfc.CourseDirectory.Models.Models.Courses.StudyMode)))
+            {
+                if (eVal.ToString().ToUpper() != "UNDEFINED")
+                {
                     var item = new SelectListItem { Text = WebHelper.GetEnumDescription(eVal) };
                     modes.Add(item);
                 }
@@ -259,7 +275,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                 YourCoursesViewModel vm = new YourCoursesViewModel
                 {
-                    UpdatedCourseId= updatedCourseId ?? null,
+                    UpdatedCourseId = updatedCourseId ?? null,
                     UKPRN = UKPRN,
                     Courses = result,
                     deliveryModes = deliveryModes,
@@ -271,7 +287,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                 return View(vm);
 
-            } else {
+            }
+            else
+            {
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
         }
@@ -598,8 +616,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 }
             }
 
-            if (model.DeliveryMode == DeliveryMode.WorkBased 
-                && model.SelectedRegions != null 
+            if (model.DeliveryMode == DeliveryMode.WorkBased
+                && model.SelectedRegions != null
                 && model.SelectedRegions.Any())
             {
                 var courseRun = new CourseRun
