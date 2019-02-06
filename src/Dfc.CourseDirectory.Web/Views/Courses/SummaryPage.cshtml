@@ -1,0 +1,56 @@
+﻿@using Dfc.CourseDirectory.Models.Models.Courses
+@using Dfc.CourseDirectory.Web.ViewComponents.SummaryComponent
+@model AddCourseSummaryViewModel
+<h1 class="govuk-heading-xl">Check your answers before publishing your course</h1>
+<h2 class="govuk-heading-m">
+    @Model.Section1.LearnAimRef Level @Model.Section1.NotionalNVQLevelv2 @Model.Section1.LearnAimRefTitle
+
+</h2>
+@*addcourse needs a new model*@
+<form asp-controller="Courses" asp-action="AddCourse" id="addCourseSummaryPage">
+    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+        @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
+        {
+            Id = "CourseName", Title = "Course name", Value = @Model.CourseName , Href = "something"
+        })
+        @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
+        {
+            Id = "CourseId", Title = "Course ID", Value = @Model.CourseId , Href = "something"
+        })
+
+        @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
+        {
+            Id="DeliveryMode", Title = "Delivery mode", Value = Model.DeliveryMode, Href = "something"
+        })
+
+        @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
+        {
+            Id="StartDate", Title = "Start date", Value = Model.StartDate, Href = "something"
+        })
+
+        @{
+            if (Model.Section2.DeliveryMode == DeliveryMode.ClassroomBased)
+            {
+                @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
+                {
+                    Id="Venues", Title = "Course venue(s)", Value = Model.VenueList , Href = "something"
+                })
+            }
+            if (Model.Section2.DeliveryMode == DeliveryMode.WorkBased)
+            {
+                @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
+                {
+                    Id="Regions", Title = "Course region(s)", Value = Model.RegionList , Href = "something"
+                })
+            }
+        }
+    </dl>
+    <div class="govuk-form-group">
+        <button name="submitButton" type="submit" class="govuk-button" id="publish" value="publish">
+            Accept & Publish
+        </button>
+    </div>
+
+</form>
+
+

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Text;
 using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Models.Models.Courses;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
@@ -705,15 +706,87 @@ namespace Dfc.CourseDirectory.Web.Controllers
         public IActionResult Publish(AddCourseRequestModel model)
         {
             _session.SetObject(SessionAddCourseSection2, model);
+            var section1 = _session.GetObject<AddCourseSection1RequestModel>(SessionAddCourseSection1);
+            var availableVenues = _session.GetObject<SelectVenueModel>(SessionVenues);
+            var availableRegions = _session.GetObject<SelectRegionModel>(SessionRegions);
+
+            string deliveryMode;
+            switch (model.DeliveryMode)
+            {
+                case DeliveryMode.Undefined:
+                    deliveryMode = "Undefined";
+                    break;
+                case DeliveryMode.ClassroomBased:
+                    deliveryMode = "Classroom based";
+                    break;
+                case DeliveryMode.Online:
+                    deliveryMode = "Online";
+                    break;
+                case DeliveryMode.WorkBased:
+                    deliveryMode = "Work based";
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            string startDate;
+            if (model.StartDateType == "FlexibleStartDate")
+            {
+                startDate = "Flexible";
+            }
+            else
+            {
+                startDate = model.Day + "/" + model.Month + "/" + model.Year;
+            }
+
+            var venues = new StringBuilder();
+            if (model.DeliveryMode == DeliveryMode.ClassroomBased)
+            {
+                foreach (var summaryVenueVenueItem in availableVenues.VenueItems)
+                {
+                    foreach (var modelSelectedVenue in model.SelectedVenues)
+                    {
+                        if (modelSelectedVenue.ToString() == summaryVenueVenueItem.Id)
+                        {
+                            venues.Append(summaryVenueVenueItem.VenueName);
+                            venues.Append(" ");
+                        }
+                    }
+                }
+            }
+
+            var regions = new StringBuilder();
+            if (model.DeliveryMode == DeliveryMode.WorkBased)
+            {
+                foreach (var region in availableRegions.RegionItems)
+                {
+                    foreach (var modelSelectedRegion in model.SelectedRegions)
+                    {
+                        if (modelSelectedRegion == region.Id)
+                        {
+                            regions.Append(region.RegionName);
+                            regions.Append(" ");
+                        }
+                    }
+                }
+            }
+
             var summaryViewModel = new AddCourseSummaryViewModel
             {
-                Section1 = _session.GetObject<AddCourseSection1RequestModel>(SessionAddCourseSection1),
+                Section1 = section1,
                 Section2 = model,
-                Venues = _session.GetObject<SelectVenueModel>(SessionVenues),
-                Region = _session.GetObject<SelectRegionModel>(SessionRegions)
+                Venues = availableVenues,
+                Region = _session.GetObject<SelectRegionModel>(SessionRegions),
+
+                CourseName = section1.LearnAimRefTitle,
+                CourseId = model.CourseProviderReference,
+                DeliveryMode = deliveryMode,
+                StartDate = startDate,
+                VenueList = venues.ToString(),
+                RegionList = regions.ToString()
             };
 
-            return View("Summary", summaryViewModel);
+            return View("SummaryPage", summaryViewModel);
         }
 
         internal void RemoveSessionVariables()
@@ -726,8 +799,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             _session.Remove(SessionAddCourseSection1);
             _session.Remove(SessionAddCourseSection2);
-            _session.Remove(SessionVenues);
-            _session.Remove(SessionRegions);
         }
 
         private async Task<SelectVenueModel> GetVenuesByUkprn(int ukprn)

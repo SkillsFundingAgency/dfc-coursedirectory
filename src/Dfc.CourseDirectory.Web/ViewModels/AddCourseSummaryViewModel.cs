@@ -10,5 +10,12 @@ namespace Dfc.CourseDirectory.Web.ViewModels
         public AddCourseRequestModel Section2 { get; set; }
         public SelectVenueModel Venues { get; set; }
         public SelectRegionModel Region { get; set; }
+
+        public string CourseName { get; set; }
+        public string CourseId { get; set; }
+        public string DeliveryMode { get; set; }
+        public string StartDate { get; set; }
+        public string VenueList { get; set; }
+        public string RegionList { get; set; }
     }
 }
