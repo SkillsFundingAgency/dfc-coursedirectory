@@ -16,18 +16,43 @@
     @Html.HiddenFor(x => x.LearnAimRef)
     @Html.HiddenFor(x => x.LearnAimRefTitle)
     @Html.HiddenFor(x => x.NotionalNVQLevelv2)
-    <h1 class="govuk-heading-l" style="padding-top: 20px;">
-        Complete your qualification details
-    </h1>
+    @Html.HiddenFor(x => x.courseMode)
+    @Html.HiddenFor(x => x.CourseId)
+    @{
+        switch (@Model.courseMode)
+        {
+            case CourseMode.Add:
+
+                <h1 class="govuk-heading-l" style="padding-top: 20px;">
+                    Complete your qualification details
+                </h1>
 
 
-    @await Component.InvokeAsync(nameof(Notification), new NotificationModel
-{
+                @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+                {
 
-    NotificationTitle = "Qualification added",
-    NotificationMessage = @Model.LearnAimRefTitle + "<br>" + "Level: " + @Model.NotionalNVQLevelv2 + "<br> Awarding organisation: " + @Model.AwardOrgCode + "<br> LARS / QAN: " + @Model.LearnAimRef,
-    ClassType = "info-summary"
-})
+                    NotificationTitle = "Qualification added",
+                    NotificationMessage = @Model.LearnAimRefTitle + "<br>" + "Level: " + @Model.NotionalNVQLevelv2 + "<br> Awarding organisation: " + @Model.AwardOrgCode + "<br> LARS / QAN: " + @Model.LearnAimRef,
+                    ClassType = "info-summary"
+                })
+
+                break;
+            case CourseMode.EditCourse:
+
+                <h1 class="govuk-heading-l" style="padding-top: 20px;">
+                    Edit Course
+                </h1>
+
+                break;
+            case CourseMode.Copy:
+                <h1 class="govuk-heading-l" style="padding-top: 20px;">
+                   Copy Course
+                </h1>
+
+                break;
+        }
+    }
+
 
     <h3 class="govuk-heading-m">Course description</h3>
 
@@ -45,11 +70,36 @@
 
     @await Component.InvokeAsync(nameof(WhereNext), Model.WhereNext)
 
-    <div class="govuk-form-group">
-        <button type="submit" class="govuk-button" id="goToSection2">
-            Next
-        </button>
-    </div>
+
+    
+    @{
+        switch (@Model.courseMode)
+        {
+            case CourseMode.Add:
+
+                <div class="govuk-form-group">
+                    <button type="submit" class="govuk-button" id="goToSection2">
+                        Next
+                    </button>
+                </div>
+
+                break;
+            case CourseMode.EditCourse:
+
+                <div class="govuk-form-group">
+                    <button type="submit" class="govuk-button" id="goToSection2">
+                        Save
+                    </button>
+                </div>
+
+                break;
+            case CourseMode.Copy:
+                
+
+                break;
+        }
+    }
+
 
 </form>
 

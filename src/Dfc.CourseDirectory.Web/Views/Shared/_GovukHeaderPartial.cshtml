@@ -32,7 +32,7 @@
                             Home
                         </a>
                     </li>
-                    <li class="govuk-header__navigation-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Qualifications" ? "govuk-header__navigation-item--active" : "")">
+                    <li class="govuk-header__navigation-item @((ViewContext.RouteData.Values["Controller"].ToString() == "Qualifications" && ViewContext.RouteData.Values["Action"].ToString() == "Index") ? "govuk-header__navigation-item--active" : "")">
                         <a class="govuk-header__link" href="~/Qualifications">
                             Qualifications
                         </a>
@@ -47,8 +47,8 @@
                             Add Provider
                         </a>
                     </li>
-                    <li class="govuk-header__navigation-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Courses" ? "govuk-header__navigation-item--active" : "")">
-                        <a class="govuk-header__link" href="/Courses">
+                    <li class="govuk-header__navigation-item @((ViewContext.RouteData.Values["Action"].ToString() == "QualificationsList" || ViewContext.RouteData.Values["Action"].ToString() == "Courses")? "govuk-header__navigation-item--active" : "")">
+                        <a class="govuk-header__link" href="/Qualifications/QualificationsList">
                             Courses
                         </a>
                     </li>

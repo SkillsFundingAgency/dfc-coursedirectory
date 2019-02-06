@@ -1,6 +1,7 @@
 ﻿using Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseFor;
@@ -31,5 +32,22 @@ namespace Dfc.CourseDirectory.Web.ViewModels
         public WhatYouNeedModel WhatYouNeed { get; set; }
         public HowAssessedModel HowAssessed { get; set; }
         public WhereNextModel WhereNext { get; set; }
+
+        public CourseMode courseMode { get; set; }
+
+        public Guid CourseId { get; set; }
+    }
+
+    public enum CourseMode
+    {
+        [Description("Add")]
+        Add = 0,
+        [Description("EditCourse")]
+        EditCourse = 1,
+        [Description("Copy")]
+        Copy = 2,
+        [Description("EditCourseRun")]
+        EditCourseRun = 3
+
     }
 }
