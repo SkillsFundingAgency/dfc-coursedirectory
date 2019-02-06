@@ -6,7 +6,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Summary.SummaryComponent
     {
         public IViewComponentResult Invoke(SummaryComponentModel model)
         {
-            return View("~/ViewComponents/SummaryComponent/Default.cshtml", model);
+            return View("~/ViewComponents/Summary/SummaryComponent/Default.cshtml", model);
         }
     }
 }

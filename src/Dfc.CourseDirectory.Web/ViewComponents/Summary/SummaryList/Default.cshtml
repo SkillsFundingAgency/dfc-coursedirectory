@@ -14,10 +14,7 @@
         }
     </dd>
     <dd class="govuk-summary-list__actions">
-        <a class="govuk-link" href=@Model.Href>
-            change
-            <span class="govuk-visually-hidden"> Course name</span>
-        </a>
+        <a class="govuk-link" href="@Url.Action(Model.Action, Model.Controller)#@Model.Section">change</a>
     </dd>
 </div>
  

@@ -359,78 +359,19 @@ namespace Dfc.CourseDirectory.Web.Controllers
         public async Task<IActionResult> AddCourseSection1(AddCourseSection1RequestModel model)
         {
             _session.SetObject(SessionAddCourseSection1, model);
-            var addCourseSection2Session = _session.GetObject<AddCourseRequestModel>(SessionAddCourseSection2);
-
-
-            int UKPRN = 0;
-            if (_session.GetInt32("UKPRN") != null)
-            {
-                UKPRN = _session.GetInt32("UKPRN").Value;
-            }
-            else
-            {
+            var viewModel = await GetSection2ViewModel();
+            if (viewModel == null)
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
-            }
 
-            var viewModel = new AddCourseDetailsViewModel
-            {
-                LearnAimRef = _session.GetString("LearnAimRef"),
-                LearnAimRefTitle = _session.GetString("LearnAimRefTitle"),
-                AwardOrgCode = _session.GetString("AwardOrgCode"),
-                NotionalNVQLevelv2 = _session.GetString("NotionalNVQLevelv2"),
-                CourseName = _session.GetString("LearnAimRefTitle"),
-                ProviderUKPRN = UKPRN
-            };
+            return View("AddCourseSection2", viewModel);
+        }
 
-            viewModel.SelectVenue = await GetVenuesByUkprn(UKPRN);
-            viewModel.SelectRegion = GetRegions();
-
-            _session.SetObject(SessionVenues, viewModel.SelectVenue);
-            _session.SetObject(SessionRegions, viewModel.SelectRegion);
-
-            if (addCourseSection2Session != null)
-            {
-                viewModel.CourseProviderReference = addCourseSection2Session.CourseProviderReference;
-                viewModel.DeliveryMode = addCourseSection2Session.DeliveryMode;
-                viewModel.StartDateType = (StartDateType)Enum.Parse(typeof(StartDateType), addCourseSection2Session.StartDateType);
-                viewModel.Day = Convert.ToInt32(addCourseSection2Session.Day);
-                viewModel.Month = Convert.ToInt32(addCourseSection2Session.Month);
-                viewModel.Year = Convert.ToInt32(addCourseSection2Session.Year);
-                viewModel.Url = addCourseSection2Session.Url;
-                viewModel.Cost = addCourseSection2Session.Cost == 0 ? string.Empty : addCourseSection2Session.Cost.ToString(CultureInfo.InvariantCulture);
-                viewModel.CostDescription = addCourseSection2Session.CostDescription;
-                viewModel.AdvancedLearnerLoan = addCourseSection2Session.AdvancedLearnerLoan;
-                viewModel.DurationLength = addCourseSection2Session.DurationLength.ToString();
-
-                viewModel.DurationUnit = addCourseSection2Session.DurationUnit;
-
-                viewModel.StudyMode = addCourseSection2Session.StudyMode;
-                viewModel.AttendanceMode = addCourseSection2Session.AttendanceMode;
-                // venues
-                if (addCourseSection2Session.SelectedVenues != null)
-                {
-                    foreach (var selectedVenue in addCourseSection2Session.SelectedVenues)
-                    {
-                        viewModel.SelectVenue.VenueItems.First(x => x.Id == selectedVenue.ToString()).Checked = true;
-                    }
-                }
-                // regions
-                if (addCourseSection2Session.SelectedRegions != null)
-                {
-                    foreach (var selectedRegion in addCourseSection2Session.SelectedRegions)
-                    {
-                        viewModel.SelectRegion.RegionItems.First(x => x.Id == selectedRegion.ToString()).Checked = true;
-                    }
-                }
-            }
-            else
-            {
-                viewModel.DurationUnit = DurationUnit.Months;
-                viewModel.StudyMode = StudyMode.FullTime;
-                viewModel.AttendanceMode = AttendancePattern.Daytime;
-                viewModel.DeliveryMode = DeliveryMode.ClassroomBased;
-                viewModel.StartDateType = StartDateType.SpecifiedStartDate;
-            }
+        [HttpGet]
+        public async Task<IActionResult> BackToAddCourseSection2()
+        {
+            var viewModel = await GetSection2ViewModel();
+            if (viewModel == null)
+                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
 
             return View("AddCourseSection2", viewModel);
         }
@@ -439,76 +380,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
         public IActionResult BackToAddCourseSection1(AddCourseRequestModel model)
         {
             _session.SetObject(SessionAddCourseSection2, model);
-            var addCourseSection1 = _session.GetObject<AddCourseSection1RequestModel>(SessionAddCourseSection1);
-            
-            AddCourseViewModel courseViewModel = new AddCourseViewModel()
-            {
-                AwardOrgCode = _session.GetString("AwardOrgCode"),
-                LearnAimRef = _session.GetString("LearnAimRef"),
-                LearnAimRefTitle = _session.GetString("LearnAimRefTitle"),
-                NotionalNVQLevelv2 = _session.GetString("NotionalNVQLevelv2"),
-                CourseFor = new CourseForModel
-                {
-                    LabelText = "Who is the course for?",
-                    HintText =
-                        "Please provide useful information that helps a learner to make a decision about the suitability of this course. For example learners new to the subject / sector or those with some experience? Any age restrictions?",
-                    AriaDescribedBy = "Please enter who this course is for."
-                },
-                EntryRequirements = new EntryRequirementsModel()
-                {
-                    LabelText = "Entry requirements",
-                    HintText =
-                        "Please provide details of specific academic or vocational entry qualification requirements. Also do learners need specific skills, attributes or evidence? e.g. DBS clearance, driving licence",
-                    AriaDescribedBy = "Please list entry requirements."
-                },
-                WhatWillLearn = new WhatWillLearnModel()
-                {
-                    LabelText = "What you’ll learn",
-                    HintText = "Give learners a taste of this course. What are the main topics covered?",
-                    AriaDescribedBy = "Please enter what will be learned"
-                },
-                HowYouWillLearn = new HowYouWillLearnModel()
-                {
-                    LabelText = "How you’ll learn",
-                    HintText =
-                        "Will it be classroom based exercises, practical on the job, practical but in a simulated work environment, online or a mixture of methods?",
-                    AriaDescribedBy = "Please enter how you’ll learn"
-                },
-                WhatYouNeed = new WhatYouNeedModel()
-                {
-                    LabelText = "What you’ll need to bring",
-                    HintText =
-                        "Please detail anything your learners will need to provide or pay for themselves such as uniform, personal protective clothing, tools or kit",
-                    AriaDescribedBy = "Please enter what you need"
-                },
-                HowAssessed = new HowAssessedModel()
-                {
-                    LabelText = "How you’ll be assessed",
-                    HintText =
-                        "Please provide details of all the ways your learners will be assessed for this course. E.g. assessment in the workplace, written assignments, group or individual project work, exam, portfolio of evidence, multiple choice tests.",
-                    AriaDescribedBy = "Please enter 'How you’ll be assessed'"
-                },
-                WhereNext = new WhereNextModel()
-                {
-                    LabelText = "Where next?",
-                    HintText =
-                        "What are the opportunities beyond this course? Progression to a higher level course, apprenticeship or direct entry to employment?",
-                    AriaDescribedBy = "Please enter 'Where next?'"
-                }
+            var courseViewModel = GetSection1ViewModel();
+            return View("AddCourseSection1", courseViewModel);
+        }
 
-            };
-
-            if (addCourseSection1 != null)
-            {
-                courseViewModel.CourseFor.CourseFor = addCourseSection1.CourseFor;
-                courseViewModel.EntryRequirements.EntryRequirements = addCourseSection1.EntryRequirements;
-                courseViewModel.WhatWillLearn.WhatWillLearn = addCourseSection1.WhatWillLearn;
-                courseViewModel.HowYouWillLearn.HowYouWillLearn = addCourseSection1.HowYouWillLearn;
-                courseViewModel.WhatYouNeed.WhatYouNeed = addCourseSection1.WhatYouNeed;
-                courseViewModel.HowAssessed.HowAssessed = addCourseSection1.HowAssessed;
-                courseViewModel.WhereNext.WhereNext = addCourseSection1.WhereNext;
-            }
-
+        [HttpGet]
+        public IActionResult BackToAddCourseSection1()
+        {
+            var courseViewModel = GetSection1ViewModel();
             return View("AddCourseSection1", courseViewModel);
         }
 
@@ -934,6 +813,156 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     //}
                 }
             };
+        }
+
+        private async Task<AddCourseDetailsViewModel> GetSection2ViewModel()
+        {
+            var addCourseSection2Session = _session.GetObject<AddCourseRequestModel>(SessionAddCourseSection2);
+
+            int UKPRN = 0;
+            if (_session.GetInt32("UKPRN") != null)
+            {
+                UKPRN = _session.GetInt32("UKPRN").Value;
+            }
+            else
+            {
+                return null;
+            }
+
+            var viewModel = new AddCourseDetailsViewModel
+            {
+                LearnAimRef = _session.GetString("LearnAimRef"),
+                LearnAimRefTitle = _session.GetString("LearnAimRefTitle"),
+                AwardOrgCode = _session.GetString("AwardOrgCode"),
+                NotionalNVQLevelv2 = _session.GetString("NotionalNVQLevelv2"),
+                CourseName = _session.GetString("LearnAimRefTitle"),
+                ProviderUKPRN = UKPRN
+            };
+
+            viewModel.SelectVenue = await GetVenuesByUkprn(UKPRN);
+            viewModel.SelectRegion = GetRegions();
+
+            _session.SetObject(SessionVenues, viewModel.SelectVenue);
+            _session.SetObject(SessionRegions, viewModel.SelectRegion);
+
+            if (addCourseSection2Session != null)
+            {
+                viewModel.CourseProviderReference = addCourseSection2Session.CourseProviderReference;
+                viewModel.DeliveryMode = addCourseSection2Session.DeliveryMode;
+                viewModel.StartDateType = (StartDateType)Enum.Parse(typeof(StartDateType), addCourseSection2Session.StartDateType);
+                viewModel.Day = Convert.ToInt32(addCourseSection2Session.Day);
+                viewModel.Month = Convert.ToInt32(addCourseSection2Session.Month);
+                viewModel.Year = Convert.ToInt32(addCourseSection2Session.Year);
+                viewModel.Url = addCourseSection2Session.Url;
+                viewModel.Cost = addCourseSection2Session.Cost == 0 ? string.Empty : addCourseSection2Session.Cost.ToString(CultureInfo.InvariantCulture);
+                viewModel.CostDescription = addCourseSection2Session.CostDescription;
+                viewModel.AdvancedLearnerLoan = addCourseSection2Session.AdvancedLearnerLoan;
+                viewModel.DurationLength = addCourseSection2Session.DurationLength.ToString();
+
+                viewModel.DurationUnit = addCourseSection2Session.DurationUnit;
+
+                viewModel.StudyMode = addCourseSection2Session.StudyMode;
+                viewModel.AttendanceMode = addCourseSection2Session.AttendanceMode;
+                if (addCourseSection2Session.SelectedVenues != null)
+                {
+                    foreach (var selectedVenue in addCourseSection2Session.SelectedVenues)
+                    {
+                        viewModel.SelectVenue.VenueItems.First(x => x.Id == selectedVenue.ToString()).Checked = true;
+                    }
+                }
+                if (addCourseSection2Session.SelectedRegions != null)
+                {
+                    foreach (var selectedRegion in addCourseSection2Session.SelectedRegions)
+                    {
+                        viewModel.SelectRegion.RegionItems.First(x => x.Id == selectedRegion.ToString()).Checked = true;
+                    }
+                }
+            }
+            else
+            {
+                viewModel.DurationUnit = DurationUnit.Months;
+                viewModel.StudyMode = StudyMode.FullTime;
+                viewModel.AttendanceMode = AttendancePattern.Daytime;
+                viewModel.DeliveryMode = DeliveryMode.ClassroomBased;
+                viewModel.StartDateType = StartDateType.SpecifiedStartDate;
+            }
+
+            return viewModel;
+        }
+
+        private AddCourseViewModel GetSection1ViewModel()
+        {
+            var addCourseSection1 = _session.GetObject<AddCourseSection1RequestModel>(SessionAddCourseSection1);
+
+            var courseViewModel = new AddCourseViewModel()
+            {
+                AwardOrgCode = _session.GetString("AwardOrgCode"),
+                LearnAimRef = _session.GetString("LearnAimRef"),
+                LearnAimRefTitle = _session.GetString("LearnAimRefTitle"),
+                NotionalNVQLevelv2 = _session.GetString("NotionalNVQLevelv2"),
+                CourseFor = new CourseForModel
+                {
+                    LabelText = "Who is the course for?",
+                    HintText =
+                        "Please provide useful information that helps a learner to make a decision about the suitability of this course. For example learners new to the subject / sector or those with some experience? Any age restrictions?",
+                    AriaDescribedBy = "Please enter who this course is for."
+                },
+                EntryRequirements = new EntryRequirementsModel()
+                {
+                    LabelText = "Entry requirements",
+                    HintText =
+                        "Please provide details of specific academic or vocational entry qualification requirements. Also do learners need specific skills, attributes or evidence? e.g. DBS clearance, driving licence",
+                    AriaDescribedBy = "Please list entry requirements."
+                },
+                WhatWillLearn = new WhatWillLearnModel()
+                {
+                    LabelText = "What you’ll learn",
+                    HintText = "Give learners a taste of this course. What are the main topics covered?",
+                    AriaDescribedBy = "Please enter what will be learned"
+                },
+                HowYouWillLearn = new HowYouWillLearnModel()
+                {
+                    LabelText = "How you’ll learn",
+                    HintText =
+                        "Will it be classroom based exercises, practical on the job, practical but in a simulated work environment, online or a mixture of methods?",
+                    AriaDescribedBy = "Please enter how you’ll learn"
+                },
+                WhatYouNeed = new WhatYouNeedModel()
+                {
+                    LabelText = "What you’ll need to bring",
+                    HintText =
+                        "Please detail anything your learners will need to provide or pay for themselves such as uniform, personal protective clothing, tools or kit",
+                    AriaDescribedBy = "Please enter what you need"
+                },
+                HowAssessed = new HowAssessedModel()
+                {
+                    LabelText = "How you’ll be assessed",
+                    HintText =
+                        "Please provide details of all the ways your learners will be assessed for this course. E.g. assessment in the workplace, written assignments, group or individual project work, exam, portfolio of evidence, multiple choice tests.",
+                    AriaDescribedBy = "Please enter 'How you’ll be assessed'"
+                },
+                WhereNext = new WhereNextModel()
+                {
+                    LabelText = "Where next?",
+                    HintText =
+                        "What are the opportunities beyond this course? Progression to a higher level course, apprenticeship or direct entry to employment?",
+                    AriaDescribedBy = "Please enter 'Where next?'"
+                }
+
+            };
+
+            if (addCourseSection1 != null)
+            {
+                courseViewModel.CourseFor.CourseFor = addCourseSection1.CourseFor;
+                courseViewModel.EntryRequirements.EntryRequirements = addCourseSection1.EntryRequirements;
+                courseViewModel.WhatWillLearn.WhatWillLearn = addCourseSection1.WhatWillLearn;
+                courseViewModel.HowYouWillLearn.HowYouWillLearn = addCourseSection1.HowYouWillLearn;
+                courseViewModel.WhatYouNeed.WhatYouNeed = addCourseSection1.WhatYouNeed;
+                courseViewModel.HowAssessed.HowAssessed = addCourseSection1.HowAssessed;
+                courseViewModel.WhereNext.WhereNext = addCourseSection1.WhereNext;
+            }
+
+            return courseViewModel;
         }
     }
 }
