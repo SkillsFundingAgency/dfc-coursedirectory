@@ -28,6 +28,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
+using System.Data.SqlClient;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http;
 using System.Security.Claims;
@@ -38,12 +40,13 @@ namespace Dfc.CourseDirectory.Web
     public class Startup
     {
         public IConfiguration Configuration { get; }
-        public ApplicationDbContext context;
+        public IBaseDataAccess BaseDataAccess { get; set; }
         private readonly ILogger _logger;
         private readonly IHostingEnvironment _env;
-        public Startup(IHostingEnvironment env, ILoggerFactory logFactory)
+        public Startup(IHostingEnvironment env, ILoggerFactory logFactory, IBaseDataAccess _baseDataAccess)
         {
             _env = env;
+            
             _logger = logFactory.CreateLogger<Startup>();
             var builder = new ConfigurationBuilder()
                 .SetBasePath(_env.ContentRootPath)
@@ -52,6 +55,7 @@ namespace Dfc.CourseDirectory.Web
                 .AddEnvironmentVariables();
 
             Configuration = builder.Build();
+            
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -60,8 +64,7 @@ namespace Dfc.CourseDirectory.Web
             services.AddSingleton(Configuration);
             services.AddApplicationInsightsTelemetry(Configuration);
 
-            services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlServer(Configuration.GetConnectionString("ApplicationDbContextConnection")));
+            
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddSessionStateTempDataProvider();
 
@@ -71,6 +74,7 @@ namespace Dfc.CourseDirectory.Web
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
+            BaseDataAccess.ConnectionString = Configuration.GetConnectionString("ConnectionStrings:DefaultConnection");
 
             services.AddSingleton<IConfiguration>(Configuration);
             services.Configure<VenueNameComponentSettings>(Configuration.GetSection("AppUISettings:VenueNameComponentSettings"));
@@ -256,7 +260,18 @@ namespace Dfc.CourseDirectory.Web
                     // and validated the identity token
                     OnTokenValidated = x =>
                     {
+                        SqlParameter param = new SqlParameter()
+                        {
+                            ParameterName = "@Email",
+                            Value = "info@aldhairandbeautytraining.co.uk"
 
+                        };
+                        List<SqlParameter> dbParameters = new List<SqlParameter>
+                        {
+                           param
+
+                        };
+                        var user = BaseDataAccess.ExecuteScalar("dbo.dfc_GetUserAuthorisationDetailsByEmail", dbParameters);
                         //var db = x.HttpContext.RequestServices.GetRequiredService<ApplicationDbContext>();
                         //try
                         //{
