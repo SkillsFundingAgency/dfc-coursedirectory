@@ -39,6 +39,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Areas\Identity\Services\" />
     <Folder Include="wwwroot\css\" />
     <Folder Include="wwwroot\vendor\" />
   </ItemGroup>

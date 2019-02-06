@@ -3,10 +3,14 @@ using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
+using Dfc.CourseDirectory.Services.Interfaces.OnspdService;
 using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
+using Dfc.CourseDirectory.Services.OnspdService;
 using Dfc.CourseDirectory.Services.ProviderService;
 using Dfc.CourseDirectory.Services.VenueService;
+using Dfc.CourseDirectory.Web.Areas.Identity;
+using Dfc.CourseDirectory.Web.Areas.Identity.Data;
 using Dfc.CourseDirectory.Web.Helpers;
 using IdentityModel.Client;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -14,8 +18,10 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Rewrite;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -26,23 +32,13 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Common.Settings;
-using Dfc.CourseDirectory.Services.Interfaces.VenueService;
-using Dfc.CourseDirectory.Services.VenueService;
-using Dfc.CourseDirectory.Services.ProviderService;
-using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
-using Dfc.CourseDirectory.Services.CourseService;
-using Dfc.CourseDirectory.Services.Interfaces.CourseService;
-using System;
-using Dfc.CourseDirectory.Services.Interfaces.OnspdService;
-using Dfc.CourseDirectory.Services.OnspdService;
-using Microsoft.AspNetCore.Http.Features;
 
 namespace Dfc.CourseDirectory.Web
 {
     public class Startup
     {
         public IConfiguration Configuration { get; }
+        public ApplicationDbContext context;
         private readonly ILogger _logger;
         private readonly IHostingEnvironment _env;
         public Startup(IHostingEnvironment env, ILoggerFactory logFactory)
@@ -64,6 +60,8 @@ namespace Dfc.CourseDirectory.Web
             services.AddSingleton(Configuration);
             services.AddApplicationInsightsTelemetry(Configuration);
 
+            services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseSqlServer(Configuration.GetConnectionString("ApplicationDbContextConnection")));
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddSessionStateTempDataProvider();
 
@@ -258,18 +256,38 @@ namespace Dfc.CourseDirectory.Web
                     // and validated the identity token
                     OnTokenValidated = x =>
                     {
-                        // store both access and refresh token in the claims - hence in the cookie
-                        var identity = (ClaimsIdentity)x.Principal.Identity;
+
+                        //var db = x.HttpContext.RequestServices.GetRequiredService<ApplicationDbContext>();
+                        //try
+                        //{
+                        //    User user = await db.User.SingleOrDefaultAsync(u => u.Email == "");
+                        //}
+                        //catch(Exception e)
+                        //{
+
+                        //}
+                        
+
+                           // store both access and refresh token in the claims - hence in the cookie
+                            var identity = (ClaimsIdentity)x.Principal.Identity;
                         identity.AddClaims(new[]
                         {
                                 new Claim("access_token", x.TokenEndpointResponse.AccessToken),
-                                    new Claim("refresh_token", x.TokenEndpointResponse.RefreshToken)
+                                new Claim("refresh_token", x.TokenEndpointResponse.RefreshToken),
+                                new Claim("UKPRN", "ukprnnumber"),
+                                new Claim(ClaimTypes.Role, "Tester")
+                                
+
+
                         });
 
                         // so that we don't issue a session cookie but one with a fixed expiration
                         x.Properties.IsPersistent = true;
 
-                        return Task.CompletedTask;
+                        
+             
+
+                         return Task.CompletedTask;
                     }
                 };
             });
@@ -370,6 +388,7 @@ namespace Dfc.CourseDirectory.Web
                 await next();
             });
 
+            
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
