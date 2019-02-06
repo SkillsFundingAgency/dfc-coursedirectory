@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace Dfc.CourseDirectory.Web.ViewComponents.SummaryComponent
+namespace Dfc.CourseDirectory.Web.ViewComponents.Summary.SummaryComponent
 {
     public class SummaryComponent : ViewComponent
     {

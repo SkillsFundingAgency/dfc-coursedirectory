@@ -1,0 +1,23 @@
+﻿@model Dfc.CourseDirectory.Web.ViewComponents.Summary.SummaryList.SummaryListModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+    
+<div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">
+        @Model.Title
+    </dt>
+    <dd class="govuk-summary-list__value">
+        @{
+            foreach (var val in Model.Value)
+            {
+                <p class="govuk-body">@val</p>
+            }
+        }
+    </dd>
+    <dd class="govuk-summary-list__actions">
+        <a class="govuk-link" href=@Model.Href>
+            change
+            <span class="govuk-visually-hidden"> Course name</span>
+        </a>
+    </dd>
+</div>
+ 

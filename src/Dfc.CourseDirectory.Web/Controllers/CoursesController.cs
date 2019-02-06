@@ -728,25 +728,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             var availableVenues = _session.GetObject<SelectVenueModel>(SessionVenues);
             var availableRegions = _session.GetObject<SelectRegionModel>(SessionRegions);
 
-            string deliveryMode;
-            switch (model.DeliveryMode)
-            {
-                case DeliveryMode.Undefined:
-                    deliveryMode = "Undefined";
-                    break;
-                case DeliveryMode.ClassroomBased:
-                    deliveryMode = "Classroom based";
-                    break;
-                case DeliveryMode.Online:
-                    deliveryMode = "Online";
-                    break;
-                case DeliveryMode.WorkBased:
-                    deliveryMode = "Work based";
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-
             string startDate;
             if (model.StartDateType == "FlexibleStartDate")
             {
@@ -757,51 +738,52 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 startDate = model.Day + "/" + model.Month + "/" + model.Year;
             }
 
-            var venues = new StringBuilder();
+            var venues = new List<string>();
             if (model.DeliveryMode == DeliveryMode.ClassroomBased)
             {
-                foreach (var summaryVenueVenueItem in availableVenues.VenueItems)
-                {
-                    foreach (var modelSelectedVenue in model.SelectedVenues)
-                    {
-                        if (modelSelectedVenue.ToString() == summaryVenueVenueItem.Id)
-                        {
-                            venues.Append(summaryVenueVenueItem.VenueName);
-                            venues.Append(" ");
-                        }
-                    }
-                }
+                venues.AddRange(from summaryVenueVenueItem in availableVenues.VenueItems
+                    from modelSelectedVenue in model.SelectedVenues
+                    where modelSelectedVenue.ToString() == summaryVenueVenueItem.Id
+                    select summaryVenueVenueItem.VenueName);
             }
 
-            var regions = new StringBuilder();
+            var regions = new List<string>();
             if (model.DeliveryMode == DeliveryMode.WorkBased)
             {
-                foreach (var region in availableRegions.RegionItems)
-                {
-                    foreach (var modelSelectedRegion in model.SelectedRegions)
-                    {
-                        if (modelSelectedRegion == region.Id)
-                        {
-                            regions.Append(region.RegionName);
-                            regions.Append(" ");
-                        }
-                    }
-                }
+                regions.AddRange(from region in availableRegions.RegionItems
+                    from modelSelectedRegion in model.SelectedRegions
+                    where modelSelectedRegion == region.Id
+                    select region.RegionName);
             }
 
             var summaryViewModel = new AddCourseSummaryViewModel
             {
-                Section1 = section1,
-                Section2 = model,
-                Venues = availableVenues,
-                Region = _session.GetObject<SelectRegionModel>(SessionRegions),
-
+                LearnAimRef = section1.LearnAimRef,
+                NotionalNVQLevelv2 = section1.NotionalNVQLevelv2,
+                LearnAimRefTitle = section1.LearnAimRefTitle,
                 CourseName = section1.LearnAimRefTitle,
                 CourseId = model.CourseProviderReference,
-                DeliveryMode = deliveryMode,
+                DeliveryMode = model.DeliveryMode.ToDescription(),
+                DeliveryModeEnum = model.DeliveryMode,
                 StartDate = startDate,
-                VenueList = venues.ToString(),
-                RegionList = regions.ToString()
+
+                Venues = venues,
+                Regions = regions,
+
+                Url = model.Url,
+                Cost = model.Cost == 0 ? string.Empty : model.Cost.ToString(CultureInfo.InvariantCulture),
+                CostDescription = model.CostDescription,
+                AdvancedLearnerLoan = model.AdvancedLearnerLoan ? "Available" : "Unavailable",
+                CourseLength = model.DurationLength + " " + model.DurationUnit,
+                AttendancePattern = model.StudyMode.ToDescription(),
+                AttendanceTime = model.AttendanceMode.ToDescription(),
+                WhoIsThisCourseFor = section1.CourseFor,
+                EntryRequirements = section1.EntryRequirements,
+                WhatYouWillLearn = section1.WhatWillLearn,
+                WhereNext = section1.WhereNext,
+                WhatYouWillNeedToBring = section1.WhatYouNeed,
+                HowAssessed = section1.HowAssessed,
+                HowYouWillLearn = section1.HowYouWillLearn
             };
 
             return View("SummaryPage", summaryViewModel);

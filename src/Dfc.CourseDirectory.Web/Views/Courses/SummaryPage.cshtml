@@ -1,9 +1,10 @@
 ﻿@using Dfc.CourseDirectory.Models.Models.Courses
-@using Dfc.CourseDirectory.Web.ViewComponents.SummaryComponent
+@using Dfc.CourseDirectory.Web.ViewComponents.Summary.SummaryList
+@using Dfc.CourseDirectory.Web.ViewComponents.Summary.SummaryComponent
 @model AddCourseSummaryViewModel
 <h1 class="govuk-heading-xl">Check your answers before publishing your course</h1>
 <h2 class="govuk-heading-m">
-    @Model.Section1.LearnAimRef Level @Model.Section1.NotionalNVQLevelv2 @Model.Section1.LearnAimRefTitle
+    @Model.LearnAimRef Level @Model.NotionalNVQLevelv2 @Model.LearnAimRefTitle
 
 </h2>
 @*addcourse needs a new model*@
@@ -29,22 +30,89 @@
         })
 
         @{
-            if (Model.Section2.DeliveryMode == DeliveryMode.ClassroomBased)
+            // TODO: put this in a list
+            if (Model.DeliveryModeEnum == DeliveryMode.ClassroomBased)
             {
-                @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
+                @await Component.InvokeAsync(nameof(SummaryList), new SummaryListModel
                 {
-                    Id="Venues", Title = "Course venue(s)", Value = Model.VenueList , Href = "something"
+                    Id="Venues", Title = "Course venue(s)", Value = Model.Venues, Href = "something"
                 })
             }
-            if (Model.Section2.DeliveryMode == DeliveryMode.WorkBased)
+            if (Model.DeliveryModeEnum == DeliveryMode.WorkBased)
             {
-                @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
+                @await Component.InvokeAsync(nameof(SummaryList), new SummaryListModel
                 {
-                    Id="Regions", Title = "Course region(s)", Value = Model.RegionList , Href = "something"
+                    Id = "Regions", Title = "Course region(s)", Value = Model.Regions, Href = "something"
                 })
             }
         }
+
+        @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
+        {
+            Id="Url", Title = "URL", Value = Model.Url, Href = "something"
+        })
+        @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
+        {
+            Id="Cost", Title = "Cost", Value = Model.Cost, Href = "something"
+        })
+        @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
+        {
+            Id="CostDesc", Title = "Cost description", Value = Model.CostDescription, Href = "something"
+        })
+        @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
+        {
+            Id="AdvancedLearnerLoan", Title = "Advanced learner loan", Value = Model.AdvancedLearnerLoan, Href = "something"
+        })
+        @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
+        {
+            Id="CourseLength", Title = "Course length", Value = Model.CourseLength, Href = "something"
+        })
+        @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
+        {
+            Id="AttendancePattern", Title = "Attendance pattern", Value = Model.AttendancePattern, Href = "something"
+        })
+        @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
+        {
+            Id="AttendanceTime", Title = "Attendance time", Value = Model.AttendanceTime, Href = "something"
+        })
     </dl>
+
+    <h2 class="govuk-heading-m">Course description</h2>
+
+    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+        @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
+        {
+            Id="WhoCourseFor", Title = "Who is the course for", Value = Model.WhoIsThisCourseFor, Href = "something"
+        })
+        @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
+        {
+            Id="EntryRequirements", Title = "Entry requirements", Value = Model.EntryRequirements, Href = "something"
+        })
+        @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
+        {
+            Id="WhatWillLearn", Title = "What you'll learn", Value = Model.WhatYouWillLearn, Href = "something"
+        })
+        @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
+        {
+            Id="HowWillLearn", Title = "How you'll learn", Value = Model.HowYouWillLearn, Href = "something"
+        })
+        @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
+        {
+            Id="WhatYouNeedBring", Title = "What you'll need to bring", Value = Model.WhatYouWillNeedToBring, Href = "something"
+        })
+        @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
+        {
+            Id="HowAssessed", Title = "How you'll be assessed", Value = Model.HowAssessed, Href = "something"
+        })
+        @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
+        {
+            Id="WhereNext", Title = "Where next?", Value = Model.WhereNext, Href = "something"
+        })
+
+
+    </dl>
+    <h2 class="govuk-heading-m">Now publish your course</h2>
+    <p class="govuk-body">By submitting this notification you are confirming that, to the best of your knowledge, the details you are providing are correct.</p>
     <div class="govuk-form-group">
         <button name="submitButton" type="submit" class="govuk-button" id="publish" value="publish">
             Accept & Publish
