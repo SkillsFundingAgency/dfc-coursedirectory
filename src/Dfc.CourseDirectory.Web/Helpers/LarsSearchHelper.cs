@@ -28,6 +28,9 @@ namespace Dfc.CourseDirectory.Web.Helpers
             sb = BuildUpFilterStringBuilder(sb, "NotionalNVQLevelv2", larsSearchRequestModel.NotionalNVQLevelv2Filter);
             sb = BuildUpFilterStringBuilder(sb, "AwardOrgCode", larsSearchRequestModel.AwardOrgCodeFilter);
 
+            new LarsSearchFilterBuilder(sb).Field("CertificationEndDate").GreaterThanOrEqualTo(DateTimeOffset.UtcNow.ToString("yyyy-MM-dd")).Or().Field("CertificationEndDate eq null");
+            
+
             var skip = currentPageNo == 1 ? 0 : itemsPerPage * (currentPageNo - 1);
 
             var criteria = new LarsSearchCriteria(

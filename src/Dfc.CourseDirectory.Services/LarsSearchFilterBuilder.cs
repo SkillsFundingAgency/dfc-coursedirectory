@@ -57,11 +57,11 @@ namespace Dfc.CourseDirectory.Services
             return this;
         }
 
-        public ILarsSearchFilterBuilder GreatherThanOrEqualTo(string value)
+        public ILarsSearchFilterBuilder GreaterThanOrEqualTo(string value)
         {
             if (value != null)
             {
-                _sb.Append($" ge '{value}'");
+                _sb.Append($" ge {value}");
             }
 
             return this;
