@@ -172,7 +172,7 @@
       "type": "string",
       "defaultValue": "",
       "metadata": {
-          "description": "Array of certificates - only used if appHostName is specified"
+          "description": "Name of the secret (certificate) as it appears in key vault - only used if appHostName is specified"
       }
     }
   },
