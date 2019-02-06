@@ -14,5 +14,7 @@ namespace Dfc.CourseDirectory.Services.Interfaces.CourseService
         Task<IResult<ICourseSearchResult>> GetYourCoursesByUKPRNAsync(ICourseSearchCriteria criteria);
 
         Task<IResult<ICourse>> UpdateCourseAsync(ICourse course);
+
+        Task<IResult<ICourse>> GetCourseByIdAsync(IGetCourseByIdCriteria criteria);
     }
 }
