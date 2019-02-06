@@ -1,0 +1,49 @@
+﻿#Cd-course-list {
+
+    .cd-course--list {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        border-bottom: 1px solid #ececec;
+        margin-bottom: 1em;
+
+        &:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        > * {
+            padding: 0 0.51em;
+        }
+
+        &_item-heading {
+            display: flex;
+            align-items: center;
+
+            > * {
+                padding: 0 0.51em;
+            }
+        }
+    }
+
+    .govuk-details__summary {
+        color: black;
+        font-size: 1.5em;
+        font-weight: 900;
+        border-bottom: 1px solid grey;
+        display: block;
+    }
+
+    .govuk-details__text {
+        border: none;
+    }
+
+    .govuk-details__summary-text {
+        text-decoration: none;
+    }
+
+    .govuk-accordion__section-button {
+        color: #0b0c0c;
+    }
+}

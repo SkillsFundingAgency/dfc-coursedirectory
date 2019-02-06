@@ -1,0 +1,17 @@
+﻿@model IEnumerable<string>;
+
+<h1 class="govuk-heading-xl">Your Qualifications</h1>
+
+<dl class="govuk-summary-list">
+    @foreach (var type in Model)
+    {
+        <div class="govuk-summary-list__row">
+            <dd class="govuk-summary-list__value">
+                @type
+            </dd>
+            <dd class="govuk-summary-list__actions">
+                <a class="govuk-link" asp-controller="Qualifications" asp-action="Courses" asp-route-qualificationType="@type">View</a>
+            </dd>
+        </div>
+    }
+</dl>

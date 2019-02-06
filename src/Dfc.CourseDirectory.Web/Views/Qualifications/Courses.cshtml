@@ -1,0 +1,127 @@
+﻿
+@using Dfc.CourseDirectory.Services.Interfaces.VenueService
+@using Dfc.CourseDirectory.Services.VenueService
+@using Dfc.CourseDirectory.Web.Helpers
+@model IEnumerable<CoursesForQualificationAndCountViewModel>
+@inject IVenueService venueService
+<div id="Cd-course-list" class="govuk-body">
+    <h1 class="govuk-heading-xl"></h1>
+
+    @{
+        var TotalCourseRunCount = 0;
+        foreach (var courseRunCount in Model)
+        {
+            TotalCourseRunCount += courseRunCount.CourseRunCount;
+        }
+    }
+    <div class="govuk-details">
+        <div class="">
+            <div class="">
+                <span>@Model.FirstOrDefault()?.QualificationType (@TotalCourseRunCount)</span>
+            </div>
+        </div>
+        <div class="govuk-details__text">
+            <div class="govuk-accordion" data-module="accordion" id="accordion-default">
+                @foreach (var x in Model)
+                {
+
+
+                    <div class="govuk-accordion__section">
+                        <div class="govuk-accordion__section-header">
+                            <h2 class="govuk-accordion__section-heading">
+                                <button type="button" id="accordion-default-heading-1" aria-controls="accordion-default-content-1" class="govuk-accordion__section-button" aria-expanded="false">
+                                    @x.Course.QualificationCourseTitle<span>(@x.CourseRunCount)</span>
+                                </button><span class="govuk-accordion__icon" aria-hidden="true"></span>
+                            </h2>
+                        </div>
+                        <div>
+                            <div class="cd-course--list_item-heading">
+                                <p>Level: @x.Course.NotionalNVQLevelv2, @x.Course.AwardOrgCode, Lars: @x.Course.LearnAimRef <br><a href="#">view description</a></p>
+                                <div class="govuk-checkboxes">
+                                    <div class="govuk-checkboxes__item">
+                                        <input class="govuk-checkboxes__input" id="all" type="checkbox" vchecked="@x.Course.AdvancedLearnerLoan" disabled="disabled">
+                                        <label class="govuk-label govuk-checkboxes__label" for="all">
+                                            Advanced learner loans available
+                                        </label>
+                                    </div>
+                                </div>
+                                <a href="/courses/EditQual">edit</a>
+                            </div>
+
+                            <div id="accordion-default-content-1" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-1">
+                                @foreach (var a in x.CourseRuns)
+                                {
+
+                                    <div class="cd-course--list">
+                                        <div class="govuk-form-group">
+                                            <label class="govuk-label" for="name">
+                                                Course name
+                                            </label>
+                                            <label asp-for="@a.CourseName">@a.CourseName</label>
+                                        </div>
+                                        <div class="govuk-form-group">
+                                            <label class="govuk-label" for="name">
+                                                ID
+                                            </label>
+                                            <label asp-for="@a.ProviderCourseID">@a.ProviderCourseID</label>
+                                        </div>
+                                        <div class="govuk-form-group">
+                                            <label class="govuk-label" for="sort">
+                                                Delivery
+                                            </label>
+                                            <label asp-for="@a.DeliveryMode">@WebHelper.GetEnumDescription(a.DeliveryMode)</label>
+
+                                        </div>
+                                        
+                                        @{
+                                            var venueName = await venueService.GetVenueByIdAsync(new GetVenueByIdCriteria(a.VenueId.ToString()));
+
+                                        }
+                                        @if (venueName.HasValue)
+                                        {
+                                            <div class="govuk-form-group">
+                                                <label class="govuk-label" for="sort">
+                                                    Venue
+                                                </label>
+                                                <label>
+                                                  
+
+                                               
+                                                    @venueName.Value.VenueName
+
+
+                                                </label>
+
+                                            </div>
+                                        }
+                                        <div class="govuk-form-group">
+                                            <label class="govuk-label" for="sort">
+                                                Mode
+                                            </label>
+                                            <label asp-for="@a.StudyMode">@WebHelper.GetEnumDescription(a.StudyMode)</label>
+                                        </div>
+                                        <div class="govuk-form-group">
+                                            <label class="govuk-label" for="sort">
+                                                Attendance
+                                            </label>
+                                            <label asp-for="@a.AttendancePattern">@WebHelper.GetEnumDescription(a.AttendancePattern)</label>
+                                        </div>
+                                        <a href="#">edit</a>
+                                    </div>
+                                }
+                            </div>
+
+
+
+
+
+
+
+                        </div>
+                    </div>
+
+                }
+            </div>
+        </div>
+    </div>
+</div>

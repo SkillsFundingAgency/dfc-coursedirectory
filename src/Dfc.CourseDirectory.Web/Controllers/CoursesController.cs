@@ -2,12 +2,14 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Globalization;
 using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Models.Models.Courses;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 using Dfc.CourseDirectory.Services.VenueService;
+using Dfc.CourseDirectory.Web.Extensions;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.RequestModels;
 using Dfc.CourseDirectory.Web.ViewModels;
@@ -71,7 +73,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         .Result.Value);
 
                 var courses = coursesByUKPRN.Value.SelectMany(o => o.Value).SelectMany(i => i.Value).ToList();
-                
+
                 var course = courses.SingleOrDefault(x => x.id == model.CourseId);
 
                 var courserun = course.CourseRuns.SingleOrDefault(x => x.id == model.courseRun.id);
@@ -89,19 +91,21 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     courserun.CourseURL = model.courseRun.CourseURL;
                     courserun.DurationValue = model.courseRun.DurationValue;
                     courserun.ProviderCourseID = model.courseRun.ProviderCourseID;
-                   // courserun.StartDate = model.courseRun.StartDate;
+                    // courserun.StartDate = model.courseRun.StartDate;
                     courserun.VenueId = model.courseRun.VenueId;
-                    courserun.UpdatedDate=DateTime.Now;
-                    
+                    courserun.UpdatedDate = DateTime.Now;
+
 
                     var updatedCourses = await _courseService.UpdateCourseAsync(course);
 
-                } else {
+                }
+                else
+                {
                     return RedirectToAction("Index", new { status = "bad", learnAimRef = "", numberOfNewCourses = "", errmsg = "No course run" });
-                }               
+                }
             }
-           
-            return RedirectToAction("Index", new { status = "update", learnAimRef ="", numberOfNewCourses ="", errmsg ="", updatedCourseId = model.CourseId});
+
+            return RedirectToAction("Index", new { status = "update", learnAimRef = "", numberOfNewCourses = "", errmsg = "", updatedCourseId = model.CourseId });
         }
 
 
@@ -130,9 +134,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _session.SetInt32("UKPRN", prn);
             IActionResult view = await GetYourCoursesViewModelAsync("", "", "", "", null);
             YourCoursesViewModel vm = (YourCoursesViewModel)(((ViewResult)view).Model);
-            IEnumerable<ICourseSearchInnerGrouping> inners = vm.Courses.Value.FirstOrDefault(o => o.QualType == qualType)
+            var inners = vm.Courses.Value.FirstOrDefault(o => o.QualType == qualType)
                                                                              .Value
-                                                                             .Select(i => new CourseSearchInnerResultGrouping(i.LARSRef));
+                                                                             .Select(t => new { Course = t.Value, Text = t.LARSRef });
+
+
             return new JsonResult(inners);
         }
 
@@ -202,41 +208,53 @@ namespace Dfc.CourseDirectory.Web.Controllers
             List<SelectListItem> courseRunVenues = new List<SelectListItem>();
             int? UKPRN = _session.GetInt32("UKPRN");
 
-            if (UKPRN.HasValue) {
+            if (UKPRN.HasValue)
+            {
                 VenueSearchCriteria criteria = new VenueSearchCriteria(UKPRN.ToString(), null);
                 var venues = await _venueService.SearchAsync(criteria);
 
-                foreach (var venue in venues.Value.Value) {
+                foreach (var venue in venues.Value.Value)
+                {
                     var item = new SelectListItem { Text = venue.VenueName, Value = venue.ID };
                     courseRunVenues.Add(item);
                 };
-            } else {
+            }
+            else
+            {
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
 
-            foreach (DeliveryMode eVal in DeliveryMode.GetValues(typeof(DeliveryMode))) {
-                if (eVal.ToString().ToUpper() != "UNDEFINED") {
+            foreach (DeliveryMode eVal in DeliveryMode.GetValues(typeof(DeliveryMode)))
+            {
+                if (eVal.ToString().ToUpper() != "UNDEFINED")
+                {
                     var item = new SelectListItem { Text = WebHelper.GetEnumDescription(eVal) };
                     deliveryModes.Add(item);
                 }
             };
 
-            foreach (DurationUnit eVal in DurationUnit.GetValues(typeof(DurationUnit))) {
-                if (eVal.ToString().ToUpper() != "UNDEFINED") {
+            foreach (DurationUnit eVal in DurationUnit.GetValues(typeof(DurationUnit)))
+            {
+                if (eVal.ToString().ToUpper() != "UNDEFINED")
+                {
                     var item = new SelectListItem { Text = WebHelper.GetEnumDescription(eVal) };
                     durationUnits.Add(item);
                 }
             };
 
-            foreach (AttendancePattern eVal in AttendancePattern.GetValues(typeof(AttendancePattern))) {
-                if (eVal.ToString().ToUpper() != "UNDEFINED") {
+            foreach (AttendancePattern eVal in AttendancePattern.GetValues(typeof(AttendancePattern)))
+            {
+                if (eVal.ToString().ToUpper() != "UNDEFINED")
+                {
                     var item = new SelectListItem { Text = WebHelper.GetEnumDescription(eVal) };
                     attendances.Add(item);
                 }
             };
 
-            foreach (Dfc.CourseDirectory.Models.Models.Courses.StudyMode eVal in Enum.GetValues(typeof(Dfc.CourseDirectory.Models.Models.Courses.StudyMode))) {
-                if (eVal.ToString().ToUpper() != "UNDEFINED") {
+            foreach (Dfc.CourseDirectory.Models.Models.Courses.StudyMode eVal in Enum.GetValues(typeof(Dfc.CourseDirectory.Models.Models.Courses.StudyMode)))
+            {
+                if (eVal.ToString().ToUpper() != "UNDEFINED")
+                {
                     var item = new SelectListItem { Text = WebHelper.GetEnumDescription(eVal) };
                     modes.Add(item);
                 }
@@ -253,7 +271,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                 YourCoursesViewModel vm = new YourCoursesViewModel
                 {
-                    UpdatedCourseId= updatedCourseId ?? null,
+                    UpdatedCourseId = updatedCourseId ?? null,
                     UKPRN = UKPRN,
                     Courses = result,
                     deliveryModes = deliveryModes,
@@ -265,7 +283,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                 return View(vm);
 
-            } else {
+            }
+            else
+            {
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
         }
@@ -334,13 +354,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> AddCourseSection1(AddCourseSection1RequestModel model)
         {
-            _session.SetString("CourseFor", model?.CourseFor);
-            _session.SetString("EntryRequirements", model?.EntryRequirements ?? string.Empty);
-            _session.SetString("WhatWillLearn", model?.WhatWillLearn ?? string.Empty);
-            _session.SetString("HowYouWillLearn", model?.HowYouWillLearn ?? string.Empty);
-            _session.SetString("WhatYouNeed", model?.WhatYouNeed ?? string.Empty);
-            _session.SetString("HowAssessed", model?.HowAssessed ?? string.Empty);
-            _session.SetString("WhereNext", model?.WhereNext ?? string.Empty);
+            _session.SetObject("AddCourseSection1", model);
+            var addCourseSection2Session = _session.GetObject<AddCourseRequestModel>("AddCourseSection2");
+
 
             int UKPRN = 0;
             if (_session.GetInt32("UKPRN") != null)
@@ -352,7 +368,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
 
-            var viewModel = new AddCourseDetailsViewModel()
+            var viewModel = new AddCourseDetailsViewModel
             {
                 LearnAimRef = _session.GetString("LearnAimRef"),
                 LearnAimRefTitle = _session.GetString("LearnAimRefTitle"),
@@ -365,7 +381,137 @@ namespace Dfc.CourseDirectory.Web.Controllers
             viewModel.SelectVenue = await GetVenuesByUkprn(UKPRN);
             viewModel.SelectRegion = GetRegions();
 
+            if (addCourseSection2Session != null)
+            {
+                viewModel.CourseProviderReference = addCourseSection2Session.CourseProviderReference;
+                viewModel.DeliveryMode = addCourseSection2Session.DeliveryMode;
+                viewModel.StartDateType = (StartDateType)Enum.Parse(typeof(StartDateType), addCourseSection2Session.StartDateType);
+                viewModel.Day = Convert.ToInt32(addCourseSection2Session.Day);
+                viewModel.Month = Convert.ToInt32(addCourseSection2Session.Month);
+                viewModel.Year = Convert.ToInt32(addCourseSection2Session.Year);
+                viewModel.Url = addCourseSection2Session.Url;
+                viewModel.Cost = addCourseSection2Session.Cost == 0 ? string.Empty : addCourseSection2Session.Cost.ToString(CultureInfo.InvariantCulture);
+                viewModel.CostDescription = addCourseSection2Session.CostDescription;
+                viewModel.AdvancedLearnerLoan = addCourseSection2Session.AdvancedLearnerLoan;
+                viewModel.DurationLength = addCourseSection2Session.DurationLength.ToString();
+
+                viewModel.DurationUnit = addCourseSection2Session.DurationUnit;
+
+                viewModel.StudyMode = addCourseSection2Session.StudyMode;
+                viewModel.AttendanceMode = addCourseSection2Session.AttendanceMode;
+                // venues
+                if (addCourseSection2Session.SelectedVenues != null)
+                {
+                    foreach (var selectedVenue in addCourseSection2Session.SelectedVenues)
+                    {
+                        viewModel.SelectVenue.VenueItems.First(x => x.Id == selectedVenue.ToString()).Checked = true;
+                    }
+                }
+                // regions
+                if (addCourseSection2Session.SelectedRegions != null)
+                {
+                    foreach (var selectedRegion in addCourseSection2Session.SelectedRegions)
+                    {
+                        viewModel.SelectRegion.RegionItems.First(x => x.Id == selectedRegion.ToString()).Checked = true;
+                    }
+                }
+            }
+            else
+            {
+                viewModel.DurationUnit = DurationUnit.Months;
+                viewModel.StudyMode = StudyMode.FullTime;
+                viewModel.AttendanceMode = AttendancePattern.Daytime;
+                viewModel.DeliveryMode = DeliveryMode.ClassroomBased;
+                viewModel.StartDateType = StartDateType.SpecifiedStartDate;
+            }
+
             return View("AddCourseSection2", viewModel);
+        }
+
+        [HttpPost]
+        public IActionResult BackToAddCourseSection1(AddCourseRequestModel model)
+        {
+            _session.SetObject("AddCourseSection2", model);
+            var addCourseSection1 = _session.GetObject<AddCourseSection1RequestModel>("AddCourseSection1");
+
+            AddCourseViewModel courseViewModel = new AddCourseViewModel()
+            {
+                AwardOrgCode = _session.GetString("AwardOrgCode"),
+                LearnAimRef = _session.GetString("LearnAimRef"),
+                LearnAimRefTitle = _session.GetString("LearnAimRefTitle"),
+                NotionalNVQLevelv2 = _session.GetString("NotionalNVQLevelv2"),
+                CourseFor = new CourseForModel
+                {
+                    LabelText = "Who is the course for?",
+                    HintText =
+                        "Please provide useful information that helps a learner to make a decision about the suitability of this course. For example learners new to the subject / sector or those with some experience? Any age restrictions?",
+                    AriaDescribedBy = "Please enter who this course is for."
+                },
+                EntryRequirements = new EntryRequirementsModel()
+                {
+                    LabelText = "Entry requirements",
+                    HintText =
+                        "Please provide details of specific academic or vocational entry qualification requirements. Also do learners need specific skills, attributes or evidence? e.g. DBS clearance, driving licence",
+                    AriaDescribedBy = "Please list entry requirements."
+                },
+                WhatWillLearn = new WhatWillLearnModel()
+                {
+                    LabelText = "What you’ll learn",
+                    HintText = "Give learners a taste of this course. What are the main topics covered?",
+                    AriaDescribedBy = "Please enter what will be learned"
+                },
+                HowYouWillLearn = new HowYouWillLearnModel()
+                {
+                    LabelText = "How you’ll learn",
+                    HintText =
+                        "Will it be classroom based exercises, practical on the job, practical but in a simulated work environment, online or a mixture of methods?",
+                    AriaDescribedBy = "Please enter how you’ll learn"
+                },
+                WhatYouNeed = new WhatYouNeedModel()
+                {
+                    LabelText = "What you’ll need to bring",
+                    HintText =
+                        "Please detail anything your learners will need to provide or pay for themselves such as uniform, personal protective clothing, tools or kit",
+                    AriaDescribedBy = "Please enter what you need"
+                },
+                HowAssessed = new HowAssessedModel()
+                {
+                    LabelText = "How you’ll be assessed",
+                    HintText =
+                        "Please provide details of all the ways your learners will be assessed for this course. E.g. assessment in the workplace, written assignments, group or individual project work, exam, portfolio of evidence, multiple choice tests.",
+                    AriaDescribedBy = "Please enter 'How you’ll be assessed'"
+                },
+                WhereNext = new WhereNextModel()
+                {
+                    LabelText = "Where next?",
+                    HintText =
+                        "What are the opportunities beyond this course? Progression to a higher level course, apprenticeship or direct entry to employment?",
+                    AriaDescribedBy = "Please enter 'Where next?'"
+                }
+
+            };
+
+            if (addCourseSection1 != null)
+            {
+                courseViewModel.CourseFor.CourseFor = addCourseSection1.CourseFor;
+                courseViewModel.EntryRequirements.EntryRequirements = addCourseSection1.EntryRequirements;
+                courseViewModel.WhatWillLearn.WhatWillLearn = addCourseSection1.WhatWillLearn;
+                courseViewModel.HowYouWillLearn.HowYouWillLearn = addCourseSection1.HowYouWillLearn;
+                courseViewModel.WhatYouNeed.WhatYouNeed = addCourseSection1.WhatYouNeed;
+                courseViewModel.HowAssessed.HowAssessed = addCourseSection1.HowAssessed;
+                courseViewModel.WhereNext.WhereNext = addCourseSection1.WhereNext;
+            }
+
+            return View("AddCourseSection1", courseViewModel);
+        }
+
+        [HttpPost]
+        public IActionResult Preview(AddCourseRequestModel model)
+        {
+            // save page 2
+            _session.SetObject("AddCourseSection2", model);
+
+            return new EmptyResult();
         }
 
         [HttpPost]
@@ -377,13 +523,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
             var learnAimRefTitle = _session.GetString("LearnAimRefTitle");
             var learnAimRefTypeDesc = _session.GetString("LearnAimRefTypeDesc");
 
-            var courseFor = _session.GetString("CourseFor");
-            var entryRequirements = _session.GetString("EntryRequirements");
-            var whatWillLearn = _session.GetString("WhatWillLearn");
-            var howYouWillLearn = _session.GetString("HowYouWillLearn");
-            var whatYouNeed = _session.GetString("WhatYouNeed");
-            var howAssessed = _session.GetString("HowAssessed");
-            var whereNext = _session.GetString("WhereNext");
+            var addCourseSection1 = _session.GetObject<AddCourseSection1RequestModel>("AddCourseSection1");
+            var courseFor = addCourseSection1.CourseFor;
+            var entryRequirements = addCourseSection1.EntryRequirements;
+            var whatWillLearn = addCourseSection1.WhatWillLearn;
+            var howYouWillLearn = addCourseSection1.HowYouWillLearn;
+            var whatYouNeed = addCourseSection1.WhatYouNeed;
+            var howAssessed = addCourseSection1.HowAssessed;
+            var whereNext = addCourseSection1.WhereNext;
 
 
             // TODO - Add error message, if use this check
@@ -449,7 +596,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         CourseURL = model.Url?.ToLower(),
                         Cost = model.Cost,
                         CostDescription = model.CostDescription,
-                        DurationUnit = model.Id,
+                        DurationUnit = model.DurationUnit,
                         DurationValue = model.DurationLength,
                         StudyMode = model.StudyMode,
                         AttendancePattern = model.AttendanceMode,
@@ -462,8 +609,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 }
             }
 
-            if (model.DeliveryMode == DeliveryMode.WorkBased 
-                && model.SelectedRegions != null 
+            if (model.DeliveryMode == DeliveryMode.WorkBased
+                && model.SelectedRegions != null
                 && model.SelectedRegions.Any())
             {
                 var courseRun = new CourseRun
@@ -478,7 +625,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     CourseURL = model.Url,
                     Cost = model.Cost,
                     CostDescription = model.CostDescription,
-                    DurationUnit = model.Id,
+                    DurationUnit = model.DurationUnit,
                     DurationValue = model.DurationLength,
                     StudyMode = model.StudyMode,
                     AttendancePattern = model.AttendanceMode,
@@ -504,7 +651,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     CourseURL = model.Url,
                     Cost = model.Cost,
                     CostDescription = model.CostDescription,
-                    DurationUnit = model.Id,
+                    DurationUnit = model.DurationUnit,
                     DurationValue = model.DurationLength,
                     StudyMode = model.StudyMode,
                     AttendancePattern = model.AttendanceMode,
@@ -574,13 +721,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _session.Remove("LearnAimRefTitle");
             _session.Remove("LearnAimRefTypeDesc");
 
-            _session.Remove("CourseFor");
-            _session.Remove("EntryRequirements");
-            _session.Remove("WhatWillLearn");
-            _session.Remove("HowYouWillLearn");
-            _session.Remove("WhatYouNeed");
-            _session.Remove("HowAssessed");
-            _session.Remove("WhereNext");
+            _session.Remove("AddCourseSection1");
+            _session.Remove("AddCourseSection2");
         }
 
         private async Task<SelectVenueModel> GetVenuesByUkprn(int ukprn)
