@@ -1,24 +1,19 @@
-﻿using Dfc.CourseDirectory.Services.Interfaces;
+﻿using Dfc.CourseDirectory.Services.Interfaces.BaseDataAccess;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
-using System.Text;
 
 namespace Dfc.CourseDirectory.Services.BaseDataAccess
 {
     public class BaseDataAccess : IBaseDataAccess
     {
         public string ConnectionString { get; set; }
-
-        public BaseDataAccess()
+        public BaseDataAccess(IOptions<BaseDataAccessSettings> settings)
         {
-        }
-
-        public BaseDataAccess(string connectionString)
-        {
-            this.ConnectionString = connectionString;
+            this.ConnectionString = settings.Value.ConnectionString;
         }
 
         public SqlConnection GetConnection()
@@ -120,7 +115,7 @@ namespace Dfc.CourseDirectory.Services.BaseDataAccess
             return returnValue;
         }
 
-        public DbDataReader GetDataReader(string procedureName, List<DbParameter> parameters, CommandType commandType = CommandType.StoredProcedure)
+        public DbDataReader GetDataReader(string procedureName, List<SqlParameter> parameters, CommandType commandType = CommandType.StoredProcedure)
         {
             DbDataReader ds;
 
