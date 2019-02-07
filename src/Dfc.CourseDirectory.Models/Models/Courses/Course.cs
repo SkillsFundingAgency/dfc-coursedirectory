@@ -1,4 +1,5 @@
-﻿using Dfc.CourseDirectory.Models.Interfaces.Courses;
+﻿using Dfc.CourseDirectory.Models.Enums;
+using Dfc.CourseDirectory.Models.Interfaces.Courses;
 using System;
 using System.Collections.Generic;
 
@@ -27,6 +28,8 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         public bool AdvancedLearnerLoan { get; set; }
 
         public IEnumerable<CourseRun> CourseRuns { get; set; }
+
+        public RecordStatus RecordStatus { get; set; }
 
         public DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }
