@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
+using System.Text;
 
 namespace Dfc.CourseDirectory.Services.BaseDataAccess
 {
@@ -115,10 +116,11 @@ namespace Dfc.CourseDirectory.Services.BaseDataAccess
             return returnValue;
         }
 
-        public DbDataReader GetDataReader(string procedureName, List<SqlParameter> parameters, CommandType commandType = CommandType.StoredProcedure)
+        public DataTable GetDataReader(string procedureName, List<SqlParameter> parameters, CommandType commandType = CommandType.StoredProcedure)
         {
+            
             DbDataReader ds;
-
+            DataTable values = new DataTable();
             try
             {
                 DbConnection connection = this.GetConnection();
@@ -129,7 +131,7 @@ namespace Dfc.CourseDirectory.Services.BaseDataAccess
                         cmd.Parameters.AddRange(parameters.ToArray());
                     }
 
-                    ds = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+                    values.Load(cmd.ExecuteReader(CommandBehavior.CloseConnection));
                 }
             }
             catch (Exception ex)
@@ -137,8 +139,8 @@ namespace Dfc.CourseDirectory.Services.BaseDataAccess
                 //LogException("Failed to GetDataReader for " + procedureName, ex, parameters);
                 throw;
             }
-
-            return ds;
+            
+            return values;
         }
     }
 

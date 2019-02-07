@@ -1,8 +1,11 @@
 ﻿using Dfc.CourseDirectory.Common.Settings;
+using Dfc.CourseDirectory.Models.Models.Auth;
 using Dfc.CourseDirectory.Services;
+using Dfc.CourseDirectory.Services.AuthService;
 using Dfc.CourseDirectory.Services.BaseDataAccess;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces;
+using Dfc.CourseDirectory.Services.Interfaces.AuthService;
 using Dfc.CourseDirectory.Services.Interfaces.BaseDataAccess;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.OnspdService;
@@ -29,6 +32,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -38,10 +42,11 @@ namespace Dfc.CourseDirectory.Web
     public class Startup
     {
         public IConfiguration Configuration { get; }
-        private IBaseDataAccess _baseDataAccess;
+        //private IBaseDataAccess _baseDataAccess;
+        private IAuthService AuthService;
         private readonly ILogger _logger;
         private readonly IHostingEnvironment _env;
-        public Startup(IHostingEnvironment env, ILoggerFactory logFactory/*, IServiceProvider serviceProvider*/)
+        public Startup(IHostingEnvironment env, ILoggerFactory logFactory)
         {
             _env = env;
             _logger = logFactory.CreateLogger<Startup>();
@@ -53,7 +58,7 @@ namespace Dfc.CourseDirectory.Web
 
             Configuration = builder.Build();
             
-           // _baseDataAccess = serviceProvider.GetService<IBaseDataAccess>();
+
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -87,11 +92,13 @@ namespace Dfc.CourseDirectory.Web
             services.AddOptions();
 
             services.Configure<BaseDataAccessSettings>(Configuration.GetSection(nameof(BaseDataAccessSettings)));
-            services.AddSingleton<IBaseDataAccess, BaseDataAccess>();
-            var sp = services.BuildServiceProvider();
-            _baseDataAccess = sp.GetService<IBaseDataAccess>();
-            
             services.AddScoped<IBaseDataAccess, BaseDataAccess>();
+
+            services.AddSingleton<IAuthService, AuthService>();
+            var authSp = services.BuildServiceProvider();
+            AuthService = authSp.GetService<IAuthService>();
+            services.AddScoped<IAuthService, AuthService>();
+            
             services.Configure<GovukPhaseBannerSettings>(Configuration.GetSection(nameof(GovukPhaseBannerSettings)));
             services.AddScoped<IGovukPhaseBannerService, GovukPhaseBannerService>();
 
@@ -313,32 +320,21 @@ namespace Dfc.CourseDirectory.Web
                     // and validated the identity token
                     OnTokenValidated = x =>
                     {
-                        
-                        SqlParameter param = new SqlParameter()
-                        {
-                            ParameterName = "@Email",
-                            Value = "info@aldhairandbeautytraining.co.uk"
-
-                        };
-                        List<SqlParameter> dbParameters = new List<SqlParameter>
-                        {
-                           param
-
-                        };
-                        var user = _baseDataAccess.GetDataReader("dbo.dfc_GetUserAuthorisationDetailsByEmail", dbParameters);
-
-
-
-                        // store both access and refresh token in the claims - hence in the cookie
                         var identity = (ClaimsIdentity)x.Principal.Identity;
+
+                        string email = identity.Claims.Where(c => c.Type == "email")
+                        .Select(c => c.Value).SingleOrDefault();
+                        
+                        AuthUserDetails details = AuthService.GetDetailsByEmail(email);
+                        
+                        // store both access and refresh token in the claims - hence in the cookie
+                        
                         identity.AddClaims(new[]
                         {
                                 new Claim("access_token", x.TokenEndpointResponse.AccessToken),
                                 new Claim("refresh_token", x.TokenEndpointResponse.RefreshToken),
-                                new Claim("UKPRN", "ukprnnumber"),
-                                new Claim(ClaimTypes.Role, "Tester")
-
-
+                                new Claim("UKPRN", details.UKPRN),
+                                new Claim(ClaimTypes.Role, details.RoleName)
 
                         });
 
