@@ -45,7 +45,14 @@
                                         </label>
                                     </div>
                                 </div>
-                                <a href="/courses/EditQual">edit</a>
+                                <a class="govuk-link" asp-controller="Courses" asp-action="AddCourseSection1"
+                                   asp-route-learnAimRef="@x.Course.LearnAimRef"
+                                   asp-route-notionalNVQLevelv2="@x.Course.NotionalNVQLevelv2"
+                                   asp-route-awardOrgCode="@x.Course.AwardOrgCode"
+                                   asp-route-learnAimRefTitle="@x.Course.QualificationCourseTitle"
+                                   asp-route-learnAimRefTypeDesc="@x.Course.QualificationType"
+                                   asp-route-courseId="@x.Course.id">Edit</a>
+
                             </div>
 
                             <div id="accordion-default-content-1" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-1">
@@ -72,27 +79,30 @@
                                             <label asp-for="@a.DeliveryMode">@WebHelper.GetEnumDescription(a.DeliveryMode)</label>
 
                                         </div>
-                                        
+
                                         @{
-                                            var venueName = await venueService.GetVenueByIdAsync(new GetVenueByIdCriteria(a.VenueId.ToString()));
+                                            if (a.VenueId.HasValue)
+                                            {
+                                                var venueName = await venueService.GetVenueByIdAsync(new GetVenueByIdCriteria(a.VenueId.ToString()));
 
-                                        }
-                                        @if (venueName.HasValue)
-                                        {
-                                            <div class="govuk-form-group">
-                                                <label class="govuk-label" for="sort">
-                                                    Venue
-                                                </label>
-                                                <label>
-                                                  
-
-                                               
-                                                    @venueName.Value.VenueName
+                                                if (venueName.HasValue)
+                                                {
+                                                    <div class="govuk-form-group">
+                                                        <label class="govuk-label" for="sort">
+                                                            Venue
+                                                        </label>
+                                                        <label>
 
 
-                                                </label>
 
-                                            </div>
+                                                            @venueName.Value.VenueName
+
+
+                                                        </label>
+
+                                                    </div>
+                                                }
+                                            }
                                         }
                                         <div class="govuk-form-group">
                                             <label class="govuk-label" for="sort">
@@ -106,7 +116,18 @@
                                             </label>
                                             <label asp-for="@a.AttendancePattern">@WebHelper.GetEnumDescription(a.AttendancePattern)</label>
                                         </div>
-                                        <a href="#">edit</a>
+
+                                        <a class="govuk-link" asp-controller="Courses" asp-action="EditCourseSection2"
+                                           asp-route-learnAimRef="@x.Course.LearnAimRef"
+                                           asp-route-notionalNVQLevelv2="@x.Course.NotionalNVQLevelv2"
+                                           asp-route-awardOrgCode="@x.Course.AwardOrgCode"
+                                           asp-route-learnAimRefTitle="@x.Course.QualificationCourseTitle"
+                                           asp-route-learnAimRefTypeDesc="@x.Course.QualificationType"
+                                           asp-route-courseId="@x.Course.id"
+                                           asp-route-courseRunId="@a.id">Edit</a>
+                                        
+                                        <a class="govuk-link" href="#">Copy</a>
+                                        <a class="govuk-link" href="#">Archive</a>
                                     </div>
                                 }
                             </div>

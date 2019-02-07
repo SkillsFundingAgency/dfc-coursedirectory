@@ -27,5 +27,10 @@ namespace Dfc.CourseDirectory.Web.RequestModels
 
         public Guid[] SelectedVenues { get; set; }
         public string[] SelectedRegions { get; set; }
+
+        public Guid? CourseId { get; set; }
+        public Guid CourseRunId { get; set; }
+
+        public CourseMode CourseMode { get; set; }
     }
 }

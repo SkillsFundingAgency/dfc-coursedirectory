@@ -1,4 +1,5 @@
-﻿using Dfc.CourseDirectory.Models.Models.Courses;
+﻿using Dfc.CourseDirectory.Models.Enums;
+using Dfc.CourseDirectory.Models.Models.Courses;
 using Dfc.CourseDirectory.Models.Models.Providers;
 using Dfc.CourseDirectory.Models.Models.Qualifications;
 using System;
@@ -30,6 +31,7 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Courses
 
         IEnumerable<CourseRun> CourseRuns { get; }
 
+        RecordStatus RecordStatus { get; set; }
         DateTime CreatedDate { get; set; }
         string CreatedBy { get; set; }
         DateTime? UpdatedDate { get; set; }
