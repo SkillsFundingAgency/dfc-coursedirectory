@@ -31,6 +31,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using CourseRun = Dfc.CourseDirectory.Models.Models.Courses.CourseRun;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.SelectRegion;
+using Dfc.CourseDirectory.Models.Enums;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -682,6 +683,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         courseRunForEdit.AttendancePattern = addCourseSection2.AttendanceMode;
                         courseRunForEdit.StudyMode = addCourseSection2.StudyMode;
 
+                        courseRunForEdit.RecordStatus = RecordStatus.Live; // TODO - To Be Decided
+
                         var updatedCourse = await _courseService.UpdateCourseAsync(courseForEdit);
 
                         if (updatedCourse.IsSuccess && updatedCourse.HasValue)
@@ -780,7 +783,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                             AttendancePattern = addCourseSection2.AttendanceMode,
                             Regions = addCourseSection2.SelectedRegions,
                             CreatedDate = DateTime.Now,
-                            CreatedBy = "ProviderPortal-AddCourse" // TODO - Change to the name of the logged person 
+                            CreatedBy = "ProviderPortal-AddCourse", // TODO - Change to the name of the logged person 
+
+                            RecordStatus = RecordStatus.Live // TODO - To Be Decided
                         };
 
                         courseRuns.Add(courseRun);
@@ -809,7 +814,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         AttendancePattern = addCourseSection2.AttendanceMode,
                         Regions = addCourseSection2.SelectedRegions,
                         CreatedDate = DateTime.Now,
-                        CreatedBy = "ProviderPortal-AddCourse"
+                        CreatedBy = "ProviderPortal-AddCourse", // TODO - Change to the name of the logged person 
+                        RecordStatus = RecordStatus.Live // TODO - To Be Decided
                     };
 
                     courseRuns.Add(courseRun);
@@ -835,7 +841,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         AttendancePattern = addCourseSection2.AttendanceMode,
                         Regions = GetRegions().RegionItems.Select(x => x.Id),
                         CreatedDate = DateTime.Now,
-                        CreatedBy = "ProviderPortal-AddCourse"
+                        CreatedBy = "ProviderPortal-AddCourse",
+                        RecordStatus = RecordStatus.Live // TODO - To Be Decided
                     };
 
                     courseRuns.Add(courseRun);
@@ -874,7 +881,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     CourseRuns = courseRuns,
 
                     CreatedDate = DateTime.Now,
-                    CreatedBy = "ProviderPortal-AddCourse" // TODO - Change to the name of the logged person
+                    CreatedBy = "ProviderPortal-AddCourse", // TODO - Change to the name of the logged person
+
+                    RecordStatus = RecordStatus.Live // TODO - To Be Decided
                 };
 
                 var result = await _courseService.AddCourseAsync(course);

@@ -1,4 +1,5 @@
-﻿using Dfc.CourseDirectory.Models.Models.Courses;
+﻿using Dfc.CourseDirectory.Models.Enums;
+using Dfc.CourseDirectory.Models.Models.Courses;
 using System;
 using System.Collections.Generic;
 
@@ -23,7 +24,7 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Courses
         StudyMode StudyMode { get; set; }
         AttendancePattern AttendancePattern { get; set; }
         IEnumerable<string> Regions { get; }
-
+        RecordStatus RecordStatus { get; set; }
         DateTime CreatedDate { get; set; }
         string CreatedBy { get; set; }
         DateTime? UpdatedDate { get; set; }
