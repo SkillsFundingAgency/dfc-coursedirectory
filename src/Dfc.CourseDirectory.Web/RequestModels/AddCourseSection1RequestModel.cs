@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Web.ViewModels;
 
 namespace Dfc.CourseDirectory.Web.RequestModels
 {
@@ -19,5 +20,10 @@ namespace Dfc.CourseDirectory.Web.RequestModels
         public string WhatYouNeed { get; set; }
         public string HowAssessed { get; set; }
         public string WhereNext { get; set; }
+
+        public CourseMode CourseMode { get; set; }
+
+        public Guid? CourseId { get; set; }
+        public Guid? CourseRunId { get; set; }
     }
 }

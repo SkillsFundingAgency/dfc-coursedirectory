@@ -22,6 +22,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
         private readonly Uri _addCourseUri;
         private readonly Uri _getYourCoursesUri;
         private readonly Uri _updateCourseUri;
+        private readonly Uri _getCourseByIdUri;
 
         public CourseService(
             ILogger<CourseService> logger,
@@ -38,9 +39,60 @@ namespace Dfc.CourseDirectory.Services.CourseService
             _addCourseUri = settings.Value.ToAddCourseUri();
             _getYourCoursesUri = settings.Value.ToGetYourCoursesUri();
             _updateCourseUri = settings.Value.ToUpdateCourseUri();
+            _getCourseByIdUri = settings.Value.ToGetCourseByIdUri();
         }
 
+        public async Task<IResult<ICourse>> GetCourseByIdAsync(IGetCourseByIdCriteria criteria)
+        {
+            Throw.IfNull(criteria, nameof(criteria));
+            _logger.LogMethodEnter();
 
+            try
+            {
+                _logger.LogInformationObject("Get Course By Id criteria.", criteria);
+                _logger.LogInformationObject("Get Course By Id URI", _getCourseByIdUri);
+
+                var content = new StringContent(criteria.ToJson(), Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.GetAsync(new Uri(_getCourseByIdUri.AbsoluteUri + "&id=" + criteria.Id));
+
+                _logger.LogHttpResponseMessage("Get Course By Id service http response", response);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+
+                    _logger.LogInformationObject("Get Course By Id service json response", json);
+
+
+                    var course = JsonConvert.DeserializeObject<Course>(json);
+
+
+                    return Result.Ok<ICourse>(course);
+                }
+                else
+                {
+                    return Result.Fail<ICourse>("Get Course By Id service unsuccessful http response");
+                }
+            }
+
+            catch (HttpRequestException hre)
+            {
+                _logger.LogException("Get Course By Id service http request error", hre);
+                return Result.Fail<ICourse>("Get Course By Id service http request error.");
+            }
+            catch (Exception e)
+            {
+                _logger.LogException("Get Course By Id service unknown error.", e);
+
+                return Result.Fail<ICourse>("Get Course By Id service unknown error.");
+            }
+            finally
+            {
+                _logger.LogMethodExit();
+            }
+
+        }
         public async Task<IResult<ICourseSearchResult>> GetYourCoursesByUKPRNAsync(ICourseSearchCriteria criteria)
         {
             Throw.IfNull(criteria, nameof(criteria));
@@ -196,6 +248,25 @@ namespace Dfc.CourseDirectory.Services.CourseService
         }
     }
 
+    internal static class IGetCourseByIdCriteriaExtensions
+    {
+        internal static string ToJson(this IGetCourseByIdCriteria extendee)
+        {
+
+            GetCourseByIdJson json = new GetCourseByIdJson
+            {
+                id = extendee.Id.ToString()
+            };
+            var result = JsonConvert.SerializeObject(json);
+
+            return result;
+        }
+    }
+
+    internal class GetCourseByIdJson
+    {
+        public string id { get; set; }
+    }
     internal static class CourseServiceSettingsExtensions
     {
         internal static Uri ToAddCourseUri(this ICourseServiceSettings extendee)
@@ -211,6 +282,11 @@ namespace Dfc.CourseDirectory.Services.CourseService
         internal static Uri ToUpdateCourseUri(this ICourseServiceSettings extendee)
         {
             return new Uri($"{extendee.ApiUrl + "UpdateCourse?code=" + extendee.ApiKey}");
+        }
+
+        internal static Uri ToGetCourseByIdUri(this ICourseServiceSettings extendee)
+        {
+            return new Uri($"{extendee.ApiUrl + "GetCourseById?code=" + extendee.ApiKey}");
         }
     }
 }
