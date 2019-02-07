@@ -892,8 +892,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                 if (result.IsSuccess && result.HasValue)
                 {
-                    return RedirectToAction("Index",
-                        new { status = "good", learnAimRef = learnAimRef, numberOfNewCourses = courseRuns?.Count });
+                    return RedirectToAction("Courses", "Qualifications", new { qualificationType = learnAimRefTypeDesc });
                 }
 
                 return RedirectToAction("Index",
