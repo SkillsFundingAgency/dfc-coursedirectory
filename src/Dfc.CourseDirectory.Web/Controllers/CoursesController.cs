@@ -479,19 +479,20 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     _session.SetObject(SessionVenues, viewModel.SelectVenue);
                     _session.SetObject(SessionRegions, viewModel.SelectRegion);
 
-                    if (addCourseSection2Session != null)
-                    {
-                        viewModel.CourseProviderReference = addCourseSection2Session.CourseProviderReference;
-                        viewModel.DeliveryMode = addCourseSection2Session.DeliveryMode;
-                        viewModel.StartDateType = (StartDateType)Enum.Parse(typeof(StartDateType), addCourseSection2Session.StartDateType);
-                        viewModel.Day = addCourseSection2Session.Day;
-                        viewModel.Month = addCourseSection2Session.Month;
-                        viewModel.Year = addCourseSection2Session.Year;
-                        viewModel.Url = addCourseSection2Session.Url;
-                        viewModel.Cost = addCourseSection2Session.Cost == 0 ? string.Empty : addCourseSection2Session.Cost.ToString(CultureInfo.InvariantCulture);
-                        viewModel.CostDescription = addCourseSection2Session.CostDescription;
-                        viewModel.AdvancedLearnerLoan = addCourseSection2Session.AdvancedLearnerLoan;
-                        viewModel.DurationLength = addCourseSection2Session.DurationLength.ToString();
+            if (addCourseSection2Session != null)
+            {
+                viewModel.CourseName = addCourseSection2Session.CourseName;
+                viewModel.CourseProviderReference = addCourseSection2Session.CourseProviderReference;
+                viewModel.DeliveryMode = addCourseSection2Session.DeliveryMode;
+                viewModel.StartDateType = (StartDateType)Enum.Parse(typeof(StartDateType), addCourseSection2Session.StartDateType);
+                viewModel.Day = addCourseSection2Session.Day;
+                viewModel.Month = addCourseSection2Session.Month;
+                viewModel.Year = addCourseSection2Session.Year;
+                viewModel.Url = addCourseSection2Session.Url;
+                viewModel.Cost = addCourseSection2Session.Cost == 0 ? string.Empty : addCourseSection2Session.Cost.ToString(CultureInfo.InvariantCulture);
+                viewModel.CostDescription = addCourseSection2Session.CostDescription;
+                viewModel.AdvancedLearnerLoan = addCourseSection2Session.AdvancedLearnerLoan;
+                viewModel.DurationLength = addCourseSection2Session.DurationLength.ToString();
 
                         viewModel.DurationUnit = addCourseSection2Session.DurationUnit;
 
@@ -557,7 +558,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         [HttpGet]
         public async Task<IActionResult> BackToAddCourseSection2()
-        {
+        { 
             var viewModel = await GetSection2ViewModel();
             if (viewModel == null)
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
@@ -570,7 +571,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             _session.SetObject(SessionAddCourseSection2, model);
             var courseViewModel = GetSection1ViewModel();
-            return View("AddCourseSection1", courseViewModel);
+            return  View("AddCourseSection1", courseViewModel);
         }
 
         [HttpGet]
@@ -999,7 +1000,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 LearnAimRef = section1.LearnAimRef,
                 NotionalNVQLevelv2 = section1.NotionalNVQLevelv2,
                 LearnAimRefTitle = section1.LearnAimRefTitle,
-                CourseName = section1.LearnAimRefTitle,
+                CourseName = model.CourseName,
                 CourseId = model.CourseProviderReference,
                 DeliveryMode = model.DeliveryMode.ToDescription(),
                 DeliveryModeEnum = model.DeliveryMode,
@@ -1207,6 +1208,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             if (addCourseSection2Session != null)
             {
+                viewModel.CourseName = addCourseSection2Session.CourseName;
                 viewModel.CourseProviderReference = addCourseSection2Session.CourseProviderReference;
                 viewModel.DeliveryMode = addCourseSection2Session.DeliveryMode;
                 viewModel.StartDateType = (StartDateType)Enum.Parse(typeof(StartDateType), addCourseSection2Session.StartDateType);
