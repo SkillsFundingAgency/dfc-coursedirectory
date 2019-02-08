@@ -216,6 +216,7 @@
     <div id="sectionDuration">
         @await Component.InvokeAsync(nameof(Duration), new DurationModel
         {
+            DurationLength = Model.DurationLength,
             DurationUnit =  Model.DurationUnit,
             LabelText = "Duration",
             HintText = "Select the duration of the course",

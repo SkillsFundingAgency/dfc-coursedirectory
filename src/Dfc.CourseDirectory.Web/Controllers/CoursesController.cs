@@ -481,6 +481,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             if (addCourseSection2Session != null)
             {
+                viewModel.CourseName = addCourseSection2Session.CourseName;
                 viewModel.CourseProviderReference = addCourseSection2Session.CourseProviderReference;
                 viewModel.DeliveryMode = addCourseSection2Session.DeliveryMode;
                 viewModel.StartDateType = (StartDateType)Enum.Parse(typeof(StartDateType), addCourseSection2Session.StartDateType);
@@ -942,7 +943,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 LearnAimRef = section1.LearnAimRef,
                 NotionalNVQLevelv2 = section1.NotionalNVQLevelv2,
                 LearnAimRefTitle = section1.LearnAimRefTitle,
-                CourseName = section1.LearnAimRefTitle,
+                CourseName = model.CourseName,
                 CourseId = model.CourseProviderReference,
                 DeliveryMode = model.DeliveryMode.ToDescription(),
                 DeliveryModeEnum = model.DeliveryMode,
@@ -1149,6 +1150,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             if (addCourseSection2Session != null)
             {
+                viewModel.CourseName = addCourseSection2Session.CourseName;
                 viewModel.CourseProviderReference = addCourseSection2Session.CourseProviderReference;
                 viewModel.DeliveryMode = addCourseSection2Session.DeliveryMode;
                 viewModel.StartDateType = (StartDateType)Enum.Parse(typeof(StartDateType), addCourseSection2Session.StartDateType);
