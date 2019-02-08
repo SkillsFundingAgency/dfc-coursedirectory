@@ -42,7 +42,6 @@
         })
 
         @{
-            // TODO: put this in a list
             if (Model.DeliveryModeEnum == DeliveryMode.ClassroomBased)
             {
                 @await Component.InvokeAsync(nameof(SummaryList), new SummaryListModel
@@ -74,7 +73,7 @@
         })
         @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
         {
-            Id="Cost", Title = "Cost", Value = Model.Cost,
+            Id="Cost", Title = "Cost", Value = string.IsNullOrWhiteSpace(Model.Cost) ? Model.Cost : "£" + Model.Cost,
             Action = "BackToAddCourseSection2",
             Controller = "Courses",
             Section = "sectionCost"
