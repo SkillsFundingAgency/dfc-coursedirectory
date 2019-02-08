@@ -1,10 +1,17 @@
 ﻿using Dfc.CourseDirectory.Common.Settings;
+using Dfc.CourseDirectory.Models.Models.Auth;
 using Dfc.CourseDirectory.Services;
+using Dfc.CourseDirectory.Services.AuthService;
+using Dfc.CourseDirectory.Services.BaseDataAccess;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces;
+using Dfc.CourseDirectory.Services.Interfaces.AuthService;
+using Dfc.CourseDirectory.Services.Interfaces.BaseDataAccess;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
+using Dfc.CourseDirectory.Services.Interfaces.OnspdService;
 using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
+using Dfc.CourseDirectory.Services.OnspdService;
 using Dfc.CourseDirectory.Services.ProviderService;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Helpers;
@@ -14,6 +21,7 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.Configuration;
@@ -23,26 +31,17 @@ using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Common.Settings;
-using Dfc.CourseDirectory.Services.Interfaces.VenueService;
-using Dfc.CourseDirectory.Services.VenueService;
-using Dfc.CourseDirectory.Services.ProviderService;
-using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
-using Dfc.CourseDirectory.Services.CourseService;
-using Dfc.CourseDirectory.Services.Interfaces.CourseService;
-using System;
-using Dfc.CourseDirectory.Services.Interfaces.OnspdService;
-using Dfc.CourseDirectory.Services.OnspdService;
-using Microsoft.AspNetCore.Http.Features;
 
 namespace Dfc.CourseDirectory.Web
 {
     public class Startup
     {
         public IConfiguration Configuration { get; }
+        private IAuthService AuthService;
         private readonly ILogger _logger;
         private readonly IHostingEnvironment _env;
         public Startup(IHostingEnvironment env, ILoggerFactory logFactory)
@@ -56,6 +55,8 @@ namespace Dfc.CourseDirectory.Web
                 .AddEnvironmentVariables();
 
             Configuration = builder.Build();
+            
+
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -63,7 +64,6 @@ namespace Dfc.CourseDirectory.Web
         {
             services.AddSingleton(Configuration);
             services.AddApplicationInsightsTelemetry(Configuration);
-
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddSessionStateTempDataProvider();
 
@@ -73,6 +73,7 @@ namespace Dfc.CourseDirectory.Web
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
+            
 
             services.AddSingleton<IConfiguration>(Configuration);
             services.Configure<VenueNameComponentSettings>(Configuration.GetSection("AppUISettings:VenueNameComponentSettings"));
@@ -84,6 +85,65 @@ namespace Dfc.CourseDirectory.Web
             services.Configure<HowAssessedComponentSettings>(Configuration.GetSection("AppUISettings:HowAssessedComponentSettings"));
             services.Configure<WhereNextComponentSettings>(Configuration.GetSection("AppUISettings:WhereNextComponentSettings"));
 
+
+            
+            services.AddOptions();
+
+            services.Configure<BaseDataAccessSettings>(Configuration.GetSection(nameof(BaseDataAccessSettings)));
+            services.AddScoped<IBaseDataAccess, BaseDataAccess>();
+
+            services.AddSingleton<IAuthService, AuthService>();
+            var authSp = services.BuildServiceProvider();
+            AuthService = authSp.GetService<IAuthService>();
+            services.AddScoped<IAuthService, AuthService>();
+            
+            services.Configure<GovukPhaseBannerSettings>(Configuration.GetSection(nameof(GovukPhaseBannerSettings)));
+            services.AddScoped<IGovukPhaseBannerService, GovukPhaseBannerService>();
+
+            services.AddTransient((provider) => new HttpClient());
+
+            services.Configure<LarsSearchSettings>(Configuration.GetSection(nameof(LarsSearchSettings)));
+            services.AddScoped<ILarsSearchService, LarsSearchService>();
+
+            services.Configure<PostCodeSearchSettings>(Configuration.GetSection(nameof(PostCodeSearchSettings)));
+            services.AddScoped<IPostCodeSearchService, PostCodeSearchService>();
+
+            services.AddScoped<IPostCodeSearchHelper, PostCodeSearchHelper>();
+
+
+            services.AddScoped<ILarsSearchHelper, LarsSearchHelper>();
+            services.AddScoped<IPaginationHelper, PaginationHelper>();
+
+            services.AddScoped<IVenueSearchHelper, VenueSearchHelper>();
+
+            services.Configure<ProviderServiceSettings>(Configuration.GetSection(nameof(ProviderServiceSettings)));
+            services.AddScoped<IProviderService, ProviderService>();
+            services.AddScoped<IProviderSearchHelper, ProviderSearchHelper>();
+
+            services.Configure<VenueServiceSettings>(Configuration.GetSection(nameof(VenueServiceSettings)));
+            services.AddScoped<IVenueService, VenueService>();
+
+            services.Configure<CourseServiceSettings>(Configuration.GetSection(nameof(CourseServiceSettings)));
+            services.AddScoped<ICourseService, CourseService>();
+
+            services.Configure<OnspdSearchSettings>(Configuration.GetSection(nameof(OnspdSearchSettings)));
+            services.AddScoped<IOnspdService, OnspdService>();
+            services.AddScoped<IOnspdSearchHelper, OnspdSearchHelper>();
+
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddSessionStateTempDataProvider();
+
+            services.AddDistributedMemoryCache();
+
+            services.Configure<FormOptions>(x => x.ValueCountLimit = 2048);
+
+            services.AddResponseCaching();
+            services.AddSession(options => {
+                options.IdleTimeout = TimeSpan.FromMinutes(20);
+                options.Cookie.HttpOnly = true;
+            });
+
+            
+            
 
             //Auth Code
             //--------------------------------------
@@ -258,16 +318,31 @@ namespace Dfc.CourseDirectory.Web
                     // and validated the identity token
                     OnTokenValidated = x =>
                     {
-                        // store both access and refresh token in the claims - hence in the cookie
                         var identity = (ClaimsIdentity)x.Principal.Identity;
+
+                        string email = identity.Claims.Where(c => c.Type == "email")
+                        .Select(c => c.Value).SingleOrDefault();
+                        
+                        AuthUserDetails details = AuthService.GetDetailsByEmail(email);
+                        
+                        // store both access and refresh token in the claims - hence in the cookie
+                        
                         identity.AddClaims(new[]
                         {
                                 new Claim("access_token", x.TokenEndpointResponse.AccessToken),
-                                    new Claim("refresh_token", x.TokenEndpointResponse.RefreshToken)
+                                new Claim("refresh_token", x.TokenEndpointResponse.RefreshToken),
+                                new Claim("UKPRN", details.UKPRN),
+                                new Claim("user_id", details.UserId.ToString()),
+                                new Claim("role_id", details.RoleId.ToString()),
+                                new Claim(ClaimTypes.Role, details.RoleName)
+
                         });
 
                         // so that we don't issue a session cookie but one with a fixed expiration
                         x.Properties.IsPersistent = true;
+
+
+
 
                         return Task.CompletedTask;
                     }
@@ -275,52 +350,6 @@ namespace Dfc.CourseDirectory.Web
             });
 
             //--------------------------------------
-            services.AddOptions();
-
-            services.Configure<GovukPhaseBannerSettings>(Configuration.GetSection(nameof(GovukPhaseBannerSettings)));
-            services.AddScoped<IGovukPhaseBannerService, GovukPhaseBannerService>();
-
-            services.AddTransient((provider) => new HttpClient());
-
-            services.Configure<LarsSearchSettings>(Configuration.GetSection(nameof(LarsSearchSettings)));
-            services.AddScoped<ILarsSearchService, LarsSearchService>();
-
-            services.Configure<PostCodeSearchSettings>(Configuration.GetSection(nameof(PostCodeSearchSettings)));
-            services.AddScoped<IPostCodeSearchService, PostCodeSearchService>();
-
-            services.AddScoped<IPostCodeSearchHelper, PostCodeSearchHelper>();
-
-
-            services.AddScoped<ILarsSearchHelper, LarsSearchHelper>();
-            services.AddScoped<IPaginationHelper, PaginationHelper>();
-
-            services.AddScoped<IVenueSearchHelper, VenueSearchHelper>();
-
-            services.Configure<ProviderServiceSettings>(Configuration.GetSection(nameof(ProviderServiceSettings)));
-            services.AddScoped<IProviderService, ProviderService>();
-            services.AddScoped<IProviderSearchHelper, ProviderSearchHelper>();
-
-            services.Configure<VenueServiceSettings>(Configuration.GetSection(nameof(VenueServiceSettings)));
-            services.AddScoped<IVenueService, VenueService>();
-
-            services.Configure<CourseServiceSettings>(Configuration.GetSection(nameof(CourseServiceSettings)));
-            services.AddScoped<ICourseService, CourseService>();
-
-            services.Configure<OnspdSearchSettings>(Configuration.GetSection(nameof(OnspdSearchSettings)));
-            services.AddScoped<IOnspdService, OnspdService>();
-            services.AddScoped<IOnspdSearchHelper, OnspdSearchHelper>();
-
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddSessionStateTempDataProvider();
-
-            services.AddDistributedMemoryCache();
-
-            services.Configure<FormOptions>(x => x.ValueCountLimit = 2048);
-
-            services.AddResponseCaching();
-            services.AddSession(options => {
-                options.IdleTimeout = TimeSpan.FromMinutes(20);
-                options.Cookie.HttpOnly = true;
-            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -370,6 +399,7 @@ namespace Dfc.CourseDirectory.Web
                 await next();
             });
 
+            
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
