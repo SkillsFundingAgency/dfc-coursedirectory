@@ -7,6 +7,8 @@ namespace Dfc.CourseDirectory.Web.ViewModels
     {
         public Course Course { get; set; }
 
+        public IEnumerable<Course> Courses { get; set; }
+
         public int CourseRunCount { get; set; }
 
         public IEnumerable<CourseRun> CourseRuns { get; set; }
