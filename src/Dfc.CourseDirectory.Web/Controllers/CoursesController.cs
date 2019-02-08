@@ -945,6 +945,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         courseRunForEdit.DurationValue = model.DurationLength;
                         courseRunForEdit.AttendancePattern = model.AttendanceMode;
                         courseRunForEdit.StudyMode = model.StudyMode;
+                        courseRunForEdit.UpdatedBy ="A User"; //TODO change to user
+                        courseRunForEdit.UpdatedDate = DateTime.Now;
 
                         var updatedCourse = await _courseService.UpdateCourseAsync(courseForEdit);
 

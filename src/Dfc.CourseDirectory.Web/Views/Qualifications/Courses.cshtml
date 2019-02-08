@@ -8,6 +8,7 @@
 <div id="Cd-course-list" class="govuk-body">
     <h1 class="govuk-heading-xl"></h1>
 
+
     @{
         var TotalCourseRunCount = 0;
         foreach (var model in Model)
@@ -23,11 +24,14 @@
     }
 
     <div class="govuk-details">
-        <div class="">
-            <div class="">
-                <span>@Model.FirstOrDefault()?.QualificationType (@TotalCourseRunCount)</span>
-            </div>
-        </div>
+        @*<div class="">
+                <div class="">
+
+                </div>
+            </div>*@
+        <h1 class="govuk-heading-l">
+            <span>@Model.FirstOrDefault()?.QualificationType (@TotalCourseRunCount)</span>
+        </h1>
 
         @if (ViewBag.CourseId != null)
         {
@@ -36,7 +40,7 @@
 
                 NotificationTitle = "Course updated",
                 //NotificationMessage = "Course " +@Model.LearnAimRefTitle + "<br>" + "Level: " + @Model.NotionalNVQLevelv2 + "<br> Awarding organisation: " + @Model.AwardOrgCode + "<br> LARS / QAN: " + @Model.LearnAimRef,
-                ClassType = "info-summary"
+                ClassType = "success-summary"
             })
         }
 
@@ -60,7 +64,7 @@
                             <div class="govuk-accordion__section-header">
                                 <h2 class="govuk-accordion__section-heading">
                                     <button type="button" id="accordion-default-heading-1" aria-controls="accordion-default-content-1" class="govuk-accordion__section-button" aria-expanded="false">
-                                        @s.QualificationCourseTitle<span>(@s.CourseRuns.Count())</span>
+                                        @s.QualificationCourseTitle<span> (@s.CourseRuns.Count())</span>
                                     </button><span class="govuk-accordion__icon" aria-hidden="true"></span>
                                 </h2>
                             </div>
@@ -69,7 +73,7 @@
                                     <p>Level: @s.NotionalNVQLevelv2, @s.AwardOrgCode, Lars: @s.LearnAimRef <br><a href="#">view description</a></p>
                                     <div class="govuk-checkboxes">
                                         <div class="govuk-checkboxes__item">
-                                            <input class="govuk-checkboxes__input" id="all" type="checkbox" vchecked="@s.AdvancedLearnerLoan" disabled="disabled">
+                                            <input class="govuk-checkboxes__input" id="all" type="checkbox" checked="@s.AdvancedLearnerLoan" disabled="disabled">
                                             <label class="govuk-label govuk-checkboxes__label" for="all">
                                                 Advanced learner loans available
                                             </label>
