@@ -558,7 +558,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         [HttpGet]
         public async Task<IActionResult> BackToAddCourseSection2()
-        {
+        { 
             var viewModel = await GetSection2ViewModel();
             if (viewModel == null)
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
@@ -571,7 +571,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             _session.SetObject(SessionAddCourseSection2, model);
             var courseViewModel = GetSection1ViewModel();
-            return View("AddCourseSection1", courseViewModel);
+            return  View("AddCourseSection1", courseViewModel);
         }
 
         [HttpGet]
