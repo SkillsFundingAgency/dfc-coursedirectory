@@ -144,32 +144,4 @@ namespace Dfc.CourseDirectory.Services.BaseDataAccess
         }
     }
 
-//public class Program
-//    {
-//        static void Main(string[] args)
-//        {
-//            var configuration = new ConfigurationBuilder()
-//                .SetBasePath(Directory.GetCurrentDirectory())
-//                .AddJsonFile("config.json", false)
-//                .Build();
-
-//            var connectionString = configuration.GetSection("connectionString").Value;
-
-//            if (string.IsNullOrEmpty(connectionString))
-//                throw new ArgumentException("No connection string in config.json");
-
-//            using (var conn = new SqlConnection(connectionString))
-//            {
-//                var sql = "SELECT * FROM ExampleTable";
-//                using (var cmd = new SqlCommand(sql, conn))
-//                {
-//                    using (var adapter = new SqlDataAdapter(cmd))
-//                    {
-//                        var resultTable = new DataTable();
-//                        adapter.Fill(resultTable);
-//                    }
-//                }
-//            }
-//        }
-//    }
 }

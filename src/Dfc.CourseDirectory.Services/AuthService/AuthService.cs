@@ -45,11 +45,11 @@ namespace Dfc.CourseDirectory.Services.AuthService
         {
             
             AuthUserDetails details = new AuthUserDetails(
-                userId: Guid.Parse(dt.Rows[0]["UserId"].ToString()),
+                userId: (((string)dt.Rows[0]["UserId"] != string.Empty) ? Guid.Parse(dt.Rows[0]["UserId"].ToString()) : Guid.NewGuid()),
                 email: dt.Rows[0]["Email"].ToString(),
                 userName: dt.Rows[0]["UserName"].ToString(),
                 nameOfUser: dt.Rows[0]["NameOfUser"].ToString(),
-                roleId: Guid.Parse(dt.Rows[0]["RoleId"].ToString()),
+                roleId: ((string)dt.Rows[0]["RoleId"] != string.Empty) ? Guid.Parse(dt.Rows[0]["RoleId"].ToString()) : Guid.NewGuid(),
                 roleName: dt.Rows[0]["RoleName"].ToString(),
                 ukPrn: dt.Rows[0]["UKPRN"].ToString()
                 );

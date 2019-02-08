@@ -42,7 +42,6 @@ namespace Dfc.CourseDirectory.Web
     public class Startup
     {
         public IConfiguration Configuration { get; }
-        //private IBaseDataAccess _baseDataAccess;
         private IAuthService AuthService;
         private readonly ILogger _logger;
         private readonly IHostingEnvironment _env;
@@ -334,6 +333,8 @@ namespace Dfc.CourseDirectory.Web
                                 new Claim("access_token", x.TokenEndpointResponse.AccessToken),
                                 new Claim("refresh_token", x.TokenEndpointResponse.RefreshToken),
                                 new Claim("UKPRN", details.UKPRN),
+                                new Claim("user_id", details.UserId.ToString()),
+                                new Claim("role_id", details.RoleId.ToString()),
                                 new Claim(ClaimTypes.Role, details.RoleName)
 
                         });
