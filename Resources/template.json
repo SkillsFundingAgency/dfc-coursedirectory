@@ -480,7 +480,8 @@
             "value": [
               {
                 "name": "DefaultConnection",
-                "value": "[parameters('sqlCourseDirectoryConnectionString')]"
+                "type": "SQLServer",
+                "connectionString": "[parameters('sqlCourseDirectoryConnectionString')]"
               }
             ]
           }
