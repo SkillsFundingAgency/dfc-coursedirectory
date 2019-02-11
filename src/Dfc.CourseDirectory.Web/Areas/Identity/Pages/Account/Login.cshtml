@@ -1,0 +1,47 @@
+﻿@page
+@model LoginModel
+
+@{
+    ViewData["Title"] = "Log in";
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-m">Use a local account to log in.</h1>
+        <form asp-route-returnUrl="@Model.ReturnUrl" method="post">
+            <hr />
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="govuk-form-group">
+                <label class="govuk-label" asp-for="Input.UserName"></label>
+                <input asp-for="Input.UserName" class="govuk-input" />
+                <span asp-validation-for="Input.UserName" class="text-danger"></span>
+            </div>
+            <div class="govuk-form-group">
+                <label class="govuk-label" asp-for="Input.Password"></label>
+                <input asp-for="Input.Password" class="govuk-input" />
+                <span asp-validation-for="Input.Password" class="text-danger"></span>
+            </div>
+            <div class="govuk-form-group">
+                <div class="govuk-checkboxes">
+                    <div class="govuk-checkboxes__item">
+                        <input class="govuk-checkboxes__input" id="waste-1" name="waste" type="checkbox" value="carcasses">
+                        <label class="govuk-label govuk-checkboxes__label" asp-for="Input.RememberMe"></label>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="govuk-button">Log In</button>
+            <div class="govuk-form-group">
+                <p>
+                    <a class="govuk-link" asp-page="./ForgotPassword">Forgot your password?</a>
+                </p>
+                <p>
+                    <a class="govuk-link" asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Register as a new user</a>
+                </p>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
