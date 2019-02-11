@@ -15,6 +15,7 @@ using Dfc.CourseDirectory.Services.ProviderService;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Areas.Identity.Data;
 using Dfc.CourseDirectory.Web.Helpers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -22,6 +23,7 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -146,7 +148,13 @@ namespace Dfc.CourseDirectory.Web
             });
 
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddSessionStateTempDataProvider();
+            services.AddMvc(options =>
+            {
+                var policy = new AuthorizationPolicyBuilder()
+               .RequireAuthenticatedUser()
+               .Build();
+                options.Filters.Add(new AuthorizeFilter(policy));
+            }).SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddSessionStateTempDataProvider();
 
             services.AddDistributedMemoryCache();
 
