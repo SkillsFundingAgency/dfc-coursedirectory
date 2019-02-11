@@ -47,7 +47,9 @@ namespace Dfc.CourseDirectory.Web.ViewModels
         [Description("Copy")]
         Copy = 2,
         [Description("EditCourseRun")]
-        EditCourseRun = 3
+        EditCourseRun = 3,
+        [Description("Review")]
+        Review = 4
 
     }
 }
