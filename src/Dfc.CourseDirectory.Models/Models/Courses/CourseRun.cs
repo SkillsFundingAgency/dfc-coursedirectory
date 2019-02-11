@@ -84,7 +84,7 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         public DeliveryMode DeliveryMode { get; set; }
         public bool FlexibleStartDate { get; set; }
 
-        [DisplayFormat(DataFormatString = "{0:d}", ApplyFormatInEditMode = true)]
+        [DisplayFormat(DataFormatString = "{0:d}")]
         public DateTime? StartDate { get; set; }
         public string CourseURL { get; set; }
         [DisplayFormat(DataFormatString = "{0:N}", ApplyFormatInEditMode = true)]

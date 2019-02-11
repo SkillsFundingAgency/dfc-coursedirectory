@@ -30,6 +30,11 @@
                 Add course details
             </h1>
             break;
+        case CourseMode.Copy:
+            <h1 class="govuk-heading-l" style="padding-top: 20px;">
+                Copy course details
+            </h1>
+            break;
         default:
             <h1 class="govuk-heading-l" style="padding-top: 20px;">
                 Add course details
@@ -42,7 +47,6 @@
 
 @await Component.InvokeAsync(nameof(Notification), new NotificationModel
 {
-
     NotificationTitle = "Qualification added",
     NotificationMessage = @Model.LearnAimRefTitle + "<br>" + "Level: " + @Model.NotionalNVQLevelv2 + "<br> Awarding organisation: " + @Model.AwardOrgCode + "<br> LARS / QAN: " + @Model.LearnAimRef,
     ClassType = "info-summary"
