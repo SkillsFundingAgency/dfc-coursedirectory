@@ -1,4 +1,6 @@
-﻿@model IEnumerable<string>;
+﻿@*@model IEnumerable<string>;*@
+
+@model IEnumerable<CoursesForQualificationAndCountViewModel>
 
 <h1 class="govuk-heading-xl">Your Qualifications</h1>
 
@@ -7,10 +9,11 @@
     {
         <div class="govuk-summary-list__row">
             <dd class="govuk-summary-list__value">
-                @type
+
+                @type.QualificationType (@type.CourseRunCount)
             </dd>
             <dd class="govuk-summary-list__actions">
-                <a class="govuk-link" asp-controller="Qualifications" asp-action="Courses" asp-route-qualificationType="@type">View</a>
+                <a class="govuk-link" asp-controller="Qualifications" asp-action="Courses" asp-route-qualificationType="@type.QualificationType">View</a>
             </dd>
         </div>
     }
