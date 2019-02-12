@@ -150,12 +150,13 @@ namespace Dfc.CourseDirectory.Web
 
             services.AddMvc(options =>
             {
-                var policy = new AuthorizationPolicyBuilder()
-               .RequireAuthenticatedUser()
-               .Build();
-                options.Filters.Add(new AuthorizeFilter(policy));
+               
             }).SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddSessionStateTempDataProvider();
 
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("ElevatedUserRole", policy => policy.RequireRole("Developer", "Helpdesk"));
+            });
             services.AddDistributedMemoryCache();
 
             services.Configure<FormOptions>(x => x.ValueCountLimit = 2048);

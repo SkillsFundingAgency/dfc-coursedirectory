@@ -1,6 +1,8 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using Dfc.CourseDirectory.Web.Areas.Identity.Data;
+@using Microsoft.AspNetCore.Authorization;
 
+@inject IAuthorizationService Authorization
 @inject SignInManager<User> SignInManager
 
 <header class="govuk-header " role="banner" data-module="header">
@@ -37,18 +39,23 @@
                 }
             }
 
-
             <button type="button" role="button" class="govuk-header__menu-button js-header-toggle" aria-controls="navigation" aria-label="Show or hide Top Level Navigation">Menu</button>
             @{
                 if (SignInManager.IsSignedIn(User))
                 {
+                    var authorised = await Authorization.AuthorizeAsync(User, "ElevatedUserRole");
                     <nav>
                         <ul id="navigation" class="govuk-header__navigation " aria-label="Top Level Navigation">
-                            <li class="govuk-header__navigation-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Home" ? "govuk-header__navigation-item--active" : "")">
-                                <a class="govuk-header__link" href="/">
-                                    Home
-                                </a>
-                            </li>
+                            @{
+                                if (authorised.Succeeded)
+                                {
+                                    <li class="govuk-header__navigation-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Home" ? "govuk-header__navigation-item--active" : "")">
+                                        <a class="govuk-header__link" href="/">
+                                            Home
+                                        </a>
+                                    </li>
+                                }
+                            }
                             <li class="govuk-header__navigation-item @((ViewContext.RouteData.Values["Controller"].ToString() == "Qualifications" && ViewContext.RouteData.Values["Action"].ToString() == "Index") ? "govuk-header__navigation-item--active" : "")">
                                 <a class="govuk-header__link" href="~/Qualifications">
                                     Qualifications
@@ -60,7 +67,7 @@
                                 </a>
                             </li>
                             @{
-                                if (User.IsInRole("Developer") || User.IsInRole("Helpdesk"))
+                                if (authorised.Succeeded)
                                 {
                                     <li class="govuk-header__navigation-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Provider" ? "govuk-header__navigation-item--active" : "")">
                                         <a class="govuk-header__link" href="/Provider">
