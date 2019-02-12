@@ -128,6 +128,12 @@
         "description": "Path in URL that DfE Signin calls back after sign out"
       }
     },
+    "sqlCourseDirectoryConnectionString": {
+      "type": "string",
+      "metadata": {
+        "description": "ADO.NET connection string for the course directory database"
+      }
+    },
     "appServicePlanSize": {
       "type": "string",
       "defaultValue": "1",
@@ -467,6 +473,15 @@
               {
                 "name": "DFESignInSettings__SignedOutCallbackPath",
                 "value": "[parameters('dfeSignedOutPath')]"
+              }
+            ]
+          },
+          "appServiceConnectionStrings": {
+            "value": [
+              {
+                "name": "DefaultConnection",
+                "type": "SQLServer",
+                "connectionString": "[parameters('sqlCourseDirectoryConnectionString')]"
               }
             ]
           }
