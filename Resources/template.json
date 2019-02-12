@@ -180,6 +180,20 @@
       "metadata": {
           "description": "Name of the secret (certificate) as it appears in key vault - only used if appHostName is specified"
       }
+    },
+    "aseHostingEnvironmentName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Optional App Service Environment for the app service to exist within. If not supplied creates a stand alone app service plan."
+      }
+    },
+    "aseResourceGroup": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Resource group the App Service Environment belongs to - only required if aseHostingEnvironmentName specified"
+      }
     }
   },
   "variables": {
@@ -247,6 +261,12 @@
           },
           "aspInstances": {
             "value": "[parameters('appServicePlanInstances')]"
+          },
+          "aseHostingEnvironmentName": {
+            "value": "[parameters('aseHostingEnvironmentName')]"
+          },
+          "aseResourceGroup": {
+            "value": "[parameters('aseResourceGroup')]"
           }
         }
       }
