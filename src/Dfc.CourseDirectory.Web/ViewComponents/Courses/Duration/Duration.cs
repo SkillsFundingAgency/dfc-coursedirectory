@@ -3,6 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Models.Models.Courses;
+using Dfc.CourseDirectory.Web.Helpers;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Dfc.CourseDirectory.Web.ViewComponents.Courses.Duration
 {
@@ -10,6 +13,18 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Courses.Duration
     {
         public IViewComponentResult Invoke(DurationModel model)
         {
+            model.DurationUnits = new List<SelectListItem>();
+            foreach (DurationUnit eVal in DurationUnit.GetValues(typeof(DurationUnit)))
+            {
+                if (eVal.ToString().ToUpper() != "UNDEFINED")
+                {
+                    var item = new SelectListItem { Text = WebHelper.GetEnumDescription(eVal) };
+                    model.DurationUnits.Add(item);
+                }
+            };
+
+            model.DurationUnits.Insert(0,model.DurationUnits.FirstOrDefault(x => x.Text.ToUpper()=="HOURS"));
+            model.DurationUnits.RemoveAt(5);
             return View("~/ViewComponents/Courses/Duration/Default.cshtml", model);
         }
     }

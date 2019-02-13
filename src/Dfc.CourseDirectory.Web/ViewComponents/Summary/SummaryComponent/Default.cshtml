@@ -1,0 +1,15 @@
+﻿@model Dfc.CourseDirectory.Web.ViewComponents.Summary.SummaryComponent.SummaryComponentModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+    
+<div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">
+        @Model.Title
+    </dt>
+    <dd class="govuk-summary-list__value">
+        @Model.Value
+    </dd>
+    <dd class="govuk-summary-list__actions">
+        <a class="govuk-link" href="@Url.Action( Model.Action , Model.Controller)#@Model.Section">change</a>
+    </dd>
+</div>
+ 

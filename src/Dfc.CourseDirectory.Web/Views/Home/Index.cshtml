@@ -1,5 +1,11 @@
 ﻿@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Identity
+@using Dfc.CourseDirectory.Web.Areas.Identity.Data;
 @using Dfc.CourseDirectory.Web.ViewComponents.ProviderSearch
+@using Microsoft.AspNetCore.Authorization;
+
+@inject IAuthorizationService Authorization
+@inject SignInManager<User> SignInManager
 @inject IHttpContextAccessor HttpContextAccessor
 
 @{
@@ -16,7 +22,6 @@
 
         </ol>
     </div>
-    <h1 class="govuk-heading-l">Search Provider</h1>
     @if (ViewBag.StatusMessage != null)
     {
         <div class="failure-container">
@@ -24,6 +29,32 @@
         </div>
     }
     <div id="VenueSearchResultContainer">
-        @await Component.InvokeAsync(nameof(ProviderSearch))
+        @if (SignInManager.IsSignedIn(User)) //And is an ITSM OR Admin users
+        {
+            var authorised = await Authorization.AuthorizeAsync(User, "ElevatedUserRole");
+
+            if (authorised.Succeeded)
+            {
+                <h1 class="govuk-heading-l">Search Provider</h1>
+
+                @await Component.InvokeAsync(nameof(ProviderSearch))
+            }
+            else
+            {
+                <h1 class="govuk-heading-l">Welcome to the Course Directory</h1>
+                <h3 class="govuk-heading-3">This is the "private beta" of the new Course Directory developed by the National Careers Service.</h3>
+                <h3 class="govuk-heading-3">It has been designed from the outset to make it easier for you to add and update your courses.</h3>
+            }
+        }
+        else
+        {
+            <h1 class="govuk-heading-l">Welcome to the Course Directory</h1>
+            <h3 class="govuk-heading-3">This is the "private beta" of the new Course Directory developed by the National Careers Service.</h3>
+            <h3 class="govuk-heading-3">Please Login below: </h3>
+            <div>
+
+                <a class="govuk-link" asp-controller="Auth" asp-action="Login">Login</a>
+
+            </div>
+        }
     </div>
-</div>

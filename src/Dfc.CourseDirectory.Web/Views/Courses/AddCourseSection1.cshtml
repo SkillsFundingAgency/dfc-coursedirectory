@@ -10,46 +10,108 @@
 
 @model Dfc.CourseDirectory.Web.ViewModels.AddCourseViewModel
 
-<form asp-controller="Courses" asp-action="AddCourseSection1" method="post">
+<form asp-controller="Courses" asp-action="AddCourseSection1" method="post" id="addCourseSection1">
 
     @Html.HiddenFor(x => x.AwardOrgCode)
     @Html.HiddenFor(x => x.LearnAimRef)
     @Html.HiddenFor(x => x.LearnAimRefTitle)
     @Html.HiddenFor(x => x.NotionalNVQLevelv2)
-    <h1 class="govuk-heading-l" style="padding-top: 20px;">
-        Complete your qualification details
-    </h1>
+    @Html.HiddenFor(x => x.courseMode)
+    @Html.HiddenFor(x => x.CourseId)
+    @{
+        switch (@Model.courseMode)
+        {
+            case CourseMode.Add:
+
+                <h1 class="govuk-heading-l" style="padding-top: 20px;">
+                    Complete your qualification details
+                </h1>
 
 
-    @await Component.InvokeAsync(nameof(Notification), new NotificationModel
-{
+                @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+                {
 
-    NotificationTitle = "Qualification added",
-    NotificationMessage = @Model.LearnAimRefTitle + "<br>" + "Level: " + @Model.NotionalNVQLevelv2 + "<br> Awarding organisation: " + @Model.AwardOrgCode + "<br> LARS / QAN: " + @Model.LearnAimRef,
-    ClassType = "info-summary"
-})
+                    NotificationTitle = "Qualification added",
+                    NotificationMessage = @Model.LearnAimRefTitle + "<br>" + "Level: " + @Model.NotionalNVQLevelv2 + "<br> Awarding organisation: " + @Model.AwardOrgCode + "<br> LARS / QAN: " + @Model.LearnAimRef,
+                    ClassType = "info-summary"
+                })
+
+                break;
+            case CourseMode.EditCourse:
+
+                <h1 class="govuk-heading-l" style="padding-top: 20px;">
+                    Edit Course
+                </h1>
+
+                break;
+            case CourseMode.Copy:
+                <h1 class="govuk-heading-l" style="padding-top: 20px;">
+                    Copy Course
+                </h1>
+
+                break;
+        }
+    }
+
 
     <h3 class="govuk-heading-m">Course description</h3>
-
-    @await Component.InvokeAsync(nameof(CourseFor), Model.CourseFor)
-
-    @await Component.InvokeAsync(nameof(EntryRequirements), Model.EntryRequirements)
-
-    @await Component.InvokeAsync(nameof(WhatWillLearn), Model.WhatWillLearn)
-
-    @await Component.InvokeAsync(nameof(HowYouWillLearn), Model.HowYouWillLearn)
-
-    @await Component.InvokeAsync(nameof(WhatYouNeed), Model.WhatYouNeed)
-
-    @await Component.InvokeAsync(nameof(HowAssessed), Model.HowAssessed)
-
-    @await Component.InvokeAsync(nameof(WhereNext), Model.WhereNext)
-
-    <div class="govuk-form-group">
-        <button type="submit" class="govuk-button" id="goToSection2">
-            Next
-        </button>
+    <div id="sectionCourseFor">
+        @await Component.InvokeAsync(nameof(CourseFor), Model.CourseFor)
     </div>
+    <div id="sectionEntryRequirements">
+        @await Component.InvokeAsync(nameof(EntryRequirements), Model.EntryRequirements)
+    </div>
+    <div id="sectionWhatWillLearn">
+        @await Component.InvokeAsync(nameof(WhatWillLearn), Model.WhatWillLearn)
+    </div>
+    <div id="sectionHowYouWillLearn">
+        @await Component.InvokeAsync(nameof(HowYouWillLearn), Model.HowYouWillLearn)
+    </div>
+    <div id="sectionWhatYouNeed">
+        @await Component.InvokeAsync(nameof(WhatYouNeed), Model.WhatYouNeed)
+    </div>
+    <div id="sectionHowAssessed">
+        @await Component.InvokeAsync(nameof(HowAssessed), Model.HowAssessed)
+    </div>
+    <div id="sectionWhereNext">
+        @await Component.InvokeAsync(nameof(WhereNext), Model.WhereNext)
+    </div>
+
+    @{
+        switch (@Model.courseMode)
+        {
+            case CourseMode.Add:
+
+                <div class="govuk-form-group">
+                    <button type="submit" class="govuk-button" id="goToSection2">
+                        Next
+                    </button>
+                </div>
+                break;
+            case CourseMode.EditCourse:
+
+                <div class="govuk-form-group">
+                    <button type="submit" class="govuk-button" id="goToSection2">
+                        Save
+                    </button>
+                </div>
+
+                break;
+            case CourseMode.Review:
+                <div class="govuk-form-group">
+                    <button type="submit" class="govuk-button" id="goToSection2">
+                        Next
+                    </button>
+                    <a class="govuk-link" href="#" id="summaryLink">Summary</a>
+                </div>
+                break;
+            case CourseMode.Copy:
+
+
+                break;
+        }
+    }
+
 
 </form>
 
@@ -72,6 +134,12 @@
                 whatYouNeed.trigger("blur");
                 var whereNext = $("#@nameof(Model.WhereNext)");
                 whereNext.trigger("blur");
+            });
+
+            var $summaryLink = $("#summaryLink");
+            $summaryLink.click(function () {
+                $("#addCourseSection1").attr("action", "Publish");
+                $("#addCourseSection1").submit();
             });
         });
     })(jQuery);

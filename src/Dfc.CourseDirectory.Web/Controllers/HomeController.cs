@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Http;
+using System.Net;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -27,7 +28,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             //Set this todisplay the Search Provider fork of the ProviderSearchResult ViewComponent
             _session.SetInt32("ProviderSearch", 1);
         }
-
         public IActionResult Index(string errmsg)
         {
             _logger.LogMethodEnter();

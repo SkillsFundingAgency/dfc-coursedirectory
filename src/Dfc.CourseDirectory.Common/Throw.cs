@@ -11,7 +11,12 @@ namespace Dfc.CourseDirectory.Common
             if (argument == null)
                 throw new ArgumentNullException(name);
         }
+        public static void IfNullGuid(Guid argument, string name)
+        {
+            if (argument == Guid.NewGuid())
+                throw new ArgumentException($"{name} cannot be null or empty", name);
 
+        }
         public static void IfNullOrEmpty(string argument, string name)
         {
             if (string.IsNullOrEmpty(argument))

@@ -39,11 +39,18 @@
     <PackageReference Include="Microsoft.Extensions.Options" Version="2.1.1" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="PrivateSetterContractResolver" Version="2.1.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.6.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Dfc.CourseDirectory.Common\Dfc.CourseDirectory.Common.csproj" />
     <ProjectReference Include="..\Dfc.CourseDirectory.Models\Dfc.CourseDirectory.Models.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Data.SqlClient">
+      <HintPath>..\..\..\..\..\..\..\Program Files\dotnet\sdk\NuGetFallbackFolder\system.data.sqlclient\4.5.1\ref\netcoreapp2.1\System.Data.SqlClient.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

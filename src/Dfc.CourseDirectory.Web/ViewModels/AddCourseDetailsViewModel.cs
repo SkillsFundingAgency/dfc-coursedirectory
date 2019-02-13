@@ -44,9 +44,9 @@ namespace Dfc.CourseDirectory.Web.ViewModels
 
         public StartDateType StartDateType { get; set; }
 
-        public int Day { get; set; }
-        public int Month { get; set; }
-        public int Year { get; set; }
+        public string Day { get; set; }
+        public string Month { get; set; }
+        public string Year { get; set; }
         public string DurationLength { get; set; }
 
 
@@ -58,5 +58,19 @@ namespace Dfc.CourseDirectory.Web.ViewModels
         public SelectVenueModel SelectVenue { get; set; }
         public SelectRegionModel SelectRegion { get; set; }
 
+        public DeliveryMode DeliveryMode { get; set; }
+        public string CourseProviderReference { get; set; }
+        public string Url { get; set; }
+        public bool AdvancedLearnerLoan { get; set; }
+        public DurationUnit DurationUnit { get; set; }
+        public StudyMode StudyMode { get; set; }
+        public AttendancePattern AttendanceMode { get; set; }
+
+        public CourseMode CourseMode { get; set; }
+
+        public Guid? CourseId { get; set; }
+        public Guid CourseRunId { get; set; }
+
+      
     }
 }

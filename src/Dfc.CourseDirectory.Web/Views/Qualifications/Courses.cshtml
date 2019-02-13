@@ -1,0 +1,183 @@
+﻿
+@using Dfc.CourseDirectory.Services.Interfaces.VenueService
+@using Dfc.CourseDirectory.Services.VenueService
+@using Dfc.CourseDirectory.Web.Helpers
+@using Dfc.CourseDirectory.Web.ViewComponents.Notification
+@model IEnumerable<CoursesForQualificationAndCountViewModel>
+@inject IVenueService venueService
+<div id="Cd-course-list" class="govuk-body">
+    <h1 class="govuk-heading-xl"></h1>
+
+
+    @{
+        var TotalCourseRunCount = 0;
+        foreach (var model in Model)
+        {
+            foreach (var course in model.Courses)
+            {
+
+                TotalCourseRunCount += course.CourseRuns.Count();
+
+            }
+
+        }
+    }
+
+    <div class="govuk-details">
+        @*<div class="">
+                <div class="">
+
+                </div>
+            </div>*@
+        <h1 class="govuk-heading-l">
+            <span>@Model.FirstOrDefault()?.QualificationType (@TotalCourseRunCount)</span>
+        </h1>
+
+        @if (ViewBag.CourseId != null)
+        {
+            @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+            {
+
+                NotificationTitle = "Course updated",
+                //NotificationMessage = "Course " +@Model.LearnAimRefTitle + "<br>" + "Level: " + @Model.NotionalNVQLevelv2 + "<br> Awarding organisation: " + @Model.AwardOrgCode + "<br> LARS / QAN: " + @Model.LearnAimRef,
+                ClassType = "success-summary"
+            })
+        }
+
+        <div class="govuk-details__text">
+            <div class="govuk-accordion" data-module="accordion" id="accordion-default">
+                @foreach (var x in Model)
+                {
+
+                    foreach (var s in x.Courses)
+                    {
+                        var accordionclass = "govuk-accordion__section";
+                        //if (ViewBag.CourseId != null)
+                        //{
+                        //    if (ViewBag.CourseId == x.Course.id)
+                        //    {
+                        //        accordionclass = accordionclass + " govuk-accordion__section--expanded";
+                        //    }
+                        //}
+
+                        <div class="@accordionclass">
+                            <div class="govuk-accordion__section-header">
+                                <h2 class="govuk-accordion__section-heading">
+                                    <button type="button" id="accordion-default-heading-1" aria-controls="accordion-default-content-1" class="govuk-accordion__section-button" aria-expanded="false">
+                                        @s.QualificationCourseTitle<span> (@s.CourseRuns.Count())</span>
+                                    </button><span class="govuk-accordion__icon" aria-hidden="true"></span>
+                                </h2>
+                            </div>
+                            <div>
+                                <div class="cd-course--list_item-heading">
+                                    <p>Level: @s.NotionalNVQLevelv2, @s.AwardOrgCode, Lars: @s.LearnAimRef <br><a href="#">view description</a></p>
+                                    <div class="govuk-checkboxes">
+                                        <div class="govuk-checkboxes__item">
+                                            <input class="govuk-checkboxes__input" id="all" type="checkbox" checked="@s.AdvancedLearnerLoan" disabled="disabled">
+                                            <label class="govuk-label govuk-checkboxes__label" for="all">
+                                                Advanced learner loans available
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <a class="govuk-link" asp-controller="Courses" asp-action="AddCourseSection1"
+                                       asp-route-learnAimRef="@s.LearnAimRef"
+                                       asp-route-notionalNVQLevelv2="@s.NotionalNVQLevelv2"
+                                       asp-route-awardOrgCode="@s.AwardOrgCode"
+                                       asp-route-learnAimRefTitle="@s.QualificationCourseTitle"
+                                       asp-route-learnAimRefTypeDesc="@s.QualificationType"
+                                       asp-route-courseId="@s.id">Edit</a>
+
+                                </div>
+
+                                <div id="accordion-default-content-1" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-1">
+                                    @foreach (var a in s.CourseRuns)
+                                    {
+
+                                        <div class="cd-course--list">
+                                            <div class="govuk-form-group">
+                                                <label class="govuk-label" for="name">
+                                                    Course name
+                                                </label>
+                                                <label asp-for="@a.CourseName">@a.CourseName</label>
+                                            </div>
+                                            <div class="govuk-form-group">
+                                                <label class="govuk-label" for="name">
+                                                    ID
+                                                </label>
+                                                <label asp-for="@a.ProviderCourseID">@a.ProviderCourseID</label>
+                                            </div>
+                                            <div class="govuk-form-group">
+                                                <label class="govuk-label" for="sort">
+                                                    Delivery
+                                                </label>
+                                                <label asp-for="@a.DeliveryMode">@WebHelper.GetEnumDescription(a.DeliveryMode)</label>
+
+                                            </div>
+
+                                            @{
+                                                if (a.VenueId.HasValue)
+                                                {
+                                                    var venueName = await venueService.GetVenueByIdAsync(new GetVenueByIdCriteria(a.VenueId.ToString()));
+
+                                                    if (venueName.HasValue)
+                                                    {
+                                                        <div class="govuk-form-group">
+                                                            <label class="govuk-label" for="sort">
+                                                                Venue
+                                                            </label>
+                                                            <label>
+
+
+
+                                                                @venueName.Value.VenueName
+
+
+                                                            </label>
+
+                                                        </div>
+                                                    }
+                                                }
+                                            }
+                                            <div class="govuk-form-group">
+                                                <label class="govuk-label" for="sort">
+                                                    Mode
+                                                </label>
+                                                <label asp-for="@a.StudyMode">@WebHelper.GetEnumDescription(a.StudyMode)</label>
+                                            </div>
+                                            <div class="govuk-form-group">
+                                                <label class="govuk-label" for="sort">
+                                                    Attendance
+                                                </label>
+                                                <label asp-for="@a.AttendancePattern">@WebHelper.GetEnumDescription(a.AttendancePattern)</label>
+                                            </div>
+
+                                            <a class="govuk-link" asp-controller="Courses" asp-action="EditCourseSection2"
+                                               asp-route-learnAimRef="@s.LearnAimRef"
+                                               asp-route-notionalNVQLevelv2="@s.NotionalNVQLevelv2"
+                                               asp-route-awardOrgCode="@s.AwardOrgCode"
+                                               asp-route-learnAimRefTitle="@s.QualificationCourseTitle"
+                                               asp-route-learnAimRefTypeDesc="@s.QualificationType"
+                                               asp-route-courseId="@s.id"
+                                               asp-route-courseRunId="@a.id">Edit</a>
+
+                                            <a class="govuk-link" href="#">Copy</a>
+                                            <a class="govuk-link" href="#">Archive</a>
+                                        </div>
+                                    }
+                                </div>
+
+
+
+
+
+
+
+                            </div>
+                        </div>
+
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
