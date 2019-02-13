@@ -12,6 +12,7 @@ using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.ViewModels;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Internal;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
@@ -47,34 +48,61 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return View();
         }
 
-        public IActionResult QualificationsList()
+        public async Task<IActionResult> QualificationsList()
         {
             var qualificationTypes = new List<string>();
             var UKPRN = _session.GetInt32("UKPRN");
 
+            List<QualificationViewModel> qualificationsList = new List<QualificationViewModel>();
+
             if (UKPRN.HasValue)
             {
+                QualificationViewModel qualification = new QualificationViewModel();
+
                 var coursesByUKPRN = !UKPRN.HasValue
                     ? null
                     : _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(UKPRN))
                         .Result.Value;
 
-                foreach (var a in coursesByUKPRN.Value)
-                {
-                    foreach (var b in a.Value)
-                    {
-                        foreach (var c in b.Value)
-                        {
-                            qualificationTypes.Add(c.QualificationType);
-                        }
-                    }
-                }
+                IActionResult view = await GetCoursesViewModelAsync("", "", "", "", null);
+                CoursesViewModel vm = (CoursesViewModel)(((ViewResult)view).Model);
 
-                qualificationTypes = qualificationTypes.Distinct().ToList();
+                IEnumerable<CoursesForQualificationAndCountViewModel> coursesForQualifcationsWithCourseRunsCount = vm.Courses.Value?
+                    .Select(c => new CoursesForQualificationAndCountViewModel
+                    {
+                        QualificationType = c.QualType,
+                        //Course = c.Value.FirstOrDefault(),
+                       // Courses = c.Value,
+                        CourseRunCount = c.Value.SelectMany(d => d.Value.SelectMany(g=>g.CourseRuns)).Count(),
+                        //CourseRuns = c.Value.FirstOrDefault()?.CourseRuns
+                        //CourseRuns =  c.Value.SelectMany(d => d.CourseRuns)
+                    }).ToList();
+
+                //var courseRunTotal = 0;
+                //foreach (var a in coursesByUKPRN.Value)
+                //{
+                //    foreach (var b in a.Value)
+                //    {
+                //        foreach (var c in b.Value)
+                //        {
+                //            courseRunTotal += c.CourseRuns.Count();
+                //            qualificationTypes.Add(c.QualificationType);
+
+                //            qualification.CourseRunCount = courseRunTotal.ToString();
+                //            qualification.QualificationTitle = c.QualificationType;
+
+                //            qualificationsList.Add(qualification);
+                //        }
+                //    }
+                //}
+
+                //qualificationTypes = qualificationTypes.Distinct().ToList();
+
+                return View(coursesForQualifcationsWithCourseRunsCount);
             }
 
+            return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
 
-            return View(qualificationTypes);
         }
 
         public async Task<IActionResult> Courses(string qualificationType, Guid? courseId, Guid? courseRunId, CourseMode courseMode)

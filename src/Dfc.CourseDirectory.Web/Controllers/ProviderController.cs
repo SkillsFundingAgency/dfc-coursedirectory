@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Dfc.CourseDirectory.Common;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -25,7 +26,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             //Set this to 0 so that we display the Add Provider logic within the ProviderSearchResult ViewComponent
             _session.SetInt32("ProviderSearch", 0);
         }
-
+        [Authorize(Policy = "ElevatedUserRole")]
         public IActionResult Index()
         {
             _logger.LogMethodEnter();

@@ -10,7 +10,7 @@
 
 @model Dfc.CourseDirectory.Web.ViewModels.AddCourseViewModel
 
-<form asp-controller="Courses" asp-action="AddCourseSection1" method="post">
+<form asp-controller="Courses" asp-action="AddCourseSection1" method="post" id="addCourseSection1">
 
     @Html.HiddenFor(x => x.AwardOrgCode)
     @Html.HiddenFor(x => x.LearnAimRef)
@@ -46,7 +46,7 @@
                 break;
             case CourseMode.Copy:
                 <h1 class="govuk-heading-l" style="padding-top: 20px;">
-                   Copy Course
+                    Copy Course
                 </h1>
 
                 break;
@@ -78,15 +78,15 @@
     </div>
 
     @{
-    switch (@Model.courseMode)
-    {
-        case CourseMode.Add:
+        switch (@Model.courseMode)
+        {
+            case CourseMode.Add:
 
-            <div class="govuk-form-group">
-                <button type="submit" class="govuk-button" id="goToSection2">
-                    Next
-                </button>
-            </div>
+                <div class="govuk-form-group">
+                    <button type="submit" class="govuk-button" id="goToSection2">
+                        Next
+                    </button>
+                </div>
                 break;
             case CourseMode.EditCourse:
 
@@ -97,8 +97,16 @@
                 </div>
 
                 break;
+            case CourseMode.Review:
+                <div class="govuk-form-group">
+                    <button type="submit" class="govuk-button" id="goToSection2">
+                        Next
+                    </button>
+                    <a class="govuk-link" href="#" id="summaryLink">Summary</a>
+                </div>
+                break;
             case CourseMode.Copy:
-                
+
 
                 break;
         }
@@ -126,6 +134,12 @@
                 whatYouNeed.trigger("blur");
                 var whereNext = $("#@nameof(Model.WhereNext)");
                 whereNext.trigger("blur");
+            });
+
+            var $summaryLink = $("#summaryLink");
+            $summaryLink.click(function () {
+                $("#addCourseSection1").attr("action", "Publish");
+                $("#addCourseSection1").submit();
             });
         });
     })(jQuery);

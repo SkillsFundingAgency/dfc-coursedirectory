@@ -36,10 +36,10 @@
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="2.1.1" />
     <PackageReference Include="Microsoft.Extensions.Caching.Redis" Version="2.1.1" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.1" />
+    <PackageReference Include="Sendgrid" Version="9.10.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\css\" />
     <Folder Include="wwwroot\vendor\" />
   </ItemGroup>
 
@@ -48,7 +48,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\tests\Dfc.CourseDirectory.Models.Test\Dfc.CourseDirectory.Models.Test.csproj" />
     <ProjectReference Include="..\Dfc.CourseDirectory.Common\Dfc.CourseDirectory.Common.csproj" />
+    <ProjectReference Include="..\Dfc.CourseDirectory.Models\Dfc.CourseDirectory.Models.csproj" />
     <ProjectReference Include="..\Dfc.CourseDirectory.Services\Dfc.CourseDirectory.Services.csproj" />
   </ItemGroup>
 

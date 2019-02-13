@@ -1,4 +1,11 @@
-﻿<header class="govuk-header " role="banner" data-module="header">
+﻿@using Microsoft.AspNetCore.Identity
+@using Dfc.CourseDirectory.Web.Areas.Identity.Data;
+@using Microsoft.AspNetCore.Authorization;
+
+@inject IAuthorizationService Authorization
+@inject SignInManager<User> SignInManager
+
+<header class="govuk-header " role="banner" data-module="header">
     <partial name="_LoginPartial" />
     <div class="govuk-header__container govuk-width-container">
         <div class="govuk-header__logo">
@@ -23,37 +30,61 @@
                 </a>
             </div>
 
+            @{
+                //Handles lack of controller error
+                if (ViewContext.RouteData.Values["Controller"] == null)
+                {
+                    ViewContext.RouteData.Values.Add("Action", "");
+                    ViewContext.RouteData.Values.Add("Controller", "");
+                }
+            }
 
             <button type="button" role="button" class="govuk-header__menu-button js-header-toggle" aria-controls="navigation" aria-label="Show or hide Top Level Navigation">Menu</button>
-            <nav>
-                <ul id="navigation" class="govuk-header__navigation " aria-label="Top Level Navigation">
-                    <li class="govuk-header__navigation-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Home" ? "govuk-header__navigation-item--active" : "")">
-                        <a class="govuk-header__link" href="/">
-                            Home
-                        </a>
-                    </li>
-                    <li class="govuk-header__navigation-item @((ViewContext.RouteData.Values["Controller"].ToString() == "Qualifications" && ViewContext.RouteData.Values["Action"].ToString() == "Index") ? "govuk-header__navigation-item--active" : "")">
-                        <a class="govuk-header__link" href="~/Qualifications">
-                            Qualifications
-                        </a>
-                    </li>
-                    <li class="govuk-header__navigation-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Venues" ? "govuk-header__navigation-item--active" : "")">
-                        <a class="govuk-header__link" href="/Venues">
-                            Venues
-                        </a>
-                    </li>
-                    <li class="govuk-header__navigation-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Provider" ? "govuk-header__navigation-item--active" : "")">
-                        <a class="govuk-header__link" href="/Provider">
-                            Add Provider
-                        </a>
-                    </li>
-                    <li class="govuk-header__navigation-item @((ViewContext.RouteData.Values["Action"].ToString() == "QualificationsList" || ViewContext.RouteData.Values["Action"].ToString() == "Courses")? "govuk-header__navigation-item--active" : "")">
-                        <a class="govuk-header__link" href="/Qualifications/QualificationsList">
-                            Courses
-                        </a>
-                    </li>
-                </ul>
-            </nav>
+            @{
+                if (SignInManager.IsSignedIn(User))
+                {
+                    var authorised = await Authorization.AuthorizeAsync(User, "ElevatedUserRole");
+                    <nav>
+                        <ul id="navigation" class="govuk-header__navigation " aria-label="Top Level Navigation">
+                            @{
+                                if (authorised.Succeeded)
+                                {
+                                    <li class="govuk-header__navigation-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Home" ? "govuk-header__navigation-item--active" : "")">
+                                        <a class="govuk-header__link" href="/">
+                                            Home
+                                        </a>
+                                    </li>
+                                }
+                            }
+                            <li class="govuk-header__navigation-item @((ViewContext.RouteData.Values["Controller"].ToString() == "Qualifications" && ViewContext.RouteData.Values["Action"].ToString() == "Index") ? "govuk-header__navigation-item--active" : "")">
+                                <a class="govuk-header__link" href="~/Qualifications">
+                                    Qualifications
+                                </a>
+                            </li>
+                            <li class="govuk-header__navigation-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Venues" ? "govuk-header__navigation-item--active" : "")">
+                                <a class="govuk-header__link" href="/Venues">
+                                    Venues
+                                </a>
+                            </li>
+                            @{
+                                if (authorised.Succeeded)
+                                {
+                                    <li class="govuk-header__navigation-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Provider" ? "govuk-header__navigation-item--active" : "")">
+                                        <a class="govuk-header__link" href="/Provider">
+                                            Add Provider
+                                        </a>
+                                    </li>
+                                }
+                            }
+                            <li class="govuk-header__navigation-item @((ViewContext.RouteData.Values["Action"].ToString() == "QualificationsList" || ViewContext.RouteData.Values["Action"].ToString() == "Courses")? "govuk-header__navigation-item--active" : "")">
+                                <a class="govuk-header__link" href="/Qualifications/QualificationsList">
+                                    Courses
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                }
+            }
         </div>
     </div>
 </header>

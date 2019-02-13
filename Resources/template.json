@@ -128,6 +128,12 @@
         "description": "Path in URL that DfE Signin calls back after sign out"
       }
     },
+    "sqlCourseDirectoryConnectionString": {
+      "type": "string",
+      "metadata": {
+        "description": "ADO.NET connection string for the course directory database"
+      }
+    },
     "appServicePlanSize": {
       "type": "string",
       "defaultValue": "1",
@@ -173,6 +179,20 @@
       "defaultValue": "",
       "metadata": {
           "description": "Name of the secret (certificate) as it appears in key vault - only used if appHostName is specified"
+      }
+    },
+    "aseHostingEnvironmentName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Optional App Service Environment for the app service to exist within. If not supplied creates a stand alone app service plan."
+      }
+    },
+    "aseResourceGroup": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Resource group the App Service Environment belongs to - only required if aseHostingEnvironmentName specified"
       }
     }
   },
@@ -241,6 +261,12 @@
           },
           "aspInstances": {
             "value": "[parameters('appServicePlanInstances')]"
+          },
+          "aseHostingEnvironmentName": {
+            "value": "[parameters('aseHostingEnvironmentName')]"
+          },
+          "aseResourceGroup": {
+            "value": "[parameters('aseResourceGroup')]"
           }
         }
       }
@@ -467,6 +493,15 @@
               {
                 "name": "DFESignInSettings__SignedOutCallbackPath",
                 "value": "[parameters('dfeSignedOutPath')]"
+              }
+            ]
+          },
+          "appServiceConnectionStrings": {
+            "value": [
+              {
+                "name": "DefaultConnection",
+                "type": "SQLServer",
+                "connectionString": "[parameters('sqlCourseDirectoryConnectionString')]"
               }
             ]
           }
