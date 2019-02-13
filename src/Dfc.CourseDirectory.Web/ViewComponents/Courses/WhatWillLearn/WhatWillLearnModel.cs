@@ -8,7 +8,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatWillLearn
 {
     public class WhatWillLearnModel
     {
-        [MaxLength(500, ErrorMessage = "What you will learn must be 500 characters or less")]
+        [MaxLength(1000, ErrorMessage = "What you will learn must be 1000 characters or less")]
         [RegularExpression(@"[a-zA-Z0-9 /\r\n?|\n\¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\" + "\"" + @"\\]+", ErrorMessage = "What you’ll learn contains invalid characters")]
         public string WhatWillLearn { get; set; }
         public string LabelText { get; set; }

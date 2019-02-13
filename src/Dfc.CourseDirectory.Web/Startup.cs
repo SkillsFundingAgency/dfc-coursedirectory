@@ -32,6 +32,21 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Net;
 using System.Net.Http;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using Dfc.CourseDirectory.Common.Settings;
+using Dfc.CourseDirectory.Services.Interfaces.VenueService;
+using Dfc.CourseDirectory.Services.VenueService;
+using Dfc.CourseDirectory.Services.ProviderService;
+using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
+using Dfc.CourseDirectory.Services.CourseService;
+using Dfc.CourseDirectory.Services.Interfaces.CourseService;
+using System;
+using Dfc.CourseDirectory.Services.CourseTextService;
+using Dfc.CourseDirectory.Services.Interfaces.CourseTextService;
+using Dfc.CourseDirectory.Services.Interfaces.OnspdService;
+using Dfc.CourseDirectory.Services.OnspdService;
+using Microsoft.AspNetCore.Http.Features;
 
 namespace Dfc.CourseDirectory.Web
 {
@@ -120,6 +135,9 @@ namespace Dfc.CourseDirectory.Web
 
             services.Configure<CourseServiceSettings>(Configuration.GetSection(nameof(CourseServiceSettings)));
             services.AddScoped<ICourseService, CourseService>();
+
+            services.Configure<CourseTextServiceSettings>(Configuration.GetSection(nameof(CourseTextServiceSettings)));
+            services.AddScoped<ICourseTextService, CourseTextService>();
 
             services.Configure<OnspdSearchSettings>(Configuration.GetSection(nameof(OnspdSearchSettings)));
             services.AddScoped<IOnspdService, OnspdService>();
