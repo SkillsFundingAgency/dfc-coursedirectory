@@ -15,6 +15,7 @@ using Dfc.CourseDirectory.Services.ProviderService;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Areas.Identity.Data;
 using Dfc.CourseDirectory.Web.Helpers;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -29,6 +30,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Net;
 using System.Net.Http;
 
 namespace Dfc.CourseDirectory.Web
@@ -147,11 +149,17 @@ namespace Dfc.CourseDirectory.Web
                 options.SlidingExpiration = true;
             });
 
-
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options => {
+                options.LoginPath = "/Home"; // auth redirect
+                options.ExpireTimeSpan = new TimeSpan(0, 0, 10, 0);
+            });
             services.AddMvc(options =>
             {
-               
+
+
             }).SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddSessionStateTempDataProvider();
+
 
             services.AddAuthorization(options =>
             {
@@ -396,6 +404,13 @@ namespace Dfc.CourseDirectory.Web
                 app.UseHsts();
             }
 
+            app.UseStatusCodePages(async context => {
+                var response = context.HttpContext.Response;
+
+                if (response.StatusCode == (int)HttpStatusCode.Unauthorized ||
+                    response.StatusCode == (int)HttpStatusCode.Forbidden)
+                    response.Redirect("/Home");
+            });
             app.UseHttpsRedirection();
             app.UseStaticFiles();
            // app.UseCookiePolicy();

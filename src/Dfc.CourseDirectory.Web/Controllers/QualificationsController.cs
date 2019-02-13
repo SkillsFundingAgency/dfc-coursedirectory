@@ -51,7 +51,16 @@ namespace Dfc.CourseDirectory.Web.Controllers
         public async Task<IActionResult> QualificationsList()
         {
             var qualificationTypes = new List<string>();
+
+            var providerUKPRN = User.Claims.SingleOrDefault(x => x.Type == "UKPRN");
+            if (providerUKPRN != null)
+            {
+                _session.SetInt32("UKPRN", Int32.Parse(providerUKPRN.Value));
+            }
+
             var UKPRN = _session.GetInt32("UKPRN");
+
+
 
             List<QualificationViewModel> qualificationsList = new List<QualificationViewModel>();
 
