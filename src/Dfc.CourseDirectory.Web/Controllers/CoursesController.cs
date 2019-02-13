@@ -35,6 +35,7 @@ using CourseRun = Dfc.CourseDirectory.Models.Models.Courses.CourseRun;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.SelectRegion;
 using Dfc.CourseDirectory.Models.Enums;
 using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -72,7 +73,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _venueSearchHelper = venueSearchHelper;
             _courseTextService = courseTextService;
         }
-
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Index(CourseRunModel model)
         {
@@ -184,6 +185,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         //}
 
 
+        [Authorize]
         public async Task<IActionResult> Index(string status, string learnAimRef, string numberOfNewCourses, string errmsg, Guid? updatedCourseId)
         {
             IActionResult view = await GetYourCoursesViewModelAsync(status, learnAimRef, numberOfNewCourses, errmsg, updatedCourseId);
@@ -302,7 +304,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
         }
 
-
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> CourseSection2(string learnAimRef, string notionalNVQLevelv2,
             string awardOrgCode, string learnAimRefTitle, string learnAimRefTypeDesc, Guid? courseId, Guid? courseRunId, CourseMode courseMode)
