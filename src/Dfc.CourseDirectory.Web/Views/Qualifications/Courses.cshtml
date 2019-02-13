@@ -5,115 +5,80 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.Notification
 @model IEnumerable<CoursesForQualificationAndCountViewModel>
 @inject IVenueService venueService
+
+
+
+<span class="govuk-caption-xl">Your courses</span>
+@{
+    var level = Model.FirstOrDefault()?.Courses.FirstOrDefault().NotionalNVQLevelv2;
+}
+<h1 class="govuk-heading-xl"> Level @level</h1>
+
+
 <div id="Cd-course-list" class="govuk-body">
-    <h1 class="govuk-heading-xl"></h1>
 
+    @foreach (var x in Model)
+    {
 
-    @{
-        var TotalCourseRunCount = 0;
-        foreach (var model in Model)
+        foreach (var s in x.Courses)
         {
-            foreach (var course in model.Courses)
-            {
+            <details class="govuk-details">
+                <summary class="govuk-details__summary">
+                    <div class="govuk-details__summary-text">
+                        @s.QualificationCourseTitle
+                        <br />
+                        <span style="font-size: 1.1875rem; font-weight: 400;margin-right: 20px">Lars/QAN: @s.LearnAimRef</span>
+                        <span style="font-size: 1.1875rem; font-weight: 400;margin-right: 20px">Level: @s.NotionalNVQLevelv2</span>
+                        <span style="font-size: 1.1875rem; font-weight: 400;margin-right: 20px">@s.AwardOrgCode</span>
+                        <span style="font-size: 1.1875rem; font-weight: 400; margin-right: 20px">
+                            <a class="govuk-link" asp-controller="Courses" asp-action="AddCourseSection1"
+                               asp-route-learnAimRef="@s.LearnAimRef"
+                               asp-route-notionalNVQLevelv2="@s.NotionalNVQLevelv2"
+                               asp-route-awardOrgCode="@s.AwardOrgCode"
+                               asp-route-learnAimRefTitle="@s.QualificationCourseTitle"
+                               asp-route-learnAimRefTypeDesc="@s.QualificationType"
+                               asp-route-courseId="@s.id">Edit course description</a>
+                        </span>
+                    </div>
 
-                TotalCourseRunCount += course.CourseRuns.Count();
+                </summary>
+                <div class="govuk-accordion" data-module="accordion" id="accordion-default">
+                    <div class="govuk-details__text" style="padding-left: 20px; padding-top: 0;">
+                        @foreach (var a in s.CourseRuns)
+                        {
+                            <div class="govuk-accordion__section" style="border-bottom: 1px solid #bfc1c3;border-top: none;padding-left: 30px;" padding-bottom: 10px;>
+                                <div class="govuk-accordion__section-header">
+                                    <h2 class="govuk-accordion__section-heading">
+                                        <button type="button" id="accordion-default-heading-1" aria-controls="accordion-default-content-1" class="govuk-accordion__section-button" aria-expanded="false">
+                                            @a.CourseName
+                                            <br />
+                                            <span style="font-size: 1rem; font-weight: 400; margin-right: 15px">
+                                                Course Id 
+                                                @{
+                                                    if (!string.IsNullOrEmpty(a.ProviderCourseID))
+                                                    {
+                                                        <span>
+                                                            @a.ProviderCourseID
+                                                        </span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span>
+                                                            --
+                                                        </span>
+                                                    }
+                                                }
 
-            }
-
-        }
-    }
-
-    <div class="govuk-details">
-        @*<div class="">
-                <div class="">
-
-                </div>
-            </div>*@
-        <h1 class="govuk-heading-l">
-            <span>@Model.FirstOrDefault()?.QualificationType (@TotalCourseRunCount)</span>
-        </h1>
-
-        @if (ViewBag.CourseId != null)
-        {
-            @await Component.InvokeAsync(nameof(Notification), new NotificationModel
-            {
-
-                NotificationTitle = "Course updated",
-                //NotificationMessage = "Course " +@Model.LearnAimRefTitle + "<br>" + "Level: " + @Model.NotionalNVQLevelv2 + "<br> Awarding organisation: " + @Model.AwardOrgCode + "<br> LARS / QAN: " + @Model.LearnAimRef,
-                ClassType = "success-summary"
-            })
-        }
-
-        <div class="govuk-details__text">
-            <div class="govuk-accordion" data-module="accordion" id="accordion-default">
-                @foreach (var x in Model)
-                {
-
-                    foreach (var s in x.Courses)
-                    {
-                        var accordionclass = "govuk-accordion__section";
-                        //if (ViewBag.CourseId != null)
-                        //{
-                        //    if (ViewBag.CourseId == x.Course.id)
-                        //    {
-                        //        accordionclass = accordionclass + " govuk-accordion__section--expanded";
-                        //    }
-                        //}
-
-                        <div class="@accordionclass">
-                            <div class="govuk-accordion__section-header">
-                                <h2 class="govuk-accordion__section-heading">
-                                    <button type="button" id="accordion-default-heading-1" aria-controls="accordion-default-content-1" class="govuk-accordion__section-button" aria-expanded="false">
-                                        @s.QualificationCourseTitle<span> (@s.CourseRuns.Count())</span>
-                                    </button><span class="govuk-accordion__icon" aria-hidden="true"></span>
-                                </h2>
-                            </div>
-                            <div>
-                                <div class="cd-course--list_item-heading">
-                                    <p>Level: @s.NotionalNVQLevelv2, @s.AwardOrgCode, Lars: @s.LearnAimRef <br><a href="#">view description</a></p>
-                                    <div class="govuk-checkboxes">
-                                        <div class="govuk-checkboxes__item">
-                                            <input class="govuk-checkboxes__input" id="all" type="checkbox" checked="@s.AdvancedLearnerLoan" disabled="disabled">
-                                            <label class="govuk-label govuk-checkboxes__label" for="all">
-                                                Advanced learner loans available
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <a class="govuk-link" asp-controller="Courses" asp-action="AddCourseSection1"
-                                       asp-route-learnAimRef="@s.LearnAimRef"
-                                       asp-route-notionalNVQLevelv2="@s.NotionalNVQLevelv2"
-                                       asp-route-awardOrgCode="@s.AwardOrgCode"
-                                       asp-route-learnAimRefTitle="@s.QualificationCourseTitle"
-                                       asp-route-learnAimRefTypeDesc="@s.QualificationType"
-                                       asp-route-courseId="@s.id">Edit</a>
-
+                                            </span>
+                                            <span style="font-size: 1rem; font-weight: 400;margin-right: 15px">@a.StudyMode</span>
+                                            <span style="font-size: 1rem; font-weight: 400;margin-right: 15px">@a.StartDate?.ToShortDateString()</span>
+                                        </button><span class="govuk-accordion__icon" aria-hidden="true"></span>
+                                    </h2>
                                 </div>
+                                <div>
+                                    <div id="accordion-default-content-1" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-1" style="border-style: solid; border-width: 1px;margin-bottom: 10px;">
 
-                                <div id="accordion-default-content-1" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-1">
-                                    @foreach (var a in s.CourseRuns)
-                                    {
-
-                                        <div class="cd-course--list">
-                                            <div class="govuk-form-group">
-                                                <label class="govuk-label" for="name">
-                                                    Course name
-                                                </label>
-                                                <label asp-for="@a.CourseName">@a.CourseName</label>
-                                            </div>
-                                            <div class="govuk-form-group">
-                                                <label class="govuk-label" for="name">
-                                                    ID
-                                                </label>
-                                                <label asp-for="@a.ProviderCourseID">@a.ProviderCourseID</label>
-                                            </div>
-                                            <div class="govuk-form-group">
-                                                <label class="govuk-label" for="sort">
-                                                    Delivery
-                                                </label>
-                                                <label asp-for="@a.DeliveryMode">@WebHelper.GetEnumDescription(a.DeliveryMode)</label>
-
-                                            </div>
-
+                                        <div class="cd-course--list" style="margin-bottom: 15px;">
                                             @{
                                                 if (a.VenueId.HasValue)
                                                 {
@@ -121,63 +86,216 @@
 
                                                     if (venueName.HasValue)
                                                     {
-                                                        <div class="govuk-form-group">
-                                                            <label class="govuk-label" for="sort">
+                                                        <div class="">
+                                                            <label class="govuk-label" for="sort" style="font-weight: 600">
                                                                 Venue
                                                             </label>
                                                             <label>
-
-
-
                                                                 @venueName.Value.VenueName
-
-
                                                             </label>
 
                                                         </div>
                                                     }
                                                 }
+                                                else
+                                                {
+                                                    if (a.Regions != null)
+                                                    {
+
+                                                        string allRegions = "";
+
+                                                        allRegions = @String.Join(", ", a.Regions.Select(p => p).ToArray());
+
+                                                        //foreach (var region in a.Regions.ToList())
+                                                        //{
+                                                        //    allRegions += string.Concat(region, ", ");
+                                                        //}
+                                                        <div class="">
+                                                            <label class="govuk-label" for="sort" style="font-weight: 600">
+                                                                Regions
+                                                            </label>
+                                                            <label>
+                                                                @allRegions
+                                                            </label>
+
+                                                        </div>
+                                                    }
+                                                }
+
                                             }
-                                            <div class="govuk-form-group">
-                                                <label class="govuk-label" for="sort">
+                                            <div>
+                                                <div class="">
+                                                    <label class="govuk-label" for="url" style="font-weight: 600">
+                                                        Url
+                                                    </label>
+
+                                                    @if (!string.IsNullOrEmpty(a.CourseURL))
+                                                    {
+                                                        <a class="govuk-link" href=@a.CourseURL>@a.CourseURL</a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <label>
+                                                            --
+                                                        </label>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="cd-course--list" style="border:none">
+                                            <div class="">
+                                                <label class="govuk-label" for="cost" style="font-weight: 600">
+                                                    Cost
+                                                </label>
+                                                @if (a.Cost.HasValue)
+                                                {
+                                                    <label>
+                                                        <span>£ </span><label asp-for="@a.Cost">@string.Format("{0:0.00}", a.Cost)</label>
+                                                    </label>
+                                                }
+                                                else
+                                                {
+                                                    <label>
+                                                        --
+                                                    </label>
+                                                }
+
+                                            </div>
+                                            <div class="">
+                                                <label class="govuk-label" for="mode" style="font-weight: 600">
                                                     Mode
                                                 </label>
                                                 <label asp-for="@a.StudyMode">@WebHelper.GetEnumDescription(a.StudyMode)</label>
                                             </div>
-                                            <div class="govuk-form-group">
-                                                <label class="govuk-label" for="sort">
+                                            <div class="">
+                                                <label class="govuk-label" for="duration" style="font-weight: 600">
+                                                    Duration
+                                                </label>
+                                                <label asp-for="@a.DurationValue">@a.DurationValue </label>
+                                                <label asp-for="@a.DurationUnit">
+                                                    @{
+                                                        if (a.DurationValue.HasValue && a.DurationValue.Value == 1)
+                                                        {
+                                                            @WebHelper.GetEnumDescription(a.DurationUnit).Remove(@WebHelper.GetEnumDescription(a.DurationUnit).Length - 1, 1)
+                                                        }
+                                                        else
+                                                        {
+                                                            @WebHelper.GetEnumDescription(a.DurationUnit)
+                                                        }
+                                                    }
+                                                </label>
+                                            </div>
+                                            <div class="">
+                                                <label class="govuk-label" for="cost" style="font-weight: 600">
+                                                    ID
+                                                </label>
+                                                @{
+                                                    if (!string.IsNullOrEmpty(a.ProviderCourseID))
+                                                    {
+                                                        <span>
+                                                            @a.ProviderCourseID
+                                                        </span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span>
+                                                            --
+                                                        </span>
+                                                    }
+                                                }
+
+                                            </div>
+                                            <div class="">
+                                                <label class="govuk-label" for="delivery" style="font-weight: 600">
+                                                    Delivery
+                                                </label>
+                                                <label asp-for="@a.DeliveryMode">@WebHelper.GetEnumDescription(a.DeliveryMode)</label>
+                                            </div>
+                                            <div class="">
+                                                <label class="govuk-label" for="attendance" style="font-weight: 600">
                                                     Attendance
                                                 </label>
                                                 <label asp-for="@a.AttendancePattern">@WebHelper.GetEnumDescription(a.AttendancePattern)</label>
                                             </div>
+                                            @{
 
-                                            <a class="govuk-link" asp-controller="Courses" asp-action="EditCourseSection2"
+                                                <div class="">
+                                                    <label class="govuk-label" for="startdate" style="font-weight: 600">
+                                                        Start date
+                                                    </label>
+
+                                                    @if (a.StartDate.HasValue)
+                                                    {
+                                                        <label>
+                                                            @a.StartDate?.ToShortDateString()
+                                                        </label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <label>
+                                                            --
+                                                        </label>
+                                                    }
+                                                </div>
+                                            }
+
+
+                                        </div>
+                                        <div class="cd-course--list" style="border-top-style: solid;padding-top: 20px;border-width: 1px">
+                                            <a class="govuk-link" asp-controller="Courses" asp-action="CourseSection2"
                                                asp-route-learnAimRef="@s.LearnAimRef"
                                                asp-route-notionalNVQLevelv2="@s.NotionalNVQLevelv2"
                                                asp-route-awardOrgCode="@s.AwardOrgCode"
                                                asp-route-learnAimRefTitle="@s.QualificationCourseTitle"
                                                asp-route-learnAimRefTypeDesc="@s.QualificationType"
                                                asp-route-courseId="@s.id"
-                                               asp-route-courseRunId="@a.id">Edit</a>
+                                               asp-route-courseRunId="@a.id"
+                                               asp-route-courseMode="@CourseMode.EditCourseRun">Edit course details</a>
 
-                                            <a class="govuk-link" href="#">Copy</a>
-                                            <a class="govuk-link" href="#">Archive</a>
+                                            <a class="govuk-link" asp-controller="Courses" asp-action="CourseSection2"
+                                               asp-route-learnAimRef="@s.LearnAimRef"
+                                               asp-route-notionalNVQLevelv2="@s.NotionalNVQLevelv2"
+                                               asp-route-awardOrgCode="@s.AwardOrgCode"
+                                               asp-route-learnAimRefTitle="@s.QualificationCourseTitle"
+                                               asp-route-learnAimRefTypeDesc="@s.QualificationType"
+                                               asp-route-courseId="@s.id"
+                                               asp-route-courseRunId="@a.id"
+                                               asp-route-courseMode="@CourseMode.Copy">Copy this course</a>
+
+                                            <a class="govuk-link" href="#">Archive this course</a>
                                         </div>
-                                    }
+
+                                    </div>
                                 </div>
-
-
-
-
-
-
-
                             </div>
-                        </div>
+                        }
+                    </div>
+                </div>
 
-                    }
-                }
-            </div>
-        </div>
-    </div>
+            </details>
+        }
+    }
 </div>
+
+<script>
+    (function ($) {
+        $(function () {
+
+            $(".govuk-details__summary").click(function () {
+
+                var els1 = document.querySelectorAll("div[class^='govuk-accordion__section']");
+                for (var i = 0; i < els1.length; i++) {
+
+                    els1[i].classList.remove('govuk-accordion__section--expanded');
+
+                }
+            });
+
+        });
+    })(jQuery);
+</script>
+
+
+
+
+
