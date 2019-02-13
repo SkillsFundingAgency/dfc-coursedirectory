@@ -373,10 +373,16 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _session.SetString("LearnAimRefTitle", learnAimRefTitle);
             _session.SetString("LearnAimRefTypeDesc", learnAimRefTypeDesc);
 
-            ICourse course = new Course();
+            ICourse course=null;
+            ICourseText defaultCourseText=null;
+
             if (courseId.HasValue)
             {
                 course = _courseService.GetCourseByIdAsync(new GetCourseByIdCriteria(courseId.Value)).Result.Value;
+            }
+            else
+            {
+                defaultCourseText = _courseTextService.GetCourseTextByLARS(new CourseTextServiceCriteria(learnAimRef)).Result.Value;
             }
 
             AddCourseViewModel vm = new AddCourseViewModel
@@ -390,35 +396,37 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     LabelText = "Who is the course for?",
                     HintText = "Please provide useful information that helps a learner to make a decision about the suitability of this course. For example learners new to the subject / sector or those with some experience? Any age restrictions?",
                     AriaDescribedBy = "Please enter who this course is for.",
-                    CourseFor = course?.CourseDescription
+                    CourseFor = course?.CourseDescription ?? defaultCourseText?.CourseDescription
                 },
+
                 EntryRequirements = new EntryRequirementsModel()
                 {
                     LabelText = "Entry requirements",
                     HintText = "Please provide details of specific academic or vocational entry qualification requirements. Also do learners need specific skills, attributes or evidence? e.g. DBS clearance, driving licence",
                     AriaDescribedBy = "Please list entry requirements.",
-                    EntryRequirements = course?.EntryRequirements
+                    EntryRequirements = course?.EntryRequirements ?? defaultCourseText?.EntryRequirments
                 },
                 WhatWillLearn = new WhatWillLearnModel()
                 {
                     LabelText = "What you’ll learn",
                     HintText = "Give learners a taste of this course. What are the main topics covered?",
                     AriaDescribedBy = "Please enter what will be learned",
-                    WhatWillLearn = course?.WhatYoullLearn
+                    WhatWillLearn = course?.WhatYoullLearn??defaultCourseText?.WhatYoullLearn
+
                 },
                 HowYouWillLearn = new HowYouWillLearnModel()
                 {
                     LabelText = "How you’ll learn",
                     HintText = "Will it be classroom based exercises, practical on the job, practical but in a simulated work environment, online or a mixture of methods?",
                     AriaDescribedBy = "Please enter how you’ll learn",
-                    HowYouWillLearn = course?.HowYoullLearn
+                    HowYouWillLearn = course?.HowYoullLearn ?? defaultCourseText?.HowYoullLearn
                 },
                 WhatYouNeed = new WhatYouNeedModel()
                 {
                     LabelText = "What you’ll need to bring",
                     HintText = "Please detail anything your learners will need to provide or pay for themselves such as uniform, personal protective clothing, tools or kit",
                     AriaDescribedBy = "Please enter what you need",
-                    WhatYouNeed = course?.WhatYoullNeed
+                    WhatYouNeed = course?.WhatYoullNeed ?? defaultCourseText?.WhatYoullNeed
 
                 },
                 HowAssessed = new HowAssessedModel()
@@ -426,14 +434,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     LabelText = "How you’ll be assessed",
                     HintText = "Please provide details of all the ways your learners will be assessed for this course. E.g. assessment in the workplace, written assignments, group or individual project work, exam, portfolio of evidence, multiple choice tests.",
                     AriaDescribedBy = "Please enter 'How you’ll be assessed'",
-                    HowAssessed = course?.HowYoullBeAssessed
+                    HowAssessed = course?.HowYoullBeAssessed ?? defaultCourseText?.HowYoullBeAssessed
                 },
                 WhereNext = new WhereNextModel()
                 {
                     LabelText = "Where next?",
                     HintText = "What are the opportunities beyond this course? Progression to a higher level course, apprenticeship or direct entry to employment?",
                     AriaDescribedBy = "Please enter 'Where next?'",
-                    WhereNext = course?.WhereNext
+                    WhereNext = course?.WhereNext ?? defaultCourseText?.WhereNext
                 }
             };
 
@@ -491,7 +499,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         viewModel.CourseName = addCourseSection2Session.CourseName;
                         viewModel.CourseProviderReference = addCourseSection2Session.CourseProviderReference;
                         viewModel.DeliveryMode = addCourseSection2Session.DeliveryMode;
-                        viewModel.StartDateType = (StartDateType) Enum.Parse(typeof(StartDateType),
+                        viewModel.StartDateType = (StartDateType)Enum.Parse(typeof(StartDateType),
                             addCourseSection2Session.StartDateType);
                         viewModel.Day = addCourseSection2Session.Day;
                         viewModel.Month = addCourseSection2Session.Month;
@@ -571,7 +579,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         [HttpGet]
         public async Task<IActionResult> BackToAddCourseSection2()
-        { 
+        {
             // from summary page
             var viewModel = await GetSection2ViewModel();
             if (viewModel == null)
@@ -586,7 +594,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             _session.SetObject(SessionAddCourseSection2, model);
             var courseViewModel = GetSection1ViewModel();
-            return  View("AddCourseSection1", courseViewModel);
+            return View("AddCourseSection1", courseViewModel);
         }
 
         [HttpGet]
@@ -963,7 +971,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         courseRunForEdit.DurationValue = model.DurationLength;
                         courseRunForEdit.AttendancePattern = model.AttendanceMode;
                         courseRunForEdit.StudyMode = model.StudyMode;
-                        courseRunForEdit.UpdatedBy ="A User"; //TODO change to user
+                        courseRunForEdit.UpdatedBy = "A User"; //TODO change to user
                         courseRunForEdit.UpdatedDate = DateTime.Now;
 
                         var updatedCourse = await _courseService.UpdateCourseAsync(courseForEdit);
@@ -981,7 +989,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
 
 
-            
+
             var section1 = _session.GetObject<AddCourseSection1RequestModel>(SessionAddCourseSection1);
             var availableVenues = _session.GetObject<SelectVenueModel>(SessionVenues);
             var availableRegions = _session.GetObject<SelectRegionModel>(SessionRegions);
@@ -1024,17 +1032,17 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 {
                     case DeliveryMode.ClassroomBased:
                         venues.AddRange(from summaryVenueVenueItem in availableVenues.VenueItems
-                            from modelSelectedVenue in section2.SelectedVenues
-                            where modelSelectedVenue.ToString() == summaryVenueVenueItem.Id
-                            select summaryVenueVenueItem.VenueName);
+                                        from modelSelectedVenue in section2.SelectedVenues
+                                        where modelSelectedVenue.ToString() == summaryVenueVenueItem.Id
+                                        select summaryVenueVenueItem.VenueName);
 
                         summaryViewModel.Venues = venues;
                         break;
                     case DeliveryMode.WorkBased:
                         regions.AddRange(from region in availableRegions.RegionItems
-                            from modelSelectedRegion in section2.SelectedRegions
-                            where modelSelectedRegion == region.Id
-                            select region.RegionName);
+                                         from modelSelectedRegion in section2.SelectedRegions
+                                         where modelSelectedRegion == region.Id
+                                         select region.RegionName);
 
                         summaryViewModel.Regions = regions;
                         break;
@@ -1062,17 +1070,17 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 {
                     case DeliveryMode.ClassroomBased:
                         venues.AddRange(from summaryVenueVenueItem in availableVenues.VenueItems
-                            from modelSelectedVenue in model.SelectedVenues
-                            where modelSelectedVenue.ToString() == summaryVenueVenueItem.Id
-                            select summaryVenueVenueItem.VenueName);
+                                        from modelSelectedVenue in model.SelectedVenues
+                                        where modelSelectedVenue.ToString() == summaryVenueVenueItem.Id
+                                        select summaryVenueVenueItem.VenueName);
 
                         summaryViewModel.Venues = venues;
                         break;
                     case DeliveryMode.WorkBased:
                         regions.AddRange(from region in availableRegions.RegionItems
-                            from modelSelectedRegion in model.SelectedRegions
-                            where modelSelectedRegion == region.Id
-                            select region.RegionName);
+                                         from modelSelectedRegion in model.SelectedRegions
+                                         where modelSelectedRegion == region.Id
+                                         select region.RegionName);
 
                         summaryViewModel.Regions = regions;
                         break;
@@ -1364,7 +1372,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         "What are the opportunities beyond this course? Progression to a higher level course, apprenticeship or direct entry to employment?",
                     AriaDescribedBy = "Please enter 'Where next?'"
                 },
-                
+
             };
 
             if (addCourseSection1 != null)

@@ -10,7 +10,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseFor
     public class CourseForModel
     {
         [Required(AllowEmptyStrings = false, ErrorMessage = "Enter who is the course for")]
-        [MaxLength(500, ErrorMessage = "Who is this course for must be 500 characters or less")]
+        [MaxLength(2000, ErrorMessage = "Who is this course for must be 2000 characters or less")]
         [RegularExpression(@"[a-zA-Z0-9 /\r\n?|\n\¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\" + "\"" + @"\\]+", ErrorMessage = "Who is this course for contains invalid characters")]
         public string CourseFor { get; set; }
         public string LabelText { get; set; }
