@@ -373,8 +373,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _session.SetString("LearnAimRefTitle", learnAimRefTitle);
             _session.SetString("LearnAimRefTypeDesc", learnAimRefTypeDesc);
 
-            ICourse course=null;
-            ICourseText defaultCourseText=null;
+            ICourse course = null;
+            ICourseText defaultCourseText = null;
 
             if (courseId.HasValue)
             {
@@ -411,7 +411,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     LabelText = "What you’ll learn",
                     HintText = "Give learners a taste of this course. What are the main topics covered?",
                     AriaDescribedBy = "Please enter what will be learned",
-                    WhatWillLearn = course?.WhatYoullLearn??defaultCourseText?.WhatYoullLearn
+                    WhatWillLearn = course?.WhatYoullLearn ?? defaultCourseText?.WhatYoullLearn
 
                 },
                 HowYouWillLearn = new HowYouWillLearnModel()
@@ -681,7 +681,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     {
                         CourseRun newCourseRun = courseRunForCopy;
 
-                        newCourseRun.id= new Guid();
+                        newCourseRun.id = new Guid();
                         newCourseRun.CourseName = addCourseSection2.CourseName;
                         newCourseRun.CourseURL = addCourseSection2.Url;
                         newCourseRun.ProviderCourseID = addCourseSection2.CourseProviderReference;
@@ -711,7 +711,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         newCourseRun.AttendancePattern = addCourseSection2.AttendanceMode;
                         newCourseRun.StudyMode = addCourseSection2.StudyMode;
                         newCourseRun.CreatedDate = DateTime.Now;
-                        newCourseRun.CreatedBy= "A User"; // TODO - change to login user
+                        newCourseRun.CreatedBy = "A User"; // TODO - change to login user
                         newCourseRun.UpdatedBy = string.Empty;
                         newCourseRun.UpdatedDate = null;
 
@@ -1008,7 +1008,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     ICourse courseForEdit = new Course();
                     if (model.CourseId.HasValue)
                     {
-                        courseForEdit = _courseService.GetCourseByIdAsync(new GetCourseByIdCriteria(model.CourseId.Value))
+                        courseForEdit = _courseService
+                            .GetCourseByIdAsync(new GetCourseByIdCriteria(model.CourseId.Value))
                             .Result.Value;
 
                         var courseRunForEdit =
@@ -1023,7 +1024,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                             bool flexibleStartDate = false;
                             DateTime? specifiedStartDate = null;
-                            if (model.StartDateType.Equals("SpecifiedStartDate", StringComparison.InvariantCultureIgnoreCase))
+                            if (model.StartDateType.Equals("SpecifiedStartDate",
+                                StringComparison.InvariantCultureIgnoreCase))
                             {
                                 string day = model.Day.Length == 1 ? string.Concat("0", model.Day) : model.Day;
                                 string month = model.Month.Length == 1 ? string.Concat("0", model.Month) : model.Month;
@@ -1031,21 +1033,22 @@ namespace Dfc.CourseDirectory.Web.Controllers
                                 specifiedStartDate = DateTime.ParseExact(courseRunstartDate, "dd-MM-yyyy",
                                     System.Globalization.CultureInfo.InvariantCulture);
                             }
-                            else if (model.StartDateType.Equals("FlexibleStartDate", StringComparison.InvariantCultureIgnoreCase))
+                            else if (model.StartDateType.Equals("FlexibleStartDate",
+                                StringComparison.InvariantCultureIgnoreCase))
                             {
                                 flexibleStartDate = true;
                             }
 
-                        courseRunForEdit.StartDate = specifiedStartDate;
-                        courseRunForEdit.FlexibleStartDate = flexibleStartDate;
-                        courseRunForEdit.Cost = model.Cost;
-                        courseRunForEdit.CostDescription = model.CostDescription;
-                        courseRunForEdit.DurationUnit = model.DurationUnit;
-                        courseRunForEdit.DurationValue = model.DurationLength;
-                        courseRunForEdit.AttendancePattern = model.AttendanceMode;
-                        courseRunForEdit.StudyMode = model.StudyMode;
-                        courseRunForEdit.UpdatedBy = "A User"; //TODO change to user
-                        courseRunForEdit.UpdatedDate = DateTime.Now;
+                            courseRunForEdit.StartDate = specifiedStartDate;
+                            courseRunForEdit.FlexibleStartDate = flexibleStartDate;
+                            courseRunForEdit.Cost = model.Cost;
+                            courseRunForEdit.CostDescription = model.CostDescription;
+                            courseRunForEdit.DurationUnit = model.DurationUnit;
+                            courseRunForEdit.DurationValue = model.DurationLength;
+                            courseRunForEdit.AttendancePattern = model.AttendanceMode;
+                            courseRunForEdit.StudyMode = model.StudyMode;
+                            courseRunForEdit.UpdatedBy = "A User"; //TODO change to user
+                            courseRunForEdit.UpdatedDate = DateTime.Now;
 
                             var updatedCourse = await _courseService.UpdateCourseAsync(courseForEdit);
 
@@ -1053,7 +1056,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
                             {
                                 RemoveSessionVariables();
                                 return RedirectToAction("Courses", "Qualifications",
-                                    new { qualificationType = courseForEdit.QualificationType, courseId = updatedCourse.Value.id, courseRunId = model.CourseRunId, courseMode = CourseMode.EditCourseRun });
+                                    new
+                                    {
+                                        qualificationType = courseForEdit.QualificationType,
+                                        courseId = updatedCourse.Value.id,
+                                        courseRunId = model.CourseRunId,
+                                        courseMode = CourseMode.EditCourseRun
+                                    });
                             }
                         }
                     }
@@ -1063,9 +1072,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     ICourse courseForCopy = new Course();
                     if (model.CourseId.HasValue)
                     {
-                        courseForCopy = _courseService.GetCourseByIdAsync(new GetCourseByIdCriteria(model.CourseId.Value)).Result.Value;
+                        courseForCopy = _courseService
+                            .GetCourseByIdAsync(new GetCourseByIdCriteria(model.CourseId.Value)).Result.Value;
 
-                        var t= courseForCopy.CourseRuns.ToList();
+                        var t = courseForCopy.CourseRuns.ToList();
 
                         var allCourseRuns = courseForCopy.CourseRuns.ToList();
 
@@ -1085,7 +1095,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                             bool flexibleStartDate = false;
                             DateTime? specifiedStartDate = null;
-                            if (model.StartDateType.Equals("SpecifiedStartDate", StringComparison.InvariantCultureIgnoreCase))
+                            if (model.StartDateType.Equals("SpecifiedStartDate",
+                                StringComparison.InvariantCultureIgnoreCase))
                             {
                                 string day = model.Day.Length == 1 ? string.Concat("0", model.Day) : model.Day;
                                 string month = model.Month.Length == 1 ? string.Concat("0", model.Month) : model.Month;
@@ -1093,7 +1104,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                                 specifiedStartDate = DateTime.ParseExact(courseRunstartDate, "dd-MM-yyyy",
                                     System.Globalization.CultureInfo.InvariantCulture);
                             }
-                            else if (model.StartDateType.Equals("FlexibleStartDate", StringComparison.InvariantCultureIgnoreCase))
+                            else if (model.StartDateType.Equals("FlexibleStartDate",
+                                StringComparison.InvariantCultureIgnoreCase))
                             {
                                 flexibleStartDate = true;
                             }
@@ -1106,9 +1118,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                             newCourseRun.DurationValue = model.DurationLength;
                             newCourseRun.AttendancePattern = model.AttendanceMode;
                             newCourseRun.StudyMode = model.StudyMode;
-                            newCourseRun.CreatedDate=DateTime.Now;
+                            newCourseRun.CreatedDate = DateTime.Now;
                             newCourseRun.CreatedBy = "A User"; //TODO change to user
-                            
+
                             allCourseRuns.Add(newCourseRun);
 
                             courseForCopy.CourseRuns = allCourseRuns;
@@ -1119,7 +1131,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
                             {
                                 RemoveSessionVariables();
                                 return RedirectToAction("Courses", "Qualifications",
-                                    new { qualificationType = courseForCopy.QualificationType, courseId = updatedCourse.Value.id, courseRunId = model.CourseRunId, courseMode = CourseMode.Copy });
+                                    new
+                                    {
+                                        qualificationType = courseForCopy.QualificationType,
+                                        courseId = updatedCourse.Value.id,
+                                        courseRunId = model.CourseRunId,
+                                        courseMode = CourseMode.Copy
+                                    });
                             }
                         }
                     }
@@ -1131,120 +1149,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     var availableVenues = _session.GetObject<SelectVenueModel>(SessionVenues);
                     var availableRegions = _session.GetObject<SelectRegionModel>(SessionRegions);
 
-            var venues = new List<string>();
-            var regions = new List<string>();
-
-            var summaryViewModel = new AddCourseSummaryViewModel
-            {
-                LearnAimRef = section1.LearnAimRef,
-                NotionalNVQLevelv2 = section1.NotionalNVQLevelv2,
-                LearnAimRefTitle = section1.LearnAimRefTitle,
-                WhoIsThisCourseFor = section1.CourseFor,
-                EntryRequirements = section1.EntryRequirements,
-                WhatYouWillLearn = section1.WhatWillLearn,
-                WhereNext = section1.WhereNext,
-                WhatYouWillNeedToBring = section1.WhatYouNeed,
-                HowAssessed = section1.HowAssessed,
-                HowYouWillLearn = section1.HowYouWillLearn
-            };
-
-            if (model.CourseMode == CourseMode.Review)
-            {
-                var section2 = _session.GetObject<AddCourseRequestModel>(SessionAddCourseSection2);
-                summaryViewModel.CourseName = section2.CourseName;
-                summaryViewModel.CourseId = section2.CourseProviderReference;
-                summaryViewModel.DeliveryMode = section2.DeliveryMode.ToDescription();
-                summaryViewModel.DeliveryModeEnum = section2.DeliveryMode;
-                summaryViewModel.Url = section2.Url;
-                summaryViewModel.Cost = section2.Cost == 0 ? string.Empty : section2.Cost.ToString(CultureInfo.InvariantCulture);
-                summaryViewModel.CostDescription = section2.CostDescription;
-                summaryViewModel.AdvancedLearnerLoan = section2.AdvancedLearnerLoan ? "Available" : "Unavailable";
-                summaryViewModel.CourseLength = section2.DurationLength + " " + section2.DurationUnit;
-                summaryViewModel.AttendancePattern = section2.StudyMode.ToDescription();
-                summaryViewModel.AttendanceTime = section2.AttendanceMode.ToDescription();
-                summaryViewModel.StartDate = section2.StartDateType == "FlexibleStartDate"
-                    ? "Flexible"
-                    : section2.Day + "/" + section2.Month + "/" + section2.Year;
-                switch (section2.DeliveryMode)
-                {
-                    case DeliveryMode.ClassroomBased:
-                        venues.AddRange(from summaryVenueVenueItem in availableVenues.VenueItems
-                                        from modelSelectedVenue in section2.SelectedVenues
-                                        where modelSelectedVenue.ToString() == summaryVenueVenueItem.Id
-                                        select summaryVenueVenueItem.VenueName);
-
-                        summaryViewModel.Venues = venues;
-                        break;
-                    case DeliveryMode.WorkBased:
-                        regions.AddRange(from region in availableRegions.RegionItems
-                                         from modelSelectedRegion in section2.SelectedRegions
-                                         where modelSelectedRegion == region.Id
-                                         select region.RegionName);
-
-                        summaryViewModel.Regions = regions;
-                        break;
-                }
-            }
-            else
-            {
-                _session.SetObject(SessionAddCourseSection2, model);
-                summaryViewModel.CourseName = model.CourseName;
-                summaryViewModel.CourseId = model.CourseProviderReference;
-                summaryViewModel.DeliveryMode = model.DeliveryMode.ToDescription();
-                summaryViewModel.DeliveryModeEnum = model.DeliveryMode;
-                summaryViewModel.Url = model.Url;
-                summaryViewModel.Cost = model.Cost == 0 ? string.Empty : model.Cost.ToString(CultureInfo.InvariantCulture);
-                summaryViewModel.CostDescription = model.CostDescription;
-                summaryViewModel.AdvancedLearnerLoan = model.AdvancedLearnerLoan ? "Available" : "Unavailable";
-                summaryViewModel.CourseLength = model.DurationLength + " " + model.DurationUnit;
-                summaryViewModel.AttendancePattern = model.StudyMode.ToDescription();
-                summaryViewModel.AttendanceTime = model.AttendanceMode.ToDescription();
-                summaryViewModel.StartDate = model.StartDateType == "FlexibleStartDate"
-                    ? "Flexible"
-                    : model.Day + "/" + model.Month + "/" + model.Year;
-
-                switch (model.DeliveryMode)
-                {
-                    case DeliveryMode.ClassroomBased:
-                        venues.AddRange(from summaryVenueVenueItem in availableVenues.VenueItems
-                                        from modelSelectedVenue in model.SelectedVenues
-                                        where modelSelectedVenue.ToString() == summaryVenueVenueItem.Id
-                                        select summaryVenueVenueItem.VenueName);
-
-                        summaryViewModel.Venues = venues;
-                        break;
-                    case DeliveryMode.WorkBased:
-                        regions.AddRange(from region in availableRegions.RegionItems
-                                         from modelSelectedRegion in model.SelectedRegions
-                                         where modelSelectedRegion == region.Id
-                                         select region.RegionName);
-
-                        summaryViewModel.Regions = regions;
-                        break;
-                }
-            }
+                    var venues = new List<string>();
+                    var regions = new List<string>();
 
                     var summaryViewModel = new AddCourseSummaryViewModel
                     {
                         LearnAimRef = section1.LearnAimRef,
                         NotionalNVQLevelv2 = section1.NotionalNVQLevelv2,
                         LearnAimRefTitle = section1.LearnAimRefTitle,
-                        CourseName = model.CourseName,
-                        CourseId = model.CourseProviderReference,
-                        DeliveryMode = model.DeliveryMode.ToDescription(),
-                        DeliveryModeEnum = model.DeliveryMode,
-                        StartDate = startDate,
-
-                        Venues = venues,
-                        Regions = regions,
-
-                        Url = model.Url,
-                        Cost = model.Cost == 0 ? string.Empty : model.Cost.ToString(CultureInfo.InvariantCulture),
-                        CostDescription = model.CostDescription,
-                        AdvancedLearnerLoan = model.AdvancedLearnerLoan ? "Available" : "Unavailable",
-                        CourseLength = model.DurationLength + " " + model.DurationUnit,
-                        AttendancePattern = model.StudyMode.ToDescription(),
-                        AttendanceTime = model.AttendanceMode.ToDescription(),
                         WhoIsThisCourseFor = section1.CourseFor,
                         EntryRequirements = section1.EntryRequirements,
                         WhatYouWillLearn = section1.WhatWillLearn,
@@ -1254,9 +1166,90 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         HowYouWillLearn = section1.HowYouWillLearn
                     };
 
-                    return View("SummaryPage", summaryViewModel);
-            }
+                    if (model.CourseMode == CourseMode.Review)
+                    {
+                        var section2 = _session.GetObject<AddCourseRequestModel>(SessionAddCourseSection2);
+                        summaryViewModel.CourseName = section2.CourseName;
+                        summaryViewModel.CourseId = section2.CourseProviderReference;
+                        summaryViewModel.DeliveryMode = section2.DeliveryMode.ToDescription();
+                        summaryViewModel.DeliveryModeEnum = section2.DeliveryMode;
+                        summaryViewModel.Url = section2.Url;
+                        summaryViewModel.Cost = section2.Cost == 0
+                            ? string.Empty
+                            : section2.Cost.ToString(CultureInfo.InvariantCulture);
+                        summaryViewModel.CostDescription = section2.CostDescription;
+                        summaryViewModel.AdvancedLearnerLoan =
+                            section2.AdvancedLearnerLoan ? "Available" : "Unavailable";
+                        summaryViewModel.CourseLength = section2.DurationLength + " " + section2.DurationUnit;
+                        summaryViewModel.AttendancePattern = section2.StudyMode.ToDescription();
+                        summaryViewModel.AttendanceTime = section2.AttendanceMode.ToDescription();
+                        summaryViewModel.StartDate = section2.StartDateType == "FlexibleStartDate"
+                            ? "Flexible"
+                            : section2.Day + "/" + section2.Month + "/" + section2.Year;
+                        switch (section2.DeliveryMode)
+                        {
+                            case DeliveryMode.ClassroomBased:
+                                venues.AddRange(from summaryVenueVenueItem in availableVenues.VenueItems
+                                                from modelSelectedVenue in section2.SelectedVenues
+                                                where modelSelectedVenue.ToString() == summaryVenueVenueItem.Id
+                                                select summaryVenueVenueItem.VenueName);
 
+                                summaryViewModel.Venues = venues;
+                                break;
+                            case DeliveryMode.WorkBased:
+                                regions.AddRange(from region in availableRegions.RegionItems
+                                                 from modelSelectedRegion in section2.SelectedRegions
+                                                 where modelSelectedRegion == region.Id
+                                                 select region.RegionName);
+
+                                summaryViewModel.Regions = regions;
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        _session.SetObject(SessionAddCourseSection2, model);
+                        summaryViewModel.CourseName = model.CourseName;
+                        summaryViewModel.CourseId = model.CourseProviderReference;
+                        summaryViewModel.DeliveryMode = model.DeliveryMode.ToDescription();
+                        summaryViewModel.DeliveryModeEnum = model.DeliveryMode;
+                        summaryViewModel.Url = model.Url;
+                        summaryViewModel.Cost = model.Cost == 0
+                            ? string.Empty
+                            : model.Cost.ToString(CultureInfo.InvariantCulture);
+                        summaryViewModel.CostDescription = model.CostDescription;
+                        summaryViewModel.AdvancedLearnerLoan = model.AdvancedLearnerLoan ? "Available" : "Unavailable";
+                        summaryViewModel.CourseLength = model.DurationLength + " " + model.DurationUnit;
+                        summaryViewModel.AttendancePattern = model.StudyMode.ToDescription();
+                        summaryViewModel.AttendanceTime = model.AttendanceMode.ToDescription();
+                        summaryViewModel.StartDate = model.StartDateType == "FlexibleStartDate"
+                            ? "Flexible"
+                            : model.Day + "/" + model.Month + "/" + model.Year;
+
+                        switch (model.DeliveryMode)
+                        {
+                            case DeliveryMode.ClassroomBased:
+                                venues.AddRange(from summaryVenueVenueItem in availableVenues.VenueItems
+                                                from modelSelectedVenue in model.SelectedVenues
+                                                where modelSelectedVenue.ToString() == summaryVenueVenueItem.Id
+                                                select summaryVenueVenueItem.VenueName);
+
+                                summaryViewModel.Venues = venues;
+                                break;
+                            case DeliveryMode.WorkBased:
+                                regions.AddRange(from region in availableRegions.RegionItems
+                                                 from modelSelectedRegion in model.SelectedRegions
+                                                 where modelSelectedRegion == region.Id
+                                                 select region.RegionName);
+
+                                summaryViewModel.Regions = regions;
+                                break;
+                        }
+                    }
+                    return View("SummaryPage", summaryViewModel);
+
+
+            }
         }
 
         internal void RemoveSessionVariables()
