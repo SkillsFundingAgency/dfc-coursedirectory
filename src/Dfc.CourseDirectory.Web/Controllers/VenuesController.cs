@@ -20,6 +20,7 @@ using Dfc.CourseDirectory.Web.ViewComponents.Shared;
 using Dfc.CourseDirectory.Web.ViewComponents.VenueName;
 using Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult;
 using Dfc.CourseDirectory.Web.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -38,6 +39,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly IOnspdSearchHelper _onspdSearchHelper;
         private ISession _session => _contextAccessor.HttpContext.Session;
 
+        
         public VenuesController(
             ILogger<VenuesController> logger,
             IPostCodeSearchService postCodeSearchService,
@@ -65,8 +67,16 @@ namespace Dfc.CourseDirectory.Web.Controllers
         /// Need to return a VenueSearchResultModel within the VenueSearchResultModel
         /// </summary>
         /// <returns></returns>
+        /// 
+        [Authorize]
         public async Task<IActionResult> Index()
         {
+            var providerUKPRN = User.Claims.SingleOrDefault(x => x.Type == "UKPRN");
+            if (providerUKPRN != null)
+            {
+                _session.SetInt32("UKPRN", Int32.Parse(providerUKPRN.Value));
+            }
+
             int UKPRN = 0;
             if (_session.GetInt32("UKPRN").HasValue)
             {
@@ -312,6 +322,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             return View("VenueSearchResults", await GetVenues(UKPRN.Value, newItem, updated));
         }
+        [Authorize]
         [HttpPost]
         public IActionResult VenueAddressManualConfirmation(AddVenueSelectionConfirmationRequestModel model)
         {
@@ -331,7 +342,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             return View(viewModel);
         }
-
+        [Authorize]
         [HttpPost]
         public IActionResult EditVenueName(EditVenueRequestModel requestModel)
         {
@@ -344,7 +355,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             };
             return View(model);
         }
-
+        [Authorize]
         [HttpPost]
         public IActionResult EditVenueAddress(EditVenueRequestModel requestModel)
         {
