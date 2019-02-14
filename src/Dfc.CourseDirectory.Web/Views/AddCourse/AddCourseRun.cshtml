@@ -1,0 +1,575 @@
+﻿
+@using Dfc.CourseDirectory.Web.ViewComponents.CourseName
+@using Dfc.CourseDirectory.Web.ViewComponents.CourseProviderReference
+@using Dfc.CourseDirectory.Web.ViewComponents.UrlInput
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.Attendance
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.DeliveryType
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.AddStartDate
+@using Dfc.CourseDirectory.Web.ViewComponents.AdvancedLearnerLoan
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.Duration
+@using Duration = Dfc.CourseDirectory.Web.ViewComponents.Courses.Duration.Duration
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.Cost
+@using Dfc.CourseDirectory.Web.ViewComponents.Notification
+@using Dfc.CourseDirectory.Web.ViewComponents.Extensions
+
+@model AddCourseDetailsViewModel
+
+<h1 class="govuk-heading-l" style="padding-top: 20px;">
+    Add course details
+</h1>
+
+@await Component.InvokeAsync(nameof(Notification), new NotificationModel
+{
+    NotificationTitle = "Qualification added",
+    NotificationMessage = @Model.LearnAimRefTitle + "<br>" + "Level: " + @Model.NotionalNVQLevelv2 + "<br> Awarding organisation: " + @Model.AwardOrgCode + "<br> LARS / QAN: " + @Model.LearnAimRef,
+    ClassType = "info-summary"
+})
+
+<form asp-controller="AddCourse" asp-action="Publish" id="addCourseSection2">
+    @Html.HiddenFor(x => x.CourseMode)
+    @Html.HiddenFor(x => x.CourseId)
+    @Html.HiddenFor(x => x.CourseRunId)
+    <div id="sectionCourseName">
+        @await Component.InvokeAsync(nameof(CourseName), new CourseNameModel
+        {
+            CourseName = Model.CourseName,
+            LabelText = "Course name",
+            HintText = "This is the name people will see when they search for your course.",
+            AriaDescribedBy = "Please enter the course name."
+        })
+    </div>
+
+    <div id="sectionCourseProviderReference">
+        @await Component.InvokeAsync(nameof(CourseProviderReference), new CourseProviderReferenceModel
+        {
+            CourseProviderReference = Model.CourseProviderReference,
+            LabelText = "ID",
+            HintText = "This is how you identify a course in your internal system.",
+            AriaDescribedBy = "Please enter the ID for this course"
+        })
+    </div>
+
+    <div id="sectionDeliveryType">
+        @await Component.InvokeAsync(nameof(DeliveryType), new DeliveryTypeModel
+        {
+            DeliveryMode = Model.DeliveryMode,
+            LabelText = "Delivery Mode",
+            HintText = "Select how this course will be delivered",
+            AriaDescribedBy = "How the course will be delivered"
+        })
+    </div>
+
+    <div id="sectionStartDate">
+        @await Component.InvokeAsync(nameof(AddStartDate), new AddStartDateModel()
+        {
+            StartDateType = Model.StartDateType,
+            Day = Model.Day ,
+            Month = Model.Month,
+            Year = Model.Year,
+            DayAriaDescribedBy = "",
+            DayLabelText = "Day",
+            MonthAriaDescribedBy = "",
+            MonthLabelText = "Month",
+            YearAriaDescribedBy = "",
+            YearLabelText = "Year",
+            AriaDescribedBy = "",
+            SpecifiedDateHintText = "e.g. 'For example, 30 9 2019",
+            FlexibleDateHintText = "Or select a flexible start date:",
+            LabelText = "Start date"
+        })
+    </div>
+
+    @*No view component here in order to get checkbox list validation to work without it's own form*@
+    <div class="govuk-form-group" id="VenueItemsCheckboxList" style="@Model.DeliveryMode.IfNotClassroomBasedDisplayNone()">
+        <label class="govuk-label" for="select-venue">
+            @Model.SelectVenue.LabelText
+        </label>
+        <span id="select-venue-hint" class="govuk-hint">
+            @Model.SelectVenue.HintText
+        </span>
+        <span class="govuk-error-message field-validation-error" id="invalidVenuesChecked" style="display: none; margin-bottom: 15px;">
+            <span id="invalidVenuesCheckedMessage" class="">Select a venue.</span>
+        </span>
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <div class="govuk-checkboxes" id="SelectVenueCheckBoxes">
+                    @{ var i = 0; }
+                    @if (Model.SelectVenue.VenueItems.Count() == 1)
+                    {
+                        <div class="govuk-checkboxes__item">
+                            <input class="govuk-checkboxes__input" id="VenueName-@i" name="SelectedVenues" type="checkbox" value="@Model.SelectVenue.VenueItems.First().Id" checked="checked" onclick="return false;" />
+                            <label class="govuk-label govuk-checkboxes__label" for="SelectedVenues">@Model.SelectVenue.VenueItems.First().VenueName</label>
+                        </div>
+                    }
+                    else
+                    {
+                        foreach (var item in Model.SelectVenue.VenueItems)
+                        {
+                            i++;
+                            <div class="govuk-checkboxes__item">
+                                <input class="govuk-checkboxes__input" id="VenueName-@i" name="SelectedVenues" type="checkbox" value="@item.Id" @item.Checked.ThenNullableCheck() />
+                                <label class="govuk-label govuk-checkboxes__label" for="SelectedVenues">@item.VenueName</label>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="govuk-form-group" id="RegionItemsCheckboxList" style="@Model.DeliveryMode.IfNotWorkBasedDisplayNone()">
+        <label class="govuk-label" for="select-region">
+            @Model.SelectRegion.LabelText
+        </label>
+        <span id="select-region-hint" class="govuk-hint">
+            @Model.SelectRegion.HintText
+        </span>
+        <span class="govuk-error-message field-validation-error" id="invalidRegionsChecked" style="display: none;margin-bottom: 15px;">
+            <span id="invalidRegionsCheckedMessage" class="">Select a region.</span>
+        </span>
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <div class="govuk-checkboxes" id="SelectRegionCheckBoxes">
+                    @{ var j = 0; }
+                    @if (Model.SelectRegion.RegionItems.Count() == 1)
+                    {
+                        <div class="govuk-checkboxes__item">
+                            <input class="govuk-checkboxes__input" id="RegionName-@j" name="SelectedRegions" type="checkbox" value="@Model.SelectRegion.RegionItems.First().Id" checked="checked" onclick="return false;" />
+                            <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@Model.SelectRegion.RegionItems.First().RegionName</label>
+                        </div>
+                    }
+                    else
+                    {
+                        foreach (var item in Model.SelectRegion.RegionItems)
+                        {
+                            j++;
+                            <div class="govuk-checkboxes__item">
+                                <input class="govuk-checkboxes__input" id="RegionName-@j" name="SelectedRegions" type="checkbox" value="@item.Id" @item.Checked.ThenNullableCheck() />
+                                <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@item.RegionName</label>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="sectionUrl">
+        @await Component.InvokeAsync(nameof(UrlInput), new UrlInputModel
+        {
+            Url = Model.Url,
+            LabelText = "URL",
+            HintText = "Enter the URL for this course e.g. http://www.google.com",
+            AriaDescribedBy = "Enter the URL for this course"
+        })
+    </div>
+
+    <div id="sectionCost">
+        @await Component.InvokeAsync(nameof(Cost), new CostModel
+        {
+            Cost = Model.Cost,
+            CostDescription = Model.CostDescription,
+            CostLabelText = "Cost",
+            CostHintText = "Enter the cost for the course in pounds and pence e.g. 125.00",
+            CostAriaDescribedBy = "Enter the cost in pounds and pence",
+            CostDescriptionLabelText = "Cost description",
+            CostDescriptionHintText = "Enter details related to the cost of this course",
+            CostDescriptionAriaDescribedBy = "Enter details of related to the cost of this course"
+        })
+    </div>
+
+    <div id="sectionAdvancedLearnerLoan">
+        @await Component.InvokeAsync(nameof(AdvancedLearnerLoan), new AdvancedLearnerLoanModel
+        {
+            AdvancedLearnerLoan = Model.AdvancedLearnerLoan,
+            LabelText = "Advanced learner loan",
+            HintText = "Select the checkbox below if Advanced Learner Loans are available for this course",
+            AriaDescribedBy = "Select whether Advanced Learner Loan is available for this course"
+        })
+    </div>
+
+    <div id="sectionDuration">
+        @await Component.InvokeAsync(nameof(Duration), new DurationModel
+        {
+            DurationLength = Model.DurationLength,
+            DurationUnit =  Model.DurationUnit,
+            LabelText = "Duration",
+            HintText = "Select the duration of the course",
+            AriaDescribedBy = "Select course duration"
+        })
+    </div>
+
+    <div id="FullPartTimeRadioButtons">
+        @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode.StudyMode), new StudyModeModel
+        {
+            StudyMode = Model.StudyMode,
+            LabelText = "Full time or part time",
+            HintText = "Select the attendance pattern"
+        })
+    </div>
+
+    <div id="AttendancePatternRadioButtons">
+        @await Component.InvokeAsync(nameof(Attendance), new AttendanceModel
+        {
+            AttendanceMode = Model.AttendanceMode,
+            LabelText = "Attendance",
+            HintText = "Select the time of day the course takes place"
+        })
+    </div>
+
+    <div class="govuk-form-group">
+        <button name="submitButton" type="submit" class="govuk-button" id="publish" value="publish">
+            Publish
+        </button>
+        <a class="govuk-link" href="#" id="previewLink">Preview</a>
+        <a class="govuk-link" href="#" id="submitBackLink">Back to Section 1</a>
+    </div>
+
+    @*<div class="govuk-form-group">
+        <button name="submitButton" type="submit" class="govuk-button" id="publish" value="publish">
+            Next
+        </button>
+        <a class="govuk-link" href="#" id="submitBackLink">Back to Section 1</a>
+    </div>*@
+
+</form>
+
+<script>
+    (function ($) {
+        $(function () {
+
+            var $formGroupErrorClass = "govuk-form-group--error";
+            var $elementErrorClass = "govuk-input--error";
+
+            var $dayElementUrl = $("#@nameof(Model.Day)");
+
+            var $monthElementUrl = $("#@nameof(Model.Month)");
+
+            var $yearElementUrl = $("#@nameof(Model.Year)");
+
+            var $validationMessageUrlForDay = $("#invalidDay");
+
+            var $validationMessageUrlForMonth = $("#invalidMonth");
+
+            var $validationMessageUrlForYear = $("#invalidYear");
+
+            var $validationMessageForPast = $("#past");
+            var $validationMessageForFuture = $("#future");
+
+            var $validationMessageForRequired= $("#required");
+
+            var $formGroupUrl = $dayElementUrl.closest('.govuk-form-group');
+
+
+
+            var $elementCostDescription = $("#@nameof(Model.CostDescription)");
+
+            var $elementCost = $("#@nameof(Model.Cost)");
+            var $formGroupCost = $elementCost.closest('.govuk-form-group');
+
+            var $validationMessageForCost= $("#invalidCost");
+            var $validationMessageForCostLength = $("#invalidCostLength");
+
+            var $venueCheckboxes = $("#SelectVenueCheckBoxes input[type=checkbox]");
+            var $regionCheckboxes = $("#SelectRegionCheckBoxes input[type=checkbox]");
+            var $formVenuesIsValid = false;
+            var $formRegionsIsValid = false;
+            var $formStartDateIsValid = false;
+            var $formCostIsValid = false;
+
+            var $deliveryRadios = $("#DeliveryModeRadioButtons input[type=radio]");
+            var $regionItemsCheckboxList = $("#RegionItemsCheckboxList");
+            //$regionItemsCheckboxList.hide();
+
+            var isClassroomBased = true;
+    var isOnline = false;
+    var isWorkBased = false;
+
+            $deliveryRadios.change(function () {
+                var $venueItemsCheckboxList = $("#VenueItemsCheckboxList");
+                var $fullPartTimeRadioButtons = $("#FullPartTimeRadioButtons");
+                var $attendancePatternRadioButtons = $("#AttendancePatternRadioButtons");
+                var $specifiedStartDate = $("#SpecifiedStartDate");
+                var $flexibleStartDate = $("#FlexibleStartDate");
+
+                switch (this.id) {
+                    case "ClassroomBased":
+                    {
+                            $specifiedStartDate.prop("checked", true);
+                            $flexibleStartDate.prop("checked", false);
+                            $venueItemsCheckboxList.show();
+                            $regionItemsCheckboxList.hide();
+                            $fullPartTimeRadioButtons.show();
+                            $attendancePatternRadioButtons.show();
+            isClassroomBased = true;
+            isOnline = false;
+            isWorkBased = false;
+            break;
+        }
+                    case "Online":
+                        {
+                            $flexibleStartDate.prop("checked", true);
+                            $specifiedStartDate.prop("checked", false);
+                            $venueItemsCheckboxList.hide();
+                            $regionItemsCheckboxList.hide();
+                            $fullPartTimeRadioButtons.hide();
+                            $attendancePatternRadioButtons.hide();
+            isClassroomBased = false;
+            isOnline = true;
+            isWorkBased = false;
+            break;
+        }
+                    case "WorkBased":
+                        {
+                            $flexibleStartDate.prop("checked", true);
+                            $specifiedStartDate.prop("checked", false);
+                            $venueItemsCheckboxList.hide();
+                            $regionItemsCheckboxList.show();
+                            $fullPartTimeRadioButtons.hide();
+                            $attendancePatternRadioButtons.hide();
+            isClassroomBased = false;
+            isOnline = false;
+            isWorkBased = true;
+            break;
+        }
+    }
+
+
+            });
+            $venueCheckboxes.change(function () {
+                var $validationMessageForVenues = $("#invalidVenuesChecked");
+                var $venueItemsCheckboxList = $("#VenueItemsCheckboxList");
+                var $formGroupVenues = $venueItemsCheckboxList.closest('.govuk-form-group');
+                var countedCheckedCheckboxes = $venueCheckboxes.filter(':checked').length;
+
+                if ($(this).is(":visible")) {
+                    if (countedCheckedCheckboxes === 0) {
+                        $formGroupVenues.addClass("govuk-form-group--error");
+                        $validationMessageForVenues.show();
+                        $formVenuesIsValid = false;
+                    }
+                    else {
+                        $formGroupVenues.removeClass("govuk-form-group--error");
+                        $validationMessageForVenues.hide();
+                        $formVenuesIsValid = true;
+                    }
+                }
+                else {
+                    $formGroupVenues.removeClass("govuk-form-group--error");
+                    $validationMessageForVenues.hide();
+                    $formVenuesIsValid = true;
+                }
+
+            });
+
+            $regionCheckboxes.change(function () {
+                var $validationMessageForRegions = $("#invalidRegionsChecked");
+                var $formGroupRegions = $regionItemsCheckboxList.closest('.govuk-form-group');
+                var countedCheckedCheckboxes = $regionCheckboxes.filter(':checked').length;
+
+                if ($(this).is(":visible")) {
+                    if (countedCheckedCheckboxes === 0) {
+                        $formGroupRegions.addClass("govuk-form-group--error");
+                        $validationMessageForRegions.show();
+                        $formRegionsIsValid = false;
+                    }
+                    else {
+                        $formGroupRegions.removeClass("govuk-form-group--error");
+                        $validationMessageForRegions.hide();
+                        $formRegionsIsValid = true;
+                    }
+                }
+                else {
+                    $formGroupRegions.removeClass("govuk-form-group--error");
+                    $validationMessageForRegions.hide();
+                    $formRegionsIsValid = true;
+                }
+            });
+
+            var $backLink = $("#submitBackLink");
+            $backLink.click(function () {
+                $("#addCourseSection2").attr("action", "BackToAddCourseSection1");
+                $("#addCourseSection2").submit();
+            });
+
+            var $previewLink = $("#previewLink");
+            $previewLink.click(function() {
+                $("#addCourseSection2").attr("action", "Preview");
+                $("#addCourseSection2").submit();
+            });
+
+            var $publish = $("#publish");
+            $publish.on("click",
+                function(e) {
+                    e.preventDefault();
+                    $venueCheckboxes.trigger("change");
+                    $regionCheckboxes.trigger("change");
+
+                    var $courseName = $("#@nameof(Model.CourseName)");
+                    $courseName.trigger("blur");
+
+                    if ($elementCost.val() === "") {
+                        if ($elementCostDescription.val() === "") {
+                            $elementCost.addClass($elementErrorClass);
+                            $validationMessageForCost.show();
+                            $formGroupCost.addClass($formGroupErrorClass);
+                            $formCostIsValid = false;
+                        } else {
+                            $elementCost.removeClass($elementErrorClass);
+                            $validationMessageForCost.hide();
+                            $formGroupCost.removeClass($formGroupErrorClass);
+                            $formCostIsValid = true;
+                        }
+                    } else {
+
+                        $validationMessageForCost.hide();
+                        $formGroupCost.removeClass($formGroupErrorClass);
+
+                        if ($elementCost.val().length < 1 || $elementCost.val().length > 9) {
+                            $elementCost.addClass($elementErrorClass);
+                            $validationMessageForCostLength.show();
+                            $formGroupCost.addClass($formGroupErrorClass);
+                            $formCostIsValid = false;
+                        } else {
+                            $elementCost.removeClass($elementErrorClass);
+                            $validationMessageForCostLength.hide();
+                            $formGroupCost.removeClass($formGroupErrorClass);
+                            $formCostIsValid = true;
+                        }
+                    }
+
+                    var $durationLength =  $("#@nameof(Model.DurationLength)");
+                    $durationLength.trigger("blur");
+
+                    var radioValue = $("input[name='StartDateType']:checked").val();
+                    if (radioValue.toUpperCase() === "SPECIFIEDSTARTDATE") {
+                        $validationMessageForRequired.hide();
+
+                        if ($dayElementUrl.val() !== "" &&
+                            $monthElementUrl.val() !== "" &&
+                            $yearElementUrl.val() !== "") {
+
+                            $formStartDateIsValid = true;
+                        }
+
+                        if ($dayElementUrl.val() === "" &&
+                            $monthElementUrl.val() === "" &&
+                            $yearElementUrl.val() === "") {
+
+                            $formGroupUrl.addClass($formGroupErrorClass);
+                            $validationMessageForRequired.show();
+                            $formStartDateIsValid = false;
+                        }
+
+                        if ($dayElementUrl.val() === "" ||
+                            parseInt($dayElementUrl.val()) < 1 ||
+                            parseInt($dayElementUrl.val()) > 31) {
+                            $dayElementUrl.addClass($elementErrorClass);
+                            $formGroupUrl.addClass($formGroupErrorClass);
+                            $validationMessageUrlForDay.show();
+                            $formStartDateIsValid = false;
+                        }
+
+
+                        if ($monthElementUrl.val() === "" ||
+                            parseInt($monthElementUrl.val()) < 1 ||
+                            parseInt($monthElementUrl.val()) > 12) {
+                            $monthElementUrl.addClass($elementErrorClass);
+                            $formGroupUrl.addClass($formGroupErrorClass);
+                            $validationMessageUrlForMonth.show();
+                            $formStartDateIsValid = false;
+                        }
+
+
+                        if (($yearElementUrl.val().length) < 4 || ($yearElementUrl.val().length) > 4) {
+                            $yearElementUrl.addClass($elementErrorClass);
+                            $formGroupUrl.addClass($formGroupErrorClass);
+                            $validationMessageUrlForYear.show();
+                            $formStartDateIsValid = false;
+                        }
+
+
+                        if ($dayElementUrl.val() !== "" &&
+                            $monthElementUrl.val() !== "" &&
+                            $yearElementUrl.val() !== "") {
+                            var enteredDate = $dayElementUrl.val() +
+                                "/" +
+                                $monthElementUrl.val() +
+                                "/" +
+                                $yearElementUrl.val();
+                            $validationMessageForFuture.hide();
+                            $validationMessageForPast.hide();
+                            var d = new Date();
+                            var currentDate =
+                                d.getDate() +
+                                    "/" +
+                                    (d.getMonth() + 1) +
+                                    "/" +
+                                    (d.getFullYear());
+
+                            var futureDate =
+                                d.getDate() +
+                                    "/" +
+                                    (d.getMonth() + 1) +
+                                    "/" +
+                                    (d.getFullYear() + 2);
+
+                            if (Date.parse(enteredDate) - Date.parse(currentDate) < 0) {
+                                $formGroupUrl.addClass($formGroupErrorClass);
+                                $validationMessageForPast.show();
+                                $formStartDateIsValid = false;
+                            } else {
+                                if (Date.parse(enteredDate) > Date.parse(futureDate)) {
+                                    $formGroupUrl.addClass($formGroupErrorClass);
+                                    $validationMessageForFuture.show();
+                                    $formStartDateIsValid = false;
+
+                                } else {
+                                    $validationMessageForFuture.hide();
+                                    $validationMessageForPast.hide();
+                                }
+                            }
+                        }
+
+
+                    } else {
+                        $dayElementUrl.removeClass($elementErrorClass);
+                        $monthElementUrl.removeClass($elementErrorClass);
+                        $yearElementUrl.removeClass($elementErrorClass);
+                        $formGroupUrl.removeClass($formGroupErrorClass);
+                        $validationMessageUrlForDay.hide();
+                        $validationMessageUrlForMonth.hide();
+                        $validationMessageUrlForYear.hide();
+                        $validationMessageForPast.hide();
+                        $validationMessageForFuture.hide();
+                        $validationMessageForRequired.hide();
+                        $formStartDateIsValid = true;
+                    }
+
+                    //if (($formVenuesIsValid || $formRegionsIsValid) & $formCostIsValid & $formStartDateIsValid) {
+                    //    $("#addCourseSection2").submit();
+                    //}
+
+                    if (isClassroomBased && $formVenuesIsValid && $formCostIsValid && $formStartDateIsValid) {
+                        $("#addCourseSection2").submit();
+                    }
+
+                    if (isOnline && $formCostIsValid && $formStartDateIsValid) {
+                        $("#addCourseSection2").submit();
+                    }
+
+                    if (isWorkBased && $formRegionsIsValid && $formCostIsValid && $formStartDateIsValid) {
+                        $("#addCourseSection2").submit();
+                    }
+
+                    var errorArray = $("[class*='--error'");
+                    if (errorArray.length > 0) {
+                        $('html, body').scrollTop($('#' + errorArray[0].id).offset().top);
+                    }
+                });
+        });
+    })(jQuery);
+</script>
