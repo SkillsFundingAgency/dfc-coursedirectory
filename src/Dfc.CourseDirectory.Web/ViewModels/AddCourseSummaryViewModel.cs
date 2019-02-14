@@ -16,6 +16,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels
         public string Url { get; set; }
         public string Cost { get; set; }
         public string CostDescription { get; set; }
+        public string AdultEducationBudget { get; set; }
         public string AdvancedLearnerLoan { get; set; }
         public string CourseLength { get; set; }
         public string AttendancePattern { get; set; }
