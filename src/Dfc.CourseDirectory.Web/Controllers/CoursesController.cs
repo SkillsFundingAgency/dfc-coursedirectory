@@ -72,6 +72,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _venueService = venueService;
             _venueSearchHelper = venueSearchHelper;
             _courseTextService = courseTextService;
+
         }
         [Authorize]
         [HttpPost]
@@ -304,7 +305,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
         }
 
-        [Authorize]
         [HttpGet]
         public async Task<IActionResult> CourseSection2(string learnAimRef, string notionalNVQLevelv2,
             string awardOrgCode, string learnAimRefTitle, string learnAimRefTypeDesc, Guid? courseId, Guid? courseRunId, CourseMode courseMode)

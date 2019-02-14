@@ -44,6 +44,12 @@
             }
             else
             {
+                var providerUKPRN = User.Claims.SingleOrDefault(x => x.Type == "UKPRN");
+                if (providerUKPRN != null)
+                {
+                    HttpContextAccessor.HttpContext.Session.SetInt32("UKPRN", Int32.Parse(providerUKPRN.Value));
+                }
+
                 <h1 class="govuk-heading-l">Welcome to the Course Directory</h1>
                 <h3 class="govuk-heading-3">This is the "private beta" of the new Course Directory developed by the National Careers Service.</h3>
                 <h3 class="govuk-heading-3">It has been designed from the outset to make it easier for you to add and update your courses.</h3>
