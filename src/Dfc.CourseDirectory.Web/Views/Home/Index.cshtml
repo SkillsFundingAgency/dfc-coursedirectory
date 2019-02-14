@@ -6,6 +6,7 @@
 
 @inject IAuthorizationService Authorization
 @inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
 @inject IHttpContextAccessor HttpContextAccessor
 
 @{
@@ -26,7 +27,9 @@
         {
 
             var authorised = await Authorization.AuthorizeAsync(User, "ElevatedUserRole");
-
+            
+            
+            
             if (authorised.Succeeded)
             {
                 <h1 class="govuk-heading-l">Search Provider</h1>

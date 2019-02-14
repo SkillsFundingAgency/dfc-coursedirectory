@@ -4,7 +4,6 @@
   flex-wrap: wrap;
   align-items: center;
   border-bottom: 1px solid #ececec;
-  margin-bottom: 1em;
 }
 
 #Cd-course-list .cd-course--list:last-child {
