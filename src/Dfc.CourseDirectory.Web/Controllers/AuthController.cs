@@ -15,12 +15,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
 {
     public class AuthController : Controller
     {
-        [Authorize]
-        public ActionResult WhoAmI()
-        {
-            return View(User as ClaimsPrincipal);
-        }
-
         public async Task Login(string returnUrl = "/")
         {
             await HttpContext.ChallengeAsync(new AuthenticationProperties() { RedirectUri = returnUrl });
