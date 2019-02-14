@@ -1,0 +1,104 @@
+﻿
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseFor
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.EntryRequirements
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.HowAssessed
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.HowYouWillLearn
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatWillLearn
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatYouNeed
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhereNext
+@using Dfc.CourseDirectory.Web.ViewComponents.Notification
+
+@model AddCourseViewModel
+
+<form asp-controller="AddCourse" asp-action="AddCourse" method="post" id="addCourseSection1">
+
+    @Html.HiddenFor(x => x.AwardOrgCode)
+    @Html.HiddenFor(x => x.LearnAimRef)
+    @Html.HiddenFor(x => x.LearnAimRefTitle)
+    @Html.HiddenFor(x => x.NotionalNVQLevelv2)
+    @Html.HiddenFor(x => x.courseMode)
+    @Html.HiddenFor(x => x.CourseId)
+    
+
+    <h1 class="govuk-heading-l" style="padding-top: 20px;">
+        Complete your qualification details
+    </h1>
+
+
+    @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+    {
+
+        NotificationTitle = "Qualification added",
+        NotificationMessage = @Model.LearnAimRefTitle + "<br>" + "Level: " + @Model.NotionalNVQLevelv2 + "<br> Awarding organisation: " + @Model.AwardOrgCode + "<br> LARS / QAN: " + @Model.LearnAimRef,
+        ClassType = "info-summary"
+    })
+
+    <h3 class="govuk-heading-m">Course description</h3>
+    <div id="sectionCourseFor">
+        @await Component.InvokeAsync(nameof(CourseFor), Model.CourseFor)
+    </div>
+    <div id="sectionEntryRequirements">
+        @await Component.InvokeAsync(nameof(EntryRequirements), Model.EntryRequirements)
+    </div>
+    <div id="sectionWhatWillLearn">
+        @await Component.InvokeAsync(nameof(WhatWillLearn), Model.WhatWillLearn)
+    </div>
+    <div id="sectionHowYouWillLearn">
+        @await Component.InvokeAsync(nameof(HowYouWillLearn), Model.HowYouWillLearn)
+    </div>
+    <div id="sectionWhatYouNeed">
+        @await Component.InvokeAsync(nameof(WhatYouNeed), Model.WhatYouNeed)
+    </div>
+    <div id="sectionHowAssessed">
+        @await Component.InvokeAsync(nameof(HowAssessed), Model.HowAssessed)
+    </div>
+    <div id="sectionWhereNext">
+        @await Component.InvokeAsync(nameof(WhereNext), Model.WhereNext)
+    </div>
+
+    <div class="govuk-form-group">
+        <button type="submit" class="govuk-button" id="goToSection2">
+            Next
+        </button>
+    </div>
+    @*<div class="govuk-form-group">
+        <button type="submit" class="govuk-button" id="goToSection2">
+            Next
+        </button>
+        <a class="govuk-link" href="#" id="summaryLink">Summary</a>
+    </div>*@
+        }
+    }
+
+
+</form>
+
+<script>
+    (function ($) {
+        $(function () {
+            var $continue = $("#goToSection2");
+            $continue.on("click", function (e) {
+                var $courseFor = $("#@nameof(Model.CourseFor)");
+                $courseFor.trigger("blur");
+                var $entryRequirements = $("#@nameof(Model.EntryRequirements)");
+                $entryRequirements.trigger("blur");
+                var $whatWillLearn = $("#@nameof(Model.WhatWillLearn)");
+                $whatWillLearn.trigger("blur");
+                var $howYouWillLearn = $("#@nameof(Model.HowYouWillLearn)");
+                $howYouWillLearn.trigger("blur");
+                var whatYouNeed = $("#@nameof(Model.WhatYouNeed)");
+                whatYouNeed.trigger("blur");
+                var howAssessed = $("#@nameof(Model.HowAssessed)");
+                whatYouNeed.trigger("blur");
+                var whereNext = $("#@nameof(Model.WhereNext)");
+                whereNext.trigger("blur");
+            });
+
+            var $summaryLink = $("#summaryLink");
+            $summaryLink.click(function () {
+                $("#addCourseSection1").attr("action", "Publish");
+                $("#addCourseSection1").submit();
+            });
+        });
+    })(jQuery);
+</script>
