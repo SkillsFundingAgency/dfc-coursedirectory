@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseFor;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.EntryRequirements;
+using Dfc.CourseDirectory.Web.ViewComponents.Courses.FundingOptions;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.HowAssessed;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.HowYouWillLearn;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatWillLearn;
@@ -32,6 +33,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels
         public WhatYouNeedModel WhatYouNeed { get; set; }
         public HowAssessedModel HowAssessed { get; set; }
         public WhereNextModel WhereNext { get; set; }
+        public FundingOptionsModel FundingOptions { get; set; }
 
         public CourseMode courseMode { get; set; }
 

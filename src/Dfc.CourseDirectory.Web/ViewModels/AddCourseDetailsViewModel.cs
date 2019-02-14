@@ -61,6 +61,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels
         public DeliveryMode DeliveryMode { get; set; }
         public string CourseProviderReference { get; set; }
         public string Url { get; set; }
+        public bool AdultEducationBudget { get; set; }
         public bool AdvancedLearnerLoan { get; set; }
         public DurationUnit DurationUnit { get; set; }
         public StudyMode StudyMode { get; set; }
