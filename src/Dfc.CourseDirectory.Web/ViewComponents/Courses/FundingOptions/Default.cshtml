@@ -1,4 +1,7 @@
-﻿@model Dfc.CourseDirectory.Web.ViewComponents.Courses.FundingOptions.FundingOptionsModel
+﻿@using Dfc.CourseDirectory.Models.Enums
+@using Dfc.CourseDirectory.Models.Models.Courses
+@using Dfc.CourseDirectory.Web.Helpers
+@model Dfc.CourseDirectory.Web.ViewComponents.Courses.FundingOptions.FundingOptionsModel
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 <div class="govuk-form-group">
@@ -10,11 +13,11 @@
         <div class="govuk-checkboxes">
             <div class="govuk-checkboxes__item">
                 <input class="govuk-checkboxes__input" type="checkbox" asp-for="@Model.AdultEducationBudget">
-                <label class="govuk-label govuk-checkboxes__label">@Model.AdultEducationBudgetLabelText</label>
+                <label class="govuk-label govuk-checkboxes__label">@WebHelper.GetEnumDescription(FundingOptions.AdultEducationBudget)</label>
             </div>
             <div class="govuk-checkboxes__item">
                 <input class="govuk-checkboxes__input" type="checkbox" asp-for="@Model.AdvancedLearnerLoan" />
-                <label class="govuk-label govuk-checkboxes__label">@Model.AdvancedLearnerLoanLabelText</label>
+                <label class="govuk-label govuk-checkboxes__label">@WebHelper.GetEnumDescription(FundingOptions.AdultEducationBudget)</label>
             </div>
         </div>
     </fieldset>
