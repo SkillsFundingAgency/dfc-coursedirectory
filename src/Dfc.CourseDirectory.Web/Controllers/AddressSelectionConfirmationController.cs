@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Web.ViewComponents.PostCodeSearchResult;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -26,7 +27,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _logger = logger;
             _postCodeSearchService = postCodeSearchService;
         }
-
+        [Authorize]
         public async Task<IActionResult> Index([FromQuery] AddressSelectionRequestModel requestModel)
         {
             _logger.LogMethodEnter();

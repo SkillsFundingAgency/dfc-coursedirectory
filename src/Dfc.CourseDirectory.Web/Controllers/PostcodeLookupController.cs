@@ -70,6 +70,7 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.Interfaces;
 using Dfc.CourseDirectory.Web.ViewComponents.PostcodeLookup;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
@@ -88,7 +89,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _logger = logger;
             _postCodeSearchService = postCodeSearchService;
         }
-
+        [Authorize]
         public async Task<IActionResult> Index(string postcode)
         {
             var result = await _postCodeSearchService.SearchAsync(new PostCodeSearchCriteria(postcode));
@@ -109,6 +110,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             return ViewComponent(nameof(ViewComponents.PostcodeLookup.PostcodeLookup), model);
         }
+        [Authorize]
         public IActionResult Default()
         {
             return ViewComponent(nameof(ViewComponents.PostcodeLookup.PostcodeLookup), new PostcodeLookupModel
