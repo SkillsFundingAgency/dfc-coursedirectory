@@ -42,7 +42,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _larsSearchHelper = larsSearchHelper;
             _paginationHelper = paginationHelper;
         }
-        [Authorize(Policy = "ElevatedUserRole")]
+        [Authorize]
         public async Task<IActionResult> Index([FromQuery] LarsSearchRequestModel requestModel)
         {
             LarsSearchResultModel model;
