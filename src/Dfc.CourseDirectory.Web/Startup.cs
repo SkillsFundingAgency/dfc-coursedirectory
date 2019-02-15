@@ -145,7 +145,7 @@ namespace Dfc.CourseDirectory.Web
             {
                 // Cookie settings
                 options.Cookie.HttpOnly = true;
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(1);
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
 
                 options.LoginPath = "/Identity/Account/Login";
                 options.AccessDeniedPath = "/Identity/Account/AccessDenied";
@@ -155,7 +155,7 @@ namespace Dfc.CourseDirectory.Web
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options => {
                 options.LoginPath = "/Home"; // auth redirect
-                options.ExpireTimeSpan = new TimeSpan(0, 0, 1, 0);
+                options.ExpireTimeSpan = new TimeSpan(0, 0, 20, 0);
             });
             services.AddMvc(options =>
             {
