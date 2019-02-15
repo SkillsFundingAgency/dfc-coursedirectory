@@ -24,6 +24,7 @@ using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatWillLearn;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatYouNeed;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhereNext;
 using Dfc.CourseDirectory.Web.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -65,7 +66,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _venueSearchHelper = venueSearchHelper;
             _courseTextService = courseTextService;
         }
-
+        [Authorize]
         [HttpGet]
         public IActionResult AddCourse(string learnAimRef, string notionalNVQLevelv2, string awardOrgCode, string learnAimRefTitle, string learnAimRefTypeDesc, Guid? courseId)
         {
@@ -159,7 +160,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             return View(vm);
         }
-
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> AddCourse(AddCourseSection1RequestModel model)
         {

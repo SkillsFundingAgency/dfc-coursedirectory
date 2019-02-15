@@ -5,6 +5,7 @@ using Dfc.CourseDirectory.Services.Interfaces;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.RequestModels;
 using Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -41,7 +42,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _larsSearchHelper = larsSearchHelper;
             _paginationHelper = paginationHelper;
         }
-
+        [Authorize(Policy = "ElevatedUserRole")]
         public async Task<IActionResult> Index([FromQuery] LarsSearchRequestModel requestModel)
         {
             LarsSearchResultModel model;

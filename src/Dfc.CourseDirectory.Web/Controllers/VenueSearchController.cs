@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 using Dfc.CourseDirectory.Services.VenueService;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -41,6 +42,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _venueSearchHelper = venueSearchHelper;
             _contextAccessor = contextAccessor;
         }
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             int UKPRN = 0;

@@ -125,12 +125,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
             };
             return viewModel;
         }
+        [Authorize]
         public IActionResult AddVenue()
         {
             //_session.SetString("IsEdit", "false");
             return View();
         }
-
+        [Authorize]
         public async Task<IActionResult> AddVenueManualAddress(string Id)
         {
             var viewModel = new VenueAddressSelectionConfirmationViewModel();
@@ -164,7 +165,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             return View(viewModel);
         }
-
+        [Authorize]
         public async Task<IActionResult> EditVenue(string Id)
         {
             var viewModel = new VenueAddressSelectionConfirmationViewModel();
@@ -195,7 +196,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             return View("VenueAddressSelectionConfirmation", viewModel);
         }
-
+        [Authorize]
         public async Task<IActionResult> VenueAddressSelectionConfirmation(VenueAddressSelectionConfirmationRequestModel requestModel)
         {
             var viewModel = new VenueAddressSelectionConfirmationViewModel();
@@ -251,7 +252,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             return View(viewModel);
         }
-
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> AddVenueSelectionConfirmation(AddVenueSelectionConfirmationRequestModel requestModel)
         {

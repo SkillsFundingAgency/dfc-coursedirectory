@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Web.ViewComponents.PostCodeSearchResult;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -40,7 +41,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _postCodeSearchService = postCodeSearchService;
             _postCodeSearchHelper = postCodeSearchHelper;
         }
-
+        [Authorize]
         public async Task<IActionResult> Index([FromQuery] PostCodeSearchRequestModel requestModel)
         {
             _logger.LogMethodEnter();
