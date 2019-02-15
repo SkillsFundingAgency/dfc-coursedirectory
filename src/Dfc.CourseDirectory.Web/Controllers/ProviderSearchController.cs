@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -43,6 +44,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _providerSearchHelper = providerSearchHelper;
             _contextAccessor = contextAccessor;
         }
+        [Authorize(Policy = "ElevatedUserRole")]
         public async Task<IActionResult> Index([FromQuery] ProviderSearchRequestModel requestModel)
         {
             _logger.LogMethodEnter();
@@ -117,7 +119,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _logger.LogMethodExit();
             return ViewComponent(nameof(ViewComponents.ProviderSearchResult.ProviderSearchResult), model);
         }
-
+        [Authorize(Policy = "ElevatedUserRole")]
         [HttpPost]
         public async Task<JsonResult> OnBoardProvider([FromBody] ProviderAjaxRequestModel ajaxRequest) 
         {

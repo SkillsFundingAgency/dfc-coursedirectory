@@ -74,6 +74,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _courseTextService = courseTextService;
 
         }
+        
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> Index(CourseRunModel model)
@@ -310,6 +311,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> CourseSection2(string learnAimRef, string notionalNVQLevelv2,
             string awardOrgCode, string learnAimRefTitle, string learnAimRefTypeDesc, Guid? courseId, Guid? courseRunId, CourseMode courseMode)
@@ -370,7 +372,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
 
         }
-
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> AddCourseSection1(string learnAimRef, string notionalNVQLevelv2, string awardOrgCode, string learnAimRefTitle, string learnAimRefTypeDesc, Guid? courseId)
         {
@@ -462,7 +464,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             return View(vm);
         }
-
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> AddCourseSection1(AddCourseSection1RequestModel model)
         {
@@ -583,7 +585,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
 
         }
-
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> BackToAddCourseSection2()
         {
@@ -595,7 +597,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             viewModel.CourseMode = CourseMode.Review;
             return View("AddCourseSection2", viewModel);
         }
-
+        [Authorize]
         [HttpPost]
         public IActionResult BackToAddCourseSection1(AddCourseRequestModel model)
         {
@@ -603,7 +605,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             var courseViewModel = GetSection1ViewModel();
             return View("AddCourseSection1", courseViewModel);
         }
-
+        [Authorize]
         [HttpGet]
         public IActionResult BackToAddCourseSection1()
         {
@@ -612,7 +614,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             courseViewModel.courseMode = CourseMode.Review;
             return View("AddCourseSection1", courseViewModel);
         }
-
+        [Authorize]
         [HttpPost]
         public IActionResult Preview(AddCourseRequestModel model)
         {
@@ -641,7 +643,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         //    return View("../Qualifications/Courses");
 
         //}
-
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> AddCourse()
         {
@@ -1005,7 +1007,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             return RedirectToAction("Index", "Home");
         }
-
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Publish(AddCourseRequestModel model)
         {
