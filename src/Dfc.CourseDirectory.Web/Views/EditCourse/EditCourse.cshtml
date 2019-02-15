@@ -1,6 +1,7 @@
 ﻿
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseFor
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.EntryRequirements
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.FundingOptions
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.HowAssessed
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.HowYouWillLearn
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatWillLearn
@@ -42,10 +43,21 @@
         @await Component.InvokeAsync(nameof(WhereNext), Model.WhereNext)
     </div>
 
+    <div id="sectionFundingOptions">
+        @await Component.InvokeAsync(nameof(FundingOptions), new FundingOptionsModel()
+        {
+          FundingOptionsHintText="",
+        FundingOptionsLabelText ="Funding options",
+        FundingOptionsAriaDescribedBy =""
+
+        })
+    </div>
+
     <div class="govuk-form-group">
         <button type="submit" class="govuk-button" id="save">
             Save
         </button>
+        @Html.ActionLink("Cancel","Courses","Provider",new{ qualificationType =@Model.QualificationType},new { @class= "govuk-link"})
     </div>
 
 </form>

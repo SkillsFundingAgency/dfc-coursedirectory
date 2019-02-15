@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
@@ -75,10 +76,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                 {
                     EditCourseViewModel vm = new EditCourseViewModel
                     {
-                        //AwardOrgCode = awardOrgCode,
-                        //LearnAimRef = learnAimRef,
-                        //LearnAimRefTitle = learnAimRefTitle,
-                        //NotionalNVQLevelv2 = notionalNVQLevelv2,
                         CourseFor = new CourseForModel()
                         {
                             LabelText = "Who is the course for?",
@@ -138,7 +135,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                             WhereNext = course?.Value?.WhereNext
                         }
                     };
-
+                    vm.QualificationType = course.Value.QualificationType;
                     return View("EditCourse", vm);
                 }
             }
@@ -163,8 +160,10 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                     courseForEdit.Value.WhatYoullNeed = model?.WhatYouNeed;
                     courseForEdit.Value.HowYoullBeAssessed = model?.HowYouWillLearn;
                     courseForEdit.Value.WhereNext = model?.WhereNext;
-                    courseForEdit.Value.UpdatedBy = "A User";
+                    courseForEdit.Value.UpdatedBy = User.Identity.Name;
                     courseForEdit.Value.UpdatedDate = DateTime.Now;
+                    courseForEdit.Value.AdultEducationBudget = model.AdultEducationBudget;
+                    courseForEdit.Value.AdvancedLearnerLoan = model.AdvancedLearnerLoan;
 
                     var updatedCourse = await _courseService.UpdateCourseAsync(courseForEdit.Value);
 

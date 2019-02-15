@@ -29,6 +29,8 @@ namespace Dfc.CourseDirectory.Web.ViewModels.EditCourse
 
         public Guid? CourseId { get; set; }
 
+        public string QualificationType { get; set; }
+
     }
 
    

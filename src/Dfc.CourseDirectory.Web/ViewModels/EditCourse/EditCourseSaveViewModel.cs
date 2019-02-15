@@ -24,6 +24,10 @@ namespace Dfc.CourseDirectory.Web.ViewModels.EditCourse
         public string HowAssessed { get; set; }
         public string WhereNext { get; set; }
 
+        public bool AdultEducationBudget { get; set; }
+
+        public bool AdvancedLearnerLoan { get; set; }
+
         public Guid? CourseId { get; set; }
 
     }

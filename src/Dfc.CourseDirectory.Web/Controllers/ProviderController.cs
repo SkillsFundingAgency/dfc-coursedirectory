@@ -58,18 +58,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             if (courseId.HasValue && courseId.Value != Guid.Empty)
             {
-                //var a = result.Value
-                //    .SingleOrDefault(o =>
-                //        String.Equals(o.QualType, qualificationType, StringComparison.CurrentCultureIgnoreCase)).Value
-                //    .SelectMany(x=>x.Value);
-
-                //var b = a.SingleOrDefault(x => x.id == courseId.Value).QualificationCourseTitle;
-
                 qualificationTitle = result.Value
-                    .SingleOrDefault(o =>
-                        String.Equals(o.QualType, qualificationType, StringComparison.CurrentCultureIgnoreCase)).Value
-                    .SelectMany(x => x.Value).SingleOrDefault(x => x.id == courseId.Value).QualificationCourseTitle;
-                string ss = string.Empty;
+                    .SingleOrDefault(o => String.Equals(o.QualType, qualificationType, StringComparison.CurrentCultureIgnoreCase))
+                    ?.Value
+                    .SelectMany(x => x.Value).SingleOrDefault(x => x.id == courseId.Value)
+                    ?.QualificationCourseTitle;
             }
 
             IEnumerable<ProviderCoursesViewModel> providerCourses= result.Value.FirstOrDefault(o => String.Equals(o.QualType, qualificationType, StringComparison.CurrentCultureIgnoreCase))
