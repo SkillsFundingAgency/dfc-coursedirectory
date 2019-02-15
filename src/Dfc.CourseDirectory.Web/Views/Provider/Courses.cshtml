@@ -6,13 +6,25 @@
 @model IEnumerable<ProviderCoursesViewModel>
 @inject IVenueService venueService
 
+
+
 <span class="govuk-caption-xl">Your courses</span>
 @{
-    var level = Model.FirstOrDefault()?.Courses.FirstOrDefault().NotionalNVQLevelv2;
+    var level = Model.FirstOrDefault()?.CoursesForLevel?.FirstOrDefault().NotionalNVQLevelv2;
 }
 <h1 class="govuk-heading-xl"> Level @level</h1>
 
-   
+@if (Model.FirstOrDefault().CourseId != Guid.Empty)
+{
+    @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+{
+
+    NotificationTitle = "Course edited",
+    NotificationMessage = "<a id='courseeditlink' class='govuk-link' href=# data-courseid=" + Model.FirstOrDefault().CourseId + ">You edited " + Model.FirstOrDefault().QualificationTitle + "</a>",
+    ClassType = "info-summary"
+});
+
+}
 
 
 <div id="Cd-course-list" class="govuk-body">
@@ -20,9 +32,9 @@
     @foreach (var x in Model)
     {
 
-        foreach (var s in x.Courses)
+        foreach (var s in x.CoursesForLevel)
         {
-            <details class="govuk-details">
+            <details id="@s.id" class="govuk-details" data-courseid="@s.id">
                 <summary class="govuk-details__summary">
                     <div class="govuk-details__summary-text">
                         @s.QualificationCourseTitle
@@ -32,11 +44,6 @@
                         <span style="font-size: 1.1875rem; font-weight: 400;margin-right: 20px">@s.AwardOrgCode</span>
                         <span style="font-size: 1.1875rem; font-weight: 400; margin-right: 20px">
                             <a class="govuk-link" asp-controller="EditCourse" asp-action="Index"
-                               asp-route-learnAimRef="@s.LearnAimRef"
-                               asp-route-notionalNVQLevelv2="@s.NotionalNVQLevelv2"
-                               asp-route-awardOrgCode="@s.AwardOrgCode"
-                               asp-route-learnAimRefTitle="@s.QualificationCourseTitle"
-                               asp-route-learnAimRefTypeDesc="@s.QualificationType"
                                asp-route-courseId="@s.id">Edit course description</a>
                         </span>
                     </div>
@@ -53,7 +60,7 @@
                                             @a.CourseName
                                             <br />
                                             <span style="font-size: 1rem; font-weight: 400; margin-right: 15px">
-                                                Course Id 
+                                                Course Id
                                                 @{
                                                     if (!string.IsNullOrEmpty(a.ProviderCourseID))
                                                     {
@@ -106,10 +113,6 @@
 
                                                         allRegions = @String.Join(", ", a.Regions.Select(p => p).ToArray());
 
-                                                        //foreach (var region in a.Regions.ToList())
-                                                        //{
-                                                        //    allRegions += string.Concat(region, ", ");
-                                                        //}
                                                         <div class="">
                                                             <label class="govuk-label" for="sort" style="font-weight: 600">
                                                                 Regions
@@ -280,6 +283,16 @@
 <script>
     (function ($) {
         $(function () {
+
+            
+            $("#courseeditlink").click(function () {
+                var courseId = $(this).attr('data-courseid');
+                //var course = $("details[data-courseid='" + courseId + "']");
+
+                $('html, body').animate({
+                    scrollTop: $('#' + courseId).offset().top
+                }, 'slow');
+            });
 
             $(".govuk-details__summary").click(function () {
 

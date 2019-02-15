@@ -1,0 +1,31 @@
+﻿@using Dfc.CourseDirectory.Models.Models.Courses;
+@using Dfc.CourseDirectory.Web.Helpers;
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseVenue.ChooseVenueModel
+
+
+
+<div class="govuk-form-group">
+    <label class="govuk-label" asp-for="@Model.LabelText">
+        @Model.LabelText
+    </label>
+    @if (!string.IsNullOrWhiteSpace(Model.HintText))
+    {
+        <span class="govuk-hint">
+            @Model.HintText
+        </span>
+    }
+    <span asp-validation-for="@Model.VenueId" class="govuk-error-message"></span>
+
+    <div class="duration-container">
+               <select asp-for="@Model.VenueId" asp-items="@Model.Venues" class="govuk-select"></select>
+    </div>
+</div>
+
+<script>
+    (function ($) {
+        $(function () {
+           
+        });
+    })(jQuery);
+</script>

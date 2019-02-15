@@ -82,8 +82,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     {
                         QualificationType = c.QualType,
                         //Course = c.Value.FirstOrDefault(),
-                       // Courses = c.Value,
-                        CourseRunCount = c.Value.SelectMany(d => d.Value.SelectMany(g=>g.CourseRuns)).Count(),
+                        // Courses = c.Value,
+                        CourseRunCount = c.Value.SelectMany(d => d.Value.SelectMany(g => g.CourseRuns)).Count(),
                         //CourseRuns = c.Value.FirstOrDefault()?.CourseRuns
                         //CourseRuns =  c.Value.SelectMany(d => d.CourseRuns)
                     }).ToList();
@@ -114,40 +114,40 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
 
         }
-        [Authorize]
-        public async Task<IActionResult> Courses(string qualificationType, Guid? courseId, Guid? courseRunId, CourseMode courseMode)
-        {
-            IActionResult view = await GetCoursesViewModelAsync("", "", "", "", null);
-            CoursesViewModel vm = (CoursesViewModel)(((ViewResult)view).Model);
 
-            if (courseId.HasValue)
-            {
-                ViewBag.CourseId = courseId.Value;
-            }
+        //public async Task<IActionResult> Courses(string qualificationType, Guid? courseId, Guid? courseRunId, CourseMode courseMode)
+        //{
+        //    IActionResult view = await GetCoursesViewModelAsync("", "", "", "", null);
+        //    CoursesViewModel vm = (CoursesViewModel)(((ViewResult)view).Model);
 
-            if (courseRunId.HasValue)
-            {
-                ViewBag.CourseRunId = courseRunId.Value;
-            }
+        //    if (courseId.HasValue)
+        //    {
+        //        ViewBag.CourseId = courseId.Value;
+        //    }
 
-            ViewBag.CourseMode = courseMode;
+        //    if (courseRunId.HasValue)
+        //    {
+        //        ViewBag.CourseRunId = courseRunId.Value;
+        //    }
 
-
-            IEnumerable<CoursesForQualificationAndCountViewModel> coursesForQualifcationsWithCourseRunsCount = vm.Courses.Value.FirstOrDefault(o => String.Equals(o.QualType, qualificationType, StringComparison.CurrentCultureIgnoreCase))
-               ?.Value
-                .Select(c => new CoursesForQualificationAndCountViewModel
-                {
-                    QualificationType = qualificationType,
-                    //Course = c.Value.FirstOrDefault(),
-                    Courses = c.Value,
-                    //CourseRunCount = c.Value.SelectMany(d => d.CourseRuns).Count(),
-                    //CourseRuns = c.Value.FirstOrDefault()?.CourseRuns
-                    //CourseRuns =  c.Value.SelectMany(d => d.CourseRuns)
-                }).ToList();
+        //    ViewBag.CourseMode = courseMode;
 
 
-            return View("Courses", coursesForQualifcationsWithCourseRunsCount);
-        }
+        //    IEnumerable<CoursesForQualificationAndCountViewModel> coursesForQualifcationsWithCourseRunsCount = vm.Courses.Value.FirstOrDefault(o => String.Equals(o.QualType, qualificationType, StringComparison.CurrentCultureIgnoreCase))
+        //       ?.Value
+        //        .Select(c => new CoursesForQualificationAndCountViewModel
+        //        {
+        //            QualificationType = qualificationType,
+        //            //Course = c.Value.FirstOrDefault(),
+        //            Courses = c.Value,
+        //            //CourseRunCount = c.Value.SelectMany(d => d.CourseRuns).Count(),
+        //            //CourseRuns = c.Value.FirstOrDefault()?.CourseRuns
+        //            //CourseRuns =  c.Value.SelectMany(d => d.CourseRuns)
+        //        }).ToList();
+
+
+        //    return View("Courses", coursesForQualifcationsWithCourseRunsCount);
+        //}
 
         [Authorize]
         private async Task<IActionResult> GetCoursesViewModelAsync(string status, string learnAimRef,
