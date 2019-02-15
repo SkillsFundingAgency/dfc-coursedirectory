@@ -1,0 +1,21 @@
+﻿@model Dfc.CourseDirectory.Web.ViewComponents.Courses.FundingOptions.FundingOptionsModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<div class="govuk-form-group">
+    <fieldset class="govuk-fieldset" aria-describedby="funding-options-hint">
+        <label class="govuk-label" for="sub">
+            @Model.FundingOptionsLabelText
+        </label>
+        <span id="more-detail-hint" class="govuk-hint">@Model.FundingOptionsHintText</span>
+        <div class="govuk-checkboxes">
+            <div class="govuk-checkboxes__item">
+                <input class="govuk-checkboxes__input" type="checkbox" asp-for="@Model.AdultEducationBudget">
+                <label class="govuk-label govuk-checkboxes__label">@Model.AdultEducationBudgetLabelText</label>
+            </div>
+            <div class="govuk-checkboxes__item">
+                <input class="govuk-checkboxes__input" type="checkbox" asp-for="@Model.AdvancedLearnerLoan" />
+                <label class="govuk-label govuk-checkboxes__label">@Model.AdvancedLearnerLoanLabelText</label>
+            </div>
+        </div>
+    </fieldset>
+</div>

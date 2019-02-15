@@ -11,6 +11,7 @@ using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Internal;
 using Microsoft.AspNetCore.Mvc;
@@ -42,16 +43,25 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _courseService = courseService;
             _venueService = venueService;
         }
-
+        [Authorize]
         public IActionResult Index()
         {
             return View();
         }
-
+        [Authorize]
         public async Task<IActionResult> QualificationsList()
         {
             var qualificationTypes = new List<string>();
+
+            var providerUKPRN = User.Claims.SingleOrDefault(x => x.Type == "UKPRN");
+            if (providerUKPRN != null)
+            {
+                _session.SetInt32("UKPRN", Int32.Parse(providerUKPRN.Value));
+            }
+
             var UKPRN = _session.GetInt32("UKPRN");
+
+
 
             List<QualificationViewModel> qualificationsList = new List<QualificationViewModel>();
 
@@ -139,7 +149,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         //    return View("Courses", coursesForQualifcationsWithCourseRunsCount);
         //}
 
-
+        [Authorize]
         private async Task<IActionResult> GetCoursesViewModelAsync(string status, string learnAimRef,
             string numberOfNewCourses, string errmsg, Guid? updatedCourseId)
         {

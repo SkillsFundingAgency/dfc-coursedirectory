@@ -27,6 +27,7 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Courses
         string HowYoullBeAssessed { get; set; }
         string WhereNext { get; set; }
 
+        bool AdultEducationBudget { get; set; }
         bool AdvancedLearnerLoan { get; set; }
 
         IEnumerable<CourseRun> CourseRuns { get; set; }
