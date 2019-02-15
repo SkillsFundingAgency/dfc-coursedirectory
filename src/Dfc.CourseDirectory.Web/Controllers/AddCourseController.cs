@@ -66,6 +66,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _venueSearchHelper = venueSearchHelper;
             _courseTextService = courseTextService;
         }
+
         [Authorize]
         [HttpGet]
         public IActionResult AddCourse(string learnAimRef, string notionalNVQLevelv2, string awardOrgCode, string learnAimRefTitle, string learnAimRefTypeDesc, Guid? courseId)
@@ -149,10 +150,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         "What are the opportunities beyond this course? Progression to a higher level course, apprenticeship or direct entry to employment?",
                     AriaDescribedBy = "Please enter 'Where next?'",
                     WhereNext = course?.WhereNext ?? defaultCourseText?.WhereNext
-                },
-                courseMode = CourseMode.Add
+                }
             };
-
+            vm.LastAddCoursePage = AddCoursePage.None;  // not come from another add course page
             if (courseId.HasValue)
             {
                 vm.CourseId = courseId.Value;
@@ -160,10 +160,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             return View(vm);
         }
+
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> AddCourse(AddCourseSection1RequestModel model)
         {
+            // to AddCourseRun or Summary
             int UKPRN = 0;
 
 
@@ -244,8 +246,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 viewModel.StartDateType = StartDateType.SpecifiedStartDate;
             }
 
+            viewModel.LastAddCoursePage = AddCoursePage.AddCourse;
+
             return View("AddCourseRun", viewModel);
         }
+
+
+        // AddCourseRun - can go to AddCourse or Summary
+
+        // Summary - can go to AddCourse, AddCourseRun or Edit screen
 
         #region Private methods
         private async Task<SelectVenueModel> GetVenuesByUkprn(int ukprn)

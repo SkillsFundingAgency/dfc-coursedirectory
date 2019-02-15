@@ -36,8 +36,17 @@ namespace Dfc.CourseDirectory.Web.ViewModels
         public FundingOptionsModel FundingOptions { get; set; }
 
         public CourseMode courseMode { get; set; }
+        public AddCoursePage LastAddCoursePage { get; set; }
 
         public Guid CourseId { get; set; }
+    }
+
+    public enum AddCoursePage
+    {
+        None,
+        AddCourse,
+        AddCourseRun,
+        Summary
     }
 
     public enum CourseMode
