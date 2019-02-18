@@ -40,6 +40,14 @@ namespace Dfc.CourseDirectory.Web.ViewModels
         public Guid CourseId { get; set; }
     }
 
+    public enum AddCoursePage
+    {
+        None,
+        AddCourse,
+        AddCourseRun,
+        Summary
+    }
+
     public enum CourseMode
     {
         [Description("Add")]

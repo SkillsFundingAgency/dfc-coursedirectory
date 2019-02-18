@@ -1,4 +1,5 @@
 ﻿
+@using Dfc.CourseDirectory.Web.Extensions
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseFor
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.EntryRequirements
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.HowAssessed
@@ -7,6 +8,9 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatYouNeed
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhereNext
 @using Dfc.CourseDirectory.Web.ViewComponents.Notification
+@using Microsoft.AspNetCore.Http
+
+@inject IHttpContextAccessor HttpContextAccessor
 
 @model AddCourseViewModel
 
@@ -18,7 +22,7 @@
     @Html.HiddenFor(x => x.NotionalNVQLevelv2)
     @Html.HiddenFor(x => x.courseMode)
     @Html.HiddenFor(x => x.CourseId)
-    
+
 
     <h1 class="govuk-heading-l" style="padding-top: 20px;">
         Complete your qualification details
@@ -56,21 +60,49 @@
         @await Component.InvokeAsync(nameof(WhereNext), Model.WhereNext)
     </div>
 
-    <div class="govuk-form-group">
-        <button type="submit" class="govuk-button" id="goToSection2">
-            Next
-        </button>
-    </div>
-    @*<div class="govuk-form-group">
-        <button type="submit" class="govuk-button" id="goToSection2">
-            Next
-        </button>
-        <a class="govuk-link" href="#" id="summaryLink">Summary</a>
-    </div>*@
+
+    @{
+        var lastAddCoursePage = HttpContextAccessor.HttpContext.Session.GetObject<AddCoursePage>("LastAddCoursePage");
+        var summaryPageLoadedAtLeastOnce = HttpContextAccessor.HttpContext.Session.GetObject<bool>("SummaryLoadedAtLeastOnce");
+        switch (lastAddCoursePage)
+        {
+            case AddCoursePage.None:
+                <div class="govuk-form-group">
+                    <button type="submit" class="govuk-button" id="goToSection2">
+                        Next
+                    </button>
+                </div>
+                break;
+            case AddCoursePage.AddCourseRun:
+                if (summaryPageLoadedAtLeastOnce)
+                {
+                    <div class="govuk-form-group">
+                        <button type="submit" class="govuk-button" id="goToSummary">
+                            Summary
+                        </button>
+                    
+                        <a class="govuk-link" href="#" id="goToSection2Link">Page 2</a>
+                    </div>
+                }
+                else
+                {
+                    <div class="govuk-form-group">
+                        <button type="submit" class="govuk-button" id="goToSection2">
+                            Next
+                        </button>
+                    </div>
+                }
+                break;
+            case AddCoursePage.Summary:
+                <div class="govuk-form-group">
+                    <button type="submit" class="govuk-button" id="goToSummary">
+                        Summary
+                    </button>
+                    <a class="govuk-link" href="#" id="goToSection2Link">Page 2</a>
+                </div>
+                break;
         }
     }
-
-
 </form>
 
 <script>
@@ -94,9 +126,15 @@
                 whereNext.trigger("blur");
             });
 
-            var $summaryLink = $("#summaryLink");
-            $summaryLink.click(function () {
-                $("#addCourseSection1").attr("action", "Publish");
+            var $goToSummary = $("#goToSummary");
+            $goToSummary.click(function () {
+                $("#addCourseSection1").attr("action", "Summary");
+                $("#addCourseSection1").submit();
+            });
+
+            var $goToSection2Link = $("#goToSection2Link");
+            $goToSection2Link.click(function() {
+                $("#addCourseSection1").attr("action", "AddCourse");
                 $("#addCourseSection1").submit();
             });
         });
