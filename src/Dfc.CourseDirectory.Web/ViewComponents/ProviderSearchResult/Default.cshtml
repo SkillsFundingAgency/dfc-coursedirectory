@@ -44,7 +44,7 @@
 
                     NotificationTitle = "",
                     NotificationMessage = "UKPRN has been deactivated and cannot be added to the Course Directory.",
-                    ClassType = "success-summary"
+                    ClassType = "warning-summary"
                 });
 
             }
@@ -156,6 +156,11 @@ else
 <script type="text/javascript">
 
     function OnBoardProvider() {
+
+        //DFC-7249 - Hide any Notification controls
+        $('.cd-info-summary').hide()
+        $('.cd-warning-summary').hide()
+        $('.cd-success-summary').hide()
 
         $.ajax({
             url: '/ProviderSearch/OnBoardProvider',

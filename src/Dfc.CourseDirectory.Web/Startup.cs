@@ -166,7 +166,9 @@ namespace Dfc.CourseDirectory.Web
 
             services.AddAuthorization(options =>
             {
+                options.AddPolicy("Admin", policy => policy.RequireRole("Developer"));
                 options.AddPolicy("ElevatedUserRole", policy => policy.RequireRole("Developer", "Helpdesk"));
+                options.AddPolicy("Helpdesk", policy => policy.RequireRole("Helpdesk"));
             });
             services.AddDistributedMemoryCache();
 

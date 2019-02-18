@@ -1,5 +1,17 @@
 ﻿@using Dfc.CourseDirectory.Web.ViewComponents.Extensions
 @using Dfc.CourseDirectory.Web.ViewComponents.Pagination;
+@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Identity
+@using Dfc.CourseDirectory.Web.Areas.Identity.Data;
+@using Microsoft.AspNetCore.Authorization;
+
+@inject IAuthorizationService Authorization
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+
+@{
+    var authorised = await Authorization.AuthorizeAsync(User, "Admin");
+}
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
@@ -85,16 +97,25 @@
 
                 @foreach (var item in Model.Items)
                 {
-                    <div class="cd-lars-search-result__container">
-                        <h3 class="govuk-heading-m">@item.LearnAimRefTitle</h3>
-                        <p class="govuk-body">LARS/QAN:<span class="govuk-!-font-weight-bold"> @item.LearnAimRef</span></p>
-                        <p class="govuk-body">Level: <span class="govuk-!-font-weight-bold"> @item.NotionalNVQLevelv2</span></p>
-                        <p class="govuk-body">Awarding body:<span class="govuk-!-font-weight-bold"> @item.AwardOrgCode</span></p>
-                        @*<p class="govuk-body"><a class="govuk-link" href="#">Add this qualification</a></p>*@
+                <div class="cd-lars-search-result__container">
+                    <h3 class="govuk-heading-m">@item.LearnAimRefTitle</h3>
+                    <p class="govuk-body">LARS/QAN:<span class="govuk-!-font-weight-bold"> @item.LearnAimRef</span></p>
+                    <p class="govuk-body">Level: <span class="govuk-!-font-weight-bold"> @item.NotionalNVQLevelv2</span></p>
+                    <p class="govuk-body">Awarding body:<span class="govuk-!-font-weight-bold"> @item.AwardOrgCode</span></p>
+                    @*<p class="govuk-body"><a class="govuk-link" href="#">Add this qualification</a></p>*@
 
-                        <a asp-controller="AddCourse" asp-action="AddCourse" asp-route-learnAimRef=@item.LearnAimRef asp-route-notionalNVQLevelv2=@item.NotionalNVQLevelv2 asp-route-awardOrgCode=@item.AwardOrgCode asp-route-learnAimRefTitle=@item.LearnAimRefTitle asp-route-learnAimRefTypeDesc=@item.LearnAimRefTypeDesc class="link--button" id="">Add this qualification</a>
+                    @{
 
-                    </div>
+                        if (authorised.Succeeded)
+                        {
+                            <h1 class="govuk-heading-l">Search Provider</h1>
+
+                            <a asp-controller="AddCourse" asp-action="AddCourse" asp-route-learnAimRef=@item.LearnAimRef asp-route-notionalNVQLevelv2=@item.NotionalNVQLevelv2 asp-route-awardOrgCode=@item.AwardOrgCode asp-route-learnAimRefTitle=@item.LearnAimRefTitle asp-route-learnAimRefTypeDesc=@item.LearnAimRefTypeDesc class="link--button" id="">Add this qualification</a>
+                        }
+                    }
+                    
+
+                </div>
                 }
 
             </div>
@@ -131,14 +152,14 @@
             var i;
 
             for (i = 0; i < acc.length; i++) {
-                acc[i].addEventListener("click", function() {
+                acc[i].addEventListener("click", function () {
                     this.classList.toggle("active");
                     var panel = this.nextElementSibling;
-                    if (panel.style.display === "none"){
+                    if (panel.style.display === "none") {
                         panel.style.display = "block";
                     } else {
                         panel.style.display = "none";
-                    } 
+                    }
                 });
             }
         });
