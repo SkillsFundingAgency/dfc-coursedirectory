@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <Content Remove="appsettings.Development.json" />
+    <Content Remove="Views\Qualifications\Courses.cshtml" />
     <Content Remove="wwwroot\scss\partials\view-components.pagination" />
   </ItemGroup>
 
@@ -112,7 +113,13 @@
     <Content Update="ViewComponents\VenueSearch\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\Qualifications\Courses.cshtml">
+    <Content Update="Views\EditCourse\EditCourse.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\EditCourse\EditCourseRun.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Provider\Courses.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\Venues\VenueSearchResults.cshtml">
