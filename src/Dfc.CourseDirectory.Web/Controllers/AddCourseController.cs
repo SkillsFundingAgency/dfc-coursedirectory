@@ -109,7 +109,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     HintText =
                         "Please provide details of specific academic or vocational entry qualification requirements. Also do learners need specific skills, attributes or evidence? e.g. DBS clearance, driving licence",
                     AriaDescribedBy = "Please list entry requirements.",
-                    EntryRequirements = course?.EntryRequirements ?? defaultCourseText?.EntryRequirments
+                    EntryRequirements = course?.EntryRequirements ?? defaultCourseText?.EntryRequirements
                 },
                 WhatWillLearn = new WhatWillLearnModel()
                 {
