@@ -1,4 +1,5 @@
 ﻿
+@using Dfc.CourseDirectory.Web.Extensions
 @using Dfc.CourseDirectory.Web.ViewComponents.CourseName
 @using Dfc.CourseDirectory.Web.ViewComponents.CourseProviderReference
 @using Dfc.CourseDirectory.Web.ViewComponents.UrlInput
@@ -12,6 +13,10 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.Cost
 @using Dfc.CourseDirectory.Web.ViewComponents.Notification
 @using Dfc.CourseDirectory.Web.ViewComponents.Extensions
+@using Microsoft.AspNetCore.Mvc.Razor.Extensions
+@using Microsoft.AspNetCore.Http
+
+@inject IHttpContextAccessor HttpContextAccessor
 
 @model AddCourseDetailsViewModel
 
@@ -26,7 +31,7 @@
     ClassType = "info-summary"
 })
 
-<form asp-controller="AddCourse" asp-action="Publish" id="addCourseSection2">
+<form asp-controller="AddCourse" asp-action="AddCourseRun" id="addCourseSection2">
     @Html.HiddenFor(x => x.CourseMode)
     @Html.HiddenFor(x => x.CourseId)
     @Html.HiddenFor(x => x.CourseRunId)
@@ -220,20 +225,59 @@
         })
     </div>
 
-    <div class="govuk-form-group">
-        <button name="submitButton" type="submit" class="govuk-button" id="publish" value="publish">
-            Publish
-        </button>
-        <a class="govuk-link" href="#" id="previewLink">Preview</a>
-        <a class="govuk-link" href="#" id="submitBackLink">Back to Section 1</a>
-    </div>
+
+
+    @{
+        var lastAddCoursePage = HttpContextAccessor.HttpContext.Session.GetObject<AddCoursePage>("LastAddCoursePage");
+        var summaryPageLoadedAtLeastOnce = HttpContextAccessor.HttpContext.Session.GetObject<bool>("SummaryLoadedAtLeastOnce");
+        switch (lastAddCoursePage)
+        {
+            case AddCoursePage.AddCourse:
+                if (summaryPageLoadedAtLeastOnce)
+                {
+                    <button name="submitButton" type="submit" class="govuk-button" id="publish" value="publish">
+                        Summary
+                    </button>
+                    <a class="govuk-link" href="#" id="goToSection1Link">Page 1</a>
+                }
+                else
+                {
+                    <button name="submitButton" type="submit" class="govuk-button" id="publish" value="publish">
+                        Review your changes
+                    </button>
+                    <a class="govuk-link" href="#" id="goToSection1Link">Page 1</a>
+                }
+                break;
+            case AddCoursePage.Summary:
+                <div class="govuk-form-group">
+                    <button type="submit" class="govuk-button" id="goToSummary">
+                        Summary
+                    </button>
+                
+                    <a class="govuk-link" href="#" id="goToSection1Link">Page 1</a>
+                </div>
+                break;
+        }
+    }
+
+
+
+
+    @*
+        <div class="govuk-form-group">
+            <button name="submitButton" type="submit" class="govuk-button" id="publish" value="publish">
+                Publish
+            </button>
+            <a class="govuk-link" href="#" id="previewLink">Preview</a>
+            <a class="govuk-link" href="#" id="submitBackLink">Back to Section 1</a>
+        </div>*@
 
     @*<div class="govuk-form-group">
-        <button name="submitButton" type="submit" class="govuk-button" id="publish" value="publish">
-            Next
-        </button>
-        <a class="govuk-link" href="#" id="submitBackLink">Back to Section 1</a>
-    </div>*@
+            <button name="submitButton" type="submit" class="govuk-button" id="publish" value="publish">
+                Next
+            </button>
+            <a class="govuk-link" href="#" id="submitBackLink">Back to Section 1</a>
+        </div>*@
 
 </form>
 
@@ -570,6 +614,15 @@
                         $('html, body').scrollTop($('#' + errorArray[0].id).offset().top);
                     }
                 });
+
+
+            var $goToSection1Link = $("#goToSection1Link");
+            $goToSection1Link.click(function() {
+                $("#addCourseSection2").attr("action", "AddCourseRunToAddCourse");
+                $("#addCourseSection2").submit();
+            });
+
+
         });
     })(jQuery);
 </script>
