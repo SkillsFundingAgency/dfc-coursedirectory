@@ -1,10 +1,22 @@
 ﻿@using Dfc.CourseDirectory.Web.ViewComponents.Extensions
 @using Dfc.CourseDirectory.Web.ViewComponents.Notification
 @using Dfc.CourseDirectory.Web.ViewComponents.Pagination;
+@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Identity
+@using Dfc.CourseDirectory.Web.Areas.Identity.Data;
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @model Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult.VenueSearchResultModel;
 
+@using Microsoft.AspNetCore.Authorization;
 
+@inject IAuthorizationService Authorization
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+
+@{ 
+    var authorised = await Authorization.AuthorizeAsync(User, "Admin");
+
+}
 <div class="govuk-width-container govuk-!-margin-top-4">
     <form id="venueSearchResultForm" asp-controller="Venues" asp-action="AddVenue" method="get">
         @{
@@ -14,37 +26,37 @@
 
 
                 @*if (Model.Updated)
-                {
-                    <span class="govuk-heading-m">Your venue updated:</span>
-                }
-                else
-                {
-                    <span class="govuk-heading-m">New venue added:</span>
-                }*@
-                string message="";
+                    {
+                        <span class="govuk-heading-m">Your venue updated:</span>
+                    }
+                    else
+                    {
+                        <span class="govuk-heading-m">New venue added:</span>
+                    }*@
+                string message = "";
                 if (!string.IsNullOrWhiteSpace(Model.NewItem.VenueName))
                 {
-                    message+= string.Concat(Model.NewItem.VenueName, ", ");
+                    message += string.Concat(Model.NewItem.VenueName, ", ");
                 }
                 if (!string.IsNullOrWhiteSpace(Model.NewItem.AddressLine1))
                 {
-                    message+=string.Concat(@Model.NewItem.AddressLine1, ", ");
+                    message += string.Concat(@Model.NewItem.AddressLine1, ", ");
                 }
                 if (!string.IsNullOrWhiteSpace(Model.NewItem.AddressLine2))
                 {
-                    message+=string.Concat(@Model.NewItem.AddressLine2, ", ");
+                    message += string.Concat(@Model.NewItem.AddressLine2, ", ");
                 }
                 if (!string.IsNullOrWhiteSpace(Model.NewItem.Town))
                 {
-                    message+=string.Concat(@Model.NewItem.Town, ", ");
+                    message += string.Concat(@Model.NewItem.Town, ", ");
                 }
                 if (!string.IsNullOrWhiteSpace(Model.NewItem.County))
                 {
-                    message+= string.Concat(@Model.NewItem.County, ", ");
+                    message += string.Concat(@Model.NewItem.County, ", ");
                 }
                 if (!string.IsNullOrWhiteSpace(Model.NewItem.PostCode))
                 {
-                    message+= @Model.NewItem.PostCode;
+                    message += @Model.NewItem.PostCode;
 
                 }
 
@@ -83,7 +95,7 @@
                                 <table class="govuk-table">
                                     <thead class="govuk-table__head">
                                         <tr class="govuk-table__row">
-                                            <th class="govuk-table__header" scope="col">Venue</th> 
+                                            <th class="govuk-table__header" scope="col">Venue</th>
                                             <th class="govuk-table__header" scope="col">Address</th>
                                             <th class="govuk-table__header" scope="col">Postcode</th>
                                             <th class="govuk-table__header" scope="col"></th>
@@ -123,9 +135,14 @@
                                                         @venue.PostCode
                                                     }
                                                 </td>
-                                                <td class="govuk-table__cell">
-                                                    <a asp-controller="venues" asp-action="EditVenue" asp-route-id=@venue.Id class="govuk-link">Edit</a>
-                                                </td>
+                                                @{
+                                                    if (authorised.Succeeded)
+                                                    {
+                                                        <td class="govuk-table__cell">
+                                                            <a asp-controller="venues" asp-action="EditVenue" asp-route-id=@venue.Id class="govuk-link">Edit</a>
+                                                        </td>
+                                                    }
+                                                }
                                             </tr>
                                         }
 
@@ -134,11 +151,16 @@
                             </section>
 
                         </div>
-                        <div class="govuk-form-group" style="margin-top: 30px;">
-                            <button type="submit" class="govuk-button">
-                                Add new venue
-                            </button>
-                        </div>
+                      
+                        if (authorised.Succeeded)
+                        {
+                            <div class="govuk-form-group" style="margin-top: 30px;">
+                                <button type="submit" class="govuk-button">
+                                    Add new venue
+                                </button>
+                            </div>
+                        }
+                        
                     }
                 </div>
             </div>

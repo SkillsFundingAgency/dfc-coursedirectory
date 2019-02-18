@@ -119,6 +119,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     return RedirectToAction("Index", new { status = "bad", learnAimRef = "", numberOfNewCourses = "", errmsg = "No course run" });
                 }
             }
+            else
+            {
+                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
+            }
+
 
             return RedirectToAction("Index", new { status = "update", learnAimRef = "", numberOfNewCourses = "", errmsg = "", updatedCourseId = model.CourseId });
         }
@@ -408,7 +413,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     LabelText = "Entry requirements",
                     HintText = "Please provide details of specific academic or vocational entry qualification requirements. Also do learners need specific skills, attributes or evidence? e.g. DBS clearance, driving licence",
                     AriaDescribedBy = "Please list entry requirements.",
-                    EntryRequirements = course?.EntryRequirements ?? defaultCourseText?.EntryRequirments
+                    EntryRequirements = course?.EntryRequirements ?? defaultCourseText?.EntryRequirements
                 },
                 WhatWillLearn = new WhatWillLearnModel()
                 {
