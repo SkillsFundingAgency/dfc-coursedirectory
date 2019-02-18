@@ -101,8 +101,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 SearchTerm = ukprn.ToString()
             };
+            if (null != newVenue) requestModel.NewAddressId = newVenue.Id;
 
-          
 
             VenueSearchResultModel model;
             var criteria = _venueSearchHelper.GetVenueSearchCriteria(requestModel);
@@ -277,10 +277,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     UKPRN.Value,
                     requestModel.VenueName,
                     requestModel.AddressLine1,
-                    requestModel.AddressLine2,
+                    (null != requestModel.AddressLine2 ? requestModel.AddressLine2 : string.Empty) ,
                     null,
                     requestModel.TownOrCity,
-                    requestModel.County,
+                    (null != requestModel.County ? requestModel.County : string.Empty), 
                     requestModel.Postcode,
                     latitude,
                     longitude,
@@ -300,11 +300,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     null,
                      UKPRN.Value,
                     requestModel.VenueName,
-                    requestModel.AddressLine1, 
-                    requestModel.AddressLine2, 
+                    requestModel.AddressLine1,
+                    (null != requestModel.AddressLine2 ? requestModel.AddressLine2 : string.Empty),
                     null,
                     requestModel.TownOrCity,
-                    requestModel.County, 
+                    (null != requestModel.County ? requestModel.County : string.Empty),
                     requestModel.Postcode,
                     latitude,
                     longitude,
@@ -315,7 +315,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     );
 
                 var addedVenue = await _venueService.AddAsync(venue);
-
+                updated = true;
                 venueID = addedVenue.Value.ID;
             }
             //Since we are updating or adding lets pass the model to the GetVenues method
