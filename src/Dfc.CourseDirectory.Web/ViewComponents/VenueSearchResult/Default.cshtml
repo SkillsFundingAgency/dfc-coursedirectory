@@ -14,8 +14,8 @@
 @inject UserManager<User> UserManager
 
 @{ 
-    var authorised = await Authorization.AuthorizeAsync(User, "Admin");
-
+    var adminLogin = await Authorization.AuthorizeAsync(User, "Admin");
+    var providerLogin = await Authorization.AuthorizeAsync(User, "Provider");
 }
 <div class="govuk-width-container govuk-!-margin-top-4">
     <form id="venueSearchResultForm" asp-controller="Venues" asp-action="AddVenue" method="get">
@@ -136,7 +136,7 @@
                                                     }
                                                 </td>
                                                 @{
-                                                    if (authorised.Succeeded)
+                                                    if (adminLogin.Succeeded || providerLogin.Succeeded)
                                                     {
                                                         <td class="govuk-table__cell">
                                                             <a asp-controller="venues" asp-action="EditVenue" asp-route-id=@venue.Id class="govuk-link">Edit</a>
@@ -152,7 +152,7 @@
 
                         </div>
                       
-                        if (authorised.Succeeded)
+                        if (adminLogin.Succeeded || providerLogin.Succeeded)
                         {
                             <div class="govuk-form-group" style="margin-top: 30px;">
                                 <button type="submit" class="govuk-button">
