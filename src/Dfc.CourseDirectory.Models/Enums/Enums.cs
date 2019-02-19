@@ -5,6 +5,8 @@ using System.Text;
 
 namespace Dfc.CourseDirectory.Models.Enums
 {
+
+
     public enum FundingOptions
     {
         [Description("Undefined")]
@@ -12,7 +14,7 @@ namespace Dfc.CourseDirectory.Models.Enums
         [Description("Adult education budget")]
         AdultEducationBudget = 1,
         [Description("Advanced learner loan")]
-        AdvancedLearnerLoad = 2,
+        AdvancedLearnerLoan = 2,
     }
     public enum RecordStatus
     {

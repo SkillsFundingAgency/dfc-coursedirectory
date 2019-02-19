@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Models.Interfaces.Courses;
+using Dfc.CourseDirectory.Models.Models;
 using Dfc.CourseDirectory.Models.Models.Courses;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.CourseTextService;
@@ -18,7 +19,6 @@ using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseFor;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.EntryRequirements;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.HowAssessed;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.HowYouWillLearn;
-using Dfc.CourseDirectory.Web.ViewComponents.Courses.SelectRegion;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.SelectVenue;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatWillLearn;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatYouNeed;
@@ -190,7 +190,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             };
 
             viewModel.SelectVenue = await GetVenuesByUkprn(UKPRN);
-            viewModel.SelectRegion = GetRegions();
+            //viewModel.SelectRegion = GetRegions();
 
             _session.SetObject(SessionVenues, viewModel.SelectVenue);
             _session.SetObject(SessionRegions, viewModel.SelectRegion);
@@ -285,72 +285,72 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return selectVenue;
         }
 
-        private SelectRegionModel GetRegions()
-        {
-            return new SelectRegionModel
-            {
-                LabelText = "Select course region",
-                HintText = "For example, South West",
-                AriaDescribedBy = "Select all that apply.",
-                RegionItems = new RegionItemModel[]
-                {
-                    new RegionItemModel
-                    {
-                        Id = "E12000001",
-                        Checked = false,
-                        RegionName = "North East"
-                    },
-                    new RegionItemModel
-                    {
-                        Id = "E12000002",
-                        Checked = false,
-                        RegionName = "North West"
-                    },
-                    new RegionItemModel
-                    {
-                        Id = "E12000003",
-                        Checked = false,
-                        RegionName = "Yorkshire and The Humber"
-                    },
-                    new RegionItemModel
-                    {
-                        Id = "E12000004",
-                        Checked = false,
-                        RegionName = "East Midlands"
-                    },
-                    new RegionItemModel
-                    {
-                        Id = "E12000005",
-                        Checked = false,
-                        RegionName = "West Midlands"
-                    },
-                    new RegionItemModel
-                    {
-                        Id = "E12000006",
-                        Checked = false,
-                        RegionName = "East of England"
-                    },
-                    new RegionItemModel
-                    {
-                        Id = "E12000007",
-                        Checked = false,
-                        RegionName = "London"
-                    },
-                    new RegionItemModel
-                    {
-                        Id = "E12000008",
-                        Checked = false,
-                        RegionName = "South East"
-                    },
-                    new RegionItemModel
-                    {
-                        Id = "E12000009",
-                        Checked = false,
-                        RegionName = "South West"
-                    }
-                }
-            };
-        }
+        //private SelectRegionModel GetRegions()
+        //{
+        //    return new SelectRegionModel
+        //    {
+        //        LabelText = "Select course region",
+        //        HintText = "For example, South West",
+        //        AriaDescribedBy = "Select all that apply.",
+        //        RegionItems = new RegionItemModel[]
+        //        {
+        //            new RegionItemModel
+        //            {
+        //                Id = "E12000001",
+        //                Checked = false,
+        //                RegionName = "North East"
+        //            },
+        //            new RegionItemModel
+        //            {
+        //                Id = "E12000002",
+        //                Checked = false,
+        //                RegionName = "North West"
+        //            },
+        //            new RegionItemModel
+        //            {
+        //                Id = "E12000003",
+        //                Checked = false,
+        //                RegionName = "Yorkshire and The Humber"
+        //            },
+        //            new RegionItemModel
+        //            {
+        //                Id = "E12000004",
+        //                Checked = false,
+        //                RegionName = "East Midlands"
+        //            },
+        //            new RegionItemModel
+        //            {
+        //                Id = "E12000005",
+        //                Checked = false,
+        //                RegionName = "West Midlands"
+        //            },
+        //            new RegionItemModel
+        //            {
+        //                Id = "E12000006",
+        //                Checked = false,
+        //                RegionName = "East of England"
+        //            },
+        //            new RegionItemModel
+        //            {
+        //                Id = "E12000007",
+        //                Checked = false,
+        //                RegionName = "London"
+        //            },
+        //            new RegionItemModel
+        //            {
+        //                Id = "E12000008",
+        //                Checked = false,
+        //                RegionName = "South East"
+        //            },
+        //            new RegionItemModel
+        //            {
+        //                Id = "E12000009",
+        //                Checked = false,
+        //                RegionName = "South West"
+        //            }
+        //        }
+        //    };
+        //}
         #endregion  
 
     }

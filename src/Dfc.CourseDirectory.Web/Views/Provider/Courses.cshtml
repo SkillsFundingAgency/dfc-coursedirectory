@@ -10,17 +10,17 @@
 
 <span class="govuk-caption-xl">Your courses</span>
 @{
-    var level = Model.FirstOrDefault()?.CoursesForLevel?.FirstOrDefault().NotionalNVQLevelv2;
+    var level = Model.FirstOrDefault()?.CoursesForLevel?.FirstOrDefault()?.NotionalNVQLevelv2;
 }
 <h1 class="govuk-heading-xl"> Level @level</h1>
 
-@if (Model.FirstOrDefault().CourseId != Guid.Empty)
+@if (Model.FirstOrDefault()?.CourseId != Guid.Empty)
 {
     @await Component.InvokeAsync(nameof(Notification), new NotificationModel
 {
 
     NotificationTitle = "Course edited",
-    NotificationMessage = "<a id='courseeditlink' class='govuk-link' href=# data-courseid=" + Model.FirstOrDefault().CourseId + ">You edited " + Model.FirstOrDefault().QualificationTitle + "</a>",
+    NotificationMessage = "<a id='courseeditlink' class='govuk-link' href=# data-courseid=" + Model.FirstOrDefault()?.CourseId + " data-courserunid = " + Model.FirstOrDefault()?.CourseRunId + "> You edited " + Model.FirstOrDefault()?.QualificationTitle + "</a>",
     ClassType = "info-summary"
 });
 
@@ -53,7 +53,7 @@
                     <div class="govuk-details__text" style="padding-left: 20px; padding-top: 0;">
                         @foreach (var a in s.CourseRuns)
                         {
-                            <div class="govuk-accordion__section" style="border-bottom: 1px solid #bfc1c3;border-top: none;padding-left: 30px;" padding-bottom: 10px;>
+                            <div class="govuk-accordion__section" id="@a.id"style="border-bottom: 1px solid #bfc1c3;border-top: none;padding-left: 30px;" padding-bottom: 10px;>
                                 <div class="govuk-accordion__section-header">
                                     <h2 class="govuk-accordion__section-heading">
                                         <button type="button" id="accordion-default-heading-1" aria-controls="accordion-default-content-1" class="govuk-accordion__section-button" aria-expanded="false">
@@ -128,7 +128,7 @@
                                             }
                                             <div>
                                                 <div class="">
-                                                    <label class="govuk-label" for="url" style="font-weight: 600">
+                                                    <label class="govuk-label" for="url" style="font-weight: 600; word-break: break-all;">
                                                         Url
                                                     </label>
 
@@ -245,15 +245,9 @@
 
                                         </div>
                                         <div class="cd-course--list" style="border-top-style: solid;padding-top: 20px;border-width: 1px">
-                                            <a class="govuk-link" asp-controller="Courses" asp-action="CourseSection2"
-                                               asp-route-learnAimRef="@s.LearnAimRef"
-                                               asp-route-notionalNVQLevelv2="@s.NotionalNVQLevelv2"
-                                               asp-route-awardOrgCode="@s.AwardOrgCode"
-                                               asp-route-learnAimRefTitle="@s.QualificationCourseTitle"
-                                               asp-route-learnAimRefTypeDesc="@s.QualificationType"
+                                            <a class="govuk-link" asp-controller="EditCourseRun" asp-action="Index"
                                                asp-route-courseId="@s.id"
-                                               asp-route-courseRunId="@a.id"
-                                               asp-route-courseMode="@CourseMode.EditCourseRun">Edit course details</a>
+                                               asp-route-courseRunId="@a.id">Edit course details</a>
 
                                             <a class="govuk-link" asp-controller="Courses" asp-action="CourseSection2"
                                                asp-route-learnAimRef="@s.LearnAimRef"
@@ -287,7 +281,20 @@
             
             $("#courseeditlink").click(function () {
                 var courseId = $(this).attr('data-courseid');
-                //var course = $("details[data-courseid='" + courseId + "']");
+
+                var courseRunId = $(this).attr('data-courserunid');
+
+                $('#' + courseId).attr('open','');
+
+                if (courseRunId !== "00000000-0000-0000-0000-000000000000") {
+                    var els1 = document.querySelectorAll("div[class^='govuk-accordion__section']");
+                    for (var i = 0; i < els1.length; i++) {
+
+                        els1[i].classList.remove('govuk-accordion__section--expanded');
+
+                    }
+                    $('#' + courseRunId).addClass('govuk-accordion__section--expanded');
+                }
 
                 $('html, body').animate({
                     scrollTop: $('#' + courseId).offset().top

@@ -13,7 +13,7 @@
         </span>
     }
     <span asp-validation-for="@Model.CourseName" class="govuk-error-message"></span>
-    <input class="govuk-input" asp-for="@Model.CourseName" type="text" aria-describedby="@Model.AriaDescribedBy">
+    <input class="govuk-input" asp-for="@Model.CourseName" type="text" aria-describedby="@Model.AriaDescribedBy" val-required-message="Course name is required">
 </div>
 
 <script>

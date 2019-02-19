@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Dfc.CourseDirectory.Web.ViewComponents.Courses.SelectRegion
+namespace Dfc.CourseDirectory.Models.Models
 {
     public class SelectRegionModel
     {

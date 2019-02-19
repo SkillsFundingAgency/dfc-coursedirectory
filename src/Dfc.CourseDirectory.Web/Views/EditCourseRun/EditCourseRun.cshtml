@@ -1,0 +1,312 @@
+﻿@using Dfc.CourseDirectory.Web.ViewComponents.AdvancedLearnerLoan
+@using Dfc.CourseDirectory.Web.ViewComponents.CourseName
+@using Dfc.CourseDirectory.Web.ViewComponents.CourseProviderReference
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.AddStartDate
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.Attendance
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseVenue
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.Cost
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.DeliveryType
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.Duration
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.SelectVenue
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode
+@using Dfc.CourseDirectory.Web.ViewComponents.Extensions
+@using Dfc.CourseDirectory.Web.ViewComponents.UrlInput
+@model Dfc.CourseDirectory.Web.ViewModels.EditCourse.EditCourseRunViewModel
+
+<h1 class="govuk-heading-l" style="padding-top: 20px;">
+    Edit course details
+</h1>
+
+<form asp-controller="EditCourseRun" asp-action="Index" id="editCourseRun">
+
+    @Html.HiddenFor(x => x.CourseId)
+    @Html.HiddenFor(x => x.CourseRunId)
+    @Html.HiddenFor(x => x.QualificationType)
+
+    <div id="sectionCourseName">
+        @await Component.InvokeAsync(nameof(CourseName), new CourseNameModel
+        {
+            CourseName = Model.CourseName,
+            LabelText = "Course name",
+            HintText = "This is the name people will see when they search for your course.",
+            AriaDescribedBy = "Please enter the course name."
+        })
+    </div>
+
+    <div id="sectionCourseProviderReference">
+        @await Component.InvokeAsync(nameof(CourseProviderReference), new CourseProviderReferenceModel
+        {
+            CourseProviderReference = Model.CourseProviderReference,
+            LabelText = "ID",
+            HintText = "This is how you identify a course in your internal system.",
+            AriaDescribedBy = "Please enter the ID for this course"
+        })
+    </div>
+
+    <div id="sectionDeliveryType">
+        @await Component.InvokeAsync(nameof(DeliveryType), new DeliveryTypeModel
+        {
+            DeliveryMode = Model.DeliveryMode,
+            LabelText = "Delivery Mode",
+            HintText = "Select how this course will be delivered",
+            AriaDescribedBy = "How the course will be delivered"
+        })
+    </div>
+
+    <div id="sectionStartDate">
+        @await Component.InvokeAsync(nameof(AddStartDate), new AddStartDateModel()
+        {
+            StartDateType = Model.StartDateType,
+            Day = Model.Day ,
+            Month = Model.Month,
+            Year = Model.Year,
+            DayAriaDescribedBy = "",
+            DayLabelText = "Day",
+            MonthAriaDescribedBy = "",
+            MonthLabelText = "Month",
+            YearAriaDescribedBy = "",
+            YearLabelText = "Year",
+            AriaDescribedBy = "",
+            SpecifiedDateHintText = "e.g. 'For example, 30 9 2019",
+            FlexibleDateHintText = "Or select a flexible start date:",
+            LabelText = "Start date"
+        })
+    </div>
+
+    @*No view component here in order to get checkbox list validation to work without it's own form*@
+    <div class="govuk-form-group" id="VenueChoice" style="@Model.DeliveryMode.IfNotClassroomBasedDisplayNone()">
+        @await Component.InvokeAsync(nameof(ChooseVenue), new ChooseVenueModel()
+        {
+            LabelText = "Venue",
+            AriaDescribedBy = "Venue",
+            HintText = "Select course run venue",
+            Venues = Model.Venues,
+            VenueId = Model.VenueId
+        })
+    </div>
+
+    <div class="govuk-form-group" id="RegionItemsCheckboxList" style="@Model.DeliveryMode.IfNotWorkBasedDisplayNone()">
+        <label class="govuk-label" for="select-region">
+            @Model.SelectRegion.LabelText
+        </label>
+        <span id="select-region-hint" class="govuk-hint">
+            @Model.SelectRegion.HintText
+        </span>
+        <span class="govuk-error-message field-validation-error" id="invalidRegionsChecked" style="display: none;margin-bottom: 15px;">
+            <span id="invalidRegionsCheckedMessage" class="">Select a region.</span>
+        </span>
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <div class="govuk-checkboxes" id="SelectRegionCheckBoxes">
+                    @{ var j = 0; }
+                    @if (Model.SelectRegion.RegionItems.Count() == 1)
+                    {
+                        <div class="govuk-checkboxes__item">
+                            <input class="govuk-checkboxes__input" id="RegionName-@j" name="SelectedRegions" type="checkbox" value="@Model.SelectRegion.RegionItems.First().Id" checked="checked" onclick="return false;" />
+                            <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@Model.SelectRegion.RegionItems.First().RegionName</label>
+                        </div>
+                    }
+                    else
+                    {
+                        foreach (var item in Model.SelectRegion.RegionItems)
+                        {
+                            j++;
+                            <div class="govuk-checkboxes__item">
+                                <input class="govuk-checkboxes__input" id="RegionName-@j" name="SelectedRegions" type="checkbox" value="@item.Id" @item.Checked.ThenNullableCheck() />
+                                <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@item.RegionName</label>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="sectionUrl">
+        @await Component.InvokeAsync(nameof(UrlInput), new UrlInputModel
+        {
+            Url = Model.Url,
+            LabelText = "URL",
+            HintText = "Enter the URL for this course e.g. http://www.google.com",
+            AriaDescribedBy = "Enter the URL for this course"
+        })
+    </div>
+
+    <div id="sectionCost">
+        @await Component.InvokeAsync(nameof(Cost), new CostModel
+        {
+            Cost = Model.Cost,
+            CostDescription = Model.CostDescription,
+            CostLabelText = "Cost",
+            CostHintText = "Enter the cost for the course in pounds and pence e.g. 125.00",
+            CostAriaDescribedBy = "Enter the cost in pounds and pence",
+            CostDescriptionLabelText = "Cost description",
+            CostDescriptionHintText = "Enter details related to the cost of this course",
+            CostDescriptionAriaDescribedBy = "Enter details of related to the cost of this course"
+        })
+    </div>
+
+    @*<div id="sectionAdvancedLearnerLoan">
+            @await Component.InvokeAsync(nameof(AdvancedLearnerLoan), new AdvancedLearnerLoanModel
+            {
+                AdvancedLearnerLoan = Model.AdvancedLearnerLoan,
+                LabelText = "Advanced learner loan",
+                HintText = "Select the checkbox below if Advanced Learner Loans are available for this course",
+                AriaDescribedBy = "Select whether Advanced Learner Loan is available for this course"
+            })
+        </div>*@
+
+    <div id="sectionDuration">
+        @await Component.InvokeAsync(nameof(Duration), new DurationModel
+        {
+            DurationLength = Model.DurationLength,
+            DurationUnit =  Model.DurationUnit,
+            LabelText = "Duration",
+            HintText = "Select the duration of the course",
+            AriaDescribedBy = "Select course duration"
+        })
+    </div>
+
+    <div id="FullPartTimeRadioButtons">
+        @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode.StudyMode), new StudyModeModel
+        {
+            StudyMode = Model.StudyMode,
+            LabelText = "Full time or part time",
+            HintText = "Select the attendance pattern"
+        })
+    </div>
+
+    <div id="AttendancePatternRadioButtons">
+        @await Component.InvokeAsync(nameof(Attendance), new AttendanceModel
+        {
+            AttendanceMode = Model.AttendanceMode,
+            LabelText = "Attendance",
+            HintText = "Select the time of day the course takes place"
+        })
+    </div>
+
+    <div class="govuk-form-group">
+        <button name="saveButton" type="submit" class="govuk-button" id="save">
+            Save
+        </button>
+        @Html.ActionLink("Cancel", "Courses", "Provider", new { qualificationType = @Model.QualificationType }, new { @class = "govuk-link" })
+    </div>
+
+</form>
+
+<script>
+    (function ($) {
+        $(function () {
+            //var $courseName = $("#@nameof(Model.CourseName)").govUkInput();
+            var $deliveryRadios = $("#DeliveryModeRadioButtons input[type=radio]");
+            var $regionItemsCheckboxList = $("#RegionItemsCheckboxList");
+            var $regionCheckboxes = $("#SelectRegionCheckBoxes input[type=checkbox]");
+            var $formRegionsIsValid = false;
+            var isClassroomBased = true;
+            var isOnline = false;
+            var isWorkBased = false;
+            var $button = $("#save");
+
+            //$courseName.on("blur", function () {
+            //    if ($.requiredValidate($courseName.val())) {
+            //        $courseName.govUkInput("validState");
+            //    }
+            //});
+
+            $button.on("click",
+                function(event) {
+                    event.preventDefault();
+                    //if ($.requiredValidate($firstname.val())) {
+                    //    $courseName.govUkInput("validState");
+                    //} else {
+                    //    $courseName.govUkInput("invalidState", $courseName.attr("val-required-message"));
+                    //}
+
+                    $("#editCourseRun").submit();
+
+                });
+
+
+
+
+
+            $deliveryRadios.change(function () {
+                var $venueChoice = $("#VenueChoice");
+                var $fullPartTimeRadioButtons = $("#FullPartTimeRadioButtons");
+                var $attendancePatternRadioButtons = $("#AttendancePatternRadioButtons");
+                var $specifiedStartDate = $("#SpecifiedStartDate");
+                var $flexibleStartDate = $("#FlexibleStartDate");
+
+                switch (this.id) {
+                    case "ClassroomBased":
+                        {
+                            $specifiedStartDate.prop("checked", true);
+                            $flexibleStartDate.prop("checked", false);
+                            $venueChoice.show();
+                            $regionItemsCheckboxList.hide();
+                            $fullPartTimeRadioButtons.show();
+                            $attendancePatternRadioButtons.show();
+                            isClassroomBased = true;
+                            isOnline = false;
+                            isWorkBased = false;
+                            break;
+                        }
+                    case "Online":
+                        {
+                            $flexibleStartDate.prop("checked", true);
+                            $specifiedStartDate.prop("checked", false);
+                            $venueChoice.hide();
+                            $regionItemsCheckboxList.hide();
+                            $fullPartTimeRadioButtons.hide();
+                            $attendancePatternRadioButtons.hide();
+                            isClassroomBased = false;
+                            isOnline = true;
+                            isWorkBased = false;
+                            break;
+                        }
+                    case "WorkBased":
+                        {
+                            $flexibleStartDate.prop("checked", true);
+                            $specifiedStartDate.prop("checked", false);
+                            $venueChoice.hide();
+                            $regionItemsCheckboxList.show();
+                            $fullPartTimeRadioButtons.hide();
+                            $attendancePatternRadioButtons.hide();
+                            isClassroomBased = false;
+                            isOnline = false;
+                            isWorkBased = true;
+                            break;
+                        }
+                }
+
+
+            });
+
+            $regionCheckboxes.change(function () {
+                var $validationMessageForRegions = $("#invalidRegionsChecked");
+                var $formGroupRegions = $regionItemsCheckboxList.closest('.govuk-form-group');
+                var countedCheckedCheckboxes = $regionCheckboxes.filter(':checked').length;
+
+                if ($(this).is(":visible")) {
+                    if (countedCheckedCheckboxes === 0) {
+                        $formGroupRegions.addClass("govuk-form-group--error");
+                        $validationMessageForRegions.show();
+                        $formRegionsIsValid = false;
+                    }
+                    else {
+                        $formGroupRegions.removeClass("govuk-form-group--error");
+                        $validationMessageForRegions.hide();
+                        $formRegionsIsValid = true;
+                    }
+                }
+                else {
+                    $formGroupRegions.removeClass("govuk-form-group--error");
+                    $validationMessageForRegions.hide();
+                    $formRegionsIsValid = true;
+                }
+            });
+
+        });
+    })(jQuery);
+</script>

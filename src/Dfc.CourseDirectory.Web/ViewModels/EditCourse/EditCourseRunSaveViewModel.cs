@@ -6,11 +6,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Dfc.CourseDirectory.Web.ViewModels.EditCourse
 {
-    public class EditCourseRunViewModel
+    public class EditCourseRunSaveViewModel
     {
         public string CourseName { get; set; }
         public DateTime StartDate { get; set; }
-        public StartDateType StartDateType { get; set; }
+        public string StartDateType { get; set; }
         public string Day { get; set; }
         public string Month { get; set; }
         public string Year { get; set; }
@@ -18,7 +18,6 @@ namespace Dfc.CourseDirectory.Web.ViewModels.EditCourse
         public string Cost { get; set; }
         public string CostDescription { get; set; }
 
-        public List<SelectListItem> Venues { get; set; }
         public Guid  VenueId { get; set; }
         public SelectRegionModel SelectRegion { get; set; }
         public DeliveryMode DeliveryMode { get; set; }
