@@ -16,7 +16,7 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Courses
          string AwardOrgCode { get; set; }
          string CountOfOpportunities { get; set; }
          string CourseDescription { get; set; }
-         string EntryRequirments { get; set; }
+         string EntryRequirements { get; set; }
          string WhatYoullLearn { get; set; }
          string HowYoullLearn { get; set; }
          string WhatYoullNeed { get; set; }

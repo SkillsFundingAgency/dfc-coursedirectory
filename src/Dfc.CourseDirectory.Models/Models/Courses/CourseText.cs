@@ -14,7 +14,7 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         public string AwardOrgCode { get; set; }
         public string CountOfOpportunities { get; set; }
         public string CourseDescription { get; set; }
-        public string EntryRequirments { get; set; }
+        public string EntryRequirements { get; set; }
         public string WhatYoullLearn { get; set; }
         public string HowYoullLearn { get; set; }
         public string WhatYoullNeed { get; set; }
