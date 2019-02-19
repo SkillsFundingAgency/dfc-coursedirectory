@@ -186,7 +186,7 @@
         })
     </div>
 
-    <div id="sectionAdvancedLearnerLoan">
+    @*<div id="sectionAdvancedLearnerLoan">
         @await Component.InvokeAsync(nameof(AdvancedLearnerLoan), new AdvancedLearnerLoanModel
         {
             AdvancedLearnerLoan = Model.AdvancedLearnerLoan,
@@ -194,7 +194,7 @@
             HintText = "Select the checkbox below if Advanced Learner Loans are available for this course",
             AriaDescribedBy = "Select whether Advanced Learner Loan is available for this course"
         })
-    </div>
+    </div>*@
 
     <div id="sectionDuration">
         @await Component.InvokeAsync(nameof(Duration), new DurationModel

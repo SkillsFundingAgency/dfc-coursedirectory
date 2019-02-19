@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
+﻿using System.ComponentModel;
 
 namespace Dfc.CourseDirectory.Models.Enums
 {
@@ -12,7 +9,7 @@ namespace Dfc.CourseDirectory.Models.Enums
         [Description("Adult education budget")]
         AdultEducationBudget = 1,
         [Description("Advanced learner loan")]
-        AdvancedLearnerLoad = 2,
+        AdvancedLearnerLoan = 2,
     }
     public enum RecordStatus
     {
