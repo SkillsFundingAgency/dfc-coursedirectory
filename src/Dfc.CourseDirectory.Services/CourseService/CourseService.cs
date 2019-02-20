@@ -9,6 +9,7 @@ using Microsoft.Extensions.Options;
 using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Common.Interfaces;
 using Dfc.CourseDirectory.Models.Interfaces.Courses;
+using Dfc.CourseDirectory.Models.Models;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Newtonsoft.Json;
 using Dfc.CourseDirectory.Models.Models.Courses;
@@ -40,6 +41,74 @@ namespace Dfc.CourseDirectory.Services.CourseService
             _getYourCoursesUri = settings.Value.ToGetYourCoursesUri();
             _updateCourseUri = settings.Value.ToUpdateCourseUri();
             _getCourseByIdUri = settings.Value.ToGetCourseByIdUri();
+        }
+
+        public SelectRegionModel GetRegions()
+        {
+            return new SelectRegionModel
+            {
+                LabelText = "Select course region",
+                HintText = "For example, South West",
+                AriaDescribedBy = "Select all that apply.",
+                RegionItems = new RegionItemModel[]
+                {
+                    new RegionItemModel
+                    {
+                        Id = "E12000001",
+                        Checked = false,
+                        RegionName = "North East"
+                    },
+                    new RegionItemModel
+                    {
+                        Id = "E12000002",
+                        Checked = false,
+                        RegionName = "North West"
+                    },
+                    new RegionItemModel
+                    {
+                        Id = "E12000003",
+                        Checked = false,
+                        RegionName = "Yorkshire and The Humber"
+                    },
+                    new RegionItemModel
+                    {
+                        Id = "E12000004",
+                        Checked = false,
+                        RegionName = "East Midlands"
+                    },
+                    new RegionItemModel
+                    {
+                        Id = "E12000005",
+                        Checked = false,
+                        RegionName = "West Midlands"
+                    },
+                    new RegionItemModel
+                    {
+                        Id = "E12000006",
+                        Checked = false,
+                        RegionName = "East of England"
+                    },
+                    new RegionItemModel
+                    {
+                        Id = "E12000007",
+                        Checked = false,
+                        RegionName = "London"
+                    },
+                    new RegionItemModel
+                    {
+                        Id = "E12000008",
+                        Checked = false,
+                        RegionName = "South East"
+                    },
+                    new RegionItemModel
+                    {
+                        Id = "E12000009",
+                        Checked = false,
+                        RegionName = "South West"
+                    }
+                   
+                }
+            };
         }
 
         public async Task<IResult<ICourse>> GetCourseByIdAsync(IGetCourseByIdCriteria criteria)

@@ -17,7 +17,7 @@
     }
     <span asp-validation-for="@Model.DurationLength" class="govuk-error-message"></span>
 
-    <div class="duration-container">
+    <div class="">
         <input pattern="[0-9]*" min="1" step="1" class="govuk-input govuk-input--width-2" style="display:inline;" asp-for="@Model.DurationLength" type="text" aria-describedby="@Model.AriaDescribedBy">
         <select asp-for="@Model.DurationUnit" asp-items="@Model.DurationUnits" class="govuk-select"></select>
     </div>

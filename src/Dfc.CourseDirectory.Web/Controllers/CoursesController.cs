@@ -32,8 +32,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using CourseRun = Dfc.CourseDirectory.Models.Models.Courses.CourseRun;
-using Dfc.CourseDirectory.Web.ViewComponents.Courses.SelectRegion;
 using Dfc.CourseDirectory.Models.Enums;
+using Dfc.CourseDirectory.Models.Models;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.Authorization;
 
@@ -333,7 +333,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 if (courseRunForEdit != null)
                 {
                     var venues = await GetVenuesByUkprn(course.ProviderUKPRN);
-                    var regions = GetRegions();
+                    //var regions = GetRegions();
 
                     var editCourseRunViewModel = new AddCourseDetailsViewModel
                     {
@@ -342,7 +342,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         AwardOrgCode = course.AwardOrgCode,
                         NotionalNVQLevelv2 = course.NotionalNVQLevelv2,
                         SelectVenue = venues,
-                        SelectRegion = regions,
+                        //SelectRegion = regions,
                         CourseProviderReference = courseRunForEdit?.ProviderCourseID,
                         CourseName = courseRunForEdit?.CourseName,
                         DeliveryMode = courseRunForEdit.DeliveryMode,
@@ -498,7 +498,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     };
 
                     viewModel.SelectVenue = await GetVenuesByUkprn(UKPRN);
-                    viewModel.SelectRegion = GetRegions();
+                    //viewModel.SelectRegion = GetRegions();
 
                     _session.SetObject(SessionVenues, viewModel.SelectVenue);
                     _session.SetObject(SessionRegions, viewModel.SelectRegion);
@@ -944,7 +944,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         DurationValue = addCourseSection2.DurationLength,
                         StudyMode = addCourseSection2.StudyMode,
                         AttendancePattern = addCourseSection2.AttendanceMode,
-                        Regions = GetRegions().RegionItems.Select(x => x.Id),
+                        //Regions = GetRegions().RegionItems.Select(x => x.Id),
                         CreatedDate = DateTime.Now,
                         CreatedBy = "ProviderPortal-AddCourse",
                         RecordStatus = RecordStatus.Live // TODO - To Be Decided
@@ -1310,103 +1310,103 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return selectVenue;
         }
 
-        private SelectRegionModel GetRegions()
-        {
-            return new SelectRegionModel
-            {
-                LabelText = "Select course region",
-                HintText = "For example, South West",
-                AriaDescribedBy = "Select all that apply.",
-                RegionItems = new RegionItemModel[]
-                {
-                    new RegionItemModel
-                    {
-                        Id = "E12000001",
-                        Checked = false,
-                        RegionName = "North East"
-                    },
-                    new RegionItemModel
-                    {
-                        Id = "E12000002",
-                        Checked = false,
-                        RegionName = "North West"
-                    },
-                    new RegionItemModel
-                    {
-                        Id = "E12000003",
-                        Checked = false,
-                        RegionName = "Yorkshire and The Humber"
-                    },
-                    new RegionItemModel
-                    {
-                        Id = "E12000004",
-                        Checked = false,
-                        RegionName = "East Midlands"
-                    },
-                    new RegionItemModel
-                    {
-                        Id = "E12000005",
-                        Checked = false,
-                        RegionName = "West Midlands"
-                    },
-                    new RegionItemModel
-                    {
-                        Id = "E12000006",
-                        Checked = false,
-                        RegionName = "East of England"
-                    },
-                    new RegionItemModel
-                    {
-                        Id = "E12000007",
-                        Checked = false,
-                        RegionName = "London"
-                    },
-                    new RegionItemModel
-                    {
-                        Id = "E12000008",
-                        Checked = false,
-                        RegionName = "South East"
-                    },
-                    new RegionItemModel
-                    {
-                        Id = "E12000009",
-                        Checked = false,
-                        RegionName = "South West"
-                    }
-                    //,
-                    //new RegionItemModel
-                    //{
-                    //    Id = "L99999999",
-                    //    Checked = false,
-                    //    RegionName = "(pseudo) Channel Islands"
-                    //},
-                    //new RegionItemModel
-                    //{
-                    //    Id = "M99999999",
-                    //    Checked = false,
-                    //    RegionName = "(pseudo) Isle of Man"
-                    //},
-                    //new RegionItemModel
-                    //{
-                    //    Id = "N99999999",
-                    //    Checked = false,
-                    //    RegionName = "(pseudo) Northern Ireland"
-                    //},
-                    //new RegionItemModel
-                    //{
-                    //    Id = "S99999999",
-                    //    Checked = false,
-                    //    RegionName = "(pseudo) Scotland"
-                    //},
-                    //new RegionItemModel
-                    //{
-                    //    Id = "W99999999",
-                    //    Checked = false,
-                    //    RegionName = "(pseudo) Wales"
-                    //}
-                }
-            };
-        }
+        //private SelectRegionModel GetRegions()
+        //{
+        //    return new SelectRegionModel
+        //    {
+        //        LabelText = "Select course region",
+        //        HintText = "For example, South West",
+        //        AriaDescribedBy = "Select all that apply.",
+        //        RegionItems = new RegionItemModel[]
+        //        {
+        //            new RegionItemModel
+        //            {
+        //                Id = "E12000001",
+        //                Checked = false,
+        //                RegionName = "North East"
+        //            },
+        //            new RegionItemModel
+        //            {
+        //                Id = "E12000002",
+        //                Checked = false,
+        //                RegionName = "North West"
+        //            },
+        //            new RegionItemModel
+        //            {
+        //                Id = "E12000003",
+        //                Checked = false,
+        //                RegionName = "Yorkshire and The Humber"
+        //            },
+        //            new RegionItemModel
+        //            {
+        //                Id = "E12000004",
+        //                Checked = false,
+        //                RegionName = "East Midlands"
+        //            },
+        //            new RegionItemModel
+        //            {
+        //                Id = "E12000005",
+        //                Checked = false,
+        //                RegionName = "West Midlands"
+        //            },
+        //            new RegionItemModel
+        //            {
+        //                Id = "E12000006",
+        //                Checked = false,
+        //                RegionName = "East of England"
+        //            },
+        //            new RegionItemModel
+        //            {
+        //                Id = "E12000007",
+        //                Checked = false,
+        //                RegionName = "London"
+        //            },
+        //            new RegionItemModel
+        //            {
+        //                Id = "E12000008",
+        //                Checked = false,
+        //                RegionName = "South East"
+        //            },
+        //            new RegionItemModel
+        //            {
+        //                Id = "E12000009",
+        //                Checked = false,
+        //                RegionName = "South West"
+        //            }
+        //            //,
+        //            //new RegionItemModel
+        //            //{
+        //            //    Id = "L99999999",
+        //            //    Checked = false,
+        //            //    RegionName = "(pseudo) Channel Islands"
+        //            //},
+        //            //new RegionItemModel
+        //            //{
+        //            //    Id = "M99999999",
+        //            //    Checked = false,
+        //            //    RegionName = "(pseudo) Isle of Man"
+        //            //},
+        //            //new RegionItemModel
+        //            //{
+        //            //    Id = "N99999999",
+        //            //    Checked = false,
+        //            //    RegionName = "(pseudo) Northern Ireland"
+        //            //},
+        //            //new RegionItemModel
+        //            //{
+        //            //    Id = "S99999999",
+        //            //    Checked = false,
+        //            //    RegionName = "(pseudo) Scotland"
+        //            //},
+        //            //new RegionItemModel
+        //            //{
+        //            //    Id = "W99999999",
+        //            //    Checked = false,
+        //            //    RegionName = "(pseudo) Wales"
+        //            //}
+        //        }
+        //    };
+        //}
 
         private async Task<AddCourseDetailsViewModel> GetSection2ViewModel()
         {
@@ -1433,7 +1433,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             };
 
             viewModel.SelectVenue = await GetVenuesByUkprn(UKPRN);
-            viewModel.SelectRegion = GetRegions();
+           // viewModel.SelectRegion = GetRegions();
 
             _session.SetObject(SessionVenues, viewModel.SelectVenue);
             _session.SetObject(SessionRegions, viewModel.SelectRegion);

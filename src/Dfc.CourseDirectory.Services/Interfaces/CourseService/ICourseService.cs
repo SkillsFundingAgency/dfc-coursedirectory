@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Common.Interfaces;
 using Dfc.CourseDirectory.Models.Interfaces.Courses;
+using Dfc.CourseDirectory.Models.Models;
 
 
 namespace Dfc.CourseDirectory.Services.Interfaces.CourseService
@@ -16,5 +17,8 @@ namespace Dfc.CourseDirectory.Services.Interfaces.CourseService
         Task<IResult<ICourse>> UpdateCourseAsync(ICourse course);
 
         Task<IResult<ICourse>> GetCourseByIdAsync(IGetCourseByIdCriteria criteria);
+
+        SelectRegionModel GetRegions();
+
     }
 }

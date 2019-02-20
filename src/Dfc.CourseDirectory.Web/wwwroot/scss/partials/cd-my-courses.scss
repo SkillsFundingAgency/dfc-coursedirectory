@@ -109,3 +109,7 @@ select:disabled {
     background-color:rgb(235, 235, 228);
 }
 
+.govuk-accordion__section:last-child {
+    border-bottom: 10px;
+}
+

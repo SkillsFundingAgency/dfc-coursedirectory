@@ -116,7 +116,7 @@
     <Content Update="Views\EditCourse\EditCourse.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\EditCourse\EditCourseRun.cshtml">
+    <Content Update="Views\EditCourseRun\EditCourseRun.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\Provider\Courses.cshtml">

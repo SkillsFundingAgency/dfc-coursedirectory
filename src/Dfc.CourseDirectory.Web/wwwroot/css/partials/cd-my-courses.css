@@ -96,3 +96,7 @@ li span.govuk-body {
 select:disabled {
   background-color: #ebebe4;
 }
+
+.govuk-accordion__section:last-child {
+  border-bottom: 10px;
+}
