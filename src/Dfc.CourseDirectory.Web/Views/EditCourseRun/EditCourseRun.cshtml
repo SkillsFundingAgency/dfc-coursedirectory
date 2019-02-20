@@ -196,36 +196,104 @@
 </form>
 
 <script>
-    (function ($) {
-        $(function () {
-            //var $courseName = $("#@nameof(Model.CourseName)").govUkInput();
+    (function($) {
+        $(function() {
+            var $courseName = $("#@nameof(Model.CourseName)").govUkInput();
             var $deliveryRadios = $("#DeliveryModeRadioButtons input[type=radio]");
             var $regionItemsCheckboxList = $("#RegionItemsCheckboxList");
             var $regionCheckboxes = $("#SelectRegionCheckBoxes input[type=checkbox]");
             var $formRegionsIsValid = false;
+
             var isClassroomBased = true;
             var isOnline = false;
             var isWorkBased = false;
+
+            var $CourseNameIsValid = false;
+
             var $button = $("#save");
 
-            //$courseName.on("blur", function () {
-            //    if ($.requiredValidate($courseName.val())) {
-            //        $courseName.govUkInput("validState");
-            //    }
-            //});
+            $courseName.on("blur",
+                function() {
+                    if ($.requiredValidate($courseName.val())) {
+                        $courseName.govUkInput("validState");
+                    }
+                });
+
+            function isAllValid(currentValue) {
+                return currentValue === true;
+            }
 
             $button.on("click",
                 function(event) {
                     event.preventDefault();
-                    //if ($.requiredValidate($firstname.val())) {
+
+                    var validStates = [];
+
+                    //if (!$.requiredValidate($courseName.val())) {
+                    //    $courseName.govUkInput("invalidState",
+                    //        $courseName.attr("val-required-message"));
+                    //} else if (!$.maxLengthValidate({
+                    //    max: $courseName.attr("val-max-length")
+                    //    },
+                    //    $courseName.find("input").val())) {
+                    //    $courseName.govUkInput("invalidState", $courseName.attr("val-max-length-message"));
+                    //} else if (!$.regexValidate({
+                    //        max: $courseName.attr("val-regex")
+                    //    },
+                    //    $courseName.find("input").val())) {
+                    //    $courseName.govUkInput("invalidState", $courseName.attr("val-regex-message"));
+                    //}
+                    //else {
                     //    $courseName.govUkInput("validState");
-                    //} else {
-                    //    $courseName.govUkInput("invalidState", $courseName.attr("val-required-message"));
                     //}
 
-                    $("#editCourseRun").submit();
+
+                    if (!$.requiredValidate($courseName.val())) {
+                        $courseName.govUkInput("invalidState", $courseName.attr("val-required-message"));
+                    } else if (
+                        !$.regexValidate({ regex: $courseName.attr("val-regex") }, $courseName.val())) {
+                        $courseName.govUkInput("invalidState", $courseName.attr("val-regex-message"));
+                    }else if (
+                        !$.maxLengthValidate({ max: $courseName.attr("val-max-length") }, $courseName.val())) {
+                        $courseName.govUkInput("invalidState", $courseName.attr("val-max-length-message"));
+                        }
+                    else {
+
+                        $courseName.govUkInput("validState");
+                    }
+
+
+                    //if (!$.requiredValidate($duration.find("input").val())) {
+                    //    $duration.govUkDurationInput("invalidState", $duration.attr("val-duration-message"));
+                    //} else if (!$.rangeValidate({
+                    //        min: $duration.attr("val-range-min"),
+                    //        max: $duration.attr("val-range-max")
+                    //    },
+                    //    $duration.find("input").val())) {
+                    //    $duration.govUkDurationInput("invalidState", $duration.attr("val-duration-message"));
+                    //} else if (!$.requiredValidate($duration.find("select").val())) {
+                    //    $duration.govUkDurationInput("invalidState", $duration.attr("val-duration-message"));
+                    //} else {
+                    //    $duration.govUkDurationInput("validState");
+                    //}
+
+                    if (validStates.every(isAllValid)) {
+
+                        alert("OK");
+                        //$("#editCourseRun").submit();
+                    } else {
+                        alert("ERROR");
+                    }
 
                 });
+
+
+            //$courseName.govUkInput("invalidState", $courseName.attr("val-required-message"));
+            //)
+
+
+
+
 
 
 

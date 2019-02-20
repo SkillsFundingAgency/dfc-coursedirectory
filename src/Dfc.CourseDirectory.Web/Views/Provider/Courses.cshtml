@@ -1,11 +1,12 @@
 ﻿
+@using Dfc.CourseDirectory.Services.Interfaces.CourseService
 @using Dfc.CourseDirectory.Services.Interfaces.VenueService
 @using Dfc.CourseDirectory.Services.VenueService
 @using Dfc.CourseDirectory.Web.Helpers
 @using Dfc.CourseDirectory.Web.ViewComponents.Notification
 @model IEnumerable<ProviderCoursesViewModel>
 @inject IVenueService venueService
-
+@inject ICourseService courseService
 
 
 <span class="govuk-caption-xl">Your courses</span>
@@ -53,7 +54,7 @@
                     <div class="govuk-details__text" style="padding-left: 20px; padding-top: 0;">
                         @foreach (var a in s.CourseRuns)
                         {
-                            <div class="govuk-accordion__section" id="@a.id"style="border-bottom: 1px solid #bfc1c3;border-top: none;padding-left: 30px;" padding-bottom: 10px;>
+                            <div class="govuk-accordion__section" id="@a.id">
                                 <div class="govuk-accordion__section-header">
                                     <h2 class="govuk-accordion__section-heading">
                                         <button type="button" id="accordion-default-heading-1" aria-controls="accordion-default-content-1" class="govuk-accordion__section-button" aria-expanded="false">
@@ -109,9 +110,18 @@
                                                     if (a.Regions != null)
                                                     {
 
+                                                        var regionNames = new List<string>();
+
                                                         string allRegions = "";
 
-                                                        allRegions = @String.Join(", ", a.Regions.Select(p => p).ToArray());
+                                                        {
+                                                            foreach (var region in a.Regions)
+                                                            {
+                                                                var regionName = courseService.GetRegions().RegionItems.Where(r => r.Id == region).Select(n=>n.RegionName).SingleOrDefault();
+                                                                regionNames.Add(regionName);
+                                                            }
+                                                        }
+                                                        allRegions = @String.Join(", ", regionNames.Select(p => p).ToArray());
 
                                                         <div class="">
                                                             <label class="govuk-label" for="sort" style="font-weight: 600">
@@ -278,13 +288,13 @@
     (function ($) {
         $(function () {
 
-            
+
             $("#courseeditlink").click(function () {
                 var courseId = $(this).attr('data-courseid');
 
                 var courseRunId = $(this).attr('data-courserunid');
 
-                $('#' + courseId).attr('open','');
+                $('#' + courseId).attr('open', '');
 
                 if (courseRunId !== "00000000-0000-0000-0000-000000000000") {
                     var els1 = document.querySelectorAll("div[class^='govuk-accordion__section']");

@@ -6366,6 +6366,10 @@ select:disabled {
   background-color: #ebebe4;
 }
 
+.govuk-accordion__section:last-child {
+  border-bottom: 10px;
+}
+
 .duration-container {
   display: flex;
 }
