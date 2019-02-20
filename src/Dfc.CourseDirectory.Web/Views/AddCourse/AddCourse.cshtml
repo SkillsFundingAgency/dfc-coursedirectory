@@ -111,7 +111,7 @@
 <script>
     (function ($) {
         $(function () {
-            var $continue = $("#goToSection2");
+            @*var $continue = $("#goToSection2");
             $continue.on("click", function (e) {
                 var $courseFor = $("#@nameof(Model.CourseFor)");
                 $courseFor.trigger("blur");
@@ -127,7 +127,7 @@
                 whatYouNeed.trigger("blur");
                 var whereNext = $("#@nameof(Model.WhereNext)");
                 whereNext.trigger("blur");
-            });
+            });*@
 
             var $goToSummary = $("#goToSummary");
             $goToSummary.click(function () {
@@ -140,6 +140,40 @@
                 $("#addCourseSection1").attr("action", "AddCourse");
                 $("#addCourseSection1").submit();
             });
+
+            function isAllValid(currentValue) {
+                return currentValue === true;
+            }
+
+            // validation
+            var $courseFor = $("#textAreaCourseFor").govUkTextarea();
+            var $button = $("#goToSection2");
+            $button.on("click",
+                function(event) {
+                    event.preventDefault();
+                    var validationStates = new Array();
+                    if ($.requiredValidate($courseFor.val())) {
+                        validationStates.push(true);
+                    } else {
+                        validationStates.push(false);
+                        $courseFor.govUkTextarea("invalidState", $courseFor.attr("val-required-message"));
+                    }
+
+                    if ($.maxLengthValidate({
+                        max: $courseFor.attr("val-max-length")
+                    }, $courseFor.val())) {
+                        validationStates.push(true);
+                    } else {
+                        validationStates.push(false);
+                        $courseFor.govUkTextarea("invalidState", $courseFor.attr("val-max-length-message"));
+                    }
+
+                    if (validationStates.every(isAllValid)) {
+                        $courseFor.govUkTextarea("validState");
+                    }
+                });
+                
+
         });
     })(jQuery);
 </script>

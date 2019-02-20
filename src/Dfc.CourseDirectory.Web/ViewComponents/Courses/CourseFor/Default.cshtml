@@ -14,13 +14,15 @@
             <span id="course-for-hint" class="govuk-hint">
                 @Model.HintText
             </span>
-            <span asp-validation-for="@Model.CourseFor" class="govuk-error-message"></span>
-            <textarea asp-for="@Model.CourseFor" class="govuk-textarea js-character-count" rows="5"  type="text" aria-describedby="@Model.AriaDescribedBy"></textarea>
+            @*<span asp-validation-for="@Model.CourseFor" class="govuk-error-message"></span>*@
+            <textarea class="govuk-textarea js-character-count" id="textAreaCourseFor" name="textAreaCourseFor" rows="5"  type="text" 
+                      aria-describedby="@Model.AriaDescribedBy" val-required-message="Enter who is the course for"
+                      val-max-length="2000" val-max-length-message="Who is this course for must be 2000 characters or less"></textarea>
         </div>
     </div>
 </div>
 
-<script>
+@*<script>
     (function ($) {
         $(function () {
             var formGroupErrorClass = "govuk-form-group--error";
@@ -88,5 +90,5 @@
 
         });
     })(jQuery);
-</script>
+</script>*@
 
