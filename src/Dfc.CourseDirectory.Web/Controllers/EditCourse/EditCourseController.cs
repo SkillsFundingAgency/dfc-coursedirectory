@@ -135,7 +135,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                             WhereNext = course?.Value?.WhereNext
                         }
                     };
-                    vm.QualificationType = course.Value.QualificationType;
+                    vm.QualificationType = course?.Value?.QualificationType;
                     return View("EditCourse", vm);
                 }
             }
@@ -158,7 +158,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                     courseForEdit.Value.WhatYoullLearn = model?.WhatWillLearn;
                     courseForEdit.Value.HowYoullLearn = model?.HowYouWillLearn;
                     courseForEdit.Value.WhatYoullNeed = model?.WhatYouNeed;
-                    courseForEdit.Value.HowYoullBeAssessed = model?.HowYouWillLearn;
+                    courseForEdit.Value.HowYoullBeAssessed = model?.HowAssessed;
                     courseForEdit.Value.WhereNext = model?.WhereNext;
                     courseForEdit.Value.UpdatedBy = User.Identity.Name;
                     courseForEdit.Value.UpdatedDate = DateTime.Now;

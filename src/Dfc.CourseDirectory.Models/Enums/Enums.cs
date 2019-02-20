@@ -2,6 +2,8 @@
 
 namespace Dfc.CourseDirectory.Models.Enums
 {
+
+
     public enum FundingOptions
     {
         [Description("Undefined")]

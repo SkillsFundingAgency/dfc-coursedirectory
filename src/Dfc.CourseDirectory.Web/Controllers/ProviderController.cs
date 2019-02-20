@@ -40,7 +40,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return View();
         }
 
-        public async Task<IActionResult> Courses(string qualificationType, Guid? courseId)
+        public async Task<IActionResult> Courses(string qualificationType, Guid? courseId,Guid? courseRunId)
         {
             int? UKPRN = _session.GetInt32("UKPRN");
 
@@ -69,7 +69,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 ?.Value
                 .Select(c => new ProviderCoursesViewModel()
                 {
-                    
+                    CourseRunId = courseRunId ?? Guid.Empty,
                     QualificationTitle = qualificationTitle,
                     CourseId = courseId ?? Guid.Empty,
                     QualificationType = qualificationType,

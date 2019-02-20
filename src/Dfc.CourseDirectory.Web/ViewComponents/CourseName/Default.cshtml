@@ -12,14 +12,19 @@
             @Model.HintText
         </span>
     }
-    <span asp-validation-for="@Model.CourseName" class="govuk-error-message"></span>
-    <input class="govuk-input" asp-for="@Model.CourseName" type="text" aria-describedby="@Model.AriaDescribedBy">
+    @*val-regex="[a-zA-Z0-9 \¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@@\'\#\~\,\<\>\.\?\/\|\`\\"\]\+\\"*@
+    <input class="govuk-input" asp-for="@Model.CourseName" type="text" aria-describedby="@Model.AriaDescribedBy"
+           val-required-message="Course name is required"
+           val-max-length="255"
+           val-max-length-message="The maximum length of Course Name is 255 characters"
+           val-regex="[a-zA-Z0-9 \¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@@\'\#\~\,\<\>\.\?\'\|]"
+           val-regex-message="Course Name contains invalid characters" />
 </div>
 
 <script>
     (function ($) {
         $(function () {
-            var formGroupErrorClass = "govuk-form-group--error";
+            @*var formGroupErrorClass = "govuk-form-group--error";
             var elementErrorClass = "govuk-input--error";
             var $elementCourseName = $("#@nameof(Model.CourseName)");
             var $validationMessageCourseName = $elementCourseName.prev("[data-valmsg-for='@nameof(Model.CourseName)']");
@@ -59,7 +64,7 @@
                     $formGroupCourseName.removeClass(formGroupErrorClass);
                     $validationMessageCourseName.css("margin-bottom", "0");
                 }
-            });
+            });*@
         });
     })(jQuery);
 </script>

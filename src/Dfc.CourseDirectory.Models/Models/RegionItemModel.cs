@@ -1,4 +1,4 @@
-﻿namespace Dfc.CourseDirectory.Web.ViewComponents.Courses.SelectRegion
+﻿namespace Dfc.CourseDirectory.Models.Models
 {
     public class RegionItemModel
     {
