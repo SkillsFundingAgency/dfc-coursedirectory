@@ -95,13 +95,13 @@
             Controller = "AddCourse",
             Section = "sectionCost"
         })
-        @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
+        @*@await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
         {
             Id="AdvancedLearnerLoan", Title = "Advanced learner loan", Value = Model.AdvancedLearnerLoan,
             Action = "SummaryToAddCourseRun",
             Controller = "AddCourse",
             Section = "sectionAdvancedLearnerLoan"
-        })
+        })*@
         @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
         {
             Id="CourseLength", Title = "Course length", Value = Model.CourseLength,
@@ -177,6 +177,11 @@
             Controller = "AddCourse",
             Section = "sectionWhereNext"
         })
+        @await Component.InvokeAsync(nameof(SummaryList), new SummaryListModel
+       {
+           Id="FundtionOptions", Title="Funding options", Value = Model.FundingOptions,
+           Action = "SummaryToAddCourse", Controller = "AddCourse", Section = "sectionFundingOptions"
+       })
 
 
     </dl>
