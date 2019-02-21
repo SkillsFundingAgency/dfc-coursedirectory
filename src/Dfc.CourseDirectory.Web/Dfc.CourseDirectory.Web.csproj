@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="ViewComponents\Courses\Duration\DurationUnitModel.cs" />
     <Compile Remove="ViewComponents\ProviderSearchResult\ProviderSearchResultItemModel.cs" />
   </ItemGroup>
 
@@ -111,6 +112,9 @@
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="ViewComponents\VenueSearch\Default.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\CopyCourseRun\CopyCourseRun.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\EditCourse\EditCourse.cshtml">

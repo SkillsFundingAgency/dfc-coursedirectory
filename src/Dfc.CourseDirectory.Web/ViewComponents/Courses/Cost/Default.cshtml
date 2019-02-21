@@ -13,14 +13,11 @@
         </span>
     }
 
-    <span class="govuk-error-message field-validation-error" id="invalidCost" style="display: none;margin-bottom: 15px;">
-        <span id="invalidCostMessage" class="">Enter the cost in pounds and pence</span>
-    </span>
-    <span class="govuk-error-message field-validation-error" id="invalidCostLength" style="display: none;margin-bottom: 15px;">
-        <span id="invalidCostLengthMessage" class="">Maximum value for cost is £999,999.99</span>
-    </span>
+    @{ var regex = @"^[a-zA-Z0-9 \¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`" + "\"" + "\\\\]+$"; }
+
     <span class="govuk-body">£</span>
-    <input class="govuk-input govuk-input--width-10" style="display:inline;" asp-for="@Model.Cost" type="text" aria-describedby="@Model.CostAriaDescribedBy">
+    <input class="govuk-input govuk-input--width-10" style="display:inline;" asp-for="@Model.Cost" type="text" aria-describedby="@Model.CostAriaDescribedBy"
+           val-required-message="Enter cost or cost description">
 </div>
 
 <div class="govuk-character-count" data-module="character-count" data-maxlength="255">
@@ -34,8 +31,14 @@
                 @Model.CostDescriptionHintText
             </span>
         }
-        <span asp-validation-for="@Model.CostDescription" class="govuk-error-message"></span>
-        <textarea class="govuk-textarea js-character-count " asp-for="@Model.CostDescription" rows="5"></textarea>
+        <textarea class="govuk-textarea js-character-count " asp-for="@Model.CostDescription" rows="5"
+                  val-required-message="Enter cost or cost description"
+                  val-max-length="255"
+                  val-max-length-message="Cost description must be 255 characters or less"
+                  val-regex="@regex"
+                  val-regex-message="Cost Description contains invalid characters">
+
+        </textarea>
     </div>
 </div>
 
@@ -43,29 +46,16 @@
     (function ($) {
         $(function () {
 
-
-            var formGroupErrorClass = "govuk-form-group--error";
-            var elementErrorClass = "govuk-input--error";
             var $elementCostDescription = $("#@nameof(Model.CostDescription)");
             var $validationMessageCostDescription = $elementCostDescription.prev("[data-valmsg-for='@nameof(Model.CostDescription)']");
             $validationMessageCostDescription.css("margin-bottom", "0");
-            var $formGroupCostDescription = $elementCostDescription.closest('.govuk-form-group');
             var $elementCost = $("#@nameof(Model.Cost)");
             var $validationMessageCost = $elementCost.prev("[data-valmsg-for='@nameof(Model.Cost)']");
             $validationMessageCost.css("margin-bottom", "0");
-            var $formGroupCost = $elementCost.closest('.govuk-form-group');
-
-            var $validationMessageForCost= $("#invalidCost");
-            var $validationMessageForCostLength = $("#invalidCostLength");
-
-
-            var $form = $elementCostDescription.closest("form");
-            $form.addTriggersToJqueryValidate().triggerElementValidationsOnFormValidation();
-            var validator = $form.validate();
 
             $elementCostDescription.on("blur", function () {
 
-                var $characterCountValue = $elementCostDescription.data("val-maxlength-max");
+                var $characterCountValue = $elementCostDescription.attr("val-max-length");
                 var $countMessage = $("#CostDescription-info");
 
                 var $actualCharacterCount = $characterCountValue - $elementCostDescription.val().length;
@@ -85,65 +75,11 @@
                     }
                 }
 
-
-                var result = validator.element($elementCostDescription);
-
-                if (result) {
-                    $elementCostDescription.removeClass(elementErrorClass);
-                    $formGroupCostDescription.removeClass(formGroupErrorClass);
-                    $validationMessageCostDescription.hide();
-                    $validationMessageCostDescription.css("margin-bottom", "0");
-                } else {
-                    $elementCostDescription.addClass(elementErrorClass);
-                    $formGroupCostDescription.addClass(formGroupErrorClass);
-                    $validationMessageCostDescription.show();
-                    $validationMessageCostDescription.css("margin-bottom", "15px");
-                }
-
-                if ($elementCost.val() === "") {
-                    if ($elementCostDescription.val() === "") {
-                        $elementCost.addClass(elementErrorClass);
-                        $validationMessageForCost.show();
-                        $formGroupCost.addClass(formGroupErrorClass);
-                    } else {
-                        $elementCost.removeClass(elementErrorClass);
-                        $validationMessageForCost.hide();
-                        $formGroupCost.removeClass(formGroupErrorClass);
-                    }
-                } else {
-
-                    $validationMessageForCost.hide();
-                    $formGroupCost.removeClass(formGroupErrorClass);
-
-                    if ($elementCost.val().length < 1 || $elementCost.val().length > 9) {
-                        $elementCost.addClass(elementErrorClass);
-                        $validationMessageForCostLength.show();
-                        $formGroupCost.addClass(formGroupErrorClass);
-                    } else {
-                        $elementCost.removeClass(elementErrorClass);
-                        $validationMessageForCostLength.hide();
-                        $formGroupCost.removeClass(formGroupErrorClass);
-                    }
-                }
             });
 
-            $elementCostDescription.elementValidation(function (element, result) {
-                if (!$formGroupCostDescription.hasClass(formGroupErrorClass)) {
-                    $validationMessageCostDescription.hide();
-                }
-
-                if (result) {
-                    $elementCostDescription.removeClass(elementErrorClass);
-                    $formGroupCostDescription.removeClass(formGroupErrorClass);
-                    $validationMessageCostDescription.css("margin-bottom", "0");
-                }
-            });
 
             $elementCost.on("blur", function () {
 
-                $validationMessageForCost.hide();
-                $validationMessageForCostLength.hide();
-                $formGroupCost.removeClass(formGroupErrorClass);
 
                 var trimmed = $elementCost.val().trim().replace(",", "");
 
@@ -155,70 +91,23 @@
                         $elementCost.val(formatted);
 
 
-                            var result = validator.element($elementCost);
-
-                            if (result) {
-                                $elementCost.removeClass(elementErrorClass);
-                                $formGroupCost.removeClass(formGroupErrorClass);
-                                $validationMessageCost.hide();
-                                $validationMessageCost.css("margin-bottom", "0");
-                            } else {
-                                $elementCost.addClass(elementErrorClass);
-                                $formGroupCost.addClass(formGroupErrorClass);
-                                $validationMessageCost.show();
-                                $validationMessageCost.css("margin-bottom", "15px");
-                            }
-
-                            if ($elementCost.val() === "") {
-                                if ($elementCostDescription.val() === "") {
-                                    $elementCost.addClass(elementErrorClass);
-                                    $validationMessageForCost.show();
-                                    $formGroupCost.addClass(formGroupErrorClass);
-                                } else {
-                                    $elementCost.removeClass(elementErrorClass);
-                                    $validationMessageForCost.hide();
-                                    $formGroupCost.removeClass(formGroupErrorClass);
-                                }
-                            } else {
-
-                                $validationMessageForCost.hide();
-                                $formGroupCost.removeClass(formGroupErrorClass);
-
-                                if ($elementCost.val().length < 1 || $elementCost.val().length > 9) {
-                                    $elementCost.addClass(elementErrorClass);
-                                    $validationMessageForCostLength.show();
-                                    $formGroupCost.addClass(formGroupErrorClass);
-                                } else {
-                                    $elementCost.removeClass(elementErrorClass);
-                                    $validationMessageForCostLength.hide();
-                                    $formGroupCost.removeClass(formGroupErrorClass);
-                                }
-                            }
-
-
-                        } else {
+                    }
+                    else
+                    {
                         $elementCost.val("");
                     }
                 }
 
-
-
             });
 
-            $elementCost.elementValidation(function (element, result) {
-                if (!$formGroupCost.hasClass(formGroupErrorClass)) {
-                    $validationMessageCost.hide();
-                }
 
-                if (result) {
-                    $elementCost.removeClass(elementErrorClass);
-                    $formGroupCost.removeClass(formGroupErrorClass);
-                    $validationMessageCost.css("margin-bottom", "0");
-                }
-            });
 
             $elementCost.on("keypress", function (event) {
                 var charCode = event.which ? event.which : event.keyCode;
+
+                if ($elementCost.val().length >= 9) {
+                    return false;
+                };
 
                 if ((charCode >= 48 && charCode <= 57) || charCode === 46) {
                     return true;

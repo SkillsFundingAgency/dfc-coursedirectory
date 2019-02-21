@@ -7,7 +7,6 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode
 {
     public class StudyModeModel
     {
-        [Required(ErrorMessage = "Enter Study Mode")]
         public Models.Models.Courses.StudyMode StudyMode { get; set; }
         public string LabelText { get; set; }
         public string HintText { get; set; }

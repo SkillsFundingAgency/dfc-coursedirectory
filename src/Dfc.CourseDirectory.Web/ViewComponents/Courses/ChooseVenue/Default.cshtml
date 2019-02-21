@@ -15,10 +15,12 @@
             @Model.HintText
         </span>
     }
-    <span asp-validation-for="@Model.VenueId" class="govuk-error-message"></span>
 
-    <div class="duration-container">
-               <select asp-for="@Model.VenueId" asp-items="@Model.Venues" class="govuk-select"></select>
+
+    <div class="">
+        <select asp-for="@Model.VenueId" asp-items="@Model.Venues" class="govuk-select" id="selectvenue" name="selectvenue" val-required-message="Select venue"> 
+
+        </select>
     </div>
 </div>
 
