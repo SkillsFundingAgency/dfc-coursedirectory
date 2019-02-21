@@ -5,7 +5,11 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @inject IOptions<CourseForComponentSettings> courseForComponentSettings
 
-<div class="govuk-form-group">
+@{
+    var regex = @"[a-zA-Z0-9 /\r\n?|\n\¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\" + "\"" + @"\\]+";
+}
+
+<div class="govuk -form-group">
     <div class="govuk-character-count" data-module="character-count" data-maxlength=@courseForComponentSettings.Value.TextFieldMaxChars>
         <div class="govuk-form-group" style="margin-bottom: 0;padding-bottom: 0">
             <label class="govuk-label" for="course-for">
@@ -15,80 +19,11 @@
                 @Model.HintText
             </span>
             @*<span asp-validation-for="@Model.CourseFor" class="govuk-error-message"></span>*@
-            <textarea class="govuk-textarea js-character-count" id="textAreaCourseFor" name="textAreaCourseFor" rows="5"  type="text" 
+            <textarea asp-for="CourseFor" class="govuk-textarea js-character-count" id="textAreaCourseFor" name="CourseFor" rows="5"  type="text" 
                       aria-describedby="@Model.AriaDescribedBy" val-required-message="Enter who is the course for"
-                      val-max-length="2000" val-max-length-message="Who is this course for must be 2000 characters or less"></textarea>
+                      val-max-length="2000" val-max-length-message="Who is this course for must be 2000 characters or less"
+                      val-regex="@regex"
+                      val-regex-message="Entry requirements contains invalid characters"></textarea>
         </div>
     </div>
 </div>
-
-@*<script>
-    (function ($) {
-        $(function () {
-            var formGroupErrorClass = "govuk-form-group--error";
-            var elementErrorClass = "govuk-input--error";
-            var $elementUrl = $("#@nameof(Model.CourseFor)");
-            var $validationMessageUrl = $elementUrl.prev("[data-valmsg-for='@nameof(Model.CourseFor)']");
-            $validationMessageUrl.css("margin-bottom", "0");
-            var $formGroupUrl = $elementUrl.closest('.govuk-form-group');
-
-            var $form = $elementUrl.closest("form");
-            $form.addTriggersToJqueryValidate().triggerElementValidationsOnFormValidation();
-            var validator = $form.validate();
-
-            $elementUrl.on("blur", function () {
-                var trimmed = $elementUrl.val().trim();
-                $elementUrl.val(trimmed);
-
-                var $characterCountValue = $elementUrl.data("val-maxlength-max");
-                var $countMessage = $("#CourseFor-info");
-
-                var $actualCharacterCount = $characterCountValue - $elementUrl.val().length;
-
-                if ($actualCharacterCount <= 0) {
-
-                } else {
-
-                    if ($actualCharacterCount === 1) {
-                        $countMessage.text("You have " +
-                            $actualCharacterCount +
-                            " character remaining");
-                    } else {
-                        $countMessage.text("You have " +
-                            $actualCharacterCount +
-                            " characters remaining");
-                    }
-                }
-               
-
-                var result = validator.element($elementUrl);
-
-                if (result) {
-                    $elementUrl.removeClass(elementErrorClass);
-                    $formGroupUrl.removeClass(formGroupErrorClass);
-                    $validationMessageUrl.hide();
-                    $validationMessageUrl.css("margin-bottom", "0");
-                } else {
-                    $elementUrl.addClass(elementErrorClass);
-                    $formGroupUrl.addClass(formGroupErrorClass);
-                    $validationMessageUrl.show();
-                    $validationMessageUrl.css("margin-bottom", "15px");
-                }
-            });
-
-            $elementUrl.elementValidation(function (element, result) {
-                if (!$formGroupUrl.hasClass(formGroupErrorClass)) {
-                    $validationMessageUrl.hide();
-                }
-
-                if (result) {
-                    $elementUrl.removeClass(elementErrorClass);
-                    $formGroupUrl.removeClass(formGroupErrorClass);
-                    $validationMessageUrl.css("margin-bottom", "0");
-                }
-            });
-
-        });
-    })(jQuery);
-</script>*@
-
