@@ -16,8 +16,6 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Courses.Cost
         public string CostAriaDescribedBy { get; set; }
 
 
-        [MaxLength(255, ErrorMessage = "Cost description must be 255 characters or less")]
-        [RegularExpression(@"[a-zA-Z0-9 /\r\n?|\n\¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\" + "\"" + @"\\]+", ErrorMessage = "Cost Description contains invalid characters")]
         public string CostDescription { get; set; }
         public string CostDescriptionLabelText { get; set; }
         public string CostDescriptionHintText { get; set; }

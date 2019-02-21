@@ -21,51 +21,14 @@
         </div>
 
         <div class="govuk-form-group" id="startDateFormGroup">
-            @*<span class="govuk-error-message field-validation-error" id="invalidDate" style="display: none; margin-bottom: 15px;">
-                <span id="invalidDateMessage" class="">Invalid date</span>
-            </span>
 
-            <span class="govuk-error-message field-validation-error" id="invalidDay" style="display: none; margin-bottom: 15px;">
-                <span id="invalidDayMessage" class="">Day must be a number between 1 and 31</span>
-            </span>
-            <span class="govuk-error-message field-validation-error" id="invalidMonth" style="display: none; margin-bottom: 15px;">
-                <span id="invalidMonthMessage" class="">Month must be a number between 1 and 12</span>
-            </span>
-            <span class="govuk-error-message field-validation-error" id="invalidYear" style="display: none; margin-bottom: 15px;">
-                <span id="invalidYearMessage" class="">Year must be a valid 4 digit year</span>
-            </span>
-            <span class="govuk-error-message field-validation-error" id="past" style="display: none; margin-bottom: 15px;">
-                <span id="pastMessage" class="">Start Date cannot be earlier than today’s date</span>
-            </span>
-            <span class="govuk-error-message field-validation-error" id="future" style="display: none; margin-bottom: 15px;">
-                <span id="futureMessage" class="">Start Date cannot be later than 2 years from today’s date</span>
-            </span>
-            <span class="govuk-error-message field-validation-error" id="required" style="display: none; margin-bottom: 15px;">
-                <span id="requiredMessage" class="">Choose an actual Start Date or select ‘Flexible Start Date’</span>
-            </span>*@
-            @*<div class="dateFields" style="padding-left: 55px;">
-                <label class="govuk-label" asp-for="@Model.Day" aria-describedby="@Model.DayAriaDescribedBy" style="display: inline-block; width: 60px;">
-                    @Model.DayLabelText
-                </label>
-                <label class="govuk-label" asp-for="@Model.Month" aria-describedby="@Model.MonthAriaDescribedBy" style="display: inline-block; width: 60px;">
-                    @Model.MonthLabelText
-                </label>
-                <label class="govuk-label" asp-for="@Model.Year" aria-describedby="@Model.YearAriaDescribedBy" style="display: inline-block; width: 120px;">
-                    @Model.YearLabelText
-                </label>
-            </div>
-
-            <div class="inputDateFields" style="padding-left: 55px; margin-bottom: 25px;">
-                <input class="govuk-input" asp-for="@Model.Day" type="text" style="width: 60px;" onpaste="return false">
-                <input class="govuk-input" asp-for="@Model.Month" type="text" style="width: 60px;" onpaste="return false">
-                <input class="govuk-input" asp-for="@Model.Year" type="text" style="width: 120px;" onpaste="return false">
-            </div>*@
-            
             <div class="govuk-date-input" id="start_date"
+                 val-required-message="Enter start date"
                  val-past-date-ref=@DateTime.Now
                  val-past-date-message="Start Date cannot be earlier than today’s date"
                  val-future-date-ref=@DateTime.Now.AddYears(2)
-                 val-future-date-message="Start Date cannot be later than 2 years from today’s date"> 
+                 val-future-date-message="Start Date cannot be later than 2 years from today’s date"
+                 val-date-message="Invalid date">
                 <div class="govuk-date-input__item">
                     <div class="govuk-form-group">
                         <label class="govuk-label govuk-date-input__label" asp-for="@Model.Day">
@@ -87,18 +50,18 @@
                         <label class="govuk-label govuk-date-input__label" asp-for="@Model.Year">
                             @Model.YearLabelText
                         </label>
-                        <input class="govuk-input govuk-date-input__input govuk-input--width-4" asp-for="@Model.Year"  type="number" pattern="[0-9]*" onpaste="return false">
+                        <input class="govuk-input govuk-date-input__input govuk-input--width-4" asp-for="@Model.Year" type="number" pattern="[0-9]*" onpaste="return false">
                     </div>
                 </div>
-            </div> 
-
-
-            <div class="govuk-radios__item">
-                @Html.RadioButtonFor(m => m.StartDateType, StartDateType.FlexibleStartDate, new { @class = "govuk-radios__input flexible", id = @StartDateType.FlexibleStartDate })
-                <label class="govuk-label govuk-radios__label" for="@StartDateType.FlexibleStartDate">Flexible Start Date</label>
             </div>
-
         </div>
+
+        <div class="govuk-radios__item" style="margin-top: 15px;">
+            @Html.RadioButtonFor(m => m.StartDateType, StartDateType.FlexibleStartDate, new { @class = "govuk-radios__input flexible", id = @StartDateType.FlexibleStartDate })
+            <label class="govuk-label govuk-radios__label" for="@StartDateType.FlexibleStartDate">Flexible Start Date</label>
+        </div>
+
+
     </div>
 
 </fieldset>
@@ -107,15 +70,6 @@
     (function($) {
         $(function() {
 
-            
-            var $dayElementUrl = $("#@nameof(Model.Day)");
-
-            var $monthElementUrl = $("#@nameof(Model.Month)");
-
-            var $yearElementUrl = $("#@nameof(Model.Year)");
-
-            @*var $formGroupErrorClass = "govuk-form-group--error";
-            var $elementErrorClass = "govuk-input--error";
 
             var $dayElementUrl = $("#@nameof(Model.Day)");
 
@@ -123,179 +77,7 @@
 
             var $yearElementUrl = $("#@nameof(Model.Year)");
 
-            var $validationMessageUrlForDay = $("#invalidDay");
 
-            var $validationMessageUrlForMonth = $("#invalidMonth");
-
-            var $validationMessageUrlForYear = $("#invalidYear");
-
-            var $validationMessageUrlForRequired = $("#required");
-            var $validationMessageUrlForInvalid = $("#invalidDate");
-
-
-
-            var $validationMessageForPast = $("#past");
-            var $validationMessageForFuture = $("#future");
-
-            var $formGroupUrl = $dayElementUrl.closest('.govuk-form-group');
-
-            function dateChecker() {
-                if ($dayElementUrl.val() !== "" &&
-                    $monthElementUrl.val() !== "" &&
-                    $yearElementUrl.val() !== "") {
-                    var enteredDate = $dayElementUrl.val() +
-                        "/" +
-                        $monthElementUrl.val() +
-                        "/" +
-                        $yearElementUrl.val();
-
-                    if (!isValidDate(enteredDate)) {
-                        $formGroupUrl.addClass($formGroupErrorClass);
-
-                        $validationMessageUrlForInvalid.show();
-                    } else {
-
-                        var bits = enteredDate.split('/');
-                        var enteredDateAsDate = new Date(bits[2] + '/' + bits[1] + '/' + bits[0]);
-
-                        $validationMessageForFuture.hide();
-                        $validationMessageForPast.hide();
-                        var d = new Date();
-                        var currentDate =
-                            d.getDate() +
-                            "/" +
-                            (d.getMonth() + 1) +
-                            "/" +
-                            (d.getFullYear());
-
-                        var futureDate =
-                            d.getDate() +
-                            "/" +
-                            (d.getMonth() + 1) +
-                            "/" +
-                            (d.getFullYear() + 2);
-
-                        var currentDateBits = currentDate.split('/');
-                        var currentDateAsDate = new Date(currentDateBits[2] +
-                            '/' +
-                            currentDateBits[1] +
-                            '/' +
-                            currentDateBits[0]);
-
-                        var futureDateBits = futureDate.split('/');
-                        var futureDateAsDate = new Date(futureDateBits[2] +
-                            '/' +
-                            futureDateBits[1] +
-                            '/' +
-                            futureDateBits[0]);
-
-                        var isPastDate = Date.parse(enteredDateAsDate) - Date.parse(currentDateAsDate) < 0;
-                        var isFutureDate = Date.parse(enteredDateAsDate) > Date.parse(futureDateAsDate);
-
-                        if (isPastDate) {
-                            $formGroupUrl.addClass($formGroupErrorClass);
-                            $validationMessageForPast.show();
-                        }
-
-                        if (isFutureDate) {
-                                $formGroupUrl.addClass($formGroupErrorClass);
-                                $validationMessageForFuture.show();
-
-                            }
-
-                        if (!isPastDate && !isFutureDate) {
-                                $validationMessageUrlForDay.hide();
-                            $validationMessageUrlForMonth.hide();
-                            $validationMessageUrlForYear.hide();
-                            $validationMessageForFuture.hide();
-                            $validationMessageForPast.hide();
-                            $validationMessageUrlForInvalid.hide();
-                            }
-
-                    }
-                }
-            }*@
-
-            //$dayElementUrl.on("blur",
-            //    function() {
-            //        var radioValue = $("input[name='StartDateType']:checked").val();
-            //        if (radioValue.toUpperCase() === "SPECIFIEDSTARTDATE") {
-
-            //            var regex = /^[0-9\s]*$/;
-            //            var isValid = regex.test($dayElementUrl.val());
-
-
-            //            if ($dayElementUrl.val() === "" ||
-            //                isValid === false ||
-            //                (parseInt($dayElementUrl.val()) < 1 || parseInt($dayElementUrl.val()) > 31)) {
-            //                $dayElementUrl.addClass($elementErrorClass);
-            //                $formGroupUrl.addClass($formGroupErrorClass);
-            //                $validationMessageUrlForDay.show();
-            //            } else {
-            //                $dayElementUrl.removeClass($elementErrorClass);
-            //                $validationMessageUrlForDay.hide();
-            //                if ($validationMessageUrlForMonth.is(":visible") ||
-            //                    $validationMessageUrlForYear.is(":visible")) {
-            //                } else {
-            //                    $formGroupUrl.removeClass($formGroupErrorClass);
-            //                }
-            //            }
-
-
-            //            dateChecker();
-
-
-            //        } else {
-            //            $dayElementUrl.removeClass($elementErrorClass);
-
-            //            $validationMessageUrlForDay.hide();
-            //            if ($validationMessageUrlForMonth.is(":visible") ||
-            //                $validationMessageUrlForYear.is(":visible")) {
-            //            } else {
-            //                $formGroupUrl.removeClass($formGroupErrorClass);
-            //            }
-            //        };
-
-            //    });
-
-            //$monthElementUrl.on("blur",
-            //    function() {
-            //        var radioValue = $("input[name='StartDateType']:checked").val();
-            //        if (radioValue.toUpperCase() === "SPECIFIEDSTARTDATE") {
-
-            //            var regex = /^[0-9\s]*$/;
-            //            var isValid = regex.test($monthElementUrl.val());
-
-            //            if ($monthElementUrl.val() === "" ||
-            //                isValid === false ||
-            //                (parseInt($monthElementUrl.val()) < 1 || parseInt($monthElementUrl.val()) > 12)) {
-            //                $monthElementUrl.addClass($elementErrorClass);
-            //                $formGroupUrl.addClass($formGroupErrorClass);
-            //                $validationMessageUrlForMonth.show();
-            //            } else {
-            //                $monthElementUrl.removeClass($elementErrorClass);
-            //                $validationMessageUrlForMonth.hide();
-            //                if ($validationMessageUrlForDay.is(":visible") ||
-            //                    $validationMessageUrlForYear.is(":visible")) {
-            //                } else {
-            //                    $formGroupUrl.removeClass($formGroupErrorClass);
-            //                }
-            //            }
-
-            //            dateChecker();
-
-            //        } else {
-            //            $monthElementUrl.removeClass($elementErrorClass);
-
-            //            $validationMessageUrlForMonth.hide();
-            //            if ($validationMessageUrlForDay.is(":visible") ||
-            //                $validationMessageUrlForYear.is(":visible")) {
-            //            } else {
-            //                $formGroupUrl.removeClass($formGroupErrorClass);
-            //            }
-            //        };
-
-            //    });
 
             $dayElementUrl.on("keypress",
                 function(event) {
@@ -342,109 +124,10 @@
                     return false;
                 });
 
-            function isValidDate(s) {
-                var bits = s.split('/');
-                var d = new Date(bits[2] + '/' + bits[1] + '/' + bits[0]);
-                return !!(d && (d.getMonth() + 1) == bits[1] && d.getDate() == Number(bits[0]));
-            }
 
 
-            //$yearElementUrl.on("blur",
-            //    function() {
-
-            //        $validationMessageUrlForRequired.hide();
-            //        $validationMessageForPast.hide();
-            //        $validationMessageForFuture.hide();
-            //        var radioValue = $("input[name='StartDateType']:checked").val();
-            //        if (radioValue.toUpperCase() === "SPECIFIEDSTARTDATE") {
-
-            //            var regex = /^[0-9\s]*$/;
-            //            var isValid = regex.test($yearElementUrl.val());
-
-            //            if ($yearElementUrl.val() === "" ||
-            //                isValid === false ||
-            //                (($yearElementUrl.val().length) < 4 || ($yearElementUrl.val().length) > 4)) {
-            //                $yearElementUrl.addClass($elementErrorClass);
-            //                $formGroupUrl.addClass($formGroupErrorClass);
-            //                $validationMessageUrlForYear.show();
-            //            } else {
-            //                $yearElementUrl.removeClass($elementErrorClass);
-            //                $validationMessageUrlForYear.hide();
-            //                if ($validationMessageUrlForDay.is(":visible") ||
-            //                    $validationMessageUrlForMonth.is(":visible")) {
-            //                } else {
-            //                    $formGroupUrl.removeClass($formGroupErrorClass);
-            //                }
-            //            }
-
-                      
-            //            dateChecker();
 
 
-            //        } else {
-            //            $yearElementUrl.removeClass($elementErrorClass);
-
-            //            $validationMessageUrlForYear.hide();
-            //            if ($validationMessageUrlForDay.is(":visible") ||
-            //                $validationMessageUrlForMonth.is(":visible")) {
-            //            } else {
-            //                $formGroupUrl.removeClass($formGroupErrorClass);
-            //            }
-            //        };
-
-            //    });
-
-            //var $startDateType = $("input[name='StartDateType']");
-            //$startDateType.on("click",
-            //    function(e) {
-            //        $validationMessageUrlForRequired.hide();
-            //        var radioValue = $("input[name='StartDateType']:checked").val();
-            //        if (radioValue.toUpperCase() === "SPECIFIEDSTARTDATE") {
-            //            if ($dayElementUrl.val() === "") {
-
-            //            } else {
-            //                if (parseInt($dayElementUrl.val()) < 1 || parseInt($dayElementUrl.val()) > 31) {
-            //                    $dayElementUrl.addClass($elementErrorClass);
-            //                    $formGroupUrl.addClass($formGroupErrorClass);
-            //                    $validationMessageUrlForDay.show();
-            //                }
-            //            }
-            //            if ($monthElementUrl.val() === "") {
-
-            //            } else {
-            //                if (parseInt($monthElementUrl.val()) < 1 || parseInt($monthElementUrl.val()) > 12) {
-            //                    $monthElementUrl.addClass($elementErrorClass);
-            //                    $formGroupUrl.addClass($formGroupErrorClass);
-            //                    $validationMessageUrlForMonth.show();
-            //                }
-            //            }
-
-            //            if ($yearElementUrl.val() === "") {
-
-            //            } else {
-            //                if (($yearElementUrl.val().length) < 4 || ($yearElementUrl.val().length) > 4) {
-            //                    $yearElementUrl.addClass($elementErrorClass);
-            //                    $formGroupUrl.addClass($formGroupErrorClass);
-            //                    $validationMessageUrlForYear.show();
-            //                }
-            //            }
-
-            //            dateChecker();
-
-            //        } else {
-            //            $dayElementUrl.removeClass($elementErrorClass);
-            //            $monthElementUrl.removeClass($elementErrorClass);
-            //            $yearElementUrl.removeClass($elementErrorClass);
-            //            $formGroupUrl.removeClass($formGroupErrorClass);
-            //            $validationMessageUrlForDay.hide();
-            //            $validationMessageUrlForMonth.hide();
-            //            $validationMessageUrlForYear.hide();
-            //            $validationMessageForPast.hide();
-            //            $validationMessageForFuture.hide();
-            //            $validationMessageUrlForRequired.hide();
-            //            $validationMessageUrlForInvalid.hide();
-            //        }
-            //    });
         });
     })(jQuery);
 </script>

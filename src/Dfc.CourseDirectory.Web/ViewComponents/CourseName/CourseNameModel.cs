@@ -8,10 +8,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.CourseName
 {
     public class CourseNameModel
     {
-        //[Required(AllowEmptyStrings = false, ErrorMessage = "Enter Course Name")]
-        //[MaxLength(255, ErrorMessage = "The maximum length of Course Name is 255 characters")]
-        //[RegularExpression(@"[a-zA-Z0-9 \¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\" + "\"" + @"\\]+", ErrorMessage = "Course Name contains invalid characters")]
-        public string CourseName { get; set; }
+             public string CourseName { get; set; }
         public string LabelText { get; set; }
         public string HintText { get; set; }
         public string AriaDescribedBy { get; set; }
