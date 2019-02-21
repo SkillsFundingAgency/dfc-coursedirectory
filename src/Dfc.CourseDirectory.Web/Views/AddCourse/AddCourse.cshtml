@@ -111,35 +111,286 @@
 <script>
     (function ($) {
         $(function () {
-            var $continue = $("#goToSection2");
-            $continue.on("click", function (e) {
-                var $courseFor = $("#@nameof(Model.CourseFor)");
-                $courseFor.trigger("blur");
-                var $entryRequirements = $("#@nameof(Model.EntryRequirements)");
-                $entryRequirements.trigger("blur");
-                var $whatWillLearn = $("#@nameof(Model.WhatWillLearn)");
-                $whatWillLearn.trigger("blur");
-                var $howYouWillLearn = $("#@nameof(Model.HowYouWillLearn)");
-                $howYouWillLearn.trigger("blur");
-                var whatYouNeed = $("#@nameof(Model.WhatYouNeed)");
-                whatYouNeed.trigger("blur");
-                var howAssessed = $("#@nameof(Model.HowAssessed)");
-                whatYouNeed.trigger("blur");
-                var whereNext = $("#@nameof(Model.WhereNext)");
-                whereNext.trigger("blur");
-            });
 
             var $goToSummary = $("#goToSummary");
             $goToSummary.click(function () {
-                $("#addCourseSection1").attr("action", "Summary");
-                $("#addCourseSection1").submit();
+                event.preventDefault();
+                if (validateAddCourse()) {
+                    $("#addCourseSection1").attr("action", "Summary");
+                    $("#addCourseSection1").submit();
+               }
             });
 
             var $goToSection2Link = $("#goToSection2Link");
-            $goToSection2Link.click(function() {
-                $("#addCourseSection1").attr("action", "AddCourse");
-                $("#addCourseSection1").submit();
+            $goToSection2Link.click(function () {
+                event.preventDefault();
+                if (validateAddCourse()) {
+                    $("#addCourseSection1").attr("action", "AddCourse");
+                    $("#addCourseSection1").submit();
+                }
             });
+
+            function isAllValid(currentValue) {
+                return currentValue === true;
+            }
+
+            // validation
+            var $courseFor = $("#textAreaCourseFor").govUkTextarea();
+            var $entryRequirements = $("#textAreaEntryRequirements").govUkTextarea();
+            var $whatWillLearn = $("#textAreaWhatWillLearn").govUkTextarea();
+            var $howWillLearn = $("#textAreaHowYouWillLearn").govUkTextarea();
+            var $whatYouNeed = $("#textAreaWhatYouNeed").govUkTextarea();
+            var $howAssessed = $("#textAreaHowAssessed").govUkTextarea();
+            var $whereNext = $("#textAreaWhereNext").govUkTextarea();
+            var $button = $("#goToSection2");
+
+            // blur
+            $courseFor.on("blur",
+                function() {
+                    if ($.requiredValidate($courseFor.val()) &&
+                        $.maxLengthValidate({ max: $courseFor.attr("val-max-length") }, $courseFor.val()) && 
+                        $.regexValidate({ regex: $courseFor.attr("val-regex") }, $courseFor.val())) {
+                        $courseFor.govUkTextarea("validState");
+                    }
+                });
+
+            $entryRequirements.on("blur",
+                function() {
+                    if ($.maxLengthValidate({ max: $entryRequirements.attr("val-max-length") },$entryRequirements.val()) &&
+                        $.regexValidate({ regex: $entryRequirements.attr("val-regex") }, $entryRequirements.val())) {
+                        $entryRequirements.govUkTextarea("validState");
+                    }
+                });
+
+            $whatWillLearn.on("blur", function () {
+                if ($.maxLengthValidate({ max: $whatWillLearn.attr("val-max-length") }, $whatWillLearn.val()) &&
+                    $.regexValidate({ regex: $whatWillLearn.attr("val-regex") }, $whatWillLearn.val())) {
+                    $whatWillLearn.govUkTextarea("validState");
+                }
+            });
+            
+            $howWillLearn.on("blur", function () {
+                if ($.maxLengthValidate({ max: $howWillLearn.attr("val-max-length") }, $howWillLearn.val()) &&
+                    $.regexValidate({ regex: $howWillLearn.attr("val-regex") }, $howWillLearn.val())) {
+                    $howWillLearn.govUkTextarea("validState");
+                }
+            });
+
+            $whatYouNeed.on("blur", function () { 
+                if ($.maxLengthValidate({ max: $whatYouNeed.attr("val-max-length") }, $whatYouNeed.val()) &&
+                    $.regexValidate({ regex: $whatYouNeed.attr("val-regex") }, $whatYouNeed.val())) {
+                    $whatYouNeed.govUkTextarea("validState");
+                }
+            });
+
+            $howAssessed.on("blur", function () {
+                if ($.maxLengthValidate({ max: $howAssessed.attr("val-max-length") }, $howAssessed.val()) &&
+                    $.regexValidate({ regex: $howAssessed.attr("val-regex") }, $howAssessed.val())) {
+                    $howAssessed.govUkTextarea("validState");
+                }
+            });
+
+            $whereNext.on("blur", x);
+
+            function x() {
+                if ($.maxLengthValidate({ max: $whereNext.attr("val-max-length") }, $whereNext.val()) &&
+                    $.regexValidate({ regex: $whereNext.attr("val-regex") }, $whereNext.val())) {
+                    $whereNext.govUkTextarea("validState");
+                }
+            }
+
+
+            // todo: move this out to its own function
+            // todo: trigger it on all button clicks away from this page
+            $button.on("click", function(event) {
+                    event.preventDefault();
+                    if (validateAddCourse()) {
+                        $("#addCourseSection1").submit();
+                    }
+                });
+
+            function validateAddCourse() {
+                //window.$this.preventDefault();
+                var validationStatesCourseFor = new Array();
+                var validationStatesEntryRequirements = new Array();
+                var validationStatesWhatWillLearn = new Array();
+                var validationStatesHowWillLearn = new Array();
+                var validationStatesWhatYouNeed = new Array();
+                var validationStatesHowAssessed = new Array();
+                var validationStatesWhereNext = new Array();
+
+                // Course For
+                if ($.requiredValidate($courseFor.val())) {
+                    validationStatesCourseFor.push(true);
+                } else {
+                    validationStatesCourseFor.push(false);
+                    $courseFor.govUkTextarea("invalidState", $courseFor.attr("val-required-message"));
+                }
+
+                if ($.maxLengthValidate({ max: $courseFor.attr("val-max-length") }, $courseFor.val())) {
+                    validationStatesCourseFor.push(true);
+                } else {
+                    validationStatesCourseFor.push(false);
+                    $courseFor.govUkTextarea("invalidState", $courseFor.attr("val-max-length-message"));
+                }
+
+                if ($.regexValidate({ regex: $courseFor.attr("val-regex") }, $courseFor.val())) {
+                    validationStatesCourseFor.push(true);
+                } else {
+                    validationStatesCourseFor.push(false);
+                    $courseFor.govUkTextarea("invalidState", $courseFor.attr("val-regex-message"));
+                }
+
+                // Entry Requirements
+                if ($.maxLengthValidate({
+                    max: $entryRequirements.attr("val-max-length")
+                }, $entryRequirements.val())) {
+                    validationStatesEntryRequirements.push(true);
+                } else {
+                    validationStatesEntryRequirements.push(false);
+                    $entryRequirements.govUkTextarea("invalidState", $entryRequirements.attr("val-max-length-message"));
+                }
+
+                if ($.regexValidate({ regex: $entryRequirements.attr("val-regex") }, $entryRequirements.val())) {
+                    validationStatesEntryRequirements.push(true);
+                } else {
+                    validationStatesEntryRequirements.push(false);
+                    $entryRequirements.govUkTextarea("invalidState", $entryRequirements.attr("val-regex-message"));
+                }
+
+                // What you will learn
+                if ($.maxLengthValidate({
+                    max: $whatWillLearn.attr("val-max-length")
+                }, $whatWillLearn.val())) {
+                    validationStatesWhatWillLearn.push(true);
+                } else {
+                    validationStatesWhatWillLearn.push(false);
+                    $whatWillLearn.govUkTextarea("invalidState", $whatWillLearn.attr("val-max-length-message"));
+                }
+
+                if ($.regexValidate({ regex: $whatWillLearn.attr("val-regex") }, $whatWillLearn.val())) {
+                    validationStatesWhatWillLearn.push(true);
+                } else {
+                    validationStatesWhatWillLearn.push(false);
+                    $whatWillLearn.govUkTextarea("invalidState", $whatWillLearn.attr("val-regex-message"));
+                }
+
+                // How you will learn
+                if ($.maxLengthValidate({
+                    max: $howWillLearn.attr("val-max-length")
+                }, $howWillLearn.val())) {
+                    validationStatesHowWillLearn.push(true);
+                } else {
+                    validationStatesHowWillLearn.push(false);
+                    $howWillLearn.govUkTextarea("invalidState", $howWillLearn.attr("val-max-length-message"));
+                }
+
+                if ($.regexValidate({ regex: $howWillLearn.attr("val-regex") }, $howWillLearn.val())) {
+                    validationStatesHowWillLearn.push(true);
+                } else {
+                    validationStatesHowWillLearn.push(false);
+                    $howWillLearn.govUkTextarea("invalidState", $howWillLearn.attr("val-regex-message"));
+                }
+
+                // What you need
+                if ($.maxLengthValidate({
+                    max: $whatYouNeed.attr("val-max-length")
+                }, $whatYouNeed.val())) {
+                    validationStatesWhatYouNeed.push(true);
+                } else {
+                    validationStatesWhatYouNeed.push(false);
+                    $whatYouNeed.govUkTextarea("invalidState", $whatYouNeed.attr("val-max-length-message"));
+                }
+
+                if ($.regexValidate({ regex: $whatYouNeed.attr("val-regex") }, $whatYouNeed.val())) {
+                    validationStatesWhatYouNeed.push(true);
+                } else {
+                    validationStatesWhatYouNeed.push(false);
+                    $whatYouNeed.govUkTextarea("invalidState", $whatYouNeed.attr("val-regex-message"));
+                }
+
+                // How you will be asssessed
+                if ($.maxLengthValidate({
+                    max: $howAssessed.attr("val-max-length")
+                }, $howAssessed.val())) {
+                    validationStatesHowAssessed.push(true);
+                } else {
+                    validationStatesHowAssessed.push(false);
+                    $howAssessed.govUkTextarea("invalidState", $howAssessed.attr("val-max-length-message"));
+                }
+
+                if ($.regexValidate({ regex: $howAssessed.attr("val-regex") }, $howAssessed.val())) {
+                    validationStatesHowAssessed.push(true);
+                } else {
+                    validationStatesHowAssessed.push(false);
+                    $howAssessed.govUkTextarea("invalidState", $howAssessed.attr("val-regex-message"));
+                }
+
+                // Where next
+                if ($.maxLengthValidate({
+                    max: $whereNext.attr("val-max-length")
+                }, $whereNext.val())) {
+                    validationStatesWhereNext.push(true);
+                } else {
+                    validationStatesWhereNext.push(false);
+                    $whereNext.govUkTextarea("invalidState", $whereNext.attr("val-max-length-message"));
+                }
+
+                if ($.regexValidate({ regex: $whereNext.attr("val-regex") }, $whereNext.val())) {
+                    validationStatesWhereNext.push(true);
+                } else {
+                    validationStatesWhereNext.push(false);
+                    $whereNext.govUkTextarea("invalidState", $whereNext.attr("val-regex-message"));
+                }
+
+                var allValid = true;
+                // Check for valid states
+                if (validationStatesCourseFor.every(isAllValid)) {
+                    $courseFor.govUkTextarea("validState");
+                } else {
+                    allValid = false;
+                }
+
+                if (validationStatesEntryRequirements.every(isAllValid)) {
+                    $entryRequirements.govUkTextarea("validState");
+                } else {
+                    allValid = false;
+                }
+
+                if (validationStatesWhatWillLearn.every(isAllValid)) {
+                    $whatWillLearn.govUkTextarea("validState");
+                } else {
+                    allValid = false;
+                }
+
+                if (validationStatesHowWillLearn.every(isAllValid)) {
+                    $howWillLearn.govUkTextarea("validState");
+                } else {
+                    allValid = false;
+                }
+
+                if (validationStatesWhatYouNeed.every(isAllValid)) {
+                    $whatYouNeed.govUkTextarea("validState");
+                } else {
+                    allValid = false;
+                }
+
+                if (validationStatesHowAssessed.every(isAllValid)) {
+                    $howAssessed.govUkTextarea("validState");
+                } else {
+                    allValid = false;
+                }
+
+                if (validationStatesWhereNext.every(isAllValid)) {
+                    $whereNext.govUkTextarea("validState");
+                } else {
+                    allValid = false;
+                }
+
+                return allValid;
+            }
+                
+
         });
     })(jQuery);
 </script>

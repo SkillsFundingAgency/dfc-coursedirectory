@@ -1,15 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatWillLearn
+﻿namespace Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatWillLearn
 {
     public class WhatWillLearnModel
     {
-        [MaxLength(1000, ErrorMessage = "What you will learn must be 1000 characters or less")]
-        [RegularExpression(@"[a-zA-Z0-9 /\r\n?|\n\¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\" + "\"" + @"\\]+", ErrorMessage = "What you’ll learn contains invalid characters")]
         public string WhatWillLearn { get; set; }
         public string LabelText { get; set; }
         public string HintText { get; set; }
