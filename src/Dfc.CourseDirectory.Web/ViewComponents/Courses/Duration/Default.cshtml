@@ -15,67 +15,41 @@
             @Model.HintText
         </span>
     }
-    <span asp-validation-for="@Model.DurationLength" class="govuk-error-message"></span>
+   
+    <div id="duration" class="duration-container"
+         val-range-min="1" 
+         val-range-max="999" 
+         val-duration-message="Enter Duration"> 
+        <div class="govuk-date-input__item"> 
+            <div class="govuk-form-group"> 
+                <input pattern="[0-9]*" min="1" step="1" class="govuk-input govuk-input--width-2" style="display: inline;" asp-for="@Model.DurationLength" type="number" maxlength="3" aria-describedby="@Model.AriaDescribedBy">
 
-    <div class="">
-        <input pattern="[0-9]*" min="1" step="1" class="govuk-input govuk-input--width-2" style="display:inline;" asp-for="@Model.DurationLength" type="text" aria-describedby="@Model.AriaDescribedBy">
-        <select asp-for="@Model.DurationUnit" asp-items="@Model.DurationUnits" class="govuk-select"></select>
-    </div>
+            </div> 
+        </div> 
+        <div class="govuk-date-input__item"> 
+            <div class="govuk-form-group"> 
+               
+                <select asp-for="@Model.DurationUnit" asp-items="@Model.DurationUnits" class="govuk-select"></select>
+            </div> 
+        </div> 
+    </div> 
+
 </div>
 
 <script>
     (function ($) {
         $(function () {
-            var formGroupErrorClass = "govuk-form-group--error";
-            var elementErrorClass = "govuk-input--error";
-            var $elementDurationLength = $("#@nameof(Model.DurationLength)");
-            var $validationDurationLength = $elementDurationLength.prev("[data-valmsg-for='@nameof(Model.DurationLength)']");
-            $validationDurationLength.css("margin-bottom", "0");
-            var $formDuration = $elementDurationLength.closest('.govuk-form-group');
 
-            var $form = $elementDurationLength.closest("form");
-            $form.addTriggersToJqueryValidate().triggerElementValidationsOnFormValidation();
-            var validator = $form.validate();
+            var $durationLength = $("#@nameof(Model.DurationLength)");
 
-            $elementDurationLength.on("blur", function () {
-                var trimmed = $elementDurationLength.val().trim();
-                $elementDurationLength.val(trimmed);
-
-                var result = validator.element($elementDurationLength);
-
-                if (result) {
-                    $elementDurationLength.removeClass(elementErrorClass);
-                    $formDuration.removeClass(formGroupErrorClass);
-                    $validationDurationLength.hide();
-                    $validationDurationLength.css("margin-bottom", "0");
-                } else {
-                    $elementDurationLength.addClass(elementErrorClass);
-                    $formDuration.addClass(formGroupErrorClass);
-                    $validationDurationLength.show();
-                    $validationDurationLength.css("margin-bottom", "15px");
-                }
-            });
-
-            $elementDurationLength.elementValidation(function (element, result) {
-                if (!$formDuration.hasClass(formGroupErrorClass)) {
-                    $validationDurationLength.hide();
-                }
-
-                if (result) {
-                    $elementDurationLength.removeClass(elementErrorClass);
-                    $formDuration.removeClass(formGroupErrorClass);
-                    $validationDurationLength.css("margin-bottom", "0");
-                }
-            });
-
-            $elementDurationLength.on("keypress", function (event) {
+            $durationLength.on("keypress", function (event) {
                 var charCode = event.which ? event.which : event.keyCode;
 
-                if ($elementDurationLength.val().length >= 3) {
+                if ($durationLength.val().length >= 3) {
                     return false;
-                }
+                };
 
-                if ((charCode >= 48 && charCode <= 57)) {
+                if ((charCode >= 48 && charCode <= 57) || charCode === 46) {
                     return true;
                 }
 

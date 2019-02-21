@@ -106,82 +106,82 @@
         })
     </div>
 
-                @*No view component here in order to get checkbox list validation to work without it's own form*@
-                <div class="govuk-form-group" id="VenueItemsCheckboxList" style="@Model.DeliveryMode.IfNotClassroomBasedDisplayNone()">
-                    <label class="govuk-label" for="select-venue">
-                        @Model.SelectVenue.LabelText
-                    </label>
-                    <span id="select-venue-hint" class="govuk-hint">
-                        @Model.SelectVenue.HintText
-                    </span>
-                    <span class="govuk-error-message field-validation-error" id="invalidVenuesChecked" style="display: none; margin-bottom: 15px;">
-                        <span id="invalidVenuesCheckedMessage" class="">Select a venue.</span>
-                    </span>
+    @*No view component here in order to get checkbox list validation to work without it's own form*@
+    <div class="govuk-form-group" id="VenueItemsCheckboxList" style="@Model.DeliveryMode.IfNotClassroomBasedDisplayNone()">
+        <label class="govuk-label" for="select-venue">
+            @Model.SelectVenue.LabelText
+        </label>
+        <span id="select-venue-hint" class="govuk-hint">
+            @Model.SelectVenue.HintText
+        </span>
+        <span class="govuk-error-message field-validation-error" id="invalidVenuesChecked" style="display: none; margin-bottom: 15px;">
+            <span id="invalidVenuesCheckedMessage" class="">Select a venue.</span>
+        </span>
 
-                    <div class="govuk-grid-row">
-                        <div class="govuk-grid-column-full">
-                            <div class="govuk-checkboxes" id="SelectVenueCheckBoxes">
-                                @{ var i = 0; }
-                                @if (Model.SelectVenue.VenueItems.Count() == 1)
-                                {
-                                    <div class="govuk-checkboxes__item">
-                                        <input class="govuk-checkboxes__input" id="VenueName-@i" name="SelectedVenues" type="checkbox" value="@Model.SelectVenue.VenueItems.First().Id" checked="checked" onclick="return false;" />
-                                        <label class="govuk-label govuk-checkboxes__label" for="SelectedVenues">@Model.SelectVenue.VenueItems.First().VenueName</label>
-                                    </div>
-                                }
-                                else
-                                {
-                                    foreach (var item in Model.SelectVenue.VenueItems)
-                                    {
-                                        i++;
-                                        <div class="govuk-checkboxes__item">
-                                            <input class="govuk-checkboxes__input" id="VenueName-@i" name="SelectedVenues" type="checkbox" value="@item.Id" @item.Checked.ThenNullableCheck() />
-                                            <label class="govuk-label govuk-checkboxes__label" for="SelectedVenues">@item.VenueName</label>
-                                        </div>
-                                    }
-                                }
-                            </div>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <div class="govuk-checkboxes" id="SelectVenueCheckBoxes">
+                    @{ var i = 0; }
+                    @if (Model.SelectVenue.VenueItems.Count() == 1)
+                    {
+                        <div class="govuk-checkboxes__item">
+                            <input class="govuk-checkboxes__input" id="VenueName-@i" name="SelectedVenues" type="checkbox" value="@Model.SelectVenue.VenueItems.First().Id" checked="checked" onclick="return false;" />
+                            <label class="govuk-label govuk-checkboxes__label" for="SelectedVenues">@Model.SelectVenue.VenueItems.First().VenueName</label>
                         </div>
-                    </div>
-                </div>
-
-                <div class="govuk-form-group" id="RegionItemsCheckboxList" style="@Model.DeliveryMode.IfNotWorkBasedDisplayNone()">
-                    <label class="govuk-label" for="select-region">
-                        @Model.SelectRegion.LabelText
-                    </label>
-                    <span id="select-region-hint" class="govuk-hint">
-                        @Model.SelectRegion.HintText
-                    </span>
-                    <span class="govuk-error-message field-validation-error" id="invalidRegionsChecked" style="display: none;margin-bottom: 15px;">
-                        <span id="invalidRegionsCheckedMessage" class="">Select a region.</span>
-                    </span>
-
-                    <div class="govuk-grid-row">
-                        <div class="govuk-grid-column-full">
-                            <div class="govuk-checkboxes" id="SelectRegionCheckBoxes">
-                                @{ var j = 0; }
-                                @if (Model.SelectRegion.RegionItems.Count() == 1)
-                                {
-                                    <div class="govuk-checkboxes__item">
-                                        <input class="govuk-checkboxes__input" id="RegionName-@j" name="SelectedRegions" type="checkbox" value="@Model.SelectRegion.RegionItems.First().Id" checked="checked" onclick="return false;" />
-                                        <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@Model.SelectRegion.RegionItems.First().RegionName</label>
-                                    </div>
-                                }
-                                else
-                                {
-                                    foreach (var item in Model.SelectRegion.RegionItems)
-                                    {
-                                        j++;
-                                        <div class="govuk-checkboxes__item">
-                                            <input class="govuk-checkboxes__input" id="RegionName-@j" name="SelectedRegions" type="checkbox" value="@item.Id" @item.Checked.ThenNullableCheck() />
-                                            <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@item.RegionName</label>
-                                        </div>
-                                    }
-                                }
+                    }
+                    else
+                    {
+                        foreach (var item in Model.SelectVenue.VenueItems)
+                        {
+                            i++;
+                            <div class="govuk-checkboxes__item">
+                                <input class="govuk-checkboxes__input" id="VenueName-@i" name="SelectedVenues" type="checkbox" value="@item.Id" @item.Checked.ThenNullableCheck() />
+                                <label class="govuk-label govuk-checkboxes__label" for="SelectedVenues">@item.VenueName</label>
                             </div>
-                        </div>
-                    </div>
+                        }
+                    }
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="govuk-form-group" id="RegionItemsCheckboxList" style="@Model.DeliveryMode.IfNotWorkBasedDisplayNone()">
+        <label class="govuk-label" for="select-region">
+            @Model.SelectRegion.LabelText
+        </label>
+        <span id="select-region-hint" class="govuk-hint">
+            @Model.SelectRegion.HintText
+        </span>
+        <span class="govuk-error-message field-validation-error" id="invalidRegionsChecked" style="display: none;margin-bottom: 15px;">
+            <span id="invalidRegionsCheckedMessage" class="">Select a region.</span>
+        </span>
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <div class="govuk-checkboxes" id="SelectRegionCheckBoxes">
+                    @{ var j = 0; }
+                    @if (Model.SelectRegion.RegionItems.Count() == 1)
+                    {
+                        <div class="govuk-checkboxes__item">
+                            <input class="govuk-checkboxes__input" id="RegionName-@j" name="SelectedRegions" type="checkbox" value="@Model.SelectRegion.RegionItems.First().Id" checked="checked" onclick="return false;" />
+                            <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@Model.SelectRegion.RegionItems.First().RegionName</label>
+                        </div>
+                    }
+                    else
+                    {
+                        foreach (var item in Model.SelectRegion.RegionItems)
+                        {
+                            j++;
+                            <div class="govuk-checkboxes__item">
+                                <input class="govuk-checkboxes__input" id="RegionName-@j" name="SelectedRegions" type="checkbox" value="@item.Id" @item.Checked.ThenNullableCheck() />
+                                <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@item.RegionName</label>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div id="sectionUrl">
         @await Component.InvokeAsync(nameof(UrlInput), new UrlInputModel
@@ -227,7 +227,7 @@
             AriaDescribedBy = "Select course duration"
         })
     </div>
-    
+
     <div id="FullPartTimeRadioButtons">
         @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode.StudyMode), new StudyModeModel
         {
@@ -246,45 +246,45 @@
         })
     </div>
 
-@{
-    switch (@Model.CourseMode)
-    {
-        case CourseMode.EditCourseRun:
-            <div class="govuk-form-group">
-                <button name="submitButton" type="submit" class="govuk-button" id="publish" value="publish">
-                    Save
-                </button>
-            </div>
-            break;
-        case CourseMode.Add:
-            <div class="govuk-form-group">
-                <button name="submitButton" type="submit" class="govuk-button" id="publish" value="publish">
-                    Publish
-                </button>
-                <a class="govuk-link" href="#" id="previewLink">Preview</a>
-                <a class="govuk-link" href="#" id="submitBackLink">Back to Section 1</a>
-            </div>
-            break;
-        case CourseMode.Review:
-            <div class="govuk-form-group">
-                <button name="submitButton" type="submit" class="govuk-button" id="publish" value="publish">
-                    Next
-                </button>
-                <a class="govuk-link" href="#" id="submitBackLink">Back to Section 1</a>
-            </div>
-            break;
-        default:
-            <div class="govuk-form-group">
-                <button name="submitButton" type="submit" class="govuk-button" id="publish" value="publish">
-                    Save
-                </button>
-            </div>
-            break;
+    @{
+        switch (@Model.CourseMode)
+        {
+            case CourseMode.EditCourseRun:
+                <div class="govuk-form-group">
+                    <button name="submitButton" type="submit" class="govuk-button" id="publish" value="publish">
+                        Save
+                    </button>
+                </div>
+                break;
+            case CourseMode.Add:
+                <div class="govuk-form-group">
+                    <button name="submitButton" type="submit" class="govuk-button" id="publish" value="publish">
+                        Publish
+                    </button>
+                    <a class="govuk-link" href="#" id="previewLink">Preview</a>
+                    <a class="govuk-link" href="#" id="submitBackLink">Back to Section 1</a>
+                </div>
+                break;
+            case CourseMode.Review:
+                <div class="govuk-form-group">
+                    <button name="submitButton" type="submit" class="govuk-button" id="publish" value="publish">
+                        Next
+                    </button>
+                    <a class="govuk-link" href="#" id="submitBackLink">Back to Section 1</a>
+                </div>
+                break;
+            default:
+                <div class="govuk-form-group">
+                    <button name="submitButton" type="submit" class="govuk-button" id="publish" value="publish">
+                        Save
+                    </button>
+                </div>
+                break;
+        }
+
     }
 
-}
 
-              
 
 </form>
 
@@ -333,11 +333,36 @@
 
             var $deliveryRadios = $("#DeliveryModeRadioButtons input[type=radio]");
             var $regionItemsCheckboxList = $("#RegionItemsCheckboxList");
-            //$regionItemsCheckboxList.hide();
 
             var isClassroomBased = true;
-    var isOnline = false;
-    var isWorkBased = false;
+            var isOnline = false;
+            var isWorkBased = false;
+
+            switch ($deliveryRadios.val()) {
+            case "ClassroomBased":
+                    {
+                         isClassroomBased = true;
+                         isOnline = false;
+                         isWorkBased = false;
+                break;
+                    }
+            case "Online":
+                    {
+                         isClassroomBased = false;
+                         isOnline = true;
+                         isWorkBased = false;
+                break;
+                    }
+            case "WorkBased":
+                    {
+                        isClassroomBased = false;
+                        isOnline = false;
+                        isWorkBased = true;
+                break;
+            }
+            }
+
+
 
             $deliveryRadios.change(function () {
                 var $venueItemsCheckboxList = $("#VenueItemsCheckboxList");

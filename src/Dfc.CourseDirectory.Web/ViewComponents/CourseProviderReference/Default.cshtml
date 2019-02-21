@@ -6,17 +6,19 @@
     <label class="govuk-label" asp-for="@Model.CourseProviderReference">
         @Model.LabelText
     </label>
+    
+    @{ var regex = @"^[a-zA-Z0-9 \¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`" + "\"" + "\\\\]+$"; }
+
     @if (!string.IsNullOrWhiteSpace(Model.HintText))
     {
         <span class="govuk-hint">
             @Model.HintText
         </span>
     }
-    @*<span asp-validation-for="@Model.CourseProviderReference" class="govuk-error-message"></span>*@
     <input class="govuk-input" asp-for="@Model.CourseProviderReference" type="text" aria-describedby="@Model.AriaDescribedBy"
            val-max-length="255"
            val-max-length-message="The maximum length of 'ID' is 255 characters"
-           val-regex=""
+           val-regex="@regex" 
            val-regex-message="ID contains invalid characters" />
            
 
