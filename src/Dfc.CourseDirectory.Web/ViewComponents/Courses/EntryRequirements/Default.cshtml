@@ -5,6 +5,9 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @inject IOptions<EntryRequirementsComponentSettings> entryRequirementsComponentSettings
 
+@{
+    var regex = @"[a-zA-Z0-9 /\r\n?|\n\¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\" + "\"" + @"\\]+";
+}
 <div class="govuk-character-count" data-module="character-count" data-maxlength=@entryRequirementsComponentSettings.Value.TextFieldMaxChars>
     <div class="govuk-form-group" style="margin-bottom: 0;padding-bottom: 0">
         <label class="govuk-label" for="entry-requirements">
@@ -13,77 +16,10 @@
         <span id="entry-requirements-hint" class="govuk-hint">
             @Model.HintText
         </span>
-        <span asp-validation-for="@Model.EntryRequirements" class="govuk-error-message"></span>
-        <textarea asp-for="@Model.EntryRequirements" class="govuk-textarea js-character-count" rows="5"  type="text" aria-describedby="@Model.AriaDescribedBy"></textarea>
+        <textarea asp-for="EntryRequirements" class="govuk-textarea js-character-count" name="EntryRequirements" id="textAreaEntryRequirements" rows="5"  type="text" 
+                  aria-describedby="@Model.AriaDescribedBy"
+                  val-max-length="500" val-max-length-message="Entry requirements must be 500 characters or less"
+                  val-regex="@regex"
+                  val-regex-message="Who is this course for contains invalid characters"></textarea>
     </div>
 </div>
-
-<script>
-    (function ($) {
-        $(function () {
-            var formGroupErrorClass = "govuk-form-group--error";
-            var elementErrorClass = "govuk-input--error";
-            var $elementUrl = $("#@nameof(Model.EntryRequirements)");
-            var $validationMessageUrl = $elementUrl.prev("[data-valmsg-for='@nameof(Model.EntryRequirements)']");
-            $validationMessageUrl.css("margin-bottom", "0");
-            var $formGroupUrl = $elementUrl.closest('.govuk-form-group');
-
-            var $form = $elementUrl.closest("form");
-            $form.addTriggersToJqueryValidate().triggerElementValidationsOnFormValidation();
-            var validator = $form.validate();
-
-            $elementUrl.on("blur", function () {
-                var trimmed = $elementUrl.val().trim();
-                $elementUrl.val(trimmed);
-
-                var $characterCountValue = $elementUrl.data("val-maxlength-max");
-                var $countMessage = $("#EntryRequirements-info");
-
-                var $actualCharacterCount = $characterCountValue - $elementUrl.val().length;
-
-                if ($actualCharacterCount <= 0) {
-
-                } else {
-
-                    if ($actualCharacterCount === 1) {
-                        $countMessage.text("You have " +
-                            $actualCharacterCount +
-                            " character remaining");
-                    } else {
-                        $countMessage.text("You have " +
-                            $actualCharacterCount +
-                            " characters remaining");
-                    }
-                }
-
-                var result = validator.element($elementUrl);
-
-                if (result) {
-                    $elementUrl.removeClass(elementErrorClass);
-                    $formGroupUrl.removeClass(formGroupErrorClass);
-                    $validationMessageUrl.hide();
-                    $validationMessageUrl.css("margin-bottom", "0");
-                } else {
-                    $elementUrl.addClass(elementErrorClass);
-                    $formGroupUrl.addClass(formGroupErrorClass);
-                    $validationMessageUrl.show();
-                    $validationMessageUrl.css("margin-bottom", "15px");
-                }
-
-
-            });
-
-            $elementUrl.elementValidation(function (element, result) {
-                if (!$formGroupUrl.hasClass(formGroupErrorClass)) {
-                    $validationMessageUrl.hide();
-                }
-
-                if (result) {
-                    $elementUrl.removeClass(elementErrorClass);
-                    $formGroupUrl.removeClass(formGroupErrorClass);
-                    $validationMessageUrl.css("margin-bottom", "0");
-                }
-            });
-        });
-    })(jQuery);
-</script>
