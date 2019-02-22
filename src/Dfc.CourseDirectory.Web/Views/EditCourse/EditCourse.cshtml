@@ -68,21 +68,137 @@
     (function ($) {
         $(function () {
             var $save = $("#save");
+            var $courseFor = $("#@nameof(Model.CourseFor)").govUkTextarea();
+            var $entryRequirements = $("#@nameof(Model.EntryRequirements)").govUkTextarea();
+            var $whatWillLearn = $("#@nameof(Model.WhatWillLearn)").govUkTextarea();
+            var $howYouWillLearn = $("#@nameof(Model.HowYouWillLearn)").govUkTextarea();
+            var $whatYouNeed = $("#@nameof(Model.WhatYouNeed)").govUkTextarea();
+            var $howAssessed = $("#@nameof(Model.HowAssessed)").govUkTextarea();
+            var $whereNext = $("#@nameof(Model.WhereNext)").govUkTextarea();
+
+
+            function isAllValid(currentValue) {
+                return currentValue === true;
+            }
+
             $save.on("click", function (e) {
-                var $courseFor = $("#@nameof(Model.CourseFor)");
-                $courseFor.trigger("blur");
-                var $entryRequirements = $("#@nameof(Model.EntryRequirements)");
-                $entryRequirements.trigger("blur");
-                var $whatWillLearn = $("#@nameof(Model.WhatWillLearn)");
-                $whatWillLearn.trigger("blur");
-                var $howYouWillLearn = $("#@nameof(Model.HowYouWillLearn)");
-                $howYouWillLearn.trigger("blur");
-                var whatYouNeed = $("#@nameof(Model.WhatYouNeed)");
-                whatYouNeed.trigger("blur");
-                var howAssessed = $("#@nameof(Model.HowAssessed)");
-                whatYouNeed.trigger("blur");
-                var whereNext = $("#@nameof(Model.WhereNext)");
-                whereNext.trigger("blur");
+                e.preventDefault();
+
+
+
+                var validStates = [];
+
+
+                if (!$.requiredValidate($courseFor.val())) {
+                    $courseFor.govUkTextarea("invalidState", $courseFor.attr("val-required-message"));
+                    validStates.push(false);
+                } else if (
+                    !$.regexValidate({ regex: $courseFor.attr("val-regex") }, $courseFor.val())) {
+                    $courseFor.govUkTextarea("invalidState", $courseFor.attr("val-regex-message"));
+                    validStates.push(false);
+                }else if (
+                    !$.maxLengthValidate({ max: $courseFor.attr("val-max-length") }, $courseFor.val())) {
+                    $courseFor.govUkTextarea("invalidState", $courseFor.attr("val-max-length-message"));
+                    validStates.push(false);
+                }
+                else {
+
+                    $courseFor.govUkInput("validState");
+                    validStates.push(true);
+                }
+
+                if (!$.regexValidate({ regex: $entryRequirements.attr("val-regex") }, $entryRequirements.val())) {
+                    $entryRequirements.govUkTextarea("invalidState", $entryRequirements.attr("val-regex-message"));
+                    validStates.push(false);
+                }else if (
+                    !$.maxLengthValidate({ max: $entryRequirements.attr("val-max-length") }, $entryRequirements.val())) {
+                    $entryRequirements.govUkTextarea("invalidState", $entryRequirements.attr("val-max-length-message"));
+                    validStates.push(false);                }
+                else {
+
+                    $entryRequirements.govUkTextarea("validState");
+                    validStates.push(true);
+                }
+
+                //what will learn
+                if (!$.regexValidate({ regex: $whatWillLearn.attr("val-regex") }, $whatWillLearn.val())) {
+                    $whatWillLearn.govUkTextarea("invalidState", $whatWillLearn.attr("val-regex-message"));
+                    validStates.push(false);
+                }else if (
+                    !$.maxLengthValidate({ max: $whatWillLearn.attr("val-max-length") }, $whatWillLearn.val())) {
+                    $whatWillLearn.govUkTextarea("invalidState", $whatWillLearn.attr("val-max-length-message"));
+                    validStates.push(false);                }
+                else {
+
+                    $whatWillLearn.govUkTextarea("validState");
+                    validStates.push(true);
+                }
+
+                //how will learn
+                if (!$.regexValidate({ regex: $howYouWillLearn.attr("val-regex") }, $howYouWillLearn.val())) {
+                    $howYouWillLearn.govUkTextarea("invalidState", $howYouWillLearn.attr("val-regex-message"));
+                    validStates.push(false);
+                }else if (
+                    !$.maxLengthValidate({ max: $howYouWillLearn.attr("val-max-length") }, $howYouWillLearn.val())) {
+                    $howYouWillLearn.govUkTextarea("invalidState", $howYouWillLearn.attr("val-max-length-message"));
+                    validStates.push(false);                }
+                else {
+
+                    $howYouWillLearn.govUkTextarea("validState");
+                    validStates.push(true);
+                }
+
+                //what you need
+                if (!$.regexValidate({ regex: $whatYouNeed.attr("val-regex") }, $whatYouNeed.val())) {
+                    $whatYouNeed.govUkTextarea("invalidState", $whatYouNeed.attr("val-regex-message"));
+                    validStates.push(false);
+                }else if (
+                    !$.maxLengthValidate({ max: $whatYouNeed.attr("val-max-length") }, $whatYouNeed.val())) {
+                    $whatYouNeed.govUkTextarea("invalidState", $whatYouNeed.attr("val-max-length-message"));
+                    validStates.push(false);                }
+                else {
+
+                    $whatYouNeed.govUkTextarea("validState");
+                    validStates.push(true);
+                }
+
+                //how assessed
+                if (!$.regexValidate({ regex: $howAssessed.attr("val-regex") }, $howAssessed.val())) {
+                    $howAssessed.govUkTextarea("invalidState", $howAssessed.attr("val-regex-message"));
+                    validStates.push(false);
+                }else if (
+                    !$.maxLengthValidate({ max: $howAssessed.attr("val-max-length") }, $howAssessed.val())) {
+                    $howAssessed.govUkTextarea("invalidState", $howAssessed.attr("val-max-length-message"));
+                    validStates.push(false);                }
+                else {
+
+                    $howAssessed.govUkTextarea("validState");
+                    validStates.push(true);
+                }
+
+                //where next
+                if (!$.regexValidate({ regex: $howAssessed.attr("val-regex") }, $whereNext.val())) {
+                    $whereNext.govUkTextarea("invalidState", $whereNext.attr("val-regex-message"));
+                    validStates.push(false);
+                } else if (
+                    !$.maxLengthValidate({ max: $whereNext.attr("val-max-length") }, $whereNext.val())) {
+                    $whereNext.govUkTextarea("invalidState", $whereNext.attr("val-max-length-message"));
+                    validStates.push(false);
+                }
+                else {
+
+                    $whereNext.govUkTextarea("validState");
+                    validStates.push(true);
+                }
+
+                if (validStates.every(isAllValid)) {
+
+                    //alert("OK");
+                   $("#editCourse").submit();
+                } else {
+                    //alert("error");
+                }
+
             });
 
         });

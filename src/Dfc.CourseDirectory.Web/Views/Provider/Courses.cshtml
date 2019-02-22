@@ -97,7 +97,7 @@
                                 <div>
                                     <div id="accordion-default-content-1" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-1" style="border-style: solid; border-width: 1px; margin-bottom: 10px;">
 
-                                        <div class="cd-course--list" style="margin-bottom: 15px;">
+                                        <div class="cd-course--list" style="margin-bottom: 15px; border-bottom: none">
                                             @{
                                                 switch (a.DeliveryMode)
                                                 {
@@ -173,7 +173,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="cd-course--list" style="border: none">
+                                        <div class="cd-course--list" style="border: none; margin-bottom: 15px;">
                                             <div class="">
                                                 <label class="govuk-label" for="cost" style="font-weight: 600">
                                                     Cost
@@ -345,6 +345,13 @@
             });
 
             $(".govuk-details__summary").click(function () {
+
+                var closeall = document.querySelectorAll("div[class^='govuk-accordion__controls']");
+                for (var i = 0; i < closeall.length; i++) {
+
+                    closeall[i].remove();
+
+                }
 
                 var els1 = document.querySelectorAll("div[class^='govuk-accordion__section']");
                 for (var i = 0; i < els1.length; i++) {
