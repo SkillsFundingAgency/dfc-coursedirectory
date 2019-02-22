@@ -100,3 +100,7 @@ select:disabled {
 .govuk-accordion__section:last-child {
   border-bottom: 10px;
 }
+
+.govuk-accordion__section:first-child {
+  border: none;
+}
