@@ -1,0 +1,21 @@
+﻿@using Microsoft.AspNetCore.Authorization;
+@using Microsoft.AspNetCore.Identity
+@using Dfc.CourseDirectory.Web.Areas.Identity.Data;
+
+@model Dfc.CourseDirectory.Web.ViewModels.BulkUpload.BulkUploadViewModel
+
+
+@inject IAuthorizationService Authorization
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+
+@{    
+    ViewData["Title"] = "Bulk Upload";
+    var authorised = await Authorization.AuthorizeAsync(User, "Admin");
+}
+
+<div>
+    <h1 class="govuk-heading-xl">@Html.Raw(Model.AbraKadabra)</h1>
+</div>
+
+
