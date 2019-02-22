@@ -331,22 +331,16 @@ namespace Dfc.CourseDirectory.Web.Controllers
             // funding options
             var fundingOptions = new List<string>();
 
-            if (!addCourse.AdultEducationBudget && !addCourse.AdvancedLearnerLoan)
+            if (addCourse.AdultEducationBudget)
             {
-                fundingOptions.Add("None");
+                fundingOptions.Add("Adult education budget");
             }
-            else
-            {
-                if (addCourse.AdultEducationBudget)
-                {
-                    fundingOptions.Add("Adult education budget");
-                }
 
-                if (addCourse.AdvancedLearnerLoan)
-                {
-                    fundingOptions.Add("Advanced learner loan");
-                }
+            if (addCourse.AdvancedLearnerLoan)
+            {
+                fundingOptions.Add("Advanced learner loan");
             }
+
             summaryViewModel.FundingOptions = fundingOptions;
             Session.SetObject(SessionLastAddCoursePage, AddCoursePage.AddCourseRun);
 
@@ -431,21 +425,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
             // funding options
             var fundingOptions = new List<string>();
             
-            if (!model.AdultEducationBudget && !model.AdvancedLearnerLoan)
+            if (model.AdultEducationBudget)
             {
-                fundingOptions.Add("None");
+                fundingOptions.Add("Adult education budget");
             }
-            else
-            {
-                if (model.AdultEducationBudget)
-                {
-                    fundingOptions.Add("Adult education budget");
-                }
 
-                if (model.AdvancedLearnerLoan)
-                {
-                    fundingOptions.Add("Advanced learner loan");
-                }
+            if (model.AdvancedLearnerLoan)
+            {
+                fundingOptions.Add("Advanced learner loan");
             }
             summaryViewModel.FundingOptions = fundingOptions;
 
