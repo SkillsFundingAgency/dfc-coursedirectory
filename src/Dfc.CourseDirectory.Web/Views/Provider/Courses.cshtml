@@ -75,7 +75,7 @@
                                                     else
                                                     {
                                                         <span>
-                                                            --
+
                                                         </span>
                                                     }
                                                 }
@@ -167,7 +167,7 @@
                                                     else
                                                     {
                                                         <label>
-                                                            --
+                                                            &nbsp;
                                                         </label>
                                                     }
                                                 </div>
@@ -187,7 +187,7 @@
                                                 else
                                                 {
                                                     <label>
-                                                        --
+                                                        &nbsp;
                                                     </label>
                                                 }
 
@@ -199,23 +199,28 @@
                                                     <label class="govuk-label" for="mode" style="font-weight: 600">
                                                         Mode
                                                     </label>
-                                                    <label asp-for="@a.StudyMode">@WebHelper.GetEnumDescription(a.StudyMode)</label>
+                                                    @if (a.StudyMode != StudyMode.Undefined)
+                                                    {
+                                                        <label asp-for="@a.StudyMode">@WebHelper.GetEnumDescription(a.StudyMode)</label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <label>
+                                                            &nbsp;
+                                                        </label>
+                                                    }
+
                                                 </div>
                                             }
                                             <div class="">
-                                                <label class="govuk-label" for="duration" style="font-weight: 600">
+                                                <label  class="govuk-label" for="duration" style="font-weight: 600">
                                                     Duration
                                                 </label>
                                                 @if (a.DurationValue.HasValue)
                                                 {
                                                     <label asp-for="@a.DurationValue">@a.DurationValue </label>
                                                 }
-                                                else
-                                                {
-                                                    <label>
-                                                        --
-                                                    </label>
-                                                }
+
                                                 @if (a.DurationUnit != DurationUnit.Undefined)
                                                 {
                                                     <label asp-for="@a.DurationUnit">@WebHelper.GetEnumDescription(a.DurationUnit)</label>
@@ -236,7 +241,7 @@
                                                     else
                                                     {
                                                         <span>
-                                                            --
+                                                            &nbsp;
                                                         </span>
                                                     }
                                                 }
@@ -255,7 +260,7 @@
                                                 else
                                                 {
                                                     <label>
-                                                        --
+                                                        &nbsp;
                                                     </label>
                                                 }
                                             </div>
@@ -266,7 +271,16 @@
                                                     <label class="govuk-label" for="attendance" style="font-weight: 600">
                                                         Attendance
                                                     </label>
-                                                    <label asp-for="@a.AttendancePattern">@WebHelper.GetEnumDescription(a.AttendancePattern)</label>
+                                                    @if (a.AttendancePattern != AttendancePattern.Undefined)
+                                                    {
+                                                        <label asp-for="@a.AttendancePattern">@WebHelper.GetEnumDescription(a.AttendancePattern)</label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <label>
+                                                            &nbsp;
+                                                        </label>
+                                                    }
                                                 </div>
                                             }
                                             @{
@@ -285,7 +299,7 @@
                                                     else
                                                     {
                                                         <label>
-                                                            --
+                                                            &nbsp;
                                                         </label>
                                                     }
                                                 </div>
@@ -330,6 +344,14 @@
                 $('#' + courseId).attr('open', '');
 
                 if (courseRunId !== "00000000-0000-0000-0000-000000000000") {
+
+                    var closeall = document.querySelectorAll("div[class^='govuk-accordion__controls']");
+                    for (var i = 0; i < closeall.length; i++) {
+
+                        closeall[i].remove();
+
+                    }
+
                     var els1 = document.querySelectorAll("div[class^='govuk-accordion__section']");
                     for (var i = 0; i < els1.length; i++) {
 
