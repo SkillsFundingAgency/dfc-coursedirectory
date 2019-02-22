@@ -118,6 +118,15 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                         QualificationType = course.Value.QualificationType
                     };
 
+                    if (courseRun.Regions != null)
+                    {
+                        foreach (var selectedRegion in courseRun.Regions)
+                        {
+                            vm.SelectRegion.RegionItems.First(x => x.Id == selectedRegion.ToString())
+                                .Checked = true;
+                        }
+                    }
+
                     return View("EditCourseRun", vm);
                 }
             }
@@ -193,6 +202,11 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                             courseRunForEdit.VenueId = null;
                             courseRunForEdit.Regions = model.SelectedRegions;
 
+                            break;
+                        case DeliveryMode.Online:
+
+                            courseRunForEdit.Regions = null;
+                            courseRunForEdit.VenueId = null;
                             break;
                     }
 
