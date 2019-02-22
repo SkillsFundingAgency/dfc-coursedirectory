@@ -489,29 +489,7 @@
 
             });
 
-            $regionCheckboxes.change(function () {
-                var $validationMessageForRegions = $("#invalidRegionsChecked");
-                var $formGroupRegions = $regionItemsCheckboxList.closest('.govuk-form-group');
-                var countedCheckedCheckboxes = $regionCheckboxes.filter(':checked').length;
-
-                if ($(this).is(":visible")) {
-                    if (countedCheckedCheckboxes === 0) {
-                        $formGroupRegions.addClass("govuk-form-group--error");
-                        $validationMessageForRegions.show();
-                        $formRegionsIsValid = false;
-                    }
-                    else {
-                        $formGroupRegions.removeClass("govuk-form-group--error");
-                        $validationMessageForRegions.hide();
-                        $formRegionsIsValid = true;
-                    }
-                }
-                else {
-                    $formGroupRegions.removeClass("govuk-form-group--error");
-                    $validationMessageForRegions.hide();
-                    $formRegionsIsValid = true;
-                }
-            });
+           
 
         });
     })(jQuery);
