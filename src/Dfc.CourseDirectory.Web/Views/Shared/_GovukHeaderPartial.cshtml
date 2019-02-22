@@ -67,14 +67,14 @@
                             @{
                                 if (authorised.Succeeded)
                                 {
-                                    <li class="govuk-header__navigation-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Provider" ? "govuk-header__navigation-item--active" : "")">
+                                    <li class="govuk-header__navigation-item @((ViewContext.RouteData.Values["Action"].ToString() == "Provider" && ViewContext.RouteData.Values["Action"].ToString() == "Index")? "govuk-header__navigation-item--active" : "")">
                                         <a class="govuk-header__link" href="/Provider">
                                             Add Provider
                                         </a>
                                     </li>
                                 }
                             }
-                            <li class="govuk-header__navigation-item @((ViewContext.RouteData.Values["Action"].ToString() == "QualificationsList" || ViewContext.RouteData.Values["Action"].ToString() == "Courses")? "govuk-header__navigation-item--active" : "")">
+                            <li class="govuk-header__navigation-item @((ViewContext.RouteData.Values["Action"].ToString() == "QualificationsList" || ViewContext.RouteData.Values["Action"].ToString() == "Courses") || (ViewContext.RouteData.Values["Controller"].ToString() == "Provider" || ViewContext.RouteData.Values["Action"].ToString() == "Courses")? "govuk-header__navigation-item--active" : "")">
                                 <a class="govuk-header__link" href="/Qualifications/QualificationsList">
                                     Courses
                                 </a>

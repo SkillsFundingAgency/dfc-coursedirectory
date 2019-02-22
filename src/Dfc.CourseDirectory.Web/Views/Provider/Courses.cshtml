@@ -89,7 +89,18 @@
 
                                             </span>
                                             <span style="font-size: 1rem; font-weight: 400; margin-right: 15px">
-                                                @a.StartDate?.ToString("dd/MM/yyy", CultureInfo.InvariantCulture)
+                                                @if (a.FlexibleStartDate)
+                                                {
+                                                    <span>
+                                                        Flexible Start Date
+                                                    </span>
+
+                                                }
+                                                else
+                                                {
+                                                    @a.StartDate?.ToString("dd/MM/yyy", CultureInfo.InvariantCulture)
+                                                }
+
                                             </span>
                                         </button><span class="govuk-accordion__icon" aria-hidden="true"></span>
                                     </h2>
@@ -213,7 +224,7 @@
                                                 </div>
                                             }
                                             <div class="">
-                                                <label  class="govuk-label" for="duration" style="font-weight: 600">
+                                                <label class="govuk-label" for="duration" style="font-weight: 600">
                                                     Duration
                                                 </label>
                                                 @if (a.DurationValue.HasValue)
@@ -289,18 +300,27 @@
                                                     <label class="govuk-label" for="startdate" style="font-weight: 600">
                                                         Start date
                                                     </label>
-
-                                                    @if (a.StartDate.HasValue)
+                                                    @if (a.FlexibleStartDate)
                                                     {
                                                         <label>
-                                                            @a.StartDate?.ToString("dd/MM/yyy", CultureInfo.InvariantCulture)
+                                                            Flexible Start Date
                                                         </label>
+
                                                     }
                                                     else
                                                     {
-                                                        <label>
-                                                            &nbsp;
-                                                        </label>
+                                                        if (a.StartDate.HasValue)
+                                                        {
+                                                            <label>
+                                                                @a.StartDate?.ToString("dd/MM/yyy", CultureInfo.InvariantCulture)
+                                                            </label>
+                                                        }
+                                                        else
+                                                        {
+                                                            <label>
+                                                                &nbsp;
+                                                            </label>
+                                                        }
                                                     }
                                                 </div>
                                             }
