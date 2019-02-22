@@ -31,7 +31,10 @@ namespace Dfc.CourseDirectory.Web.ViewModels.EditCourse
 
         public string QualificationType { get; set; }
 
-    }
+        public bool? AdultEducationBudget { get; set; }
+        public bool? AdvancedLearnerLoan{ get; set; }
+
+}
 
    
 }

@@ -136,6 +136,9 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                         }
                     };
                     vm.QualificationType = course?.Value?.QualificationType;
+                    vm.AdultEducationBudget = course?.Value?.AdultEducationBudget;
+                    vm.AdvancedLearnerLoan = course?.Value?.AdvancedLearnerLoan;
+
                     return View("EditCourse", vm);
                 }
             }

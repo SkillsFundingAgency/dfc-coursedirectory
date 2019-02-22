@@ -1,4 +1,5 @@
 ﻿
+@using System.Globalization
 @using Dfc.CourseDirectory.Models.Models.Courses
 @using Dfc.CourseDirectory.Services.Interfaces.CourseService
 @using Dfc.CourseDirectory.Services.Interfaces.VenueService
@@ -87,7 +88,9 @@
                                                 }
 
                                             </span>
-                                            <span style="font-size: 1rem; font-weight: 400; margin-right: 15px">@a.StartDate?.ToShortDateString()</span>
+                                            <span style="font-size: 1rem; font-weight: 400; margin-right: 15px">
+                                                @a.StartDate?.ToString("dd/MM/yyy", CultureInfo.InvariantCulture)
+                                            </span>
                                         </button><span class="govuk-accordion__icon" aria-hidden="true"></span>
                                     </h2>
                                 </div>
@@ -276,7 +279,7 @@
                                                     @if (a.StartDate.HasValue)
                                                     {
                                                         <label>
-                                                            @a.StartDate?.ToShortDateString()
+                                                            @a.StartDate?.ToString("dd/MM/yyy", CultureInfo.InvariantCulture)
                                                         </label>
                                                     }
                                                     else
