@@ -9,7 +9,6 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseVenue
     public class ChooseVenueModel
     {
         public Guid VenueId { get; set; }
-
         public List<SelectListItem> Venues { get; set; }
       
         public string LabelText { get; set; }
