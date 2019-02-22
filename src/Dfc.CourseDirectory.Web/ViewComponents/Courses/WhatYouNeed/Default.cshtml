@@ -6,23 +6,27 @@
 @inject IOptions<WhatYouNeedComponentSettings> whatYouNeedComponentSettings
 
 @{
-    var regex = @"[a-zA-Z0-9 /\r\n?|\n\¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\" + "\"" + @"\\]+";
+    var regex = @"^[a-zA-Z0-9 \¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`" + "\"" + "\\\\]+$";
 }
 
-<div class="govuk-form-group">
-    <div class="govuk-character-count" data-module="character-count" data-maxlength=@whatYouNeedComponentSettings.Value.TextFieldMaxChars>
-        <div class="govuk-form-group" style="margin-bottom: 0;padding-bottom: 0">
-            <label class="govuk-label" for="course-for">
-                @Model.LabelText
-            </label>
-            <span id="course-for-hint" class="govuk-hint">
+
+
+<div class="govuk-character-count" data-module="character-count" data-maxlength=@whatYouNeedComponentSettings.Value.TextFieldMaxChars>
+    <div class="govuk-form-group">
+        <label class="govuk-label" for="word-count">
+            @Model.LabelText
+        </label>
+        @if (!string.IsNullOrWhiteSpace(Model.HintText))
+        {
+            <span class="govuk-hint">
                 @Model.HintText
             </span>
-            <textarea asp-for="WhatYouNeed" class="govuk-textarea js-character-count" id="textAreaWhatYouNeed" name="WhatYouNeed" rows="5" type="text" 
-                      aria-describedby="@Model.AriaDescribedBy"
-                      val-max-length="500" val-max-length-message="What you’ll need to bring must be 500 characters or less"
-                      val-regex="@regex"
-                      val-regex-message="What you’ll need to bring contains invalid characters"></textarea>
-        </div>
+        }
+        <textarea class="govuk-textarea js-character-count " asp-for="@Model.WhatYouNeed" rows="5"
+                   aria-describedby="@Model.AriaDescribedBy"
+                          val-max-length="500" val-max-length-message="What you’ll need to bring must be 500 characters or less"
+                          val-regex="@regex"
+                          val-regex-message="What you’ll need to bring contains invalid characters"></textarea>
+
     </div>
 </div>
