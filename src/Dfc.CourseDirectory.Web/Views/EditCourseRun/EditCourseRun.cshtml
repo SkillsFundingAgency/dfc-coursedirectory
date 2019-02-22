@@ -249,8 +249,10 @@
                     if (isClassroomBased) {
                     if ($.requiredValidate($selectvenue.val())) {
                         $selectvenue.govUkSelect("validState");
+                        validStates.push(true);
                     } else {
                         $selectvenue.govUkSelect("invalidState", $selectvenue.attr("val-required-message"));
+                        validStates.push(false);
                         }
                         }
 
@@ -353,16 +355,20 @@
 
                     if (!$.requiredValidate($duration.find("input").val())) {
                         $duration.govUkDurationInput("invalidState", $duration.attr("val-duration-message"));
+                        validStates.push(false);
                     } else if (!$.rangeValidate({
                             min: $duration.attr("val-range-min"),
                             max: $duration.attr("val-range-max")
                         },
                         $duration.find("input").val())) {
                         $duration.govUkDurationInput("invalidState", $duration.attr("val-duration-message"));
+                        validStates.push(false);
                     } else if (!$.requiredValidate($duration.find("select").val())) {
                         $duration.govUkDurationInput("invalidState", $duration.attr("val-duration-message"));
+                        validStates.push(false);
                     } else {
                         $duration.govUkDurationInput("validState");
+                        validStates.push(true);
                     }
 
 
@@ -377,21 +383,27 @@
 
                     if ($.requiredValidate($radioDeliveryMode.find("input[type='radio']:checked").val())) {
                         $radioDeliveryMode.govUkRadios("validState");
+                        validStates.push(true);
                     } else {
                         $radioDeliveryMode.govUkRadios("invalidState", $radioDeliveryMode.attr("val-required-message"));
+                        validStates.push(false);
                     }
 
 
                     if ($.requiredValidate($radioStudyMode.find("input[type='radio']:checked").val())) {
                         $radioStudyMode.govUkRadios("validState");
+                        validStates.push(true);
                     } else {
                         $radioStudyMode.govUkRadios("invalidState", $radioStudyMode.attr("val-required-message"));
+                        validStates.push(false);
                     }
 
                     if ($.requiredValidate($radioAttendance.find("input[type='radio']:checked").val())) {
                         $radioAttendance.govUkRadios("validState");
+                        validStates.push(true);
                     } else {
                         $radioAttendance.govUkRadios("invalidState", $radioAttendance.attr("val-required-message"));
+                        validStates.push(false);
                     }
 
 
@@ -423,7 +435,7 @@
 
                         //alert("OK");
                         $("#editCourseRun").submit();
-                    } 
+                    }
 
                 });
 
@@ -489,7 +501,7 @@
 
             });
 
-           
+
 
         });
     })(jQuery);
