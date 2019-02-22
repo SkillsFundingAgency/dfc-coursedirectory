@@ -24,9 +24,9 @@
 
             <div class="govuk-date-input" id="start_date"
                  val-required-message="Enter start date"
-                 val-past-date-ref=@DateTime.Now
+                 val-past-date-ref=@DateTime.Now.ToString("yyyy-MM-dd")
                  val-past-date-message="Start Date cannot be earlier than today’s date"
-                 val-future-date-ref=@DateTime.Now.AddYears(2)
+                 val-future-date-ref=@DateTime.Now.AddYears(2).ToString("yyyy-MM-dd")
                  val-future-date-message="Start Date cannot be later than 2 years from today’s date"
                  val-date-message="Invalid date">
                 <div class="govuk-date-input__item">
@@ -71,7 +71,7 @@
         $(function() {
 
 
-            var $dayElementUrl = $("#@nameof(Model.Day)");
+            @*var $dayElementUrl = $("#@nameof(Model.Day)");
 
             var $monthElementUrl = $("#@nameof(Model.Month)");
 
@@ -122,7 +122,7 @@
                     }
 
                     return false;
-                });
+                });*@
 
 
 

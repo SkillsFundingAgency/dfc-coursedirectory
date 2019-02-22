@@ -93,10 +93,6 @@
         <span id="select-venue-hint" class="govuk-hint">
             @Model.SelectVenue.HintText
         </span>
-        <span class="govuk-error-message field-validation-error" id="invalidVenuesChecked" style="display: none; margin-bottom: 15px;">
-            <span id="invalidVenuesCheckedMessage" class="">Select a venue.</span>
-        </span>
-
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
                 <div class="govuk-checkboxes" id="SelectVenueCheckBoxes" val-required-message="Select a venue">
@@ -131,10 +127,6 @@
         <span id="select-region-hint" class="govuk-hint">
             @Model.SelectRegion.HintText
         </span>
-        <span class="govuk-error-message field-validation-error" id="invalidRegionsChecked" style="display: none;margin-bottom: 15px;">
-            <span id="invalidRegionsCheckedMessage" class="">Select a region.</span>
-        </span>
-
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
                 <div class="govuk-checkboxes" id="SelectRegionCheckBoxes" val-required-message="Select a region">
@@ -185,16 +177,6 @@
             CostDescriptionAriaDescribedBy = "Enter details of related to the cost of this course"
         })
     </div>
-
-    @*<div id="sectionAdvancedLearnerLoan">
-        @await Component.InvokeAsync(nameof(AdvancedLearnerLoan), new AdvancedLearnerLoanModel
-        {
-            AdvancedLearnerLoan = Model.AdvancedLearnerLoan,
-            LabelText = "Advanced learner loan",
-            HintText = "Select the checkbox below if Advanced Learner Loans are available for this course",
-            AriaDescribedBy = "Select whether Advanced Learner Loan is available for this course"
-        })
-    </div>*@
 
     <div id="sectionDuration">
         @await Component.InvokeAsync(nameof(Duration), new DurationModel
@@ -261,25 +243,6 @@
         }
     }
 
-
-
-
-    @*
-        <div class="govuk-form-group">
-            <button name="submitButton" type="submit" class="govuk-button" id="publish" value="publish">
-                Publish
-            </button>
-            <a class="govuk-link" href="#" id="previewLink">Preview</a>
-            <a class="govuk-link" href="#" id="submitBackLink">Back to Section 1</a>
-        </div>*@
-
-    @*<div class="govuk-form-group">
-            <button name="submitButton" type="submit" class="govuk-button" id="publish" value="publish">
-                Next
-            </button>
-            <a class="govuk-link" href="#" id="submitBackLink">Back to Section 1</a>
-        </div>*@
-
 </form>
 
 <script>
@@ -290,10 +253,10 @@
             var $courseProviderReference = $("#@nameof(Model.CourseProviderReference)").govUkInput();
             var $deliveryRadios = $("#DeliveryModeRadioButtons input[type=radio]");
             var $regionItemsCheckboxList = $("#RegionItemsCheckboxList");
-            var $venueCheckboxes = $("#SelectVenueCheckBoxes input[type=checkbox]");
-            var $regionCheckboxes = $("#SelectRegionCheckBoxes input[type=checkbox]");
+            
             var $duration = $("#duration").govUkDurationInput();
             var $checkboxsregions = $("#SelectRegionCheckBoxes").govUkCheckboxes();
+            var $checkboxVenues = $("#SelectVenueCheckBoxes").govUkCheckboxes();
 
             var $radioDeliveryMode = $("#DeliveryModeRadioButtons").govUkRadios();
             var $radioStudyMode = $("#StudyModeRadioButtons").govUkRadios();
@@ -357,14 +320,6 @@
             function validateAddCourseRun() {
                 var validStates = [];
 
-                if (isClassroomBased) {
-                    if ($.requiredValidate($selectvenue.val())) {
-                        $selectvenue.govUkSelect("validState");
-                    } else {
-                        $selectvenue.govUkSelect("invalidState", $selectvenue.attr("val-required-message"));
-                    }
-                }
-
                 if ((!$.requiredValidate($cost.val()) && !$.requiredValidate($costDescription.val()))) {
                     $cost.govUkInput("invalidState", $cost.attr("val-required-message"));
                     validStates.push(false);
@@ -392,6 +347,17 @@
                         $checkboxsregions.govUkCheckboxes("invalidState", $checkboxsregions.attr("val-required-message"));
                         validStates.push(false);
                     }
+                }
+
+                if (isClassroomBased) {
+                    if ($.requiredValidate($checkboxVenues.find("input[type='checkbox']:checked").val())) {
+                        $checkboxVenues.govUkCheckboxes("validState");
+                        validStates.push(true);
+                    } else {
+                        $checkboxVenues.govUkCheckboxes("invalidState", $checkboxVenues.attr("val-required-message"));
+                        validStates.push(false);
+                    }
+
                 }
 
                 if (!$.requiredValidate($courseName.val())) {
@@ -489,8 +455,30 @@
                             $startDate.govUkDateInput("invalidState", $startDate.attr("val-date-message"));
                             validStates.push(false);
                         }
-                    }
 
+                        // in the past
+                        if ($.pastDateValidate({
+                            ref: $startDate.attr("val-past-date-ref") 
+                        }, startDateValue)) {
+                            $startDate.govUkDateInput("invalidState", $startDate.attr("val-past-date-message"));
+                            validStates.push(false);
+                        } else {
+                            $startDate.govUkDateInput("validState");
+                            validStates.push(true);
+
+                            // past was ok, check the future date
+                            if ($.futureDateValidate ({
+                                ref: $startDate.attr("val-future-date-ref")
+                            }, startDateValue)) {
+                                $startDate.govUkDateInput("invalidState", $startDate.attr("val-future-date-message"));
+                                validStates.push(false);
+                            } else {
+                                $startDate.govUkDateInput("validState");
+                                validStates.push(true);
+                            }
+                        } 
+
+                    }
                 };
 
                 return validStates.every(isAllValid);
@@ -547,51 +535,6 @@
 
 
             });
-
-            //$venueCheckboxes.change(function () {
-            //    var $validationMessageForVenues = $("#invalidVenuesChecked");
-            //    var $venueItemsCheckboxList = $("#VenueItemsCheckboxList");
-            //    var $formGroupVenues = $venueItemsCheckboxList.closest('.govuk-form-group');
-            //    var countedCheckedCheckboxes = $venueCheckboxes.filter(':checked').length;
-
-            //    if ($(this).is(":visible")) {
-            //        if (countedCheckedCheckboxes === 0) {
-            //            $formGroupVenues.addClass("govuk-form-group--error");
-            //            $validationMessageForVenues.show();
-            //        }
-            //        else {
-            //            $formGroupVenues.removeClass("govuk-form-group--error");
-            //            $validationMessageForVenues.hide();
-            //        }
-            //    }
-            //    else {
-            //        $formGroupVenues.removeClass("govuk-form-group--error");
-            //        $validationMessageForVenues.hide();
-            //    }
-
-            //});
-
-            //$regionCheckboxes.change(function () {
-            //    var $validationMessageForRegions = $("#invalidRegionsChecked");
-            //    var $formGroupRegions = $regionItemsCheckboxList.closest('.govuk-form-group');
-            //    var countedCheckedCheckboxes = $regionCheckboxes.filter(':checked').length;
-
-            //    if ($(this).is(":visible")) {
-            //        if (countedCheckedCheckboxes === 0) {
-            //            $formGroupRegions.addClass("govuk-form-group--error");
-            //            $validationMessageForRegions.show();
-            //        }
-            //        else {
-            //            $formGroupRegions.removeClass("govuk-form-group--error");
-            //            $validationMessageForRegions.hide();
-            //        }
-            //    }
-            //    else {
-            //        $formGroupRegions.removeClass("govuk-form-group--error");
-            //        $validationMessageForRegions.hide();
-            //    }
-            //});
-
 
         });
     })(jQuery);
