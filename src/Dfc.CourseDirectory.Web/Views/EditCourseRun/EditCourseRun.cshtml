@@ -17,7 +17,7 @@
     Edit course details
 </h1>
 
-<form asp-controller="EditCourseRun" asp-action="Index" id="editCourseRun">
+<form asp-controller="EditCourseRun" asp-action="Index" id="editCourseRun" onkeypress="return event.keyCode != 13;">
 
     @Html.HiddenFor(x => x.CourseId)
     @Html.HiddenFor(x => x.CourseRunId)
@@ -67,7 +67,7 @@
             YearAriaDescribedBy = "",
             YearLabelText = "Year",
             AriaDescribedBy = "",
-            SpecifiedDateHintText = "e.g. 'For example, 30 9 2019",
+            SpecifiedDateHintText = "e.g. For example, 30 9 2019",
             FlexibleDateHintText = "Or select a flexible start date:",
             LabelText = "Start date"
         })

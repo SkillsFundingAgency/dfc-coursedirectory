@@ -40,7 +40,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return View();
         }
 
-        public async Task<IActionResult> Courses(string qualificationType, Guid? courseId,Guid? courseRunId)
+        public async Task<IActionResult> Courses(string qualificationType, Guid? courseId,Guid? courseRunId, string NotificationTitle, string NotificationMessage)
         {
             int? UKPRN = _session.GetInt32("UKPRN");
 
@@ -55,24 +55,46 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     .Result.Value);
 
             String qualificationTitle = string.Empty;
+            String courseName = string.Empty;
 
             if (courseId.HasValue && courseId.Value != Guid.Empty)
             {
-                qualificationTitle = result.Value
-                    .SingleOrDefault(o => String.Equals(o.QualType, qualificationType, StringComparison.CurrentCultureIgnoreCase))
-                    ?.Value
-                    .SelectMany(x => x.Value).SingleOrDefault(x => x.id == courseId.Value)
-                    ?.QualificationCourseTitle;
+                var course = await _courseService.GetCourseByIdAsync(new GetCourseByIdCriteria(courseId.Value));
+                 qualificationTitle = course.Value.QualificationCourseTitle;
+
+                if (courseRunId.HasValue)
+                {
+                    var courseRunCourseName = course.Value.CourseRuns.FirstOrDefault(x => x.id == courseRunId.Value)?.CourseName;
+                    courseName = courseRunCourseName;
+                }
+                
             }
+
+            string notificationMessage = string.Empty;
+
+            if (courseRunId.HasValue)
+            {
+                 notificationMessage = "<a id='courseeditlink' class='govuk-link' href=# data-courseid=" + courseId +
+                                          " data-courserunid = " + courseRunId + "> " + NotificationMessage + " " +
+                                       courseName + "</a>";
+            }
+            else
+            {
+                 notificationMessage = "<a id='courseeditlink' class='govuk-link' href=# data-courseid=" + courseId +"> " + NotificationMessage + " " +
+                                          qualificationTitle + "</a>";
+            }
+
 
             IEnumerable<ProviderCoursesViewModel> providerCourses= result.Value.FirstOrDefault(o => String.Equals(o.QualType, qualificationType, StringComparison.CurrentCultureIgnoreCase))
                 ?.Value
                 .Select(c => new ProviderCoursesViewModel()
                 {
+                    NotificationTitle = NotificationTitle,
+                    NotificationMessage = notificationMessage,
                     CourseRunId = courseRunId ?? Guid.Empty,
-                    QualificationTitle = qualificationTitle,
+                    //QualificationTitle = qualificationTitle,
                     CourseId = courseId ?? Guid.Empty,
-                    QualificationType = qualificationType,
+                   // QualificationType = qualificationType,
                     CoursesForLevel = c.Value,
                 }).ToList();
 
