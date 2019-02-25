@@ -9,7 +9,7 @@
     </label>
 
 
-    @{ var regex = @"(https?|HTTPS?):\/\/(www\.|WWW\.)[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-zA-Z]{2,4}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)";}
+    @{ var regex = @"(https?|HTTPS?):\/\/[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-zA-Z]{2,4}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)";}
 
     @if (!string.IsNullOrWhiteSpace(Model.HintText))
     {
