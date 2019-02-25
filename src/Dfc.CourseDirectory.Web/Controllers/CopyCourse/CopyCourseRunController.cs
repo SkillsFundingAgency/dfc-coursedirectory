@@ -7,7 +7,6 @@ using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Models.Models.Courses;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.CourseService;
-using Dfc.CourseDirectory.Services.Interfaces.CourseTextService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Helpers;
@@ -115,6 +114,15 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                         QualificationType = course.Value.QualificationType
                     };
 
+                    if (courseRun.Regions != null)
+                    {
+                        foreach (var selectedRegion in courseRun.Regions)
+                        {
+                            vm.SelectRegion.RegionItems.First(x => x.Id == selectedRegion.ToString())
+                                .Checked = true;
+                        }
+                    }
+
                     return View("CopyCourseRun", vm);
                 }
             }
@@ -140,24 +148,30 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
 
             if (model.CourseId.HasValue)
             {
-                var courseForCopy = await _courseService.GetCourseByIdAsync(new GetCourseByIdCriteria(model.CourseId.Value));
+                var courseForEdit = await _courseService.GetCourseByIdAsync(new GetCourseByIdCriteria(model.CourseId.Value));
 
-                if (courseForCopy.IsSuccess && courseForCopy.HasValue)
+                if (courseForEdit.IsSuccess && courseForEdit.HasValue)
                 {
-                    var regions = new List<string>();
-                    var courseRunForCopy = courseForCopy.Value.CourseRuns.SingleOrDefault(cr => cr.id == model.CourseRunId);
+                    var courseRuns = courseForEdit.Value.CourseRuns.ToList();
 
-                    courseRunForCopy.DurationUnit = model.DurationUnit;
-                    courseRunForCopy.AttendancePattern = model.AttendanceMode;
-                    courseRunForCopy.DeliveryMode = model.DeliveryMode;
-                    courseRunForCopy.FlexibleStartDate = model.FlexibleStartDate;
-                    courseRunForCopy.StudyMode = model.StudyMode;
-                    courseRunForCopy.Cost = Convert.ToDecimal(model.Cost);
-                    courseRunForCopy.CostDescription = model.CostDescription;
-                    courseRunForCopy.CourseName = model.CourseName;
-                    courseRunForCopy.CourseURL = model.Url;
-                    courseRunForCopy.DurationValue = Convert.ToInt32(model.DurationLength);
-                    courseRunForCopy.ProviderCourseID = model.CourseProviderReference;
+                    var courseRunForCopy = courseRuns.SingleOrDefault(cr => cr.id == model.CourseRunId);
+
+                    var copiedCourseRun = new CourseRun
+                    {
+                        id = Guid.NewGuid(),
+                        DurationUnit = model.DurationUnit,
+                        AttendancePattern = model.AttendanceMode,
+                        DeliveryMode = model.DeliveryMode,
+                        FlexibleStartDate = model.FlexibleStartDate,
+                        StudyMode = model.StudyMode,
+                        Cost = Convert.ToDecimal(model.Cost),
+                        CostDescription = model.CostDescription,
+                        CourseName = model.CourseName,
+                        CourseURL = model.Url,
+                        DurationValue = Convert.ToInt32(model.DurationLength),
+                        ProviderCourseID = model.CourseProviderReference
+                    };
+
 
                     bool flexibleStartDate = true;
                     DateTime? specifiedStartDate = null;
@@ -174,35 +188,44 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                         flexibleStartDate = false;
                     }
 
-                    courseRunForCopy.FlexibleStartDate = flexibleStartDate;
-                    courseRunForCopy.StartDate = specifiedStartDate;
-                    courseRunForCopy.UpdatedDate = DateTime.Now;
-                    courseRunForCopy.UpdatedBy = User.Identity.Name;
+                    copiedCourseRun.FlexibleStartDate = flexibleStartDate;
+                    copiedCourseRun.StartDate = specifiedStartDate;
+                    copiedCourseRun.CreatedDate=DateTime.Now;
+                    copiedCourseRun.CreatedBy = User.Identity.Name;
 
                     switch (model.DeliveryMode)
                     {
                         case DeliveryMode.ClassroomBased:
 
-                            courseRunForCopy.Regions = null;
-                            courseRunForCopy.VenueId = model.VenueId;
+                            copiedCourseRun.Regions = null;
+                            copiedCourseRun.VenueId = model.VenueId;
                             break;
                         case DeliveryMode.WorkBased:
-                            courseRunForCopy.VenueId = null;
+                            copiedCourseRun.VenueId = null;
+                            copiedCourseRun.Regions = model.SelectedRegions;
 
+                            break;
+                        case DeliveryMode.Online:
 
+                            copiedCourseRun.Regions = null;
+                            copiedCourseRun.VenueId = null;
                             break;
                     }
 
+                    courseRuns.Add(copiedCourseRun);
+                    courseForEdit.Value.CourseRuns = courseRuns;
 
-                    var copiedCourse = await _courseService.UpdateCourseAsync(courseForCopy.Value);
-                     if (copiedCourse.IsSuccess && copiedCourse.HasValue)
+                    var updatedCourse = await _courseService.UpdateCourseAsync(courseForEdit.Value);
+                    if (updatedCourse.IsSuccess && updatedCourse.HasValue)
                     {
                         return RedirectToAction("Courses", "Provider",
                             new
                             {
-                                qualificationType = courseForCopy.Value.QualificationType,
-                                courseId = copiedCourse.Value.id,
-                                courseRunId = model.CourseRunId
+                                notificationTitle = "New course added",
+                                notificationMessage = "You added",
+                                qualificationType = courseForEdit.Value.QualificationType,
+                                courseId = updatedCourse.Value.id,
+                                courseRunId = copiedCourseRun.id
                             });
                     }
 
