@@ -22,6 +22,7 @@ using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatWillLearn;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatYouNeed;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhereNext;
 using Dfc.CourseDirectory.Web.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 {
@@ -55,6 +56,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> Index(Guid? courseId)
         {
             int? UKPRN;
@@ -148,6 +150,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Index(EditCourseSaveViewModel model)
         {
             if (model.CourseId.HasValue)

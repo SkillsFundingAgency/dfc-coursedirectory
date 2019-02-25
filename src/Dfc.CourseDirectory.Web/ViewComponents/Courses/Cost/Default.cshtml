@@ -13,7 +13,7 @@
         </span>
     }
 
-    @{ var regex = @"^[a-zA-Z0-9 \¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`" + "\"" + "\\\\]+$"; }
+    @{ var regex = @"^[a-zA-Z0-9 /\n/\r/\¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`" + "\"" + "\\\\]+$"; }
 
     <span class="govuk-body">£</span>
     <input class="govuk-input govuk-input--width-10" style="display:inline;" asp-for="@Model.Cost" type="text" aria-describedby="@Model.CostAriaDescribedBy"

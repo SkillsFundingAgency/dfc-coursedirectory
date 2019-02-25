@@ -13,6 +13,7 @@ using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.Web.ViewModels.CopyCourse;
 using Dfc.CourseDirectory.Web.ViewModels.EditCourse;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -53,6 +54,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
 
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> Index(Guid? courseId, Guid courseRunId)
         {
             int? UKPRN;
@@ -133,6 +135,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Index(CopyCourseRunSaveViewModel model)
         {
             int? UKPRN;
