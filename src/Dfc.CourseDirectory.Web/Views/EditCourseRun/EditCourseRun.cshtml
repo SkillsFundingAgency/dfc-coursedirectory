@@ -201,6 +201,8 @@
 
             var $selectvenue = $("#selectvenue").govUkSelect();
 
+            var $selectedvenue = $("#@nameof(Model.VenueId)").govUkSelect();
+
             var $startDate = $("#start_date").govUkDateInput();
 
             var $cost = $("#@nameof(Model.Cost)").govUkInput();
@@ -247,11 +249,11 @@
                     var validStates = [];
 
                     if (isClassroomBased) {
-                    if ($.requiredValidate($selectvenue.val())) {
-                        $selectvenue.govUkSelect("validState");
+                        if ($.requiredValidate($selectedvenue.val())) {
+                            $selectedvenue.govUkSelect("validState");
                         validStates.push(true);
                     } else {
-                        $selectvenue.govUkSelect("invalidState", $selectvenue.attr("val-required-message"));
+                            $selectedvenue.govUkSelect("invalidState", $selectedvenue.attr("val-required-message"));
                         validStates.push(false);
                         }
                         }
