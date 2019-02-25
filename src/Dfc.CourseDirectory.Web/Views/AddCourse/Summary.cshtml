@@ -109,20 +109,24 @@
             Controller = "AddCourse",
             Section = "sectionDuration"
         })
-        @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
+        
+        @if (Model.DeliveryModeEnum == DeliveryMode.ClassroomBased)
         {
-            Id="AttendancePattern", Title = "Attendance pattern", Value = Model.AttendancePattern,
-            Action = "SummaryToAddCourseRun",
-            Controller = "AddCourse",
-            Section = "FullPartTimeRadioButtons"
-        })
-        @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
-        {
-            Id="AttendanceTime", Title = "Attendance time", Value = Model.AttendanceTime,
-            Action = "SummaryToAddCourseRun",
-            Controller = "AddCourse",
-            Section = "AttendancePatternRadioButtons"
-        })
+            @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
+            {
+                Id = "AttendancePattern", Title = "Attendance pattern", Value = Model.AttendancePattern,
+                Action = "SummaryToAddCourseRun",
+                Controller = "AddCourse",
+                Section = "FullPartTimeRadioButtons"
+            })
+            @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
+            {
+                Id = "AttendanceTime", Title = "Attendance time", Value = Model.AttendanceTime,
+                Action = "SummaryToAddCourseRun",
+                Controller = "AddCourse",
+                Section = "AttendancePatternRadioButtons"
+            })
+        }
     </dl>
 
     <h2 class="govuk-heading-m">Course description</h2>
