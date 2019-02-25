@@ -217,6 +217,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                         return RedirectToAction("Courses", "Provider",
                             new
                             {
+                                notificationTitle = "Course edited",
+                                notificationMessage = "You edited",
                                 qualificationType = courseForEdit.Value.QualificationType,
                                 courseId = updatedCourse.Value.id,
                                 courseRunId = model.CourseRunId

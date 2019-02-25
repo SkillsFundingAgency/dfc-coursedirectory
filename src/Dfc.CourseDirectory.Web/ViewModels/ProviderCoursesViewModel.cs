@@ -6,6 +6,8 @@ namespace Dfc.CourseDirectory.Web.ViewModels
 {
     public class ProviderCoursesViewModel
     {
+        public string NotificationMessage { get; set; }
+        public string NotificationTitle { get; set; }
         public string QualificationTitle {get; set; }
         public string QualificationType { get; set; }
 

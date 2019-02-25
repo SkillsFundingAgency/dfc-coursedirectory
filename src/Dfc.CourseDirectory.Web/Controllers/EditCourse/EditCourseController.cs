@@ -173,6 +173,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                     return RedirectToAction("Courses", "Provider",
                         new
                         {
+                            NotificationTitle ="Course edited",
+                            NotificationMessage = "You edited",
                             qualificationType = courseForEdit.Value.QualificationType,
                             courseId = updatedCourse.Value.id
                         });
