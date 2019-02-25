@@ -146,9 +146,10 @@ namespace Dfc.CourseDirectory.Web
                 // Cookie settings
                 options.Cookie.HttpOnly = true;
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
-
+                options.LogoutPath = "/Identity/Account/Logout";
                 options.LoginPath = "/Identity/Account/Login";
-                options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+  
+                options.AccessDeniedPath = "/Identity/Account/Login";
                 options.SlidingExpiration = true;
             });
 
