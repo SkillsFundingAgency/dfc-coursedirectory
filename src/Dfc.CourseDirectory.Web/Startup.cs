@@ -148,7 +148,6 @@ namespace Dfc.CourseDirectory.Web
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
                 options.LogoutPath = "/Identity/Account/Logout";
                 options.LoginPath = "/Identity/Account/Login";
-  
                 options.AccessDeniedPath = "/Identity/Account/Login";
                 options.SlidingExpiration = true;
             });
