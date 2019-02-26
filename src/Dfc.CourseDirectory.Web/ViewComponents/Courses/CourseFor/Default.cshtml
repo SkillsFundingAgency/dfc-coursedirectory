@@ -6,28 +6,8 @@
 @inject IOptions<CourseForComponentSettings> courseForComponentSettings
 
 @{
-    var regex = @"^[a-zA-Z0-9 \¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`" + "\"" + "\\\\]+$";
+    var regex = @"^[a-zA-Z0-9 /\n/\r/\¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`" + "\"" + "\\\\]+$";
 }
-
-@*<div class="govuk -form-group">
-    <div class="govuk-character-count" data-module="character-count" data-maxlength=@courseForComponentSettings.Value.TextFieldMaxChars>
-        <div class="govuk-form-group" style="margin-bottom: 0;padding-bottom: 0">
-            <label class="govuk-label" for="course-for">
-                @Model.LabelText
-            </label>
-            <span id="course-for-hint" class="govuk-hint">
-                @Model.HintText
-            </span>
-
-            <textarea asp-for="@Model.CourseFor" class="govuk-textarea js-character-count" id="textAreaCourseFor" name="CourseFor" rows="5" type="text"
-                      aria-describedby="@Model.AriaDescribedBy"
-                      val-required-message="Enter Course Name"
-                      val-max-length="2000" val-max-length-message="Who is this course for must be 2000 characters or less"
-                      val-regex="@regex"
-                      val-regex-message="Course for contains invalid characters"></textarea>
-        </div>
-    </div>
-</div>*@
 
 
 
