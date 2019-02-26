@@ -159,11 +159,15 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                     var courseRunForEdit = courseForEdit.Value.CourseRuns.SingleOrDefault(cr => cr.id == model.CourseRunId);
 
                     courseRunForEdit.DurationUnit = model.DurationUnit;
-                    courseRunForEdit.AttendancePattern = model.AttendanceMode;
                     courseRunForEdit.DeliveryMode = model.DeliveryMode;
                     courseRunForEdit.FlexibleStartDate = model.FlexibleStartDate;
-                    courseRunForEdit.StudyMode = model.StudyMode;
+
                     courseRunForEdit.Cost = Convert.ToDecimal(model.Cost);
+                    if (string.IsNullOrEmpty(model.Cost))
+                    {
+                        courseRunForEdit.Cost = null;
+                    }
+                    
                     courseRunForEdit.CostDescription = model.CostDescription;
                     courseRunForEdit.CourseName = model.CourseName;
                     courseRunForEdit.CourseURL = model.Url;
@@ -196,16 +200,27 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 
                             courseRunForEdit.Regions = null;
                             courseRunForEdit.VenueId = model.VenueId;
+
+                            courseRunForEdit.AttendancePattern = model.AttendanceMode;
+                            courseRunForEdit.StudyMode = model.StudyMode;
+
                             break;
                         case DeliveryMode.WorkBased:
                             courseRunForEdit.VenueId = null;
                             courseRunForEdit.Regions = model.SelectedRegions;
+
+                            courseRunForEdit.AttendancePattern = AttendancePattern.Undefined;
+                            courseRunForEdit.StudyMode = StudyMode.Undefined;
 
                             break;
                         case DeliveryMode.Online:
 
                             courseRunForEdit.Regions = null;
                             courseRunForEdit.VenueId = null;
+
+                            courseRunForEdit.AttendancePattern = AttendancePattern.Undefined;
+                            courseRunForEdit.StudyMode = StudyMode.Undefined;
+
                             break;
                     }
 

@@ -1,4 +1,5 @@
-﻿@using Dfc.CourseDirectory.Web.ViewComponents.AdvancedLearnerLoan
+﻿@using Dfc.CourseDirectory.Models.Models.Courses
+@using Dfc.CourseDirectory.Web.ViewComponents.AdvancedLearnerLoan
 @using Dfc.CourseDirectory.Web.ViewComponents.CourseName
 @using Dfc.CourseDirectory.Web.ViewComponents.CourseProviderReference
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.AddStartDate
@@ -156,7 +157,8 @@
         })
     </div>
 
-    <div id="FullPartTimeRadioButtons">
+
+    <div id="FullPartTimeRadioButtons" style="display: none;">
         @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode.StudyMode), new StudyModeModel
         {
             StudyMode = Model.StudyMode,
@@ -165,7 +167,7 @@
         })
     </div>
 
-    <div id="AttendancePatternRadioButtons">
+    <div id="AttendancePatternRadioButtons" style="display: none;">
         @await Component.InvokeAsync(nameof(Attendance), new AttendanceModel
         {
             AttendanceMode = Model.AttendanceMode,
@@ -173,6 +175,7 @@
             HintText = "Select the time of day the course takes place"
         })
     </div>
+
 
     <div class="govuk-form-group">
         <button name="saveButton" type="submit" class="govuk-button" id="save">
@@ -212,23 +215,33 @@
             var isOnline = false;
             var isWorkBased = false;
 
+            var $fullPartTimeRadioButtons = $("#FullPartTimeRadioButtons");
+            var $attendancePatternRadioButtons = $("#AttendancePatternRadioButtons");
+
+
             switch ($radioDeliveryMode.find("input[type='radio']:checked").val()) {
             case "ClassroomBased":
             {
+                $fullPartTimeRadioButtons.show();
+                $attendancePatternRadioButtons.show();
                 isClassroomBased = true;
                 isOnline = false;
                 isWorkBased = false;
                 break;
             }
             case "Online":
-            {
+                    {
+                        $fullPartTimeRadioButtons.hide();
+                        $attendancePatternRadioButtons.hide();
                 isClassroomBased = false;
                 isOnline = true;
                 isWorkBased = false;
                 break;
             }
             case "WorkBased":
-            {
+                    {
+                        $fullPartTimeRadioButtons.hide();
+                        $attendancePatternRadioButtons.hide();
                 isClassroomBased = false;
                 isOnline = false;
                 isWorkBased = true;
@@ -392,21 +405,39 @@
                     }
 
 
-                    if ($.requiredValidate($radioStudyMode.find("input[type='radio']:checked").val())) {
-                        $radioStudyMode.govUkRadios("validState");
-                        validStates.push(true);
-                    } else {
-                        $radioStudyMode.govUkRadios("invalidState", $radioStudyMode.attr("val-required-message"));
-                        validStates.push(false);
+                    switch ($radioDeliveryMode.find("input[type='radio']:checked").val()) {
+                    case "ClassroomBased":
+                    {
+                        if ($.requiredValidate($radioStudyMode.find("input[type='radio']:checked").val())) {
+                            $radioStudyMode.govUkRadios("validState");
+                            validStates.push(true);
+                        } else {
+                            $radioStudyMode.govUkRadios("invalidState", $radioStudyMode.attr("val-required-message"));
+                            validStates.push(false);
+                        }
+
+                        if ($.requiredValidate($radioAttendance.find("input[type='radio']:checked").val())) {
+                            $radioAttendance.govUkRadios("validState");
+                            validStates.push(true);
+                        } else {
+                            $radioAttendance.govUkRadios("invalidState", $radioAttendance.attr("val-required-message"));
+                            validStates.push(false);
+                        }
+                        break;
+                    }
+                    case "Online":
+                    {
+                       
+                        break;
+                    }
+                    case "WorkBased":
+                    {
+                      
+                        break;
+                    }
                     }
 
-                    if ($.requiredValidate($radioAttendance.find("input[type='radio']:checked").val())) {
-                        $radioAttendance.govUkRadios("validState");
-                        validStates.push(true);
-                    } else {
-                        $radioAttendance.govUkRadios("invalidState", $radioAttendance.attr("val-required-message"));
-                        validStates.push(false);
-                    }
+                   
 
 
                     var radioValue = $("input[name='StartDateType']:checked").val();
