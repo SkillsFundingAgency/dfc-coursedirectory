@@ -164,7 +164,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                         DeliveryMode = model.DeliveryMode,
                         FlexibleStartDate = model.FlexibleStartDate,
                         StudyMode = model.StudyMode,
-                        Cost = Convert.ToDecimal(model.Cost),
                         CostDescription = model.CostDescription,
                         CourseName = model.CourseName,
                         CourseURL = model.Url,
@@ -172,6 +171,11 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                         ProviderCourseID = model.CourseProviderReference
                     };
 
+                    copiedCourseRun.Cost = Convert.ToDecimal(model.Cost);
+                    if (string.IsNullOrEmpty(model.Cost))
+                    {
+                        copiedCourseRun.Cost = null;
+                    }
 
                     bool flexibleStartDate = true;
                     DateTime? specifiedStartDate = null;
@@ -196,6 +200,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                     switch (model.DeliveryMode)
                     {
                         case DeliveryMode.ClassroomBased:
+                            copiedCourseRun.AttendancePattern = model.AttendanceMode;
+                            copiedCourseRun.StudyMode = model.StudyMode;
 
                             copiedCourseRun.Regions = null;
                             copiedCourseRun.VenueId = model.VenueId;
@@ -203,12 +209,15 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                         case DeliveryMode.WorkBased:
                             copiedCourseRun.VenueId = null;
                             copiedCourseRun.Regions = model.SelectedRegions;
-
+                            copiedCourseRun.AttendancePattern = AttendancePattern.Undefined;
+                            copiedCourseRun.StudyMode = StudyMode.Undefined;
                             break;
                         case DeliveryMode.Online:
 
                             copiedCourseRun.Regions = null;
                             copiedCourseRun.VenueId = null;
+                            copiedCourseRun.AttendancePattern = AttendancePattern.Undefined;
+                            copiedCourseRun.StudyMode = StudyMode.Undefined;
                             break;
                     }
 
