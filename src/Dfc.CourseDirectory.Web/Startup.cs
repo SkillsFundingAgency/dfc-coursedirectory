@@ -155,6 +155,7 @@ namespace Dfc.CourseDirectory.Web
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options => {
                 options.LoginPath = "/Home"; // auth redirect
+                options.AccessDeniedPath = "/Identity/Account/Login";
                 options.ExpireTimeSpan = new TimeSpan(0, 0, 20, 0);
             });
             services.AddMvc(options =>
