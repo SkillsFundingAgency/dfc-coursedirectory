@@ -66,28 +66,16 @@
                                         <button type="button" id="accordion-default-heading-1" aria-controls="@accordionId" class="govuk-accordion__section-button" aria-expanded="false">
                                             @a.CourseName
                                             <br />
-                                            <span style="font-size: 1rem; font-weight: 400; margin-right: 15px">
-                                                @{
-                                                    if (!string.IsNullOrEmpty(a.ProviderCourseID))
-                                                    {
-                                                        <span>
-                                                            @a.ProviderCourseID
-                                                        </span>
-                                                    }
-                                                    else
-                                                    {
-                                                        <span>
 
-                                                        </span>
-                                                    }
+                                            @{
+                                                if (!string.IsNullOrEmpty(a.ProviderCourseID))
+                                                {
+                                                    <span style="font-size: 1rem; font-weight: 400; margin-right: 15px">
+                                                        @a.ProviderCourseID
+                                                    </span>
                                                 }
 
-                                            </span>
-
-
-
-
-
+                                            }
 
                                             @{
                                                 switch (a.DeliveryMode)
@@ -106,12 +94,7 @@
                                                                     </span>
 
                                                                 }
-                                                                else
-                                                                {
-                                                                    <span>
 
-                                                                    </span>
-                                                                }
                                                             }
                                                             break;
                                                         }
@@ -134,13 +117,13 @@
                                                                 allRegions = @String.Join(", ", regionNames.Select(p => p).ToArray());
 
 
-                                                      
+
                                                                 <span style="font-size: 1rem; font-weight: 400; margin-right: 15px">
 
-                                                                        @allRegions
-                                                                    </span>
+                                                                    @allRegions
+                                                                </span>
 
-                                                               
+
                                                             }
                                                             break;
                                                         }
@@ -148,27 +131,31 @@
                                             }
 
 
-                                            <span style="font-size: 1rem; font-weight: 400; margin-right: 15px">
-                                                @if (a.StudyMode != StudyMode.Undefined)
-                                                {
+
+                                            @if (a.StudyMode != StudyMode.Undefined)
+                                            {
+                                                <span style="font-size: 1rem; font-weight: 400; margin-right: 15px">
                                                     @WebHelper.GetEnumDescription(a.StudyMode)
-                                                }
+                                                </span>
+                                            }
 
-                                            </span>
-                                            <span style="font-size: 1rem; font-weight: 400; margin-right: 15px">
-                                                @if (a.FlexibleStartDate)
-                                                {
-                                                    <span>
-                                                        Flexible Start Date
-                                                    </span>
 
-                                                }
-                                                else
-                                                {
+
+                                            @if (a.FlexibleStartDate)
+                                            {
+                                                <span style="font-size: 1rem; font-weight: 400; margin-right: 15px">
+                                                    Flexible Start Date
+                                                </span>
+
+                                            }
+                                            else
+                                            {
+                                                <span style="font-size: 1rem; font-weight: 400; margin-right: 15px">
                                                     @a.StartDate?.ToString("dd/MM/yyy", CultureInfo.InvariantCulture)
-                                                }
+                                                </span>
+                                            }
 
-                                            </span>
+
                                         </button><span class="govuk-accordion__icon" aria-hidden="true"></span>
                                     </h2>
                                 </div>
@@ -460,11 +447,37 @@
 
                     }
                     $('#' + courseRunId).addClass('govuk-accordion__section--expanded');
+
+                    var el = $('#' + courseRunId);
+                    var elOffset = el.offset().top;
+                    var elHeight = el.height();
+                    var windowHeight = $(window).height();
+                    var offset;
+
+                    if (elHeight < windowHeight) {
+                        offset = elOffset - ((windowHeight / 2) - (elHeight / 2));
+                    } else {
+                        offset = elOffset;
+                    }
+                    var speed = 700;
+                    $('html, body').animate({ scrollTop: offset }, speed);
+                } else {
+                    var el = $('#' + courseId);
+                    var elOffset = el.offset().top;
+                    var elHeight = el.height();
+                    var windowHeight = $(window).height();
+                    var offset;
+
+                    if (elHeight < windowHeight) {
+                        offset = elOffset - ((windowHeight / 2) - (elHeight / 2));
+                    } else {
+                        offset = elOffset;
+                    }
+                    var speed = 700;
+                    $('html, body').animate({ scrollTop: offset }, speed);
                 }
 
-                $('html, body').animate({
-                    scrollTop: $('#' + courseId).offset().top
-                }, 'slow');
+
             });
 
             $(".govuk-accordion__section").click(function (e) {
