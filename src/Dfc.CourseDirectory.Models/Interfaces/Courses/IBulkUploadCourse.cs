@@ -7,7 +7,7 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Courses
     public interface IBulkUploadCourse
     {
         bool IsCourseHeader { get; set; }
-        List<int> LineNumbersInCourse { get; set; }
+        //List<int> LineNumbersInCourse { get; set; }
         int BulkUploadLineNumber { get; set; }
 
         // Course
@@ -40,7 +40,7 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Courses
         string Cost { get; set; } // ??? decimal?
         string CostDescription { get; set; }
         string DurationUnit { get; set; } // DurationUnit
-        int? DurationValue { get; set; } // ???
+        string DurationValue { get; set; } // ??? int?
         string StudyMode { get; set; } // StudyMode
         string AttendancePattern { get; set; } // AttendancePattern
     }

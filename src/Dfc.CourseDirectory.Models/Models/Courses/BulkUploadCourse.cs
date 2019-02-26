@@ -8,7 +8,7 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
     public class BulkUploadCourse : IBulkUploadCourse
     {
         public bool IsCourseHeader { get; set; }
-        public List<int> LineNumbersInCourse { get; set; }
+        //public List<int> LineNumbersInCourse { get; set; }
         public int BulkUploadLineNumber { get; set; }
 
         // Course
@@ -41,7 +41,7 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         public string Cost { get; set; } // ??? decimal?
         public string CostDescription { get; set; }
         public string DurationUnit { get; set; } // DurationUnit
-        public int? DurationValue { get; set; } // ???
+        public string DurationValue { get; set; } // ???
         public string StudyMode { get; set; } // StudyMode
         public string AttendancePattern { get; set; } // AttendancePattern
     }
