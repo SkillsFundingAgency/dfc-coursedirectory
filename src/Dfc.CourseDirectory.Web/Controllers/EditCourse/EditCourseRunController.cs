@@ -13,6 +13,7 @@ using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.Web.ViewModels.EditCourse;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -31,10 +32,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
         private ISession _session => _contextAccessor.HttpContext.Session;
         private readonly IVenueSearchHelper _venueSearchHelper;
         private readonly IVenueService _venueService;
-        //private const string SessionAddCourseSection1 = "AddCourseSection1";
-        //private const string SessionAddCourseSection2 = "AddCourseSection2";
-        //private const string SessionVenues = "Venues";
-        //private const string SessionRegions = "Regions";
 
         public EditCourseRunController(
             ILogger<EditCourseRunController> logger,
@@ -57,6 +54,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> Index(Guid? courseId, Guid courseRunId)
         {
             int? UKPRN;
@@ -137,6 +135,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Index(EditCourseRunSaveViewModel model)
         {
             int? UKPRN;
