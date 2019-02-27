@@ -1,0 +1,25 @@
+﻿@using System.Text.RegularExpressions
+@using Dfc.CourseDirectory.Web.ViewComponents.Publish.PublishCourseRun
+@model IEnumerable<Dfc.CourseDirectory.Models.Models.Courses.Course>
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@foreach (var course in Model)
+{
+    <div class="error-line">
+        <div class="heading"><strong>@course.QualificationCourseTitle</strong><br />@course.NotionalNVQLevelv2, @course.AwardOrgCode, Lars: @course.LearnAimRef</div>
+        <div class="col"><div class="error-box no-error">No errors</div></div>
+        <div class="col">&nbsp;</div>
+    </div>
+
+    @await Component.InvokeAsync(nameof(PublishCourseRun), new { model = course.CourseRuns})
+    
+}
+
+<script>
+    (function ($) {
+        $(function () {
+          
+        });
+    })(jQuery);
+</script>

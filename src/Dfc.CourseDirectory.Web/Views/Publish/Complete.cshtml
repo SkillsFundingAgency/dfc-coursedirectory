@@ -1,0 +1,31 @@
+﻿@using Microsoft.AspNetCore.Authorization;
+@using Microsoft.AspNetCore.Identity
+@using Dfc.CourseDirectory.Web.Areas.Identity.Data;
+@using Dfc.CourseDirectory.Web.ViewComponents.Publish.Publish
+
+@model Dfc.CourseDirectory.Web.ViewModels.Publish.PublishCompleteViewModel
+
+
+<div class="govuk-panel govuk-panel--confirmation">
+    <h1 class="govuk-panel__title">
+       Your file has been published
+    </h1>
+    <div class="govuk-panel__body">
+       You have added @Model.NumberOfCoursesPublished courses to the course directory
+    </div>
+</div>
+
+<div class="Publish-Complete">
+    <div class="govuk-form-group Next-Steps">
+
+
+        Next steps
+    </div>
+</div>
+<div class="govuk-form-group">
+       
+
+        @Html.ActionLink("Back to the Dashboard", "", "", new { }, new { @class = "govuk-link" })
+    </div>
+
+

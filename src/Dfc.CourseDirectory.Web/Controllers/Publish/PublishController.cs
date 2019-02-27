@@ -1,0 +1,135 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Dfc.CourseDirectory.Common;
+using Dfc.CourseDirectory.Models.Enums;
+using Dfc.CourseDirectory.Models.Models.Courses;
+using Dfc.CourseDirectory.Services.CourseService;
+using Dfc.CourseDirectory.Services.Interfaces.CourseService;
+using Dfc.CourseDirectory.Web.ViewModels;
+using Dfc.CourseDirectory.Web.ViewModels.BulkUpload;
+using Dfc.CourseDirectory.Web.ViewModels.Publish;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+
+namespace Dfc.CourseDirectory.Web.Controllers.Publish
+{
+
+    public class PublishController : Controller
+    {
+        private readonly ILogger<PublishController> _logger;
+        private readonly IHttpContextAccessor _contextAccessor;
+        private ISession _session => _contextAccessor.HttpContext.Session;
+        private readonly ICourseService _courseService;
+
+        public PublishController(ILogger<PublishController> logger,
+            IHttpContextAccessor contextAccessor, ICourseService courseService)
+        {
+            Throw.IfNull(logger, nameof(logger));
+            Throw.IfNull(courseService, nameof(courseService));
+
+            _logger = logger;
+            _contextAccessor = contextAccessor;
+            _courseService = courseService;
+        }
+
+        [Authorize]
+        public IActionResult Index()
+        {
+           PublishViewModel vm = new PublishViewModel();
+
+            int? UKPRN = _session.GetInt32("UKPRN");
+
+            if (!UKPRN.HasValue)
+            {
+                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
+            }
+
+            //ICourseSearchResult result = (!UKPRN.HasValue ? null : _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(UKPRN)).Result.Value);
+
+            List<Course> Courses;
+
+            Courses = new List<Course>()
+            {
+                new Course()
+                {
+                    CourseDescription = "Course Description 1",
+                    id =Guid.NewGuid(),
+                    QualificationCourseTitle = "Test Qualification 1",
+                    LearnAimRef = "Test Lars Ref 1",
+                    NotionalNVQLevelv2 = "Test Level 1",
+                    AwardOrgCode = "Test Award Code 1",
+                    CourseRuns = new List<CourseRun>()
+                    {
+                        new CourseRun()
+                        {
+                            id = Guid.NewGuid(),
+                            CourseName = "Test Course Name 1",
+                            RecordStatus = RecordStatus.Live
+
+                        },
+                        new CourseRun()
+                        {
+                            id = Guid.NewGuid(),
+                            CourseName = "Test Course Name 2",
+                            RecordStatus = RecordStatus.Live
+
+                        },
+                    }
+                },
+                new Course()
+                {
+                    CourseDescription = "Course Description 2",
+                    id =Guid.NewGuid(),
+                    QualificationCourseTitle = "Test Qualification 2",
+                    LearnAimRef = "Test Lars Ref 2",
+                    NotionalNVQLevelv2 = "Test Level 2",
+                    AwardOrgCode = "Test Award Code 2",
+
+                    CourseRuns = new List<CourseRun>()
+                    {
+                        new CourseRun()
+                        {
+                            id = Guid.NewGuid(),
+                            CourseName = "Test Course Name 3",
+                            RecordStatus = RecordStatus.Live
+
+                        },
+                        new CourseRun()
+                        {
+                            id = Guid.NewGuid(),
+                            CourseName = "Test Course Name 4",
+                            RecordStatus = RecordStatus.Live
+
+                        },
+                    }
+                }
+            };
+
+            vm.NumberOfCoursesInFiles = 10;
+            vm.Courses = Courses;
+
+            return View("Index", vm);
+        }
+
+        [Authorize]
+        [HttpPost]
+        public IActionResult Index(PublishViewModel vm)
+        {
+            //TODO publish
+
+
+
+            //TODO replace with result from publish?
+            PublishCompleteViewModel CompleteVM = new PublishCompleteViewModel()
+            {
+                NumberOfCoursesPublished = 10
+            };
+
+            return View("Complete", CompleteVM);
+        }
+    }
+}
