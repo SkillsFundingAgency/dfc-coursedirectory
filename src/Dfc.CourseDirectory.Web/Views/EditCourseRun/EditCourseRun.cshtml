@@ -12,6 +12,7 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode
 @using Dfc.CourseDirectory.Web.ViewComponents.Extensions
 @using Dfc.CourseDirectory.Web.ViewComponents.UrlInput
+@using StudyMode = Dfc.CourseDirectory.Models.Models.Courses.StudyMode
 @model Dfc.CourseDirectory.Web.ViewModels.EditCourse.EditCourseRunViewModel
 
 <h1 class="govuk-heading-l" style="padding-top: 20px;">
@@ -489,6 +490,8 @@
                 var $specifiedStartDate = $("#SpecifiedStartDate");
                 var $flexibleStartDate = $("#FlexibleStartDate");
 
+                var $dayTimeAttendance = $("#@AttendancePattern.Daytime");
+                var $studyMode = $("#@StudyMode.FullTime");
                 switch (this.id) {
                     case "ClassroomBased":
                         {
@@ -501,6 +504,8 @@
                             isClassroomBased = true;
                             isOnline = false;
                             isWorkBased = false;
+                            $dayTimeAttendance.prop("checked", true);
+                            $studyMode.prop("checked", true);
                             break;
                         }
                     case "Online":
@@ -514,6 +519,8 @@
                             isClassroomBased = false;
                             isOnline = true;
                             isWorkBased = false;
+                            $dayTimeAttendance.prop("checked", false);
+                            $studyMode.prop("checked", false);
                             break;
                         }
                     case "WorkBased":
@@ -527,6 +534,8 @@
                             isClassroomBased = false;
                             isOnline = false;
                             isWorkBased = true;
+                            $dayTimeAttendance.prop("checked", false);
+                            $studyMode.prop("checked", false);
                             break;
                         }
                 }
