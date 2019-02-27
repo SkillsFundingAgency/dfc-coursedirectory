@@ -9,6 +9,7 @@ using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.Web.ViewModels.BulkUpload;
+using Dfc.CourseDirectory.Web.ViewModels.Publish;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -44,86 +45,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return View("Index", model);
         }
 
-        [Authorize]
-        public IActionResult Publish()
-        {
-            BulkUploadPublishViewModel vm = new BulkUploadPublishViewModel();
-
-            int? UKPRN = _session.GetInt32("UKPRN");
-
-            if (!UKPRN.HasValue)
-            {
-                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
-            }
-
-            //ICourseSearchResult result = (!UKPRN.HasValue ? null : _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(UKPRN)).Result.Value);
-
-            List<Course> Courses;
-
-            Courses = new List<Course>()
-            {
-                new Course()
-                {
-                    CourseDescription = "Course Description 1",
-                    id =Guid.NewGuid(),
-                    QualificationCourseTitle = "Test Qualification 1",
-
-                    CourseRuns = new List<CourseRun>()
-                    {
-                        new CourseRun()
-                        {
-                            id = Guid.NewGuid(),
-                            CourseName = "Test Course Name 1",
-                            RecordStatus = RecordStatus.Live
-
-                        },
-                        new CourseRun()
-                        {
-                            id = Guid.NewGuid(),
-                            CourseName = "Test Course Name 2",
-                            RecordStatus = RecordStatus.Live
-
-                        },
-                    }
-                },
-                new Course()
-                {
-                    CourseDescription = "Course Description 2",
-                    id =Guid.NewGuid(),
-                    QualificationCourseTitle = "Test Qualification 2",
-
-                    CourseRuns = new List<CourseRun>()
-                    {
-                        new CourseRun()
-                        {
-                            id = Guid.NewGuid(),
-                            CourseName = "Test Course Name 3",
-                            RecordStatus = RecordStatus.Live
-
-                        },
-                        new CourseRun()
-                        {
-                            id = Guid.NewGuid(),
-                            CourseName = "Test Course Name 4",
-                            RecordStatus = RecordStatus.Live
-
-                        },
-                    }
-                }
-            };
-
-            vm.Courses = Courses;
-
-            return View("Publish", vm);
-        }
-
-        [Authorize]
-        [HttpPost]
-        public IActionResult Publish(BulkUploadPublishViewModel vm)
-        {
-            //Do stuff
-
-            return RedirectToAction("Courses", "Provider", new { qualificationType = "", courseId = Guid.NewGuid(), courseRunId = Guid.NewGuid() });
-        }
+       
+    
     }
 }
