@@ -1,0 +1,104 @@
+﻿@using Microsoft.AspNetCore.Authorization;
+@using Microsoft.AspNetCore.Identity
+@using Dfc.CourseDirectory.Web.Areas.Identity.Data;
+
+@model Dfc.CourseDirectory.Web.ViewModels.BulkUpload.BulkUploadPublishViewModel
+
+<div>
+    <h1 class="govuk-heading-xl">Publish your courses</h1>
+</div>
+
+<span class="govuk-caption-xl">Your file of 6 courses has no errors. Publish them to replace your current courses on the course directory.</span>
+
+<form asp-controller="BulkUpload" asp-action="Publish" id="publishBulkUpload">
+
+
+
+
+    <div id="Cd-course-list" class="">
+
+        @foreach (var x in Model.Courses)
+        {
+
+            <details id="@x.id" class="govuk-details" data-courseid="@x.id">
+                <summary class="govuk-details__summary">
+                    <span class="govuk-details__summary-text">
+                        @x.QualificationCourseTitle
+
+                    </span>
+
+                </summary>
+                @foreach (var s in x.CourseRuns.OrderBy(l => l.CourseName))
+                {
+
+                    <div class="govuk-details__text" style="padding-left: 20px; padding-top: 0;">
+                        <div class="" data-module="" id="">
+
+                            <div class="" id="@x.id">
+                                <div class="">
+                                    <h2 class="">
+
+
+                                        @s.CourseName
+
+
+                                    </h2>
+                                </div>
+                                <div>
+                                    <div id="" class="" aria-labelledby="" style="border-style: solid; border-width: 1px; margin-bottom: 10px;">
+
+                                        <div class="cd-course--list" style="margin-bottom: 15px; border-bottom: none">
+
+                                            <div>
+                                                <div class="">
+
+
+                                                    @*@if (!string.IsNullOrEmpty(a.CourseName))
+                                                        {
+                                                            <a class="govuk-link" href=@a.CourseURL target="_blank">@a.CourseURL</a>
+                                                        }
+                                                        else
+                                                        {
+                                                            <label>
+                                                                &nbsp;
+                                                            </label>
+                                                        }*@
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+
+
+
+
+
+
+
+
+                                    </div>
+
+
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                }
+
+            </details>
+        }
+
+    </div>
+
+
+    <div class="govuk-form-group">
+        <button name="publishButton" type="submit" class="govuk-button" id="publish">
+            Publish all
+        </button>
+
+        @Html.ActionLink("Exit without publishing", "Courses", "Provider", new { qualificationType = "", courseId = Guid.NewGuid(), courseRunId = Guid.NewGuid() }, new { @class = "govuk-link" })
+    </div>
+
+</form>

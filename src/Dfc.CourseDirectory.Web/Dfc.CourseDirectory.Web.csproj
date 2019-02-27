@@ -114,6 +114,9 @@
     <Content Update="ViewComponents\VenueSearch\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\BulkUpload\Publish.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\CopyCourseRun\CopyCourseRun.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
