@@ -114,6 +114,22 @@
             display: block;
             font-weight: 900;
         }
+
+    .cd__your-courses__filters-list {
+        margin: 0px;
+        padding:0px;
+        list-style: none;
+    }
+
+    .cd__your-courses__filters-list__link {
+        color: #000;
+        font-family: nta,Arial,sans-serif;
+        text-decoration: none;
+    }
+
+    .cd__your-courses__filters-list__link--selected {
+        font-weight: 900;
+    }
 </style>
 
 <div class="govuk-grid-row">
@@ -127,25 +143,19 @@
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-one-quarter">
-        <ul class="govuk-list">
-            <li><a class="govuk-link" href="#">Entry Level (888)</a></li>
-            <hr class="govuk-section-break govuk-section-break--visible">
-            <li><a class="govuk-link" href="#">Level 1 (888)</a></li>
-            <hr class="govuk-section-break govuk-section-break--visible">
-            <li><a class="govuk-link" href="#">Level 2 (888)</a></li>
-            <hr class="govuk-section-break govuk-section-break--visible">
-            <li><a class="govuk-link" href="#">Level 3 (888)</a></li>
-            <hr class="govuk-section-break govuk-section-break--visible">
-            <li><a class="govuk-link" href="#">Level 4 (888)</a></li>
-            <hr class="govuk-section-break govuk-section-break--visible">
-            <li><a class="govuk-link" href="#">Level 5 (888)</a></li>
-            <hr class="govuk-section-break govuk-section-break--visible">
-            <li><a class="govuk-link" href="#">Level 6 (888)</a></li>
-            <hr class="govuk-section-break govuk-section-break--visible">
-            <li><a class="govuk-link" href="#">Level 7 (888)</a></li>
-            <hr class="govuk-section-break govuk-section-break--visible">
-            <li><a class="govuk-link" href="#">Level 8 (888)</a></li>
-            <hr class="govuk-section-break govuk-section-break--visible">
+        <ul class="cd__your-courses__filters-list">
+            @foreach (var filter in Model.LevelFilters)
+            {
+                @if (filter.IsSelected)
+                {
+                    <li><a class="cd__your-courses__filters-list__link cd__your-courses__filters-list__link--selected" href="@filter.Value">@filter.Name (@filter.Facet)</a></li>
+                }
+                else
+                {
+                    <li><a class="cd__your-courses__filters-list__link" href="@filter.Value">@filter.Name (@filter.Facet)</a></li>
+                }
+                <hr class="cd__your-courses__filters-list__break">
+            }
         </ul>
     </div>
     <div class="govuk-grid-column-three-quarters">

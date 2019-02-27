@@ -15,6 +15,6 @@ namespace Dfc.CourseDirectory.Web.ViewModels.YourCourses
         public string Heading { get; set; }
         public string HeadingCaption { get; set; }
         public IList<CourseViewModel> Courses { get; set;}
-        public IList<QualificationLevelFilterViewModel> Levels { get; set; }
+        public IList<QualificationLevelFilterViewModel> LevelFilters { get; set; }
     }
 }
