@@ -1,4 +1,5 @@
-﻿@using Dfc.CourseDirectory.Web.ViewComponents.AdvancedLearnerLoan
+﻿@using Dfc.CourseDirectory.Models.Models.Courses
+@using Dfc.CourseDirectory.Web.ViewComponents.AdvancedLearnerLoan
 @using Dfc.CourseDirectory.Web.ViewComponents.CourseName
 @using Dfc.CourseDirectory.Web.ViewComponents.CourseProviderReference
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.AddStartDate
@@ -11,6 +12,7 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode
 @using Dfc.CourseDirectory.Web.ViewComponents.Extensions
 @using Dfc.CourseDirectory.Web.ViewComponents.UrlInput
+@using StudyMode = Dfc.CourseDirectory.Models.Models.Courses.StudyMode
 @model Dfc.CourseDirectory.Web.ViewModels.CopyCourse.CopyCourseRunViewModel
 
 <h1 class="govuk-heading-l" style="padding-top: 20px;">
@@ -156,7 +158,7 @@
         })
     </div>
 
-    <div id="FullPartTimeRadioButtons"  style="display: none;">
+    <div id="FullPartTimeRadioButtons" style="display: none;">
         @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode.StudyMode), new StudyModeModel
         {
             StudyMode = Model.StudyMode,
@@ -165,7 +167,7 @@
         })
     </div>
 
-    <div id="AttendancePatternRadioButtons"  style="display: none;">
+    <div id="AttendancePatternRadioButtons" style="display: none;">
         @await Component.InvokeAsync(nameof(Attendance), new AttendanceModel
         {
             AttendanceMode = Model.AttendanceMode,
@@ -484,6 +486,9 @@
                 var $specifiedStartDate = $("#SpecifiedStartDate");
                 var $flexibleStartDate = $("#FlexibleStartDate");
 
+                var $dayTimeAttendance = $("#@AttendancePattern.Daytime");
+                var $studyMode = $("#@StudyMode.FullTime");
+
                 switch (this.id) {
                     case "ClassroomBased":
                         {
@@ -496,6 +501,8 @@
                             isClassroomBased = true;
                             isOnline = false;
                             isWorkBased = false;
+                            $dayTimeAttendance.prop("checked", true);
+                            $studyMode.prop("checked", true);
                             break;
                         }
                     case "Online":
@@ -509,6 +516,8 @@
                             isClassroomBased = false;
                             isOnline = true;
                             isWorkBased = false;
+                            $dayTimeAttendance.prop("checked", false);
+                            $studyMode.prop("checked", false);
                             break;
                         }
                     case "WorkBased":
@@ -522,6 +531,8 @@
                             isClassroomBased = false;
                             isOnline = false;
                             isWorkBased = true;
+                            $dayTimeAttendance.prop("checked", false);
+                            $studyMode.prop("checked", false);
                             break;
                         }
                 }
