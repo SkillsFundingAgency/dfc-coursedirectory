@@ -5,13 +5,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Models.Models.Courses;
 
-namespace Dfc.CourseDirectory.Web.ViewComponents.Publish.PublishCourseRun
+namespace Dfc.CourseDirectory.Web.ViewComponents.PublishCourses.PublishCourseRun
 {
     public class PublishCourseRun : ViewComponent
     {
         public IViewComponentResult Invoke(IEnumerable<CourseRun> model)
         {
-            return View("~/ViewComponents/Publish/PublishCourseRun/Default.cshtml", model);
+            return View("~/ViewComponents/PublishCourses/PublishCourseRun/Default.cshtml", model);
         }
     }
 }

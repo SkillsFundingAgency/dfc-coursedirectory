@@ -1,31 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Models.Courses;
-using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
-using Dfc.CourseDirectory.Web.ViewModels;
-using Dfc.CourseDirectory.Web.ViewModels.BulkUpload;
-using Dfc.CourseDirectory.Web.ViewModels.Publish;
+using Dfc.CourseDirectory.Web.ViewModels.PublishCourses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace Dfc.CourseDirectory.Web.Controllers.Publish
+namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
 {
 
-    public class PublishController : Controller
+    public class PublishCoursesController : Controller
     {
-        private readonly ILogger<PublishController> _logger;
+        private readonly ILogger<PublishCoursesController> _logger;
         private readonly IHttpContextAccessor _contextAccessor;
         private ISession _session => _contextAccessor.HttpContext.Session;
         private readonly ICourseService _courseService;
 
-        public PublishController(ILogger<PublishController> logger,
+        public PublishCoursesController(ILogger<PublishCoursesController> logger,
             IHttpContextAccessor contextAccessor, ICourseService courseService)
         {
             Throw.IfNull(logger, nameof(logger));

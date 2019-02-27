@@ -58,13 +58,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="ViewComponents\Publish\PublishCourseRun\Default.cshtml">
+    <Content Update="ViewComponents\PublishCourses\PublishCourseRun\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="ViewComponents\Publish\PublishCourse\Default.cshtml">
+    <Content Update="ViewComponents\PublishCourses\PublishCourse\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="ViewComponents\Publish\Publish\Default.cshtml">
+    <Content Update="ViewComponents\PublishCourses\Publish\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="ViewComponents\CourseProviderReference\Default.cshtml">
@@ -124,7 +124,7 @@
     <Content Update="ViewComponents\VenueSearch\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\Publish\Index.cshtml">
+    <Content Update="Views\PublishCourses\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\CopyCourseRun\CopyCourseRun.cshtml">

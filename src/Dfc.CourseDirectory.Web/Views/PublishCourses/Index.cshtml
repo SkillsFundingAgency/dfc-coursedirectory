@@ -1,11 +1,9 @@
-﻿@using Microsoft.AspNetCore.Authorization;
-@using Microsoft.AspNetCore.Identity
-@using Dfc.CourseDirectory.Web.Areas.Identity.Data;
-@using Dfc.CourseDirectory.Web.ViewComponents.Publish.Publish
+﻿
 
-@model Dfc.CourseDirectory.Web.ViewModels.Publish.PublishViewModel
+@using Dfc.CourseDirectory.Web.ViewComponents.PublishCourses.Publish
+@model Dfc.CourseDirectory.Web.ViewModels.PublishCourses.PublishViewModel
 
-<form asp-controller="Publish" asp-action="Index" id="Publish">
+<form asp-controller="PublishCourses" asp-action="Index" id="PublishCourses">
 
     @await Component.InvokeAsync(nameof(Publish), new { model = Model})
 
