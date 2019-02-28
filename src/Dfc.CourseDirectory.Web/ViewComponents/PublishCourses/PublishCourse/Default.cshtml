@@ -1,4 +1,5 @@
 ﻿@using System.Text.RegularExpressions
+@using Dfc.CourseDirectory.Models.Enums
 @using Dfc.CourseDirectory.Web.ViewComponents.PublishCourses.PublishCourseRun
 @model IEnumerable<Dfc.CourseDirectory.Models.Models.Courses.Course>
 
@@ -8,11 +9,53 @@
 {
     <div class="error-line">
         <div class="heading"><strong>@course.QualificationCourseTitle</strong><br />@course.NotionalNVQLevelv2, @course.AwardOrgCode, Lars: @course.LearnAimRef</div>
-        <div class="col"><div class="error-box no-error">No errors</div></div>
-        <div class="col">&nbsp;</div>
+        
+        @if (course.IsValid)
+        {
+            <div class="col"><div class="error-box no-error">No errors</div></div>
+            <div class="col">&nbsp;</div>
+        }
+        else
+        {
+            <div class="col"><div class="error-box ">Errors</div></div>
+            <div class="col">
+               
+                <a class="govuk-link" asp-controller="EditCourse" asp-action="Index"
+                   asp-route-courseId="@course.id" asp-route-fromBulkUpload=true>Fix</a>
+            </div>
+        }
+       
     </div>
 
-    @await Component.InvokeAsync(nameof(PublishCourseRun), new { model = course.CourseRuns})
+    @*@await Component.InvokeAsync(nameof(PublishCourseRun), new { model = course.CourseRuns})*@
+
+   foreach (var courseRun in course.CourseRuns)
+     {
+         <div class="error-line-in">
+             <div class="heading">@courseRun.CourseName</div>
+
+
+             @if (courseRun.RecordStatus == RecordStatus.BulkUloadPending)
+             {
+                 <div class="col"><div class="error-box ">Errors</div></div>
+                 <div class="col">
+                     <a class="govuk-link" asp-controller="EditCourseRun" asp-action="Index"
+                        asp-route-courseId="@course.id"
+                        asp-route-courseRunId="@courseRun.id" asp-route-fromBulkUpload=true>Fix</a>
+                 </div>
+             }
+             else
+             {
+                 if (courseRun.RecordStatus == RecordStatus.BulkUploadReadyToGoLive)
+                 {
+                     <div class="col"><div class="error-box no-error">No errors</div></div>
+                     <div class="col">&nbsp;</div>
+                 }
+            
+             }
+
+         </div>
+     }
     
 }
 
@@ -23,3 +66,4 @@
         });
     })(jQuery);
 </script>
+

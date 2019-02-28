@@ -1,4 +1,5 @@
-﻿@using Dfc.CourseDirectory.Web.ViewComponents.AdvancedLearnerLoan
+﻿@using Dfc.CourseDirectory.Models.Models.Courses
+@using Dfc.CourseDirectory.Web.ViewComponents.AdvancedLearnerLoan
 @using Dfc.CourseDirectory.Web.ViewComponents.CourseName
 @using Dfc.CourseDirectory.Web.ViewComponents.CourseProviderReference
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.AddStartDate
@@ -11,13 +12,14 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode
 @using Dfc.CourseDirectory.Web.ViewComponents.Extensions
 @using Dfc.CourseDirectory.Web.ViewComponents.UrlInput
+@using StudyMode = Dfc.CourseDirectory.Models.Models.Courses.StudyMode
 @model Dfc.CourseDirectory.Web.ViewModels.CopyCourse.CopyCourseRunViewModel
 
 <h1 class="govuk-heading-l" style="padding-top: 20px;">
-    Copy course details
+    Copy course
 </h1>
 
-<form asp-controller="CopyCourseRun" asp-action="Index" id="copyCourseRun">
+<form asp-controller="CopyCourseRun" asp-action="Index" id="editCourseRun" onkeypress="return event.keyCode != 13;">
 
     @Html.HiddenFor(x => x.CourseId)
     @Html.HiddenFor(x => x.CourseRunId)
@@ -67,7 +69,7 @@
             YearAriaDescribedBy = "",
             YearLabelText = "Year",
             AriaDescribedBy = "",
-            SpecifiedDateHintText = "e.g. 'For example, 30 9 2019",
+            SpecifiedDateHintText = "e.g. For example, 30 9 2019",
             FlexibleDateHintText = "Or select a flexible start date:",
             LabelText = "Start date"
         })
@@ -92,13 +94,11 @@
         <span id="select-region-hint" class="govuk-hint">
             @Model.SelectRegion.HintText
         </span>
-        <span class="govuk-error-message field-validation-error" id="invalidRegionsChecked" style="display: none;margin-bottom: 15px;">
-            <span id="invalidRegionsCheckedMessage" class="">Select a region.</span>
-        </span>
 
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
-                <div class="govuk-checkboxes" id="SelectRegionCheckBoxes">
+                <div class="govuk-checkboxes" id="SelectRegionCheckBoxes"
+                     val-required-message="Select a region">
                     @{ var j = 0; }
                     @if (Model.SelectRegion.RegionItems.Count() == 1)
                     {
@@ -158,7 +158,7 @@
         })
     </div>
 
-    <div id="FullPartTimeRadioButtons">
+    <div id="FullPartTimeRadioButtons" style="display: none;">
         @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode.StudyMode), new StudyModeModel
         {
             StudyMode = Model.StudyMode,
@@ -167,7 +167,7 @@
         })
     </div>
 
-    <div id="AttendancePatternRadioButtons">
+    <div id="AttendancePatternRadioButtons" style="display: none;">
         @await Component.InvokeAsync(nameof(Attendance), new AttendanceModel
         {
             AttendanceMode = Model.AttendanceMode,
@@ -189,25 +189,66 @@
     (function($) {
         $(function() {
             var $courseName = $("#@nameof(Model.CourseName)").govUkInput();
+            var $URL = $("#@nameof(Model.Url)").govUkInput();
+            var $courseProviderReference = $("#@nameof(Model.CourseProviderReference)").govUkInput();
             var $deliveryRadios = $("#DeliveryModeRadioButtons input[type=radio]");
             var $regionItemsCheckboxList = $("#RegionItemsCheckboxList");
             var $regionCheckboxes = $("#SelectRegionCheckBoxes input[type=checkbox]");
-            var $formRegionsIsValid = false;
+            var $duration = $("#duration").govUkDurationInput();
+            var $checkboxsregions = $("#SelectRegionCheckBoxes").govUkCheckboxes();
+
+            var $radioDeliveryMode = $("#DeliveryModeRadioButtons").govUkRadios();
+            var $radioStudyMode = $("#StudyModeRadioButtons").govUkRadios();
+            var $radioAttendance = $("#AttendanceRadioButtons").govUkRadios();
+
+            var $selectvenue = $("#selectvenue").govUkSelect();
+
+            var $selectedvenue = $("#@nameof(Model.VenueId)").govUkSelect();
+
+            var $startDate = $("#start_date").govUkDateInput();
+
+            var $cost = $("#@nameof(Model.Cost)").govUkInput();
+            var $costDescription = $("#@nameof(Model.CostDescription)").govUkTextarea();
 
             var isClassroomBased = true;
             var isOnline = false;
             var isWorkBased = false;
 
-            var $CourseNameIsValid = false;
+
+            var $fullPartTimeRadioButtons = $("#FullPartTimeRadioButtons");
+            var $attendancePatternRadioButtons = $("#AttendancePatternRadioButtons");
+
+            switch ($radioDeliveryMode.find("input[type='radio']:checked").val()) {
+            case "ClassroomBased":
+                    {
+                        $fullPartTimeRadioButtons.show();
+                        $attendancePatternRadioButtons.show();
+                isClassroomBased = true;
+                isOnline = false;
+                isWorkBased = false;
+                break;
+            }
+            case "Online":
+                    {
+                        $fullPartTimeRadioButtons.hide();
+                        $attendancePatternRadioButtons.hide();
+                isClassroomBased = false;
+                isOnline = true;
+                isWorkBased = false;
+                break;
+            }
+            case "WorkBased":
+                    {
+                        $fullPartTimeRadioButtons.hide();
+                        $attendancePatternRadioButtons.hide();
+                isClassroomBased = false;
+                isOnline = false;
+                isWorkBased = true;
+                break;
+            }
+            }
 
             var $button = $("#save");
-
-            $courseName.on("blur",
-                function() {
-                    if ($.requiredValidate($courseName.val())) {
-                        $courseName.govUkInput("validState");
-                    }
-                });
 
             function isAllValid(currentValue) {
                 return currentValue === true;
@@ -219,67 +260,216 @@
 
                     var validStates = [];
 
-                    //if (!$.requiredValidate($courseName.val())) {
-                    //    $courseName.govUkInput("invalidState",
-                    //        $courseName.attr("val-required-message"));
-                    //} else if (!$.maxLengthValidate({
-                    //    max: $courseName.attr("val-max-length")
-                    //    },
-                    //    $courseName.find("input").val())) {
-                    //    $courseName.govUkInput("invalidState", $courseName.attr("val-max-length-message"));
-                    //} else if (!$.regexValidate({
-                    //        max: $courseName.attr("val-regex")
-                    //    },
-                    //    $courseName.find("input").val())) {
-                    //    $courseName.govUkInput("invalidState", $courseName.attr("val-regex-message"));
-                    //}
-                    //else {
-                    //    $courseName.govUkInput("validState");
-                    //}
+                    if (isClassroomBased) {
+                        if ($.requiredValidate($selectedvenue.val())) {
+                            $selectedvenue.govUkSelect("validState");
+                        validStates.push(true);
+                    } else {
+                            $selectedvenue.govUkSelect("invalidState", $selectedvenue.attr("val-required-message"));
+                        validStates.push(false);
+                        }
+                        }
+
+
+
+                    if ((!$.requiredValidate($cost.val()) && !$.requiredValidate($costDescription.val()))) {
+                        $cost.govUkInput("invalidState", $cost.attr("val-required-message"));
+                        validStates.push(false);
+                    } else if (
+                        !$.regexValidate({ regex: $costDescription.attr("val-regex") }, $costDescription.val())) {
+                        $costDescription.govUkTextarea("invalidState", $costDescription.attr("val-regex-message"));
+                        validStates.push(false);
+                    }else if (
+                        !$.maxLengthValidate({ max: $costDescription.attr("val-max-length") }, $costDescription.val())) {
+                        $costDescription.govUkTextarea("invalidState", $costDescription.attr("val-max-length-message"));
+                        validStates.push(false);
+                    }
+                    else {
+
+                        $cost.govUkInput("validState");
+                        $costDescription.govUkTextarea("validState");
+                        validStates.push(true);
+                    }
+
+
+
+
+
+
+
+                    if (isWorkBased) {
+                    if ($.requiredValidate($checkboxsregions.find("input[type='checkbox']:checked").val())) {
+                        $checkboxsregions.govUkCheckboxes("validState");
+                        validStates.push(true);
+                    } else {
+                        $checkboxsregions.govUkCheckboxes("invalidState", $checkboxsregions.attr("val-required-message"));
+                        validStates.push(false);
+                        }
+                        }
+
 
 
                     if (!$.requiredValidate($courseName.val())) {
                         $courseName.govUkInput("invalidState", $courseName.attr("val-required-message"));
+                        validStates.push(false);
                     } else if (
                         !$.regexValidate({ regex: $courseName.attr("val-regex") }, $courseName.val())) {
                         $courseName.govUkInput("invalidState", $courseName.attr("val-regex-message"));
+                        validStates.push(false);
                     }else if (
                         !$.maxLengthValidate({ max: $courseName.attr("val-max-length") }, $courseName.val())) {
                         $courseName.govUkInput("invalidState", $courseName.attr("val-max-length-message"));
+                        validStates.push(false);
                         }
                     else {
 
                         $courseName.govUkInput("validState");
+                        validStates.push(true);
+                    }
+
+                    if (!$.regexValidate({ regex: $courseProviderReference.attr("val-regex") }, $courseProviderReference.val())) {
+                        $courseProviderReference.govUkInput("invalidState", $courseProviderReference.attr("val-regex-message"));
+                        validStates.push(false);
+                    }else if (
+                        !$.maxLengthValidate({ max: $courseProviderReference.attr("val-max-length") }, $courseProviderReference.val())) {
+                        $courseProviderReference.govUkInput("invalidState", $courseProviderReference.attr("val-max-length-message"));
+                        validStates.push(false);
+                    }
+                    else {
+
+                        $courseProviderReference.govUkInput("validState");
+                        validStates.push(true);
                     }
 
 
-                    //if (!$.requiredValidate($duration.find("input").val())) {
-                    //    $duration.govUkDurationInput("invalidState", $duration.attr("val-duration-message"));
-                    //} else if (!$.rangeValidate({
-                    //        min: $duration.attr("val-range-min"),
-                    //        max: $duration.attr("val-range-max")
-                    //    },
-                    //    $duration.find("input").val())) {
-                    //    $duration.govUkDurationInput("invalidState", $duration.attr("val-duration-message"));
-                    //} else if (!$.requiredValidate($duration.find("select").val())) {
-                    //    $duration.govUkDurationInput("invalidState", $duration.attr("val-duration-message"));
-                    //} else {
-                    //    $duration.govUkDurationInput("validState");
-                    //}
+
+
+
+
+
+
+
+
+                    if (!$.regexValidate({ regex: $URL.attr("val-regex") }, $URL.val())) {
+                        $URL.govUkInput("invalidState", $URL.attr("val-regex-message"));
+                        validStates.push(false);
+                    }else if (
+                        !$.maxLengthValidate({ max: $URL.attr("val-max-length") }, $URL.val())) {
+                        $URL.govUkInput("invalidState", $URL.attr("val-max-length-message"));
+                        validStates.push(false);
+                    }
+                    else {
+
+                        $URL.govUkInput("validState");
+                        validStates.push(true);
+                    }
+
+
+
+
+                    if (!$.requiredValidate($duration.find("input").val())) {
+                        $duration.govUkDurationInput("invalidState", $duration.attr("val-duration-message"));
+                        validStates.push(false);
+                    } else if (!$.rangeValidate({
+                            min: $duration.attr("val-range-min"),
+                            max: $duration.attr("val-range-max")
+                        },
+                        $duration.find("input").val())) {
+                        $duration.govUkDurationInput("invalidState", $duration.attr("val-duration-message"));
+                        validStates.push(false);
+                    } else if (!$.requiredValidate($duration.find("select").val())) {
+                        $duration.govUkDurationInput("invalidState", $duration.attr("val-duration-message"));
+                        validStates.push(false);
+                    } else {
+                        $duration.govUkDurationInput("validState");
+                        validStates.push(true);
+                    }
+
+
+
+
+
+
+
+
+
+
+
+                    if ($.requiredValidate($radioDeliveryMode.find("input[type='radio']:checked").val())) {
+                        $radioDeliveryMode.govUkRadios("validState");
+                        validStates.push(true);
+                    } else {
+                        $radioDeliveryMode.govUkRadios("invalidState", $radioDeliveryMode.attr("val-required-message"));
+                        validStates.push(false);
+                    }
+
+
+                    switch ($radioDeliveryMode.find("input[type='radio']:checked").val()) {
+                        case "ClassroomBased":
+                            {
+                                if ($.requiredValidate($radioStudyMode.find("input[type='radio']:checked").val())) {
+                                    $radioStudyMode.govUkRadios("validState");
+                                    validStates.push(true);
+                                } else {
+                                    $radioStudyMode.govUkRadios("invalidState", $radioStudyMode.attr("val-required-message"));
+                                    validStates.push(false);
+                                }
+
+                                if ($.requiredValidate($radioAttendance.find("input[type='radio']:checked").val())) {
+                                    $radioAttendance.govUkRadios("validState");
+                                    validStates.push(true);
+                                } else {
+                                    $radioAttendance.govUkRadios("invalidState", $radioAttendance.attr("val-required-message"));
+                                    validStates.push(false);
+                                }
+                                break;
+                            }
+                        case "Online":
+                            {
+
+                                break;
+                            }
+                        case "WorkBased":
+                            {
+
+                                break;
+                            }
+                    }
+
+
+                    var radioValue = $("input[name='StartDateType']:checked").val();
+                    if (radioValue.toUpperCase() === "SPECIFIEDSTARTDATE") {
+
+                        var startDateValue = $startDate.govUkDateInput("getISODateString");
+
+                        if (startDateValue === "") {
+                            $startDate.govUkDateInput("invalidState", $startDate.attr("val-required-message"));
+                            validStates.push(false);
+                        }
+                        else {
+                        if ($.dateValidate(startDateValue)) {
+                            $startDate.govUkDateInput("validState");
+                            validStates.push(true);
+                        } else {
+                            $startDate.govUkDateInput("invalidState", $startDate.attr("val-date-message"));
+                            validStates.push(false);
+                        }
+                            }
+
+                        };
+
+
+
 
                     if (validStates.every(isAllValid)) {
 
-                        alert("OK");
-                        //$("#editCourseRun").submit();
-                    } else {
-                        alert("ERROR");
+                        //alert("OK");
+                        $("#editCourseRun").submit();
                     }
 
                 });
 
 
-            //$courseName.govUkInput("invalidState", $courseName.attr("val-required-message"));
-            //)
 
 
 
@@ -296,6 +486,9 @@
                 var $specifiedStartDate = $("#SpecifiedStartDate");
                 var $flexibleStartDate = $("#FlexibleStartDate");
 
+                var $dayTimeAttendance = $("#@AttendancePattern.Daytime");
+                var $studyMode = $("#@StudyMode.FullTime");
+
                 switch (this.id) {
                     case "ClassroomBased":
                         {
@@ -308,6 +501,8 @@
                             isClassroomBased = true;
                             isOnline = false;
                             isWorkBased = false;
+                            $dayTimeAttendance.prop("checked", true);
+                            $studyMode.prop("checked", true);
                             break;
                         }
                     case "Online":
@@ -321,6 +516,8 @@
                             isClassroomBased = false;
                             isOnline = true;
                             isWorkBased = false;
+                            $dayTimeAttendance.prop("checked", false);
+                            $studyMode.prop("checked", false);
                             break;
                         }
                     case "WorkBased":
@@ -334,6 +531,8 @@
                             isClassroomBased = false;
                             isOnline = false;
                             isWorkBased = true;
+                            $dayTimeAttendance.prop("checked", false);
+                            $studyMode.prop("checked", false);
                             break;
                         }
                 }
@@ -341,29 +540,7 @@
 
             });
 
-            $regionCheckboxes.change(function () {
-                var $validationMessageForRegions = $("#invalidRegionsChecked");
-                var $formGroupRegions = $regionItemsCheckboxList.closest('.govuk-form-group');
-                var countedCheckedCheckboxes = $regionCheckboxes.filter(':checked').length;
 
-                if ($(this).is(":visible")) {
-                    if (countedCheckedCheckboxes === 0) {
-                        $formGroupRegions.addClass("govuk-form-group--error");
-                        $validationMessageForRegions.show();
-                        $formRegionsIsValid = false;
-                    }
-                    else {
-                        $formGroupRegions.removeClass("govuk-form-group--error");
-                        $validationMessageForRegions.hide();
-                        $formRegionsIsValid = true;
-                    }
-                }
-                else {
-                    $formGroupRegions.removeClass("govuk-form-group--error");
-                    $validationMessageForRegions.hide();
-                    $formRegionsIsValid = true;
-                }
-            });
 
         });
     })(jQuery);

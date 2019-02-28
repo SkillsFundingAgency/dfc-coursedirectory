@@ -22,9 +22,8 @@
 {
     @await Component.InvokeAsync(nameof(Notification), new NotificationModel
 {
-
-    NotificationTitle = "Course edited",
-    NotificationMessage = "<a id='courseeditlink' class='govuk-link' href=# data-courseid=" + Model.FirstOrDefault()?.CourseId + " data-courserunid = " + Model.FirstOrDefault()?.CourseRunId + "> You edited " + Model.FirstOrDefault()?.QualificationTitle + "</a>",
+    NotificationTitle = Model.FirstOrDefault()?.NotificationTitle,
+    NotificationMessage = @Html.Raw(Model.FirstOrDefault()?.NotificationMessage).ToString(),
     ClassType = "info-summary"
 });
 
@@ -58,55 +57,111 @@
                     <div class="govuk-accordion" data-module="accordion" id="accordion-default">
                         @foreach (var a in s.CourseRuns.OrderBy(l => l.CourseName))
                         {
+
+                            var accordionId = "accordion-default-content-" + a.id;
+
                             <div class="govuk-accordion__section" id="@a.id">
                                 <div class="govuk-accordion__section-header">
                                     <h2 class="govuk-accordion__section-heading">
-                                        <button type="button" id="accordion-default-heading-1" aria-controls="accordion-default-content-1" class="govuk-accordion__section-button" aria-expanded="false">
+                                        <button type="button" id="accordion-default-heading-1" aria-controls="@accordionId" class="govuk-accordion__section-button" aria-expanded="false">
                                             @a.CourseName
                                             <br />
-                                            <span style="font-size: 1rem; font-weight: 400; margin-right: 15px">
-                                                @{
-                                                    if (!string.IsNullOrEmpty(a.ProviderCourseID))
-                                                    {
-                                                        <span>
-                                                            @a.ProviderCourseID
-                                                        </span>
-                                                    }
-                                                    else
-                                                    {
-                                                        <span>
 
-                                                        </span>
-                                                    }
-                                                }
-
-                                            </span>
-                                            <span style="font-size: 1rem; font-weight: 400; margin-right: 15px">
-                                                @if (a.StudyMode != StudyMode.Undefined)
+                                            @{
+                                                if (!string.IsNullOrEmpty(a.ProviderCourseID))
                                                 {
-                                                    @WebHelper.GetEnumDescription(a.StudyMode)
-                                                }
-
-                                            </span>
-                                            <span style="font-size: 1rem; font-weight: 400; margin-right: 15px">
-                                                @if (a.FlexibleStartDate)
-                                                {
-                                                    <span>
-                                                        Flexible Start Date
+                                                    <span style="font-size: 1rem; font-weight: 400; margin-right: 15px">
+                                                        @a.ProviderCourseID
                                                     </span>
-
                                                 }
-                                                else
+
+                                            }
+
+                                            @{
+                                                switch (a.DeliveryMode)
                                                 {
-                                                    @a.StartDate?.ToString("dd/MM/yyy", CultureInfo.InvariantCulture)
-                                                }
+                                                    case DeliveryMode.ClassroomBased:
+                                                        {
+                                                            if (a.VenueId.HasValue)
+                                                            {
+                                                                var venueName = await venueService.GetVenueByIdAsync(new GetVenueByIdCriteria(a.VenueId.ToString()));
 
-                                            </span>
+                                                                if (venueName.HasValue)
+                                                                {
+                                                                    <span style="font-size: 1rem; font-weight: 400; margin-right: 15px">
+
+                                                                        @venueName.Value.VenueName
+                                                                    </span>
+
+                                                                }
+
+                                                            }
+                                                            break;
+                                                        }
+                                                    case DeliveryMode.WorkBased:
+                                                        {
+                                                            if (a.Regions != null)
+                                                            {
+
+                                                                var regionNames = new List<string>();
+
+                                                                string allRegions = "";
+
+                                                                {
+                                                                    foreach (var region in a.Regions)
+                                                                    {
+                                                                        var regionName = courseService.GetRegions().RegionItems.Where(r => r.Id == region).Select(n => n.RegionName).SingleOrDefault();
+                                                                        regionNames.Add(regionName);
+                                                                    }
+                                                                }
+                                                                allRegions = @String.Join(", ", regionNames.Select(p => p).ToArray());
+
+
+
+                                                                <span style="font-size: 1rem; font-weight: 400; margin-right: 15px">
+
+                                                                    @allRegions
+                                                                </span>
+
+
+                                                            }
+                                                            break;
+                                                        }
+                                                }
+                                            }
+
+
+
+                                            @if (a.StudyMode != StudyMode.Undefined)
+                                            {
+                                                <span style="font-size: 1rem; font-weight: 400; margin-right: 15px">
+                                                    @WebHelper.GetEnumDescription(a.StudyMode)
+                                                </span>
+                                            }
+
+
+
+                                            @if (a.FlexibleStartDate)
+                                            {
+                                                <span style="font-size: 1rem; font-weight: 400; margin-right: 15px">
+                                                    Flexible Start Date
+                                                </span>
+
+                                            }
+                                            else
+                                            {
+                                                <span style="font-size: 1rem; font-weight: 400; margin-right: 15px">
+                                                    @a.StartDate?.ToString("dd/MM/yyy", CultureInfo.InvariantCulture)
+                                                </span>
+                                            }
+
+
                                         </button><span class="govuk-accordion__icon" aria-hidden="true"></span>
                                     </h2>
                                 </div>
                                 <div>
-                                    <div id="accordion-default-content-1" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-1" style="border-style: solid; border-width: 1px; margin-bottom: 10px;">
+
+                                    <div id="@accordionId" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-1" style="border-style: solid; border-width: 1px; margin-bottom: 10px;">
 
                                         <div class="cd-course--list" style="margin-bottom: 15px; border-bottom: none">
                                             @{
@@ -120,7 +175,7 @@
 
                                                                 if (venueName.HasValue)
                                                                 {
-                                                                    <div class="">
+                                                                    <div style="padding-bottom: 1em">
                                                                         <label class="govuk-label" for="sort" style="font-weight: 600">
                                                                             Venue
                                                                         </label>
@@ -151,7 +206,7 @@
                                                                 }
                                                                 allRegions = @String.Join(", ", regionNames.Select(p => p).ToArray());
 
-                                                                <div class="">
+                                                                <div style="padding-bottom: 1em">
                                                                     <label class="govuk-label" for="sort" style="font-weight: 600">
                                                                         Regions
                                                                     </label>
@@ -166,14 +221,14 @@
                                                 }
                                             }
                                             <div>
-                                                <div class="">
-                                                    <label class="govuk-label" for="url" style="font-weight: 600; word-break: break-all;">
+                                                <div style="padding-bottom: 1em">
+                                                    <label class="govuk-label" for="url" style="font-weight: 600">
                                                         Url
                                                     </label>
 
                                                     @if (!string.IsNullOrEmpty(a.CourseURL))
                                                     {
-                                                        <a class="govuk-link" href=@a.CourseURL target="_blank">@a.CourseURL</a>
+                                                        <a class="govuk-link" href=@a.CourseURL target="_blank" style="word-break: break-all;">@a.CourseURL</a>
                                                     }
                                                     else
                                                     {
@@ -185,7 +240,7 @@
                                             </div>
                                         </div>
                                         <div class="cd-course--list" style="border: none; margin-bottom: 15px;">
-                                            <div class="">
+                                            <div style="padding-bottom: 1em">
                                                 <label class="govuk-label" for="cost" style="font-weight: 600">
                                                     Cost
                                                 </label>
@@ -206,7 +261,7 @@
 
                                             @if (a.DeliveryMode == DeliveryMode.ClassroomBased)
                                             {
-                                                <div class="">
+                                                <div style="padding-bottom: 1em">
                                                     <label class="govuk-label" for="mode" style="font-weight: 600">
                                                         Mode
                                                     </label>
@@ -223,22 +278,35 @@
 
                                                 </div>
                                             }
-                                            <div class="">
+                                            <div style="padding-bottom: 1em">
                                                 <label class="govuk-label" for="duration" style="font-weight: 600">
                                                     Duration
                                                 </label>
                                                 @if (a.DurationValue.HasValue)
                                                 {
                                                     <label asp-for="@a.DurationValue">@a.DurationValue </label>
+                                                    if (a.DurationUnit != DurationUnit.Undefined)
+                                                    {
+                                                        <label asp-for="@a.DurationUnit">@WebHelper.GetEnumDescription(a.DurationUnit)</label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <label>
+                                                            &nbsp;
+                                                        </label>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <label>
+                                                        &nbsp;
+                                                    </label>
                                                 }
 
-                                                @if (a.DurationUnit != DurationUnit.Undefined)
-                                                {
-                                                    <label asp-for="@a.DurationUnit">@WebHelper.GetEnumDescription(a.DurationUnit)</label>
-                                                }
+
 
                                             </div>
-                                            <div class="">
+                                            <div style="padding-bottom: 1em">
                                                 <label class="govuk-label" for="cost" style="font-weight: 600">
                                                     ID
                                                 </label>
@@ -260,7 +328,7 @@
                                             </div>
 
 
-                                            <div class="">
+                                            <div style="padding-bottom: 1em">
                                                 <label class="govuk-label" for="delivery" style="font-weight: 600">
                                                     Delivery
                                                 </label>
@@ -278,7 +346,7 @@
 
                                             @if (a.DeliveryMode == DeliveryMode.ClassroomBased)
                                             {
-                                                <div class="">
+                                                <div style="padding-bottom: 1em">
                                                     <label class="govuk-label" for="attendance" style="font-weight: 600">
                                                         Attendance
                                                     </label>
@@ -296,7 +364,7 @@
                                             }
                                             @{
 
-                                                <div class="">
+                                                <div style="padding-bottom: 1em">
                                                     <label class="govuk-label" for="startdate" style="font-weight: 600">
                                                         Start date
                                                     </label>
@@ -379,11 +447,54 @@
 
                     }
                     $('#' + courseRunId).addClass('govuk-accordion__section--expanded');
+
+                    var el = $('#' + courseRunId);
+                    var elOffset = el.offset().top;
+                    var elHeight = el.height();
+                    var windowHeight = $(window).height();
+                    var offset;
+
+                    if (elHeight < windowHeight) {
+                        offset = elOffset - ((windowHeight / 2) - (elHeight / 2));
+                    } else {
+                        offset = elOffset;
+                    }
+                    var speed = 700;
+                    $('html, body').animate({ scrollTop: offset }, speed);
+                } else {
+                    var el = $('#' + courseId);
+                    var elOffset = el.offset().top;
+                    var elHeight = el.height();
+                    var windowHeight = $(window).height();
+                    var offset;
+
+                    if (elHeight < windowHeight) {
+                        offset = elOffset - ((windowHeight / 2) - (elHeight / 2));
+                    } else {
+                        offset = elOffset;
+                    }
+                    var speed = 700;
+                    $('html, body').animate({ scrollTop: offset }, speed);
                 }
 
-                $('html, body').animate({
-                    scrollTop: $('#' + courseId).offset().top
-                }, 'slow');
+
+            });
+
+            $(".govuk-accordion__section").click(function (e) {
+                var el = $(this);
+                var elOffset = el.offset().top;
+                var elHeight = el.height();
+                var windowHeight = $(window).height();
+                var offset;
+
+                if (elHeight < windowHeight) {
+                    offset = elOffset - ((windowHeight / 2) - (elHeight / 2));
+                }
+                else {
+                    offset = elOffset;
+                }
+                var speed = 700;
+                $('html, body').animate({ scrollTop: offset }, speed);
             });
 
             $(".govuk-details__summary").click(function () {
@@ -395,12 +506,7 @@
 
                 }
 
-                var els1 = document.querySelectorAll("div[class^='govuk-accordion__section']");
-                for (var i = 0; i < els1.length; i++) {
 
-                    els1[i].classList.remove('govuk-accordion__section--expanded');
-
-                }
             });
 
         });

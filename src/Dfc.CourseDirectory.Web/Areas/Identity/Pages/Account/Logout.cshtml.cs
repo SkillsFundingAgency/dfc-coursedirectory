@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Dfc.CourseDirectory.Web.Areas.Identity.Pages.Account
 {
-    [AllowAnonymous]
+    [Authorize]
     public class LogoutModel : PageModel
     {
         private readonly SignInManager<User> _signInManager;
