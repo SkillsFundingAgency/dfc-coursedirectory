@@ -57,7 +57,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> Index(Guid? courseId)
+        public async Task<IActionResult> Index(Guid? courseId, bool fromBulkUpload)
         {
             int? UKPRN;
 
