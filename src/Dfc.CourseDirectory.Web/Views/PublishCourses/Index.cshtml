@@ -1,0 +1,19 @@
+﻿
+
+@using Dfc.CourseDirectory.Web.ViewComponents.PublishCourses.Publish
+@model Dfc.CourseDirectory.Web.ViewModels.PublishCourses.PublishViewModel
+
+<form asp-controller="PublishCourses" asp-action="Index" id="PublishCourses">
+
+    @await Component.InvokeAsync(nameof(Publish), new { model = Model})
+
+
+    <div class="govuk-form-group">
+        <button name="publishButton" type="submit" class="govuk-button" id="publish">
+            Publish all
+        </button>
+
+        @Html.ActionLink("Exit without publishing", "Courses", "Provider", new { qualificationType = "", courseId = Guid.NewGuid(), courseRunId = Guid.NewGuid() }, new { @class = "govuk-link" })
+    </div>
+
+</form>
