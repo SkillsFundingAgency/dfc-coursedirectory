@@ -1,4 +1,6 @@
-﻿@model Dfc.CourseDirectory.Web.ViewModels.YourCourses.YourCoursesViewModel
+﻿@using Dfc.CourseDirectory.Web.ViewComponents.Notification
+
+@model Dfc.CourseDirectory.Web.ViewModels.YourCourses.YourCoursesViewModel
 
 <style>
 
@@ -52,12 +54,28 @@
         }
 
             .cd__your-courses__accordion-list .govuk-accordion__section-heading .govuk-accordion__section-button .row-1 {
+                -ms-word-break: break-all;
+                word-break: break-all;
+                /* Non standard for webkit */
+                word-break: break-word;
+                -webkit-hyphens: auto;
+                -moz-hyphens: auto;
+                -ms-hyphens: auto;
+                hyphens: auto;
             }
 
             .cd__your-courses__accordion-list .govuk-accordion__section-heading .govuk-accordion__section-button .row-2 {
                 font-size: 0.8em;
                 font-weight: normal;
                 color: #666;
+                -ms-word-break: break-all;
+                word-break: break-all;
+                /* Non standard for webkit */
+                word-break: break-word;
+                -webkit-hyphens: auto;
+                -moz-hyphens: auto;
+                -ms-hyphens: auto;
+                hyphens: auto;
             }
 
             .cd__your-courses__accordion-list .govuk-accordion__section-heading .govuk-accordion__section-button .row-2 {
@@ -117,7 +135,7 @@
 
     .cd__your-courses__filters-list {
         margin: 0px;
-        padding:0px;
+        padding: 0px;
         list-style: none;
     }
 
@@ -138,6 +156,17 @@
             <span class="govuk-caption-xl">@Model.HeadingCaption</span>
             @Model.Heading
         </h1>
+
+        @if (!string.IsNullOrWhiteSpace(Model.NotificationTitle))
+        {
+            @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+            {
+
+                NotificationTitle = Model.NotificationTitle,
+                NotificationMessage = Model.NotificationMessage,
+                ClassType = "info-summary"
+            })
+        }
     </div>
 </div>
 
@@ -148,11 +177,11 @@
             {
                 @if (filter.IsSelected)
                 {
-                    <li><a class="cd__your-courses__filters-list__link cd__your-courses__filters-list__link--selected" href="@filter.Value">@filter.Name (@filter.Facet)</a></li>
+                    <li><a class="cd__your-courses__filters-list__link cd__your-courses__filters-list__link--selected" asp-controller="YourCourses" asp-action="Index" asp-route-level="@filter.Value">@filter.Name (@filter.Facet)</a></li>
                 }
                 else
                 {
-                    <li><a class="cd__your-courses__filters-list__link" href="@filter.Value">@filter.Name (@filter.Facet)</a></li>
+                    <li><a class="cd__your-courses__filters-list__link" asp-controller="YourCourses" asp-action="Index" asp-route-level="@filter.Value">@filter.Name (@filter.Facet)</a></li>
                 }
                 <hr class="cd__your-courses__filters-list__break">
             }
@@ -197,47 +226,47 @@
                                                     <li>@courseRun.CourseName</li>
                                                 </ul>
                                                 @if (!string.IsNullOrEmpty(courseRun.CourseId)
-                                                 || !string.IsNullOrEmpty(courseRun.StudyMode)
-                                                 || !string.IsNullOrEmpty(courseRun.StartDate))
+                                                || !string.IsNullOrEmpty(courseRun.StudyMode)
+                                                || !string.IsNullOrEmpty(courseRun.StartDate))
                                                 {
-                                                <ul class="row-2">
-                                                    @if (!string.IsNullOrEmpty(courseRun.CourseId))
-                                                    {
-                                                        <li>
-                                                            @courseRun.CourseId
-                                                        </li>
-                                                    }
-                                                    @if (courseRun.DeliveryMode == "Classroom based")
-                                                    {
-                                                        @if (!string.IsNullOrEmpty(courseRun.Venue))
+                                                    <ul class="row-2">
+                                                        @if (!string.IsNullOrEmpty(courseRun.CourseId))
                                                         {
                                                             <li>
-                                                                @courseRun.Venue
+                                                                @courseRun.CourseId
                                                             </li>
                                                         }
-                                                    }
-                                                    @if (courseRun.DeliveryMode == "Work based")
-                                                    {
-                                                        @if (!string.IsNullOrEmpty(courseRun.Region))
+                                                        @if (courseRun.DeliveryMode == "Classroom based")
+                                                        {
+                                                            @if (!string.IsNullOrEmpty(courseRun.Venue))
+                                                            {
+                                                                <li>
+                                                                    @courseRun.Venue
+                                                                </li>
+                                                            }
+                                                        }
+                                                        @if (courseRun.DeliveryMode == "Work based")
+                                                        {
+                                                            @if (!string.IsNullOrEmpty(courseRun.Region))
+                                                            {
+                                                                <li>
+                                                                    @courseRun.Region
+                                                                </li>
+                                                            }
+                                                        }
+                                                        @if (!string.IsNullOrEmpty(courseRun.StudyMode))
                                                         {
                                                             <li>
-                                                                @courseRun.Region
+                                                                @courseRun.StudyMode
                                                             </li>
                                                         }
-                                                    }
-                                                    @if (!string.IsNullOrEmpty(courseRun.StudyMode))
-                                                    {
-                                                        <li>
-                                                            @courseRun.StudyMode
-                                                        </li>
-                                                    }
-                                                    @if (!string.IsNullOrEmpty(courseRun.StartDate))
-                                                    {
-                                                        <li>
-                                                            @courseRun.StartDate
-                                                        </li>
-                                                    }
-                                                </ul>
+                                                        @if (!string.IsNullOrEmpty(courseRun.StartDate))
+                                                        {
+                                                            <li>
+                                                                @courseRun.StartDate
+                                                            </li>
+                                                        }
+                                                    </ul>
                                                 }
                                             </button>
                                         </h2>
@@ -363,3 +392,40 @@
         </div>
     </div>
 </div>
+
+<script>
+    (function ($) {
+        $(function () {
+            $courseeditlink = $("#courseeditlink");
+            if ($courseeditlink.length) {
+                $courseeditlink.on("click", function (event) {
+                    event.preventDefault();
+                    var courseId = $(this).attr('data-courseid');
+                    var courseRunId = $(this).attr('data-courserunid');
+                    var $courseId = $("#" + courseId);
+                    var $courseRunId = $("#" + courseRunId);
+                    var hasOpenAttr = $courseId[0].getAttribute('open') !== null;
+                    if (!hasOpenAttr) {
+                        $courseId.find("summary").trigger("click");
+                    }
+                    if (!$courseRunId.hasClass("govuk-accordion__section--expanded")) {
+                        console.log("add class");
+                        $courseRunId.addClass("govuk-accordion__section--expanded")
+                    }
+                    if ($courseId.attr("open")) {
+                        console.log("scroll details");
+                        $("html,body").animate({
+                            scrollTop: $courseId.offset().top
+                        }, "slow");
+                    }
+                    if ($courseRunId.hasClass("govuk-accordion__section--expanded")) {
+                        console.log("scroll accordion");
+                        $("html,body").animate({
+                            scrollTop: $courseRunId.offset().top
+                        }, "slow");
+                    }
+                });
+            }
+        });
+    })(jQuery);
+</script>

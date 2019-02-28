@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Common;
+using Dfc.CourseDirectory.Models.Models;
+using Dfc.CourseDirectory.Models.Models.Venues;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
+using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.Web.ViewModels.YourCourses;
@@ -39,7 +42,77 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _venueService = venueService;
         }
 
-        public async Task<IActionResult> Index(string level)
+        internal Venue GetVenueByIdFrom(IEnumerable<Venue> list, Guid id)
+        {
+            if (list == null) list = new List<Venue>();
+
+            var found = list.ToList().Find(x => x.ID == id.ToString());
+
+            return found;
+        }
+
+        internal string FormatAddress(Venue venue)
+        {
+            if (venue == null) return string.Empty;
+
+            var list = new List<string>
+            {
+                venue.Address1,
+                venue.Address2,
+                venue.Address3,
+                venue.County,
+                venue.PostCode
+            }
+            .Where(x => !string.IsNullOrWhiteSpace(x))
+            .ToList();
+
+            return string.Join(", ", list);
+        }
+
+        internal string FormattedRegionsByIds(IEnumerable<RegionItemModel> list, IEnumerable<string> ids)
+        {
+            if (list == null) list = new List<RegionItemModel>();
+            if (ids == null) ids = new List<string>();
+
+            ids = ids
+                .Select(x => x.Trim())
+                .Where(x => !string.IsNullOrWhiteSpace(x));
+
+            if (ids.Count() == 0) return string.Empty;
+
+            var matching = list
+                .Where(x => ids.Contains(x.Id))
+                .Select(x => x.RegionName);
+
+            return string.Join(", ", matching);
+        }
+
+        internal string CourseNameByCourseRunId(IEnumerable<CourseRunViewModel> courseRuns, string id)
+        {
+            if (courseRuns == null) return string.Empty;
+            if (string.IsNullOrWhiteSpace(id)) return string.Empty;
+
+            var found = courseRuns.FirstOrDefault(x => x.Id == id)?.CourseName;
+
+            return found;
+        }
+
+        internal string QualificationTitleByCourseId(IEnumerable<CourseViewModel> courses, string id)
+        {
+            if (courses == null) return string.Empty;
+            if (string.IsNullOrWhiteSpace(id)) return string.Empty;
+
+            var found = courses.FirstOrDefault(x => x.Id == id)?.QualificationTitle;
+
+            return found;
+        }
+
+        public async Task<IActionResult> Index(
+            string level, 
+            Guid? courseId, 
+            Guid? courseRunId, 
+            string notificationTitle, 
+            string notificationMessage)
         {
             int? UKPRN = _session.GetInt32("UKPRN");
 
@@ -48,7 +121,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
 
-            var courseResult = _courseService.GetCoursesByLevelForUKPRNAsync(new CourseSearchCriteria(UKPRN)).Result.Value;
+            var courseResult = (await _courseService.GetCoursesByLevelForUKPRNAsync(new CourseSearchCriteria(UKPRN))).Value;
+            var venueResult = (await _venueService.SearchAsync(new VenueSearchCriteria(UKPRN.ToString(), string.Empty))).Value;
+            var allRegions = _courseService.GetRegions().RegionItems;
 
             var levelFilters = courseResult
                 .Value
@@ -89,154 +164,44 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         CourseName = y.CourseName,
                         DeliveryMode = y.DeliveryMode.ToDescription(),
                         Duration = y.DurationValue.HasValue ? $"{y.DurationValue.Value} {y.DurationUnit.ToDescription()}" : $"0 {y.DurationUnit.ToDescription()}",
-                        Venue = y.VenueId.HasValue ? y.VenueId.Value.ToString() : string.Empty,
-                        Region =  y.Regions != null ? string.Join(", ", y.Regions) : string.Empty,
+                        Venue = y.VenueId.HasValue ? FormatAddress(GetVenueByIdFrom(venueResult.Value, y.VenueId.Value)) : string.Empty,
+                        Region =  y.Regions != null ? FormattedRegionsByIds(allRegions, y.Regions) : string.Empty,
                         StartDate = y.FlexibleStartDate ? "Flexible start date" : y.StartDate?.ToString("dd/mm/yyyy"),
                         StudyMode = y.StudyMode.ToDescription(),
                         Url = y.CourseURL
                     })
+                    .OrderBy(y => y.CourseName)
                     .ToList()
                 })
+                .OrderBy(x => x.QualificationTitle)
                 .ToList();
 
-            var courseRuns = new List<CourseRunViewModel>
+            var notificationCourseName = string.Empty;
+            var notificationAnchorTag = string.Empty;
+
+            if (courseId.HasValue && courseId.Value != Guid.Empty)
             {
-                new CourseRunViewModel
+                notificationCourseName = QualificationTitleByCourseId(courseViewModels, courseId.ToString());
+
+                if (courseRunId.HasValue && courseRunId.Value != Guid.Empty)
                 {
-                    Id = Guid.NewGuid().ToString(),
-                    CourseName = "Recruitment Resourcer (EPA)",
-                    CourseId = "Some Course Id",
-                    StartDate = DateTime.UtcNow.ToShortDateString(),
-                    Url = "http://www.bbc.co.uk",
-                    Cost = "£9999.99",
-                    Duration = "999 Months",
-                    DeliveryMode = "Classroom based",
-                    Venue = "Matthew Boulton College, 1 Jennens Rd, Birmingham B4 7PS",
-                    StudyMode = "Full-time",
-                    AttendancePattern = "Day/Block Release"
-                },
-                new CourseRunViewModel
-                {
-                    Id = Guid.NewGuid().ToString(),
-                    CourseName = "Recruitment Resourcer (EPA)",
-                    CourseId = "Some Course Id",
-                    StartDate = DateTime.UtcNow.ToShortDateString(),
-                    Url = "http://www.bbc.co.uk",
-                    Cost = "£9999.99",
-                    Duration = "999 Months",
-                    DeliveryMode = "Online"
-                },
-                new CourseRunViewModel
-                {
-                    Id = Guid.NewGuid().ToString(),
-                    CourseName = "Recruitment Resourcer (EPA)",
-                    CourseId = "Some Course Id",
-                    StartDate = DateTime.UtcNow.ToShortDateString(),
-                    Url = "http://www.bbc.co.uk",
-                    Cost = "£9999.99",
-                    Duration = "999 Months",
-                    DeliveryMode = "Work based",
-                    Region = "North East, North West, Yorkshire and Humberside, West Midlands, East Midlands, South East, South West, London"
+                    var courseRuns = courseViewModels.Find(x => x.Id == courseId.Value.ToString())?.CourseRuns;
+                    notificationCourseName = CourseNameByCourseRunId(courseRuns, courseRunId.ToString());
                 }
-            };
-            var course1 = new CourseViewModel
-            {
-                Id = Guid.NewGuid().ToString(),
-                LearnAimRef = "10003385",
-                NotionalNVQLevelv2 = "2",
-                QualificationTitle = "Recruitment Resourcer (EPA)",
-                AwardOrg = "REC",
-                CourseRuns = courseRuns
-            };
-            var course2 = new CourseViewModel
-            {
-                Id = Guid.NewGuid().ToString(),
-                LearnAimRef = "10003385",
-                NotionalNVQLevelv2 = "2",
-                QualificationTitle = "Recruitment Resourcer (EPA)",
-                CourseRuns = courseRuns
-            };
-            var course3 = new CourseViewModel
-            {
-                Id = Guid.NewGuid().ToString(),
-                LearnAimRef = "10003385",
-                NotionalNVQLevelv2 = "2",
-                QualificationTitle = "Recruitment Resourcer (EPA)",
-                CourseRuns = courseRuns
-            };
-            var filters = new List<QualificationLevelFilterViewModel>
-            {
-                new QualificationLevelFilterViewModel
-                {
-                    Name = "Entry Level",
-                    Facet = "888",
-                    Value = "Entry",
-                    IsSelected = false
-                },
-                new QualificationLevelFilterViewModel
-                {
-                    Name = "Level 1",
-                    Facet = "888",
-                    Value = "1",
-                    IsSelected = false
-                },
-                new QualificationLevelFilterViewModel
-                {
-                    Name = "Level 2",
-                    Facet = "888",
-                    Value = "2",
-                    IsSelected = true
-                },
-                new QualificationLevelFilterViewModel
-                {
-                    Name = "Level 3",
-                    Facet = "888",
-                    Value = "3",
-                    IsSelected = false
-                },
-                new QualificationLevelFilterViewModel
-                {
-                    Name = "Level 4",
-                    Facet = "888",
-                    Value = "4",
-                    IsSelected = false
-                },
-                new QualificationLevelFilterViewModel
-                {
-                    Name = "Level 5",
-                    Facet = "888",
-                    Value = "5",
-                    IsSelected = false
-                },
-                new QualificationLevelFilterViewModel
-                {
-                    Name = "Level 6",
-                    Facet = "888",
-                    Value = "6",
-                    IsSelected = false
-                },
-                new QualificationLevelFilterViewModel
-                {
-                    Name = "Level 7",
-                    Facet = "888",
-                    Value = "7",
-                    IsSelected = false
-                },
-                new QualificationLevelFilterViewModel
-                {
-                    Name = "Level 8",
-                    Facet = "888",
-                    Value = "8",
-                    IsSelected = false
-                }
-            };
+            }
+
+            notificationAnchorTag = courseRunId.HasValue 
+                ? $"<a id=\"courseeditlink\" class=\"govuk-link\" href=\"#\" data-courseid=\"{courseId}\" data-courserunid=\"{courseRunId}\" >{notificationCourseName} {notificationMessage}</a>" 
+                : $"<a id=\"courseeditlink\" class=\"govuk-link\" href=\"#\" data-courseid=\"{courseId}\">{notificationCourseName} {notificationMessage}</a>";
 
             var viewModel = new YourCoursesViewModel
             {
                 Heading = $"Level {level}",
                 HeadingCaption = "Your courses",
                 Courses = courseViewModels ?? new List<CourseViewModel>(),
-                LevelFilters = levelFilters
+                LevelFilters = levelFilters,
+                NotificationTitle = notificationTitle,
+                NotificationMessage = notificationAnchorTag
             };
 
             return View(viewModel);
