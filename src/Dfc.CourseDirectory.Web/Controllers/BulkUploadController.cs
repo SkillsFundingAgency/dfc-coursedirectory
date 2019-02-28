@@ -54,6 +54,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpPost("BulkUpload")]
         public async Task<IActionResult> Index(IFormFile bulkUploadFile)
         {
+            BulkUploadViewModel vm = new BulkUploadViewModel();
+
             string errorReturn = "ToDisplay";
 
             if (bulkUploadFile.Length > 0)
@@ -73,27 +75,36 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                 if (errors.Any())
                 {
-                    foreach(var error in errors)
-                    {
-                        ModelState.AddModelError("Errors", error);
-                    }
+                    //foreach (var error in errors)
+                    //{
+                    //    ModelState.AddModelError("Errors", error);
+                    //}
+
+                    vm.errors = errors;
+
+                    return View(vm);
                 }
                 else
                 {
                     // All good => redirect to BulkCourses action
+                    RedirectToAction("Index", "PublishCourses", new { @class = "govuk-button" });
                 }
 
             }
-            else
-            {
+            //else
+            //{
                 // error
 
-                errorReturn = "No file uploaded";
+                
+                //errorReturn = "No file uploaded";
 
-                ModelState.AddModelError("Errors", errorReturn);
-            }
+                //ModelState.AddModelError("Errors", errorReturn);
+                vm.errors.ToList().Add("No file uploaded");
+                return View(vm);
+                // vm.errors = errorReturn;
+            //}
 
-            return Ok(new { errorReturn });
+            //return Ok(new { errorReturn });
         }
 
     }

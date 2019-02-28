@@ -5919,6 +5919,7 @@ p {
 }
 
 .cd-success-summary,
+.cd-error-summary,
 .cd-warning-summary,
 .cd-info-summary {
   font-family: nta,Arial,sans-serif;
@@ -5929,6 +5930,7 @@ p {
 }
 
 .cd-success-summary:focus,
+.cd-error-summary:focus,
 .cd-warning-summary:focus,
 .cd-info-summary:focus {
   outline: #ffbf47 solid 3px;
@@ -5981,6 +5983,22 @@ p {
 
 .cd-info-summary .cd-info-summary__body .cd-info-summary__list a {
   color: #005ea5;
+}
+
+.cd-error-summary {
+  border: 5px solid #ff0000;
+}
+
+.cd-error-summary .cd-error-summary__title {
+  font-weight: 700;
+}
+
+.cd-error-summary .cd-error-summary__body {
+  color: #ff0000;
+}
+
+.cd-error-summary .cd-error-summary__body .cd-error-summary__list a {
+  color: #ff0000;
 }
 
 .pagination {
