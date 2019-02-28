@@ -11,6 +11,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System.Security.Claims;
+using Dfc.CourseDirectory.Models.Models.Courses;
+
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -19,7 +22,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
     {
         private readonly ILogger<BulkUploadController> _logger;
         private readonly IHttpContextAccessor _contextAccessor;
-        //private readonly ICourseService _courseService;
         private readonly IBulkUploadService _bulkUploadService;
 
         private IHostingEnvironment _env;
@@ -71,7 +73,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             if (bulkUploadFile.Length > 0)
             {
                 int providerUKPRN = UKPRN.Value;
-                string userId = User.Identity.Name;
+                string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value; ; 
 
                 string webRoot = _env.WebRootPath;
                 string bulkUploadFileNewName = string.Format(@"{0}-{1}", DateTime.Now.ToString("yyMMdd-HHmmss"), bulkUploadFile.FileName);
@@ -93,9 +95,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 else
                 {
                     // All good => redirect to BulkCourses action
-                    RedirectToAction("Index", "PublishCourses", new { @class = "govuk-button" });
+                    return RedirectToAction("Index", "PublishCourses");
                 }
-
             }
 
             var noFileError = new List<string>

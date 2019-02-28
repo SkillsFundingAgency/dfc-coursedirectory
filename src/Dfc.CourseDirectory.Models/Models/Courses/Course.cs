@@ -3,6 +3,7 @@ using Dfc.CourseDirectory.Models.Helpers;
 using Dfc.CourseDirectory.Models.Interfaces.Courses;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
 namespace Dfc.CourseDirectory.Models.Models.Courses
@@ -17,7 +18,7 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         public string AwardOrgCode { get; set; } 
         public string QualificationType { get; set; } 
 
-        public int ProviderUKPRN { get; set; } 
+        public int ProviderUKPRN { get; set; }
 
         public string CourseDescription { get; set; }
         public string EntryRequirements { get; set; }
