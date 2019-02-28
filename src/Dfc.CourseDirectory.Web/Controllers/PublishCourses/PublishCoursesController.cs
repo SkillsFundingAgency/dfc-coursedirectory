@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Models.Enums;
+using Dfc.CourseDirectory.Models.Interfaces.Courses;
 using Dfc.CourseDirectory.Models.Models.Courses;
+using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Web.ViewModels.PublishCourses;
 using Microsoft.AspNetCore.Authorization;
@@ -116,7 +120,10 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
         {
             //TODO publish
 
-
+            var something = vm.Courses.Select( c => {c.IsValid = true; return c; }).ToList();
+            
+            //On click, course gets edited to is valid
+            //course run statuses get set to ready for live
 
             //TODO replace with result from publish?
             PublishCompleteViewModel CompleteVM = new PublishCompleteViewModel()
