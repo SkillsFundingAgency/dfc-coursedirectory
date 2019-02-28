@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -44,8 +45,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [Authorize]
         public IActionResult Index()
         {
-            var model = new BulkUploadViewModel();
-            model.AbraKadabra = "Welcome to BulkUpload UI! <br /> Get ready to be amazed!";
+            var model = new BulkUploadViewModel();           
 
             return View("Index", model);
         }
@@ -94,13 +94,17 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
             //else
             //{
-                // error
+            // error
 
-                
-                //errorReturn = "No file uploaded";
 
-                //ModelState.AddModelError("Errors", errorReturn);
-                vm.errors.ToList().Add("No file uploaded");
+            //errorReturn = "No file uploaded";
+
+            //ModelState.AddModelError("Errors", errorReturn);
+            var noFileError = new List<string>
+                {
+                    "No file uploaded"
+                };
+            vm.errors = noFileError;
                 return View(vm);
                 // vm.errors = errorReturn;
             //}
