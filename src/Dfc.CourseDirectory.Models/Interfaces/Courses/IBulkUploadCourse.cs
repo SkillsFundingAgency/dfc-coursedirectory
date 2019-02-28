@@ -7,7 +7,6 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Courses
     public interface IBulkUploadCourse
     {
         bool IsCourseHeader { get; set; }
-        //List<int> LineNumbersInCourse { get; set; }
         int BulkUploadLineNumber { get; set; }
 
         // Course

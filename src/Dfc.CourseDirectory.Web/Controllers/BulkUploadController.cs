@@ -60,6 +60,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             if (bulkUploadFile.Length > 0)
             {
                 int providerUKPRN = 1000001;
+                string userId = "qwe5rty-guid-userId-as-string-from-identity";
 
                 string webRoot = _env.WebRootPath;
                 string bulkUploadFileNewName = string.Format(@"{0}-{1}", DateTime.Now.ToString("yyMMdd-HHmmss"), bulkUploadFile.FileName);
@@ -70,7 +71,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     await bulkUploadFile.CopyToAsync(stream);
                 }
 
-                var errors = _bulkUploadService.ProcessBulkUpload(savedCsvFilePath, providerUKPRN);
+                var errors = _bulkUploadService.ProcessBulkUpload(savedCsvFilePath, providerUKPRN, userId);
 
                 if (errors.Any())
                 {

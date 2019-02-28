@@ -8,6 +8,6 @@ namespace Dfc.CourseDirectory.Services.Interfaces.BulkUploadService
 {
     public interface IBulkUploadService
     {
-        List<string> ProcessBulkUpload(string bulkUploadFilePath, int providerUKPRN);
+        List<string> ProcessBulkUpload(string bulkUploadFilePath, int providerUKPRN, string userId);
     }
 }

@@ -12,5 +12,6 @@ namespace Dfc.CourseDirectory.Services
         public string NotionalNVQLevelv2 { get; set; }
         public string AwardOrgCode { get; set; }
         public string LearnAimRefTypeDesc { get; set; }
+        public DateTime? CertificationEndDate { get; set; }
     }
 }

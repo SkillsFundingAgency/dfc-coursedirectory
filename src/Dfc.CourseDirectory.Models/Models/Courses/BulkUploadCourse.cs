@@ -8,7 +8,6 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
     public class BulkUploadCourse : IBulkUploadCourse
     {
         public bool IsCourseHeader { get; set; }
-        //public List<int> LineNumbersInCourse { get; set; }
         public int BulkUploadLineNumber { get; set; }
 
         // Course
