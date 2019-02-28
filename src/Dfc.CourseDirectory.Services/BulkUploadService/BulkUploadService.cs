@@ -99,7 +99,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                                     record.WhatYoullNeed = csv.GetField("WHAT_YOU_WILL_NEED_TO_BRING").Trim();
                                     record.HowYoullBeAssessed = csv.GetField("HOW_YOU_WILL_BE_ASSESSED").Trim();
                                     record.WhereNext = csv.GetField("WHERE_NEXT").Trim();
-                                    record.AdultEducationBudget = csv.GetField("ADULT_EDUCATION_BUDGET").Trim(); 
+                                    record.AdultEducationBudget = csv.GetField("ADULT_EDUCATION_BUDGET").Trim();
                                     record.AdvancedLearnerLoan = csv.GetField("ADVANCED_LEARNER_OPTION").Trim();
                                 }
 
@@ -123,7 +123,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             }
             else
             {
-                if(bulkUploadcourses == null || bulkUploadcourses.Count.Equals(0))
+                if (bulkUploadcourses == null || bulkUploadcourses.Count.Equals(0))
                 {
                     errors.Add($"You have uploaded an empty file.");
                     return errors;
@@ -219,10 +219,15 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             var validationMessages = new List<string>();
             var courses = new List<Course>();
 
-            var listOfAllCourseRuns = new List<CourseRun>();
+            var listCourseRuns = new List<CourseRun>();
+            var previousLARS = string.Empty;
 
-            foreach(var bulkUploadcourse in bulkUploadcourses)
+           // Dictionary courseRuns
+
+            foreach (var bulkUploadcourse in bulkUploadcourses)
             {
+                var currenLARS = bulkUploadcourse.LearnAimRef;
+
                 if (bulkUploadcourse.IsCourseHeader)
                 {
                     var course = new Course();
@@ -277,7 +282,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 courseRun.CourseURL = bulkUploadcourse.CourseURL;
 
                 decimal specifiedCost;
-                if(decimal.TryParse(bulkUploadcourse.Cost, out specifiedCost))
+                if (decimal.TryParse(bulkUploadcourse.Cost, out specifiedCost))
                 {
                     courseRun.Cost = specifiedCost;
                 }
@@ -319,7 +324,30 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 courseRun.CreatedBy = userId;
                 courseRun.CreatedDate = DateTime.Now;
 
-                listOfAllCourseRuns.Add(courseRun);
+                
+
+                if (currenLARS != previousLARS && !bulkUploadcourse.BulkUploadLineNumber.Equals(2))
+                {
+                    var previousCourse = courses.Where(c => c.LearnAimRef == previousLARS).FirstOrDefault(); //;.CourseRuns = listCurrentCourseRuns;
+                    courses.Remove(previousCourse);
+                    previousCourse.CourseRuns = listCourseRuns;
+                    courses.Add(previousCourse);
+                    listCourseRuns.Clear();
+                }
+
+                listCourseRuns.Add(courseRun);
+
+
+                // Handling the last course
+                if(bulkUploadcourse.BulkUploadLineNumber == bulkUploadcourses[bulkUploadcourses.Count - 1].BulkUploadLineNumber)
+                {
+                    var lastCourse = courses.Where(c => c.LearnAimRef == currenLARS).FirstOrDefault(); //.CourseRuns = listCourseRuns;
+                    courses.Remove(lastCourse);
+                    lastCourse.CourseRuns = listCourseRuns;
+                    courses.Add(lastCourse);
+                }
+
+                previousLARS = currenLARS;
             }
 
             return courses;
@@ -346,7 +374,9 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
         public static T GetValueFromDescription<T>(string description)
         {
             var type = typeof(T);
-            if (!type.IsEnum) return default(T); //throw new InvalidOperationException();
+            if (!type.IsEnum)
+                return default(T);
+
             foreach (var field in type.GetFields())
             {
                 var attribute = Attribute.GetCustomAttribute(field,
@@ -362,7 +392,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                         return (T)field.GetValue(null);
                 }
             }
-            //throw new ArgumentException("Not found.", "description");
+
             return default(T);
         }
     }

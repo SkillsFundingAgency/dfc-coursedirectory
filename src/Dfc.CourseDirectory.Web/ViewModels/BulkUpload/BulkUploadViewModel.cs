@@ -7,8 +7,6 @@ namespace Dfc.CourseDirectory.Web.ViewModels.BulkUpload
 {
     public class BulkUploadViewModel
     {
-        public string AbraKadabra { get; set; }
-
         public IEnumerable<string> errors { get; set; }
     }
 }
