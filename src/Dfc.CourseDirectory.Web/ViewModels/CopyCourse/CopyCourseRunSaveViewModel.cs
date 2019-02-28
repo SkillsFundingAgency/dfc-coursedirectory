@@ -18,8 +18,8 @@ namespace Dfc.CourseDirectory.Web.ViewModels.CopyCourse
         public string Cost { get; set; }
         public string CostDescription { get; set; }
 
-        public Guid  VenueId { get; set; }
-        public SelectRegionModel SelectRegion { get; set; }
+        public Guid VenueId { get; set; }
+        public string[] SelectedRegions { get; set; }
         public DeliveryMode DeliveryMode { get; set; }
         public string CourseProviderReference { get; set; }
         public string Url { get; set; }

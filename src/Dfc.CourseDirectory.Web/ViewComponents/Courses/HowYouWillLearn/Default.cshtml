@@ -6,25 +6,9 @@
 @inject IOptions<HowYouWillLearnComponentSettings> howYouWillLearnComponentSettings
 
 @{
-    var regex = @"^[a-zA-Z0-9 \¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`" + "\"" + "\\\\]+$";
+    var regex = @"^[a-zA-Z0-9 /\n/\r/\¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`" + "\"" + "\\\\]+$";
 }
-@*<div class="govuk-form-group">
-    <div class="govuk-character-count" data-module="character-count" data-maxlength=@howYouWillLearnComponentSettings.Value.TextFieldMaxChars>
-        <div class="govuk-form-group" style="margin-bottom: 0;padding-bottom: 0">
-            <label class="govuk-label" for="course-for">
-                @Model.LabelText
-            </label>
-            <span id="course-for-hint" class="govuk-hint">
-                @Model.HintText
-            </span>
-            <textarea asp-for="HowYouWillLearn" class="govuk-textarea js-character-count" id="textAreaHowYouWillLearn" name="HowYouWillLearn" rows="5"  type="text" 
-                      aria-describedby="@Model.AriaDescribedBy"
-                      val-max-length="500" val-max-length-message="How you’ll learn must be 500 characters or less"
-                      val-regex="@regex"
-                      val-regex-message="How you’ll learn contains invalid characters"></textarea>
-        </div>
-    </div>
-</div>*@
+
 
 <div class="govuk-character-count" data-module="character-count" data-maxlength=@howYouWillLearnComponentSettings.Value.TextFieldMaxChars>
     <div class="govuk-form-group">

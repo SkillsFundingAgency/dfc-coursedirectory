@@ -14,6 +14,7 @@ using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.Web.ViewModels.EditCourse;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -32,10 +33,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
         private ISession _session => _contextAccessor.HttpContext.Session;
         private readonly IVenueSearchHelper _venueSearchHelper;
         private readonly IVenueService _venueService;
-        //private const string SessionAddCourseSection1 = "AddCourseSection1";
-        //private const string SessionAddCourseSection2 = "AddCourseSection2";
-        //private const string SessionVenues = "Venues";
-        //private const string SessionRegions = "Regions";
 
         public EditCourseRunController(
             ILogger<EditCourseRunController> logger,
@@ -58,7 +55,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 
 
         [HttpGet]
-        public async Task<IActionResult> Index(Guid? courseId, Guid courseRunId, bool fromBulkUpload)
+        [Authorize]
+        public async Task<IActionResult> Index(Guid? courseId, Guid courseRunId)
         {
             int? UKPRN;
 
@@ -139,6 +137,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Index(EditCourseRunSaveViewModel model)
         {
             int? UKPRN;
@@ -162,11 +161,15 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                     var courseRunForEdit = courseForEdit.Value.CourseRuns.SingleOrDefault(cr => cr.id == model.CourseRunId);
 
                     courseRunForEdit.DurationUnit = model.DurationUnit;
-                    courseRunForEdit.AttendancePattern = model.AttendanceMode;
                     courseRunForEdit.DeliveryMode = model.DeliveryMode;
                     courseRunForEdit.FlexibleStartDate = model.FlexibleStartDate;
-                    courseRunForEdit.StudyMode = model.StudyMode;
+
                     courseRunForEdit.Cost = Convert.ToDecimal(model.Cost);
+                    if (string.IsNullOrEmpty(model.Cost))
+                    {
+                        courseRunForEdit.Cost = null;
+                    }
+                    
                     courseRunForEdit.CostDescription = model.CostDescription;
                     courseRunForEdit.CourseName = model.CourseName;
                     courseRunForEdit.CourseURL = model.Url;
@@ -199,16 +202,27 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 
                             courseRunForEdit.Regions = null;
                             courseRunForEdit.VenueId = model.VenueId;
+
+                            courseRunForEdit.AttendancePattern = model.AttendanceMode;
+                            courseRunForEdit.StudyMode = model.StudyMode;
+
                             break;
                         case DeliveryMode.WorkBased:
                             courseRunForEdit.VenueId = null;
                             courseRunForEdit.Regions = model.SelectedRegions;
+
+                            courseRunForEdit.AttendancePattern = AttendancePattern.Undefined;
+                            courseRunForEdit.StudyMode = StudyMode.Undefined;
 
                             break;
                         case DeliveryMode.Online:
 
                             courseRunForEdit.Regions = null;
                             courseRunForEdit.VenueId = null;
+
+                            courseRunForEdit.AttendancePattern = AttendancePattern.Undefined;
+                            courseRunForEdit.StudyMode = StudyMode.Undefined;
+
                             break;
                     }
 
@@ -235,6 +249,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                             return RedirectToAction("Courses", "Provider",
                                 new
                                 {
+                                    notificationTitle = "Course edited",
+                                    notificationMessage = "You edited",
                                     qualificationType = courseForEdit.Value.QualificationType,
                                     courseId = updatedCourse.Value.id,
                                     courseRunId = model.CourseRunId
