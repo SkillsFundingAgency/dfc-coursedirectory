@@ -23,6 +23,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly IBulkUploadService _bulkUploadService;
 
         private IHostingEnvironment _env;
+        private ISession _session => _contextAccessor.HttpContext.Session;
 
         public BulkUploadController(
                 ILogger<BulkUploadController> logger,
@@ -54,14 +55,23 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpPost("BulkUpload")]
         public async Task<IActionResult> Index(IFormFile bulkUploadFile)
         {
-            BulkUploadViewModel vm = new BulkUploadViewModel();
+            int? UKPRN;
 
-            string errorReturn = "ToDisplay";
+            if (_session.GetInt32("UKPRN") != null)
+            {
+                UKPRN = _session.GetInt32("UKPRN").Value;
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
+            }
+
+            BulkUploadViewModel vm = new BulkUploadViewModel();
 
             if (bulkUploadFile.Length > 0)
             {
-                int providerUKPRN = 1000001;
-                string userId = "qwe5rty-guid-userId-as-string-from-identity";
+                int providerUKPRN = UKPRN.Value;
+                string userId = User.Identity.Name;
 
                 string webRoot = _env.WebRootPath;
                 string bulkUploadFileNewName = string.Format(@"{0}-{1}", DateTime.Now.ToString("yyMMdd-HHmmss"), bulkUploadFile.FileName);
@@ -76,11 +86,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                 if (errors.Any())
                 {
-                    //foreach (var error in errors)
-                    //{
-                    //    ModelState.AddModelError("Errors", error);
-                    //}
-
                     vm.errors = errors;
 
                     return View(vm);
@@ -92,24 +97,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 }
 
             }
-            //else
-            //{
-            // error
 
-
-            //errorReturn = "No file uploaded";
-
-            //ModelState.AddModelError("Errors", errorReturn);
             var noFileError = new List<string>
                 {
                     "No file uploaded"
                 };
             vm.errors = noFileError;
                 return View(vm);
-                // vm.errors = errorReturn;
-            //}
+  
 
-            //return Ok(new { errorReturn });
         }
 
     }
