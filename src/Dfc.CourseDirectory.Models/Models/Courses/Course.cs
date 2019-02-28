@@ -1,7 +1,9 @@
 ﻿using Dfc.CourseDirectory.Models.Enums;
+using Dfc.CourseDirectory.Models.Helpers;
 using Dfc.CourseDirectory.Models.Interfaces.Courses;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Dfc.CourseDirectory.Models.Models.Courses
 {
@@ -29,8 +31,15 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         public bool AdvancedLearnerLoan { get; set; }
 
         public IEnumerable<CourseRun> CourseRuns { get; set; }
+        public bool IsValid { get; set; }
+        public RecordStatus CourseStatus
+        {
+            get
+            {
+                return GetBitMaskState(CourseRuns);
+            }
 
-        public RecordStatus RecordStatus { get; set; }
+        }
 
         public DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }
@@ -51,6 +60,23 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
             Course empty = (Course)this.MemberwiseClone();
             empty.CourseRuns = new List<CourseRun>();
             return empty;
+        }
+
+        internal static RecordStatus GetBitMaskState(IEnumerable<CourseRun> courseRuns)
+        {
+            RecordStatus courseStatus = RecordStatus.Undefined; // Default BitMaskState (handles undefined and no CourseRuns)
+
+            if (courseRuns != null)
+            {
+                foreach (RecordStatus recordStatus in Enum.GetValues(typeof(RecordStatus)))
+                {
+                    if (courseRuns.Any(c => c.RecordStatus == recordStatus))
+                    {
+                        BitmaskHelper.Set<RecordStatus>(ref courseStatus, recordStatus);
+                    }
+                }
+            }
+            return courseStatus;
         }
     }
 }

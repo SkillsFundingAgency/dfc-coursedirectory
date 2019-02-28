@@ -669,7 +669,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 CreatedDate = DateTime.Now,
                 CreatedBy = "ProviderPortal-AddCourse", // TODO - Change to the name of the logged person
 
-                RecordStatus = RecordStatus.Live // TODO - To Be Decided
+                //RecordStatus = RecordStatus.Live // TODO - To Be Decided
             };
 
             var result = await _courseService.AddCourseAsync(course);
