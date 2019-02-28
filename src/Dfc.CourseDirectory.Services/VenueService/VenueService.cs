@@ -23,6 +23,7 @@ namespace Dfc.CourseDirectory.Services.VenueService
         private readonly HttpClient _httpClient;
         private readonly Uri _getVenueByIdUri;
         private readonly Uri _getVenueByVenueIdUri;
+        private readonly Uri _getVenueByPRNAndNameUri;
         private readonly Uri _updateVenueUri;
         private readonly Uri _searchVenueUri;
         private readonly Uri _addVenueUri;
@@ -41,6 +42,7 @@ namespace Dfc.CourseDirectory.Services.VenueService
 
             _getVenueByIdUri = settings.Value.ToGetVenueByIdUri();
             _getVenueByVenueIdUri = settings.Value.ToGetVenueByVenueIdUri();
+            _getVenueByPRNAndNameUri = settings.Value.ToGetVenuesByPRNAndNameUri();
             _updateVenueUri = settings.Value.ToUpdateVenueUrl();
             _searchVenueUri = settings.Value.ToSearchVenueUri();
             _addVenueUri = settings.Value.ToAddVenueUri();
@@ -150,7 +152,6 @@ namespace Dfc.CourseDirectory.Services.VenueService
             {
                 _logger.LogMethodExit();
             }
-
         }
 
         public async Task<IResult<IVenue>> GetVenueByVenueIdAsync(IGetVenueByVenueIdCriteria criteria)
@@ -206,6 +207,48 @@ namespace Dfc.CourseDirectory.Services.VenueService
                 _logger.LogMethodExit();
             }
 
+        }
+
+        public async Task<IResult<IVenueSearchResult>> GetVenuesByPRNAndNameAsync(IGetVenuesByPRNAndNameCriteria criteria)
+        {
+            Throw.IfNull(criteria, nameof(criteria));
+            _logger.LogMethodEnter();
+
+            try
+            {
+                _logger.LogInformationObject("Get Venue By PRN & Name criteria.", criteria);
+                _logger.LogInformationObject("Get Venue By PRN & Name URI", _getVenueByPRNAndNameUri);
+
+                var content = new StringContent(criteria.ToJson(), Encoding.UTF8, "application/json");
+                var response = await _httpClient.PostAsync(_getVenueByPRNAndNameUri, content);
+
+                _logger.LogHttpResponseMessage("Get Venue By PRN and Name service http response", response);
+                if (response.IsSuccessStatusCode) {
+                    var json = await response.Content.ReadAsStringAsync();
+                    _logger.LogInformationObject("Venue search service json response", json);
+
+                    var settings = new JsonSerializerSettings {
+                        ContractResolver = new VenueSearchResultContractResolver()
+                    };
+                    var venues = JsonConvert.DeserializeObject<IEnumerable<Venue>>(json, settings).OrderBy(x => x.VenueName).ToList();
+                    return Result.Ok<IVenueSearchResult>(new VenueSearchResult(venues));
+
+                } else {
+                    return Result.Fail<IVenueSearchResult>("Get Venue By PRN & Name service unsuccessful http response");
+                }
+            }
+
+            catch (HttpRequestException hre) {
+                _logger.LogException("Get Venue By PRN and Name service http request error", hre);
+                return Result.Fail<IVenueSearchResult>("Get Venue By PRN and Name service http request error.");
+
+            } catch (Exception e) {
+                _logger.LogException("Get Venue By PRN and Name service unknown error.", e);
+                return Result.Fail<IVenueSearchResult>("Get Venue By PRN and Name service unknown error.");
+
+            } finally {
+                _logger.LogMethodExit();
+            }
         }
 
         public async Task<IResult<IVenueSearchResult>> SearchAsync(IVenueSearchCriteria criteria)
@@ -342,6 +385,11 @@ namespace Dfc.CourseDirectory.Services.VenueService
             return new Uri($"{extendee.ApiUrl + "GetVenueByVenueId?code=" + extendee.ApiKey}");
         }
 
+        internal static Uri ToGetVenuesByPRNAndNameUri(this VenueServiceSettings extendee)
+        {
+            return new Uri($"{extendee.ApiUrl + "GetVenuesByPRNAndName?code=" + extendee.ApiKey}");
+        }
+
         internal static Uri ToSearchVenueUri(this VenueServiceSettings extendee)
         {
             return new Uri($"{extendee.ApiUrl + "GetVenuesByPRN?code=" + extendee.ApiKey}");
@@ -371,6 +419,25 @@ namespace Dfc.CourseDirectory.Services.VenueService
     internal class GetVenueByIdJson
     {
         public string id { get; set; }
+    }
+
+    internal static class IGetVenueByPRNAndNameCriteriaExtensions
+    {
+        internal static string ToJson(this IGetVenuesByPRNAndNameCriteria extendee)
+        {
+            GetVenueByPRNAndNameJson json = new GetVenueByPRNAndNameJson
+            {
+                PRN = extendee.PRN,
+                Name = extendee.Name
+            };
+            return JsonConvert.SerializeObject(json);
+        }
+    }
+
+    internal class GetVenueByPRNAndNameJson
+    {
+        public string PRN { get; set; }
+        public string Name { get; set; }
     }
 
     internal static class IGetVenueByVenueIdCriteriaExtensions
@@ -413,5 +480,4 @@ namespace Dfc.CourseDirectory.Services.VenueService
     {
         public string PRN { get; set; }
     }
-
 }
