@@ -97,22 +97,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 }
 
             }
-            //else
-            //{
-            // error
 
-
-            //errorReturn = "No file uploaded";
-
-            //ModelState.AddModelError("Errors", errorReturn);
             var noFileError = new List<string>
                 {
                     "No file uploaded"
                 };
             vm.errors = noFileError;
                 return View(vm);
-                // vm.errors = errorReturn;
-            //}
+  
 
         }
 
