@@ -145,18 +145,13 @@ namespace Dfc.CourseDirectory.Web
             {
                 // Cookie settings
                 options.Cookie.HttpOnly = true;
+               
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
-                options.LogoutPath = "/Identity/Account/Logout";
+                options.LogoutPath = "/Home";
                 options.LoginPath = "/Identity/Account/Login";
                 options.AccessDeniedPath = "/Identity/Account/Login";
+                options.ReturnUrlParameter = "/Home";
                 options.SlidingExpiration = true;
-            });
-
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie(options => {
-                options.LoginPath = "/Home"; // auth redirect
-                options.AccessDeniedPath = "/Identity/Account/Login";
-                options.ExpireTimeSpan = new TimeSpan(0, 0, 20, 0);
             });
             services.AddMvc(options =>
             {
@@ -180,6 +175,7 @@ namespace Dfc.CourseDirectory.Web
             services.AddSession(options => {
                 options.IdleTimeout = TimeSpan.FromMinutes(20);
                 options.Cookie.HttpOnly = true;
+               
             });
 
 
@@ -460,6 +456,7 @@ namespace Dfc.CourseDirectory.Web
                     name: "onboardprovider",
                     template: "{controller=ProviderSearch}/{action=OnBoardProvider}/{id?}");
             });
+
 
 
         }
