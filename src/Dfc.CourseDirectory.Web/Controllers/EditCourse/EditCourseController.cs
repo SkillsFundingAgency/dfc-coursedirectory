@@ -55,7 +55,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(Guid? courseId)
+        public async Task<IActionResult> Index(Guid? courseId, bool fromBulkUpload)
         {
             int? UKPRN;
 
@@ -76,6 +76,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                 {
                     EditCourseViewModel vm = new EditCourseViewModel
                     {
+                        FromBulkUpload = fromBulkUpload,
                         CourseFor = new CourseForModel()
                         {
                             LabelText = "Who is the course for?",
@@ -168,14 +169,33 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                     courseForEdit.Value.AdultEducationBudget = model.AdultEducationBudget;
                     courseForEdit.Value.AdvancedLearnerLoan = model.AdvancedLearnerLoan;
 
+                    //todo when real data
+                    //if (model.fromBulkUpload)
+                    //{
+                    // courseForEdit.Value.IsValid = true;
+                    //}
+
                     var updatedCourse = await _courseService.UpdateCourseAsync(courseForEdit.Value);
 
-                    return RedirectToAction("Courses", "Provider",
-                        new
-                        {
-                            qualificationType = courseForEdit.Value.QualificationType,
-                            courseId = updatedCourse.Value.id
-                        });
+                    if (model.fromBulkUpload)
+                    {
+                        return RedirectToAction("Index", "PublishCourses",
+                            new
+                            {
+                               
+                            });
+                    }
+                    else
+                    {
+
+                        return RedirectToAction("Courses", "Provider",
+                            new
+                            {
+                                qualificationType = courseForEdit.Value.QualificationType,
+                                courseId = updatedCourse.Value.id
+                            });
+                    }
+
                 }
             }
 

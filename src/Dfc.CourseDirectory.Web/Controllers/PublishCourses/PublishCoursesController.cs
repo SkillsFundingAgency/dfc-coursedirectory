@@ -52,25 +52,26 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                 new Course()
                 {
                     CourseDescription = "Course Description 1",
-                    id =Guid.NewGuid(),
+                    id = new Guid("24893c87-bec3-48d8-9647-cca87ec6ec51"),
                     QualificationCourseTitle = "Test Qualification 1",
                     LearnAimRef = "Test Lars Ref 1",
                     NotionalNVQLevelv2 = "Test Level 1",
                     AwardOrgCode = "Test Award Code 1",
+                    IsValid = true,
                     CourseRuns = new List<CourseRun>()
                     {
                         new CourseRun()
                         {
-                            id = Guid.NewGuid(),
+                            id = new Guid("65b03e0c-1c47-4995-a0f8-efb2739c3008"),
                             CourseName = "Test Course Name 1",
-                            RecordStatus = RecordStatus.Live
+                            RecordStatus = RecordStatus.BulkUloadPending
 
                         },
                         new CourseRun()
                         {
-                            id = Guid.NewGuid(),
+                            id = new Guid("65b03e0c-1c47-4995-a0f8-efb2739c3008"),
                             CourseName = "Test Course Name 2",
-                            RecordStatus = RecordStatus.Live
+                            RecordStatus = RecordStatus.BulkUploadReadyToGoLive
 
                         },
                     }
@@ -78,26 +79,26 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                 new Course()
                 {
                     CourseDescription = "Course Description 2",
-                    id =Guid.NewGuid(),
+                    id = new Guid("24893c87-bec3-48d8-9647-cca87ec6ec51"),
                     QualificationCourseTitle = "Test Qualification 2",
                     LearnAimRef = "Test Lars Ref 2",
                     NotionalNVQLevelv2 = "Test Level 2",
                     AwardOrgCode = "Test Award Code 2",
-
+                    IsValid = false,
                     CourseRuns = new List<CourseRun>()
                     {
                         new CourseRun()
                         {
-                            id = Guid.NewGuid(),
+                            id = new Guid("65b03e0c-1c47-4995-a0f8-efb2739c3008"),
                             CourseName = "Test Course Name 3",
-                            RecordStatus = RecordStatus.Live
+                            RecordStatus = RecordStatus.BulkUloadPending
 
                         },
                         new CourseRun()
                         {
-                            id = Guid.NewGuid(),
+                            id = new Guid("65b03e0c-1c47-4995-a0f8-efb2739c3008"),
                             CourseName = "Test Course Name 4",
-                            RecordStatus = RecordStatus.Live
+                            RecordStatus = RecordStatus.BulkUploadReadyToGoLive
 
                         },
                     }

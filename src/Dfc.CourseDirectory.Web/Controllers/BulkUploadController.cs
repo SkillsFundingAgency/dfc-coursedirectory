@@ -93,7 +93,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 else
                 {
                     // All good => redirect to BulkCourses action
-                    RedirectToAction("Index", "PublishCourses", new { @class = "govuk-button" });
+                   return RedirectToAction("Index", "PublishCourses", new { @class = "govuk-button" });
                 }
 
             }
