@@ -221,22 +221,21 @@
                 var validationStatesWhereNext = new Array();
 
                 // Course For
-                var courseForTrimmed = $courseFor.val().trim();
-                if ($.requiredValidate(courseForTrimmed)) {
+                if ($.requiredValidate($courseFor.val())) {
                     validationStatesCourseFor.push(true);
                 } else {
                     validationStatesCourseFor.push(false);
                     $courseFor.govUkTextarea("invalidState", $courseFor.attr("val-required-message"));
                 }
 
-                if ($.maxLengthValidate({ max: $courseFor.attr("val-max-length") }, courseForTrimmed)) {
+                if ($.maxLengthValidate({ max: $courseFor.attr("val-max-length") }, $courseFor.val())) {
                     validationStatesCourseFor.push(true);
                 } else {
                     validationStatesCourseFor.push(false);
                     $courseFor.govUkTextarea("invalidState", $courseFor.attr("val-max-length-message"));
                 }
 
-                if ($.regexValidate({ regex: $courseFor.attr("val-regex") }, courseForTrimmed)) {
+                if ($.regexValidate({ regex: $courseFor.attr("val-regex") }, $courseFor.val())) {
                     validationStatesCourseFor.push(true);
                 } else {
                     validationStatesCourseFor.push(false);
@@ -244,17 +243,16 @@
                 }
 
                 // Entry Requirements
-                var entryRequirementsTrimmed = $entryRequirements.val().trim();
                 if ($.maxLengthValidate({
                     max: $entryRequirements.attr("val-max-length")
-                }, entryRequirementsTrimmed)) {
+                }, $entryRequirements.val())) {
                     validationStatesEntryRequirements.push(true);
                 } else {
                     validationStatesEntryRequirements.push(false);
                     $entryRequirements.govUkTextarea("invalidState", $entryRequirements.attr("val-max-length-message"));
                 }
 
-                if ($.regexValidate({ regex: $entryRequirements.attr("val-regex") }, entryRequirementsTrimmed)) {
+                if ($.regexValidate({ regex: $entryRequirements.attr("val-regex") }, $entryRequirements.val())) {
                     validationStatesEntryRequirements.push(true);
                 } else {
                     validationStatesEntryRequirements.push(false);
@@ -262,7 +260,6 @@
                 }
 
                 // What you will learn
-                var whatWillLearn = $whatWillLearn.val().trim();
                 if ($.maxLengthValidate({
                     max: $whatWillLearn.attr("val-max-length")
                 }, $whatWillLearn.val())) {

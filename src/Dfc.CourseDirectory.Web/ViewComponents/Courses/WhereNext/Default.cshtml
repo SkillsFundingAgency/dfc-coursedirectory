@@ -34,3 +34,41 @@
 
     </div>
 </div>
+
+<script>
+    (function ($) {
+        $(function () {
+
+            var $elementWhereNext = $("#@nameof(Model.WhereNext)");
+
+            $elementWhereNext.on("blur", function () {
+
+                var trimmed = $elementWhereNext.val().trim();
+                $elementWhereNext.val(trimmed);
+
+                var $characterCountValue = @whereNextTextFieldMaxChars;
+                var $countMessage = $("#WhereNext-info");
+
+                var $actualCharacterCount = $characterCountValue - $elementWhereNext.val().length;
+
+                if ($actualCharacterCount <= 0) {
+
+                } else {
+
+                    if ($actualCharacterCount === 1) {
+                        $countMessage.text("You have " + $actualCharacterCount + " character remaining");
+                    } else {
+                        $countMessage.text("You have " + $actualCharacterCount + " characters remaining");
+
+                        $countMessage.addClass('govuk-hint');
+                        $elementWhereNext.removeClass('govuk-textarea--error');
+                        $countMessage.removeClass('govuk-error-message');
+                        $countMessage.addClass('govuk-character-count__message');
+                    }
+                }
+
+            });
+
+        });
+    })(jQuery);
+</script>

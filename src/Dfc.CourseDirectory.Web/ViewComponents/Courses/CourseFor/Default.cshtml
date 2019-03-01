@@ -33,3 +33,41 @@
 
     </div>
 </div>
+
+<script>
+    (function ($) {
+        $(function () {
+
+            var $elementCourseFor = $("#@nameof(Model.CourseFor)");
+
+            $elementCourseFor.on("blur", function () {
+
+                var trimmed = $elementCourseFor.val().trim();
+                $elementCourseFor.val(trimmed);
+
+                var $characterCountValue = @courseForTextFieldMaxChars;
+                var $countMessage = $("#CourseFor-info");
+
+                var $actualCharacterCount = $characterCountValue - $elementCourseFor.val().length;
+
+                if ($actualCharacterCount <= 0) {
+
+                } else {
+
+                    if ($actualCharacterCount === 1) {
+                        $countMessage.text("You have " + $actualCharacterCount + " character remaining");
+                    } else {
+                        $countMessage.text("You have " + $actualCharacterCount + " characters remaining");
+
+                        $countMessage.addClass('govuk-hint');
+                        $elementCourseFor.removeClass('govuk-textarea--error');
+                        $countMessage.removeClass('govuk-error-message');
+                        $countMessage.addClass('govuk-character-count__message');
+                    }
+                }
+
+            });
+
+        });
+    })(jQuery);
+</script>

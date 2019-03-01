@@ -31,3 +31,41 @@
 
     </div>
 </div>
+
+<script>
+    (function ($) {
+        $(function () {
+
+            var $elementEntryRequirements = $("#@nameof(Model.EntryRequirements)");
+
+            $elementEntryRequirements.on("blur", function () {
+
+                var trimmed = $elementEntryRequirements.val().trim();
+                $elementEntryRequirements.val(trimmed);
+
+                var $characterCountValue = @entryRequirementsTextFieldMaxChars;
+                var $countMessage = $("#EntryRequirements-info");
+
+                var $actualCharacterCount = $characterCountValue - $elementEntryRequirements.val().length;
+
+                if ($actualCharacterCount <= 0) {
+
+                } else {
+
+                    if ($actualCharacterCount === 1) {
+                        $countMessage.text("You have " + $actualCharacterCount + " character remaining");
+                    } else {
+                        $countMessage.text("You have " + $actualCharacterCount + " characters remaining");
+
+                        $countMessage.addClass('govuk-hint');
+                        $elementEntryRequirements.removeClass('govuk-textarea--error');
+                        $countMessage.removeClass('govuk-error-message');
+                        $countMessage.addClass('govuk-character-count__message');
+                    }
+                }
+
+            });
+
+        });
+    })(jQuery);
+</script>
