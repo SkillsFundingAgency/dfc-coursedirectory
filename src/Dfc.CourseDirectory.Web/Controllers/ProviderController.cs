@@ -178,7 +178,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         Venue = y.VenueId.HasValue ? FormatAddress(GetVenueByIdFrom(venueResult.Value, y.VenueId.Value)) : string.Empty,
                         Region = y.Regions != null ? FormattedRegionsByIds(allRegions, y.Regions) : string.Empty,
                         StartDate = y.FlexibleStartDate ? "Flexible start date" : y.StartDate?.ToString("dd/MM/yyyy"),
-                        StudyMode = y.StudyMode.ToDescription(),
+                        StudyMode = y.StudyMode == Models.Models.Courses.StudyMode.Undefined ? string.Empty : y.StudyMode.ToDescription(),
                         Url = y.CourseURL
                     })
                     .OrderBy(y => y.CourseName)
