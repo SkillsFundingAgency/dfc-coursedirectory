@@ -118,34 +118,32 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
         [HttpPost]
         public IActionResult Index(PublishViewModel vm)
         {
-            //TODO publish
-
+            
             vm.Courses = vm.Courses.Select( c => {
                 c.IsValid = true;
                 return c;
             }).ToList();
 
+            int successfulPublishedCourses = 0;
             foreach (var course in vm.Courses)
             {
                 foreach (var courseRuns in course.CourseRuns)
                 {
-                    courseRuns.RecordStatus = RecordStatus.BulkUploadReadyToGoLive;
+                    courseRuns.RecordStatus = RecordStatus.Live;
                 }
+
+                var result = _courseService.AddCourseAsync(course);
+
+                if (result.Result.IsSuccess && result.Result.HasValue)
+                {
+                    successfulPublishedCourses++;
+                }
+                
             }
-
-            //vm.Courses. = vm.Courses.Select(c => c.CourseRuns.Select(cr => 
-            //{
-            //    cr.RecordStatus = RecordStatus.BulkUploadReadyToGoLive;
-            //    return cr;
-            //}));
-
-            //On click, course gets edited to is valid
-            //course run statuses get set to ready for live
-
             //TODO replace with result from publish?
             PublishCompleteViewModel CompleteVM = new PublishCompleteViewModel()
             {
-                NumberOfCoursesPublished = 10
+                NumberOfCoursesPublished = successfulPublishedCourses
             };
 
             return View("Complete", CompleteVM);
