@@ -1,0 +1,25 @@
+﻿@using System.Text.RegularExpressions
+@using Dfc.CourseDirectory.Web.ViewComponents.PublishCourses.PublishCourse
+@model Dfc.CourseDirectory.Web.ViewModels.PublishCourses.PublishViewModel
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<div class="govuk-body cd-file-upload">
+    <h1 class="govuk-heading-l">Fix errors and publish</h1>
+    <p>
+        Your file of @Model.NumberOfCoursesInFiles courses has been uploaded. They will not be listed on the course directory until you publish them. You must fix and errors first.
+    </p>
+    <div class="err-top-line"></div>
+    
+    @await Component.InvokeAsync(nameof(PublishCourse), new { model = Model.Courses})
+
+
+</div>
+
+<script>
+    (function ($) {
+        $(function () {
+
+        });
+    })(jQuery);
+</script>

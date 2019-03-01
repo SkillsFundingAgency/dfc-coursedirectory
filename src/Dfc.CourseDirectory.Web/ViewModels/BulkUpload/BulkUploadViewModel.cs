@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Dfc.CourseDirectory.Models.Models.Courses;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,6 +8,6 @@ namespace Dfc.CourseDirectory.Web.ViewModels.BulkUpload
 {
     public class BulkUploadViewModel
     {
-        public string AbraKadabra { get; set; }
+        public IEnumerable<string> errors { get; set; }
     }
 }

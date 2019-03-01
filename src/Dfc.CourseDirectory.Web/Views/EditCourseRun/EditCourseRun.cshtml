@@ -24,6 +24,7 @@
     @Html.HiddenFor(x => x.CourseId)
     @Html.HiddenFor(x => x.CourseRunId)
     @Html.HiddenFor(x => x.QualificationType)
+    @Html.HiddenFor(x => x.FromBulkUpload)
 
     <div id="sectionCourseName">
         @await Component.InvokeAsync(nameof(CourseName), new CourseNameModel

@@ -30,6 +30,8 @@ namespace Dfc.CourseDirectory.Web.ViewModels.EditCourse
 
         public Guid? CourseId { get; set; }
 
+        public bool fromBulkUpload { get; set; }
+
     }
 
    

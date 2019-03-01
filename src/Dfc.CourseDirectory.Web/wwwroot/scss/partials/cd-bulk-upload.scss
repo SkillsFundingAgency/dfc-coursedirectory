@@ -1,0 +1,100 @@
+﻿.cd-file-upload {
+
+    .box-container {
+        width: 100%;
+        height: auto;
+        margin-top: 40px;
+        margin-bottom: 40px;
+
+        .box {
+            width: 200px;
+            height: 200px;
+            display: inline-block;
+            margin-right: 15px;
+            color: #ffffff;
+            background-color: #808080;
+            font-size: 130px;
+            line-height: 215px;
+            text-align: center;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+    }
+
+    .error-line {
+        width: 100%;
+        padding: 15px 0 15px 0;
+        border-bottom: solid 1px #ccc;
+        display: flex;
+        align-content: center;
+
+
+        .heading {
+            width: calc(100% - 400px);
+            display: inline-block;
+        }
+
+        .col {
+            width: 200px;
+            text-align: center;
+            display: inline-block;
+        }
+    }
+
+    .error-line-in {
+        width: calc(100% - 100px);
+        padding: 15px 0 15px 0;
+        border-bottom: solid 1px #ccc;
+        display: flex;
+        align-content: center;
+        margin-left: 100px;
+
+        .heading {
+            width: calc(100% - 400px);
+            display: inline-block;
+            padding-top: 12px;
+        }
+
+        .col {
+            width: 200px;
+            text-align: center;
+            display: inline-block;
+        }
+    }
+
+    .error-box {
+        width: 80%;
+        height: auto;
+        text-align: center;
+        padding: 10px;
+        margin: 0 auto;
+        border-radius: 4px;
+        color: #ff0000;
+        border: solid 1px #ff0000;
+
+        &.no-error {
+            color: #22ad00;
+            border: solid 1px #22ad00;
+        }
+    }
+
+    .error-fix {
+        margin-top: 12px;
+        display: inline-block;
+    }
+
+    .err-top-line {
+        border-top: solid 1px #666;
+    }
+
+    .new-upload {
+        margin-top: 40px;
+    }
+}
+
+.Publish-Complete {
+    .Next-Steps {
+        font-weight: bold;
+        font-family: "nta", Arial, sans-serif;
+    }
+}

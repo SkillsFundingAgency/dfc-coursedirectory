@@ -35,6 +35,8 @@ namespace Dfc.CourseDirectory.Web.ViewModels.EditCourse
 
         public bool FlexibleStartDate { get; set; }
 
+        public bool? FromBulkUpload { get; set; }
+
     }
 
 }

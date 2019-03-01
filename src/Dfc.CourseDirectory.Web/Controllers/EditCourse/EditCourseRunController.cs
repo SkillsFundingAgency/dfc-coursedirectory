@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Common;
+using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Models.Courses;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.CourseService;
@@ -55,7 +56,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> Index(Guid? courseId, Guid courseRunId)
+        public async Task<IActionResult> Index(Guid? courseId, Guid courseRunId, bool fromBulkUpload)
         {
             int? UKPRN;
 
@@ -91,6 +92,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                 {
                     EditCourseRunViewModel vm = new EditCourseRunViewModel
                     {
+                        FromBulkUpload = fromBulkUpload,
                         CourseId = courseId.Value,
                         CourseRunId = courseRunId,
                         CourseName = courseRun?.CourseName,
@@ -224,19 +226,36 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                             break;
                     }
 
+                    //todo when real data
+                    //if (model.fromBulkUpload)
+                    //{
+                    //    courseRunForEdit.RecordStatus = RecordStatus.BulkUploadReadyToGoLive;
+                    //}
 
                     var updatedCourse = await _courseService.UpdateCourseAsync(courseForEdit.Value);
-                     if (updatedCourse.IsSuccess && updatedCourse.HasValue)
+                    if (updatedCourse.IsSuccess && updatedCourse.HasValue)
                     {
-                        return RedirectToAction("Courses", "Provider",
-                            new
-                            {
-                                notificationTitle = "Course edited",
-                                notificationMessage = "You edited",
-                                qualificationType = courseForEdit.Value.QualificationType,
-                                courseId = updatedCourse.Value.id,
-                                courseRunId = model.CourseRunId
-                            });
+
+                        if (model.fromBulkUpload)
+                        {
+                            return RedirectToAction("Index", "PublishCourses",
+                                new
+                                {
+
+                                });
+                        }
+                        else
+                        {
+                            return RedirectToAction("Courses", "Provider",
+                                new
+                                {
+                                    notificationTitle = "Course edited",
+                                    notificationMessage = "You edited",
+                                    qualificationType = courseForEdit.Value.QualificationType,
+                                    courseId = updatedCourse.Value.id,
+                                    courseRunId = model.CourseRunId
+                                });
+                        }
                     }
 
 

@@ -14,6 +14,7 @@
 <form asp-controller="EditCourse" asp-action="Index" method="post" id="editCourse">
 
     @Html.HiddenFor(x => x.CourseId)
+    @Html.HiddenFor(x => x.FromBulkUpload)
 
     <h1 class="govuk-heading-l" style="padding-top: 20px;">
         Edit Course
@@ -59,7 +60,16 @@
         <button type="submit" class="govuk-button" id="save">
             Save
         </button>
-        @Html.ActionLink("Cancel", "Courses", "Provider", new { qualificationType = @Model.QualificationType }, new { @class = "govuk-link" })
+
+        @if (Model.FromBulkUpload.Value)
+        {
+            @Html.ActionLink("Cancel", "Index", "PublishCourses", new { qualificationType = @Model.QualificationType }, new { @class = "govuk-link" })
+        }
+        else
+        {
+            @Html.ActionLink("Cancel", "Courses", "Provider", new { qualificationType = @Model.QualificationType }, new { @class = "govuk-link" })
+        }
+       
     </div>
 
 </form>
