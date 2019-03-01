@@ -34,6 +34,8 @@ namespace Dfc.CourseDirectory.Web.ViewModels.EditCourse
 
         public bool FlexibleStartDate { get; set; }
 
+        public string NotionalNVQLevelv2 { get; set; }
+
     }
 
 }

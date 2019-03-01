@@ -115,7 +115,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                         Cost = courseRun.Cost?.ToString("F"),
                         CostDescription = courseRun.CostDescription,
                         AttendanceMode = courseRun.AttendancePattern,
-                        QualificationType = course.Value.QualificationType
+                        QualificationType = course.Value.QualificationType,
+                        NotionalNVQLevelv2 = course.Value.NotionalNVQLevelv2
                     };
 
                     return View("EditCourseRun", vm);
@@ -203,7 +204,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                         return RedirectToAction("Courses", "Provider",
                             new
                             {
-                                qualificationType = courseForEdit.Value.QualificationType,
+                                level = courseForEdit.Value.NotionalNVQLevelv2,
                                 courseId = updatedCourse.Value.id,
                                 courseRunId = model.CourseRunId
                             });

@@ -160,7 +160,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         Id = y.id.ToString(),
                         CourseId = y.ProviderCourseID,
                         AttendancePattern = y.AttendancePattern.ToDescription(),
-                        Cost = y.Cost.HasValue ? $"£{y.Cost.Value.ToString()}" : string.Empty,
+                        Cost = y.Cost.HasValue ? $"£ {y.Cost.Value:0.00}" : string.Empty,
                         CourseName = y.CourseName,
                         DeliveryMode = y.DeliveryMode.ToDescription(),
                         Duration = y.DurationValue.HasValue ? $"{y.DurationValue.Value} {y.DurationUnit.ToDescription()}" : $"0 {y.DurationUnit.ToDescription()}",

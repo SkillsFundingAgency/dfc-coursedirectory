@@ -112,7 +112,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                         Cost = courseRun.Cost?.ToString("F"),
                         CostDescription = courseRun.CostDescription,
                         AttendanceMode = courseRun.AttendancePattern,
-                        QualificationType = course.Value.QualificationType
+                        QualificationType = course.Value.QualificationType,
+                        NotionalNVQLevelv2 = course.Value.NotionalNVQLevelv2
                     };
 
                     return View("CopyCourseRun", vm);
@@ -200,7 +201,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                         return RedirectToAction("Courses", "Provider",
                             new
                             {
-                                qualificationType = courseForCopy.Value.QualificationType,
+                                level = courseForCopy.Value.NotionalNVQLevelv2,
                                 courseId = copiedCourse.Value.id,
                                 courseRunId = model.CourseRunId
                             });

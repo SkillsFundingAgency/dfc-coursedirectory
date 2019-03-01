@@ -678,8 +678,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             if (result.IsSuccess && result.HasValue)
             {
-                return RedirectToAction("QualificationsList", "Qualifications",
-                    new {qualificationType = learnAimRefTypeDesc});
+                return RedirectToAction("Courses", "Provider",
+                    new { level = notionalNvqLevelv2 });
             }
 
             return RedirectToAction("Index",
