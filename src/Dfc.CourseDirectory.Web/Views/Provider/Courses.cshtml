@@ -207,7 +207,7 @@
                 <details id="@course.Id" class="govuk-details" data-courseid="@course.Id">
                     <summary class="govuk-details__summary">
                         <span class="govuk-details__summary-text">
-                            @course.QualificationTitle
+                            @course.QualificationTitle (@course.Facet)
                         </span>
                         <ul>
                             @if (!string.IsNullOrEmpty(course.LearnAimRef))
