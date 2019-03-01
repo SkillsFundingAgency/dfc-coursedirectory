@@ -76,6 +76,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
                 string webRoot = _env.WebRootPath;
+                if (!Directory.Exists(webRoot))
+                    Directory.CreateDirectory(webRoot);
                 string bulkUploadFileNewName = string.Format(@"{0}-{1}", DateTime.Now.ToString("yyMMdd-HHmmss"), bulkUploadFile.FileName);
                 string savedCsvFilePath = string.Format(@"{0}\BulkUploads\{1}", webRoot, bulkUploadFileNewName);
 

@@ -14,7 +14,7 @@ using System;
 using Dfc.CourseDirectory.Models.Enums;
 using System.ComponentModel;
 using System.Globalization;
-
+using Newtonsoft.Json;
 
 namespace Dfc.CourseDirectory.Services.BulkUploadService
 {
@@ -329,6 +329,15 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             {
                 course.CourseRuns = listsCourseRuns.Where(cr => cr.LearnAimRef == course.LearnAimRef).Select(cr => cr.CourseRun).ToList();
             }
+
+            // Uncomment only for DEV and TESTING
+            //foreach(var course in courses)
+            //{
+            //    string jsonBulkUploadCoursesFilesPath = "D:\\FindACourse-BulkUploadJSONfiles";
+            //    var courseJson = JsonConvert.SerializeObject(course);
+            //    string jsonFileName = string.Format("{0}-{1}-{2}-{3}-{4}.json", DateTime.Now.ToString("yyMMdd-HHmmss"), course.ProviderUKPRN, course.LearnAimRef, course.CourseId, course.CourseRuns.Count().ToString());
+            //    File.WriteAllText(string.Format(@"{0}\{1}", jsonBulkUploadCoursesFilesPath, jsonFileName), courseJson);
+            //}
          
             return courses;
         }
