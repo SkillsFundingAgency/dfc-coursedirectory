@@ -120,8 +120,25 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
         {
             //TODO publish
 
-            var something = vm.Courses.Select( c => {c.IsValid = true; return c; }).ToList();
-            
+            vm.Courses = vm.Courses.Select( c => {
+                c.IsValid = true;
+                return c;
+            }).ToList();
+
+            foreach (var course in vm.Courses)
+            {
+                foreach (var courseRuns in course.CourseRuns)
+                {
+                    courseRuns.RecordStatus = RecordStatus.BulkUploadReadyToGoLive;
+                }
+            }
+
+            //vm.Courses. = vm.Courses.Select(c => c.CourseRuns.Select(cr => 
+            //{
+            //    cr.RecordStatus = RecordStatus.BulkUploadReadyToGoLive;
+            //    return cr;
+            //}));
+
             //On click, course gets edited to is valid
             //course run statuses get set to ready for live
 
