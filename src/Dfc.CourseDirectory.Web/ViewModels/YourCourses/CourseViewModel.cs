@@ -13,5 +13,6 @@ namespace Dfc.CourseDirectory.Web.ViewModels.YourCourses
         public string NotionalNVQLevelv2 { get; set; }
         public string AwardOrg { get; set; }
         public IList<CourseRunViewModel> CourseRuns { get; set; }
+        public string Facet { get; set; }
     }
 }
