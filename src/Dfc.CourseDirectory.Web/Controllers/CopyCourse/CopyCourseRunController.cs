@@ -236,7 +236,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                             {
                                 notificationTitle = "New course added",
                                 notificationMessage = "You added",
-                                level = courseForCopy.Value.NotionalNVQLevelv2,
+                                level = updatedCourse.Value.NotionalNVQLevelv2,
                                 courseId = updatedCourse.Value.id,
                                 courseRunId = copiedCourseRun.id
                             });
