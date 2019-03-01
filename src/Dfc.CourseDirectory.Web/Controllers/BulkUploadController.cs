@@ -73,7 +73,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             if (bulkUploadFile.Length > 0)
             {
                 int providerUKPRN = UKPRN.Value;
-                string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value; ; 
+                string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
                 string webRoot = _env.WebRootPath;
                 string bulkUploadFileNewName = string.Format(@"{0}-{1}", DateTime.Now.ToString("yyMMdd-HHmmss"), bulkUploadFile.FileName);
