@@ -106,6 +106,8 @@
             });
 
             function ValidateAndSearchForProvider() {
+                var trimmed = $elementSearchTerm.val().trim();
+                $elementSearchTerm.val(trimmed);
                 $elementSearchTerm.trigger("blur");
                 var result = validator.element($elementSearchTerm);
                 if (result) {
