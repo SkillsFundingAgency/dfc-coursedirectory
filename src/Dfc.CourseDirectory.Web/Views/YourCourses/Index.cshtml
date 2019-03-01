@@ -177,19 +177,19 @@
                 @if (filter.IsSelected)
                 {
                     <li>
-                        <a class="cd__your-courses__filters-list__link cd__your-courses__filters-list__link--selected"
-                           asp-controller="Provider" 
-                           asp-action="Courses"
-                           asp-route-level="@filter.Value">@filter.Name (@filter.Facet)</a>
+                        <a class="cd__your-courses__filters-list__link cd__your-courses__filters-list__link--selected" 
+                            asp-controller="YourCourses" 
+                            asp-action="Index" 
+                            asp-route-level="@filter.Value">@filter.Name (@filter.Facet)</a>
                     </li>
                 }
                 else
                 {
                     <li>
-                        <a class="cd__your-courses__filters-list__link"
-                           asp-controller="Provider" 
-                           asp-action="Courses"
-                           asp-route-level="@filter.Value">@filter.Name (@filter.Facet)</a>
+                        <a class="cd__your-courses__filters-list__link" 
+                            asp-controller="YourCourses" 
+                            asp-action="Index" 
+                            asp-route-level="@filter.Value">@filter.Name (@filter.Facet)</a>
                     </li>
                 }
                 <hr class="cd__your-courses__filters-list__break">
@@ -219,10 +219,10 @@
                                 <li>Award Org.: @course.AwardOrg</li>
                             }
                             <li>
-                                <a class="govuk-link"
-                                   asp-controller="EditCourse"
-                                   asp-action="Index"
-                                   asp-route-courseId="@course.Id">Edit course description</a>
+                                <a class="govuk-link" 
+                                    asp-controller="EditCourse" 
+                                    asp-action="Index" 
+                                    asp-route-courseId="@course.Id">Edit course description</a>
                             </li>
                         </ul>
                     </summary>
@@ -238,8 +238,8 @@
                                                     <li>@courseRun.CourseName</li>
                                                 </ul>
                                                 @if (!string.IsNullOrEmpty(courseRun.CourseId)
-                                               || !string.IsNullOrEmpty(courseRun.StudyMode)
-                                               || !string.IsNullOrEmpty(courseRun.StartDate))
+                                                || !string.IsNullOrEmpty(courseRun.StudyMode)
+                                                || !string.IsNullOrEmpty(courseRun.StartDate))
                                                 {
                                                     <ul class="row-2">
                                                         @if (!string.IsNullOrEmpty(courseRun.CourseId))
@@ -382,18 +382,18 @@
                                         <div class="cd__your-courses__accordion-content-card-controls">
                                             <ul class="flex-container">
                                                 <li class="flex-item">
-                                                    <a class="govuk-link"
-                                                       asp-controller="EditCourseRun"
-                                                       asp-action="Index"
-                                                       asp-route-courseId="@course.Id"
-                                                       asp-route-courseRunId="@courseRun.Id">Edit course details</a>
+                                                    <a class="govuk-link" 
+                                                        asp-controller="EditCourseRun" 
+                                                        asp-action="Index"
+                                                        asp-route-courseId="@course.Id"
+                                                        asp-route-courseRunId="@courseRun.Id">Edit course details</a>
                                                 </li>
                                                 <li class="flex-item">
-                                                    <a class="govuk-link"
-                                                       asp-controller="CopyCourseRun"
-                                                       asp-action="Index"
-                                                       asp-route-courseId="@course.Id"
-                                                       asp-route-courseRunId="@courseRun.Id">Copy this course</a>
+                                                    <a class="govuk-link" 
+                                                        asp-controller="CopyCourseRun" 
+                                                        asp-action="Index"
+                                                        asp-route-courseId="@course.Id"
+                                                        asp-route-courseRunId="@courseRun.Id">Copy this course</a>
                                                 </li>
                                                 <li class="flex-item">
                                                     <a class="govuk-link" href="">Archive this course</a>

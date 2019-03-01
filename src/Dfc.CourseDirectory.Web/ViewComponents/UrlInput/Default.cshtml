@@ -27,7 +27,12 @@
 <script>
     (function ($) {
         $(function () {
-          
+            var $elementUrl = $("#@nameof(Model.Url)");
+
+            $elementUrl.on("blur", function () {
+                var trimmed = $elementUrl.val().trim();
+                $elementUrl.val(trimmed);
+            });
         });
     })(jQuery);
 </script>
