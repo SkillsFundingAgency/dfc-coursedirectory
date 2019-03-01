@@ -25,7 +25,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
         {
             Throw.IfNull(courses, nameof(courses));
 
-            Value = courses.Select(c => new CourseSearchOuterGrouping(c.Value, c.QualType));
+            Value = courses.Select(c => new CourseSearchOuterGrouping(c.Value, c.Level));
         }
 
         protected override IEnumerable<object> GetEqualityComponents()
@@ -37,12 +37,18 @@ namespace Dfc.CourseDirectory.Services.CourseService
     public class CourseSearchOuterGrouping : ValueObject<CourseSearchOuterGrouping>, ICourseSearchOuterGrouping
     {
         public string QualType { get; set; }
+        public string Level { get; set; }
         public IEnumerable<ICourseSearchInnerGrouping> Value { get; set; }
 
-        public CourseSearchOuterGrouping(IEnumerable<ICourseSearchInnerGrouping> courses, string qualType)
+        public CourseSearchOuterGrouping(
+            IEnumerable<ICourseSearchInnerGrouping> courses, 
+            string level)
         {
-            Throw.IfNullOrEmpty(qualType, nameof(qualType));
-            QualType = qualType;
+            Throw.IfNullOrEmpty(level, nameof(level));
+            Throw.IfNull(courses, nameof(courses));
+
+            //QualType = qualType;
+            Level = level;
             Value = courses.Select(c => new CourseSearchInnerResultGrouping(c.LARSRef));
         }
 
@@ -52,13 +58,13 @@ namespace Dfc.CourseDirectory.Services.CourseService
         {
             Throw.IfNull(courses, nameof(courses));
 
-            QualType = courses?.FirstOrDefault()?.FirstOrDefault()?.QualificationType;
+            Level = courses?.FirstOrDefault()?.FirstOrDefault()?.NotionalNVQLevelv2;
             Value = courses.Select(c => new CourseSearchInnerResultGrouping(c));
         }
 
         protected override IEnumerable<object> GetEqualityComponents()
         {
-            yield return QualType;
+            yield return Level;
             yield return Value;
         }
     }
