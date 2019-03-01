@@ -13,6 +13,7 @@ using Dfc.CourseDirectory.Models.Models;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Newtonsoft.Json;
 using Dfc.CourseDirectory.Models.Models.Courses;
+using System.Net;
 
 namespace Dfc.CourseDirectory.Services.CourseService
 {
@@ -241,9 +242,13 @@ namespace Dfc.CourseDirectory.Services.CourseService
 
                     return Result.Ok<ICourse>(courseResult);
                 }
+                else if (response.StatusCode == HttpStatusCode.TooManyRequests)
+                {
+                    return Result.Fail<ICourse>("Course add service unsuccessful http response - TooManyRequests");
+                }
                 else
                 {
-                    return Result.Fail<ICourse>("Course add service unsuccessful http response");
+                    return Result.Fail<ICourse>("Course add service unsuccessful http response - ResponseStatusCode: " + response.StatusCode);
                 }
             }
             catch (HttpRequestException hre)
