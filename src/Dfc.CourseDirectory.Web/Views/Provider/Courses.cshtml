@@ -172,13 +172,17 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-one-quarter">
         <ul class="cd__your-courses__filters-list">
+            <li>
+                <span class="govuk-body govuk-!-font-weight-bold">Levels</span>
+            </li>
+            <hr class="cd__your-courses__filters-list__break">
             @foreach (var filter in Model.LevelFilters)
             {
                 @if (filter.IsSelected)
                 {
                     <li>
                         <a class="cd__your-courses__filters-list__link cd__your-courses__filters-list__link--selected"
-                           asp-controller="Provider" 
+                           asp-controller="Provider"
                            asp-action="Courses"
                            asp-route-level="@filter.Value">@filter.Name (@filter.Facet)</a>
                     </li>
@@ -187,7 +191,7 @@
                 {
                     <li>
                         <a class="cd__your-courses__filters-list__link"
-                           asp-controller="Provider" 
+                           asp-controller="Provider"
                            asp-action="Courses"
                            asp-route-level="@filter.Value">@filter.Name (@filter.Facet)</a>
                     </li>
