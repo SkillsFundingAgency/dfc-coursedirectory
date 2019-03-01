@@ -176,7 +176,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         Duration = y.DurationValue.HasValue ? $"{y.DurationValue.Value} {y.DurationUnit.ToDescription()}" : $"0 {y.DurationUnit.ToDescription()}",
                         Venue = y.VenueId.HasValue ? FormatAddress(GetVenueByIdFrom(venueResult.Value, y.VenueId.Value)) : string.Empty,
                         Region = y.Regions != null ? FormattedRegionsByIds(allRegions, y.Regions) : string.Empty,
-                        StartDate = y.FlexibleStartDate ? "Flexible start date" : y.StartDate?.ToString("dd/mm/yyyy"),
+                        StartDate = y.FlexibleStartDate ? "Flexible start date" : y.StartDate?.ToString("dd/MM/yyyy"),
                         StudyMode = y.StudyMode.ToDescription(),
                         Url = y.CourseURL
                     })
