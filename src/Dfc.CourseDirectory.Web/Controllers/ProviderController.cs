@@ -141,7 +141,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 {
                     Name = $"Level {x.Level}",
                     Value = x.Level,
-                    Facet = x.Value.Count().ToString(),
+                    Facet = x.Value.Sum(y => y.Value.Count()).ToString(),
                     IsSelected = level == x.Level
                 })
                 .OrderBy(x => x.Value)
