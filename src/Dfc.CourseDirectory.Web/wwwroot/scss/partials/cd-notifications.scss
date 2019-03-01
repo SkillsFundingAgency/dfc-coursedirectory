@@ -2,8 +2,10 @@
 $info: #005ea5;
 $warning: #f47738;
 $focus: #ffbf47;
+$error: #ff0000;
 
 .cd-success-summary,
+.cd-error-summary,
 .cd-warning-summary,
 .cd-info-summary {
     font-family: nta,Arial,sans-serif;
@@ -67,6 +69,22 @@ $focus: #ffbf47;
 
         .cd-info-summary__list a {
             color: $info;
+        }
+    }
+}
+
+.cd-error-summary {
+    border: 5px solid $error;
+
+    .cd-error-summary__title {
+        font-weight: 700;
+    }
+
+    .cd-error-summary__body {
+        color: $error;
+
+        .cd-error-summary__list a {
+            color: $error;
         }
     }
 }

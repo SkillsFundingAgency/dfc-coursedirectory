@@ -34,9 +34,9 @@ namespace Dfc.CourseDirectory.Web.ViewModels.EditCourse
         public bool? AdultEducationBudget { get; set; }
         public bool? AdvancedLearnerLoan{ get; set; }
 
+        public bool? FromBulkUpload { get; set; }
+
         public string NotionalNVQLevelv2 { get; set; }
 
-    }
-
-   
+    }   
 }

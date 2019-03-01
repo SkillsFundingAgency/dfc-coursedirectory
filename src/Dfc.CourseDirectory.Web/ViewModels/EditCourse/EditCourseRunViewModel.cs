@@ -20,6 +20,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels.EditCourse
 
         public List<SelectListItem> Venues { get; set; }
         public Guid  VenueId { get; set; }
+
         public SelectRegionModel SelectRegion { get; set; }
         public DeliveryMode DeliveryMode { get; set; }
         public string CourseProviderReference { get; set; }
@@ -33,6 +34,8 @@ namespace Dfc.CourseDirectory.Web.ViewModels.EditCourse
         public string QualificationType { get; set; }
 
         public bool FlexibleStartDate { get; set; }
+
+        public bool? FromBulkUpload { get; set; }
 
         public string NotionalNVQLevelv2 { get; set; }
 

@@ -514,9 +514,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         viewModel.Month = addCourseSection2Session.Month;
                         viewModel.Year = addCourseSection2Session.Year;
                         viewModel.Url = addCourseSection2Session.Url;
-                        viewModel.Cost = addCourseSection2Session.Cost == 0
+                        viewModel.Cost = addCourseSection2Session.Cost == null
                             ? string.Empty
-                            : addCourseSection2Session.Cost.ToString(CultureInfo.InvariantCulture);
+                            : addCourseSection2Session.Cost.ToString();
                         viewModel.CostDescription = addCourseSection2Session.CostDescription;
                         viewModel.AdvancedLearnerLoan = addCourseSection2Session.AdvancedLearnerLoan;
                         viewModel.DurationLength = addCourseSection2Session.DurationLength.ToString();
@@ -988,7 +988,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     CreatedDate = DateTime.Now,
                     CreatedBy = "ProviderPortal-AddCourse", // TODO - Change to the name of the logged person
 
-                    RecordStatus = RecordStatus.Live // TODO - To Be Decided
+                    //RecordStatus = RecordStatus.Live // TODO - To Be Decided
                 };
 
                 var result = await _courseService.AddCourseAsync(course);
@@ -1183,9 +1183,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         summaryViewModel.DeliveryMode = section2.DeliveryMode.ToDescription();
                         summaryViewModel.DeliveryModeEnum = section2.DeliveryMode;
                         summaryViewModel.Url = section2.Url;
-                        summaryViewModel.Cost = section2.Cost == 0
+                        summaryViewModel.Cost = section2.Cost == null
                             ? string.Empty
-                            : section2.Cost.ToString(CultureInfo.InvariantCulture);
+                            : section2.Cost.ToString();
                         summaryViewModel.CostDescription = section2.CostDescription;
                         summaryViewModel.AdvancedLearnerLoan =
                             section2.AdvancedLearnerLoan ? "Available" : "Unavailable";
@@ -1223,9 +1223,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         summaryViewModel.DeliveryMode = model.DeliveryMode.ToDescription();
                         summaryViewModel.DeliveryModeEnum = model.DeliveryMode;
                         summaryViewModel.Url = model.Url;
-                        summaryViewModel.Cost = model.Cost == 0
+                        summaryViewModel.Cost = model.Cost == null
                             ? string.Empty
-                            : model.Cost.ToString(CultureInfo.InvariantCulture);
+                            : model.Cost.ToString();
                         summaryViewModel.CostDescription = model.CostDescription;
                         summaryViewModel.AdvancedLearnerLoan = model.AdvancedLearnerLoan ? "Available" : "Unavailable";
                         summaryViewModel.CourseLength = model.DurationLength + " " + model.DurationUnit;
@@ -1448,7 +1448,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 viewModel.Month = addCourseSection2Session.Month;
                 viewModel.Year = addCourseSection2Session.Year;
                 viewModel.Url = addCourseSection2Session.Url;
-                viewModel.Cost = addCourseSection2Session.Cost == 0 ? string.Empty : addCourseSection2Session.Cost.ToString(CultureInfo.InvariantCulture);
+                viewModel.Cost = addCourseSection2Session.Cost == null ? string.Empty : addCourseSection2Session.Cost.ToString();
                 viewModel.CostDescription = addCourseSection2Session.CostDescription;
                 viewModel.AdvancedLearnerLoan = addCourseSection2Session.AdvancedLearnerLoan;
                 viewModel.DurationLength = addCourseSection2Session.DurationLength.ToString();

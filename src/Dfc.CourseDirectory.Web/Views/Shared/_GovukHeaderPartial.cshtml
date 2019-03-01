@@ -47,12 +47,12 @@
                     <nav>
                         <ul id="navigation" class="govuk-header__navigation " aria-label="Top Level Navigation">
                             @{
-                                 <li class="govuk-header__navigation-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Home" ? "govuk-header__navigation-item--active" : "")">
-                                        <a class="govuk-header__link" href="/">
-                                            Home
-                                        </a>
-                                 </li>
-                             
+                                <li class="govuk-header__navigation-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Home" ? "govuk-header__navigation-item--active" : "")">
+                                    <a class="govuk-header__link" href="/">
+                                        Home
+                                    </a>
+                                </li>
+
                             }
                             <li class="govuk-header__navigation-item @((ViewContext.RouteData.Values["Controller"].ToString() == "Qualifications" && ViewContext.RouteData.Values["Action"].ToString() == "Index") ? "govuk-header__navigation-item--active" : "")">
                                 <a class="govuk-header__link" href="~/Qualifications">
@@ -79,6 +79,14 @@
                                     Courses
                                 </a>
                             </li>
+                            @if (authorised.Succeeded)
+                            {
+                                <li class="govuk-header__navigation-item @(ViewContext.RouteData.Values["Controller"].ToString() == "BulkUpload" ? "govuk-header__navigation-item--active" : "")">
+                                    <a class="govuk-header__link" href="/BulkUpload">
+                                        Bulk Upload
+                                    </a>
+                                </li>
+                            }
                         </ul>
                     </nav>
                 }

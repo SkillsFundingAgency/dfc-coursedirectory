@@ -6,20 +6,66 @@
 @inject IOptions<EntryRequirementsComponentSettings> entryRequirementsComponentSettings
 
 @{
-    var regex = @"[a-zA-Z0-9 /\r\n?|\n\¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\" + "\"" + @"\\]+";
+    var regex = @"^[a-zA-Z0-9 /\n/\r/\¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`" + "\"" + "\\\\]+$";
+    var entryRequirementsTextFieldMaxChars = entryRequirementsComponentSettings.Value.TextFieldMaxChars;
 }
-<div class="govuk-character-count" data-module="character-count" data-maxlength=@entryRequirementsComponentSettings.Value.TextFieldMaxChars>
-    <div class="govuk-form-group" style="margin-bottom: 0;padding-bottom: 0">
-        <label class="govuk-label" for="entry-requirements">
+
+
+
+<div class="govuk-character-count" data-module="character-count" data-maxlength=@entryRequirementsTextFieldMaxChars>
+    <div class="govuk-form-group">
+        <label class="govuk-label" for="word-count">
             @Model.LabelText
         </label>
-        <span id="entry-requirements-hint" class="govuk-hint">
-            @Model.HintText
-        </span>
-        <textarea asp-for="EntryRequirements" class="govuk-textarea js-character-count" name="EntryRequirements" id="textAreaEntryRequirements" rows="5"  type="text" 
-                  aria-describedby="@Model.AriaDescribedBy"
-                  val-max-length="500" val-max-length-message="Entry requirements must be 500 characters or less"
+        @if (!string.IsNullOrWhiteSpace(Model.HintText))
+        {
+            <span class="govuk-hint">
+                @Model.HintText
+            </span>
+        }
+        <textarea class="govuk-textarea js-character-count " asp-for="@Model.EntryRequirements" rows="5"
+                 aria-describedby="@Model.AriaDescribedBy"
+                  val-max-length=@entryRequirementsTextFieldMaxChars val-max-length-message="Entry requirements must be @entryRequirementsTextFieldMaxChars characters or less"
                   val-regex="@regex"
-                  val-regex-message="Who is this course for contains invalid characters"></textarea>
+                  val-regex-message="Entry requirements contains invalid character"></textarea>
+
     </div>
 </div>
+
+<script>
+    (function ($) {
+        $(function () {
+
+            var $elementEntryRequirements = $("#@nameof(Model.EntryRequirements)");
+
+            $elementEntryRequirements.on("blur", function () {
+
+                var trimmed = $elementEntryRequirements.val().trim();
+                $elementEntryRequirements.val(trimmed);
+
+                var $characterCountValue = @entryRequirementsTextFieldMaxChars;
+                var $countMessage = $("#EntryRequirements-info");
+
+                var $actualCharacterCount = $characterCountValue - $elementEntryRequirements.val().length;
+
+                if ($actualCharacterCount <= 0) {
+
+                } else {
+
+                    if ($actualCharacterCount === 1) {
+                        $countMessage.text("You have " + $actualCharacterCount + " character remaining");
+                    } else {
+                        $countMessage.text("You have " + $actualCharacterCount + " characters remaining");
+
+                        $countMessage.addClass('govuk-hint');
+                        $elementEntryRequirements.removeClass('govuk-textarea--error');
+                        $countMessage.removeClass('govuk-error-message');
+                        $countMessage.addClass('govuk-character-count__message');
+                    }
+                }
+
+            });
+
+        });
+    })(jQuery);
+</script>

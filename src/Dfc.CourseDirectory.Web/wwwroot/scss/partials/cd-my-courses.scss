@@ -113,3 +113,7 @@ select:disabled {
     border-bottom: 10px;
 }
 
+.govuk-accordion__section:first-child {
+    border: none;
+}
+

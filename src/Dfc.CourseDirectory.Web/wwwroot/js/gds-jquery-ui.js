@@ -637,6 +637,8 @@
         if (isNaN(parsedYear) && isNaN(parsedMonth) && isNaN(parsedDay)) return "";
         if (isNaN(parsedYear) || isNaN(parsedMonth) || isNaN(parsedDay)) return "Invalid Date";
         var parsedDate = new Date(parsedYear + "-" + parsedMonth + "-" + parsedDay);
+        if (parsedDate.toString() === "Invalid Date") return parsedDate;
+        if (parseInt(parsedDate.toISOString().substr(5, 2)) !== parseInt($(this._monthInput).val())) return "Invalid Date";
         var isoDateString = parsedDate.toString() === "Invalid Date" ? "Invalid Date" : parsedDate.toISOString().substr(0, 10);
         return isoDateString;
     };

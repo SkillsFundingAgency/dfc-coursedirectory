@@ -22,6 +22,7 @@ using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatWillLearn;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatYouNeed;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhereNext;
 using Dfc.CourseDirectory.Web.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 {
@@ -55,7 +56,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(Guid? courseId)
+        [Authorize]
+        public async Task<IActionResult> Index(Guid? courseId, bool fromBulkUpload)
         {
             int? UKPRN;
 
@@ -76,6 +78,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                 {
                     EditCourseViewModel vm = new EditCourseViewModel
                     {
+                        FromBulkUpload = fromBulkUpload,
                         CourseFor = new CourseForModel()
                         {
                             LabelText = "Who is the course for?",
@@ -149,6 +152,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Index(EditCourseSaveViewModel model)
         {
             if (model.CourseId.HasValue)
@@ -169,14 +173,35 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                     courseForEdit.Value.AdultEducationBudget = model.AdultEducationBudget;
                     courseForEdit.Value.AdvancedLearnerLoan = model.AdvancedLearnerLoan;
 
+                    //todo when real data
+                    //if (model.fromBulkUpload)
+                    //{
+                    // courseForEdit.Value.IsValid = true;
+                    //}
+
                     var updatedCourse = await _courseService.UpdateCourseAsync(courseForEdit.Value);
 
-                    return RedirectToAction("Courses", "Provider",
-                        new
-                        {
-                            level = courseForEdit.Value.NotionalNVQLevelv2,
-                            courseId = updatedCourse.Value.id
-                        });
+                    if (model.fromBulkUpload)
+                    {
+                        return RedirectToAction("Index", "PublishCourses",
+                            new
+                            {
+                               
+                            });
+                    }
+                    else
+                    {
+
+                        return RedirectToAction("Courses", "Provider",
+                            new
+                            {
+                                notificationTitle = "Course edited",
+                                notificationMessage = "You edited",
+                                level = courseForEdit.Value.NotionalNVQLevelv2,
+                                courseId = updatedCourse.Value.id
+                            });
+                    }
+
                 }
             }
 

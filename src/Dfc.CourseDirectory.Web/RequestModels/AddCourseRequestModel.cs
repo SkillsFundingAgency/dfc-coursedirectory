@@ -14,7 +14,7 @@ namespace Dfc.CourseDirectory.Web.RequestModels
         public string Month { get; set; }
         public string Year { get; set; }
         public string Url { get; set; }
-        public decimal Cost { get; set; }
+        public decimal? Cost { get; set; }
         public string CostDescription { get; set; }
         public bool AdvancedLearnerLoan { get; set; }
         public DurationUnit DurationUnit { get; set; }

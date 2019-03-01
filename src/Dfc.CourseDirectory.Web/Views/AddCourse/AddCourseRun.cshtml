@@ -93,13 +93,9 @@
         <span id="select-venue-hint" class="govuk-hint">
             @Model.SelectVenue.HintText
         </span>
-        <span class="govuk-error-message field-validation-error" id="invalidVenuesChecked" style="display: none; margin-bottom: 15px;">
-            <span id="invalidVenuesCheckedMessage" class="">Select a venue.</span>
-        </span>
-
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
-                <div class="govuk-checkboxes" id="SelectVenueCheckBoxes">
+                <div class="govuk-checkboxes" id="SelectVenueCheckBoxes" val-required-message="Select a venue">
                     @{ var i = 0; }
                     @if (Model.SelectVenue.VenueItems.Count() == 1)
                     {
@@ -131,13 +127,9 @@
         <span id="select-region-hint" class="govuk-hint">
             @Model.SelectRegion.HintText
         </span>
-        <span class="govuk-error-message field-validation-error" id="invalidRegionsChecked" style="display: none;margin-bottom: 15px;">
-            <span id="invalidRegionsCheckedMessage" class="">Select a region.</span>
-        </span>
-
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
-                <div class="govuk-checkboxes" id="SelectRegionCheckBoxes">
+                <div class="govuk-checkboxes" id="SelectRegionCheckBoxes" val-required-message="Select a region">
                     @{ var j = 0; }
                     @if (Model.SelectRegion.RegionItems.Count() == 1)
                     {
@@ -185,16 +177,6 @@
             CostDescriptionAriaDescribedBy = "Enter details of related to the cost of this course"
         })
     </div>
-
-    @*<div id="sectionAdvancedLearnerLoan">
-        @await Component.InvokeAsync(nameof(AdvancedLearnerLoan), new AdvancedLearnerLoanModel
-        {
-            AdvancedLearnerLoan = Model.AdvancedLearnerLoan,
-            LabelText = "Advanced learner loan",
-            HintText = "Select the checkbox below if Advanced Learner Loans are available for this course",
-            AriaDescribedBy = "Select whether Advanced Learner Loan is available for this course"
-        })
-    </div>*@
 
     <div id="sectionDuration">
         @await Component.InvokeAsync(nameof(Duration), new DurationModel
@@ -249,88 +231,251 @@
                 }
                 break;
             case AddCoursePage.Summary:
-                <div class="govuk-form-group">
-                    <button type="submit" class="govuk-button" id="goToSummary">
-                        Summary
-                    </button>
-                
-                    <a class="govuk-link" href="#" id="goToSection1Link">Page 1</a>
-                </div>
+                    <div class="govuk-form-group">
+                        @*id="goToSummary"*@
+                        <button type="submit" class="govuk-button" id="publish" value="publish">
+                            Summary
+                        </button>
+
+                        <a class="govuk-link" href="#" id="goToSection1Link">Page 1</a>
+                    </div>
                 break;
         }
     }
-
-
-
-
-    @*
-        <div class="govuk-form-group">
-            <button name="submitButton" type="submit" class="govuk-button" id="publish" value="publish">
-                Publish
-            </button>
-            <a class="govuk-link" href="#" id="previewLink">Preview</a>
-            <a class="govuk-link" href="#" id="submitBackLink">Back to Section 1</a>
-        </div>*@
-
-    @*<div class="govuk-form-group">
-            <button name="submitButton" type="submit" class="govuk-button" id="publish" value="publish">
-                Next
-            </button>
-            <a class="govuk-link" href="#" id="submitBackLink">Back to Section 1</a>
-        </div>*@
 
 </form>
 
 <script>
     (function ($) {
         $(function () {
-
-            var $formGroupErrorClass = "govuk-form-group--error";
-            var $elementErrorClass = "govuk-input--error";
-
-            var $dayElementUrl = $("#@nameof(Model.Day)");
-
-            var $monthElementUrl = $("#@nameof(Model.Month)");
-
-            var $yearElementUrl = $("#@nameof(Model.Year)");
-
-            var $validationMessageUrlForDay = $("#invalidDay");
-
-            var $validationMessageUrlForMonth = $("#invalidMonth");
-
-            var $validationMessageUrlForYear = $("#invalidYear");
-
-            var $validationMessageForPast = $("#past");
-            var $validationMessageForFuture = $("#future");
-
-            var $validationMessageForRequired= $("#required");
-
-            var $formGroupUrl = $dayElementUrl.closest('.govuk-form-group');
-
-
-
-            var $elementCostDescription = $("#@nameof(Model.CostDescription)");
-
-            var $elementCost = $("#@nameof(Model.Cost)");
-            var $formGroupCost = $elementCost.closest('.govuk-form-group');
-
-            var $validationMessageForCost= $("#invalidCost");
-            var $validationMessageForCostLength = $("#invalidCostLength");
-
-            var $venueCheckboxes = $("#SelectVenueCheckBoxes input[type=checkbox]");
-            var $regionCheckboxes = $("#SelectRegionCheckBoxes input[type=checkbox]");
-            var $formVenuesIsValid = false;
-            var $formRegionsIsValid = false;
-            var $formStartDateIsValid = false;
-            var $formCostIsValid = false;
-
+            var $courseName = $("#@nameof(Model.CourseName)").govUkInput();
+            var $URL = $("#@nameof(Model.Url)").govUkInput();
+            var $courseProviderReference = $("#@nameof(Model.CourseProviderReference)").govUkInput();
             var $deliveryRadios = $("#DeliveryModeRadioButtons input[type=radio]");
             var $regionItemsCheckboxList = $("#RegionItemsCheckboxList");
-            //$regionItemsCheckboxList.hide();
+            
+            var $duration = $("#duration").govUkDurationInput();
+            var $checkboxsregions = $("#SelectRegionCheckBoxes").govUkCheckboxes();
+            var $checkboxVenues = $("#SelectVenueCheckBoxes").govUkCheckboxes();
+
+            var $radioDeliveryMode = $("#DeliveryModeRadioButtons").govUkRadios();
+            var $radioStudyMode = $("#StudyModeRadioButtons").govUkRadios();
+            var $radioAttendance = $("#AttendanceRadioButtons").govUkRadios();
+
+            var $selectvenue = $("#selectvenue").govUkSelect();
+            var $startDate = $("#start_date").govUkDateInput();
+            var $cost = $("#@nameof(Model.Cost)").govUkInput();
+            var $costDescription = $("#@nameof(Model.CostDescription)").govUkTextarea();
 
             var isClassroomBased = true;
-    var isOnline = false;
-    var isWorkBased = false;
+            var isOnline = false;
+            var isWorkBased = false;
+
+            switch ($radioDeliveryMode.find("input[type='radio']:checked").val()) {
+                case "ClassroomBased":
+                {
+                        isClassroomBased = true;
+                        isOnline = false;
+                    isWorkBased = false;
+                    break;
+                }
+                case "Online":
+                {
+                        isClassroomBased = false;
+                        isOnline = true;
+                    isWorkBased = false;
+                    break;
+                }
+                case "WorkBased":
+                {
+                        isClassroomBased = false;
+                        isOnline = false;
+                    isWorkBased = true;
+                    break;
+                }
+            }
+
+            function isAllValid(currentValue) {
+                return currentValue === true;
+            }
+
+            var $publishbutton = $("#publish");
+            $publishbutton.on("click", function(event) {
+                    event.preventDefault();
+                    if (validateAddCourseRun()) {
+                        $("#addCourseSection2").submit();
+                    }
+                });
+
+            var $goToSection1Link = $("#goToSection1Link");
+            $goToSection1Link.click(function () {
+                event.preventDefault();
+                if (validateAddCourseRun()) {
+                    $("#addCourseSection2").attr("action", "AddCourseRunToAddCourse");
+                    $("#addCourseSection2").submit();
+                }
+            });
+
+            function validateStartDate(startDateValue) {
+                if (!$.dateValidate(startDateValue)) {
+                    return "val-date-message";
+                }
+
+                if ($.pastDateValidate({ ref: $startDate.attr("val-past-date-ref")}, startDateValue)) {
+                    return "val-past-date-message";
+                }
+
+                if ($.futureDateValidate ({ref: $startDate.attr("val-future-date-ref")}, startDateValue)) {
+                    return "val-future-date-message";
+                }
+
+                return "validState";
+            }
+
+            function validateAddCourseRun() {
+                var validStates = [];
+
+                if ((!$.requiredValidate($cost.val()) && !$.requiredValidate($costDescription.val()))) {
+                    $cost.govUkInput("invalidState", $cost.attr("val-required-message"));
+                    validStates.push(false);
+                } else if (
+                    !$.regexValidate({ regex: $costDescription.attr("val-regex") }, $costDescription.val())) {
+                    $costDescription.govUkTextarea("invalidState", $costDescription.attr("val-regex-message"));
+                    validStates.push(false);
+                } else if (
+                    !$.maxLengthValidate({ max: $costDescription.attr("val-max-length") }, $costDescription.val())) {
+                    $costDescription.govUkTextarea("invalidState", $costDescription.attr("val-max-length-message"));
+                    validStates.push(false);
+                }
+                else {
+
+                    $cost.govUkInput("validState");
+                    $costDescription.govUkTextarea("validState");
+                    validStates.push(true);
+                }
+
+                if (isWorkBased) {
+                    if ($.requiredValidate($checkboxsregions.find("input[type='checkbox']:checked").val())) {
+                        $checkboxsregions.govUkCheckboxes("validState");
+                        validStates.push(true);
+                    } else {
+                        $checkboxsregions.govUkCheckboxes("invalidState", $checkboxsregions.attr("val-required-message"));
+                        validStates.push(false);
+                    }
+                }
+
+                if (isClassroomBased) {
+                    if ($.requiredValidate($checkboxVenues.find("input[type='checkbox']:checked").val())) {
+                        $checkboxVenues.govUkCheckboxes("validState");
+                        validStates.push(true);
+                    } else {
+                        $checkboxVenues.govUkCheckboxes("invalidState", $checkboxVenues.attr("val-required-message"));
+                        validStates.push(false);
+                    }
+
+                }
+
+                if (!$.requiredValidate($courseName.val())) {
+                    $courseName.govUkInput("invalidState", $courseName.attr("val-required-message"));
+                    validStates.push(false);
+                } else if (
+                    !$.regexValidate({ regex: $courseName.attr("val-regex") }, $courseName.val())) {
+                    $courseName.govUkInput("invalidState", $courseName.attr("val-regex-message"));
+                    validStates.push(false);
+                } else if (
+                    !$.maxLengthValidate({ max: $courseName.attr("val-max-length") }, $courseName.val())) {
+                    $courseName.govUkInput("invalidState", $courseName.attr("val-max-length-message"));
+                    validStates.push(false);
+                }
+                else {
+
+                    $courseName.govUkInput("validState");
+                    validStates.push(true);
+                }
+
+                if (!$.regexValidate({ regex: $courseProviderReference.attr("val-regex") }, $courseProviderReference.val())) {
+                    $courseProviderReference.govUkInput("invalidState", $courseProviderReference.attr("val-regex-message"));
+                    validStates.push(false);
+                } else if (
+                    !$.maxLengthValidate({ max: $courseProviderReference.attr("val-max-length") }, $courseProviderReference.val())) {
+                    $courseProviderReference.govUkInput("invalidState", $courseProviderReference.attr("val-max-length-message"));
+                    validStates.push(false);
+                }
+                else {
+
+                    $courseProviderReference.govUkInput("validState");
+                    validStates.push(true);
+                }
+
+                if (!$.regexValidate({ regex: $URL.attr("val-regex") }, $URL.val())) {
+                    $URL.govUkInput("invalidState", $URL.attr("val-regex-message"));
+                    validStates.push(false);
+                } else if (
+                    !$.maxLengthValidate({ max: $URL.attr("val-max-length") }, $URL.val())) {
+                    $URL.govUkInput("invalidState", $URL.attr("val-max-length-message"));
+                    validStates.push(false);
+                }
+                else {
+
+                    $URL.govUkInput("validState");
+                    validStates.push(true);
+                }
+
+                if (!$.requiredValidate($duration.find("input").val())) {
+                    $duration.govUkDurationInput("invalidState", $duration.attr("val-duration-message"));
+                } else if (!$.rangeValidate({
+                    min: $duration.attr("val-range-min"),
+                    max: $duration.attr("val-range-max")
+                },
+                    $duration.find("input").val())) {
+                    $duration.govUkDurationInput("invalidState", $duration.attr("val-duration-message"));
+                } else if (!$.requiredValidate($duration.find("select").val())) {
+                    $duration.govUkDurationInput("invalidState", $duration.attr("val-duration-message"));
+                } else {
+                    $duration.govUkDurationInput("validState");
+                }
+
+                if ($.requiredValidate($radioDeliveryMode.find("input[type='radio']:checked").val())) {
+                    $radioDeliveryMode.govUkRadios("validState");
+                } else {
+                    $radioDeliveryMode.govUkRadios("invalidState", $radioDeliveryMode.attr("val-required-message"));
+                }
+
+                if ($.requiredValidate($radioStudyMode.find("input[type='radio']:checked").val())) {
+                    $radioStudyMode.govUkRadios("validState");
+                } else {
+                    $radioStudyMode.govUkRadios("invalidState", $radioStudyMode.attr("val-required-message"));
+                }
+
+                if ($.requiredValidate($radioAttendance.find("input[type='radio']:checked").val())) {
+                    $radioAttendance.govUkRadios("validState");
+                } else {
+                    $radioAttendance.govUkRadios("invalidState", $radioAttendance.attr("val-required-message"));
+                }
+
+                var radioValue = $("input[name='StartDateType']:checked").val();
+                if (radioValue.toUpperCase() === "SPECIFIEDSTARTDATE") {
+
+                    var startDateValue = $startDate.govUkDateInput("getISODateString");
+
+                    if (startDateValue === "") {
+                        $startDate.govUkDateInput("invalidState", $startDate.attr("val-required-message"));
+                        validStates.push(false);
+                    }
+                    else {
+                        var validateStartDateMsg = validateStartDate(startDateValue);
+                        if (validateStartDateMsg === "validState") {
+                            $startDate.govUkDateInput("validState");
+                            validStates.push(true);
+                        } else {
+                            $startDate.govUkDateInput("invalidState", $startDate.attr(validateStartDateMsg));
+                            validStates.push(false);
+                        }
+                    }
+                };
+
+                return validStates.every(isAllValid);
+            }
 
             $deliveryRadios.change(function () {
                 var $venueItemsCheckboxList = $("#VenueItemsCheckboxList");
@@ -341,18 +486,18 @@
 
                 switch (this.id) {
                     case "ClassroomBased":
-                    {
+                        {
                             $specifiedStartDate.prop("checked", true);
                             $flexibleStartDate.prop("checked", false);
                             $venueItemsCheckboxList.show();
                             $regionItemsCheckboxList.hide();
                             $fullPartTimeRadioButtons.show();
                             $attendancePatternRadioButtons.show();
-            isClassroomBased = true;
-            isOnline = false;
-            isWorkBased = false;
-            break;
-        }
+                            isClassroomBased = true;
+                            isOnline = false;
+                            isWorkBased = false;
+                            break;
+                        }
                     case "Online":
                         {
                             $flexibleStartDate.prop("checked", true);
@@ -361,11 +506,11 @@
                             $regionItemsCheckboxList.hide();
                             $fullPartTimeRadioButtons.hide();
                             $attendancePatternRadioButtons.hide();
-            isClassroomBased = false;
-            isOnline = true;
-            isWorkBased = false;
-            break;
-        }
+                            isClassroomBased = false;
+                            isOnline = true;
+                            isWorkBased = false;
+                            break;
+                        }
                     case "WorkBased":
                         {
                             $flexibleStartDate.prop("checked", true);
@@ -374,254 +519,15 @@
                             $regionItemsCheckboxList.show();
                             $fullPartTimeRadioButtons.hide();
                             $attendancePatternRadioButtons.hide();
-            isClassroomBased = false;
-            isOnline = false;
-            isWorkBased = true;
-            break;
-        }
-    }
-
-
-            });
-            $venueCheckboxes.change(function () {
-                var $validationMessageForVenues = $("#invalidVenuesChecked");
-                var $venueItemsCheckboxList = $("#VenueItemsCheckboxList");
-                var $formGroupVenues = $venueItemsCheckboxList.closest('.govuk-form-group');
-                var countedCheckedCheckboxes = $venueCheckboxes.filter(':checked').length;
-
-                if ($(this).is(":visible")) {
-                    if (countedCheckedCheckboxes === 0) {
-                        $formGroupVenues.addClass("govuk-form-group--error");
-                        $validationMessageForVenues.show();
-                        $formVenuesIsValid = false;
-                    }
-                    else {
-                        $formGroupVenues.removeClass("govuk-form-group--error");
-                        $validationMessageForVenues.hide();
-                        $formVenuesIsValid = true;
-                    }
-                }
-                else {
-                    $formGroupVenues.removeClass("govuk-form-group--error");
-                    $validationMessageForVenues.hide();
-                    $formVenuesIsValid = true;
+                            isClassroomBased = false;
+                            isOnline = false;
+                            isWorkBased = true;
+                            break;
+                        }
                 }
 
+
             });
-
-            $regionCheckboxes.change(function () {
-                var $validationMessageForRegions = $("#invalidRegionsChecked");
-                var $formGroupRegions = $regionItemsCheckboxList.closest('.govuk-form-group');
-                var countedCheckedCheckboxes = $regionCheckboxes.filter(':checked').length;
-
-                if ($(this).is(":visible")) {
-                    if (countedCheckedCheckboxes === 0) {
-                        $formGroupRegions.addClass("govuk-form-group--error");
-                        $validationMessageForRegions.show();
-                        $formRegionsIsValid = false;
-                    }
-                    else {
-                        $formGroupRegions.removeClass("govuk-form-group--error");
-                        $validationMessageForRegions.hide();
-                        $formRegionsIsValid = true;
-                    }
-                }
-                else {
-                    $formGroupRegions.removeClass("govuk-form-group--error");
-                    $validationMessageForRegions.hide();
-                    $formRegionsIsValid = true;
-                }
-            });
-
-            var $backLink = $("#submitBackLink");
-            $backLink.click(function () {
-                $("#addCourseSection2").attr("action", "BackToAddCourseSection1");
-                $("#addCourseSection2").submit();
-            });
-
-            var $previewLink = $("#previewLink");
-            $previewLink.click(function() {
-                $("#addCourseSection2").attr("action", "Preview");
-                $("#addCourseSection2").submit();
-            });
-
-            var $publish = $("#publish");
-            $publish.on("click",
-                function(e) {
-                    e.preventDefault();
-                    $venueCheckboxes.trigger("change");
-                    $regionCheckboxes.trigger("change");
-
-                    var $courseName = $("#@nameof(Model.CourseName)");
-                    $courseName.trigger("blur");
-
-                    if ($elementCost.val() === "") {
-                        if ($elementCostDescription.val() === "") {
-                            $elementCost.addClass($elementErrorClass);
-                            $validationMessageForCost.show();
-                            $formGroupCost.addClass($formGroupErrorClass);
-                            $formCostIsValid = false;
-                        } else {
-                            $elementCost.removeClass($elementErrorClass);
-                            $validationMessageForCost.hide();
-                            $formGroupCost.removeClass($formGroupErrorClass);
-                            $formCostIsValid = true;
-                        }
-                    } else {
-
-                        $validationMessageForCost.hide();
-                        $formGroupCost.removeClass($formGroupErrorClass);
-
-                        if ($elementCost.val().length < 1 || $elementCost.val().length > 9) {
-                            $elementCost.addClass($elementErrorClass);
-                            $validationMessageForCostLength.show();
-                            $formGroupCost.addClass($formGroupErrorClass);
-                            $formCostIsValid = false;
-                        } else {
-                            $elementCost.removeClass($elementErrorClass);
-                            $validationMessageForCostLength.hide();
-                            $formGroupCost.removeClass($formGroupErrorClass);
-                            $formCostIsValid = true;
-                        }
-                    }
-
-                    var $durationLength =  $("#@nameof(Model.DurationLength)");
-                    $durationLength.trigger("blur");
-
-                    var radioValue = $("input[name='StartDateType']:checked").val();
-                    if (radioValue.toUpperCase() === "SPECIFIEDSTARTDATE") {
-                        $validationMessageForRequired.hide();
-
-                        if ($dayElementUrl.val() !== "" &&
-                            $monthElementUrl.val() !== "" &&
-                            $yearElementUrl.val() !== "") {
-
-                            $formStartDateIsValid = true;
-                        }
-
-                        if ($dayElementUrl.val() === "" &&
-                            $monthElementUrl.val() === "" &&
-                            $yearElementUrl.val() === "") {
-
-                            $formGroupUrl.addClass($formGroupErrorClass);
-                            $validationMessageForRequired.show();
-                            $formStartDateIsValid = false;
-                        }
-
-                        if ($dayElementUrl.val() === "" ||
-                            parseInt($dayElementUrl.val()) < 1 ||
-                            parseInt($dayElementUrl.val()) > 31) {
-                            $dayElementUrl.addClass($elementErrorClass);
-                            $formGroupUrl.addClass($formGroupErrorClass);
-                            $validationMessageUrlForDay.show();
-                            $formStartDateIsValid = false;
-                        }
-
-
-                        if ($monthElementUrl.val() === "" ||
-                            parseInt($monthElementUrl.val()) < 1 ||
-                            parseInt($monthElementUrl.val()) > 12) {
-                            $monthElementUrl.addClass($elementErrorClass);
-                            $formGroupUrl.addClass($formGroupErrorClass);
-                            $validationMessageUrlForMonth.show();
-                            $formStartDateIsValid = false;
-                        }
-
-
-                        if (($yearElementUrl.val().length) < 4 || ($yearElementUrl.val().length) > 4) {
-                            $yearElementUrl.addClass($elementErrorClass);
-                            $formGroupUrl.addClass($formGroupErrorClass);
-                            $validationMessageUrlForYear.show();
-                            $formStartDateIsValid = false;
-                        }
-
-
-                        if ($dayElementUrl.val() !== "" &&
-                            $monthElementUrl.val() !== "" &&
-                            $yearElementUrl.val() !== "") {
-                            var enteredDate = $dayElementUrl.val() +
-                                "/" +
-                                $monthElementUrl.val() +
-                                "/" +
-                                $yearElementUrl.val();
-                            $validationMessageForFuture.hide();
-                            $validationMessageForPast.hide();
-                            var d = new Date();
-                            var currentDate =
-                                d.getDate() +
-                                    "/" +
-                                    (d.getMonth() + 1) +
-                                    "/" +
-                                    (d.getFullYear());
-
-                            var futureDate =
-                                d.getDate() +
-                                    "/" +
-                                    (d.getMonth() + 1) +
-                                    "/" +
-                                    (d.getFullYear() + 2);
-
-                            if (Date.parse(enteredDate) - Date.parse(currentDate) < 0) {
-                                $formGroupUrl.addClass($formGroupErrorClass);
-                                $validationMessageForPast.show();
-                                $formStartDateIsValid = false;
-                            } else {
-                                if (Date.parse(enteredDate) > Date.parse(futureDate)) {
-                                    $formGroupUrl.addClass($formGroupErrorClass);
-                                    $validationMessageForFuture.show();
-                                    $formStartDateIsValid = false;
-
-                                } else {
-                                    $validationMessageForFuture.hide();
-                                    $validationMessageForPast.hide();
-                                }
-                            }
-                        }
-
-
-                    } else {
-                        $dayElementUrl.removeClass($elementErrorClass);
-                        $monthElementUrl.removeClass($elementErrorClass);
-                        $yearElementUrl.removeClass($elementErrorClass);
-                        $formGroupUrl.removeClass($formGroupErrorClass);
-                        $validationMessageUrlForDay.hide();
-                        $validationMessageUrlForMonth.hide();
-                        $validationMessageUrlForYear.hide();
-                        $validationMessageForPast.hide();
-                        $validationMessageForFuture.hide();
-                        $validationMessageForRequired.hide();
-                        $formStartDateIsValid = true;
-                    }
-
-                    //if (($formVenuesIsValid || $formRegionsIsValid) & $formCostIsValid & $formStartDateIsValid) {
-                    //    $("#addCourseSection2").submit();
-                    //}
-
-                    if (isClassroomBased && $formVenuesIsValid && $formCostIsValid && $formStartDateIsValid) {
-                        $("#addCourseSection2").submit();
-                    }
-
-                    if (isOnline && $formCostIsValid && $formStartDateIsValid) {
-                        $("#addCourseSection2").submit();
-                    }
-
-                    if (isWorkBased && $formRegionsIsValid && $formCostIsValid && $formStartDateIsValid) {
-                        $("#addCourseSection2").submit();
-                    }
-
-                    var errorArray = $("[class*='--error'");
-                    if (errorArray.length > 0) {
-                        $('html, body').scrollTop($('#' + errorArray[0].id).offset().top);
-                    }
-                });
-
-
-            var $goToSection1Link = $("#goToSection1Link");
-            $goToSection1Link.click(function() {
-                $("#addCourseSection2").attr("action", "AddCourseRunToAddCourse");
-                $("#addCourseSection2").submit();
-            });
-
 
         });
     })(jQuery);

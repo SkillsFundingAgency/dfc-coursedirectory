@@ -6,22 +6,65 @@
 @inject IOptions<HowYouWillLearnComponentSettings> howYouWillLearnComponentSettings
 
 @{
-    var regex = @"[a-zA-Z0-9 /\r\n?|\n\¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\" + "\"" + @"\\]+";
+    var regex = @"^[a-zA-Z0-9 /\n/\r/\¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`" + "\"" + "\\\\]+$";
+    var howYouWillLearnTextFieldMaxChars = howYouWillLearnComponentSettings.Value.TextFieldMaxChars;
 }
-<div class="govuk-form-group">
-    <div class="govuk-character-count" data-module="character-count" data-maxlength=@howYouWillLearnComponentSettings.Value.TextFieldMaxChars>
-        <div class="govuk-form-group" style="margin-bottom: 0;padding-bottom: 0">
-            <label class="govuk-label" for="course-for">
-                @Model.LabelText
-            </label>
-            <span id="course-for-hint" class="govuk-hint">
+
+
+<div class="govuk-character-count" data-module="character-count" data-maxlength=@howYouWillLearnTextFieldMaxChars>
+    <div class="govuk-form-group">
+        <label class="govuk-label" for="word-count">
+            @Model.LabelText
+        </label>
+        @if (!string.IsNullOrWhiteSpace(Model.HintText))
+        {
+            <span class="govuk-hint">
                 @Model.HintText
             </span>
-            <textarea asp-for="HowYouWillLearn" class="govuk-textarea js-character-count" id="textAreaHowYouWillLearn" name="HowYouWillLearn" rows="5"  type="text" 
-                      aria-describedby="@Model.AriaDescribedBy"
-                      val-max-length="500" val-max-length-message="How you’ll learn must be 500 characters or less"
+        }
+        <textarea class="govuk-textarea js-character-count " asp-for="@Model.HowYouWillLearn" rows="5"
+                 aria-describedby="@Model.AriaDescribedBy"
+                      val-max-length=@howYouWillLearnTextFieldMaxChars val-max-length-message="How you’ll learn must be @howYouWillLearnTextFieldMaxChars characters or less"
                       val-regex="@regex"
                       val-regex-message="How you’ll learn contains invalid characters"></textarea>
-        </div>
+
     </div>
 </div>
+
+<script>
+    (function ($) {
+        $(function () {
+
+            var $elementHowYouWillLearn = $("#@nameof(Model.HowYouWillLearn)");
+
+            $elementHowYouWillLearn.on("blur", function () {
+
+                var trimmed = $elementHowYouWillLearn.val().trim();
+                $elementHowYouWillLearn.val(trimmed);
+
+                var $characterCountValue = @howYouWillLearnTextFieldMaxChars;
+                var $countMessage = $("#HowYouWillLearn-info");
+
+                var $actualCharacterCount = $characterCountValue - $elementHowYouWillLearn.val().length;
+
+                if ($actualCharacterCount <= 0) {
+
+                } else {
+
+                    if ($actualCharacterCount === 1) {
+                        $countMessage.text("You have " + $actualCharacterCount + " character remaining");
+                    } else {
+                        $countMessage.text("You have " + $actualCharacterCount + " characters remaining");
+
+                        $countMessage.addClass('govuk-hint');
+                        $elementHowYouWillLearn.removeClass('govuk-textarea--error');
+                        $countMessage.removeClass('govuk-error-message');
+                        $countMessage.addClass('govuk-character-count__message');
+                    }
+                }
+
+            });
+
+        });
+    })(jQuery);
+</script>

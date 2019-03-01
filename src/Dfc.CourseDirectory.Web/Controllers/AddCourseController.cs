@@ -224,9 +224,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 viewModel.Month = addCourseSection2Session.Month;
                 viewModel.Year = addCourseSection2Session.Year;
                 viewModel.Url = addCourseSection2Session.Url;
-                viewModel.Cost = addCourseSection2Session.Cost == 0
+                viewModel.Cost = addCourseSection2Session.Cost == null
                     ? string.Empty
-                    : addCourseSection2Session.Cost.ToString(CultureInfo.InvariantCulture);
+                    : addCourseSection2Session.Cost.ToString();
                 viewModel.CostDescription = addCourseSection2Session.CostDescription;
                 viewModel.DurationLength = addCourseSection2Session.DurationLength.ToString();
 
@@ -296,9 +296,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 DeliveryMode = model.DeliveryMode.ToDescription(),
                 DeliveryModeEnum = model.DeliveryMode,
                 Url = model.Url,
-                Cost = model.Cost == 0
+                Cost = model.Cost == null
                     ? string.Empty
-                    : model.Cost.ToString(CultureInfo.InvariantCulture),
+                    : model.Cost.ToString(),
                 CostDescription = model.CostDescription,
                 CourseLength = model.DurationLength + " " + model.DurationUnit,
                 AttendancePattern = model.StudyMode.ToDescription(),
@@ -383,7 +383,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 DeliveryMode = addCourseRun.DeliveryMode.ToDescription(),
                 DeliveryModeEnum = addCourseRun.DeliveryMode,
                 Url = addCourseRun.Url,
-                Cost = addCourseRun.Cost == 0 ? string.Empty : addCourseRun.Cost.ToString(CultureInfo.InvariantCulture),
+                Cost = addCourseRun.Cost == null ? string.Empty : addCourseRun.Cost.ToString(),
                 CostDescription = addCourseRun.CostDescription,
                 CourseLength = addCourseRun.DurationLength + " " + addCourseRun.DurationUnit,
                 AttendancePattern = addCourseRun.StudyMode.ToDescription(),
@@ -595,8 +595,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     CostDescription = addCourseSection2.CostDescription,
                     DurationUnit = addCourseSection2.DurationUnit,
                     DurationValue = addCourseSection2.DurationLength,
-                    StudyMode = addCourseSection2.StudyMode,
-                    AttendancePattern = addCourseSection2.AttendanceMode,
+                    StudyMode = StudyMode.Undefined,
+                    AttendancePattern = AttendancePattern.Undefined,
                     Regions = addCourseSection2.SelectedRegions,
                     CreatedDate = DateTime.Now,
                     CreatedBy = "ProviderPortal-AddCourse", // TODO - Change to the name of the logged person 
@@ -622,8 +622,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     CostDescription = addCourseSection2.CostDescription,
                     DurationUnit = addCourseSection2.DurationUnit,
                     DurationValue = addCourseSection2.DurationLength,
-                    StudyMode = addCourseSection2.StudyMode,
-                    AttendancePattern = addCourseSection2.AttendanceMode,
+                    StudyMode = StudyMode.Undefined,
+                    AttendancePattern = AttendancePattern.Undefined,
                     Regions = GetRegions().RegionItems.Select(x => x.Id),
                     CreatedDate = DateTime.Now,
                     CreatedBy = "ProviderPortal-AddCourse",
@@ -669,7 +669,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 CreatedDate = DateTime.Now,
                 CreatedBy = "ProviderPortal-AddCourse", // TODO - Change to the name of the logged person
 
-                RecordStatus = RecordStatus.Live // TODO - To Be Decided
+                //RecordStatus = RecordStatus.Live // TODO - To Be Decided
             };
 
             var result = await _courseService.AddCourseAsync(course);
@@ -952,7 +952,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 viewModel.Month = addCourseSection2Session.Month;
                 viewModel.Year = addCourseSection2Session.Year;
                 viewModel.Url = addCourseSection2Session.Url;
-                viewModel.Cost = addCourseSection2Session.Cost == 0 ? string.Empty : addCourseSection2Session.Cost.ToString(CultureInfo.InvariantCulture);
+                viewModel.Cost = addCourseSection2Session.Cost == null ? string.Empty : addCourseSection2Session.Cost.ToString();
                 viewModel.CostDescription = addCourseSection2Session.CostDescription;
                 viewModel.DurationLength = addCourseSection2Session.DurationLength.ToString();
 
