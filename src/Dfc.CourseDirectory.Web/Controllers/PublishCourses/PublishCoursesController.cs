@@ -116,31 +116,33 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
 
         [Authorize]
         [HttpPost]
-        public IActionResult Index(PublishViewModel vm)
+        public async Task<IActionResult> Index(PublishViewModel vm)
         {
-            
-            vm.Courses = vm.Courses.Select( c => {
-                c.IsValid = true;
-                return c;
-            }).ToList();
+
+            //Uncomment to add Courses
+
+            //vm.Courses = vm.Courses.Select( c => {
+            //    c.IsValid = true;
+            //    return c;
+            //}).ToList();
+
+
+            //foreach (var course in vm.Courses)
+            //{
+            //    foreach (var courseRuns in course.CourseRuns)
+            //    {
+            //        courseRuns.RecordStatus = RecordStatus.Live;
+            //    }
+            //    var result = await _courseService.AddCourseAsync(course);
+
+            //    if (result.IsSuccess && result.HasValue)
+            //    {
+            //        successfulPublishedCourses++;
+            //    }
+
+            //}
 
             int successfulPublishedCourses = 0;
-            foreach (var course in vm.Courses)
-            {
-                foreach (var courseRuns in course.CourseRuns)
-                {
-                    courseRuns.RecordStatus = RecordStatus.Live;
-                }
-
-                var result = _courseService.AddCourseAsync(course);
-
-                if (result.Result.IsSuccess && result.Result.HasValue)
-                {
-                    successfulPublishedCourses++;
-                }
-                
-            }
-            //TODO replace with result from publish?
             PublishCompleteViewModel CompleteVM = new PublishCompleteViewModel()
             {
                 NumberOfCoursesPublished = successfulPublishedCourses
@@ -148,5 +150,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
 
             return View("Complete", CompleteVM);
         }
+
     }
 }
