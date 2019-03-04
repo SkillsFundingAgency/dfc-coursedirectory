@@ -163,7 +163,6 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                     // Mapping BulkUploadCourse to Course
                     var courses = MappingBulkUploadCourseToCourse(bulkUploadcourses, userId, out errors);
 
-
                     return errors;
                 }
             }
@@ -239,7 +238,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             errors = new List<string>();
             var validationMessages = new List<string>();
 
-            var courses = new List<Course>();       
+            var courses = new List<Course>();
             var listsCourseRuns = new List<BulkUploadCourseRun>();
 
             foreach (var bulkUploadcourse in bulkUploadcourses)
@@ -289,7 +288,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                         courseRun.RecordStatus = RecordStatus.BulkUloadPending;
                         validationMessages.Add($"NO Venue Name for Line { bulkUploadcourse.BulkUploadLineNumber },  LARS_QAN = { bulkUploadcourse.LearnAimRef }, ID = { bulkUploadcourse.ProviderCourseID }");
 
-                        
+
                     }
                     else
                     {
@@ -319,7 +318,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
                 courseRun.CourseName = bulkUploadcourse.CourseName;
                 courseRun.ProviderCourseID = bulkUploadcourse.ProviderCourseID;
-                
+
                 courseRun.FlexibleStartDate = bulkUploadcourse.FlexibleStartDate.Equals("Yes", StringComparison.InvariantCultureIgnoreCase) ? true : false;
 
                 DateTime specifiedStartDate;
@@ -353,7 +352,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                     courseRun.RecordStatus = RecordStatus.BulkUloadPending;
                     validationMessages.Add($"DurationUnit is Undefined, because you have entered ( { bulkUploadcourse.DurationUnit } ), Line { bulkUploadcourse.BulkUploadLineNumber },  LARS_QAN = { bulkUploadcourse.LearnAimRef }, ID = { bulkUploadcourse.ProviderCourseID }");
                 }
-                
+
                 int specifiedDurationValue;
                 if (int.TryParse(bulkUploadcourse.DurationValue, out specifiedDurationValue))
                 {
@@ -381,10 +380,10 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 courseRun.CreatedBy = userId;
                 courseRun.CreatedDate = DateTime.Now;
 
-                listsCourseRuns.Add(new BulkUploadCourseRun { LearnAimRef = bulkUploadcourse.LearnAimRef, CourseRun = courseRun } );
+                listsCourseRuns.Add(new BulkUploadCourseRun { LearnAimRef = bulkUploadcourse.LearnAimRef, CourseRun = courseRun });
             }
 
-            foreach(var course in courses)
+            foreach (var course in courses)
             {
                 course.CourseRuns = listsCourseRuns.Where(cr => cr.LearnAimRef == course.LearnAimRef).Select(cr => cr.CourseRun).ToList();
             }
@@ -405,9 +404,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
                 if (courseResult.IsSuccess && courseResult.HasValue)
                 {
-                    //CountProviderCourseMigrationSuccess++;
-                    //courseReport += $"The course is migarted  " + Environment.NewLine;
-                    //migrationSuccess = MigrationSuccess.Success;
+                    // Do nothing. Eventually we could have a count on successfully uploaded courses
                 }
                 else
                 {
