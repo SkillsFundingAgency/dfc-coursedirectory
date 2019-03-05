@@ -63,18 +63,18 @@
     }
 
     .error-box {
-        width: 80%;
+        width: 65%;
         height: auto;
         text-align: center;
         padding: 10px;
         margin: 0 auto;
         border-radius: 4px;
-        color: #ff0000;
-        border: solid 1px #ff0000;
+        color: #b10e1e;
+        border: solid 3px #b10e1e;
 
         &.no-error {
-            color: #22ad00;
-            border: solid 1px #22ad00;
+            color: #006435;
+            border: solid 3px #006435;
         }
     }
 
@@ -89,6 +89,14 @@
 
     .new-upload {
         margin-top: 40px;
+    }
+
+    .govuk-table__cell--numeric {
+        margin-left: 80%
+    }
+
+    .m100 {
+        margin-right: 100px
     }
 }
 

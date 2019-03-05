@@ -87,6 +87,14 @@
                                     </a>
                                 </li>
                             }
+                            @if (authorised.Succeeded)
+                            {
+                                <li class="govuk-header__navigation-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Migration" ? "govuk-header__navigation-item--active" : "")">
+                                    <a class="govuk-header__link" href="/Migration">
+                                        Migration
+                                    </a>
+                                </li>
+                            }
                         </ul>
                     </nav>
                 }
