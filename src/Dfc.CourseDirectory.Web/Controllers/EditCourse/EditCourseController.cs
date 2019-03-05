@@ -75,6 +75,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             {
                 var course = await _courseService.GetCourseByIdAsync(new GetCourseByIdCriteria(courseId.Value));
 
+                course.Value.CourseDescription = "";
                 if (course != null)
                 {
                     EditCourseViewModel vm = new EditCourseViewModel
