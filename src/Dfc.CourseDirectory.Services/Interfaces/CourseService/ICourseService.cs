@@ -20,5 +20,12 @@ namespace Dfc.CourseDirectory.Services.Interfaces.CourseService
 
         SelectRegionModel GetRegions();
 
+        Task<IResult<ICourseSearchResult>> GetCoursesByLevelForUKPRNAsync(ICourseSearchCriteria criteria);
+
+        IList<string> ValidateCourse(ICourse course);
+
+        IList<string> ValidateCourseRun(ICourseRun courseRun);
+
+        bool HasOnlyFollowingValidCharacters(string value);
     }
 }

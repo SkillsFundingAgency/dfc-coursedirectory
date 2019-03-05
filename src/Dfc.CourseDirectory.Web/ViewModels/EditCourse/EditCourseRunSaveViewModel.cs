@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Models;
 using Dfc.CourseDirectory.Models.Models.Courses;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -32,6 +33,8 @@ namespace Dfc.CourseDirectory.Web.ViewModels.EditCourse
         public string QualificationType { get; set; }
 
         public bool FlexibleStartDate { get; set; }
+
+        public PublishMode Mode { get; set; }
 
     }
 

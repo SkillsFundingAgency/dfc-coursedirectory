@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Common;
+using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Models.Courses;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.CourseService;
@@ -55,7 +56,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> Index(Guid? courseId, Guid courseRunId)
+        public async Task<IActionResult> Index(Guid? courseId, Guid courseRunId, PublishMode mode)
         {
             int? UKPRN;
 
@@ -91,6 +92,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                 {
                     EditCourseRunViewModel vm = new EditCourseRunViewModel
                     {
+                        Mode = mode,
                         CourseId = courseId.Value,
                         CourseRunId = courseRunId,
                         CourseName = courseRun?.CourseName,
@@ -113,7 +115,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                         Cost = courseRun.Cost?.ToString("F"),
                         CostDescription = courseRun.CostDescription,
                         AttendanceMode = courseRun.AttendancePattern,
-                        QualificationType = course.Value.QualificationType
+                        QualificationType = course.Value.QualificationType,
+                        NotionalNVQLevelv2 = course.Value.NotionalNVQLevelv2
                     };
 
                     if (courseRun.Regions != null)
@@ -167,7 +170,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                     {
                         courseRunForEdit.Cost = null;
                     }
-                    
+
                     courseRunForEdit.CostDescription = model.CostDescription;
                     courseRunForEdit.CourseName = model.CourseName;
                     courseRunForEdit.CourseURL = model.Url;
@@ -224,19 +227,46 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                             break;
                     }
 
+                    //todo when real data
+                    //switch (model.Mode)
+                    //{
+                    //    case PublishMode.BulkUpload:
+                    //        courseRunForEdit.RecordStatus = RecordStatus.BulkUploadReadyToGoLive;
+                    //        break;
+                    //    case PublishMode.Migration:
+                    //        courseRunForEdit.RecordStatus = RecordStatus.MigrationReadyToGoLive;
+                    //        break;
+                    //    default:
+                    //        courseRunForEdit.RecordStatus = RecordStatus.Live;
+                    //        break;
+
+                    //}
 
                     var updatedCourse = await _courseService.UpdateCourseAsync(courseForEdit.Value);
-                     if (updatedCourse.IsSuccess && updatedCourse.HasValue)
+                    if (updatedCourse.IsSuccess && updatedCourse.HasValue)
                     {
-                        return RedirectToAction("Courses", "Provider",
-                            new
-                            {
-                                notificationTitle = "Course edited",
-                                notificationMessage = "You edited",
-                                qualificationType = courseForEdit.Value.QualificationType,
-                                courseId = updatedCourse.Value.id,
-                                courseRunId = model.CourseRunId
-                            });
+
+                        switch (model.Mode)
+                        {
+                            case PublishMode.BulkUpload:
+                            case PublishMode.Migration:
+
+                                return RedirectToAction("Index", "PublishCourses",
+                                new
+                                {
+                                    Mode = model.Mode
+                                });
+                            default:
+                                return RedirectToAction("Courses", "Provider",
+                                    new
+                                    {
+                                        NotificationTitle = "Course edited",
+                                        NotificationMessage = "You edited",
+                                        qualificationType = courseForEdit.Value.QualificationType,
+                                        courseId = updatedCourse.Value.id
+                                    });
+
+                        }
                     }
 
 

@@ -15,6 +15,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             Throw.IfNull(UKPRNvalue, nameof(UKPRNvalue));
             UKPRN = UKPRNvalue;
         }
+
         protected override IEnumerable<object> GetEqualityComponents()
         {
             yield return UKPRN;
