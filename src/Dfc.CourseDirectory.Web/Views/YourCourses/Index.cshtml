@@ -1,4 +1,5 @@
-﻿@using Dfc.CourseDirectory.Web.ViewComponents.Notification
+﻿@using Dfc.CourseDirectory.Models.Enums
+@using Dfc.CourseDirectory.Web.ViewComponents.Notification
 
 @model Dfc.CourseDirectory.Web.ViewModels.YourCourses.YourCoursesViewModel
 
@@ -222,7 +223,8 @@
                                 <a class="govuk-link" 
                                     asp-controller="EditCourse" 
                                     asp-action="Index" 
-                                    asp-route-courseId="@course.Id">Edit course description</a>
+                                   asp-route-courseId="@course.Id"
+                                   asp-route-mode ="@PublishMode.Undefined">Edit course description</a>
                             </li>
                         </ul>
                     </summary>
@@ -386,14 +388,17 @@
                                                         asp-controller="EditCourseRun" 
                                                         asp-action="Index"
                                                         asp-route-courseId="@course.Id"
-                                                        asp-route-courseRunId="@courseRun.Id">Edit course details</a>
+                                                       asp-route-courseRunId="@courseRun.Id"
+                                                       asp-route-mode ="@PublishMode.Undefined"
+                                                       >Edit course details</a>
                                                 </li>
                                                 <li class="flex-item">
                                                     <a class="govuk-link" 
                                                         asp-controller="CopyCourseRun" 
                                                         asp-action="Index"
                                                         asp-route-courseId="@course.Id"
-                                                        asp-route-courseRunId="@courseRun.Id">Copy this course</a>
+                                                       asp-route-courseRunId="@courseRun.Id"
+                                                       asp-route-mode ="@PublishMode.Undefined">Copy this course</a>
                                                 </li>
                                                 <li class="flex-item">
                                                     <a class="govuk-link" href="">Archive this course</a>
