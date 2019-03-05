@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseFor;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.EntryRequirements;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.HowAssessed;
@@ -34,7 +35,8 @@ namespace Dfc.CourseDirectory.Web.ViewModels.EditCourse
         public bool? AdultEducationBudget { get; set; }
         public bool? AdvancedLearnerLoan{ get; set; }
 
-        public bool? FromBulkUpload { get; set; }
+        public PublishMode Mode { get; set; }
+
 
         public string NotionalNVQLevelv2 { get; set; }
 
