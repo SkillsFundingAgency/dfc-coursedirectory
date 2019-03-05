@@ -12,8 +12,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Security.Claims;
-using Dfc.CourseDirectory.Models.Enums;
-using Dfc.CourseDirectory.Models.Models.Courses;
 
 
 namespace Dfc.CourseDirectory.Web.Controllers
@@ -89,6 +87,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                 var errors = _bulkUploadService.ProcessBulkUpload(savedCsvFilePath, providerUKPRN, userId);
 
+                if (System.IO.File.Exists(savedCsvFilePath))
+                {
+                    System.IO.File.Delete(savedCsvFilePath);
+                }
+
                 if (errors.Any())
                 {
                     vm.errors = errors;
@@ -98,8 +101,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 else
                 {
                     // All good => redirect to BulkCourses action
-                    return RedirectToAction("Index", "PublishCourses", new { publishMode = PublishMode.BulkUpload });
-                   
+                    return RedirectToAction("Index", "PublishCourses");
                 }
             }
 

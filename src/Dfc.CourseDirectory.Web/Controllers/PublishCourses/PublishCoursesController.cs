@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
 using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Models.Enums;
+using Dfc.CourseDirectory.Models.Interfaces.Courses;
 using Dfc.CourseDirectory.Models.Models.Courses;
+using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Web.ViewModels.PublishCourses;
 using Microsoft.AspNetCore.Authorization;
@@ -188,19 +192,33 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
 
         [Authorize]
         [HttpPost]
-        public IActionResult Index(PublishViewModel vm)
+        public async Task<IActionResult> Index(PublishViewModel vm)
         {
-            //TODO publish
+            PublishCompleteViewModel CompleteVM = new PublishCompleteViewModel();
 
-
-
-            //TODO replace with result from publish?
-            PublishCompleteViewModel CompleteVM = new PublishCompleteViewModel()
+            int? UKPRN = _session.GetInt32("UKPRN");
+            if (!UKPRN.HasValue)
             {
-                NumberOfCoursesPublished = 10,
-                Mode = vm.PublishMode
-            };
+                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
+            }
+            //Archive any existing courses
+            var archiveExistingCourse = await _courseService.ArchiveProviderLiveCourses(UKPRN);
 
+            foreach (var course in vm.Courses)
+            {
+                course.IsValid = true;
+
+                foreach (var courseRuns in course.CourseRuns)
+                {
+                    courseRuns.RecordStatus = RecordStatus.Live;
+                }
+                var result = await _courseService.AddCourseAsync(course);
+
+                if (result.IsSuccess && result.HasValue)
+                {
+                    CompleteVM.NumberOfCoursesPublished++;
+                }
+            }
             return View("Complete", CompleteVM);
         }
 
