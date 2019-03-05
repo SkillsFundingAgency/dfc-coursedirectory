@@ -36,7 +36,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels.EditCourse
         public bool? AdvancedLearnerLoan{ get; set; }
 
         public PublishMode Mode { get; set; }
-}
+
 
         public string NotionalNVQLevelv2 { get; set; }
 
