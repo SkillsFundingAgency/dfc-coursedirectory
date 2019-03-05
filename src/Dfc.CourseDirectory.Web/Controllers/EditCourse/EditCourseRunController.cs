@@ -260,6 +260,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                                 return RedirectToAction("Courses", "Provider",
                                     new
                                     {
+                                        level = courseForEdit.Value.NotionalNVQLevelv2,
                                         NotificationTitle = "Course edited",
                                         NotificationMessage = "You edited",
                                         qualificationType = courseForEdit.Value.QualificationType,
