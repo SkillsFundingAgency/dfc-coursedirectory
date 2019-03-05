@@ -87,6 +87,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                 var errors = _bulkUploadService.ProcessBulkUpload(savedCsvFilePath, providerUKPRN, userId);
 
+                if (System.IO.File.Exists(savedCsvFilePath))
+                {
+                    System.IO.File.Delete(savedCsvFilePath);
+                }
+
                 if (errors.Any())
                 {
                     vm.errors = errors;
