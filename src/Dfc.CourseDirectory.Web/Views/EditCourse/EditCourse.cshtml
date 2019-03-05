@@ -21,6 +21,19 @@
     <h1 class="govuk-heading-l" style="padding-top: 20px;">
         Edit Course
     </h1>
+    
+    <div id="errorsummary" style ="display:none">
+        @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+        {
+
+            NotificationTitle = "There is an issue with this qualification",
+            NotificationMessage = "",
+            ClassType = "error-summary"
+        });
+    </div>
+
+    
+
 
     <h3 class="govuk-heading-m">Course description</h3>
 
@@ -62,7 +75,7 @@
         <button type="submit" class="govuk-button" id="save">
             Save
         </button>
-        
+
         @switch (Model.Mode)
         {
             case PublishMode.Migration:
@@ -75,8 +88,8 @@
                 @Html.ActionLink("Cancel", "Courses", "Provider", new { qualificationType = @Model.QualificationType }, new { @class = "govuk-link" })
                 break;
         }
-     
-       
+
+
     </div>
 
 </form>
@@ -84,6 +97,7 @@
 <script>
     (function ($) {
         $(function () {
+            var validStates = [];
             var $save = $("#save");
             var $courseFor = $("#@nameof(Model.CourseFor)").govUkTextarea();
             var $entryRequirements = $("#@nameof(Model.EntryRequirements)").govUkTextarea();
@@ -94,16 +108,46 @@
             var $whereNext = $("#@nameof(Model.WhereNext)").govUkTextarea();
 
 
+            validate();
+
+            var errorArray = $("[class*='govuk-error-message'");
+            if (errorArray.length > 0) {
+
+
+                var $errorField = $("#" + errorArray[0].nextElementSibling.id);
+                $('html,body').animate({ scrollTop: $errorField.parent().offset().top }, 'slow');
+
+                var notificationBody = "";
+                $.each(errorArray, function (index, value) {
+                    var $field = value.parentElement.parentElement.parentElement.id;
+
+                    notificationBody = notificationBody + "<a href='#' class='govuk-link' style=color:#b10e1e data-error-field=" + $field + ">"+ value.innerHTML +"</a></br>";
+                });
+
+                $('.cd-error-summary__body').html(notificationBody);
+
+                $('#errorsummary').css({ "display": "block" });
+
+                
+                
+            }
+
+            $('.govuk-link').on("click",
+                function(e) {
+                    e.preventDefault();
+
+                    var $field = $("#" + $(this).attr("data-error-field"));
+                    $('html,body').animate({ scrollTop: $field.offset().top }, 'slow');
+
+                });
+
+
             function isAllValid(currentValue) {
                 return currentValue === true;
             }
 
-            $save.on("click", function (e) {
-                e.preventDefault();
-
-
-
-                var validStates = [];
+            function validate() {
+               
 
 
                 if (!$.requiredValidate($courseFor.val())) {
@@ -113,7 +157,7 @@
                     !$.regexValidate({ regex: $courseFor.attr("val-regex") }, $courseFor.val())) {
                     $courseFor.govUkTextarea("invalidState", $courseFor.attr("val-regex-message"));
                     validStates.push(false);
-                }else if (
+                } else if (
                     !$.maxLengthValidate({ max: $courseFor.attr("val-max-length") }, $courseFor.val())) {
                     $courseFor.govUkTextarea("invalidState", $courseFor.attr("val-max-length-message"));
                     validStates.push(false);
@@ -127,10 +171,11 @@
                 if (!$.regexValidate({ regex: $entryRequirements.attr("val-regex") }, $entryRequirements.val())) {
                     $entryRequirements.govUkTextarea("invalidState", $entryRequirements.attr("val-regex-message"));
                     validStates.push(false);
-                }else if (
+                } else if (
                     !$.maxLengthValidate({ max: $entryRequirements.attr("val-max-length") }, $entryRequirements.val())) {
                     $entryRequirements.govUkTextarea("invalidState", $entryRequirements.attr("val-max-length-message"));
-                    validStates.push(false);                }
+                    validStates.push(false);
+                }
                 else {
 
                     $entryRequirements.govUkTextarea("validState");
@@ -141,10 +186,11 @@
                 if (!$.regexValidate({ regex: $whatWillLearn.attr("val-regex") }, $whatWillLearn.val())) {
                     $whatWillLearn.govUkTextarea("invalidState", $whatWillLearn.attr("val-regex-message"));
                     validStates.push(false);
-                }else if (
+                } else if (
                     !$.maxLengthValidate({ max: $whatWillLearn.attr("val-max-length") }, $whatWillLearn.val())) {
                     $whatWillLearn.govUkTextarea("invalidState", $whatWillLearn.attr("val-max-length-message"));
-                    validStates.push(false);                }
+                    validStates.push(false);
+                }
                 else {
 
                     $whatWillLearn.govUkTextarea("validState");
@@ -155,10 +201,11 @@
                 if (!$.regexValidate({ regex: $howYouWillLearn.attr("val-regex") }, $howYouWillLearn.val())) {
                     $howYouWillLearn.govUkTextarea("invalidState", $howYouWillLearn.attr("val-regex-message"));
                     validStates.push(false);
-                }else if (
+                } else if (
                     !$.maxLengthValidate({ max: $howYouWillLearn.attr("val-max-length") }, $howYouWillLearn.val())) {
                     $howYouWillLearn.govUkTextarea("invalidState", $howYouWillLearn.attr("val-max-length-message"));
-                    validStates.push(false);                }
+                    validStates.push(false);
+                }
                 else {
 
                     $howYouWillLearn.govUkTextarea("validState");
@@ -169,10 +216,11 @@
                 if (!$.regexValidate({ regex: $whatYouNeed.attr("val-regex") }, $whatYouNeed.val())) {
                     $whatYouNeed.govUkTextarea("invalidState", $whatYouNeed.attr("val-regex-message"));
                     validStates.push(false);
-                }else if (
+                } else if (
                     !$.maxLengthValidate({ max: $whatYouNeed.attr("val-max-length") }, $whatYouNeed.val())) {
                     $whatYouNeed.govUkTextarea("invalidState", $whatYouNeed.attr("val-max-length-message"));
-                    validStates.push(false);                }
+                    validStates.push(false);
+                }
                 else {
 
                     $whatYouNeed.govUkTextarea("validState");
@@ -183,10 +231,11 @@
                 if (!$.regexValidate({ regex: $howAssessed.attr("val-regex") }, $howAssessed.val())) {
                     $howAssessed.govUkTextarea("invalidState", $howAssessed.attr("val-regex-message"));
                     validStates.push(false);
-                }else if (
+                } else if (
                     !$.maxLengthValidate({ max: $howAssessed.attr("val-max-length") }, $howAssessed.val())) {
                     $howAssessed.govUkTextarea("invalidState", $howAssessed.attr("val-max-length-message"));
-                    validStates.push(false);                }
+                    validStates.push(false);
+                }
                 else {
 
                     $howAssessed.govUkTextarea("validState");
@@ -207,14 +256,17 @@
                     $whereNext.govUkTextarea("validState");
                     validStates.push(true);
                 }
+            }
+
+            $save.on("click", function (e) {
+                e.preventDefault();
+
+                validate();
 
                 if (validStates.every(isAllValid)) {
 
-                    //alert("OK");
                    $("#editCourse").submit();
-                } else {
-                    //alert("error");
-                }
+                } 
 
             });
 
