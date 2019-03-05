@@ -1,4 +1,5 @@
 ﻿
+@using Dfc.CourseDirectory.Models.Enums
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseFor
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.EntryRequirements
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.FundingOptions
@@ -8,13 +9,14 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatYouNeed
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhereNext
 @using Dfc.CourseDirectory.Web.ViewComponents.Notification
+@using FundingOptions = Dfc.CourseDirectory.Web.ViewComponents.Courses.FundingOptions.FundingOptions
 
 @model Dfc.CourseDirectory.Web.ViewModels.EditCourse.EditCourseViewModel
 
 <form asp-controller="EditCourse" asp-action="Index" method="post" id="editCourse">
 
     @Html.HiddenFor(x => x.CourseId)
-    @Html.HiddenFor(x => x.FromBulkUpload)
+    @Html.HiddenFor(x => x.Mode)
 
     <h1 class="govuk-heading-l" style="padding-top: 20px;">
         Edit Course
@@ -60,15 +62,20 @@
         <button type="submit" class="govuk-button" id="save">
             Save
         </button>
-
-        @if (Model.FromBulkUpload.Value)
+        
+        @switch (Model.Mode)
         {
-            @Html.ActionLink("Cancel", "Index", "PublishCourses", new { qualificationType = @Model.QualificationType }, new { @class = "govuk-link" })
+            case PublishMode.Migration:
+                @Html.ActionLink("Cancel", "Index", "PublishCourses", new { publishMode = Model.Mode }, new { @class = "govuk-link" })
+                break;
+            case PublishMode.BulkUpload:
+                @Html.ActionLink("Cancel", "Index", "PublishCourses", new { publishMode = Model.Mode }, new { @class = "govuk-link" })
+                break;
+            default:
+                @Html.ActionLink("Cancel", "Courses", "Provider", new { qualificationType = @Model.QualificationType }, new { @class = "govuk-link" })
+                break;
         }
-        else
-        {
-            @Html.ActionLink("Cancel", "Courses", "Provider", new { qualificationType = @Model.QualificationType }, new { @class = "govuk-link" })
-        }
+     
        
     </div>
 

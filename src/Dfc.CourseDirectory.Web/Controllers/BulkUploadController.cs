@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Security.Claims;
+using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Models.Courses;
 
 
@@ -76,6 +77,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
                 string webRoot = _env.WebRootPath;
+                if (!Directory.Exists(webRoot))
+                    Directory.CreateDirectory(webRoot);
                 string bulkUploadFileNewName = string.Format(@"{0}-{1}", DateTime.Now.ToString("yyMMdd-HHmmss"), bulkUploadFile.FileName);
                 string savedCsvFilePath = string.Format(@"{0}\BulkUploads\{1}", webRoot, bulkUploadFileNewName);
 
@@ -95,7 +98,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 else
                 {
                     // All good => redirect to BulkCourses action
-                    return RedirectToAction("Index", "PublishCourses");
+                    return RedirectToAction("Index", "PublishCourses", new { publishMode = PublishMode.BulkUpload });
+                   
                 }
             }
 

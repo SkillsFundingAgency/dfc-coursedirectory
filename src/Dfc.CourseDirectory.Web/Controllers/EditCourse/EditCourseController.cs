@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Common;
+using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseTextService;
@@ -57,7 +58,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> Index(Guid? courseId, bool fromBulkUpload)
+        public async Task<IActionResult> Index(Guid? courseId, bool fromBulkUpload, PublishMode mode)
         {
             int? UKPRN;
 
@@ -78,7 +79,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                 {
                     EditCourseViewModel vm = new EditCourseViewModel
                     {
-                        FromBulkUpload = fromBulkUpload,
+                        Mode = mode,
                         CourseFor = new CourseForModel()
                         {
                             LabelText = "Who is the course for?",
@@ -141,6 +142,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                     vm.QualificationType = course?.Value?.QualificationType;
                     vm.AdultEducationBudget = course?.Value?.AdultEducationBudget;
                     vm.AdvancedLearnerLoan = course?.Value?.AdvancedLearnerLoan;
+                    vm.NotionalNVQLevelv2 = course?.Value?.NotionalNVQLevelv2;
 
                     return View("EditCourse", vm);
                 }
@@ -173,33 +175,35 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                     courseForEdit.Value.AdvancedLearnerLoan = model.AdvancedLearnerLoan;
 
                     //todo when real data
-                    //if (model.fromBulkUpload)
+                    //if (model.Mode == PublishMode.BulkUpload)
                     //{
                     // courseForEdit.Value.IsValid = true;
                     //}
 
+
                     var updatedCourse = await _courseService.UpdateCourseAsync(courseForEdit.Value);
 
-                    if (model.fromBulkUpload)
+                    switch (model.Mode)
                     {
-                        return RedirectToAction("Index", "PublishCourses",
-                            new
-                            {
-                               
-                            });
+                        case PublishMode.BulkUpload:
+                        case PublishMode.Migration:
+                            return RedirectToAction("Index", "PublishCourses",
+                                new
+                                {
+                                    Mode=model.Mode
+                                });
+                        default:
+                            return RedirectToAction("Courses", "Provider",
+                                new
+                                {
+                                    NotificationTitle = "Course edited",
+                                    NotificationMessage = "You edited",
+                                    qualificationType = courseForEdit.Value.QualificationType,
+                                    courseId = updatedCourse.Value.id
+                                });
+  
                     }
-                    else
-                    {
-
-                        return RedirectToAction("Courses", "Provider",
-                            new
-                            {
-                                NotificationTitle = "Course edited",
-                                NotificationMessage = "You edited",
-                                qualificationType = courseForEdit.Value.QualificationType,
-                                courseId = updatedCourse.Value.id
-                            });
-                    }
+                   
 
                 }
             }
