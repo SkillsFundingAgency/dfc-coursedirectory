@@ -16,6 +16,7 @@ using Dfc.CourseDirectory.Models.Models.Courses;
 using System.Net;
 using System.Text.RegularExpressions;
 using Dfc.CourseDirectory.Common.Settings;
+using System.Linq;
 
 namespace Dfc.CourseDirectory.Services.CourseService
 {
@@ -460,7 +461,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             return validationMessages;
         }
 
-        public IList<string> ValidateCourseRun(ICourseRun courseRun)
+        public IList<string> ValidateCourseRun(ICourseRun courseRun, ValidationMode validationMode)
         {
             var validationMessages = new List<string>();
 
@@ -472,28 +473,25 @@ namespace Dfc.CourseDirectory.Services.CourseService
             if (courseRun.CourseName.Length > 255)
                 validationMessages.Add($"Course Name must be 255 characters or less");
 
-            //[Required(AllowEmptyStrings = false, ErrorMessage = "Enter Course Name")]
-            //[MaxLength(255, ErrorMessage = "The maximum length of Course Name is 255 characters")]
-            //[RegularExpression(@"[a-zA-Z0-9 \¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\" + "\"" + @"\\]+", ErrorMessage = "Course Name contains invalid characters")]
-            //public string CourseName { get; set; }
-
             // ProviderCourseID
             if (!HasOnlyFollowingValidCharacters(courseRun.ProviderCourseID))
                 validationMessages.Add("ID contains invalid characters");
             if (courseRun.ProviderCourseID.Length > 255)
                 validationMessages.Add($"The maximum length of 'ID' is 255 characters");
 
+            // DeliveryMode
             switch (courseRun.DeliveryMode)
             {
                 case DeliveryMode.ClassroomBased:
                     if(courseRun.VenueId == null || courseRun.VenueId == Guid.Empty)
-                        validationMessages.Add($"Course Name must be 255 characters or less");
+                        validationMessages.Add($"Select a venue");
                     break;
                 case DeliveryMode.Online:
                     //courseRun.DeliveryMode = DeliveryMode.WorkBased;
                     break;
                 case DeliveryMode.WorkBased:
-                    //courseRun.DeliveryMode = DeliveryMode.Online;
+                    if (courseRun.Regions == null || courseRun.Regions.Count().Equals(0))
+                        validationMessages.Add($"Select a region");
                     break;
                 case DeliveryMode.Undefined: // Question ???
                 default:
@@ -501,16 +499,42 @@ namespace Dfc.CourseDirectory.Services.CourseService
                     break;
             }
 
+            // StartDate & FlexibleStartDate
+            if (courseRun.StartDate != null)
+            {
+                switch (validationMode)
+                {
+                    case ValidationMode.AddCourse:
+                        if (courseRun.StartDate < DateTime.Now || courseRun.StartDate > DateTime.Now.AddYears(2))
+                            validationMessages.Add($"Start Date should not be in the past and not more than 2 years in the future");
+                        break;
+                    case ValidationMode.EditCourse:
+                        //
+                        break;
+                    case ValidationMode.BulkUploadCourse:
+                        //
+                        break;
+                    case ValidationMode.MigrateCourse:
+                        if (courseRun.StartDate < DateTime.Now.AddMonths(-3))
+                            validationMessages.Add($"Start Date is older than 3 months");
+                        break;
+                    case ValidationMode.Undefined: // Question ???
+                    default:
+                        validationMessages.Add($"Validation Mode was not defined.");
+                        break;
+                }
+            }
 
-            //public Guid? VenueId { get; set; }
+            if (courseRun.StartDate == null && courseRun.FlexibleStartDate == false)
+                validationMessages.Add($"Either 'Defined Start Date' or 'Flexible Start Date' has to be provided");
 
-            //public DeliveryMode DeliveryMode { get; set; }
-            //public bool FlexibleStartDate { get; set; }
+            // CourseURL
+            if (!IsValidUrl(courseRun.CourseURL))
+                validationMessages.Add("The format of URL is incorrect");
+            if (courseRun.CourseURL.Length > 255)
+                validationMessages.Add($"The maximum length of URL is 255 characters");
 
-            //[DisplayFormat(DataFormatString = "{0:d}")]
-            //public DateTime? StartDate { get; set; }
-            //public string CourseURL { get; set; }
-            //[DisplayFormat(DataFormatString = "{0:N}", ApplyFormatInEditMode = true)]
+
             //public decimal? Cost { get; set; }
             //public string CostDescription { get; set; }
             //public DurationUnit DurationUnit { get; set; }
@@ -519,7 +543,6 @@ namespace Dfc.CourseDirectory.Services.CourseService
             //public int? DurationValue { get; set; }
             //public StudyMode StudyMode { get; set; }
             //public AttendancePattern AttendancePattern { get; set; }
-            //public IEnumerable<string> Regions { get; set; }
 
 
 
@@ -528,7 +551,15 @@ namespace Dfc.CourseDirectory.Services.CourseService
 
         public bool HasOnlyFollowingValidCharacters(string value)
         {
-            string regex = "^[a-zA-Z0-9 /\n/\r/\\¬\\!\\£\\$\\%\\^\\&\\*\\(\\)_\\+\\-\\=\\{\\}\\[\\]\\;\\:\\@\'\\#\\~\\,\\<\\>\\.\\?\\/\\|\\`" + "\"" + "\\\\]+$";
+            string regex = @"^[a-zA-Z0-9 /\n/\r/\¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`" + "\"" + "\\\\]+$";
+            var validUKPRN = Regex.Match(value, regex, RegexOptions.IgnoreCase);
+
+            return validUKPRN.Success;
+        }
+
+        public bool IsValidUrl(string value)
+        {
+            string regex = @"^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$";
             var validUKPRN = Regex.Match(value, regex, RegexOptions.IgnoreCase);
 
             return validUKPRN.Success;
