@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Models.Courses;
 
 namespace Dfc.CourseDirectory.Web.ViewModels.PublishCourses
@@ -8,5 +9,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels.PublishCourses
         public IEnumerable<Course> Courses { get; set; }
 
         public int NumberOfCoursesInFiles { get; set; }
+
+        public PublishMode PublishMode { get; set; }
     }
 }

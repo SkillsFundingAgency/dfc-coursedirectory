@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Models;
 using Dfc.CourseDirectory.Models.Models.Courses;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -35,7 +36,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels.EditCourse
 
         public bool FlexibleStartDate { get; set; }
 
-        public bool? FromBulkUpload { get; set; }
+        public PublishMode Mode { get; set; }
 
         public string NotionalNVQLevelv2 { get; set; }
 

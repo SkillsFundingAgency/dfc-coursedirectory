@@ -1,4 +1,5 @@
-﻿@using Dfc.CourseDirectory.Models.Models.Courses
+﻿@using Dfc.CourseDirectory.Models.Enums
+@using Dfc.CourseDirectory.Models.Models.Courses
 @using Dfc.CourseDirectory.Web.ViewComponents.AdvancedLearnerLoan
 @using Dfc.CourseDirectory.Web.ViewComponents.CourseName
 @using Dfc.CourseDirectory.Web.ViewComponents.CourseProviderReference
@@ -24,7 +25,7 @@
     @Html.HiddenFor(x => x.CourseId)
     @Html.HiddenFor(x => x.CourseRunId)
     @Html.HiddenFor(x => x.QualificationType)
-    @Html.HiddenFor(x => x.FromBulkUpload)
+    @Html.HiddenFor(x => x.Mode)
 
     <div id="sectionCourseName">
         @await Component.InvokeAsync(nameof(CourseName), new CourseNameModel
@@ -183,7 +184,20 @@
         <button name="saveButton" type="submit" class="govuk-button" id="save">
             Save
         </button>
-        @Html.ActionLink("Cancel", "Courses", "Provider", new { level = @Model.NotionalNVQLevelv2 }, new { @class = "govuk-link" })
+     
+        
+        @switch (Model.Mode)
+        {
+            case PublishMode.Migration:
+                @Html.ActionLink("Cancel", "Index", "PublishCourses", new { publishMode = Model.Mode }, new { @class = "govuk-link" })
+                break;
+            case PublishMode.BulkUpload:
+                @Html.ActionLink("Cancel", "Index", "PublishCourses", new { publishMode = Model.Mode }, new { @class = "govuk-link" })
+                break;
+            default:
+                @Html.ActionLink("Cancel", "Courses", "Provider", new { qualificationType = @Model.QualificationType }, new { @class = "govuk-link" })
+                break;
+        }
     </div>
 
 </form>
