@@ -13,6 +13,7 @@ namespace Dfc.CourseDirectory.Services.Interfaces.CourseService
     public interface ICourseSearchOuterGrouping
     {
         string QualType { get; }
+        string Level { get; }
         IEnumerable<ICourseSearchInnerGrouping> Value { get; set; }
     }
 
