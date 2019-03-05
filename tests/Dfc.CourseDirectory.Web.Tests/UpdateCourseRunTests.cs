@@ -32,7 +32,7 @@ namespace Dfc.CourseDirectory.Web.Tests
         //    HttpContextAccessor contextAccessor = new HttpContextAccessor();
         //    var settings = new CourseServiceSettings()
         //    {
-        //        ApiUrl = "https://dfc-dev-prov-course-fa.azurewebsites.net/api/",
+        //        ApiUrl = "",
         //        ApiKey = ""
         //    };
 
@@ -45,7 +45,7 @@ namespace Dfc.CourseDirectory.Web.Tests
         //    vm.NumberOfCoursesInFiles = vm.Courses.Count();
         //    //var course = courses2.SingleOrDefault(x => x.id == model.CourseId);
 
-        //   // var courserun = course.CourseRuns.SingleOrDefault(x => x.id == model.courseRun.id);
+        //    // var courserun = course.CourseRuns.SingleOrDefault(x => x.id == model.courseRun.id);
 
         //    //Arrange
         //    var controller = new PublishCoursesController(

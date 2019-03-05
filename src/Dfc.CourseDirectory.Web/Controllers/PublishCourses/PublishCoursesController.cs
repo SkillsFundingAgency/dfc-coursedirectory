@@ -118,38 +118,35 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
         [HttpPost]
         public async Task<IActionResult> Index(PublishViewModel vm)
         {
+            PublishCompleteViewModel CompleteVM = new PublishCompleteViewModel();
 
-            //Uncomment to add Courses
-
-            //vm.Courses = vm.Courses.Select( c => {
-            //    c.IsValid = true;
-            //    return c;
-            //}).ToList();
-
-
-            //foreach (var course in vm.Courses)
-            //{
-            //    foreach (var courseRuns in course.CourseRuns)
-            //    {
-            //        courseRuns.RecordStatus = RecordStatus.Live;
-            //    }
-            //    var result = await _courseService.AddCourseAsync(course);
-
-            //    if (result.IsSuccess && result.HasValue)
-            //    {
-            //        successfulPublishedCourses++;
-            //    }
-
-            //}
-
-            int successfulPublishedCourses = 0;
-            PublishCompleteViewModel CompleteVM = new PublishCompleteViewModel()
+            int? UKPRN = _session.GetInt32("UKPRN");
+            if (!UKPRN.HasValue)
             {
-                NumberOfCoursesPublished = successfulPublishedCourses
-            };
+                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
+            }
+            //Archive any existing courses
+            var archiveExistingCourse = await _courseService.ArchiveProviderLiveCourses(UKPRN);
 
+            foreach (var course in vm.Courses)
+            {
+                course.IsValid = true;
+
+                foreach (var courseRuns in course.CourseRuns)
+                {
+                    courseRuns.RecordStatus = RecordStatus.Live;
+                }
+                var result = await _courseService.AddCourseAsync(course);
+
+                if (result.IsSuccess && result.HasValue)
+                {
+                    CompleteVM.NumberOfCoursesPublished++;
+                }
+            }
             return View("Complete", CompleteVM);
         }
+
+        
 
     }
 }

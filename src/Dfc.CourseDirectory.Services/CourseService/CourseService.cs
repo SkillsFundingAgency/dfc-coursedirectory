@@ -13,6 +13,7 @@ using Dfc.CourseDirectory.Models.Models;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Newtonsoft.Json;
 using Dfc.CourseDirectory.Models.Models.Courses;
+using Dfc.CourseDirectory.Models.Enums;
 
 namespace Dfc.CourseDirectory.Services.CourseService
 {
@@ -24,6 +25,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
         private readonly Uri _getYourCoursesUri;
         private readonly Uri _updateCourseUri;
         private readonly Uri _getCourseByIdUri;
+        private readonly Uri _archiveLiveCoursesUri;
 
         public CourseService(
             ILogger<CourseService> logger,
@@ -41,6 +43,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             _getYourCoursesUri = settings.Value.ToGetYourCoursesUri();
             _updateCourseUri = settings.Value.ToUpdateCourseUri();
             _getCourseByIdUri = settings.Value.ToGetCourseByIdUri();
+            _archiveLiveCoursesUri = settings.Value.ToArchiveLiveCoursesUri();
         }
 
         public SelectRegionModel GetRegions()
@@ -162,6 +165,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             }
 
         }
+
         public async Task<IResult<ICourseSearchResult>> GetYourCoursesByUKPRNAsync(ICourseSearchCriteria criteria)
         {
             Throw.IfNull(criteria, nameof(criteria));
@@ -208,9 +212,6 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 _logger.LogMethodExit();
             }
         }
-
-
-
 
         public async Task<IResult<ICourse>> AddCourseAsync(ICourse course)
         {
@@ -263,8 +264,6 @@ namespace Dfc.CourseDirectory.Services.CourseService
             }
         }
 
-
-
         public async Task<IResult<ICourse>> UpdateCourseAsync(ICourse course)
         {
             _logger.LogMethodEnter();
@@ -315,9 +314,29 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 _logger.LogMethodExit();
             }
         }
-        
+
+        public async Task<IResult> ArchiveProviderLiveCourses(int? UKPRN)
+        {
+            Throw.IfNull(UKPRN, nameof(UKPRN));
+
+            var response = await _httpClient.GetAsync(new Uri(_archiveLiveCoursesUri.AbsoluteUri + "&UKPRN=" + UKPRN));
+            _logger.LogHttpResponseMessage("Archive courses service http response", response);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return Result.Ok();
+
+            }
+            else
+            {
+                return Result.Fail("Archive courses service unsuccessful http response");
+            }
+
+            
+        }
+
+
     }
-    
 
     internal static class IGetCourseByIdCriteriaExtensions
     {
@@ -358,6 +377,10 @@ namespace Dfc.CourseDirectory.Services.CourseService
         internal static Uri ToGetCourseByIdUri(this ICourseServiceSettings extendee)
         {
             return new Uri($"{extendee.ApiUrl + "GetCourseById?code=" + extendee.ApiKey}");
+        }
+        internal static Uri ToArchiveLiveCoursesUri(this ICourseServiceSettings extendee)
+        {
+            return new Uri($"{extendee.ApiUrl + "ArchiveProvidersLiveCourses?code=" + extendee.ApiKey}");
         }
     }
 }
