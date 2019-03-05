@@ -263,6 +263,8 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                     course.AdvancedLearnerLoan = bulkUploadcourse.AdvancedLearnerLoan.Equals("Yes", StringComparison.InvariantCultureIgnoreCase) ? true : false;
                     course.AdultEducationBudget = bulkUploadcourse.AdultEducationBudget.Equals("Yes", StringComparison.InvariantCultureIgnoreCase) ? true : false;
 
+                    course.IsValid = _courseService.ValidateCourse(course).Any() ? false : true;
+
                     course.CreatedBy = userId;
                     course.CreatedDate = DateTime.Now;
 

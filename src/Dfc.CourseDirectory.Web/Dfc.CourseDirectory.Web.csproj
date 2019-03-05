@@ -42,7 +42,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\BulkUploads\" />
     <Folder Include="wwwroot\vendor\" />
   </ItemGroup>
 
