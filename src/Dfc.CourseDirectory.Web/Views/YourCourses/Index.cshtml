@@ -173,28 +173,24 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-one-quarter">
         <ul class="cd__your-courses__filters-list">
-            <li>
-                <span class="govuk-body govuk-!-font-weight-bold">Levels</span>
-            </li>
-            <hr class="cd__your-courses__filters-list__break">
             @foreach (var filter in Model.LevelFilters)
             {
                 @if (filter.IsSelected)
                 {
                     <li>
-                        <a class="cd__your-courses__filters-list__link cd__your-courses__filters-list__link--selected"
-                           asp-controller="Provider"
-                           asp-action="Courses"
-                           asp-route-level="@filter.Value">@filter.Name (@filter.Facet)</a>
+                        <a class="cd__your-courses__filters-list__link cd__your-courses__filters-list__link--selected" 
+                            asp-controller="YourCourses" 
+                            asp-action="Index" 
+                            asp-route-level="@filter.Value">@filter.Name (@filter.Facet)</a>
                     </li>
                 }
                 else
                 {
                     <li>
-                        <a class="cd__your-courses__filters-list__link"
-                           asp-controller="Provider"
-                           asp-action="Courses"
-                           asp-route-level="@filter.Value">@filter.Name (@filter.Facet)</a>
+                        <a class="cd__your-courses__filters-list__link" 
+                            asp-controller="YourCourses" 
+                            asp-action="Index" 
+                            asp-route-level="@filter.Value">@filter.Name (@filter.Facet)</a>
                     </li>
                 }
                 <hr class="cd__your-courses__filters-list__break">
@@ -208,7 +204,7 @@
                 <details id="@course.Id" class="govuk-details" data-courseid="@course.Id">
                     <summary class="govuk-details__summary">
                         <span class="govuk-details__summary-text">
-                            @course.QualificationTitle (@course.Facet)
+                            @course.QualificationTitle
                         </span>
                         <ul>
                             @if (!string.IsNullOrEmpty(course.LearnAimRef))
@@ -224,9 +220,9 @@
                                 <li>Award Org.: @course.AwardOrg</li>
                             }
                             <li>
-                                <a class="govuk-link"
-                                   asp-controller="EditCourse"
-                                   asp-action="Index"
+                                <a class="govuk-link" 
+                                    asp-controller="EditCourse" 
+                                    asp-action="Index" 
                                    asp-route-courseId="@course.Id"
                                    asp-route-mode ="@PublishMode.Undefined">Edit course description</a>
                             </li>
@@ -244,8 +240,8 @@
                                                     <li>@courseRun.CourseName</li>
                                                 </ul>
                                                 @if (!string.IsNullOrEmpty(courseRun.CourseId)
-                                               || !string.IsNullOrEmpty(courseRun.StudyMode)
-                                               || !string.IsNullOrEmpty(courseRun.StartDate))
+                                                || !string.IsNullOrEmpty(courseRun.StudyMode)
+                                                || !string.IsNullOrEmpty(courseRun.StartDate))
                                                 {
                                                     <ul class="row-2">
                                                         @if (!string.IsNullOrEmpty(courseRun.CourseId))
@@ -388,18 +384,19 @@
                                         <div class="cd__your-courses__accordion-content-card-controls">
                                             <ul class="flex-container">
                                                 <li class="flex-item">
-                                                    <a class="govuk-link"
-                                                       asp-controller="EditCourseRun"
-                                                       asp-action="Index"
-                                                       asp-route-courseId="@course.Id"
+                                                    <a class="govuk-link" 
+                                                        asp-controller="EditCourseRun" 
+                                                        asp-action="Index"
+                                                        asp-route-courseId="@course.Id"
                                                        asp-route-courseRunId="@courseRun.Id"
-                                                       asp-route-mode ="@PublishMode.Undefined">Edit course details</a>
+                                                       asp-route-mode ="@PublishMode.Undefined"
+                                                       >Edit course details</a>
                                                 </li>
                                                 <li class="flex-item">
-                                                    <a class="govuk-link"
-                                                       asp-controller="CopyCourseRun"
-                                                       asp-action="Index"
-                                                       asp-route-courseId="@course.Id"
+                                                    <a class="govuk-link" 
+                                                        asp-controller="CopyCourseRun" 
+                                                        asp-action="Index"
+                                                        asp-route-courseId="@course.Id"
                                                        asp-route-courseRunId="@courseRun.Id"
                                                        asp-route-mode ="@PublishMode.Undefined">Copy this course</a>
                                                 </li>

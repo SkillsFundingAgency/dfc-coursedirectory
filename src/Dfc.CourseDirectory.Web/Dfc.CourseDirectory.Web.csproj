@@ -42,7 +42,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\BulkUploads\" />
     <Folder Include="wwwroot\vendor\" />
   </ItemGroup>
 
@@ -58,9 +57,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="ViewComponents\PublishCourses\PublishCourseRun\Default.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
     <Content Update="ViewComponents\PublishCourses\PublishCourse\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
@@ -122,6 +118,9 @@
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="ViewComponents\VenueSearch\Default.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Migration\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\PublishCourses\Index.cshtml">

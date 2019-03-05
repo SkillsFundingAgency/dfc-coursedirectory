@@ -1,25 +1,137 @@
 ﻿@using System.Text.RegularExpressions
-@using Dfc.CourseDirectory.Web.ViewComponents.PublishCourses.PublishCourseRun
-@model IEnumerable<Dfc.CourseDirectory.Models.Models.Courses.Course>
+@using Dfc.CourseDirectory.Models.Enums
+@using Dfc.CourseDirectory.Models.Models.Courses
+@model Dfc.CourseDirectory.Web.ViewModels.PublishCourses.PublishViewModel
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
-@foreach (var course in Model)
+@Html.HiddenFor(x=>x.PublishMode)
+
+@foreach (var course in Model.Courses)
 {
     <div class="error-line">
-        <div class="heading"><strong>@course.QualificationCourseTitle</strong><br />@course.NotionalNVQLevelv2, @course.AwardOrgCode, Lars: @course.LearnAimRef</div>
-        <div class="col"><div class="error-box no-error">No errors</div></div>
-        <div class="col">&nbsp;</div>
+        <div class="govuk-grid-column-one-half m100"><strong>@course.QualificationCourseTitle</strong><br />@course.NotionalNVQLevelv2, @course.AwardOrgCode, Lars: @course.LearnAimRef</div>
+
+        <div id="courseid" style="display:none">@course.id</div>
+        @if (course.IsValid)
+        {
+            <div class="govuk-grid-column-one-quarter"><div class="error-box no-error">No errors</div></div>
+            <div class="govuk-grid-column-one-quarter">&nbsp;</div>
+        }
+        else
+        {
+            <div class="govuk-grid-column-one-quarter"><div class="error-box ">Errors</div></div>
+            <div class="govuk-grid-column-one-quarter">
+
+                <a id="course-fix-@course.id" class="error-fix govuk-table__cell--numeric fix" asp-controller="EditCourse" asp-action="Index" style="display:block"
+                   asp-route-courseId="@course.id" asp-route-mode=@Model.PublishMode>Fix</a>
+            </div>
+        }
+
     </div>
 
-    @await Component.InvokeAsync(nameof(PublishCourseRun), new { model = course.CourseRuns})
-    
+    foreach (var courseRun in course.CourseRuns)
+    {
+        <div id="courserunid" style="display:none">@courseRun.id</div>
+        <div class="error-line-in">
+            <div class="govuk-grid-column-one-half"><strong>@courseRun.CourseName</strong></div>
+
+
+            @if (courseRun.RecordStatus == RecordStatus.BulkUloadPending || courseRun.RecordStatus == RecordStatus.MigrationPending)
+            {
+                <div class="govuk-grid-column-one-quarter"><div class="error-box ">Errors</div></div>
+
+                <div class="govuk-grid-column-one-quarter" id="course-run-fix-@courseRun.id" style="display:block">
+                    <a class="error-fix govuk-table__cell--numeric fix" asp-controller="EditCourseRun" asp-action="Index"
+                       asp-route-courseId="@course.id"
+                       asp-route-courseRunId="@courseRun.id" asp-route-mode=@Model.PublishMode>Fix</a>
+                </div>
+                if (courseRun.RecordStatus == RecordStatus.MigrationPending)
+                {
+                    <div class="govuk-grid-column-one-quarter" id="migration-delete-@courseRun.id" style="display:block">
+                        <a href="#"class="error-fix delete" id="delete-@courseRun.id" data-course-run-id="@courseRun.id">Delete</a>
+                    </div>
+                }
+
+
+                <div class="govuk-grid-column-one-quarter" id="migration-confirm-delete-@courseRun.id" style="display:none">
+                    <a class="govuk-button" asp-controller="PublishCourses" asp-action="Delete"
+                       asp-route-courseId="@course.id"
+                       asp-route-courseRunId="@courseRun.id" asp-route-mode=@Model.PublishMode>Confirm delete</a>
+                </div>
+
+                <div class="govuk-grid-column-one-quarter" id="migration-cancel-delete-@courseRun.id" style="display:none">
+                    <a class="error-fix cancel-delete" id="canceldelete " data-course-run-id="@courseRun.id" href="#">Cancel delete</a>
+                </div>
+
+
+
+            }
+            else
+            {
+                if (courseRun.RecordStatus == RecordStatus.BulkUploadReadyToGoLive || courseRun.RecordStatus == RecordStatus.MigrationReadyToGoLive)
+                {
+                    <div class="govuk-grid-column-one-quarter"><div class="error-box no-error">No errors</div></div>
+                    <div class="govuk-grid-column-one-quarter">&nbsp;</div>
+                }
+
+            }
+
+        </div>
+    }
+
 }
 
 <script>
     (function ($) {
         $(function () {
-          
+            var $deleteButton = $(".delete");
+
+            var $canceldeleteButton = $(".cancel-delete");
+
+              var $fixButton = $(".fix");
+
+            $canceldeleteButton.on("click",
+                function (event) {
+                    event.preventDefault();
+                    {
+                        var courseRunId = $(this).attr("data-course-run-id");
+
+                        var migrationConfirmDelete = $("#migration-confirm-delete-" + courseRunId);
+                        migrationConfirmDelete.css({ "display": "none" });
+
+                        var migrationCancelDelete = $("#migration-cancel-delete-" + courseRunId);
+                        migrationCancelDelete.css({ "display": "none" });
+
+                          var fix = $("#course-run-fix-" + courseRunId);
+                        fix.css({ "display": "block" });
+
+                             var deleteOptions = $("#migration-delete-" + courseRunId);
+                    deleteOptions.css({ "display": "block" });
+                    }
+                });
+
+
+            $deleteButton.on("click",
+                function (event) {
+                    event.preventDefault();
+
+                    var courseRunId = $(this).attr("data-course-run-id");
+
+                    var deleteOptions = $("#migration-delete-" + courseRunId);
+                    deleteOptions.css({ "display": "none" });
+
+                    var migrationConfirmDelete = $("#migration-confirm-delete-" + courseRunId);
+                    migrationConfirmDelete.css({ "display": "block" });
+
+                    var migrationCancelDelete = $("#migration-cancel-delete-" + courseRunId);
+                    migrationCancelDelete.css({ "display": "block" });
+
+                     var fix = $("#course-run-fix-" + courseRunId);
+                    fix.css({ "display": "none" });
+
+                });
         });
     })(jQuery);
 </script>
+

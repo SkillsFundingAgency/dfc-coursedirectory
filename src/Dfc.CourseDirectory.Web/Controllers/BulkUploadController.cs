@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System.Security.Claims;
+
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -19,7 +21,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
     {
         private readonly ILogger<BulkUploadController> _logger;
         private readonly IHttpContextAccessor _contextAccessor;
-        //private readonly ICourseService _courseService;
         private readonly IBulkUploadService _bulkUploadService;
 
         private IHostingEnvironment _env;
@@ -71,9 +72,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
             if (bulkUploadFile.Length > 0)
             {
                 int providerUKPRN = UKPRN.Value;
-                string userId = User.Identity.Name;
+                string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
                 string webRoot = _env.WebRootPath;
+                if (!Directory.Exists(webRoot))
+                    Directory.CreateDirectory(webRoot);
                 string bulkUploadFileNewName = string.Format(@"{0}-{1}", DateTime.Now.ToString("yyMMdd-HHmmss"), bulkUploadFile.FileName);
                 string savedCsvFilePath = string.Format(@"{0}\BulkUploads\{1}", webRoot, bulkUploadFileNewName);
 
@@ -84,6 +87,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                 var errors = _bulkUploadService.ProcessBulkUpload(savedCsvFilePath, providerUKPRN, userId);
 
+                if (System.IO.File.Exists(savedCsvFilePath))
+                {
+                    System.IO.File.Delete(savedCsvFilePath);
+                }
+
                 if (errors.Any())
                 {
                     vm.errors = errors;
@@ -93,9 +101,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 else
                 {
                     // All good => redirect to BulkCourses action
-                    return RedirectToAction("Index", "PublishCourses", new { @class = "govuk-button" });
+                    return RedirectToAction("Index", "PublishCourses");
                 }
-
             }
 
             var noFileError = new List<string>

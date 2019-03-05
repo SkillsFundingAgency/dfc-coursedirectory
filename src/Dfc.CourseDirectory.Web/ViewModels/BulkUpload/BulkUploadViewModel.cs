@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Dfc.CourseDirectory.Models.Models.Courses;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;

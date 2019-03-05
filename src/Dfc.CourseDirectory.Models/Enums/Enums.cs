@@ -3,7 +3,16 @@
 namespace Dfc.CourseDirectory.Models.Enums
 {
 
-
+    public enum PublishMode
+    {
+        [Description("Default")]
+        Undefined = -1,
+        [Description("BulkUpload")]
+        BulkUpload = 0,
+        [Description("Migration")]
+        Migration = 1,
+      
+    }
     public enum FundingOptions
     {
         [Description("Undefined")]

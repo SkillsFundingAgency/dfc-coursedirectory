@@ -9,11 +9,12 @@
 
 @{
     var regex = @"^[a-zA-Z0-9 /\n/\r/\¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`" + "\"" + "\\\\]+$";
+    var howAssessedTextFieldMaxChars = howAssessedComponentSettings.Value.TextFieldMaxChars;
 }
 
 
 
-<div class="govuk-character-count" data-module="character-count" data-maxlength=@howAssessedComponentSettings.Value.TextFieldMaxChars>
+<div class="govuk-character-count" data-module="character-count" data-maxlength=@howAssessedTextFieldMaxChars>
     <div class="govuk-form-group">
         <label class="govuk-label" for="word-count">
             @Model.LabelText
@@ -26,10 +27,47 @@
         }
         <textarea class="govuk-textarea js-character-count " asp-for="@Model.HowAssessed" rows="5"
                      aria-describedby="@Model.AriaDescribedBy"
-                          val-max-length="500" val-max-length-message="How you’ll be assessed must be 500 characters or less"
+                          val-max-length=@howAssessedTextFieldMaxChars val-max-length-message="How you’ll be assessed must be @howAssessedTextFieldMaxChars characters or less"
                           val-regex="@regex"
                           val-regex-message="How you’ll be assessed contains invalid characters"></textarea>
 
     </div>
 </div>
 
+<script>
+    (function ($) {
+        $(function () {
+
+            var $elementHowAssessed = $("#@nameof(Model.HowAssessed)");
+
+            $elementHowAssessed.on("blur", function () {
+
+                var trimmed = $elementHowAssessed.val().trim();
+                $elementHowAssessed.val(trimmed);
+
+                var $characterCountValue = @howAssessedTextFieldMaxChars;
+                var $countMessage = $("#HowAssessed-info");
+
+                var $actualCharacterCount = $characterCountValue - $elementHowAssessed.val().length;
+
+                if ($actualCharacterCount <= 0) {
+
+                } else {
+
+                    if ($actualCharacterCount === 1) {
+                        $countMessage.text("You have " + $actualCharacterCount + " character remaining");
+                    } else {
+                        $countMessage.text("You have " + $actualCharacterCount + " characters remaining");
+
+                        $countMessage.addClass('govuk-hint');
+                        $elementHowAssessed.removeClass('govuk-textarea--error');
+                        $countMessage.removeClass('govuk-error-message');
+                        $countMessage.addClass('govuk-character-count__message');
+                    }
+                }
+
+            });
+
+        });
+    })(jQuery);
+</script>

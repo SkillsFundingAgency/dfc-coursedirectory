@@ -6,7 +6,7 @@ using Dfc.CourseDirectory.Common.Interfaces;
 using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Interfaces.Courses;
 using Dfc.CourseDirectory.Models.Models;
-
+using Dfc.CourseDirectory.Models.Models.Courses;
 
 namespace Dfc.CourseDirectory.Services.Interfaces.CourseService
 {
@@ -21,5 +21,12 @@ namespace Dfc.CourseDirectory.Services.Interfaces.CourseService
         Task<IResult> ArchiveProviderLiveCourses(int? UKPRN);
         SelectRegionModel GetRegions();
 
+        Task<IResult<ICourseSearchResult>> GetCoursesByLevelForUKPRNAsync(ICourseSearchCriteria criteria);
+
+        IList<string> ValidateCourse(ICourse course);
+
+        IList<string> ValidateCourseRun(ICourseRun courseRun, ValidationMode validationMode);
+
+        bool HasOnlyFollowingValidCharacters(string value);
     }
 }

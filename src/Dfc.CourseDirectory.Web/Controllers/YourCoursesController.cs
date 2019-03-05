@@ -15,19 +15,18 @@ using Dfc.CourseDirectory.Web.ViewModels.YourCourses;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Authorization;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
-    public class ProviderController : Controller
+    public class YourCoursesController : Controller
     {
-        private readonly ILogger<ProviderController> _logger;
+        private readonly ILogger<YourCoursesController> _logger;
         private readonly ISession _session;
         private readonly ICourseService _courseService;
         private readonly IVenueService _venueService;
 
-        public ProviderController(
-            ILogger<ProviderController> logger,
+        public YourCoursesController(
+            ILogger<YourCoursesController> logger,
             IHttpContextAccessor contextAccessor,
             ICourseService courseService,
             IVenueService venueService)
@@ -42,15 +41,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _courseService = courseService;
             _venueService = venueService;
         }
-
-        [Authorize(Policy = "ElevatedUserRole")]
-        public IActionResult Index()
-        {
-            _logger.LogMethodEnter();
-            _logger.LogMethodExit();
-            return View();
-        }
-
 
         internal Venue GetVenueByIdFrom(IEnumerable<Venue> list, Guid id)
         {
@@ -117,11 +107,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return found;
         }
 
-        public async Task<IActionResult> Courses(
-            string level,
-            Guid? courseId,
-            Guid? courseRunId,
-            string notificationTitle,
+        public async Task<IActionResult> Index(
+            string level, 
+            Guid? courseId, 
+            Guid? courseRunId, 
+            string notificationTitle, 
             string notificationMessage)
         {
             int? UKPRN = _session.GetInt32("UKPRN");
@@ -141,7 +131,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 {
                     Name = $"Level {x.Level}",
                     Value = x.Level,
-                    Facet = x.Value.Sum(y => y.Value.Count()).ToString(),
+                    Facet = x.Value.Count().ToString(),
                     IsSelected = level == x.Level
                 })
                 .OrderBy(x => x.Value)
@@ -165,7 +155,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     LearnAimRef = x.LearnAimRef,
                     NotionalNVQLevelv2 = x.NotionalNVQLevelv2,
                     QualificationTitle = x.QualificationCourseTitle,
-                    Facet = x.CourseRuns.Count().ToString(),
                     CourseRuns = x.CourseRuns.Select(y => new CourseRunViewModel
                     {
                         Id = y.id.ToString(),
@@ -176,9 +165,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         DeliveryMode = y.DeliveryMode.ToDescription(),
                         Duration = y.DurationValue.HasValue ? $"{y.DurationValue.Value} {y.DurationUnit.ToDescription()}" : $"0 {y.DurationUnit.ToDescription()}",
                         Venue = y.VenueId.HasValue ? FormatAddress(GetVenueByIdFrom(venueResult.Value, y.VenueId.Value)) : string.Empty,
-                        Region = y.Regions != null ? FormattedRegionsByIds(allRegions, y.Regions) : string.Empty,
-                        StartDate = y.FlexibleStartDate ? "Flexible start date" : y.StartDate?.ToString("dd/MM/yyyy"),
-                        StudyMode = y.StudyMode == Models.Models.Courses.StudyMode.Undefined ? string.Empty : y.StudyMode.ToDescription(),
+                        Region =  y.Regions != null ? FormattedRegionsByIds(allRegions, y.Regions) : string.Empty,
+                        StartDate = y.FlexibleStartDate ? "Flexible start date" : y.StartDate?.ToString("dd/mm/yyyy"),
+                        StudyMode = y.StudyMode.ToDescription(),
                         Url = y.CourseURL
                     })
                     .OrderBy(y => y.CourseName)
@@ -201,9 +190,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 }
             }
 
-            notificationAnchorTag = courseRunId.HasValue
-                ? $"<a id=\"courseeditlink\" class=\"govuk-link\" href=\"#\" data-courseid=\"{courseId}\" data-courserunid=\"{courseRunId}\" >{notificationMessage} {notificationCourseName}</a>"
-                : $"<a id=\"courseeditlink\" class=\"govuk-link\" href=\"#\" data-courseid=\"{courseId}\">{notificationMessage} {notificationCourseName}</a>";
+            notificationAnchorTag = courseRunId.HasValue 
+                ? $"<a id=\"courseeditlink\" class=\"govuk-link\" href=\"#\" data-courseid=\"{courseId}\" data-courserunid=\"{courseRunId}\" >{notificationCourseName} {notificationMessage}</a>" 
+                : $"<a id=\"courseeditlink\" class=\"govuk-link\" href=\"#\" data-courseid=\"{courseId}\">{notificationCourseName} {notificationMessage}</a>";
 
             var viewModel = new YourCoursesViewModel
             {
