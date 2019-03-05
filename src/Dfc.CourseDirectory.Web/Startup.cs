@@ -145,12 +145,15 @@ namespace Dfc.CourseDirectory.Web
             services.AddScoped<SignInManager<User>, SignInManager<User>>();
             services.AddSingleton<IEmailSender, EmailSender>();
 
+            services.Configure<SecurityStampValidatorOptions>(options =>
+            {
+                options.ValidationInterval = TimeSpan.FromMinutes(1);
+            });
             services.ConfigureApplicationCookie(options =>
             {
                 // Cookie settings
                 options.Cookie.HttpOnly = true;
-               
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
                 options.LogoutPath = "/Home";
                 options.LoginPath = "/Identity/Account/Login";
                 options.AccessDeniedPath = "/Identity/Account/Login";
@@ -179,7 +182,7 @@ namespace Dfc.CourseDirectory.Web
             services.AddSession(options => {
                 options.IdleTimeout = TimeSpan.FromMinutes(20);
                 options.Cookie.HttpOnly = true;
-               
+
             });
 
 
