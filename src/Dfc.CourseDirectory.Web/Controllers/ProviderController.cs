@@ -202,8 +202,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
 
             notificationAnchorTag = courseRunId.HasValue
-                ? $"<a id=\"courseeditlink\" class=\"govuk-link\" href=\"#\" data-courseid=\"{courseId}\" data-courserunid=\"{courseRunId}\" >{notificationCourseName} {notificationMessage}</a>"
-                : $"<a id=\"courseeditlink\" class=\"govuk-link\" href=\"#\" data-courseid=\"{courseId}\">{notificationCourseName} {notificationMessage}</a>";
+                ? $"<a id=\"courseeditlink\" class=\"govuk-link\" href=\"#\" data-courseid=\"{courseId}\" data-courserunid=\"{courseRunId}\" >{notificationMessage} {notificationCourseName}</a>"
+                : $"<a id=\"courseeditlink\" class=\"govuk-link\" href=\"#\" data-courseid=\"{courseId}\">{notificationMessage} {notificationCourseName}</a>";
 
             var viewModel = new YourCoursesViewModel
             {
