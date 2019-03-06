@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Common.Interfaces;
+using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Interfaces.Courses;
 using Dfc.CourseDirectory.Models.Models;
 using Dfc.CourseDirectory.Models.Models.Courses;
@@ -17,7 +18,7 @@ namespace Dfc.CourseDirectory.Services.Interfaces.CourseService
         Task<IResult<ICourse>> UpdateCourseAsync(ICourse course);
 
         Task<IResult<ICourse>> GetCourseByIdAsync(IGetCourseByIdCriteria criteria);
-
+        Task<IResult> ArchiveProviderLiveCourses(int? UKPRN);
         SelectRegionModel GetRegions();
 
         Task<IResult<ICourseSearchResult>> GetCoursesByLevelForUKPRNAsync(ICourseSearchCriteria criteria);

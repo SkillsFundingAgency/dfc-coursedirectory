@@ -36,6 +36,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
         private readonly int _whatYouNeedTextFieldMaxChars;
         private readonly int _howAssessedTextFieldMaxChars;
         private readonly int _whereNextTextFieldMaxChars;
+        private readonly Uri _archiveLiveCoursesUri;
 
         public CourseService(
             ILogger<CourseService> logger,
@@ -68,6 +69,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             _getYourCoursesUri = settings.Value.ToGetYourCoursesUri();
             _updateCourseUri = settings.Value.ToUpdateCourseUri();
             _getCourseByIdUri = settings.Value.ToGetCourseByIdUri();
+            _archiveLiveCoursesUri = settings.Value.ToArchiveLiveCoursesUri();
 
             _courseForTextFieldMaxChars = courseForComponentSettings.Value.TextFieldMaxChars;
             _entryRequirementsTextFieldMaxChars = entryRequirementsComponentSettings.Value.TextFieldMaxChars;
@@ -634,6 +636,23 @@ namespace Dfc.CourseDirectory.Services.CourseService
             return validUKPRN.Success;
         }
 
+        public async Task<IResult> ArchiveProviderLiveCourses(int? UKPRN)
+        {
+            Throw.IfNull(UKPRN, nameof(UKPRN));
+
+            var response = await _httpClient.GetAsync(new Uri(_archiveLiveCoursesUri.AbsoluteUri + "&UKPRN=" + UKPRN));
+            _logger.LogHttpResponseMessage("Archive courses service http response", response);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return Result.Ok();
+
+            }
+            else
+            {
+                return Result.Fail("Archive courses service unsuccessful http response");
+            }
+
         public bool IsCorrectCostFormatting(string value)
         {
             string regex = @"^[0-9]*(\.[0-9]{1,2})?$";
@@ -648,6 +667,10 @@ namespace Dfc.CourseDirectory.Services.CourseService
             var validUKPRN = Regex.Match(value, regex, RegexOptions.IgnoreCase);
 
             return validUKPRN.Success;
+        }
+    }
+
+
         }
     }
 
@@ -692,6 +715,10 @@ namespace Dfc.CourseDirectory.Services.CourseService
         internal static Uri ToGetCourseByIdUri(this ICourseServiceSettings extendee)
         {
             return new Uri($"{extendee.ApiUrl + "GetCourseById?code=" + extendee.ApiKey}");
+        }
+        internal static Uri ToArchiveLiveCoursesUri(this ICourseServiceSettings extendee)
+        {
+            return new Uri($"{extendee.ApiUrl + "ArchiveProvidersLiveCourses?code=" + extendee.ApiKey}");
         }
     }
 }
