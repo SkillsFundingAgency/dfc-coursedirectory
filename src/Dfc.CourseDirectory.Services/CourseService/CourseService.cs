@@ -636,6 +636,22 @@ namespace Dfc.CourseDirectory.Services.CourseService
             return validUKPRN.Success;
         }
 
+        public bool IsCorrectCostFormatting(string value)
+        {
+            string regex = @"^[0-9]*(\.[0-9]{1,2})?$";
+            var validUKPRN = Regex.Match(value, regex, RegexOptions.IgnoreCase);
+
+            return validUKPRN.Success;
+        }
+
+        public bool ValidDurationValue(string value)
+        {
+            string regex = @"^([0-9]|[0-9][0-9]|[0-9][0-9][0-9])$";
+            var validUKPRN = Regex.Match(value, regex, RegexOptions.IgnoreCase);
+
+            return validUKPRN.Success;
+        }
+
         public async Task<IResult> ArchiveProviderLiveCourses(int? UKPRN)
         {
             Throw.IfNull(UKPRN, nameof(UKPRN));
@@ -652,73 +668,54 @@ namespace Dfc.CourseDirectory.Services.CourseService
             {
                 return Result.Fail("Archive courses service unsuccessful http response");
             }
-
-        public bool IsCorrectCostFormatting(string value)
-        {
-            string regex = @"^[0-9]*(\.[0-9]{1,2})?$";
-            var validUKPRN = Regex.Match(value, regex, RegexOptions.IgnoreCase);
-
-            return validUKPRN.Success;
-        }
-
-        public bool ValidDurationValue(string value)
-        {
-            string regex = @"^([0-9]|[0-9][0-9]|[0-9][0-9][0-9])$";
-            var validUKPRN = Regex.Match(value, regex, RegexOptions.IgnoreCase);
-
-            return validUKPRN.Success;
         }
     }
+}
 
 
-        }
-    }
-
-
-    internal static class IGetCourseByIdCriteriaExtensions
+internal static class IGetCourseByIdCriteriaExtensions
+{
+    internal static string ToJson(this IGetCourseByIdCriteria extendee)
     {
-        internal static string ToJson(this IGetCourseByIdCriteria extendee)
+
+        GetCourseByIdJson json = new GetCourseByIdJson
         {
+            id = extendee.Id.ToString()
+        };
+        var result = JsonConvert.SerializeObject(json);
 
-            GetCourseByIdJson json = new GetCourseByIdJson
-            {
-                id = extendee.Id.ToString()
-            };
-            var result = JsonConvert.SerializeObject(json);
+        return result;
+    }
+}
 
-            return result;
-        }
+internal class GetCourseByIdJson
+{
+    public string id { get; set; }
+}
+
+internal static class CourseServiceSettingsExtensions
+{
+    internal static Uri ToAddCourseUri(this ICourseServiceSettings extendee)
+    {
+        return new Uri($"{extendee.ApiUrl + "AddCourse?code=" + extendee.ApiKey}");
     }
 
-    internal class GetCourseByIdJson
+    internal static Uri ToGetYourCoursesUri(this ICourseServiceSettings extendee)
     {
-        public string id { get; set; }
+        return new Uri($"{extendee.ApiUrl + "GetCoursesByLevelForUKPRN?code=" + extendee.ApiKey}");
     }
 
-    internal static class CourseServiceSettingsExtensions
+    internal static Uri ToUpdateCourseUri(this ICourseServiceSettings extendee)
     {
-        internal static Uri ToAddCourseUri(this ICourseServiceSettings extendee)
-        {
-            return new Uri($"{extendee.ApiUrl + "AddCourse?code=" + extendee.ApiKey}");
-        }
+        return new Uri($"{extendee.ApiUrl + "UpdateCourse?code=" + extendee.ApiKey}");
+    }
 
-        internal static Uri ToGetYourCoursesUri(this ICourseServiceSettings extendee)
-        {
-            return new Uri($"{extendee.ApiUrl + "GetCoursesByLevelForUKPRN?code=" + extendee.ApiKey}");
-        }
-
-        internal static Uri ToUpdateCourseUri(this ICourseServiceSettings extendee)
-        {
-            return new Uri($"{extendee.ApiUrl + "UpdateCourse?code=" + extendee.ApiKey}");
-        }
-
-        internal static Uri ToGetCourseByIdUri(this ICourseServiceSettings extendee)
-        {
-            return new Uri($"{extendee.ApiUrl + "GetCourseById?code=" + extendee.ApiKey}");
-        }
-        internal static Uri ToArchiveLiveCoursesUri(this ICourseServiceSettings extendee)
-        {
-            return new Uri($"{extendee.ApiUrl + "ArchiveProvidersLiveCourses?code=" + extendee.ApiKey}");
-        }
+    internal static Uri ToGetCourseByIdUri(this ICourseServiceSettings extendee)
+    {
+        return new Uri($"{extendee.ApiUrl + "GetCourseById?code=" + extendee.ApiKey}");
+    }
+    internal static Uri ToArchiveLiveCoursesUri(this ICourseServiceSettings extendee)
+    {
+        return new Uri($"{extendee.ApiUrl + "ArchiveProvidersLiveCourses?code=" + extendee.ApiKey}");
     }
 }
