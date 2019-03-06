@@ -25,7 +25,5 @@ namespace Dfc.CourseDirectory.Services.Interfaces.CourseService
         IList<string> ValidateCourse(ICourse course);
 
         IList<string> ValidateCourseRun(ICourseRun courseRun, ValidationMode validationMode);
-
-        bool HasOnlyFollowingValidCharacters(string value);
     }
 }

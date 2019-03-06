@@ -273,12 +273,10 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
                 var courseRun = new CourseRun();
                 courseRun.id = Guid.NewGuid();
-                courseRun.RecordStatus = RecordStatus.BulkUploadReadyToGoLive;
 
                 courseRun.DeliveryMode = GetValueFromDescription<DeliveryMode>(bulkUploadcourse.DeliveryMode);
                 if (courseRun.DeliveryMode.Equals(DeliveryMode.Undefined))
                 {
-                    courseRun.RecordStatus = RecordStatus.BulkUloadPending;
                     validationMessages.Add($"DeliveryMode is Undefined, because you have entered ( { bulkUploadcourse.DeliveryMode } ), Line { bulkUploadcourse.BulkUploadLineNumber },  LARS_QAN = { bulkUploadcourse.LearnAimRef }, ID = { bulkUploadcourse.ProviderCourseID }");
                 }
 
@@ -287,10 +285,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 {
                     if (string.IsNullOrEmpty(bulkUploadcourse.VenueName))
                     {
-                        courseRun.RecordStatus = RecordStatus.BulkUloadPending;
                         validationMessages.Add($"NO Venue Name for Line { bulkUploadcourse.BulkUploadLineNumber },  LARS_QAN = { bulkUploadcourse.LearnAimRef }, ID = { bulkUploadcourse.ProviderCourseID }");
-
-
                     }
                     else
                     {
@@ -306,13 +301,11 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                             }
                             else
                             {
-                                courseRun.RecordStatus = RecordStatus.BulkUloadPending;
                                 validationMessages.Add($"We have obtained muliple Venues for { bulkUploadcourse.VenueName } - Line { bulkUploadcourse.BulkUploadLineNumber },  LARS_QAN = { bulkUploadcourse.LearnAimRef }, ID = { bulkUploadcourse.ProviderCourseID }");
                             }
                         }
                         else
                         {
-                            courseRun.RecordStatus = RecordStatus.BulkUloadPending;
                             validationMessages.Add($"We could NOT obtain a Venue for { bulkUploadcourse.VenueName } - Line { bulkUploadcourse.BulkUploadLineNumber },  LARS_QAN = { bulkUploadcourse.LearnAimRef }, ID = { bulkUploadcourse.ProviderCourseID }");
                         }
                     }
@@ -351,7 +344,6 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 courseRun.DurationUnit = GetValueFromDescription<DurationUnit>(bulkUploadcourse.DurationUnit);
                 if (courseRun.DurationUnit.Equals(DurationUnit.Undefined))
                 {
-                    courseRun.RecordStatus = RecordStatus.BulkUloadPending;
                     validationMessages.Add($"DurationUnit is Undefined, because you have entered ( { bulkUploadcourse.DurationUnit } ), Line { bulkUploadcourse.BulkUploadLineNumber },  LARS_QAN = { bulkUploadcourse.LearnAimRef }, ID = { bulkUploadcourse.ProviderCourseID }");
                 }
 
@@ -369,15 +361,15 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 courseRun.StudyMode = GetValueFromDescription<StudyMode>(bulkUploadcourse.StudyMode);
                 if (courseRun.StudyMode.Equals(StudyMode.Undefined))
                 {
-                    courseRun.RecordStatus = RecordStatus.BulkUloadPending;
                     validationMessages.Add($"StudyMode is Undefined, because you have entered ( { bulkUploadcourse.StudyMode } ), Line { bulkUploadcourse.BulkUploadLineNumber },  LARS_QAN = { bulkUploadcourse.LearnAimRef }, ID = { bulkUploadcourse.ProviderCourseID }");
                 }
                 courseRun.AttendancePattern = GetValueFromDescription<AttendancePattern>(bulkUploadcourse.AttendancePattern);
                 if (courseRun.AttendancePattern.Equals(AttendancePattern.Undefined))
                 {
-                    courseRun.RecordStatus = RecordStatus.BulkUloadPending;
                     validationMessages.Add($"AttendancePattern is Undefined, because you have entered ( { bulkUploadcourse.AttendancePattern } ), Line { bulkUploadcourse.BulkUploadLineNumber },  LARS_QAN = { bulkUploadcourse.LearnAimRef }, ID = { bulkUploadcourse.ProviderCourseID }");
                 }
+
+                courseRun.RecordStatus = _courseService.ValidateCourseRun(courseRun, ValidationMode.BulkUploadCourse).Any() ? RecordStatus.BulkUloadPending : RecordStatus.BulkUploadReadyToGoLive;
 
                 courseRun.CreatedBy = userId;
                 courseRun.CreatedDate = DateTime.Now;
