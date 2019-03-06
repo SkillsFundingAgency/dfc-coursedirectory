@@ -256,6 +256,28 @@
                     $whereNext.govUkTextarea("validState");
                     validStates.push(true);
                 }
+
+                var errorArray = $("[class*='govuk-error-message'");
+                if (errorArray.length > 0) {
+
+
+                    var $errorField = $("#" + errorArray[0].nextElementSibling.id);
+                    $('html,body').animate({ scrollTop: $errorField.parent().offset().top }, 'slow');
+
+                    var notificationBody = "";
+                    $.each(errorArray, function (index, value) {
+                        var $field = value.parentElement.parentElement.parentElement.id;
+
+                        notificationBody = notificationBody + "<a href='#' class='govuk-link' style=color:#b10e1e data-error-field=" + $field + ">"+ value.innerHTML +"</a></br>";
+                    });
+
+                    $('.cd-error-summary__body').html(notificationBody);
+
+                    $('#errorsummary').css({ "display": "block" });
+
+                
+                
+                }
             }
 
             $save.on("click", function (e) {
