@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Security.Claims;
 
 namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 {
@@ -195,7 +196,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                     courseRunForEdit.FlexibleStartDate = flexibleStartDate;
                     courseRunForEdit.StartDate = specifiedStartDate;
                     courseRunForEdit.UpdatedDate = DateTime.Now;
-                    courseRunForEdit.UpdatedBy = User.Identity.Name;
+                    courseRunForEdit.UpdatedBy = User.FindFirst(ClaimTypes.NameIdentifier)?.Value; // User.Identity.Name;
 
                     switch (model.DeliveryMode)
                     {
@@ -228,19 +229,18 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                     }
 
                     //todo when real data
-                    //switch (model.Mode)
-                    //{
-                    //    case PublishMode.BulkUpload:
-                    //        courseRunForEdit.RecordStatus = RecordStatus.BulkUploadReadyToGoLive;
-                    //        break;
-                    //    case PublishMode.Migration:
-                    //        courseRunForEdit.RecordStatus = RecordStatus.MigrationReadyToGoLive;
-                    //        break;
-                    //    default:
-                    //        courseRunForEdit.RecordStatus = RecordStatus.Live;
-                    //        break;
-
-                    //}
+                    switch (model.Mode)
+                    {
+                        case PublishMode.BulkUpload:
+                            courseRunForEdit.RecordStatus = RecordStatus.BulkUploadReadyToGoLive;
+                            break;
+                        case PublishMode.Migration:
+                            courseRunForEdit.RecordStatus = RecordStatus.MigrationReadyToGoLive;
+                            break;
+                        default:
+                            courseRunForEdit.RecordStatus = RecordStatus.Live;
+                            break;
+                    }
 
                     var updatedCourse = await _courseService.UpdateCourseAsync(courseForEdit.Value);
                     if (updatedCourse.IsSuccess && updatedCourse.HasValue)
