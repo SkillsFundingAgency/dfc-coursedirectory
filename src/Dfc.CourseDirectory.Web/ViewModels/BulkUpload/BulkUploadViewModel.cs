@@ -9,5 +9,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels.BulkUpload
     public class BulkUploadViewModel
     {
         public IEnumerable<string> errors { get; set; }
+        public string NotificationTitle { get; set; }
+        public string NotificationMessage { get; set; }
     }
 }
