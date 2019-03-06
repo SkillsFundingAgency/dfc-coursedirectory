@@ -418,47 +418,70 @@ namespace Dfc.CourseDirectory.Services.CourseService
 
             // CourseDescription
             if (string.IsNullOrEmpty(course.CourseDescription))
+            {
                 validationMessages.Add("Course For decription is required");
-            if (!HasOnlyFollowingValidCharacters(course.CourseDescription))
-                validationMessages.Add("Course For decription contains invalid character");
-            if (course.CourseDescription.Length > _courseForTextFieldMaxChars)
-                validationMessages.Add($"Course For decription must be { _courseForTextFieldMaxChars } characters or less");
+            }
+            else
+            {
+                if (!HasOnlyFollowingValidCharacters(course.CourseDescription))
+                    validationMessages.Add("Course For decription contains invalid character");
+                if (course.CourseDescription.Length > _courseForTextFieldMaxChars)
+                    validationMessages.Add($"Course For decription must be { _courseForTextFieldMaxChars } characters or less");
+            }
 
             // EntryRequirements
-            if (!HasOnlyFollowingValidCharacters(course.EntryRequirements))
-                validationMessages.Add("Entry Requirements contains invalid character");
-            if (course.EntryRequirements.Length > _entryRequirementsTextFieldMaxChars)
-                validationMessages.Add($"Entry Requirements must be { _entryRequirementsTextFieldMaxChars } characters or less");
+            if (!string.IsNullOrEmpty(course.EntryRequirements))
+            {
+                if (!HasOnlyFollowingValidCharacters(course.EntryRequirements))
+                    validationMessages.Add("Entry Requirements contains invalid character");
+                if (course.EntryRequirements.Length > _entryRequirementsTextFieldMaxChars)
+                    validationMessages.Add($"Entry Requirements must be { _entryRequirementsTextFieldMaxChars } characters or less");
+            }
 
             // WhatYoullLearn 
-            if (!HasOnlyFollowingValidCharacters(course.WhatYoullLearn))
-                validationMessages.Add("What You'll Learn contains invalid character");
-            if (course.WhatYoullLearn.Length > _whatWillLearnTextFieldMaxChars)
-                validationMessages.Add($"What You'll Learn must be { _whatWillLearnTextFieldMaxChars } characters or less");
+            if (!string.IsNullOrEmpty(course.WhatYoullLearn))
+            {
+                if (!HasOnlyFollowingValidCharacters(course.WhatYoullLearn))
+                    validationMessages.Add("What You'll Learn contains invalid character");
+                if (course.WhatYoullLearn.Length > _whatWillLearnTextFieldMaxChars)
+                    validationMessages.Add($"What You'll Learn must be { _whatWillLearnTextFieldMaxChars } characters or less");
+            }
 
             // HowYoullLearn 
-            if (!HasOnlyFollowingValidCharacters(course.HowYoullLearn))
-                validationMessages.Add("How You'll Learn contains invalid character");
-            if (course.HowYoullLearn.Length > _howYouWillLearnTextFieldMaxChars)
-                validationMessages.Add($"How You'll Learn must be { _howYouWillLearnTextFieldMaxChars } characters or less");
+            if (!string.IsNullOrEmpty(course.HowYoullLearn))
+            {
+                if (!HasOnlyFollowingValidCharacters(course.HowYoullLearn))
+                    validationMessages.Add("How You'll Learn contains invalid character");
+                if (course.HowYoullLearn.Length > _howYouWillLearnTextFieldMaxChars)
+                    validationMessages.Add($"How You'll Learn must be { _howYouWillLearnTextFieldMaxChars } characters or less");
+            }
 
             // WhatYoullNeed 
-            if (!HasOnlyFollowingValidCharacters(course.WhatYoullNeed))
-                validationMessages.Add("What You'll Need contains invalid character");
-            if (course.WhatYoullNeed.Length > _whatYouNeedTextFieldMaxChars)
-                validationMessages.Add($"What You'll Need must be { _whatYouNeedTextFieldMaxChars } characters or less");
+            if (!string.IsNullOrEmpty(course.WhatYoullNeed))
+            {
+                if (!HasOnlyFollowingValidCharacters(course.WhatYoullNeed))
+                    validationMessages.Add("What You'll Need contains invalid character");
+                if (course.WhatYoullNeed.Length > _whatYouNeedTextFieldMaxChars)
+                    validationMessages.Add($"What You'll Need must be { _whatYouNeedTextFieldMaxChars } characters or less");
+            }
 
             // HowYoullBeAssessed 
-            if (!HasOnlyFollowingValidCharacters(course.HowYoullBeAssessed))
-                validationMessages.Add("How You'll Be Assessed contains invalid character");
-            if (course.HowYoullBeAssessed.Length > _howAssessedTextFieldMaxChars)
-                validationMessages.Add($"How You'll Be Assessed must be { _howAssessedTextFieldMaxChars } characters or less");
+            if (!string.IsNullOrEmpty(course.HowYoullBeAssessed))
+            {
+                if (!HasOnlyFollowingValidCharacters(course.HowYoullBeAssessed))
+                    validationMessages.Add("How You'll Be Assessed contains invalid character");
+                if (course.HowYoullBeAssessed.Length > _howAssessedTextFieldMaxChars)
+                    validationMessages.Add($"How You'll Be Assessed must be { _howAssessedTextFieldMaxChars } characters or less");
+            }
 
             // WhereNext 
-            if (!HasOnlyFollowingValidCharacters(course.WhereNext))
-                validationMessages.Add("Where Next contains invalid character");
-            if (course.WhereNext.Length > _whereNextTextFieldMaxChars)
-                validationMessages.Add($"Where Next must be { _whereNextTextFieldMaxChars } characters or less");
+            if (!string.IsNullOrEmpty(course.WhereNext))
+            {
+                if (!HasOnlyFollowingValidCharacters(course.WhereNext))
+                    validationMessages.Add("Where Next contains invalid character");
+                if (course.WhereNext.Length > _whereNextTextFieldMaxChars)
+                    validationMessages.Add($"Where Next must be { _whereNextTextFieldMaxChars } characters or less");
+            }
 
             return validationMessages;
         }
@@ -469,35 +492,56 @@ namespace Dfc.CourseDirectory.Services.CourseService
 
             // CourseName
             if (string.IsNullOrEmpty(courseRun.CourseName))
+            {
                 validationMessages.Add("Course Name is required"); // "Enter Course Name"
-            if (!HasOnlyFollowingValidCharacters(courseRun.CourseName))
-                validationMessages.Add("Course Name contains invalid character");
-            if (courseRun.CourseName.Length > 255)
-                validationMessages.Add($"Course Name must be 255 characters or less");
+            }
+            else
+            {
+                if (!HasOnlyFollowingValidCharacters(courseRun.CourseName))
+                    validationMessages.Add("Course Name contains invalid character");
+                if (courseRun.CourseName.Length > 255)
+                    validationMessages.Add($"Course Name must be 255 characters or less");
+            }
 
             // ProviderCourseID
-            if (!HasOnlyFollowingValidCharacters(courseRun.ProviderCourseID))
-                validationMessages.Add("ID contains invalid characters");
-            if (courseRun.ProviderCourseID.Length > 255)
-                validationMessages.Add($"The maximum length of 'ID' is 255 characters");
+            if (!string.IsNullOrEmpty(courseRun.ProviderCourseID))
+            {
+                if (!HasOnlyFollowingValidCharacters(courseRun.ProviderCourseID))
+                    validationMessages.Add("ID contains invalid characters");
+                if (courseRun.ProviderCourseID.Length > 255)
+                    validationMessages.Add($"The maximum length of 'ID' is 255 characters");
+            }
 
             // DeliveryMode
             switch (courseRun.DeliveryMode)
             {
                 case DeliveryMode.ClassroomBased:
-                    if(courseRun.VenueId == null || courseRun.VenueId == Guid.Empty)
+
+                    // VenueId
+                    if (courseRun.VenueId == null || courseRun.VenueId == Guid.Empty)
                         validationMessages.Add($"Select a venue");
+
+                    // StudyMode
+                    if (courseRun.StudyMode.Equals(StudyMode.Undefined))
+                        validationMessages.Add($"Select Study Mode");
+
+                    // AttendancePattern
+                    if (courseRun.AttendancePattern.Equals(AttendancePattern.Undefined))
+                        validationMessages.Add($"Select Attendance Pattern");
+
                     break;
                 case DeliveryMode.Online:
-                    //courseRun.DeliveryMode = DeliveryMode.WorkBased;
+                    // No Specific Fields
                     break;
                 case DeliveryMode.WorkBased:
+
+                    // Regions
                     if (courseRun.Regions == null || courseRun.Regions.Count().Equals(0))
                         validationMessages.Add($"Select a region");
                     break;
                 case DeliveryMode.Undefined: // Question ???
                 default:
-                    validationMessages.Add($"DeliveryMode is Undefined. We are not checking the rest of the fields now. On editing you can select the appropriate Delivery Mode and the rest of the fields will be validated accordingly.");
+                    validationMessages.Add($"DeliveryMode is Undefined. We are not checking the specific fields now. On editing you can select the appropriate Delivery Mode and the rest of the fields will be validated accordingly.");
                     break;
             }
 
@@ -514,11 +558,12 @@ namespace Dfc.CourseDirectory.Services.CourseService
                         //
                         break;
                     case ValidationMode.BulkUploadCourse:
-                        //
+                        if (courseRun.StartDate < DateTime.Now.AddMonths(-3) || courseRun.StartDate > DateTime.Now.AddYears(2))
+                            validationMessages.Add($"Start Date should not be older than 3 months and not more than 2 years in the future");
                         break;
                     case ValidationMode.MigrateCourse:
-                        if (courseRun.StartDate < DateTime.Now.AddMonths(-3))
-                            validationMessages.Add($"Start Date is older than 3 months");
+                        if (courseRun.StartDate < DateTime.Now.AddMonths(-3) || courseRun.StartDate > DateTime.Now.AddYears(2))
+                            validationMessages.Add($"Start Date should not be older than 3 months and not more than 2 years in the future");
                         break;
                     case ValidationMode.Undefined: // Question ???
                     default:
@@ -531,22 +576,46 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 validationMessages.Add($"Either 'Defined Start Date' or 'Flexible Start Date' has to be provided");
 
             // CourseURL
-            if (!IsValidUrl(courseRun.CourseURL))
-                validationMessages.Add("The format of URL is incorrect");
-            if (courseRun.CourseURL.Length > 255)
-                validationMessages.Add($"The maximum length of URL is 255 characters");
+            if (!string.IsNullOrEmpty(courseRun.CourseURL))
+            {
+                if (!IsValidUrl(courseRun.CourseURL))
+                    validationMessages.Add("The format of URL is incorrect");
+                if (courseRun.CourseURL.Length > 255)
+                    validationMessages.Add($"The maximum length of URL is 255 characters");
+            }
 
+            // Cost & CostDescription
+            if (string.IsNullOrEmpty(courseRun.CostDescription) && courseRun.Cost.Equals(null))
+                validationMessages.Add($"Enter cost or cost description");
 
-            //public decimal? Cost { get; set; }
-            //public string CostDescription { get; set; }
-            //public DurationUnit DurationUnit { get; set; }
-            //[Required(ErrorMessage = "Enter Duration")]
-            //[RegularExpression("^([0-9]|[0-9][0-9]|[0-9][0-9][0-9])$", ErrorMessage = "Duration must be numeric and maximum length is 3 digits")]
-            //public int? DurationValue { get; set; }
-            //public StudyMode StudyMode { get; set; }
-            //public AttendancePattern AttendancePattern { get; set; }
+            if (!string.IsNullOrEmpty(courseRun.CostDescription))
+            {
+                if (!HasOnlyFollowingValidCharacters(courseRun.CostDescription))
+                    validationMessages.Add("Cost Description contains invalid characters");
+                if (courseRun.CostDescription.Length > 255)
+                    validationMessages.Add($"Cost description must be 255 characters or less");
+            }
 
+            if (!courseRun.Cost.Equals(null))
+            {
+                if (!IsCorrectCostFormatting(courseRun.Cost.ToString()))
+                    validationMessages.Add($"Enter the cost in pounds and pence");
+            }
 
+            // DurationUnit
+            if (courseRun.DurationUnit.Equals(DurationUnit.Undefined))
+                validationMessages.Add($"Select Duration Unit");
+
+            // DurationValue
+            if (courseRun.DurationValue.Equals(null))
+            {
+                validationMessages.Add($"Enter Duration");
+            }
+            else
+            {
+                if (!ValidDurationValue(courseRun.DurationValue?.ToString()))
+                    validationMessages.Add("Duration must be numeric and maximum length is 3 digits");
+            }
 
             return validationMessages;
         }
@@ -562,6 +631,22 @@ namespace Dfc.CourseDirectory.Services.CourseService
         public bool IsValidUrl(string value)
         {
             string regex = @"^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$";
+            var validUKPRN = Regex.Match(value, regex, RegexOptions.IgnoreCase);
+
+            return validUKPRN.Success;
+        }
+
+        public bool IsCorrectCostFormatting(string value)
+        {
+            string regex = @"^[0-9]*(\.[0-9]{1,2})?$";
+            var validUKPRN = Regex.Match(value, regex, RegexOptions.IgnoreCase);
+
+            return validUKPRN.Success;
+        }
+
+        public bool ValidDurationValue(string value)
+        {
+            string regex = @"^([0-9]|[0-9][0-9]|[0-9][0-9][0-9])$";
             var validUKPRN = Regex.Match(value, regex, RegexOptions.IgnoreCase);
 
             return validUKPRN.Success;
@@ -583,56 +668,54 @@ namespace Dfc.CourseDirectory.Services.CourseService
             {
                 return Result.Fail("Archive courses service unsuccessful http response");
             }
-
-
         }
     }
+}
 
 
-    internal static class IGetCourseByIdCriteriaExtensions
+internal static class IGetCourseByIdCriteriaExtensions
+{
+    internal static string ToJson(this IGetCourseByIdCriteria extendee)
     {
-        internal static string ToJson(this IGetCourseByIdCriteria extendee)
+
+        GetCourseByIdJson json = new GetCourseByIdJson
         {
+            id = extendee.Id.ToString()
+        };
+        var result = JsonConvert.SerializeObject(json);
 
-            GetCourseByIdJson json = new GetCourseByIdJson
-            {
-                id = extendee.Id.ToString()
-            };
-            var result = JsonConvert.SerializeObject(json);
+        return result;
+    }
+}
 
-            return result;
-        }
+internal class GetCourseByIdJson
+{
+    public string id { get; set; }
+}
+
+internal static class CourseServiceSettingsExtensions
+{
+    internal static Uri ToAddCourseUri(this ICourseServiceSettings extendee)
+    {
+        return new Uri($"{extendee.ApiUrl + "AddCourse?code=" + extendee.ApiKey}");
     }
 
-    internal class GetCourseByIdJson
+    internal static Uri ToGetYourCoursesUri(this ICourseServiceSettings extendee)
     {
-        public string id { get; set; }
+        return new Uri($"{extendee.ApiUrl + "GetCoursesByLevelForUKPRN?code=" + extendee.ApiKey}");
     }
 
-    internal static class CourseServiceSettingsExtensions
+    internal static Uri ToUpdateCourseUri(this ICourseServiceSettings extendee)
     {
-        internal static Uri ToAddCourseUri(this ICourseServiceSettings extendee)
-        {
-            return new Uri($"{extendee.ApiUrl + "AddCourse?code=" + extendee.ApiKey}");
-        }
+        return new Uri($"{extendee.ApiUrl + "UpdateCourse?code=" + extendee.ApiKey}");
+    }
 
-        internal static Uri ToGetYourCoursesUri(this ICourseServiceSettings extendee)
-        {
-            return new Uri($"{extendee.ApiUrl + "GetCoursesByLevelForUKPRN?code=" + extendee.ApiKey}");
-        }
-
-        internal static Uri ToUpdateCourseUri(this ICourseServiceSettings extendee)
-        {
-            return new Uri($"{extendee.ApiUrl + "UpdateCourse?code=" + extendee.ApiKey}");
-        }
-
-        internal static Uri ToGetCourseByIdUri(this ICourseServiceSettings extendee)
-        {
-            return new Uri($"{extendee.ApiUrl + "GetCourseById?code=" + extendee.ApiKey}");
-        }
-        internal static Uri ToArchiveLiveCoursesUri(this ICourseServiceSettings extendee)
-        {
-            return new Uri($"{extendee.ApiUrl + "ArchiveProvidersLiveCourses?code=" + extendee.ApiKey}");
-        }
+    internal static Uri ToGetCourseByIdUri(this ICourseServiceSettings extendee)
+    {
+        return new Uri($"{extendee.ApiUrl + "GetCourseById?code=" + extendee.ApiKey}");
+    }
+    internal static Uri ToArchiveLiveCoursesUri(this ICourseServiceSettings extendee)
+    {
+        return new Uri($"{extendee.ApiUrl + "ArchiveProvidersLiveCourses?code=" + extendee.ApiKey}");
     }
 }
