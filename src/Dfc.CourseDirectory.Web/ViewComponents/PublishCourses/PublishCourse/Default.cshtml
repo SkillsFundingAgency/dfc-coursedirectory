@@ -5,7 +5,7 @@
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
-@Html.HiddenFor(x=>x.PublishMode)
+@Html.HiddenFor(x => x.PublishMode)
 
 @foreach (var course in Model.Courses)
 {
@@ -37,7 +37,8 @@
             <div class="govuk-grid-column-one-half"><strong>@courseRun.CourseName</strong></div>
 
 
-            @if (courseRun.RecordStatus == RecordStatus.BulkUloadPending || courseRun.RecordStatus == RecordStatus.MigrationPending)
+            @if ((Model.PublishMode.Equals(PublishMode.BulkUpload) && courseRun.RecordStatus == RecordStatus.BulkUloadPending) ||
+              (Model.PublishMode.Equals(PublishMode.Migration) && courseRun.RecordStatus == RecordStatus.MigrationPending))
             {
                 <div class="govuk-grid-column-one-quarter"><div class="error-box ">Errors</div></div>
 
@@ -49,10 +50,9 @@
                 if (courseRun.RecordStatus == RecordStatus.MigrationPending)
                 {
                     <div class="govuk-grid-column-one-quarter" id="migration-delete-@courseRun.id" style="display:block">
-                        <a href="#"class="error-fix delete" id="delete-@courseRun.id" data-course-run-id="@courseRun.id">Delete</a>
+                        <a href="#" class="error-fix delete" id="delete-@courseRun.id" data-course-run-id="@courseRun.id">Delete</a>
                     </div>
                 }
-
 
                 <div class="govuk-grid-column-one-quarter" id="migration-confirm-delete-@courseRun.id" style="display:none">
                     <a class="govuk-button" asp-controller="PublishCourses" asp-action="Delete"
@@ -63,18 +63,19 @@
                 <div class="govuk-grid-column-one-quarter" id="migration-cancel-delete-@courseRun.id" style="display:none">
                     <a class="error-fix cancel-delete" id="canceldelete " data-course-run-id="@courseRun.id" href="#">Cancel delete</a>
                 </div>
-
-
-
             }
             else
             {
-                if (courseRun.RecordStatus == RecordStatus.BulkUploadReadyToGoLive || courseRun.RecordStatus == RecordStatus.MigrationReadyToGoLive)
+                if ((Model.PublishMode.Equals(PublishMode.BulkUpload) && courseRun.RecordStatus == RecordStatus.BulkUploadReadyToGoLive) ||
+                    (Model.PublishMode.Equals(PublishMode.Migration) && courseRun.RecordStatus == RecordStatus.MigrationReadyToGoLive))
                 {
                     <div class="govuk-grid-column-one-quarter"><div class="error-box no-error">No errors</div></div>
                     <div class="govuk-grid-column-one-quarter">&nbsp;</div>
                 }
-
+                else
+                {
+                    <div class="govuk-grid-column-one-half">TEMP Indicator - If All CourseRuns have this message, something went WRONG</div>
+                }
             }
 
         </div>
@@ -89,7 +90,7 @@
 
             var $canceldeleteButton = $(".cancel-delete");
 
-              var $fixButton = $(".fix");
+            var $fixButton = $(".fix");
 
             $canceldeleteButton.on("click",
                 function (event) {
@@ -103,11 +104,11 @@
                         var migrationCancelDelete = $("#migration-cancel-delete-" + courseRunId);
                         migrationCancelDelete.css({ "display": "none" });
 
-                          var fix = $("#course-run-fix-" + courseRunId);
+                        var fix = $("#course-run-fix-" + courseRunId);
                         fix.css({ "display": "block" });
 
-                             var deleteOptions = $("#migration-delete-" + courseRunId);
-                    deleteOptions.css({ "display": "block" });
+                        var deleteOptions = $("#migration-delete-" + courseRunId);
+                        deleteOptions.css({ "display": "block" });
                     }
                 });
 
@@ -127,7 +128,7 @@
                     var migrationCancelDelete = $("#migration-cancel-delete-" + courseRunId);
                     migrationCancelDelete.css({ "display": "block" });
 
-                     var fix = $("#course-run-fix-" + courseRunId);
+                    var fix = $("#course-run-fix-" + courseRunId);
                     fix.css({ "display": "none" });
 
                 });
