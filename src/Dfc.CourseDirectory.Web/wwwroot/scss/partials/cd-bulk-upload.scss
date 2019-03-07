@@ -23,11 +23,10 @@
 
     .error-line {
         width: 100%;
-        padding: 15px 0 15px 0;
+        padding: 0 0 15px 0;
         border-bottom: solid 1px #ccc;
         display: flex;
         align-content: center;
-
 
         .heading {
             width: calc(100% - 400px);
@@ -35,15 +34,27 @@
         }
 
         .col {
-            width: 200px;
-            text-align: center;
-            display: inline-block;
+            padding-top: 15px;
+
+            &.right {
+                text-align: right;
+            }
+
+            a {
+                margin-left: 10px;
+            }
+
+            button {
+                padding: 15px 10px 10px 10px;
+                margin-bottom: 0;
+                margin-right: 10px;
+            }
         }
     }
 
     .error-line-in {
         width: calc(100% - 100px);
-        padding: 15px 0 15px 0;
+        padding: 0 0 15px 0;
         border-bottom: solid 1px #ccc;
         display: flex;
         align-content: center;
@@ -56,9 +67,20 @@
         }
 
         .col {
-            width: 200px;
-            text-align: center;
-            display: inline-block;
+            padding-top: 15px;
+
+            a {
+                margin-left: 10px;
+            }
+
+            &.right {
+                text-align: right;
+            }
+
+            button {
+                padding: 15px 10px 10px 10px;
+                margin-bottom: 0;
+            }
         }
     }
 
@@ -78,7 +100,7 @@
         }
     }
 
-    .error-fix {
+    .error-link {
         margin-top: 12px;
         display: inline-block;
     }
@@ -91,14 +113,26 @@
         margin-top: 40px;
     }
 
-    .govuk-table__cell--numeric {
-        margin-left: 80%
-    }
-
     .m100 {
         margin-right: 100px
     }
 }
+
+
+@media only screen and (max-width: 640px) {
+
+    .cd-file-upload {
+        .error-line, .error-line-in {
+            .col {
+
+                &.center {
+                    text-align: center;
+                }
+            }
+        }
+    }
+}
+
 
 .Publish-Complete {
     .Next-Steps {
