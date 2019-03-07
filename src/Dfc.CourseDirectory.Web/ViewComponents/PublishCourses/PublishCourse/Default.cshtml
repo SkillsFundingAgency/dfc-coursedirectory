@@ -26,10 +26,10 @@
             }
             else
             {
-                <div class="govuk-grid-column-one-third col"><div class="error-box no-error">Errors</div></div>
+                <div class="govuk-grid-column-one-third col"><div class="error-box">Errors</div></div>
                 <div class="govuk-grid-column-two-thirds align-right col right center">
 
-                    <a id="course-fix-@course.id" class="error-fix govuk-table__cell--numeric fix" asp-controller="EditCourse" asp-action="Index" style="display:block"
+                    <a id="course-fix-@course.id" class="error-link" asp-controller="EditCourse" asp-action="Index" style="display:block"
                        asp-route-courseId="@course.id" asp-route-mode=@Model.PublishMode>Fix</a>
                 </div>
             }
@@ -40,48 +40,59 @@
     foreach (var courseRun in course.CourseRuns)
     {
         <div id="courserunid" style="display:none">@courseRun.id</div>
-        <div class="error-line-in">
-            <div class="govuk-grid-column-one-third col">@courseRun.CourseName</div>
 
+
+        <div class="error-line-in">
+            <div class="govuk-grid-column-one-third col">BTech business</div>
             <div class="govuk-grid-column-two-thirds">
+
+
                 @if ((Model.PublishMode.Equals(PublishMode.BulkUpload) && courseRun.RecordStatus == RecordStatus.BulkUloadPending) ||
-                     (Model.PublishMode.Equals(PublishMode.Migration) && courseRun.RecordStatus == RecordStatus.MigrationPending))
+                (Model.PublishMode.Equals(PublishMode.Migration) && courseRun.RecordStatus == RecordStatus.MigrationPending))
                 {
-                    
-                    <div class="govuk-grid-column-one-third col"><div class="error-box no-error">Errors</div></div>
+                    <div class="govuk-grid-column-one-third col">
+                        <div class="error-box">Errors</div>
+                    </div>
                     <div class="govuk-grid-column-two-thirds align-right col right center">
 
-                        <a id="course-fix-@course.id" class="error-fix govuk-table__cell--numeric fix" asp-controller="EditCourseRun" asp-action="Index" style="display:block"
-                           asp-route-courseId="@course.id" asp-route-mode=@Model.PublishMode>Fix</a>
-                        
+                        @*<a href="#" class="error-link">Fix</a>
+                            <a href="#" class="error-link">Delete</a>*@
+                        <a id="course-run-fix-@courseRun.id" class="error-link" asp-controller="EditCourseRun" asp-action="Index"
+                           asp-route-courseId="@course.id" asp-route-courseRunId="@courseRun.id" asp-route-mode=@Model.PublishMode>Fix</a>
+
                         @if (courseRun.RecordStatus == RecordStatus.MigrationPending)
                         {
-                            <button type="submit" class="govuk-button">Confirm delete</button>
-                            <a href="#" class="error-link">Cancel</a>
+                            <a href="#" class="error-link delete" id="delete-@courseRun.id" data-course-run-id="@courseRun.id">Delete</a>
+
+                            <a id="migration-confirm-delete-@courseRun.id" class="govuk-button" asp-controller="PublishCourses" asp-action="Delete"
+                               asp-route-courseId="@course.id"
+                               asp-route-courseRunId="@courseRun.id" asp-route-mode=@Model.PublishMode style="display: none">Confirm delete</a>
+
+                            <a href="#" class="error-link cancel-delete" id="migration-cancel-delete-@courseRun.id" data-course-run-id="@courseRun.id" style="display: none">Cancel</a>
                         }
 
-                    </div>
 
+
+                    </div>
                 }
                 else
                 {
                     if ((Model.PublishMode.Equals(PublishMode.BulkUpload) && courseRun.RecordStatus == RecordStatus.BulkUploadReadyToGoLive) ||
                         (Model.PublishMode.Equals(PublishMode.Migration) && courseRun.RecordStatus == RecordStatus.MigrationReadyToGoLive))
-
                     {
-                        @*<div class="govuk-grid-column-one-quarter"><div class="error-box no-error">No errors</div></div>
-                            <div class="govuk-grid-column-one-quarter">&nbsp;</div>*@
-
-
-                        <div class="govuk-grid-column-one-third col"><div class="error-box no-error">No errors</div></div>
-                        <div class="govuk-grid-column-two-thirds align-right col right center">&nbsp;</div>
-
-
+                        <div class="govuk-grid-column-one-third col">
+                            <div class="error-box no-error">No errors</div>
+                        </div>
+                        <div class="govuk-grid-column-two-thirds align-right col right center">
+                            &nbsp;
+                        </div>
                     }
-
                 }
             </div>
         </div>
+
+
+
     }
 
 }
@@ -101,17 +112,17 @@
                     {
                         var courseRunId = $(this).attr("data-course-run-id");
 
+                        var deleteOptions = $("#delete-" + courseRunId);
+                        deleteOptions.show();
+
                         var migrationConfirmDelete = $("#migration-confirm-delete-" + courseRunId);
-                        migrationConfirmDelete.css({ "display": "none" });
+                        migrationConfirmDelete.hide();
 
                         var migrationCancelDelete = $("#migration-cancel-delete-" + courseRunId);
-                        migrationCancelDelete.css({ "display": "none" });
+                        migrationCancelDelete.hide();
 
                         var fix = $("#course-run-fix-" + courseRunId);
-                        fix.css({ "display": "block" });
-
-                        var deleteOptions = $("#migration-delete-" + courseRunId);
-                        deleteOptions.css({ "display": "block" });
+                        fix.show();
                     }
                 });
 
@@ -122,17 +133,17 @@
 
                     var courseRunId = $(this).attr("data-course-run-id");
 
-                    var deleteOptions = $("#migration-delete-" + courseRunId);
-                    deleteOptions.css({ "display": "none" });
+                    var deleteOptions = $("#delete-" + courseRunId);
+                    deleteOptions.hide();
 
                     var migrationConfirmDelete = $("#migration-confirm-delete-" + courseRunId);
-                    migrationConfirmDelete.css({ "display": "block" });
+                    migrationConfirmDelete.show();
 
                     var migrationCancelDelete = $("#migration-cancel-delete-" + courseRunId);
-                    migrationCancelDelete.css({ "display": "block" });
+                    migrationCancelDelete.show();
 
                     var fix = $("#course-run-fix-" + courseRunId);
-                    fix.css({ "display": "none" });
+                    fix.hide();
 
                 });
         });

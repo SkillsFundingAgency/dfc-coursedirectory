@@ -5986,7 +5986,7 @@ p {
 }
 
 .cd-error-summary {
-  border: 5px solid #ff0000;
+  border: 5px solid #b10e1e;
 }
 
 .cd-error-summary .cd-error-summary__title {
@@ -5994,11 +5994,11 @@ p {
 }
 
 .cd-error-summary .cd-error-summary__body {
-  color: #ff0000;
+  color: #b10e1e;
 }
 
 .cd-error-summary .cd-error-summary__body .cd-error-summary__list a {
-  color: #ff0000;
+  color: #b10e1e;
 }
 
 .pagination {
