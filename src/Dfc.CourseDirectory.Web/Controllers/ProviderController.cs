@@ -46,6 +46,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [Authorize(Policy = "ElevatedUserRole")]
         public IActionResult Index()
         {
+            _session.SetInt32("ProviderSearch", 0);
             _logger.LogMethodEnter();
             _logger.LogMethodExit();
             return View();

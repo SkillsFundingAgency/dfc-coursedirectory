@@ -24,10 +24,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _larsSearchService = larsSearchService;
             _contextAccessor = contextAccessor;
             //Set this todisplay the Search Provider fork of the ProviderSearchResult ViewComponent
-            _session.SetInt32("ProviderSearch", 1);
+            
         }
         public IActionResult Index(string errmsg)
         {
+            _session.SetInt32("ProviderSearch", 1);
             _logger.LogMethodEnter();
             _logger.LogTrace("0");
             _logger.LogDebug("1");
