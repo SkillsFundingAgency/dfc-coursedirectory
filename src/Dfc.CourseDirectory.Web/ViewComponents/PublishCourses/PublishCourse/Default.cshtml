@@ -44,7 +44,8 @@
             <div class="govuk-grid-column-one-third col">@courseRun.CourseName</div>
 
             <div class="govuk-grid-column-two-thirds">
-                @if (courseRun.RecordStatus == RecordStatus.BulkUloadPending || courseRun.RecordStatus == RecordStatus.MigrationPending)
+                @if ((Model.PublishMode.Equals(PublishMode.BulkUpload) && courseRun.RecordStatus == RecordStatus.BulkUloadPending) ||
+                     (Model.PublishMode.Equals(PublishMode.Migration) && courseRun.RecordStatus == RecordStatus.MigrationPending))
                 {
                     
                     <div class="govuk-grid-column-one-third col"><div class="error-box no-error">Errors</div></div>
@@ -64,7 +65,9 @@
                 }
                 else
                 {
-                    if (courseRun.RecordStatus == RecordStatus.BulkUploadReadyToGoLive || courseRun.RecordStatus == RecordStatus.MigrationReadyToGoLive)
+                    if ((Model.PublishMode.Equals(PublishMode.BulkUpload) && courseRun.RecordStatus == RecordStatus.BulkUploadReadyToGoLive) ||
+                        (Model.PublishMode.Equals(PublishMode.Migration) && courseRun.RecordStatus == RecordStatus.MigrationReadyToGoLive))
+
                     {
                         @*<div class="govuk-grid-column-one-quarter"><div class="error-box no-error">No errors</div></div>
                             <div class="govuk-grid-column-one-quarter">&nbsp;</div>*@

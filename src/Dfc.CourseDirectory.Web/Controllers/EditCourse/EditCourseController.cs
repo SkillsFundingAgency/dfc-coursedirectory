@@ -24,6 +24,7 @@ using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatYouNeed;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhereNext;
 using Dfc.CourseDirectory.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 {
@@ -169,17 +170,11 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                     courseForEdit.Value.WhatYoullNeed = model?.WhatYouNeed;
                     courseForEdit.Value.HowYoullBeAssessed = model?.HowAssessed;
                     courseForEdit.Value.WhereNext = model?.WhereNext;
-                    courseForEdit.Value.UpdatedBy = User.Identity.Name;
-                    courseForEdit.Value.UpdatedDate = DateTime.Now;
                     courseForEdit.Value.AdultEducationBudget = model.AdultEducationBudget;
                     courseForEdit.Value.AdvancedLearnerLoan = model.AdvancedLearnerLoan;
-
-                    //todo when real data
-                    //if (model.Mode == PublishMode.BulkUpload)
-                    //{
-                    // courseForEdit.Value.IsValid = true;
-                    //}
-
+                    courseForEdit.Value.IsValid = true; // The same for Live, BulkUpload, Migration
+                    courseForEdit.Value.UpdatedBy = User.FindFirst(ClaimTypes.NameIdentifier)?.Value; // User.Identity.Name;
+                    courseForEdit.Value.UpdatedDate = DateTime.Now;
 
                     var updatedCourse = await _courseService.UpdateCourseAsync(courseForEdit.Value);
 
