@@ -26,5 +26,7 @@ namespace Dfc.CourseDirectory.Services.Interfaces.CourseService
         IList<string> ValidateCourse(ICourse course);
 
         IList<string> ValidateCourseRun(ICourseRun courseRun, ValidationMode validationMode);
+
+        Task<IResult> UpdateStatus(Guid courseId, Guid courseRunId, int statusToChangeTo);
     }
 }
