@@ -5,15 +5,25 @@
 
 <form asp-controller="PublishCourses" asp-action="Index" id="PublishCourses">
 
-    @await Component.InvokeAsync(nameof(Publish), new { model = Model})
+    @await Component.InvokeAsync(nameof(Publish), new { model = Model })
 
 
     <div class="govuk-form-group">
-        <button name="publishButton" type="submit" class="govuk-button" id="publish">
-            Publish all
-        </button>
+        @Html.HiddenFor(m => m.PublishMode)
+        @Html.HiddenFor(m => m.NumberOfCoursesInFiles)
 
-        @Html.ActionLink("Exit without publishing", "Index", "Home", new {  }, new { @class = "govuk-link" })
+        @if (Model.AreAllReadyToBePublished)
+        {
+            <button name="publishButton" type="submit" class="govuk-button" id="publish">
+                Publish all
+            </button>
+        }
+        else
+        {
+            <div class="govuk-button">Please, fix all course in order to 'Publish all'</div>
+        }
+
+        <div> @Html.ActionLink("Exit without publishing", "Index", "Home", new { }, new { @class = "govuk-link" })</div>
     </div>
 
 </form>

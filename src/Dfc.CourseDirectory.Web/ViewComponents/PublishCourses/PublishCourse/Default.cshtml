@@ -16,25 +16,18 @@
         <div class="govuk-grid-column-two-thirds">
             @if (course.IsValid)
             {
-                @*<div class="govuk-grid-column-one-quarter"><div class="error-box no-error">No errors</div></div>
-                    <div class="govuk-grid-column-one-quarter">&nbsp;</div>*@
-
-
                 <div class="govuk-grid-column-one-third col"><div class="error-box no-error">No errors</div></div>
                 <div class="govuk-grid-column-two-thirds align-right col right center">&nbsp;</div>
-
             }
             else
             {
                 <div class="govuk-grid-column-one-third col"><div class="error-box">Errors</div></div>
                 <div class="govuk-grid-column-two-thirds align-right col right center">
-
                     <a id="course-fix-@course.id" class="error-link" asp-controller="EditCourse" asp-action="Index" style="display:block"
                        asp-route-courseId="@course.id" asp-route-mode=@Model.PublishMode>Fix</a>
                 </div>
             }
         </div>
-
     </div>
 
     foreach (var courseRun in course.CourseRuns)

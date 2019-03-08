@@ -98,26 +98,28 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
 
-            //Archive any existing courses
-            var archiveExistingCourse = await _courseService.ArchiveProviderLiveCourses(UKPRN);
+            CompleteVM.NumberOfCoursesPublished = vm.NumberOfCoursesInFiles; 
 
-            foreach (var course in vm.Courses)
+            switch (vm.PublishMode)
             {
-                course.IsValid = true;
+                case PublishMode.Migration:
+                    //commit courses directly
+                  
 
-                foreach (var courseRuns in course.CourseRuns)
-                {
-                    courseRuns.RecordStatus = RecordStatus.Live;
-                }
+                    break;
+                case PublishMode.BulkUpload:
 
-                // AM - We don't add courses. We modify them.
-                //var result = await _courseService.AddCourseAsync(course);
+                    //Archive any existing courses
+                    //var archiveExistingCourse = await _courseService.ArchiveProviderLiveCourses(UKPRN);
 
-                //if (result.IsSuccess && result.HasValue)
-                //{
-                //    CompleteVM.NumberOfCoursesPublished++;
-                //}
+                    // commit ciurses
+
+                    break;
+                default:
+                    // TODO: We should have generic error handling page
+                    return RedirectToAction("Index", "Home", new { errmsg = "Publish All BulkUpload/Migration Error" });
             }
+
             return View("Complete", CompleteVM);
         }
 
