@@ -17,6 +17,7 @@ using System.Net;
 using System.Text.RegularExpressions;
 using Dfc.CourseDirectory.Common.Settings;
 using System.Linq;
+using Dfc.CourseDirectory.Models.Enums;
 
 namespace Dfc.CourseDirectory.Services.CourseService
 {
@@ -28,6 +29,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
         private readonly Uri _getYourCoursesUri;
         private readonly Uri _updateCourseUri;
         private readonly Uri _getCourseByIdUri;
+        private readonly Uri _updateStatusUri;
 
         private readonly int _courseForTextFieldMaxChars;
         private readonly int _entryRequirementsTextFieldMaxChars;
@@ -70,6 +72,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             _updateCourseUri = settings.Value.ToUpdateCourseUri();
             _getCourseByIdUri = settings.Value.ToGetCourseByIdUri();
             _archiveLiveCoursesUri = settings.Value.ToArchiveLiveCoursesUri();
+            _updateStatusUri = settings.Value.ToUpdateStatusUri();
 
             _courseForTextFieldMaxChars = courseForComponentSettings.Value.TextFieldMaxChars;
             _entryRequirementsTextFieldMaxChars = entryRequirementsComponentSettings.Value.TextFieldMaxChars;
@@ -669,6 +672,29 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 return Result.Fail("Archive courses service unsuccessful http response");
             }
         }
+
+        public async Task<IResult> UpdateStatus(Guid courseId, Guid courseRunId, int statusToUpdateTo)
+        {
+            Throw.IfNullGuid(courseId, nameof(courseId));
+            Throw.IfLessThan(0, statusToUpdateTo, nameof(statusToUpdateTo));
+            Throw.IfGreaterThan(Enum.GetValues(typeof(RecordStatus)).Cast<int>().Max(), statusToUpdateTo, nameof(statusToUpdateTo));
+
+            var response = await _httpClient.GetAsync(new Uri(_updateStatusUri.AbsoluteUri 
+                + "&CourseId=" + courseId
+                + "&CourseRunId=" + courseRunId
+                + "&Status=" + statusToUpdateTo));
+            _logger.LogHttpResponseMessage("Update Status http response", response);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return Result.Ok();
+
+            }
+            else
+            {
+                return Result.Fail("Update course unsuccessful http response");
+            }
+        }
     }
 }
 
@@ -717,5 +743,9 @@ internal static class CourseServiceSettingsExtensions
     internal static Uri ToArchiveLiveCoursesUri(this ICourseServiceSettings extendee)
     {
         return new Uri($"{extendee.ApiUrl + "ArchiveProvidersLiveCourses?code=" + extendee.ApiKey}");
+    }
+    internal static Uri ToUpdateStatusUri(this ICourseServiceSettings extendee)
+    {
+        return new Uri($"{extendee.ApiUrl + "UpdateStatus?code=" + extendee.ApiKey}");
     }
 }

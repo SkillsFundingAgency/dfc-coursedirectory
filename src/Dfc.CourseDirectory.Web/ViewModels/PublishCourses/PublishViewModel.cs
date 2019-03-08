@@ -11,5 +11,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels.PublishCourses
         public int NumberOfCoursesInFiles { get; set; }
 
         public PublishMode PublishMode { get; set; }
+
+        public bool AreAllReadyToBePublished { get; set; }
     }
 }

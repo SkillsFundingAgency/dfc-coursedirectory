@@ -30,7 +30,7 @@
             NotificationTitle = "There is an issue with this qualification",
             NotificationMessage = "",
             ClassType = "error-summary"
-        });
+        })
     </div>
 
     @Html.HiddenFor(x => x.CourseId)
@@ -296,6 +296,8 @@
             }
 
             function validate() {
+
+                validStates = [];
 
                 $courseName.govUkInput("validState");
                 $courseProviderReference.govUkInput("validState");

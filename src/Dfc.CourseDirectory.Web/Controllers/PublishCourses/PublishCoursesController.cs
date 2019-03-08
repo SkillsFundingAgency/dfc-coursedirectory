@@ -58,32 +58,32 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                        .Result.Value);
             Courses = coursesByUKPRN.Value.SelectMany(o => o.Value).SelectMany(i => i.Value).ToList();
 
-            var migratedCourses = Courses.Where(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.MigrationPending || cr.RecordStatus == RecordStatus.MigrationReadyToGoLive)).ToList();
-            var bulkUploadedCourses = Courses.Where(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.BulkUloadPending || cr.RecordStatus == RecordStatus.BulkUploadReadyToGoLive)).ToList();
-            var liveCourses = Courses.Where(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.Live)).ToList();
+            //var liveCourses = Courses.Where(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.Live)).ToList();
 
             switch (publishMode)
             {
                 case PublishMode.Migration:
                     //TODO replace with call to service to return by status
                     vm.PublishMode = PublishMode.Migration;
-                    vm.NumberOfCoursesInFiles = 10;
-                    //vm.Courses = Courses;
+                    var migratedCourses = Courses.Where(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.MigrationPending || cr.RecordStatus == RecordStatus.MigrationReadyToGoLive)).ToList();
+                    vm.NumberOfCoursesInFiles = migratedCourses.SelectMany(s => s.CourseRuns.Where(cr => cr.RecordStatus == RecordStatus.MigrationPending || cr.RecordStatus == RecordStatus.MigrationReadyToGoLive)).Count();
                     vm.Courses = migratedCourses;
+                    vm.AreAllReadyToBePublished = CheckAreAllReadyToBePublished(migratedCourses, PublishMode.Migration);
 
                     break;
                 case PublishMode.BulkUpload:
 
                     //TODO replace with call to service to return by status
                     vm.PublishMode = PublishMode.BulkUpload;
-                    vm.NumberOfCoursesInFiles = 10;
-                    //vm.Courses = Courses;
+                    var bulkUploadedCourses = Courses.Where(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.BulkUloadPending || cr.RecordStatus == RecordStatus.BulkUploadReadyToGoLive)).ToList();
+                    vm.NumberOfCoursesInFiles = bulkUploadedCourses.SelectMany(s => s.CourseRuns.Where(cr => cr.RecordStatus == RecordStatus.BulkUloadPending || cr.RecordStatus == RecordStatus.BulkUploadReadyToGoLive)).Count();
                     vm.Courses = bulkUploadedCourses;
+                    vm.AreAllReadyToBePublished = CheckAreAllReadyToBePublished(bulkUploadedCourses, PublishMode.BulkUpload);
 
                     break;
-                    }
+            }
 
-                    return View("Index", vm);
+            return View("Index", vm);
         }
 
         [Authorize]
@@ -97,6 +97,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
             {
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
+
             //Archive any existing courses
             var archiveExistingCourse = await _courseService.ArchiveProviderLiveCourses(UKPRN);
 
@@ -127,6 +128,34 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
             //TODO delete
 
             return RedirectToAction("Index", "PublishCourses", new { publishMode = PublishMode.Migration });
+        }
+
+        public bool CheckAreAllReadyToBePublished(List<Course> courses, PublishMode publishMode)
+        {
+            bool AreAllReadyToBePublished = false;
+
+            var hasInvalidCourses = courses.Any(c => c.IsValid == false);
+            if (hasInvalidCourses)
+            {
+                return AreAllReadyToBePublished;
+            }
+            else
+            {
+                switch (publishMode)
+                {
+                    case PublishMode.Migration:
+                        var hasInvalidMigrationCourseRuns = courses.Any(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.MigrationPending));
+                        if (!hasInvalidMigrationCourseRuns)
+                            AreAllReadyToBePublished = true;
+                        break;
+                    case PublishMode.BulkUpload:
+                        var hasInvalidBulkUploadCourseRuns = courses.Any(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.BulkUloadPending));
+                        if (!hasInvalidBulkUploadCourseRuns)
+                            AreAllReadyToBePublished = true;
+                        break;
+                }
+                return AreAllReadyToBePublished;
+            }         
         }
     }
 }
