@@ -70,14 +70,9 @@
     (function($) {
         $(function() {
 
-
-            @*var $dayElementUrl = $("#@nameof(Model.Day)");
-
+            var $dayElementUrl = $("#@nameof(Model.Day)");
             var $monthElementUrl = $("#@nameof(Model.Month)");
-
             var $yearElementUrl = $("#@nameof(Model.Year)");
-
-
 
             $dayElementUrl.on("keypress",
                 function(event) {
@@ -122,12 +117,7 @@
                     }
 
                     return false;
-                });*@
-
-
-
-
-
+                });
         });
     })(jQuery);
 </script>

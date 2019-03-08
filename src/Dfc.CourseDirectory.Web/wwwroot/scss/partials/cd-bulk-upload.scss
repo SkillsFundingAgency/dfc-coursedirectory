@@ -1,0 +1,142 @@
+﻿.cd-file-upload {
+
+    .box-container {
+        width: 100%;
+        height: auto;
+        margin-top: 40px;
+        margin-bottom: 40px;
+
+        .box {
+            width: 200px;
+            height: 200px;
+            display: inline-block;
+            margin-right: 15px;
+            color: #ffffff;
+            background-color: #808080;
+            font-size: 130px;
+            line-height: 215px;
+            text-align: center;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+    }
+
+    .error-line {
+        width: 100%;
+        padding: 0 0 15px 0;
+        border-bottom: solid 1px #ccc;
+        display: flex;
+        align-content: center;
+
+        .heading {
+            width: calc(100% - 400px);
+            display: inline-block;
+        }
+
+        .col {
+            padding-top: 15px;
+
+            &.right {
+                text-align: right;
+            }
+
+            a {
+                margin-left: 10px;
+            }
+
+            button {
+                padding: 15px 10px 10px 10px;
+                margin-bottom: 0;
+                margin-right: 10px;
+            }
+        }
+    }
+
+    .error-line-in {
+        width: calc(100% - 100px);
+        padding: 0 0 15px 0;
+        border-bottom: solid 1px #ccc;
+        display: flex;
+        align-content: center;
+        margin-left: 100px;
+
+        .heading {
+            width: calc(100% - 400px);
+            display: inline-block;
+            padding-top: 12px;
+        }
+
+        .col {
+            padding-top: 15px;
+
+            a {
+                margin-left: 10px;
+            }
+
+            &.right {
+                text-align: right;
+            }
+
+            button {
+                padding: 15px 10px 10px 10px;
+                margin-bottom: 0;
+            }
+        }
+    }
+
+    .error-box {
+        width: 65%;
+        height: auto;
+        text-align: center;
+        padding: 10px;
+        margin: 0 auto;
+        border-radius: 4px;
+        color: #b10e1e;
+        border: solid 3px #b10e1e;
+
+        &.no-error {
+            color: #006435;
+            border: solid 3px #006435;
+        }
+    }
+
+    .error-link {
+        margin-top: 12px;
+        display: inline-block;
+    }
+
+    .err-top-line {
+        border-top: solid 1px #666;
+    }
+
+    .new-upload {
+        margin-top: 40px;
+    }
+
+    .m100 {
+        margin-right: 100px
+    }
+}
+
+
+@media only screen and (max-width: 640px) {
+
+    .cd-file-upload {
+        .error-line, .error-line-in {
+            .col {
+
+                &.center {
+                    text-align: center;
+                }
+            }
+        }
+    }
+}
+
+
+.Publish-Complete {
+    .Next-Steps {
+        font-weight: bold;
+        font-family: "nta", Arial, sans-serif;
+    }
+}

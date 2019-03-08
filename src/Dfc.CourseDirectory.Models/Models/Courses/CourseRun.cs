@@ -67,6 +67,20 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         FlexibleStartDate = 2,
     }
 
+    public enum ValidationMode
+    {
+        [Description("Undefined")]
+        Undefined = 0,
+        [Description("Add Course")]
+        AddCourse = 1,
+        [Description("Edit Course")]
+        EditCourse = 2,
+        [Description("Bulk Upload Course")]
+        BulkUploadCourse = 3,
+        [Description("Migrate Course")]
+        MigrateCourse = 4,
+    }
+
     public class CourseRun : ICourseRun 
     {
         public Guid id { get; set; }

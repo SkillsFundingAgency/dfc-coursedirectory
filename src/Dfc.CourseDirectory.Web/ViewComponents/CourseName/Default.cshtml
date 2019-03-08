@@ -26,7 +26,12 @@
 <script>
     (function ($) {
         $(function () {
+            var $elementCourseName = $("#@nameof(Model.CourseName)");
 
+            $elementCourseName.on("blur", function () {
+                var trimmed = $elementCourseName.val().trim();
+                $elementCourseName.val(trimmed);
+            });
         });
     })(jQuery);
 </script>

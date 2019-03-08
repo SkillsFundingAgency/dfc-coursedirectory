@@ -27,7 +27,12 @@
 <script>
     (function ($) {
         $(function () {
-          
+            var $elementCourseProviderReference = $("#@nameof(Model.CourseProviderReference)");
+
+            $elementCourseProviderReference.on("blur", function () {
+                var trimmed = $elementCourseProviderReference.val().trim();
+                $elementCourseProviderReference.val(trimmed);
+            });
         });
     })(jQuery);
 </script>

@@ -1,5 +1,6 @@
 ﻿using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Web.ViewComponents.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -21,6 +22,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult
         public string UnitType { get; }
         public string AwardOrgName { get; }
         public string LearnAimRefTypeDesc { get; }
+        public DateTime? CertificationEndDate { get; }
 
         public LarsSearchResultItemModel(
             decimal searchScore,
@@ -34,7 +36,8 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult
             string totalQualificationTime,
             string unitType,
             string awardOrgName,
-            string learnAimRefTypeDesc)
+            string learnAimRefTypeDesc,
+            DateTime? certificationEndDate)
         {
             Errors = new string[] { };
             SearchScore = searchScore;
@@ -49,6 +52,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult
             UnitType = unitType;
             AwardOrgName = awardOrgName;
             LearnAimRefTypeDesc = learnAimRefTypeDesc;
+            CertificationEndDate = certificationEndDate;
         }
 
         public LarsSearchResultItemModel()
@@ -77,6 +81,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult
             yield return UnitType;
             yield return AwardOrgName;
             yield return LearnAimRefTypeDesc;
+            yield return CertificationEndDate;
         }
     }
 }

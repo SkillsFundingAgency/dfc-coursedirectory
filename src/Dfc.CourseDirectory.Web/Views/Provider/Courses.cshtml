@@ -1,519 +1,512 @@
-﻿
-@using System.Globalization
-@using Dfc.CourseDirectory.Models.Models.Courses
-@using Dfc.CourseDirectory.Services.Interfaces.CourseService
-@using Dfc.CourseDirectory.Services.Interfaces.VenueService
-@using Dfc.CourseDirectory.Services.VenueService
-@using Dfc.CourseDirectory.Web.Helpers
-@using Dfc.CourseDirectory.Web.ViewComponents.Courses.DeliveryType
+﻿@using Dfc.CourseDirectory.Models.Enums
 @using Dfc.CourseDirectory.Web.ViewComponents.Notification
-@model IEnumerable<ProviderCoursesViewModel>
-@inject IVenueService venueService
-@inject ICourseService courseService
 
+@model Dfc.CourseDirectory.Web.ViewModels.YourCourses.YourCoursesViewModel
 
-<span class="govuk-caption-xl">Your courses</span>
-@{
-    var level = Model.FirstOrDefault()?.CoursesForLevel?.FirstOrDefault()?.NotionalNVQLevelv2;
-}
-<h1 class="govuk-heading-xl"> Level @level</h1>
+<style>
 
-@if (Model.FirstOrDefault()?.CourseId != Guid.Empty)
-{
-    @await Component.InvokeAsync(nameof(Notification), new NotificationModel
-{
-    NotificationTitle = Model.FirstOrDefault()?.NotificationTitle,
-    NotificationMessage = @Html.Raw(Model.FirstOrDefault()?.NotificationMessage).ToString(),
-    ClassType = "info-summary"
-});
+    .cd__your-courses__accordion-list {
+    }
 
-}
+        .cd__your-courses__accordion-list .govuk-details__summary {
+            border-bottom: 1px solid grey;
+        }
 
+        .cd__your-courses__accordion-list .govuk-details__summary-text {
+            color: #000;
+            font-size: 1.5em;
+            font-weight: 900;
+            text-decoration: none;
+        }
 
-<div id="Cd-course-list" class="">
+        .cd__your-courses__accordion-list .govuk-details__summary {
+            width: 100%;
+        }
 
-    @foreach (var x in Model)
-    {
+            .cd__your-courses__accordion-list .govuk-details__summary ul {
+                padding: 0px;
+                color: #000;
+                text-decoration: none;
+            }
 
-        foreach (var s in x.CoursesForLevel)
+                .cd__your-courses__accordion-list .govuk-details__summary ul li {
+                    display: inline;
+                    padding-right: 1rem;
+                }
+
+        .cd__your-courses__accordion-list .govuk-details__text {
+            padding-right: 0px;
+            border-left: 0px;
+        }
+
+        .cd__your-courses__accordion-list .govuk-accordion__section-heading ul {
+            padding: 0px 0px 0px 1rem;
+            margin-top: 0px;
+            margin-bottom: 0px;
+        }
+
+            .cd__your-courses__accordion-list .govuk-accordion__section-heading ul li {
+                display: inline;
+                padding-right: 1rem;
+            }
+
+        .cd__your-courses__accordion-list .govuk-accordion__section-heading .govuk-accordion__section-button {
+            color: #000;
+        }
+
+            .cd__your-courses__accordion-list .govuk-accordion__section-heading .govuk-accordion__section-button .row-1 {
+                -ms-word-break: break-all;
+                word-break: break-all;
+                /* Non standard for webkit */
+                word-break: break-word;
+                -webkit-hyphens: auto;
+                -moz-hyphens: auto;
+                -ms-hyphens: auto;
+                hyphens: auto;
+            }
+
+            .cd__your-courses__accordion-list .govuk-accordion__section-heading .govuk-accordion__section-button .row-2 {
+                font-size: 0.8em;
+                font-weight: normal;
+                color: #666;
+                -ms-word-break: break-all;
+                word-break: break-all;
+                /* Non standard for webkit */
+                word-break: break-word;
+                -webkit-hyphens: auto;
+                -moz-hyphens: auto;
+                -ms-hyphens: auto;
+                hyphens: auto;
+            }
+
+            .cd__your-courses__accordion-list .govuk-accordion__section-heading .govuk-accordion__section-button .row-2 {
+                font-size: 1rem;
+                font-weight: normal;
+            }
+
+        .cd__your-courses__accordion-list .govuk-accordion__section-content {
+            padding-bottom: 0px;
+        }
+
+    .cd__your-courses__accordion-content-card {
+        border: 1px solid #ccc;
+    }
+
+    .cd__your-courses__accordion-content-card-content {
+        padding: 1rem;
+    }
+
+    .cd__your-courses__accordion-content-card-controls {
+        border: 0px;
+        border-right: 1px solid #ccc;
+        border-left: 1px solid #ccc;
+        border-bottom: 1px solid #ccc;
+        padding: 0.5rem 1rem 0.5rem 1rem;
+    }
+
+    .flex-container {
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        display: -webkit-box;
+        display: -moz-box;
+        display: -ms-flexbox;
+        display: -webkit-flex;
+        display: flex;
+        -webkit-flex-flow: row wrap;
+    }
+
+    .flex-item {
+        padding: 5px 1rem 5px 0px;
+        margin-top: 10px;
+        -ms-word-break: break-all;
+        word-break: break-all;
+        /* Non standard for webkit */
+        word-break: break-word;
+        -webkit-hyphens: auto;
+        -moz-hyphens: auto;
+        -ms-hyphens: auto;
+        hyphens: auto;
+    }
+
+        .flex-item label {
+            display: block;
+            font-weight: 900;
+        }
+
+    .cd__your-courses__filters-list {
+        margin: 0px;
+        padding: 0px;
+        list-style: none;
+    }
+
+    .cd__your-courses__filters-list__link {
+        color: #000;
+        font-family: nta,Arial,sans-serif;
+        text-decoration: none;
+    }
+
+    .cd__your-courses__filters-list__link--selected {
+        font-weight: 900;
+    }
+</style>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-one">
+        <h1 class="govuk-heading-xl">
+            <span class="govuk-caption-xl">@Model.HeadingCaption</span>
+            @Model.Heading
+        </h1>
+
+        @if (!string.IsNullOrWhiteSpace(Model.NotificationTitle))
         {
-            <details id="@s.id" class="govuk-details" data-courseid="@s.id">
-                <summary class="govuk-details__summary">
-                    <span class="govuk-details__summary-text">
-                        @s.QualificationCourseTitle
-                        <br />
-                        <span style="font-size: 1.1875rem; font-weight: 400;margin-right: 20px">Lars/QAN: @s.LearnAimRef</span>
-                        <span style="font-size: 1.1875rem; font-weight: 400;margin-right: 20px">Level: @s.NotionalNVQLevelv2</span>
-                        <span style="font-size: 1.1875rem; font-weight: 400;margin-right: 20px">@s.AwardOrgCode</span>
-                        <span style="font-size: 1.1875rem; font-weight: 400; margin-right: 20px">
-                            <a class="govuk-link" asp-controller="EditCourse" asp-action="Index"
-                               asp-route-courseId="@s.id">Edit course description</a>
+            @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+            {
+                NotificationTitle = Model.NotificationTitle,
+                NotificationMessage = Model.NotificationMessage,
+                ClassType = "info-summary"
+            })
+        }
+    </div>
+</div>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-one-quarter">
+        <ul class="cd__your-courses__filters-list">
+            <li>
+                <span class="govuk-body govuk-!-font-weight-bold">Levels</span>
+            </li>
+            <hr class="cd__your-courses__filters-list__break">
+            @foreach (var filter in Model.LevelFilters)
+            {
+                @if (filter.IsSelected)
+                {
+                    <li>
+                        <a class="cd__your-courses__filters-list__link cd__your-courses__filters-list__link--selected"
+                           asp-controller="Provider"
+                           asp-action="Courses"
+                           asp-route-level="@filter.Value">@filter.Name (@filter.Facet)</a>
+                    </li>
+                }
+                else
+                {
+                    <li>
+                        <a class="cd__your-courses__filters-list__link"
+                           asp-controller="Provider"
+                           asp-action="Courses"
+                           asp-route-level="@filter.Value">@filter.Name (@filter.Facet)</a>
+                    </li>
+                }
+                <hr class="cd__your-courses__filters-list__break">
+            }
+        </ul>
+    </div>
+    <div class="govuk-grid-column-three-quarters">
+        <div class="cd__your-courses__accordion-list">
+            @foreach (var course in Model.Courses)
+            {
+                <details id="@course.Id" class="govuk-details" data-courseid="@course.Id">
+                    <summary class="govuk-details__summary">
+                        <span class="govuk-details__summary-text">
+                            @course.QualificationTitle (@course.Facet)
                         </span>
-                    </span>
-
-                </summary>
-
-                <div class="govuk-details__text" style="padding-left: 20px; padding-top: 0;">
-                    <div class="govuk-accordion" data-module="accordion" id="accordion-default">
-                        @foreach (var a in s.CourseRuns.OrderBy(l => l.CourseName))
-                        {
-
-                            var accordionId = "accordion-default-content-" + a.id;
-
-                            <div class="govuk-accordion__section" id="@a.id">
-                                <div class="govuk-accordion__section-header">
-                                    <h2 class="govuk-accordion__section-heading">
-                                        <button type="button" id="accordion-default-heading-1" aria-controls="@accordionId" class="govuk-accordion__section-button" aria-expanded="false">
-                                            @a.CourseName
-                                            <br />
-
-                                            @{
-                                                if (!string.IsNullOrEmpty(a.ProviderCourseID))
+                        <ul>
+                            @if (!string.IsNullOrEmpty(course.LearnAimRef))
+                            {
+                                <li>Lars/QAN: @course.LearnAimRef</li>
+                            }
+                            @if (!string.IsNullOrEmpty(course.NotionalNVQLevelv2))
+                            {
+                                <li>Level: @course.NotionalNVQLevelv2</li>
+                            }
+                            @if (!string.IsNullOrEmpty(course.AwardOrg))
+                            {
+                                <li>Award Org.: @course.AwardOrg</li>
+                            }
+                            <li>
+                                <a class="govuk-link"
+                                   asp-controller="EditCourse"
+                                   asp-action="Index"
+                                   asp-route-courseId="@course.Id"
+                                   asp-route-mode ="@PublishMode.Undefined">Edit course description</a>
+                            </li>
+                        </ul>
+                    </summary>
+                    <div class="govuk-details__text">
+                        <div class="govuk-accordion" data-module="accordion" id="accordion-@course.Id">
+                            @foreach (var courseRun in course.CourseRuns)
+                            {
+                                <div class="govuk-accordion__section" id="@courseRun.Id">
+                                    <div class="govuk-accordion__section-header">
+                                        <h2 class="govuk-accordion__section-heading">
+                                            <button type="button" id="accordion-default-heading-@courseRun.Id" aria-controls="accordion-default-content-@courseRun.Id" class="govuk-accordion__section-button" aria-expanded="false">
+                                                <ul class="row-1">
+                                                    <li>@courseRun.CourseName</li>
+                                                </ul>
+                                                @if (!string.IsNullOrEmpty(courseRun.CourseId)
+                                               || !string.IsNullOrEmpty(courseRun.StudyMode)
+                                               || !string.IsNullOrEmpty(courseRun.StartDate))
                                                 {
-                                                    <span style="font-size: 1rem; font-weight: 400; margin-right: 15px">
-                                                        @a.ProviderCourseID
-                                                    </span>
-                                                }
-
-                                            }
-
-                                            @{
-                                                switch (a.DeliveryMode)
-                                                {
-                                                    case DeliveryMode.ClassroomBased:
+                                                    <ul class="row-2">
+                                                        @if (!string.IsNullOrEmpty(courseRun.CourseId))
                                                         {
-                                                            if (a.VenueId.HasValue)
+                                                            <li>
+                                                                @courseRun.CourseId
+                                                            </li>
+                                                        }
+                                                        @if (courseRun.DeliveryMode == "Classroom based")
+                                                        {
+                                                            @if (!string.IsNullOrEmpty(courseRun.Venue))
                                                             {
-                                                                var venueName = await venueService.GetVenueByIdAsync(new GetVenueByIdCriteria(a.VenueId.ToString()));
-
-                                                                if (venueName.HasValue)
-                                                                {
-                                                                    <span style="font-size: 1rem; font-weight: 400; margin-right: 15px">
-
-                                                                        @venueName.Value.VenueName
-                                                                    </span>
-
-                                                                }
-
+                                                                <li>
+                                                                    @courseRun.Venue
+                                                                </li>
                                                             }
-                                                            break;
                                                         }
-                                                    case DeliveryMode.WorkBased:
+                                                        @if (courseRun.DeliveryMode == "Work based")
                                                         {
-                                                            if (a.Regions != null)
+                                                            @if (!string.IsNullOrEmpty(courseRun.Region))
                                                             {
-
-                                                                var regionNames = new List<string>();
-
-                                                                string allRegions = "";
-
-                                                                {
-                                                                    foreach (var region in a.Regions)
-                                                                    {
-                                                                        var regionName = courseService.GetRegions().RegionItems.Where(r => r.Id == region).Select(n => n.RegionName).SingleOrDefault();
-                                                                        regionNames.Add(regionName);
-                                                                    }
-                                                                }
-                                                                allRegions = @String.Join(", ", regionNames.Select(p => p).ToArray());
-
-
-
-                                                                <span style="font-size: 1rem; font-weight: 400; margin-right: 15px">
-
-                                                                    @allRegions
-                                                                </span>
-
-
+                                                                <li>
+                                                                    @courseRun.Region
+                                                                </li>
                                                             }
-                                                            break;
                                                         }
-                                                }
-                                            }
-
-
-
-                                            @if (a.StudyMode != StudyMode.Undefined)
-                                            {
-                                                <span style="font-size: 1rem; font-weight: 400; margin-right: 15px">
-                                                    @WebHelper.GetEnumDescription(a.StudyMode)
-                                                </span>
-                                            }
-
-
-
-                                            @if (a.FlexibleStartDate)
-                                            {
-                                                <span style="font-size: 1rem; font-weight: 400; margin-right: 15px">
-                                                    Flexible Start Date
-                                                </span>
-
-                                            }
-                                            else
-                                            {
-                                                <span style="font-size: 1rem; font-weight: 400; margin-right: 15px">
-                                                    @a.StartDate?.ToString("dd/MM/yyy", CultureInfo.InvariantCulture)
-                                                </span>
-                                            }
-
-
-                                        </button><span class="govuk-accordion__icon" aria-hidden="true"></span>
-                                    </h2>
-                                </div>
-                                <div>
-
-                                    <div id="@accordionId" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-1" style="border-style: solid; border-width: 1px; margin-bottom: 10px;">
-
-                                        <div class="cd-course--list" style="margin-bottom: 15px; border-bottom: none">
-                                            @{
-                                                switch (a.DeliveryMode)
-                                                {
-                                                    case DeliveryMode.ClassroomBased:
+                                                        @if (!string.IsNullOrEmpty(courseRun.StudyMode))
                                                         {
-                                                            if (a.VenueId.HasValue)
-                                                            {
-                                                                var venueName = await venueService.GetVenueByIdAsync(new GetVenueByIdCriteria(a.VenueId.ToString()));
-
-                                                                if (venueName.HasValue)
-                                                                {
-                                                                    <div style="padding-bottom: 1em">
-                                                                        <label class="govuk-label" for="sort" style="font-weight: 600">
-                                                                            Venue
-                                                                        </label>
-                                                                        <label>
-                                                                            @venueName.Value.VenueName
-                                                                        </label>
-
-                                                                    </div>
-                                                                }
-                                                            }
-                                                            break;
+                                                            <li>
+                                                                @courseRun.StudyMode
+                                                            </li>
                                                         }
-                                                    case DeliveryMode.WorkBased:
+                                                        @if (!string.IsNullOrEmpty(courseRun.StartDate))
                                                         {
-                                                            if (a.Regions != null)
-                                                            {
-
-                                                                var regionNames = new List<string>();
-
-                                                                string allRegions = "";
-
-                                                                {
-                                                                    foreach (var region in a.Regions)
-                                                                    {
-                                                                        var regionName = courseService.GetRegions().RegionItems.Where(r => r.Id == region).Select(n => n.RegionName).SingleOrDefault();
-                                                                        regionNames.Add(regionName);
-                                                                    }
-                                                                }
-                                                                allRegions = @String.Join(", ", regionNames.Select(p => p).ToArray());
-
-                                                                <div style="padding-bottom: 1em">
-                                                                    <label class="govuk-label" for="sort" style="font-weight: 600">
-                                                                        Regions
-                                                                    </label>
-                                                                    <label>
-                                                                        @allRegions
-                                                                    </label>
-
-                                                                </div>
-                                                            }
-                                                            break;
+                                                            <li>
+                                                                @courseRun.StartDate
+                                                            </li>
                                                         }
+                                                    </ul>
                                                 }
-                                            }
-                                            <div>
-                                                <div style="padding-bottom: 1em">
-                                                    <label class="govuk-label" for="url" style="font-weight: 600">
-                                                        Url
-                                                    </label>
-
-                                                    @if (!string.IsNullOrEmpty(a.CourseURL))
-                                                    {
-                                                        <a class="govuk-link" href=@a.CourseURL target="_blank" style="word-break: break-all;">@a.CourseURL</a>
-                                                    }
-                                                    else
-                                                    {
-                                                        <label>
-                                                            &nbsp;
-                                                        </label>
-                                                    }
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="cd-course--list" style="border: none; margin-bottom: 15px;">
-                                            <div style="padding-bottom: 1em">
-                                                <label class="govuk-label" for="cost" style="font-weight: 600">
-                                                    Cost
-                                                </label>
-                                                @if (a.Cost.HasValue)
+                                            </button>
+                                        </h2>
+                                    </div>
+                                    <div id="accordion-default-content-@courseRun.Id" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-@courseRun.Id">
+                                        <div class="cd__your-courses__accordion-content-card">
+                                            <div class="cd__your-courses__accordion-content-card-content">
+                                                @if (courseRun.DeliveryMode == "Classroom based")
                                                 {
-                                                    <label>
-                                                        <span>£ </span><label asp-for="@a.Cost">@string.Format("{0:0.00}", a.Cost)</label>
-                                                    </label>
+                                                    <ul class="flex-container">
+                                                        <li class="flex-item">
+                                                            <label>Venue</label> @courseRun.Venue
+                                                        </li>
+                                                        <li class="flex-item">
+                                                            <label>Url</label>
+                                                            <a href="@courseRun.Url">@courseRun.Url</a>
+                                                        </li>
+                                                    </ul>
+                                                    <ul class="flex-container">
+                                                        <li class="flex-item">
+                                                            <label>Cost</label> @courseRun.Cost
+                                                        </li>
+                                                        <li class="flex-item">
+                                                            <label>Mode</label> @courseRun.StudyMode
+                                                        </li>
+                                                        <li class="flex-item">
+                                                            <label>Duration</label> @courseRun.Duration
+                                                        </li>
+                                                        <li class="flex-item">
+                                                            <label>ID</label> @courseRun.CourseId
+                                                        </li>
+                                                        <li class="flex-item">
+                                                            <label>Delivery</label> @courseRun.DeliveryMode
+                                                        </li>
+                                                        <li class="flex-item">
+                                                            <label>Attendance</label> @courseRun.AttendancePattern
+                                                        </li>
+                                                        <li class="flex-item">
+                                                            <label>Start date</label> @courseRun.StartDate
+                                                        </li>
+                                                    </ul>
                                                 }
-                                                else
+                                                @if (courseRun.DeliveryMode == "Online")
                                                 {
-                                                    <label>
-                                                        &nbsp;
-                                                    </label>
+                                                    <ul class="flex-container">
+                                                        <li class="flex-item">
+                                                            <label>Url</label>
+                                                            <a href="@courseRun.Url">@courseRun.Url</a>
+                                                        </li>
+                                                    </ul>
+                                                    <ul class="flex-container">
+                                                        <li class="flex-item">
+                                                            <label>Cost</label> @courseRun.Cost
+                                                        </li>
+                                                        <li class="flex-item">
+                                                            <label>Duration</label> @courseRun.Duration
+                                                        </li>
+                                                        <li class="flex-item">
+                                                            <label>ID</label> @courseRun.CourseId
+                                                        </li>
+                                                        <li class="flex-item">
+                                                            <label>Delivery</label> @courseRun.DeliveryMode
+                                                        </li>
+                                                        <li class="flex-item">
+                                                            <label>Start date</label> @courseRun.StartDate
+                                                        </li>
+                                                    </ul>
                                                 }
-
-                                            </div>
-
-                                            @if (a.DeliveryMode == DeliveryMode.ClassroomBased)
-                                            {
-                                                <div style="padding-bottom: 1em">
-                                                    <label class="govuk-label" for="mode" style="font-weight: 600">
-                                                        Mode
-                                                    </label>
-                                                    @if (a.StudyMode != StudyMode.Undefined)
-                                                    {
-                                                        <label asp-for="@a.StudyMode">@WebHelper.GetEnumDescription(a.StudyMode)</label>
-                                                    }
-                                                    else
-                                                    {
-                                                        <label>
-                                                            &nbsp;
-                                                        </label>
-                                                    }
-
-                                                </div>
-                                            }
-                                            <div style="padding-bottom: 1em">
-                                                <label class="govuk-label" for="duration" style="font-weight: 600">
-                                                    Duration
-                                                </label>
-                                                @if (a.DurationValue.HasValue)
+                                                @if (courseRun.DeliveryMode == "Work based")
                                                 {
-                                                    <label asp-for="@a.DurationValue">@a.DurationValue </label>
-                                                    if (a.DurationUnit != DurationUnit.Undefined)
-                                                    {
-                                                        <label asp-for="@a.DurationUnit">@WebHelper.GetEnumDescription(a.DurationUnit)</label>
-                                                    }
-                                                    else
-                                                    {
-                                                        <label>
-                                                            &nbsp;
-                                                        </label>
-                                                    }
-                                                }
-                                                else
-                                                {
-                                                    <label>
-                                                        &nbsp;
-                                                    </label>
-                                                }
-
-
-
-                                            </div>
-                                            <div style="padding-bottom: 1em">
-                                                <label class="govuk-label" for="cost" style="font-weight: 600">
-                                                    ID
-                                                </label>
-                                                @{
-                                                    if (!string.IsNullOrEmpty(a.ProviderCourseID))
-                                                    {
-                                                        <span>
-                                                            @a.ProviderCourseID
-                                                        </span>
-                                                    }
-                                                    else
-                                                    {
-                                                        <span>
-                                                            &nbsp;
-                                                        </span>
-                                                    }
-                                                }
-
-                                            </div>
-
-
-                                            <div style="padding-bottom: 1em">
-                                                <label class="govuk-label" for="delivery" style="font-weight: 600">
-                                                    Delivery
-                                                </label>
-                                                @if (a.DeliveryMode != DeliveryMode.Undefined)
-                                                {
-                                                    <label asp-for="@a.DeliveryMode">@WebHelper.GetEnumDescription(a.DeliveryMode)</label>
-                                                }
-                                                else
-                                                {
-                                                    <label>
-                                                        &nbsp;
-                                                    </label>
+                                                    <ul class="flex-container">
+                                                        <li class="flex-item">
+                                                            <label>Region</label> @courseRun.Region
+                                                        </li>
+                                                        <li class="flex-item">
+                                                            <label>Url</label>
+                                                            <a href="@courseRun.Url">@courseRun.Url</a>
+                                                        </li>
+                                                    </ul>
+                                                    <ul class="flex-container">
+                                                        <li class="flex-item">
+                                                            <label>Cost</label> @courseRun.Cost
+                                                        </li>
+                                                        <li class="flex-item">
+                                                            <label>Duration</label> @courseRun.Duration
+                                                        </li>
+                                                        <li class="flex-item">
+                                                            <label>ID</label> @courseRun.CourseId
+                                                        </li>
+                                                        <li class="flex-item">
+                                                            <label>Delivery</label> @courseRun.DeliveryMode
+                                                        </li>
+                                                        <li class="flex-item">
+                                                            <label>Start date</label> @courseRun.StartDate
+                                                        </li>
+                                                    </ul>
                                                 }
                                             </div>
-
-                                            @if (a.DeliveryMode == DeliveryMode.ClassroomBased)
-                                            {
-                                                <div style="padding-bottom: 1em">
-                                                    <label class="govuk-label" for="attendance" style="font-weight: 600">
-                                                        Attendance
-                                                    </label>
-                                                    @if (a.AttendancePattern != AttendancePattern.Undefined)
-                                                    {
-                                                        <label asp-for="@a.AttendancePattern">@WebHelper.GetEnumDescription(a.AttendancePattern)</label>
-                                                    }
-                                                    else
-                                                    {
-                                                        <label>
-                                                            &nbsp;
-                                                        </label>
-                                                    }
-                                                </div>
-                                            }
-                                            @{
-
-                                                <div style="padding-bottom: 1em">
-                                                    <label class="govuk-label" for="startdate" style="font-weight: 600">
-                                                        Start date
-                                                    </label>
-                                                    @if (a.FlexibleStartDate)
-                                                    {
-                                                        <label>
-                                                            Flexible Start Date
-                                                        </label>
-
-                                                    }
-                                                    else
-                                                    {
-                                                        if (a.StartDate.HasValue)
-                                                        {
-                                                            <label>
-                                                                @a.StartDate?.ToString("dd/MM/yyy", CultureInfo.InvariantCulture)
-                                                            </label>
-                                                        }
-                                                        else
-                                                        {
-                                                            <label>
-                                                                &nbsp;
-                                                            </label>
-                                                        }
-                                                    }
-                                                </div>
-                                            }
-
 
                                         </div>
-                                        <div class="cd-course--list" style="border-top-style: solid; padding-top: 20px; border-width: 1px">
-                                            <a class="govuk-link" asp-controller="EditCourseRun" asp-action="Index"
-                                               asp-route-courseId="@s.id"
-                                               asp-route-courseRunId="@a.id">Edit course details</a>
+                                        <div class="cd__your-courses__accordion-content-card-controls">
+                                            <ul class="flex-container">
+                                                <li class="flex-item">
+                                                    <a class="govuk-link"
+                                                       asp-controller="EditCourseRun"
+                                                       asp-action="Index"
+                                                       asp-route-courseId="@course.Id"
+                                                       asp-route-courseRunId="@courseRun.Id"
+                                                       asp-route-mode ="@PublishMode.Undefined">Edit course details</a>
+                                                </li>
+                                                <li class="flex-item">
+                                                    <a class="govuk-link"
+                                                       asp-controller="CopyCourseRun"
+                                                       asp-action="Index"
+                                                       asp-route-courseId="@course.Id"
+                                                       asp-route-courseRunId="@courseRun.Id"
+                                                       asp-route-mode ="@PublishMode.Undefined">Copy this course</a>
+                                                </li>
+                                                <li class="flex-item">
+                                                    @*a class="govuk-link" href="">Archive this course</a>*@
+                                                    
+                                                    
+                                                    <a href="#" class="error-link archive" id="archive-@courseRun.Id" data-course-run-id="@courseRun.Id">Archive this course</a>
 
-                                            <a class="govuk-link" asp-controller="CopyCourseRun" asp-action="Index"
-                                               asp-route-courseId="@s.id"
-                                               asp-route-courseRunId="@a.id">Copy this course</a>
+                                                    <a id="course-confirm-archive-@courseRun.Id" class="govuk-button" asp-controller="Courses" asp-action="Archive"
+                                                       asp-route-courseId="@course.Id"
+                                                       asp-route-courseRunId="@courseRun.Id" 
+                                                       asp-route-level="@course.NotionalNVQLevelv2" 
+                                                       asp-route-qualificationType="@course.QualificationType" 
+                                                       style="display: none">Confirm archive</a>
 
-                                            <a class="govuk-link" href="#">Archive this course</a>
+                                                    <a href="#" class="error-link cancel-archive" id="course-cancel-archive-@courseRun.Id" data-course-run-id="@courseRun.Id" style="display: none">Cancel</a>
+                                                </li>
+                                                
+                                                
+                                                
+                                                
+
+                                            </ul>
                                         </div>
-
                                     </div>
                                 </div>
-                            </div>
-                        }
+                            }
+                        </div>
                     </div>
-                </div>
-
-            </details>
-        }
-    }
+                </details>
+            }
+        </div>
+    </div>
 </div>
 
 <script>
     (function ($) {
         $(function () {
 
+            var $archiveButton = $(".archive");
 
-            $("#courseeditlink").click(function () {
-                var courseId = $(this).attr('data-courseid');
+            var $cancelArchiveButton = $(".cancel-archive");
 
-                var courseRunId = $(this).attr('data-courserunid');
+            $cancelArchiveButton.on("click",
+                function (event) {
+                    event.preventDefault();
+                    {
+                        var courseRunId = $(this).attr("data-course-run-id");
 
-                $('#' + courseId).attr('open', '');
+                        var archiveOption = $("#archive-" + courseRunId);
+                        archiveOption.show();
 
-                if (courseRunId !== "00000000-0000-0000-0000-000000000000") {
+                        var confirmArchive = $("#course-confirm-archive-" + courseRunId);
+                        confirmArchive.hide();
 
-                    var closeall = document.querySelectorAll("div[class^='govuk-accordion__controls']");
-                    for (var i = 0; i < closeall.length; i++) {
-
-                        closeall[i].remove();
-
-                    }
-
-                    var els1 = document.querySelectorAll("div[class^='govuk-accordion__section']");
-                    for (var i = 0; i < els1.length; i++) {
-
-                        els1[i].classList.remove('govuk-accordion__section--expanded');
+                        var archiveCancelDelete = $("#course-cancel-archive-" + courseRunId);
+                        archiveCancelDelete.hide();
 
                     }
-                    $('#' + courseRunId).addClass('govuk-accordion__section--expanded');
+                });
 
-                    var el = $('#' + courseRunId);
-                    var elOffset = el.offset().top;
-                    var elHeight = el.height();
-                    var windowHeight = $(window).height();
-                    var offset;
 
-                    if (elHeight < windowHeight) {
-                        offset = elOffset - ((windowHeight / 2) - (elHeight / 2));
-                    } else {
-                        offset = elOffset;
+            $archiveButton.on("click",
+                function (event) {
+                    event.preventDefault();
+
+                    var courseRunId = $(this).attr("data-course-run-id");
+
+                    var archiveOption = $("#archive-" + courseRunId);
+                    archiveOption.hide();
+
+                    var confirmArchive = $("#course-confirm-archive-" + courseRunId);
+                    confirmArchive.show();
+
+                    var archiveCancelDelete = $("#course-cancel-archive-" + courseRunId);
+                    archiveCancelDelete.show();
+
+                });
+
+            $courseeditlink = $("#courseeditlink");
+            if ($courseeditlink.length) {
+                $courseeditlink.on("click", function (event) {
+                    event.preventDefault();
+                    var courseId = $(this).attr('data-courseid');
+                    var courseRunId = $(this).attr('data-courserunid');
+                    var $courseId = $("#" + courseId);
+                    var $courseRunId = $("#" + courseRunId);
+                    var hasOpenAttr = $courseId[0].getAttribute('open') !== null;
+                    if (!hasOpenAttr) {
+                        $courseId.find("summary").trigger("click");
                     }
-                    var speed = 700;
-                    $('html, body').animate({ scrollTop: offset }, speed);
-                } else {
-                    var el = $('#' + courseId);
-                    var elOffset = el.offset().top;
-                    var elHeight = el.height();
-                    var windowHeight = $(window).height();
-                    var offset;
-
-                    if (elHeight < windowHeight) {
-                        offset = elOffset - ((windowHeight / 2) - (elHeight / 2));
-                    } else {
-                        offset = elOffset;
+                    if (!$courseRunId.hasClass("govuk-accordion__section--expanded")) {
+                        $courseRunId.addClass("govuk-accordion__section--expanded")
                     }
-                    var speed = 700;
-                    $('html, body').animate({ scrollTop: offset }, speed);
-                }
-
-
-            });
-
-            $(".govuk-accordion__section").click(function (e) {
-                var el = $(this);
-                var elOffset = el.offset().top;
-                var elHeight = el.height();
-                var windowHeight = $(window).height();
-                var offset;
-
-                if (elHeight < windowHeight) {
-                    offset = elOffset - ((windowHeight / 2) - (elHeight / 2));
-                }
-                else {
-                    offset = elOffset;
-                }
-                var speed = 700;
-                $('html, body').animate({ scrollTop: offset }, speed);
-            });
-
-            $(".govuk-details__summary").click(function () {
-
-                var closeall = document.querySelectorAll("div[class^='govuk-accordion__controls']");
-                for (var i = 0; i < closeall.length; i++) {
-
-                    closeall[i].remove();
-
-                }
-
-
-            });
-
+                    if ($courseId.attr("open")) {
+                        $("html,body").animate({
+                            scrollTop: $courseId.offset().top
+                        }, "slow");
+                    }
+                    if ($courseRunId.hasClass("govuk-accordion__section--expanded")) {
+                        $("html,body").animate({
+                            scrollTop: $courseRunId.offset().top
+                        }, "slow");
+                    }
+                });
+            }
         });
     })(jQuery);
 </script>
-
-
-
-
-

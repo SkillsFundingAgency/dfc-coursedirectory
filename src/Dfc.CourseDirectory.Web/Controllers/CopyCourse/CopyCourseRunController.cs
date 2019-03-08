@@ -113,7 +113,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                         Cost = courseRun.Cost?.ToString("F"),
                         CostDescription = courseRun.CostDescription,
                         AttendanceMode = courseRun.AttendancePattern,
-                        QualificationType = course.Value.QualificationType
+                        QualificationType = course.Value.QualificationType,
+                        NotionalNVQLevelv2 = course.Value.NotionalNVQLevelv2
                     };
 
                     if (courseRun.Regions != null)
@@ -235,7 +236,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                             {
                                 notificationTitle = "New course added",
                                 notificationMessage = "You added",
-                                qualificationType = courseForEdit.Value.QualificationType,
+                                level = updatedCourse.Value.NotionalNVQLevelv2,
                                 courseId = updatedCourse.Value.id,
                                 courseRunId = copiedCourseRun.id
                             });
