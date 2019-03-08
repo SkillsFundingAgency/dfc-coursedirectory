@@ -24,6 +24,8 @@ namespace Dfc.CourseDirectory.Services.CourseService
         private readonly Uri _getYourCoursesUri;
         private readonly Uri _updateCourseUri;
         private readonly Uri _getCourseByIdUri;
+        private readonly Uri _getCourseCountsByStatusForUKPRNUri;
+        private readonly Uri _getRecentCourseChangesByUKPRNUri;
 
         public CourseService(
             ILogger<CourseService> logger,
@@ -41,6 +43,8 @@ namespace Dfc.CourseDirectory.Services.CourseService
             _getYourCoursesUri = settings.Value.ToGetYourCoursesUri();
             _updateCourseUri = settings.Value.ToUpdateCourseUri();
             _getCourseByIdUri = settings.Value.ToGetCourseByIdUri();
+            _getCourseCountsByStatusForUKPRNUri = settings.Value.ToGetCourseCountsByStatusForUKPRNUri();
+            _getRecentCourseChangesByUKPRNUri = settings.Value.ToGetRecentCourseChangesByUKPRNUri();
         }
 
         public SelectRegionModel GetRegions()
@@ -162,6 +166,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             }
 
         }
+
         public async Task<IResult<ICourseSearchResult>> GetYourCoursesByUKPRNAsync(ICourseSearchCriteria criteria)
         {
             Throw.IfNull(criteria, nameof(criteria));
@@ -209,8 +214,98 @@ namespace Dfc.CourseDirectory.Services.CourseService
             }
         }
 
+        public async Task<IResult<IEnumerable<ICourseStatusCountResult>>> GetCourseCountsByStatusForUKPRN(ICourseSearchCriteria criteria)
+        {
+            Throw.IfNull(criteria, nameof(criteria));
+            Throw.IfLessThan(0, criteria.UKPRN.Value, nameof(criteria.UKPRN.Value));
+            _logger.LogMethodEnter();
 
+            try
+            {
+                _logger.LogInformationObject("Get course counts criteria", criteria);
+                _logger.LogInformationObject("Get course counts URI", _getCourseCountsByStatusForUKPRNUri);
 
+                if (!criteria.UKPRN.HasValue)
+                    return Result.Fail<IEnumerable<ICourseStatusCountResult>>("Get course counts unknown UKRLP");
+
+                var response = await _httpClient.GetAsync(new Uri(_getCourseCountsByStatusForUKPRNUri.AbsoluteUri + "&UKPRN=" + criteria.UKPRN));
+                _logger.LogHttpResponseMessage("Get course counts service http response", response);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+
+                    if (!json.StartsWith("["))
+                        json = "[" + json + "]";
+
+                    _logger.LogInformationObject("Get course counts service json response", json);
+                    IEnumerable<ICourseStatusCountResult> counts = JsonConvert.DeserializeObject<IEnumerable<CourseStatusCountResult>>(json);
+
+                    //CourseSearchResult searchResult = new CourseSearchResult(courses);
+                    return Result.Ok<IEnumerable<ICourseStatusCountResult>>(counts);
+
+                } else {
+                    return Result.Fail<IEnumerable<ICourseStatusCountResult>>("Get course counts service unsuccessful http response");
+                }
+
+            } catch (HttpRequestException hre) {
+                _logger.LogException("Get course counts service http request error", hre);
+                return Result.Fail<IEnumerable<ICourseStatusCountResult>>("Get course counts service http request error.");
+
+            } catch (Exception e) {
+                _logger.LogException("Get course counts service unknown error.", e);
+                return Result.Fail<IEnumerable<ICourseStatusCountResult>>("Get course counts service unknown error.");
+
+            } finally {
+                _logger.LogMethodExit();
+            }
+        }
+
+        public async Task<IResult<IEnumerable<ICourse>>> GetRecentCourseChangesByUKPRN(ICourseSearchCriteria criteria)
+        {
+            Throw.IfNull(criteria, nameof(criteria));
+            Throw.IfLessThan(0, criteria.UKPRN.Value, nameof(criteria.UKPRN.Value));
+            _logger.LogMethodEnter();
+
+            try
+            {
+                _logger.LogInformationObject("Get recent course changes criteria", criteria);
+                _logger.LogInformationObject("Get recent course changes URI", _getRecentCourseChangesByUKPRNUri);
+
+                if (!criteria.UKPRN.HasValue)
+                    return Result.Fail<IEnumerable<ICourse>>("Get recent course changes unknown UKRLP");
+
+                var response = await _httpClient.GetAsync(new Uri(_getRecentCourseChangesByUKPRNUri.AbsoluteUri + "&UKPRN=" + criteria.UKPRN));
+                _logger.LogHttpResponseMessage("Get recent course changes service http response", response);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+
+                    if (!json.StartsWith("["))
+                        json = "[" + json + "]";
+
+                    _logger.LogInformationObject("Get recent course changes service json response", json);
+                    IEnumerable<ICourse> courses = JsonConvert.DeserializeObject<IEnumerable<Course>>(json);
+
+                    return Result.Ok<IEnumerable<ICourse>>(courses);
+
+                } else {
+                    return Result.Fail<IEnumerable<ICourse>>("Get recent course changes service unsuccessful http response");
+                }
+
+            } catch (HttpRequestException hre) {
+                _logger.LogException("Get recent course changes service http request error", hre);
+                return Result.Fail<IEnumerable<ICourse>>("Get recent course changes service http request error.");
+
+            } catch (Exception e) {
+                _logger.LogException("Get recent course changes service unknown error.", e);
+                return Result.Fail<IEnumerable<ICourse>>("Get recent course changes service unknown error.");
+
+            } finally {
+                _logger.LogMethodExit();
+            }
+        }
 
         public async Task<IResult<ICourse>> AddCourseAsync(ICourse course)
         {
@@ -358,6 +453,16 @@ namespace Dfc.CourseDirectory.Services.CourseService
         internal static Uri ToGetCourseByIdUri(this ICourseServiceSettings extendee)
         {
             return new Uri($"{extendee.ApiUrl + "GetCourseById?code=" + extendee.ApiKey}");
+        }
+
+        internal static Uri ToGetCourseCountsByStatusForUKPRNUri(this ICourseServiceSettings extendee)
+        {
+            return new Uri($"{extendee.ApiUrl + "GetCourseCountsByStatusForUKPRN?code=" + extendee.ApiKey}");
+        }
+
+        internal static Uri ToGetRecentCourseChangesByUKPRNUri(this ICourseServiceSettings extendee)
+        {
+            return new Uri($"{extendee.ApiUrl + "GetRecentCourseChangesByUKPRN?code=" + extendee.ApiKey}");
         }
     }
 }
