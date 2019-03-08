@@ -166,6 +166,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     LearnAimRef = x.LearnAimRef,
                     NotionalNVQLevelv2 = x.NotionalNVQLevelv2,
                     QualificationTitle = x.QualificationCourseTitle,
+                    QualificationType = x.QualificationType,
                     Facet = x.CourseRuns.Count().ToString(),
                     CourseRuns = x.CourseRuns.Select(y => new CourseRunViewModel
                     {

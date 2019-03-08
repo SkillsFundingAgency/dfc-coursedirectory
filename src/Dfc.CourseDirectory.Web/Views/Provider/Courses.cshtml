@@ -404,8 +404,25 @@
                                                        asp-route-mode ="@PublishMode.Undefined">Copy this course</a>
                                                 </li>
                                                 <li class="flex-item">
-                                                    <a class="govuk-link" href="">Archive this course</a>
+                                                    @*a class="govuk-link" href="">Archive this course</a>*@
+                                                    
+                                                    
+                                                    <a href="#" class="error-link archive" id="archive-@courseRun.Id" data-course-run-id="@courseRun.Id">Archive this course</a>
+
+                                                    <a id="course-confirm-archive-@courseRun.Id" class="govuk-button" asp-controller="Courses" asp-action="Archive"
+                                                       asp-route-courseId="@course.Id"
+                                                       asp-route-courseRunId="@courseRun.Id" 
+                                                       asp-route-level="@course.NotionalNVQLevelv2" 
+                                                       asp-route-qualificationType="@course.QualificationType" 
+                                                       style="display: none">Confirm archive</a>
+
+                                                    <a href="#" class="error-link cancel-archive" id="course-cancel-archive-@courseRun.Id" data-course-run-id="@courseRun.Id" style="display: none">Cancel</a>
                                                 </li>
+                                                
+                                                
+                                                
+                                                
+
                                             </ul>
                                         </div>
                                     </div>
@@ -422,6 +439,47 @@
 <script>
     (function ($) {
         $(function () {
+
+            var $archiveButton = $(".archive");
+
+            var $cancelArchiveButton = $(".cancel-archive");
+
+            $cancelArchiveButton.on("click",
+                function (event) {
+                    event.preventDefault();
+                    {
+                        var courseRunId = $(this).attr("data-course-run-id");
+
+                        var archiveOption = $("#archive-" + courseRunId);
+                        archiveOption.show();
+
+                        var confirmArchive = $("#course-confirm-archive-" + courseRunId);
+                        confirmArchive.hide();
+
+                        var archiveCancelDelete = $("#course-cancel-archive-" + courseRunId);
+                        archiveCancelDelete.hide();
+
+                    }
+                });
+
+
+            $archiveButton.on("click",
+                function (event) {
+                    event.preventDefault();
+
+                    var courseRunId = $(this).attr("data-course-run-id");
+
+                    var archiveOption = $("#archive-" + courseRunId);
+                    archiveOption.hide();
+
+                    var confirmArchive = $("#course-confirm-archive-" + courseRunId);
+                    confirmArchive.show();
+
+                    var archiveCancelDelete = $("#course-cancel-archive-" + courseRunId);
+                    archiveCancelDelete.show();
+
+                });
+
             $courseeditlink = $("#courseeditlink");
             if ($courseeditlink.length) {
                 $courseeditlink.on("click", function (event) {
