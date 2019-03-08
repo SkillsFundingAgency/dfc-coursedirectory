@@ -125,9 +125,16 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
 
         [Authorize]
         [HttpGet]
-        public IActionResult Delete(Guid courseId, Guid courseRunId)
+        public async Task<IActionResult> Delete(Guid courseId, Guid courseRunId)
         {
             //TODO delete
+
+            var result = await _courseService.UpdateStatus(courseId, courseRunId, (int)RecordStatus.Deleted);
+
+            if (result.IsSuccess)
+            {
+                //do something
+            }
 
             return RedirectToAction("Index", "PublishCourses", new { publishMode = PublishMode.Migration });
         }
