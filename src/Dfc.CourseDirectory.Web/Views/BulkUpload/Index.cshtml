@@ -33,7 +33,13 @@
             })
         }*@
 
-        <div id="errorSummary" class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+        @{
+            var styleAttribute = (string.IsNullOrEmpty(Model.NotificationTitle) && Model.errors == null)
+                ? "style=\"display: none;\""
+                : string.Empty;
+        }
+
+        <div id="errorSummary" class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary" @Html.Raw(styleAttribute)>
             <h2 class="govuk-error-summary__title" id="error-summary-title">
                 @if (string.IsNullOrEmpty(Model.NotificationTitle))
                 {
@@ -48,7 +54,14 @@
                 <ul class="govuk-list govuk-error-summary__list">
                     @if (!string.IsNullOrEmpty(Model.NotificationMessage))
                     {
-                    <li>@Model.NotificationMessage</li>
+                        <li>@Model.NotificationMessage</li>
+                    }
+                    @if (Model.errors != null && Model.errors.Any())
+                    {
+                        foreach (var error in Model.errors)
+                        {
+                            <li><a href="#bulkUploadFile">@error</a></li>
+                        }
                     }
                 </ul>
             </div>
@@ -181,7 +194,6 @@
         (function ($) {
             $(function () {
                 var $errorSummary = $("#errorSummary").govUkErrorSummary();
-                $errorSummary.govUkErrorSummary("hide");
                 var $bulkUploadFile = $("#bulkUploadFile").govUkFileUpload();
                 var $button = $("#uploadButton");
 
