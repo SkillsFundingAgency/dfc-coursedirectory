@@ -32,6 +32,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
         private readonly Uri _updateStatusUri;
         private readonly Uri _getCourseCountsByStatusForUKPRNUri;
         private readonly Uri _getRecentCourseChangesByUKPRNUri;
+        private readonly Uri _changeCourseRunStatusesForUKPRNSelectionUri;
 
         private readonly int _courseForTextFieldMaxChars;
         private readonly int _entryRequirementsTextFieldMaxChars;
@@ -41,6 +42,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
         private readonly int _howAssessedTextFieldMaxChars;
         private readonly int _whereNextTextFieldMaxChars;
         private readonly Uri _archiveLiveCoursesUri;
+
 
         public CourseService(
             ILogger<CourseService> logger,
@@ -77,6 +79,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             _updateStatusUri = settings.Value.ToUpdateStatusUri();
             _getCourseCountsByStatusForUKPRNUri = settings.Value.ToGetCourseCountsByStatusForUKPRNUri();
             _getRecentCourseChangesByUKPRNUri = settings.Value.ToGetRecentCourseChangesByUKPRNUri();
+            _changeCourseRunStatusesForUKPRNSelectionUri = settings.Value.ToChangeCourseRunStatusesForUKPRNSelectionUri();
 
             _courseForTextFieldMaxChars = courseForComponentSettings.Value.TextFieldMaxChars;
             _entryRequirementsTextFieldMaxChars = entryRequirementsComponentSettings.Value.TextFieldMaxChars;
@@ -778,6 +781,25 @@ namespace Dfc.CourseDirectory.Services.CourseService
             }
         }
 
+        public async Task<IResult> ChangeCourseRunStatusesForUKPRNSelection(int UKPRN, int CurrentStatus, int StatusToBeChangedTo)
+        {
+            Throw.IfNull(UKPRN, nameof(UKPRN));
+            Throw.IfNull(CurrentStatus, nameof(CurrentStatus));
+            Throw.IfNull(StatusToBeChangedTo, nameof(StatusToBeChangedTo));
+
+            var response = await _httpClient.GetAsync(new Uri(_changeCourseRunStatusesForUKPRNSelectionUri.AbsoluteUri + "&UKPRN=" + UKPRN + "&CurrentStatus=" + CurrentStatus + "&StatusToBeChangedTo=" + StatusToBeChangedTo));
+            _logger.LogHttpResponseMessage("Archive courses service http response", response);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return Result.Ok();
+            }
+            else
+            {
+                return Result.Fail("ChangeCourseRunStatusesForUKPRNSelection service unsuccessful http response");
+            }
+        }
+
         public async Task<IResult> UpdateStatus(Guid courseId, Guid courseRunId, int statusToUpdateTo)
         {
             Throw.IfNullGuid(courseId, nameof(courseId));
@@ -855,6 +877,10 @@ namespace Dfc.CourseDirectory.Services.CourseService
         internal static Uri ToGetRecentCourseChangesByUKPRNUri(this ICourseServiceSettings extendee)
         {
             return new Uri($"{extendee.ApiUrl + "GetRecentCourseChangesByUKPRN?code=" + extendee.ApiKey}");
+        }
+        internal static Uri ToChangeCourseRunStatusesForUKPRNSelectionUri(this ICourseServiceSettings extendee)
+        {
+            return new Uri($"{extendee.ApiUrl + "ChangeCourseRunStatusesForUKPRNSelection?code=" + extendee.ApiKey}");
         }
     }
 }

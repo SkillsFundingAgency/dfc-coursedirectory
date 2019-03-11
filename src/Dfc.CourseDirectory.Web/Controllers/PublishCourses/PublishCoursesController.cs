@@ -92,10 +92,15 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
         {
             PublishCompleteViewModel CompleteVM = new PublishCompleteViewModel();
 
-            int? UKPRN = _session.GetInt32("UKPRN");
-            if (!UKPRN.HasValue)
+            int? sUKPRN = _session.GetInt32("UKPRN");
+            int UKPRN;
+            if (!sUKPRN.HasValue)
             {
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
+            }
+            else
+            {
+                UKPRN = sUKPRN ?? 0;
             }
 
             CompleteVM.NumberOfCoursesPublished = vm.NumberOfCoursesInFiles; 
@@ -103,24 +108,44 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
             switch (vm.PublishMode)
             {
                 case PublishMode.Migration:
-                    //commit courses directly
-                  
 
-                    break;
+                    // Publish migrated courses directly, NO archiving
+                    var resultPublishMigratedCourses = await _courseService.ChangeCourseRunStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.MigrationReadyToGoLive, (int)RecordStatus.Live);
+                    if (resultPublishMigratedCourses.IsSuccess)
+                    {
+                        return View("Complete", CompleteVM);
+                    }
+                    else
+                    {
+                        return RedirectToAction("Index", "Home", new { errmsg = "Publish All Migration-PublishCourses Error" });
+                    }
+
                 case PublishMode.BulkUpload:
 
                     //Archive any existing courses
-                    //var archiveExistingCourse = await _courseService.ArchiveProviderLiveCourses(UKPRN);
+                    var resultArchivingCourses = await _courseService.ChangeCourseRunStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.Live, (int)RecordStatus.Archived);
+                    if (resultArchivingCourses.IsSuccess)
+                    {
+                        // Publish courses
+                        var resultPublishBulkUploadedCourses = await _courseService.ChangeCourseRunStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.BulkUploadReadyToGoLive, (int)RecordStatus.Live);
+                        if (resultPublishBulkUploadedCourses.IsSuccess)
+                        {
+                            return View("Complete", CompleteVM);
+                        }
+                        else
+                        {
+                            return RedirectToAction("Index", "Home", new { errmsg = "Publish All BulkUpload-PublishCourses Error" });
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("Index", "Home", new { errmsg = "Publish All BulkUpload-ArchiveCourses Error" });
+                    }
 
-                    // commit ciurses
-
-                    break;
                 default:
                     // TODO: We should have generic error handling page
                     return RedirectToAction("Index", "Home", new { errmsg = "Publish All BulkUpload/Migration Error" });
-            }
-
-            return View("Complete", CompleteVM);
+            }            
         }
 
         [Authorize]
@@ -142,6 +167,9 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
         public bool CheckAreAllReadyToBePublished(List<Course> courses, PublishMode publishMode)
         {
             bool AreAllReadyToBePublished = false;
+
+            if(courses.Count.Equals(0))
+                return AreAllReadyToBePublished;
 
             var hasInvalidCourses = courses.Any(c => c.IsValid == false);
             if (hasInvalidCourses)
