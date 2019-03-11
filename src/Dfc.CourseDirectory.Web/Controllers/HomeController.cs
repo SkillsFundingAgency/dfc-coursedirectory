@@ -36,7 +36,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _logger.LogWarning("3");
             _logger.LogError("4");
             _logger.LogCritical("5");
-
+            _session.SetString("Option","Home");
             ViewBag.StatusMessage = errmsg;
             return View();
         }
