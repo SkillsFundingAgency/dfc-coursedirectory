@@ -138,6 +138,12 @@
     <Content Update="Views\Provider\Courses.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\Shared\_GovukHeaderPartial_Your_Courses.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Shared\_Layout_Your_Courses.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Venues\VenueSearchResults.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
