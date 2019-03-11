@@ -1,0 +1,141 @@
+.cd__your-courses__accordion-list .govuk-details__summary {
+  border-bottom: 1px solid grey;
+}
+
+.cd__your-courses__accordion-list .govuk-details__summary-text {
+  color: #000;
+  font-size: 1.5em;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.cd__your-courses__accordion-list .govuk-details__summary {
+  width: 100%;
+}
+
+.cd__your-courses__accordion-list .govuk-details__summary ul {
+  padding: 0px;
+  color: #000;
+  text-decoration: none;
+}
+
+.cd__your-courses__accordion-list .govuk-details__summary ul li {
+  display: inline;
+  padding-right: 1rem;
+}
+
+.cd__your-courses__accordion-list .govuk-details__text {
+  padding-right: 0px;
+  border-left: 0px;
+}
+
+.cd__your-courses__accordion-list .govuk-accordion__section-heading ul {
+  padding: 0px 0px 0px 1rem;
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+.cd__your-courses__accordion-list .govuk-accordion__section-heading ul li {
+  display: inline;
+  padding-right: 1rem;
+}
+
+.cd__your-courses__accordion-list .govuk-accordion__section-heading .govuk-accordion__section-button {
+  color: #000;
+}
+
+.cd__your-courses__accordion-list .govuk-accordion__section-heading .govuk-accordion__section-button .row-1 {
+  -ms-word-break: break-all;
+  word-break: break-all;
+  /* Non standard for webkit */
+  word-break: break-word;
+  -webkit-hyphens: auto;
+  -moz-hyphens: auto;
+  -ms-hyphens: auto;
+  hyphens: auto;
+}
+
+.cd__your-courses__accordion-list .govuk-accordion__section-heading .govuk-accordion__section-button .row-2 {
+  font-size: 0.8em;
+  font-weight: normal;
+  color: #666;
+  -ms-word-break: break-all;
+  word-break: break-all;
+  /* Non standard for webkit */
+  word-break: break-word;
+  -webkit-hyphens: auto;
+  -moz-hyphens: auto;
+  -ms-hyphens: auto;
+  hyphens: auto;
+}
+
+.cd__your-courses__accordion-list .govuk-accordion__section-heading .govuk-accordion__section-button .row-2 {
+  font-size: 1rem;
+  font-weight: normal;
+}
+
+.cd__your-courses__accordion-list .govuk-accordion__section-content {
+  padding-bottom: 0px;
+}
+
+.cd__your-courses__accordion-content-card {
+  border: 1px solid #ccc;
+}
+
+.cd__your-courses__accordion-content-card-content {
+  padding: 1rem;
+}
+
+.cd__your-courses__accordion-content-card-controls {
+  border: 0px;
+  border-right: 1px solid #ccc;
+  border-left: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+  padding: 0.5rem 1rem 0.5rem 1rem;
+}
+
+.flex-container {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-flow: row wrap;
+}
+
+.flex-item {
+  padding: 5px 1rem 5px 0px;
+  margin-top: 10px;
+  -ms-word-break: break-all;
+  word-break: break-all;
+  /* Non standard for webkit */
+  word-break: break-word;
+  -webkit-hyphens: auto;
+  -moz-hyphens: auto;
+  -ms-hyphens: auto;
+  hyphens: auto;
+}
+
+.flex-item label {
+  display: block;
+  font-weight: 900;
+}
+
+.cd__your-courses__filters-list {
+  margin: 0px;
+  padding: 0px;
+  list-style: none;
+}
+
+.cd__your-courses__filters-list__link {
+  color: #000;
+  font-family: nta,Arial,sans-serif;
+  text-decoration: none;
+}
+
+.cd__your-courses__filters-list__link--selected {
+  font-weight: 900;
+}

@@ -1,0 +1,33 @@
+﻿.govuk-header__container.cd-fullwidth-container {
+    margin-bottom: -10px;
+}
+
+.cd-fullwidth-container {
+    width: 90%;
+    margin: 0 auto;
+
+    .cd-grid-coloumn-three-quarters {
+        width: 75%;
+        float: left;
+    }
+    /*need to fix these media queries*/
+    .cd-grid-coloumn-80 {
+        width: 100%;
+        float: left;
+
+        @media (min-width: 40.0625em) {
+            width: 80%;
+        }
+    }
+
+    .cd-grid-coloumn-20 {
+        width: 100%;
+        float: left;
+        padding: 1em;
+        box-sizing: border-box;
+
+        @media (min-width: 40.0625em) {
+            width: 20%;
+        }
+    }
+}
