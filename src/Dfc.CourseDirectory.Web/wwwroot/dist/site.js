@@ -172,6 +172,31 @@
         }
     };
 
+    Plugin.prototype.getErrorMessages = function () {
+        var list = [];
+        if (this._errorMessages.length) {
+            this._errorMessages.each(function (index, element) {
+                list.push(element.innerHTML);
+            });
+        }
+        return list;
+    }
+
+    Plugin.prototype.getErrorHashLinks = function () {
+        var list = [];
+        var elementId = this.element.id;
+        if (this._errorMessages.length) {
+            this._errorMessages.each(function (index, element) {
+                var $anchor = document.createElement("a");
+                $anchor.href = "#" + elementId;
+                $anchor.innerHTML = element.innerHTML;
+                $anchor.id = "error-hash-link-" + elementId + "-" + index;
+                list.push($anchor);
+            });
+        }
+        return list;
+    }
+
     $.fn[pluginName] = function (options) {
         var args = arguments;
         if (options === undefined || typeof options === "object") {
@@ -255,6 +280,31 @@
         }
     };
 
+    Plugin.prototype.getErrorMessages = function () {
+        var list = [];
+        if (this._errorMessages.length) {
+            this._errorMessages.each(function (index, element) {
+                list.push(element.innerHTML);
+            });
+        }
+        return list;
+    }
+
+    Plugin.prototype.getErrorHashLinks = function () {
+        var list = [];
+        var elementId = this.element.id;
+        if (this._errorMessages.length) {
+            this._errorMessages.each(function (index, element) {
+                var $anchor = document.createElement("a");
+                $anchor.href = "#" + elementId;
+                $anchor.innerHTML = element.innerHTML;
+                $anchor.id = "error-hash-link-" + elementId + "-" + index;
+                list.push($anchor);
+            });
+        }
+        return list;
+    }
+
     $.fn[pluginName] = function (options) {
         var args = arguments;
         if (options === undefined || typeof options === "object") {
@@ -334,6 +384,31 @@
         }
     };
 
+    Plugin.prototype.getErrorMessages = function () {
+        var list = [];
+        if (this._errorMessages.length) {
+            this._errorMessages.each(function (index, element) {
+                list.push(element.innerHTML);
+            });
+        }
+        return list;
+    }
+
+    Plugin.prototype.getErrorHashLinks = function () {
+        var list = [];
+        var elementId = this.element.id;
+        if (this._errorMessages.length) {
+            this._errorMessages.each(function (index, element) {
+                var $anchor = document.createElement("a");
+                $anchor.href = "#" + elementId;
+                $anchor.innerHTML = element.innerHTML;
+                $anchor.id = "error-hash-link-" + elementId + "-" + index;
+                list.push($anchor);
+            });
+        }
+        return list;
+    }
+
     $.fn[pluginName] = function (options) {
         var args = arguments;
         if (options === undefined || typeof options === "object") {
@@ -412,6 +487,31 @@
             this._errorMessages.govUkErrorMessage("show");
         }
     };
+
+    Plugin.prototype.getErrorMessages = function () {
+        var list = [];
+        if (this._errorMessages.length) {
+            this._errorMessages.each(function (index, element) {
+                list.push(element.innerHTML);
+            });
+        }
+        return list;
+    }
+
+    Plugin.prototype.getErrorHashLinks = function () {
+        var list = [];
+        var elementId = this.element.id;
+        if (this._errorMessages.length) {
+            this._errorMessages.each(function (index, element) {
+                var $anchor = document.createElement("a");
+                $anchor.href = "#" + elementId;
+                $anchor.innerHTML = element.innerHTML;
+                $anchor.id = "error-hash-link-" + elementId + "-" + index;
+                list.push($anchor);
+            });
+        }
+        return list;
+    }
 
     $.fn[pluginName] = function (options) {
         var args = arguments;
@@ -495,6 +595,31 @@
             this._errorMessages.govUkErrorMessage("show");
         }
     };
+
+    Plugin.prototype.getErrorMessages = function () {
+        var list = [];
+        if (this._errorMessages.length) {
+            this._errorMessages.each(function (index, element) {
+                list.push(element.innerHTML);
+            });
+        }
+        return list;
+    }
+
+    Plugin.prototype.getErrorHashLinks = function () {
+        var list = [];
+        var elementId = this.element.id;
+        if (this._errorMessages.length) {
+            this._errorMessages.each(function (index, element) {
+                var $anchor = document.createElement("a");
+                $anchor.href = "#" + elementId;
+                $anchor.innerHTML = element.innerHTML;
+                $anchor.id = "error-hash-link-" + elementId + "-" + index;
+                list.push($anchor);
+            });
+        }
+        return list;
+    }
 
     $.fn[pluginName] = function (options) {
         var args = arguments;
@@ -596,6 +721,31 @@
         }
     };
 
+    Plugin.prototype.getErrorMessages = function () {
+        var list = [];
+        if (this._errorMessages.length) {
+            this._errorMessages.each(function (index, element) {
+                list.push(element.innerHTML);
+            });
+        }
+        return list;
+    }
+
+    Plugin.prototype.getErrorHashLinks = function () {
+        var list = [];
+        var elementId = this.element.id;
+        if (this._errorMessages.length) {
+            this._errorMessages.each(function (index, element) {
+                var $anchor = document.createElement("a");
+                $anchor.href = "#" + elementId;
+                $anchor.innerHTML = element.innerHTML;
+                $anchor.id = "error-hash-link-" + elementId + "-" + index;
+                list.push($anchor);
+            });
+        }
+        return list;
+    }
+
     Plugin.prototype.getISODateString = function () {
         var parsedDay = "";
         if (this._dayInput) {
@@ -635,7 +785,7 @@
             }
         }
         if (isNaN(parsedYear) && isNaN(parsedMonth) && isNaN(parsedDay)) return "";
-        if (isNaN(parsedYear) || isNaN(parsedMonth) || isNaN(parsedDay)) return "Invalid Date";
+        if (isNaN(parsedYear) || isNaN(parsedMonth) || isNaN(parsedDay) || parsedYear < 1 || parsedMonth < 1 || parsedDay < 1) return "Invalid Date";
         var parsedDate = new Date(parsedYear + "-" + parsedMonth + "-" + parsedDay);
         if (parsedDate.toString() === "Invalid Date") return parsedDate;
         if (parseInt(parsedDate.toISOString().substr(5, 2)) !== parseInt($(this._monthInput).val())) return "Invalid Date";
@@ -725,6 +875,31 @@
             this._errorMessages.govUkErrorMessage("show");
         }
     };
+
+    Plugin.prototype.getErrorMessages = function () {
+        var list = [];
+        if (this._errorMessages.length) {
+            this._errorMessages.each(function (index, element) {
+                list.push(element.innerHTML);
+            });
+        }
+        return list;
+    }
+
+    Plugin.prototype.getErrorHashLinks = function () {
+        var list = [];
+        var elementId = this.element.id;
+        if (this._errorMessages.length) {
+            this._errorMessages.each(function (index, element) {
+                var $anchor = document.createElement("a");
+                $anchor.href = "#" + elementId;
+                $anchor.innerHTML = element.innerHTML;
+                $anchor.id = "error-hash-link-" + elementId + "-" + index;
+                list.push($anchor);
+            });
+        }
+        return list;
+    }
 
     $.fn[pluginName] = function (options) {
         var args = arguments;
@@ -821,6 +996,130 @@
             this._errorMessages.govUkErrorMessage("show");
         }
     };
+
+    Plugin.prototype.getErrorMessages = function () {
+        var list = [];
+        if (this._errorMessages.length) {
+            this._errorMessages.each(function (index, element) {
+                list.push(element.innerHTML);
+            });
+        }
+        return list;
+    }
+
+    Plugin.prototype.getErrorHashLinks = function () {
+        var list = [];
+        var elementId = this.element.id;
+        if (this._errorMessages.length) {
+            this._errorMessages.each(function (index, element) {
+                var $anchor = document.createElement("a");
+                $anchor.href = "#" + elementId;
+                $anchor.innerHTML = element.innerHTML;
+                $anchor.id = "error-hash-link-" + elementId + "-" + index;
+                list.push($anchor);
+            });
+        }
+        return list;
+    }
+
+    $.fn[pluginName] = function (options) {
+        var args = arguments;
+        if (options === undefined || typeof options === "object") {
+            return this.each(function () {
+                if (!$.data(this, "plugin_" + pluginName)) {
+                    $.data(this, "plugin_" + pluginName, new Plugin(this, options));
+                }
+            });
+        } else if (typeof options === "string" && options[0] !== "_" && options !== "init") {
+            var returns;
+            this.each(function () {
+                var instance = $.data(this, "plugin_" + pluginName);
+                if (instance instanceof Plugin && typeof instance[options] === "function") {
+                    returns = instance[options].apply(instance, Array.prototype.slice.call(args, 1));
+                }
+                if (options === "destroy") {
+                    $.data(this, "plugin_" + pluginName, null);
+                }
+            });
+            return returns !== undefined ? returns : this;
+        }
+    };
+
+}(jQuery, window, document));
+
+(function ($) {
+
+    // Create the defaults once
+    var pluginName = "govUkErrorSummary",
+        defaults = {
+            errorCssClass: ""
+        };
+
+    // The actual plugin constructor
+    function Plugin(element, options) {
+        this.element = element;
+        this._summaryList = undefined;
+        this.options = $.extend({}, defaults, options);
+        this._defaults = defaults;
+        this._name = pluginName;
+        this.init();
+    }
+
+    Plugin.prototype.init = function () {
+        if (!$(this.element).hasClass(this.options.errorCssClass)) {
+            $(this.element).addClass(this.options.errorCssClass);
+        }
+        this._summaryList = $(this.element).find(".govuk-error-summary__list")[0];
+    };
+
+    Plugin.prototype.show = function () {
+        $(this.element).show();
+    };
+
+    Plugin.prototype.hide = function () {
+        $(this.element).hide();
+    };
+
+    Plugin.prototype.hideIfEmpty = function () {
+        if ($(this._summaryList).find("li").length === 0) {
+            this.hide();
+        }
+    }
+
+    Plugin.prototype.add = function (errors) {
+        if (!Array.isArray(errors)) {
+            errors = [errors];
+        }
+        if (errors && Array.isArray(errors)) {
+            errors.forEach(function (error) {
+                var li = document.createElement("li");
+                if (error instanceof HTMLElement) {
+                    $("#" + error.id).remove();
+                    li.append(error);
+                } else {
+                    li.innerHTML = error;
+                }
+                this._summaryList.append(li);
+            }, this);
+        }
+    }
+
+    Plugin.prototype.remove = function (selector) {
+        if (typeof selector === "string") {
+            $(this._summaryList).find(selector).remove();
+            $(this._summaryList).find("li:empty").remove();
+        }
+    }
+
+    Plugin.prototype.removeErrorHashLinksFor = function (id) {
+        if (typeof id === "string") {
+            this.remove("[id^=error-hash-link-" + id + "-]");
+        }
+    }
+
+    Plugin.prototype.removeAll = function () {
+        $(this._summaryList).empty();
+    }
 
     $.fn[pluginName] = function (options) {
         var args = arguments;
