@@ -833,17 +833,14 @@ namespace Dfc.CourseDirectory.Services.CourseService
         {
             return new Uri($"{extendee.ApiUrl + "AddCourse?code=" + extendee.ApiKey}");
         }
-
         internal static Uri ToGetYourCoursesUri(this ICourseServiceSettings extendee)
         {
             return new Uri($"{extendee.ApiUrl + "GetCoursesByLevelForUKPRN?code=" + extendee.ApiKey}");
         }
-
         internal static Uri ToUpdateCourseUri(this ICourseServiceSettings extendee)
         {
             return new Uri($"{extendee.ApiUrl + "UpdateCourse?code=" + extendee.ApiKey}");
         }
-
         internal static Uri ToGetCourseByIdUri(this ICourseServiceSettings extendee)
         {
             return new Uri($"{extendee.ApiUrl + "GetCourseById?code=" + extendee.ApiKey}");
@@ -856,16 +853,10 @@ namespace Dfc.CourseDirectory.Services.CourseService
         {
             return new Uri($"{extendee.ApiUrl + "UpdateStatus?code=" + extendee.ApiKey}");
         }
-        internal static Uri ToGetCourseByIdUri(this ICourseServiceSettings extendee)
-        {
-            return new Uri($"{extendee.ApiUrl + "GetCourseById?code=" + extendee.ApiKey}");
-        }
-
         internal static Uri ToGetCourseCountsByStatusForUKPRNUri(this ICourseServiceSettings extendee)
         {
             return new Uri($"{extendee.ApiUrl + "GetCourseCountsByStatusForUKPRN?code=" + extendee.ApiKey}");
         }
-
         internal static Uri ToGetRecentCourseChangesByUKPRNUri(this ICourseServiceSettings extendee)
         {
             return new Uri($"{extendee.ApiUrl + "GetRecentCourseChangesByUKPRN?code=" + extendee.ApiKey}");
