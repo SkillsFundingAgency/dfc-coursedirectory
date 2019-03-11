@@ -254,9 +254,6 @@ namespace Dfc.CourseDirectory.Services.CourseService
             }
         }
 
-
-
-
         public async Task<IResult<ICourseSearchResult>> GetCoursesByLevelForUKPRNAsync(ICourseSearchCriteria criteria)
         {
             Throw.IfNull(criteria, nameof(criteria));
@@ -410,9 +407,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 _logger.LogException("Get recent course changes service unknown error.", e);
                 return Result.Fail<IEnumerable<ICourse>>("Get recent course changes service unknown error.");
 
-            }
-            finally
-            {
+            } finally {
                 _logger.LogMethodExit();
             }
         }
