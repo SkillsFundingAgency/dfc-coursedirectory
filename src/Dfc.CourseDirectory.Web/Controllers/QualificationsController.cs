@@ -46,6 +46,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [Authorize]
         public IActionResult Index()
         {
+            _session.SetString("Option", "Qualifications");
             return View();
         }
         [Authorize]

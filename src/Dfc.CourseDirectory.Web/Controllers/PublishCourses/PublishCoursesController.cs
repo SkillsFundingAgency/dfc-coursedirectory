@@ -52,140 +52,36 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
 
             List<Course> Courses = new List<Course>();
 
+            ICourseSearchResult coursesByUKPRN = (!UKPRN.HasValue
+                   ? null
+                   : _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(UKPRN))
+                       .Result.Value);
+            Courses = coursesByUKPRN.Value.SelectMany(o => o.Value).SelectMany(i => i.Value).ToList();
+
+            //var liveCourses = Courses.Where(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.Live)).ToList();
+
             switch (publishMode)
             {
                 case PublishMode.Migration:
                     //TODO replace with call to service to return by status
                     vm.PublishMode = PublishMode.Migration;
-                    Courses = new List<Course>()
-                    {
-                        new Course()
-                        {
-                            CourseDescription = "Course Description 1",
-                            id = new Guid("24893c87-bec3-48d8-9647-cca87ec6ec51"),
-                            QualificationCourseTitle = "Test Qualification 1",
-                            LearnAimRef = "Test Lars Ref 1",
-                            NotionalNVQLevelv2 = "Test Level 1",
-                            AwardOrgCode = "Test Award Code 1",
-                            IsValid = true,
-                            CourseRuns = new List<CourseRun>()
-                            {
-                            new CourseRun()
-                            {
-                                id = new Guid("65b03e0c-1c47-4995-a0f8-efb2739c3008"),
-                                CourseName = "Test Course Name 1",
-                                RecordStatus = RecordStatus.MigrationPending
-
-                            },
-                            new CourseRun()
-                            {
-                                id = new Guid("65b03e0c-1c47-4995-a0f8-efb2739c3008"),
-                                CourseName = "Test Course Name 2",
-                                RecordStatus = RecordStatus.MigrationReadyToGoLive
-
-                            },
-                        }
-                    },
-                        new Course()
-                        {
-                            CourseDescription = "Course Description 2",
-                            id = new Guid("4e88a520-45c2-4dc2-be57-1f6b36f2c07f"),
-                            QualificationCourseTitle = "Test Qualification 2",
-                            LearnAimRef = "Test Lars Ref 2",
-                            NotionalNVQLevelv2 = "Test Level 2",
-                            AwardOrgCode = "Test Award Code 2",
-                            IsValid = false,
-                            CourseRuns = new List<CourseRun>()
-                            {
-                                new CourseRun()
-                                {
-                                    id = new Guid("4aaf651d-d4df-4eb6-8b1e-982924752ecc"),
-                                    CourseName = "Test Course Name 3",
-                                    RecordStatus = RecordStatus.MigrationPending
-
-                                },
-                                new CourseRun()
-                                {
-                                    id = new Guid("469b6253-7856-4d2a-b151-3387f2718c7f"),
-                                    CourseName = "Test Course Name 4",
-                                    RecordStatus = RecordStatus.MigrationReadyToGoLive
-
-                                },
-                            }
-                        }
-                    };
-
-                    vm.NumberOfCoursesInFiles = 10;
+                    var migratedCourses = Courses.Where(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.MigrationPending || cr.RecordStatus == RecordStatus.MigrationReadyToGoLive)).ToList();
+                    vm.NumberOfCoursesInFiles = migratedCourses.SelectMany(s => s.CourseRuns.Where(cr => cr.RecordStatus == RecordStatus.MigrationPending || cr.RecordStatus == RecordStatus.MigrationReadyToGoLive)).Count();
+                    vm.Courses = migratedCourses;
+                    vm.AreAllReadyToBePublished = CheckAreAllReadyToBePublished(migratedCourses, PublishMode.Migration);
 
                     break;
                 case PublishMode.BulkUpload:
 
                     //TODO replace with call to service to return by status
                     vm.PublishMode = PublishMode.BulkUpload;
-                    Courses = new List<Course>()
-                    {
-                        new Course()
-                        {
-                            CourseDescription = "Course Description 1",
-                            id = new Guid("24893c87-bec3-48d8-9647-cca87ec6ec51"),
-                            QualificationCourseTitle = "Test Qualification 1",
-                            LearnAimRef = "Test Lars Ref 1",
-                            NotionalNVQLevelv2 = "Test Level 1",
-                            AwardOrgCode = "Test Award Code 1",
-                            IsValid = true,
-                            CourseRuns = new List<CourseRun>()
-                            {
-                            new CourseRun()
-                            {
-                                id = new Guid("65b03e0c-1c47-4995-a0f8-efb2739c3008"),
-                                CourseName = "Test Course Name 1",
-                                RecordStatus = RecordStatus.BulkUloadPending
-
-                            },
-                            new CourseRun()
-                            {
-                                id = new Guid("65b03e0c-1c47-4995-a0f8-efb2739c3008"),
-                                CourseName = "Test Course Name 2",
-                                RecordStatus = RecordStatus.BulkUploadReadyToGoLive
-
-                            },
-                        }
-                    },
-                        new Course()
-                        {
-                            CourseDescription = "Course Description 2",
-                            id = new Guid("24893c87-bec3-48d8-9647-cca87ec6ec51"),
-                            QualificationCourseTitle = "Test Qualification 2",
-                            LearnAimRef = "Test Lars Ref 2",
-                            NotionalNVQLevelv2 = "Test Level 2",
-                            AwardOrgCode = "Test Award Code 2",
-                            IsValid = false,
-                            CourseRuns = new List<CourseRun>()
-                            {
-                                new CourseRun()
-                                {
-                                    id = new Guid("65b03e0c-1c47-4995-a0f8-efb2739c3008"),
-                                    CourseName = "Test Course Name 3",
-                                    RecordStatus = RecordStatus.BulkUloadPending
-
-                                },
-                                new CourseRun()
-                                {
-                                    id = new Guid("65b03e0c-1c47-4995-a0f8-efb2739c3008"),
-                                    CourseName = "Test Course Name 4",
-                                    RecordStatus = RecordStatus.BulkUploadReadyToGoLive
-
-                                },
-                            }
-                        }
-                    };
-
-                    vm.NumberOfCoursesInFiles = 10;
+                    var bulkUploadedCourses = Courses.Where(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.BulkUloadPending || cr.RecordStatus == RecordStatus.BulkUploadReadyToGoLive)).ToList();
+                    vm.NumberOfCoursesInFiles = bulkUploadedCourses.SelectMany(s => s.CourseRuns.Where(cr => cr.RecordStatus == RecordStatus.BulkUloadPending || cr.RecordStatus == RecordStatus.BulkUploadReadyToGoLive)).Count();
+                    vm.Courses = bulkUploadedCourses;
+                    vm.AreAllReadyToBePublished = CheckAreAllReadyToBePublished(bulkUploadedCourses, PublishMode.BulkUpload);
 
                     break;
             }
-
-            vm.Courses = Courses;
 
             return View("Index", vm);
         }
@@ -201,34 +97,74 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
             {
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
-            //Archive any existing courses
-            var archiveExistingCourse = await _courseService.ArchiveProviderLiveCourses(UKPRN);
 
-            foreach (var course in vm.Courses)
+            CompleteVM.NumberOfCoursesPublished = vm.NumberOfCoursesInFiles; 
+
+            switch (vm.PublishMode)
             {
-                course.IsValid = true;
+                case PublishMode.Migration:
+                    //commit courses directly
+                  
 
-                foreach (var courseRuns in course.CourseRuns)
-                {
-                    courseRuns.RecordStatus = RecordStatus.Live;
-                }
-                var result = await _courseService.AddCourseAsync(course);
+                    break;
+                case PublishMode.BulkUpload:
 
-                if (result.IsSuccess && result.HasValue)
-                {
-                    CompleteVM.NumberOfCoursesPublished++;
-                }
+                    //Archive any existing courses
+                    //var archiveExistingCourse = await _courseService.ArchiveProviderLiveCourses(UKPRN);
+
+                    // commit ciurses
+
+                    break;
+                default:
+                    // TODO: We should have generic error handling page
+                    return RedirectToAction("Index", "Home", new { errmsg = "Publish All BulkUpload/Migration Error" });
             }
+
             return View("Complete", CompleteVM);
         }
 
         [Authorize]
         [HttpGet]
-        public IActionResult Delete(Guid courseId, Guid courseRunId)
+        public async Task<IActionResult> Delete(Guid courseId, Guid courseRunId)
         {
             //TODO delete
 
+            var result = await _courseService.UpdateStatus(courseId, courseRunId, (int)RecordStatus.Deleted);
+
+            if (result.IsSuccess)
+            {
+                //do something
+            }
+
             return RedirectToAction("Index", "PublishCourses", new { publishMode = PublishMode.Migration });
+        }
+
+        public bool CheckAreAllReadyToBePublished(List<Course> courses, PublishMode publishMode)
+        {
+            bool AreAllReadyToBePublished = false;
+
+            var hasInvalidCourses = courses.Any(c => c.IsValid == false);
+            if (hasInvalidCourses)
+            {
+                return AreAllReadyToBePublished;
+            }
+            else
+            {
+                switch (publishMode)
+                {
+                    case PublishMode.Migration:
+                        var hasInvalidMigrationCourseRuns = courses.Any(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.MigrationPending));
+                        if (!hasInvalidMigrationCourseRuns)
+                            AreAllReadyToBePublished = true;
+                        break;
+                    case PublishMode.BulkUpload:
+                        var hasInvalidBulkUploadCourseRuns = courses.Any(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.BulkUloadPending));
+                        if (!hasInvalidBulkUploadCourseRuns)
+                            AreAllReadyToBePublished = true;
+                        break;
+                }
+                return AreAllReadyToBePublished;
+            }         
         }
     }
 }

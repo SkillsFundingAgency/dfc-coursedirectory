@@ -46,6 +46,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [Authorize(Policy = "ElevatedUserRole")]
         public IActionResult Index()
         {
+            _session.SetString("Option", "Provider");
+            _session.SetInt32("ProviderSearch", 0);
             _logger.LogMethodEnter();
             _logger.LogMethodExit();
             return View();
@@ -124,6 +126,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
             string notificationTitle,
             string notificationMessage)
         {
+
+            _session.SetString("Option", "Courses");
             int? UKPRN = _session.GetInt32("UKPRN");
 
             if (!UKPRN.HasValue)
@@ -165,6 +169,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     LearnAimRef = x.LearnAimRef,
                     NotionalNVQLevelv2 = x.NotionalNVQLevelv2,
                     QualificationTitle = x.QualificationCourseTitle,
+                    QualificationType = x.QualificationType,
                     Facet = x.CourseRuns.Count().ToString(),
                     CourseRuns = x.CourseRuns.Select(y => new CourseRunViewModel
                     {

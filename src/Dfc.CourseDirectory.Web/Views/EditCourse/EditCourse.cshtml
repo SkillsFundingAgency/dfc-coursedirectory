@@ -29,7 +29,7 @@
             NotificationTitle = "There is an issue with this qualification",
             NotificationMessage = "",
             ClassType = "error-summary"
-        });
+        })
     </div>
 
     
@@ -85,7 +85,7 @@
                 @Html.ActionLink("Cancel", "Index", "PublishCourses", new { publishMode = Model.Mode }, new { @class = "govuk-link" })
                 break;
             default:
-                @Html.ActionLink("Cancel", "Courses", "Provider", new { qualificationType = @Model.QualificationType }, new { @class = "govuk-link" })
+                @Html.ActionLink("Cancel", "Courses", "Provider", new { level = @Model.NotionalNVQLevelv2,courseId=@Model.CourseId }, new { @class = "govuk-link" })
                 break;
         }
 
@@ -110,45 +110,22 @@
 
             validate();
 
-            var errorArray = $("[class*='govuk-error-message'");
-            if (errorArray.length > 0) {
-
-
-                var $errorField = $("#" + errorArray[0].nextElementSibling.id);
-                $('html,body').animate({ scrollTop: $errorField.parent().offset().top }, 'slow');
-
-                var notificationBody = "";
-                $.each(errorArray, function (index, value) {
-                    var $field = value.parentElement.parentElement.parentElement.id;
-
-                    notificationBody = notificationBody + "<a href='#' class='govuk-link' style=color:#b10e1e data-error-field=" + $field + ">"+ value.innerHTML +"</a></br>";
-                });
-
-                $('.cd-error-summary__body').html(notificationBody);
-
-                $('#errorsummary').css({ "display": "block" });
-
-                
-                
-            }
-
-            $('.govuk-link').on("click",
-                function(e) {
-                    e.preventDefault();
-
-                    var $field = $("#" + $(this).attr("data-error-field"));
-                    $('html,body').animate({ scrollTop: $field.offset().top }, 'slow');
-
-                });
-
-
             function isAllValid(currentValue) {
                 return currentValue === true;
             }
 
             function validate() {
                
+                validStates = [];
 
+                //$(".govuk-error-message").remove();
+                $courseFor.govUkTextarea("validState");
+                $entryRequirements.govUkTextarea("validState");
+                $whatWillLearn.govUkTextarea("validState");
+                $howYouWillLearn.govUkTextarea("validState");
+                $whatYouNeed.govUkTextarea("validState");
+                $howAssessed.govUkTextarea("validState");
+                $whereNext.govUkTextarea("validState");
 
                 if (!$.requiredValidate($courseFor.val())) {
                     $courseFor.govUkTextarea("invalidState", $courseFor.attr("val-required-message"));
@@ -164,7 +141,7 @@
                 }
                 else {
 
-                    $courseFor.govUkInput("validState");
+                    $courseFor.govUkTextarea("validState");
                     validStates.push(true);
                 }
 
@@ -266,16 +243,24 @@
 
                     var notificationBody = "";
                     $.each(errorArray, function (index, value) {
+
                         var $field = value.parentElement.parentElement.parentElement.id;
 
-                        notificationBody = notificationBody + "<a href='#' class='govuk-link' style=color:#b10e1e data-error-field=" + $field + ">"+ value.innerHTML +"</a></br>";
+                        notificationBody = notificationBody + "<a href='#' class='govuk-link errorlink' style=color:#b10e1e data-error-field=" + $field + ">"+ value.innerHTML +"</a></br>";
                     });
 
                     $('.cd-error-summary__body').html(notificationBody);
 
                     $('#errorsummary').css({ "display": "block" });
 
-                
+                    $('.errorlink').on("click",
+                        function(e) {
+                            e.preventDefault();
+
+                            var $field = $("#" + $(this).attr("data-error-field"));
+                            $('html,body').animate({ scrollTop: $field.offset().top }, 'slow');
+
+                        });
                 
                 }
             }
