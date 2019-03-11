@@ -58,8 +58,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                        .Result.Value);
             Courses = coursesByUKPRN.Value.SelectMany(o => o.Value).SelectMany(i => i.Value).ToList();
 
-            //var liveCourses = Courses.Where(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.Live)).ToList();
-
             switch (publishMode)
             {
                 case PublishMode.Migration:
