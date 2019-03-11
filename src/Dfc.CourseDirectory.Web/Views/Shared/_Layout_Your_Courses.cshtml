@@ -15,28 +15,22 @@
     <link rel="apple-touch-icon" href="~/assets/images/govuk-apple-touch-icon.png">
 
     <link href="~/dist/site.min.css" rel="stylesheet" />
-
     <meta property="og:image" content="~/assets/images/govuk-opengraph-image.png">
     <partial name="_ScriptsPartial" />
+
+    <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
 </head>
 
 <body class="govuk-template__body app-body-class">
 
     <a href="#main-content" class="govuk-skip-link">Skip to main content</a>
 
-    <partial name="_GovukHeaderPartial" />
+    <partial name="_GovukHeaderPartial_Your_Courses" />
 
-    @*TODO: Move styling to Application.scss*@
-    <div @*class="govuk-width-container" *@ style="padding: 0px 60px;">
+    <div class=" cd-fullwidth-container">
         @await Component.InvokeAsync(nameof(GovukPhaseBanner))
 
-        @*<vc:govuk-phase-banner is-visible="true"></vc:govuk-phase-banner>*@
-
-        @*<a href="javascript: history.go(-1)" class="govuk-back-link">Back</a>*@
-
-        <main class="govuk-main-wrapper app-main-class" id="main-content" role="main">
-            @RenderBody()
-        </main>
+        @RenderBody()
     </div>
 
     <partial name="_GovukFooterPartial" />

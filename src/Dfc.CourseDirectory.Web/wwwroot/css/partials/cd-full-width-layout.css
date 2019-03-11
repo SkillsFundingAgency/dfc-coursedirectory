@@ -1,0 +1,38 @@
+.govuk-header__container.cd-fullwidth-container {
+  margin-bottom: -10px;
+}
+
+.cd-fullwidth-container {
+  width: 90%;
+  margin: 0 auto;
+  /*need to fix these media queries*/
+}
+
+.cd-fullwidth-container .cd-grid-coloumn-three-quarters {
+  width: 75%;
+  float: left;
+}
+
+.cd-fullwidth-container .cd-grid-coloumn-80 {
+  width: 100%;
+  float: left;
+}
+
+@media (min-width: 40.0625em) {
+  .cd-fullwidth-container .cd-grid-coloumn-80 {
+    width: 80%;
+  }
+}
+
+.cd-fullwidth-container .cd-grid-coloumn-20 {
+  width: 100%;
+  float: left;
+  padding: 1em;
+  box-sizing: border-box;
+}
+
+@media (min-width: 40.0625em) {
+  .cd-fullwidth-container .cd-grid-coloumn-20 {
+    width: 20%;
+  }
+}

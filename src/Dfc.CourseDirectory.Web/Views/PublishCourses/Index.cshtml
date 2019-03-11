@@ -17,11 +17,7 @@
             <button name="publishButton" type="submit" class="govuk-button" id="publish">
                 Publish all
             </button>
-        }
-        else
-        {
-            <div class="govuk-button">Please, fix all course in order to 'Publish all'</div>
-        }
+        }      
 
         <div> @Html.ActionLink("Exit without publishing", "Index", "Home", new { }, new { @class = "govuk-link" })</div>
     </div>
