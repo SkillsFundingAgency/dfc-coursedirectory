@@ -46,6 +46,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [Authorize(Policy = "ElevatedUserRole")]
         public IActionResult Index()
         {
+            _session.SetString("Option", "Provider");
             _session.SetInt32("ProviderSearch", 0);
             _logger.LogMethodEnter();
             _logger.LogMethodExit();
@@ -125,6 +126,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
             string notificationTitle,
             string notificationMessage)
         {
+
+            _session.SetString("Option", "Courses");
             int? UKPRN = _session.GetInt32("UKPRN");
 
             if (!UKPRN.HasValue)
