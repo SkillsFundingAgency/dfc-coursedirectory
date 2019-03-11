@@ -17,118 +17,225 @@
     var authorised = await Authorization.AuthorizeAsync(User, "Admin");
 }
 
-<div class="govuk-width-container">
-    <main class="govuk-main-wrapper">
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-one-half">
-                <h1 class="govuk-heading-xl">Upload a file</h1>
-                
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <h1 class="govuk-heading-xl">
+            Upload a file
+        </h1>
 
-                <form method="post" id="bulkUploadForm" enctype="multipart/form-data" asp-controller="BulkUpload" asp-action="Index">
-                    <div class="govuk-form-group">
+        @*@if (!string.IsNullOrWhiteSpace(Model.NotificationTitle))
+        {
+            @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+            {
+                NotificationTitle = Model.NotificationTitle,
+                NotificationMessage = Model.NotificationMessage,
+                ClassType = "info-summary"
+            })
+        }*@
 
-                        @if (Model.errors == null || !Model.errors.Any())
+        @{
+            var styleAttribute = (string.IsNullOrEmpty(Model.NotificationTitle) && Model.errors == null)
+                ? "style=\"display: none;\""
+                : string.Empty;
+        }
+
+        <div id="errorSummary" class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary" @Html.Raw(styleAttribute)>
+            <h2 class="govuk-error-summary__title" id="error-summary-title">
+                @if (string.IsNullOrEmpty(Model.NotificationTitle))
+                {
+                    <span>There is a problem</span>
+                }
+                else
+                {
+                    @Model.NotificationTitle
+                }
+            </h2>
+            <div class="govuk-error-summary__body">
+                <ul class="govuk-list govuk-error-summary__list">
+                    @if (!string.IsNullOrEmpty(Model.NotificationMessage))
+                    {
+                        <li>@Model.NotificationMessage</li>
+                    }
+                    @if (Model.errors != null && Model.errors.Any())
+                    {
+                        foreach (var error in Model.errors)
                         {
-                            <label class="govuk-label">
-                                Create a file with the courses you want to publish. You can either use a blank template or download a file of the courses that are published now and amend it. When you upload it you will be able to fix any errors before publishing and replace the courses you currently have listed in the course directory
-                            </label>
-                            <br />
-                            <br />
+                            <li><a href="#bulkUploadFile">@error</a></li>
                         }
-                        else
-                        {
-                            var errorMessage = "<ul style='list-style: none'>";
-
-
-                            foreach (var error in Model.errors)
-                            {
-                                errorMessage= String.Concat(errorMessage,"<li>",error,"</li>");
-                            }
-
-                            errorMessage = String.Concat(errorMessage,"</ul>");
-
-                            @await Component.InvokeAsync(nameof(Notification), new NotificationModel
-                            {
-
-                                NotificationTitle = "There are issues with this upload",
-                                NotificationMessage = errorMessage,
-                                ClassType = "error-summary"
-                            });
-                        }
-                        <label class="govuk-label" for="bulkUploadFile">
-                            Upload a file
-                        </label>
-                        <input class="govuk-file-upload" id="bulkUploadFile" name="bulkUploadFile" type="file"
-                               val-required-message="Select a file to upload"
-                               val-file-extensions="csv"
-                               val-file-extensions-message="The selected file must be a CSV"
-                               val-file-size-max="2097152"
-                               val-file-size-max-message="The selected file must be smaller than 2MB" />
-                    </div>
-                    <button type="submit" id="uploadButton" class="govuk-button">
-                        Upload
-                    </button>
-                                  </form>
-
-            </div>
-            <div class="govuk-grid-column-one-half">
-                <h3 class="govuk-heading-m">Template</h3>
-                <ul style="list-style: none">
-                    <li>
-                        <a href="#" class="govuk-link">Download current courses in Excel template</a>
-                    </li>
-                    <li>
-                        <a href="#" class="govuk-link">Download current courses as csv template</a>
-                    </li>
-                    <li>
-                        <a href="#" class="govuk-link">Download blank template (Excel format)</a>
-                    </li>
-                    <li>
-                        <a href="#" class="govuk-link">Download blank template (csv format)</a>
-                    </li>
+                    }
                 </ul>
             </div>
         </div>
-    </main>
+    </div>
 </div>
 
-<script>
-    (function ($) {
-        $(function () {
-            var $fileupload1 = $("#bulkUploadFile").govUkFileUpload();
-            var $button = $("#uploadButton");
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-one-half">
 
-            $fileupload1.on("change", function () {
-                $fileupload1.govUkFileUpload("validState");
-            });
+        <form method="post" id="bulkUploadForm" enctype="multipart/form-data"
+              asp-controller="BulkUpload"
+              asp-action="Index">
+            <p class="govuk-body govuk-!-padding-bottom-4">
+                Create a file with the courses you want to publish. You can either use a blank template or download a file of the courses that are published now and amend it. When you upload it you will be able to fix any errors before publishing and replace the courses you currently have listed in the course directory.
+            </p>
+            <div class="govuk-form-group">
+                <label class="govuk-label" for="bulkUploadFile">
+                    Upload a file
+                </label>
+                <input class="govuk-file-upload" id="bulkUploadFile" name="bulkUploadFile" type="file"
+                       val-required-message="Select a file to upload"
+                       val-file-extensions="csv"
+                       val-file-extensions-message="The selected file must be a CSV"
+                       val-file-size-max="2097152"
+                       val-file-size-max-message="The selected file must be smaller than 2MB" />
+            </div>
+            <div class="govuk-form-group">
+                <button type="submit" id="uploadButton" class="govuk-button">
+                    Upload
+                </button>
+            </div>
+        </form>
+    </div>
+    <div class="govuk-grid-column-one-half">
+        <h3 class="govuk-heading-m">Template</h3>
+        <ul class="govuk-list">
+            <li>
+                <a href="#" class="govuk-link">Download current courses in Excel template</a>
+            </li>
+            <li class="govuk-!-padding-bottom-4">
+                <a href="#" class="govuk-link">Download current courses as csv template</a>
+            </li>
+            <li>
+                <a href="#" class="govuk-link">Download blank template (Excel format)</a>
+            </li>
+            <li>
+                <a href="#" class="govuk-link">Download blank template (csv format)</a>
+            </li>
+        </ul>
+    </div>
+</div>
 
-            $button.on("click", function (event) {
-                event.preventDefault();
-                if (!$.requiredValidate($fileupload1.val())) {
-                    $fileupload1.govUkFileUpload("invalidState", $fileupload1.attr(
-                        "val-required-message"));
-                } else if ($fileupload1[0].files) {
-                    if (!$.fileExtensionsValidate({
-                        extensions: $fileupload1.attr("val-file-extensions")
-                    }, $fileupload1[0].files[0])) {
-                        $fileupload1.govUkFileUpload("invalidState", $fileupload1.attr(
-                            "val-file-extensions-message"));
-                    } else if (!$.fileSizeMaxValidate({
-                        max: $fileupload1.attr("val-file-size-max")
-                    }, $fileupload1[0].files[0])) {
-                        $fileupload1.govUkFileUpload("invalidState", $fileupload1.attr(
-                            "val-file-size-max-message"));
+    @*<div class="govuk-width-container">
+        <main class="govuk-main-wrapper">
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-one-half">
+                    <h1 class="govuk-heading-xl">Upload a file</h1>
+
+
+                    <form method="post" id="bulkUploadForm" enctype="multipart/form-data" asp-controller="BulkUpload" asp-action="Index">
+                        <div class="govuk-form-group">
+
+                            @if (Model.errors == null || !Model.errors.Any())
+                                {
+                                    <label class="govuk-label">
+                                        Create a file with the courses you want to publish. You can either use a blank template or download a file of the courses that are published now and amend it. When you upload it you will be able to fix any errors before publishing and replace the courses you currently have listed in the course directory
+                                    </label>
+                                    <br />
+                                    <br />
+                                }
+                                else
+                                {
+                                    var errorMessage = "<ul style='list-style: none'>";
+
+
+                                    foreach (var error in Model.errors)
+                                    {
+                                        errorMessage= String.Concat(errorMessage,"<li>",error,"</li>");
+                                    }
+
+                                    errorMessage = String.Concat(errorMessage,"</ul>");
+
+                                    @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+                                    {
+
+                                        NotificationTitle = "There are issues with this upload",
+                                        NotificationMessage = errorMessage,
+                                        ClassType = "error-summary"
+                                    });
+                                }
+                            <label class="govuk-label" for="bulkUploadFile">
+                                Upload a file
+                            </label>
+                            <input class="govuk-file-upload" id="bulkUploadFile" name="bulkUploadFile" type="file"
+                                   val-required-message="Select a file to upload"
+                                   val-file-extensions="csv"
+                                   val-file-extensions-message="The selected file must be a CSV"
+                                   val-file-size-max="2097152"
+                                   val-file-size-max-message="The selected file must be smaller than 2MB" />
+                        </div>
+                        <button type="submit" id="uploadButton" class="govuk-button">
+                            Upload
+                        </button>
+                    </form>
+
+                </div>
+                <div class="govuk-grid-column-one-half">
+                    <h3 class="govuk-heading-m">Template</h3>
+                    <ul style="list-style: none">
+                        <li>
+                            <a href="#" class="govuk-link">Download current courses in Excel template</a>
+                        </li>
+                        <li>
+                            <a href="#" class="govuk-link">Download current courses as csv template</a>
+                        </li>
+                        <li>
+                            <a href="#" class="govuk-link">Download blank template (Excel format)</a>
+                        </li>
+                        <li>
+                            <a href="#" class="govuk-link">Download blank template (csv format)</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </main>
+    </div>*@
+
+    <script>
+        (function ($) {
+            $(function () {
+                var $errorSummary = $("#errorSummary").govUkErrorSummary();
+                var $bulkUploadFile = $("#bulkUploadFile").govUkFileUpload();
+                var $button = $("#uploadButton");
+
+                $bulkUploadFile.on("change", function () {
+                    $bulkUploadFile.govUkFileUpload("validState");
+                    $errorSummary.govUkErrorSummary("removeAll");
+                    $errorSummary.govUkErrorSummary("hide");
+                });
+
+                $button.on("click", function (event) {
+                    event.preventDefault();
+                    if (!$.requiredValidate($bulkUploadFile.val())) {
+                        $bulkUploadFile.govUkFileUpload("invalidState", $bulkUploadFile.attr("val-required-message"));
+                        var errorHashLinks = $bulkUploadFile.govUkFileUpload("getErrorHashLinks");
+                        $errorSummary.govUkErrorSummary("add", errorHashLinks);
+                        $errorSummary.govUkErrorSummary("show");
+                    } else if ($bulkUploadFile[0].files) {
+                        if (!$.fileExtensionsValidate({ extensions: $bulkUploadFile.attr("val-file-extensions") }, $bulkUploadFile[0].files[0])) {
+                            $bulkUploadFile.govUkFileUpload("invalidState", $bulkUploadFile.attr("val-file-extensions-message"));
+                            var errorHashLinks = $bulkUploadFile.govUkFileUpload("getErrorHashLinks");
+                            $errorSummary.govUkErrorSummary("add", errorHashLinks);
+                            $errorSummary.govUkErrorSummary("show");
+                        } else if (!$.fileSizeMaxValidate({ max: $bulkUploadFile.attr("val-file-size-max") }, $bulkUploadFile[0].files[0])) {
+                            $bulkUploadFile.govUkFileUpload("invalidState", $bulkUploadFile.attr("val-file-size-max-message"));
+                            var errorHashLinks = $bulkUploadFile.govUkFileUpload("getErrorHashLinks");
+                            $errorSummary.govUkErrorSummary("add", errorHashLinks);
+                            $errorSummary.govUkErrorSummary("show");
+                        } else {
+                            $bulkUploadFile.govUkFileUpload("validState");
+                            $errorSummary.govUkErrorSummary("removeAll");
+                            $errorSummary.govUkErrorSummary("hide");
+                            $("#bulkUploadForm").submit();
+                        }
                     } else {
-                        $fileupload1.govUkFileUpload("validState");
+                        $bulkUploadFile.govUkFileUpload("validState");
+                        $errorSummary.govUkErrorSummary("removeAll");
+                        $errorSummary.govUkErrorSummary("hide");
                         $("#bulkUploadForm").submit();
                     }
-                } else {
-                    $fileupload1.govUkFileUpload("validState");
-                    $("#bulkUploadForm").submit();
-                }
+                });
             });
-        });
-    })(jQuery);
-</script>
+        })(jQuery);
+    </script>
 
 
