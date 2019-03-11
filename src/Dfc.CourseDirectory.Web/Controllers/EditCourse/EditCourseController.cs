@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Common;
+using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseTextService;
@@ -23,6 +24,7 @@ using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatYouNeed;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhereNext;
 using Dfc.CourseDirectory.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 {
@@ -57,7 +59,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> Index(Guid? courseId)
+        public async Task<IActionResult> Index(Guid? courseId, bool fromBulkUpload, PublishMode mode)
         {
             int? UKPRN;
 
@@ -78,6 +80,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                 {
                     EditCourseViewModel vm = new EditCourseViewModel
                     {
+                        Mode = mode,
                         CourseFor = new CourseForModel()
                         {
                             LabelText = "Who is the course for?",
@@ -140,6 +143,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                     vm.QualificationType = course?.Value?.QualificationType;
                     vm.AdultEducationBudget = course?.Value?.AdultEducationBudget;
                     vm.AdvancedLearnerLoan = course?.Value?.AdvancedLearnerLoan;
+                    vm.NotionalNVQLevelv2 = course?.Value?.NotionalNVQLevelv2;
 
                     return View("EditCourse", vm);
                 }
@@ -166,21 +170,36 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                     courseForEdit.Value.WhatYoullNeed = model?.WhatYouNeed;
                     courseForEdit.Value.HowYoullBeAssessed = model?.HowAssessed;
                     courseForEdit.Value.WhereNext = model?.WhereNext;
-                    courseForEdit.Value.UpdatedBy = User.Identity.Name;
-                    courseForEdit.Value.UpdatedDate = DateTime.Now;
                     courseForEdit.Value.AdultEducationBudget = model.AdultEducationBudget;
                     courseForEdit.Value.AdvancedLearnerLoan = model.AdvancedLearnerLoan;
+                    courseForEdit.Value.IsValid = true; // The same for Live, BulkUpload, Migration
+                    courseForEdit.Value.UpdatedBy = User.FindFirst(ClaimTypes.NameIdentifier)?.Value; // User.Identity.Name;
+                    courseForEdit.Value.UpdatedDate = DateTime.Now;
 
                     var updatedCourse = await _courseService.UpdateCourseAsync(courseForEdit.Value);
 
-                    return RedirectToAction("Courses", "Provider",
-                        new
-                        {
-                            NotificationTitle ="Course edited",
-                            NotificationMessage = "You edited",
-                            qualificationType = courseForEdit.Value.QualificationType,
-                            courseId = updatedCourse.Value.id
-                        });
+                    switch (model.Mode)
+                    {
+                        case PublishMode.BulkUpload:
+                        case PublishMode.Migration:
+                            return RedirectToAction("Index", "PublishCourses",
+                                new
+                                {
+                                    publishMode = model.Mode
+                                });
+                        default:
+                            return RedirectToAction("Courses", "Provider",
+                                new
+                                {
+                                    NotificationTitle = "Course edited",
+                                    NotificationMessage = "You edited",
+                                    qualificationType = courseForEdit.Value.QualificationType,
+                                    courseId = updatedCourse.Value.id
+                                });
+  
+                    }
+                   
+
                 }
             }
 

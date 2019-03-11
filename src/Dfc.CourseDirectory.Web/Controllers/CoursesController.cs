@@ -74,7 +74,27 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _courseTextService = courseTextService;
 
         }
-        
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> Archive(Guid courseId, Guid courseRunId, string level, string qualificationType)
+        {
+            //archive call??
+
+            //may need changing, not sure what message if anything needs to be displayed
+            return RedirectToAction("Courses", "Provider",
+                new
+                {
+                    level = level,
+                    NotificationTitle = "Course archived",
+                    NotificationMessage = "You archived",
+                    qualificationType = qualificationType,
+                    courseId = courseId
+                });
+        }
+
+
+
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> Index(CourseRunModel model)
@@ -192,124 +212,124 @@ namespace Dfc.CourseDirectory.Web.Controllers
         //}
 
 
-        [Authorize]
-        public async Task<IActionResult> Index(string status, string learnAimRef, string numberOfNewCourses, string errmsg, Guid? updatedCourseId)
-        {
-            IActionResult view = await GetYourCoursesViewModelAsync(status, learnAimRef, numberOfNewCourses, errmsg, updatedCourseId);
-            return view;
-        }
+        //[Authorize]
+        //public async Task<IActionResult> Index(string status, string learnAimRef, string numberOfNewCourses, string errmsg, Guid? updatedCourseId)
+        //{
+        //    IActionResult view = await GetYourCoursesViewModelAsync(status, learnAimRef, numberOfNewCourses, errmsg, updatedCourseId);
+        //    return view;
+        //}
 
-        private async Task<IActionResult> GetYourCoursesViewModelAsync(string status, string learnAimRef, string numberOfNewCourses, string errmsg, Guid? updatedCourseId)
-        {
+        //private async Task<IActionResult> GetYourCoursesViewModelAsync(string status, string learnAimRef, string numberOfNewCourses, string errmsg, Guid? updatedCourseId)
+        //{
 
-            var deliveryModes = new List<SelectListItem>();
-            var durationUnits = new List<SelectListItem>();
-            var attendances = new List<SelectListItem>();
-            var modes = new List<SelectListItem>();
+        //    var deliveryModes = new List<SelectListItem>();
+        //    var durationUnits = new List<SelectListItem>();
+        //    var attendances = new List<SelectListItem>();
+        //    var modes = new List<SelectListItem>();
 
-            if (!string.IsNullOrEmpty(status))
-            {
-                ViewData["Status"] = status;
-                switch (status.ToUpper())
-                {
-                    case "GOOD":
-                        ViewData["StatusMessage"] = string.Format("{0} New Course(s) created in Course Directory for LARS: {1}", numberOfNewCourses, learnAimRef);
-                        break;
-                    case "BAD":
-                        ViewData["StatusMessage"] = errmsg;
-                        break;
-                    case "UPDATE":
-                        ViewData["StatusMessage"] = string.Format("Course run updated in Course Directory");
-                        break;
-                    default:
-                        break;
-                }
-            }
+        //    if (!string.IsNullOrEmpty(status))
+        //    {
+        //        ViewData["Status"] = status;
+        //        switch (status.ToUpper())
+        //        {
+        //            case "GOOD":
+        //                ViewData["StatusMessage"] = string.Format("{0} New Course(s) created in Course Directory for LARS: {1}", numberOfNewCourses, learnAimRef);
+        //                break;
+        //            case "BAD":
+        //                ViewData["StatusMessage"] = errmsg;
+        //                break;
+        //            case "UPDATE":
+        //                ViewData["StatusMessage"] = string.Format("Course run updated in Course Directory");
+        //                break;
+        //            default:
+        //                break;
+        //        }
+        //    }
 
-            List<SelectListItem> courseRunVenues = new List<SelectListItem>();
-            int? UKPRN = _session.GetInt32("UKPRN");
+        //    List<SelectListItem> courseRunVenues = new List<SelectListItem>();
+        //    int? UKPRN = _session.GetInt32("UKPRN");
 
-            if (UKPRN.HasValue)
-            {
-                VenueSearchCriteria criteria = new VenueSearchCriteria(UKPRN.ToString(), null);
-                var venues = await _venueService.SearchAsync(criteria);
+        //    if (UKPRN.HasValue)
+        //    {
+        //        VenueSearchCriteria criteria = new VenueSearchCriteria(UKPRN.ToString(), null);
+        //        var venues = await _venueService.SearchAsync(criteria);
 
-                foreach (var venue in venues.Value.Value)
-                {
-                    var item = new SelectListItem { Text = venue.VenueName, Value = venue.ID };
-                    courseRunVenues.Add(item);
-                };
-            }
-            else
-            {
-                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
-            }
+        //        foreach (var venue in venues.Value.Value)
+        //        {
+        //            var item = new SelectListItem { Text = venue.VenueName, Value = venue.ID };
+        //            courseRunVenues.Add(item);
+        //        };
+        //    }
+        //    else
+        //    {
+        //        return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
+        //    }
 
-            foreach (DeliveryMode eVal in DeliveryMode.GetValues(typeof(DeliveryMode)))
-            {
-                if (eVal.ToString().ToUpper() != "UNDEFINED")
-                {
-                    var item = new SelectListItem { Text = WebHelper.GetEnumDescription(eVal) };
-                    deliveryModes.Add(item);
-                }
-            };
+        //    foreach (DeliveryMode eVal in DeliveryMode.GetValues(typeof(DeliveryMode)))
+        //    {
+        //        if (eVal.ToString().ToUpper() != "UNDEFINED")
+        //        {
+        //            var item = new SelectListItem { Text = WebHelper.GetEnumDescription(eVal) };
+        //            deliveryModes.Add(item);
+        //        }
+        //    };
 
-            foreach (DurationUnit eVal in DurationUnit.GetValues(typeof(DurationUnit)))
-            {
-                if (eVal.ToString().ToUpper() != "UNDEFINED")
-                {
-                    var item = new SelectListItem { Text = WebHelper.GetEnumDescription(eVal) };
-                    durationUnits.Add(item);
-                }
-            };
+        //    foreach (DurationUnit eVal in DurationUnit.GetValues(typeof(DurationUnit)))
+        //    {
+        //        if (eVal.ToString().ToUpper() != "UNDEFINED")
+        //        {
+        //            var item = new SelectListItem { Text = WebHelper.GetEnumDescription(eVal) };
+        //            durationUnits.Add(item);
+        //        }
+        //    };
 
-            foreach (AttendancePattern eVal in AttendancePattern.GetValues(typeof(AttendancePattern)))
-            {
-                if (eVal.ToString().ToUpper() != "UNDEFINED")
-                {
-                    var item = new SelectListItem { Text = WebHelper.GetEnumDescription(eVal) };
-                    attendances.Add(item);
-                }
-            };
+        //    foreach (AttendancePattern eVal in AttendancePattern.GetValues(typeof(AttendancePattern)))
+        //    {
+        //        if (eVal.ToString().ToUpper() != "UNDEFINED")
+        //        {
+        //            var item = new SelectListItem { Text = WebHelper.GetEnumDescription(eVal) };
+        //            attendances.Add(item);
+        //        }
+        //    };
 
-            foreach (Dfc.CourseDirectory.Models.Models.Courses.StudyMode eVal in Enum.GetValues(typeof(Dfc.CourseDirectory.Models.Models.Courses.StudyMode)))
-            {
-                if (eVal.ToString().ToUpper() != "UNDEFINED")
-                {
-                    var item = new SelectListItem { Text = WebHelper.GetEnumDescription(eVal) };
-                    modes.Add(item);
-                }
-            };
+        //    foreach (Dfc.CourseDirectory.Models.Models.Courses.StudyMode eVal in Enum.GetValues(typeof(Dfc.CourseDirectory.Models.Models.Courses.StudyMode)))
+        //    {
+        //        if (eVal.ToString().ToUpper() != "UNDEFINED")
+        //        {
+        //            var item = new SelectListItem { Text = WebHelper.GetEnumDescription(eVal) };
+        //            modes.Add(item);
+        //        }
+        //    };
 
-            // Get courses (and runs) for PRN, grouped by qualification type, then within that by LARS ref
-            //int? ukprn = _session.GetInt32("UKPRN");
-            if (UKPRN.HasValue)
-            {
-                ICourseSearchResult result = (!UKPRN.HasValue ? null :
-                                              _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(UKPRN))
-                                                            .Result.Value);
+        //    // Get courses (and runs) for PRN, grouped by qualification type, then within that by LARS ref
+        //    //int? ukprn = _session.GetInt32("UKPRN");
+        //    if (UKPRN.HasValue)
+        //    {
+        //        ICourseSearchResult result = (!UKPRN.HasValue ? null :
+        //                                      _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(UKPRN))
+        //                                                    .Result.Value);
 
 
-                YourCoursesViewModel vm = new YourCoursesViewModel
-                {
-                    UpdatedCourseId = updatedCourseId ?? null,
-                    UKPRN = UKPRN,
-                    Courses = result,
-                    deliveryModes = deliveryModes,
-                    durationUnits = durationUnits,
-                    attendances = attendances,
-                    modes = modes,
-                    Venues = courseRunVenues
-                };
+        //        YourCoursesViewModel vm = new YourCoursesViewModel
+        //        {
+        //            UpdatedCourseId = updatedCourseId ?? null,
+        //            UKPRN = UKPRN,
+        //            Courses = result,
+        //            deliveryModes = deliveryModes,
+        //            durationUnits = durationUnits,
+        //            attendances = attendances,
+        //            modes = modes,
+        //            Venues = courseRunVenues
+        //        };
 
-                return View(vm);
+        //        return View(vm);
 
-            }
-            else
-            {
-                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
-            }
-        }
+        //    }
+        //    else
+        //    {
+        //        return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
+        //    }
+        //}
 
         [Authorize]
         [HttpGet]
@@ -988,7 +1008,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     CreatedDate = DateTime.Now,
                     CreatedBy = "ProviderPortal-AddCourse", // TODO - Change to the name of the logged person
 
-                    RecordStatus = RecordStatus.Live // TODO - To Be Decided
+                    //RecordStatus = RecordStatus.Live // TODO - To Be Decided
                 };
 
                 var result = await _courseService.AddCourseAsync(course);

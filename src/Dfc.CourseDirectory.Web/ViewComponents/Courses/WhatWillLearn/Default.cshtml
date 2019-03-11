@@ -9,11 +9,12 @@
 
 @{
     var regex = @"^[a-zA-Z0-9 /\n/\r/\¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`" + "\"" + "\\\\]+$";
+    var whatWillLearnTextFieldMaxChars = whatWilllLearnComponentSettings.Value.TextFieldMaxChars;
 }
 
 
 
-<div class="govuk-character-count" data-module="character-count" data-maxlength=@whatWilllLearnComponentSettings.Value.TextFieldMaxChars>
+<div class="govuk-character-count" data-module="character-count" data-maxlength=@whatWillLearnTextFieldMaxChars>
     <div class="govuk-form-group">
         <label class="govuk-label" for="word-count">
             @Model.LabelText
@@ -26,9 +27,47 @@
         }
         <textarea class="govuk-textarea js-character-count " asp-for="@Model.WhatWillLearn" rows="5"
                     aria-describedby="@Model.AriaDescribedBy"
-                  val-max-length="1000" val-max-length-message="What you will learn must be 1000 characters or less"
+                  val-max-length=@whatWillLearnTextFieldMaxChars val-max-length-message="What you will learn must be @whatWillLearnTextFieldMaxChars characters or less"
                   val-regex="@regex"
                   val-regex-message="What you’ll learn contains invalid characters"></textarea>
 
     </div>
 </div>
+
+<script>
+    (function ($) {
+        $(function () {
+
+            var $elementWhatWillLearn = $("#@nameof(Model.WhatWillLearn)");
+
+            $elementWhatWillLearn.on("blur", function () {
+
+                var trimmed = $elementWhatWillLearn.val().trim();
+                $elementWhatWillLearn.val(trimmed);
+
+                var $characterCountValue = @whatWillLearnTextFieldMaxChars;
+                var $countMessage = $("#WhatWillLearn-info");
+
+                var $actualCharacterCount = $characterCountValue - $elementWhatWillLearn.val().length;
+
+                if ($actualCharacterCount <= 0) {
+
+                } else {
+
+                    if ($actualCharacterCount === 1) {
+                        $countMessage.text("You have " + $actualCharacterCount + " character remaining");
+                    } else {
+                        $countMessage.text("You have " + $actualCharacterCount + " characters remaining");
+
+                        $countMessage.addClass('govuk-hint');
+                        $elementWhatWillLearn.removeClass('govuk-textarea--error');
+                        $countMessage.removeClass('govuk-error-message');
+                        $countMessage.addClass('govuk-character-count__message');
+                    }
+                }
+
+            });
+
+        });
+    })(jQuery);
+</script>

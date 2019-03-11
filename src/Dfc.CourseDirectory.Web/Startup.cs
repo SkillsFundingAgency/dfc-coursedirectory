@@ -2,11 +2,13 @@
 using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.AuthService;
 using Dfc.CourseDirectory.Services.BaseDataAccess;
+using Dfc.CourseDirectory.Services.BulkUploadService;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.CourseTextService;
 using Dfc.CourseDirectory.Services.Interfaces;
 using Dfc.CourseDirectory.Services.Interfaces.AuthService;
 using Dfc.CourseDirectory.Services.Interfaces.BaseDataAccess;
+using Dfc.CourseDirectory.Services.Interfaces.BulkUploadService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseTextService;
 using Dfc.CourseDirectory.Services.Interfaces.OnspdService;
@@ -128,6 +130,8 @@ namespace Dfc.CourseDirectory.Web
             services.AddScoped<IOnspdService, OnspdService>();
             services.AddScoped<IOnspdSearchHelper, OnspdSearchHelper>();
 
+            services.AddScoped<IBulkUploadService, BulkUploadService>();
+
             services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
@@ -141,22 +145,20 @@ namespace Dfc.CourseDirectory.Web
             services.AddScoped<SignInManager<User>, SignInManager<User>>();
             services.AddSingleton<IEmailSender, EmailSender>();
 
+            services.Configure<SecurityStampValidatorOptions>(options =>
+            {
+                options.ValidationInterval = TimeSpan.FromMinutes(1);
+            });
             services.ConfigureApplicationCookie(options =>
             {
                 // Cookie settings
                 options.Cookie.HttpOnly = true;
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
-                options.LogoutPath = "/Identity/Account/Logout";
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+                options.LogoutPath = "/Home";
                 options.LoginPath = "/Identity/Account/Login";
                 options.AccessDeniedPath = "/Identity/Account/Login";
+                options.ReturnUrlParameter = "/Home";
                 options.SlidingExpiration = true;
-            });
-
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie(options => {
-                options.LoginPath = "/Home"; // auth redirect
-                options.AccessDeniedPath = "/Identity/Account/Login";
-                options.ExpireTimeSpan = new TimeSpan(0, 0, 20, 0);
             });
             services.AddMvc(options =>
             {
@@ -180,6 +182,7 @@ namespace Dfc.CourseDirectory.Web
             services.AddSession(options => {
                 options.IdleTimeout = TimeSpan.FromMinutes(20);
                 options.Cookie.HttpOnly = true;
+
             });
 
 
@@ -460,6 +463,7 @@ namespace Dfc.CourseDirectory.Web
                     name: "onboardprovider",
                     template: "{controller=ProviderSearch}/{action=OnBoardProvider}/{id?}");
             });
+
 
 
         }

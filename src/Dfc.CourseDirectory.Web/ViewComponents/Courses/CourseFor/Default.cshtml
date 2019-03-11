@@ -7,12 +7,13 @@
 
 @{
     var regex = @"^[a-zA-Z0-9 /\n/\r/\¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`" + "\"" + "\\\\]+$";
+    var courseForTextFieldMaxChars = courseForComponentSettings.Value.TextFieldMaxChars;
 }
 
 
 
 
-<div class="govuk-character-count" data-module="character-count" data-maxlength=@courseForComponentSettings.Value.TextFieldMaxChars>
+<div class="govuk-character-count" data-module="character-count" data-maxlength=@courseForTextFieldMaxChars>
     <div class="govuk-form-group">
         <label class="govuk-label" for="word-count">
             @Model.LabelText
@@ -25,10 +26,48 @@
         }
         <textarea class="govuk-textarea js-character-count " asp-for="@Model.CourseFor" rows="5"
                   aria-describedby="@Model.AriaDescribedBy"
-                      val-required-message="Enter Course Name"
-                      val-max-length="2000" val-max-length-message="Who is this course for must be 2000 characters or less"
+                      val-required-message="Enter who is this course for"
+                      val-max-length="@courseForTextFieldMaxChars" val-max-length-message="Who is this course for must be @courseForTextFieldMaxChars characters or less"
                       val-regex="@regex"
                       val-regex-message="Course for contains invalid characters"></textarea>
 
     </div>
 </div>
+
+<script>
+    (function ($) {
+        $(function () {
+
+            var $elementCourseFor = $("#@nameof(Model.CourseFor)");
+
+            $elementCourseFor.on("blur", function () {
+
+                var trimmed = $elementCourseFor.val().trim();
+                $elementCourseFor.val(trimmed);
+
+                var $characterCountValue = @courseForTextFieldMaxChars;
+                var $countMessage = $("#CourseFor-info");
+
+                var $actualCharacterCount = $characterCountValue - $elementCourseFor.val().length;
+
+                if ($actualCharacterCount <= 0) {
+
+                } else {
+
+                    if ($actualCharacterCount === 1) {
+                        $countMessage.text("You have " + $actualCharacterCount + " character remaining");
+                    } else {
+                        $countMessage.text("You have " + $actualCharacterCount + " characters remaining");
+
+                        $countMessage.addClass('govuk-hint');
+                        $elementCourseFor.removeClass('govuk-textarea--error');
+                        $countMessage.removeClass('govuk-error-message');
+                        $countMessage.addClass('govuk-character-count__message');
+                    }
+                }
+
+            });
+
+        });
+    })(jQuery);
+</script>

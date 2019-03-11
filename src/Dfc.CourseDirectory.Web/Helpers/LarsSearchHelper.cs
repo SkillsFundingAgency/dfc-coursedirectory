@@ -105,7 +105,8 @@ namespace Dfc.CourseDirectory.Web.Helpers
                     item.TotalQualificationTime,
                     item.UnitType,
                     item.AwardOrgName,
-                    item.LearnAimRefTypeDesc));
+                    item.LearnAimRefTypeDesc,
+                    item.CertificationEndDate));
             }
 
             return items;
