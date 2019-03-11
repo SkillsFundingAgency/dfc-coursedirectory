@@ -71,6 +71,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [Authorize]
         public async Task<IActionResult> Index()
         {
+            _session.SetString("Option", "Venues");
             var providerUKPRN = User.Claims.SingleOrDefault(x => x.Type == "UKPRN");
             if (providerUKPRN != null)
             {

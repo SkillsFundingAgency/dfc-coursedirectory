@@ -49,7 +49,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [Authorize]
         public IActionResult Index()
         {
-
+            _session.SetString("Option", "Migration");
             return RedirectToAction("Index", "PublishCourses", new { publishMode = PublishMode.Migration });
         }
 

@@ -80,6 +80,16 @@ namespace Dfc.CourseDirectory.Web.Controllers
         public async Task<IActionResult> Archive(Guid courseId, Guid courseRunId, string level, string qualificationType)
         {
             //archive call??
+            var result = await _courseService.UpdateStatus(courseId, courseRunId, (int)RecordStatus.Archived);
+
+            if (result.IsSuccess)
+            {
+                //do something
+            }
+            else
+            {
+               //log goto error????? no journey
+            }
 
             //may need changing, not sure what message if anything needs to be displayed
             return RedirectToAction("Courses", "Provider",

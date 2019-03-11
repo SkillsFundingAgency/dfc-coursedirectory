@@ -47,6 +47,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [Authorize]
         public IActionResult Index()
         {
+            _session.SetString("Option", "BulkUpload");
             var model = new BulkUploadViewModel();           
 
             return View("Index", model);
