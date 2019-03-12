@@ -18,3 +18,13 @@
 #logout-btn {
   display: inline-flex;
 }
+
+.cd-status-panel {
+  background-color: #dee0e2;
+  display: flex;
+  padding: 1em;
+  margin-bottom: 1.5em;
+  text-align: center;
+  justify-content: center;
+  flex-direction: column;
+}

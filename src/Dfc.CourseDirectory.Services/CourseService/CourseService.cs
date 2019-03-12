@@ -18,6 +18,7 @@ using System.Text.RegularExpressions;
 using Dfc.CourseDirectory.Common.Settings;
 using System.Linq;
 using Dfc.CourseDirectory.Models.Enums;
+using static Dfc.CourseDirectory.Services.CourseService.CourseValidationResult;
 
 namespace Dfc.CourseDirectory.Services.CourseService
 {
@@ -338,27 +339,19 @@ namespace Dfc.CourseDirectory.Services.CourseService
                     //CourseSearchResult searchResult = new CourseSearchResult(courses);
                     return Result.Ok<IEnumerable<ICourseStatusCountResult>>(counts);
 
-                }
-                else
-                {
+                } else {
                     return Result.Fail<IEnumerable<ICourseStatusCountResult>>("Get course counts service unsuccessful http response");
                 }
 
-            }
-            catch (HttpRequestException hre)
-            {
+            } catch (HttpRequestException hre) {
                 _logger.LogException("Get course counts service http request error", hre);
                 return Result.Fail<IEnumerable<ICourseStatusCountResult>>("Get course counts service http request error.");
 
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 _logger.LogException("Get course counts service unknown error.", e);
                 return Result.Fail<IEnumerable<ICourseStatusCountResult>>("Get course counts service unknown error.");
 
-            }
-            finally
-            {
+            } finally {
                 _logger.LogMethodExit();
             }
         }
@@ -392,21 +385,15 @@ namespace Dfc.CourseDirectory.Services.CourseService
 
                     return Result.Ok<IEnumerable<ICourse>>(courses);
 
-                }
-                else
-                {
+                } else {
                     return Result.Fail<IEnumerable<ICourse>>("Get recent course changes service unsuccessful http response");
                 }
 
-            }
-            catch (HttpRequestException hre)
-            {
+            } catch (HttpRequestException hre) {
                 _logger.LogException("Get recent course changes service http request error", hre);
                 return Result.Fail<IEnumerable<ICourse>>("Get recent course changes service http request error.");
 
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 _logger.LogException("Get recent course changes service unknown error.", e);
                 return Result.Fail<IEnumerable<ICourse>>("Get recent course changes service unknown error.");
 
@@ -415,6 +402,34 @@ namespace Dfc.CourseDirectory.Services.CourseService
             }
         }
 
+        public IResult<IList<CourseValidationResult>> PendingCourseValidationMessages(IEnumerable<ICourse> courses)
+        {
+            _logger.LogMethodEnter();
+            Throw.IfNull(courses, nameof(courses));
+
+            try {
+                IList<CourseValidationResult> results = new List<CourseValidationResult>();
+
+                foreach (ICourse c in courses) {
+                    CourseValidationResult cvr = new CourseValidationResult() {
+                        Course = c,
+                        Issues = ValidateCourse(c),
+                        RunValidationResults = new List<CourseRunValidationResult>()
+                    };
+                    foreach (ICourseRun r in c.CourseRuns)
+                        cvr.RunValidationResults.Add(new CourseRunValidationResult() { Run = r, Issues = ValidateCourseRun(r, ValidationMode.BulkUploadCourse) });
+                    results.Add(cvr);
+                }
+                return Result.Ok(results);
+
+            } catch (Exception ex) {
+                _logger.LogException("PendingCourseValidationMessages error", ex);
+                return Result.Fail<IList<CourseValidationResult>>("Error compiling messages for items requiring attention on landing page");
+
+            } finally {
+                _logger.LogMethodExit();
+            }
+        }
 
         public async Task<IResult<ICourse>> AddCourseAsync(ICourse course)
         {
