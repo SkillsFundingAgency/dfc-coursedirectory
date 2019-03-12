@@ -12,18 +12,19 @@
 @{
     var provSearch = HttpContextAccessor.HttpContext.Session.GetInt32("ProviderSearch");
     ViewData["Title"] = "Find a Provider";
+    var isSignedIn = SignInManager.IsSignedIn(User);
 }
 <div>
 
 
-    @if (ViewBag.StatusMessage != null)
+    @if (ViewBag.StatusMessage != null && isSignedIn == true)
     {
         <div class="failure-container">
             <h1 class="govuk-heading-m" style="font-size: 24px; font-weight: 700">@ViewBag.StatusMessage</h1>
         </div>
     }
     <div id="VenueSearchResultContainer">
-        @if (SignInManager.IsSignedIn(User)) //And is an ITSM OR Admin users
+        @if (isSignedIn) //And is an ITSM OR Admin users
         {
 
             var authorised = await Authorization.AuthorizeAsync(User, "ElevatedUserRole");
