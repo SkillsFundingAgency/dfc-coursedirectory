@@ -12,6 +12,7 @@ using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.Web.ViewModels.YourCourses;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -106,7 +107,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             return found;
         }
-
+        [Authorize]
         public async Task<IActionResult> Index(
             string level, 
             Guid? courseId, 

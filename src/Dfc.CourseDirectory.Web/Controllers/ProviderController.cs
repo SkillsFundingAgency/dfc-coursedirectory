@@ -119,6 +119,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return found;
         }
 
+        [Authorize]
         public async Task<IActionResult> Courses(
             string level,
             Guid? courseId,
