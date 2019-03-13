@@ -466,15 +466,23 @@
                         validStates.push(false);
                     }
                     else {
-                        if ($.dateValidate(startDateValue)) {
-                            $startDate.govUkDateInput("validState");
-                            validStates.push(true);
-                        } else {
+                        if (!$.dateValidate(startDateValue)) {
                             $startDate.govUkDateInput("invalidState", $startDate.attr("val-date-message"));
                             validStates.push(false);
                         }
+                        else if ($.pastDateValidate({ ref: $startDate.attr("val-past-date-ref") }, startDateValue)) {
+                            $startDate.govUkDateInput("invalidState", $startDate.attr("val-past-date-message"));
+                            validStates.push(false);
+                        }
+                        else if ($.futureDateValidate({ ref: $startDate.attr("val-future-date-ref") }, startDateValue)) {
+                            $startDate.govUkDateInput("invalidState", $startDate.attr("val-future-date-message"));
+                            validStates.push(false);
+                        }
+                        else if ($.dateValidate(startDateValue)) {
+                            $startDate.govUkDateInput("validState");
+                            validStates.push(true);
+                        } 
                     }
-
                 };
 
                 var errorArray = $("[class*='govuk-error-message'");
