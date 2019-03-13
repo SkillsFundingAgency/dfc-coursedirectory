@@ -44,14 +44,20 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseVenue
 
                 if (result.IsSuccess && result.HasValue)
                 {
+                    var defaultItem = new SelectListItem { Text = "Select", Value = "" };
+
                     foreach (var venue in result.Value.Value)
                     {
                         var item = new SelectListItem { Text = venue.VenueName, Value = venue.ID };
                         venues.Add(item);
                     };
+
+                    venues.Insert(0,defaultItem);
                 }
 
             }
+
+            model.Venues = venues;
             return View("~/ViewComponents/Courses/ChooseVenue/Default.cshtml", model);
 
         }

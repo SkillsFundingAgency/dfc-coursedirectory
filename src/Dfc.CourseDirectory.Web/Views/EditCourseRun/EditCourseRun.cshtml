@@ -95,8 +95,8 @@
                 LabelText = "Venue",
                 AriaDescribedBy = "Venue",
                 HintText = "Select course run venue",
-                Venues = Model.Venues,
-                VenueId = Model.VenueId
+                //Venues = Model.Venues,
+                VenueId = Model.VenueId ?? (Guid?)null
             })
         </div>
     </div>
@@ -113,34 +113,34 @@
 
             @*<div class="govuk-grid-row">
                 <div class="govuk-grid-column-full">*@
-                    <div class="govuk-checkboxes" id="SelectRegionCheckBoxes"
-                         val-required-message="Select a region">
-                        @{ var j = 0; }
-                        @if (Model.SelectRegion.RegionItems.Count() == 1)
-                        {
-                            <div class="govuk-checkboxes__item">
-                                <input class="govuk-checkboxes__input" id="RegionName-@j" name="SelectedRegions" type="checkbox" value="@Model.SelectRegion.RegionItems.First().Id" checked="checked" onclick="return false;" />
-                                <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@Model.SelectRegion.RegionItems.First().RegionName</label>
-                            </div>
-                        }
-                        else
-                        {
-                            foreach (var item in Model.SelectRegion.RegionItems)
-                            {
-                                j++;
-                                <div class="govuk-checkboxes__item">
-                                    <input class="govuk-checkboxes__input" id="RegionName-@j" name="SelectedRegions" type="checkbox" value="@item.Id" @item.Checked.ThenNullableCheck() />
-                                    <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@item.RegionName</label>
-                                </div>
-                            }
-                        }
+            <div class="govuk-checkboxes" id="SelectRegionCheckBoxes"
+                 val-required-message="Select a region">
+                @{ var j = 0; }
+                @if (Model.SelectRegion.RegionItems.Count() == 1)
+                {
+                    <div class="govuk-checkboxes__item">
+                        <input class="govuk-checkboxes__input" id="RegionName-@j" name="SelectedRegions" type="checkbox" value="@Model.SelectRegion.RegionItems.First().Id" checked="checked" onclick="return false;" />
+                        <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@Model.SelectRegion.RegionItems.First().RegionName</label>
                     </div>
-                @*</div>
-            </div>*@
+                }
+                else
+                {
+                    foreach (var item in Model.SelectRegion.RegionItems)
+                    {
+                        j++;
+                        <div class="govuk-checkboxes__item">
+                            <input class="govuk-checkboxes__input" id="RegionName-@j" name="SelectedRegions" type="checkbox" value="@item.Id" @item.Checked.ThenNullableCheck() />
+                            <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@item.RegionName</label>
+                        </div>
+                    }
+                }
+            </div>
+            @*</div>
+                </div>*@
         </div>
     </div>
-    
-    
+
+
 
 
     <div id="sectionUrl">
@@ -213,7 +213,7 @@
                 @Html.ActionLink("Cancel", "Index", "PublishCourses", new { publishMode = Model.Mode }, new { @class = "govuk-link" })
                 break;
             default:
-                @Html.ActionLink("Cancel", "Courses", "Provider", new { level = @Model.NotionalNVQLevelv2,courseId=@Model.CourseId,courseRunId = @Model.CourseRunId }, new { @class = "govuk-link" })
+                @Html.ActionLink("Cancel", "Courses", "Provider", new { level = @Model.NotionalNVQLevelv2, courseId = @Model.CourseId, courseRunId = @Model.CourseRunId }, new { @class = "govuk-link" })
                 break;
 
         }
@@ -232,6 +232,9 @@
             var $regionItemsCheckboxList = $("#RegionItemsCheckboxList");
             var $regionCheckboxes = $("#SelectRegionCheckBoxes input[type=checkbox]");
             var $duration = $("#duration").govUkDurationInput();
+
+            var $durationDropdown = $("#durationDropDown").govUkSelect();
+
             var $checkboxsregions = $("#SelectRegionCheckBoxes").govUkCheckboxes();
 
             var $radioDeliveryMode = $("#DeliveryModeRadioButtons").govUkRadios();
@@ -289,7 +292,7 @@
 
 
             validate();
-            
+
 
             function isAllValid(currentValue) {
                 return currentValue === true;
@@ -302,6 +305,7 @@
                 $courseName.govUkInput("validState");
                 $courseProviderReference.govUkInput("validState");
                 $duration.govUkDurationInput("validState");
+                $durationDropdown.govUkSelect("validState");
                 $checkboxsregions.govUkCheckboxes("validState");
                 $selectedvenue.govUkSelect("validState");
                 $cost.govUkInput("validState");
@@ -416,6 +420,30 @@
                     validStates.push(true);
                 }
 
+                //if ($.requiredValidate($durationDropdown.val())) {
+                //    $durationDropdown.govUkSelect("validState");
+                //    validStates.push(true);
+                //} else {
+                //    $durationDropdown.govUkSelect("invalidState", $durationDropdown.attr("val-required-message"));
+                //    validStates.push(false);
+                //}
+
+                //if (!$.requiredValidate($duration.find("input").val())) {
+                //    $duration.govUkDurationInput("invalidState", $duration.attr("val-duration-message"));
+                //    validStates.push(false);
+                //} else if (!$.rangeValidate({
+                //        min: $duration.attr("val-range-min"),
+                //        max: $duration.attr("val-range-max")
+                //    },
+                //    $duration.find("input").val())) {
+                //    $duration.govUkDurationInput("invalidState", $duration.attr("val-duration-message"));
+                //    validStates.push(false);
+                //}  else {
+                //    $duration.govUkDurationInput("validState");
+                //    validStates.push(true);
+                //}
+
+
                 if ($.requiredValidate($radioDeliveryMode.find("input[type='radio']:checked").val())) {
                     $radioDeliveryMode.govUkRadios("validState");
                     validStates.push(true);
@@ -481,7 +509,7 @@
                         else if ($.dateValidate(startDateValue)) {
                             $startDate.govUkDateInput("validState");
                             validStates.push(true);
-                        } 
+                        }
                     }
                 };
 
@@ -501,7 +529,7 @@
 
                     $('.cd-error-summary__body').html(notificationBody);
 
-                    $('#errorsummary').css({ "display": "block" });  
+                    $('#errorsummary').css({ "display": "block" });
                 }
 
                 $('.errorlink').on("click",
