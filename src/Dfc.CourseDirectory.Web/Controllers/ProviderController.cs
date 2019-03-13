@@ -67,18 +67,18 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             if (venue == null) return string.Empty;
 
-            var list = new List<string>
-            {
-                venue.Address1,
-                venue.Address2,
-                venue.Address3,
-                venue.County,
-                venue.PostCode
-            }
-            .Where(x => !string.IsNullOrWhiteSpace(x))
-            .ToList();
+            //var list = new List<string>
+            //{
+            //    venue.Address1,
+            //    venue.Address2,
+            //    venue.Address3,
+            //    venue.County,
+            //    venue.VenueName
+            //}
+            //.Where(x => !string.IsNullOrWhiteSpace(x))
+            //.ToList();
 
-            return string.Join(", ", list);
+            return venue.VenueName;
         }
 
         internal string FormattedRegionsByIds(IEnumerable<RegionItemModel> list, IEnumerable<string> ids)
