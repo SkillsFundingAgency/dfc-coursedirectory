@@ -98,7 +98,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                         CourseRunId = courseRunId,
                         CourseName = courseRun?.CourseName,
                         Venues = courseRunVenues,
-                        VenueId = courseRun.VenueId ?? Guid.Empty,
+                        VenueId = courseRun.VenueId ?? (Guid?)null,
                         SelectRegion = regions,
                         DeliveryMode = courseRun.DeliveryMode,
 
