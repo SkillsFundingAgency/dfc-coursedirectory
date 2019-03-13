@@ -1,10 +1,14 @@
-﻿using Dfc.CourseDirectory.Common;
-using Dfc.CourseDirectory.Services.Interfaces;
-using Dfc.CourseDirectory.Web.ViewModels;
+﻿
+using System.Diagnostics;
+using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System.Diagnostics;
+using Dfc.CourseDirectory.Common;
+using Dfc.CourseDirectory.Web.ViewModels;
+using Dfc.CourseDirectory.Services.Interfaces;
+using Dfc.CourseDirectory.Services.Interfaces.CourseService;
+
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -13,19 +17,31 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly ILarsSearchService _larsSearchService;
         private readonly IHttpContextAccessor _contextAccessor;
+        private readonly ICourseService _courseService;
         private ISession _session => _contextAccessor.HttpContext.Session;
 
         public HomeController(
             ILogger<HomeController> logger,
             ILarsSearchService larsSearchService,
+            ICourseService courseService,
             IHttpContextAccessor contextAccessor)
         {
+            Throw.IfNull(logger, nameof(logger));
+            Throw.IfNull(contextAccessor, nameof(contextAccessor));
+            Throw.IfNull(courseService, nameof(courseService));
+
             _logger = logger;
             _larsSearchService = larsSearchService;
             _contextAccessor = contextAccessor;
+            _courseService = courseService;
             //Set this todisplay the Search Provider fork of the ProviderSearchResult ViewComponent
-            
+
+            var providerUKPRN = User?.Claims?.SingleOrDefault(x => x.Type == "UKPRN");
+            if (providerUKPRN != null) {
+                _session.SetInt32("UKPRN", int.Parse(providerUKPRN.Value));
+            }
         }
+
         public IActionResult Index(string errmsg)
         {
             _session.SetInt32("ProviderSearch", 1);
@@ -38,7 +54,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _logger.LogCritical("5");
             _session.SetString("Option","Home");
             ViewBag.StatusMessage = errmsg;
-            return View();
+
+            if (_session.GetInt32("UKPRN") == null)
+                return View();
+            else
+                return View(DashboardController.GetDashboardViewModel(_courseService, _session.GetInt32("UKPRN")));
         }
 
         public IActionResult About()
