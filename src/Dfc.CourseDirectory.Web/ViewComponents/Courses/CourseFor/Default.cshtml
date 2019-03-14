@@ -25,11 +25,11 @@
             </span>
         }
         <textarea class="govuk-textarea js-character-count " asp-for="@Model.CourseFor" rows="5"
-                  aria-describedby="@Model.AriaDescribedBy"
-                      val-required-message="Enter who is this course for"
-                      val-max-length="@courseForTextFieldMaxChars" val-max-length-message="Who is this course for? must be @courseForTextFieldMaxChars characters or less"
-                      val-regex="@regex"
-                      val-regex-message="Who is this course for? contains invalid characters"></textarea>
+            aria-describedby="@Model.AriaDescribedBy"
+            val-required-message="Enter who is this course for"
+            val-max-length="@courseForTextFieldMaxChars" val-max-length-message="Who is this course for? must be @courseForTextFieldMaxChars characters or less"
+            val-regex="@regex"
+            val-regex-message="Who is this course for? contains invalid characters"></textarea>
 
     </div>
 </div>
