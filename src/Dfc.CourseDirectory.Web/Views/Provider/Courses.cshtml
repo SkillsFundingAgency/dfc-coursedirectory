@@ -4,363 +4,392 @@
     Layout = "_Layout_Your_Courses";
 }
 @model Dfc.CourseDirectory.Web.ViewModels.YourCourses.YourCoursesViewModel
+@{
+    var hasCourses = Model.Courses != null && Model.Courses.Any();
 
+    if (!hasCourses)
+    {
 <div class="govuk-grid-row govuk-!-padding-top-9">
     <div class="govuk-grid-column-one">
         <h1 class="govuk-heading-xl">
             <span class="govuk-caption-xl">@Model.HeadingCaption</span>
-            @Model.Heading
+            You have no published courses
+            <p>
+                <span class="govuk-caption-xl">You can</span>
+            </p>
         </h1>
-
-        @if (!string.IsNullOrWhiteSpace(Model.NotificationTitle))
-        {
-            @await Component.InvokeAsync(nameof(Notification), new NotificationModel
-            {
-                NotificationTitle = Model.NotificationTitle,
-                NotificationMessage = Model.NotificationMessage,
-                ClassType = "info-summary"
-            })
-        }
     </div>
+    
+    <p>
+        <a href="~/Qualifications" class="govuk-link">Add course</a>
+    </p>
+    <p>
+        <a href="~/BulkUpload" class="govuk-link">Fix and publish a pending course</a>
+    </p>
+    
 </div>
+    }
+    else
+    {
 
-<div class="govuk-grid-row ">
-    <div class="cd-grid-coloumn-20">
-        <ul class="cd__your-courses__filters-list">
-            <li>
-                <span class="govuk-body govuk-!-font-weight-bold">Levels</span>
-            </li>
-            <hr class="cd__your-courses__filters-list__break">
-            @foreach (var filter in Model.LevelFilters)
-            {
-                @if (filter.IsSelected)
-                 {
-                     <li>
-                         <a class="cd__your-courses__filters-list__link cd__your-courses__filters-list__link--selected"
-                            asp-controller="Provider"
-                            asp-action="Courses"
-                            asp-route-level="@filter.Value">@filter.Name (@filter.Facet)</a>
-                     </li>
-                 }
-                 else
-                 {
-                     <li>
-                         <a class="cd__your-courses__filters-list__link"
-                            asp-controller="Provider"
-                            asp-action="Courses"
-                            asp-route-level="@filter.Value">@filter.Name (@filter.Facet)</a>
-                     </li>
-                 }
-                <hr class="cd__your-courses__filters-list__break">
-            }
-        </ul>
-    </div>
-    <div class="cd-grid-coloumn-80">
-        <div class="cd__your-courses__accordion-list">
-            @foreach (var course in Model.Courses)
-            {
-                <details id="@course.Id" class="govuk-details" data-courseid="@course.Id">
-                    <summary class="govuk-details__summary">
-                        <span class="govuk-details__summary-text">
-                            @course.QualificationTitle (@course.Facet)
-                        </span>
-                        <ul>
-                            @if (!string.IsNullOrEmpty(course.LearnAimRef))
+
+            <div class="govuk-grid-row govuk-!-padding-top-9">
+                <div class="govuk-grid-column-one">
+                    <h1 class="govuk-heading-xl">
+                        <span class="govuk-caption-xl">@Model.HeadingCaption</span>
+                        @Model.Heading
+                    </h1>
+
+                    @if (!string.IsNullOrWhiteSpace(Model.NotificationTitle))
+                    {
+                        @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+                        {
+                            NotificationTitle = Model.NotificationTitle,
+                            NotificationMessage = Model.NotificationMessage,
+                            ClassType = "info-summary"
+                        })
+                    }
+                </div>
+            </div>
+
+            <div class="govuk-grid-row ">
+                <div class="cd-grid-coloumn-20">
+                    <ul class="cd__your-courses__filters-list">
+                        <li>
+                            <span class="govuk-body govuk-!-font-weight-bold">Levels</span>
+                        </li>
+                        <hr class="cd__your-courses__filters-list__break">
+                        @foreach (var filter in Model.LevelFilters)
+                        {
+                            @if (filter.IsSelected)
                             {
-                                <li>Lars/QAN: @course.LearnAimRef</li>
+                                <li>
+                                    <a class="cd__your-courses__filters-list__link cd__your-courses__filters-list__link--selected"
+                                       asp-controller="Provider"
+                                       asp-action="Courses"
+                                       asp-route-level="@filter.Value">@filter.Name (@filter.Facet)</a>
+                                </li>
                             }
-                            @if (!string.IsNullOrEmpty(course.NotionalNVQLevelv2))
+                            else
                             {
-                                <li>Level: @course.NotionalNVQLevelv2</li>
+                                <li>
+                                    <a class="cd__your-courses__filters-list__link"
+                                       asp-controller="Provider"
+                                       asp-action="Courses"
+                                       asp-route-level="@filter.Value">@filter.Name (@filter.Facet)</a>
+                                </li>
                             }
-                            @if (!string.IsNullOrEmpty(course.AwardOrg))
-                            {
-                                <li>Award Org.: @course.AwardOrg</li>
-                            }
-                            <li>
-                                <a class="govuk-link"
-                                   asp-controller="EditCourse"
-                                   asp-action="Index"
-                                   asp-route-courseId="@course.Id"
-                                   asp-route-mode="@PublishMode.Undefined">Edit course description</a>
-                            </li>
-                        </ul>
-                    </summary>
-                    <div class="govuk-details__text">
-                        <div class="govuk-accordion" data-module="accordion" id="accordion-@course.Id">
-                            @foreach (var courseRun in course.CourseRuns)
-                            {
-                                <div class="govuk-accordion__section" id="@courseRun.Id">
-                                    <div class="govuk-accordion__section-header">
-                                        <h2 class="govuk-accordion__section-heading">
-                                            <button type="button" id="accordion-default-heading-@courseRun.Id" aria-controls="accordion-default-content-@courseRun.Id" class="govuk-accordion__section-button" aria-expanded="false">
-                                                <ul class="row-1">
-                                                    <li>@courseRun.CourseName</li>
-                                                </ul>
-                                                @if (!string.IsNullOrEmpty(courseRun.CourseId)
-                                              || !string.IsNullOrEmpty(courseRun.StudyMode)
-                                              || !string.IsNullOrEmpty(courseRun.StartDate))
-                                                {
-                                                    <ul class="row-2">
-                                                        @if (!string.IsNullOrEmpty(courseRun.CourseId))
-                                                        {
-                                                            <li>
-                                                                @courseRun.CourseId
-                                                            </li>
-                                                        }
-                                                        @if (courseRun.DeliveryMode == "Classroom based")
-                                                        {
-                                                            @if (!string.IsNullOrEmpty(courseRun.Venue))
+                            <hr class="cd__your-courses__filters-list__break">
+                        }
+                    </ul>
+                </div>
+                <div class="cd-grid-coloumn-80">
+                    <div class="cd__your-courses__accordion-list">
+                        @foreach (var course in Model.Courses)
+                        {
+                            <details id="@course.Id" class="govuk-details" data-courseid="@course.Id">
+                                <summary class="govuk-details__summary">
+                                    <span class="govuk-details__summary-text">
+                                        @course.QualificationTitle (@course.Facet)
+                                    </span>
+                                    <ul>
+                                        @if (!string.IsNullOrEmpty(course.LearnAimRef))
+                                        {
+                                            <li>Lars/QAN: @course.LearnAimRef</li>
+                                        }
+                                        @if (!string.IsNullOrEmpty(course.NotionalNVQLevelv2))
+                                        {
+                                            <li>Level: @course.NotionalNVQLevelv2</li>
+                                        }
+                                        @if (!string.IsNullOrEmpty(course.AwardOrg))
+                                        {
+                                            <li>Award Org.: @course.AwardOrg</li>
+                                        }
+                                        <li>
+                                            <a class="govuk-link"
+                                               asp-controller="EditCourse"
+                                               asp-action="Index"
+                                               asp-route-courseId="@course.Id"
+                                               asp-route-mode="@PublishMode.Undefined">Edit course description</a>
+                                        </li>
+                                    </ul>
+                                </summary>
+                                <div class="govuk-details__text">
+                                    <div class="govuk-accordion" data-module="accordion" id="accordion-@course.Id">
+                                        @foreach (var courseRun in course.CourseRuns)
+                                        {
+                                            <div class="govuk-accordion__section" id="@courseRun.Id">
+                                                <div class="govuk-accordion__section-header">
+                                                    <h2 class="govuk-accordion__section-heading">
+                                                        <button type="button" id="accordion-default-heading-@courseRun.Id" aria-controls="accordion-default-content-@courseRun.Id" class="govuk-accordion__section-button" aria-expanded="false">
+                                                            <ul class="row-1">
+                                                                <li>@courseRun.CourseName</li>
+                                                            </ul>
+                                                            @if (!string.IsNullOrEmpty(courseRun.CourseId)
+                                                               || !string.IsNullOrEmpty(courseRun.StudyMode)
+                                                               || !string.IsNullOrEmpty(courseRun.StartDate))
                                                             {
-                                                                <li>
-                                                                    @courseRun.Venue
-                                                                </li>
+                                                                <ul class="row-2">
+                                                                    @if (!string.IsNullOrEmpty(courseRun.CourseId))
+                                                                    {
+                                                                        <li>
+                                                                            @courseRun.CourseId
+                                                                        </li>
+                                                                    }
+                                                                    @if (courseRun.DeliveryMode == "Classroom based")
+                                                                    {
+                                                                        @if (!string.IsNullOrEmpty(courseRun.Venue))
+                                                                        {
+                                                                            <li>
+                                                                                @courseRun.Venue
+                                                                            </li>
+                                                                        }
+                                                                    }
+                                                                    @if (courseRun.DeliveryMode == "Work based")
+                                                                    {
+                                                                        @if (!string.IsNullOrEmpty(courseRun.Region))
+                                                                        {
+                                                                            <li>
+                                                                                @courseRun.Region
+                                                                            </li>
+                                                                        }
+                                                                    }
+                                                                    @if (!string.IsNullOrEmpty(courseRun.StudyMode))
+                                                                    {
+                                                                        <li>
+                                                                            @courseRun.StudyMode
+                                                                        </li>
+                                                                    }
+                                                                    @if (!string.IsNullOrEmpty(courseRun.StartDate))
+                                                                    {
+                                                                        <li>
+                                                                            @courseRun.StartDate
+                                                                        </li>
+                                                                    }
+                                                                </ul>
                                                             }
-                                                        }
-                                                        @if (courseRun.DeliveryMode == "Work based")
-                                                        {
-                                                            @if (!string.IsNullOrEmpty(courseRun.Region))
+                                                        </button>
+                                                    </h2>
+                                                </div>
+                                                <div id="accordion-default-content-@courseRun.Id" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-@courseRun.Id">
+                                                    <div class="cd__your-courses__accordion-content-card">
+                                                        <div class="cd__your-courses__accordion-content-card-content">
+                                                            @if (courseRun.DeliveryMode == "Classroom based")
                                                             {
-                                                                <li>
-                                                                    @courseRun.Region
-                                                                </li>
+                                                                <ul class="flex-container">
+                                                                    <li class="flex-item">
+                                                                        <label>Venue</label> @courseRun.Venue
+                                                                    </li>
+                                                                    <li class="flex-item">
+                                                                        <label>Url</label>
+                                                                        <a href="@courseRun.Url">@courseRun.Url</a>
+                                                                    </li>
+                                                                </ul>
+                                                                <ul class="flex-container">
+                                                                    <li class="flex-item">
+                                                                        <label>Cost</label> @courseRun.Cost
+                                                                    </li>
+                                                                    <li class="flex-item">
+                                                                        <label>Mode</label> @courseRun.StudyMode
+                                                                    </li>
+                                                                    <li class="flex-item">
+                                                                        <label>Duration</label> @courseRun.Duration
+                                                                    </li>
+                                                                    <li class="flex-item">
+                                                                        <label>ID</label> @courseRun.CourseId
+                                                                    </li>
+                                                                    <li class="flex-item">
+                                                                        <label>Delivery</label> @courseRun.DeliveryMode
+                                                                    </li>
+                                                                    <li class="flex-item">
+                                                                        <label>Attendance</label> @courseRun.AttendancePattern
+                                                                    </li>
+                                                                    <li class="flex-item">
+                                                                        <label>Start date</label> @courseRun.StartDate
+                                                                    </li>
+                                                                </ul>
                                                             }
-                                                        }
-                                                        @if (!string.IsNullOrEmpty(courseRun.StudyMode))
-                                                        {
-                                                            <li>
-                                                                @courseRun.StudyMode
+                                                            @if (courseRun.DeliveryMode == "Online")
+                                                            {
+                                                                <ul class="flex-container">
+                                                                    <li class="flex-item">
+                                                                        <label>Url</label>
+                                                                        <a href="@courseRun.Url">@courseRun.Url</a>
+                                                                    </li>
+                                                                </ul>
+                                                                <ul class="flex-container">
+                                                                    <li class="flex-item">
+                                                                        <label>Cost</label> @courseRun.Cost
+                                                                    </li>
+                                                                    <li class="flex-item">
+                                                                        <label>Duration</label> @courseRun.Duration
+                                                                    </li>
+                                                                    <li class="flex-item">
+                                                                        <label>ID</label> @courseRun.CourseId
+                                                                    </li>
+                                                                    <li class="flex-item">
+                                                                        <label>Delivery</label> @courseRun.DeliveryMode
+                                                                    </li>
+                                                                    <li class="flex-item">
+                                                                        <label>Start date</label> @courseRun.StartDate
+                                                                    </li>
+                                                                </ul>
+                                                            }
+                                                            @if (courseRun.DeliveryMode == "Work based")
+                                                            {
+                                                                <ul class="flex-container">
+                                                                    <li class="flex-item">
+                                                                        <label>Region</label> @courseRun.Region
+                                                                    </li>
+                                                                    <li class="flex-item">
+                                                                        <label>Url</label>
+                                                                        <a href="@courseRun.Url">@courseRun.Url</a>
+                                                                    </li>
+                                                                </ul>
+                                                                <ul class="flex-container">
+                                                                    <li class="flex-item">
+                                                                        <label>Cost</label> @courseRun.Cost
+                                                                    </li>
+                                                                    <li class="flex-item">
+                                                                        <label>Duration</label> @courseRun.Duration
+                                                                    </li>
+                                                                    <li class="flex-item">
+                                                                        <label>ID</label> @courseRun.CourseId
+                                                                    </li>
+                                                                    <li class="flex-item">
+                                                                        <label>Delivery</label> @courseRun.DeliveryMode
+                                                                    </li>
+                                                                    <li class="flex-item">
+                                                                        <label>Start date</label> @courseRun.StartDate
+                                                                    </li>
+                                                                </ul>
+                                                            }
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="cd__your-courses__accordion-content-card-controls">
+                                                        <ul class="flex-container">
+                                                            <li class="flex-item">
+                                                                <a class="govuk-link"
+                                                                   asp-controller="EditCourseRun"
+                                                                   asp-action="Index"
+                                                                   asp-route-courseId="@course.Id"
+                                                                   asp-route-courseRunId="@courseRun.Id"
+                                                                   asp-route-mode="@PublishMode.Undefined">Edit course details</a>
                                                             </li>
-                                                        }
-                                                        @if (!string.IsNullOrEmpty(courseRun.StartDate))
-                                                        {
-                                                            <li>
-                                                                @courseRun.StartDate
+                                                            <li class="flex-item">
+                                                                <a class="govuk-link"
+                                                                   asp-controller="CopyCourseRun"
+                                                                   asp-action="Index"
+                                                                   asp-route-courseId="@course.Id"
+                                                                   asp-route-courseRunId="@courseRun.Id"
+                                                                   asp-route-mode="@PublishMode.Undefined">Copy this course</a>
                                                             </li>
-                                                        }
-                                                    </ul>
-                                                }
-                                            </button>
-                                        </h2>
-                                    </div>
-                                    <div id="accordion-default-content-@courseRun.Id" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-@courseRun.Id">
-                                        <div class="cd__your-courses__accordion-content-card">
-                                            <div class="cd__your-courses__accordion-content-card-content">
-                                                @if (courseRun.DeliveryMode == "Classroom based")
-                                                {
-                                                    <ul class="flex-container">
-                                                        <li class="flex-item">
-                                                            <label>Venue</label> @courseRun.Venue
-                                                        </li>
-                                                        <li class="flex-item">
-                                                            <label>Url</label>
-                                                            <a href="@courseRun.Url">@courseRun.Url</a>
-                                                        </li>
-                                                    </ul>
-                                                    <ul class="flex-container">
-                                                        <li class="flex-item">
-                                                            <label>Cost</label> @courseRun.Cost
-                                                        </li>
-                                                        <li class="flex-item">
-                                                            <label>Mode</label> @courseRun.StudyMode
-                                                        </li>
-                                                        <li class="flex-item">
-                                                            <label>Duration</label> @courseRun.Duration
-                                                        </li>
-                                                        <li class="flex-item">
-                                                            <label>ID</label> @courseRun.CourseId
-                                                        </li>
-                                                        <li class="flex-item">
-                                                            <label>Delivery</label> @courseRun.DeliveryMode
-                                                        </li>
-                                                        <li class="flex-item">
-                                                            <label>Attendance</label> @courseRun.AttendancePattern
-                                                        </li>
-                                                        <li class="flex-item">
-                                                            <label>Start date</label> @courseRun.StartDate
-                                                        </li>
-                                                    </ul>
-                                                }
-                                                @if (courseRun.DeliveryMode == "Online")
-                                                {
-                                                    <ul class="flex-container">
-                                                        <li class="flex-item">
-                                                            <label>Url</label>
-                                                            <a href="@courseRun.Url">@courseRun.Url</a>
-                                                        </li>
-                                                    </ul>
-                                                    <ul class="flex-container">
-                                                        <li class="flex-item">
-                                                            <label>Cost</label> @courseRun.Cost
-                                                        </li>
-                                                        <li class="flex-item">
-                                                            <label>Duration</label> @courseRun.Duration
-                                                        </li>
-                                                        <li class="flex-item">
-                                                            <label>ID</label> @courseRun.CourseId
-                                                        </li>
-                                                        <li class="flex-item">
-                                                            <label>Delivery</label> @courseRun.DeliveryMode
-                                                        </li>
-                                                        <li class="flex-item">
-                                                            <label>Start date</label> @courseRun.StartDate
-                                                        </li>
-                                                    </ul>
-                                                }
-                                                @if (courseRun.DeliveryMode == "Work based")
-                                                {
-                                                    <ul class="flex-container">
-                                                        <li class="flex-item">
-                                                            <label>Region</label> @courseRun.Region
-                                                        </li>
-                                                        <li class="flex-item">
-                                                            <label>Url</label>
-                                                            <a href="@courseRun.Url">@courseRun.Url</a>
-                                                        </li>
-                                                    </ul>
-                                                    <ul class="flex-container">
-                                                        <li class="flex-item">
-                                                            <label>Cost</label> @courseRun.Cost
-                                                        </li>
-                                                        <li class="flex-item">
-                                                            <label>Duration</label> @courseRun.Duration
-                                                        </li>
-                                                        <li class="flex-item">
-                                                            <label>ID</label> @courseRun.CourseId
-                                                        </li>
-                                                        <li class="flex-item">
-                                                            <label>Delivery</label> @courseRun.DeliveryMode
-                                                        </li>
-                                                        <li class="flex-item">
-                                                            <label>Start date</label> @courseRun.StartDate
-                                                        </li>
-                                                    </ul>
-                                                }
+                                                            <li class="flex-item">
+                                                                @*a class="govuk-link" href="">Archive this course</a>*@
+
+
+                                                                <a href="#" class="error-link archive" id="archive-@courseRun.Id" data-course-run-id="@courseRun.Id">Archive this course</a>
+
+                                                                <a id="course-confirm-archive-@courseRun.Id" class="govuk-button" asp-controller="Courses" asp-action="Archive"
+                                                                   asp-route-courseId="@course.Id"
+                                                                   asp-route-courseRunId="@courseRun.Id"
+                                                                   asp-route-level="@course.NotionalNVQLevelv2"
+                                                                   asp-route-qualificationType="@course.QualificationType"
+                                                                   style="display: none">Confirm archive</a>
+
+                                                                <a href="#" class="error-link cancel-archive" id="course-cancel-archive-@courseRun.Id" data-course-run-id="@courseRun.Id" style="display: none">Cancel</a>
+                                                            </li>
+
+
+
+
+
+                                                        </ul>
+                                                    </div>
+                                                </div>
                                             </div>
-
-                                        </div>
-                                        <div class="cd__your-courses__accordion-content-card-controls">
-                                            <ul class="flex-container">
-                                                <li class="flex-item">
-                                                    <a class="govuk-link"
-                                                       asp-controller="EditCourseRun"
-                                                       asp-action="Index"
-                                                       asp-route-courseId="@course.Id"
-                                                       asp-route-courseRunId="@courseRun.Id"
-                                                       asp-route-mode="@PublishMode.Undefined">Edit course details</a>
-                                                </li>
-                                                <li class="flex-item">
-                                                    <a class="govuk-link"
-                                                       asp-controller="CopyCourseRun"
-                                                       asp-action="Index"
-                                                       asp-route-courseId="@course.Id"
-                                                       asp-route-courseRunId="@courseRun.Id"
-                                                       asp-route-mode="@PublishMode.Undefined">Copy this course</a>
-                                                </li>
-                                                <li class="flex-item">
-                                                    @*a class="govuk-link" href="">Archive this course</a>*@
-
-
-                                                    <a href="#" class="error-link archive" id="archive-@courseRun.Id" data-course-run-id="@courseRun.Id">Archive this course</a>
-
-                                                    <a id="course-confirm-archive-@courseRun.Id" class="govuk-button" asp-controller="Courses" asp-action="Archive"
-                                                       asp-route-courseId="@course.Id"
-                                                       asp-route-courseRunId="@courseRun.Id"
-                                                       asp-route-level="@course.NotionalNVQLevelv2"
-                                                       asp-route-qualificationType="@course.QualificationType"
-                                                       style="display: none">Confirm archive</a>
-
-                                                    <a href="#" class="error-link cancel-archive" id="course-cancel-archive-@courseRun.Id" data-course-run-id="@courseRun.Id" style="display: none">Cancel</a>
-                                                </li>
-
-
-
-
-
-                                            </ul>
-                                        </div>
+                                        }
                                     </div>
                                 </div>
-                            }
-                        </div>
+                            </details>
+                        }
                     </div>
-                </details>
+                </div>
+            </div>
             }
-        </div>
-    </div>
-</div>
-
-<script>
-    (function ($) {
-        $(function () {
-
-            var $archiveButton = $(".archive");
-
-            var $cancelArchiveButton = $(".cancel-archive");
-
-            $cancelArchiveButton.on("click",
-                function (event) {
-                    event.preventDefault();
-                    {
-                        var courseRunId = $(this).attr("data-course-run-id");
-
-                        var archiveOption = $("#archive-" + courseRunId);
-                        archiveOption.show();
-
-                        var confirmArchive = $("#course-confirm-archive-" + courseRunId);
-                        confirmArchive.hide();
-
-                        var archiveCancelDelete = $("#course-cancel-archive-" + courseRunId);
-                        archiveCancelDelete.hide();
-
-                    }
-                });
-
-
-            $archiveButton.on("click",
-                function (event) {
-                    event.preventDefault();
-
-                    var courseRunId = $(this).attr("data-course-run-id");
-
-                    var archiveOption = $("#archive-" + courseRunId);
-                    archiveOption.hide();
-
-                    var confirmArchive = $("#course-confirm-archive-" + courseRunId);
-                    confirmArchive.show();
-
-                    var archiveCancelDelete = $("#course-cancel-archive-" + courseRunId);
-                    archiveCancelDelete.show();
-
-                });
-
-            $courseeditlink = $("#courseeditlink");
-            if ($courseeditlink.length) {
-                $courseeditlink.on("click", function (event) {
-                    event.preventDefault();
-                    var courseId = $(this).attr('data-courseid');
-                    var courseRunId = $(this).attr('data-courserunid');
-                    var $courseId = $("#" + courseId);
-                    var $courseRunId = $("#" + courseRunId);
-                    var hasOpenAttr = $courseId[0].getAttribute('open') !== null;
-                    if (!hasOpenAttr) {
-                        $courseId.find("summary").trigger("click");
-                    }
-                    if (!$courseRunId.hasClass("govuk-accordion__section--expanded")) {
-                        $courseRunId.addClass("govuk-accordion__section--expanded")
-                    }
-                    if ($courseId.attr("open")) {
-                        $("html,body").animate({
-                            scrollTop: $courseId.offset().top
-                        }, "slow");
-                    }
-                    if ($courseRunId.hasClass("govuk-accordion__section--expanded")) {
-                        $("html,body").animate({
-                            scrollTop: $courseRunId.offset().top
-                        }, "slow");
-                    }
-                });
             }
-        });
-    })(jQuery);
-</script>
+            <script>
+                (function ($) {
+                    $(function () {
+
+                        var $archiveButton = $(".archive");
+
+                        var $cancelArchiveButton = $(".cancel-archive");
+
+                        $cancelArchiveButton.on("click",
+                            function (event) {
+                                event.preventDefault();
+                                {
+                                    var courseRunId = $(this).attr("data-course-run-id");
+
+                                    var archiveOption = $("#archive-" + courseRunId);
+                                    archiveOption.show();
+
+                                    var confirmArchive = $("#course-confirm-archive-" + courseRunId);
+                                    confirmArchive.hide();
+
+                                    var archiveCancelDelete = $("#course-cancel-archive-" + courseRunId);
+                                    archiveCancelDelete.hide();
+
+                                }
+                            });
+
+
+                        $archiveButton.on("click",
+                            function (event) {
+                                event.preventDefault();
+
+                                var courseRunId = $(this).attr("data-course-run-id");
+
+                                var archiveOption = $("#archive-" + courseRunId);
+                                archiveOption.hide();
+
+                                var confirmArchive = $("#course-confirm-archive-" + courseRunId);
+                                confirmArchive.show();
+
+                                var archiveCancelDelete = $("#course-cancel-archive-" + courseRunId);
+                                archiveCancelDelete.show();
+
+                            });
+
+                        $courseeditlink = $("#courseeditlink");
+                        if ($courseeditlink.length) {
+                            $courseeditlink.on("click", function (event) {
+                                event.preventDefault();
+                                var courseId = $(this).attr('data-courseid');
+                                var courseRunId = $(this).attr('data-courserunid');
+                                var $courseId = $("#" + courseId);
+                                var $courseRunId = $("#" + courseRunId);
+                                var hasOpenAttr = $courseId[0].getAttribute('open') !== null;
+                                if (!hasOpenAttr) {
+                                    $courseId.find("summary").trigger("click");
+                                }
+                                if (!$courseRunId.hasClass("govuk-accordion__section--expanded")) {
+                                    $courseRunId.addClass("govuk-accordion__section--expanded")
+                                }
+                                if ($courseId.attr("open")) {
+                                    $("html,body").animate({
+                                        scrollTop: $courseId.offset().top
+                                    }, "slow");
+                                }
+                                if ($courseRunId.hasClass("govuk-accordion__section--expanded")) {
+                                    $("html,body").animate({
+                                        scrollTop: $courseRunId.offset().top
+                                    }, "slow");
+                                }
+                            });
+                        }
+                    });
+                })(jQuery);
+            </script>
