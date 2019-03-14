@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Common;
+using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Models.Courses;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.CourseService;
@@ -172,7 +173,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                         CourseName = model.CourseName,
                         CourseURL = model.Url,
                         DurationValue = Convert.ToInt32(model.DurationLength),
-                        ProviderCourseID = model.CourseProviderReference
+                        ProviderCourseID = model.CourseProviderReference,
+                        RecordStatus = RecordStatus.Live
                     };
 
                     copiedCourseRun.Cost = Convert.ToDecimal(model.Cost);

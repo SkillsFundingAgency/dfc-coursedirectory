@@ -20,7 +20,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels.EditCourse
         public string CostDescription { get; set; }
 
         public List<SelectListItem> Venues { get; set; }
-        public Guid  VenueId { get; set; }
+        public Guid? VenueId { get; set; }
 
         public SelectRegionModel SelectRegion { get; set; }
         public DeliveryMode DeliveryMode { get; set; }

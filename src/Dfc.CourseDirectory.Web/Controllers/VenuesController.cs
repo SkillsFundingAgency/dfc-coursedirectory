@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Models.Models.Onspd;
 using Dfc.CourseDirectory.Models.Models.Venues;
@@ -320,7 +321,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 venueID = addedVenue.Value.ID;
             }
             //Since we are updating or adding lets pass the model to the GetVenues method
-            VenueSearchResultItemModel newItem = new VenueSearchResultItemModel(requestModel.VenueName, requestModel.AddressLine1, requestModel.AddressLine2, requestModel.TownOrCity, requestModel.County, requestModel.Postcode, venueID);
+            VenueSearchResultItemModel newItem = new VenueSearchResultItemModel(HttpUtility.HtmlEncode(requestModel.VenueName), requestModel.AddressLine1, requestModel.AddressLine2, requestModel.TownOrCity, requestModel.County, requestModel.Postcode, venueID);
 
             return View("VenueSearchResults", await GetVenues(UKPRN.Value, newItem, updated));
         }

@@ -47,25 +47,20 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
 
-        [Authorize]
-        public IActionResult Index()
+        public static DashboardViewModel GetDashboardViewModel(ICourseService service, int? UKPRN)
         {
-            //_session.SetString("Option", "Dashboard");
-            //return RedirectToAction("Index", "PublishCourses", new { publishMode = PublishMode.Migration });
-
-            int? UKPRN = _session.GetInt32("UKPRN");
             if (!UKPRN.HasValue)
-                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
+                return new DashboardViewModel();
 
-            IEnumerable<Course> courses = _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(UKPRN))
-                                                        .Result
-                                                        .Value
-                                                        .Value
-                                                        .SelectMany(o => o.Value)
-                                                        .SelectMany(i => i.Value);
+            IEnumerable<Course> courses = service.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(UKPRN))
+                                                 .Result
+                                                 .Value
+                                                 .Value
+                                                 .SelectMany(o => o.Value)
+                                                 .SelectMany(i => i.Value);
 
-            IEnumerable<CourseValidationResult> result = _courseService.PendingCourseValidationMessages(courses)
-                                                                       .Value;
+            IEnumerable<CourseValidationResult> result = service.PendingCourseValidationMessages(courses)
+                                                                .Value;
             IEnumerable<string> courseMessages = result.SelectMany(c => c.Issues);
             IEnumerable<string> runMessages    = result.SelectMany(c => c.RunValidationResults)
                                                        .SelectMany(r => r.Issues);
@@ -73,7 +68,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                                                                .GroupBy(i => i)
                                                                .Select(g => $"{ g.LongCount() } { g.Key }");
 
-            IEnumerable<ICourseStatusCountResult> counts = _courseService.GetCourseCountsByStatusForUKPRN(new CourseSearchCriteria(UKPRN))
+            IEnumerable<ICourseStatusCountResult> counts = service.GetCourseCountsByStatusForUKPRN(new CourseSearchCriteria(UKPRN))
                                                                          .Result
                                                                          .Value;
 
@@ -90,8 +85,20 @@ namespace Dfc.CourseDirectory.Web.Controllers
                                        select c.Count).Sum() //,
                  //RecentlyModifiedCourses = new List<Course>() { new Course(), new Course() }
             };
+            return vm;
+        }
 
-            return View(vm);
+        [Authorize]
+        public IActionResult Index()
+        {
+            //_session.SetString("Option", "Dashboard");
+            //return RedirectToAction("Index", "PublishCourses", new { publishMode = PublishMode.Migration });
+
+            int? UKPRN = _session.GetInt32("UKPRN");
+            if (!UKPRN.HasValue)
+                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
+
+            return View(GetDashboardViewModel(_courseService, UKPRN));
         }
     }
 }

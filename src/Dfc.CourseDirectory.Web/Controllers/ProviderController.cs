@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Common;
+using Dfc.CourseDirectory.Models.Enums;
+using Dfc.CourseDirectory.Models.Helpers;
 using Dfc.CourseDirectory.Models.Models;
+using Dfc.CourseDirectory.Models.Models.Courses;
 using Dfc.CourseDirectory.Models.Models.Venues;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
@@ -67,18 +70,18 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             if (venue == null) return string.Empty;
 
-            var list = new List<string>
-            {
-                venue.Address1,
-                venue.Address2,
-                venue.Address3,
-                venue.County,
-                venue.PostCode
-            }
-            .Where(x => !string.IsNullOrWhiteSpace(x))
-            .ToList();
+            //var list = new List<string>
+            //{
+            //    venue.Address1,
+            //    venue.Address2,
+            //    venue.Address3,
+            //    venue.County,
+            //    venue.VenueName
+            //}
+            //.Where(x => !string.IsNullOrWhiteSpace(x))
+            //.ToList();
 
-            return string.Join(", ", list);
+            return venue.VenueName;
         }
 
         internal string FormattedRegionsByIds(IEnumerable<RegionItemModel> list, IEnumerable<string> ids)
@@ -140,17 +143,84 @@ namespace Dfc.CourseDirectory.Web.Controllers
             var venueResult = (await _venueService.SearchAsync(new VenueSearchCriteria(UKPRN.ToString(), string.Empty))).Value;
             var allRegions = _courseService.GetRegions().RegionItems;
 
-            var levelFilters = courseResult
-                .Value
-                .Select(x => new QualificationLevelFilterViewModel
+
+            var Courses = courseResult.Value.SelectMany(o => o.Value).SelectMany(i => i.Value).ToList();
+
+            var filteredCourses = from Course c in Courses.Where(c => BitmaskHelper.IsSet(c.CourseStatus, RecordStatus.Live)).ToList().OrderBy(x => x.QualificationCourseTitle)
+                                  select c;
+
+            foreach (var course in filteredCourses)
+            {
+                var filteredCourseRuns = new List<CourseRun>();
+
+                filteredCourseRuns = course.CourseRuns.ToList();
+                filteredCourseRuns.RemoveAll(x => x.RecordStatus != RecordStatus.Live);
+
+                course.CourseRuns = filteredCourseRuns;
+            }
+
+            var levelFilters1 = filteredCourses.GroupBy(x => x.NotionalNVQLevelv2).ToList();
+
+            var levelFilters = new List<QualificationLevelFilterViewModel>();
+
+            var courseViewModels = new List<CourseViewModel>();
+
+            foreach (var levels in levelFilters1)
+            {
+                var f = levels.ToList();
+
+                var lf = new QualificationLevelFilterViewModel()
                 {
-                    Name = $"Level {x.Level}",
-                    Value = x.Level,
-                    Facet = x.Value.Sum(y => y.Value.Count()).ToString(),
-                    IsSelected = level == x.Level
-                })
-                .OrderBy(x => x.Value)
-                .ToList();
+                    Facet = f.Count().ToString(),
+                    IsSelected = level == levels.Key,
+                    Value = levels.Key,
+                    Name = $"Level {levels.Key}",
+
+                };
+
+                levelFilters.Add(lf);
+
+                foreach (var course in levels)
+                {
+                    var courseVM = new CourseViewModel()
+                    {
+                        Id = course.id.ToString(),
+                        AwardOrg = course.AwardOrgCode,
+                        LearnAimRef = course.LearnAimRef,
+                        NotionalNVQLevelv2 = course.NotionalNVQLevelv2,
+                        QualificationTitle = course.QualificationCourseTitle,
+                        QualificationType = course.QualificationType,
+                        Facet = course.CourseRuns.Count().ToString(),
+                        CourseRuns = course.CourseRuns.Select(y => new CourseRunViewModel
+                        {
+                            Id = y.id.ToString(),
+                            CourseId = y.ProviderCourseID,
+                            AttendancePattern = y.AttendancePattern.ToDescription(),
+                            Cost = y.Cost.HasValue ? $"£ {y.Cost.Value:0.00}" : string.Empty,
+                            CourseName = y.CourseName,
+                            DeliveryMode = y.DeliveryMode.ToDescription(),
+                            Duration = y.DurationValue.HasValue
+                                    ? $"{y.DurationValue.Value} {y.DurationUnit.ToDescription()}"
+                                    : $"0 {y.DurationUnit.ToDescription()}",
+                            Venue = y.VenueId.HasValue
+                                    ? FormatAddress(GetVenueByIdFrom(venueResult.Value, y.VenueId.Value))
+                                    : string.Empty,
+                            Region = y.Regions != null ? FormattedRegionsByIds(allRegions, y.Regions) : string.Empty,
+                            StartDate = y.FlexibleStartDate
+                                    ? "Flexible start date"
+                                    : y.StartDate?.ToString("dd/MM/yyyy"),
+                            StudyMode = y.StudyMode == Models.Models.Courses.StudyMode.Undefined
+                                    ? string.Empty
+                                    : y.StudyMode.ToDescription(),
+                            Url = y.CourseURL
+                        })
+                                            .OrderBy(y => y.CourseName)
+                                            .ToList()
+                    };
+
+                    courseViewModels.Add(courseVM);
+                }
+            }
 
             if (string.IsNullOrWhiteSpace(level))
             {
@@ -158,40 +228,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 levelFilters.ForEach(x => { if (x.Value == level) { x.IsSelected = true; } });
             }
 
-            var courseViewModels = courseResult
-                .Value
-                .SingleOrDefault(x => x.Level == level)
-                ?.Value
-                .SelectMany(x => x.Value)
-                .Select(x => new CourseViewModel
-                {
-                    Id = x.id.ToString(),
-                    AwardOrg = x.AwardOrgCode,
-                    LearnAimRef = x.LearnAimRef,
-                    NotionalNVQLevelv2 = x.NotionalNVQLevelv2,
-                    QualificationTitle = x.QualificationCourseTitle,
-                    QualificationType = x.QualificationType,
-                    Facet = x.CourseRuns.Count().ToString(),
-                    CourseRuns = x.CourseRuns.Select(y => new CourseRunViewModel
-                    {
-                        Id = y.id.ToString(),
-                        CourseId = y.ProviderCourseID,
-                        AttendancePattern = y.AttendancePattern.ToDescription(),
-                        Cost = y.Cost.HasValue ? $"£ {y.Cost.Value:0.00}" : string.Empty,
-                        CourseName = y.CourseName,
-                        DeliveryMode = y.DeliveryMode.ToDescription(),
-                        Duration = y.DurationValue.HasValue ? $"{y.DurationValue.Value} {y.DurationUnit.ToDescription()}" : $"0 {y.DurationUnit.ToDescription()}",
-                        Venue = y.VenueId.HasValue ? FormatAddress(GetVenueByIdFrom(venueResult.Value, y.VenueId.Value)) : string.Empty,
-                        Region = y.Regions != null ? FormattedRegionsByIds(allRegions, y.Regions) : string.Empty,
-                        StartDate = y.FlexibleStartDate ? "Flexible start date" : y.StartDate?.ToString("dd/MM/yyyy"),
-                        StudyMode = y.StudyMode == Models.Models.Courses.StudyMode.Undefined ? string.Empty : y.StudyMode.ToDescription(),
-                        Url = y.CourseURL
-                    })
-                    .OrderBy(y => y.CourseName)
-                    .ToList()
-                })
-                .OrderBy(x => x.QualificationTitle)
-                .ToList();
+            courseViewModels.OrderBy(x => x.QualificationTitle).ToList();
 
             var notificationCourseName = string.Empty;
             var notificationAnchorTag = string.Empty;
@@ -205,6 +242,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     var courseRuns = courseViewModels.Find(x => x.Id == courseId.Value.ToString())?.CourseRuns;
                     notificationCourseName = CourseNameByCourseRunId(courseRuns, courseRunId.ToString());
                 }
+            }
+
+            if (!courseRunId.HasValue)
+            {
+                notificationMessage = string.Empty;
             }
 
             notificationAnchorTag = courseRunId.HasValue
