@@ -34,7 +34,7 @@
             {
                 var authorised = await Authorization.AuthorizeAsync(User, "ElevatedUserRole");
 
-                if (authorised.Succeeded && Model == null) {
+                if (authorised.Succeeded) {
                     <h1 class="govuk-heading-l">Search Provider</h1>
                     @await Component.InvokeAsync(nameof(ProviderSearch))
 
