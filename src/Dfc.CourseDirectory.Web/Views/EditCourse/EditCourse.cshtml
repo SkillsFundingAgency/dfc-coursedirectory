@@ -120,7 +120,7 @@
             var $howAssessed = $("#@nameof(Model.HowAssessed)").govUkTextarea();
             var $whereNext = $("#@nameof(Model.WhereNext)").govUkTextarea();
 
-            validate();
+            setTimeout(validate, 500);
 
             function isAllValid(currentValue) {
                 return currentValue === true;

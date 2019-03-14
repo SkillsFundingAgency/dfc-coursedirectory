@@ -603,18 +603,38 @@
                 list.push(element.innerHTML);
             });
         }
+        var characterCountErrorMessages = $(this._formGroup).find(".govuk-character-count__message.govuk-error-message");
+        if (characterCountErrorMessages.length) {
+            characterCountErrorMessages.each(function (index, element) {
+                list.push(element.innerHTML);
+            });
+        }
         return list;
     }
 
     Plugin.prototype.getErrorHashLinks = function () {
         var list = [];
+        var outerIndex = 0;
         var elementId = this.element.id;
         if (this._errorMessages.length) {
             this._errorMessages.each(function (index, element) {
+                outerIndex = outerIndex + index;
                 var $anchor = document.createElement("a");
                 $anchor.href = "#" + elementId;
                 $anchor.innerHTML = element.innerHTML;
-                $anchor.id = "error-hash-link-" + elementId + "-" + index;
+                $anchor.id = "error-hash-link-" + elementId + "-" + outerIndex;
+                list.push($anchor);
+            });
+        }
+        var characterCountErrorMessages = $(this._formGroup).find(".govuk-character-count__message.govuk-error-message");
+        if (characterCountErrorMessages.length) {
+            outerIndex = outerIndex + 1;
+            characterCountErrorMessages.each(function (index, element) {
+                outerIndex = outerIndex + index;
+                var $anchor = document.createElement("a");
+                $anchor.href = "#" + elementId;
+                $anchor.innerHTML = element.innerHTML;
+                $anchor.id = "error-hash-link-" + elementId + "-" + outerIndex;
                 list.push($anchor);
             });
         }
