@@ -139,6 +139,15 @@ namespace Dfc.CourseDirectory.Web
             services.AddIdentity<User, IdentityRole>(options => {
                 options.Tokens.PasswordResetTokenProvider = TokenOptions.DefaultEmailProvider;
                 options.SignIn.RequireConfirmedEmail = false;
+                options.Password.RequireDigit = true;
+                options.Password.RequiredLength = 8;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = true;
+                options.Password.RequireLowercase = false;
+
+                //Password rules
+                options.Password.RequireNonAlphanumeric = false;
+
             }).AddEntityFrameworkStores<ApplicationDbContext>()
                .AddDefaultTokenProviders();
 

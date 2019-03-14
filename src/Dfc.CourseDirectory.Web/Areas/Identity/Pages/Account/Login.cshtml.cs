@@ -81,6 +81,29 @@ namespace Dfc.CourseDirectory.Web.Areas.Identity.Pages.Account
 
             if (ModelState.IsValid)
             {
+                var user = await _userManager.FindByEmailAsync(Input.UserName);
+
+                //Check for password reset required flag
+                if (user.PasswordResetRequired)
+                {
+                    var passwordResetRequired = await _signInManager.CheckPasswordSignInAsync(user, Input.Password, false);
+                    
+                    if (user.PasswordResetRequired && passwordResetRequired.Succeeded)
+                    {
+                        var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+                        return RedirectToPage("./ResetPassword",
+                            new
+                            {
+                                ReturnUrl = returnUrl,
+                                RememberMe = Input.RememberMe,
+                                Code = code,
+                                Input.UserName
+                            });
+                    }
+                }
+
+                
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
                 var result = await _signInManager.PasswordSignInAsync(Input.UserName, Input.Password, Input.RememberMe, lockoutOnFailure: true);
@@ -91,7 +114,7 @@ namespace Dfc.CourseDirectory.Web.Areas.Identity.Pages.Account
                     
                     var principal = (ClaimsPrincipal)Thread.CurrentPrincipal;
                     ClaimsIdentity identity = (ClaimsIdentity)User.Identity;
-                    var user = await _userManager.FindByEmailAsync(Input.UserName);
+                    
                     if(user != null)
                     {
                         var claims = await _userManager.GetClaimsAsync(user);
@@ -101,11 +124,9 @@ namespace Dfc.CourseDirectory.Web.Areas.Identity.Pages.Account
                         }
                         
                     }
-                  
-                    
-                    
-
                     return LocalRedirect(returnUrl);
+
+                    
                 }
                 if (result.RequiresTwoFactor)
                 {
@@ -116,6 +137,7 @@ namespace Dfc.CourseDirectory.Web.Areas.Identity.Pages.Account
                     _logger.LogWarning("User account locked out.");
                     return RedirectToPage("./Lockout");
                 }
+                
                 else
                 {
                     ModelState.AddModelError(string.Empty, "Invalid login attempt.");

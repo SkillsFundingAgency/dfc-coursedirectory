@@ -43,7 +43,7 @@ namespace Dfc.CourseDirectory.Web.Areas.Identity.Pages.Account
             public string Code { get; set; }
         }
 
-        public IActionResult OnGet(string code = null)
+        public IActionResult OnGet(string code = null, string userName = "")
         {
             if (code == null)
             {
@@ -53,7 +53,9 @@ namespace Dfc.CourseDirectory.Web.Areas.Identity.Pages.Account
             {
                 Input = new InputModel
                 {
-                    Code = code
+                    Code = code,
+                    Email = userName
+                    
                 };
                 return Page();
             }
@@ -76,6 +78,9 @@ namespace Dfc.CourseDirectory.Web.Areas.Identity.Pages.Account
             var result = await _userManager.ResetPasswordAsync(user, Input.Code, Input.Password);
             if (result.Succeeded)
             {
+                user.PasswordResetRequired = false;
+                var passwordResetRemoved = await _userManager.UpdateAsync(user);
+                if(passwordResetRemoved.Succeeded)
                 return RedirectToPage("./ResetPasswordConfirmation");
             }
 
