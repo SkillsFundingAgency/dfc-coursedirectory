@@ -13,6 +13,8 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Courses.Duration
     {
         public IViewComponentResult Invoke(DurationModel model)
         {
+            var defaultItem = new SelectListItem { Text = "Select", Value = "" };
+
             model.DurationUnits = new List<SelectListItem>();
             foreach (DurationUnit eVal in DurationUnit.GetValues(typeof(DurationUnit)))
             {
@@ -25,6 +27,9 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Courses.Duration
 
             model.DurationUnits.Insert(0,model.DurationUnits.FirstOrDefault(x => x.Text.ToUpper()=="HOURS"));
             model.DurationUnits.RemoveAt(5);
+
+            model.DurationUnits.Insert(0, defaultItem);
+
             return View("~/ViewComponents/Courses/Duration/Default.cshtml", model);
         }
     }
