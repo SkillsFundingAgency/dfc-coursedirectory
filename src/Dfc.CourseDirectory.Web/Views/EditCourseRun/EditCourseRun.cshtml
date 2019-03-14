@@ -196,14 +196,14 @@
             HintText = "Select the time of day the course takes place"
         })
     </div>
-
-
-    <div class="govuk-form-group">
+    
+<ul class="flex-container">
+    <li class="flex-item">
         <button name="saveButton" type="submit" class="govuk-button" id="save">
             Save
         </button>
-
-
+    </li>
+    <li class="flex-item" style="padding-top: 15px">
         @switch (Model.Mode)
         {
             case PublishMode.Migration:
@@ -217,7 +217,11 @@
                 break;
 
         }
-    </div>
+    </li>
+        
+</ul>
+
+
 
 </form>
 

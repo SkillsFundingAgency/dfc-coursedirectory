@@ -79,26 +79,30 @@
         })
     </div>
 
-    <div class="govuk-form-group">
-        <button type="submit" class="govuk-button" id="save">
-            Save
-        </button>
+    <ul class="flex-container">
+        <li class="flex-item">
+            <button type="submit" class="govuk-button" id="save">
+                Save
+            </button>
+        </li>
+        <li class="flex-item" style="padding-top: 15px">
+            @switch (Model.Mode)
+            {
+                case PublishMode.Migration:
+                    @Html.ActionLink("Cancel", "Index", "PublishCourses", new { publishMode = Model.Mode }, new { @class = "govuk-link" })
+                    break;
+                case PublishMode.BulkUpload:
+                    @Html.ActionLink("Cancel", "Index", "PublishCourses", new { publishMode = Model.Mode }, new { @class = "govuk-link" })
+                    break;
+                default:
+                    @Html.ActionLink("Cancel", "Courses", "Provider", new { level = @Model.NotionalNVQLevelv2,courseId=@Model.CourseId }, new { @class = "govuk-link" })
+                    break;
+            }
+        </li>
+        
+    </ul>
 
-        @switch (Model.Mode)
-        {
-            case PublishMode.Migration:
-                @Html.ActionLink("Cancel", "Index", "PublishCourses", new { publishMode = Model.Mode }, new { @class = "govuk-link" })
-                break;
-            case PublishMode.BulkUpload:
-                @Html.ActionLink("Cancel", "Index", "PublishCourses", new { publishMode = Model.Mode }, new { @class = "govuk-link" })
-                break;
-            default:
-                @Html.ActionLink("Cancel", "Courses", "Provider", new { level = @Model.NotionalNVQLevelv2, courseId = @Model.CourseId }, new { @class = "govuk-link" })
-                break;
-        }
 
-
-    </div>
 
 </form>
 
