@@ -159,73 +159,82 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 course.CourseRuns = filteredCourseRuns;
             }
 
-            var levelFilters1 = filteredCourses.GroupBy(x => x.NotionalNVQLevelv2).ToList();
+            var levelFilters = filteredCourses.GroupBy(x => x.NotionalNVQLevelv2).ToList();
 
-            var levelFilters = new List<QualificationLevelFilterViewModel>();
+            var levelFiltersForDisplay = new List<QualificationLevelFilterViewModel>();
 
             var courseViewModels = new List<CourseViewModel>();
 
-            foreach (var levels in levelFilters1)
+            if (string.IsNullOrWhiteSpace(level))
             {
-                var f = levels.ToList();
+                level = levelFilters.FirstOrDefault()?.Key;
+            }
+
+            foreach (var levels in levelFilters)
+            { 
 
                 var lf = new QualificationLevelFilterViewModel()
                 {
-                    Facet = f.Count().ToString(),
+                    Facet = levels.ToList().Count().ToString(),
                     IsSelected = level == levels.Key,
                     Value = levels.Key,
                     Name = $"Level {levels.Key}",
 
                 };
 
-                levelFilters.Add(lf);
+                levelFiltersForDisplay.Add(lf);
 
                 foreach (var course in levels)
                 {
-                    var courseVM = new CourseViewModel()
+                    if (course.NotionalNVQLevelv2 == level)
                     {
-                        Id = course.id.ToString(),
-                        AwardOrg = course.AwardOrgCode,
-                        LearnAimRef = course.LearnAimRef,
-                        NotionalNVQLevelv2 = course.NotionalNVQLevelv2,
-                        QualificationTitle = course.QualificationCourseTitle,
-                        QualificationType = course.QualificationType,
-                        Facet = course.CourseRuns.Count().ToString(),
-                        CourseRuns = course.CourseRuns.Select(y => new CourseRunViewModel
+                        var courseVM = new CourseViewModel()
                         {
-                            Id = y.id.ToString(),
-                            CourseId = y.ProviderCourseID,
-                            AttendancePattern = y.AttendancePattern.ToDescription(),
-                            Cost = y.Cost.HasValue ? $"£ {y.Cost.Value:0.00}" : string.Empty,
-                            CourseName = y.CourseName,
-                            DeliveryMode = y.DeliveryMode.ToDescription(),
-                            Duration = y.DurationValue.HasValue
-                                    ? $"{y.DurationValue.Value} {y.DurationUnit.ToDescription()}"
-                                    : $"0 {y.DurationUnit.ToDescription()}",
-                            Venue = y.VenueId.HasValue
-                                    ? FormatAddress(GetVenueByIdFrom(venueResult.Value, y.VenueId.Value))
-                                    : string.Empty,
-                            Region = y.Regions != null ? FormattedRegionsByIds(allRegions, y.Regions) : string.Empty,
-                            StartDate = y.FlexibleStartDate
-                                    ? "Flexible start date"
-                                    : y.StartDate?.ToString("dd/MM/yyyy"),
-                            StudyMode = y.StudyMode == Models.Models.Courses.StudyMode.Undefined
-                                    ? string.Empty
-                                    : y.StudyMode.ToDescription(),
-                            Url = y.CourseURL
-                        })
-                                            .OrderBy(y => y.CourseName)
-                                            .ToList()
-                    };
+                            Id = course.id.ToString(),
+                            AwardOrg = course.AwardOrgCode,
+                            LearnAimRef = course.LearnAimRef,
+                            NotionalNVQLevelv2 = course.NotionalNVQLevelv2,
+                            QualificationTitle = course.QualificationCourseTitle,
+                            QualificationType = course.QualificationType,
+                            Facet = course.CourseRuns.Count().ToString(),
+                            CourseRuns = course.CourseRuns.Select(y => new CourseRunViewModel
+                                {
+                                    Id = y.id.ToString(),
+                                    CourseId = y.ProviderCourseID,
+                                    AttendancePattern = y.AttendancePattern.ToDescription(),
+                                    Cost = y.Cost.HasValue ? $"£ {y.Cost.Value:0.00}" : string.Empty,
+                                    CourseName = y.CourseName,
+                                    DeliveryMode = y.DeliveryMode.ToDescription(),
+                                    Duration = y.DurationValue.HasValue
+                                        ? $"{y.DurationValue.Value} {y.DurationUnit.ToDescription()}"
+                                        : $"0 {y.DurationUnit.ToDescription()}",
+                                    Venue = y.VenueId.HasValue
+                                        ? FormatAddress(GetVenueByIdFrom(venueResult.Value, y.VenueId.Value))
+                                        : string.Empty,
+                                    Region = y.Regions != null
+                                        ? FormattedRegionsByIds(allRegions, y.Regions)
+                                        : string.Empty,
+                                    StartDate = y.FlexibleStartDate
+                                        ? "Flexible start date"
+                                        : y.StartDate?.ToString("dd/MM/yyyy"),
+                                    StudyMode = y.StudyMode == Models.Models.Courses.StudyMode.Undefined
+                                        ? string.Empty
+                                        : y.StudyMode.ToDescription(),
+                                    Url = y.CourseURL
+                                })
+                                .OrderBy(y => y.CourseName)
+                                .ToList()
+                        };
 
-                    courseViewModels.Add(courseVM);
+                        courseViewModels.Add(courseVM);
+                    }
                 }
             }
 
             if (string.IsNullOrWhiteSpace(level))
             {
-                level = levelFilters.FirstOrDefault()?.Value;
-                levelFilters.ForEach(x => { if (x.Value == level) { x.IsSelected = true; } });
+                level = levelFiltersForDisplay.FirstOrDefault()?.Value;
+                levelFiltersForDisplay.ForEach(x => { if (x.Value == level) { x.IsSelected = true; } });
             }
 
             courseViewModels.OrderBy(x => x.QualificationTitle).ToList();
@@ -258,7 +267,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 Heading = $"Level {level}",
                 HeadingCaption = "Your courses",
                 Courses = courseViewModels ?? new List<CourseViewModel>(),
-                LevelFilters = levelFilters,
+                LevelFilters = levelFiltersForDisplay,
                 NotificationTitle = notificationTitle,
                 NotificationMessage = notificationAnchorTag
             };
