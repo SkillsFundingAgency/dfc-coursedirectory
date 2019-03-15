@@ -38,7 +38,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
 
         [Authorize]
         [HttpGet]
-        public IActionResult Index(PublishMode publishMode)
+        public IActionResult Index(PublishMode publishMode, string notificationTitle)
         {
 
             PublishViewModel vm = new PublishViewModel();
@@ -65,7 +65,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                     vm.PublishMode = PublishMode.Migration;
                     var migratedCourses = Courses.Where(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.MigrationPending || cr.RecordStatus == RecordStatus.MigrationReadyToGoLive)).ToList();
                     vm.NumberOfCoursesInFiles = migratedCourses.SelectMany(s => s.CourseRuns.Where(cr => cr.RecordStatus == RecordStatus.MigrationPending || cr.RecordStatus == RecordStatus.MigrationReadyToGoLive)).Count();
-                    vm.Courses = migratedCourses;
+                    vm.Courses = migratedCourses.OrderBy(x=>x.QualificationCourseTitle);
                     vm.AreAllReadyToBePublished = CheckAreAllReadyToBePublished(migratedCourses, PublishMode.Migration);
 
                     break;
@@ -75,12 +75,13 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                     vm.PublishMode = PublishMode.BulkUpload;
                     var bulkUploadedCourses = Courses.Where(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.BulkUloadPending || cr.RecordStatus == RecordStatus.BulkUploadReadyToGoLive)).ToList();
                     vm.NumberOfCoursesInFiles = bulkUploadedCourses.SelectMany(s => s.CourseRuns.Where(cr => cr.RecordStatus == RecordStatus.BulkUloadPending || cr.RecordStatus == RecordStatus.BulkUploadReadyToGoLive)).Count();
-                    vm.Courses = bulkUploadedCourses;
+                    vm.Courses = bulkUploadedCourses.OrderBy(x => x.QualificationCourseTitle);
                     vm.AreAllReadyToBePublished = CheckAreAllReadyToBePublished(bulkUploadedCourses, PublishMode.BulkUpload);
 
                     break;
             }
 
+            vm.NotificationTitle = notificationTitle;
             return View("Index", vm);
         }
 
@@ -148,18 +149,24 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> Delete(Guid courseId, Guid courseRunId)
+        public async Task<IActionResult> Delete(Guid courseId, Guid courseRunId,string courseName)
         {
             //TODO delete
+            string notificationTitle = string.Empty;
 
             var result = await _courseService.UpdateStatus(courseId, courseRunId, (int)RecordStatus.Deleted);
 
             if (result.IsSuccess)
             {
                 //do something
+                notificationTitle = courseName + " was successfully deleted";
+            }
+            else
+            {
+                notificationTitle = "Error " + courseName + " was not deleted";
             }
 
-            return RedirectToAction("Index", "PublishCourses", new { publishMode = PublishMode.Migration });
+            return RedirectToAction("Index", "PublishCourses", new { publishMode = PublishMode.Migration,notificationTitle = notificationTitle });
         }
 
         public bool CheckAreAllReadyToBePublished(List<Course> courses, PublishMode publishMode)

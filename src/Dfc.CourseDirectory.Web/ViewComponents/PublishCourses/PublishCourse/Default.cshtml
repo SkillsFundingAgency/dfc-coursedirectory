@@ -30,7 +30,7 @@
         </div>
     </div>
 
-    foreach (var courseRun in course.CourseRuns)
+    foreach (var courseRun in course.CourseRuns.OrderBy(x=>x.CourseName))
     {
         @if ((Model.PublishMode.Equals(PublishMode.BulkUpload) && courseRun.RecordStatus == RecordStatus.BulkUloadPending) ||
              (Model.PublishMode.Equals(PublishMode.Migration) && courseRun.RecordStatus == RecordStatus.MigrationPending))
@@ -56,7 +56,7 @@
 
                             <a id="migration-confirm-delete-@courseRun.id" class="govuk-button" asp-controller="PublishCourses" asp-action="Delete"
                                asp-route-courseId="@course.id"
-                               asp-route-courseRunId="@courseRun.id" asp-route-mode=@Model.PublishMode style="display: none">Confirm delete</a>
+                               asp-route-courseRunId="@courseRun.id" asp-route-courseName="@courseRun.CourseName" asp-route-mode=@Model.PublishMode style="display: none">Confirm delete</a>
 
                             <a href="#" class="error-link cancel-delete" id="migration-cancel-delete-@courseRun.id" data-course-run-id="@courseRun.id" style="display: none">Cancel</a>
                         }
