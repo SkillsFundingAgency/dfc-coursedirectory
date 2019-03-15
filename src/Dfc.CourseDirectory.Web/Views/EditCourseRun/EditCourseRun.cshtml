@@ -1,6 +1,5 @@
 ﻿@using Dfc.CourseDirectory.Models.Enums
 @using Dfc.CourseDirectory.Models.Models.Courses
-@using Dfc.CourseDirectory.Web.ViewComponents.AdvancedLearnerLoan
 @using Dfc.CourseDirectory.Web.ViewComponents.CourseName
 @using Dfc.CourseDirectory.Web.ViewComponents.CourseProviderReference
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.AddStartDate
@@ -9,7 +8,6 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.Cost
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.DeliveryType
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.Duration
-@using Dfc.CourseDirectory.Web.ViewComponents.Courses.SelectVenue
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode
 @using Dfc.CourseDirectory.Web.ViewComponents.Extensions
 @using Dfc.CourseDirectory.Web.ViewComponents.Notification
@@ -38,7 +36,7 @@
     @Html.HiddenFor(x => x.QualificationType)
     @Html.HiddenFor(x => x.Mode)
 
-    <div id="sectionCourseName">
+    <div class="section" id="sectionCourseName">
         @await Component.InvokeAsync(nameof(CourseName), new CourseNameModel
         {
             CourseName = Model.CourseName,
@@ -48,7 +46,7 @@
         })
     </div>
 
-    <div id="sectionCourseProviderReference">
+    <div class="section" id="sectionCourseProviderReference">
         @await Component.InvokeAsync(nameof(CourseProviderReference), new CourseProviderReferenceModel
         {
             CourseProviderReference = Model.CourseProviderReference,
@@ -58,7 +56,7 @@
         })
     </div>
 
-    <div id="sectionDeliveryType">
+    <div class="section" id="sectionDeliveryType">
         @await Component.InvokeAsync(nameof(DeliveryType), new DeliveryTypeModel
         {
             DeliveryMode = Model.DeliveryMode,
@@ -68,7 +66,7 @@
         })
     </div>
 
-    <div id="sectionStartDate">
+    <div class="section" id="sectionStartDate">
         @await Component.InvokeAsync(nameof(AddStartDate), new AddStartDateModel()
         {
             StartDateType = Model.StartDateType,
@@ -88,8 +86,8 @@
         })
     </div>
 
-    <div id="sectionVenue">
-        <div class="govuk-form-group" id="VenueChoice" style="@Model.DeliveryMode.IfNotClassroomBasedDisplayNone()">
+    <div class="section" id="sectionVenue" style="@Model.DeliveryMode.IfNotClassroomBasedDisplayNone()">
+       @* <div class="govuk-form-group" id="VenueChoice" style="@Model.DeliveryMode.IfNotClassroomBasedDisplayNone()">*@
             @await Component.InvokeAsync(nameof(ChooseVenue), new ChooseVenueModel()
             {
                 LabelText = "Venue",
@@ -98,10 +96,10 @@
                 //Venues = Model.Venues,
                 VenueId = Model.VenueId ?? (Guid?)null
             })
-        </div>
+        @*</div>*@
     </div>
 
-    <div id="sectionRegion">
+    <div class="section" id="sectionRegion">
         @*No view component here in order to get checkbox list validation to work without it's own form*@
         <div class="govuk-form-group" id="RegionItemsCheckboxList" style="@Model.DeliveryMode.IfNotWorkBasedDisplayNone()">
             <label class="govuk-label" for="select-region">
@@ -143,7 +141,7 @@
 
 
 
-    <div id="sectionUrl">
+    <div class="section" id="sectionUrl">
         @await Component.InvokeAsync(nameof(UrlInput), new UrlInputModel
         {
             Url = Model.Url,
@@ -153,7 +151,7 @@
         })
     </div>
 
-    <div id="sectionCost">
+    <div class="section" id="sectionCost">
         @await Component.InvokeAsync(nameof(Cost), new CostModel
         {
             Cost = Model.Cost,
@@ -167,7 +165,7 @@
         })
     </div>
 
-    <div id="sectionDuration">
+    <div class="section" id="sectionDuration">
         @await Component.InvokeAsync(nameof(Duration), new DurationModel
         {
             DurationLength = Model.DurationLength,
@@ -179,7 +177,7 @@
     </div>
 
 
-    <div id="FullPartTimeRadioButtons" style="display: none;">
+    <div class="section" id="FullPartTimeRadioButtons" style="display: none;">
         @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode.StudyMode), new StudyModeModel
         {
             StudyMode = Model.StudyMode,
@@ -188,7 +186,7 @@
         })
     </div>
 
-    <div id="AttendancePatternRadioButtons" style="display: none;">
+    <div class="section" id="AttendancePatternRadioButtons" style="display: none;">
         @await Component.InvokeAsync(nameof(Attendance), new AttendanceModel
         {
             AttendanceMode = Model.AttendanceMode,
@@ -424,30 +422,6 @@
                     validStates.push(true);
                 }
 
-                //if ($.requiredValidate($durationDropdown.val())) {
-                //    $durationDropdown.govUkSelect("validState");
-                //    validStates.push(true);
-                //} else {
-                //    $durationDropdown.govUkSelect("invalidState", $durationDropdown.attr("val-required-message"));
-                //    validStates.push(false);
-                //}
-
-                //if (!$.requiredValidate($duration.find("input").val())) {
-                //    $duration.govUkDurationInput("invalidState", $duration.attr("val-duration-message"));
-                //    validStates.push(false);
-                //} else if (!$.rangeValidate({
-                //        min: $duration.attr("val-range-min"),
-                //        max: $duration.attr("val-range-max")
-                //    },
-                //    $duration.find("input").val())) {
-                //    $duration.govUkDurationInput("invalidState", $duration.attr("val-duration-message"));
-                //    validStates.push(false);
-                //}  else {
-                //    $duration.govUkDurationInput("validState");
-                //    validStates.push(true);
-                //}
-
-
                 if ($.requiredValidate($radioDeliveryMode.find("input[type='radio']:checked").val())) {
                     $radioDeliveryMode.govUkRadios("validState");
                     validStates.push(true);
@@ -521,13 +495,12 @@
                 if (errorArray.length > 0) {
 
 
-                    var $errorField = $("#" + errorArray[0].nextElementSibling.id);
-                    $('html,body').animate({ scrollTop: $errorField.parent().offset().top }, 'slow');
+                    var $errorField = $("#" + errorArray[0].closest('.section').id);
+                    $('html,body').animate({ scrollTop: $errorField.offset().top }, 'slow');
 
                     var notificationBody = "";
                     $.each(errorArray, function (index, value) {
-                        var $field = value.parentElement.parentElement.id;
-
+                        var $field = value.closest('.section').id;
                         notificationBody = notificationBody + "<a href='#' id='error' class='govuk-link errorlink' style=color:#b10e1e data-error-field=" + $field + ">"+ value.innerHTML +"</a></br>";
                     });
 
@@ -555,15 +528,13 @@
                     validate();
 
                     if (validStates.every(isAllValid)) {
-
-                        //alert("OK");
                         $("#editCourseRun").submit();
                     }
 
                 });
 
             $deliveryRadios.change(function () {
-                var $venueChoice = $("#VenueChoice");
+                var $venueChoice = $("#sectionVenue");
                 var $fullPartTimeRadioButtons = $("#FullPartTimeRadioButtons");
                 var $attendancePatternRadioButtons = $("#AttendancePatternRadioButtons");
                 var $specifiedStartDate = $("#SpecifiedStartDate");
