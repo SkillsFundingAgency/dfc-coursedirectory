@@ -30,7 +30,7 @@
         </div>
     </div>
 
-    foreach (var courseRun in course.CourseRuns)
+    foreach (var courseRun in course.CourseRuns.OrderBy(x=>x.CourseName))
     {
         @if ((Model.PublishMode.Equals(PublishMode.BulkUpload) && courseRun.RecordStatus == RecordStatus.BulkUloadPending) ||
              (Model.PublishMode.Equals(PublishMode.Migration) && courseRun.RecordStatus == RecordStatus.MigrationPending))
