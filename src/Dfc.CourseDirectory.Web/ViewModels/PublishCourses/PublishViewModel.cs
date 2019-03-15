@@ -13,5 +13,8 @@ namespace Dfc.CourseDirectory.Web.ViewModels.PublishCourses
         public PublishMode PublishMode { get; set; }
 
         public bool AreAllReadyToBePublished { get; set; }
+
+        public string NotificationTitle { get; set; }
+        public string NotificationMessage { get; set; }
     }
 }
