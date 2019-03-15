@@ -63,9 +63,9 @@
             </div>
             <div>
                 <ul class="govuk-list">
-                    <li><a class="govuk-link" asp-controller="AddCourse" asp-action="Index">Publish a course</a></li>
+                    <li><a class="govuk-link" asp-controller="AddCourse" asp-action="AddCourse">Publish a course</a></li>
                     @*<li><a class="govuk-link" asp-controller="Lars" asp-action="Index">Search for a course</a></li>*@
-                    <li><a class="govuk-link" asp-controller="Courses" asp-action="CourseListfullwidth">@(Model.LiveCourseCount > 0 ? "Manage your courses" : "")</a></li>
+                    <li><a class="govuk-link" asp-controller="Provider" asp-action="Courses">@(Model.LiveCourseCount > 0 ? "Manage your courses" : "")</a></li>
                 </ul>
             </div>
         </div>
