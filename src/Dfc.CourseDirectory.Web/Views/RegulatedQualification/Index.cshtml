@@ -1,0 +1,25 @@
+﻿@using Dfc.CourseDirectory.Models.Enums
+@using Dfc.CourseDirectory.Web.Helpers
+@model RegulatedViewModel
+
+<form asp-controller="RegulatedQualification" asp-action="RegulatedTypeSelected" method="post">
+
+    <div class="govuk-form-group">
+        <fieldset class="govuk-fieldset">
+                <h1 class="govuk-heading-l">What type of qualification are you looking for?</h1>
+            <br />
+            <div class="govuk-radios">
+                <div class="govuk-radios__item">
+                    @Html.RadioButtonFor(m => m.RegulatedType, RegulatedType.Regulated, new { @class = "govuk-radios__input", id = RegulatedType.Regulated })
+                    <label class="govuk-label govuk-radios__label" for="@RegulatedType.Regulated">@WebHelper.GetEnumDescription(RegulatedType.Regulated)</label>
+                </div>
+                <div class="govuk-radios__item">
+                    @Html.RadioButtonFor(m => m.RegulatedType, RegulatedType.NonRegulated, new { @class = "govuk-radios__input", id = RegulatedType.NonRegulated })
+                    <label class="govuk-label govuk-radios__label" for="@RegulatedType.NonRegulated">@WebHelper.GetEnumDescription(RegulatedType.NonRegulated)</label>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+    <br />
+    <button type="submit" class="govuk-button" id="next">Next</button>
+</form>
