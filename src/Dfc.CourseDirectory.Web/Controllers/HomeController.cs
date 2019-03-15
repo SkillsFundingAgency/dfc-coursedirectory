@@ -41,7 +41,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                  _session.SetInt32("UKPRN", int.Parse(providerUKPRN.Value)); 
             }
 
-            _session.SetInt32("UKPRN", 10001800);
+           
         }
 
         public IActionResult Index(string errmsg)
