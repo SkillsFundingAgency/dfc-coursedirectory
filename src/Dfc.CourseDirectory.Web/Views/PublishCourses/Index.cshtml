@@ -1,9 +1,20 @@
 ﻿
 
+@using Dfc.CourseDirectory.Web.ViewComponents.Notification
 @using Dfc.CourseDirectory.Web.ViewComponents.PublishCourses.Publish
 @model Dfc.CourseDirectory.Web.ViewModels.PublishCourses.PublishViewModel
 
 <form asp-controller="PublishCourses" asp-action="Index" id="PublishCourses">
+    
+    @if (!string.IsNullOrWhiteSpace(Model.NotificationTitle))
+    {
+        @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+        {
+            NotificationTitle = Model.NotificationTitle,
+            NotificationMessage = Model.NotificationMessage,
+            ClassType = "info-summary"
+        })
+    }
 
     @await Component.InvokeAsync(nameof(Publish), new { model = Model })
 
