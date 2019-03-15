@@ -1,0 +1,29 @@
+﻿<form asp-controller="QualificationTypeSelect" asp-action="Index" method="post">
+
+    <div class="govuk-form-group">
+        <fieldset class="govuk-fieldset">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+                <h1 class="govuk-fieldset__heading">
+                    What type of qualification are you looking for?
+                </h1>
+            </legend>
+            <br />
+            <div class="govuk-radios">
+                <div class="govuk-radios__item">
+                    <input class="govuk-radios__input" id="regulated" name="qualificationSelector" type="radio" value="regulated">
+                    <label class="govuk-label govuk-radios__label" for="regulated">
+                        Regulated
+                    </label>
+                </div>
+                <div class="govuk-radios__item">
+                    <input class="govuk-radios__input" id="unregulated" name="qualificationSelector" type="radio" value="unregulated">
+                    <label class="govuk-label govuk-radios__label" for="unregulated">
+                        Non-regulated provision
+                    </label>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+    <br />
+    <button type="submit" class="govuk-button" id="next">Next</button>
+</form>
