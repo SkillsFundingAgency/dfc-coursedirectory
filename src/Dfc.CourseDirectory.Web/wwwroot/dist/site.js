@@ -1133,7 +1133,8 @@
 
     Plugin.prototype.removeErrorHashLinksFor = function (id) {
         if (typeof id === "string") {
-            this.remove("[id^=error-hash-link-" + id + "-]");
+            var selector = "[id^=error-hash-link-" + id + "-]";
+            this.remove(selector);
         }
     }
 
