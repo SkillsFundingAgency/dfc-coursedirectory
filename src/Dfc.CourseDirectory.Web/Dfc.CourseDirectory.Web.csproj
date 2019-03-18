@@ -57,6 +57,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="ViewComponents\Courses\ChooseRegion\Default.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="ViewComponents\PublishCourses\PublishCourse\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

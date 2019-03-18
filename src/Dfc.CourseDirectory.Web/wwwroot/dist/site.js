@@ -615,7 +615,7 @@
     Plugin.prototype.getErrorHashLinks = function () {
         var list = [];
         var outerIndex = 0;
-        var elementId = this.element.id;
+        var elementId = this.element.closest(".section").id;
         if (this._errorMessages.length) {
             this._errorMessages.each(function (index, element) {
                 outerIndex = outerIndex + index;

@@ -1,6 +1,5 @@
 ﻿@using Dfc.CourseDirectory.Models.Enums
 @using Dfc.CourseDirectory.Models.Models.Courses
-@using Dfc.CourseDirectory.Web.ViewComponents.AdvancedLearnerLoan
 @using Dfc.CourseDirectory.Web.ViewComponents.CourseName
 @using Dfc.CourseDirectory.Web.ViewComponents.CourseProviderReference
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.AddStartDate
@@ -9,7 +8,6 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.Cost
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.DeliveryType
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.Duration
-@using Dfc.CourseDirectory.Web.ViewComponents.Courses.SelectVenue
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode
 @using Dfc.CourseDirectory.Web.ViewComponents.Extensions
 @using Dfc.CourseDirectory.Web.ViewComponents.Notification
@@ -47,7 +45,7 @@
     @Html.HiddenFor(x => x.QualificationType)
     @Html.HiddenFor(x => x.Mode)
 
-    <div id="sectionCourseName">
+    <div class="section" id="sectionCourseName">
         @await Component.InvokeAsync(nameof(CourseName), new CourseNameModel
         {
             CourseName = Model.CourseName,
@@ -57,7 +55,7 @@
         })
     </div>
 
-    <div id="sectionCourseProviderReference">
+    <div class="section" id="sectionCourseProviderReference">
         @await Component.InvokeAsync(nameof(CourseProviderReference), new CourseProviderReferenceModel
         {
             CourseProviderReference = Model.CourseProviderReference,
@@ -67,7 +65,7 @@
         })
     </div>
 
-    <div id="sectionDeliveryType">
+    <div class="section" id="sectionDeliveryType">
         @await Component.InvokeAsync(nameof(DeliveryType), new DeliveryTypeModel
         {
             DeliveryMode = Model.DeliveryMode,
@@ -77,7 +75,7 @@
         })
     </div>
 
-    <div id="sectionStartDate">
+    <div class="section" id="sectionStartDate">
         @await Component.InvokeAsync(nameof(AddStartDate), new AddStartDateModel()
         {
             StartDateType = Model.StartDateType,
@@ -97,8 +95,8 @@
         })
     </div>
 
-    <div id="sectionVenue">
-        <div class="govuk-form-group" id="VenueChoice" style="@Model.DeliveryMode.IfNotClassroomBasedDisplayNone()">
+    <div class="section" id="sectionVenue" style="@Model.DeliveryMode.IfNotClassroomBasedDisplayNone()">
+       @* <div class="govuk-form-group" id="VenueChoice" style="@Model.DeliveryMode.IfNotClassroomBasedDisplayNone()">*@
             @await Component.InvokeAsync(nameof(ChooseVenue), new ChooseVenueModel()
             {
                 LabelText = "Venue",
@@ -107,10 +105,10 @@
                 //Venues = Model.Venues,
                 VenueId = Model.VenueId ?? (Guid?)null
             })
-        </div>
+        @*</div>*@
     </div>
 
-    <div id="sectionRegion">
+    <div class="section" id="sectionRegion">
         @*No view component here in order to get checkbox list validation to work without it's own form*@
         <div class="govuk-form-group" id="RegionItemsCheckboxList" style="@Model.DeliveryMode.IfNotWorkBasedDisplayNone()">
             <label class="govuk-label" for="select-region">
@@ -149,7 +147,10 @@
         </div>
     </div>
 
-    <div id="sectionUrl">
+
+
+
+    <div class="section" id="sectionUrl">
         @await Component.InvokeAsync(nameof(UrlInput), new UrlInputModel
         {
             Url = Model.Url,
@@ -159,7 +160,7 @@
         })
     </div>
 
-    <div id="sectionCost">
+    <div class="section" id="sectionCost">
         @await Component.InvokeAsync(nameof(Cost), new CostModel
         {
             Cost = Model.Cost,
@@ -173,7 +174,7 @@
         })
     </div>
 
-    <div id="sectionDuration">
+    <div class="section" id="sectionDuration">
         @await Component.InvokeAsync(nameof(Duration), new DurationModel
         {
             DurationLength = Model.DurationLength,
@@ -184,7 +185,8 @@
         })
     </div>
 
-    <div id="FullPartTimeRadioButtons" style="display: none;">
+
+    <div class="section" id="FullPartTimeRadioButtons" style="display: none;">
         @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode.StudyMode), new StudyModeModel
         {
             StudyMode = Model.StudyMode,
@@ -193,7 +195,7 @@
         })
     </div>
 
-    <div id="AttendancePatternRadioButtons" style="display: none;">
+    <div class="section" id="AttendancePatternRadioButtons" style="display: none;">
         @await Component.InvokeAsync(nameof(Attendance), new AttendanceModel
         {
             AttendanceMode = Model.AttendanceMode,
@@ -201,28 +203,33 @@
             HintText = "Select the time of day the course takes place"
         })
     </div>
+    
+<ul class="flex-container">
+    <li class="flex-item">
+        <button name="saveButton" type="submit" class="govuk-button" id="save">
+            Save
+        </button>
+    </li>
+    <li class="flex-item" style="padding-top: 15px">
+        @switch (Model.Mode)
+        {
+            case PublishMode.Migration:
+                @Html.ActionLink("Cancel", "Index", "PublishCourses", new { publishMode = Model.Mode, courseId = Model.CourseId, courseRunId = Model.CourseRunId}, new { @class = "govuk-link" })
+                break;
+            case PublishMode.BulkUpload:
+                @Html.ActionLink("Cancel", "Index", "PublishCourses", new { publishMode = Model.Mode }, new { @class = "govuk-link" })
+                break;
+            default:
+                @Html.ActionLink("Cancel", "Courses", "Provider", new { level = @Model.NotionalNVQLevelv2, courseId = @Model.CourseId, courseRunId = @Model.CourseRunId }, new { @class = "govuk-link" })
+                break;
 
-    <ul class="flex-container">
-        <li class="flex-item">
-            <button name="saveButton" type="submit" class="govuk-button" id="save">
-                Save
-            </button>
-        </li>
-        <li class="flex-item" style="padding-top: 15px">
-            @switch (Model.Mode)
-            {
-                case PublishMode.Migration:
-                    @Html.ActionLink("Cancel", "Index", "PublishCourses", new { publishMode = Model.Mode }, new { @class = "govuk-link" })
-                    break;
-                case PublishMode.BulkUpload:
-                    @Html.ActionLink("Cancel", "Index", "PublishCourses", new { publishMode = Model.Mode }, new { @class = "govuk-link" })
-                    break;
-                default:
-                    @Html.ActionLink("Cancel", "Courses", "Provider", new { level = @Model.NotionalNVQLevelv2, courseId = @Model.CourseId, courseRunId = @Model.CourseRunId }, new { @class = "govuk-link" })
-                    break;
-            }
-        </li>
-    </ul>
+        }
+    </li>
+        
+</ul>
+
+
+
 </form>
 
 <script>

@@ -71,14 +71,20 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
     {
         [Description("Undefined")]
         Undefined = 0,
-        [Description("Add Course")]
-        AddCourse = 1,
-        [Description("Edit Course")]
-        EditCourse = 2,
+        [Description("Add CourseRun")]
+        AddCourseRun = 1,
+        [Description("Edit Course YC")]
+        EditCourseYC = 2,
+        [Description("Edit Course BU")]
+        EditCourseBU = 3,
+        [Description("Edit Course MT")]
+        EditCourseMT = 4,
+        [Description("Copy CourseRun")]
+        CopyCourseRun = 5,
         [Description("Bulk Upload Course")]
-        BulkUploadCourse = 3,
+        BulkUploadCourse = 6,
         [Description("Migrate Course")]
-        MigrateCourse = 4,
+        MigrateCourse = 7,
     }
 
     public class CourseRun : ICourseRun 

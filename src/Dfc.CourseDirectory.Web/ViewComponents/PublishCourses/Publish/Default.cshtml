@@ -1,23 +1,45 @@
 ﻿@using System.Text.RegularExpressions
 @using Dfc.CourseDirectory.Web.ViewComponents.PublishCourses.PublishCourse
+@using Dfc.CourseDirectory.Models.Enums
 @model Dfc.CourseDirectory.Web.ViewModels.PublishCourses.PublishViewModel
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 <div class="govuk-body cd-file-upload">
-    @if (Model.AreAllReadyToBePublished)
+    @if (Model.PublishMode.Equals(PublishMode.BulkUpload))
     {
-        <h1 class="govuk-govuk-grid-column-one-half-l">Publish Your Courses</h1>
-        <p>
-            Your file of @Model.NumberOfCoursesInFiles courses has no errors. Publish them to replace your current courses on the course directory.
-        </p>
+        if (Model.AreAllReadyToBePublished)
+        {
+            <h1 class="govuk-govuk-grid-column-one-half-l">Publish Your Courses</h1>
+            <p>
+                Your file of @Model.NumberOfCoursesInFiles courses has no errors. Publish them to replace your current courses on the course directory.
+            </p>
+        }
+        else
+        {
+            <h1 class="govuk-govuk-grid-column-one-half-l">Fix errors and publish</h1>
+            <p>
+                Your file of @Model.NumberOfCoursesInFiles courses has been uploaded. They will not be listed on the course directory until you publish them. You must fix any errors first.
+            </p>
+        }
     }
-    else
+
+    @if (Model.PublishMode.Equals(PublishMode.Migration))
     {
-        <h1 class="govuk-govuk-grid-column-one-half-l">Fix errors and publish</h1>
-        <p>
-            Your file of @Model.NumberOfCoursesInFiles courses has been uploaded. They will not be listed on the course directory until you publish them. You must fix any errors first.
-        </p>
+        if (Model.AreAllReadyToBePublished)
+        {
+            <h1 class="govuk-govuk-grid-column-one-half-l">Publish Your Pending Courses</h1>
+            <p>
+                Your @Model.NumberOfCoursesInFiles number of pending migration courses contain no errors.
+            </p>
+        }
+        else
+        {
+            <h1 class="govuk-govuk-grid-column-one-half-l">Fix errors and publish</h1>
+            <p>
+                It has not been possible to migrate @Model.NumberOfCoursesInFiles of your courses from the old Course Directory to new Course Directory. These courses cannot be listed on the new Course Directory until you fix the errors.
+            </p>
+        }
     }
 
     <div class="err-top-line"></div>

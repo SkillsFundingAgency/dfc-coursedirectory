@@ -1,9 +1,20 @@
 ﻿
 
+@using Dfc.CourseDirectory.Web.ViewComponents.Notification
 @using Dfc.CourseDirectory.Web.ViewComponents.PublishCourses.Publish
 @model Dfc.CourseDirectory.Web.ViewModels.PublishCourses.PublishViewModel
 
 <form asp-controller="PublishCourses" asp-action="Index" id="PublishCourses">
+    
+    @if (!string.IsNullOrWhiteSpace(Model.NotificationTitle))
+    {
+        @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+        {
+            NotificationTitle = Model.NotificationTitle,
+            NotificationMessage = Model.NotificationMessage,
+            ClassType = "info-summary"
+        })
+    }
 
     @await Component.InvokeAsync(nameof(Publish), new { model = Model })
 
@@ -12,14 +23,53 @@
         @Html.HiddenFor(m => m.PublishMode)
         @Html.HiddenFor(m => m.NumberOfCoursesInFiles)
 
+        @Html.HiddenFor(m => m.CourseId)
+        @Html.HiddenFor(m => m.CourseRunId)
+
         @if (Model.AreAllReadyToBePublished)
         {
             <button name="publishButton" type="submit" class="govuk-button" id="publish">
                 Publish all
             </button>
-        }      
+        }
 
         <div> @Html.ActionLink("Exit without publishing", "Index", "Home", new { }, new { @class = "govuk-link" })</div>
     </div>
 
 </form>
+
+
+
+<script>
+    (function ($) {
+        $(function () {
+            var $courseid = $("#CourseId");
+
+            var $courserunid = $("#CourseRunId");
+
+            if ($courseid.val() !== "") {
+
+                var $courseRowId = $("#" + "CourseId_" + $courseid.val());
+
+                if ($courserunid.val() !== "") {
+
+                    var $courseRunRowId = $("#" + "CourseRunId_" + $courserunid.val());
+
+                    $("html,body").animate({
+                        scrollTop: $courseRunRowId.offset().top
+                    }, "slow");
+
+                } else {
+
+                    $("html,body").animate({
+                        scrollTop: $courseRowId.offset().top
+                    }, "slow");
+                }
+
+
+
+            }
+        });
+    })(jQuery);
+</script>
+

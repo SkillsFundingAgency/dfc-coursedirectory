@@ -43,25 +43,25 @@
 
     <h3 class="govuk-heading-m">Course description</h3>
 
-    <div id="sectionCourseFor">
+    <div class="section" id="sectionCourseFor">
         @await Component.InvokeAsync(nameof(CourseFor), Model.CourseFor)
     </div>
-    <div id="sectionEntryRequirements">
+    <div class="section" id="sectionEntryRequirements">
         @await Component.InvokeAsync(nameof(EntryRequirements), Model.EntryRequirements)
     </div>
-    <div id="sectionWhatWillLearn">
+    <div class="section" id="sectionWhatWillLearn">
         @await Component.InvokeAsync(nameof(WhatWillLearn), Model.WhatWillLearn)
     </div>
-    <div id="sectionHowYouWillLearn">
+    <div class="section" id="sectionHowYouWillLearn">
         @await Component.InvokeAsync(nameof(HowYouWillLearn), Model.HowYouWillLearn)
     </div>
-    <div id="sectionWhatYouNeed">
+    <div class="section" id="sectionWhatYouNeed">
         @await Component.InvokeAsync(nameof(WhatYouNeed), Model.WhatYouNeed)
     </div>
-    <div id="sectionHowAssessed">
+    <div class="section" id="sectionHowAssessed">
         @await Component.InvokeAsync(nameof(HowAssessed), Model.HowAssessed)
     </div>
-    <div id="sectionWhereNext">
+    <div class="section" id="sectionWhereNext">
         @await Component.InvokeAsync(nameof(WhereNext), Model.WhereNext)
     </div>
 

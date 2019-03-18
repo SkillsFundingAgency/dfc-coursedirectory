@@ -8,6 +8,7 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.AddStartDate
 @using Dfc.CourseDirectory.Web.ViewComponents.AdvancedLearnerLoan
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseRegion
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.Duration
 @using Duration = Dfc.CourseDirectory.Web.ViewComponents.Courses.Duration.Duration
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.Cost
@@ -15,6 +16,8 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.Extensions
 @using Microsoft.AspNetCore.Mvc.Razor.Extensions
 @using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Mvc.RazorPages
+@using Microsoft.AspNetCore.Mvc.Rendering
 
 @inject IHttpContextAccessor HttpContextAccessor
 
@@ -121,6 +124,12 @@
     </div>
 
     <div class="govuk-form-group" id="RegionItemsCheckboxList" style="@Model.DeliveryMode.IfNotWorkBasedDisplayNone()">
+        <div id="sectionRegions">
+            @await Component.InvokeAsync(nameof(ChooseRegion))
+        </div>
+    </div>
+
+    @*<div class="govuk-form-group" id="RegionItemsCheckboxList" style="@Model.DeliveryMode.IfNotWorkBasedDisplayNone()">
         <label class="govuk-label" for="select-region">
             @Model.SelectRegion.LabelText
         </label>
@@ -152,7 +161,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div>*@
 
     <div id="sectionUrl">
         @await Component.InvokeAsync(nameof(UrlInput), new UrlInputModel
@@ -231,14 +240,14 @@
                 }
                 break;
             case AddCoursePage.Summary:
-                    <div class="govuk-form-group">
-                        @*id="goToSummary"*@
-                        <button type="submit" class="govuk-button" id="publish" value="publish">
-                            Summary
-                        </button>
+                <div class="govuk-form-group">
+                    @*id="goToSummary"*@
+                    <button type="submit" class="govuk-button" id="publish" value="publish">
+                        Summary
+                    </button>
 
-                        <a class="govuk-link" href="#" id="goToSection1Link">Page 1</a>
-                    </div>
+                    <a class="govuk-link" href="#" id="goToSection1Link">Page 1</a>
+                </div>
                 break;
         }
     }
@@ -253,7 +262,7 @@
             var $courseProviderReference = $("#@nameof(Model.CourseProviderReference)").govUkInput();
             var $deliveryRadios = $("#DeliveryModeRadioButtons input[type=radio]");
             var $regionItemsCheckboxList = $("#RegionItemsCheckboxList");
-            
+
             var $duration = $("#duration").govUkDurationInput();
             var $checkboxsregions = $("#SelectRegionCheckBoxes").govUkCheckboxes();
             var $checkboxVenues = $("#SelectVenueCheckBoxes").govUkCheckboxes();

@@ -38,8 +38,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             var providerUKPRN = User?.Claims?.SingleOrDefault(x => x.Type == "UKPRN");
             if (providerUKPRN != null) {
-                _session.SetInt32("UKPRN", int.Parse(providerUKPRN.Value));
+                 _session.SetInt32("UKPRN", int.Parse(providerUKPRN.Value)); 
             }
+
+           
         }
 
         public IActionResult Index(string errmsg)

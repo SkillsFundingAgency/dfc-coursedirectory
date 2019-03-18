@@ -1,5 +1,5 @@
-﻿@using Dfc.CourseDirectory.Models.Models.Courses
-@using Dfc.CourseDirectory.Web.ViewComponents.AdvancedLearnerLoan
+﻿@using Dfc.CourseDirectory.Models.Enums
+@using Dfc.CourseDirectory.Models.Models.Courses
 @using Dfc.CourseDirectory.Web.ViewComponents.CourseName
 @using Dfc.CourseDirectory.Web.ViewComponents.CourseProviderReference
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.AddStartDate
@@ -8,9 +8,9 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.Cost
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.DeliveryType
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.Duration
-@using Dfc.CourseDirectory.Web.ViewComponents.Courses.SelectVenue
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode
 @using Dfc.CourseDirectory.Web.ViewComponents.Extensions
+@using Dfc.CourseDirectory.Web.ViewComponents.Notification
 @using Dfc.CourseDirectory.Web.ViewComponents.UrlInput
 @using StudyMode = Dfc.CourseDirectory.Models.Models.Courses.StudyMode
 @model Dfc.CourseDirectory.Web.ViewModels.CopyCourse.CopyCourseRunViewModel
@@ -21,11 +21,21 @@
 
 <form asp-controller="CopyCourseRun" asp-action="Index" id="editCourseRun" onkeypress="return event.keyCode != 13;">
 
+    <div id="errorsummary" style="display:none">
+        @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+        {
+
+            NotificationTitle = "There is an issue with this qualification",
+            NotificationMessage = "",
+            ClassType = "error-summary"
+        })
+    </div>
+
     @Html.HiddenFor(x => x.CourseId)
     @Html.HiddenFor(x => x.CourseRunId)
     @Html.HiddenFor(x => x.QualificationType)
 
-    <div id="sectionCourseName">
+    <div class="section" id="sectionCourseName">
         @await Component.InvokeAsync(nameof(CourseName), new CourseNameModel
         {
             CourseName = Model.CourseName,
@@ -35,7 +45,7 @@
         })
     </div>
 
-    <div id="sectionCourseProviderReference">
+    <div class="section" id="sectionCourseProviderReference">
         @await Component.InvokeAsync(nameof(CourseProviderReference), new CourseProviderReferenceModel
         {
             CourseProviderReference = Model.CourseProviderReference,
@@ -45,7 +55,7 @@
         })
     </div>
 
-    <div id="sectionDeliveryType">
+    <div class="section" id="sectionDeliveryType">
         @await Component.InvokeAsync(nameof(DeliveryType), new DeliveryTypeModel
         {
             DeliveryMode = Model.DeliveryMode,
@@ -55,7 +65,7 @@
         })
     </div>
 
-    <div id="sectionStartDate">
+    <div class="section" id="sectionStartDate">
         @await Component.InvokeAsync(nameof(AddStartDate), new AddStartDateModel()
         {
             StartDateType = Model.StartDateType,
@@ -75,55 +85,62 @@
         })
     </div>
 
-    @*No view component here in order to get checkbox list validation to work without it's own form*@
-    <div class="govuk-form-group" id="VenueChoice" style="@Model.DeliveryMode.IfNotClassroomBasedDisplayNone()">
+    <div class="section" id="sectionVenue" style="@Model.DeliveryMode.IfNotClassroomBasedDisplayNone()">
+        @* <div class="govuk-form-group" id="VenueChoice" style="@Model.DeliveryMode.IfNotClassroomBasedDisplayNone()">*@
         @await Component.InvokeAsync(nameof(ChooseVenue), new ChooseVenueModel()
-        {
-            LabelText = "Venue",
-            AriaDescribedBy = "Venue",
-            HintText = "Select course run venue",
-            Venues = Model.Venues,
-            VenueId = Model.VenueId
-        })
+   {
+       LabelText = "Venue",
+       AriaDescribedBy = "Venue",
+       HintText = "Select course run venue",
+       Venues = Model.Venues,
+       VenueId = Model.VenueId
+   })
+        @*</div>*@
     </div>
 
-    <div class="govuk-form-group" id="RegionItemsCheckboxList" style="@Model.DeliveryMode.IfNotWorkBasedDisplayNone()">
-        <label class="govuk-label" for="select-region">
-            @Model.SelectRegion.LabelText
-        </label>
-        <span id="select-region-hint" class="govuk-hint">
-            @Model.SelectRegion.HintText
-        </span>
+    <div class="section" id="sectionRegion">
+        @*No view component here in order to get checkbox list validation to work without it's own form*@
+        <div class="govuk-form-group" id="RegionItemsCheckboxList" style="@Model.DeliveryMode.IfNotWorkBasedDisplayNone()">
+            <label class="govuk-label" for="select-region">
+                @Model.SelectRegion.LabelText
+            </label>
+            <span id="select-region-hint" class="govuk-hint">
+                @Model.SelectRegion.HintText
+            </span>
 
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-full">
-                <div class="govuk-checkboxes" id="SelectRegionCheckBoxes"
-                     val-required-message="Select a region">
-                    @{ var j = 0; }
-                    @if (Model.SelectRegion.RegionItems.Count() == 1)
+            @*<div class="govuk-grid-row">
+                <div class="govuk-grid-column-full">*@
+            <div class="govuk-checkboxes" id="SelectRegionCheckBoxes"
+                 val-required-message="Select a region">
+                @{ var j = 0; }
+                @if (Model.SelectRegion.RegionItems.Count() == 1)
+                {
+                    <div class="govuk-checkboxes__item">
+                        <input class="govuk-checkboxes__input" id="RegionName-@j" name="SelectedRegions" type="checkbox" value="@Model.SelectRegion.RegionItems.First().Id" checked="checked" onclick="return false;" />
+                        <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@Model.SelectRegion.RegionItems.First().RegionName</label>
+                    </div>
+                }
+                else
+                {
+                    foreach (var item in Model.SelectRegion.RegionItems)
                     {
+                        j++;
                         <div class="govuk-checkboxes__item">
-                            <input class="govuk-checkboxes__input" id="RegionName-@j" name="SelectedRegions" type="checkbox" value="@Model.SelectRegion.RegionItems.First().Id" checked="checked" onclick="return false;" />
-                            <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@Model.SelectRegion.RegionItems.First().RegionName</label>
+                            <input class="govuk-checkboxes__input" id="RegionName-@j" name="SelectedRegions" type="checkbox" value="@item.Id" @item.Checked.ThenNullableCheck() />
+                            <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@item.RegionName</label>
                         </div>
                     }
-                    else
-                    {
-                        foreach (var item in Model.SelectRegion.RegionItems)
-                        {
-                            j++;
-                            <div class="govuk-checkboxes__item">
-                                <input class="govuk-checkboxes__input" id="RegionName-@j" name="SelectedRegions" type="checkbox" value="@item.Id" @item.Checked.ThenNullableCheck() />
-                                <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@item.RegionName</label>
-                            </div>
-                        }
-                    }
-                </div>
+                }
             </div>
+            @*</div>
+                </div>*@
         </div>
     </div>
 
-    <div id="sectionUrl">
+
+
+
+    <div class="section" id="sectionUrl">
         @await Component.InvokeAsync(nameof(UrlInput), new UrlInputModel
         {
             Url = Model.Url,
@@ -133,7 +150,7 @@
         })
     </div>
 
-    <div id="sectionCost">
+    <div class="section" id="sectionCost">
         @await Component.InvokeAsync(nameof(Cost), new CostModel
         {
             Cost = Model.Cost,
@@ -147,7 +164,7 @@
         })
     </div>
 
-    <div id="sectionDuration">
+    <div class="section" id="sectionDuration">
         @await Component.InvokeAsync(nameof(Duration), new DurationModel
         {
             DurationLength = Model.DurationLength,
@@ -158,7 +175,8 @@
         })
     </div>
 
-    <div id="FullPartTimeRadioButtons" style="display: none;">
+
+    <div class="section" id="FullPartTimeRadioButtons" style="display: none;">
         @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode.StudyMode), new StudyModeModel
         {
             StudyMode = Model.StudyMode,
@@ -167,7 +185,7 @@
         })
     </div>
 
-    <div id="AttendancePatternRadioButtons" style="display: none;">
+    <div class="section" id="AttendancePatternRadioButtons" style="display: none;">
         @await Component.InvokeAsync(nameof(Attendance), new AttendanceModel
         {
             AttendanceMode = Model.AttendanceMode,
@@ -175,7 +193,6 @@
             HintText = "Select the time of day the course takes place"
         })
     </div>
-    
     <ul class="flex-container">
         <li class="flex-item">
             <button name="saveButton" type="submit" class="govuk-button" id="save">
@@ -185,15 +202,17 @@
         <li class="flex-item" style="padding-top: 15px">
             @Html.ActionLink("Cancel", "Courses", "Provider", new { qualificationType = @Model.QualificationType }, new { @class = "govuk-link" })
         </li>
-        
+
     </ul>
+
 
 
 </form>
 
 <script>
     (function($) {
-        $(function() {
+        $(function () {
+            var validStates = [];
             var $courseName = $("#@nameof(Model.CourseName)").govUkInput();
             var $URL = $("#@nameof(Model.Url)").govUkInput();
             var $courseProviderReference = $("#@nameof(Model.CourseProviderReference)").govUkInput();
@@ -201,6 +220,9 @@
             var $regionItemsCheckboxList = $("#RegionItemsCheckboxList");
             var $regionCheckboxes = $("#SelectRegionCheckBoxes input[type=checkbox]");
             var $duration = $("#duration").govUkDurationInput();
+
+            var $durationDropdown = $("#durationDropDown").govUkSelect();
+
             var $checkboxsregions = $("#SelectRegionCheckBoxes").govUkCheckboxes();
 
             var $radioDeliveryMode = $("#DeliveryModeRadioButtons").govUkRadios();
@@ -220,15 +242,15 @@
             var isOnline = false;
             var isWorkBased = false;
 
-
             var $fullPartTimeRadioButtons = $("#FullPartTimeRadioButtons");
             var $attendancePatternRadioButtons = $("#AttendancePatternRadioButtons");
 
+
             switch ($radioDeliveryMode.find("input[type='radio']:checked").val()) {
             case "ClassroomBased":
-                    {
-                        $fullPartTimeRadioButtons.show();
-                        $attendancePatternRadioButtons.show();
+            {
+                $fullPartTimeRadioButtons.show();
+                $attendancePatternRadioButtons.show();
                 isClassroomBased = true;
                 isOnline = false;
                 isWorkBased = false;
@@ -256,246 +278,249 @@
 
             var $button = $("#save");
 
+
+            validate();
+
+
             function isAllValid(currentValue) {
                 return currentValue === true;
             }
 
-            $button.on("click",
-                function(event) {
-                    event.preventDefault();
+            function validate() {
 
-                    var validStates = [];
+                validStates = [];
 
-                    if (isClassroomBased) {
-                        if ($.requiredValidate($selectedvenue.val())) {
-                            $selectedvenue.govUkSelect("validState");
+                $courseName.govUkInput("validState");
+                $courseProviderReference.govUkInput("validState");
+                $duration.govUkDurationInput("validState");
+                $durationDropdown.govUkSelect("validState");
+                $checkboxsregions.govUkCheckboxes("validState");
+                $selectedvenue.govUkSelect("validState");
+                $cost.govUkInput("validState");
+                $URL.govUkInput("validState");
+                $radioDeliveryMode.govUkRadios("validState");
+                $radioStudyMode.govUkRadios("validState");
+                $radioAttendance.govUkRadios("validState");
+                $startDate.govUkDateInput("validState");
+
+                if (isClassroomBased) {
+                    if ($.requiredValidate($selectedvenue.val())) {
+                        $selectedvenue.govUkSelect("validState");
                         validStates.push(true);
                     } else {
-                            $selectedvenue.govUkSelect("invalidState", $selectedvenue.attr("val-required-message"));
-                        validStates.push(false);
-                        }
-                        }
-
-
-
-                    if ((!$.requiredValidate($cost.val()) && !$.requiredValidate($costDescription.val()))) {
-                        $cost.govUkInput("invalidState", $cost.attr("val-required-message"));
-                        validStates.push(false);
-                    } else if (
-                        !$.regexValidate({ regex: $costDescription.attr("val-regex") }, $costDescription.val())) {
-                        $costDescription.govUkTextarea("invalidState", $costDescription.attr("val-regex-message"));
-                        validStates.push(false);
-                    }else if (
-                        !$.maxLengthValidate({ max: $costDescription.attr("val-max-length") }, $costDescription.val())) {
-                        $costDescription.govUkTextarea("invalidState", $costDescription.attr("val-max-length-message"));
+                        $selectedvenue.govUkSelect("invalidState", $selectedvenue.attr("val-required-message"));
                         validStates.push(false);
                     }
-                    else {
-
-                        $cost.govUkInput("validState");
-                        $costDescription.govUkTextarea("validState");
-                        validStates.push(true);
-                    }
+                }
 
 
 
+                if ((!$.requiredValidate($cost.val()) && !$.requiredValidate($costDescription.val()))) {
+                    $cost.govUkInput("invalidState", $cost.attr("val-required-message"));
+                    validStates.push(false);
+                } else if (
+                    !$.regexValidate({ regex: $costDescription.attr("val-regex") }, $costDescription.val())) {
+                    $costDescription.govUkTextarea("invalidState", $costDescription.attr("val-regex-message"));
+                    validStates.push(false);
+                } else if (
+                    !$.maxLengthValidate({ max: $costDescription.attr("val-max-length") }, $costDescription.val())) {
+                    $costDescription.govUkTextarea("invalidState", $costDescription.attr("val-max-length-message"));
+                    validStates.push(false);
+                }
+                else {
 
+                    $cost.govUkInput("validState");
+                    $costDescription.govUkTextarea("validState");
+                    validStates.push(true);
+                }
 
-
-
-                    if (isWorkBased) {
+                if (isWorkBased) {
                     if ($.requiredValidate($checkboxsregions.find("input[type='checkbox']:checked").val())) {
                         $checkboxsregions.govUkCheckboxes("validState");
                         validStates.push(true);
                     } else {
                         $checkboxsregions.govUkCheckboxes("invalidState", $checkboxsregions.attr("val-required-message"));
                         validStates.push(false);
-                        }
-                        }
-
-
-
-                    if (!$.requiredValidate($courseName.val())) {
-                        $courseName.govUkInput("invalidState", $courseName.attr("val-required-message"));
-                        validStates.push(false);
-                    } else if (
-                        !$.regexValidate({ regex: $courseName.attr("val-regex") }, $courseName.val())) {
-                        $courseName.govUkInput("invalidState", $courseName.attr("val-regex-message"));
-                        validStates.push(false);
-                    }else if (
-                        !$.maxLengthValidate({ max: $courseName.attr("val-max-length") }, $courseName.val())) {
-                        $courseName.govUkInput("invalidState", $courseName.attr("val-max-length-message"));
-                        validStates.push(false);
-                        }
-                    else {
-
-                        $courseName.govUkInput("validState");
-                        validStates.push(true);
                     }
+                }
 
-                    if (!$.regexValidate({ regex: $courseProviderReference.attr("val-regex") }, $courseProviderReference.val())) {
-                        $courseProviderReference.govUkInput("invalidState", $courseProviderReference.attr("val-regex-message"));
-                        validStates.push(false);
-                    }else if (
-                        !$.maxLengthValidate({ max: $courseProviderReference.attr("val-max-length") }, $courseProviderReference.val())) {
-                        $courseProviderReference.govUkInput("invalidState", $courseProviderReference.attr("val-max-length-message"));
-                        validStates.push(false);
-                    }
-                    else {
+                if (!$.requiredValidate($courseName.val())) {
+                    $courseName.govUkInput("invalidState", $courseName.attr("val-required-message"));
+                    validStates.push(false);
+                } else if (
+                    !$.regexValidate({ regex: $courseName.attr("val-regex") }, $courseName.val())) {
+                    $courseName.govUkInput("invalidState", $courseName.attr("val-regex-message"));
+                    validStates.push(false);
+                } else if (
+                    !$.maxLengthValidate({ max: $courseName.attr("val-max-length") }, $courseName.val())) {
+                    $courseName.govUkInput("invalidState", $courseName.attr("val-max-length-message"));
+                    validStates.push(false);
+                }
+                else {
 
-                        $courseProviderReference.govUkInput("validState");
-                        validStates.push(true);
-                    }
+                    $courseName.govUkInput("validState");
+                    validStates.push(true);
+                }
 
+                if (!$.regexValidate({ regex: $courseProviderReference.attr("val-regex") }, $courseProviderReference.val())) {
+                    $courseProviderReference.govUkInput("invalidState", $courseProviderReference.attr("val-regex-message"));
+                    validStates.push(false);
+                } else if (
+                    !$.maxLengthValidate({ max: $courseProviderReference.attr("val-max-length") }, $courseProviderReference.val())) {
+                    $courseProviderReference.govUkInput("invalidState", $courseProviderReference.attr("val-max-length-message"));
+                    validStates.push(false);
+                }
+                else {
 
+                    $courseProviderReference.govUkInput("validState");
+                    validStates.push(true);
+                }
 
+                if (!$.regexValidate({ regex: $URL.attr("val-regex") }, $URL.val())) {
+                    $URL.govUkInput("invalidState", $URL.attr("val-regex-message"));
+                    validStates.push(false);
+                } else if (
+                    !$.maxLengthValidate({ max: $URL.attr("val-max-length") }, $URL.val())) {
+                    $URL.govUkInput("invalidState", $URL.attr("val-max-length-message"));
+                    validStates.push(false);
+                }
+                else {
 
+                    $URL.govUkInput("validState");
+                    validStates.push(true);
+                }
 
+                if (!$.requiredValidate($duration.find("input").val())) {
+                    $duration.govUkDurationInput("invalidState", $duration.attr("val-duration-message"));
+                    validStates.push(false);
+                } else if (!$.rangeValidate({
+                    min: $duration.attr("val-range-min"),
+                    max: $duration.attr("val-range-max")
+                },
+                    $duration.find("input").val())) {
+                    $duration.govUkDurationInput("invalidState", $duration.attr("val-duration-message"));
+                    validStates.push(false);
+                } else if (!$.requiredValidate($duration.find("select").val())) {
+                    $duration.govUkDurationInput("invalidState", $duration.attr("val-duration-message"));
+                    validStates.push(false);
+                } else {
+                    $duration.govUkDurationInput("validState");
+                    validStates.push(true);
+                }
 
+                if ($.requiredValidate($radioDeliveryMode.find("input[type='radio']:checked").val())) {
+                    $radioDeliveryMode.govUkRadios("validState");
+                    validStates.push(true);
+                } else {
+                    $radioDeliveryMode.govUkRadios("invalidState", $radioDeliveryMode.attr("val-required-message"));
+                    validStates.push(false);
+                }
 
-
-
-
-                    if (!$.regexValidate({ regex: $URL.attr("val-regex") }, $URL.val())) {
-                        $URL.govUkInput("invalidState", $URL.attr("val-regex-message"));
-                        validStates.push(false);
-                    }else if (
-                        !$.maxLengthValidate({ max: $URL.attr("val-max-length") }, $URL.val())) {
-                        $URL.govUkInput("invalidState", $URL.attr("val-max-length-message"));
-                        validStates.push(false);
-                    }
-                    else {
-
-                        $URL.govUkInput("validState");
-                        validStates.push(true);
-                    }
-
-
-
-
-                    if (!$.requiredValidate($duration.find("input").val())) {
-                        $duration.govUkDurationInput("invalidState", $duration.attr("val-duration-message"));
-                        validStates.push(false);
-                    } else if (!$.rangeValidate({
-                            min: $duration.attr("val-range-min"),
-                            max: $duration.attr("val-range-max")
-                        },
-                        $duration.find("input").val())) {
-                        $duration.govUkDurationInput("invalidState", $duration.attr("val-duration-message"));
-                        validStates.push(false);
-                    } else if (!$.requiredValidate($duration.find("select").val())) {
-                        $duration.govUkDurationInput("invalidState", $duration.attr("val-duration-message"));
-                        validStates.push(false);
-                    } else {
-                        $duration.govUkDurationInput("validState");
-                        validStates.push(true);
-                    }
-
-
-
-
-
-
-
-
-
-
-
-                    if ($.requiredValidate($radioDeliveryMode.find("input[type='radio']:checked").val())) {
-                        $radioDeliveryMode.govUkRadios("validState");
-                        validStates.push(true);
-                    } else {
-                        $radioDeliveryMode.govUkRadios("invalidState", $radioDeliveryMode.attr("val-required-message"));
-                        validStates.push(false);
-                    }
-
-
-                    switch ($radioDeliveryMode.find("input[type='radio']:checked").val()) {
-                        case "ClassroomBased":
-                            {
-                                if ($.requiredValidate($radioStudyMode.find("input[type='radio']:checked").val())) {
-                                    $radioStudyMode.govUkRadios("validState");
-                                    validStates.push(true);
-                                } else {
-                                    $radioStudyMode.govUkRadios("invalidState", $radioStudyMode.attr("val-required-message"));
-                                    validStates.push(false);
-                                }
-
-                                if ($.requiredValidate($radioAttendance.find("input[type='radio']:checked").val())) {
-                                    $radioAttendance.govUkRadios("validState");
-                                    validStates.push(true);
-                                } else {
-                                    $radioAttendance.govUkRadios("invalidState", $radioAttendance.attr("val-required-message"));
-                                    validStates.push(false);
-                                }
-                                break;
+                switch ($radioDeliveryMode.find("input[type='radio']:checked").val()) {
+                    case "ClassroomBased":
+                        {
+                            if ($.requiredValidate($radioStudyMode.find("input[type='radio']:checked").val())) {
+                                $radioStudyMode.govUkRadios("validState");
+                                validStates.push(true);
+                            } else {
+                                $radioStudyMode.govUkRadios("invalidState", $radioStudyMode.attr("val-required-message"));
+                                validStates.push(false);
                             }
-                        case "Online":
-                            {
 
-                                break;
+                            if ($.requiredValidate($radioAttendance.find("input[type='radio']:checked").val())) {
+                                $radioAttendance.govUkRadios("validState");
+                                validStates.push(true);
+                            } else {
+                                $radioAttendance.govUkRadios("invalidState", $radioAttendance.attr("val-required-message"));
+                                validStates.push(false);
                             }
-                        case "WorkBased":
-                            {
+                            break;
+                        }
+                    case "Online":
+                        {
 
-                                break;
-                            }
+                            break;
+                        }
+                    case "WorkBased":
+                        {
+
+                            break;
+                        }
+                }
+
+                var radioValue = $("input[name='StartDateType']:checked").val();
+                if (radioValue.toUpperCase() === "SPECIFIEDSTARTDATE") {
+
+                    var startDateValue = $startDate.govUkDateInput("getISODateString");
+
+                    if (startDateValue === "") {
+                        $startDate.govUkDateInput("invalidState", $startDate.attr("val-required-message"));
+                        validStates.push(false);
                     }
-
-
-                    var radioValue = $("input[name='StartDateType']:checked").val();
-                    if (radioValue.toUpperCase() === "SPECIFIEDSTARTDATE") {
-
-                        var startDateValue = $startDate.govUkDateInput("getISODateString");
-
-                        if (startDateValue === "") {
-                            $startDate.govUkDateInput("invalidState", $startDate.attr("val-required-message"));
+                    else {
+                        if (!$.dateValidate(startDateValue)) {
+                            $startDate.govUkDateInput("invalidState", $startDate.attr("val-date-message"));
                             validStates.push(false);
                         }
-                        else {
-                            if (!$.dateValidate(startDateValue)) {
-                                $startDate.govUkDateInput("invalidState", $startDate.attr("val-date-message"));
-                                validStates.push(false);
-                            }
-                            else if ($.pastDateValidate({ ref: $startDate.attr("val-past-date-ref") }, startDateValue)) {
-                                $startDate.govUkDateInput("invalidState", $startDate.attr("val-past-date-message"));
-                                validStates.push(false);
-                            }
-                            else if ($.futureDateValidate({ ref: $startDate.attr("val-future-date-ref") }, startDateValue)) {
-                                $startDate.govUkDateInput("invalidState", $startDate.attr("val-future-date-message"));
-                                validStates.push(false);
-                            }
-                            else if ($.dateValidate(startDateValue)) {
-                                $startDate.govUkDateInput("validState");
-                                validStates.push(true);
-                            }
+                        else if ($.pastDateValidate({ ref: $startDate.attr("val-past-date-ref") }, startDateValue)) {
+                            $startDate.govUkDateInput("invalidState", $startDate.attr("val-past-date-message"));
+                            validStates.push(false);
                         }
+                        else if ($.futureDateValidate({ ref: $startDate.attr("val-future-date-ref") }, startDateValue)) {
+                            $startDate.govUkDateInput("invalidState", $startDate.attr("val-future-date-message"));
+                            validStates.push(false);
+                        }
+                        else if ($.dateValidate(startDateValue)) {
+                            $startDate.govUkDateInput("validState");
+                            validStates.push(true);
+                        }
+                    }
+                };
 
-                        };
+                var errorArray = $("[class*='govuk-error-message'");
+                if (errorArray.length > 0) {
+
+
+                    var $errorField = $("#" + errorArray[0].closest('.section').id);
+                    $('html,body').animate({ scrollTop: $errorField.offset().top }, 'slow');
+
+                    var notificationBody = "";
+                    $.each(errorArray, function (index, value) {
+                        var $field = value.closest('.section').id;
+                        notificationBody = notificationBody + "<a href='#' id='error' class='govuk-link errorlink' style=color:#b10e1e data-error-field=" + $field + ">"+ value.innerHTML +"</a></br>";
+                    });
+
+                    $('.cd-error-summary__body').html(notificationBody);
+
+                    $('#errorsummary').css({ "display": "block" });
+                }
+
+                $('.errorlink').on("click",
+                    function(e) {
+                        e.preventDefault();
+
+                        var $field = $("#" + $(this).attr("data-error-field"));
+                        $('html,body').animate({ scrollTop: $field.offset().top }, 'slow');
+
+                    });
+            }
 
 
 
+            $button.on("click",
+                function(event) {
+                    event.preventDefault();
+
+                    validate();
 
                     if (validStates.every(isAllValid)) {
-
-                        //alert("OK");
                         $("#editCourseRun").submit();
                     }
 
                 });
 
-
-
-
-
-
-
-
-
-
-
             $deliveryRadios.change(function () {
-                var $venueChoice = $("#VenueChoice");
+                var $venueChoice = $("#sectionVenue");
                 var $fullPartTimeRadioButtons = $("#FullPartTimeRadioButtons");
                 var $attendancePatternRadioButtons = $("#AttendancePatternRadioButtons");
                 var $specifiedStartDate = $("#SpecifiedStartDate");
@@ -503,7 +528,6 @@
 
                 var $dayTimeAttendance = $("#@AttendancePattern.Daytime");
                 var $studyMode = $("#@StudyMode.FullTime");
-
                 switch (this.id) {
                     case "ClassroomBased":
                         {
