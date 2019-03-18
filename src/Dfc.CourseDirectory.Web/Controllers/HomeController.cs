@@ -35,13 +35,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _contextAccessor = contextAccessor;
             _courseService = courseService;
             //Set this todisplay the Search Provider fork of the ProviderSearchResult ViewComponent
-
-            var providerUKPRN = User?.Claims?.SingleOrDefault(x => x.Type == "UKPRN");
-            if (providerUKPRN != null) {
-                 _session.SetInt32("UKPRN", int.Parse(providerUKPRN.Value)); 
-            }
-
-           
         }
 
         public IActionResult Index(string errmsg)
