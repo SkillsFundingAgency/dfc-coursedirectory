@@ -41,8 +41,6 @@
         </div>
     </div>
 
-
-
     <h3 class="govuk-heading-m">Course description</h3>
 
     <div class="section" id="sectionCourseFor">
@@ -111,7 +109,7 @@
         $(function () {
             var validStates = [];
             var $save = $("#save");
-            var $errorsummary = $("#errorsummary").govUkErrorSummary();
+            var $errorSummary = $("#errorsummary").govUkErrorSummary();
             var $courseFor = $("#@nameof(Model.CourseFor)").govUkTextarea();
             var $entryRequirements = $("#@nameof(Model.EntryRequirements)").govUkTextarea();
             var $whatWillLearn = $("#@nameof(Model.WhatWillLearn)").govUkTextarea();
@@ -128,6 +126,7 @@
 
             function validate() {
                 validStates = [];
+                $errorSummary.govUkErrorSummary("empty");
                 $courseFor.govUkTextarea("validState");
                 $entryRequirements.govUkTextarea("validState");
                 $whatWillLearn.govUkTextarea("validState");
@@ -139,47 +138,47 @@
                 if (!$.requiredValidate($courseFor.val())) {
                     $courseFor.govUkTextarea("invalidState", $courseFor.attr("val-required-message"));
                     var courseForErrorHashLinks = $courseFor.govUkTextarea("getErrorHashLinks");
-                    $errorsummary.govUkErrorSummary("add", courseForErrorHashLinks);
-                    $errorsummary.govUkErrorSummary("show");
+                    $errorSummary.govUkErrorSummary("add", courseForErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
                     validStates.push(false);
                 } else if (
                     !$.regexValidate({ regex: $courseFor.attr("val-regex") }, $courseFor.val())) {
                     $courseFor.govUkTextarea("invalidState", $courseFor.attr("val-regex-message"));
                     var courseForErrorHashLinks = $courseFor.govUkTextarea("getErrorHashLinks");
-                    $errorsummary.govUkErrorSummary("add", courseForErrorHashLinks);
-                    $errorsummary.govUkErrorSummary("show");
+                    $errorSummary.govUkErrorSummary("add", courseForErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
                     validStates.push(false);
                 } else if (
                     !$.maxLengthValidate({ max: $courseFor.attr("val-max-length") }, $courseFor.val())) {
                     $courseFor.govUkTextarea("invalidState", $courseFor.attr("val-max-length-message"));
                     var courseForErrorHashLinks = $courseFor.govUkTextarea("getErrorHashLinks");
-                    $errorsummary.govUkErrorSummary("add", courseForErrorHashLinks);
-                    $errorsummary.govUkErrorSummary("show");
+                    $errorSummary.govUkErrorSummary("add", courseForErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
                     validStates.push(false);
                 } else {
                     $courseFor.govUkTextarea("validState");
-                    $errorsummary.govUkErrorSummary("removeErrorHashLinksFor", $courseFor[0].id);
-                    $errorsummary.govUkErrorSummary("hideIfEmpty")
+                    $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $courseFor[0].id);
+                    $errorSummary.govUkErrorSummary("hideIfEmpty")
                     validStates.push(true);
                 }
 
                 if (!$.regexValidate({ regex: $entryRequirements.attr("val-regex") }, $entryRequirements.val())) {
                     $entryRequirements.govUkTextarea("invalidState", $entryRequirements.attr("val-regex-message"));
                     var entryRequirementsErrorHashLinks = $entryRequirements.govUkTextarea("getErrorHashLinks");
-                    $errorsummary.govUkErrorSummary("add", entryRequirementsErrorHashLinks);
-                    $errorsummary.govUkErrorSummary("show");
+                    $errorSummary.govUkErrorSummary("add", entryRequirementsErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
                     validStates.push(false);
                 } else if (
                     !$.maxLengthValidate({ max: $entryRequirements.attr("val-max-length") }, $entryRequirements.val())) {
                     $entryRequirements.govUkTextarea("invalidState", $entryRequirements.attr("val-max-length-message"));
                     var entryRequirementsErrorHashLinks = $entryRequirements.govUkTextarea("getErrorHashLinks");
-                    $errorsummary.govUkErrorSummary("add", entryRequirementsErrorHashLinks);
-                    $errorsummary.govUkErrorSummary("show");
+                    $errorSummary.govUkErrorSummary("add", entryRequirementsErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
                     validStates.push(false);
                 } else {
                     $entryRequirements.govUkTextarea("validState");
-                    $errorsummary.govUkErrorSummary("removeErrorHashLinksFor", $entryRequirements[0].id);
-                    $errorsummary.govUkErrorSummary("hideIfEmpty")
+                    $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $entryRequirements[0].id);
+                    $errorSummary.govUkErrorSummary("hideIfEmpty")
                     validStates.push(true);
                 }
 
@@ -187,20 +186,20 @@
                 if (!$.regexValidate({ regex: $whatWillLearn.attr("val-regex") }, $whatWillLearn.val())) {
                     $whatWillLearn.govUkTextarea("invalidState", $whatWillLearn.attr("val-regex-message"));
                     var whatWillLearnErrorHashLinks = $whatWillLearn.govUkTextarea("getErrorHashLinks");
-                    $errorsummary.govUkErrorSummary("add", whatWillLearnErrorHashLinks);
-                    $errorsummary.govUkErrorSummary("show");
+                    $errorSummary.govUkErrorSummary("add", whatWillLearnErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
                     validStates.push(false);
                 } else if (
                     !$.maxLengthValidate({ max: $whatWillLearn.attr("val-max-length") }, $whatWillLearn.val())) {
                     $whatWillLearn.govUkTextarea("invalidState", $whatWillLearn.attr("val-max-length-message"));
                     var whatWillLearnErrorHashLinks = $whatWillLearn.govUkTextarea("getErrorHashLinks");
-                    $errorsummary.govUkErrorSummary("add", whatWillLearnErrorHashLinks);
-                    $errorsummary.govUkErrorSummary("show");
+                    $errorSummary.govUkErrorSummary("add", whatWillLearnErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
                     validStates.push(false);
                 } else {
                     $whatWillLearn.govUkTextarea("validState");
-                    $errorsummary.govUkErrorSummary("removeErrorHashLinksFor", $whatWillLearn[0].id);
-                    $errorsummary.govUkErrorSummary("hideIfEmpty")
+                    $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $whatWillLearn[0].id);
+                    $errorSummary.govUkErrorSummary("hideIfEmpty")
                     validStates.push(true);
                 }
 
@@ -208,20 +207,20 @@
                 if (!$.regexValidate({ regex: $howYouWillLearn.attr("val-regex") }, $howYouWillLearn.val())) {
                     $howYouWillLearn.govUkTextarea("invalidState", $howYouWillLearn.attr("val-regex-message"));
                     var howYouWillLearnErrorHashLinks = $howYouWillLearn.govUkTextarea("getErrorHashLinks");
-                    $errorsummary.govUkErrorSummary("add", howYouWillLearnErrorHashLinks);
-                    $errorsummary.govUkErrorSummary("show");
+                    $errorSummary.govUkErrorSummary("add", howYouWillLearnErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
                     validStates.push(false);
                 } else if (
                     !$.maxLengthValidate({ max: $howYouWillLearn.attr("val-max-length") }, $howYouWillLearn.val())) {
                     $howYouWillLearn.govUkTextarea("invalidState", $howYouWillLearn.attr("val-max-length-message"));
                     var howYouWillLearnErrorHashLinks = $howYouWillLearn.govUkTextarea("getErrorHashLinks");
-                    $errorsummary.govUkErrorSummary("add", howYouWillLearnErrorHashLinks);
-                    $errorsummary.govUkErrorSummary("show");
+                    $errorSummary.govUkErrorSummary("add", howYouWillLearnErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
                     validStates.push(false);
                 } else {
                     $howYouWillLearn.govUkTextarea("validState");
-                    $errorsummary.govUkErrorSummary("removeErrorHashLinksFor", $howYouWillLearn[0].id);
-                    $errorsummary.govUkErrorSummary("hideIfEmpty")
+                    $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $howYouWillLearn[0].id);
+                    $errorSummary.govUkErrorSummary("hideIfEmpty")
                     validStates.push(true);
                 }
 
@@ -229,20 +228,20 @@
                 if (!$.regexValidate({ regex: $whatYouNeed.attr("val-regex") }, $whatYouNeed.val())) {
                     $whatYouNeed.govUkTextarea("invalidState", $whatYouNeed.attr("val-regex-message"));
                     var whatYouNeedErrorHashLinks = $whatYouNeed.govUkTextarea("getErrorHashLinks");
-                    $errorsummary.govUkErrorSummary("add", whatYouNeedErrorHashLinks);
-                    $errorsummary.govUkErrorSummary("show");
+                    $errorSummary.govUkErrorSummary("add", whatYouNeedErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
                     validStates.push(false);
                 } else if (
                     !$.maxLengthValidate({ max: $whatYouNeed.attr("val-max-length") }, $whatYouNeed.val())) {
                     $whatYouNeed.govUkTextarea("invalidState", $whatYouNeed.attr("val-max-length-message"));
                     var whatYouNeedErrorHashLinks = $whatYouNeed.govUkTextarea("getErrorHashLinks");
-                    $errorsummary.govUkErrorSummary("add", whatYouNeedErrorHashLinks);
-                    $errorsummary.govUkErrorSummary("show");
+                    $errorSummary.govUkErrorSummary("add", whatYouNeedErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
                     validStates.push(false);
                 } else {
                     $whatYouNeed.govUkTextarea("validState");
-                    $errorsummary.govUkErrorSummary("removeErrorHashLinksFor", $whatYouNeed[0].id);
-                    $errorsummary.govUkErrorSummary("hideIfEmpty")
+                    $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $whatYouNeed[0].id);
+                    $errorSummary.govUkErrorSummary("hideIfEmpty")
                     validStates.push(true);
                 }
 
@@ -250,20 +249,20 @@
                 if (!$.regexValidate({ regex: $howAssessed.attr("val-regex") }, $howAssessed.val())) {
                     $howAssessed.govUkTextarea("invalidState", $howAssessed.attr("val-regex-message"));
                     var whatYouNeedErrorHashLinks = $whatYouNeed.govUkTextarea("getErrorHashLinks");
-                    $errorsummary.govUkErrorSummary("add", whatYouNeedErrorHashLinks);
-                    $errorsummary.govUkErrorSummary("show");
+                    $errorSummary.govUkErrorSummary("add", whatYouNeedErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
                     validStates.push(false);
                 } else if (
                     !$.maxLengthValidate({ max: $howAssessed.attr("val-max-length") }, $howAssessed.val())) {
                     $howAssessed.govUkTextarea("invalidState", $howAssessed.attr("val-max-length-message"));
                     var howAssessedErrorHashLinks = $howAssessed.govUkTextarea("getErrorHashLinks");
-                    $errorsummary.govUkErrorSummary("add", howAssessedErrorHashLinks);
-                    $errorsummary.govUkErrorSummary("show");
+                    $errorSummary.govUkErrorSummary("add", howAssessedErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
                     validStates.push(false);
                 } else {
                     $howAssessed.govUkTextarea("validState");
-                    $errorsummary.govUkErrorSummary("removeErrorHashLinksFor", $howAssessed[0].id);
-                    $errorsummary.govUkErrorSummary("hideIfEmpty")
+                    $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $howAssessed[0].id);
+                    $errorSummary.govUkErrorSummary("hideIfEmpty")
                     validStates.push(true);
                 }
 
@@ -271,40 +270,29 @@
                 if (!$.regexValidate({ regex: $howAssessed.attr("val-regex") }, $whereNext.val())) {
                     $whereNext.govUkTextarea("invalidState", $whereNext.attr("val-regex-message"));
                     var whereNextErrorHashLinks = $whereNext.govUkTextarea("getErrorHashLinks");
-                    $errorsummary.govUkErrorSummary("add", whereNextErrorHashLinks);
-                    $errorsummary.govUkErrorSummary("show");
+                    $errorSummary.govUkErrorSummary("add", whereNextErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
                     validStates.push(false);
                 } else if (
                     !$.maxLengthValidate({ max: $whereNext.attr("val-max-length") }, $whereNext.val())) {
                     $whereNext.govUkTextarea("invalidState", $whereNext.attr("val-max-length-message"));
                     var whereNextErrorHashLinks = $whereNext.govUkTextarea("getErrorHashLinks");
-                    $errorsummary.govUkErrorSummary("add", whereNextErrorHashLinks);
-                    $errorsummary.govUkErrorSummary("show");
+                    $errorSummary.govUkErrorSummary("add", whereNextErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
                     validStates.push(false);
                 } else {
                     $whereNext.govUkTextarea("validState");
-                    $errorsummary.govUkErrorSummary("removeErrorHashLinksFor", $whereNext[0].id);
-                    $errorsummary.govUkErrorSummary("hideIfEmpty")
+                    $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $whereNext[0].id);
+                    $errorSummary.govUkErrorSummary("hideIfEmpty")
                     validStates.push(true);
                 }
 
-                //var errorArray = $("[class*='govuk-error-message'");
-                //if (errorArray.length > 0) {
-                //    var $errorField = $("#" + errorArray[0].nextElementSibling.id);
-                //    $('html,body').animate({ scrollTop: $errorField.parent().offset().top }, 'slow');
-                //    var notificationBody = "";
-                //    $.each(errorArray, function (index, value) {
-                //        var $field = value.parentElement.parentElement.parentElement.id;
-                //        notificationBody = notificationBody + "<a href='#' class='govuk-link errorlink' style=color:#b10e1e data-error-field=" + $field + ">"+ value.innerHTML +"</a></br>";
-                //    });
-                //    $('.cd-error-summary__body').html(notificationBody);
-                //    $('#errorsummary').css({ "display": "block" });
-                //    $('.errorlink').on("click", function(e) {
-                //        e.preventDefault();
-                //        var $field = $("#" + $(this).attr("data-error-field"));
-                //        $('html,body').animate({ scrollTop: $field.offset().top }, 'slow');
-                //    });
-                //}
+                if (!validStates.every(isAllValid)) {
+                    $("html, body").animate({
+                        scrollTop: $errorSummary.offset().top
+                    }, 600);
+                    $errorSummary.focus();
+                }
             }
 
             $save.on("click", function (e) {
