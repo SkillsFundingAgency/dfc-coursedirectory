@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Models.Courses;
 
@@ -16,5 +17,9 @@ namespace Dfc.CourseDirectory.Web.ViewModels.PublishCourses
 
         public string NotificationTitle { get; set; }
         public string NotificationMessage { get; set; }
+
+        public Guid? CourseId { get; set; }
+
+        public Guid? CourseRunId { get; set; }
     }
 }

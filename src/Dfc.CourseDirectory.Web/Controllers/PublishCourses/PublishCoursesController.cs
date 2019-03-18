@@ -38,7 +38,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
 
         [Authorize]
         [HttpGet]
-        public IActionResult Index(PublishMode publishMode, string notificationTitle)
+        public IActionResult Index(PublishMode publishMode, string notificationTitle, Guid? courseId, Guid? courseRunId)
         {
 
             PublishViewModel vm = new PublishViewModel();
@@ -82,6 +82,9 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
             }
 
             vm.NotificationTitle = notificationTitle;
+            vm.CourseId = courseId;
+            vm.CourseRunId = courseRunId;
+
             return View("Index", vm);
         }
 
