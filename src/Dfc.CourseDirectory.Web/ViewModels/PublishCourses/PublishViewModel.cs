@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Models.Courses;
 
@@ -13,5 +14,9 @@ namespace Dfc.CourseDirectory.Web.ViewModels.PublishCourses
         public PublishMode PublishMode { get; set; }
 
         public bool AreAllReadyToBePublished { get; set; }
+
+        public Guid? CourseId { get; set; }
+
+        public Guid? CourseRunId { get; set; }
     }
 }

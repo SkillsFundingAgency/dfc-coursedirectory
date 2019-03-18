@@ -185,7 +185,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                             return RedirectToAction("Index", "PublishCourses",
                                 new
                                 {
-                                    publishMode = model.Mode
+                                    publishMode = model.Mode,
+                                    courseId = model.CourseId
                                 });
                         default:
                             return RedirectToAction("Courses", "Provider",

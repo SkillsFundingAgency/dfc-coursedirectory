@@ -7,9 +7,10 @@
 
 @Html.HiddenFor(x => x.PublishMode)
 
+
 @foreach (var course in Model.Courses)
 {
-    <div class="error-line">
+    <div class="error-line" id="CourseId_@course.id">
         <div class="govuk-grid-column-one-third m100 col"><strong>@course.QualificationCourseTitle</strong><br />@course.NotionalNVQLevelv2, @course.AwardOrgCode, Lars: @course.LearnAimRef</div>
 
         <div id="courseid" style="display:none">@course.id</div>
@@ -30,14 +31,14 @@
         </div>
     </div>
 
-    foreach (var courseRun in course.CourseRuns.OrderBy(x=>x.CourseName))
+    foreach (var courseRun in course.CourseRuns.OrderBy(x => x.CourseName))
     {
         @if ((Model.PublishMode.Equals(PublishMode.BulkUpload) && courseRun.RecordStatus == RecordStatus.BulkUloadPending) ||
-             (Model.PublishMode.Equals(PublishMode.Migration) && courseRun.RecordStatus == RecordStatus.MigrationPending))
+           (Model.PublishMode.Equals(PublishMode.Migration) && courseRun.RecordStatus == RecordStatus.MigrationPending))
         {
             <div id="courserunid" style="display:none">@courseRun.id</div>
 
-            <div class="error-line-in">
+            <div class="error-line-in" id="CourseRunId_@courseRun.id">
                 <div class="govuk-grid-column-one-third col">@courseRun.CourseName</div>
                 <div class="govuk-grid-column-two-thirds">
                     <div class="govuk-grid-column-one-third col">
@@ -45,8 +46,6 @@
                     </div>
                     <div class="govuk-grid-column-two-thirds align-right col right center">
 
-                        @*<a href="#" class="error-link">Fix</a>
-                            <a href="#" class="error-link">Delete</a>*@
                         <a id="course-run-fix-@courseRun.id" class="error-link" asp-controller="EditCourseRun" asp-action="Index"
                            asp-route-courseId="@course.id" asp-route-courseRunId="@courseRun.id" asp-route-mode=@Model.PublishMode>Fix</a>
 
@@ -90,6 +89,9 @@
 <script>
     (function ($) {
         $(function () {
+
+
+
             var $deleteButton = $(".delete");
 
             var $canceldeleteButton = $(".cancel-delete");
