@@ -38,7 +38,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
 
         [Authorize]
         [HttpGet]
-        public IActionResult Index(PublishMode publishMode,Guid? courseId, Guid? courseRunId)
+        public IActionResult Index(PublishMode publishMode, string notificationTitle, Guid? courseId, Guid? courseRunId)
         {
 
             PublishViewModel vm = new PublishViewModel();
@@ -81,6 +81,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                     break;
             }
 
+            vm.NotificationTitle = notificationTitle;
             vm.CourseId = courseId;
             vm.CourseRunId = courseRunId;
 
@@ -151,18 +152,24 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> Delete(Guid courseId, Guid courseRunId)
+        public async Task<IActionResult> Delete(Guid courseId, Guid courseRunId,string courseName)
         {
             //TODO delete
+            string notificationTitle = string.Empty;
 
             var result = await _courseService.UpdateStatus(courseId, courseRunId, (int)RecordStatus.Deleted);
 
             if (result.IsSuccess)
             {
                 //do something
+                notificationTitle = courseName + " was successfully deleted";
+            }
+            else
+            {
+                notificationTitle = "Error " + courseName + " was not deleted";
             }
 
-            return RedirectToAction("Index", "PublishCourses", new { publishMode = PublishMode.Migration });
+            return RedirectToAction("Index", "PublishCourses", new { publishMode = PublishMode.Migration,notificationTitle = notificationTitle });
         }
 
         public bool CheckAreAllReadyToBePublished(List<Course> courses, PublishMode publishMode)

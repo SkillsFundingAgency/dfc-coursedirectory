@@ -89,6 +89,16 @@ namespace Dfc.CourseDirectory.Models.Enums
         [Description("Prod")]
         Prod = 5
     }
+
+    public enum RegulatedType
+    {
+        [Description("Regulated")]
+        Regulated = 0,
+        [Description("Non-regulated provision")]
+        NonRegulated = 1
+    }
+
+
     public class Enums
     {
     }

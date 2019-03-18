@@ -15,6 +15,9 @@ namespace Dfc.CourseDirectory.Web.ViewModels.PublishCourses
 
         public bool AreAllReadyToBePublished { get; set; }
 
+        public string NotificationTitle { get; set; }
+        public string NotificationMessage { get; set; }
+
         public Guid? CourseId { get; set; }
 
         public Guid? CourseRunId { get; set; }
