@@ -15,7 +15,7 @@
 
 <div class="govuk-character-count" data-module="character-count" data-maxlength=@courseForTextFieldMaxChars>
     <div class="govuk-form-group">
-        <label class="govuk-label" for="word-count">
+        <label id="govuk-label-@nameof(Model.CourseFor)" class="govuk-label" for="word-count">
             @Model.LabelText
         </label>
         @if (!string.IsNullOrWhiteSpace(Model.HintText))
