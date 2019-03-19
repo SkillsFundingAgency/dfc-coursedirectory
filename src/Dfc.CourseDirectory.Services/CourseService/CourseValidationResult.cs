@@ -12,12 +12,11 @@ namespace Dfc.CourseDirectory.Services.CourseService
         public ICourse Course{ get; set; }
         public IList<string> Issues { get; set; }
         public IList<CourseRunValidationResult> RunValidationResults { get; set; }
-        public int TotalIssueCount { get { return Issues.Count + RunValidationResults.SelectMany(c => c.Issues).Count(); } }
+        public int TotalIssueCount { get { return Issues.Count() + RunValidationResults.SelectMany(c => c.Issues).Count(); } }
 
         protected override IEnumerable<object> GetEqualityComponents()
         {
             yield return Course;
-            yield return Issues;
         }
 
         public class CourseRunValidationResult : ValueObject<CourseRunValidationResult> //, ICourseRunValidationResult
@@ -28,7 +27,6 @@ namespace Dfc.CourseDirectory.Services.CourseService
             protected override IEnumerable<object> GetEqualityComponents()
             {
                 yield return Run;
-                yield return Issues;
             }
         }
     }

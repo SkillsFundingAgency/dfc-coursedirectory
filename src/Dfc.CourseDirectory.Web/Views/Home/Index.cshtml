@@ -56,7 +56,7 @@
                             @Model.ValidationHeader
                         </h2>
                         <div class="cd-info-summary__body">
-                            @foreach (string msg in Model.ValidationMessages) {
+                            @foreach (string msg in Model?.ValidationMessages) {
                                 <p>@msg</p>
                             }
                         </div>
@@ -64,21 +64,21 @@
                         <div class="govuk-grid-row">
                             <div class="govuk-grid-column-one-quarter">
                                 <div class="cd-status-panel">
-                                    <h3 class="govuk-heading-l">@Model.LiveCourseCount</h3>
+                                    <h3 class="govuk-heading-l">@(Model?.LiveCourseCount ?? 0)</h3>
                                     <div class="govuk-heading-s">Live courses</div>
                                 </div>
                                 <div>
                                     <ul class="govuk-list">
                                         <li><a class="govuk-link" asp-controller="Qualifications" asp-action="Index">Publish a course</a></li>
                                         @*<li><a class="govuk-link" asp-controller="Lars" asp-action="Index">Search for a course</a></li>*@
-                                        <li><a class="govuk-link" asp-controller="Provider" asp-action="Courses">@(Model.LiveCourseCount > 0 ? "Manage your courses" : "")</a></li>
+                                        <li><a class="govuk-link" asp-controller="Provider" asp-action="Courses">@((Model?.LiveCourseCount != null && Model?.LiveCourseCount > 0) ? "Manage your courses" : "")</a></li>
                                     </ul>
                                 </div>
                             </div>
                             @*
                         <div class="govuk-grid-column-one-quarter">
                             <div class="cd-status-panel">
-                                <h3 class="govuk-heading-l">@Model.ArchivedCourseCount</h3>
+                                <h3 class="govuk-heading-l">@(Model?.ArchivedCourseCount ?? 0)</h3>
                                 <div class="govuk-heading-s">Archived courses</div>
                             </div>
                             <div>
@@ -91,7 +91,7 @@
                             *@
                             <div class="govuk-grid-column-one-quarter">
                                 <div class="cd-status-panel">
-                                    <h3 class="govuk-heading-l">@Model.PendingCourseCount</h3>
+                                    <h3 class="govuk-heading-l">@(Model?.PendingCourseCount ?? 0)</h3>
                                     <div class="govuk-heading-s">Pending courses</div>
                                 </div>
                                 <div>

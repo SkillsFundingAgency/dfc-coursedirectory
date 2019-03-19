@@ -13,6 +13,8 @@ using Microsoft.Extensions.Logging;
 using System.Security.Principal;
 using System.Security.Claims;
 using System.Threading;
+using Microsoft.AspNetCore.Http;
+using Dfc.CourseDirectory.Common;
 
 namespace Dfc.CourseDirectory.Web.Areas.Identity.Pages.Account
 {
@@ -22,14 +24,18 @@ namespace Dfc.CourseDirectory.Web.Areas.Identity.Pages.Account
         private readonly SignInManager<User> _signInManager;
         private readonly ILogger<LoginModel> _logger;
         private readonly UserManager<User> _userManager;
+        private readonly IHttpContextAccessor _contextAccessor;
+        private ISession _session => _contextAccessor.HttpContext.Session;
 
-        public LoginModel(SignInManager<User> signInManager, ILogger<LoginModel> logger, UserManager<User> userManager)
+        public LoginModel(SignInManager<User> signInManager, ILogger<LoginModel> logger, UserManager<User> userManager, IHttpContextAccessor contextAccessor)
         {
             _signInManager = signInManager;
             _logger = logger;
             _userManager = userManager;
-            
-            
+            Throw.IfNull(contextAccessor, nameof(contextAccessor));
+            _contextAccessor = contextAccessor;
+
+
         }
 
         [BindProperty]
@@ -121,8 +127,12 @@ namespace Dfc.CourseDirectory.Web.Areas.Identity.Pages.Account
                         foreach (var claim in claims)
                         {
                             identity.AddClaim(new Claim(claim.Type, claim.Value));
+                            if(claim.Type == "UKPRN")
+                            {
+                                _session.SetInt32("UKPRN", int.Parse(claim.Value));
+                            }
                         }
-                        
+
                     }
                     return LocalRedirect(returnUrl);
 
