@@ -22,16 +22,6 @@
         Edit Course
     </h1>
 
-    @*<div id="errorsummary" style="display:none">
-        @await Component.InvokeAsync(nameof(Notification), new NotificationModel
-        {
-
-            NotificationTitle = "There is an issue with this qualification",
-            NotificationMessage = "",
-            ClassType = "error-summary"
-        })
-    </div>*@
-
     <div id="errorsummary" class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary" style="display: none;">
         <h2 class="govuk-error-summary__title" id="error-summary-title">
             There is an issue with this qualification
@@ -70,10 +60,9 @@
         {
             AdvancedLearnerLoan = Model.AdvancedLearnerLoan.Value,
             AdultEducationBudget = Model.AdultEducationBudget.Value,
-        FundingOptionsHintText="",
-        FundingOptionsLabelText ="Funding options",
-        FundingOptionsAriaDescribedBy =""
-
+            FundingOptionsHintText="",
+            FundingOptionsLabelText ="Funding options",
+            FundingOptionsAriaDescribedBy =""
         })
     </div>
 
@@ -97,10 +86,7 @@
                     break;
             }
         </li>
-        
     </ul>
-
-
 
 </form>
 

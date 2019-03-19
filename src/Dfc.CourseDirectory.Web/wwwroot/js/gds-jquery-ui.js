@@ -188,7 +188,7 @@
         if (this._errorMessages.length) {
             this._errorMessages.each(function (index, element) {
                 var $anchor = document.createElement("a");
-                $anchor.href = "#" + elementId;
+                $anchor.href = "#govuk-label-" + elementId;
                 $anchor.innerHTML = element.innerHTML;
                 $anchor.id = "error-hash-link-" + elementId + "-" + index;
                 list.push($anchor);
@@ -296,7 +296,7 @@
         if (this._errorMessages.length) {
             this._errorMessages.each(function (index, element) {
                 var $anchor = document.createElement("a");
-                $anchor.href = "#" + elementId;
+                $anchor.href = "#govuk-label-" + elementId;
                 $anchor.innerHTML = element.innerHTML;
                 $anchor.id = "error-hash-link-" + elementId + "-" + index;
                 list.push($anchor);
@@ -400,7 +400,7 @@
         if (this._errorMessages.length) {
             this._errorMessages.each(function (index, element) {
                 var $anchor = document.createElement("a");
-                $anchor.href = "#" + elementId;
+                $anchor.href = "#govuk-label-" + elementId;
                 $anchor.innerHTML = element.innerHTML;
                 $anchor.id = "error-hash-link-" + elementId + "-" + index;
                 list.push($anchor);
@@ -504,7 +504,7 @@
         if (this._errorMessages.length) {
             this._errorMessages.each(function (index, element) {
                 var $anchor = document.createElement("a");
-                $anchor.href = "#" + elementId;
+                $anchor.href = "#govuk-label-" + elementId;
                 $anchor.innerHTML = element.innerHTML;
                 $anchor.id = "error-hash-link-" + elementId + "-" + index;
                 list.push($anchor);
@@ -615,12 +615,12 @@
     Plugin.prototype.getErrorHashLinks = function () {
         var list = [];
         var outerIndex = 0;
-        var elementId = this.element.closest(".section").id;
+        var elementId = this.element.id;
         if (this._errorMessages.length) {
             this._errorMessages.each(function (index, element) {
                 outerIndex = outerIndex + index;
                 var $anchor = document.createElement("a");
-                $anchor.href = "#" + elementId;
+                $anchor.href = "#govuk-label-" + elementId;
                 $anchor.innerHTML = element.innerHTML;
                 $anchor.id = "error-hash-link-" + elementId + "-" + outerIndex;
                 list.push($anchor);
@@ -632,7 +632,7 @@
             characterCountErrorMessages.each(function (index, element) {
                 outerIndex = outerIndex + index;
                 var $anchor = document.createElement("a");
-                $anchor.href = "#" + elementId;
+                $anchor.href = "#govuk-label-" + elementId;
                 $anchor.innerHTML = element.innerHTML;
                 $anchor.id = "error-hash-link-" + elementId + "-" + outerIndex;
                 list.push($anchor);
@@ -757,7 +757,7 @@
         if (this._errorMessages.length) {
             this._errorMessages.each(function (index, element) {
                 var $anchor = document.createElement("a");
-                $anchor.href = "#" + elementId;
+                $anchor.href = "#govuk-label-" + elementId;
                 $anchor.innerHTML = element.innerHTML;
                 $anchor.id = "error-hash-link-" + elementId + "-" + index;
                 list.push($anchor);
@@ -912,7 +912,7 @@
         if (this._errorMessages.length) {
             this._errorMessages.each(function (index, element) {
                 var $anchor = document.createElement("a");
-                $anchor.href = "#" + elementId;
+                $anchor.href = "#govuk-label-" + elementId;
                 $anchor.innerHTML = element.innerHTML;
                 $anchor.id = "error-hash-link-" + elementId + "-" + index;
                 list.push($anchor);
@@ -1033,7 +1033,7 @@
         if (this._errorMessages.length) {
             this._errorMessages.each(function (index, element) {
                 var $anchor = document.createElement("a");
-                $anchor.href = "#" + elementId;
+                $anchor.href = "#govuk-label-" + elementId;
                 $anchor.innerHTML = element.innerHTML;
                 $anchor.id = "error-hash-link-" + elementId + "-" + index;
                 list.push($anchor);

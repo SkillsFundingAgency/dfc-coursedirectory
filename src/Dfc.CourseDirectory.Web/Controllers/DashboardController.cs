@@ -59,25 +59,32 @@ namespace Dfc.CourseDirectory.Web.Controllers
                                                  .SelectMany(o => o.Value)
                                                  .SelectMany(i => i.Value);
 
-            IEnumerable<CourseValidationResult> result = service.PendingCourseValidationMessages(courses)
-                                                                .Value;
-            IEnumerable<string> courseMessages = result.SelectMany(c => c.Issues);
-            IEnumerable<string> runMessages    = result.SelectMany(c => c.RunValidationResults)
-                                                       .SelectMany(r => r.Issues);
+            int[] pendingStatuses = new int[] { (int)RecordStatus.Pending, (int)RecordStatus.BulkUloadPending, (int)RecordStatus.APIPending, (int)RecordStatus.MigrationPending };
+            IEnumerable<Course> liveCourses = courses.Where(c => ((int)c.CourseStatus & (int)RecordStatus.Live) > 0);
+            //IEnumerable<Course> pendingCourses = from Course c in courses
+            //                                     from int s in pendingStatuses
+            //                                     where ((int)c.CourseStatus & s) > 0
+            //                                     select c;
+
+            IEnumerable<CourseValidationResult> results = service.PendingCourseValidationMessages(courses)
+                                                                 .Value;
+            IEnumerable<string> courseMessages = results.SelectMany(c => c.Issues);
+            IEnumerable<string> runMessages    = results.SelectMany(c => c.RunValidationResults)
+                                                        .SelectMany(r => r.Issues);
             IEnumerable<string> messages       = courseMessages.Concat(runMessages)
                                                                .GroupBy(i => i)
                                                                .Select(g => $"{ g.LongCount() } { g.Key }");
 
             IEnumerable<ICourseStatusCountResult> counts = service.GetCourseCountsByStatusForUKPRN(new CourseSearchCriteria(UKPRN))
-                                                                         .Result
-                                                                         .Value;
+                                                                  .Result
+                                                                  .Value;
 
-            int[] pendingStatuses = new int[] { (int)RecordStatus.Pending, (int)RecordStatus.BulkUloadPending, (int)RecordStatus.APIPending, (int)RecordStatus.MigrationPending };
             DashboardViewModel vm = new DashboardViewModel()
             {
                  ValidationHeader = $"{ courseMessages.LongCount() + runMessages.LongCount() } data items require attention",
                  ValidationMessages = messages,
-                 LiveCourseCount = counts.FirstOrDefault(c => c.Status == (int)RecordStatus.Live).Count,
+                 //LiveCourseCount = counts.FirstOrDefault(c => c.Status == (int)RecordStatus.Live).Count,
+                 LiveCourseCount = liveCourses.SelectMany(c => c.CourseRuns).Count(r => r.RecordStatus == RecordStatus.Live),
                  ArchivedCourseCount = counts.FirstOrDefault(c => c.Status == (int)RecordStatus.Archived).Count,
                  PendingCourseCount = (from ICourseStatusCountResult c in counts
                                        join int p in pendingStatuses

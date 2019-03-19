@@ -11,7 +11,7 @@
 @foreach (var course in Model.Courses)
 {
     <div class="error-line" id="CourseId_@course.id">
-        <div class="govuk-grid-column-one-third m100 col"><strong>@course.QualificationCourseTitle</strong><br />@course.NotionalNVQLevelv2, @course.AwardOrgCode, Lars: @course.LearnAimRef</div>
+        <div class="govuk-grid-column-one-third m100 col"><strong>@course.QualificationCourseTitle</strong><br />LEVEL: @course.NotionalNVQLevelv2, @course.AwardOrgCode, Lars: @course.LearnAimRef</div>
 
         <div id="courseid" style="display:none">@course.id</div>
         <div class="govuk-grid-column-two-thirds">
