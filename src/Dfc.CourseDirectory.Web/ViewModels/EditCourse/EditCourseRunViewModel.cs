@@ -40,6 +40,8 @@ namespace Dfc.CourseDirectory.Web.ViewModels.EditCourse
 
         public string NotionalNVQLevelv2 { get; set; }
 
+        public DateTime? CurrentCourseRunDate { get; set; }
+
     }
 
 }
