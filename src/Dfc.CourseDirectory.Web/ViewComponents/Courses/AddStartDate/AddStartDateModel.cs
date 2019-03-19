@@ -31,6 +31,8 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Courses.AddStartDate
         public string YearAriaDescribedBy { get; set; }
         public string YearLabelText { get; set; }
 
+        public DateTime? CurrentStartDate { get; set; }
+
 
 
        

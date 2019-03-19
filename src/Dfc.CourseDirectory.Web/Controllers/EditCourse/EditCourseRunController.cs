@@ -117,7 +117,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                         CostDescription = courseRun.CostDescription,
                         AttendanceMode = courseRun.AttendancePattern,
                         QualificationType = course.Value.QualificationType,
-                        NotionalNVQLevelv2 = course.Value.NotionalNVQLevelv2
+                        NotionalNVQLevelv2 = course.Value.NotionalNVQLevelv2,
+                        CurrentCourseRunDate = courseRun.StartDate
                     };
 
                     if (courseRun.Regions != null)
@@ -267,7 +268,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                                         NotificationTitle = "Course edited",
                                         NotificationMessage = "You edited",
                                         qualificationType = courseForEdit.Value.QualificationType,
-                                        courseId = updatedCourse.Value.id
+                                        courseId = updatedCourse.Value.id,
+                                        courseRunId = model.CourseRunId
                                     });
 
                         }

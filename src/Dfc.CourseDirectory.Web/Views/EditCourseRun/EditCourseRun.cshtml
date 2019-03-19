@@ -34,6 +34,7 @@
     @Html.HiddenFor(x => x.CourseRunId)
     @Html.HiddenFor(x => x.QualificationType)
     @Html.HiddenFor(x => x.Mode)
+    @Html.HiddenFor(x => x.CurrentCourseRunDate)
 
     <div class="section" id="sectionCourseName">
         @await Component.InvokeAsync(nameof(CourseName), new CourseNameModel
@@ -81,7 +82,8 @@
             AriaDescribedBy = "",
             SpecifiedDateHintText = "e.g. For example, 30 9 2019",
             FlexibleDateHintText = "Or select a flexible start date:",
-            LabelText = "Start date"
+            LabelText = "Start date",
+            CurrentStartDate = Model.CurrentCourseRunDate
         })
     </div>
 
@@ -220,7 +222,8 @@
             var $errorSummary = $("#errorsummary").govUkErrorSummary();
             var $courseName = $("#@nameof(Model.CourseName)").govUkInput();
             var $courseProviderReference = $("#@nameof(Model.CourseProviderReference)").govUkInput();
-            var $deliveryMode = $("#DeliveryModeRadioButtons").govUkRadios();
+            var $deliveryRadios = $("#DeliveryModeRadioButtons input[type=radio]");
+            var $radioDeliveryMode = $("#DeliveryModeRadioButtons").govUkRadios();
             var $startDate = $("#start_date").govUkDateInput();
             var $selectedVenue = $("#@nameof(Model.VenueId)").govUkSelect();
             var $regions = $("#SelectRegionCheckBoxes").govUkCheckboxes();
@@ -239,7 +242,7 @@
             var isOnline = false;
             var isWorkBased = false;
 
-            switch ($deliveryMode.find("input[type='radio']:checked").val()) {
+            switch ($radioDeliveryMode.find("input[type='radio']:checked").val()) {
                 case "ClassroomBased":
                     {
                         $fullPartTimeRadioButtons.show();
@@ -281,7 +284,7 @@
                 $errorSummary.govUkErrorSummary("empty");
                 $courseName.govUkInput("validState");
                 $courseProviderReference.govUkInput("validState");
-                $deliveryMode.govUkRadios("validState");
+                $radioDeliveryMode.govUkRadios("validState");
                 $startDate.govUkDateInput("validState");
                 $duration.govUkDurationInput("validState");
                 $selectedVenue.govUkSelect("validState");
@@ -459,14 +462,14 @@
                     validStates.push(true);
                 }
 
-                if ($.requiredValidate($deliveryMode.find("input[type='radio']:checked").val())) {
-                    $deliveryMode.govUkRadios("validState");
-                    $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $deliveryMode[0].id);
+                if ($.requiredValidate($radioDeliveryMode.find("input[type='radio']:checked").val())) {
+                    $radioDeliveryMode.govUkRadios("validState");
+                    $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $radioDeliveryMode[0].id);
                     $errorSummary.govUkErrorSummary("hideIfEmpty")
                     validStates.push(true);
                 } else {
-                    $deliveryMode.govUkRadios("invalidState", $deliveryMode.attr("val-required-message"));
-                    var deliveryModeErrorHashLinks = $deliveryMode.govUkRadios("getErrorHashLinks");
+                    $radioDeliveryMode.govUkRadios("invalidState", $radioDeliveryMode.attr("val-required-message"));
+                    var deliveryModeErrorHashLinks = $radioDeliveryMode.govUkRadios("getErrorHashLinks");
                     $errorSummary.govUkErrorSummary("add", deliveryModeErrorHashLinks);
                     $errorSummary.govUkErrorSummary("show");
                     validStates.push(false);
@@ -525,8 +528,8 @@
                 }
             });
 
-            $deliveryMode.find("input[type='radio']").change(function () {
-                var $venueChoice = $("#VenueChoice");
+            $deliveryRadios.change(function () {
+                var $venueChoice = $("#sectionVenue");
                 var $fullPartTimeRadioButtons = $("#FullPartTimeRadioButtons");
                 var $attendancePatternRadioButtons = $("#AttendancePatternRadioButtons");
                 var $specifiedStartDate = $("#SpecifiedStartDate");
