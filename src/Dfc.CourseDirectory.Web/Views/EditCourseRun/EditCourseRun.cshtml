@@ -98,7 +98,7 @@
     <div class="section" id="sectionRegion">
         @*No view component here in order to get checkbox list validation to work without it's own form*@
         <div class="govuk-form-group" id="RegionItemsCheckboxList" style="@Model.DeliveryMode.IfNotWorkBasedDisplayNone()">
-            <label class="govuk-label" for="select-region">
+            <label id="govuk-label-SelectRegionCheckBoxes" class="govuk-label" for="select-region">
                 @Model.SelectRegion.LabelText
             </label>
             <span id="select-region-hint" class="govuk-hint">
@@ -310,7 +310,7 @@
                 if (isWorkBased) {
                     if ($.requiredValidate($regions.find("input[type='checkbox']:checked").val())) {
                         $regions.govUkCheckboxes("validState");
-                        $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $selectedVenue[0].id);
+                        $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $regions[0].id);
                         $errorSummary.govUkErrorSummary("hideIfEmpty")
                         validStates.push(true);
                     } else {
