@@ -113,6 +113,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
 
                     // Publish migrated courses directly, NO archiving
                     var resultPublishMigratedCourses = await _courseService.ChangeCourseRunStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.MigrationReadyToGoLive, (int)RecordStatus.Live);
+                    CompleteVM.Mode = PublishMode.Migration;
                     if (resultPublishMigratedCourses.IsSuccess)
                     {
                         return View("Complete", CompleteVM);
@@ -130,6 +131,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                     {
                         // Publish courses
                         var resultPublishBulkUploadedCourses = await _courseService.ChangeCourseRunStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.BulkUploadReadyToGoLive, (int)RecordStatus.Live);
+                        CompleteVM.Mode = PublishMode.BulkUpload;
                         if (resultPublishBulkUploadedCourses.IsSuccess)
                         {
                             return View("Complete", CompleteVM);
