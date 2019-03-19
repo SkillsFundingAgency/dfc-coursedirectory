@@ -21,16 +21,6 @@
 
 <form asp-controller="EditCourseRun" asp-action="Index" id="editCourseRun" onkeypress="return event.keyCode != 13;">
 
-    @*<div id="errorsummary" style="display:none">
-            @await Component.InvokeAsync(nameof(Notification), new NotificationModel
-            {
-
-                NotificationTitle = "There is an issue with this qualification",
-                NotificationMessage = "",
-                ClassType = "error-summary"
-            })
-        </div>*@
-
     <div id="errorsummary" class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary" style="display: none;">
         <h2 class="govuk-error-summary__title" id="error-summary-title">
             There is an issue with this qualification
@@ -96,16 +86,13 @@
     </div>
 
     <div class="section" id="sectionVenue" style="@Model.DeliveryMode.IfNotClassroomBasedDisplayNone()">
-       @* <div class="govuk-form-group" id="VenueChoice" style="@Model.DeliveryMode.IfNotClassroomBasedDisplayNone()">*@
             @await Component.InvokeAsync(nameof(ChooseVenue), new ChooseVenueModel()
             {
                 LabelText = "Venue",
                 AriaDescribedBy = "Venue",
                 HintText = "Select course run venue",
-                //Venues = Model.Venues,
                 VenueId = Model.VenueId ?? (Guid?)null
             })
-        @*</div>*@
     </div>
 
     <div class="section" id="sectionRegion">
@@ -118,8 +105,6 @@
                 @Model.SelectRegion.HintText
             </span>
 
-            @*<div class="govuk-grid-row">
-                <div class="govuk-grid-column-full">*@
             <div class="govuk-checkboxes" id="SelectRegionCheckBoxes"
                  val-required-message="Select a region">
                 @{ var j = 0; }
@@ -142,8 +127,6 @@
                     }
                 }
             </div>
-            @*</div>
-                </div>*@
         </div>
     </div>
 
@@ -222,12 +205,9 @@
             default:
                 @Html.ActionLink("Cancel", "Courses", "Provider", new { level = @Model.NotionalNVQLevelv2, courseId = @Model.CourseId, courseRunId = @Model.CourseRunId }, new { @class = "govuk-link" })
                 break;
-
         }
     </li>
-        
 </ul>
-
 
 
 </form>

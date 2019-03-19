@@ -6,7 +6,7 @@
 
 
 <div class="govuk-form-group">
-    <label class="govuk-label" asp-for="@Model.LabelText">
+    <label id="govuk-label-@nameof(@Model.VenueId)" class="govuk-label" asp-for="@Model.LabelText">
         @Model.LabelText
     </label>
     @if (!string.IsNullOrWhiteSpace(Model.HintText))
