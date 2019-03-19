@@ -321,6 +321,19 @@
                         $errorSummary.govUkErrorSummary("show");
                         validStates.push(false);
                     }
+
+                    if ($.requiredValidate($studyMode.find("input[type='radio']:checked").val())) {
+                        $studyMode.govUkRadios("validState");
+                        $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $studyMode[0].id);
+                        $errorSummary.govUkErrorSummary("hideIfEmpty")
+                        validStates.push(true);
+                    } else {
+                        $studyMode.govUkRadios("invalidState", $studyMode.attr("val-required-message"));
+                        var studyModeErrorHashLinks = $studyMode.govUkRadios("getErrorHashLinks");
+                        $errorSummary.govUkErrorSummary("add", studyModeErrorHashLinks);
+                        $errorSummary.govUkErrorSummary("show");
+                        validStates.push(false);
+                    }
                 }
 
                 if (isWorkBased) {
