@@ -36,7 +36,7 @@
             <main id="Cd-course-list" class="govuk-main-wrapper">
                 <span class="govuk-caption-xl">Course directory</span>
                 <h1 class="govuk-heading-xl">Your published courses</h1>
-                
+
                 @if (!string.IsNullOrWhiteSpace(Model.NotificationTitle))
                 {
                     @await Component.InvokeAsync(nameof(Notification), new NotificationModel
@@ -80,16 +80,17 @@
 
                     <div class="cd-grid-coloumn-80 govuk-!-margin-top-9">
 
-                        @foreach (var course in Model.Courses.OrderBy(x=>x.QualificationTitle))
-                        {
+                        <div class="govuk-accordion" data-module="accordion" id="accordion">
+                            @foreach (var course in Model.Courses.OrderBy(x => x.QualificationTitle))
+                            {
 
-                            <div class="govuk-accordion" data-module="accordion" id="accordion-@course.Id">
+                                @*<div class="govuk-accordion" data-module="accordion" id="accordion-@course.Id">*@
 
                                 <div class="govuk-accordion__section" id="@course.Id">
                                     <div class="govuk-accordion__section-header">
                                         <h2 class="govuk-accordion__section-heading">
                                             <span class="govuk-accordion__section-button">
-                                                @course.QualificationTitle
+                                                @course.QualificationTitle (@course.Facet)
                                             </span>
 
 
@@ -102,7 +103,7 @@
                                     }
                                     @if (!string.IsNullOrEmpty(course.NotionalNVQLevelv2))
                                     {
-                                        <span> Level @course.NotionalNVQLevelv2 , </span>
+                                        <span> Level @course.NotionalNVQLevelv2, </span>
                                     }
                                     @if (!string.IsNullOrEmpty(course.AwardOrg))
                                     {
@@ -120,7 +121,7 @@
                                            asp-route-mode="@PublishMode.Undefined">Edit course description</a>
                                     </span>
                                     <div id="accordion-default-content-@course.Id" class="govuk-accordion__section-content" aria-labelledby="">
-                                        @foreach (var courseRun in course.CourseRuns.OrderBy(x=>x.CourseName))
+                                        @foreach (var courseRun in course.CourseRuns.OrderBy(x => x.CourseName))
                                         {
 
 
@@ -133,71 +134,77 @@
                                                 }
                                                 @if (courseRun.DeliveryMode == "Classroom based")
                                                 {
-                                                    @if (!string.IsNullOrEmpty(courseRun.Venue))
-                                                     {
-                                                         <div class="courserun__row2">
-                                                             <span class="">@courseRun.Venue</span>
-                                                         </div>
-                                                     }
+                                                    if (!string.IsNullOrEmpty(courseRun.Venue))
+                                                    {
+                                                        <div class="courserun__row2">
+                                                            <span class="">@courseRun.Venue</span>
+                                                        </div>
+                                                    }
                                                 }
                                                 @if (courseRun.DeliveryMode == "Work based")
                                                 {
-                                                    @if (!string.IsNullOrEmpty(courseRun.Region))
-                                                     {
-                                                         <div class="courserun__row2">
-                                                             <span class="">@courseRun.Region</span>
-                                                         </div>
-                                                     }
+                                                    if (!string.IsNullOrEmpty(courseRun.Region))
+                                                    {
+                                                        <div class="courserun__row2">
+                                                            <span class="">@courseRun.Region</span>
+                                                        </div>
+                                                    }
                                                 }
-                                                    <div class="courserun__row3">
-                                                        @if (!string.IsNullOrEmpty(courseRun.CourseId))
-                                                        { 
+                                                <div class="courserun__row3">
+                                                    @if (!string.IsNullOrEmpty(courseRun.CourseId))
+                                                    {
                                                         <span>@courseRun.CourseId</span>
-                                                        }
-                                                        @if (!string.IsNullOrEmpty(courseRun.AttendancePattern))
+                                                    }
+                                                    @if (courseRun.DeliveryMode == "Classroom based")
+                                                    {
+                                                        if (!string.IsNullOrEmpty(courseRun.AttendancePattern))
                                                         {
-                                                            <span>@courseRun.AttendancePattern</span>
+                                                            <span id="attendance">@courseRun.AttendancePattern</span>
                                                         }
-                                                        @if (!string.IsNullOrEmpty(courseRun.DeliveryMode))
-                                                        {
-                                                            <span>@courseRun.DeliveryMode</span>
-                                                        }
+                                                    }
+                                                    @if (!string.IsNullOrEmpty(courseRun.DeliveryMode))
+                                                    {
+                                                        <span id="deliverymode">@courseRun.DeliveryMode</span>
+                                                    }
+                                                    @if (courseRun.DeliveryMode == "Classroom based")
+                                                    {
                                                         @if (!string.IsNullOrEmpty(courseRun.StudyMode))
                                                         {
-                                                            <span>@courseRun.StudyMode</span>
+                                                            <span id="studymode">@courseRun.StudyMode</span>
                                                         }
-                                                        @if (!string.IsNullOrEmpty(courseRun.StartDate))
-                                                        {
-                                                            <span>@courseRun.StartDate</span>
-                                                        }
-                                                    </div>
+                                                    }
+                                                    @if (!string.IsNullOrEmpty(courseRun.StartDate))
+                                                    {
+                                                        <span>@courseRun.StartDate</span>
+                                                    }
+                                                </div>
                                                 <div class="courserun__row4">
                                                     @*<a class="govuk-link" asp-controller="Courses" asp-action="Summaryedit">Edit</a>
-                        <a href="#" class="govuk-link">Duplicate</a>
-                        <a href="#" class="govuk-link">Delete</a>*@
+                                                        <a href="#" class="govuk-link">Duplicate</a>
+                                                        <a href="#" class="govuk-link">Delete</a>*@
 
-                                                    <a class="govuk-link"
+                                                    <a class="govuk-link" style="padding-right:1em"
                                                        asp-controller="EditCourseRun"
                                                        asp-action="Index"
                                                        asp-route-courseId="@course.Id"
                                                        asp-route-courseRunId="@courseRun.Id"
                                                        asp-route-mode="@PublishMode.Undefined">Edit</a>
 
-                                                    <a class="govuk-link"
+                                                    <a class="govuk-link" style="padding-right:1em"
                                                        asp-controller="CopyCourseRun"
                                                        asp-action="Index"
                                                        asp-route-courseId="@course.Id"
                                                        asp-route-courseRunId="@courseRun.Id"
                                                        asp-route-mode="@PublishMode.Undefined">Copy</a>
 
-                                                    <a href="#" class="error-link archive" id="archive-@courseRun.Id" data-course-run-id="@courseRun.Id">Archive</a>
+                                                    <a href="#" class="error-link archive" id="archive-@courseRun.Id" data-course-run-id="@courseRun.Id" style="padding-right:1em">Archive</a>
 
                                                     <a id="course-confirm-archive-@courseRun.Id" class="govuk-button" asp-controller="Courses" asp-action="Archive"
                                                        asp-route-courseId="@course.Id"
                                                        asp-route-courseRunId="@courseRun.Id"
                                                        asp-route-level="@course.NotionalNVQLevelv2"
                                                        asp-route-qualificationType="@course.QualificationType"
-                                                       style="display: none">Confirm archive</a>
+                                                       style="display: none;padding-right:1em">Confirm archive</a>
 
                                                     <a href="#" class="error-link cancel-archive" id="course-cancel-archive-@courseRun.Id" data-course-run-id="@courseRun.Id" style="display: none">Cancel</a>
 
@@ -210,9 +217,9 @@
 
                                     </div>
                                 </div>
-                            </div>
-                        }
 
+                            }
+                        </div>
                     </div>
                 </div>
 
@@ -225,7 +232,7 @@
         $(function () {
 
             $('a.filter:first-child').attr("tabIndex", 5);
-           
+
 
             var $archiveButton = $(".archive");
 
@@ -235,7 +242,7 @@
                 function (event) {
                     event.preventDefault();
                     {
-                        var courseRunId = $(this).attr("data-course-run-id"); 
+                        var courseRunId = $(this).attr("data-course-run-id");
 
                         var archiveOption = $("#archive-" + courseRunId);
                         archiveOption.show();
