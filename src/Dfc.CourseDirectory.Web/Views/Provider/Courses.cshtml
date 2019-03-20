@@ -51,23 +51,15 @@
                 <div class="govuk-grid-row govuk-!-margin-top-9 ">
                     <div class="cd-grid-coloumn-20 govuk-body">
                         <h3 class="govukbody govuk-heading-m">Levels</h3>
-                        @*<ul class="cd-course-list-level-filter">
-                                <li>Level 1 (3)</li>
-                                <li class="selected">Level 2 (14)</li>
-                                <li>Level 3 (3)</li>
-                                <li>Level 4 (3)</li>
-                                <li>Level 5 (3)</li>
-                                <li>Level 6 (3)</li>
-                                <li>Level 7 (3)</li>
-                                <li>Level 8 (3)</li>
-                            </ul>*@
+
                         <ul class="cd-course-list-level-filter">
-                            @foreach (var filter in Model.LevelFilters.OrderBy(x=>x.Value))
+
+                            @foreach (var filter in Model.LevelFilters.OrderBy(x => x.Value))
                             {
                                 if (filter.IsSelected)
                                 {
                                     <li>
-                                        <a class="cd__your-courses__filters-list__link cd__your-courses__filters-list__link--selected"
+                                        <a class="cd__your-courses__filters-list__link cd__your-courses__filters-list__link--selected filter"
                                            asp-controller="Provider"
                                            asp-action="Courses"
                                            asp-route-level="@filter.Value">@filter.Name (@filter.Facet)</a>
@@ -82,7 +74,6 @@
                                            asp-route-level="@filter.Value">@filter.Name (@filter.Facet)</a>
                                     </li>
                                 }
-                                @*<hr class="cd__your-courses__filters-list__break">*@
                             }
                         </ul>
                     </div>
@@ -233,6 +224,9 @@
     (function ($) {
         $(function () {
 
+            $('a.filter:first-child').attr("tabIndex", 5);
+           
+
             var $archiveButton = $(".archive");
 
             var $cancelArchiveButton = $(".cancel-archive");
@@ -241,7 +235,7 @@
                 function (event) {
                     event.preventDefault();
                     {
-                        var courseRunId = $(this).attr("data-course-run-id");
+                        var courseRunId = $(this).attr("data-course-run-id"); 
 
                         var archiveOption = $("#archive-" + courseRunId);
                         archiveOption.show();
