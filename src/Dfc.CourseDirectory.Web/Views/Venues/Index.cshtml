@@ -19,3 +19,10 @@
 
         @await Component.InvokeAsync(nameof(VenueSearchResult), Model.Result)
     </div>
+    <script>
+    (function ($) {
+        $(function () {
+            $('a.edit-venue-link:first-child').attr("tabIndex", 5);
+        });
+    })(jQuery);
+    </script>
