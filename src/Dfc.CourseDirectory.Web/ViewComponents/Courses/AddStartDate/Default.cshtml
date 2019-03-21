@@ -13,19 +13,13 @@
             @Model.LabelText
 
         </label>
-        <span id="more-detail-hint" class="govuk-hint">@Model.SpecifiedDateHintText </span>
+        <span id="more-detail-hint" class="govuk-hint">@Model.SpecifiedDateHintText</span>
 
         <div class="govuk-form-group" id="startDateFormGroup">
-
-            @{
-                var currentStartDate = string.Empty;
-                var pastMessage = string.Empty;
-            }
             <div class="govuk-date-input" id="start_date"
                  val-required-message="Enter start date"
-                 @if (Model.CurrentStartDate != null) { currentStartDate = @Model.CurrentStartDate.Value.ToString("yyyy-MM-dd"); pastMessage = "New Start Date cannot be before the pre-edited Start Date"; } else { currentStartDate = @DateTime.Now.ToString("yyyy-MM-dd"); pastMessage = "Start Date cannot be earlier than today’s date"; }
-                 val-past-date-ref="@currentStartDate"
-                 val-past-date-message="@pastMessage"
+                 val-past-date-ref=@Model.ValPastDateRef.ToString("yyyy-MM-dd")
+                 val-past-date-message="@Model.ValPastDateMessage"
                  val-future-date-ref=@DateTime.Now.AddYears(2).ToString("yyyy-MM-dd")
                  val-future-date-message="Start Date cannot be later than 2 years from today’s date"
                  val-date-message="Invalid date">

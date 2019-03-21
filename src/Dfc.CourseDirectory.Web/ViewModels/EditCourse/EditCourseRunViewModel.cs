@@ -42,6 +42,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels.EditCourse
 
         public DateTime? CurrentCourseRunDate { get; set; }
 
+        public DateTime ValPastDateRef { get; set; }
+        public string ValPastDateMessage { get; set; }
     }
-
 }
