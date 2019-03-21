@@ -23,6 +23,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly IProviderService _providerService;
         private readonly IProviderSearchHelper _providerSearchHelper;
         private readonly IHttpContextAccessor _contextAccessor;
+        private readonly IUserHelper _userHelper;
         private ISession _session => _contextAccessor.HttpContext.Session;
 
         public ProviderSearchController(
@@ -30,23 +31,36 @@ namespace Dfc.CourseDirectory.Web.Controllers
             IOptions<ProviderServiceSettings> providerServiceSettings,
             IProviderService providerService,
             IProviderSearchHelper providerSearchHelper,
-            IHttpContextAccessor contextAccessor
+            IHttpContextAccessor contextAccessor,
+            IUserHelper userHelper
             )
         {
             Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(providerServiceSettings, nameof(providerServiceSettings));
             Throw.IfNull(providerService, nameof(providerService));
             Throw.IfNull(providerSearchHelper, nameof(providerSearchHelper));
+            Throw.IfNull(userHelper, nameof(userHelper));
 
             _logger = logger;
             _providerServiceSettings = providerServiceSettings.Value;
             _providerService = providerService;
             _providerSearchHelper = providerSearchHelper;
             _contextAccessor = contextAccessor;
+            _userHelper = userHelper;
         }
-        [Authorize(Policy = "ElevatedUserRole")]
+
+        //[Authorize(Policy = "ElevatedUserRole")]
         public async Task<IActionResult> Index([FromQuery] ProviderSearchRequestModel requestModel)
         {
+            
+            if(!_userHelper.IsUserAuthorised(policy: "ElevatedUserRole").Result)
+            {
+                return new ContentResult
+                {
+                    ContentType = "text/html",
+                    Content = "<script>location.reload();</script>"
+                };
+            }
             _logger.LogMethodEnter();
             _logger.LogInformationObject("RequestModel", requestModel);
             //Set the UKPRN here in session
@@ -82,14 +96,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     {
                         var providerContactTypeL = provider.ProviderContact.Where(s => s.ContactType.Equals("L", StringComparison.InvariantCultureIgnoreCase));
                         string AddressLine1 = string.Empty;
-                        if(!(string.IsNullOrEmpty(providerContactTypeL.FirstOrDefault()?.ContactAddress.PAON.Description) 
+                        if (!(string.IsNullOrEmpty(providerContactTypeL.FirstOrDefault()?.ContactAddress.PAON.Description)
                             && string.IsNullOrEmpty(providerContactTypeL.FirstOrDefault()?.ContactAddress.StreetDescription)))
                         {
                             AddressLine1 = providerContactTypeL.FirstOrDefault()?.ContactAddress.PAON.Description
                                             + " " + providerContactTypeL.FirstOrDefault()?.ContactAddress.StreetDescription + ", ";
                         }
                         string AddressLine2 = string.Empty;
-                        if (providerContactTypeL.FirstOrDefault()?.ContactAddress.Locality != null) 
+                        if (providerContactTypeL.FirstOrDefault()?.ContactAddress.Locality != null)
                         {
                             AddressLine2 = providerContactTypeL.FirstOrDefault()?.ContactAddress.Locality.ToString() + ", ";
                         }
@@ -121,7 +135,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
         [Authorize(Policy = "ElevatedUserRole")]
         [HttpPost]
-        public async Task<JsonResult> OnBoardProvider([FromBody] ProviderAjaxRequestModel ajaxRequest) 
+        public async Task<JsonResult> OnBoardProvider([FromBody] ProviderAjaxRequestModel ajaxRequest)
         {
             _logger.LogMethodEnter();
             _logger.LogInformationObject("RequestModel", ajaxRequest);
@@ -153,7 +167,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     {
                         ResultText = "Provider Add Service did NOT return a result.";
                         Success = false;
-                    }                   
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -165,7 +179,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _logger.LogInformation("Success", Success);
             _logger.LogInformation("ResultText", ResultText);
             _logger.LogMethodExit();
-            return Json(new { success = Success,  resultText = ResultText });
+            return Json(new { success = Success, resultText = ResultText });
         }
     }
 }
