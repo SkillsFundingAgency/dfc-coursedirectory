@@ -60,9 +60,9 @@
     <div id="sectionWhereNext">
         @await Component.InvokeAsync(nameof(WhereNext), Model.WhereNext)
     </div>
-    <div id="sectionFundingOptions">
+    @*<div id="sectionFundingOptions">
         @await Component.InvokeAsync(nameof(FundingOptions), Model.FundingOptions)
-    </div>
+    </div>*@
 
     @{
         var lastAddCoursePage = HttpContextAccessor.HttpContext.Session.GetObject<AddCoursePage>("LastAddCoursePage");
