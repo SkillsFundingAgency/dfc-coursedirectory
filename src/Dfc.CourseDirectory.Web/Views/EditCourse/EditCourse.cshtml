@@ -55,7 +55,7 @@
         @await Component.InvokeAsync(nameof(WhereNext), Model.WhereNext)
     </div>
 
-    <div id="sectionFundingOptions">
+    @*<div id="sectionFundingOptions">
         @await Component.InvokeAsync(nameof(FundingOptions), new FundingOptionsModel()
         {
             AdvancedLearnerLoan = Model.AdvancedLearnerLoan.Value,
@@ -64,7 +64,7 @@
             FundingOptionsLabelText ="Funding options",
             FundingOptionsAriaDescribedBy =""
         })
-    </div>
+    </div>*@
 
     <ul class="flex-container">
         <li class="flex-item">
