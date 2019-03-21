@@ -169,6 +169,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 level = levelFilters.FirstOrDefault()?.Key;
             }
+            else
+            {
+                if (!filteredCourses.Any(x => x.NotionalNVQLevelv2==level))
+                {
+                    level = levelFilters.FirstOrDefault()?.Key;
+                }
+            }
 
             foreach (var levels in levelFilters)
             { 
