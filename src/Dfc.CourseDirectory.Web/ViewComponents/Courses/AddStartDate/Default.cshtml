@@ -8,45 +8,31 @@
 <fieldset class="govuk-fieldset" aria-describedby="changed-name-hint">
 
     <div class="govuk-form-group" id="date">
+
         <label id="govuk-label-start_date" class="govuk-label" for="sub" style="margin-bottom: 15px">
             @Model.LabelText
 
         </label>
         <span id="more-detail-hint" class="govuk-hint">@Model.SpecifiedDateHintText </span>
 
-
-        <div class="govuk-radios__item">
-            @Html.RadioButtonFor(m => m.StartDateType, StartDateType.SpecifiedStartDate, new { @class = "govuk-radios__input specified", id = @StartDateType.SpecifiedStartDate })
-            <label class="govuk-label govuk-radios__label" for="@StartDateType.SpecifiedStartDate">Defined Start Date</label>
-        </div>
-
         <div class="govuk-form-group" id="startDateFormGroup">
-            
+
             @{
                 var currentStartDate = string.Empty;
                 var pastMessage = string.Empty;
             }
             <div class="govuk-date-input" id="start_date"
                  val-required-message="Enter start date"
-                 @if (Model.CurrentStartDate != null)
-                 {
-                     currentStartDate = @Model.CurrentStartDate.Value.ToString("yyyy-MM-dd");
-                     pastMessage = "New Start Date cannot be before the pre-edited Start Date";
-                 }
-                 else
-                 {
-                     currentStartDate = @DateTime.Now.ToString("yyyy-MM-dd");
-                     pastMessage = "Start Date cannot be earlier than today’s date";
-                 }
-
-
+                 @if (Model.CurrentStartDate != null) { currentStartDate = @Model.CurrentStartDate.Value.ToString("yyyy-MM-dd"); pastMessage = "New Start Date cannot be before the pre-edited Start Date"; } else { currentStartDate = @DateTime.Now.ToString("yyyy-MM-dd"); pastMessage = "Start Date cannot be earlier than today’s date"; }
                  val-past-date-ref="@currentStartDate"
-
                  val-past-date-message="@pastMessage"
-
                  val-future-date-ref=@DateTime.Now.AddYears(2).ToString("yyyy-MM-dd")
                  val-future-date-message="Start Date cannot be later than 2 years from today’s date"
                  val-date-message="Invalid date">
+                <div class="govuk-radios__item">
+                    @Html.RadioButtonFor(m => m.StartDateType, StartDateType.SpecifiedStartDate, new { @class = "govuk-radios__input specified", id = @StartDateType.SpecifiedStartDate })
+                    <label class="govuk-label govuk-radios__label" for="@StartDateType.SpecifiedStartDate">Defined Start Date</label>
+                </div>
                 <div class="govuk-date-input__item">
                     <div class="govuk-form-group">
                         <label class="govuk-label govuk-date-input__label" asp-for="@Model.Day">
