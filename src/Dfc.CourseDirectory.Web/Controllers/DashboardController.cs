@@ -60,7 +60,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                                                  .SelectMany(i => i.Value);
 
             int[] pendingStatuses = new int[] { (int)RecordStatus.Pending, (int)RecordStatus.BulkUloadPending, (int)RecordStatus.APIPending, (int)RecordStatus.MigrationPending };
-            IEnumerable<Course> liveCourses = courses.Where(c => ((int)c.CourseStatus & (int)RecordStatus.Live) > 0);
+            IEnumerable<Course> validCourses = courses.Where(c => c.IsValid);
             //IEnumerable<Course> pendingCourses = from Course c in courses
             //                                     from int s in pendingStatuses
             //                                     where ((int)c.CourseStatus & s) > 0
@@ -84,7 +84,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                  ValidationHeader = $"{ courseMessages.LongCount() + runMessages.LongCount() } data items require attention",
                  ValidationMessages = messages,
                  //LiveCourseCount = counts.FirstOrDefault(c => c.Status == (int)RecordStatus.Live).Count,
-                 LiveCourseCount = liveCourses.SelectMany(c => c.CourseRuns).Count(r => r.RecordStatus == RecordStatus.Live),
+                 LiveCourseCount = validCourses.SelectMany(c => c.CourseRuns).Count(r => r.RecordStatus == RecordStatus.Live),
                  ArchivedCourseCount = counts.FirstOrDefault(c => c.Status == (int)RecordStatus.Archived).Count,
                  PendingCourseCount = (from ICourseStatusCountResult c in counts
                                        join int p in pendingStatuses
