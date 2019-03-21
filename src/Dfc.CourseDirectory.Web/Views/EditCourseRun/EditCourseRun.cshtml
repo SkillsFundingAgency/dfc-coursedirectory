@@ -39,62 +39,62 @@
     <div class="section" id="sectionCourseName">
         @await Component.InvokeAsync(nameof(CourseName), new CourseNameModel
         {
-            CourseName = Model.CourseName,
-            LabelText = "Course name",
-            HintText = "This is the name people will see when they search for your course.",
-            AriaDescribedBy = "Please enter the course name."
+        CourseName = Model.CourseName,
+        LabelText = "Course name",
+        HintText = "This is the name people will see when they search for your course.",
+        AriaDescribedBy = "Please enter the course name."
         })
     </div>
 
     <div class="section" id="sectionCourseProviderReference">
         @await Component.InvokeAsync(nameof(CourseProviderReference), new CourseProviderReferenceModel
         {
-            CourseProviderReference = Model.CourseProviderReference,
-            LabelText = "ID",
-            HintText = "This is how you identify a course in your internal system.",
-            AriaDescribedBy = "Please enter the ID for this course"
+        CourseProviderReference = Model.CourseProviderReference,
+        LabelText = "ID",
+        HintText = "This is how you identify a course in your internal system.",
+        AriaDescribedBy = "Please enter the ID for this course"
         })
     </div>
 
     <div class="section" id="sectionDeliveryType">
         @await Component.InvokeAsync(nameof(DeliveryType), new DeliveryTypeModel
         {
-            DeliveryMode = Model.DeliveryMode,
-            LabelText = "Delivery Mode",
-            HintText = "Select how this course will be delivered",
-            AriaDescribedBy = "How the course will be delivered"
+        DeliveryMode = Model.DeliveryMode,
+        LabelText = "Delivery Mode",
+        HintText = "Select how this course will be delivered",
+        AriaDescribedBy = "How the course will be delivered"
         })
     </div>
 
     <div class="section" id="sectionStartDate">
         @await Component.InvokeAsync(nameof(AddStartDate), new AddStartDateModel()
         {
-            StartDateType = Model.StartDateType,
-            Day = Model.Day ,
-            Month = Model.Month,
-            Year = Model.Year,
-            DayAriaDescribedBy = "",
-            DayLabelText = "Day",
-            MonthAriaDescribedBy = "",
-            MonthLabelText = "Month",
-            YearAriaDescribedBy = "",
-            YearLabelText = "Year",
-            AriaDescribedBy = "",
-            SpecifiedDateHintText = "e.g. For example, 30 9 2019",
-            FlexibleDateHintText = "Or select a flexible start date:",
-            LabelText = "Start date",
-            CurrentStartDate = Model.CurrentCourseRunDate
+        StartDateType = Model.StartDateType,
+        Day = Model.Day ,
+        Month = Model.Month,
+        Year = Model.Year,
+        DayAriaDescribedBy = "",
+        DayLabelText = "Day",
+        MonthAriaDescribedBy = "",
+        MonthLabelText = "Month",
+        YearAriaDescribedBy = "",
+        YearLabelText = "Year",
+        AriaDescribedBy = "",
+        SpecifiedDateHintText = "e.g. For example, 30 9 2019",
+        FlexibleDateHintText = "Or select a flexible start date:",
+        LabelText = "Start date",
+        CurrentStartDate = Model.CurrentCourseRunDate
         })
     </div>
 
     <div class="section" id="sectionVenue" style="@Model.DeliveryMode.IfNotClassroomBasedDisplayNone()">
-            @await Component.InvokeAsync(nameof(ChooseVenue), new ChooseVenueModel()
-            {
-                LabelText = "Venue",
-                AriaDescribedBy = "Venue",
-                HintText = "Select course run venue",
-                VenueId = Model.VenueId ?? (Guid?)null
-            })
+        @await Component.InvokeAsync(nameof(ChooseVenue), new ChooseVenueModel()
+        {
+        LabelText = "Venue",
+        AriaDescribedBy = "Venue",
+        HintText = "Select course run venue",
+        VenueId = Model.VenueId ?? (Guid?)null
+        })
     </div>
 
     <div class="section" id="sectionRegion">
@@ -112,21 +112,21 @@
                 @{ var j = 0; }
                 @if (Model.SelectRegion.RegionItems.Count() == 1)
                 {
-                    <div class="govuk-checkboxes__item">
-                        <input class="govuk-checkboxes__input" id="RegionName-@j" name="SelectedRegions" type="checkbox" value="@Model.SelectRegion.RegionItems.First().Id" checked="checked" onclick="return false;" />
-                        <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@Model.SelectRegion.RegionItems.First().RegionName</label>
-                    </div>
+                <div class="govuk-checkboxes__item">
+                    <input class="govuk-checkboxes__input" id="RegionName-@j" name="SelectedRegions" type="checkbox" value="@Model.SelectRegion.RegionItems.First().Id" checked="checked" onclick="return false;" />
+                    <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@Model.SelectRegion.RegionItems.First().RegionName</label>
+                </div>
                 }
                 else
                 {
-                    foreach (var item in Model.SelectRegion.RegionItems)
-                    {
-                        j++;
-                        <div class="govuk-checkboxes__item">
-                            <input class="govuk-checkboxes__input" id="RegionName-@j" name="SelectedRegions" type="checkbox" value="@item.Id" @item.Checked.ThenNullableCheck() />
-                            <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@item.RegionName</label>
-                        </div>
-                    }
+                foreach (var item in Model.SelectRegion.RegionItems)
+                {
+                j++;
+                <div class="govuk-checkboxes__item">
+                    <input class="govuk-checkboxes__input" id="RegionName-@j" name="SelectedRegions" type="checkbox" value="@item.Id" @item.Checked.ThenNullableCheck() />
+                    <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@item.RegionName</label>
+                </div>
+                }
                 }
             </div>
         </div>
@@ -138,35 +138,35 @@
     <div class="section" id="sectionUrl">
         @await Component.InvokeAsync(nameof(UrlInput), new UrlInputModel
         {
-            Url = Model.Url,
-            LabelText = "URL",
-            HintText = "Enter the URL for this course e.g. http://www.google.com",
-            AriaDescribedBy = "Enter the URL for this course"
+        Url = Model.Url,
+        LabelText = "URL",
+        HintText = "Enter the URL for this course e.g. http://www.google.com",
+        AriaDescribedBy = "Enter the URL for this course"
         })
     </div>
 
     <div class="section" id="sectionCost">
         @await Component.InvokeAsync(nameof(Cost), new CostModel
         {
-            Cost = Model.Cost,
-            CostDescription = Model.CostDescription,
-            CostLabelText = "Cost",
-            CostHintText = "Enter the cost for the course in pounds and pence e.g. 125.00",
-            CostAriaDescribedBy = "Enter the cost in pounds and pence",
-            CostDescriptionLabelText = "Cost description",
-            CostDescriptionHintText = "Enter details related to the cost of this course",
-            CostDescriptionAriaDescribedBy = "Enter details of related to the cost of this course"
+        Cost = Model.Cost,
+        CostDescription = Model.CostDescription,
+        CostLabelText = "Cost",
+        CostHintText = "Enter the cost for the course in pounds and pence e.g. 125.00",
+        CostAriaDescribedBy = "Enter the cost in pounds and pence",
+        CostDescriptionLabelText = "Cost description",
+        CostDescriptionHintText = "Enter details related to the cost of this course",
+        CostDescriptionAriaDescribedBy = "Enter details of related to the cost of this course"
         })
     </div>
 
     <div class="section" id="sectionDuration">
         @await Component.InvokeAsync(nameof(Duration), new DurationModel
         {
-            DurationLength = Model.DurationLength,
-            DurationUnit =  Model.DurationUnit,
-            LabelText = "Duration",
-            HintText = "Select the duration of the course",
-            AriaDescribedBy = "Select course duration"
+        DurationLength = Model.DurationLength,
+        DurationUnit =  Model.DurationUnit,
+        LabelText = "Duration",
+        HintText = "Select the duration of the course",
+        AriaDescribedBy = "Select course duration"
         })
     </div>
 
@@ -174,42 +174,42 @@
     <div class="section" id="FullPartTimeRadioButtons" style="display: none;">
         @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode.StudyMode), new StudyModeModel
         {
-            StudyMode = Model.StudyMode,
-            LabelText = "Full time or part time",
-            HintText = "Select the attendance pattern"
+        StudyMode = Model.StudyMode,
+        LabelText = "Full time or part time",
+        HintText = "Select the attendance pattern"
         })
     </div>
 
     <div class="section" id="AttendancePatternRadioButtons" style="display: none;">
         @await Component.InvokeAsync(nameof(Attendance), new AttendanceModel
         {
-            AttendanceMode = Model.AttendanceMode,
-            LabelText = "Attendance",
-            HintText = "Select the time of day the course takes place"
+        AttendanceMode = Model.AttendanceMode,
+        LabelText = "Attendance",
+        HintText = "Select the time of day the course takes place"
         })
     </div>
-    
-<ul class="flex-container">
-    <li class="flex-item">
-        <button name="saveButton" type="submit" class="govuk-button" id="save">
-            Save
-        </button>
-    </li>
-    <li class="flex-item" style="padding-top: 15px">
-        @switch (Model.Mode)
-        {
+
+    <ul class="flex-container">
+        <li class="flex-item">
+            <button name="saveButton" type="submit" class="govuk-button" id="save">
+                Save
+            </button>
+        </li>
+        <li class="flex-item" style="padding-top: 15px">
+            @switch (Model.Mode)
+            {
             case PublishMode.Migration:
-                @Html.ActionLink("Cancel", "Index", "PublishCourses", new { publishMode = Model.Mode, courseId = Model.CourseId, courseRunId = Model.CourseRunId}, new { @class = "govuk-link" })
-                break;
+            @Html.ActionLink("Cancel", "Index", "PublishCourses", new { publishMode = Model.Mode, courseId = Model.CourseId, courseRunId = Model.CourseRunId}, new { @class = "govuk-link" })
+            break;
             case PublishMode.BulkUpload:
-                @Html.ActionLink("Cancel", "Index", "PublishCourses", new { publishMode = Model.Mode }, new { @class = "govuk-link" })
-                break;
+            @Html.ActionLink("Cancel", "Index", "PublishCourses", new { publishMode = Model.Mode }, new { @class = "govuk-link" })
+            break;
             default:
-                @Html.ActionLink("Cancel", "Courses", "Provider", new { level = @Model.NotionalNVQLevelv2, courseId = @Model.CourseId, courseRunId = @Model.CourseRunId }, new { @class = "govuk-link" })
-                break;
-        }
-    </li>
-</ul>
+            @Html.ActionLink("Cancel", "Courses", "Provider", new { level = @Model.NotionalNVQLevelv2, courseId = @Model.CourseId, courseRunId = @Model.CourseRunId }, new { @class = "govuk-link" })
+            break;
+            }
+        </li>
+    </ul>
 
 
 </form>
@@ -286,14 +286,72 @@
                 $courseProviderReference.govUkInput("validState");
                 $radioDeliveryMode.govUkRadios("validState");
                 $startDate.govUkDateInput("validState");
+                $duration.govUkDurationInput("validState");
                 $selectedVenue.govUkSelect("validState");
                 $regions.govUkCheckboxes("validState");
                 $url.govUkInput("validState");
                 $cost.govUkInput("validState");
                 $costDescription.govUkTextarea("validState");
-                $duration.govUkDurationInput("validState");
                 $studyMode.govUkRadios("validState");
                 $attendance.govUkRadios("validState");
+
+                if (isClassroomBased) {
+                    if ($.requiredValidate($selectedVenue.val())) {
+                        $selectedVenue.govUkSelect("validState");
+                        $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $selectedVenue[0].id);
+                        $errorSummary.govUkErrorSummary("hideIfEmpty")
+                        validStates.push(true);
+                    } else {
+                        $selectedVenue.govUkSelect("invalidState", $selectedVenue.attr("val-required-message"));
+                        var selectedVenueErrorHashLinks = $selectedVenue.govUkSelect("getErrorHashLinks");
+                        $errorSummary.govUkErrorSummary("add", selectedVenueErrorHashLinks);
+                        $errorSummary.govUkErrorSummary("show");
+                        validStates.push(false);
+                    }
+                }
+
+                if (isWorkBased) {
+                    if ($.requiredValidate($regions.find("input[type='checkbox']:checked").val())) {
+                        $regions.govUkCheckboxes("validState");
+                        $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $regions[0].id);
+                        $errorSummary.govUkErrorSummary("hideIfEmpty")
+                        validStates.push(true);
+                    } else {
+                        $regions.govUkCheckboxes("invalidState", $regions.attr("val-required-message"));
+                        var regionsErrorHashLinks = $regions.govUkCheckboxes("getErrorHashLinks");
+                        $errorSummary.govUkErrorSummary("add", regionsErrorHashLinks);
+                        $errorSummary.govUkErrorSummary("show");
+                        validStates.push(false);
+                    }
+                }
+
+                if ((!$.requiredValidate($cost.val()) && !$.requiredValidate($costDescription.val()))) {
+                    $cost.govUkInput("invalidState", $cost.attr("val-required-message"));
+                    var costErrorHashLinks = $cost.govUkInput("getErrorHashLinks");
+                    $errorSummary.govUkErrorSummary("add", costErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
+                    validStates.push(false);
+                } else if (
+                    !$.regexValidate({ regex: $costDescription.attr("val-regex") }, $costDescription.val())) {
+                    $costDescription.govUkTextarea("invalidState", $costDescription.attr("val-regex-message"));
+                    var costDescriptionErrorHashLinks = $costDescription.govUkTextarea("getErrorHashLinks");
+                    $errorSummary.govUkErrorSummary("add", costDescriptionErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
+                    validStates.push(false);
+                } else if (
+                    !$.maxLengthValidate({ max: $costDescription.attr("val-max-length") }, $costDescription.val())) {
+                    $costDescription.govUkTextarea("invalidState", $costDescription.attr("val-max-length-message"));
+                    var costDescriptionErrorHashLinks = $costDescription.govUkTextarea("getErrorHashLinks");
+                    $errorSummary.govUkErrorSummary("add", costDescriptionErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
+                    validStates.push(false);
+                } else {
+                    $cost.govUkInput("validState");
+                    $costDescription.govUkTextarea("validState");
+                    $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $costDescription[0].id);
+                    $errorSummary.govUkErrorSummary("hideIfEmpty")
+                    validStates.push(true);
+                }
 
                 if (!$.requiredValidate($courseName.val())) {
                     $courseName.govUkInput("invalidState", $courseName.attr("val-required-message"));
@@ -338,6 +396,55 @@
                 } else {
                     $courseProviderReference.govUkInput("validState");
                     $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $courseProviderReference[0].id);
+                    $errorSummary.govUkErrorSummary("hideIfEmpty")
+                    validStates.push(true);
+                }
+
+                if (!$.regexValidate({ regex: $url.attr("val-regex") }, $url.val())) {
+                    $url.govUkInput("invalidState", $url.attr("val-regex-message"));
+                    var urlErrorHashLinks = $url.govUkInput("getErrorHashLinks");
+                    $errorSummary.govUkErrorSummary("add", urlErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
+                    validStates.push(false);
+                } else if (
+                    !$.maxLengthValidate({ max: $url.attr("val-max-length") }, $url.val())) {
+                    $url.govUkInput("invalidState", $url.attr("val-max-length-message"));
+                    var urlErrorHashLinks = $url.govUkInput("getErrorHashLinks");
+                    $errorSummary.govUkErrorSummary("add", urlErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
+                    validStates.push(false);
+                } else {
+                    $url.govUkInput("validState");
+                    $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $url[0].id);
+                    $errorSummary.govUkErrorSummary("hideIfEmpty")
+                    validStates.push(true);
+                }
+
+                if (!$.requiredValidate($duration.find("input").val())) {
+                    $duration.govUkDurationInput("invalidState", $duration.attr("val-duration-message"));
+                    var durationErrorHashLinks = $duration.govUkDurationInput("getErrorHashLinks");
+                    $errorSummary.govUkErrorSummary("add", durationErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
+                    validStates.push(false);
+                } else if (!$.rangeValidate({
+                    min: $duration.attr("val-range-min"),
+                    max: $duration.attr("val-range-max")
+                },
+                    $duration.find("input").val())) {
+                    $duration.govUkDurationInput("invalidState", $duration.attr("val-duration-message"));
+                    var durationErrorHashLinks = $duration.govUkDurationInput("getErrorHashLinks");
+                    $errorSummary.govUkErrorSummary("add", durationErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
+                    validStates.push(false);
+                } else if (!$.requiredValidate($duration.find("select").val())) {
+                    $duration.govUkDurationInput("invalidState", $duration.attr("val-duration-message"));
+                    var durationErrorHashLinks = $duration.govUkDurationInput("getErrorHashLinks");
+                    $errorSummary.govUkErrorSummary("add", durationErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
+                    validStates.push(false);
+                } else {
+                    $duration.govUkDurationInput("validState");
+                    $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $duration[0].id);
                     $errorSummary.govUkErrorSummary("hideIfEmpty")
                     validStates.push(true);
                 }
@@ -391,113 +498,6 @@
                             validStates.push(true);
                         }
                     }
-                }
-
-                if (isClassroomBased) {
-                    if ($.requiredValidate($selectedVenue.val())) {
-                        $selectedVenue.govUkSelect("validState");
-                        $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $selectedVenue[0].id);
-                        $errorSummary.govUkErrorSummary("hideIfEmpty")
-                        validStates.push(true);
-                    } else {
-                        $selectedVenue.govUkSelect("invalidState", $selectedVenue.attr("val-required-message"));
-                        var selectedVenueErrorHashLinks = $selectedVenue.govUkSelect("getErrorHashLinks");
-                        $errorSummary.govUkErrorSummary("add", selectedVenueErrorHashLinks);
-                        $errorSummary.govUkErrorSummary("show");
-                        validStates.push(false);
-                    }
-                }
-
-                if (isWorkBased) {
-                    if ($.requiredValidate($regions.find("input[type='checkbox']:checked").val())) {
-                        $regions.govUkCheckboxes("validState");
-                        $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $regions[0].id);
-                        $errorSummary.govUkErrorSummary("hideIfEmpty")
-                        validStates.push(true);
-                    } else {
-                        $regions.govUkCheckboxes("invalidState", $regions.attr("val-required-message"));
-                        var regionsErrorHashLinks = $regions.govUkCheckboxes("getErrorHashLinks");
-                        $errorSummary.govUkErrorSummary("add", regionsErrorHashLinks);
-                        $errorSummary.govUkErrorSummary("show");
-                        validStates.push(false);
-                    }
-                }
-
-                if (!$.regexValidate({ regex: $url.attr("val-regex") }, $url.val())) {
-                    $url.govUkInput("invalidState", $url.attr("val-regex-message"));
-                    var urlErrorHashLinks = $url.govUkInput("getErrorHashLinks");
-                    $errorSummary.govUkErrorSummary("add", urlErrorHashLinks);
-                    $errorSummary.govUkErrorSummary("show");
-                    validStates.push(false);
-                } else if (
-                    !$.maxLengthValidate({ max: $url.attr("val-max-length") }, $url.val())) {
-                    $url.govUkInput("invalidState", $url.attr("val-max-length-message"));
-                    var urlErrorHashLinks = $url.govUkInput("getErrorHashLinks");
-                    $errorSummary.govUkErrorSummary("add", urlErrorHashLinks);
-                    $errorSummary.govUkErrorSummary("show");
-                    validStates.push(false);
-                } else {
-                    $url.govUkInput("validState");
-                    $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $url[0].id);
-                    $errorSummary.govUkErrorSummary("hideIfEmpty")
-                    validStates.push(true);
-                }
-
-                if ((!$.requiredValidate($cost.val()) && !$.requiredValidate($costDescription.val()))) {
-                    $cost.govUkInput("invalidState", $cost.attr("val-required-message"));
-                    var costErrorHashLinks = $cost.govUkInput("getErrorHashLinks");
-                    $errorSummary.govUkErrorSummary("add", costErrorHashLinks);
-                    $errorSummary.govUkErrorSummary("show");
-                    validStates.push(false);
-                } else if (
-                    !$.regexValidate({ regex: $costDescription.attr("val-regex") }, $costDescription.val())) {
-                    $costDescription.govUkTextarea("invalidState", $costDescription.attr("val-regex-message"));
-                    var costDescriptionErrorHashLinks = $costDescription.govUkTextarea("getErrorHashLinks");
-                    $errorSummary.govUkErrorSummary("add", costDescriptionErrorHashLinks);
-                    $errorSummary.govUkErrorSummary("show");
-                    validStates.push(false);
-                } else if (
-                    !$.maxLengthValidate({ max: $costDescription.attr("val-max-length") }, $costDescription.val())) {
-                    $costDescription.govUkTextarea("invalidState", $costDescription.attr("val-max-length-message"));
-                    var costDescriptionErrorHashLinks = $costDescription.govUkTextarea("getErrorHashLinks");
-                    $errorSummary.govUkErrorSummary("add", costDescriptionErrorHashLinks);
-                    $errorSummary.govUkErrorSummary("show");
-                    validStates.push(false);
-                } else {
-                    $cost.govUkInput("validState");
-                    $costDescription.govUkTextarea("validState");
-                    $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $costDescription[0].id);
-                    $errorSummary.govUkErrorSummary("hideIfEmpty")
-                    validStates.push(true);
-                }
-
-                if (!$.requiredValidate($duration.find("input").val())) {
-                    $duration.govUkDurationInput("invalidState", $duration.attr("val-duration-message"));
-                    var durationErrorHashLinks = $duration.govUkDurationInput("getErrorHashLinks");
-                    $errorSummary.govUkErrorSummary("add", durationErrorHashLinks);
-                    $errorSummary.govUkErrorSummary("show");
-                    validStates.push(false);
-                } else if (!$.rangeValidate({
-                    min: $duration.attr("val-range-min"),
-                    max: $duration.attr("val-range-max")
-                },
-                    $duration.find("input").val())) {
-                    $duration.govUkDurationInput("invalidState", $duration.attr("val-duration-message"));
-                    var durationErrorHashLinks = $duration.govUkDurationInput("getErrorHashLinks");
-                    $errorSummary.govUkErrorSummary("add", durationErrorHashLinks);
-                    $errorSummary.govUkErrorSummary("show");
-                    validStates.push(false);
-                } else if (!$.requiredValidate($duration.find("select").val())) {
-                    $duration.govUkDurationInput("invalidState", $duration.attr("val-duration-message"));
-                    var durationErrorHashLinks = $duration.govUkDurationInput("getErrorHashLinks");
-                    $errorSummary.govUkErrorSummary("add", durationErrorHashLinks);
-                    $errorSummary.govUkErrorSummary("show");
-                    validStates.push(false);
-                } else {
-                    $duration.govUkDurationInput("validState");
-                    $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $duration[0].id);
-                    $errorSummary.govUkErrorSummary("hideIfEmpty")
-                    validStates.push(true);
                 }
 
                 if (!validStates.every(isAllValid)) {
