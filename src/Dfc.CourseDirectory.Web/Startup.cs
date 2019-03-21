@@ -129,7 +129,7 @@ namespace Dfc.CourseDirectory.Web
             services.Configure<OnspdSearchSettings>(Configuration.GetSection(nameof(OnspdSearchSettings)));
             services.AddScoped<IOnspdService, OnspdService>();
             services.AddScoped<IOnspdSearchHelper, OnspdSearchHelper>();
-
+            services.AddScoped<IUserHelper, UserHelper>();
             services.AddScoped<IBulkUploadService, BulkUploadService>();
 
             services.AddDbContext<ApplicationDbContext>(options =>
@@ -189,7 +189,7 @@ namespace Dfc.CourseDirectory.Web
 
             services.AddResponseCaching();
             services.AddSession(options => {
-                options.IdleTimeout = TimeSpan.FromMinutes(20);
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
                 options.Cookie.HttpOnly = true;
 
             });

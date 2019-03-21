@@ -159,7 +159,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 course.CourseRuns = filteredCourseRuns;
             }
 
-            var levelFilters = filteredCourses.GroupBy(x => x.NotionalNVQLevelv2).ToList();
+            var levelFilters = filteredCourses.GroupBy(x => x.NotionalNVQLevelv2).OrderBy(x => x.Key).ToList();
 
             var levelFiltersForDisplay = new List<QualificationLevelFilterViewModel>();
 
@@ -168,6 +168,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
             if (string.IsNullOrWhiteSpace(level))
             {
                 level = levelFilters.FirstOrDefault()?.Key;
+            }
+            else
+            {
+                if (!filteredCourses.Any(x => x.NotionalNVQLevelv2==level))
+                {
+                    level = levelFilters.FirstOrDefault()?.Key;
+                }
             }
 
             foreach (var levels in levelFilters)

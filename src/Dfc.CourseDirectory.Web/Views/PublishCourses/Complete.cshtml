@@ -1,16 +1,29 @@
 ﻿@using Microsoft.AspNetCore.Authorization;
 @using Microsoft.AspNetCore.Identity
 @using Dfc.CourseDirectory.Web.Areas.Identity.Data;
-
+@using Dfc.CourseDirectory.Models.Enums
 @model Dfc.CourseDirectory.Web.ViewModels.PublishCourses.PublishCompleteViewModel
 
 <div class="govuk-panel govuk-panel--confirmation">
-    <h1 class="govuk-panel__title">
-        Your file has been published
-    </h1>
-    <div class="govuk-panel__body">
-        You have added @Model.NumberOfCoursesPublished courses to the course directory
-    </div>
+    @if (Model.Mode.Equals(PublishMode.BulkUpload))
+    {
+        <h1 class="govuk-panel__title">
+            Your file has been published
+        </h1>
+        <div class="govuk-panel__body">
+            You have added @Model.NumberOfCoursesPublished courses to the course directory
+        </div>
+    }
+
+    @if (Model.Mode.Equals(PublishMode.Migration))
+    {
+        <h1 class="govuk-panel__title">
+            Pending Courses Fixed
+        </h1>
+        <div class="govuk-panel__body">
+            You have published @Model.NumberOfCoursesPublished courses to the course directory
+        </div>
+    }
 </div>
 <div class="Publish-Complete">
     <div class="govuk-form-group Next-Steps">
