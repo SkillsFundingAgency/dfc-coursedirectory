@@ -286,72 +286,14 @@
                 $courseProviderReference.govUkInput("validState");
                 $radioDeliveryMode.govUkRadios("validState");
                 $startDate.govUkDateInput("validState");
-                $duration.govUkDurationInput("validState");
                 $selectedVenue.govUkSelect("validState");
                 $regions.govUkCheckboxes("validState");
                 $url.govUkInput("validState");
                 $cost.govUkInput("validState");
                 $costDescription.govUkTextarea("validState");
+                $duration.govUkDurationInput("validState");
                 $studyMode.govUkRadios("validState");
                 $attendance.govUkRadios("validState");
-
-                if (isClassroomBased) {
-                    if ($.requiredValidate($selectedVenue.val())) {
-                        $selectedVenue.govUkSelect("validState");
-                        $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $selectedVenue[0].id);
-                        $errorSummary.govUkErrorSummary("hideIfEmpty")
-                        validStates.push(true);
-                    } else {
-                        $selectedVenue.govUkSelect("invalidState", $selectedVenue.attr("val-required-message"));
-                        var selectedVenueErrorHashLinks = $selectedVenue.govUkSelect("getErrorHashLinks");
-                        $errorSummary.govUkErrorSummary("add", selectedVenueErrorHashLinks);
-                        $errorSummary.govUkErrorSummary("show");
-                        validStates.push(false);
-                    }
-                }
-
-                if (isWorkBased) {
-                    if ($.requiredValidate($regions.find("input[type='checkbox']:checked").val())) {
-                        $regions.govUkCheckboxes("validState");
-                        $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $regions[0].id);
-                        $errorSummary.govUkErrorSummary("hideIfEmpty")
-                        validStates.push(true);
-                    } else {
-                        $regions.govUkCheckboxes("invalidState", $regions.attr("val-required-message"));
-                        var regionsErrorHashLinks = $regions.govUkCheckboxes("getErrorHashLinks");
-                        $errorSummary.govUkErrorSummary("add", regionsErrorHashLinks);
-                        $errorSummary.govUkErrorSummary("show");
-                        validStates.push(false);
-                    }
-                }
-
-                if ((!$.requiredValidate($cost.val()) && !$.requiredValidate($costDescription.val()))) {
-                    $cost.govUkInput("invalidState", $cost.attr("val-required-message"));
-                    var costErrorHashLinks = $cost.govUkInput("getErrorHashLinks");
-                    $errorSummary.govUkErrorSummary("add", costErrorHashLinks);
-                    $errorSummary.govUkErrorSummary("show");
-                    validStates.push(false);
-                } else if (
-                    !$.regexValidate({ regex: $costDescription.attr("val-regex") }, $costDescription.val())) {
-                    $costDescription.govUkTextarea("invalidState", $costDescription.attr("val-regex-message"));
-                    var costDescriptionErrorHashLinks = $costDescription.govUkTextarea("getErrorHashLinks");
-                    $errorSummary.govUkErrorSummary("add", costDescriptionErrorHashLinks);
-                    $errorSummary.govUkErrorSummary("show");
-                    validStates.push(false);
-                } else if (
-                    !$.maxLengthValidate({ max: $costDescription.attr("val-max-length") }, $costDescription.val())) {
-                    $costDescription.govUkTextarea("invalidState", $costDescription.attr("val-max-length-message"));
-                    var costDescriptionErrorHashLinks = $costDescription.govUkTextarea("getErrorHashLinks");
-                    $errorSummary.govUkErrorSummary("add", costDescriptionErrorHashLinks);
-                    $errorSummary.govUkErrorSummary("show");
-                    validStates.push(false);
-                } else {
-                    $cost.govUkInput("validState");
-                    $costDescription.govUkTextarea("validState");
-                    $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $costDescription[0].id);
-                    $errorSummary.govUkErrorSummary("hideIfEmpty")
-                    validStates.push(true);
-                }
 
                 if (!$.requiredValidate($courseName.val())) {
                     $courseName.govUkInput("invalidState", $courseName.attr("val-required-message"));
@@ -400,6 +342,87 @@
                     validStates.push(true);
                 }
 
+                if ($.requiredValidate($radioDeliveryMode.find("input[type='radio']:checked").val())) {
+                    $radioDeliveryMode.govUkRadios("validState");
+                    $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $radioDeliveryMode[0].id);
+                    $errorSummary.govUkErrorSummary("hideIfEmpty")
+                    validStates.push(true);
+                } else {
+                    $radioDeliveryMode.govUkRadios("invalidState", $radioDeliveryMode.attr("val-required-message"));
+                    var deliveryModeErrorHashLinks = $radioDeliveryMode.govUkRadios("getErrorHashLinks");
+                    $errorSummary.govUkErrorSummary("add", deliveryModeErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
+                    validStates.push(false);
+                }
+
+                $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $startDate[0].id);
+                var radioValue = $("input[name='StartDateType']:checked").val();
+                if (radioValue.toUpperCase() === "SPECIFIEDSTARTDATE") {
+                    var startDateValue = $startDate.govUkDateInput("getISODateString");
+                    if (startDateValue === "") {
+                        $startDate.govUkDateInput("invalidState", $startDate.attr("val-required-message"));
+                        var startDateErrorHashLinks = $startDate.govUkDateInput("getErrorHashLinks");
+                        $errorSummary.govUkErrorSummary("add", startDateErrorHashLinks);
+                        $errorSummary.govUkErrorSummary("show");
+                        validStates.push(false);
+                    } else {
+                        if (!$.dateValidate(startDateValue)) {
+                            $startDate.govUkDateInput("invalidState", $startDate.attr("val-date-message"));
+                            var startDateErrorHashLinks = $startDate.govUkDateInput("getErrorHashLinks");
+                            $errorSummary.govUkErrorSummary("add", startDateErrorHashLinks);
+                            $errorSummary.govUkErrorSummary("show");
+                            validStates.push(false);
+                        } else if ($.pastDateValidate({ ref: $startDate.attr("val-past-date-ref") }, startDateValue)) {
+                            $startDate.govUkDateInput("invalidState", $startDate.attr("val-past-date-message"));
+                            var startDateErrorHashLinks = $startDate.govUkDateInput("getErrorHashLinks");
+                            $errorSummary.govUkErrorSummary("add", startDateErrorHashLinks);
+                            $errorSummary.govUkErrorSummary("show");
+                            validStates.push(false);
+                        } else if ($.futureDateValidate({ ref: $startDate.attr("val-future-date-ref") }, startDateValue)) {
+                            $startDate.govUkDateInput("invalidState", $startDate.attr("val-future-date-message"));
+                            var startDateErrorHashLinks = $startDate.govUkDateInput("getErrorHashLinks");
+                            $errorSummary.govUkErrorSummary("add", startDateErrorHashLinks);
+                            $errorSummary.govUkErrorSummary("show");
+                            validStates.push(false);
+                        } else if ($.dateValidate(startDateValue)) {
+                            $startDate.govUkDateInput("validState");
+                            //$errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $startDate[0].id);
+                            $errorSummary.govUkErrorSummary("hideIfEmpty")
+                            validStates.push(true);
+                        }
+                    }
+                }
+
+                if (isClassroomBased) {
+                    if ($.requiredValidate($selectedVenue.val())) {
+                        $selectedVenue.govUkSelect("validState");
+                        $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $selectedVenue[0].id);
+                        $errorSummary.govUkErrorSummary("hideIfEmpty")
+                        validStates.push(true);
+                    } else {
+                        $selectedVenue.govUkSelect("invalidState", $selectedVenue.attr("val-required-message"));
+                        var selectedVenueErrorHashLinks = $selectedVenue.govUkSelect("getErrorHashLinks");
+                        $errorSummary.govUkErrorSummary("add", selectedVenueErrorHashLinks);
+                        $errorSummary.govUkErrorSummary("show");
+                        validStates.push(false);
+                    }
+                }
+
+                if (isWorkBased) {
+                    if ($.requiredValidate($regions.find("input[type='checkbox']:checked").val())) {
+                        $regions.govUkCheckboxes("validState");
+                        $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $regions[0].id);
+                        $errorSummary.govUkErrorSummary("hideIfEmpty")
+                        validStates.push(true);
+                    } else {
+                        $regions.govUkCheckboxes("invalidState", $regions.attr("val-required-message"));
+                        var regionsErrorHashLinks = $regions.govUkCheckboxes("getErrorHashLinks");
+                        $errorSummary.govUkErrorSummary("add", regionsErrorHashLinks);
+                        $errorSummary.govUkErrorSummary("show");
+                        validStates.push(false);
+                    }
+                }
+
                 if (!$.regexValidate({ regex: $url.attr("val-regex") }, $url.val())) {
                     $url.govUkInput("invalidState", $url.attr("val-regex-message"));
                     var urlErrorHashLinks = $url.govUkInput("getErrorHashLinks");
@@ -416,6 +439,34 @@
                 } else {
                     $url.govUkInput("validState");
                     $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $url[0].id);
+                    $errorSummary.govUkErrorSummary("hideIfEmpty")
+                    validStates.push(true);
+                }
+
+                if ((!$.requiredValidate($cost.val()) && !$.requiredValidate($costDescription.val()))) {
+                    $cost.govUkInput("invalidState", $cost.attr("val-required-message"));
+                    var costErrorHashLinks = $cost.govUkInput("getErrorHashLinks");
+                    $errorSummary.govUkErrorSummary("add", costErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
+                    validStates.push(false);
+                } else if (
+                    !$.regexValidate({ regex: $costDescription.attr("val-regex") }, $costDescription.val())) {
+                    $costDescription.govUkTextarea("invalidState", $costDescription.attr("val-regex-message"));
+                    var costDescriptionErrorHashLinks = $costDescription.govUkTextarea("getErrorHashLinks");
+                    $errorSummary.govUkErrorSummary("add", costDescriptionErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
+                    validStates.push(false);
+                } else if (
+                    !$.maxLengthValidate({ max: $costDescription.attr("val-max-length") }, $costDescription.val())) {
+                    $costDescription.govUkTextarea("invalidState", $costDescription.attr("val-max-length-message"));
+                    var costDescriptionErrorHashLinks = $costDescription.govUkTextarea("getErrorHashLinks");
+                    $errorSummary.govUkErrorSummary("add", costDescriptionErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
+                    validStates.push(false);
+                } else {
+                    $cost.govUkInput("validState");
+                    $costDescription.govUkTextarea("validState");
+                    $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $costDescription[0].id);
                     $errorSummary.govUkErrorSummary("hideIfEmpty")
                     validStates.push(true);
                 }
@@ -447,56 +498,6 @@
                     $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $duration[0].id);
                     $errorSummary.govUkErrorSummary("hideIfEmpty")
                     validStates.push(true);
-                }
-
-                if ($.requiredValidate($radioDeliveryMode.find("input[type='radio']:checked").val())) {
-                    $radioDeliveryMode.govUkRadios("validState");
-                    $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $radioDeliveryMode[0].id);
-                    $errorSummary.govUkErrorSummary("hideIfEmpty")
-                    validStates.push(true);
-                } else {
-                    $radioDeliveryMode.govUkRadios("invalidState", $radioDeliveryMode.attr("val-required-message"));
-                    var deliveryModeErrorHashLinks = $radioDeliveryMode.govUkRadios("getErrorHashLinks");
-                    $errorSummary.govUkErrorSummary("add", deliveryModeErrorHashLinks);
-                    $errorSummary.govUkErrorSummary("show");
-                    validStates.push(false);
-                }
-
-                var radioValue = $("input[name='StartDateType']:checked").val();
-                if (radioValue.toUpperCase() === "SPECIFIEDSTARTDATE") {
-                    var startDateValue = $startDate.govUkDateInput("getISODateString");
-                    if (startDateValue === "") {
-                        $startDate.govUkDateInput("invalidState", $startDate.attr("val-required-message"));
-                        var startDateErrorHashLinks = $startDate.govUkDateInput("getErrorHashLinks");
-                        $errorSummary.govUkErrorSummary("add", startDateErrorHashLinks);
-                        $errorSummary.govUkErrorSummary("show");
-                        validStates.push(false);
-                    } else {
-                        if (!$.dateValidate(startDateValue)) {
-                            $startDate.govUkDateInput("invalidState", $startDate.attr("val-date-message"));
-                            var startDateErrorHashLinks = $startDate.govUkDateInput("getErrorHashLinks");
-                            $errorSummary.govUkErrorSummary("add", startDateErrorHashLinks);
-                            $errorSummary.govUkErrorSummary("show");
-                            validStates.push(false);
-                        } else if ($.pastDateValidate({ ref: $startDate.attr("val-past-date-ref") }, startDateValue)) {
-                            $startDate.govUkDateInput("invalidState", $startDate.attr("val-past-date-message"));
-                            var startDateErrorHashLinks = $startDate.govUkDateInput("getErrorHashLinks");
-                            $errorSummary.govUkErrorSummary("add", startDateErrorHashLinks);
-                            $errorSummary.govUkErrorSummary("show");
-                            validStates.push(false);
-                        } else if ($.futureDateValidate({ ref: $startDate.attr("val-future-date-ref") }, startDateValue)) {
-                            $startDate.govUkDateInput("invalidState", $startDate.attr("val-future-date-message"));
-                            var startDateErrorHashLinks = $startDate.govUkDateInput("getErrorHashLinks");
-                            $errorSummary.govUkErrorSummary("add", startDateErrorHashLinks);
-                            $errorSummary.govUkErrorSummary("show");
-                            validStates.push(false);
-                        } else if ($.dateValidate(startDateValue)) {
-                            $startDate.govUkDateInput("validState");
-                            $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $startDate[0].id);
-                            $errorSummary.govUkErrorSummary("hideIfEmpty")
-                            validStates.push(true);
-                        }
-                    }
                 }
 
                 if (!validStates.every(isAllValid)) {
