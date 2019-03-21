@@ -295,6 +295,19 @@
                 $studyMode.govUkRadios("validState");
                 $attendance.govUkRadios("validState");
 
+                if ($.requiredValidate($radioDeliveryMode.find("input[type=radio]:checked").val())) {
+                    $radioDeliveryMode.govUkRadios("validState");
+                    $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $radioDeliveryMode[0].id);
+                    $errorSummary.govUkErrorSummary("hideIfEmpty")
+                    validStates.push(true);
+                } else {
+                    $radioDeliveryMode.govUkRadios("invalidState", $radioDeliveryMode.attr("val-required-message"));
+                    var radioDeliveryModeErrorHashLinks = $radioDeliveryMode.govUkRadios("getErrorHashLinks");
+                    $errorSummary.govUkErrorSummary("add", radioDeliveryModeErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
+                    validStates.push(false);
+                }
+
                 if (isClassroomBased) {
                     if ($.requiredValidate($selectedVenue.val())) {
                         $selectedVenue.govUkSelect("validState");
