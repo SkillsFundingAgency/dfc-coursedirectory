@@ -121,6 +121,17 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                         CurrentCourseRunDate = courseRun.StartDate
                     };
 
+                    if (mode == PublishMode.BulkUpload)
+                    {
+                        vm.ValPastDateRef = DateTime.Now;
+                        vm.ValPastDateMessage = "Start Date cannot be earlier than today’s date";
+                    }
+                    else
+                    {
+                        vm.ValPastDateRef = courseRun.StartDate ?? DateTime.Now;
+                        vm.ValPastDateMessage = "New Start Date cannot be before the pre-edited Start Date";
+                    }
+
                     if (courseRun.Regions != null)
                     {
                         foreach (var selectedRegion in courseRun.Regions)
@@ -257,7 +268,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                                 {
                                     publishMode = model.Mode,
                                     courseId = model.CourseId,
-                                    courseRunId =model.CourseRunId
+                                    courseRunId = model.CourseRunId
 
                                 });
                             default:

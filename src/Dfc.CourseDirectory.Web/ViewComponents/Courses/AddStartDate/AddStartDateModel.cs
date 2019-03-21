@@ -33,8 +33,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Courses.AddStartDate
 
         public DateTime? CurrentStartDate { get; set; }
 
-
-
-       
+        public DateTime ValPastDateRef { get; set; }
+        public string ValPastDateMessage { get; set; }
     }
 }
