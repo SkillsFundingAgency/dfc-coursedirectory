@@ -162,7 +162,7 @@ namespace Dfc.CourseDirectory.Web
             {
                 // Cookie settings
                 options.Cookie.HttpOnly = true;
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(1);
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
                 options.LogoutPath = "/Home";
                 options.LoginPath = "/Identity/Account/Login";
                 options.AccessDeniedPath = "/Identity/Account/Login";
@@ -189,7 +189,7 @@ namespace Dfc.CourseDirectory.Web
 
             services.AddResponseCaching();
             services.AddSession(options => {
-                options.IdleTimeout = TimeSpan.FromMinutes(1);
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
                 options.Cookie.HttpOnly = true;
 
             });

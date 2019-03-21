@@ -94,7 +94,6 @@
             };
 
             $("#searchProvider").on("click", function (e) {
-                CheckUser();
                 e.preventDefault();
                 ValidateAndSearchForProvider();
             });
@@ -137,18 +136,6 @@
                     $searchForm.removeClass("govuk-form-group, govuk-form-group--error");
                     $validationMessageSearchTerm.hide();
                     $validationMessageSearchTerm.css("margin-bottom", "0");              
-            }
-            function CheckUser() {
-                var serviceURL = '/Users/CheckUser';
-
-                var test = $.ajax({
-                    type: "GET",
-                    url: serviceURL,
-                    data: param = "",
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json"
-                });
-                var dfd = test;
             }
         });
     })(jQuery);

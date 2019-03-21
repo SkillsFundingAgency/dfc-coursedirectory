@@ -8,5 +8,6 @@ namespace Dfc.CourseDirectory.Web.Helpers
     public interface IUserHelper
     {
         bool CheckUserLoggedIn();
+        Task<bool> IsUserAuthorised(string policy);
     }
 }

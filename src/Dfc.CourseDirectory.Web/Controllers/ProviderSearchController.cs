@@ -49,9 +49,18 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _userHelper = userHelper;
         }
 
-        [Authorize(Policy = "ElevatedUserRole")]
+        //[Authorize(Policy = "ElevatedUserRole")]
         public async Task<IActionResult> Index([FromQuery] ProviderSearchRequestModel requestModel)
         {
+            
+            if(!_userHelper.IsUserAuthorised(policy: "ElevatedUserRole").Result)
+            {
+                return new ContentResult
+                {
+                    ContentType = "text/html",
+                    Content = "<script>location.reload();</script>"
+                };
+            }
             _logger.LogMethodEnter();
             _logger.LogInformationObject("RequestModel", requestModel);
             //Set the UKPRN here in session
