@@ -64,7 +64,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _logger.LogMethodEnter();
             _logger.LogInformationObject("RequestModel", requestModel);
             //Set the UKPRN here in session
-            _session.SetInt32("UKPRN", Convert.ToInt32(requestModel.SearchTerm));
+            
 
             ProviderSearchResultModel model;
 
@@ -126,11 +126,18 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         model.WebTypeL = providerContactTypeL.FirstOrDefault()?.ContactWebsiteAddress;
                         model.EmailTypeL = providerContactTypeL.FirstOrDefault()?.ContactEmail;
 
+                       if(provider.Status == Status.Onboarded)
+                        {
+                            _session.SetInt32("UKPRN", Convert.ToInt32(requestModel.SearchTerm));
+                        }
                     }
                 }
             }
             _logger.LogInformationObject("Model", model);
             _logger.LogMethodExit();
+
+            
+
             return ViewComponent(nameof(ViewComponents.ProviderSearchResult.ProviderSearchResult), model);
         }
         [Authorize(Policy = "ElevatedUserRole")]
@@ -179,6 +186,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _logger.LogInformation("Success", Success);
             _logger.LogInformation("ResultText", ResultText);
             _logger.LogMethodExit();
+            _session.SetInt32("UKPRN", Convert.ToInt32(ajaxRequest.UKPRN));
             return Json(new { success = Success, resultText = ResultText });
         }
     }
