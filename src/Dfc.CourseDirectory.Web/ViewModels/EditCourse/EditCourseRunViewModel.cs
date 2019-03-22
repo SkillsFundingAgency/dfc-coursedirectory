@@ -9,6 +9,10 @@ namespace Dfc.CourseDirectory.Web.ViewModels.EditCourse
 {
     public class EditCourseRunViewModel
     {
+
+        public string LearnAimRef { get; set; }
+        public string AwardOrgCode { get; set; }
+        public string LearnAimRefTitle { get; set; }
         public string CourseName { get; set; }
         public DateTime StartDate { get; set; }
         public StartDateType StartDateType { get; set; }
