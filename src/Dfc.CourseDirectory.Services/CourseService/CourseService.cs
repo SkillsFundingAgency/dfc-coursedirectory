@@ -125,7 +125,34 @@ namespace Dfc.CourseDirectory.Services.CourseService
                     {
                         Id = "E12000002",
                         Checked = false,
-                        RegionName = "North West"
+                        RegionName = "North West",
+                        SubRegionName = new Dictionary<string, string>
+                        {
+                            ["E06000006"] = "Halton",
+                            ["E06000007"] = "Warrington",
+                            ["E06000008"] = "Blackburn with Darwen",
+                            ["E06000009"] = "Blackpool",
+                            ["E06000049"] = "Cheshire East",
+                            ["E06000050"] = "Cheshire West and Chester",
+                            ["E08000001"] = "Bolton",
+                            ["E08000002"] = "Bury",
+                            ["E08000003"] = "Manchester",
+                            ["E08000004"] = "Oldham",
+                            ["E08000005"] = "Rochdale",
+                            ["E08000006"] = "Salford",
+                            ["E08000007"] = "Stockport",
+                            ["E08000008"] = "Tameside",
+                            ["E08000009"] = "Trafford",
+                            ["E08000010"] = "Wigan",
+                            ["E08000011"] = "Knowsley",
+                            ["E08000012"] = "Liverpool",
+                            ["E08000013"] = "St. Helens",
+                            ["E08000014"] = "Sefton",
+                            ["E08000015"] = "Wirral",
+                            ["E10000006"] = "Cumbria",
+                            ["E10000017"] = "Lancashire"
+
+                        }
                     },
                     new RegionItemModel
                     {
