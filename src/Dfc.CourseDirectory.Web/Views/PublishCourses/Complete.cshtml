@@ -19,10 +19,10 @@
     {
         <div class="govuk-panel__body">
             You have published @Model.NumberOfCoursesPublished
-            @if (Model.NumberOfCoursesPublished > 1)
-            {<text>courses</text> }
+            @if (Model.NumberOfCoursesPublished.Equals(1))
+            {<text>course</text> }
             else
-            { <text>course</text>}
+            { <text>courses</text>}
                 to the course directory
          </div>
     }
