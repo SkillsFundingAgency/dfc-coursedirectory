@@ -104,57 +104,237 @@ namespace Dfc.CourseDirectory.Services.CourseService
                     {
                         Id = "E12000001",
                         Checked = false,
-                        RegionName = "North East"
+                        RegionName = "North East",
+                        SubRegionName = new Dictionary<string, string>
+                        {
+                            ["E06000001"] = "County Durham",
+                            ["E06000002"] = "Darlington",
+                            ["E06000003"] = "Gateshead",
+                            ["E06000004"] = "Hartlepool",
+                            ["E06000005"] = "Middlesbrough",
+                            ["E06000047"] = "Newcastle upon Tyne",
+                            ["E06000057"] = "North Tyneside",
+                            ["E08000021"] = "Northumberland",
+                            ["E08000022"] = "Redcar and Cleveland",
+                            ["E08000023"] = "South Tyneside",
+                            ["E08000024"] = "Stockton-on-Tees",
+                            ["E08000037"] = "Sunderland"
+                        }
                     },
                     new RegionItemModel
                     {
                         Id = "E12000002",
                         Checked = false,
-                        RegionName = "North West"
+                        RegionName = "North West",
+                        SubRegionName = new Dictionary<string, string>
+                        {
+                            ["E06000006"] = "Halton",
+                            ["E06000007"] = "Warrington",
+                            ["E06000008"] = "Blackburn with Darwen",
+                            ["E06000009"] = "Blackpool",
+                            ["E06000049"] = "Cheshire East",
+                            ["E06000050"] = "Cheshire West and Chester",
+                            ["E08000001"] = "Bolton",
+                            ["E08000002"] = "Bury",
+                            ["E08000003"] = "Manchester",
+                            ["E08000004"] = "Oldham",
+                            ["E08000005"] = "Rochdale",
+                            ["E08000006"] = "Salford",
+                            ["E08000007"] = "Stockport",
+                            ["E08000008"] = "Tameside",
+                            ["E08000009"] = "Trafford",
+                            ["E08000010"] = "Wigan",
+                            ["E08000011"] = "Knowsley",
+                            ["E08000012"] = "Liverpool",
+                            ["E08000013"] = "St. Helens",
+                            ["E08000014"] = "Sefton",
+                            ["E08000015"] = "Wirral",
+                            ["E10000006"] = "Cumbria",
+                            ["E10000017"] = "Lancashire"
+
+                        }
                     },
                     new RegionItemModel
                     {
                         Id = "E12000003",
                         Checked = false,
-                        RegionName = "Yorkshire and The Humber"
+                        RegionName = "Yorkshire and The Humber",
+                        SubRegionName = new Dictionary<string, string>
+                        {
+                            ["E06000010"] = "Kingston upon Hull, City of",
+                            ["E06000011"] = "East Riding of Yorkshire",
+                            ["E06000012"] = "North East Lincolnshire",
+                            ["E06000013"] = "North Lincolnshire",
+                            ["E06000014"] = "York",
+                            ["E08000016"] = "Barnsley",
+                            ["E08000017"] = "Doncaster",
+                            ["E08000018"] = "Rotherham",
+                            ["E08000019"] = "Sheffield",
+                            ["E08000032"] = "Bradford",
+                            ["E08000033"] = "Calderdale",
+                            ["E08000034"] = "Kirklees",
+                            ["E08000035"] = "Leeds",
+                            ["E08000036"] = "Wakefield",
+                            ["E10000023"] = "North Yorkshire"
+                        }
                     },
                     new RegionItemModel
                     {
                         Id = "E12000004",
                         Checked = false,
-                        RegionName = "East Midlands"
+                        RegionName = "East Midlands",
+                        SubRegionName = new Dictionary<string, string>
+                        {
+                            ["E06000015"] = "Derby",
+                            ["E10000007"] = "Derbyshire",
+                            ["E06000016"] = "Leicester",
+                            ["E10000018"] = "Leicestershire",
+                            ["E10000019"] = "Lincolnshire",
+                            ["E10000021"] = "Northamptonshire",
+                            ["E06000018"] = "Nottingham",
+                            ["E10000024"] = "Nottinghamshire",
+                            ["E06000017"] = "Rutland"
+                        }
                     },
                     new RegionItemModel
                     {
                         Id = "E12000005",
                         Checked = false,
-                        RegionName = "West Midlands"
+                        RegionName = "West Midlands",
+                        SubRegionName = new Dictionary<string, string>
+                        {
+                            ["E06000019"] = "Herefordshire, County of",
+                            ["E06000020"] = "Telford and Wrekin",
+                            ["E06000021"] = "Stoke-on-Trent",
+                            ["E06000051"] = "Shropshire",
+                            ["E08000025"] = "Birmingham",
+                            ["E08000026"] = "Coventry",
+                            ["E08000027"] = "Dudley",
+                            ["E08000028"] = "Sandwell",
+                            ["E08000029"] = "Solihull",
+                            ["E08000030"] = "Walsall",
+                            ["E08000031"] = "Wolverhampton",
+                            ["E10000028"] = "Staffordshire",
+                            ["E10000031"] = "Warwickshire",
+                            ["E10000034"] = "Worcestershire"
+                        }
                     },
                     new RegionItemModel
                     {
                         Id = "E12000006",
                         Checked = false,
-                        RegionName = "East of England"
+                        RegionName = "East of England",
+                        SubRegionName = new Dictionary<string, string>
+                        {
+                            ["E06000055"] = "Bedford",
+                            ["E10000003"] = "Cambridgeshire",
+                            ["E06000056"] = "Central Bedfordshire",
+                            ["E10000012"] = "Essex",
+                            ["E10000015"] = "Hertfordshire",
+                            ["E06000032"] = "Luton",
+                            ["E10000020"] = "Norfolk",
+                            ["E06000031"] = "Peterborough",
+                            ["E06000033"] = "Southend-on-Sea",
+                            ["E10000029"] = "Suffolk",
+                            ["E06000034"] = "Thurrock"
+                        }
                     },
                     new RegionItemModel
                     {
                         Id = "E12000007",
                         Checked = false,
-                        RegionName = "London"
+                        RegionName = "London",
+                        SubRegionName = new Dictionary<string, string>
+                        {
+                            ["E09000001"] = "City of London",
+                            ["E09000002"] = "Barking and Dagenham",
+                            ["E09000003"] = "Barnet",
+                            ["E09000004"] = "Bexley,",
+                            ["E09000005"] = "Brent",
+                            ["E09000006"] = "Bromley",
+                            ["E09000007"] = "Camden",
+                            ["E09000008"] = "Croydon",
+                            ["E09000009"] = "Ealing",
+                            ["E09000010"] = "Enfield",
+                            ["E09000011"] = "Greenwich",
+                            ["E09000012"] = "Hackney",
+                            ["E09000013"] = "Hammersmith and Fulham",
+                            ["E09000014"] = "Haringey",
+                            ["E09000015"] = "Harrow",
+                            ["E09000016"] = "Havering",
+                            ["E09000017"] = "Hillingdon",
+                            ["E09000018"] = "Hounslow",
+                            ["E09000019"] = "Islington",
+                            ["E09000020"] = "Kensington and Chelsea",
+                            ["E09000021"] = "Kingston upon Thames",
+                            ["E09000022"] = "Lambeth",
+                            ["E09000023"] = "Lewisham",
+                            ["E09000024"] = "Merton",
+                            ["E09000025"] = "Newham",
+                            ["E09000026"] = "Redbridge",
+                            ["E09000027"] = "Richmond upon Thames",
+                            ["E09000028"] = "Southwark",
+                            ["E09000029"] = "Sutton",
+                            ["E09000030"] = "Tower Hamlets",
+                            ["E09000031"] = "Waltham Forest",
+                            ["E09000032"] = "Wandsworth",
+                            ["E09000033"] = "Westminster"
+                        }
                     },
                     new RegionItemModel
                     {
                         Id = "E12000008",
                         Checked = false,
-                        RegionName = "South East"
+                        RegionName = "South East",
+                        SubRegionName = new Dictionary<string, string>
+                        {
+                            ["E06000035"] = "Medway",
+                            ["E06000036"] = "Bracknell Forest",
+                            ["E06000037"] = "West Berkshire",
+                            ["E06000038"] = "Reading",
+                            ["E06000039"] = "Slough",
+                            ["E06000040"] = "Windsor and Maidenhead",
+                            ["E06000041"] = "Wokingham",
+                            ["E06000042"] = "Milton Keynes",
+                            ["E06000043"] = "Brighton and Hove",
+                            ["E06000044"] = "Portsmouth",
+                            ["E06000045"] = "Southampton",
+                            ["E06000046"] = "Isle of Wight",
+                            ["E10000002"] = "Buckinghamshire",
+                            ["E10000011"] = "East Sussex",
+                            ["E10000014"] = "Hampshire",
+                            ["E10000016"] = "Kent",
+                            ["E10000025"] = "Oxfordshire",
+                            ["E10000030"] = "Surrey",
+                            ["E10000032"] = "West Sussex"
+                        }
                     },
                     new RegionItemModel
                     {
                         Id = "E12000009",
                         Checked = false,
-                        RegionName = "South West"
+                        RegionName = "South West",
+                        SubRegionName = new Dictionary<string, string>
+                        {
+                            ["E06000022"] = "Bath and North East Somerset",
+                            ["E06000023"] = "Bristol, City of",
+                            ["E06000024"] = "North Somerset",
+                            ["E06000025"] = "South Gloucestershire",
+                            ["E06000026"] = "Plymouth",
+                            ["E06000027"] = "Torbay",
+                            ["E06000028"] = "Bournemouth",
+                            ["E06000029"] = "Poole",
+                            ["E06000030"] = "Swindon",
+                            ["E06000052"] = "Cornwall",
+                            ["E06000053"] = "Isles of Scilly",
+                            ["E06000054"] = "Wiltshire",
+                            ["E10000008"] = "Devon",
+                            ["E10000009"] = "Dorset",
+                            ["E10000013"] = "Gloucestershire",
+                            ["E10000027"] = "Somerset"
+                        }
                     }
-                   
+
                 }
             };
         }
