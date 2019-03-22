@@ -46,7 +46,7 @@
                     </div>
                     <div class="govuk-grid-column-two-thirds align-right col right center">
 
-                        <a id="course-run-fix-@courseRun.id" class="error-link" asp-controller="EditCourseRun" asp-action="Index"
+                        <a id="course-run-fix-@courseRun.id" class="error-link fix" asp-controller="EditCourseRun" asp-action="Index"
                            asp-route-courseId="@course.id" asp-route-courseRunId="@courseRun.id" asp-route-mode=@Model.PublishMode>Fix</a>
 
                         @if (courseRun.RecordStatus == RecordStatus.MigrationPending)
@@ -122,6 +122,14 @@
             $deleteButton.on("click",
                 function (event) {
                     event.preventDefault();
+
+                    $('.govuk-button').hide();
+
+                    $('.cancel-delete').hide();
+
+                    $('.delete').show();
+
+                    $('.fix').show();
 
                     var courseRunId = $(this).attr("data-course-run-id");
 
