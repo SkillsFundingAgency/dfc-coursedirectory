@@ -324,7 +324,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 else
                 {
                     courseRun.StartDate = null;
-                    validationMessages.Add($"StartDate is NULL, because you have entered ( { bulkUploadcourse.StartDate } ), Line { bulkUploadcourse.BulkUploadLineNumber },  LARS_QAN = { bulkUploadcourse.LearnAimRef }, ID = { bulkUploadcourse.ProviderCourseID }");
+                    validationMessages.Add($"StartDate is NULL, because you have entered ( { bulkUploadcourse.StartDate } ), Line { bulkUploadcourse.BulkUploadLineNumber },  LARS_QAN = { bulkUploadcourse.LearnAimRef }, ID = { bulkUploadcourse.ProviderCourseID }. We are expecting the date in 'dd/MM/yyyy' format.");
                 }
 
                 courseRun.CourseURL = bulkUploadcourse.CourseURL;
