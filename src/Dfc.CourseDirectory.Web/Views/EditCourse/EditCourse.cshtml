@@ -15,12 +15,27 @@
 
 <form asp-controller="EditCourse" asp-action="Index" method="post" id="editCourse">
 
+
+    @Html.HiddenFor(x => x.AwardOrgCode)
+    @Html.HiddenFor(x => x.LearnAimRef)
+    @Html.HiddenFor(x => x.LearnAimRefTitle)
+    @Html.HiddenFor(x => x.NotionalNVQLevelv2)
+
+
     @Html.HiddenFor(x => x.CourseId)
     @Html.HiddenFor(x => x.Mode)
 
     <h1 class="govuk-heading-l" style="padding-top: 20px;">
         Edit Course
     </h1>
+
+    @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+   {
+
+       NotificationTitle = "Qualification added",
+       NotificationMessage = @Model.LearnAimRefTitle + "<br>" + "Level: " + @Model.NotionalNVQLevelv2 + "<br> Awarding organisation: " + @Model.AwardOrgCode + "<br> LARS / QAN: " + @Model.LearnAimRef,
+       ClassType = "info-summary"
+   })
 
     <div id="errorsummary" class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary" style="display: none;">
         <h2 class="govuk-error-summary__title" id="error-summary-title">
@@ -56,15 +71,15 @@
     </div>
 
     @*<div id="sectionFundingOptions">
-        @await Component.InvokeAsync(nameof(FundingOptions), new FundingOptionsModel()
-        {
-            AdvancedLearnerLoan = Model.AdvancedLearnerLoan.Value,
-            AdultEducationBudget = Model.AdultEducationBudget.Value,
-            FundingOptionsHintText="",
-            FundingOptionsLabelText ="Funding options",
-            FundingOptionsAriaDescribedBy =""
-        })
-    </div>*@
+            @await Component.InvokeAsync(nameof(FundingOptions), new FundingOptionsModel()
+            {
+                AdvancedLearnerLoan = Model.AdvancedLearnerLoan.Value,
+                AdultEducationBudget = Model.AdultEducationBudget.Value,
+                FundingOptionsHintText="",
+                FundingOptionsLabelText ="Funding options",
+                FundingOptionsAriaDescribedBy =""
+            })
+        </div>*@
 
     <ul class="flex-container">
         <li class="flex-item">
@@ -82,7 +97,16 @@
                     @Html.ActionLink("Cancel", "Index", "PublishCourses", new { publishMode = Model.Mode }, new { @class = "govuk-link" })
                     break;
                 default:
-                    @Html.ActionLink("Cancel", "Courses", "Provider", new { level = @Model.NotionalNVQLevelv2,courseId=@Model.CourseId }, new { @class = "govuk-link" })
+                    @Html.ActionLink("Cancel", "Courses", "Provider", new {
+                   level = @Model.NotionalNVQLevelv2,
+                   courseId = @Model.CourseId,
+
+                   learnAimRef = @Model.LearnAimRef,
+                   notionalNVQLevelv2 = @Model.NotionalNVQLevelv2,
+                   awardOrgCode = @Model.AwardOrgCode,
+                   learnAimRefTitle = @Model.LearnAimRefTitle,
+                   learnAimRefTypeDesc = @Model.QualificationType
+               }, new { @class = "govuk-link" })
                     break;
             }
         </li>

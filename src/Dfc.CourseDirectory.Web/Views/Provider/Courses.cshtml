@@ -110,15 +110,17 @@
                                         <span> @course.AwardOrg </span>
                                     }
 
-
-
-
                                     <span>
                                         <a class="govuk-link"
                                            asp-controller="EditCourse"
                                            asp-action="Index"
                                            asp-route-courseId="@course.Id"
-                                           asp-route-mode="@PublishMode.Undefined">Edit course description</a>
+                                           asp-route-learnAimRef="@course.LearnAimRef"
+                                           asp-route-notionalNVQLevelv2="course.NotionalNVQLevelv2"
+                                           asp-route-awardOrgCode="@course.AwardOrg"
+                                           asp-route-learnAimRefTitle="@course.QualificationTitle"
+                                           asp-route-learnAimRefTypeDesc="@course.QualificationType"
+                                           asp-route-mode="@PublishMode.Undefined">Edit this qualification</a>
                                     </span>
                                     <div id="accordion-default-content-@course.Id" class="govuk-accordion__section-content" aria-labelledby="">
                                         @foreach (var courseRun in course.CourseRuns.OrderBy(x => x.CourseName))
@@ -186,6 +188,11 @@
                                                     <a class="govuk-link" style="padding-right:1em"
                                                        asp-controller="EditCourseRun"
                                                        asp-action="Index"
+                                                       asp-route-learnAimRef="@course.LearnAimRef"
+                                                       asp-route-notionalNVQLevelv2="@course.NotionalNVQLevelv2"
+                                                       asp-route-awardOrgCode="@course.AwardOrg"
+                                                       asp-route-learnAimRefTitle="@course.QualificationTitle"
+                                                       asp-route-learnAimRefTypeDesc="@course.QualificationType"
                                                        asp-route-courseId="@course.Id"
                                                        asp-route-courseRunId="@courseRun.Id"
                                                        asp-route-mode="@PublishMode.Undefined">Edit</a>
@@ -193,20 +200,25 @@
                                                     <a class="govuk-link" style="padding-right:1em"
                                                        asp-controller="CopyCourseRun"
                                                        asp-action="Index"
+                                                       asp-route-learnAimRef="@course.LearnAimRef"
+                                                       asp-route-notionalNVQLevelv2="course.NotionalNVQLevelv2"
+                                                       asp-route-awardOrgCode="@course.AwardOrg"
+                                                       asp-route-learnAimRefTitle="@course.QualificationTitle"
+                                                       asp-route-learnAimRefTypeDesc="@course.QualificationType"
                                                        asp-route-courseId="@course.Id"
                                                        asp-route-courseRunId="@courseRun.Id"
-                                                       asp-route-mode="@PublishMode.Undefined">Copy</a>
+                                                       asp-route-mode="@PublishMode.Undefined">Duplicate</a>
 
-                                                    <a href="#" class="error-link archive" id="archive-@courseRun.Id" data-course-run-id="@courseRun.Id" style="padding-right:1em">Archive</a>
+                                                    <a href="#" class="govuk-link archive" id="archive-@courseRun.Id" data-course-run-id="@courseRun.Id" style="padding-right:1em">Delete</a>
 
                                                     <a id="course-confirm-archive-@courseRun.Id" class="govuk-button" asp-controller="Courses" asp-action="Archive"
                                                        asp-route-courseId="@course.Id"
                                                        asp-route-courseRunId="@courseRun.Id"
                                                        asp-route-level="@course.NotionalNVQLevelv2"
                                                        asp-route-qualificationType="@course.QualificationType"
-                                                       style="display: none;padding-right:1em">Confirm archive</a>
+                                                       style="display: none;padding-right:1em">Confirm delete</a>
 
-                                                    <a href="#" class="error-link cancel-archive" id="course-cancel-archive-@courseRun.Id" data-course-run-id="@courseRun.Id" style="display: none">Cancel</a>
+                                                    <a href="#" class="govuk-link cancel-archive" id="course-cancel-archive-@courseRun.Id" data-course-run-id="@courseRun.Id" style="display: none">Cancel</a>
 
                                                 </div>
                                             </div>

@@ -56,7 +56,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
 
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> Index(Guid? courseId, Guid courseRunId)
+        public async Task<IActionResult> Index(string learnAimRef, string notionalNVQLevelv2, string awardOrgCode, string learnAimRefTitle, string learnAimRefTypeDesc,  Guid? courseId, Guid courseRunId)
         {
             int? UKPRN;
 
@@ -92,6 +92,10 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                 {
                     CopyCourseRunViewModel vm = new CopyCourseRunViewModel
                     {
+                        AwardOrgCode = awardOrgCode,
+                        LearnAimRef = learnAimRef,
+                        LearnAimRefTitle = learnAimRefTitle,
+
                         CourseId = courseId.Value,
                         CourseRunId = courseRunId,
                         CourseName = courseRun?.CourseName,
