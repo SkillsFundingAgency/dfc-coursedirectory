@@ -152,16 +152,18 @@
                             </section>
 
                         </div>
-                      
-                        if (adminLogin.Succeeded || providerLogin.Succeeded)
-                        {
-                            <div class="govuk-form-group" style="margin-top: 30px;">
-                                <button type="submit" class="govuk-button">
-                                    Add new venue
-                                </button>
-                            </div>
-                        }
-                        
+
+
+
+                    }
+
+                    @if (adminLogin.Succeeded || providerLogin.Succeeded)
+                    {
+                    <div class="govuk-form-group" style="margin-top: 30px;">
+                        <button type="submit" class="govuk-button">
+                            Add new venue
+                        </button>
+                    </div>
                     }
                 </div>
             </div>
