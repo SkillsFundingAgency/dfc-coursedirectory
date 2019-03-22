@@ -104,7 +104,22 @@ namespace Dfc.CourseDirectory.Services.CourseService
                     {
                         Id = "E12000001",
                         Checked = false,
-                        RegionName = "North East"
+                        RegionName = "North East",
+                        SubRegionName = new Dictionary<string, string>
+                        {
+                            ["E06000001"] = "County Durham",
+                            ["E06000002"] = "Darlington",
+                            ["E06000003"] = "Gateshead",
+                            ["E06000004"] = "Hartlepool",
+                            ["E06000005"] = "Middlesbrough",
+                            ["E06000047"] = "Newcastle upon Tyne",
+                            ["E06000057"] = "North Tyneside",
+                            ["E08000021"] = "Northumberland",
+                            ["E08000022"] = "Redcar and Cleveland",
+                            ["E08000023"] = "South Tyneside",
+                            ["E08000024"] = "Stockton-on-Tees",
+                            ["E08000037"] = "Sunderland"
+                        }
                     },
                     new RegionItemModel
                     {
@@ -154,7 +169,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
                         Checked = false,
                         RegionName = "South West"
                     }
-                   
+
                 }
             };
         }
