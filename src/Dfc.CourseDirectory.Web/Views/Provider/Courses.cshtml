@@ -207,16 +207,16 @@
                                                        asp-route-learnAimRefTypeDesc="@course.QualificationType"
                                                        asp-route-courseId="@course.Id"
                                                        asp-route-courseRunId="@courseRun.Id"
-                                                       asp-route-mode="@PublishMode.Undefined">Duplicate</a>
+                                                       asp-route-mode="@PublishMode.Undefined">Copy</a>
 
-                                                    <a href="#" class="govuk-link archive" id="archive-@courseRun.Id" data-course-run-id="@courseRun.Id" style="padding-right:1em">Delete</a>
+                                                    <a href="#" class="govuk-link archive" id="archive-@courseRun.Id" data-course-run-id="@courseRun.Id" style="padding-right:1em">Archive</a>
 
                                                     <a id="course-confirm-archive-@courseRun.Id" class="govuk-button" asp-controller="Courses" asp-action="Archive"
                                                        asp-route-courseId="@course.Id"
                                                        asp-route-courseRunId="@courseRun.Id"
                                                        asp-route-level="@course.NotionalNVQLevelv2"
                                                        asp-route-qualificationType="@course.QualificationType"
-                                                       style="display: none;padding-right:1em">Confirm delete</a>
+                                                       style="display: none;padding-right:1em">Confirm archive</a>
 
                                                     <a href="#" class="govuk-link cancel-archive" id="course-cancel-archive-@courseRun.Id" data-course-run-id="@courseRun.Id" style="display: none">Cancel</a>
 
