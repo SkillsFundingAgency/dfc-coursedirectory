@@ -86,12 +86,20 @@
 
 
                 var trimmed = $elementCost.val().trim().replace(",", "");
+                trimmed = trimmed.trim().replace(".", "");
 
                 if (trimmed !== "") {
 
                     if ($.isNumeric(trimmed))
-                        {
-                        var formatted = parseFloat(Math.floor(trimmed * 100) / 100).toFixed(2);
+                    {
+                        if (trimmed.length >= 7) {
+
+                            var formatted = parseFloat(trimmed / 100).toFixed(2);
+                        }
+                        else {
+                            var formatted = parseFloat(Math.floor(trimmed * 100) / 100).toFixed(2);
+                        }
+
                         $elementCost.val(formatted);
 
 
@@ -108,8 +116,9 @@
 
             $elementCost.on("keypress", function (event) {
                 var charCode = event.which ? event.which : event.keyCode;
+                var trimmed = $elementCost.val().trim().replace(".", "");
 
-                if ($elementCost.val().length >= 9) {
+                if (trimmed.length >= 8) {
                     return false;
                 };
 
