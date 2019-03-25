@@ -19,6 +19,13 @@
     Copy course
 </h1>
 
+@await Component.InvokeAsync(nameof(Notification), new NotificationModel
+{
+    NotificationTitle = "Qualification added",
+    NotificationMessage = @Model.LearnAimRefTitle + "<br>" + "Level: " + @Model.NotionalNVQLevelv2 + "<br> Awarding organisation: " + @Model.AwardOrgCode + "<br> LARS / QAN: " + @Model.LearnAimRef,
+    ClassType = "info-summary"
+})
+
 <form asp-controller="CopyCourseRun" asp-action="Index" id="editCourseRun" onkeypress="return event.keyCode != 13;">
 
     <div id="errorsummary" style="display:none">

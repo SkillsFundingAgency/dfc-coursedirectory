@@ -167,7 +167,8 @@ else
             type: "POST",
             dataType: "json",
             data: JSON.stringify({
-                ProviderId: $('#ProviderId').val()
+                ProviderId: $('#ProviderId').val(),
+                UKPRN: $('#SearchTerm').val()
             }),
             contentType: "application/json; charset=utf-8",
             success: function (data) {

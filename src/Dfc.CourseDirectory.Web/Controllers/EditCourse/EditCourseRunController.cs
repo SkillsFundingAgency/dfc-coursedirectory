@@ -57,7 +57,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> Index(Guid? courseId, Guid courseRunId, PublishMode mode)
+        public async Task<IActionResult> Index(string learnAimRef, string notionalNVQLevelv2, string awardOrgCode, string learnAimRefTitle, string learnAimRefTypeDesc, Guid? courseId, Guid courseRunId, PublishMode mode)
         {
             int? UKPRN;
 
@@ -93,6 +93,10 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                 {
                     EditCourseRunViewModel vm = new EditCourseRunViewModel
                     {
+                        AwardOrgCode = awardOrgCode,
+                        LearnAimRef = learnAimRef,
+                        LearnAimRefTitle = learnAimRefTitle,
+
                         Mode = mode,
                         CourseId = courseId.Value,
                         CourseRunId = courseRunId,

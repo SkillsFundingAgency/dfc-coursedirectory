@@ -25,7 +25,13 @@
                 <div class="govuk-grid-column-one-third col"><div class="error-box">Errors</div></div>
                 <div class="govuk-grid-column-two-thirds align-right col right center">
                     <a id="course-fix-@course.id" class="error-link" asp-controller="EditCourse" asp-action="Index" style="display:block"
-                       asp-route-courseId="@course.id" asp-route-mode=@Model.PublishMode>Fix</a>
+                       asp-route-courseId="@course.id"
+                       asp-route-learnAimRef="@course.LearnAimRef"
+                       asp-route-notionalNVQLevelv2="course.NotionalNVQLevelv2"
+                       asp-route-awardOrgCode="@course.AwardOrgCode"
+                       asp-route-learnAimRefTitle="@course.QualificationCourseTitle"
+                       asp-route-learnAimRefTypeDesc="@course.QualificationType"
+                       asp-route-mode=@Model.PublishMode>Fix</a>
                 </div>
             }
         </div>
@@ -34,7 +40,7 @@
     foreach (var courseRun in course.CourseRuns.OrderBy(x => x.CourseName))
     {
         @if ((Model.PublishMode.Equals(PublishMode.BulkUpload) && courseRun.RecordStatus == RecordStatus.BulkUloadPending) ||
-           (Model.PublishMode.Equals(PublishMode.Migration) && courseRun.RecordStatus == RecordStatus.MigrationPending))
+         (Model.PublishMode.Equals(PublishMode.Migration) && courseRun.RecordStatus == RecordStatus.MigrationPending))
         {
             <div id="courserunid" style="display:none">@courseRun.id</div>
 
@@ -47,7 +53,13 @@
                     <div class="govuk-grid-column-two-thirds align-right col right center">
 
                         <a id="course-run-fix-@courseRun.id" class="error-link fix" asp-controller="EditCourseRun" asp-action="Index"
-                           asp-route-courseId="@course.id" asp-route-courseRunId="@courseRun.id" asp-route-mode=@Model.PublishMode>Fix</a>
+                           asp-route-courseId="@course.id" asp-route-courseRunId="@courseRun.id"
+                           asp-route-learnAimRef="@course.LearnAimRef"
+                           asp-route-notionalNVQLevelv2="course.NotionalNVQLevelv2"
+                       asp-route-awardOrgCode="@course.AwardOrgCode"
+                       asp-route-learnAimRefTitle="@course.QualificationCourseTitle"
+                           asp-route-learnAimRefTypeDesc="@course.QualificationType"
+                           asp-route-mode=@Model.PublishMode>Fix</a>
 
                         @if (courseRun.RecordStatus == RecordStatus.MigrationPending)
                         {

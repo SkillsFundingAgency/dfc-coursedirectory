@@ -17,6 +17,10 @@ namespace Dfc.CourseDirectory.Web.ViewModels.EditCourse
 {
     public class EditCourseViewModel
     {
+        public string LearnAimRef { get; set; }
+        public string NotionalNVQLevelv2 { get; set; }
+        public string AwardOrgCode { get; set; }
+        public string LearnAimRefTitle { get; set; }
         public CourseForModel CourseFor { get; set; }
 
         public EntryRequirementsModel EntryRequirements { get; set; }
@@ -38,7 +42,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels.EditCourse
         public PublishMode Mode { get; set; }
 
 
-        public string NotionalNVQLevelv2 { get; set; }
+       // public string NotionalNVQLevelv2 { get; set; }
 
     }   
 }

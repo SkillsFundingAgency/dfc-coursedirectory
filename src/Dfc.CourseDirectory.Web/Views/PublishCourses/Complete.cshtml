@@ -17,21 +17,24 @@
 
     @if (Model.Mode.Equals(PublishMode.Migration))
     {
-        <h1 class="govuk-panel__title">
-            Pending Courses Fixed
-        </h1>
         <div class="govuk-panel__body">
-            You have published @Model.NumberOfCoursesPublished courses to the course directory
-        </div>
+            You have published @Model.NumberOfCoursesPublished
+            @if (Model.NumberOfCoursesPublished.Equals(1))
+            {<text>course</text> }
+            else
+            { <text>courses</text>}
+                to the course directory
+         </div>
     }
 </div>
 <div class="Publish-Complete">
     <div class="govuk-form-group Next-Steps">
+        <br />
         Next steps
     </div>
 </div>
 <div class="govuk-form-group">
-    @Html.ActionLink("Back to the Dashboard", "", "", new { }, new { @class = "govuk-link" })
+    @Html.ActionLink("Back to the dashboard", "Index", "Home", new { }, new { @class = "govuk-link" })
 </div>
 
 
