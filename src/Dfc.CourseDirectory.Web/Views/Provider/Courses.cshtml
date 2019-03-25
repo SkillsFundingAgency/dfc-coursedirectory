@@ -273,6 +273,12 @@
                 function (event) {
                     event.preventDefault();
 
+                    $('.govuk-button').hide();
+
+                    $('.cancel-archive').hide();
+
+                    $('.archive').show();
+
                     var courseRunId = $(this).attr("data-course-run-id");
 
                     var archiveOption = $("#archive-" + courseRunId);
