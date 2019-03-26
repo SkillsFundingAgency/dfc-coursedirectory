@@ -8,6 +8,6 @@ namespace Dfc.CourseDirectory.Models.Models
         public string RegionName { get; set; }
         public bool? Checked { get; set; }
 
-        public Dictionary<string, string> SubRegionName { get; set; }
+        public List<SubRegionItemModel> SubRegion { get; set; }
     }
 }
