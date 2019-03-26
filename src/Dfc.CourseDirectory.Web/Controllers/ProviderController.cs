@@ -149,6 +149,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
             var filteredCourses = from Course c in Courses.Where(c => BitmaskHelper.IsSet(c.CourseStatus, RecordStatus.Live)).ToList().OrderBy(x => x.QualificationCourseTitle)
                                   select c;
 
+            var pendingCourses = from Course c in Courses.Where(c => c.CourseStatus== RecordStatus.MigrationPending || c.CourseStatus== RecordStatus.BulkUloadPending)
+                                  select c;
+
             foreach (var course in filteredCourses)
             {
                 var filteredCourseRuns = new List<CourseRun>();
@@ -276,7 +279,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 Courses = courseViewModels ?? new List<CourseViewModel>(),
                 LevelFilters = levelFiltersForDisplay,
                 NotificationTitle = notificationTitle,
-                NotificationMessage = notificationAnchorTag
+                NotificationMessage = notificationAnchorTag,
+                PendingCoursesCount = pendingCourses?.Count()
             };
 
             return View(viewModel);
