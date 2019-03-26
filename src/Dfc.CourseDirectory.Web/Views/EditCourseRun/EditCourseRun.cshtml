@@ -554,7 +554,7 @@
                 $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $studyMode[0].id);
                 $errorSummary.govUkErrorSummary("hideIfEmpty")
                 validStates.push(true);
-                if (isClassroomBased && $.requiredValidate($studyMode.find("input[type='radio']:checked").val()) && $radioDeliveryMode.find("input[type='radio']:checked").val() == "ClassroomBased") {
+                if (isClassroomBased && !$.requiredValidate($studyMode.find("input[type='radio']:checked").val()) && $radioDeliveryMode.find("input[type='radio']:checked").val() == "ClassroomBased") {
                     $studyMode.govUkRadios("invalidState", $studyMode.attr("val-required-message"));
                     var studyModeErrorHashLinks = $studyMode.govUkRadios("getErrorHashLinks");
                     $errorSummary.govUkErrorSummary("add", studyModeErrorHashLinks);
