@@ -768,55 +768,234 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     {
                         Id = "E12000001",
                         Checked = false,
-                        RegionName = "North East"
+                        RegionName = "North East",
+                        SubRegion = new List<SubRegionItemModel>
+                        {
+                            new SubRegionItemModel{Id="E06000001", SubRegionName = "County Durham", Checked = false},
+                            new SubRegionItemModel{Id="E06000002", SubRegionName = "Darlington", Checked = false},
+                            new SubRegionItemModel{Id="E06000003", SubRegionName = "Gateshead", Checked = false},
+                            new SubRegionItemModel{Id="E06000004", SubRegionName = "Hartlepool", Checked = false},
+                            new SubRegionItemModel{Id="E06000005", SubRegionName = "Middlesbrough", Checked = false},
+                            new SubRegionItemModel{Id="E06000047", SubRegionName = "Newcastle upon Tyne", Checked = false},
+                            new SubRegionItemModel{Id="E06000057", SubRegionName = "North Tyneside", Checked = false},
+                            new SubRegionItemModel{Id="E08000021", SubRegionName = "Northumberland", Checked = false},
+                            new SubRegionItemModel{Id="E08000022", SubRegionName = "Redcar and Cleveland", Checked = false},
+                            new SubRegionItemModel{Id="E08000023", SubRegionName = "South Tyneside", Checked = false},
+                            new SubRegionItemModel{Id="E08000024", SubRegionName = "Stockton-on-Tees", Checked = false},
+                            new SubRegionItemModel{Id="E08000037", SubRegionName = "Sunderland", Checked = false},
+                        }
                     },
                     new RegionItemModel
                     {
                         Id = "E12000002",
                         Checked = false,
-                        RegionName = "North West"
+                        RegionName = "North West",
+                        SubRegion = new List<SubRegionItemModel>
+                        {
+                            new SubRegionItemModel{Id="E06000006", SubRegionName  = "Halton", Checked = false},
+                            new SubRegionItemModel{Id="E06000007", SubRegionName  = "Warrington", Checked = false},
+                            new SubRegionItemModel{Id="E06000008", SubRegionName  = "Blackburn with Darwen", Checked = false},
+                            new SubRegionItemModel{Id="E06000009", SubRegionName  = "Blackpool", Checked = false},
+                            new SubRegionItemModel{Id="E06000049", SubRegionName  = "Cheshire East", Checked = false},
+                            new SubRegionItemModel{Id="E06000050", SubRegionName  = "Cheshire West and Chester", Checked = false},
+                            new SubRegionItemModel{Id="E08000001", SubRegionName  = "Bolton", Checked = false},
+                            new SubRegionItemModel{Id="E08000002", SubRegionName  = "Bury", Checked = false},
+                            new SubRegionItemModel{Id="E08000003", SubRegionName  = "Manchester", Checked = false},
+                            new SubRegionItemModel{Id="E08000004", SubRegionName  = "Oldham", Checked = false},
+                            new SubRegionItemModel{Id="E08000005", SubRegionName  = "Rochdale", Checked = false},
+                            new SubRegionItemModel{Id="E08000006", SubRegionName  = "Salford", Checked = false},
+                            new SubRegionItemModel{Id="E08000007", SubRegionName  = "Stockport", Checked = false},
+                            new SubRegionItemModel{Id="E08000008", SubRegionName  = "Tameside", Checked = false},
+                            new SubRegionItemModel{Id="E08000009", SubRegionName  = "Trafford", Checked = false},
+                            new SubRegionItemModel{Id="E08000010", SubRegionName  = "Wigan", Checked = false},
+                            new SubRegionItemModel{Id="E08000011", SubRegionName  = "Knowsley", Checked = false},
+                            new SubRegionItemModel{Id="E08000012", SubRegionName  = "Liverpool", Checked = false},
+                            new SubRegionItemModel{Id="E08000013", SubRegionName  = "St. Helens", Checked = false},
+                            new SubRegionItemModel{Id="E08000014", SubRegionName  = "Sefton", Checked = false},
+                            new SubRegionItemModel{Id="E08000015", SubRegionName  = "Wirral", Checked = false},
+                            new SubRegionItemModel{Id="E10000006", SubRegionName  = "Cumbria", Checked = false},
+                            new SubRegionItemModel{Id="E10000017", SubRegionName  = "Lancashire", Checked = false}
+                        }
                     },
                     new RegionItemModel
                     {
                         Id = "E12000003",
                         Checked = false,
-                        RegionName = "Yorkshire and The Humber"
+                        RegionName = "Yorkshire and The Humber",
+                        SubRegion = new List<SubRegionItemModel>
+                        {
+                            new SubRegionItemModel{Id="E06000010", SubRegionName  = "Kingston upon Hull, City of", Checked = false},
+                            new SubRegionItemModel{Id="E06000011", SubRegionName  = "East Riding of Yorkshire", Checked = false},
+                            new SubRegionItemModel{Id="E06000012", SubRegionName  = "North East Lincolnshire", Checked = false},
+                            new SubRegionItemModel{Id="E06000013", SubRegionName  = "North Lincolnshire", Checked = false},
+                            new SubRegionItemModel{Id="E06000014", SubRegionName  = "York", Checked = false},
+                            new SubRegionItemModel{Id="E08000016", SubRegionName  = "Barnsley", Checked = false},
+                            new SubRegionItemModel{Id="E08000017", SubRegionName  = "Doncaster", Checked = false},
+                            new SubRegionItemModel{Id="E08000018", SubRegionName  = "Rotherham", Checked = false},
+                            new SubRegionItemModel{Id="E08000019", SubRegionName  = "Sheffield", Checked = false},
+                            new SubRegionItemModel{Id="E08000032", SubRegionName  = "Bradford", Checked = false},
+                            new SubRegionItemModel{Id="E08000033", SubRegionName  = "Calderdale", Checked = false},
+                            new SubRegionItemModel{Id="E08000034", SubRegionName  = "Kirklees", Checked = false},
+                            new SubRegionItemModel{Id="E08000035", SubRegionName  = "Leeds", Checked = false},
+                            new SubRegionItemModel{Id="E08000036", SubRegionName  = "Wakefield", Checked = false},
+                            new SubRegionItemModel{Id="E10000023", SubRegionName  = "North Yorkshire", Checked = false}
+                        }
                     },
                     new RegionItemModel
                     {
                         Id = "E12000004",
                         Checked = false,
-                        RegionName = "East Midlands"
+                        RegionName = "East Midlands",
+                        SubRegion = new List<SubRegionItemModel>
+                        {
+                            new SubRegionItemModel{Id="E06000015", SubRegionName  = "Derby", Checked = false},
+                            new SubRegionItemModel{Id="E10000007", SubRegionName  = "Derbyshire", Checked = false},
+                            new SubRegionItemModel{Id="E06000016", SubRegionName  = "Leicester", Checked = false},
+                            new SubRegionItemModel{Id="E10000018", SubRegionName  = "Leicestershire", Checked = false},
+                            new SubRegionItemModel{Id="E10000019", SubRegionName  = "Lincolnshire", Checked = false},
+                            new SubRegionItemModel{Id="E10000021", SubRegionName  = "Northamptonshire", Checked = false},
+                            new SubRegionItemModel{Id="E06000018", SubRegionName  = "Nottingham", Checked = false},
+                            new SubRegionItemModel{Id="E10000024", SubRegionName  = "Nottinghamshire", Checked = false},
+                            new SubRegionItemModel{Id="E06000017", SubRegionName  = "Rutland", Checked = false}
+                        }
                     },
                     new RegionItemModel
                     {
                         Id = "E12000005",
                         Checked = false,
-                        RegionName = "West Midlands"
+                        RegionName = "West Midlands",
+                        SubRegion = new List<SubRegionItemModel>
+                        {
+                            new SubRegionItemModel{Id="E06000019", SubRegionName  = "Herefordshire, County of", Checked = false},
+                            new SubRegionItemModel{Id="E06000020", SubRegionName  = "Telford and Wrekin", Checked = false},
+                            new SubRegionItemModel{Id="E06000021", SubRegionName  = "Stoke-on-Trent", Checked = false},
+                            new SubRegionItemModel{Id="E06000051", SubRegionName  = "Shropshire", Checked = false},
+                            new SubRegionItemModel{Id="E08000025", SubRegionName  = "Birmingham", Checked = false},
+                            new SubRegionItemModel{Id="E08000026", SubRegionName  = "Coventry", Checked = false},
+                            new SubRegionItemModel{Id="E08000027", SubRegionName  = "Dudley", Checked = false},
+                            new SubRegionItemModel{Id="E08000028", SubRegionName  = "Sandwell", Checked = false},
+                            new SubRegionItemModel{Id="E08000029", SubRegionName  = "Solihull", Checked = false},
+                            new SubRegionItemModel{Id="E08000030", SubRegionName  = "Walsall", Checked = false},
+                            new SubRegionItemModel{Id="E08000031", SubRegionName  = "Wolverhampton", Checked = false},
+                            new SubRegionItemModel{Id="E10000028", SubRegionName  = "Staffordshire", Checked = false},
+                            new SubRegionItemModel{Id="E10000031", SubRegionName  = "Warwickshire", Checked = false},
+                            new SubRegionItemModel{Id="E10000034", SubRegionName  = "Worcestershire", Checked = false},
+                        }
                     },
                     new RegionItemModel
                     {
                         Id = "E12000006",
                         Checked = false,
-                        RegionName = "East of England"
+                        RegionName = "East of England",
+                        SubRegion = new List<SubRegionItemModel>
+                        {
+                            new SubRegionItemModel{Id="E06000055", SubRegionName  = "Bedford", Checked = false},
+                            new SubRegionItemModel{Id="E10000003", SubRegionName  = "Cambridgeshire", Checked = false},
+                            new SubRegionItemModel{Id="E06000056", SubRegionName  = "Central Bedfordshire", Checked = false},
+                            new SubRegionItemModel{Id="E10000012", SubRegionName  = "Essex", Checked = false},
+                            new SubRegionItemModel{Id="E10000015", SubRegionName  = "Hertfordshire", Checked = false},
+                            new SubRegionItemModel{Id="E06000032", SubRegionName  = "Luton", Checked = false},
+                            new SubRegionItemModel{Id="E10000020", SubRegionName  = "Norfolk", Checked = false},
+                            new SubRegionItemModel{Id="E06000031", SubRegionName  = "Peterborough", Checked = false},
+                            new SubRegionItemModel{Id="E06000033", SubRegionName  = "Southend-on-Sea", Checked = false},
+                            new SubRegionItemModel{Id="E10000029", SubRegionName  = "Suffolk", Checked = false},
+                            new SubRegionItemModel{Id="E06000034", SubRegionName  = "Thurrock", Checked = false}
+                        }
                     },
                     new RegionItemModel
                     {
                         Id = "E12000007",
                         Checked = false,
-                        RegionName = "London"
+                        RegionName = "London",
+                        SubRegion = new List<SubRegionItemModel>
+                        {
+                            new SubRegionItemModel{Id="E09000001", SubRegionName  = "City of London", Checked = false},
+                            new SubRegionItemModel{Id="E09000002", SubRegionName  = "Barking and Dagenham", Checked = false},
+                            new SubRegionItemModel{Id="E09000003", SubRegionName  = "Barnet", Checked = false},
+                            new SubRegionItemModel{Id="E09000004", SubRegionName  = "Bexley,", Checked = false},
+                            new SubRegionItemModel{Id="E09000005", SubRegionName  = "Brent", Checked = false},
+                            new SubRegionItemModel{Id="E09000006", SubRegionName  = "Bromley", Checked = false},
+                            new SubRegionItemModel{Id="E09000007", SubRegionName  = "Camden", Checked = false},
+                            new SubRegionItemModel{Id="E09000008", SubRegionName  = "Croydon", Checked = false},
+                            new SubRegionItemModel{Id="E09000009", SubRegionName  = "Ealing", Checked = false},
+                            new SubRegionItemModel{Id="E09000010", SubRegionName  = "Enfield", Checked = false},
+                            new SubRegionItemModel{Id="E09000011", SubRegionName  = "Greenwich", Checked = false},
+                            new SubRegionItemModel{Id="E09000012", SubRegionName  = "Hackney", Checked = false},
+                            new SubRegionItemModel{Id="E09000013", SubRegionName  = "Hammersmith and Fulham", Checked = false},
+                            new SubRegionItemModel{Id="E09000014", SubRegionName  = "Haringey", Checked = false},
+                            new SubRegionItemModel{Id="E09000015", SubRegionName  = "Harrow", Checked = false},
+                            new SubRegionItemModel{Id="E09000016", SubRegionName  = "Havering", Checked = false},
+                            new SubRegionItemModel{Id="E09000017", SubRegionName  = "Hillingdon", Checked = false},
+                            new SubRegionItemModel{Id="E09000018", SubRegionName  = "Hounslow", Checked = false},
+                            new SubRegionItemModel{Id="E09000019", SubRegionName  = "Islington", Checked = false},
+                            new SubRegionItemModel{Id="E09000020", SubRegionName  = "Kensington and Chelsea", Checked = false},
+                            new SubRegionItemModel{Id="E09000021", SubRegionName  = "Kingston upon Thames", Checked = false},
+                            new SubRegionItemModel{Id="E09000022", SubRegionName  = "Lambeth", Checked = false},
+                            new SubRegionItemModel{Id="E09000023", SubRegionName  = "Lewisham", Checked = false},
+                            new SubRegionItemModel{Id="E09000024", SubRegionName  = "Merton", Checked = false},
+                            new SubRegionItemModel{Id="E09000025", SubRegionName  = "Newham", Checked = false},
+                            new SubRegionItemModel{Id="E09000026", SubRegionName  = "Redbridge", Checked = false},
+                            new SubRegionItemModel{Id="E09000027", SubRegionName  = "Richmond upon Thames", Checked = false},
+                            new SubRegionItemModel{Id="E09000028", SubRegionName  = "Southwark", Checked = false},
+                            new SubRegionItemModel{Id="E09000029", SubRegionName  = "Sutton", Checked = false},
+                            new SubRegionItemModel{Id="E09000030", SubRegionName  = "Tower Hamlets", Checked = false},
+                            new SubRegionItemModel{Id="E09000031", SubRegionName  = "Waltham Forest", Checked = false},
+                            new SubRegionItemModel{Id="E09000032", SubRegionName  = "Wandsworth", Checked = false},
+                            new SubRegionItemModel{Id="E09000033", SubRegionName  = "Westminster", Checked = false}
+                        }
                     },
                     new RegionItemModel
                     {
                         Id = "E12000008",
                         Checked = false,
-                        RegionName = "South East"
+                        RegionName = "South East",
+                        SubRegion = new List<SubRegionItemModel>
+                        {
+                            new SubRegionItemModel{Id="E06000035", SubRegionName  = "Medway", Checked = false},
+                            new SubRegionItemModel{Id="E06000036", SubRegionName  = "Bracknell Forest", Checked = false},
+                            new SubRegionItemModel{Id="E06000037", SubRegionName  = "West Berkshire", Checked = false},
+                            new SubRegionItemModel{Id="E06000038", SubRegionName  = "Reading", Checked = false},
+                            new SubRegionItemModel{Id="E06000039", SubRegionName  = "Slough", Checked = false},
+                            new SubRegionItemModel{Id="E06000040", SubRegionName  = "Windsor and Maidenhead", Checked = false},
+                            new SubRegionItemModel{Id="E06000041", SubRegionName  = "Wokingham", Checked = false},
+                            new SubRegionItemModel{Id="E06000042", SubRegionName  = "Milton Keynes", Checked = false},
+                            new SubRegionItemModel{Id="E06000043", SubRegionName  = "Brighton and Hove", Checked = false},
+                            new SubRegionItemModel{Id="E06000044", SubRegionName  = "Portsmouth", Checked = false},
+                            new SubRegionItemModel{Id="E06000045", SubRegionName  = "Southampton", Checked = false},
+                            new SubRegionItemModel{Id="E06000046", SubRegionName  = "Isle of Wight", Checked = false},
+                            new SubRegionItemModel{Id="E10000002", SubRegionName  = "Buckinghamshire", Checked = false},
+                            new SubRegionItemModel{Id="E10000011", SubRegionName  = "East Sussex", Checked = false},
+                            new SubRegionItemModel{Id="E10000014", SubRegionName  = "Hampshire", Checked = false},
+                            new SubRegionItemModel{Id="E10000016", SubRegionName  = "Kent", Checked = false},
+                            new SubRegionItemModel{Id="E10000025", SubRegionName  = "Oxfordshire", Checked = false},
+                            new SubRegionItemModel{Id="E10000030", SubRegionName  = "Surrey", Checked = false},
+                            new SubRegionItemModel{Id="E10000032", SubRegionName  = "West Sussex",  Checked = false}
+                        }
                     },
                     new RegionItemModel
                     {
                         Id = "E12000009",
                         Checked = false,
-                        RegionName = "South West"
+                        RegionName = "South West",
+                        SubRegion = new List<SubRegionItemModel>
+                        {
+                            new SubRegionItemModel{Id="E06000022", SubRegionName  = "Bath and North East Somerset", Checked = false},
+                            new SubRegionItemModel{Id="E06000023", SubRegionName  = "Bristol, City of", Checked = false},
+                            new SubRegionItemModel{Id="E06000024", SubRegionName  = "North Somerset", Checked = false},
+                            new SubRegionItemModel{Id="E06000025", SubRegionName  = "South Gloucestershire", Checked = false},
+                            new SubRegionItemModel{Id="E06000026", SubRegionName  = "Plymouth", Checked = false},
+                            new SubRegionItemModel{Id="E06000027", SubRegionName  = "Torbay", Checked = false},
+                            new SubRegionItemModel{Id="E06000028", SubRegionName  = "Bournemouth", Checked = false},
+                            new SubRegionItemModel{Id="E06000029", SubRegionName  = "Poole", Checked = false},
+                            new SubRegionItemModel{Id="E06000030", SubRegionName  = "Swindon", Checked = false},
+                            new SubRegionItemModel{Id="E06000052", SubRegionName  = "Cornwall", Checked = false},
+                            new SubRegionItemModel{Id="E06000053", SubRegionName  = "Isles of Scilly", Checked = false},
+                            new SubRegionItemModel{Id="E06000054", SubRegionName  = "Wiltshire", Checked = false},
+                            new SubRegionItemModel{Id="E10000008", SubRegionName  = "Devon", Checked = false},
+                            new SubRegionItemModel{Id="E10000009", SubRegionName  = "Dorset", Checked = false},
+                            new SubRegionItemModel{Id="E10000013", SubRegionName  = "Gloucestershire", Checked = false},
+                            new SubRegionItemModel{Id="E10000027", SubRegionName  = "Somerset", Checked = false},
+                        }
                     }
                 }
             };

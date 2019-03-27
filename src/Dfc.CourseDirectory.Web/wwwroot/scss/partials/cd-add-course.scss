@@ -5,3 +5,18 @@
         margin-left:10px;
     }
 }
+
+details {
+    display: block;
+}
+
+details summary {
+    display: inline-block;
+    color: #005ea5;
+    cursor: pointer;
+    position: relative;
+}
+
+details .summary {
+    text-decoration: underline;
+}
