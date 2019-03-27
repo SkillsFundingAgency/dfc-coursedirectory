@@ -9,24 +9,50 @@
 
     if (!hasCourses)
     {
-        <div class="govuk-grid-row govuk-!-padding-top-9">
-            <div class="govuk-grid-column-one">
-                <h1 class="govuk-heading-xl">
-                    <span class="govuk-caption-xl">@Model.HeadingCaption</span>
-                    You have no published courses
-                    <p>
-                        <span class="govuk-caption-xl">You can</span>
-                    </p>
-                </h1>
-            </div>
+        <div class="govuk-body">
+            <main id="Cd-course-list" class="govuk-main-wrapper">
+                <span class="govuk-caption-xl">Course directory</span>
+                <h1 class="govuk-heading-xl">Your published courses</h1>
+                <p class="govuk-body-l">
+                    You have no courses listed on the course directory.
+                </p>
+                <h3 class="govukbody govuk-heading-m">What next?</h3>
 
-            <p>
-                <a href="~/Qualifications" class="govuk-link">Add course</a>
-            </p>
-            <p>
-                <a href="~/BulkUpload" class="govuk-link">Fix and publish a pending course</a>
-            </p>
+                <p>
+                    <span class="govuk-caption-xl">You can</span>
+                </p>
 
+                <ul>
+                    <li>
+                        <p>
+                            <a href="~/Qualifications" class="govuk-link">publish a course </a>to the course directory
+                        </p>
+                    </li>
+                    <li>
+                        <p>
+                            <a href="~/BulkUpload" class="govuk-link">publish all your courses </a> with a file upload
+                        </p>
+                    </li>
+                    @if (Model.PendingCoursesCount.HasValue)
+                    {
+                        <li>
+                            <p>
+                                <a href="~/Migration" class="govuk-link">or add information to @Model.PendingCoursesCount of your courses </a>that can’t be published until they are fixed
+                            </p>
+                        </li>
+                    }
+                </ul>
+
+
+
+
+
+
+
+
+
+
+            </main>
         </div>
     }
     else
@@ -207,16 +233,16 @@
                                                        asp-route-learnAimRefTypeDesc="@course.QualificationType"
                                                        asp-route-courseId="@course.Id"
                                                        asp-route-courseRunId="@courseRun.Id"
-                                                       asp-route-mode="@PublishMode.Undefined">Duplicate</a>
+                                                       asp-route-mode="@PublishMode.Undefined">Copy</a>
 
-                                                    <a href="#" class="govuk-link archive" id="archive-@courseRun.Id" data-course-run-id="@courseRun.Id" style="padding-right:1em">Delete</a>
+                                                    <a href="#" class="govuk-link archive" id="archive-@courseRun.Id" data-course-run-id="@courseRun.Id" style="padding-right:1em">Archive</a>
 
                                                     <a id="course-confirm-archive-@courseRun.Id" class="govuk-button" asp-controller="Courses" asp-action="Archive"
                                                        asp-route-courseId="@course.Id"
                                                        asp-route-courseRunId="@courseRun.Id"
                                                        asp-route-level="@course.NotionalNVQLevelv2"
                                                        asp-route-qualificationType="@course.QualificationType"
-                                                       style="display: none;padding-right:1em">Confirm delete</a>
+                                                       style="display: none;padding-right:1em">Confirm archive</a>
 
                                                     <a href="#" class="govuk-link cancel-archive" id="course-cancel-archive-@courseRun.Id" data-course-run-id="@courseRun.Id" style="display: none">Cancel</a>
 

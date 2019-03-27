@@ -86,23 +86,27 @@
 
 
                 var trimmed = $elementCost.val().trim().replace(",", "");
-                trimmed = trimmed.trim().replace(".", "");
-
+                
                 if (trimmed !== "") {
 
                     if ($.isNumeric(trimmed))
                     {
-                        if (trimmed.length >= 7) {
+                        if (!trimmed.includes(".")) {
+                            if (trimmed.length >= 7) {
 
-                            var formatted = parseFloat(trimmed / 100).toFixed(2);
+                                var formatted = parseFloat(trimmed / 100).toFixed(2);
+                            }
+                            else {
+                                var formatted = parseFloat(Math.floor(trimmed * 100) / 100).toFixed(2);
+                            }
+
+                            $elementCost.val(formatted);
                         }
                         else {
-                            var formatted = parseFloat(Math.floor(trimmed * 100) / 100).toFixed(2);
+                            //Is a float
+                            trimmed = parseFloat(trimmed).toFixed(2);
+                            $elementCost.val(trimmed);
                         }
-
-                        $elementCost.val(formatted);
-
-
                     }
                     else
                     {
