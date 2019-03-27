@@ -96,7 +96,7 @@
                             </a>
 
 
-                            if (authorised.Succeeded)
+                            @if (authorised.Succeeded || superUser.Succeeded)
                             {
 
                                 <a class="" href="/BulkUpload">
@@ -104,7 +104,7 @@
                                 </a>
 
                             }
-                            if (authorised.Succeeded)
+                            @if (authorised.Succeeded || superUser.Succeeded)
                             {
 
                                 <a class="" href="/Migration">
