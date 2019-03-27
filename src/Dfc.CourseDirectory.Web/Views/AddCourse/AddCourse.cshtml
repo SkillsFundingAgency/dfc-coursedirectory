@@ -24,19 +24,25 @@
     @Html.HiddenFor(x => x.courseMode)
     @Html.HiddenFor(x => x.CourseId)
 
-
     <h1 class="govuk-heading-l" style="padding-top: 20px;">
         Complete your qualification details
     </h1>
 
-
     @await Component.InvokeAsync(nameof(Notification), new NotificationModel
     {
-
         NotificationTitle = "Qualification added",
         NotificationMessage = @Model.LearnAimRefTitle + "<br>" + "Level: " + @Model.NotionalNVQLevelv2 + "<br> Awarding organisation: " + @Model.AwardOrgCode + "<br> LARS / QAN: " + @Model.LearnAimRef,
         ClassType = "info-summary"
     })
+
+    <div id="errorsummary" class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary" style="display: none;">
+        <h2 class="govuk-error-summary__title" id="error-summary-title">
+            There is an issue with this qualification
+        </h2>
+        <div class="govuk-error-summary__body">
+            <ul class="govuk-list govuk-error-summary__list"></ul>
+        </div>
+    </div>
 
     <h3 class="govuk-heading-m">Course description</h3>
     <div id="sectionCourseFor">
@@ -61,8 +67,8 @@
         @await Component.InvokeAsync(nameof(WhereNext), Model.WhereNext)
     </div>
     @*<div id="sectionFundingOptions">
-        @await Component.InvokeAsync(nameof(FundingOptions), Model.FundingOptions)
-    </div>*@
+            @await Component.InvokeAsync(nameof(FundingOptions), Model.FundingOptions)
+        </div>*@
 
     @{
         var lastAddCoursePage = HttpContextAccessor.HttpContext.Session.GetObject<AddCoursePage>("LastAddCoursePage");
@@ -83,7 +89,7 @@
                         <button type="submit" class="govuk-button" id="goToSummary">
                             Summary
                         </button>
-                    
+
                         <a class="govuk-link" href="#" id="goToSection2Link">Page 2</a>
                     </div>
                 }
@@ -109,6 +115,219 @@
 </form>
 
 <script>
+    (function ($) {
+        $(function () {
+            var validStates = [];
+            var $button = $("#addCourseSection1 button[type='submit']");
+            var $link = $("#goToSection2Link");
+            var $errorSummary = $("#errorsummary").govUkErrorSummary();
+            var $courseFor = $("#@nameof(Model.CourseFor)").govUkTextarea();
+            var $entryRequirements = $("#@nameof(Model.EntryRequirements)").govUkTextarea();
+            var $whatWillLearn = $("#@nameof(Model.WhatWillLearn)").govUkTextarea();
+            var $howYouWillLearn = $("#@nameof(Model.HowYouWillLearn)").govUkTextarea();
+            var $whatYouNeed = $("#@nameof(Model.WhatYouNeed)").govUkTextarea();
+            var $howAssessed = $("#@nameof(Model.HowAssessed)").govUkTextarea();
+            var $whereNext = $("#@nameof(Model.WhereNext)").govUkTextarea();
+
+            function isAllValid(currentValue) {
+                return currentValue === true;
+            }
+
+            function validate() {
+                validStates = [];
+                $errorSummary.govUkErrorSummary("empty");
+                $courseFor.govUkTextarea("validState");
+                $entryRequirements.govUkTextarea("validState");
+                $whatWillLearn.govUkTextarea("validState");
+                $howYouWillLearn.govUkTextarea("validState");
+                $whatYouNeed.govUkTextarea("validState");
+                $howAssessed.govUkTextarea("validState");
+                $whereNext.govUkTextarea("validState");
+
+                if (!$.requiredValidate($courseFor.val())) {
+                    $courseFor.govUkTextarea("invalidState", $courseFor.attr("val-required-message"));
+                    var courseForErrorHashLinks = $courseFor.govUkTextarea("getErrorHashLinks");
+                    $errorSummary.govUkErrorSummary("add", courseForErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
+                    validStates.push(false);
+                } else if (
+                    !$.regexValidate({ regex: $courseFor.attr("val-regex") }, $courseFor.val())) {
+                    $courseFor.govUkTextarea("invalidState", $courseFor.attr("val-regex-message"));
+                    var courseForErrorHashLinks = $courseFor.govUkTextarea("getErrorHashLinks");
+                    $errorSummary.govUkErrorSummary("add", courseForErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
+                    validStates.push(false);
+                } else if (
+                    !$.maxLengthValidate({ max: $courseFor.attr("val-max-length") }, $courseFor.val())) {
+                    $courseFor.govUkTextarea("invalidState", $courseFor.attr("val-max-length-message"));
+                    var courseForErrorHashLinks = $courseFor.govUkTextarea("getErrorHashLinks");
+                    $errorSummary.govUkErrorSummary("add", courseForErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
+                    validStates.push(false);
+                } else {
+                    $courseFor.govUkTextarea("validState");
+                    $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $courseFor[0].id);
+                    $errorSummary.govUkErrorSummary("hideIfEmpty")
+                    validStates.push(true);
+                }
+
+                if (!$.regexValidate({ regex: $entryRequirements.attr("val-regex") }, $entryRequirements.val())) {
+                    $entryRequirements.govUkTextarea("invalidState", $entryRequirements.attr("val-regex-message"));
+                    var entryRequirementsErrorHashLinks = $entryRequirements.govUkTextarea("getErrorHashLinks");
+                    $errorSummary.govUkErrorSummary("add", entryRequirementsErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
+                    validStates.push(false);
+                } else if (
+                    !$.maxLengthValidate({ max: $entryRequirements.attr("val-max-length") }, $entryRequirements.val())) {
+                    $entryRequirements.govUkTextarea("invalidState", $entryRequirements.attr("val-max-length-message"));
+                    var entryRequirementsErrorHashLinks = $entryRequirements.govUkTextarea("getErrorHashLinks");
+                    $errorSummary.govUkErrorSummary("add", entryRequirementsErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
+                    validStates.push(false);
+                } else {
+                    $entryRequirements.govUkTextarea("validState");
+                    $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $entryRequirements[0].id);
+                    $errorSummary.govUkErrorSummary("hideIfEmpty")
+                    validStates.push(true);
+                }
+
+                //what will learn
+                if (!$.regexValidate({ regex: $whatWillLearn.attr("val-regex") }, $whatWillLearn.val())) {
+                    $whatWillLearn.govUkTextarea("invalidState", $whatWillLearn.attr("val-regex-message"));
+                    var whatWillLearnErrorHashLinks = $whatWillLearn.govUkTextarea("getErrorHashLinks");
+                    $errorSummary.govUkErrorSummary("add", whatWillLearnErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
+                    validStates.push(false);
+                } else if (
+                    !$.maxLengthValidate({ max: $whatWillLearn.attr("val-max-length") }, $whatWillLearn.val())) {
+                    $whatWillLearn.govUkTextarea("invalidState", $whatWillLearn.attr("val-max-length-message"));
+                    var whatWillLearnErrorHashLinks = $whatWillLearn.govUkTextarea("getErrorHashLinks");
+                    $errorSummary.govUkErrorSummary("add", whatWillLearnErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
+                    validStates.push(false);
+                } else {
+                    $whatWillLearn.govUkTextarea("validState");
+                    $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $whatWillLearn[0].id);
+                    $errorSummary.govUkErrorSummary("hideIfEmpty")
+                    validStates.push(true);
+                }
+
+                //how will learn
+                if (!$.regexValidate({ regex: $howYouWillLearn.attr("val-regex") }, $howYouWillLearn.val())) {
+                    $howYouWillLearn.govUkTextarea("invalidState", $howYouWillLearn.attr("val-regex-message"));
+                    var howYouWillLearnErrorHashLinks = $howYouWillLearn.govUkTextarea("getErrorHashLinks");
+                    $errorSummary.govUkErrorSummary("add", howYouWillLearnErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
+                    validStates.push(false);
+                } else if (
+                    !$.maxLengthValidate({ max: $howYouWillLearn.attr("val-max-length") }, $howYouWillLearn.val())) {
+                    $howYouWillLearn.govUkTextarea("invalidState", $howYouWillLearn.attr("val-max-length-message"));
+                    var howYouWillLearnErrorHashLinks = $howYouWillLearn.govUkTextarea("getErrorHashLinks");
+                    $errorSummary.govUkErrorSummary("add", howYouWillLearnErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
+                    validStates.push(false);
+                } else {
+                    $howYouWillLearn.govUkTextarea("validState");
+                    $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $howYouWillLearn[0].id);
+                    $errorSummary.govUkErrorSummary("hideIfEmpty")
+                    validStates.push(true);
+                }
+
+                //what you need
+                if (!$.regexValidate({ regex: $whatYouNeed.attr("val-regex") }, $whatYouNeed.val())) {
+                    $whatYouNeed.govUkTextarea("invalidState", $whatYouNeed.attr("val-regex-message"));
+                    var whatYouNeedErrorHashLinks = $whatYouNeed.govUkTextarea("getErrorHashLinks");
+                    $errorSummary.govUkErrorSummary("add", whatYouNeedErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
+                    validStates.push(false);
+                } else if (
+                    !$.maxLengthValidate({ max: $whatYouNeed.attr("val-max-length") }, $whatYouNeed.val())) {
+                    $whatYouNeed.govUkTextarea("invalidState", $whatYouNeed.attr("val-max-length-message"));
+                    var whatYouNeedErrorHashLinks = $whatYouNeed.govUkTextarea("getErrorHashLinks");
+                    $errorSummary.govUkErrorSummary("add", whatYouNeedErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
+                    validStates.push(false);
+                } else {
+                    $whatYouNeed.govUkTextarea("validState");
+                    $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $whatYouNeed[0].id);
+                    $errorSummary.govUkErrorSummary("hideIfEmpty")
+                    validStates.push(true);
+                }
+
+                //how assessed
+                if (!$.regexValidate({ regex: $howAssessed.attr("val-regex") }, $howAssessed.val())) {
+                    $howAssessed.govUkTextarea("invalidState", $howAssessed.attr("val-regex-message"));
+                    var whatYouNeedErrorHashLinks = $whatYouNeed.govUkTextarea("getErrorHashLinks");
+                    $errorSummary.govUkErrorSummary("add", whatYouNeedErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
+                    validStates.push(false);
+                } else if (
+                    !$.maxLengthValidate({ max: $howAssessed.attr("val-max-length") }, $howAssessed.val())) {
+                    $howAssessed.govUkTextarea("invalidState", $howAssessed.attr("val-max-length-message"));
+                    var howAssessedErrorHashLinks = $howAssessed.govUkTextarea("getErrorHashLinks");
+                    $errorSummary.govUkErrorSummary("add", howAssessedErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
+                    validStates.push(false);
+                } else {
+                    $howAssessed.govUkTextarea("validState");
+                    $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $howAssessed[0].id);
+                    $errorSummary.govUkErrorSummary("hideIfEmpty")
+                    validStates.push(true);
+                }
+
+                //where next
+                if (!$.regexValidate({ regex: $howAssessed.attr("val-regex") }, $whereNext.val())) {
+                    $whereNext.govUkTextarea("invalidState", $whereNext.attr("val-regex-message"));
+                    var whereNextErrorHashLinks = $whereNext.govUkTextarea("getErrorHashLinks");
+                    $errorSummary.govUkErrorSummary("add", whereNextErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
+                    validStates.push(false);
+                } else if (
+                    !$.maxLengthValidate({ max: $whereNext.attr("val-max-length") }, $whereNext.val())) {
+                    $whereNext.govUkTextarea("invalidState", $whereNext.attr("val-max-length-message"));
+                    var whereNextErrorHashLinks = $whereNext.govUkTextarea("getErrorHashLinks");
+                    $errorSummary.govUkErrorSummary("add", whereNextErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
+                    validStates.push(false);
+                } else {
+                    $whereNext.govUkTextarea("validState");
+                    $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $whereNext[0].id);
+                    $errorSummary.govUkErrorSummary("hideIfEmpty")
+                    validStates.push(true);
+                }
+
+                if (!validStates.every(isAllValid)) {
+                    $("html, body").animate({
+                        scrollTop: $errorSummary.offset().top
+                    }, 600);
+                    $errorSummary.focus();
+                }
+            }
+
+            $button.on("click", function (e) {
+                e.preventDefault();
+                validate();
+                if (validStates.every(isAllValid)) {
+                    if ($button[0].id == "goToSummary") {
+                        $("#addCourseSection1").attr("action", "Summary");
+                    }
+                    $("#addCourseSection1").submit();
+                }
+            });
+
+            $link.on("click", function (e) {
+                e.preventDefault();
+                validate();
+                if (validStates.every(isAllValid)) {
+                    $("#addCourseSection1").attr("action", "AddCourse");
+                    $("#addCourseSection1").submit();
+                }
+            });
+        });
+    })(jQuery);
+</script>
+
+@*<script>
     (function ($) {
         $(function () {
 
@@ -394,4 +613,4 @@
 
         });
     })(jQuery);
-</script>
+</script>*@
