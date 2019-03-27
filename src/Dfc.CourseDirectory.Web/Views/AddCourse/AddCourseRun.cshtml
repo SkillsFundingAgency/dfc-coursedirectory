@@ -418,11 +418,21 @@
                     validStates.push(true);
                 }
 
-                if (!$.regexValidate({ regex: $URL.attr("val-regex") }, $URL.val())) {
+
+                var enteredUrl = $URL.val();
+                var urlToValidate = "";
+                if ($URL.val().includes("http")) {
+                    urlToValidate = enteredUrl.substring(enteredUrl.indexOf("//") + 2, enteredUrl.length);
+                }
+                else {
+                    urlToValidate = $url.val();
+                }
+
+                if (!$.regexValidate({ regex: $URL.attr("val-regex") }, urlToValidate)) {
                     $URL.govUkInput("invalidState", $URL.attr("val-regex-message"));
                     validStates.push(false);
                 } else if (
-                    !$.maxLengthValidate({ max: $URL.attr("val-max-length") }, $URL.val())) {
+                    !$.maxLengthValidate({ max: $URL.attr("val-max-length") }, urlToValidate)) {
                     $URL.govUkInput("invalidState", $URL.attr("val-max-length-message"));
                     validStates.push(false);
                 }
