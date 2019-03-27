@@ -74,6 +74,7 @@
                         if (SignInManager.IsSignedIn(User))
                         {
                             var authorised = await Authorization.AuthorizeAsync(User, "ElevatedUserRole");
+                            var superUser = await Authorization.AuthorizeAsync(User, "SuperUser");
 
                             <a class="govuk-header__link" href="/">
                                 Home
@@ -89,9 +90,12 @@
                                 Venues
                             </a>
 
-                            <a class="" href="/Provider">
-                                Add Provider
-                            </a>
+                            if (authorised.Succeeded)
+                            {
+                                <a class="" href="/Provider">
+                                    Add Provider
+                                </a>
+                            }
 
 
                             <a class="" href="/Provider/Courses">
@@ -99,7 +103,7 @@
                             </a>
 
 
-                            if (authorised.Succeeded)
+                            if (authorised.Succeeded || superUser.Succeeded)
                             {
 
                                 <a class="" href="/BulkUpload">
@@ -107,7 +111,7 @@
                                 </a>
 
                             }
-                            if (authorised.Succeeded)
+                            if (authorised.Succeeded || superUser.Succeeded)
                             {
 
                                 <a class="" href="/Migration">
