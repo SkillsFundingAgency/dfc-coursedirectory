@@ -457,14 +457,23 @@
                 }
 
                 // url
-                if (!$.regexValidate({ regex: $url.attr("val-regex") }, $url.val())) {
+                var enteredUrl = $url.val();
+                var urlToValidate = "";
+                if ($url.val().includes("http")) {
+                    urlToValidate = enteredUrl.substring(enteredUrl.indexOf("//") + 2, enteredUrl.length);
+                }
+                else {
+                    urlToValidate = $url.val();
+                }
+
+                if (!$.regexValidate({ regex: $url.attr("val-regex") }, urlToValidate)) {
                     $url.govUkInput("invalidState", $url.attr("val-regex-message"));
                     var urlErrorHashLinks = $url.govUkInput("getErrorHashLinks");
                     $errorSummary.govUkErrorSummary("add", urlErrorHashLinks);
                     $errorSummary.govUkErrorSummary("show");
                     validStates.push(false);
                 } else if (
-                    !$.maxLengthValidate({ max: $url.attr("val-max-length") }, $url.val())) {
+                    !$.maxLengthValidate({ max: $url.attr("val-max-length") }, urlToValidate)) {
                     $url.govUkInput("invalidState", $url.attr("val-max-length-message"));
                     var urlErrorHashLinks = $url.govUkInput("getErrorHashLinks");
                     $errorSummary.govUkErrorSummary("add", urlErrorHashLinks);

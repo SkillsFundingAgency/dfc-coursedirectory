@@ -9,7 +9,7 @@
     </label>
 
 
-    @{ var regex = @"^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,10}(:[0-9]{1,5})?(\/.*)?$";}
+    @{ var regex = @"^([-a-zA-Z0-9]{2,256}\.)+[a-z]{2,10}(\/.*)?";}
 
 
     @if (!string.IsNullOrWhiteSpace(Model.HintText))
@@ -31,8 +31,14 @@
             var $elementUrl = $("#@nameof(Model.Url)");
 
             $elementUrl.on("blur", function () {
-                var trimmed = $elementUrl.val().trim();
+                var trimmed = $elementUrl.val().trim().toLowerCase();
                 $elementUrl.val(trimmed);
+                if ($elementUrl.val().includes("http") || $elementUrl.val().includes("https")) {
+
+                }
+                else {
+                    $elementUrl.val("http://" + trimmed);
+                }
             });
         });
     })(jQuery);
