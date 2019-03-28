@@ -136,7 +136,11 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             }
             catch (Exception ex)
             {
-                errors.Add($"We experienced an error. Text: { ex.Message }");
+                string errorMessage = ex.Message;
+                if (errorMessage.Contains("You can ignore missing fields by setting MissingFieldFound to null.", StringComparison.InvariantCultureIgnoreCase))
+                    errorMessage = errorMessage.Replace("You can ignore missing fields by setting MissingFieldFound to null.", string.Empty);
+
+                errors.Add($"We experienced an error. Text: { errorMessage }");
             }
 
             if (errors != null && errors.Count > 0)
