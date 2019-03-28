@@ -20,3 +20,13 @@ details summary {
 details .summary {
     text-decoration: underline;
 }
+
+.region-checkboxes {
+    display: flex;
+    flex-wrap: wrap;
+
+    .govuk-checkboxes__item {
+        margin: 0.8em;
+        flex: 0 0 0%;
+    }
+}

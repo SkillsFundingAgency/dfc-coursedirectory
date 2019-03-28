@@ -52,7 +52,7 @@
                      <div class="govuk-form-group">
                          <h3><a class="govuk-link" id="SelectAll" region-id="@item.Id" href="#">Select all</a></h3>
                      </div>
-                     <div class="flex-container govuk-grid-row" id="details-content-@item.Id" aria-hidden="true">
+                     <div class="flex-container govuk-grid-row region-checkboxes" id="details-content-@item.Id" aria-hidden="true">
 
                          @{ var x = 0; }
                          @foreach (var subregion in item.SubRegion)
