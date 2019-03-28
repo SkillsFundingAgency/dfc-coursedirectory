@@ -20,6 +20,10 @@ namespace Dfc.CourseDirectory.Services
         public string AwardOrgName { get; }
         public string LearnAimRefTypeDesc { get; }
         public DateTime? CertificationEndDate { get; }
+        public string SectorSubjectAreaTier1Desc { get; }
+        public string SectorSubjectAreaTier2Desc { get; }
+        public string AwardOrgAimRef { get; }
+
 
         public LarsSearchResultItem(
             decimal searchScore,
@@ -33,7 +37,10 @@ namespace Dfc.CourseDirectory.Services
             string unitType,
             string awardOrgName,
             string learnAimRefTypeDesc,
-            DateTime? certificationEndDate)
+            DateTime? certificationEndDate,
+            string sectorSubjectAreaTier1Desc,
+            string sectorSubjectAreaTier2Desc,
+            string awardOrgAimRef)
         {
             Throw.IfLessThan(0, searchScore, nameof(searchScore));
             Throw.IfNullOrWhiteSpace(learnAimRef, nameof(learnAimRef));
@@ -44,6 +51,9 @@ namespace Dfc.CourseDirectory.Services
             Throw.IfNullOrWhiteSpace(unitType, nameof(unitType));
             Throw.IfNullOrWhiteSpace(awardOrgName, nameof(awardOrgName));
             Throw.IfNullOrWhiteSpace(learnAimRefTypeDesc, nameof(learnAimRefTypeDesc));
+            Throw.IfNullOrWhiteSpace(sectorSubjectAreaTier1Desc, nameof(sectorSubjectAreaTier1Desc));
+            Throw.IfNullOrWhiteSpace(sectorSubjectAreaTier2Desc, nameof(sectorSubjectAreaTier2Desc));
+            Throw.IfNullOrWhiteSpace(awardOrgAimRef, nameof(awardOrgAimRef));
 
             SearchScore = searchScore;
             LearnAimRef = learnAimRef;
@@ -57,6 +67,9 @@ namespace Dfc.CourseDirectory.Services
             AwardOrgName = AwardOrgName;
             LearnAimRefTypeDesc = learnAimRefTypeDesc;
             CertificationEndDate = certificationEndDate;
+            SectorSubjectAreaTier1Desc = sectorSubjectAreaTier1Desc;
+            SectorSubjectAreaTier2Desc = sectorSubjectAreaTier2Desc;
+            AwardOrgAimRef = awardOrgAimRef;
         }
 
         protected override IEnumerable<object> GetEqualityComponents()
@@ -73,6 +86,9 @@ namespace Dfc.CourseDirectory.Services
             yield return AwardOrgName;
             yield return LearnAimRefTypeDesc;
             yield return CertificationEndDate;
+            yield return SectorSubjectAreaTier1Desc;
+            yield return SectorSubjectAreaTier2Desc;
+            yield return AwardOrgAimRef;
         }
     }
 }
