@@ -15,6 +15,9 @@
         string TotalQualificationTime { get; }
         string UnitType { get; }
         string AwardOrgName { get; }
+        string SectorSubjectAreaTier1Desc { get; }
+        string SectorSubjectAreaTier2Desc { get; }
+        string AwardOrgAimRef { get; }
     }
 }
 
