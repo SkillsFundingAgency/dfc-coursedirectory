@@ -136,7 +136,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             }
             catch (Exception ex)
             {
-                errors.Add($"Problem  => Error - { ex.Message }");
+                errors.Add($"We experienced an error. Text: { ex.Message }");
             }
 
             if (errors != null && errors.Count > 0)
@@ -147,7 +147,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             {
                 if (bulkUploadcourses == null || bulkUploadcourses.Count.Equals(0))
                 {
-                    errors.Add($"You have uploaded an empty file.");
+                    errors.Add($"The selected file is empty");
                     return errors;
                 }
 
@@ -439,12 +439,12 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                     typeof(DescriptionAttribute)) as DescriptionAttribute;
                 if (attribute != null)
                 {
-                    if (attribute.Description == description)
+                    if (attribute.Description.Equals(description, StringComparison.InvariantCultureIgnoreCase))
                         return (T)field.GetValue(null);
                 }
                 else
                 {
-                    if (field.Name == description)
+                    if (field.Name.Equals(description, StringComparison.InvariantCultureIgnoreCase))
                         return (T)field.GetValue(null);
                 }
             }
