@@ -147,7 +147,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             {
                 if (bulkUploadcourses == null || bulkUploadcourses.Count.Equals(0))
                 {
-                    errors.Add($"You have uploaded an empty file.");
+                    errors.Add($"There are issues with this upload. The selected file is empty");
                     return errors;
                 }
 
