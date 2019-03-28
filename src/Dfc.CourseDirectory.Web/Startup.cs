@@ -180,6 +180,7 @@ namespace Dfc.CourseDirectory.Web
             {
                 options.AddPolicy("Admin", policy => policy.RequireRole("Developer"));
                 options.AddPolicy("ElevatedUserRole", policy => policy.RequireRole("Developer", "Helpdesk"));
+                options.AddPolicy("SuperUser", policy => policy.RequireRole("Developer", "Helpdesk", "Provider Superuser"));
                 options.AddPolicy("Helpdesk", policy => policy.RequireRole("Helpdesk"));
                 options.AddPolicy("Provider", policy => policy.RequireRole("Provider User", "Provider Superuser"));
             });
