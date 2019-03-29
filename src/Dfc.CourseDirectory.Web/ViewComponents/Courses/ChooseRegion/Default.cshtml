@@ -17,49 +17,50 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
         <div class="govuk-checkboxes" id="SelectRegionCheckBoxes" val-required-message="Select a region">
-             @foreach (var item in Model.Regions.RegionItems)
-             {
-                 <details class="form-group" role="group">
+            @foreach (var item in Model.Regions.RegionItems)
+            {
+                <details class="form-group" role="group">
 
-                     <summary role="button">
-                         <span id="region+@item.Id" class="summary govuk-label govuk-checkboxes__label">@item.RegionName</span>
-                     </summary>
+                    <summary role="button">
+                        <span id="region+@item.Id" class="summary govuk-label govuk-checkboxes__label">@item.RegionName</span>
+                    </summary>
 
-                     <div class="govuk-form-group">
-                         <h3><a class="govuk-link" id="SelectAll" region-id="@item.Id" href="#">Select all</a></h3>
-                     </div>
-                     <div class="flex-container govuk-grid-row region-checkboxes" id="details-content-@item.Id" aria-hidden="true">
+                    <div class="govuk-form-group">
+                        <h3><a class="govuk-link" id="SelectAll" region-id="@item.Id" href="#">Select all</a></h3>
+                    </div>
+                    <div class="flex-container govuk-grid-row region-checkboxes" id="details-content-@item.Id" aria-hidden="true">
 
-                         @{ var x = 0; }
-                         @foreach (var subregion in item.SubRegion)
-                         {
-                             x++;
+                        @{ var x = 0; }
+                        @foreach (var subregion in item.SubRegion)
+                        {
+                            x++;
 
-                             <div class="govuk-checkboxes__item">
-                                 <input class="govuk-checkboxes__input" id="RegionName-@x" region-id="@item.Id" name="SelectedRegions" type="checkbox" value="@subregion.Id" @subregion.Checked.ThenNullableCheck()/>
-                                 <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@subregion.SubRegionName</label>
-                             </div>
+                            <div class="govuk-checkboxes__item">
+                                <input class="govuk-checkboxes__input" id="RegionName-@x" region-id="@item.Id" name="SelectedRegions" type="checkbox" value="@subregion.Id" @subregion.Checked.ThenNullableCheck()/>
+                                <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@subregion.SubRegionName</label>
+                            </div>
 
-                         }
-                     </div>
-                 </details>
-             }
+                        }
+                    </div>
+                </details>
+            }
 
 
         </div>
 
     </div>
 </div>
+
     <script>
         (function ($) {
             $(function () {
                 $("a").on("click",
                     function(e) {
-                        e.preventDefault();
+                        
                         var $regionId = $(this).attr('region-id');
 
                         if ($regionId) {
-
+                            e.preventDefault();
                             var $selectAllText = $(this).text();
                             var $allCheckedCheckboxes = $("input[region-id='" + $regionId + "']:checkbox");
                             var allCheckedFilterCheckboxesLength = $allCheckedCheckboxes.length;
