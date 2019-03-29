@@ -106,7 +106,7 @@
 
                     <div class="cd-grid-coloumn-80 govuk-!-margin-top-9">
 
-                        <div class="govuk-accordion" data-module="accordion" id="accordion">
+                        <div class="govuk-accordion" data-module="accordion" id="accordion-default">
                             @foreach (var course in Model.Courses.OrderBy(x => x.QualificationTitle))
                             {
 
@@ -115,7 +115,7 @@
                                 <div class="govuk-accordion__section" id="@course.Id">
                                     <div class="govuk-accordion__section-header">
                                         <h2 class="govuk-accordion__section-heading">
-                                            <span class="govuk-accordion__section-button">
+                                            <span class="govuk-accordion__section-button" id="accordion-default-heading-@course.Id" aria-controls="accordion-default-content-@course.Id" >
                                                 @course.QualificationTitle (@course.Facet)
                                             </span>
 
