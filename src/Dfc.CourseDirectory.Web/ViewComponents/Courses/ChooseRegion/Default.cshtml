@@ -16,30 +16,6 @@
 </span>
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
-        @*<div class="govuk-checkboxes" id="SelectRegionCheckBoxes" val-required-message="Select a region">
-            @{ var j = 0; }
-            @if (Model.Regions.RegionItems.Count() == 1)
-            {
-                <div class="govuk-checkboxes__item">
-                    <input class="govuk-checkboxes__input" id="RegionName-@j" name="SelectedRegions" type="checkbox" value="@Model.Regions.RegionItems.First().Id" checked="checked" onclick="return false;" />
-                    <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@Model.Regions.RegionItems.First().RegionName</label>
-                </div>
-            }
-            else
-            {
-                @*foreach (var item in Model.Regions.RegionItems)
-                {
-                    j++;
-                    <div class="govuk-checkboxes__item">
-                        <input class="govuk-checkboxes__input" id="RegionName-@j" name="SelectedRegions" type="checkbox" value="@item.Id" @item.Checked.ThenNullableCheck() />
-                        <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@item.RegionName</label>
-                    </div>
-                }
-            }
-
-
-        </div>*@
-
         <div class="govuk-checkboxes" id="SelectRegionCheckBoxes" val-required-message="Select a region">
              @foreach (var item in Model.Regions.RegionItems)
              {

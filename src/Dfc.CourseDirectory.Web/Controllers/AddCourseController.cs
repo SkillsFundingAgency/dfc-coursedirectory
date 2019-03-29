@@ -319,11 +319,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     summaryViewModel.Venues = venues;
                     break;
                 case DeliveryMode.WorkBased:
-                    regions.AddRange(from region in availableRegions.RegionItems
+                    regions.AddRange(from availableRegionsRegionItem in availableRegions.RegionItems
+                        from subRegionItemModel in availableRegionsRegionItem.SubRegion
                         from modelSelectedRegion in model.SelectedRegions
-                        where modelSelectedRegion == region.Id
-                        select region.RegionName);
-
+                        where modelSelectedRegion == subRegionItemModel.Id
+                        select subRegionItemModel.SubRegionName);
+                    
                     summaryViewModel.Regions = regions;
                     break;
             }
