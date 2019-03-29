@@ -527,13 +527,16 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 listsCourseRuns.Add(new BulkUploadCourseRun { LearnAimRef = bulkUploadcourse.LearnAimRef, CourseRun = courseRun });
             }
 
-            foreach (var course in courses)
+            // Get first course 
+            var coursesDistinct = courses.GroupBy(x => x.LearnAimRef).Select(g => g.OrderBy(y => y.LearnAimRef).First());
+
+            foreach (var course in coursesDistinct)
             {
                 course.CourseRuns = listsCourseRuns.Where(cr => cr.LearnAimRef == course.LearnAimRef).Select(cr => cr.CourseRun).ToList();
             }
 
             //// Uncomment only for DEV and TESTING
-            //foreach (var course in courses)
+            //foreach (var course in coursesDistinct)
             //{
             //    string jsonBulkUploadCoursesFilesPath = "D:\\FindACourse-BulkUploadJSONfiles";
             //    var courseJson = JsonConvert.SerializeObject(course);
@@ -542,7 +545,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             //}
 
             // Push the courses to the CourseService
-            foreach (var course in courses)
+            foreach (var course in coursesDistinct)
             {
                 var courseResult = Task.Run(async () => await _courseService.AddCourseAsync(course)).Result;
 
@@ -552,7 +555,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 }
                 else
                 {
-                    errors.Add($"The course is NOT migrated, LARS_QAN = { course.LearnAimRef }. Error -  { courseResult.Error }");
+                    errors.Add($"The course is NOT BulkUploaded, LARS_QAN = { course.LearnAimRef }. Error -  { courseResult.Error }");
                 }
             }
 
