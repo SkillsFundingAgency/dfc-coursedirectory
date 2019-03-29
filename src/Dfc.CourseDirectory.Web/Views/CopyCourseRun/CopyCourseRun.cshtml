@@ -115,32 +115,34 @@
                 @Model.SelectRegion.HintText
             </span>
 
-            @*<div class="govuk-grid-row">
-                <div class="govuk-grid-column-full">*@
-            <div class="govuk-checkboxes" id="SelectRegionCheckBoxes"
-                 val-required-message="Select a region">
-                @{ var j = 0; }
-                @if (Model.SelectRegion.RegionItems.Count() == 1)
+            <div class="govuk-checkboxes" id="SelectRegionCheckBoxes" val-required-message="Select a region">
+                @foreach (var item in Model.SelectRegion.RegionItems)
                 {
-                    <div class="govuk-checkboxes__item">
-                        <input class="govuk-checkboxes__input" id="RegionName-@j" name="SelectedRegions" type="checkbox" value="@Model.SelectRegion.RegionItems.First().Id" checked="checked" onclick="return false;" />
-                        <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@Model.SelectRegion.RegionItems.First().RegionName</label>
-                    </div>
-                }
-                else
-                {
-                    foreach (var item in Model.SelectRegion.RegionItems)
-                    {
-                        j++;
-                        <div class="govuk-checkboxes__item">
-                            <input class="govuk-checkboxes__input" id="RegionName-@j" name="SelectedRegions" type="checkbox" value="@item.Id" @item.Checked.ThenNullableCheck() />
-                            <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@item.RegionName</label>
+                    <details class="form-group" role="group">
+                        <summary role="button">
+                            <span id="region+@item.Id" class="summary govuk-label govuk-checkboxes__label">@item.RegionName</span>
+                        </summary>
+
+                        <div class="govuk-form-group">
+                            <h3><a class="govuk-link" id="SelectAll" region-id="@item.Id" href="#">Select all</a></h3>
                         </div>
-                    }
+                        <div class="flex-container govuk-grid-row region-checkboxes" id="details-content-@item.Id" aria-hidden="true">
+
+                            @{ var x = 0; }
+                            @foreach (var subregion in item.SubRegion)
+                            {
+                                x++;
+
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="RegionName-@x" region-id="@item.Id" name="SelectedRegions" type="checkbox" value="@subregion.Id" @subregion.Checked.ThenNullableCheck() />
+                                    <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@subregion.SubRegionName</label>
+                                </div>
+
+                            }
+                        </div>
+                    </details>
                 }
             </div>
-            @*</div>
-                </div>*@
         </div>
     </div>
 
@@ -304,7 +306,7 @@
                 $checkboxsregions.govUkCheckboxes("validState");
                 $selectedvenue.govUkSelect("validState");
                 $cost.govUkInput("validState");
-                $URL.govUkInput("validState");
+               $URL.govUkInput("validState");
                 $radioDeliveryMode.govUkRadios("validState");
                 $radioStudyMode.govUkRadios("validState");
                 $radioAttendance.govUkRadios("validState");
@@ -383,26 +385,26 @@
                     validStates.push(true);
                 }
 
-                var enteredUrl = $URL.val();
+                var enteredUrl =$URL.val();
                 var urlToValidate = "";
                 if ($URL.val().includes("http")) {
                     urlToValidate = enteredUrl.substring(enteredUrl.indexOf("//") + 2, enteredUrl.length);
                 }
                 else {
-                    urlToValidate = $url.val();
+                    urlToValidate =$URL.val();
                 }
 
-                if (!$.regexValidate({ regex: $URL.attr("val-regex") }, urlToValidate)) {
-                    $URL.govUkInput("invalidState", $URL.attr("val-regex-message"));
+                if (!$.regexValidate({ regex:$URL.attr("val-regex") }, urlToValidate)) {
+                   $URL.govUkInput("invalidState",$URL.attr("val-regex-message"));
                     validStates.push(false);
                 } else if (
-                    !$.maxLengthValidate({ max: $URL.attr("val-max-length") }, urlToValidate)) {
-                    $URL.govUkInput("invalidState", $URL.attr("val-max-length-message"));
+                    !$.maxLengthValidate({ max:$URL.attr("val-max-length") }, urlToValidate)) {
+                   $URL.govUkInput("invalidState",$URL.attr("val-max-length-message"));
                     validStates.push(false);
                 }
                 else {
 
-                    $URL.govUkInput("validState");
+                   $URL.govUkInput("validState");
                     validStates.push(true);
                 }
 
@@ -602,7 +604,34 @@
 
             });
 
+            $("a").on("click",
+                function(e) {
+                    
+                    var $regionId = $(this).attr('region-id');
 
+                    if ($regionId) {
+                        e.preventDefault();
+                        var $selectAllText = $(this).text();
+                        var $allCheckedCheckboxes = $("input[region-id='" + $regionId + "']:checkbox");
+                        var allCheckedFilterCheckboxesLength = $allCheckedCheckboxes.length;
+
+                        for (var i = 0; i < allCheckedFilterCheckboxesLength; i++) {
+                            if ($selectAllText === "Select all") {
+                                $($allCheckedCheckboxes[i]).prop('checked', true);
+
+                            } else {
+                                $($allCheckedCheckboxes[i]).prop('checked', false);
+
+                            }
+                        }
+
+                        if ($selectAllText === "Select all") {
+                            $(this).text("Clear all");
+                        } else {
+                            $(this).text("Select all");
+                        }
+                    }
+                });
 
         });
     })(jQuery);
