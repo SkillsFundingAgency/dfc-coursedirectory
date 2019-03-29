@@ -69,6 +69,8 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
             try
             {
+                string missingFieldsError = string.Empty; // Field with name 'VENUE' does not exist.
+                int missingFieldsErrorCount = 0;
                 using (var reader = new StreamReader(bulkUploadFilePath))
                 {
                     using (var csv = new CsvReader(reader))
@@ -77,62 +79,206 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                         csv.ReadHeader();
                         while (csv.Read())
                         {
-                            bool isCourseHeader = false;
-                            string currentLearnAimRef = csv.GetField("LARS_QAN").Trim();
-
-                            if (bulkUploadLineNumber.Equals(2) || currentLearnAimRef != previousLearnAimRef)
+                            // To enable multiple missing fields error display
+                            if (bulkUploadLineNumber.Equals(2))
                             {
-                                isCourseHeader = true;
-                            }
-
-                            if (string.IsNullOrEmpty(currentLearnAimRef))
-                            {
-                                errors.Add($"Line { bulkUploadLineNumber }, LARS_QAN = { currentLearnAimRef } => LARS is missing.");
-                            }
-                            else
-                            {
-                                var record = new BulkUploadCourse
+                                string larsQan = string.Empty;
+                                if (!csv.TryGetField("LARS_QAN", out larsQan))
                                 {
-                                    IsCourseHeader = isCourseHeader,
-                                    BulkUploadLineNumber = bulkUploadLineNumber,
-                                    LearnAimRef = currentLearnAimRef,
-                                    ProviderUKPRN = providerUKPRN,
-                                    VenueName = csv.GetField("VENUE").Trim(),
-                                    CourseName = csv.GetField("COURSE_NAME").Trim(),
-                                    ProviderCourseID = csv.GetField("ID").Trim(),
-                                    DeliveryMode = csv.GetField("DELIVERY_MODE").Trim(),
-                                    FlexibleStartDate = csv.GetField("FLEXIBLE_START_DATE").Trim(),
-                                    StartDate = csv.GetField("START_DATE").Trim(),
-                                    CourseURL = csv.GetField("URL").Trim(),
-                                    Cost = csv.GetField("COST").Trim(),
-                                    CostDescription = csv.GetField("COST_DESCRIPTION").Trim(),
-                                    DurationUnit = csv.GetField("DURATION_UNIT").Trim(),
-                                    DurationValue = csv.GetField("DURATION").Trim(),
-                                    StudyMode = csv.GetField("STUDY_MODE").Trim(),
-                                    AttendancePattern = csv.GetField("ATTENDANCE_PATTERN").Trim()
-                                };
-
-                                if (isCourseHeader)
+                                    missingFieldsError += " 'LARS_QAN',"; missingFieldsErrorCount++;
+                                }
+                                string venue = string.Empty;
+                                if (!csv.TryGetField("VENUE", out venue))
                                 {
-                                    record.CourseDescription = csv.GetField("WHO_IS_THIS_COURSE_FOR").Trim();
-                                    record.EntryRequirements = csv.GetField("ENTRY_REQUIREMENTS").Trim();
-                                    record.WhatYoullLearn = csv.GetField("WHAT_YOU_WILL_LEARN").Trim();
-                                    record.HowYoullLearn = csv.GetField("HOW_YOU_WILL_LEARN").Trim();
-                                    record.WhatYoullNeed = csv.GetField("WHAT_YOU_WILL_NEED_TO_BRING").Trim();
-                                    record.HowYoullBeAssessed = csv.GetField("HOW_YOU_WILL_BE_ASSESSED").Trim();
-                                    record.WhereNext = csv.GetField("WHERE_NEXT").Trim();
-                                    record.AdultEducationBudget = csv.GetField("ADULT_EDUCATION_BUDGET").Trim();
-                                    record.AdvancedLearnerLoan = csv.GetField("ADVANCED_LEARNER_OPTION").Trim();
+                                    missingFieldsError += " 'VENUE',"; missingFieldsErrorCount++;
+                                }
+                                string COURSE_NAME = string.Empty;
+                                if (!csv.TryGetField("COURSE_NAME", out COURSE_NAME))
+                                {
+                                    missingFieldsError += " 'COURSE_NAME',"; missingFieldsErrorCount++;
+                                }
+                                string ID = string.Empty;
+                                if (!csv.TryGetField("ID", out venue))
+                                {
+                                    missingFieldsError += " 'ID',"; missingFieldsErrorCount++;
+                                }
+                                string DELIVERY_MODE = string.Empty;
+                                if (!csv.TryGetField("DELIVERY_MODE", out larsQan))
+                                {
+                                    missingFieldsError += " 'DELIVERY_MODE',"; missingFieldsErrorCount++;
+                                }
+                                string FLEXIBLE_START_DATE = string.Empty;
+                                if (!csv.TryGetField("FLEXIBLE_START_DATE", out venue))
+                                {
+                                    missingFieldsError += " 'FLEXIBLE_START_DATE',"; missingFieldsErrorCount++;
+                                }
+                                string START_DATE = string.Empty;
+                                if (!csv.TryGetField("START_DATE", out venue))
+                                {
+                                    missingFieldsError += " 'START_DATE',"; missingFieldsErrorCount++;
+                                }
+                                string URL = string.Empty;
+                                if (!csv.TryGetField("URL", out larsQan))
+                                {
+                                    missingFieldsError += " 'URL',"; missingFieldsErrorCount++;
+                                }
+                                string COST = string.Empty;
+                                if (!csv.TryGetField("COST", out venue))
+                                {
+                                    missingFieldsError += " 'COST',"; missingFieldsErrorCount++;
+                                }
+                                string COST_DESCRIPTION = string.Empty;
+                                if (!csv.TryGetField("COST_DESCRIPTION", out larsQan))
+                                {
+                                    missingFieldsError += " 'COST_DESCRIPTION',"; missingFieldsErrorCount++;
+                                }
+                                string DURATION_UNIT = string.Empty;
+                                if (!csv.TryGetField("DURATION_UNIT", out venue))
+                                {
+                                    missingFieldsError += " 'DURATION_UNIT',"; missingFieldsErrorCount++;
+                                }
+                                string DURATION = string.Empty;
+                                if (!csv.TryGetField("DURATION", out larsQan))
+                                {
+                                    missingFieldsError += " 'DURATION',"; missingFieldsErrorCount++;
+                                }
+                                string STUDY_MODE = string.Empty;
+                                if (!csv.TryGetField("STUDY_MODE", out STUDY_MODE))
+                                {
+                                    missingFieldsError += " 'STUDY_MODE',"; missingFieldsErrorCount++;
+                                }
+                                string ATTENDANCE_PATTERN = string.Empty;
+                                if (!csv.TryGetField("ATTENDANCE_PATTERN", out venue))
+                                {
+                                    missingFieldsError += " 'ATTENDANCE_PATTERN',"; missingFieldsErrorCount++;
                                 }
 
-                                bulkUploadcourses.Add(record);
+
+                                string WHO_IS_THIS_COURSE_FOR = string.Empty;
+                                if (!csv.TryGetField("WHO_IS_THIS_COURSE_FOR", out larsQan))
+                                {
+                                    missingFieldsError += " 'WHO_IS_THIS_COURSE_FOR',"; missingFieldsErrorCount++;
+                                }
+                                string ENTRY_REQUIREMENTS = string.Empty;
+                                if (!csv.TryGetField("ENTRY_REQUIREMENTS", out venue))
+                                {
+                                    missingFieldsError += " 'ENTRY_REQUIREMENTS',"; missingFieldsErrorCount++;
+                                }
+                                string WHAT_YOU_WILL_LEARN = string.Empty;
+                                if (!csv.TryGetField("WHAT_YOU_WILL_LEARN", out COURSE_NAME))
+                                {
+                                    missingFieldsError += " 'WHAT_YOU_WILL_LEARN',"; missingFieldsErrorCount++;
+                                }
+                                string HOW_YOU_WILL_LEARN = string.Empty;
+                                if (!csv.TryGetField("HOW_YOU_WILL_LEARN", out venue))
+                                {
+                                    missingFieldsError += " 'HOW_YOU_WILL_LEARN',"; missingFieldsErrorCount++;
+                                }
+                                string WHAT_YOU_WILL_NEED_TO_BRING = string.Empty;
+                                if (!csv.TryGetField("WHAT_YOU_WILL_NEED_TO_BRING", out larsQan))
+                                {
+                                    missingFieldsError += " 'WHAT_YOU_WILL_NEED_TO_BRING',"; missingFieldsErrorCount++;
+                                }
+                                string HOW_YOU_WILL_BE_ASSESSED = string.Empty;
+                                if (!csv.TryGetField("HOW_YOU_WILL_BE_ASSESSED", out venue))
+                                {
+                                    missingFieldsError += " 'HOW_YOU_WILL_BE_ASSESSED',"; missingFieldsErrorCount++;
+                                }
+                                string WHERE_NEXT = string.Empty;
+                                if (!csv.TryGetField("WHERE_NEXT", out larsQan))
+                                {
+                                    missingFieldsError += " 'WHERE_NEXT',"; missingFieldsErrorCount++;
+                                }
+                                string ADULT_EDUCATION_BUDGET = string.Empty;
+                                if (!csv.TryGetField("ADULT_EDUCATION_BUDGET", out venue))
+                                {
+                                    missingFieldsError += " 'ADULT_EDUCATION_BUDGET',"; missingFieldsErrorCount++;
+                                }
+                                string ADVANCED_LEARNER_OPTION = string.Empty;
+                                if (!csv.TryGetField("ADVANCED_LEARNER_OPTION", out larsQan))
+                                {
+                                    missingFieldsError += " 'ADVANCED_LEARNER_OPTION',"; missingFieldsErrorCount++;
+                                }
                             }
 
-                            previousLearnAimRef = currentLearnAimRef;
+
+                            if (string.IsNullOrEmpty(missingFieldsError))
+                            {
+                                bool isCourseHeader = false;
+                                string currentLearnAimRef = csv.GetField("LARS_QAN").Trim();
+
+                                if (bulkUploadLineNumber.Equals(2) || currentLearnAimRef != previousLearnAimRef)
+                                {
+                                    isCourseHeader = true;
+                                }
+
+                                if (string.IsNullOrEmpty(currentLearnAimRef))
+                                {
+                                    errors.Add($"Line { bulkUploadLineNumber }, LARS_QAN = { currentLearnAimRef } => LARS is missing.");
+                                }
+                                else
+                                {
+                                    var record = new BulkUploadCourse
+                                    {
+                                        IsCourseHeader = isCourseHeader,
+                                        BulkUploadLineNumber = bulkUploadLineNumber,
+                                        LearnAimRef = currentLearnAimRef,
+                                        ProviderUKPRN = providerUKPRN,
+                                        VenueName = csv.GetField("VENUE").Trim(),
+                                        CourseName = csv.GetField("COURSE_NAME").Trim(),
+                                        ProviderCourseID = csv.GetField("ID").Trim(),
+                                        DeliveryMode = csv.GetField("DELIVERY_MODE").Trim(),
+                                        FlexibleStartDate = csv.GetField("FLEXIBLE_START_DATE").Trim(),
+                                        StartDate = csv.GetField("START_DATE").Trim(),
+                                        CourseURL = csv.GetField("URL").Trim(),
+                                        Cost = csv.GetField("COST").Trim(),
+                                        CostDescription = csv.GetField("COST_DESCRIPTION").Trim(),
+                                        DurationUnit = csv.GetField("DURATION_UNIT").Trim(),
+                                        DurationValue = csv.GetField("DURATION").Trim(),
+                                        StudyMode = csv.GetField("STUDY_MODE").Trim(),
+                                        AttendancePattern = csv.GetField("ATTENDANCE_PATTERN").Trim()
+                                    };
+
+                                    if (isCourseHeader)
+                                    {
+                                        record.CourseDescription = csv.GetField("WHO_IS_THIS_COURSE_FOR").Trim();
+                                        record.EntryRequirements = csv.GetField("ENTRY_REQUIREMENTS").Trim();
+                                        record.WhatYoullLearn = csv.GetField("WHAT_YOU_WILL_LEARN").Trim();
+                                        record.HowYoullLearn = csv.GetField("HOW_YOU_WILL_LEARN").Trim();
+                                        record.WhatYoullNeed = csv.GetField("WHAT_YOU_WILL_NEED_TO_BRING").Trim();
+                                        record.HowYoullBeAssessed = csv.GetField("HOW_YOU_WILL_BE_ASSESSED").Trim();
+                                        record.WhereNext = csv.GetField("WHERE_NEXT").Trim();
+                                        record.AdultEducationBudget = csv.GetField("ADULT_EDUCATION_BUDGET").Trim();
+                                        record.AdvancedLearnerLoan = csv.GetField("ADVANCED_LEARNER_OPTION").Trim();
+                                    }
+
+                                    bulkUploadcourses.Add(record);
+                                }
+
+                                previousLearnAimRef = currentLearnAimRef;
+
+                            }
                             bulkUploadLineNumber++;
+
                         }
                     }
                 }
+
+                if (!string.IsNullOrEmpty(missingFieldsError))
+                {
+                    missingFieldsError = missingFieldsError.TrimEnd(',');
+                    if (missingFieldsErrorCount.Equals(1))
+                    {
+                        errors.Add($"Field with name { missingFieldsError } does not exist");
+                    }
+                    else
+                    {
+                        errors.Add($"Fields with names { missingFieldsError } do not exist");
+                    }
+                    
+                    return errors;
+                }
+
             }
             catch (Exception ex)
             {

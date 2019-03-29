@@ -500,7 +500,7 @@
 
 
                     var $errorField = $("#" + errorArray[0].closest('.section').id);
-                    $('html,body').animate({ scrollTop: $errorField.offset().top }, 'slow');
+                    //$('html,body').animate({ scrollTop: $errorField.offset().top }, 'slow');
 
                     var notificationBody = "";
                     $.each(errorArray, function (index, value) {
@@ -511,6 +511,13 @@
                     $('.cd-error-summary__body').html(notificationBody);
 
                     $('#errorsummary').css({ "display": "block" });
+                }
+
+                if (!validStates.every(isAllValid)) {
+                    $("html, body").animate({
+                        scrollTop: $('#errorsummary').offset().top
+                    }, 600);
+                    $('#errorsummary').focus();
                 }
 
                 $('.errorlink').on("click",
