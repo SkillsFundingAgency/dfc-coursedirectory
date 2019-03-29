@@ -912,6 +912,8 @@ namespace Dfc.CourseDirectory.Services.CourseService
             {
                 if (!IsCorrectCostFormatting(courseRun.Cost.ToString()))
                     validationMessages.Add($"Enter the cost in pounds and pence");
+                if(courseRun.Cost > decimal.Parse("999999.99"))
+                    validationMessages.Add($"Maximum allowed cost value is 999,999.99");
             }
 
             // DurationUnit
