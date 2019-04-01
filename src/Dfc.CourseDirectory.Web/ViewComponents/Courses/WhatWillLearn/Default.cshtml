@@ -8,7 +8,7 @@
 
 
 @{
-    var regex = @"^[a-zA-Z0-9 /\n/\r/\¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`" + "\"" + "\\\\]+$";
+    var regex = @"^[a-zA-Z0-9 /\n/\r/\¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\•\’\-\:/\t/\s" + "\"" + "\\\\]+$";
     var whatWillLearnTextFieldMaxChars = whatWilllLearnComponentSettings.Value.TextFieldMaxChars;
 }
 
@@ -41,8 +41,9 @@
             var $elementWhatWillLearn = $("#@nameof(Model.WhatWillLearn)");
 
             $elementWhatWillLearn.on("blur", function () {
-
+                
                 var trimmed = $elementWhatWillLearn.val().trim();
+
                 $elementWhatWillLearn.val(trimmed);
 
                 var $characterCountValue = @whatWillLearnTextFieldMaxChars;
@@ -51,6 +52,7 @@
                 var $actualCharacterCount = $characterCountValue - $elementWhatWillLearn.val().length;
 
                 if ($actualCharacterCount <= 0) {
+                    return false;
 
                 } else {
 
