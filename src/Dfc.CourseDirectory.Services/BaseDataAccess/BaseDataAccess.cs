@@ -89,15 +89,16 @@ namespace Dfc.CourseDirectory.Services.BaseDataAccess
             return returnValue;
         }
 
-        public object ExecuteScalar(string procedureName, List<SqlParameter> parameters)
+        public object ExecuteScalar(string command, List<SqlParameter> parameters)
         {
             object returnValue = null;
 
             try
             {
-                using (DbConnection connection = this.GetConnection())
+                using (SqlConnection connection = this.GetConnection())
                 {
-                    DbCommand cmd = this.GetCommand(connection, procedureName, CommandType.StoredProcedure);
+                    SqlCommand cmd = new SqlCommand(command, connection);
+
 
                     if (parameters != null && parameters.Count > 0)
                     {
@@ -116,16 +117,16 @@ namespace Dfc.CourseDirectory.Services.BaseDataAccess
             return returnValue;
         }
 
-        public DataTable GetDataReader(string procedureName, List<SqlParameter> parameters, CommandType commandType = CommandType.StoredProcedure)
+        public DataTable GetDataReader(string command, List<SqlParameter> parameters)
         {
             
             DbDataReader ds;
             DataTable values = new DataTable();
             try
             {
-                DbConnection connection = this.GetConnection();
+                SqlConnection connection = this.GetConnection();
                 {
-                    DbCommand cmd = this.GetCommand(connection, procedureName, commandType);
+                    SqlCommand cmd = new SqlCommand(cmdText: command, connection: connection);
                     if (parameters != null && parameters.Count > 0)
                     {
                         cmd.Parameters.AddRange(parameters.ToArray());
