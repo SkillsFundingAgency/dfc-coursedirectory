@@ -998,7 +998,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                             new SubRegionItemModel{Id="E10000027", SubRegionName  = "Somerset", Checked = false},
                         }
                     }
-                }
+                }.OrderBy(x => x.RegionName)
             };
         }
 
