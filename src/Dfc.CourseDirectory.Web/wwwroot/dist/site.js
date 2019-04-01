@@ -152,6 +152,22 @@
 
     Plugin.prototype.invalidState = function (messages) {
         this.validState();
+
+        var $errorElement="";
+
+        if ($(this.element).prevAll(".govuk-hint").length) {
+            $errorElement = $(this.element).prevAll(".govuk-hint");
+        }
+        else {
+            if ($(this.element).prevAll(".govuk-label").length) {
+                $errorElement = $(this.element).prevAll(".govuk-label");
+            }
+            else {
+                $errorElement = $(this.element)
+            }
+        }
+       
+
         $(this.element).addClass(this.options.errorCssClass);
         this._formGroup.govUkFormGroup("invalidState");
         if (typeof messages === "string") {
@@ -162,7 +178,7 @@
                 var span = document.createElement("span");
                 span.classList.add("govuk-error-message");
                 span.innerHTML = message;
-                $(span).insertBefore(this.element);
+                $(span).insertBefore($errorElement);
             }, this);
         }
         this._errorMessages = $(this.element).prevAll(".govuk-error-message");

@@ -20,6 +20,8 @@
   <ItemGroup>
     <Compile Remove="ViewComponents\Courses\Duration\DurationUnitModel.cs" />
     <Compile Remove="ViewComponents\ProviderSearchResult\ProviderSearchResultItemModel.cs" />
+    <Compile Remove="ViewComponents\ZCodeSearchResult\LarsSearchFilterItemModel.cs" />
+    <Compile Remove="ViewComponents\ZCodeSearchResult\LarsSearchFilterModel.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -58,6 +60,12 @@
 
   <ItemGroup>
     <Content Update="ViewComponents\Courses\ChooseRegion\Default.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="ViewComponents\ZCodeSearchResult\Default.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="ViewComponents\ZCodeSearch\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="ViewComponents\PublishCourses\PublishCourse\Default.cshtml">
@@ -148,6 +156,12 @@
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\Shared\_Layout_Your_Courses.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\UnRegulatedCourses\ZCodeResults.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\UnRegulatedCourses\UnknownZCode.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\Venues\VenueSearchResults.cshtml">

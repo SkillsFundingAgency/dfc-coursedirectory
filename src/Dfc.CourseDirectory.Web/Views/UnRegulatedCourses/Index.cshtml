@@ -1,0 +1,154 @@
+﻿
+@model UnRegulatedSearchViewModel
+@*@{ var regex = @"^[a-zA-Z][0-9]{8}$";}*@
+
+@{
+    ViewData["Title"] = "Add a Provider";
+    ViewData["Subtext"] = "Enter UKPRN number";
+    ViewData["Placeholder"] = "Search";
+}
+
+
+<div class="cd-hero-grey">
+    <div class="govuk-width-container">
+        <header class="cd-hero-search">
+            <div class="content-container">
+                <a asp-controller="Home" asp-action="Index" class="govuk-back-link">Back</a>
+                <div class="grid-row" data-sf-element="Row">
+                    <div class="column-two-thirds">
+                        <div>
+
+                            <h1 class="govuk-heading-l govuk-!-margin-top-4">Search for a course provision</h1>
+                            <p class="column-two-thirds">Find the provision you'll be awarding with the course</p>
+                        </div>
+                        <form class="govuk-!-margin-bottom-9" id="zCodeSearch" asp-controller="UnregulatedCourses" asp-action="Index" method="post" >
+                            <div class="header-search-content">
+                                <span asp-validation-for="@Model.Search" class="govuk-error-message"></span>
+                                <div class="search-input-wrapper">
+                                    @*@if (!string.IsNullOrWhiteSpace(Model.HintText))
+                                    {
+                                        <span class="govuk-hint">
+                                            @Model.HintText
+                                        </span>
+                                    }*@
+
+                                    <input class="govuk-input govuk-!-width-one-third search-input js-search-focus" asp-for="@Model.Search" type="text" placeholder="Enter a Z code">
+                                    <div class="cd-c-search__item cd-search__submit-wrapper">
+                                        <button type="button" class=" submit" id="searchZCode">Search</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                        <a class="govuk-link" asp-controller="UnregulatedCourses" asp-action="UnknownZCode">I don't know the Z code</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+    </div>
+</div>
+
+<script>
+    (function ($) {
+        $(function () {
+
+
+
+            var formGroupErrorClass = "govuk-form-group--error";
+            var elementErrorClass = "govuk-input--error";
+
+            var $searchForm = $("#zCodeSearch");
+
+            var $elementSearchTerm = $("#@nameof(Model.Search)");
+
+            var $validationMessageSearchTerm = $elementSearchTerm.prev("[data-valmsg-for='@nameof(Model.Search)']");
+            $validationMessageSearchTerm.css("margin-bottom", "0");
+
+            var $formGroupSearchTerm = $elementSearchTerm.closest('.govuk-form-group');
+            var $form = $elementSearchTerm.closest("form");
+
+            $form.addTriggersToJqueryValidate().triggerElementValidationsOnFormValidation();
+            var validator = $form.validate();
+
+            //$elementSearchTerm.on("blur", function () {
+            //    var result = validator.element($elementSearchTerm);
+            //    if (result) {
+            //        HideValidationErrorMessage();
+            //    } else {
+            //        ShowValidationErrorMessage();
+            //    }
+            //});
+            //$elementSearchTerm.elementValidation(function (element, result) {
+            //    if (!$formGroupSearchTerm.hasClass(formGroupErrorClass)) {
+            //        $validationMessageSearchTerm.hide();
+            //    }
+            //    if (result) {
+            //        HideValidationErrorMessage();
+            //    }
+            //    else {
+            //        ShowValidationErrorMessage()
+            //    }
+            //});
+
+            //var makeRequestWithPayload = function (payload, cb) {
+            //    var qs = $.param(payload);
+            //    $.get("/ProviderSearch?" + qs, cb);
+            //};
+            //var onSucess = function (data) {
+            //    $providerSearchResultContainer.html("");
+            //    $providerSearchResultContainer.html(data);
+            //};
+
+            $("#searchZCode").on("click", function (e) {
+                e.preventDefault();
+                ValidateAndSearchForProvider();
+            });
+
+            $(document).keypress(function (e) {
+                if (e.which == 13) {
+                    e.preventDefault();
+                   ValidateAndSearchForProvider();
+                }
+            });
+
+            function ValidateAndSearchForProvider() {
+                var trimmed = $elementSearchTerm.val().trim();
+                $elementSearchTerm.val(trimmed);
+                $elementSearchTerm.trigger("blur");
+                var result = validator.element($elementSearchTerm);
+                if (result) {
+
+
+                    HideValidationErrorMessage();
+                    $("#zCodeSearch").submit();
+                }
+                else {
+                    //$providerSearchResultContainer.html("");
+                    ShowValidationErrorMessage();
+                }
+            }
+
+            function ShowValidationErrorMessage() {
+                    $elementSearchTerm.addClass(elementErrorClass);
+                    $formGroupSearchTerm.addClass(formGroupErrorClass);
+                    $searchForm.addClass("govuk-form-group, govuk-form-group--error");
+                    $validationMessageSearchTerm.show();
+                    $validationMessageSearchTerm.css("margin-bottom", "15px");
+            }
+            function HideValidationErrorMessage() {
+                    $elementSearchTerm.removeClass(elementErrorClass);
+                    $formGroupSearchTerm.removeClass(formGroupErrorClass);
+                    $searchForm.removeClass("govuk-form-group, govuk-form-group--error");
+                    $validationMessageSearchTerm.hide();
+                    $validationMessageSearchTerm.css("margin-bottom", "0");
+            }
+        });
+    })(jQuery);
+</script>
+
+
+
+
+
+
+
+
