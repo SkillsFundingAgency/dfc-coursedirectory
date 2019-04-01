@@ -1,13 +1,6 @@
 ﻿
+@using Dfc.CourseDirectory.Web.ViewComponents.Notification
 @model UnRegulatedSearchViewModel
-@*@{ var regex = @"^[a-zA-Z][0-9]{8}$";}*@
-
-@{
-    ViewData["Title"] = "Add a Provider";
-    ViewData["Subtext"] = "Enter UKPRN number";
-    ViewData["Placeholder"] = "Search";
-}
-
 
 <div class="cd-hero-grey">
     <div class="govuk-width-container">
@@ -19,18 +12,29 @@
                         <div>
 
                             <h1 class="govuk-heading-l govuk-!-margin-top-4">Search for a course provision</h1>
+
+                            @if (!string.IsNullOrEmpty(Model.NotificationTitle))
+                            {
+                                @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+                                {
+                                    NotificationTitle = Model.NotificationTitle,
+                                    NotificationMessage = Model.NotificationMessage,
+                                    ClassType = "error-summary"
+                                })
+                            }
+
                             <p class="column-two-thirds">Find the provision you'll be awarding with the course</p>
                         </div>
-                        <form class="govuk-!-margin-bottom-9" id="zCodeSearch" asp-controller="UnregulatedCourses" asp-action="Index" method="post" >
+                        <form class="govuk-!-margin-bottom-9" id="zCodeSearch" asp-controller="UnregulatedCourses" asp-action="Index" method="post">
                             <div class="header-search-content">
                                 <span asp-validation-for="@Model.Search" class="govuk-error-message"></span>
                                 <div class="search-input-wrapper">
                                     @*@if (!string.IsNullOrWhiteSpace(Model.HintText))
-                                    {
-                                        <span class="govuk-hint">
-                                            @Model.HintText
-                                        </span>
-                                    }*@
+                                        {
+                                            <span class="govuk-hint">
+                                                @Model.HintText
+                                            </span>
+                                        }*@
 
                                     <input class="govuk-input govuk-!-width-one-third search-input js-search-focus" asp-for="@Model.Search" type="text" placeholder="Enter a Z code">
                                     <div class="cd-c-search__item cd-search__submit-wrapper">
@@ -69,14 +73,14 @@
             $form.addTriggersToJqueryValidate().triggerElementValidationsOnFormValidation();
             var validator = $form.validate();
 
-            //$elementSearchTerm.on("blur", function () {
-            //    var result = validator.element($elementSearchTerm);
-            //    if (result) {
-            //        HideValidationErrorMessage();
-            //    } else {
-            //        ShowValidationErrorMessage();
-            //    }
-            //});
+            $("#searchZCode").on("blur", function () {
+                var result = validator.element($elementSearchTerm);
+                if (result) {
+                    HideValidationErrorMessage();
+                } else {
+                    ShowValidationErrorMessage();
+                }
+            });
             //$elementSearchTerm.elementValidation(function (element, result) {
             //    if (!$formGroupSearchTerm.hasClass(formGroupErrorClass)) {
             //        $validationMessageSearchTerm.hide();

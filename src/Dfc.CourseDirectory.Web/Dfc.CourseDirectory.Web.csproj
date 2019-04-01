@@ -65,9 +65,6 @@
     <Content Update="ViewComponents\ZCodeSearchResult\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="ViewComponents\ZCodeSearch\Default.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
     <Content Update="ViewComponents\PublishCourses\PublishCourse\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

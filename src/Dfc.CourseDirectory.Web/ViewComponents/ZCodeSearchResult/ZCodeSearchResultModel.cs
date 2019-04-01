@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Dfc.CourseDirectory.Web.ViewComponents.ZCodeSearchResult
 {
-    public class ZCodeSearchResultModel { 
-
+    public class ZCodeSearchResultModel {
+        public IEnumerable<ZCodeSearchResultItemModel> Items { get; set; }
     }
 }
