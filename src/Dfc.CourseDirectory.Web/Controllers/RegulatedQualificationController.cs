@@ -20,8 +20,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 return RedirectToAction("Index", "Qualifications");
             }
+            else
+            {
+                return RedirectToAction("Index", "UnregulatedCourses");
+            }
 
-            return View("Index");
+
         }
     }
 }
