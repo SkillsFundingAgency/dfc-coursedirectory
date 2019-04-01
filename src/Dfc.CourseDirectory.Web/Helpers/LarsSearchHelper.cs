@@ -77,10 +77,24 @@ namespace Dfc.CourseDirectory.Web.Helpers
                 larsSearchFacets.AwardOrgCode,
                 larsSearchRequestModel.AwardOrgCodeFilter);
 
+            var sectorSubjectAreaTier1Filter = GetLarsSearchFilterModel(
+                "Sector Subject Area Tier 1",
+                "SectorSubjectAreaTier1Filter",
+                (value) => value,
+                larsSearchFacets.SectorSubjectAreaTier1,
+                larsSearchRequestModel.SectorSubjectAreaTier1Filter);
+
+            var sectorSubjectAreaTier2Filter = GetLarsSearchFilterModel(
+                "Sector Subject Area Tier 2",
+                "SectorSubjectAreaTier2Filter",
+                (value) => value,
+                larsSearchFacets.SectorSubjectAreaTier2,
+                larsSearchRequestModel.SectorSubjectAreaTier2Filter);
 
             filters.Add(notionalNVQLevelv2Filter);
             filters.Add(awardOrgCodeFilter);
-
+            filters.Add(sectorSubjectAreaTier1Filter);
+            filters.Add(sectorSubjectAreaTier2Filter);
             return filters;
         }
 
