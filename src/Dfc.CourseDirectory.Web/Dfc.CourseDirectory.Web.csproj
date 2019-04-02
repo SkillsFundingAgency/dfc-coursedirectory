@@ -22,6 +22,8 @@
     <Compile Remove="ViewComponents\ProviderSearchResult\ProviderSearchResultItemModel.cs" />
     <Compile Remove="ViewComponents\ZCodeSearchResult\LarsSearchFilterItemModel.cs" />
     <Compile Remove="ViewComponents\ZCodeSearchResult\LarsSearchFilterModel.cs" />
+    <Compile Remove="ViewComponents\ZCodeSSA\ZCodeSearchResultItemModel.cs" />
+    <Compile Remove="ViewComponents\ZCodeSSA\ZCodeSearchResultModel.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -60,6 +62,9 @@
 
   <ItemGroup>
     <Content Update="ViewComponents\Courses\ChooseRegion\Default.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="ViewComponents\ZCodeSSA\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="ViewComponents\ZCodeSearchResult\Default.cshtml">
