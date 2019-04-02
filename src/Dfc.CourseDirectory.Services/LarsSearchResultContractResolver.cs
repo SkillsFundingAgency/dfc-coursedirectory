@@ -1,5 +1,7 @@
-﻿using Newtonsoft.Json.Serialization;
+﻿
+using Newtonsoft.Json.Serialization;
 using System.Collections.Generic;
+
 
 namespace Dfc.CourseDirectory.Services
 {
@@ -15,12 +17,12 @@ namespace Dfc.CourseDirectory.Services
                 { "AwardOrgCodeODataType", "AwardOrgCode@odata.type" },
                 { "NotionalNVQLevelv2ODataType", "NotionalNVQLevelv2@odata.type" },
                 { "SectorSubjectAreaTier1ODataType", "SectorSubjectAreaTier1@odata.type" },
-                { "SectorSubjectAreaTier2DataType", "SectorSubjectAreaTier2@odata.type" },
+                { "SectorSubjectAreaTier2ODataType", "SectorSubjectAreaTier2@odata.type" },
+                { "AwardOrgAimRefODataType", "AwardOrgAimRef@odata.type" },
                 { "SearchScore", "@search.score" }
             };
 
-            if (names.ContainsKey(propertyName))
-            {
+            if (names.ContainsKey(propertyName)) {
                 names.TryGetValue(propertyName, out string name);
                 return name;
             }
