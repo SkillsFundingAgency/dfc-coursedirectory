@@ -53,7 +53,19 @@ namespace Dfc.CourseDirectory.Web.Controllers
             if (_session.GetInt32("UKPRN") == null)
                 return View();
             else
-                return View(DashboardController.GetDashboardViewModel(_courseService, _session.GetInt32("UKPRN")));
+            {
+                var vm = DashboardController.GetDashboardViewModel(_courseService, _session.GetInt32("UKPRN"));
+                if (vm.PendingCourseCount > 0)
+                {
+                    _session.SetString("PendingCourses", "true");
+                }
+                else
+                {
+                    _session.SetString("PendingCourses", "false");
+                }
+                return View(vm);
+            }
+                
         }
 
         public IActionResult About()

@@ -6,7 +6,7 @@
 @inject IOptions<CourseForComponentSettings> courseForComponentSettings
 
 @{
-    var regex = @"^[a-zA-Z0-9 /\n/\r/\¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`" + "\"" + "\\\\]+$";
+    var regex = @"^[a-zA-Z0-9 /\n/\r/\¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\•\’\-\:/\t/\s" + "\"" + "\\\\]+$";
     var courseForTextFieldMaxChars = courseForComponentSettings.Value.TextFieldMaxChars;
 }
 
