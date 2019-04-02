@@ -33,7 +33,7 @@
                             <a href="~/BulkUpload" class="govuk-link">publish all your courses </a> with a file upload
                         </p>
                     </li>
-                    @if (Model.PendingCoursesCount.HasValue)
+                    @if (Model.PendingCoursesCount.HasValue && Model.PendingCoursesCount.Value > 0)
                     {
                         <li>
                             <p>
