@@ -122,12 +122,16 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                         NotionalNVQLevelv2 = course.Value.NotionalNVQLevelv2
                     };
 
-                    if (courseRun.Regions != null)
+                    if (courseRun.Regions == null) return View("CopyCourseRun", vm);
+
+                    foreach (var selectRegionRegionItem in vm.SelectRegion.RegionItems)
                     {
-                        foreach (var selectedRegion in courseRun.Regions)
+                        foreach (var subRegionItemModel in selectRegionRegionItem.SubRegion)
                         {
-                            vm.SelectRegion.RegionItems.First(x => x.Id == selectedRegion.ToString())
-                                .Checked = true;
+                            if (courseRun.Regions.Contains(subRegionItemModel.Id))
+                            {
+                                subRegionItemModel.Checked = true;
+                            }
                         }
                     }
 

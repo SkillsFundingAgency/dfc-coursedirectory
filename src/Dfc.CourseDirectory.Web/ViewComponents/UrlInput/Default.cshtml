@@ -21,7 +21,7 @@
     <input class="govuk-input" asp-for="@Model.Url" type="text" aria-describedby="@Model.AriaDescribedBy"
            val-max-length="255"
            val-max-length-message="The maximum length of URL is 255 characters"
-           val-regex="@regex" 
+           val-regex="@regex"
            val-regex-message="The format of URL is incorrect" />
 </div>
 
@@ -33,11 +33,15 @@
             $elementUrl.on("blur", function () {
                 var trimmed = $elementUrl.val().trim().toLowerCase();
                 $elementUrl.val(trimmed);
+                if ($elementUrl.val() !== "") {
+
+
                 if ($elementUrl.val().includes("http") || $elementUrl.val().includes("https")) {
 
                 }
                 else {
                     $elementUrl.val("http://" + trimmed);
+                    }
                 }
             });
         });

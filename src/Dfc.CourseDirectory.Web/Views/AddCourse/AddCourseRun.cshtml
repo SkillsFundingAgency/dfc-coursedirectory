@@ -32,7 +32,7 @@
 
 @await Component.InvokeAsync(nameof(Notification), new NotificationModel
 {
-    NotificationTitle = "Qualification added",
+    NotificationTitle = "Qualification details",
     NotificationMessage = @Model.LearnAimRefTitle + "<br>" + "Level: " + @Model.NotionalNVQLevelv2 + "<br> Awarding organisation: " + @Model.AwardOrgCode + "<br> LARS / QAN: " + @Model.LearnAimRef,
     ClassType = "info-summary"
 })
@@ -140,7 +140,7 @@
 
     <div class="govuk-form-group" id="RegionItemsCheckboxList" style="@Model.DeliveryMode.IfNotWorkBasedDisplayNone()">
         <div id="sectionRegions">
-            @await Component.InvokeAsync(nameof(ChooseRegion))
+            @await Component.InvokeAsync(nameof(ChooseRegion), Model.SelectRegion)
         </div>
     </div>
 
@@ -621,7 +621,7 @@
             });
 
             $deliveryRadios.change(function () {
-                var $venueChoice = $("#sectionVenue");
+                var $venueChoice = $("#VenueItemsCheckboxList");
                 var $fullPartTimeRadioButtons = $("#FullPartTimeRadioButtons");
                 var $attendancePatternRadioButtons = $("#AttendancePatternRadioButtons");
                 var $specifiedStartDate = $("#SpecifiedStartDate");

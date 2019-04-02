@@ -6973,3 +6973,47 @@ select:disabled {
     margin-left: 0;
   }
 }
+
+.cd-nonregulated-provision {
+  background-color: #f8f8f8;
+  padding: 1em;
+  border: 1px solid #bfc1c3;
+  margin-bottom: 2em;
+}
+
+.cd-nonregulated-provision .cd-level-select {
+  padding-right: 1em;
+}
+
+.cd-non-regulated-filters {
+  padding: 0 1em;
+}
+
+.cd-non-regulated-filters .govuk-form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.cd-non-regulated-filters .govuk-select {
+  margin-bottom: 1em;
+  width: auto;
+}
+
+.provision-container {
+  border: 1px solid #bfc1c3;
+  padding: .5em;
+}
+
+.provision-container .provision-title {
+  margin-top: 0;
+}
+
+.cd-action-container {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+}
+
+.cd-action-container > * {
+  margin-right: 1em;
+}
