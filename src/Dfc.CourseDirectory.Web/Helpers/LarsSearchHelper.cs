@@ -27,16 +27,14 @@ namespace Dfc.CourseDirectory.Web.Helpers
 
             sb = BuildUpFilterStringBuilder(sb, "NotionalNVQLevelv2", larsSearchRequestModel.NotionalNVQLevelv2Filter);
             sb = BuildUpFilterStringBuilder(sb, "AwardOrgCode", larsSearchRequestModel.AwardOrgCodeFilter);
+            sb = BuildUpFilterStringBuilder(sb, "AwardOrgAimRef", larsSearchRequestModel.AwardOrgAimRefFilter);
 
 
-            if (sb.Length != 0)
-            {
+            if (sb.Length != 0) {
                 new LarsSearchFilterBuilder(sb).And().AppendOpeningBracket().Field("CertificationEndDate")
                     .GreaterThanOrEqualTo(DateTimeOffset.UtcNow.ToString("yyyy-MM-dd")).Or()
                     .Field("CertificationEndDate eq null").AppendClosingBracket();
-            }
-            else
-            {
+            } else {
                 new LarsSearchFilterBuilder(sb).Field("CertificationEndDate")
                     .GreaterThanOrEqualTo(DateTimeOffset.UtcNow.ToString("yyyy-MM-dd")).Or()
                     .Field("CertificationEndDate eq null");
@@ -77,10 +75,32 @@ namespace Dfc.CourseDirectory.Web.Helpers
                 larsSearchFacets.AwardOrgCode,
                 larsSearchRequestModel.AwardOrgCodeFilter);
 
+            //var sectorSubjectAreaTier1Filter = GetLarsSearchFilterModel(
+            //    "Sector Subject Area Tier 1",
+            //    "SectorSubjectAreaTier1Filter",
+            //    (value) => value,
+            //    larsSearchFacets.SectorSubjectAreaTier1,
+            //    larsSearchRequestModel.SectorSubjectAreaTier1Filter);
+
+            //var sectorSubjectAreaTier2Filter = GetLarsSearchFilterModel(
+            //    "Sector Subject Area Tier 2",
+            //    "SectorSubjectAreaTier2Filter",
+            //    (value) => value,
+            //    larsSearchFacets.SectorSubjectAreaTier2,
+            //    larsSearchRequestModel.SectorSubjectAreaTier2Filter);
+
+            var awardOrgAimRefFilter = GetLarsSearchFilterModel(
+                "Category",
+                "AwardOrgAimRefFilter",
+                (value) => value,
+                larsSearchFacets.AwardOrgAimRef,
+                larsSearchRequestModel.AwardOrgAimRefFilter);
 
             filters.Add(notionalNVQLevelv2Filter);
             filters.Add(awardOrgCodeFilter);
-
+            //filters.Add(sectorSubjectAreaTier1Filter);
+            //filters.Add(sectorSubjectAreaTier2Filter);
+            filters.Add(awardOrgAimRefFilter);
             return filters;
         }
 
@@ -195,13 +215,14 @@ namespace Dfc.CourseDirectory.Web.Helpers
 
             foreach (var item in searchFacets)
             {
+                string value = string.IsNullOrWhiteSpace(item.Value) ? "(blank)" : item.Value;
                 items.Add(new LarsSearchFilterItemModel(
                     $"{facetName}-{count++}",
                     facetName,
-                    textStrategy?.Invoke(item.Value),
-                    item.Value,
+                    textStrategy?.Invoke(value),
+                    value,
                     item.Count,
-                    selectedValues.Contains(item.Value)));
+                    selectedValues.Contains(value)));
             }
 
             var model = new LarsSearchFilterModel(title, items);

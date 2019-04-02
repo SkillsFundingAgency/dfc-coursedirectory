@@ -317,7 +317,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     );
 
                 var addedVenue = await _venueService.AddAsync(venue);
-                updated = true;
                 venueID = addedVenue.Value.ID;
             }
             //Since we are updating or adding lets pass the model to the GetVenues method

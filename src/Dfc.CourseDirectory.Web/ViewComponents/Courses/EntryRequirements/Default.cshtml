@@ -6,7 +6,7 @@
 @inject IOptions<EntryRequirementsComponentSettings> entryRequirementsComponentSettings
 
 @{
-    var regex = @"^[a-zA-Z0-9 /\n/\r/\¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`" + "\"" + "\\\\]+$";
+    var regex = @"^[a-zA-Z0-9 /\n/\r/\¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\•\’\‘\-\–\:/\t/\s" + "\"" + "\\\\]+$";
     var entryRequirementsTextFieldMaxChars = entryRequirementsComponentSettings.Value.TextFieldMaxChars;
 }
 
@@ -38,7 +38,7 @@
 
             var $elementEntryRequirements = $("#@nameof(Model.EntryRequirements)");
 
-            $elementEntryRequirements.on("blur", function () {
+                $elementEntryRequirements.on("blur", function () {
 
                 var trimmed = $elementEntryRequirements.val().trim();
                 $elementEntryRequirements.val(trimmed);

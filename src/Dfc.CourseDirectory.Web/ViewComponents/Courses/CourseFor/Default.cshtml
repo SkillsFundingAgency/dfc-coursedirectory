@@ -6,7 +6,7 @@
 @inject IOptions<CourseForComponentSettings> courseForComponentSettings
 
 @{
-    var regex = @"^[a-zA-Z0-9 /\n/\r/\¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`" + "\"" + "\\\\]+$";
+    var regex = @"^[a-zA-Z0-9 /\n/\r/\¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\•\’\‘\-\–\:/\t/\s" + "\"" + "\\\\]+$";
     var courseForTextFieldMaxChars = courseForComponentSettings.Value.TextFieldMaxChars;
 }
 
@@ -38,9 +38,9 @@
     (function ($) {
         $(function () {
 
-            var $elementCourseFor = $("#@nameof(Model.CourseFor)");
+                var $elementCourseFor = $("#@nameof(Model.CourseFor)");
 
-            $elementCourseFor.on("blur", function () {
+                $elementCourseFor.on("blur", function () {
 
                 var trimmed = $elementCourseFor.val().trim();
                 $elementCourseFor.val(trimmed);

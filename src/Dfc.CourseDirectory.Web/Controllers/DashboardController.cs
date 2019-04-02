@@ -92,6 +92,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                                        select c.Count).Sum() //,
                  //RecentlyModifiedCourses = new List<Course>() { new Course(), new Course() }
             };
+
             return vm;
         }
 
@@ -105,7 +106,17 @@ namespace Dfc.CourseDirectory.Web.Controllers
             if (!UKPRN.HasValue)
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
 
-            return View(GetDashboardViewModel(_courseService, UKPRN));
+            var vm = GetDashboardViewModel(_courseService, UKPRN);
+
+            if (vm.PendingCourseCount > 0)
+            {
+                _session.SetString("PendingCourses", "true");
+            }
+            else
+            {
+                _session.SetString("PendingCourses", "false");
+            }
+            return View(vm);
         }
     }
 }
