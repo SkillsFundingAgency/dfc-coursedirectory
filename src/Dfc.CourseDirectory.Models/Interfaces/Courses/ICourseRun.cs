@@ -2,6 +2,7 @@
 using Dfc.CourseDirectory.Models.Models.Courses;
 using System;
 using System.Collections.Generic;
+using Dfc.CourseDirectory.Models.Models.Regions;
 
 namespace Dfc.CourseDirectory.Models.Interfaces.Courses
 {
@@ -29,5 +30,6 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Courses
         string CreatedBy { get; set; }
         DateTime? UpdatedDate { get; set; }
         string UpdatedBy { get; set; }
+        IEnumerable<SubRegionItemModel> SubRegions { get; set; }
     }
 }

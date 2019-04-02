@@ -34,6 +34,7 @@ using Microsoft.Extensions.Options;
 using CourseRun = Dfc.CourseDirectory.Models.Models.Courses.CourseRun;
 using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Models;
+using Dfc.CourseDirectory.Models.Models.Regions;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.Authorization;
 
