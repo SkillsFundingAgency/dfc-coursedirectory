@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Models.Courses;
+using Dfc.CourseDirectory.Models.Models.Regions;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
@@ -223,6 +224,10 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                         case DeliveryMode.WorkBased:
                             copiedCourseRun.VenueId = null;
                             copiedCourseRun.Regions = model.SelectedRegions;
+                            var availableRegions = new SelectRegionModel();
+                            var subRegions = copiedCourseRun.Regions.Select(selectedRegion => availableRegions.GetRegionFromName(selectedRegion)).ToList();
+                            copiedCourseRun.SubRegions = subRegions;
+
                             copiedCourseRun.AttendancePattern = AttendancePattern.Undefined;
                             copiedCourseRun.StudyMode = StudyMode.Undefined;
                             break;

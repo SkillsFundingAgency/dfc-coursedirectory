@@ -21,6 +21,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
+using Dfc.CourseDirectory.Models.Models.Regions;
 
 namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 {
@@ -232,7 +233,9 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                         case DeliveryMode.WorkBased:
                             courseRunForEdit.VenueId = null;
                             courseRunForEdit.Regions = model.SelectedRegions;
-
+                            var availableRegions = new SelectRegionModel();
+                            var subRegions = courseRunForEdit.Regions.Select(selectedRegion => availableRegions.GetRegionFromName(selectedRegion)).ToList();
+                            courseRunForEdit.SubRegions = subRegions;
                             courseRunForEdit.AttendancePattern = AttendancePattern.Undefined;
                             courseRunForEdit.StudyMode = StudyMode.Undefined;
 

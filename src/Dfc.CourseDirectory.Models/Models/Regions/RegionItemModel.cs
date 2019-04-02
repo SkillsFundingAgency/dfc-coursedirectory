@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Dfc.CourseDirectory.Models.Models
+namespace Dfc.CourseDirectory.Models.Models.Regions
 {
     public class RegionItemModel
     {
@@ -9,5 +9,7 @@ namespace Dfc.CourseDirectory.Models.Models
         public bool? Checked { get; set; }
 
         public List<SubRegionItemModel> SubRegion { get; set; }
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
     }
 }
