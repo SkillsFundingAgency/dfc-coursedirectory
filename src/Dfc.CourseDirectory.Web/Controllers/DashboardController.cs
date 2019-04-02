@@ -110,11 +110,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             if (vm.PendingCourseCount > 0)
             {
-                _session.SetString("PendingCourses", "True");
+                _session.SetString("PendingCourses", "true");
             }
             else
             {
-                _session.SetString("PendingCourses", "False");
+                _session.SetString("PendingCourses", "false");
             }
             return View(vm);
         }
