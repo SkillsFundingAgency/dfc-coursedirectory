@@ -35,6 +35,62 @@ namespace Dfc.CourseDirectory.Services
             _uri = settings.Value.ToUri();
         }
 
+
+
+        public async Task<IResult<ILarsSearchResult>> SearchAsync(IZCodeSearchCriteria criteria)
+        {
+            Throw.IfNull(criteria, nameof(criteria));
+
+            _logger.LogMethodEnter();
+
+            try
+            {
+                _logger.LogInformationObject("Lars search criteria.", criteria);
+                _logger.LogInformationObject("Lars search uri.", _uri);
+
+                var content = new StringContent(criteria.ToJson(), Encoding.UTF8, "application/json");
+                var response = await _httpClient.PostAsync(_uri, content);
+
+                _logger.LogHttpResponseMessage("Lars search service http response.", response);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+
+                    _logger.LogInformationObject("Lars search service json response.", json);
+
+                    var settings = new JsonSerializerSettings
+                    {
+                        ContractResolver = new LarsSearchResultContractResolver()
+                    };
+
+                    var searchResult = JsonConvert.DeserializeObject<LarsSearchResult>(json, settings);
+
+                    return Result.Ok<ILarsSearchResult>(searchResult);
+                }
+                else
+                {
+                    return Result.Fail<ILarsSearchResult>("Lars search service unsuccessfull http response.");
+                }
+            }
+            catch (HttpRequestException hre)
+            {
+                _logger.LogException("Lars search service http request error.", hre);
+
+                return Result.Fail<ILarsSearchResult>("Lars search service http request error.");
+            }
+            catch (Exception e)
+            {
+                _logger.LogException("Lars search service unknown error.", e);
+
+                return Result.Fail<ILarsSearchResult>("Lars search service unknown error.");
+            }
+            finally
+            {
+                _logger.LogMethodExit();
+            }
+        }
+
         public async Task<IResult<ILarsSearchResult>> SearchAsync(ILarsSearchCriteria criteria)
         {
             Throw.IfNull(criteria, nameof(criteria));
@@ -113,6 +169,20 @@ namespace Dfc.CourseDirectory.Services
     internal static class LarsSearchCriteriaExtensions
     {
         internal static string ToJson(this ILarsSearchCriteria extendee)
+        {
+            var settings = new JsonSerializerSettings
+            {
+                ContractResolver = new LarsSearchCriteriaContractResolver()
+            };
+
+            settings.Converters.Add(new StringEnumConverter() { CamelCaseText = false });
+
+            var result = JsonConvert.SerializeObject(extendee, settings);
+
+            return result;
+        }
+
+        internal static string ToJson(this IZCodeSearchCriteria extendee)
         {
             var settings = new JsonSerializerSettings
             {

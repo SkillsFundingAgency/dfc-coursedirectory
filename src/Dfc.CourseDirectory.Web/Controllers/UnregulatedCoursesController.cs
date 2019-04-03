@@ -6,13 +6,16 @@ using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.Enums;
 using Dfc.CourseDirectory.Services.Interfaces;
+using Dfc.CourseDirectory.Services.UnregulatedProvision;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.RequestModels;
 using Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult;
+using Dfc.CourseDirectory.Web.ViewComponents.ZCodeSearchResult;
 using Dfc.CourseDirectory.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -50,7 +53,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         public IActionResult Index(string NotificationTitle, string NotificationMessage)
         {
             var model = new UnRegulatedSearchViewModel()
-                    {NotificationTitle = NotificationTitle, NotificationMessage = NotificationMessage};
+            { NotificationTitle = NotificationTitle, NotificationMessage = NotificationMessage };
             return View(model);
         }
 
@@ -58,6 +61,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Index(UnRegulatedSearchViewModel theModel)
         {
+            ZCodeSearchResultModel model = new ZCodeSearchResultModel();
+
             if (theModel.Search.ToLower() == "z9999999")
             {
                 return RedirectToAction("Index", "UnregulatedCourses",
@@ -68,19 +73,17 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     });
             }
 
+            LarsSearchRequestModel requestModel = new LarsSearchRequestModel
+            {
+                SearchTerm = theModel.Search
+            };
 
-
-            LarsSearchRequestModel requestModel = new LarsSearchRequestModel();
-            //requestModel.SearchTerm = theModel.Search;
-
-            requestModel.SectorSubjectAreaTier1Filter= new string[1];
-            requestModel.SectorSubjectAreaTier1Filter[0] = "1.00";
-
-            LarsSearchResultModel model;
+            // requestModel.SectorSubjectAreaTier1Filter= new string[1];
+            //requestModel.SectorSubjectAreaTier1Filter[0] = "1.00";
 
             if (requestModel == null)
             {
-                model = new LarsSearchResultModel();
+                // model = new ZCodeSearchResultModel();
             }
             else
             {
@@ -90,40 +93,65 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     _larsSearchSettings.ItemsPerPage,
                     (LarsSearchFacet[])Enum.GetValues(typeof(LarsSearchFacet)));
 
-                var criteria = new LarsSearchCriteria(
-                    "",
-                    1,
-                    1,
-                    null,
-                    (LarsSearchFacet[])Enum.GetValues(typeof(LarsSearchFacet)));
+
+
+                //var criteria = new LarsSearchCriteria(
+                //    "",
+                //    1,
+                //    1,
+                //    null,
+                //    (LarsSearchFacet[])Enum.GetValues(typeof(LarsSearchFacet)));
 
                 var result = await _larsSearchService.SearchAsync(criteria);
 
                 if (result.IsSuccess && result.HasValue)
                 {
-                    var filters = _larsSearchHelper.GetLarsSearchFilterModels(result.Value.SearchFacets, requestModel);
-                    var items = _larsSearchHelper.GetLarsSearchResultItemModels(result.Value.Value);
+                    //var filters = _larsSearchHelper.GetLarsSearchFilterModels(result.Value.SearchFacets, requestModel);
+                    //var items = _larsSearchHelper.GetLarsSearchResultItemModels(result.Value.Value);
 
-                    model = new LarsSearchResultModel(
-                        requestModel.SearchTerm,
-                        items,
-                        Request.GetDisplayUrl(),
-                        _larsSearchSettings.PageParamName,
-                        _larsSearchSettings.ItemsPerPage,
-                        result.Value.ODataCount ?? 0,
-                        filters);
-                }
-                else
-                {
-                    model = new LarsSearchResultModel(result.Error);
+                    //model = new LarsSearchResultModel(
+                    //    requestModel.SearchTerm,
+                    //    items,
+                    //    Request.GetDisplayUrl(),
+                    //    _larsSearchSettings.PageParamName,
+                    //    _larsSearchSettings.ItemsPerPage,
+                    //    result.Value.ODataCount ?? 0,
+                    //    filters);
+                    if (result.Value.Value.Count() > 0)
+                    {
+                        var zCodeResults = new List<ZCodeSearchResultItemModel>();
+
+                        foreach (var item in result.Value.Value)
+                        {
+                            zCodeResults.Add(new ZCodeSearchResultItemModel()
+                            {
+                                AwardOrgCode = item.AwardOrgCode,
+                                AwardOrgName = item.AwardOrgName,
+                                LearnAimRef = item.LearnAimRef,
+                                LearnAimRefTitle = item.LearnAimRefTitle,
+                                LearnAimRefTypeDesc = item.LearnAimRefTypeDesc,
+                                NotionalNVQLevelv2 = item.NotionalNVQLevelv2
+
+                            });
+                        }
+
+                        model.Items = zCodeResults;
+
+                        return View("ZCodeResults", model);
+                    }
+
                 }
             }
+
             _logger.LogMethodExit();
 
-
-
-
-            return View("ZCodeResults");
+            return RedirectToAction("Index", "UnregulatedCourses",
+                    new
+                    {
+                        NotificationTitle = "Z code does not exist",
+                        NotificationMessage = "Check the code you have entered and try again"
+                    });
+            
         }
 
 
@@ -132,7 +160,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         public IActionResult UnknownZCode()
         {
             SectorSubjectAreaTier s = new SectorSubjectAreaTier();
-            var ssaLevel1 = s.SectorSubjectAreaTierAll.Select(y => new SSAOptions(){Id = y.Id,Description = y.Description}).ToList();
+            var ssaLevel1 = s.SectorSubjectAreaTierAll.Select(y => new SSAOptions() { Id = y.Id, Description = y.Description }).ToList();
 
             List<SelectListItem> levelOnes = new List<SelectListItem>();
             List<SelectListItem> levelTwos = new List<SelectListItem>();
@@ -166,10 +194,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             if (allLevels != null && allLevels.Count > 0)
             {
-                
+
                 foreach (var level in allLevels)
                 {
-                    var item = new SelectListItem { Text = level.Level,Value = level.Id };
+                    var item = new SelectListItem { Text = level.Level, Value = level.Id };
                     levels.Add(item);
                 };
             }
@@ -194,9 +222,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return View(model);
         }
 
-        
 
 
- 
+
+
     }
 }
