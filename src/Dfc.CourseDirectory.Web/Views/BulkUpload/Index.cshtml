@@ -60,7 +60,14 @@
                     {
                         foreach (var error in Model.errors)
                         {
-                            <li><a href="#bulkUploadFile">@error</a></li>
+                            <li>
+                                <span id="name-error" class="govuk-error-message">
+                                    <span class="govuk-visually-hidden">
+                                        Error:
+                                    </span>
+                                    @error
+                                </span>
+                            </li>
                         }
                     }
                 </ul>
