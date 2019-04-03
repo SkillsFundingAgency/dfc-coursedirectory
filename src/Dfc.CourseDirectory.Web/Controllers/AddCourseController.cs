@@ -763,12 +763,19 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         private SelectRegionModel GetRegions()
         {
-            return new SelectRegionModel
+            var selectRegion = new SelectRegionModel
             {
                 LabelText = "Select course region",
                 HintText = "For example, South West",
                 AriaDescribedBy = "Select all that apply."
             };
+
+            if (selectRegion.RegionItems != null && selectRegion.RegionItems.Any())
+            {
+                selectRegion.RegionItems = selectRegion.RegionItems.OrderBy(x => x.RegionName);
+            }
+
+            return selectRegion;
         }
 
         internal void RemoveSessionVariables()
