@@ -21,7 +21,7 @@ namespace Dfc.CourseDirectory.Services
             string filter = null,
             IEnumerable<LarsSearchFacet> facets = null)
         {
-            Throw.IfNullOrWhiteSpace(search, nameof(search));
+            //Throw.IfNullOrWhiteSpace(search, nameof(search));
             Throw.IfLessThan(1, top, nameof(top));
             Throw.IfLessThan(0, skip, nameof(skip));
 
