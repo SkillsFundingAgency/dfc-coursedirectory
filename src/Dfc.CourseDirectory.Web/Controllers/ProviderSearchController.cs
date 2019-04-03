@@ -140,6 +140,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             return ViewComponent(nameof(ViewComponents.ProviderSearchResult.ProviderSearchResult), model);
         }
+
         [Authorize(Policy = "ElevatedUserRole")]
         [HttpPost]
         public async Task<JsonResult> OnBoardProvider([FromBody] ProviderAjaxRequestModel ajaxRequest)
