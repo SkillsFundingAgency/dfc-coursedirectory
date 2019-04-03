@@ -127,12 +127,71 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
 
+
         [Authorize]
         public IActionResult UnknownZCode()
         {
+            SectorSubjectAreaTier s = new SectorSubjectAreaTier();
+            var ssaLevel1 = s.SectorSubjectAreaTierAll.Select(y => new SSAOptions(){Id = y.Id,Description = y.Description}).ToList();
+
+            List<SelectListItem> levelOnes = new List<SelectListItem>();
+            List<SelectListItem> levelTwos = new List<SelectListItem>();
+            List<SelectListItem> levels = new List<SelectListItem>();
+            List<SelectListItem> categories = new List<SelectListItem>();
 
 
-            return View();
+            UnRegulatedNotFoundViewModel model = new UnRegulatedNotFoundViewModel();
+
+            model.ssaLevel1 = ssaLevel1;
+
+            if (ssaLevel1 != null && ssaLevel1.Count > 0)
+            {
+                var defaultItem = new SelectListItem { Text = "Choose a sector area", Value = "" };
+
+                foreach (var level1 in ssaLevel1)
+                {
+                    var item = new SelectListItem { Text = level1.Description, Value = level1.Id };
+                    levelOnes.Add(item);
+                };
+
+                levelOnes.Insert(0, defaultItem);
+                levelTwos.Insert(0, defaultItem);
+            }
+
+            model.Level1 = levelOnes;
+            model.Level2 = levelTwos;
+
+            Levels l = new Levels();
+            var allLevels = l.AllLevels;
+
+            if (allLevels != null && allLevels.Count > 0)
+            {
+                
+                foreach (var level in allLevels)
+                {
+                    var item = new SelectListItem { Text = level.Level,Value = level.Id };
+                    levels.Add(item);
+                };
+            }
+
+            model.Levels = levels;
+
+            Categories c = new Categories();
+            var allCategogies = c.AllCategogies;
+
+            if (allCategogies != null && allCategogies.Count > 0)
+            {
+
+                foreach (var category in allCategogies)
+                {
+                    var item = new SelectListItem { Text = category.Category, Value = category.Id };
+                    categories.Add(item);
+                };
+            }
+
+            model.Categories = categories;
+
+            return View(model);
         }
 
         

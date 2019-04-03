@@ -98,6 +98,8 @@ namespace Dfc.CourseDirectory.Models.Enums
         NonRegulated = 1
     }
 
+  
+
 
     public class Enums
     {

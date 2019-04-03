@@ -92,6 +92,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             _whereNextTextFieldMaxChars = whereNextComponentSettings.Value.TextFieldMaxChars;
         }
 
+
         public SelectRegionModel GetRegions()
         {
             return new SelectRegionModel
