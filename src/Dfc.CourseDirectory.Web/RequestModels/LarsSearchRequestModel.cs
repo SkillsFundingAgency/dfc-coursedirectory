@@ -8,6 +8,7 @@ namespace Dfc.CourseDirectory.Web.RequestModels
         public string[] NotionalNVQLevelv2Filter { get; set; }
         public string[] SectorSubjectAreaTier1Filter { get; set; }
         public string[] SectorSubjectAreaTier2Filter { get; set; }
+        public string[] AwardOrgAimRefFilter { get; set; }
         public int PageNo { get; set; }
 
         public LarsSearchRequestModel()
@@ -16,6 +17,7 @@ namespace Dfc.CourseDirectory.Web.RequestModels
             NotionalNVQLevelv2Filter = new string[] { };
             SectorSubjectAreaTier1Filter = new string[] { };
             SectorSubjectAreaTier2Filter = new string[] { };
+            AwardOrgAimRefFilter = new string[] { };
             PageNo = 1;
         }
     }

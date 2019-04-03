@@ -1,4 +1,4 @@
-﻿namespace Dfc.CourseDirectory.Models.Models
+﻿namespace Dfc.CourseDirectory.Models.Models.Regions
 {
     public class SubRegionItemModel
     {

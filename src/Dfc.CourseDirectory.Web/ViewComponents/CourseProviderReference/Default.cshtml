@@ -7,7 +7,7 @@
         @Model.LabelText
     </label>
     
-    @{ var regex = @"^[a-zA-Z0-9 \¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`" + "\"" + "\\\\]+$"; }
+    @{ var regex = @"^[a-zA-Z0-9 /\n/\r/\¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\•\’\‘\-\–\:/\t/\s" + "\"" + "\\\\]+$"; }
 
     @if (!string.IsNullOrWhiteSpace(Model.HintText))
     {
@@ -18,9 +18,9 @@
     <input class="govuk-input" asp-for="@Model.CourseProviderReference" type="text" aria-describedby="@Model.AriaDescribedBy"
            val-max-length="255"
            val-max-length-message="The maximum length of 'ID' is 255 characters"
-           val-regex="@regex" 
+           val-regex="@regex"
            val-regex-message="ID contains invalid characters" />
-           
+
 
 </div>
 

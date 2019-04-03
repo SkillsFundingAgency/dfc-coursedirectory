@@ -2,13 +2,13 @@
 @using Dfc.CourseDirectory.Web.Helpers
 @model RegulatedViewModel
 
-<form asp-controller="RegulatedQualification" asp-action="RegulatedTypeSelected" method="post">
+<form asp-controller="RegulatedQualification" asp-action="RegulatedTypeSelected" method="post" id="QualificationType">
 
     <div class="govuk-form-group">
         <fieldset class="govuk-fieldset">
             <h1 class="govuk-heading-l">What are you awarding with this course</h1>
             <br />
-            <div class="govuk-radios">
+            <div class="govuk-radios" val-required-message="Choose 1 option to continue" id="SelectQualificationType">
                 <div class="govuk-radios__item">
                     @Html.RadioButtonFor(m => m.RegulatedType, RegulatedType.Regulated, new { @class = "govuk-radios__input", id = RegulatedType.Regulated })
                     <label class="govuk-label govuk-radios__label" for="@RegulatedType.Regulated">@WebHelper.GetEnumDescription(RegulatedType.Regulated)</label>
@@ -23,3 +23,42 @@
     <br />
     <button type="submit" class="govuk-button" id="next">Next</button>
 </form>
+
+<script>
+    (function($) {
+        $(function () {
+            var validStates = [];
+            var $button = $("#next");
+          
+            var $qualificationType = $("#SelectQualificationType").govUkRadios();
+
+            function isAllValid(currentValue) {
+                return currentValue === true;
+            }
+
+            function validate() {
+
+                validStates = [];
+               
+                $qualificationType.govUkRadios("validState");
+
+                if ($.requiredValidate($qualificationType.find("input[type='radio']:checked").val())) {
+                    $qualificationType.govUkRadios("validState");
+                    validStates.push(true);
+                } else {
+                    $qualificationType.govUkRadios("invalidState", $qualificationType.attr("val-required-message"));
+                   validStates.push(false);
+                }
+            }
+
+            $button.on("click", function (event) {
+                event.preventDefault();
+                validate();
+                if (validStates.every(isAllValid)) {
+                    $("#QualificationType").submit();
+                }
+            });
+
+        });
+    })(jQuery);
+</script>
