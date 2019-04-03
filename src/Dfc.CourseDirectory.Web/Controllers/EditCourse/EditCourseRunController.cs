@@ -130,6 +130,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                     {
                         vm.ValPastDateRef = DateTime.Now;
                         vm.ValPastDateMessage = "Start Date cannot be earlier than today’s date";
+
+                        //var venueExists = vm.Venues.Any(x => x.Text == )
                     }
                     else
                     {
