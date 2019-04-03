@@ -152,6 +152,11 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                         }
                     }
 
+                    if (vm.SelectRegion.RegionItems != null && vm.SelectRegion.RegionItems.Any())
+                    {
+                        vm.SelectRegion.RegionItems = vm.SelectRegion.RegionItems.OrderBy(x => x.RegionName);
+                    }
+
                     return View("EditCourseRun", vm);
                 }
             }
