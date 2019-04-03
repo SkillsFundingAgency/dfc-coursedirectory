@@ -136,6 +136,11 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                         }
                     }
 
+                    if (vm.SelectRegion.RegionItems != null && vm.SelectRegion.RegionItems.Any())
+                    {
+                        vm.SelectRegion.RegionItems = vm.SelectRegion.RegionItems.OrderBy(x => x.RegionName);
+                    }
+
                     return View("CopyCourseRun", vm);
                 }
             }
