@@ -431,35 +431,34 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 }
 
                 // Call VenueService and for VenueName get VenueId (GUID) (Applicable only for type ClassroomBased)
-                if (courseRun.DeliveryMode.Equals(DeliveryMode.ClassroomBased))
-                {
-                    if (string.IsNullOrEmpty(bulkUploadcourse.VenueName))
-                    {
-                        validationMessages.Add($"NO Venue Name for Line { bulkUploadcourse.BulkUploadLineNumber },  LARS_QAN = { bulkUploadcourse.LearnAimRef }, ID = { bulkUploadcourse.ProviderCourseID }");
-                    }
-                    else
-                    {
-                        GetVenuesByPRNAndNameCriteria venueCriteria = new GetVenuesByPRNAndNameCriteria(bulkUploadcourse.ProviderUKPRN.ToString(), bulkUploadcourse.VenueName);
-                        var venueResult = Task.Run(async () => await _venueService.GetVenuesByPRNAndNameAsync(venueCriteria)).Result;
 
-                        if (venueResult.IsSuccess && venueResult.HasValue)
+                if (string.IsNullOrEmpty(bulkUploadcourse.VenueName))
+                {
+                    validationMessages.Add($"NO Venue Name for Line { bulkUploadcourse.BulkUploadLineNumber },  LARS_QAN = { bulkUploadcourse.LearnAimRef }, ID = { bulkUploadcourse.ProviderCourseID }");
+                }
+                else
+                {
+                    GetVenuesByPRNAndNameCriteria venueCriteria = new GetVenuesByPRNAndNameCriteria(bulkUploadcourse.ProviderUKPRN.ToString(), bulkUploadcourse.VenueName);
+                    var venueResult = Task.Run(async () => await _venueService.GetVenuesByPRNAndNameAsync(venueCriteria)).Result;
+
+                    if (venueResult.IsSuccess && venueResult.HasValue)
+                    {
+                        var venues = (IEnumerable<Venue>)venueResult.Value.Value;
+                        if (venues.Count().Equals(1))
                         {
-                            var venues = (IEnumerable<Venue>)venueResult.Value.Value;
-                            if (venues.Count().Equals(1))
-                            {
-                                courseRun.VenueId = new Guid(venues.FirstOrDefault().ID);
-                            }
-                            else
-                            {
-                                validationMessages.Add($"We have obtained muliple Venues for { bulkUploadcourse.VenueName } - Line { bulkUploadcourse.BulkUploadLineNumber },  LARS_QAN = { bulkUploadcourse.LearnAimRef }, ID = { bulkUploadcourse.ProviderCourseID }");
-                            }
+                            courseRun.VenueId = new Guid(venues.FirstOrDefault().ID);
                         }
                         else
                         {
-                            validationMessages.Add($"We could NOT obtain a Venue for { bulkUploadcourse.VenueName } - Line { bulkUploadcourse.BulkUploadLineNumber },  LARS_QAN = { bulkUploadcourse.LearnAimRef }, ID = { bulkUploadcourse.ProviderCourseID }");
+                            validationMessages.Add($"We have obtained muliple Venues for { bulkUploadcourse.VenueName } - Line { bulkUploadcourse.BulkUploadLineNumber },  LARS_QAN = { bulkUploadcourse.LearnAimRef }, ID = { bulkUploadcourse.ProviderCourseID }");
                         }
                     }
+                    else
+                    {
+                        validationMessages.Add($"We could NOT obtain a Venue for { bulkUploadcourse.VenueName } - Line { bulkUploadcourse.BulkUploadLineNumber },  LARS_QAN = { bulkUploadcourse.LearnAimRef }, ID = { bulkUploadcourse.ProviderCourseID }");
+                    }
                 }
+                
 
                 courseRun.CourseName = bulkUploadcourse.CourseName;
                 courseRun.ProviderCourseID = bulkUploadcourse.ProviderCourseID;
