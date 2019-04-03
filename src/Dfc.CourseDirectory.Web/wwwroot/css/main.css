@@ -6410,6 +6410,31 @@ select:disabled {
   margin-left: 10px;
 }
 
+details {
+  display: block;
+}
+
+details summary {
+  display: inline-block;
+  color: #005ea5;
+  cursor: pointer;
+  position: relative;
+}
+
+details .summary {
+  text-decoration: underline;
+}
+
+.region-checkboxes {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.region-checkboxes .govuk-checkboxes__item {
+  margin: 0.5em;
+  flex: 0 0 18%;
+}
+
 /*#Cd-course-list {
 
     .cd-course--list {
@@ -6724,6 +6749,35 @@ select:disabled {
   margin-bottom: -10px;
 }
 
+.cd-flex {
+  display: flex;
+}
+
+.cd-subHead {
+  background-color: #005ea5;
+  margin-top: -10px;
+  color: white;
+  font-family: nta,Arial,sans-serif;
+}
+
+.cd-subHead .cd-subHead--item {
+  font-weight: 800;
+}
+
+.navigation-container {
+  border-bottom: 1px solid #bfc1c3;
+}
+
+.navigation-container .cd-secondary-nav {
+  padding: 0.5em 0;
+  text-align: right;
+  font-size: 19px;
+}
+
+.navigation-container .cd-secondary-nav .cd-secondary-nav--item {
+  text-decoration: none;
+}
+
 .cd-fullwidth-container {
   width: 90%;
   margin: 0 auto;
@@ -6736,6 +6790,7 @@ select:disabled {
 }
 
 .cd-fullwidth-container .cd-grid-coloumn-80 {
+  box-sizing: border-box;
   width: 100%;
   float: left;
 }
@@ -6747,15 +6802,42 @@ select:disabled {
 }
 
 .cd-fullwidth-container .cd-grid-coloumn-20 {
+  box-sizing: border-box;
   width: 100%;
   float: left;
-  padding: 1em;
+  padding: 0 1em;
   box-sizing: border-box;
 }
 
 @media (min-width: 40.0625em) {
   .cd-fullwidth-container .cd-grid-coloumn-20 {
     width: 20%;
+  }
+}
+
+.cd-fullwidth-container .cd-grid-coloumn-70 {
+  box-sizing: border-box;
+  width: 100%;
+  float: left;
+}
+
+@media (min-width: 40.0625em) {
+  .cd-fullwidth-container .cd-grid-coloumn-70 {
+    width: 70%;
+  }
+}
+
+.cd-fullwidth-container .cd-grid-coloumn-30 {
+  box-sizing: border-box;
+  width: 100%;
+  float: left;
+  padding: 0 1em;
+  box-sizing: border-box;
+}
+
+@media (min-width: 40.0625em) {
+  .cd-fullwidth-container .cd-grid-coloumn-30 {
+    width: 30%;
   }
 }
 

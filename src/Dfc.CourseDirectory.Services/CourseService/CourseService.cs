@@ -18,6 +18,7 @@ using System.Text.RegularExpressions;
 using Dfc.CourseDirectory.Common.Settings;
 using System.Linq;
 using Dfc.CourseDirectory.Models.Enums;
+using Dfc.CourseDirectory.Services.UnregulatedProvision;
 using static Dfc.CourseDirectory.Services.CourseService.CourseValidationResult;
 
 namespace Dfc.CourseDirectory.Services.CourseService
@@ -90,6 +91,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             _howAssessedTextFieldMaxChars = howAssessedComponentSettings.Value.TextFieldMaxChars;
             _whereNextTextFieldMaxChars = whereNextComponentSettings.Value.TextFieldMaxChars;
         }
+
 
         public SelectRegionModel GetRegions()
         {
