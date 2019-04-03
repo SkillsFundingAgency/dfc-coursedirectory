@@ -61,6 +61,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
         public List<string> ProcessBulkUpload(string bulkUploadFilePath, int providerUKPRN, string userId)
         {
+            
             var errors = new List<string>();
             var bulkUploadcourses = new List<BulkUploadCourse>();
             int bulkUploadLineNumber = 2;
@@ -321,6 +322,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
         public List<BulkUploadCourse> PolulateLARSData(List<BulkUploadCourse> bulkUploadcourses, out List<string> errors)
         {
             errors = new List<string>();
+            List<int>totalErrorList = new List<int>();
 
             foreach (var bulkUploadcourse in bulkUploadcourses.Where(c => c.IsCourseHeader == true).ToList())
             {
@@ -347,14 +349,28 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                     if (qualifications.Count.Equals(0))
                     {
                         List<int> invalidLARSLineNumbers = bulkUploadcourses.Where(c => c.LearnAimRef == bulkUploadcourse.LearnAimRef).Select(l => l.BulkUploadLineNumber).ToList();
-                        errors.Add($"{ InvalidLARSLineNumbersToString(invalidLARSLineNumbers) }, LARS_QAN = { bulkUploadcourse.LearnAimRef } invalid LARS");
+
+                        invalidLARSLineNumbers = CheckForErrorDuplicates(ref totalErrorList, invalidLARSLineNumbers);
+
+                        if(invalidLARSLineNumbers.Count > 0)
+                        {
+                            errors.Add($"{ InvalidLARSLineNumbersToString(invalidLARSLineNumbers) }, " + $"LARS_QAN = { bulkUploadcourse.LearnAimRef } invalid LARS");
+                        }
+
                     }
                     else if (qualifications.Count.Equals(1))
                     {
                         if (qualifications[0].CertificationEndDate != null && qualifications[0].CertificationEndDate < DateTime.Now)
                         {
                             List<int> invalidLARSLineNumbers = bulkUploadcourses.Where(c => c.LearnAimRef == bulkUploadcourse.LearnAimRef).Select(l => l.BulkUploadLineNumber).ToList();
-                            errors.Add($"{ InvalidLARSLineNumbersToString(invalidLARSLineNumbers) }, LARS_QAN = { bulkUploadcourse.LearnAimRef } expired LARS");
+
+                            invalidLARSLineNumbers = CheckForErrorDuplicates(ref totalErrorList, invalidLARSLineNumbers);
+
+                            if (invalidLARSLineNumbers.Count > 0)
+                            {
+                                errors.Add($"{ InvalidLARSLineNumbersToString(invalidLARSLineNumbers) }, LARS_QAN = { bulkUploadcourse.LearnAimRef } expired LARS");
+                            }
+                               
                         }
                         else
                         {
@@ -381,6 +397,24 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             }
 
             return bulkUploadcourses;
+        }
+
+        public List<int> CheckForErrorDuplicates(ref List<int> totalList, List<int> errorList)
+        {
+
+            for(int i = errorList.Count - 1; i >= 0; i--)
+            {
+                bool exists = totalList.Any(x => x.Equals(errorList[i]));
+                if (exists)
+                {
+                    errorList.Remove(errorList[i]);
+                }
+                else
+                {
+                    totalList.Add(errorList[i]);
+                }
+            }
+            return errorList;
         }
 
         public List<Course> MappingBulkUploadCourseToCourse(List<BulkUploadCourse> bulkUploadcourses, string userId, out List<string> errors)
@@ -431,35 +465,34 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 }
 
                 // Call VenueService and for VenueName get VenueId (GUID) (Applicable only for type ClassroomBased)
-                if (courseRun.DeliveryMode.Equals(DeliveryMode.ClassroomBased))
-                {
-                    if (string.IsNullOrEmpty(bulkUploadcourse.VenueName))
-                    {
-                        validationMessages.Add($"NO Venue Name for Line { bulkUploadcourse.BulkUploadLineNumber },  LARS_QAN = { bulkUploadcourse.LearnAimRef }, ID = { bulkUploadcourse.ProviderCourseID }");
-                    }
-                    else
-                    {
-                        GetVenuesByPRNAndNameCriteria venueCriteria = new GetVenuesByPRNAndNameCriteria(bulkUploadcourse.ProviderUKPRN.ToString(), bulkUploadcourse.VenueName);
-                        var venueResult = Task.Run(async () => await _venueService.GetVenuesByPRNAndNameAsync(venueCriteria)).Result;
 
-                        if (venueResult.IsSuccess && venueResult.HasValue)
+                if (string.IsNullOrEmpty(bulkUploadcourse.VenueName))
+                {
+                    validationMessages.Add($"NO Venue Name for Line { bulkUploadcourse.BulkUploadLineNumber },  LARS_QAN = { bulkUploadcourse.LearnAimRef }, ID = { bulkUploadcourse.ProviderCourseID }");
+                }
+                else
+                {
+                    GetVenuesByPRNAndNameCriteria venueCriteria = new GetVenuesByPRNAndNameCriteria(bulkUploadcourse.ProviderUKPRN.ToString(), bulkUploadcourse.VenueName);
+                    var venueResult = Task.Run(async () => await _venueService.GetVenuesByPRNAndNameAsync(venueCriteria)).Result;
+
+                    if (venueResult.IsSuccess && venueResult.HasValue)
+                    {
+                        var venues = (IEnumerable<Venue>)venueResult.Value.Value;
+                        if (venues.Count().Equals(1))
                         {
-                            var venues = (IEnumerable<Venue>)venueResult.Value.Value;
-                            if (venues.Count().Equals(1))
-                            {
-                                courseRun.VenueId = new Guid(venues.FirstOrDefault().ID);
-                            }
-                            else
-                            {
-                                validationMessages.Add($"We have obtained muliple Venues for { bulkUploadcourse.VenueName } - Line { bulkUploadcourse.BulkUploadLineNumber },  LARS_QAN = { bulkUploadcourse.LearnAimRef }, ID = { bulkUploadcourse.ProviderCourseID }");
-                            }
+                            courseRun.VenueId = new Guid(venues.FirstOrDefault().ID);
                         }
                         else
                         {
-                            validationMessages.Add($"We could NOT obtain a Venue for { bulkUploadcourse.VenueName } - Line { bulkUploadcourse.BulkUploadLineNumber },  LARS_QAN = { bulkUploadcourse.LearnAimRef }, ID = { bulkUploadcourse.ProviderCourseID }");
+                            validationMessages.Add($"We have obtained muliple Venues for { bulkUploadcourse.VenueName } - Line { bulkUploadcourse.BulkUploadLineNumber },  LARS_QAN = { bulkUploadcourse.LearnAimRef }, ID = { bulkUploadcourse.ProviderCourseID }");
                         }
                     }
+                    else
+                    {
+                        validationMessages.Add($"We could NOT obtain a Venue for { bulkUploadcourse.VenueName } - Line { bulkUploadcourse.BulkUploadLineNumber },  LARS_QAN = { bulkUploadcourse.LearnAimRef }, ID = { bulkUploadcourse.ProviderCourseID }");
+                    }
                 }
+                
 
                 courseRun.CourseName = bulkUploadcourse.CourseName;
                 courseRun.ProviderCourseID = bulkUploadcourse.ProviderCourseID;
