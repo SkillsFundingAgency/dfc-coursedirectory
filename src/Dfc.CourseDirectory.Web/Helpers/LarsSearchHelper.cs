@@ -52,6 +52,52 @@ namespace Dfc.CourseDirectory.Web.Helpers
             return criteria;
         }
 
+
+        public IZCodeSearchCriteria GetZCodeSearchCriteria(
+            LarsSearchRequestModel larsSearchRequestModel,
+            int currentPageNo,
+            int itemsPerPage,
+            IEnumerable<LarsSearchFacet> facets = null)
+        {
+            Throw.IfNull(larsSearchRequestModel, nameof(larsSearchRequestModel));
+            Throw.IfLessThan(1, currentPageNo, nameof(currentPageNo));
+            Throw.IfLessThan(1, itemsPerPage, nameof(itemsPerPage));
+
+            var sb = new StringBuilder();
+
+
+            sb = BuildUpFilterStringBuilder(sb, "NotionalNVQLevelv2", larsSearchRequestModel.NotionalNVQLevelv2Filter);
+            sb = BuildUpFilterStringBuilder(sb, "AwardOrgCode", larsSearchRequestModel.AwardOrgCodeFilter);
+            sb = BuildUpFilterStringBuilder(sb, "AwardOrgAimRef", larsSearchRequestModel.AwardOrgAimRefFilter);
+            sb = BuildUpFilterStringBuilder(sb, "SectorSubjectAreaTier1", larsSearchRequestModel.SectorSubjectAreaTier1Filter);
+            sb = BuildUpFilterStringBuilder(sb, "SectorSubjectAreaTier2", larsSearchRequestModel.SectorSubjectAreaTier2Filter);
+
+
+            if (sb.Length != 0)
+            {
+                new LarsSearchFilterBuilder(sb).And().AppendOpeningBracket().Field("CertificationEndDate")
+                    .GreaterThanOrEqualTo(DateTimeOffset.UtcNow.ToString("yyyy-MM-dd")).Or()
+                    .Field("CertificationEndDate eq null").AppendClosingBracket();
+
+            }
+            else
+            {
+                new LarsSearchFilterBuilder(sb).Field("CertificationEndDate")
+                    .GreaterThanOrEqualTo(DateTimeOffset.UtcNow.ToString("yyyy-MM-dd")).Or()
+                    .Field("CertificationEndDate eq null");
+            }
+
+            var skip = currentPageNo == 1 ? 0 : itemsPerPage * (currentPageNo - 1);
+
+            var criteria = new ZCodeSearchCriteria(
+               itemsPerPage,
+               skip,
+               new LarsSearchFilterBuilder(sb).Build(),
+               facets);
+
+            return criteria;
+        }
+
         public IEnumerable<LarsSearchFilterModel> GetLarsSearchFilterModels(
             LarsSearchFacets larsSearchFacets,
             LarsSearchRequestModel larsSearchRequestModel)

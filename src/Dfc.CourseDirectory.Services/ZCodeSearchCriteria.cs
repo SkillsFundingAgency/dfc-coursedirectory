@@ -5,17 +5,17 @@ using System.Collections.Generic;
 
 namespace Dfc.CourseDirectory.Services
 {
-    public class LarsSearchCriteria : ValueObject<LarsSearchCriteria>, ILarsSearchCriteria
+    public class ZCodeSearchCriteria : ValueObject<ZCodeSearchCriteria>, IZCodeSearchCriteria
     {
-        public string Search { get; }
+       // public string Search { get; }
         public int Top { get; }
         public int Skip { get; }
         public bool Count => true;
         public string Filter { get; }
         public IEnumerable<LarsSearchFacet> Facets { get; }
 
-        public LarsSearchCriteria(
-            string search,
+        public ZCodeSearchCriteria(
+            //string search,
             int top,
             int skip,
             string filter = null,
@@ -25,7 +25,7 @@ namespace Dfc.CourseDirectory.Services
             Throw.IfLessThan(1, top, nameof(top));
             Throw.IfLessThan(0, skip, nameof(skip));
 
-            Search = search;
+            //Search = search;
             Top = top;
             Skip = skip;
             Filter = filter;
@@ -34,7 +34,7 @@ namespace Dfc.CourseDirectory.Services
 
         protected override IEnumerable<object> GetEqualityComponents()
         {
-            yield return Search;
+            //yield return Search;
             yield return Top;
             yield return Skip;
             yield return Count;
