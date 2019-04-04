@@ -8,6 +8,7 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Courses
     {
         bool IsCourseHeader { get; set; }
         int BulkUploadLineNumber { get; set; }
+        int TempCourseId { get; set; }
 
         // Course
         string QualificationCourseTitle { get; set; }

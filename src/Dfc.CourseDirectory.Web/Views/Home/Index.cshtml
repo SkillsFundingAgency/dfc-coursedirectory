@@ -51,16 +51,19 @@
                         <hr />
                         <br />
 
-                        @*<div class="cd-info-summary" aria-labelledby="info-summary-title" role="alert" tabindex="-1" data-module="info-summary">
-                        <h2 class="cd-info-summary__title" id="info-summary-title">
+                        <div class="cd-info-summary" aria-labelledby="info-summary-title" role="alert" tabindex="-1" data-module="info-summary">
+                        @*<h2 class="cd-info-summary__title" id="info-summary-title">
                             @Model.ValidationHeader
-                        </h2>
+                        </h2>*@
                         <div class="cd-info-summary__body">
-                            @foreach (string msg in Model?.ValidationMessages) {
-                                <p>@msg</p>
-                            }
-                        </div>
-                    </div>*@
+                            <div class="cd-info-summary__list">
+                                @foreach (string msg in Model?.ValidationMessages)
+                                {
+                                   <a href="#">@msg</a>
+                                }
+                            </div>
+</div>
+                    </div>
                         <div class="govuk-grid-row">
                             <div class="govuk-grid-column-one-quarter">
                                 <div class="cd-status-panel">
