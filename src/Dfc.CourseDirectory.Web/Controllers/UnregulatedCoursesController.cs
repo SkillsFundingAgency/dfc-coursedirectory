@@ -63,15 +63,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             ZCodeSearchResultModel model = new ZCodeSearchResultModel();
 
-            if (theModel.Search.ToLower() == "z9999999")
-            {
-                return RedirectToAction("Index", "UnregulatedCourses",
-                    new
-                    {
-                        NotificationTitle = "Z code does not exist",
-                        NotificationMessage = "Check the code you have entered and try again"
-                    });
-            }
+            //if (theModel.Search.ToLower() == "z9999999")
+            //{
+            //    return RedirectToAction("Index", "UnregulatedCourses",
+            //        new
+            //        {
+            //            NotificationTitle = "Z code does not exist",
+            //            NotificationMessage = "Check the code you have entered and try again"
+            //        });
+            //}
 
             LarsSearchRequestModel requestModel = new LarsSearchRequestModel
             {
@@ -151,9 +151,40 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         NotificationTitle = "Z code does not exist",
                         NotificationMessage = "Check the code you have entered and try again"
                     });
-            
+
         }
 
+
+        [Authorize(Policy = "ElevatedUserRole")]
+        public async Task<List<SelectListItem>> GetSSALevelTwo(string Level1Id)
+        {
+            List<SelectListItem> levelTwos = new List<SelectListItem>();
+
+            if (!string.IsNullOrEmpty(Level1Id))
+            {
+                SectorSubjectAreaTier s = new SectorSubjectAreaTier();
+                var ssaLevel2 = s.SectorSubjectAreaTierAll.Where(t => t.Id == Level1Id).Select(y => y.SectorSubjectAreaTier2);
+
+                var defaultItem = new SelectListItem { Text = "Choose a sector area", Value = "" };
+
+
+                foreach (var level2 in ssaLevel2)
+                {
+                    foreach (var level2Item in level2)
+                    {
+                        var item = new SelectListItem { Text = level2Item.Value, Value = level2Item.Key };
+                        levelTwos.Add(item);
+                    }
+
+
+                }
+
+                levelTwos.Insert(0, defaultItem);
+
+            }
+
+            return levelTwos;
+        }
 
 
         [Authorize]
@@ -194,12 +225,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             if (allLevels != null && allLevels.Count > 0)
             {
-
+                var defaultItem = new SelectListItem { Text = "Select a level", Value = "" };
                 foreach (var level in allLevels)
                 {
                     var item = new SelectListItem { Text = level.Level, Value = level.Id };
                     levels.Add(item);
                 };
+
+                levels.Insert(0, defaultItem);
             }
 
             model.Levels = levels;
@@ -209,12 +242,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             if (allCategogies != null && allCategogies.Count > 0)
             {
-
+                var defaultItem = new SelectListItem { Text = "Select a category", Value = "" };
                 foreach (var category in allCategogies)
                 {
                     var item = new SelectListItem { Text = category.Category, Value = category.Id };
                     categories.Add(item);
                 };
+
+                categories.Insert(0, defaultItem);
             }
 
             model.Categories = categories;
@@ -224,6 +259,89 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
 
 
+
+
+
+
+        [Authorize]
+        public async Task<IActionResult> ZCodeNotKnown([FromQuery] ZCodeNotKnownRequestModel request)
+        {
+            ZCodeSearchResultModel model = new ZCodeSearchResultModel();
+
+            LarsSearchRequestModel requestModel = new LarsSearchRequestModel();
+
+
+            requestModel.SectorSubjectAreaTier1Filter = new string[1];
+            requestModel.SectorSubjectAreaTier1Filter[0] = request.Level1Id;
+
+            requestModel.SectorSubjectAreaTier2Filter = new string[1];
+            requestModel.SectorSubjectAreaTier2Filter[0] = request.Level2Id;
+
+            if (!string.IsNullOrEmpty(request.LevelId))
+            {
+                requestModel.NotionalNVQLevelv2Filter = new string[1];
+                requestModel.NotionalNVQLevelv2Filter[0] = request.LevelId;
+            }
+
+            if (!string.IsNullOrEmpty(request.CategoryId))
+            {
+                requestModel.AwardOrgAimRefFilter = new string[1];
+                requestModel.AwardOrgAimRefFilter[0] = request.CategoryId;
+            }
+
+            if (requestModel == null)
+            {
+      
+            }
+            else
+            {
+                var criteria = _larsSearchHelper.GetZCodeSearchCriteria(
+                    requestModel,
+                    _paginationHelper.GetCurrentPageNo(Request.GetDisplayUrl(), _larsSearchSettings.PageParamName),
+                    1000,
+                   // _larsSearchSettings.ItemsPerPage,
+                    (LarsSearchFacet[])Enum.GetValues(typeof(LarsSearchFacet)));
+
+
+                var result = await _larsSearchService.SearchAsync(criteria);
+
+                if (result.IsSuccess && result.HasValue)
+                {
+
+
+                    if (result.Value.Value.Count() > 0)
+                    {
+
+                        var zCodeResults = new List<ZCodeSearchResultItemModel>();
+
+                        foreach (var item in result.Value.Value)
+                        {
+                            if (item.LearnAimRef.StartsWith("Z") || item.LearnAimRef.StartsWith("z"))
+                            {
+                                zCodeResults.Add(new ZCodeSearchResultItemModel()
+                                {
+                                    AwardOrgCode = item.AwardOrgCode,
+                                    AwardOrgName = item.AwardOrgName,
+                                    LearnAimRef = item.LearnAimRef,
+                                    LearnAimRefTitle = item.LearnAimRefTitle,
+                                    LearnAimRefTypeDesc = item.LearnAimRefTypeDesc,
+                                    NotionalNVQLevelv2 = item.NotionalNVQLevelv2
+
+                                });
+                            }
+                        }
+
+                        model.Items = zCodeResults;
+                    }
+
+                }
+            }
+
+            _logger.LogMethodExit();
+
+            return ViewComponent(nameof(ViewComponents.ZCodeSearchResult.ZCodeSearchResult), model);
+
+        }
 
 
     }

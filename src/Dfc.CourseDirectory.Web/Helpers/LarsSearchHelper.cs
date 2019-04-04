@@ -65,12 +65,12 @@ namespace Dfc.CourseDirectory.Web.Helpers
 
             var sb = new StringBuilder();
 
+
+            sb = BuildUpFilterStringBuilder(sb, "NotionalNVQLevelv2", larsSearchRequestModel.NotionalNVQLevelv2Filter);
+            sb = BuildUpFilterStringBuilder(sb, "AwardOrgCode", larsSearchRequestModel.AwardOrgCodeFilter);
+            sb = BuildUpFilterStringBuilder(sb, "AwardOrgAimRef", larsSearchRequestModel.AwardOrgAimRefFilter);
             sb = BuildUpFilterStringBuilder(sb, "SectorSubjectAreaTier1", larsSearchRequestModel.SectorSubjectAreaTier1Filter);
             sb = BuildUpFilterStringBuilder(sb, "SectorSubjectAreaTier2", larsSearchRequestModel.SectorSubjectAreaTier2Filter);
-
-            //sb = BuildUpFilterStringBuilder(sb, "NotionalNVQLevelv2", larsSearchRequestModel.NotionalNVQLevelv2Filter);
-            //sb = BuildUpFilterStringBuilder(sb, "AwardOrgCode", larsSearchRequestModel.AwardOrgCodeFilter);
-            //sb = BuildUpFilterStringBuilder(sb, "AwardOrgAimRef", larsSearchRequestModel.AwardOrgAimRefFilter);
 
 
             if (sb.Length != 0)
@@ -78,6 +78,7 @@ namespace Dfc.CourseDirectory.Web.Helpers
                 new LarsSearchFilterBuilder(sb).And().AppendOpeningBracket().Field("CertificationEndDate")
                     .GreaterThanOrEqualTo(DateTimeOffset.UtcNow.ToString("yyyy-MM-dd")).Or()
                     .Field("CertificationEndDate eq null").AppendClosingBracket();
+
             }
             else
             {
@@ -87,12 +88,6 @@ namespace Dfc.CourseDirectory.Web.Helpers
             }
 
             var skip = currentPageNo == 1 ? 0 : itemsPerPage * (currentPageNo - 1);
-
-            //var criteria = new ZCodeSearchCriteria(
-            //    itemsPerPage,
-            //    skip,
-            //    new LarsSearchFilterBuilder(sb).Build(),
-            //    facets);
 
             var criteria = new ZCodeSearchCriteria(
                itemsPerPage,
