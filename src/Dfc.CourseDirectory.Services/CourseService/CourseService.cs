@@ -346,7 +346,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             }
         }
 
-        public IResult<IList<CourseValidationResult>> PendingCourseValidationMessages(IEnumerable<ICourse> courses)
+        public IResult<IList<CourseValidationResult>> CourseValidationMessages(IEnumerable<ICourse> courses, ValidationMode mode)
         {
             _logger.LogMethodEnter();
             Throw.IfNull(courses, nameof(courses));
@@ -357,11 +357,20 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 foreach (ICourse c in courses) {
                     CourseValidationResult cvr = new CourseValidationResult() {
                         Course = c,
-                        Issues = ValidateCourse(c),
                         RunValidationResults = new List<CourseRunValidationResult>()
                     };
+                    //Code to be refactored upon updated DQI stories
+                    
+                    if(mode != ValidationMode.DataQualityIndicator)
+                    {
+                        cvr.Issues = ValidateCourse(c);
+                    }
+                    else
+                    {
+                        cvr.Issues = new List<string>();
+                    }
                     foreach (ICourseRun r in c.CourseRuns)
-                        cvr.RunValidationResults.Add(new CourseRunValidationResult() { Run = r, Issues = ValidateCourseRun(r, ValidationMode.BulkUploadCourse) });
+                        cvr.RunValidationResults.Add(new CourseRunValidationResult() { Run = r, Issues = ValidateCourseRun(r, mode) });
                     results.Add(cvr);
                 }
                 return Result.Ok(results);
@@ -559,6 +568,16 @@ namespace Dfc.CourseDirectory.Services.CourseService
         public IList<string> ValidateCourseRun(ICourseRun courseRun, ValidationMode validationMode)
         {
             var validationMessages = new List<string>();
+
+            //Filtered down validation rules for DQI based on story
+            //To be made more generic when we bring additional rules in
+            if (validationMode == ValidationMode.DataQualityIndicator)
+            {
+                if (courseRun.StartDate < DateTime.Now)
+                    validationMessages.Add($"courses need their start date updating");
+                return validationMessages;
+            }
+
 
             // CourseName
             if (string.IsNullOrEmpty(courseRun.CourseName))

@@ -86,6 +86,8 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         BulkUploadCourse = 6,
         [Description("Migrate Course")]
         MigrateCourse = 7,
+        [Description("DQI")]
+        DataQualityIndicator = 8
     }
 
     public class CourseRun : ICourseRun 
