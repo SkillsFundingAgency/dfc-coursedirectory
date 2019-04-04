@@ -20,12 +20,6 @@
                                         <label class="govuk-label" for="level1">
                                             Level 1
                                         </label>
-                                        @*<select class="govuk-select" id="level1" name="level1">
-                                                <option value="published">Recently published</option>
-                                                <option value="updated" selected> Choose a sector area</option>
-                                                <option value="views">Most views</option>
-                                                <option value="comments">Most comments</option>
-                                            </select>*@
 
                                         <select asp-for="@Model.Level1Id" asp-items="@Model.Level1" class="govuk-select" id="LevelOneSelect" style="width: 400px"></select>
                                     </div>
@@ -35,56 +29,31 @@
                                         <label class="govuk-label" for="level2">
                                             Level 2
                                         </label>
-                                        @*<select class="govuk-select" id="level2" name="level2">
-                                                <option value="published">Recently published</option>
-                                                <option value="updated" selected>Choose a sector area</option>
-                                                <option value="views">Most views</option>
-                                                <option value="comments">Most comments</option>
-                                            </select>*@
 
-                                        @*<select class="govuk-select" id="LevelTwoSelect" name="LevelTwoSelect" disabled style="width:400px"></select>*@
                                         <select asp-for="@Model.Level2Id" asp-items="@Model.Level2" class="govuk-select" id="LevelTwoSelect" disabled style="width: 400px"></select>
 
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        <div class="cd-flex" id="message" style="display:none">
+                            <h1>No Records Found</h1>
+                        </div>
 
                         <div class="cd-flex" id="Filters" style="visibility: hidden">
                             <div class="cd-non-regulated-filters govuk-!-width-one-uarter">
                                 <div class="govuk-form-group">
-
-                                    @*<select class="govuk-select" id="category" name="category">
-                                            <option value="published">Recently published</option>
-                                            <option value="updated" selected>Select a category</option>
-                                            <option value="views">Most views</option>
-                                            <option value="comments">Most comments</option>
-                                        </select>
-
-                                        <select class="govuk-select" id="level" name="level">
-                                            <option value="published">Recently published</option>
-                                            <option value="updated" selected>Select a level</option>
-                                            <option value="views">Most views</option>
-                                            <option value="comments">Most comments</option>
-                                        </select>
-
-                                        <select class="govuk-select" id="hours" name="hours">
-                                            <option value="published">Recently published</option>
-                                            <option value="updated" selected>Select course hours</option>
-                                            <option value="views">Most views</option>
-                                            <option value="comments">Most comments</option>
-                                        </select>*@
 
                                     <select asp-for="@Model.LevelId" asp-items="@Model.Levels" class="govuk-select" id="LevelsSelect"></select>
 
                                     <select asp-for="@Model.CategoryId" asp-items="@Model.Categories" class="govuk-select" id="CategoriesSelect"></select>
                                 </div>
                             </div>
-                            <div class="cd-grid-coloumn-0 ">
-                                <div class="provision-container">
+                            <div class="cd-grid-coloumn-0 " id="results">
 
-                                    @await Component.InvokeAsync(nameof(ZCodeSearchResult))
-                                </div>
+
+                                @await Component.InvokeAsync(nameof(ZCodeSearchResult))
+
                             </div>
                         </div>
 
@@ -101,6 +70,8 @@
     (function ($) {
         $(function () {
 
+            var $x = $('.govuk-link');
+            var $y = $('.pagination__item');
             $('#LevelOneSelect').change(function () {
                 // alert($(this).val());
 
@@ -117,18 +88,6 @@
                         data: { Level1Id: $SelectedValue },
                         contentType: "application/json; charset=utf-8",
                         success: function (data) {
-                            //alert("Success");
-                            //$('#OnBoardingAjaxCallResult').html("<h1 class=\"govuk-heading-m\">" + data.resultText + "</h1>");
-                            //$('#OnBoardingAjaxCallResult').show();
-
-                            //if (data.success == true) {
-                            //    $('#RegisteredStatusText').html("<b>Onboarded</b>");
-                            //    $('#RegisteredStatusText').css('color', '#28a197');
-                            //    $('#OnBoardingAjaxCallResult').addClass("success-container");
-                            //}
-                            //else {
-                            //    $('#OnBoardingAjaxCallResult').addClass("failure-container");
-                            //}
 
                             var s = '';
                             for (var i = 0; i < data.length; i++) {
@@ -141,14 +100,9 @@
 
                         },
                         error: function (xhr, ajaxOptions, thrownError) {
-                            //$('#OnBoardingAjaxCallResult').html("<h1 class=\"govuk-heading-m\">" + xhr + ", " + ajaxOptions + ", " + thrownError + "</h1>");
-                            //$('#OnBoardingAjaxCallResult').addClass("failure-container");
-                            //$('#OnBoardingAjaxCallResult').show();
+
                         }
                     });
-
-
-
 
                 } else {
                     $('#Filters').css('visibility', 'hidden');
@@ -156,62 +110,107 @@
                 }
             });
 
-            $('#LevelTwoSelect').change(function () {
-                // alert($(this).val());
 
+            var replaceAll = function (search, find, replace) {
+                return search.split(find).join(replace);
+            };
+
+            var makeRequestWithPayload = function (payload, success) {
+                console.log(payload);
+                var qs = $.param(payload);
+                qs = replaceAll(qs, "%5B%5D", "");
+                $.get("/UnregulatedCourses/ZCodeNotKnown?" + qs, success);
+            };
+
+            var doSearch = function () {
+
+
+                makeRequestWithPayload({
+                    Level1Id: $('#LevelOneSelect').val(),
+                    Level2Id: $('#LevelTwoSelect').val(),
+                    LevelId: $('#LevelsSelect').val(),
+                    CategoryId: $('#CategoriesSelect').val(),
+
+                },
+                    onSucess);
+
+            };
+
+          
+
+            var onSucess = function (data) {
+
+                if (data.includes("No Records Found")) {
+                    $('#Filters').css('visibility', 'hidden');
+                    $('#message').css('display', 'flex');
+                    $('#LevelsSelect').find('option:eq(0)').attr('selected', true);
+                    $('#CategoriesSelect').find('option:eq(0)').attr('selected', true);
+                } else {
+                    $('#message').css('display', 'none');
+                    $('#results').html("");
+                    $('#results').html(data);
+
+                    $('#Filters').css('visibility', 'visible');
+                }
+
+            };
+
+            $(document).on('click', '.pagination__item', function (e) {
+                e.preventDefault()
+                var url = $(this).attr("href");
+                var params = url.substring(url.indexOf("?") + 1, url.length);
+                var paramsArrary = params.split("&");
+                var ssa1 = paramsArrary[0].split("=")[1];
+                var ssa2 = paramsArrary[1].split("=")[1];
+                var levelId = paramsArrary[2].split("=")[1];
+                var categoryId = paramsArrary[3].split("=")[1];
+                var pageNo = paramsArrary[4].split("=")[1];
+
+
+                makeRequestWithPayload({
+                    Level1Id: ssa1,
+                    Level2Id: ssa2,
+                    LevelId: levelId,
+                    CategoryId: categoryId,
+                    PageNo: pageNo
+
+                },
+                    onSucess);
+            });
+
+
+            $('#LevelTwoSelect').change(function () {
+
+
+                var $Level1Id = $('#LevelOneSelect').val();
                 var $SelectedValue = $(this).val();
                 if ($SelectedValue !== "") {
-                    $('#Filters').css('visibility', 'visible');
+
+                    doSearch();
 
                 } else {
                     $('#Filters').css('visibility', 'hidden');
                 }
             });
+
+            $('#LevelsSelect').change(function () {
+
+                doSearch();
+
+            });
+
+            $('#CategoriesSelect').change(function () {
+
+                doSearch();
+
+            });
+
+
+
         });
     })(jQuery);
 </script>
 
 
 
-@*<script type="text/javascript">
-
-
-        function OnBoardProvider() {
-
-
-
-            $.ajax({
-                url: '/ProviderSearch/OnBoardProvider',
-                type: "POST",
-                dataType: "json",
-                data: JSON.stringify({
-                    ProviderId: $('#ProviderId').val(),
-                    UKPRN: $('#SearchTerm').val()
-                }),
-                contentType: "application/json; charset=utf-8",
-                success: function (data) {
-                    $('#OnBoardingAjaxCallResult').html("<h1 class=\"govuk-heading-m\">" + data.resultText + "</h1>");
-                    $('#OnBoardingAjaxCallResult').show();
-
-                    if (data.success == true) {
-                        $('#RegisteredStatusText').html("<b>Onboarded</b>");
-                        $('#RegisteredStatusText').css('color', '#28a197');
-                        $('#OnBoardingAjaxCallResult').addClass("success-container");
-                    }
-                    else {
-                        $('#OnBoardingAjaxCallResult').addClass("failure-container");
-                    }
-                },
-                error: function (xhr, ajaxOptions, thrownError) {
-                    $('#OnBoardingAjaxCallResult').html("<h1 class=\"govuk-heading-m\">" + xhr + ", " + ajaxOptions + ", " + thrownError + "</h1>");
-                    $('#OnBoardingAjaxCallResult').addClass("failure-container");
-                    $('#OnBoardingAjaxCallResult').show();
-                }
-            });
-
-            $('#btnOnboardProvider').hide();
-
-            return false;
-        }
-    </script>*@
 

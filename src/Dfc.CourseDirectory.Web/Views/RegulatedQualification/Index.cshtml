@@ -15,7 +15,12 @@
                 </div>
                 <div class="govuk-radios__item">
                     @Html.RadioButtonFor(m => m.RegulatedType, RegulatedType.NonRegulated, new { @class = "govuk-radios__input", id = RegulatedType.NonRegulated })
-                    <label class="govuk-label govuk-radios__label" for="@RegulatedType.NonRegulated">@WebHelper.GetEnumDescription(RegulatedType.NonRegulated)</label>
+                    <label class="govuk-label govuk-radios__label" for="@RegulatedType.NonRegulated">@WebHelper.GetEnumDescription(RegulatedType.NonRegulated)
+                    <span class="govuk-hint">
+                        Not overseen by Ofqual or the QAA for Higher Education
+                    </span>
+                    </label>
+                    
                 </div>
             </div>
         </fieldset>

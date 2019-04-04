@@ -11,7 +11,7 @@ namespace Dfc.CourseDirectory.Services.UnregulatedProvision
             {
                 _levelsModel = new List<LevelsModel>
                     {
-                        new LevelsModel() {Id = "0", Level = "Entry level"},
+                        new LevelsModel() {Id = "E", Level = "Entry level"},
                         new LevelsModel() {Id = "1", Level = "Level 1"},
                         new LevelsModel() {Id = "2", Level = "Level 2"},
                         new LevelsModel() {Id = "3", Level = "Level 3"},
