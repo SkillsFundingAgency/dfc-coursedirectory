@@ -66,8 +66,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
             //                                     where ((int)c.CourseStatus & s) > 0
             //                                     select c;
 
-            IEnumerable<CourseValidationResult> results = service.PendingCourseValidationMessages(courses)
-                                                                 .Value;
+
+            IEnumerable<CourseValidationResult> results = service.CourseValidationMessages(validCourses, ValidationMode.DataQualityIndicator).Value;
+          
+
+            //IEnumerable<CourseValidationResult> results = service.CourseValidationMessages(courses, ValidationMode.BulkUploadCourse).Value;
             IEnumerable<string> courseMessages = results.SelectMany(c => c.Issues);
             IEnumerable<string> runMessages    = results.SelectMany(c => c.RunValidationResults)
                                                         .SelectMany(r => r.Issues);
