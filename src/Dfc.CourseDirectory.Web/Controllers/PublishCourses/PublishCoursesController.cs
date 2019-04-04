@@ -79,6 +79,22 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                     vm.AreAllReadyToBePublished = CheckAreAllReadyToBePublished(bulkUploadedCourses, PublishMode.BulkUpload);
 
                     break;
+                case PublishMode.DataQualityIndicator:
+                    {
+                        
+
+                        vm.PublishMode = PublishMode.DataQualityIndicator;
+                        var validCourses = Courses.Where(x => x.IsValid == true).ToList();
+                        IEnumerable<CourseValidationResult> results = _courseService.CourseValidationMessages(validCourses, ValidationMode.DataQualityIndicator).Value;
+                        var updateCourses = results.Select(c => c.RunValidationResults);
+
+
+                            
+
+                        vm.NumberOfCoursesInFiles = updateCourses.Count();
+                        //vm.Courses =;
+                        break;
+                    }
             }
 
             vm.NotificationTitle = notificationTitle;
