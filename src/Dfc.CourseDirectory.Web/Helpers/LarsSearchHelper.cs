@@ -89,18 +89,18 @@ namespace Dfc.CourseDirectory.Web.Helpers
             //    larsSearchFacets.SectorSubjectAreaTier2,
             //    larsSearchRequestModel.SectorSubjectAreaTier2Filter);
 
-            var awardOrgAimRefFilter = GetLarsSearchFilterModel(
-                "Category",
-                "AwardOrgAimRefFilter",
-                (value) => value,
-                larsSearchFacets.AwardOrgAimRef,
-                larsSearchRequestModel.AwardOrgAimRefFilter);
+            //var awardOrgAimRefFilter = GetLarsSearchFilterModel(
+            //    "Category",
+            //    "AwardOrgAimRefFilter",
+            //    (value) => value,
+            //    larsSearchFacets.AwardOrgAimRef,
+            //    larsSearchRequestModel.AwardOrgAimRefFilter);
 
             filters.Add(notionalNVQLevelv2Filter);
             filters.Add(awardOrgCodeFilter);
             //filters.Add(sectorSubjectAreaTier1Filter);
             //filters.Add(sectorSubjectAreaTier2Filter);
-            filters.Add(awardOrgAimRefFilter);
+            //filters.Add(awardOrgAimRefFilter);
             return filters;
         }
 
