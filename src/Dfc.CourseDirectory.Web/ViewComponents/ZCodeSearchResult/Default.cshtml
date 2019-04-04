@@ -13,6 +13,17 @@
 
 @if (Model.Items != null && Model.Items.Count() > 0)
 {
+
+    @await Component.InvokeAsync(nameof(Pagination),
+                    new
+                    {
+                        url = Model.Url,
+                        pageParamName = Model.PageParamName,
+                        totalNoOfItems = Model.TotalCount,
+                        itemsPerPage = Model.ItemsPerPage,
+                        noOfPagesToDisplay = 10,
+                        isSliding = true
+                    })
     @foreach (var item in Model.Items)
     {
         <div class="provision-container">
@@ -39,6 +50,16 @@
         </div>
         <br />
     }
+    @await Component.InvokeAsync(nameof(Pagination),
+                    new
+                    {
+                        url = Model.Url,
+                        pageParamName = Model.PageParamName,
+                        totalNoOfItems = Model.TotalCount,
+                        itemsPerPage = Model.ItemsPerPage,
+                        noOfPagesToDisplay = 10,
+                        isSliding = true
+                    })
 }
 else
 {

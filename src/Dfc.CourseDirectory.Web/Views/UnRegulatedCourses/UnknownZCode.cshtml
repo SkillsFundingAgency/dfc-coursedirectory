@@ -70,6 +70,8 @@
     (function ($) {
         $(function () {
 
+            var $x = $('.govuk-link');
+            var $y = $('.pagination__item');
             $('#LevelOneSelect').change(function () {
                 // alert($(this).val());
 
@@ -134,12 +136,15 @@
 
             };
 
+          
 
             var onSucess = function (data) {
 
                 if (data.includes("No Records Found")) {
                     $('#Filters').css('visibility', 'hidden');
                     $('#message').css('display', 'flex');
+                    $('#LevelsSelect').find('option:eq(0)').attr('selected', true);
+                    $('#CategoriesSelect').find('option:eq(0)').attr('selected', true);
                 } else {
                     $('#message').css('display', 'none');
                     $('#results').html("");
@@ -150,6 +155,28 @@
 
             };
 
+            $(document).on('click', '.pagination__item', function (e) {
+                e.preventDefault()
+                var url = $(this).attr("href");
+                var params = url.substring(url.indexOf("?") + 1, url.length);
+                var paramsArrary = params.split("&");
+                var ssa1 = paramsArrary[0].split("=")[1];
+                var ssa2 = paramsArrary[1].split("=")[1];
+                var levelId = paramsArrary[2].split("=")[1];
+                var categoryId = paramsArrary[3].split("=")[1];
+                var pageNo = paramsArrary[4].split("=")[1];
+
+
+                makeRequestWithPayload({
+                    Level1Id: ssa1,
+                    Level2Id: ssa2,
+                    LevelId: levelId,
+                    CategoryId: categoryId,
+                    PageNo: pageNo
+
+                },
+                    onSucess);
+            });
 
 
             $('#LevelTwoSelect').change(function () {

@@ -298,8 +298,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 var criteria = _larsSearchHelper.GetZCodeSearchCriteria(
                     requestModel,
                     _paginationHelper.GetCurrentPageNo(Request.GetDisplayUrl(), _larsSearchSettings.PageParamName),
-                    1000,
-                   // _larsSearchSettings.ItemsPerPage,
+                    _larsSearchSettings.ItemsPerPage,
                     (LarsSearchFacet[])Enum.GetValues(typeof(LarsSearchFacet)));
 
 
@@ -311,6 +310,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                     if (result.Value.Value.Count() > 0)
                     {
+                       
 
                         var zCodeResults = new List<ZCodeSearchResultItemModel>();
 
@@ -332,6 +332,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         }
 
                         model.Items = zCodeResults;
+                        model.Url = Request.GetDisplayUrl();
+                        model.PageParamName = _larsSearchSettings.PageParamName;
+                        model.ItemsPerPage = _larsSearchSettings.ItemsPerPage;
+                        model.TotalCount = result.Value.ODataCount ?? 0;
                     }
 
                 }
