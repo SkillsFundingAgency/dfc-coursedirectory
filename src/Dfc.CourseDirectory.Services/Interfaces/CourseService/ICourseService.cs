@@ -32,7 +32,7 @@ namespace Dfc.CourseDirectory.Services.Interfaces.CourseService
         IList<string> ValidateCourseRun(ICourseRun courseRun, ValidationMode validationMode);
 
         Task<IResult> UpdateStatus(Guid courseId, Guid courseRunId, int statusToChangeTo);
-        IResult<IList<CourseValidationResult>> PendingCourseValidationMessages(IEnumerable<ICourse> courses);
+        IResult<IList<CourseValidationResult>> CourseValidationMessages(IEnumerable<ICourse> courses, ValidationMode mode);
         Task<IResult<IEnumerable<ICourseStatusCountResult>>> GetCourseCountsByStatusForUKPRN(ICourseSearchCriteria criteria);
         Task<IResult<IEnumerable<ICourse>>> GetRecentCourseChangesByUKPRN(ICourseSearchCriteria criteria);
     }
