@@ -98,6 +98,12 @@
             color: #006435;
             border: solid 3px #006435;
         }
+
+        &.start-date-error {
+            color: #ff6a00;
+            border: solid 3px #ff6a00;
+            width: 150%;
+        }
     }
 
     .error-link {

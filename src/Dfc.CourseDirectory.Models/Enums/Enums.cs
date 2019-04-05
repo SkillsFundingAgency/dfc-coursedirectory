@@ -11,6 +11,8 @@ namespace Dfc.CourseDirectory.Models.Enums
         BulkUpload = 1,
         [Description("Migration")]
         Migration = 2,
+        [Description("DataQualityIndicator")]
+        DataQualityIndicator = 3
       
     }
     public enum FundingOptions
