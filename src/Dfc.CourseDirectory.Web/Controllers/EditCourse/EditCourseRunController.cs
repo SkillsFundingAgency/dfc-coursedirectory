@@ -155,6 +155,10 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                     if (vm.SelectRegion.RegionItems != null && vm.SelectRegion.RegionItems.Any())
                     {
                         vm.SelectRegion.RegionItems = vm.SelectRegion.RegionItems.OrderBy(x => x.RegionName);
+                        foreach (var selectRegionRegionItem in vm.SelectRegion.RegionItems)
+                        {
+                            selectRegionRegionItem.SubRegion = selectRegionRegionItem.SubRegion.OrderBy(x => x.SubRegionName).ToList();
+                        }
                     }
 
                     return View("EditCourseRun", vm);
