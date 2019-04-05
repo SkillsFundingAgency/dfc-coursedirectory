@@ -256,8 +256,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             else
             {
                 viewModel.DurationUnit = DurationUnit.Months;
-                viewModel.StudyMode = StudyMode.FullTime;
-                viewModel.AttendanceMode = AttendancePattern.Daytime;
                 viewModel.DeliveryMode = DeliveryMode.ClassroomBased;
                 viewModel.StartDateType = StartDateType.SpecifiedStartDate;
             }
