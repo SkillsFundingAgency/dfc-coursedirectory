@@ -1,5 +1,4 @@
-﻿@using System.Text.RegularExpressions
-@using Dfc.CourseDirectory.Web.ViewComponents.PublishCourses.PublishCourse
+﻿@using Dfc.CourseDirectory.Web.ViewComponents.PublishCourses.PublishCourse
 @using Dfc.CourseDirectory.Models.Enums
 @model Dfc.CourseDirectory.Web.ViewModels.PublishCourses.PublishViewModel
 
@@ -12,14 +11,21 @@
         {
             <h1 class="govuk-govuk-grid-column-one-half-l">Publish Your Courses</h1>
             <p>
-                Your file of @Model.NumberOfCoursesInFiles courses has no errors. Publish them to replace your current courses on the course directory.
+                Your file of @Model.NumberOfCoursesInFiles @(Model.NumberOfCoursesInFiles.Equals(1) ? "course" : "courses") has no errors. Publish @(Model.NumberOfCoursesInFiles.Equals(1) ? "it" : "them") to replace your current courses on the course directory.
             </p>
         }
         else
         {
             <h1 class="govuk-govuk-grid-column-one-half-l">Fix errors and publish</h1>
             <p>
-                Your file of @Model.NumberOfCoursesInFiles courses has been uploaded. They will not be listed on the course directory until you publish them. You must fix any errors first.
+                @if (Model.NumberOfCoursesInFiles.Equals(1))
+                {
+                    <text>Your file if @Model.NumberOfCoursesInFiles course has been uploaded. It will not be listed on the course directory until you publish it.You must fix any errors first.</text>
+                }
+                else
+                {
+                    <text>Your file if @Model.NumberOfCoursesInFiles courses has been uploaded. They will not be listed on the course directory until you publish them.You must fix any errors first.</text>
+                }
             </p>
         }
     }
@@ -30,14 +36,14 @@
         {
             <h1 class="govuk-govuk-grid-column-one-half-l">Publish your courses</h1>
             <p>
-                These courses have no errors but will not be listed on the course directory until you publish them.
+                @(Model.NumberOfCoursesInFiles.Equals(1) ? "This course has" : "These courses have") no errors but will not be listed on the course directory until you publish @(Model.NumberOfCoursesInFiles.Equals(1) ? "it" : "them").
             </p>
         }
         else
         {
             <h1 class="govuk-govuk-grid-column-one-half-l">Fix errors and publish</h1>
             <p>
-                It has not been possible to migrate @Model.NumberOfCoursesInFiles of your courses from the old Course Directory to new Course Directory. These courses cannot be listed on the new Course Directory until you fix the errors.
+                It has not been possible to migrate @Model.NumberOfCoursesInFiles of your courses from the old Course Directory to new Course Directory. @(Model.NumberOfCoursesInFiles.Equals(1) ? "This course" : "These courses") cannot be listed on the new Course Directory until you fix the errors.
             </p>
         }
     }
@@ -59,16 +65,5 @@
         }
     }
     <div class="err-top-line"></div>
-
     @await Component.InvokeAsync(nameof(PublishCourse), new { model = Model })
-
-
 </div>
-
-<script>
-    (function ($) {
-        $(function () {
-
-        });
-    })(jQuery);
-</script>
