@@ -20,11 +20,11 @@
             <p>
                 @if (Model.NumberOfCoursesInFiles.Equals(1))
                 {
-                    <text>Your file if @Model.NumberOfCoursesInFiles course has been uploaded. It will not be listed on the course directory until you publish it.You must fix any errors first.</text>
+                    <text>Your file @Model.NumberOfCoursesInFiles course has been uploaded. It will not be listed on the course directory until you publish it.You must fix any errors first.</text>
                 }
                 else
                 {
-                    <text>Your file if @Model.NumberOfCoursesInFiles courses has been uploaded. They will not be listed on the course directory until you publish them.You must fix any errors first.</text>
+                    <text>Your file @Model.NumberOfCoursesInFiles courses has been uploaded. They will not be listed on the course directory until you publish them.You must fix any errors first.</text>
                 }
             </p>
         }
