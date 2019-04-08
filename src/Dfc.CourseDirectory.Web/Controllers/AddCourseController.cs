@@ -256,8 +256,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             else
             {
                 viewModel.DurationUnit = DurationUnit.Months;
-                viewModel.StudyMode = StudyMode.FullTime;
-                viewModel.AttendanceMode = AttendancePattern.Daytime;
                 viewModel.DeliveryMode = DeliveryMode.ClassroomBased;
                 viewModel.StartDateType = StartDateType.SpecifiedStartDate;
             }
@@ -773,6 +771,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
             if (selectRegion.RegionItems != null && selectRegion.RegionItems.Any())
             {
                 selectRegion.RegionItems = selectRegion.RegionItems.OrderBy(x => x.RegionName);
+                foreach (var selectRegionRegionItem in selectRegion.RegionItems)
+                {
+                    selectRegionRegionItem.SubRegion = selectRegionRegionItem.SubRegion.OrderBy(x => x.SubRegionName).ToList();
+                }
             }
 
             return selectRegion;

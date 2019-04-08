@@ -23,16 +23,6 @@
             Upload a file
         </h1>
 
-        @*@if (!string.IsNullOrWhiteSpace(Model.NotificationTitle))
-        {
-            @await Component.InvokeAsync(nameof(Notification), new NotificationModel
-            {
-                NotificationTitle = Model.NotificationTitle,
-                NotificationMessage = Model.NotificationMessage,
-                ClassType = "info-summary"
-            })
-        }*@
-
         @{
             var styleAttribute = (string.IsNullOrEmpty(Model.NotificationTitle) && Model.errors == null)
                 ? "style=\"display: none;\""
@@ -85,10 +75,11 @@
             <p class="govuk-body govuk-!-padding-bottom-4">
                 Create a file with the courses you want to publish. You can either use a blank template or download a file of the courses that are published now and amend it. When you upload it you will be able to fix any errors before publishing and replace the courses you currently have listed in the course directory.
             </p>
-            <div class="govuk-form-group">
+            <div id="groupServerSideError" class="govuk-form-group">
                 <label class="govuk-label" for="bulkUploadFile">
                     Upload a file
                 </label>
+                <span id="serverSideError" class="govuk-error-message" style="display: none">Upload a valid CSV file for BulkUpload</span>
                 <input class="govuk-file-upload" id="bulkUploadFile" name="bulkUploadFile" type="file"
                        val-required-message="Select a file to upload"
                        val-file-extensions="csv"
@@ -122,87 +113,22 @@
     </div>
 </div>
 
-    @*<div class="govuk-width-container">
-        <main class="govuk-main-wrapper">
-            <div class="govuk-grid-row">
-                <div class="govuk-grid-column-one-half">
-                    <h1 class="govuk-heading-xl">Upload a file</h1>
-
-
-                    <form method="post" id="bulkUploadForm" enctype="multipart/form-data" asp-controller="BulkUpload" asp-action="Index">
-                        <div class="govuk-form-group">
-
-                            @if (Model.errors == null || !Model.errors.Any())
-                                {
-                                    <label class="govuk-label">
-                                        Create a file with the courses you want to publish. You can either use a blank template or download a file of the courses that are published now and amend it. When you upload it you will be able to fix any errors before publishing and replace the courses you currently have listed in the course directory
-                                    </label>
-                                    <br />
-                                    <br />
-                                }
-                                else
-                                {
-                                    var errorMessage = "<ul style='list-style: none'>";
-
-
-                                    foreach (var error in Model.errors)
-                                    {
-                                        errorMessage= String.Concat(errorMessage,"<li>",error,"</li>");
-                                    }
-
-                                    errorMessage = String.Concat(errorMessage,"</ul>");
-
-                                    @await Component.InvokeAsync(nameof(Notification), new NotificationModel
-                                    {
-
-                                        NotificationTitle = "There are issues with this upload",
-                                        NotificationMessage = errorMessage,
-                                        ClassType = "error-summary"
-                                    });
-                                }
-                            <label class="govuk-label" for="bulkUploadFile">
-                                Upload a file
-                            </label>
-                            <input class="govuk-file-upload" id="bulkUploadFile" name="bulkUploadFile" type="file"
-                                   val-required-message="Select a file to upload"
-                                   val-file-extensions="csv"
-                                   val-file-extensions-message="The selected file must be a CSV"
-                                   val-file-size-max="2097152"
-                                   val-file-size-max-message="The selected file must be smaller than 2MB" />
-                        </div>
-                        <button type="submit" id="uploadButton" class="govuk-button">
-                            Upload
-                        </button>
-                    </form>
-
-                </div>
-                <div class="govuk-grid-column-one-half">
-                    <h3 class="govuk-heading-m">Template</h3>
-                    <ul style="list-style: none">
-                        <li>
-                            <a href="#" class="govuk-link">Download current courses in Excel template</a>
-                        </li>
-                        <li>
-                            <a href="#" class="govuk-link">Download current courses as csv template</a>
-                        </li>
-                        <li>
-                            <a href="#" class="govuk-link">Download blank template (Excel format)</a>
-                        </li>
-                        <li>
-                            <a href="#" class="govuk-link">Download blank template (csv format)</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </main>
-    </div>*@
-
-    <script>
+<script>
         (function ($) {
             $(function () {
                 var $errorSummary = $("#errorSummary").govUkErrorSummary();
                 var $bulkUploadFile = $("#bulkUploadFile").govUkFileUpload();
                 var $button = $("#uploadButton");
+
+                var hasServerSideError = '@(Model.errors != null && Model.errors.Any() ? true : false)'
+                if (hasServerSideError === 'True') {
+                    $("#serverSideError").show();
+                    $("#groupServerSideError").addClass("govuk-form-group--error");
+                }
+                else {
+                    $("#serverSideError").hide();
+                    $("#groupServerSideError").removeClass("govuk-form-group--error");
+                }
 
                 $bulkUploadFile.on("change", function () {
                     $bulkUploadFile.govUkFileUpload("validState");
@@ -243,6 +169,6 @@
                 });
             });
         })(jQuery);
-    </script>
+</script>
 
 
