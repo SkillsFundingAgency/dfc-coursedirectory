@@ -310,14 +310,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                     if (result.Value.Value.Count() > 0)
                     {
-                       
+                        //var results = result.Value.Value.Where(x => x.LearnAimRef.ToUpper().StartsWith("Z"));
 
-                        var zCodeResults = new List<ZCodeSearchResultItemModel>();
+                         var zCodeResults = new List<ZCodeSearchResultItemModel>();
 
                         foreach (var item in result.Value.Value)
                         {
-                            if (item.LearnAimRef.StartsWith("Z") || item.LearnAimRef.StartsWith("z"))
-                            {
+                            //if (item.LearnAimRef.StartsWith("Z") || item.LearnAimRef.StartsWith("z"))
+                            //{
                                 zCodeResults.Add(new ZCodeSearchResultItemModel()
                                 {
                                     AwardOrgCode = item.AwardOrgCode,
@@ -328,14 +328,16 @@ namespace Dfc.CourseDirectory.Web.Controllers
                                     NotionalNVQLevelv2 = item.NotionalNVQLevelv2
 
                                 });
-                            }
+                            //}
                         }
 
                         model.Items = zCodeResults;
                         model.Url = Request.GetDisplayUrl();
                         model.PageParamName = _larsSearchSettings.PageParamName;
                         model.ItemsPerPage = _larsSearchSettings.ItemsPerPage;
-                        model.TotalCount = result.Value.ODataCount ?? 0;
+                       model.TotalCount = result.Value.ODataCount ?? 0;
+                       // model.TotalCount = results.Count();
+                            
                     }
 
                 }
