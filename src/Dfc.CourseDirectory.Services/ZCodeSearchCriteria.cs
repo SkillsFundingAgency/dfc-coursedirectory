@@ -7,7 +7,10 @@ namespace Dfc.CourseDirectory.Services
 {
     public class ZCodeSearchCriteria : ValueObject<ZCodeSearchCriteria>, IZCodeSearchCriteria
     {
-       // public string Search { get; }
+        public string search { get; }
+
+        public string searchfields { get; }
+
         public int Top { get; }
         public int Skip { get; }
         public bool Count => true;
@@ -15,17 +18,20 @@ namespace Dfc.CourseDirectory.Services
         public IEnumerable<LarsSearchFacet> Facets { get; }
 
         public ZCodeSearchCriteria(
-            //string search,
+            string Search,
+             string SearchFields,
             int top,
             int skip,
             string filter = null,
             IEnumerable<LarsSearchFacet> facets = null)
         {
-            //Throw.IfNullOrWhiteSpace(search, nameof(search));
+            Throw.IfNullOrWhiteSpace(Search, nameof(Search));
+            Throw.IfNullOrWhiteSpace(SearchFields, nameof(SearchFields));
             Throw.IfLessThan(1, top, nameof(top));
             Throw.IfLessThan(0, skip, nameof(skip));
 
-            //Search = search;
+            search = Search;
+            searchfields = SearchFields;
             Top = top;
             Skip = skip;
             Filter = filter;
@@ -34,7 +40,8 @@ namespace Dfc.CourseDirectory.Services
 
         protected override IEnumerable<object> GetEqualityComponents()
         {
-            //yield return Search;
+            yield return search;
+            yield return searchfields;
             yield return Top;
             yield return Skip;
             yield return Count;

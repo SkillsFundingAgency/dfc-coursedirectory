@@ -143,8 +143,10 @@
                 if (data.includes("No Records Found")) {
                     $('#Filters').css('visibility', 'hidden');
                     $('#message').css('display', 'flex');
-                    $('#LevelsSelect').find('option:eq(0)').attr('selected', true);
-                    $('#CategoriesSelect').find('option:eq(0)').attr('selected', true);
+                    $('#LevelsSelect').val(""),
+                        $('#CategoriesSelect').val("");
+                    //$('#LevelsSelect').find('option:eq(0)').attr('selected', true);
+                    //$('#CategoriesSelect').find('option:eq(0)').attr('selected', true);
                 } else {
                     $('#message').css('display', 'none');
                     $('#results').html("");
