@@ -90,6 +90,8 @@ namespace Dfc.CourseDirectory.Web.Helpers
             var skip = currentPageNo == 1 ? 0 : itemsPerPage * (currentPageNo - 1);
 
             var criteria = new ZCodeSearchCriteria(
+                "Z*",
+                "LearnAimRef",
                itemsPerPage,
                skip,
                new LarsSearchFilterBuilder(sb).Build(),

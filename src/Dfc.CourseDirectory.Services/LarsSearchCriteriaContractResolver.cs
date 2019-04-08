@@ -6,6 +6,10 @@ namespace Dfc.CourseDirectory.Services
     {
         protected override string ResolvePropertyName(string propertyName)
         {
+            if (propertyName.ToLower()=="searchfields")
+            {
+                return "searchFields";
+            }
             return propertyName.ToLower();
         }
     }

@@ -5,7 +5,9 @@ namespace Dfc.CourseDirectory.Services.Interfaces
 {
     public interface IZCodeSearchCriteria
     {
-        //string Search { get; }
+        string search { get; }
+
+        string searchfields { get; }
         string Filter { get; }
         IEnumerable<LarsSearchFacet> Facets { get; }
         bool Count { get; }
