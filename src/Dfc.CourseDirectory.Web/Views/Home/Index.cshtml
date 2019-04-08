@@ -51,19 +51,28 @@
                         <hr />
                         <br />
 
-                        <div class="cd-info-summary" aria-labelledby="info-summary-title" role="alert" tabindex="-1" data-module="info-summary">
-                        @*<h2 class="cd-info-summary__title" id="info-summary-title">
-                            @Model.ValidationHeader
-                        </h2>*@
-                        <div class="cd-info-summary__body">
-                            <div class="cd-info-summary__list">
-                                @foreach (string msg in Model?.ValidationMessages)
+                        
+                            @*<h2 class="cd-info-summary__title" id="info-summary-title">
+            @Model.ValidationHeader
+        </h2>*@
+                            
+                                if (Model.ValidationMessages.Count() > 0)
                                 {
-                                   <a href="/DQI">@msg</a>
+                                    <div class="cd-info-summary" aria-labelledby="info-summary-title" role="alert" tabindex="-1" data-module="info-summary">
+                                        <div class="cd-info-summary__body">
+                                            <div class="cd-info-summary__list">
+                                                @foreach (string msg in Model?.ValidationMessages)
+                                                {
+                                                    <a href="/DQI">@msg</a>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
                                 }
-                            </div>
-</div>
-                    </div>
+                            
+
+
+                        
                         <div class="govuk-grid-row">
                             <div class="govuk-grid-column-one-quarter">
                                 <div class="cd-status-panel">
