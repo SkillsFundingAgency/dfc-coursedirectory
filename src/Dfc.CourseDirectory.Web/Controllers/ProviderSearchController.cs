@@ -13,6 +13,10 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
+using Dfc.CourseDirectory.Services.Interfaces.CourseService;
+using Dfc.CourseDirectory.Services.CourseService;
+using System.Collections.Generic;
+using Dfc.CourseDirectory.Models.Enums;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -25,6 +29,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IUserHelper _userHelper;
         private ISession _session => _contextAccessor.HttpContext.Session;
+        private readonly ICourseService _courseService;
 
         public ProviderSearchController(
             ILogger<ProviderSearchController> logger,
@@ -32,7 +37,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
             IProviderService providerService,
             IProviderSearchHelper providerSearchHelper,
             IHttpContextAccessor contextAccessor,
-            IUserHelper userHelper
+            IUserHelper userHelper,
+            IOptions<CourseServiceSettings> courseSearchSettings,
+            ICourseService courseService
+
             )
         {
             Throw.IfNull(logger, nameof(logger));
@@ -40,6 +48,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
             Throw.IfNull(providerService, nameof(providerService));
             Throw.IfNull(providerSearchHelper, nameof(providerSearchHelper));
             Throw.IfNull(userHelper, nameof(userHelper));
+            Throw.IfNull(courseSearchSettings, nameof(courseSearchSettings));
+            Throw.IfNull(courseService, nameof(courseService));
 
             _logger = logger;
             _providerServiceSettings = providerServiceSettings.Value;
@@ -47,6 +57,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _providerSearchHelper = providerSearchHelper;
             _contextAccessor = contextAccessor;
             _userHelper = userHelper;
+            _courseService = courseService;
         }
 
         //[Authorize(Policy = "ElevatedUserRole")]
@@ -128,7 +139,29 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                        if(provider.Status == Status.Onboarded)
                         {
+                            var UKPRN = Convert.ToInt32(requestModel.SearchTerm);
                             _session.SetInt32("UKPRN", Convert.ToInt32(requestModel.SearchTerm));
+                            _session.SetString("PendingCourses", "true");
+
+                            IEnumerable<ICourseStatusCountResult> counts = _courseService.GetCourseCountsByStatusForUKPRN(new CourseSearchCriteria(UKPRN))
+                                                              .Result
+                                                              .Value;
+                            int[] pendingStatuses = new int[] { (int)RecordStatus.Pending, (int)RecordStatus.BulkUloadPending, (int)RecordStatus.APIPending, (int)RecordStatus.MigrationPending };
+
+                            var pendingCourseCount = (from ICourseStatusCountResult c in counts
+                                                      join int p in pendingStatuses
+                                                      on c.Status equals p
+                                                      select c.Count).Sum();
+
+                            if (pendingCourseCount > 0)
+                            {
+                                _session.SetString("PendingCourses", "true");
+                            }
+                            else
+                            {
+                                _session.SetString("PendingCourses", "false");
+                            }
+
                         }
                     }
                 }
