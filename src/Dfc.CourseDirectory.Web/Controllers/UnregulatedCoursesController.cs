@@ -291,7 +291,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             if (requestModel == null)
             {
-      
+
             }
             else
             {
@@ -307,36 +307,35 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 if (result.IsSuccess && result.HasValue)
                 {
 
+                    var filters = _larsSearchHelper.GetUnRegulatedSearchFilterModels(result.Value.SearchFacets, requestModel);
 
-                    if (result.Value.Value.Count() > 0)
+
+
+                    var zCodeResults = new List<ZCodeSearchResultItemModel>();
+
+                    foreach (var item in result.Value.Value)
                     {
-                       
-
-                        var zCodeResults = new List<ZCodeSearchResultItemModel>();
-
-                        foreach (var item in result.Value.Value)
+                        if (item.LearnAimRef.StartsWith("Z") || item.LearnAimRef.StartsWith("z"))
                         {
-                            if (item.LearnAimRef.StartsWith("Z") || item.LearnAimRef.StartsWith("z"))
+                            zCodeResults.Add(new ZCodeSearchResultItemModel()
                             {
-                                zCodeResults.Add(new ZCodeSearchResultItemModel()
-                                {
-                                    AwardOrgCode = item.AwardOrgCode,
-                                    AwardOrgName = item.AwardOrgName,
-                                    LearnAimRef = item.LearnAimRef,
-                                    LearnAimRefTitle = item.LearnAimRefTitle,
-                                    LearnAimRefTypeDesc = item.LearnAimRefTypeDesc,
-                                    NotionalNVQLevelv2 = item.NotionalNVQLevelv2
+                                AwardOrgCode = item.AwardOrgCode,
+                                AwardOrgName = item.AwardOrgName,
+                                LearnAimRef = item.LearnAimRef,
+                                LearnAimRefTitle = item.LearnAimRefTitle,
+                                LearnAimRefTypeDesc = item.LearnAimRefTypeDesc,
+                                NotionalNVQLevelv2 = item.NotionalNVQLevelv2
 
-                                });
-                            }
+                            });
                         }
-
-                        model.Items = zCodeResults;
-                        model.Url = Request.GetDisplayUrl();
-                        model.PageParamName = _larsSearchSettings.PageParamName;
-                        model.ItemsPerPage = _larsSearchSettings.ItemsPerPage;
-                        model.TotalCount = result.Value.ODataCount ?? 0;
                     }
+
+                    model.Items = zCodeResults;
+                    model.Url = Request.GetDisplayUrl();
+                    model.PageParamName = _larsSearchSettings.PageParamName;
+                    model.ItemsPerPage = _larsSearchSettings.ItemsPerPage;
+                    model.TotalCount = result.Value.ODataCount ?? 0;
+                    model.Filters = filters;
 
                 }
             }
