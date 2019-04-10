@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using Dfc.CourseDirectory.Services.UnregulatedProvision;
 namespace Dfc.CourseDirectory.Web.Helpers
 {
     public class LarsSearchHelper : ILarsSearchHelper
@@ -128,6 +128,11 @@ namespace Dfc.CourseDirectory.Web.Helpers
                 larsSearchRequestModel.AwardOrgAimRefFilter);
 
             filters.Add(notionalNVQLevelv2Filter);
+
+           foreach(var award in awardOrgAimRefFilter.Items)
+            {
+                award.Text = Categories.AllCategories.Where(x => x.Id == award.Text).Select(x => x.Category).SingleOrDefault();
+            }
             filters.Add(awardOrgAimRefFilter);
             return filters;
         }

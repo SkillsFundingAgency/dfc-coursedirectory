@@ -15,6 +15,16 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.ZCodeSearchResult
 
         public int TotalCount { get; set; }
 
-        public IEnumerable<LarsSearchFilterModel> Filters { get; set; }
+        public List<LarsSearchFilterModel> Filters { get; set; }
+
+        public string Level1Id { get; set; }
+
+        public string Level2Id { get; set; }
+
+        public string filter0Id { get; set; }
+
+        public string filter1Id { get; set; }
+
+        public bool HasSelectedFilters => Filters.SelectMany(x => x.Items).Any(x => x.IsSelected);
     }
 }
