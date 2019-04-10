@@ -2,14 +2,15 @@
 
 namespace Dfc.CourseDirectory.Services.UnregulatedProvision
 {
-    public class Categories
+    public static class Categories
     {
 
-        private List<CategoryModel> _categoriesModel = new List<CategoryModel>();
-        public List<CategoryModel> AllCategogies
+        
+        public static List<CategoryModel> AllCategories
         {
             get
             {
+                List<CategoryModel> _categoriesModel = new List<CategoryModel>();
                 _categoriesModel = new List<CategoryModel>();
                 _categoriesModel.Add(new CategoryModel() { Id = "APP H CAT A", Category = "A: SFA funded NR provision" });
                 _categoriesModel.Add(new CategoryModel() { Id = "APP H CAT B", Category = "B: SFA funded English, maths, ESOL" });
