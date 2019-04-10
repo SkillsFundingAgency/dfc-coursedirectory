@@ -309,26 +309,28 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                     var filters = _larsSearchHelper.GetUnRegulatedSearchFilterModels(result.Value.SearchFacets, requestModel);
 
-
-
-                    var zCodeResults = new List<ZCodeSearchResultItemModel>();
-
-                    foreach (var item in result.Value.Value)
+                    if (result.Value.Value.Count() > 0)
                     {
-                        if (item.LearnAimRef.StartsWith("Z") || item.LearnAimRef.StartsWith("z"))
-                        {
-                            zCodeResults.Add(new ZCodeSearchResultItemModel()
-                            {
-                                AwardOrgCode = item.AwardOrgCode,
-                                AwardOrgName = item.AwardOrgName,
-                                LearnAimRef = item.LearnAimRef,
-                                LearnAimRefTitle = item.LearnAimRefTitle,
-                                LearnAimRefTypeDesc = item.LearnAimRefTypeDesc,
-                                NotionalNVQLevelv2 = item.NotionalNVQLevelv2
+                        //var results = result.Value.Value.Where(x => x.LearnAimRef.ToUpper().StartsWith("Z"));
 
-                            });
+                         var zCodeResults = new List<ZCodeSearchResultItemModel>();
+
+                        foreach (var item in result.Value.Value)
+                        {
+                            //if (item.LearnAimRef.StartsWith("Z") || item.LearnAimRef.StartsWith("z"))
+                            //{
+                                zCodeResults.Add(new ZCodeSearchResultItemModel()
+                                {
+                                    AwardOrgCode = item.AwardOrgCode,
+                                    AwardOrgName = item.AwardOrgName,
+                                    LearnAimRef = item.LearnAimRef,
+                                    LearnAimRefTitle = item.LearnAimRefTitle,
+                                    LearnAimRefTypeDesc = item.LearnAimRefTypeDesc,
+                                    NotionalNVQLevelv2 = item.NotionalNVQLevelv2
+
+                                });
+                            //}
                         }
-                    }
 
                     model.Items = zCodeResults;
                     model.Url = Request.GetDisplayUrl();

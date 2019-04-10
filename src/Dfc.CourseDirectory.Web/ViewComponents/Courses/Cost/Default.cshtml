@@ -85,28 +85,28 @@
             $elementCost.on("blur", function () {
 
 
-                var trimmed = $elementCost.val().trim().replace(",", "");
-                
+                var trimmed = $elementCost.val().trim();//.replace(",", "");
+
                 if (trimmed !== "") {
 
                     if ($.isNumeric(trimmed))
                     {
-                        if (!trimmed.includes(".")) {
-                            if (trimmed.length >= 7) {
+                        //if (trimmed.includes(".")) {
+                            //if (trimmed.length >= 7) {
 
-                                var formatted = parseFloat(trimmed / 100).toFixed(2);
-                            }
-                            else {
+                            //    var formatted = parseFloat(trimmed / 100).toFixed(2);
+                            //}
+                            //else {
                                 var formatted = parseFloat(Math.floor(trimmed * 100) / 100).toFixed(2);
-                            }
+                            //}
 
                             $elementCost.val(formatted);
-                        }
-                        else {
+                        //}
+                        //else {
                             //Is a float
-                            trimmed = parseFloat(trimmed).toFixed(2);
-                            $elementCost.val(trimmed);
-                        }
+                        //    trimmed = parseFloat(trimmed).toFixed(2);
+                        //    $elementCost.val(trimmed);
+                        //}
                     }
                     else
                     {
@@ -120,11 +120,29 @@
 
             $elementCost.on("keypress", function (event) {
                 var charCode = event.which ? event.which : event.keyCode;
-                var trimmed = $elementCost.val().trim().replace(".", "");
+                var trimmed = $elementCost.val().trim();//.replace(".", "");
 
-                if (trimmed.length >= 8) {
-                    return false;
-                };
+                if (trimmed.includes(".")) {
+                    if (charCode === 46) {
+                        return false;
+                    }
+                    if (trimmed.length >= 9) {
+                        return false;
+                    }
+                } else {
+                    if (charCode === 46) {
+                        if (trimmed.length >= 9) {
+                            return false;
+                        }
+                    }
+                    else {
+                        if (trimmed.length >= 6) {
+                            return false;
+                        }
+                    }
+
+                   
+                }
 
                 if ((charCode >= 48 && charCode <= 57) || charCode === 46) {
                     return true;

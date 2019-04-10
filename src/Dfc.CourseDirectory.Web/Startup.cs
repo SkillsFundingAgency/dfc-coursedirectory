@@ -19,6 +19,7 @@ using Dfc.CourseDirectory.Services.ProviderService;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Areas.Identity.Data;
 using Dfc.CourseDirectory.Web.Helpers;
+using Dfc.CourseDirectory.Web.ViewComponents;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -27,6 +28,7 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -195,7 +197,11 @@ namespace Dfc.CourseDirectory.Web
 
             });
 
+            //TODO
+            //services.Configure<GoogleAnalyticsOptions>(options => Configuration.GetSection("GoogleAnalytics").Bind(options));
 
+
+            services.AddTransient<ITagHelperComponent, GoogleAnalyticsTagHelperComponent>();
 
             #region DFE Sign-in code
 
