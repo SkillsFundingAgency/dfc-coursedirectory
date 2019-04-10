@@ -86,17 +86,24 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                         vm.PublishMode = PublishMode.DataQualityIndicator;
                         var validCourses = Courses.Where(x => x.IsValid);
                         var results = _courseService.CourseValidationMessages(validCourses, ValidationMode.DataQualityIndicator).Value.ToList();
-
                         var invalidCoursesResult = results.Where(c => c.RunValidationResults.Any(cr => cr.Issues.Count() > 0));
+                        var invalidCourses = invalidCoursesResult.Select(c => (Course)c.Course).ToList();
+                        var courseRuns = invalidCourses.Select(cr => cr.CourseRuns.Where(x => x.StartDate < DateTime.Today));
 
-                        var invalidCourses = invalidCoursesResult.Select(c => (Course)c.Course);
+                        List<Course> filteredList = new List<Course>();
+                        foreach(var course in invalidCourses)
+                        {
+                            var invalidRuns = course.CourseRuns.Where(x => x.StartDate < DateTime.Today);
 
+                            course.CourseRuns = invalidRuns;
+                            filteredList.Add(course);
+                        }
 
 
                             
 
                         vm.NumberOfCoursesInFiles = invalidCourses.Count();
-                        vm.Courses = invalidCourses.OrderBy(x => x.QualificationCourseTitle);
+                        vm.Courses = filteredList.OrderBy(x => x.QualificationCourseTitle);
                         break;
                     }
             }
