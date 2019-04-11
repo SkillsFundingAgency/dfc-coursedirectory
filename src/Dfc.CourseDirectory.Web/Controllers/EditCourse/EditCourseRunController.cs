@@ -285,8 +285,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                         {
                             case PublishMode.BulkUpload:
                             case PublishMode.Migration:
-                            case PublishMode.DataQualityIndicator:
-
                                 return RedirectToAction("Index", "PublishCourses",
                                 new
                                 {
@@ -295,6 +293,16 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                                     courseRunId = model.CourseRunId
 
                                 });
+                            case PublishMode.DataQualityIndicator:
+                                return RedirectToAction("Index", "PublishCourses",
+                                 new
+                                 {
+                                     publishMode = model.Mode,
+                                     courseId = model.CourseId,
+                                     courseRunId = model.CourseRunId,
+                                     NotificationTitle = model.CourseName + " has been updated",
+                                     NotificationMessage = "Start date edited"
+                                 });
                             default:
                                 return RedirectToAction("Courses", "Provider",
                                     new

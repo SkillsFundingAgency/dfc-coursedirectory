@@ -13,5 +13,6 @@ namespace Dfc.CourseDirectory.Web.ViewModels
         public int ArchivedCourseCount { get; set; }
         public int PendingCourseCount { get; set; }
         public IEnumerable<Course> RecentlyModifiedCourses { get; set; }
+        public string SuccessHeader { get; set; }
     }
 }
