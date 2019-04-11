@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using Dfc.CourseDirectory.Services.UnregulatedProvision;
 namespace Dfc.CourseDirectory.Web.Helpers
 {
     public class LarsSearchHelper : ILarsSearchHelper
@@ -100,6 +100,45 @@ namespace Dfc.CourseDirectory.Web.Helpers
             return criteria;
         }
 
+
+
+
+        public IEnumerable<LarsSearchFilterModel> GetUnRegulatedSearchFilterModels(
+    LarsSearchFacets larsSearchFacets,
+    LarsSearchRequestModel larsSearchRequestModel)
+        {
+            Throw.IfNull(larsSearchFacets, nameof(larsSearchFacets));
+            Throw.IfNull(larsSearchRequestModel, nameof(larsSearchRequestModel));
+
+            var filters = new List<LarsSearchFilterModel>();
+
+            var notionalNVQLevelv2Filter = GetLarsSearchFilterModel(
+                "Qualification Level",
+                "NotionalNVQLevelv2Filter",
+                (value) => $"Level {value}",
+                larsSearchFacets.NotionalNVQLevelv2,
+                larsSearchRequestModel.NotionalNVQLevelv2Filter);
+
+
+            var awardOrgAimRefFilter = GetLarsSearchFilterModel(
+                "Category",
+                "AwardOrgAimRefFilter",
+                (value) => value,
+                larsSearchFacets.AwardOrgAimRef,
+                larsSearchRequestModel.AwardOrgAimRefFilter);
+
+            filters.Add(notionalNVQLevelv2Filter);
+
+           foreach(var award in awardOrgAimRefFilter.Items)
+            {
+                award.Text = Categories.AllCategories.Where(x => x.Id == award.Text).Select(x => x.Category).SingleOrDefault();
+            }
+            filters.Add(awardOrgAimRefFilter);
+            return filters;
+        }
+
+
+
         public IEnumerable<LarsSearchFilterModel> GetLarsSearchFilterModels(
             LarsSearchFacets larsSearchFacets,
             LarsSearchRequestModel larsSearchRequestModel)
@@ -123,32 +162,9 @@ namespace Dfc.CourseDirectory.Web.Helpers
                 larsSearchFacets.AwardOrgCode,
                 larsSearchRequestModel.AwardOrgCodeFilter);
 
-            //var sectorSubjectAreaTier1Filter = GetLarsSearchFilterModel(
-            //    "Sector Subject Area Tier 1",
-            //    "SectorSubjectAreaTier1Filter",
-            //    (value) => value,
-            //    larsSearchFacets.SectorSubjectAreaTier1,
-            //    larsSearchRequestModel.SectorSubjectAreaTier1Filter);
-
-            //var sectorSubjectAreaTier2Filter = GetLarsSearchFilterModel(
-            //    "Sector Subject Area Tier 2",
-            //    "SectorSubjectAreaTier2Filter",
-            //    (value) => value,
-            //    larsSearchFacets.SectorSubjectAreaTier2,
-            //    larsSearchRequestModel.SectorSubjectAreaTier2Filter);
-
-            //var awardOrgAimRefFilter = GetLarsSearchFilterModel(
-            //    "Category",
-            //    "AwardOrgAimRefFilter",
-            //    (value) => value,
-            //    larsSearchFacets.AwardOrgAimRef,
-            //    larsSearchRequestModel.AwardOrgAimRefFilter);
-
             filters.Add(notionalNVQLevelv2Filter);
             filters.Add(awardOrgCodeFilter);
-            //filters.Add(sectorSubjectAreaTier1Filter);
-            //filters.Add(sectorSubjectAreaTier2Filter);
-            //filters.Add(awardOrgAimRefFilter);
+
             return filters;
         }
 

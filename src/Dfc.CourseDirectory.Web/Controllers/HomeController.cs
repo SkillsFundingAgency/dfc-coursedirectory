@@ -54,7 +54,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 return View();
             else
             {
-                var vm = DashboardController.GetDashboardViewModel(_courseService, _session.GetInt32("UKPRN"));
+                var vm = DashboardController.GetDashboardViewModel(_courseService, _session.GetInt32("UKPRN"), "");
                 if (vm.PendingCourseCount > 0)
                 {
                     _session.SetString("PendingCourses", "true");
@@ -66,6 +66,28 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 return View(vm);
             }
                 
+        }
+        public IActionResult IndexSuccess(DashboardViewModel vm)
+        {
+            if (_session.GetInt32("UKPRN") == null)
+                return View();
+            else
+            {
+                if (vm == null)
+                {
+                    vm = DashboardController.GetDashboardViewModel(_courseService, _session.GetInt32("UKPRN"), "");
+                }
+                if (vm.PendingCourseCount > 0)
+                {
+                    _session.SetString("PendingCourses", "true");
+                }
+                else
+                {
+                    _session.SetString("PendingCourses", "false");
+                }
+                return View("Index", vm);
+            }
+
         }
 
         public IActionResult About()

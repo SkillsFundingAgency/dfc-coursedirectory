@@ -1,5 +1,6 @@
 ﻿using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Web.ViewComponents.Interfaces;
+using Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +20,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.ZCodeSearchResult
         public string UnitType { get; set; }
         public string AwardOrgName { get; set; }
         public string LearnAimRefTypeDesc { get; set; }
+
     }
 
    

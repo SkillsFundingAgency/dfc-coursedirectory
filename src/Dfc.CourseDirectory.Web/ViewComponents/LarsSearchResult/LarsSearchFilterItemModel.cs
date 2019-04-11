@@ -7,7 +7,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult
     {
         public string Id { get; }
         public string Name { get; }
-        public string Text { get; }
+        public string Text { get; set; }
         public string Value { get; }
         public int Count { get; }
         public bool IsSelected { get; }

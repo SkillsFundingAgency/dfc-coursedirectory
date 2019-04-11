@@ -126,7 +126,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                         CurrentCourseRunDate = courseRun.StartDate
                     };
 
-                    if (mode == PublishMode.BulkUpload)
+                    if (mode == PublishMode.BulkUpload || mode == PublishMode.DataQualityIndicator)
                     {
                         vm.ValPastDateRef = DateTime.Now;
                         vm.ValPastDateMessage = "Start Date cannot be earlier than today’s date";
@@ -274,6 +274,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                         case PublishMode.Migration:
                             courseRunForEdit.RecordStatus = RecordStatus.MigrationReadyToGoLive;
                             break;
+                        case PublishMode.DataQualityIndicator:
                         default:
                             courseRunForEdit.RecordStatus = RecordStatus.Live;
                             break;
@@ -287,7 +288,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                         {
                             case PublishMode.BulkUpload:
                             case PublishMode.Migration:
-
                                 return RedirectToAction("Index", "PublishCourses",
                                 new
                                 {
@@ -296,6 +296,16 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                                     courseRunId = model.CourseRunId
 
                                 });
+                            case PublishMode.DataQualityIndicator:
+                                return RedirectToAction("Index", "PublishCourses",
+                                 new
+                                 {
+                                     publishMode = model.Mode,
+                                     courseId = model.CourseId,
+                                     courseRunId = model.CourseRunId,
+                                     NotificationTitle = model.CourseName + " has been updated",
+                                     NotificationMessage = "Start date edited"
+                                 });
                             default:
                                 return RedirectToAction("Courses", "Provider",
                                     new

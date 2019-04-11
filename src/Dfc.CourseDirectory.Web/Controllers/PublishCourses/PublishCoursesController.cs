@@ -81,7 +81,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                     break;
                 case PublishMode.DataQualityIndicator:
                     {
-                        
 
                         vm.PublishMode = PublishMode.DataQualityIndicator;
                         var validCourses = Courses.Where(x => x.IsValid);
@@ -95,14 +94,22 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                         {
                             var invalidRuns = course.CourseRuns.Where(x => x.StartDate < DateTime.Today);
 
-                            course.CourseRuns = invalidRuns;
-                            filteredList.Add(course);
+                            if (invalidRuns.Count() != 0)
+                            {
+                                course.CourseRuns = invalidRuns;
+                                filteredList.Add(course);
+                            }
+
+                        }
+
+                        if(courseRuns.Count() == 0 && courseId != null && courseRunId != null)
+                        {
+                            var dashboardVm = DashboardController.GetDashboardViewModel(_courseService, _session.GetInt32("UKPRN"), notificationTitle);
+                            return RedirectToAction("IndexSuccess", "Home", dashboardVm);
                         }
 
 
-                            
-
-                        vm.NumberOfCoursesInFiles = invalidCourses.Count();
+                    vm.NumberOfCoursesInFiles = invalidCourses.Count();
                         vm.Courses = filteredList.OrderBy(x => x.QualificationCourseTitle);
                         break;
                     }
