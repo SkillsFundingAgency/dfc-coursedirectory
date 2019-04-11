@@ -81,7 +81,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                     break;
                 case PublishMode.DataQualityIndicator:
                     {
-                        
 
                         vm.PublishMode = PublishMode.DataQualityIndicator;
                         var validCourses = Courses.Where(x => x.IsValid);
