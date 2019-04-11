@@ -1344,9 +1344,53 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         return subRegionItemModel;
                     }
                 }
+
+                if (regionItemModel.Id == regionCode)
+                {
+                    return new SubRegionItemModel
+                    {
+                        Id = regionItemModel.Id,
+                        Latitude = regionItemModel.Latitude,
+                        Longitude = regionItemModel.Longitude,
+                        SubRegionName = regionItemModel.RegionName
+                    };
+                }
             }
 
             return new SubRegionItemModel();
+        }
+
+        public string[] SubRegionsDataCleanse(List<string> subRegions)
+        {
+            List<string> revisedSubRegions = subRegions.Select(x=> x).ToList();
+
+            foreach (var regionItemModel in RegionItems)
+            {
+                var subRegionCheckedCount = 0;
+                foreach (var subRegionItemModel in regionItemModel.SubRegion)
+                {
+                    foreach (var subRegion in subRegions)
+                    {
+                        if (subRegionItemModel.Id == subRegion)
+                        {
+                            subRegionCheckedCount++;
+                        }
+                    }
+                }
+
+                var subRegionCount = regionItemModel.SubRegion.Count;
+                if (subRegionCount == subRegionCheckedCount)
+                {
+                    foreach (var subRegionItemModel in regionItemModel.SubRegion)
+                    {
+                        revisedSubRegions.Remove(subRegionItemModel.Id);
+                    }
+
+                    revisedSubRegions.Add(regionItemModel.Id);
+                }
+            }
+
+            return revisedSubRegions.Distinct().ToArray();
         }
     }
 }
