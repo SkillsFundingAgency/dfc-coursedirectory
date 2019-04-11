@@ -94,10 +94,14 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                         {
                             var invalidRuns = course.CourseRuns.Where(x => x.StartDate < DateTime.Today);
 
-                            course.CourseRuns = invalidRuns;
-                            filteredList.Add(course);
+                            if (invalidRuns.Count() != 0)
+                            {
+                                course.CourseRuns = invalidRuns;
+                                filteredList.Add(course);
+                            }
+
                         }
-                        var testRemove = 0;
+
                         if(courseRuns.Count() == 0 && courseId != null && courseRunId != null)
                         {
                             var dashboardVm = DashboardController.GetDashboardViewModel(_courseService, _session.GetInt32("UKPRN"), notificationTitle);
