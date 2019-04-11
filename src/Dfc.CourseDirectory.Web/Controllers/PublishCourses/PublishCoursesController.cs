@@ -97,11 +97,15 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                             course.CourseRuns = invalidRuns;
                             filteredList.Add(course);
                         }
+                        var testRemove = 0;
+                        if(courseRuns.Count() == 0 && courseId != null && courseRunId != null)
+                        {
+                            var dashboardVm = DashboardController.GetDashboardViewModel(_courseService, _session.GetInt32("UKPRN"), notificationTitle);
+                            return RedirectToAction("IndexSuccess", "Home", dashboardVm);
+                        }
 
 
-                            
-
-                        vm.NumberOfCoursesInFiles = invalidCourses.Count();
+                    vm.NumberOfCoursesInFiles = invalidCourses.Count();
                         vm.Courses = filteredList.OrderBy(x => x.QualificationCourseTitle);
                         break;
                     }
