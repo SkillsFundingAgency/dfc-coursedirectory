@@ -573,7 +573,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             //To be made more generic when we bring additional rules in
             if (validationMode == ValidationMode.DataQualityIndicator)
             {
-                if (courseRun.StartDate < DateTime.Now)
+                if (courseRun.StartDate < DateTime.Today)
                     validationMessages.Add($"courses need their start date updating");
                 return validationMessages;
             }
