@@ -245,7 +245,10 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                             courseRunForEdit.VenueId = null;
                             courseRunForEdit.Regions = model.SelectedRegions;
                             var availableRegions = new SelectRegionModel();
-                            var subRegions = courseRunForEdit.Regions.Select(selectedRegion => availableRegions.GetRegionFromName(selectedRegion)).ToList();
+
+                            string[] selectedRegions = availableRegions.SubRegionsDataCleanse(courseRunForEdit.Regions.ToList());
+
+                            var subRegions = selectedRegions.Select(selectedRegion => availableRegions.GetRegionFromName(selectedRegion)).ToList();
                             courseRunForEdit.SubRegions = subRegions;
                             courseRunForEdit.AttendancePattern = AttendancePattern.Undefined;
                             courseRunForEdit.StudyMode = StudyMode.Undefined;
