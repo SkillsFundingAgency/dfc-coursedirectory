@@ -234,7 +234,10 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                             copiedCourseRun.VenueId = null;
                             copiedCourseRun.Regions = model.SelectedRegions;
                             var availableRegions = new SelectRegionModel();
-                            var subRegions = copiedCourseRun.Regions.Select(selectedRegion => availableRegions.GetRegionFromName(selectedRegion)).ToList();
+
+                            string[] selectedRegions = availableRegions.SubRegionsDataCleanse(copiedCourseRun.Regions.ToList());
+
+                            var subRegions = selectedRegions.Select(selectedRegion => availableRegions.GetRegionFromName(selectedRegion)).ToList();
                             copiedCourseRun.SubRegions = subRegions;
 
                             copiedCourseRun.AttendancePattern = AttendancePattern.Undefined;
