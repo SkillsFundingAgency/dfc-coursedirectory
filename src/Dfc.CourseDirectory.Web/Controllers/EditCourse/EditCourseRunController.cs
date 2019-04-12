@@ -21,6 +21,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
+using Dfc.CourseDirectory.Models.Models.Regions;
 
 namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 {
@@ -125,10 +126,12 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                         CurrentCourseRunDate = courseRun.StartDate
                     };
 
-                    if (mode == PublishMode.BulkUpload)
+                    if (mode == PublishMode.BulkUpload || mode == PublishMode.DataQualityIndicator)
                     {
                         vm.ValPastDateRef = DateTime.Now;
                         vm.ValPastDateMessage = "Start Date cannot be earlier than today’s date";
+
+                        //var venueExists = vm.Venues.Any(x => x.Text == )
                     }
                     else
                     {
@@ -146,6 +149,15 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                             {
                                 subRegionItemModel.Checked = true;
                             }
+                        }
+                    }
+
+                    if (vm.SelectRegion.RegionItems != null && vm.SelectRegion.RegionItems.Any())
+                    {
+                        vm.SelectRegion.RegionItems = vm.SelectRegion.RegionItems.OrderBy(x => x.RegionName);
+                        foreach (var selectRegionRegionItem in vm.SelectRegion.RegionItems)
+                        {
+                            selectRegionRegionItem.SubRegion = selectRegionRegionItem.SubRegion.OrderBy(x => x.SubRegionName).ToList();
                         }
                     }
 
@@ -232,7 +244,12 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                         case DeliveryMode.WorkBased:
                             courseRunForEdit.VenueId = null;
                             courseRunForEdit.Regions = model.SelectedRegions;
+                            var availableRegions = new SelectRegionModel();
 
+                            string[] selectedRegions = availableRegions.SubRegionsDataCleanse(courseRunForEdit.Regions.ToList());
+
+                            var subRegions = selectedRegions.Select(selectedRegion => availableRegions.GetRegionFromName(selectedRegion)).ToList();
+                            courseRunForEdit.SubRegions = subRegions;
                             courseRunForEdit.AttendancePattern = AttendancePattern.Undefined;
                             courseRunForEdit.StudyMode = StudyMode.Undefined;
 
@@ -257,6 +274,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                         case PublishMode.Migration:
                             courseRunForEdit.RecordStatus = RecordStatus.MigrationReadyToGoLive;
                             break;
+                        case PublishMode.DataQualityIndicator:
                         default:
                             courseRunForEdit.RecordStatus = RecordStatus.Live;
                             break;
@@ -270,7 +288,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                         {
                             case PublishMode.BulkUpload:
                             case PublishMode.Migration:
-
                                 return RedirectToAction("Index", "PublishCourses",
                                 new
                                 {
@@ -279,6 +296,16 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                                     courseRunId = model.CourseRunId
 
                                 });
+                            case PublishMode.DataQualityIndicator:
+                                return RedirectToAction("Index", "PublishCourses",
+                                 new
+                                 {
+                                     publishMode = model.Mode,
+                                     courseId = model.CourseId,
+                                     courseRunId = model.CourseRunId,
+                                     NotificationTitle = model.CourseName + " has been updated",
+                                     NotificationMessage = "Start date edited"
+                                 });
                             default:
                                 return RedirectToAction("Courses", "Provider",
                                     new

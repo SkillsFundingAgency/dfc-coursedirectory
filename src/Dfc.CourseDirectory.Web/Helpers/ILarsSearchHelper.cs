@@ -12,5 +12,9 @@ namespace Dfc.CourseDirectory.Web.Helpers
         ILarsSearchCriteria GetLarsSearchCriteria(LarsSearchRequestModel larsSearchRequestModel, int currentPageNo, int itemsPerPage, IEnumerable<LarsSearchFacet> facets = null);
         IEnumerable<LarsSearchFilterModel> GetLarsSearchFilterModels(LarsSearchFacets larsSearchFacets, LarsSearchRequestModel larsSearchRequestModel);
         IEnumerable<LarsSearchResultItemModel> GetLarsSearchResultItemModels(IEnumerable<LarsSearchResultItem> larsSearchResultItems);
+
+        IZCodeSearchCriteria GetZCodeSearchCriteria(LarsSearchRequestModel larsSearchRequestModel, int currentPageNo, int itemsPerPage, IEnumerable<LarsSearchFacet> facets = null);
+
+        IEnumerable<LarsSearchFilterModel> GetUnRegulatedSearchFilterModels(LarsSearchFacets larsSearchFacets, LarsSearchRequestModel larsSearchRequestModel);
     }
 }

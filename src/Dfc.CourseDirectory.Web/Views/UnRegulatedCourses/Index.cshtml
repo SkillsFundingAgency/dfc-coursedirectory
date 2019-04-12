@@ -6,7 +6,7 @@
     <div class="govuk-width-container">
         <header class="cd-hero-search">
             <div class="content-container">
-                <a asp-controller="Home" asp-action="Index" class="govuk-back-link">Back</a>
+                <a asp-controller="RegulatedQualification" asp-action="Index" class="govuk-back-link">Back</a>
                 <div class="grid-row" data-sf-element="Row">
                     <div class="column-two-thirds">
                         <div>
@@ -81,26 +81,7 @@
                     ShowValidationErrorMessage();
                 }
             });
-            //$elementSearchTerm.elementValidation(function (element, result) {
-            //    if (!$formGroupSearchTerm.hasClass(formGroupErrorClass)) {
-            //        $validationMessageSearchTerm.hide();
-            //    }
-            //    if (result) {
-            //        HideValidationErrorMessage();
-            //    }
-            //    else {
-            //        ShowValidationErrorMessage()
-            //    }
-            //});
 
-            //var makeRequestWithPayload = function (payload, cb) {
-            //    var qs = $.param(payload);
-            //    $.get("/ProviderSearch?" + qs, cb);
-            //};
-            //var onSucess = function (data) {
-            //    $providerSearchResultContainer.html("");
-            //    $providerSearchResultContainer.html(data);
-            //};
 
             $("#searchZCode").on("click", function (e) {
                 e.preventDefault();

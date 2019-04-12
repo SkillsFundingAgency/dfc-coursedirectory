@@ -7,6 +7,7 @@ using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Interfaces.Courses;
 using Dfc.CourseDirectory.Models.Models;
 using Dfc.CourseDirectory.Models.Models.Courses;
+using Dfc.CourseDirectory.Models.Models.Regions;
 using Dfc.CourseDirectory.Services.CourseService;
 
 
@@ -31,7 +32,7 @@ namespace Dfc.CourseDirectory.Services.Interfaces.CourseService
         IList<string> ValidateCourseRun(ICourseRun courseRun, ValidationMode validationMode);
 
         Task<IResult> UpdateStatus(Guid courseId, Guid courseRunId, int statusToChangeTo);
-        IResult<IList<CourseValidationResult>> PendingCourseValidationMessages(IEnumerable<ICourse> courses);
+        IResult<IList<CourseValidationResult>> CourseValidationMessages(IEnumerable<ICourse> courses, ValidationMode mode);
         Task<IResult<IEnumerable<ICourseStatusCountResult>>> GetCourseCountsByStatusForUKPRN(ICourseSearchCriteria criteria);
         Task<IResult<IEnumerable<ICourse>>> GetRecentCourseChangesByUKPRN(ICourseSearchCriteria criteria);
     }

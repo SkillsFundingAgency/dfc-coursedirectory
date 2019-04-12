@@ -1,1 +1,525 @@
-﻿unknown z code Placeholder
+﻿@using Dfc.CourseDirectory.Web.ViewComponents.ZCodeSearchResult
+@model UnRegulatedNotFoundViewModel
+@{
+    Layout = "_Layout_Your_Courses";
+}
+
+
+
+@Html.HiddenFor(x => x.LevelId)
+@Html.HiddenFor(x => x.CategoryId)
+<main class="cd-fullwidth-">
+    <a asp-controller="UnregulatedCourses" asp-action="Index" class="govuk-back-link">Back</a>
+    <div class="grid-row govuk-body" data-sf-element="Row">
+        <div class="">
+            <div>
+                <h1 class="govuk-heading-l govuk-!-margin-top-4">Choose a non-regulated provision</h1>
+            </div>
+            <div class="govuk-form-group">
+                <div class="govuk--row cd-nonregulated-provision">
+                    <div class="cd-flex">
+                        <div class="">
+                            <div class="cd-level-select govuk-form-group">
+                                <label class="govuk-label" for="level1">
+                                    Level 1
+                                </label>
+
+                                <select asp-for="@Model.Level1Id" asp-items="@Model.Level1" class="govuk-select" id="LevelOneSelect" style="width: 400px"></select>
+                            </div>
+                        </div>
+                        <div id="LevelTwo" class="">
+                            <div class="cd-level-select govuk-form-group">
+                                <label class="govuk-label" for="level2">
+                                    Level 2
+                                </label>
+
+                                <select asp-for="@Model.Level2Id" asp-items="@Model.Level2" class="govuk-select" id="LevelTwoSelect" disabled style="width: 400px"></select>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="results">
+
+                    @await Component.InvokeAsync(nameof(ZCodeSearchResult))
+                </div>
+            </div>
+
+
+
+
+
+
+        </div>
+    </div>
+</main>
+
+
+<script>
+    (function ($) {
+        $(function () {
+
+            $('#LevelOneSelect').change(function () {
+                // alert($(this).val());
+
+                $('#filter0').val("");
+                $('#filter1').val("");
+                $('#LevelTwoSelect').val("");
+
+                $('#LevelTwoSelect').attr('disabled', true);
+                $('#LevelTwoSelect').find('option:eq(0)').attr('selected', true);
+                var $SelectedValue = $(this).val();
+
+                if ($SelectedValue !== "") {
+
+                    $.ajax({
+                        url: '/UnregulatedCourses/GetSSALevelTwo',
+                        type: "GET",
+                        dataType: "json",
+                        data: { Level1Id: $SelectedValue },
+                        contentType: "application/json; charset=utf-8",
+                        success: function (data) {
+
+                            var s = '';
+                            for (var i = 0; i < data.length; i++) {
+                                s += '<option value="' + data[i].value + '">' + data[i].text + '</option>';
+                            }
+                            $("#LevelTwoSelect").html(s);
+
+                            $('#LevelTwoSelect').prop("disabled", false);
+                            $('#LevelTwoSelect').removeAttr("disabled");
+
+                        },
+                        error: function (xhr, ajaxOptions, thrownError) {
+
+                        }
+                    });
+
+                } else {
+                    $('#results').html("");
+                    $('#LevelTwoSelect').attr('disabled', true);
+                }
+            });
+
+            var debounce = function (cb, delay) {
+                var inDebounce;
+                return function () {
+                    var context = this;
+                    var args = arguments;
+                    clearTimeout(inDebounce);
+                    inDebounce = setTimeout(function () {
+                        cb.apply(context, args);
+                    },
+                        delay);
+                };
+            };
+
+            var isNullOrWhitespace = function (input) {
+                if (typeof input === 'undefined' || input == null) return true;
+                return input.replace(/\s/g, '').length < 3;
+            }
+
+            var replaceAll = function (search, find, replace) {
+                return search.split(find).join(replace);
+            };
+
+            //var makeRequestWithPayload = function (payload, success) {
+            //    console.log(payload);
+            //    var qs = $.param(payload);
+            //    qs = replaceAll(qs, "%5B%5D", "");
+            //    $.get("/LarsSearch?" + qs, success);
+            //};
+
+            var makeRequestWithUrl = function (url, success) {
+                console.log(url);
+                $.get(url, success);
+            };
+
+            var removeSearchResults = function () {
+                var $larsSearchResultContainer = $("#LarsSearchResultContainer");
+                $larsSearchResultContainer.html("");
+            };
+
+            var replaceSearchResult = function (searchResults) {
+                var $larsSearchResultContainer = $("#LarsSearchResultContainer");
+                $larsSearchResultContainer.html("");
+                $larsSearchResultContainer.html(searchResults);
+            };
+
+            var $larsSearchTerm = $("#LarsSearchTerm");
+            var $buttonSearch = $("#searchQualification");
+
+            var doSearch = function () {
+                //if (isNullOrWhitespace($larsSearchTerm.val())) {
+                //    removeSearchResults();
+                //} else {
+                Level1Id: $('#LevelOneSelect').val();
+                Level2Id: $('#LevelTwoSelect').val();
+                    //    LevelId: $('#filter0').val(),
+                    //CategoryId: $('#filter1').val(),
+
+                    var $allCheckedNotionalNvqLevelV2FilterCheckboxes =
+                        $("input[name='NotionalNVQLevelv2Filter']:checkbox:checked");
+                    var $allCheckedAwardAimRefFilterCheckboxes =
+                        $("input[name='AwardOrgAimRefFilter']:checkbox:checked");
+                    //var $allSectorSubjectAreaTier1FilterCheckboxes =
+                    //    $("input[name='SectorSubjectAreaTier1Filter']:checkbox:checked");
+                    //var $allSectorSubjectAreaTier2FilterCheckboxes =
+                    //    $("input[name='SectorSubjectAreaTier2Filter']:checkbox:checked");
+
+                makeRequestWithPayload({
+                    Level1Id: $('#LevelOneSelect').val(),
+                    Level2Id: $('#LevelTwoSelect').val(),
+                        //SearchTerm: $larsSearchTerm.val(),
+                        NotionalNVQLevelv2Filter: $allCheckedNotionalNvqLevelV2FilterCheckboxes.map(function () {
+                            return $(this).val();
+                        }).get(),
+                    AwardOrgAimRefFilter: $allCheckedAwardAimRefFilterCheckboxes.map(function () {
+                            return $(this).val();
+                        }).get(),
+                        //SectorSubjectAreaTier1Filter: $allSectorSubjectAreaTier1FilterCheckboxes.map(function () {
+                        //    return $(this).val();
+                        //}).get(),
+                        //SectorSubjectAreaTier2Filter: $allSectorSubjectAreaTier2FilterCheckboxes.map(function () {
+                        //    return $(this).val();
+                        //}).get()
+                    },
+                        onSucess);
+               // }
+            };
+
+            var assignEventsToAllCheckboxes = function () {
+                var $notionalNvqLevelV2FilterCheckboxes = $("input[name='NotionalNVQLevelv2Filter']:checkbox");
+                var $awardAimRefFilterCheckboxes = $("input[name='AwardOrgAimRefFilter']:checkbox");
+                //var $sectorSubjectAreaTier1FilterCheckboxes = $("input[name='SectorSubjectAreaTier1Filter']:checkbox");
+                //var $sectorSubjectAreaTier2FilterCheckboxes = $("input[name='SectorSubjectAreaTier2Filter']:checkbox");
+
+                $notionalNvqLevelV2FilterCheckboxes.on("click", debounce(doSearch, 1500));
+                $awardAimRefFilterCheckboxes.on("click", debounce(doSearch, 1500));
+                //$sectorSubjectAreaTier1FilterCheckboxes.on("click", doSearch);
+                //$sectorSubjectAreaTier2FilterCheckboxes.on("click", doSearch);
+            };
+
+            var assignEventToClearAllFiltersLink = function () {
+                var $clearAllFiltersLink = $("#ClearAllFilters");
+
+                $clearAllFiltersLink.on("click",
+                    function (e) {
+                        e.preventDefault();
+                        var $allCheckedFilterCheckboxes = $(
+                            "input[name='NotionalNVQLevelv2Filter']:checkbox:checked, input[name='AwardOrgAimRefFilter']:checkbox:checked:checkbox");
+                        var allCheckedFilterCheckboxesLength = $allCheckedFilterCheckboxes.length;
+
+                        for (var i = 0; i < allCheckedFilterCheckboxesLength; i++) {
+                            if (i === (allCheckedFilterCheckboxesLength - 1)) {
+                                $($allCheckedFilterCheckboxes[i]).trigger("click");
+                            } else {
+                                $($allCheckedFilterCheckboxes[i]).prop('checked', false);
+                            }
+                        }
+                    });
+            };
+
+            var assignEventsToLarsSearchPagination = function () {
+                var $larsSearchResultPaginationItems = $("#results .pagination .pagination__item");
+                $larsSearchResultPaginationItems.on("click",
+                    function (e) {
+                        e.preventDefault();
+                        var url = $(e.target).attr("href");
+                        makeRequestWithUrl(url, onSucess);
+                    });
+            };
+
+            //$(document).on('click', '.pagination__item', function (e) {
+            //    e.preventDefault()
+            //    var url = $(this).attr("href");
+            //    var params = url.substring(url.indexOf("?") + 1, url.length);
+            //    var paramsArrary = params.split("&");
+            //    var ssa1 = paramsArrary[0].split("=")[1];
+            //    var ssa2 = paramsArrary[1].split("=")[1];
+            //    var levelId = paramsArrary[2].split("=")[1];
+            //    var categoryId = paramsArrary[3].split("=")[1];
+            //    var pageNo = paramsArrary[4].split("=")[1];
+
+
+            //    makeRequestWithPayload({
+            //        Level1Id: ssa1,
+            //        Level2Id: ssa2,
+            //        LevelId: levelId,
+            //        CategoryId: categoryId,
+            //        PageNo: pageNo
+
+            //    },
+            //        onSucess);
+            //});
+
+
+
+            var onSucess = function (data) {
+
+                $('#results').html("");
+                $('#results').html(data);
+
+                $('#Filters').css('visibility', 'visible');
+
+                //replaceSearchResult(data);
+                assignEventsToAllCheckboxes();
+                assignEventToClearAllFiltersLink();
+                assignEventsToLarsSearchPagination();
+            };
+
+            //$larsSearchTerm.on("keyup", debounce(doSearch, 400));
+            $buttonSearch.on("click", doSearch);
+
+            $(document).keypress(function (e) {
+                if (e.which === 13) {
+                    e.preventDefault();
+                }
+            });
+
+            var replaceAll = function (search, find, replace) {
+                return search.split(find).join(replace);
+            };
+
+            var makeRequestWithPayload = function (payload, success) {
+                console.log(payload);
+                var qs = $.param(payload);
+                qs = replaceAll(qs, "%5B%5D", "");
+                $.get("/UnregulatedCourses/ZCodeNotKnown?" + qs, success);
+            };
+
+            //var doSearch = function () {
+
+
+            //    makeRequestWithPayload({
+            //        Level1Id: $('#LevelOneSelect').val(),
+            //        Level2Id: $('#LevelTwoSelect').val(),
+            //        LevelId: $('#filter0').val(),
+            //        CategoryId: $('#filter1').val(),
+
+            //    },
+            //        onSucess);
+
+            //};
+
+            //var onSucess = function (data) {
+
+            //    //if (data.includes("No Records Found")) {
+            //    //    $('#Filters').css('visibility', 'hidden');
+            //    //    $('#message').css('display', 'flex');
+            //    //    $('#LevelsSelect').val(""),
+            //    //        $('#CategoriesSelect').val("");
+            //    //    //$('#LevelsSelect').find('option:eq(0)').attr('selected', true);
+            //    //    //$('#CategoriesSelect').find('option:eq(0)').attr('selected', true);
+            //    //} else {
+            //    //    $('#message').css('display', 'none');
+            //    $('#results').html("");
+            //    $('#results').html(data);
+
+            //    $('#Filters').css('visibility', 'visible');
+            //    //}
+
+            //};
+
+            $('#LevelTwoSelect').change(function () {
+
+                var $Level1Id = $('#LevelOneSelect').val();
+                var $SelectedValue = $(this).val();
+                if ($SelectedValue !== "") {
+
+                    doSearch();
+
+                } else {
+                    $('#results').html("");
+                }
+            });
+
+        });
+    })(jQuery);
+</script>
+
+
+@*<script>
+    (function ($) {
+        $(function () {
+
+            var $x = $('.govuk-link');
+            var $y = $('.pagination__item');
+            $('#LevelOneSelect').change(function () {
+                // alert($(this).val());
+
+                $('#filter0').val("");
+                $('#filter1').val("");
+                $('#LevelTwoSelect').val("");
+
+                $('#LevelTwoSelect').attr('disabled', true);
+                $('#LevelTwoSelect').find('option:eq(0)').attr('selected', true);
+                var $SelectedValue = $(this).val();
+
+                if ($SelectedValue !== "") {
+
+                    $.ajax({
+                        url: '/UnregulatedCourses/GetSSALevelTwo',
+                        type: "GET",
+                        dataType: "json",
+                        data: { Level1Id: $SelectedValue },
+                        contentType: "application/json; charset=utf-8",
+                        success: function (data) {
+
+                            var s = '';
+                            for (var i = 0; i < data.length; i++) {
+                                s += '<option value="' + data[i].value + '">' + data[i].text + '</option>';
+                            }
+                            $("#LevelTwoSelect").html(s);
+
+                            $('#LevelTwoSelect').prop("disabled", false);
+                            $('#LevelTwoSelect').removeAttr("disabled");
+
+                        },
+                        error: function (xhr, ajaxOptions, thrownError) {
+
+                        }
+                    });
+
+                } else {
+                    $('#Filters').css('visibility', 'hidden');
+                    $('#LevelTwoSelect').attr('disabled', true);
+                }
+            });
+
+
+            var replaceAll = function (search, find, replace) {
+                return search.split(find).join(replace);
+            };
+
+            var makeRequestWithPayload = function (payload, success) {
+                console.log(payload);
+                var qs = $.param(payload);
+                qs = replaceAll(qs, "%5B%5D", "");
+                $.get("/UnregulatedCourses/ZCodeNotKnown?" + qs, success);
+            };
+
+            var doSearch = function () {
+
+
+                makeRequestWithPayload({
+                    Level1Id: $('#LevelOneSelect').val(),
+                    Level2Id: $('#LevelTwoSelect').val(),
+                    LevelId: $('#filter0').val(),
+                    CategoryId: $('#filter1').val(),
+
+                },
+                    onSucess);
+
+            };
+
+            $(document).on('click', '#ResetFilters', function (e) {
+                e.preventDefault()
+
+                $('#filter0').val("");
+                $('#filter1').val("");
+
+                doSearch();
+
+            });
+
+
+            //$('#ResetFilters').click(function () {
+
+            //    doSearch();
+
+            //});
+
+            var onSucess = function (data) {
+
+                //if (data.includes("No Records Found")) {
+                //    $('#Filters').css('visibility', 'hidden');
+                //    $('#message').css('display', 'flex');
+                //    $('#LevelsSelect').val(""),
+                //        $('#CategoriesSelect').val("");
+                //    //$('#LevelsSelect').find('option:eq(0)').attr('selected', true);
+                //    //$('#CategoriesSelect').find('option:eq(0)').attr('selected', true);
+                //} else {
+                //    $('#message').css('display', 'none');
+                $('#results').html("");
+                $('#results').html(data);
+
+                $('#Filters').css('visibility', 'visible');
+                //}
+
+            };
+
+            $(document).on('click', '.pagination__item', function (e) {
+                e.preventDefault()
+                var url = $(this).attr("href");
+                var params = url.substring(url.indexOf("?") + 1, url.length);
+                var paramsArrary = params.split("&");
+                var ssa1 = paramsArrary[0].split("=")[1];
+                var ssa2 = paramsArrary[1].split("=")[1];
+                var levelId = paramsArrary[2].split("=")[1];
+                var categoryId = paramsArrary[3].split("=")[1];
+                var pageNo = paramsArrary[4].split("=")[1];
+
+
+                makeRequestWithPayload({
+                    Level1Id: ssa1,
+                    Level2Id: ssa2,
+                    LevelId: levelId,
+                    CategoryId: categoryId,
+                    PageNo: pageNo
+
+                },
+                    onSucess);
+            });
+
+
+            $('#LevelTwoSelect').change(function () {
+
+                $('#filter0').val("");
+                $('#filter1').val("");
+                var $Level1Id = $('#LevelOneSelect').val();
+                var $SelectedValue = $(this).val();
+                if ($SelectedValue !== "") {
+
+                    doSearch();
+
+                } else {
+                    $('#Filters').css('visibility', 'hidden');
+                }
+            });
+
+            $(document).on('change', '#filter0', function (e) {
+                e.preventDefault()
+                doSearch();
+
+            });
+
+            $(document).on('change', '#filter1', function (e) {
+                e.preventDefault()
+                doSearch();
+
+            });
+
+
+            //$('#filter0').change(function () {
+
+            //    doSearch();
+
+            //});
+
+            //$('#filter1').change(function () {
+
+            //    doSearch();
+
+            //});
+
+
+
+        });
+    })(jQuery);
+</script>*@
+
+
+
+

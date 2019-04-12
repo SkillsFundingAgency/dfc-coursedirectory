@@ -4,33 +4,174 @@
 @using Microsoft.AspNetCore.Identity
 @using Dfc.CourseDirectory.Web.Areas.Identity.Data;
 @using Microsoft.AspNetCore.Authorization;
-
+@using Dfc.CourseDirectory.Services.UnregulatedProvision
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @model Dfc.CourseDirectory.Web.ViewComponents.ZCodeSearchResult.ZCodeSearchResultModel;
 
 
-<a asp-controller="UnregulatedCourses" asp-action="index" class="govuk-back-link">Back</a><br />
-<form asp-controller="AddCourse" asp-action="AddCourse" asp-route-learnAimRef="@Model.Items.FirstOrDefault()?.LearnAimRef" asp-route-notionalNVQLevelv2="@Model.Items.FirstOrDefault()?.NotionalNVQLevelv2" asp-route-awardOrgCode="@Model.Items.FirstOrDefault()?.AwardOrgCode" asp-route-learnAimRefTitle="@Model.Items.FirstOrDefault()?.LearnAimRefTitle" asp-route-learnAimRefTypeDesc="@Model.Items.FirstOrDefault()?.LearnAimRefTypeDesc">
-    <div class=" govuk-!-margin-top-4 ">
-        <div class="govuk-!-width-two-thirds provision-container govuk-body govuk-!-margin-bottom-9">
-            <h2 class="provision-title govuk-heading-l">
-                @Model.Items.FirstOrDefault()?.LearnAimRefTitle
-            </h2>
-            <span>LARS/QAN :</span> <span>@Model.Items.FirstOrDefault()?.LearnAimRef</span><br />
-            <span>Level :</span> <span>@Model.Items.FirstOrDefault()?.NotionalNVQLevelv2</span><br />
-            @*<a href="#">Add this provison</a>*@
-            @Html.ActionLink("Add this provison", "AddCourse", "AddCourse", new { @Model.Items.FirstOrDefault()?.LearnAimRef, @Model.Items.FirstOrDefault()?.NotionalNVQLevelv2, @Model.Items.FirstOrDefault()?.AwardOrgCode, @Model.Items.FirstOrDefault()?.LearnAimRefTitle, @Model.Items.FirstOrDefault()?.LearnAimRefTypeDesc }, new { @class = "govuk-link" })
-        </div>
-        <br />
+<div class="govuk-grid-row">
+    @if (Model.Items != null && Model.Items.Count() > 0)
+    {
 
-    </div>
-    <div class="cd-action-container">
-        <button type="submit" class="govuk-button ">
-            Choose
-        </button>
-        @*<a href="#" class="govuk-link">Cancel</a>*@
-        @Html.ActionLink("Cancel", "index", "UnregulatedCourses", new { }, new { @class = "govuk-link" })
-    </div>
-</form>
+        @*<div class="govuk-heading-s lars-search-results govuk-!-font-weight-regular">
+                Found <span class="govuk-!-font-weight-bold">@Model.TotalCount</span> results for <span class="govuk-!-font-weight-bold">@Model.SearchTerm</span>
+            </div>*@
+
+        <div class="govuk-grid-column-one-quarter">
+            @*<h3>filter controls here</h3>*@
+            @if (Model.Filters != null)
+            {
+                if (Model.HasSelectedFilters)
+                {
+                <div class="govuk-form-group">
+                    <h5><a class="govuk-link" id="ClearAllFilters" href="">reset</a></h5>
+                </div>
+                 }
+                foreach (var filter in Model.Filters)
+                {
+                    <div class="govuk-form-group govuk-!-font-size-14">
+                        <div class="accordion govuk-heading-s">@filter.Title</div>
+                        <div class="panel">
+                            <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
+                                <div class="govuk-checkboxes">
+
+
+
+                                    @foreach (var item in filter.Items)
+                                    {
+                                        <div class="govuk-checkboxes__item">
+                                            <input class="govuk-checkboxes__input" id="@item.Id" name="@item.Name" type="checkbox" value="@item.Value" @item.IsSelected.ThenCheck()>
+                                            <label class="govuk-label govuk-checkboxes__label govuk-!-font-size-14" for="@item.Id">
+
+                                                @item.Text (@item.Count)
+                                            </label>
+                                        </div>
+                                   }
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+
+        <div class="govuk-grid-column-three-quarters">
+
+            @*@await Component.InvokeAsync(nameof(Pagination),
+                new
+                {
+                    url = Model.Url,
+                    pageParamName = Model.PageParamName,
+                    totalNoOfItems = Model.TotalCount,
+                    itemsPerPage = Model.ItemsPerPage,
+                    noOfPagesToDisplay = 10,
+                    isSliding = true
+                })*@
+            <div class="govuk-table govuk-!-font-size-14">
+
+
+                @foreach (var item in Model.Items)
+                {
+                    <div class="cd-lars-search-result__container">
+                        <h3 class="govuk-heading-m">@item.LearnAimRefTitle</h3>
+                        <p class="govuk-body">LARS/QAN:<span class="govuk-!-font-weight-bold"> @item.LearnAimRef</span></p>
+                        <p class="govuk-body">Level: <span class="govuk-!-font-weight-bold"> @item.NotionalNVQLevelv2</span></p>
+                        @*<p class="govuk-body">Awarding body:<span class="govuk-!-font-weight-bold"> @item.AwardOrgCode</span></p>*@
+
+
+                        @Html.ActionLink("Add this provision", "AddCourse", "AddCourse", new { @item?.LearnAimRef, @item?.NotionalNVQLevelv2, @item?.AwardOrgCode, @item?.LearnAimRefTitle, @item?.LearnAimRefTypeDesc }, new { @class = "govuk-link" })
+
+
+
+                    </div>
+                }
+
+            </div>
+            @await Component.InvokeAsync(nameof(Pagination),
+                     new
+                     {
+                         url = Model.Url,
+                         pageParamName = Model.PageParamName,
+                         totalNoOfItems = Model.TotalCount,
+                         itemsPerPage = Model.ItemsPerPage,
+                         noOfPagesToDisplay = 10,
+                         isSliding = true
+                     })
+        </div>
+    }
+    @*else if (!string.IsNullOrWhiteSpace(Model.SearchTerm) && !Model.Items.Any())
+        {
+            <div class="govuk-grid-column-full">
+                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+
+                    <h2 class="govuk-error-summary__title" id="error-summary-title">
+                        No records found
+                    </h2>
+                </div>
+            </div>
+        }*@
+</div>
+
+<script>
+    (function ($) {
+        $(function () {
+
+            var acc = document.getElementsByClassName("accordion");
+            var i;
+
+            for (i = 0; i < acc.length; i++) {
+                acc[i].addEventListener("click", function () {
+                    this.classList.toggle("active");
+                    var panel = this.nextElementSibling;
+                    if (panel.style.display === "none") {
+                        panel.style.display = "block";
+                    } else {
+                        panel.style.display = "none";
+                    }
+                });
+            }
+        });
+    })(jQuery);
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

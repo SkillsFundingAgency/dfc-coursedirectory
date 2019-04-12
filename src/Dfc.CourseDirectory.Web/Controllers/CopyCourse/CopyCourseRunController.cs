@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Models.Courses;
+using Dfc.CourseDirectory.Models.Models.Regions;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
@@ -135,6 +136,15 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                         }
                     }
 
+                    if (vm.SelectRegion.RegionItems != null && vm.SelectRegion.RegionItems.Any())
+                    {
+                        vm.SelectRegion.RegionItems = vm.SelectRegion.RegionItems.OrderBy(x => x.RegionName);
+                        foreach (var selectRegionRegionItem in vm.SelectRegion.RegionItems)
+                        {
+                            selectRegionRegionItem.SubRegion = selectRegionRegionItem.SubRegion.OrderBy(x => x.SubRegionName).ToList();
+                        }
+                    }
+
                     return View("CopyCourseRun", vm);
                 }
             }
@@ -223,6 +233,13 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                         case DeliveryMode.WorkBased:
                             copiedCourseRun.VenueId = null;
                             copiedCourseRun.Regions = model.SelectedRegions;
+                            var availableRegions = new SelectRegionModel();
+
+                            string[] selectedRegions = availableRegions.SubRegionsDataCleanse(copiedCourseRun.Regions.ToList());
+
+                            var subRegions = selectedRegions.Select(selectedRegion => availableRegions.GetRegionFromName(selectedRegion)).ToList();
+                            copiedCourseRun.SubRegions = subRegions;
+
                             copiedCourseRun.AttendancePattern = AttendancePattern.Undefined;
                             copiedCourseRun.StudyMode = StudyMode.Undefined;
                             break;

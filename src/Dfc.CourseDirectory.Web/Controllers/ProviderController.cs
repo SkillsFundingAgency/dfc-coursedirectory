@@ -5,15 +5,14 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Helpers;
-using Dfc.CourseDirectory.Models.Models;
 using Dfc.CourseDirectory.Models.Models.Courses;
+using Dfc.CourseDirectory.Models.Models.Regions;
 using Dfc.CourseDirectory.Models.Models.Venues;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Helpers;
-using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.Web.ViewModels.YourCourses;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -89,17 +88,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
             if (list == null) list = new List<RegionItemModel>();
             if (ids == null) ids = new List<string>();
 
-            ids = ids
-                .Select(x => x.Trim())
-                .Where(x => !string.IsNullOrWhiteSpace(x));
+            var regionNames = (from regionItemModel in list
+                from subRegionItemModel in regionItemModel.SubRegion
+                where ids.Contains(subRegionItemModel.Id)
+                select regionItemModel.RegionName).Distinct().OrderBy(x=>x).ToList();
 
-            if (ids.Count() == 0) return string.Empty;
-
-            var matching = list
-                .Where(x => ids.Contains(x.Id))
-                .Select(x => x.RegionName);
-
-            return string.Join(", ", matching);
+            return string.Join(", ", regionNames);
         }
 
         internal string CourseNameByCourseRunId(IEnumerable<CourseRunViewModel> courseRuns, string id)

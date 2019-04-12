@@ -21,7 +21,7 @@
 
 @await Component.InvokeAsync(nameof(Notification), new NotificationModel
 {
-    NotificationTitle = "Qualification added",
+    NotificationTitle = "Qualification details",
     NotificationMessage = @Model.LearnAimRefTitle + "<br>" + "Level: " + @Model.NotionalNVQLevelv2 + "<br> Awarding organisation: " + @Model.AwardOrgCode + "<br> LARS / QAN: " + @Model.LearnAimRef,
     ClassType = "info-summary"
 })
@@ -118,30 +118,31 @@
                 @Model.SelectRegion.HintText
             </span>
 
-            <div class="govuk-checkboxes" id="SelectRegionCheckBoxes" val-required-message="Select a region">
+            <div class="govuk-checkboxes" id="SelectRegionCheckBoxes" val-required-message="Select at least one region">
                 @foreach (var item in Model.SelectRegion.RegionItems)
                 {
-                    <details class="form-group" role="group">
-                        <summary role="button">
-                            <span id="region+@item.Id" class="summary govuk-label govuk-checkboxes__label">@item.RegionName</span>
+                    <details class="govuk-details">
+                        <summary class="govuk-details__summary">
+                            <span id="region"@item.Id class="govuk-details__summary-text">
+                                @item.RegionName
+                            </span>
                         </summary>
-
                         <div class="govuk-form-group">
                             <h3><a class="govuk-link" id="SelectAll" region-id="@item.Id" href="#">Select all</a></h3>
-                        </div>
-                        <div class="flex-container govuk-grid-row region-checkboxes" id="details-content-@item.Id" aria-hidden="true">
+                            <div class="flex-container govuk-grid-row region-checkboxes" id="details-content-@item.Id" aria-hidden="true">
 
-                            @{ var x = 0; }
-                            @foreach (var subregion in item.SubRegion)
-                            {
-                                x++;
+                                @{ var x = 0; }
+                                @foreach (var subregion in item.SubRegion)
+                                {
+                                    x++;
 
-                                <div class="govuk-checkboxes__item">
-                                    <input class="govuk-checkboxes__input" id="RegionName-@x" region-id="@item.Id" name="SelectedRegions" type="checkbox" value="@subregion.Id" @subregion.Checked.ThenNullableCheck()/>
-                                    <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@subregion.SubRegionName</label>
-                                </div>
+                                    <div class="govuk-checkboxes__item">
+                                        <input class="govuk-checkboxes__input" id="RegionName-@x" region-id="@item.Id" name="SelectedRegions" type="checkbox" value="@subregion.Id" @subregion.Checked.ThenNullableCheck()/>
+                                        <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@subregion.SubRegionName</label>
+                                    </div>
 
-                            }
+                                }
+                            </div>
                         </div>
                     </details>
                 }
@@ -219,6 +220,7 @@
                     @Html.ActionLink("Cancel", "Index", "PublishCourses", new { publishMode = Model.Mode, courseId = Model.CourseId, courseRunId = Model.CourseRunId }, new { @class = "govuk-link" })
                     break;
                 case PublishMode.BulkUpload:
+                case PublishMode.DataQualityIndicator:
                     @Html.ActionLink("Cancel", "Index", "PublishCourses", new { publishMode = Model.Mode }, new { @class = "govuk-link" })
                     break;
                 default:
@@ -599,8 +601,9 @@
                 var $attendancePatternRadioButtons = $("#AttendancePatternRadioButtons");
                 var $specifiedStartDate = $("#SpecifiedStartDate");
                 var $flexibleStartDate = $("#FlexibleStartDate");
-                var $dayTimeAttendance = $("#@AttendancePattern.Daytime");
-                var $studyMode = $("#@StudyMode.FullTime");
+
+                var $attendancePattern = $("#@Model.AttendanceMode");
+                var $studyMode = $("#@Model.StudyMode");
 
                 switch (this.id) {
                     case "ClassroomBased":
@@ -614,7 +617,7 @@
                             isClassroomBased = true;
                             isOnline = false;
                             isWorkBased = false;
-                            $dayTimeAttendance.prop("checked", true);
+                            $attendancePattern.prop("checked", true);
                             $studyMode.prop("checked", true);
                             break;
                         }
@@ -629,7 +632,7 @@
                             isClassroomBased = false;
                             isOnline = true;
                             isWorkBased = false;
-                            $dayTimeAttendance.prop("checked", false);
+                            $attendancePattern.prop("checked", false);
                             $studyMode.prop("checked", false);
                             break;
                         }
@@ -644,7 +647,7 @@
                             isClassroomBased = false;
                             isOnline = false;
                             isWorkBased = true;
-                            $dayTimeAttendance.prop("checked", false);
+                            $attendancePattern.prop("checked", false);
                             $studyMode.prop("checked", false);
                             break;
                         }

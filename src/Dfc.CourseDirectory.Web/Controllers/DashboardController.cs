@@ -47,7 +47,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
 
-        public static DashboardViewModel GetDashboardViewModel(ICourseService service, int? UKPRN)
+        public static DashboardViewModel GetDashboardViewModel(ICourseService service, int? UKPRN, string successHeader)
         {
             if (!UKPRN.HasValue)
                 return new DashboardViewModel();
@@ -66,8 +66,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
             //                                     where ((int)c.CourseStatus & s) > 0
             //                                     select c;
 
-            IEnumerable<CourseValidationResult> results = service.PendingCourseValidationMessages(courses)
-                                                                 .Value;
+
+            IEnumerable<CourseValidationResult> results = service.CourseValidationMessages(validCourses, ValidationMode.DataQualityIndicator).Value;
+          
+
+            //IEnumerable<CourseValidationResult> results = service.CourseValidationMessages(courses, ValidationMode.BulkUploadCourse).Value;
             IEnumerable<string> courseMessages = results.SelectMany(c => c.Issues);
             IEnumerable<string> runMessages    = results.SelectMany(c => c.RunValidationResults)
                                                         .SelectMany(r => r.Issues);
@@ -81,6 +84,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             DashboardViewModel vm = new DashboardViewModel()
             {
+                SuccessHeader = successHeader,
                  ValidationHeader = $"{ courseMessages.LongCount() + runMessages.LongCount() } data items require attention",
                  ValidationMessages = messages,
                  //LiveCourseCount = counts.FirstOrDefault(c => c.Status == (int)RecordStatus.Live).Count,
@@ -92,6 +96,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                                        select c.Count).Sum() //,
                  //RecentlyModifiedCourses = new List<Course>() { new Course(), new Course() }
             };
+
             return vm;
         }
 
@@ -105,7 +110,17 @@ namespace Dfc.CourseDirectory.Web.Controllers
             if (!UKPRN.HasValue)
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
 
-            return View(GetDashboardViewModel(_courseService, UKPRN));
+            var vm = GetDashboardViewModel(_courseService, UKPRN, "");
+
+            if (vm.PendingCourseCount > 0)
+            {
+                _session.SetString("PendingCourses", "true");
+            }
+            else
+            {
+                _session.SetString("PendingCourses", "false");
+            }
+            return View(vm);
         }
     }
 }

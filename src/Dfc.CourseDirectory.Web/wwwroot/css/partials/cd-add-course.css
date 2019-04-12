@@ -6,21 +6,6 @@
   margin-left: 10px;
 }
 
-details {
-  display: block;
-}
-
-details summary {
-  display: inline-block;
-  color: #005ea5;
-  cursor: pointer;
-  position: relative;
-}
-
-details .summary {
-  text-decoration: underline;
-}
-
 .region-checkboxes {
   display: flex;
   flex-wrap: wrap;
@@ -28,5 +13,5 @@ details .summary {
 
 .region-checkboxes .govuk-checkboxes__item {
   margin: 0.5em;
-  flex: 0 0 18%;
+  flex: 0 0 25%;
 }

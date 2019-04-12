@@ -11,6 +11,8 @@ namespace Dfc.CourseDirectory.Models.Enums
         BulkUpload = 1,
         [Description("Migration")]
         Migration = 2,
+        [Description("DataQualityIndicator")]
+        DataQualityIndicator = 3
       
     }
     public enum FundingOptions
@@ -92,11 +94,13 @@ namespace Dfc.CourseDirectory.Models.Enums
 
     public enum RegulatedType
     {
-        [Description("Regulated")]
+        [Description("Regulated qualification")]
         Regulated = 0,
         [Description("Non-regulated provision")]
         NonRegulated = 1
     }
+
+  
 
 
     public class Enums

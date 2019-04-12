@@ -83,7 +83,7 @@
 
         <div class="govuk-grid-column-three-quarters">
 
-            @await Component.InvokeAsync(nameof(Pagination),
+            @*@await Component.InvokeAsync(nameof(Pagination),
                      new
                      {
                          url = Model.Url,
@@ -92,7 +92,7 @@
                          itemsPerPage = Model.ItemsPerPage,
                          noOfPagesToDisplay = 10,
                          isSliding = true
-                     })
+                     })*@
             <div class="govuk-table govuk-!-font-size-14">
 
 
@@ -130,7 +130,7 @@
                      })
         </div>
     }
-    else if (!string.IsNullOrWhiteSpace(Model.SearchTerm) && !Model.Items.Any())
+    @*else if (!string.IsNullOrWhiteSpace(Model.SearchTerm) && !Model.Items.Any())
     {
         <div class="govuk-grid-column-full">
             <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
@@ -140,7 +140,7 @@
                 </h2>
             </div>
         </div>
-    }
+    }*@
 </div>
 
 <script>

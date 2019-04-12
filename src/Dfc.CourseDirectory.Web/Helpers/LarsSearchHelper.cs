@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using Dfc.CourseDirectory.Services.UnregulatedProvision;
 namespace Dfc.CourseDirectory.Web.Helpers
 {
     public class LarsSearchHelper : ILarsSearchHelper
@@ -27,16 +27,14 @@ namespace Dfc.CourseDirectory.Web.Helpers
 
             sb = BuildUpFilterStringBuilder(sb, "NotionalNVQLevelv2", larsSearchRequestModel.NotionalNVQLevelv2Filter);
             sb = BuildUpFilterStringBuilder(sb, "AwardOrgCode", larsSearchRequestModel.AwardOrgCodeFilter);
+            sb = BuildUpFilterStringBuilder(sb, "AwardOrgAimRef", larsSearchRequestModel.AwardOrgAimRefFilter);
 
 
-            if (sb.Length != 0)
-            {
+            if (sb.Length != 0) {
                 new LarsSearchFilterBuilder(sb).And().AppendOpeningBracket().Field("CertificationEndDate")
                     .GreaterThanOrEqualTo(DateTimeOffset.UtcNow.ToString("yyyy-MM-dd")).Or()
                     .Field("CertificationEndDate eq null").AppendClosingBracket();
-            }
-            else
-            {
+            } else {
                 new LarsSearchFilterBuilder(sb).Field("CertificationEndDate")
                     .GreaterThanOrEqualTo(DateTimeOffset.UtcNow.ToString("yyyy-MM-dd")).Or()
                     .Field("CertificationEndDate eq null");
@@ -53,6 +51,93 @@ namespace Dfc.CourseDirectory.Web.Helpers
 
             return criteria;
         }
+
+
+        public IZCodeSearchCriteria GetZCodeSearchCriteria(
+            LarsSearchRequestModel larsSearchRequestModel,
+            int currentPageNo,
+            int itemsPerPage,
+            IEnumerable<LarsSearchFacet> facets = null)
+        {
+            Throw.IfNull(larsSearchRequestModel, nameof(larsSearchRequestModel));
+            Throw.IfLessThan(1, currentPageNo, nameof(currentPageNo));
+            Throw.IfLessThan(1, itemsPerPage, nameof(itemsPerPage));
+
+            var sb = new StringBuilder();
+
+
+            sb = BuildUpFilterStringBuilder(sb, "NotionalNVQLevelv2", larsSearchRequestModel.NotionalNVQLevelv2Filter);
+            sb = BuildUpFilterStringBuilder(sb, "AwardOrgCode", larsSearchRequestModel.AwardOrgCodeFilter);
+            sb = BuildUpFilterStringBuilder(sb, "AwardOrgAimRef", larsSearchRequestModel.AwardOrgAimRefFilter);
+            sb = BuildUpFilterStringBuilder(sb, "SectorSubjectAreaTier1", larsSearchRequestModel.SectorSubjectAreaTier1Filter);
+            sb = BuildUpFilterStringBuilder(sb, "SectorSubjectAreaTier2", larsSearchRequestModel.SectorSubjectAreaTier2Filter);
+
+
+            if (sb.Length != 0)
+            {
+                new LarsSearchFilterBuilder(sb).And().AppendOpeningBracket().Field("CertificationEndDate")
+                    .GreaterThanOrEqualTo(DateTimeOffset.UtcNow.ToString("yyyy-MM-dd")).Or()
+                    .Field("CertificationEndDate eq null").AppendClosingBracket();
+
+            }
+            else
+            {
+                new LarsSearchFilterBuilder(sb).Field("CertificationEndDate")
+                    .GreaterThanOrEqualTo(DateTimeOffset.UtcNow.ToString("yyyy-MM-dd")).Or()
+                    .Field("CertificationEndDate eq null");
+            }
+
+            var skip = currentPageNo == 1 ? 0 : itemsPerPage * (currentPageNo - 1);
+
+            var criteria = new ZCodeSearchCriteria(
+                "Z*",
+                "LearnAimRef",
+               itemsPerPage,
+               skip,
+               new LarsSearchFilterBuilder(sb).Build(),
+               facets);
+
+            return criteria;
+        }
+
+
+
+
+        public IEnumerable<LarsSearchFilterModel> GetUnRegulatedSearchFilterModels(
+    LarsSearchFacets larsSearchFacets,
+    LarsSearchRequestModel larsSearchRequestModel)
+        {
+            Throw.IfNull(larsSearchFacets, nameof(larsSearchFacets));
+            Throw.IfNull(larsSearchRequestModel, nameof(larsSearchRequestModel));
+
+            var filters = new List<LarsSearchFilterModel>();
+
+            var notionalNVQLevelv2Filter = GetLarsSearchFilterModel(
+                "Qualification Level",
+                "NotionalNVQLevelv2Filter",
+                (value) => $"Level {value}",
+                larsSearchFacets.NotionalNVQLevelv2,
+                larsSearchRequestModel.NotionalNVQLevelv2Filter);
+
+
+            var awardOrgAimRefFilter = GetLarsSearchFilterModel(
+                "Category",
+                "AwardOrgAimRefFilter",
+                (value) => value,
+                larsSearchFacets.AwardOrgAimRef,
+                larsSearchRequestModel.AwardOrgAimRefFilter);
+
+            filters.Add(notionalNVQLevelv2Filter);
+
+           foreach(var award in awardOrgAimRefFilter.Items)
+            {
+                award.Text = Categories.AllCategories.Where(x => x.Id == award.Text).Select(x => x.Category).SingleOrDefault();
+            }
+            filters.Add(awardOrgAimRefFilter);
+            return filters;
+        }
+
+
 
         public IEnumerable<LarsSearchFilterModel> GetLarsSearchFilterModels(
             LarsSearchFacets larsSearchFacets,
@@ -76,7 +161,6 @@ namespace Dfc.CourseDirectory.Web.Helpers
                 (value) => value,
                 larsSearchFacets.AwardOrgCode,
                 larsSearchRequestModel.AwardOrgCodeFilter);
-
 
             filters.Add(notionalNVQLevelv2Filter);
             filters.Add(awardOrgCodeFilter);
@@ -195,13 +279,14 @@ namespace Dfc.CourseDirectory.Web.Helpers
 
             foreach (var item in searchFacets)
             {
+                string value = string.IsNullOrWhiteSpace(item.Value) ? "(blank)" : item.Value;
                 items.Add(new LarsSearchFilterItemModel(
                     $"{facetName}-{count++}",
                     facetName,
-                    textStrategy?.Invoke(item.Value),
-                    item.Value,
+                    textStrategy?.Invoke(value),
+                    value,
                     item.Count,
-                    selectedValues.Contains(item.Value)));
+                    selectedValues.Contains(value)));
             }
 
             var model = new LarsSearchFilterModel(title, items);

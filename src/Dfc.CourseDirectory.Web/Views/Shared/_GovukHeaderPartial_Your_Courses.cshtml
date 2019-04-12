@@ -39,7 +39,7 @@
         </div>
     </div>
     <div class="cd-header-blue">
-        <div class="cd-fullwidth-container"">
+        <div class="cd-fullwidth-container">
             <div class="govuk-grid-row row">
                 @if (SignInManager.IsSignedIn(User))
                 {
@@ -56,11 +56,9 @@
                                 providerName = providerSearchResult.Value.Value.FirstOrDefault()?.ProviderName;
                             }
                         }
-                        @providerName
-                    </div>
-                    <partial name="_LoginPartial" />
+                        @providerName</div>
+                    <partial name="_LoginPartial"/>
                 }
-
             </div>
         </div>
     </div>
@@ -111,13 +109,17 @@
                                 </a>
 
                             }
-                            if (authorised.Succeeded || superUser.Succeeded)
+                            var pendingCourses = HttpContextAccessor.HttpContext.Session.GetString("PendingCourses");
+
+                            if (pendingCourses == "true")
                             {
+                                if (authorised.Succeeded || superUser.Succeeded)
+                                {
+                                    <a class="" href="/Migration">
+                                        Migration
+                                    </a>
 
-                                <a class="" href="/Migration">
-                                    Migration
-                                </a>
-
+                                }
                             }
 
                         }

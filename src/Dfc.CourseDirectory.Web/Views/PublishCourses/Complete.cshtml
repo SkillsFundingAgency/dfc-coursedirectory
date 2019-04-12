@@ -7,13 +7,13 @@
 <div class="govuk-panel govuk-panel--confirmation">
     @if (Model.Mode.Equals(PublishMode.BulkUpload))
     {
-        <div class="govuk-panel__body">
-            <h1 class="govuk-panel__title">
-                Your file has been published
-            </h1>
+    <div class="govuk-panel__body">
+        <h1 class="govuk-panel__title">
+            Your file has been published
+        </h1>
 
-            You have added @Model.NumberOfCoursesPublished courses to the course directory
-        </div>
+        You have added <strong>@Model.NumberOfCoursesPublished</strong> @(Model.NumberOfCoursesPublished.Equals(1) ? "course" : "courses") to the course directory
+    </div>
     }
 
     @if (Model.Mode.Equals(PublishMode.Migration))
@@ -22,12 +22,7 @@
             <h1 class="govuk-panel__title">
                 Migration complete
             </h1>
-            You have published <strong> @Model.NumberOfCoursesPublished</strong>
-            @if (Model.NumberOfCoursesPublished.Equals(1))
-            {<text>course</text> }
-        else
-        { <text>courses</text>}
-            to the course directory
+            You have published <strong>@Model.NumberOfCoursesPublished</strong> @(Model.NumberOfCoursesPublished.Equals(1) ? "course" : "courses") to the course directory.
         </div>
     }
 </div>

@@ -32,7 +32,7 @@
 
 @await Component.InvokeAsync(nameof(Notification), new NotificationModel
 {
-    NotificationTitle = "Qualification added",
+    NotificationTitle = "Qualification details",
     NotificationMessage = @Model.LearnAimRefTitle + "<br>" + "Level: " + @Model.NotionalNVQLevelv2 + "<br> Awarding organisation: " + @Model.AwardOrgCode + "<br> LARS / QAN: " + @Model.LearnAimRef,
     ClassType = "info-summary"
 })
@@ -213,7 +213,7 @@
         })
     </div>
 
-    <div id="FullPartTimeRadioButtons">
+    <div id="FullPartTimeRadioButtons" style="display: none;">
         @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode.StudyMode), new StudyModeModel
         {
             StudyMode = Model.StudyMode,
@@ -222,7 +222,7 @@
         })
     </div>
 
-    <div id="AttendancePatternRadioButtons">
+    <div id="AttendancePatternRadioButtons" style="display: none;">
         @await Component.InvokeAsync(nameof(Attendance), new AttendanceModel
         {
             AttendanceMode = Model.AttendanceMode,
@@ -288,7 +288,6 @@
             var $duration = $("#duration").govUkDurationInput();
             var $studyMode = $("#StudyModeRadioButtons").govUkRadios();
             var $attendance = $("#AttendanceRadioButtons").govUkRadios();
-
             var $regionItemsCheckboxList = $("#RegionItemsCheckboxList");
             var $fullPartTimeRadioButtons = $("#FullPartTimeRadioButtons");
             var $attendancePatternRadioButtons = $("#AttendancePatternRadioButtons");
@@ -296,6 +295,12 @@
             var isClassroomBased = true;
             var isOnline = false;
             var isWorkBased = false;
+
+            //Default options on page load
+            var $defaultAttendancePattern = $("#@AttendancePattern.Daytime");
+            $defaultAttendancePattern.prop("checked", true);            
+            var $defaultStudyMode = $("#@StudyMode.FullTime");
+            $defaultStudyMode.prop("checked", true);
 
             switch ($radioDeliveryMode.find("input[type='radio']:checked").val()) {
                 case "ClassroomBased":
@@ -626,8 +631,8 @@
                 var $attendancePatternRadioButtons = $("#AttendancePatternRadioButtons");
                 var $specifiedStartDate = $("#SpecifiedStartDate");
                 var $flexibleStartDate = $("#FlexibleStartDate");
-                var $dayTimeAttendance = $("#@AttendancePattern.Daytime");
-                var $studyMode = $("#@StudyMode.FullTime");
+                var $attendancePattern = $("#@Model.AttendanceMode");
+                var $studyMode = $("#@Model.StudyMode");
 
                 switch (this.id) {
                     case "ClassroomBased":
@@ -641,7 +646,7 @@
                             isClassroomBased = true;
                             isOnline = false;
                             isWorkBased = false;
-                            $dayTimeAttendance.prop("checked", true);
+                            $attendancePattern.prop("checked", true);
                             $studyMode.prop("checked", true);
                             break;
                         }
@@ -656,7 +661,7 @@
                             isClassroomBased = false;
                             isOnline = true;
                             isWorkBased = false;
-                            $dayTimeAttendance.prop("checked", false);
+                            $attendancePattern.prop("checked", false);
                             $studyMode.prop("checked", false);
                             break;
                         }
@@ -671,7 +676,7 @@
                             isClassroomBased = false;
                             isOnline = false;
                             isWorkBased = true;
-                            $dayTimeAttendance.prop("checked", false);
+                            $attendancePattern.prop("checked", false);
                             $studyMode.prop("checked", false);
                             break;
                         }
