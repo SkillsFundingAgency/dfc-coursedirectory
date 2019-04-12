@@ -1,0 +1,252 @@
+﻿@using Dfc.CourseDirectory.Web.ViewComponents.Extensions
+@using Dfc.CourseDirectory.Web.ViewComponents.Pagination;
+@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Identity
+@using Dfc.CourseDirectory.Web.Areas.Identity.Data;
+@using Microsoft.AspNetCore.Authorization;
+@using Dfc.CourseDirectory.Services.UnregulatedProvision
+@using Dfc.CourseDirectory.Web.ViewModels
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@model Dfc.CourseDirectory.Web.ViewModels.ProviderCourses.ProviderCoursesViewModel;
+
+<div class="cd-grid-coloumn-20 govuk-body">
+    <div class="govuk-form-group">
+        <h5><a class="govuk-link" id="ClearAllFilters" href="">reset</a></h5>
+    </div>
+    <div class="govuk-form-group govuk-!-font-size-14">
+        <div class="accordion govuk-heading-s">Level</div>
+        <div class="panel">
+            <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
+                <div class="govuk-checkboxes">
+
+
+                    @foreach (var level in Model.Levels)
+                    {
+                        <div class="govuk-checkboxes__item">
+                            <input class="govuk-checkboxes__input" id="@level.Id" name="@level.Name" type="checkbox" value="@level.Value" @level.IsSelected.ThenCheck()>
+                            <label class="govuk-label govuk-checkboxes__label govuk-!-font-size-14" for="@level.Id">
+                                @level.Text
+                            </label>
+                        </div>
+                    }
+
+
+                </div>
+            </fieldset>
+        </div>
+    </div>
+    <div class="govuk-form-group govuk-!-font-size-14">
+        <div class="accordion govuk-heading-s">Delivery Mode</div>
+        <div class="panel">
+            <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
+                <div class="govuk-checkboxes">
+
+
+                    @foreach (var deliveryMode in Model.DeliveryModes)
+                    {
+                        <div class="govuk-checkboxes__item">
+                            <input class="govuk-checkboxes__input" id="@deliveryMode.Id" name="@deliveryMode.Name" type="checkbox" value="@deliveryMode.Value" @deliveryMode.IsSelected.ThenCheck()>
+                            <label class="govuk-label govuk-checkboxes__label govuk-!-font-size-14" for="@deliveryMode.Id">
+                                @deliveryMode.Text
+                            </label>
+                        </div>
+                    }
+
+
+                </div>
+            </fieldset>
+        </div>
+    </div>
+
+    @*<span class="cd-filter-reset">Reset filters</span>
+        <div class="cd-level-select govuk-form-group">
+            <label class="govuk-label" for="level1">
+                Filter by delivery mode
+            </label>
+            <select class="govuk-select" id="level1" name="level1">
+                <option value="published">Work based</option>
+                <option value="updated" selected> Classroom based</option>
+                <option value="views">Online</option>
+            </select>
+        </div>
+        <div class="cd-level-select govuk-form-group">
+            <label class="govuk-label" for="level1">
+                Filter by level
+            </label>
+            <select class="govuk-select" id="level1" name="level1">
+                <option value="published">Recently published</option>
+                <option value="updated" selected> Level 1</option>
+                <option value="views">Most views</option>
+                <option value="comments">Most comments</option>
+            </select>
+        </div>
+
+
+        <div class="cd-level-select govuk-form-group">
+            <label class="govuk-label" for="level1">
+                Filter by venue
+            </label>
+            <select class="govuk-select" id="level1" name="level1">
+                <option value="published">Recently published</option>
+                <option value="updated" selected>Main campus</option>
+                <option value="views">Most views</option>
+                <option value="comments">Most comments</option>
+            </select>
+        </div>
+
+        <div class="cd-level-select govuk-form-group">
+            <label class="govuk-label" for="region">
+                Filter by region
+            </label>
+            <select class="govuk-select" id="region" name="region">
+                <option value="published">South</option>
+                <option value="updated" selected> North</option>
+                <option value="views">Midlands</option>
+                <option value="comments">Most comments</option>
+            </select>
+        </div>
+        <div class="cd-level-select govuk-form-group">
+            <label class="govuk-label" for="level1">
+                Filter by attendance mode
+            </label>
+            <select class="govuk-select" id="level1" name="level1">
+                <option value="published">Recently published</option>
+                <option value="updated" selected>Full time</option>
+                <option value="views">Most views</option>
+                <option value="comments">Most comments</option>
+            </select>
+        </div>*@
+</div>
+
+<div class="cd-grid-coloumn-80 ">
+
+    @foreach (var courseRun in Model.ProviderCourseRuns)
+    {
+    <div class="courserun border">
+        <div class="courserun__row1">
+            @if (!string.IsNullOrEmpty(courseRun.CourseName))
+            {
+                <h3 class="coursename">@courseRun.CourseName</h3>
+            }
+            <h4 class="coursename smaller ">
+
+                @if (!string.IsNullOrEmpty(courseRun.QualificationCourseTitle))
+                {
+                    <small>@courseRun.QualificationCourseTitle </small>
+                }
+                @if (!string.IsNullOrEmpty(courseRun.LearnAimRef))
+                {
+                    <small>
+                        <span>LARS/QAN:@courseRun.LearnAimRef</span>
+                    </small>
+                }
+
+            </h4>
+        </div>
+
+        @if (courseRun.DeliveryMode == "Classroom based")
+        {
+            if (!string.IsNullOrEmpty(courseRun.Venue))
+            {
+                <div class="courserun__row2">
+                    <span class="">@courseRun.Venue</span>
+                </div>
+            }
+        }
+        @if (courseRun.DeliveryMode == "Work based")
+        {
+            if (!string.IsNullOrEmpty(courseRun.Region))
+            {
+                <div class="courserun__row2">
+                    <span class="">@courseRun.Region</span>
+                </div>
+            }
+        }
+
+
+                <div class="courserun__row3">
+                    @if (!string.IsNullOrEmpty(courseRun.CourseTextId))
+                    {
+                        <span>@courseRun.CourseTextId</span>
+                    }
+
+                    @if (courseRun.DeliveryMode == "Classroom based")
+                    {
+                        if (!string.IsNullOrEmpty(courseRun.AttendancePattern))
+                        {
+                            <span id="attendance">@courseRun.AttendancePattern</span>
+                        }
+                    }
+                    @if (!string.IsNullOrEmpty(courseRun.NotionalNVQLevelv2))
+                    {
+                        <span>Level @courseRun.NotionalNVQLevelv2</span>
+                    }
+
+
+                    @if (!string.IsNullOrEmpty(courseRun.DeliveryMode))
+                    {
+                        <span id="deliverymode">@courseRun.DeliveryMode</span>
+                    }
+                    @if (courseRun.DeliveryMode == "Classroom based")
+                    {
+                        @if (!string.IsNullOrEmpty(courseRun.StudyMode))
+                        {
+                            <span id="studymode">@courseRun.StudyMode</span>
+                        }
+                    }
+                    @if (!string.IsNullOrEmpty(courseRun.StartDate))
+                    {
+                        <span>@courseRun.StartDate</span>
+                    }
+
+                </div>
+        <div class="courserun__row4">
+            <a class="govuk-link" asp-controller="CoursePage" asp-action="Index">Select</a>
+
+        </div>
+    </div>
+    }
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
