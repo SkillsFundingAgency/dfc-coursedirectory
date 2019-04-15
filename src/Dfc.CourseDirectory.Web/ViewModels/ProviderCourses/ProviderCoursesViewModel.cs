@@ -17,5 +17,15 @@ namespace Dfc.CourseDirectory.Web.ViewModels.ProviderCourses
 
         public List<ProviderCoursesFilterItemModel> Levels { get; set; }
         public List<ProviderCoursesFilterItemModel> DeliveryModes { get; set; }
+
+        public List<ProviderCoursesFilterItemModel> Venues { get; set; }
+
+        public List<ProviderCoursesFilterItemModel> Regions { get; set; }
+
+        public List<ProviderCoursesFilterItemModel> AttendancePattern { get; set; }
+
+        public int? PendingCoursesCount { get; set; }
+
+
     }
 }

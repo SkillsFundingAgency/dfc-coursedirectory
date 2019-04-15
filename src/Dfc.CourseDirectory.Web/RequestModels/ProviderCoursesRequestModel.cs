@@ -8,14 +8,16 @@
     {
 
 
-        //public string LevelId { get; set; }
 
-        //public string CategoryId { get; set; }
-        //public string SearchTerm { get; set; }
-        //public string[] AwardOrgCodeFilter { get; set; }
         public string[] LevelFilter { get; set; }
         public string[] DeliveryModeFilter { get; set; }
-        //public string[] SectorSubjectAreaTier2Filter { get; set; }
+
+        public string[] VenueFilter { get; set; }
+
+        public string[] RegionFilter { get; set; }
+
+        public string[] AttendancePatternFilter { get; set; }
+
 
 
 
@@ -23,13 +25,12 @@
 
         public ProviderCoursesRequestModel()
         {
-            //AwardOrgCodeFilter = new string[] { };
             LevelFilter = new string[] { };
             DeliveryModeFilter = new string[] { };
-            // SectorSubjectAreaTier1Filter = new string[] { };
-            //SectorSubjectAreaTier2Filter = new string[] { };
-            //AwardOrgAimRefFilter = new string[] { };
-            PageNo = 1;
+            VenueFilter = new string[] { };
+            RegionFilter = new string[] { };
+            AttendancePatternFilter = new string[] { };
+
         }
     }
 }
