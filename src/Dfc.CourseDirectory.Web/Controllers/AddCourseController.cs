@@ -280,7 +280,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             var regions = new List<string>();
 
             // sort regions out
-            model.SelectedRegions = availableRegions.SubRegionsDataCleanse(model.SelectedRegions.ToList());
+            model.SelectedRegions = availableRegions.SubRegionsDataCleanse(model.SelectedRegions?.ToList() ?? new List<string>());
 
             var summaryViewModel = new AddCourseSummaryViewModel
             {
