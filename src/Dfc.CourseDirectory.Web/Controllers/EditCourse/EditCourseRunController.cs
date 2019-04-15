@@ -136,7 +136,15 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                     else
                     {
                         vm.ValPastDateRef = courseRun.StartDate ?? DateTime.Now;
-                        vm.ValPastDateMessage = "New Start Date cannot be before the pre-edited Start Date";
+                        if (courseRun.FlexibleStartDate == true)
+                        {
+                            vm.ValPastDateMessage = "Start Date cannot be earlier than today’s date";
+                        }
+                        else
+                        {
+                            vm.ValPastDateMessage = "New Start Date cannot be before the pre-edited Start Date";
+                        }
+
                     }
 
                     if (courseRun.Regions == null) return View("EditCourseRun", vm);
