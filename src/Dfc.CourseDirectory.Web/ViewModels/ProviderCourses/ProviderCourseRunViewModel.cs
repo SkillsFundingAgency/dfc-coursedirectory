@@ -31,6 +31,8 @@ namespace Dfc.CourseDirectory.Web.ViewModels.ProviderCourses
         public string AttendancePattern { get; set; }
         public IEnumerable<string> Regions { get; set; }
 
+        public string RegionIdList { get; set; }
+
         public Guid? VenueId { get; set; }
 
     }

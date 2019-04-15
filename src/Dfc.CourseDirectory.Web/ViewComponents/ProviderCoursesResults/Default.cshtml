@@ -12,11 +12,14 @@
 @model Dfc.CourseDirectory.Web.ViewModels.ProviderCourses.ProviderCoursesViewModel;
 
 <div class="cd-grid-coloumn-20 govuk-body">
+    @if (Model.HasFilters)
+    {
     <div class="govuk-form-group">
-        <h5><a class="govuk-link" id="ClearAllFilters" href="">reset</a></h5>
+        <h5><a class="govuk-link" id="ClearAllFilters" href="">Reset filters</a></h5>
     </div>
+    }
     <div class="govuk-form-group govuk-!-font-size-14">
-        <div class="accordion govuk-heading-s">Level</div>
+        <div class="accordion govuk-heading-s">Filter by level</div>
         <div class="panel">
             <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
                 <div class="govuk-checkboxes">
@@ -37,180 +40,223 @@
             </fieldset>
         </div>
     </div>
-    <div class="govuk-form-group govuk-!-font-size-14">
-        <div class="accordion govuk-heading-s">Delivery Mode</div>
-        <div class="panel">
-            <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
-                <div class="govuk-checkboxes">
+    @if (Model.DeliveryModes.Any())
+    {
+        <div class="govuk-form-group govuk-!-font-size-14">
+            <div class="accordion govuk-heading-s">Filter by delivery mode</div>
+            <div class="panel">
+                <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
+                    <div class="govuk-checkboxes">
 
 
-                    @foreach (var deliveryMode in Model.DeliveryModes)
-                    {
-                        <div class="govuk-checkboxes__item">
-                            <input class="govuk-checkboxes__input" id="@deliveryMode.Id" name="@deliveryMode.Name" type="checkbox" value="@deliveryMode.Value" @deliveryMode.IsSelected.ThenCheck()>
-                            <label class="govuk-label govuk-checkboxes__label govuk-!-font-size-14" for="@deliveryMode.Id">
-                                @deliveryMode.Text
-                            </label>
-                        </div>
-                    }
+                        @foreach (var deliveryMode in Model.DeliveryModes)
+                        {
+                            <div class="govuk-checkboxes__item">
+                                <input class="govuk-checkboxes__input" id="@deliveryMode.Id" name="@deliveryMode.Name" type="checkbox" value="@deliveryMode.Value" @deliveryMode.IsSelected.ThenCheck()>
+                                <label class="govuk-label govuk-checkboxes__label govuk-!-font-size-14" for="@deliveryMode.Id">
+                                    @deliveryMode.Text
+                                </label>
+                            </div>
+                        }
 
 
-                </div>
-            </fieldset>
+                    </div>
+                </fieldset>
+            </div>
         </div>
-    </div>
+    }
 
-    @*<span class="cd-filter-reset">Reset filters</span>
-        <div class="cd-level-select govuk-form-group">
-            <label class="govuk-label" for="level1">
-                Filter by delivery mode
-            </label>
-            <select class="govuk-select" id="level1" name="level1">
-                <option value="published">Work based</option>
-                <option value="updated" selected> Classroom based</option>
-                <option value="views">Online</option>
-            </select>
-        </div>
-        <div class="cd-level-select govuk-form-group">
-            <label class="govuk-label" for="level1">
-                Filter by level
-            </label>
-            <select class="govuk-select" id="level1" name="level1">
-                <option value="published">Recently published</option>
-                <option value="updated" selected> Level 1</option>
-                <option value="views">Most views</option>
-                <option value="comments">Most comments</option>
-            </select>
-        </div>
+    @if (Model.Venues.Any())
+    {
+        <div class="govuk-form-group govuk-!-font-size-14">
+            <div class="accordion govuk-heading-s">Filter by venue</div>
+            <div class="panel">
+                <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
+                    <div class="govuk-checkboxes">
 
 
-        <div class="cd-level-select govuk-form-group">
-            <label class="govuk-label" for="level1">
-                Filter by venue
-            </label>
-            <select class="govuk-select" id="level1" name="level1">
-                <option value="published">Recently published</option>
-                <option value="updated" selected>Main campus</option>
-                <option value="views">Most views</option>
-                <option value="comments">Most comments</option>
-            </select>
+                        @foreach (var venue in Model.Venues)
+                        {
+                            <div class="govuk-checkboxes__item">
+                                <input class="govuk-checkboxes__input" id="@venue.Id" name="@venue.Name" type="checkbox" value="@venue.Value" @venue.IsSelected.ThenCheck()>
+                                <label class="govuk-label govuk-checkboxes__label govuk-!-font-size-14" for="@venue.Id">
+                                    @venue.Text
+                                </label>
+                            </div>
+                        }
+
+
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+    }
+
+    @if (Model.AttendancePattern.Any())
+    {
+        <div class="govuk-form-group govuk-!-font-size-14">
+            <div class="accordion govuk-heading-s">Filter by attendance mode</div>
+            <div class="panel">
+                <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
+                    <div class="govuk-checkboxes">
+
+
+                        @foreach (var attendancePattern in Model.AttendancePattern)
+                        {
+                            <div class="govuk-checkboxes__item">
+                                <input class="govuk-checkboxes__input" id="@attendancePattern.Id" name="@attendancePattern.Name" type="checkbox" value="@attendancePattern.Value" @attendancePattern.IsSelected.ThenCheck()>
+                                <label class="govuk-label govuk-checkboxes__label govuk-!-font-size-14" for="@attendancePattern.Id">
+                                    @attendancePattern.Text
+                                </label>
+                            </div>
+                        }
+
+
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+    }
+    @if (Model.Regions.Any())
+    {
+        <div class="govuk-form-group govuk-!-font-size-14">
+            <div class="accordion govuk-heading-s">Filter by region</div>
+            <div class="panel">
+                <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
+                    <div class="govuk-checkboxes">
+
+
+                        @foreach (var region in Model.Regions)
+                        {
+                            <div class="govuk-checkboxes__item">
+                                <input class="govuk-checkboxes__input" id="@region.Id" name="@region.Name" type="checkbox" value="@region.Value" @region.IsSelected.ThenCheck()>
+                                <label class="govuk-label govuk-checkboxes__label govuk-!-font-size-14" for="@region.Id">
+                                    @region.Text
+                                </label>
+                            </div>
+                        }
+
+
+                    </div>
+                </fieldset>
+            </div>
         </div>
 
-        <div class="cd-level-select govuk-form-group">
-            <label class="govuk-label" for="region">
-                Filter by region
-            </label>
-            <select class="govuk-select" id="region" name="region">
-                <option value="published">South</option>
-                <option value="updated" selected> North</option>
-                <option value="views">Midlands</option>
-                <option value="comments">Most comments</option>
-            </select>
-        </div>
-        <div class="cd-level-select govuk-form-group">
-            <label class="govuk-label" for="level1">
-                Filter by attendance mode
-            </label>
-            <select class="govuk-select" id="level1" name="level1">
-                <option value="published">Recently published</option>
-                <option value="updated" selected>Full time</option>
-                <option value="views">Most views</option>
-                <option value="comments">Most comments</option>
-            </select>
-        </div>*@
+
+    }
 </div>
-
 <div class="cd-grid-coloumn-80 ">
 
     @foreach (var courseRun in Model.ProviderCourseRuns)
     {
-    <div class="courserun border">
-        <div class="courserun__row1">
-            @if (!string.IsNullOrEmpty(courseRun.CourseName))
-            {
-                <h3 class="coursename">@courseRun.CourseName</h3>
-            }
-            <h4 class="coursename smaller ">
-
-                @if (!string.IsNullOrEmpty(courseRun.QualificationCourseTitle))
+        <div class="courserun border">
+            <div class="courserun__row1">
+                @if (!string.IsNullOrEmpty(courseRun.CourseName))
                 {
-                    <small>@courseRun.QualificationCourseTitle </small>
+                    <h3 class="coursename">@courseRun.CourseName</h3>
                 }
-                @if (!string.IsNullOrEmpty(courseRun.LearnAimRef))
+                <h4 class="coursename smaller ">
+
+                    @if (!string.IsNullOrEmpty(courseRun.QualificationCourseTitle))
+                    {
+                        <small>@courseRun.QualificationCourseTitle </small>
+                    }
+                    @if (!string.IsNullOrEmpty(courseRun.LearnAimRef))
+                    {
+                        <small>
+                            <span>LARS/QAN:@courseRun.LearnAimRef</span>
+                        </small>
+                    }
+
+                </h4>
+            </div>
+
+            @if (courseRun.DeliveryMode == "Classroom based")
+            {
+                if (!string.IsNullOrEmpty(courseRun.Venue))
                 {
-                    <small>
-                        <span>LARS/QAN:@courseRun.LearnAimRef</span>
-                    </small>
+                    <div class="courserun__row2">
+                        <span class="">@courseRun.Venue</span>
+                    </div>
+                }
+            }
+            @if (courseRun.DeliveryMode == "Work based")
+            {
+                if (!string.IsNullOrEmpty(courseRun.Region))
+                {
+                    <div class="courserun__row2">
+                        <span class="">@courseRun.Region</span>
+                    </div>
+                }
+            }
+
+
+            <div class="courserun__row3">
+                @if (!string.IsNullOrEmpty(courseRun.CourseTextId))
+                {
+                    <span>@courseRun.CourseTextId</span>
                 }
 
-            </h4>
+                @if (courseRun.DeliveryMode == "Classroom based")
+                {
+                    if (!string.IsNullOrEmpty(courseRun.AttendancePattern))
+                    {
+                        <span id="attendance">@courseRun.AttendancePattern</span>
+                    }
+                }
+                @if (!string.IsNullOrEmpty(courseRun.NotionalNVQLevelv2))
+                {
+                    <span>Level @courseRun.NotionalNVQLevelv2</span>
+                }
+
+
+                @if (!string.IsNullOrEmpty(courseRun.DeliveryMode))
+                {
+                    <span id="deliverymode">@courseRun.DeliveryMode</span>
+                }
+                @if (courseRun.DeliveryMode == "Classroom based")
+                {
+                    @if (!string.IsNullOrEmpty(courseRun.StudyMode))
+                    {
+                        <span id="studymode">@courseRun.StudyMode</span>
+                    }
+                }
+                @if (!string.IsNullOrEmpty(courseRun.StartDate))
+                {
+                    <span>@courseRun.StartDate</span>
+                }
+
+            </div>
+            <div class="courserun__row4">
+                <a class="govuk-link" asp-controller="CoursePage" asp-action="Index">Select</a>
+
+            </div>
         </div>
-
-        @if (courseRun.DeliveryMode == "Classroom based")
-        {
-            if (!string.IsNullOrEmpty(courseRun.Venue))
-            {
-                <div class="courserun__row2">
-                    <span class="">@courseRun.Venue</span>
-                </div>
-            }
-        }
-        @if (courseRun.DeliveryMode == "Work based")
-        {
-            if (!string.IsNullOrEmpty(courseRun.Region))
-            {
-                <div class="courserun__row2">
-                    <span class="">@courseRun.Region</span>
-                </div>
-            }
-        }
-
-
-                <div class="courserun__row3">
-                    @if (!string.IsNullOrEmpty(courseRun.CourseTextId))
-                    {
-                        <span>@courseRun.CourseTextId</span>
-                    }
-
-                    @if (courseRun.DeliveryMode == "Classroom based")
-                    {
-                        if (!string.IsNullOrEmpty(courseRun.AttendancePattern))
-                        {
-                            <span id="attendance">@courseRun.AttendancePattern</span>
-                        }
-                    }
-                    @if (!string.IsNullOrEmpty(courseRun.NotionalNVQLevelv2))
-                    {
-                        <span>Level @courseRun.NotionalNVQLevelv2</span>
-                    }
-
-
-                    @if (!string.IsNullOrEmpty(courseRun.DeliveryMode))
-                    {
-                        <span id="deliverymode">@courseRun.DeliveryMode</span>
-                    }
-                    @if (courseRun.DeliveryMode == "Classroom based")
-                    {
-                        @if (!string.IsNullOrEmpty(courseRun.StudyMode))
-                        {
-                            <span id="studymode">@courseRun.StudyMode</span>
-                        }
-                    }
-                    @if (!string.IsNullOrEmpty(courseRun.StartDate))
-                    {
-                        <span>@courseRun.StartDate</span>
-                    }
-
-                </div>
-        <div class="courserun__row4">
-            <a class="govuk-link" asp-controller="CoursePage" asp-action="Index">Select</a>
-
-        </div>
-    </div>
     }
 
 </div>
 
+<script>
+    (function ($) {
+        $(function () {
+
+            var acc = document.getElementsByClassName("accordion");
+            var i;
+
+            for (i = 0; i < acc.length; i++) {
+                acc[i].addEventListener("click", function () {
+                    this.classList.toggle("active");
+                    var panel = this.nextElementSibling;
+                    if (panel.style.display === "none") {
+                        panel.style.display = "block";
+                    } else {
+                        panel.style.display = "none";
+                    }
+                });
+            }
+        });
+    })(jQuery);
+</script>
 
 
 
