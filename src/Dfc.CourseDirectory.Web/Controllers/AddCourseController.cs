@@ -681,7 +681,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 WhereNext = whereNext,
                 AdvancedLearnerLoan = advancedLearnerLoan,
                 AdultEducationBudget = adultEducationBudget,
-
+                IsValid = true,
                 CourseRuns = courseRuns,
 
                 CreatedDate = DateTime.Now,
