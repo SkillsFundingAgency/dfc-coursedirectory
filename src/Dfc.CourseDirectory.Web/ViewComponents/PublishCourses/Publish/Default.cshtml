@@ -49,20 +49,7 @@
     }
     @if (Model.PublishMode.Equals(PublishMode.DataQualityIndicator))
     {
-        if (Model.AreAllReadyToBePublished)
-        {
-            <h1 class="govuk-govuk-grid-column-one-half-l">Publish your courses</h1>
-            <p>
-                These courses have no errors but will not be listed on the course directory until you publish them.
-            </p>
-        }
-        else
-        {
-            <h1 class="govuk-govuk-grid-column-one-half-l">Fix errors and publish</h1>
-            <p>
-                It has not been possible to migrate @Model.NumberOfCoursesInFiles of your courses from the old Course Directory to new Course Directory. These courses cannot be listed on the new Course Directory until you update the start date.
-            </p>
-        }
+        <h1 class="govuk-govuk-grid-column-one-half-l">@Model.NumberOfCoursesInFiles courses need their start date updating</h1>
     }
     <div class="err-top-line"></div>
     @await Component.InvokeAsync(nameof(PublishCourse), new { model = Model })

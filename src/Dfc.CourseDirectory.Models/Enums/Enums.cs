@@ -94,7 +94,7 @@ namespace Dfc.CourseDirectory.Models.Enums
 
     public enum RegulatedType
     {
-        [Description("Regulated")]
+        [Description("Regulated qualification")]
         Regulated = 0,
         [Description("Non-regulated provision")]
         NonRegulated = 1
