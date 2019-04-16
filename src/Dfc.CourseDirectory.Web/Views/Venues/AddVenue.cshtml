@@ -26,7 +26,7 @@
             <div class="govuk-form-group">
                 <a id="manualLink" class="govuk-link" asp-controller="Venues" asp-action="AddVenueManualAddress" asp-route-edit="false">Enter address manually</a>
             </div>
-
+            @Html.ActionLink("Cancel", "Index", "Venues", null, new { @class = "govuk-link" })
         </form>
     </div>
 </div>
