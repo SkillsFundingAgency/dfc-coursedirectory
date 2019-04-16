@@ -47,7 +47,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
 
-        public static DashboardViewModel GetDashboardViewModel(ICourseService service, int? UKPRN)
+        public static DashboardViewModel GetDashboardViewModel(ICourseService service, int? UKPRN, string successHeader)
         {
             if (!UKPRN.HasValue)
                 return new DashboardViewModel();
@@ -84,6 +84,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             DashboardViewModel vm = new DashboardViewModel()
             {
+                SuccessHeader = successHeader,
                  ValidationHeader = $"{ courseMessages.LongCount() + runMessages.LongCount() } data items require attention",
                  ValidationMessages = messages,
                  //LiveCourseCount = counts.FirstOrDefault(c => c.Status == (int)RecordStatus.Live).Count,
@@ -109,7 +110,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             if (!UKPRN.HasValue)
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
 
-            var vm = GetDashboardViewModel(_courseService, UKPRN);
+            var vm = GetDashboardViewModel(_courseService, UKPRN, "");
 
             if (vm.PendingCourseCount > 0)
             {

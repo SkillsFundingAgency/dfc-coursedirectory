@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
@@ -278,6 +279,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
             var venues = new List<string>();
             var regions = new List<string>();
 
+            // sort regions out
+            model.SelectedRegions = availableRegions.SubRegionsDataCleanse(model.SelectedRegions?.ToList() ?? new List<string>());
+
             var summaryViewModel = new AddCourseSummaryViewModel
             {
                 LearnAimRef = addCourse.LearnAimRef,
@@ -323,7 +327,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         from modelSelectedRegion in model.SelectedRegions
                         where modelSelectedRegion == subRegionItemModel.Id
                         select subRegionItemModel.SubRegionName);
-                    
+
+
+                    regions.AddRange(from availableRegionsRegionItem in availableRegions.RegionItems
+                        from modelSelectedRegion in model.SelectedRegions
+                        where modelSelectedRegion == availableRegionsRegionItem.Id
+                        select availableRegionsRegionItem.RegionName
+                    );
+
                     summaryViewModel.Regions = regions;
                     break;
             }
@@ -582,7 +593,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 && addCourseSection2.SelectedRegions.Any())
             {
                 var availableRegions = new SelectRegionModel();
-                var subRegions = addCourseSection2.SelectedRegions.Select(selectedRegion => availableRegions.GetRegionFromName(selectedRegion)).ToList();
+
+                string[] selectedRegions =  availableRegions.SubRegionsDataCleanse(addCourseSection2.SelectedRegions.ToList());
+
+                var subRegions = selectedRegions.Select(selectedRegion => availableRegions.GetRegionFromName(selectedRegion)).ToList();
 
                 var courseRun = new CourseRun
                 {
@@ -667,7 +681,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 WhereNext = whereNext,
                 AdvancedLearnerLoan = advancedLearnerLoan,
                 AdultEducationBudget = adultEducationBudget,
-
+                IsValid = true,
                 CourseRuns = courseRuns,
 
                 CreatedDate = DateTime.Now,

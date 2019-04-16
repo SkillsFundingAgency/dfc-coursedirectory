@@ -136,7 +136,15 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                     else
                     {
                         vm.ValPastDateRef = courseRun.StartDate ?? DateTime.Now;
-                        vm.ValPastDateMessage = "New Start Date cannot be before the pre-edited Start Date";
+                        if (courseRun.FlexibleStartDate == true)
+                        {
+                            vm.ValPastDateMessage = "Start Date cannot be earlier than today’s date";
+                        }
+                        else
+                        {
+                            vm.ValPastDateMessage = "New Start Date cannot be before the pre-edited Start Date";
+                        }
+
                     }
 
                     if (courseRun.Regions == null) return View("EditCourseRun", vm);
@@ -245,7 +253,10 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                             courseRunForEdit.VenueId = null;
                             courseRunForEdit.Regions = model.SelectedRegions;
                             var availableRegions = new SelectRegionModel();
-                            var subRegions = courseRunForEdit.Regions.Select(selectedRegion => availableRegions.GetRegionFromName(selectedRegion)).ToList();
+
+                            string[] selectedRegions = availableRegions.SubRegionsDataCleanse(courseRunForEdit.Regions.ToList());
+
+                            var subRegions = selectedRegions.Select(selectedRegion => availableRegions.GetRegionFromName(selectedRegion)).ToList();
                             courseRunForEdit.SubRegions = subRegions;
                             courseRunForEdit.AttendancePattern = AttendancePattern.Undefined;
                             courseRunForEdit.StudyMode = StudyMode.Undefined;
@@ -285,8 +296,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                         {
                             case PublishMode.BulkUpload:
                             case PublishMode.Migration:
-                            case PublishMode.DataQualityIndicator:
-
                                 return RedirectToAction("Index", "PublishCourses",
                                 new
                                 {
@@ -295,6 +304,16 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                                     courseRunId = model.CourseRunId
 
                                 });
+                            case PublishMode.DataQualityIndicator:
+                                return RedirectToAction("Index", "PublishCourses",
+                                 new
+                                 {
+                                     publishMode = model.Mode,
+                                     courseId = model.CourseId,
+                                     courseRunId = model.CourseRunId,
+                                     NotificationTitle = model.CourseName + " has been updated",
+                                     NotificationMessage = "Start date edited"
+                                 });
                             default:
                                 return RedirectToAction("Courses", "Provider",
                                     new

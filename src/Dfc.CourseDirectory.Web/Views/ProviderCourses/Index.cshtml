@@ -1,0 +1,219 @@
+﻿@using Dfc.CourseDirectory.Models.Enums
+@using Dfc.CourseDirectory.Web.ViewComponents.Notification
+@using Dfc.CourseDirectory.Web.ViewComponents.ProviderCoursesResults
+@{
+    Layout = "_Layout_Your_Courses";
+}
+@model Dfc.CourseDirectory.Web.ViewModels.ProviderCourses.ProviderCoursesViewModel
+@{
+    var hasCourses = Model.ProviderCourseRuns != null && Model.ProviderCourseRuns.Any();
+
+    if (!hasCourses)
+    {
+        <div class="govuk-body">
+            <main id="Cd-course-list" class="govuk-main-wrapper">
+                <span class="govuk-caption-xl">Course directory</span>
+                <h1 class="govuk-heading-xl">Your published courses</h1>
+                <p class="govuk-body-l">
+                    You have no courses listed on the course directory.
+                </p>
+                <h3 class="govukbody govuk-heading-m">What next?</h3>
+
+                <p>
+                    <span class="govuk-caption-xl">You can</span>
+                </p>
+
+                <ul>
+                    <li>
+                        <p>
+                            <a href="~/Qualifications" class="govuk-link">publish a course </a>to the course directory
+                        </p>
+                    </li>
+                    <li>
+                        <p>
+                            <a href="~/BulkUpload" class="govuk-link">publish all your courses </a> with a file upload
+                        </p>
+                    </li>
+                    @if (Model.PendingCoursesCount.HasValue && Model.PendingCoursesCount.Value > 0)
+                        {
+                            <li>
+                                <p>
+                                    <a href="~/Migration" class="govuk-link">or add information to @Model.PendingCoursesCount of your courses </a>that can’t be published until they are fixed
+                                </p>
+                            </li>
+                        }
+                </ul>
+
+
+            </main>
+        </div>
+    }
+    else
+    {
+
+        <div class="govuk-body">
+            <main id="Cd-course-list" class="govuk-main-wrapper">
+                <span class="govuk-caption-xl">Course directory</span>
+                <h1 class="govuk-heading-xl">Your published courses</h1>
+                <p class="govuk-body-l">These are the courses you have listed on the course directory.</p>
+                <div class="govuk-grid-row  ">
+
+                    <div id="results">
+
+                        @await Component.InvokeAsync(nameof(ProviderCoursesResults),Model)
+                    </div>
+
+                </div>
+
+            </main>
+        </div>
+
+    }
+}
+        <script>
+            (function ($) {
+                $(function () {
+                   
+
+
+                    var assignEventsToAllCheckboxes = function () {
+                        var $levelFilterCheckboxes = $("input[name='level']:checkbox");
+                        var $deliverymodeFilterCheckboxes = $("input[name='deliverymode']:checkbox");
+                        var $venueFilterCheckboxes = $("input[name='venue']:checkbox");
+                        var $attendancePatternFilterCheckboxes = $("input[name='attendancepattern']:checkbox");
+                        var $regionFilterCheckboxes = $("input[name='region']:checkbox");
+
+                        $levelFilterCheckboxes.on("click", debounce(doSearch, 1500));
+                        $deliverymodeFilterCheckboxes.on("click", debounce(doSearch, 1500));
+                        $venueFilterCheckboxes.on("click", debounce(doSearch, 1500));
+                        $attendancePatternFilterCheckboxes.on("click", debounce(doSearch, 1500));
+                        $regionFilterCheckboxes.on("click", debounce(doSearch, 1500));
+                    };
+
+                    $( document ).ready(function() {
+                        assignEventsToAllCheckboxes();
+                    });
+
+
+                    var debounce = function (cb, delay) {
+                        var inDebounce;
+                        return function () {
+                            var context = this;
+                            var args = arguments;
+                            clearTimeout(inDebounce);
+                            inDebounce = setTimeout(function () {
+                                cb.apply(context, args);
+                            },
+                                delay);
+                        };
+                    };
+
+                    var isNullOrWhitespace = function (input) {
+                        if (typeof input === 'undefined' || input == null) return true;
+                        return input.replace(/\s/g, '').length < 3;
+                    }
+
+                    var replaceAll = function (search, find, replace) {
+                        return search.split(find).join(replace);
+                    };
+
+                    var makeRequestWithUrl = function (url, success) {
+                        console.log(url);
+                        $.get(url, success);
+                    };
+
+                  
+
+                    var doSearch = function () {
+
+                        var $allCheckedLevelFilterCheckboxes =
+                            $("input[name='level']:checkbox:checked");
+                        var $allCheckedDeliveryModeFilterCheckboxes =
+                            $("input[name='deliverymode']:checkbox:checked");
+                        var $allCheckedVenuesFilterCheckboxes =
+                            $("input[name='venue']:checkbox:checked");
+                        var $allCheckedAttendancePatternFilterCheckboxes =
+                            $("input[name='attendancepattern']:checkbox:checked");
+                        var $allCheckedRegionFilterCheckboxes =
+                            $("input[name='region']:checkbox:checked");
+
+                        makeRequestWithPayload({
+                                LevelFilter: $allCheckedLevelFilterCheckboxes.map(function () {
+                                return $(this).val();
+                            }).get(),
+                            DeliveryModeFilter: $allCheckedDeliveryModeFilterCheckboxes.map(function () {
+                                return $(this).val();
+                            }).get(),
+                            VenueFilter: $allCheckedVenuesFilterCheckboxes.map(function () {
+                                    return $(this).val();
+                            }).get(),
+                                AttendancePatternFilter: $allCheckedAttendancePatternFilterCheckboxes.map(function () {
+                                    return $(this).val();
+                                }).get(),
+                            RegionFilter: $allCheckedRegionFilterCheckboxes.map(function () {
+                                    return $(this).val();
+                                }).get()
+                        },
+                            onSucess);
+                    };
+
+
+                    var assignEventToClearAllFiltersLink = function () {
+                        var $clearAllFiltersLink = $("#ClearAllFilters");
+
+                        $clearAllFiltersLink.on("click",
+                            function (e) {
+                                region
+                                e.preventDefault();
+                                var $allCheckedFilterCheckboxes = $(
+                                    "input[name='level']:checkbox:checked, input[name='deliverymode']:checkbox:checked:checkbox, input[name='venue']:checkbox:checked:checkbox, input[name='attendancepattern']:checkbox:checked:checkbox, input[name='region']:checkbox:checked:checkbox");
+                                var allCheckedFilterCheckboxesLength = $allCheckedFilterCheckboxes.length;
+
+                                for (var i = 0; i < allCheckedFilterCheckboxesLength; i++) {
+                                    if (i === (allCheckedFilterCheckboxesLength - 1)) {
+                                        $($allCheckedFilterCheckboxes[i]).trigger("click");
+                                    } else {
+                                        $($allCheckedFilterCheckboxes[i]).prop('checked', false);
+                                    }
+                                }
+                            });
+                    };
+
+                    //var assignEventsToLarsSearchPagination = function () {
+                    //    var $larsSearchResultPaginationItems = $("#results .pagination .pagination__item");
+                    //    $larsSearchResultPaginationItems.on("click",
+                    //        function (e) {
+                    //            e.preventDefault();
+                    //            var url = $(e.target).attr("href");
+                    //            makeRequestWithUrl(url, onSucess);
+                    //        });
+                    //};
+
+                    var onSucess = function (data) {
+
+                        $('#results').html("");
+                        $('#results').html(data);
+
+                        //$('#Filters').css('visibility', 'visible');
+
+                        assignEventsToAllCheckboxes();
+                        assignEventToClearAllFiltersLink();
+                        //assignEventsToLarsSearchPagination();
+                    };
+
+                    var replaceAll = function (search, find, replace) {
+                        return search.split(find).join(replace);
+                    };
+
+                    var makeRequestWithPayload = function (payload, success) {
+                        console.log(payload);
+                        var qs = $.param(payload);
+                        qs = replaceAll(qs, "%5B%5D", "");
+                        $.get("/ProviderCourses/FilterCourses?" + qs, success);
+                    };
+
+                  
+
+                });
+            })(jQuery);
+        </script>
