@@ -1,4 +1,5 @@
-﻿@using Dfc.CourseDirectory.Web.ViewComponents.Extensions
+﻿
+@using Dfc.CourseDirectory.Web.ViewComponents.Extensions
 @using Dfc.CourseDirectory.Web.ViewComponents.Notification
 @using Dfc.CourseDirectory.Web.ViewComponents.Pagination;
 @using Microsoft.AspNetCore.Http
@@ -22,9 +23,6 @@
         @{
             if (Model.Items.Any() && Model.NewItem != null)
             {
-
-
-
                 @*if (Model.Updated)
                     {
                         <span class="govuk-heading-m">Your venue updated:</span>
@@ -74,6 +72,17 @@
         <div class="venue-list">
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-full">
+
+
+                    @if (adminLogin.Succeeded || providerLogin.Succeeded)
+                    {
+                    <div class="govuk-form-group" style="margin-top: 30px;">
+                        <button type="submit" class="govuk-button">
+                            Add new venue
+                        </button>
+                        @Html.ActionLink("Cancel", "Index", "Home", null, new { @class = "govuk-link cd-cancel-link" })
+                    </div>
+                    }
 
                     @if (Model.Items.Any())
                     {
@@ -159,11 +168,12 @@
 
                     @if (adminLogin.Succeeded || providerLogin.Succeeded)
                     {
-                    <div class="govuk-form-group" style="margin-top: 30px;">
-                        <button type="submit" class="govuk-button">
-                            Add new venue
-                        </button>
-                    </div>
+                        <div class="govuk-form-group" style="margin-top: 30px;">
+                            <button type="submit" class="govuk-button">
+                                Add new venue
+                            </button>
+                            @Html.ActionLink("Cancel", "Index", "Home", null, new { @class = "govuk-link cd-cancel-link" })
+                        </div>
                     }
                 </div>
             </div>

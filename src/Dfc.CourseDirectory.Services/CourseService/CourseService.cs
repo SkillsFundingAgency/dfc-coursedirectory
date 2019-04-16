@@ -29,6 +29,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
         private readonly HttpClient _httpClient;
         private readonly Uri _addCourseUri;
         private readonly Uri _getYourCoursesUri;
+        private readonly Uri _providerSearchUri;
         private readonly Uri _updateCourseUri;
         private readonly Uri _getCourseByIdUri;
         private readonly Uri _updateStatusUri;
@@ -75,6 +76,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
 
             _addCourseUri = settings.Value.ToAddCourseUri();
             _getYourCoursesUri = settings.Value.ToGetYourCoursesUri();
+            _providerSearchUri = settings.Value.ToProviderSearchUri();
             _updateCourseUri = settings.Value.ToUpdateCourseUri();
             _getCourseByIdUri = settings.Value.ToGetCourseByIdUri();
             _archiveLiveCoursesUri = settings.Value.ToArchiveLiveCoursesUri();
@@ -152,7 +154,55 @@ namespace Dfc.CourseDirectory.Services.CourseService
             {
                 _logger.LogMethodExit();
             }
+        }
 
+        // TODO - Provider search is in the course service for now, needs moving!
+        public async Task<IResult<ProviderSearchResult>> ProviderSearchAsync(IProviderSearchCriteria criteria)
+        {
+            Throw.IfNull(criteria, nameof(criteria));
+            _logger.LogMethodEnter();
+
+            try {
+
+                _logger.LogInformationObject("Provider search criteria", criteria);
+                _logger.LogInformationObject("Provider search URI", _providerSearchUri);
+
+                //if (!criteria.Something.HasValue)
+                //    return Result.Fail<IProviderSearchResult>("Provider search criteria invalid");
+
+                StringContent content = new StringContent(JsonConvert.SerializeObject(criteria),
+                                                          Encoding.UTF8,
+                                                          "application/json");
+                var response = await _httpClient.PostAsync(_providerSearchUri, content);
+                _logger.LogHttpResponseMessage("Provider search service http response", response);
+
+                if (response.IsSuccessStatusCode) {
+                    var json = await response.Content.ReadAsStringAsync();
+
+                    if (!json.StartsWith("["))
+                        json = "[" + json + "]";
+
+                    _logger.LogInformationObject("Provider search service json response", json);
+                    ProviderSearchResult providers = JsonConvert.DeserializeObject<ProviderSearchResult>(json);
+
+                    //ProviderSearchResult searchResult = new ProviderSearchResult(providers);
+                    return Result.Ok<ProviderSearchResult>(providers); // searchResult);
+
+                } else {
+                    return Result.Fail<ProviderSearchResult>("Provider search service unsuccessful http response");
+                }
+
+            } catch (HttpRequestException hre) {
+                _logger.LogException("Provider search service http request error", hre);
+                return Result.Fail<ProviderSearchResult>("Provider search service http request error.");
+
+            } catch (Exception e) {
+                _logger.LogException("Provider search service unknown error.", e);
+                return Result.Fail<ProviderSearchResult>("Provider search service unknown error.");
+
+            } finally {
+                _logger.LogMethodExit();
+            }
         }
 
         public async Task<IResult<ICourseSearchResult>> GetYourCoursesByUKPRNAsync(ICourseSearchCriteria criteria)
@@ -844,6 +894,10 @@ namespace Dfc.CourseDirectory.Services.CourseService
         internal static Uri ToUpdateCourseUri(this ICourseServiceSettings extendee)
         {
             return new Uri($"{extendee.ApiUrl + "UpdateCourse?code=" + extendee.ApiKey}");
+        }
+        internal static Uri ToProviderSearchUri(this ICourseServiceSettings extendee)
+        {
+            return new Uri($"{extendee.ApiUrl + "ProviderSearch?code=" + extendee.ApiKey}");
         }
         internal static Uri ToGetCourseByIdUri(this ICourseServiceSettings extendee)
         {

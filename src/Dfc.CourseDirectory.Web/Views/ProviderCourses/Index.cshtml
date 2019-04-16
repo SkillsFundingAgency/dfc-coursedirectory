@@ -34,14 +34,14 @@
                             <a href="~/BulkUpload" class="govuk-link">publish all your courses </a> with a file upload
                         </p>
                     </li>
-                    @*@if (Model.PendingCoursesCount.HasValue && Model.PendingCoursesCount.Value > 0)
+                    @if (Model.PendingCoursesCount.HasValue && Model.PendingCoursesCount.Value > 0)
                         {
                             <li>
                                 <p>
                                     <a href="~/Migration" class="govuk-link">or add information to @Model.PendingCoursesCount of your courses </a>that can’t be published until they are fixed
                                 </p>
                             </li>
-                        }*@
+                        }
                 </ul>
 
 
@@ -79,9 +79,15 @@
                     var assignEventsToAllCheckboxes = function () {
                         var $levelFilterCheckboxes = $("input[name='level']:checkbox");
                         var $deliverymodeFilterCheckboxes = $("input[name='deliverymode']:checkbox");
+                        var $venueFilterCheckboxes = $("input[name='venue']:checkbox");
+                        var $attendancePatternFilterCheckboxes = $("input[name='attendancepattern']:checkbox");
+                        var $regionFilterCheckboxes = $("input[name='region']:checkbox");
 
                         $levelFilterCheckboxes.on("click", debounce(doSearch, 1500));
                         $deliverymodeFilterCheckboxes.on("click", debounce(doSearch, 1500));
+                        $venueFilterCheckboxes.on("click", debounce(doSearch, 1500));
+                        $attendancePatternFilterCheckboxes.on("click", debounce(doSearch, 1500));
+                        $regionFilterCheckboxes.on("click", debounce(doSearch, 1500));
                     };
 
                     $( document ).ready(function() {
@@ -116,16 +122,7 @@
                         $.get(url, success);
                     };
 
-                    var removeSearchResults = function () {
-                        var $larsSearchResultContainer = $("#LarsSearchResultContainer");
-                        $larsSearchResultContainer.html("");
-                    };
-
-                    var replaceSearchResult = function (searchResults) {
-                        var $larsSearchResultContainer = $("#LarsSearchResultContainer");
-                        $larsSearchResultContainer.html("");
-                        $larsSearchResultContainer.html(searchResults);
-                    };
+                  
 
                     var doSearch = function () {
 
@@ -133,6 +130,12 @@
                             $("input[name='level']:checkbox:checked");
                         var $allCheckedDeliveryModeFilterCheckboxes =
                             $("input[name='deliverymode']:checkbox:checked");
+                        var $allCheckedVenuesFilterCheckboxes =
+                            $("input[name='venue']:checkbox:checked");
+                        var $allCheckedAttendancePatternFilterCheckboxes =
+                            $("input[name='attendancepattern']:checkbox:checked");
+                        var $allCheckedRegionFilterCheckboxes =
+                            $("input[name='region']:checkbox:checked");
 
                         makeRequestWithPayload({
                                 LevelFilter: $allCheckedLevelFilterCheckboxes.map(function () {
@@ -140,31 +143,41 @@
                             }).get(),
                             DeliveryModeFilter: $allCheckedDeliveryModeFilterCheckboxes.map(function () {
                                 return $(this).val();
-                            }).get()
+                            }).get(),
+                            VenueFilter: $allCheckedVenuesFilterCheckboxes.map(function () {
+                                    return $(this).val();
+                            }).get(),
+                                AttendancePatternFilter: $allCheckedAttendancePatternFilterCheckboxes.map(function () {
+                                    return $(this).val();
+                                }).get(),
+                            RegionFilter: $allCheckedRegionFilterCheckboxes.map(function () {
+                                    return $(this).val();
+                                }).get()
                         },
                             onSucess);
                     };
 
 
-                    //var assignEventToClearAllFiltersLink = function () {
-                    //    var $clearAllFiltersLink = $("#ClearAllFilters");
+                    var assignEventToClearAllFiltersLink = function () {
+                        var $clearAllFiltersLink = $("#ClearAllFilters");
 
-                    //    $clearAllFiltersLink.on("click",
-                    //        function (e) {
-                    //            e.preventDefault();
-                    //            var $allCheckedFilterCheckboxes = $(
-                    //                "input[name='NotionalNVQLevelv2Filter']:checkbox:checked, input[name='AwardOrgAimRefFilter']:checkbox:checked:checkbox");
-                    //            var allCheckedFilterCheckboxesLength = $allCheckedFilterCheckboxes.length;
+                        $clearAllFiltersLink.on("click",
+                            function (e) {
+                                region
+                                e.preventDefault();
+                                var $allCheckedFilterCheckboxes = $(
+                                    "input[name='level']:checkbox:checked, input[name='deliverymode']:checkbox:checked:checkbox, input[name='venue']:checkbox:checked:checkbox, input[name='attendancepattern']:checkbox:checked:checkbox, input[name='region']:checkbox:checked:checkbox");
+                                var allCheckedFilterCheckboxesLength = $allCheckedFilterCheckboxes.length;
 
-                    //            for (var i = 0; i < allCheckedFilterCheckboxesLength; i++) {
-                    //                if (i === (allCheckedFilterCheckboxesLength - 1)) {
-                    //                    $($allCheckedFilterCheckboxes[i]).trigger("click");
-                    //                } else {
-                    //                    $($allCheckedFilterCheckboxes[i]).prop('checked', false);
-                    //                }
-                    //            }
-                    //        });
-                    //};
+                                for (var i = 0; i < allCheckedFilterCheckboxesLength; i++) {
+                                    if (i === (allCheckedFilterCheckboxesLength - 1)) {
+                                        $($allCheckedFilterCheckboxes[i]).trigger("click");
+                                    } else {
+                                        $($allCheckedFilterCheckboxes[i]).prop('checked', false);
+                                    }
+                                }
+                            });
+                    };
 
                     //var assignEventsToLarsSearchPagination = function () {
                     //    var $larsSearchResultPaginationItems = $("#results .pagination .pagination__item");
@@ -184,7 +197,7 @@
                         //$('#Filters').css('visibility', 'visible');
 
                         assignEventsToAllCheckboxes();
-                       // assignEventToClearAllFiltersLink();
+                        assignEventToClearAllFiltersLink();
                         //assignEventsToLarsSearchPagination();
                     };
 
