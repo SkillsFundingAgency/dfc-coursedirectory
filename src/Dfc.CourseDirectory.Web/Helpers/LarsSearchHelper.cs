@@ -113,7 +113,7 @@ namespace Dfc.CourseDirectory.Web.Helpers
             var filters = new List<LarsSearchFilterModel>();
 
             var notionalNVQLevelv2Filter = GetLarsSearchFilterModel(
-                "Qualification Level",
+                "Level",
                 "NotionalNVQLevelv2Filter",
                 (value) => $"Level {value}",
                 larsSearchFacets.NotionalNVQLevelv2,
