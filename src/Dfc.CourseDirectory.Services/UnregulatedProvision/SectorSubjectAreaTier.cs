@@ -36,7 +36,7 @@ namespace Dfc.CourseDirectory.Services.UnregulatedProvision
                 ssat1 = new SectorSubjectAreaTier1
                 {
                     Id= "2.00",
-                    Description = "Science mathematics",
+                    Description = "Science, mathematics",
                     SectorSubjectAreaTier2 = new Dictionary<string, string>
                     {
                         {"2.10", "Science" },

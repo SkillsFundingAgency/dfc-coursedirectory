@@ -154,8 +154,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         }
 
-
-        [Authorize(Policy = "ElevatedUserRole")]
         public async Task<List<SelectListItem>> GetSSALevelTwo(string Level1Id)
         {
             List<SelectListItem> levelTwos = new List<SelectListItem>();
