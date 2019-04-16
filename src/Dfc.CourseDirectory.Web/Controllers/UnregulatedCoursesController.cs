@@ -311,7 +311,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     });
                 }
 
-                model.Items = zCodeResults;
+                model.Items = zCodeResults.OrderBy(x=>x.LearnAimRef);
                 model.Url = Request.GetDisplayUrl();
                 model.PageParamName = _larsSearchSettings.PageParamName;
                 model.ItemsPerPage = _larsSearchSettings.ItemsPerPage;
