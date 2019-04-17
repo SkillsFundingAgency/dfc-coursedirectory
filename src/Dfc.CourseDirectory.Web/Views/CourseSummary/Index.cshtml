@@ -1,4 +1,5 @@
-﻿@model Dfc.CourseDirectory.Web.ViewModels.CourseSummary.CourseSummaryViewModel
+﻿@using Dfc.CourseDirectory.Models.Enums
+@model Dfc.CourseDirectory.Web.ViewModels.CourseSummary.CourseSummaryViewModel
 
 <div class=" cd-fullwidth-container govuk-!-padding-top-9">
     <div class="govuk-width-container cd-course-page">
@@ -29,7 +30,17 @@
 
 
                     <h3 class="govuk-heading-m govuk-!-margin-top-0">
-                        <a href="#">Edit course information</a>
+                        <a class="govuk-link" style="padding-right:1em"
+                           asp-controller="EditCourseRun"
+                           asp-action="Index"
+                           asp-route-learnAimRef="@Model.LearnAimRef"
+                           asp-route-notionalNVQLevelv2="@Model.NotionalNVQLevelv2"
+                           asp-route-awardOrgCode="@Model.AwardOrgCode"
+                           asp-route-learnAimRefTitle="@Model.QualificationCourseTitle"
+                           asp-route-learnAimRefTypeDesc="@Model.QualificationType"
+                           asp-route-courseId="@Model.CourseId"
+                           asp-route-courseRunId="@Model.CourseInstanceId"
+                           asp-route-mode="@PublishMode.Summary">Edit course information</a>
                     </h3>
 
                     <table class="govuk-table">
@@ -190,7 +201,7 @@
                                             </span>
                                         </summary>
                                         <div class="govuk-details__text" id="details-content-9ce35a38-e076-49c6-a756-65e3e5a2fc41" aria-hidden="true">
-                                           @Model.HowYoullBeAssessed
+                                            @Model.HowYoullBeAssessed
                                         </div>
                                     </details>
                                 </td>
