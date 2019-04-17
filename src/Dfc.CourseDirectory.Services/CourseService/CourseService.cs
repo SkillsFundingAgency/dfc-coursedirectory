@@ -36,6 +36,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
         private readonly Uri _getCourseCountsByStatusForUKPRNUri;
         private readonly Uri _getRecentCourseChangesByUKPRNUri;
         private readonly Uri _changeCourseRunStatusesForUKPRNSelectionUri;
+        private readonly Uri _archiveLiveCoursesUri;
 
         private readonly int _courseForTextFieldMaxChars;
         private readonly int _entryRequirementsTextFieldMaxChars;
@@ -44,13 +45,15 @@ namespace Dfc.CourseDirectory.Services.CourseService
         private readonly int _whatYouNeedTextFieldMaxChars;
         private readonly int _howAssessedTextFieldMaxChars;
         private readonly int _whereNextTextFieldMaxChars;
-        private readonly Uri _archiveLiveCoursesUri;
+        private readonly string _apiUserName;
+        private readonly string _apiPassword;
 
 
         public CourseService(
             ILogger<CourseService> logger,
             HttpClient httpClient,
             IOptions<CourseServiceSettings> settings,
+            IOptions<FindACourseServiceSettings> facSettings,
             IOptions<CourseForComponentSettings> courseForComponentSettings,
             IOptions<EntryRequirementsComponentSettings> entryRequirementsComponentSettings,
             IOptions<WhatWillLearnComponentSettings> whatWillLearnComponentSettings,
@@ -62,6 +65,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(httpClient, nameof(httpClient));
             Throw.IfNull(settings, nameof(settings));
+            Throw.IfNull(facSettings, nameof(facSettings));
             Throw.IfNull(courseForComponentSettings, nameof(courseForComponentSettings));
             Throw.IfNull(entryRequirementsComponentSettings, nameof(entryRequirementsComponentSettings));
             Throw.IfNull(whatWillLearnComponentSettings, nameof(whatWillLearnComponentSettings));
@@ -76,7 +80,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
 
             _addCourseUri = settings.Value.ToAddCourseUri();
             _getYourCoursesUri = settings.Value.ToGetYourCoursesUri();
-            _providerSearchUri = settings.Value.ToProviderSearchUri();
+            _providerSearchUri = facSettings.Value.ToProviderSearchUri();
             _updateCourseUri = settings.Value.ToUpdateCourseUri();
             _getCourseByIdUri = settings.Value.ToGetCourseByIdUri();
             _archiveLiveCoursesUri = settings.Value.ToArchiveLiveCoursesUri();
@@ -92,6 +96,9 @@ namespace Dfc.CourseDirectory.Services.CourseService
             _whatYouNeedTextFieldMaxChars = whatYouNeedComponentSettings.Value.TextFieldMaxChars;
             _howAssessedTextFieldMaxChars = howAssessedComponentSettings.Value.TextFieldMaxChars;
             _whereNextTextFieldMaxChars = whereNextComponentSettings.Value.TextFieldMaxChars;
+
+            _apiUserName = facSettings.Value.UserName;
+            _apiPassword = facSettings.Value.Password;
         }
 
 
@@ -170,17 +177,23 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 //if (!criteria.Something.HasValue)
                 //    return Result.Fail<IProviderSearchResult>("Provider search criteria invalid");
 
+                if (!_httpClient.DefaultRequestHeaders.Any(h => h.Key == "UserName"))
+                    _httpClient.DefaultRequestHeaders.Add("UserName", _apiUserName);
+                if (!_httpClient.DefaultRequestHeaders.Any(h => h.Key == "Password"))
+                    _httpClient.DefaultRequestHeaders.Add("Password", _apiPassword);
+
                 StringContent content = new StringContent(JsonConvert.SerializeObject(criteria),
                                                           Encoding.UTF8,
                                                           "application/json");
                 var response = await _httpClient.PostAsync(_providerSearchUri, content);
                 _logger.LogHttpResponseMessage("Provider search service http response", response);
 
-                if (response.IsSuccessStatusCode) {
+                if (response.IsSuccessStatusCode)
+                {
                     var json = await response.Content.ReadAsStringAsync();
 
-                    if (!json.StartsWith("["))
-                        json = "[" + json + "]";
+                    //if (!json.StartsWith("["))
+                    //    json = "[" + json + "]";
 
                     _logger.LogInformationObject("Provider search service json response", json);
                     ProviderSearchResult providers = JsonConvert.DeserializeObject<ProviderSearchResult>(json);
@@ -188,9 +201,8 @@ namespace Dfc.CourseDirectory.Services.CourseService
                     //ProviderSearchResult searchResult = new ProviderSearchResult(providers);
                     return Result.Ok<ProviderSearchResult>(providers); // searchResult);
 
-                } else {
+                } else
                     return Result.Fail<ProviderSearchResult>("Provider search service unsuccessful http response");
-                }
 
             } catch (HttpRequestException hre) {
                 _logger.LogException("Provider search service http request error", hre);
@@ -410,7 +422,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
                         RunValidationResults = new List<CourseRunValidationResult>()
                     };
                     //Code to be refactored upon updated DQI stories
-                    
+
                     if(mode != ValidationMode.DataQualityIndicator)
                     {
                         cvr.Issues = ValidateCourse(c);
@@ -711,7 +723,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
                         if (courseRun.StartDate > DateTime.Now.AddYears(2))
                             validationMessages.Add($"Start Date must be less than or equal to 2 years from Today's Date");
                         break;
-                    case ValidationMode.Undefined: 
+                    case ValidationMode.Undefined:
                     default:
                         validationMessages.Add($"Validation Mode was not defined.");
                         break;
@@ -843,7 +855,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             Throw.IfLessThan(0, statusToUpdateTo, nameof(statusToUpdateTo));
             Throw.IfGreaterThan(Enum.GetValues(typeof(RecordStatus)).Cast<int>().Max(), statusToUpdateTo, nameof(statusToUpdateTo));
 
-            var response = await _httpClient.GetAsync(new Uri(_updateStatusUri.AbsoluteUri 
+            var response = await _httpClient.GetAsync(new Uri(_updateStatusUri.AbsoluteUri
                 + "&CourseId=" + courseId
                 + "&CourseRunId=" + courseRunId
                 + "&Status=" + statusToUpdateTo));
@@ -895,10 +907,6 @@ namespace Dfc.CourseDirectory.Services.CourseService
         {
             return new Uri($"{extendee.ApiUrl + "UpdateCourse?code=" + extendee.ApiKey}");
         }
-        internal static Uri ToProviderSearchUri(this ICourseServiceSettings extendee)
-        {
-            return new Uri($"{extendee.ApiUrl + "ProviderSearch?code=" + extendee.ApiKey}");
-        }
         internal static Uri ToGetCourseByIdUri(this ICourseServiceSettings extendee)
         {
             return new Uri($"{extendee.ApiUrl + "GetCourseById?code=" + extendee.ApiKey}");
@@ -922,6 +930,17 @@ namespace Dfc.CourseDirectory.Services.CourseService
         internal static Uri ToChangeCourseRunStatusesForUKPRNSelectionUri(this ICourseServiceSettings extendee)
         {
             return new Uri($"{extendee.ApiUrl + "ChangeCourseRunStatusesForUKPRNSelection?code=" + extendee.ApiKey}");
+        }
+    }
+    internal static class FindACourseServiceSettingsExtensions
+    {
+        internal static Uri ToFindACourseSearchUri(this IFindACourseServiceSettings extendee)
+        {
+            return new Uri($"{extendee.ApiUrl}search");
+        }
+        internal static Uri ToProviderSearchUri(this IFindACourseServiceSettings extendee)
+        {
+            return new Uri($"{extendee.ApiUrl}providersearch");
         }
     }
 }

@@ -17,20 +17,15 @@ namespace Dfc.CourseDirectory.Services.Interfaces.CourseService
     {
         Task<IResult<ICourse>> AddCourseAsync(ICourse course);
         Task<IResult<ICourseSearchResult>> GetYourCoursesByUKPRNAsync(ICourseSearchCriteria criteria);
-
+        Task<IResult<ProviderSearchResult>> ProviderSearchAsync(IProviderSearchCriteria criteria);
         Task<IResult<ICourse>> UpdateCourseAsync(ICourse course);
-
         Task<IResult<ICourse>> GetCourseByIdAsync(IGetCourseByIdCriteria criteria);
         Task<IResult> ArchiveProviderLiveCourses(int? UKPRN);
         Task<IResult> ChangeCourseRunStatusesForUKPRNSelection(int UKPRN, int CurrentStatus, int StatusToBeChangedTo);
         SelectRegionModel GetRegions();
-
         Task<IResult<ICourseSearchResult>> GetCoursesByLevelForUKPRNAsync(ICourseSearchCriteria criteria);
-
         IList<string> ValidateCourse(ICourse course);
-
         IList<string> ValidateCourseRun(ICourseRun courseRun, ValidationMode validationMode);
-
         Task<IResult> UpdateStatus(Guid courseId, Guid courseRunId, int statusToChangeTo);
         IResult<IList<CourseValidationResult>> CourseValidationMessages(IEnumerable<ICourse> courses, ValidationMode mode);
         Task<IResult<IEnumerable<ICourseStatusCountResult>>> GetCourseCountsByStatusForUKPRN(ICourseSearchCriteria criteria);
