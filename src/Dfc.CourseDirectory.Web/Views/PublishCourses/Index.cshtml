@@ -33,7 +33,13 @@
             </button>
         }
 
-        <div> @Html.ActionLink("Exit without publishing", "Index", "Home", new { }, new { @class = "govuk-link" })</div>
+        @{
+            if (Model.PublishMode != Dfc.CourseDirectory.Models.Enums.PublishMode.DataQualityIndicator)
+            {
+                <div> @Html.ActionLink("Exit without publishing", "Index", "Home", new { }, new { @class = "govuk-link" })</div>
+            }
+        }
+
     </div>
 
 </form>
