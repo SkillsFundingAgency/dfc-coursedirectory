@@ -385,7 +385,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
             {
                 Id = "level-" + s++.ToString(),
                 Value = r.Key,
-                Text = "level " + r.Key,
+                Text = "Level " + r.Key,
                 Name = "level",
                 IsSelected = requestModel.LevelFilter.Length > 0 && requestModel.LevelFilter.Contains(r.Key)
             }).ToList();
