@@ -228,7 +228,8 @@
 
             </div>
             <div class="courserun__row4">
-                <a class="govuk-link" asp-controller="CoursePage" asp-action="Index">Select</a>
+                @Html.ActionLink("Select", "Index", "CourseSummary", new {courseRun.CourseId, courseRun.CourseRunId }, null)
+                @*<a class="govuk-link" asp-controller="CourseSummary"  asp-action="Index" asp-route-id="@courseRun.c">Select</a>*@
 
             </div>
         </div>
