@@ -8,7 +8,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels.CourseSummary
     {
         //Course Details
         public int ProviderUKPRN { get; set; }
-        public int? CourseId { get; set; }
+        public Guid? CourseId { get; set; }
         public string QualificationCourseTitle { get; set; }
         public string LearnAimRef { get; set; }
         public string NotionalNVQLevelv2 { get; set; }
@@ -37,5 +37,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels.CourseSummary
         public DeliveryMode DeliveryMode { get; set; }
         public bool FlexibleStartDate { get; set; }
         public DateTime? StartDate { get; set; }
+        public DateTime? UpdatedDate { get; set; }
+        public string UpdatedBy { get; set; }
     }
 }
