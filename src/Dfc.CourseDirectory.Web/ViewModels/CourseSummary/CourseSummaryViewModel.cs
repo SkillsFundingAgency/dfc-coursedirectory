@@ -24,7 +24,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels.CourseSummary
         public string QualificationType { get; set; }
 
         //CourseRun Details
-        public int? CourseInstanceId { get; set; }
+        public Guid? CourseInstanceId { get; set; }
         public string CourseName { get; set; }
         public Guid? VenueId { get; set; }
         public string VenueName { get; set; }

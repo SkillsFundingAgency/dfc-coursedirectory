@@ -60,7 +60,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 QualificationType = course.QualificationType,
 
                 //Course run deets
-                CourseInstanceId = courseRun.CourseInstanceId,
+                CourseInstanceId = courseRunId,
                 CourseName = courseRun.CourseName,
                 VenueId = courseRun.VenueId,
                 CourseURL = courseRun.CourseURL,
