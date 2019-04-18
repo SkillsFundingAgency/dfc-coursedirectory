@@ -276,6 +276,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
 
             var filteredLiveCourses = from Course c in allCourses.Where(c => BitmaskHelper.IsSet(c.CourseStatus, RecordStatus.Live)).ToList().OrderBy(x => x.QualificationCourseTitle) select c;
 
+
             var model = new ProviderCoursesViewModel();
 
             model.ProviderCourseRuns = new List<ProviderCourseRunViewModel>();
@@ -339,6 +340,17 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
                 }
 
             }
+
+            if (!string.IsNullOrEmpty(requestModel.Keyword))
+            {
+                model.ProviderCourseRuns = model.ProviderCourseRuns
+                    .Where(x => x.CourseName.ToLower().Contains(requestModel.Keyword.ToLower())
+                                || x.QualificationCourseTitle.ToLower().Contains(requestModel.Keyword.ToLower())
+                                || x.LearnAimRef.ToLower().Contains(requestModel.Keyword.ToLower())
+                                || (!string.IsNullOrEmpty(x.CourseTextId) && x.CourseTextId.ToLower().Contains(requestModel.Keyword.ToLower()))
+                                ).ToList();
+            }
+
 
             List<ProviderCourseRunViewModel> aa = new List<ProviderCourseRunViewModel>();
             if (requestModel.LevelFilter.Length > 0)
