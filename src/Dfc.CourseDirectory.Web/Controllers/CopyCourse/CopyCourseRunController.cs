@@ -57,7 +57,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
 
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> Index(string learnAimRef, string notionalNVQLevelv2, string awardOrgCode, string learnAimRefTitle, string learnAimRefTypeDesc,  Guid? courseId, Guid courseRunId)
+        public async Task<IActionResult> Index(string learnAimRef, string notionalNVQLevelv2, string awardOrgCode, string learnAimRefTitle, string learnAimRefTypeDesc,  Guid? courseId, Guid courseRunId, PublishMode publishMode)
         {
             int? UKPRN;
 
@@ -120,7 +120,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                         CostDescription = courseRun.CostDescription,
                         AttendanceMode = courseRun.AttendancePattern,
                         QualificationType = course.Value.QualificationType,
-                        NotionalNVQLevelv2 = course.Value.NotionalNVQLevelv2
+                        NotionalNVQLevelv2 = course.Value.NotionalNVQLevelv2,
+                        PublishMode = publishMode
                     };
 
                     if (courseRun.Regions == null) return View("CopyCourseRun", vm);

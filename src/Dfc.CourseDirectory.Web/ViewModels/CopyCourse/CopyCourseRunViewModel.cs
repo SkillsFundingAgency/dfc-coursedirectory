@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Models;
 using Dfc.CourseDirectory.Models.Models.Courses;
 using Dfc.CourseDirectory.Models.Models.Regions;
@@ -40,6 +41,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels.CopyCourse
         public bool FlexibleStartDate { get; set; }
 
         public string NotionalNVQLevelv2 { get; set; }
+        public PublishMode PublishMode { get; set; }
 
     }
 

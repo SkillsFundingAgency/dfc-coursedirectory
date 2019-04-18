@@ -249,7 +249,17 @@
                         edit the details and save it
                         as a new course.
                     </p>
-                    <a class="govuk-link" href="#">Duplicate this course</a>
+                    <a class="govuk-link" style="padding-right:1em"
+                       asp-controller="CopyCourseRun"
+                       asp-action="Index"
+                       asp-route-learnAimRef="@Model.LearnAimRef"
+                       asp-route-notionalNVQLevelv2="@Model.NotionalNVQLevelv2"
+                       asp-route-awardOrgCode="@Model.AwardOrgCode"
+                       asp-route-learnAimRefTitle="@Model.QualificationCourseTitle"
+                       asp-route-learnAimRefTypeDesc="@Model.QualificationType"
+                       asp-route-courseId="@Model.CourseId"
+                       asp-route-courseRunId="@Model.CourseInstanceId"
+                       asp-route-publishMode="@PublishMode.Summary">Duplicate this course</a>
                     <hr>
 
                     <h3 class="govuk-heading-m m20">Delete</h3>
