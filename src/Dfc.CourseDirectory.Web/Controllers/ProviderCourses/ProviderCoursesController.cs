@@ -109,9 +109,9 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
 
             var filteredLiveCourses = from Course c in allCourses.Where(c => BitmaskHelper.IsSet(c.CourseStatus, RecordStatus.Live)).ToList().OrderBy(x => x.QualificationCourseTitle) select c;
             var pendingCourses = from Course c in allCourses.Where(c => c.CourseStatus == RecordStatus.MigrationPending || c.CourseStatus == RecordStatus.BulkUloadPending)
-                select c;
+                                 select c;
 
-            var model = new ProviderCoursesViewModel
+            var model = new ProviderCoursesViewModel()
             {
                 PendingCoursesCount = pendingCourses?.Count(),
                 ProviderCourseRuns = new List<ProviderCourseRunViewModel>()
