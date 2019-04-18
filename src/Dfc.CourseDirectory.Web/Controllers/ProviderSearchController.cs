@@ -107,38 +107,37 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     {
                         var providerContactTypeL = provider.ProviderContact.Where(s => s.ContactType.Equals("L", StringComparison.InvariantCultureIgnoreCase));
                         string AddressLine1 = string.Empty;
-                        if (!(string.IsNullOrEmpty(providerContactTypeL.FirstOrDefault()?.ContactAddress.PAON.Description)
-                            && string.IsNullOrEmpty(providerContactTypeL.FirstOrDefault()?.ContactAddress.StreetDescription)))
+                        if (!(string.IsNullOrEmpty(providerContactTypeL.FirstOrDefault()?.ContactAddress?.PAON?.Description)
+                            && string.IsNullOrEmpty(providerContactTypeL.FirstOrDefault()?.ContactAddress?.StreetDescription)))
                         {
-                            AddressLine1 = providerContactTypeL.FirstOrDefault()?.ContactAddress.PAON.Description
-                                            + " " + providerContactTypeL.FirstOrDefault()?.ContactAddress.StreetDescription + ", ";
+                            AddressLine1 = providerContactTypeL.FirstOrDefault()?.ContactAddress?.PAON?.Description
+                                            + " " + providerContactTypeL.FirstOrDefault()?.ContactAddress?.StreetDescription + ", ";
                         }
                         string AddressLine2 = string.Empty;
-                        if (providerContactTypeL.FirstOrDefault()?.ContactAddress.Locality != null)
+                        if (providerContactTypeL.FirstOrDefault()?.ContactAddress?.Locality != null)
                         {
-                            AddressLine2 = providerContactTypeL.FirstOrDefault()?.ContactAddress.Locality.ToString() + ", ";
+                            AddressLine2 = providerContactTypeL.FirstOrDefault()?.ContactAddress?.Locality.ToString() + ", ";
                         }
 
                         string AddressLine3 = string.Empty;
-                        if (!string.IsNullOrEmpty(providerContactTypeL.FirstOrDefault()?.ContactAddress.Items[0]))
+                        if (!string.IsNullOrEmpty(providerContactTypeL.FirstOrDefault()?.ContactAddress?.Items?.FirstOrDefault()))
                         {
-                            AddressLine3 = providerContactTypeL.FirstOrDefault()?.ContactAddress.Items[0] + ", ";
+                            AddressLine3 = providerContactTypeL.FirstOrDefault()?.ContactAddress?.Items?.FirstOrDefault() + ", ";
                         }
 
                         string PostCode = string.Empty;
-                        if (!string.IsNullOrEmpty(providerContactTypeL.FirstOrDefault()?.ContactAddress.PostCode))
+                        if (!string.IsNullOrEmpty(providerContactTypeL?.FirstOrDefault()?.ContactAddress?.PostCode))
                         {
-                            PostCode = providerContactTypeL.FirstOrDefault()?.ContactAddress.PostCode;
+                            PostCode = providerContactTypeL?.FirstOrDefault()?.ContactAddress?.PostCode;
                         }
 
                         model.AddressTypeL = string.Concat(AddressLine1, AddressLine2, AddressLine3, PostCode);
-
-                        model.TelephoneTypeL = providerContactTypeL.FirstOrDefault()?.ContactTelephone1;
-                        model.WebTypeL = providerContactTypeL.FirstOrDefault()?.ContactWebsiteAddress;
-                        model.EmailTypeL = providerContactTypeL.FirstOrDefault()?.ContactEmail;
+                        model.TelephoneTypeL = providerContactTypeL?.FirstOrDefault()?.ContactTelephone1;
+                        model.WebTypeL = providerContactTypeL?.FirstOrDefault()?.ContactWebsiteAddress;
+                        model.EmailTypeL = providerContactTypeL?.FirstOrDefault()?.ContactEmail;
 
                        if(provider.Status == Status.Onboarded)
-                        {
+                       {
                             var UKPRN = Convert.ToInt32(requestModel.SearchTerm);
                             _session.SetInt32("UKPRN", Convert.ToInt32(requestModel.SearchTerm));
                             _session.SetString("PendingCourses", "true");
@@ -153,16 +152,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
                                                       on c.Status equals p
                                                       select c.Count).Sum();
 
-                            if (pendingCourseCount > 0)
-                            {
+                            if (pendingCourseCount > 0) {
                                 _session.SetString("PendingCourses", "true");
-                            }
-                            else
-                            {
+                            } else {
                                 _session.SetString("PendingCourses", "false");
                             }
 
-                        }
+                       }
                     }
                 }
             }
