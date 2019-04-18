@@ -129,10 +129,22 @@ namespace Dfc.CourseDirectory.Web.Helpers
 
             filters.Add(notionalNVQLevelv2Filter);
 
-           foreach(var award in awardOrgAimRefFilter.Items)
+            var r = awardOrgAimRefFilter.Items.ToList();
+
+           foreach (var award in awardOrgAimRefFilter.Items)
             {
-                award.Text = Categories.AllCategories.Where(x => x.Id == award.Text).Select(x => x.Category).SingleOrDefault();
+                if (award.Value == "APP H CAT C" || award.Value == "APP H CAT D" || award.Value == "APP H CAT H" || award.Value == "APP H CAT N")
+                {
+                   r.Remove(award);
+                }
+                else
+                {
+                    award.Text = Categories.AllCategories.Where(x => x.Id == award.Text).Select(x => x.Category).SingleOrDefault();
+                }
+                
             }
+
+            awardOrgAimRefFilter.Items = r;
             filters.Add(awardOrgAimRefFilter);
             return filters;
         }

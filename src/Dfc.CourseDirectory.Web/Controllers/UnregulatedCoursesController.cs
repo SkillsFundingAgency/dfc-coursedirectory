@@ -274,10 +274,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
             requestModel.SectorSubjectAreaTier2Filter = new string[1];
             requestModel.SectorSubjectAreaTier2Filter[0] = request.Level2Id;
 
-
             requestModel.NotionalNVQLevelv2Filter = request.NotionalNVQLevelv2Filter;
+
+
+
+
             requestModel.AwardOrgAimRefFilter = request.AwardOrgAimRefFilter;
-           
+
 
 
             var criteria = _larsSearchHelper.GetZCodeSearchCriteria(
@@ -298,20 +301,29 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                 foreach (var item in result.Value.Value)
                 {
-
-                    zCodeResults.Add(new ZCodeSearchResultItemModel()
+                    if (item.AwardOrgAimRef == "APP H CAT C" || item.AwardOrgAimRef == "APP H CAT D" ||
+                        item.AwardOrgAimRef == "APP H CAT H" || item.AwardOrgAimRef == "APP H CAT N")
                     {
-                        AwardOrgCode = item.AwardOrgCode,
-                        AwardOrgName = item.AwardOrgName,
-                        LearnAimRef = item.LearnAimRef,
-                        LearnAimRefTitle = item.LearnAimRefTitle,
-                        LearnAimRefTypeDesc = item.LearnAimRefTypeDesc,
-                        NotionalNVQLevelv2 = item.NotionalNVQLevelv2
+                    }
+                    else
+                    {
+                        zCodeResults.Add(new ZCodeSearchResultItemModel()
+                        {
+                            AwardOrgCode = item.AwardOrgCode,
+                            AwardOrgName = item.AwardOrgName,
+                            LearnAimRef = item.LearnAimRef,
+                            LearnAimRefTitle = item.LearnAimRefTitle,
+                            LearnAimRefTypeDesc = item.LearnAimRefTypeDesc,
+                            NotionalNVQLevelv2 = item.NotionalNVQLevelv2
 
-                    });
+                        });
+                    }
                 }
 
-                model.Items = zCodeResults.OrderByDescending(x=>x.LearnAimRef);
+
+
+
+                model.Items = zCodeResults.OrderByDescending(x => x.LearnAimRef);
                 model.Url = Request.GetDisplayUrl();
                 model.PageParamName = _larsSearchSettings.PageParamName;
                 model.ItemsPerPage = _larsSearchSettings.ItemsPerPage;
