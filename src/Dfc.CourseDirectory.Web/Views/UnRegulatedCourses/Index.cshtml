@@ -62,6 +62,8 @@
 
             var $searchForm = $("#zCodeSearch");
 
+            var $errorSummary = $(".cd-error-summary");
+
             var $elementSearchTerm = $("#@nameof(Model.Search)");
 
             var $validationMessageSearchTerm = $elementSearchTerm.prev("[data-valmsg-for='@nameof(Model.Search)']");
@@ -73,12 +75,25 @@
             $form.addTriggersToJqueryValidate().triggerElementValidationsOnFormValidation();
             var validator = $form.validate();
 
-            $("#searchZCode").on("blur", function () {
+            $elementSearchTerm.on("blur", function () {
+                $errorSummary.hide();
                 var result = validator.element($elementSearchTerm);
                 if (result) {
                     HideValidationErrorMessage();
                 } else {
                     ShowValidationErrorMessage();
+                }
+            });
+
+            $elementSearchTerm.elementValidation(function (element, result) {
+                if (!$formGroupSearchTerm.hasClass(formGroupErrorClass)) {
+                    $validationMessageSearchTerm.hide();
+                }
+                if (result) {
+                    HideValidationErrorMessage();
+                }
+                else {
+                    ShowValidationErrorMessage()
                 }
             });
 
@@ -96,6 +111,7 @@
             });
 
             function ValidateAndSearchForProvider() {
+                $errorSummary.hide();
                 var trimmed = $elementSearchTerm.val().trim();
                 $elementSearchTerm.val(trimmed);
                 $elementSearchTerm.trigger("blur");

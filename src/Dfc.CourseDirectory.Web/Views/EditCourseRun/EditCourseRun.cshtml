@@ -223,6 +223,9 @@
                 case PublishMode.DataQualityIndicator:
                     @Html.ActionLink("Cancel", "Index", "PublishCourses", new { publishMode = Model.Mode }, new { @class = "govuk-link" })
                     break;
+                case PublishMode.Summary:
+                    @Html.ActionLink("Cancel", "Index", "ProviderCourses", null, new { @class = "govuk-link" })
+                    break;
                 default:
                     @Html.ActionLink("Cancel", "Courses", "Provider", new {
                    level = @Model.NotionalNVQLevelv2,

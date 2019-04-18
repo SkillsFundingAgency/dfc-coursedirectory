@@ -172,3 +172,13 @@
 .cd-course-list-filters > * {
   padding-right: 1em;
 }
+
+.govuk-related-items {
+  border-top: 10px solid #005ea5;
+  padding: 20px;
+  background-color: #f8f8f8;
+}
+
+.phase-tag-published {
+  background: #00823b;
+}

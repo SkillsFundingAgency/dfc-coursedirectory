@@ -78,9 +78,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> Archive(Guid courseId, Guid courseRunId, string level, string qualificationType)
+        public async Task<IActionResult> Archive(Guid courseId, Guid courseRunId, string level, string qualificationType, string courseName)
         {
-            //archive call??
+            //archive call
             var result = await _courseService.UpdateStatus(courseId, courseRunId, (int)RecordStatus.Archived);
 
             if (result.IsSuccess)
@@ -97,8 +97,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 new
                 {
                     level = level,
-                    NotificationTitle = "Course archived",
-                    NotificationMessage = "You archived",
+                    NotificationTitle = "Course deleted " + courseName,
+                    NotificationMessage = "You archived" + courseName,
                     qualificationType = qualificationType,
                     courseId = courseId
                 });

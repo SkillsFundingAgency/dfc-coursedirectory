@@ -12,7 +12,9 @@ namespace Dfc.CourseDirectory.Models.Enums
         [Description("Migration")]
         Migration = 2,
         [Description("DataQualityIndicator")]
-        DataQualityIndicator = 3
+        DataQualityIndicator = 3,
+        [Description("Summary")]
+        Summary = 4
       
     }
     public enum FundingOptions

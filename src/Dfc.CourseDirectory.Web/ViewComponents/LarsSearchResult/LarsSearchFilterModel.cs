@@ -6,7 +6,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult
     public class LarsSearchFilterModel : ValueObject<LarsSearchFilterModel>
     {
         public string Title { get; }
-        public IEnumerable<LarsSearchFilterItemModel> Items { get; }
+        public IEnumerable<LarsSearchFilterItemModel> Items { get; set; }
 
         public LarsSearchFilterModel(
             string title,

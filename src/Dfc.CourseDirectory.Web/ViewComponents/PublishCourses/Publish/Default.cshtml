@@ -49,7 +49,8 @@
     }
     @if (Model.PublishMode.Equals(PublishMode.DataQualityIndicator))
     {
-        <h1 class="govuk-govuk-grid-column-one-half-l">@Model.NumberOfCoursesInFiles courses need their start date updating</h1>
+        var courseRunCount = Model.Courses.SelectMany(x => x.CourseRuns).Count();
+        <h1 class="govuk-govuk-grid-column-one-half-l">@courseRunCount courses need their start date updating</h1>
     }
     <div class="err-top-line"></div>
     @await Component.InvokeAsync(nameof(PublishCourse), new { model = Model })

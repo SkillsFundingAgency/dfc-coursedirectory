@@ -72,6 +72,17 @@
                 <button type="submit" asp-action="AddVenueSelectionConfirmation" class="govuk-button" id="">
                     Continue
                 </button>
+                @{
+                    if (string.IsNullOrWhiteSpace(Model.Id))
+                    {
+                        @Html.ActionLink("Cancel", "AddVenue", "Venues", null, new { @class = "govuk-link cd-cancel-link" })
+                    }
+                    else
+                    {
+                        @Html.ActionLink("Cancel", "Index", "Venues", null, new { @class = "govuk-link cd-cancel-link" })
+                    }
+                }
+
             </div>
         </div>
     </div>

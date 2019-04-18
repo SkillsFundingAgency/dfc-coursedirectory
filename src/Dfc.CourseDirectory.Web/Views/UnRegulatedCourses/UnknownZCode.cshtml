@@ -73,6 +73,8 @@
 
                 if ($SelectedValue !== "") {
 
+                    $('#results').html("");
+
                     $.ajax({
                         url: '/UnregulatedCourses/GetSSALevelTwo',
                         type: "GET",
@@ -241,6 +243,8 @@
                 var $Level1Id = $('#LevelOneSelect').val();
                 var $SelectedValue = $(this).val();
                 if ($SelectedValue !== "") {
+
+                    $('#results').html("");
 
                     doSearch();
 

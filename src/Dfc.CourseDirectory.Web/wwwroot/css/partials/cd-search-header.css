@@ -15,11 +15,10 @@
   display: flex;
 }
 
-.search-input[type="search"] {
-  border: 0;
-  display: flex;
-}
-
+/*.search-input[type="search"] {
+    border: 0;
+    display:flex;
+}*/
 .submit {
   display: inline-flex;
   height: 40px;

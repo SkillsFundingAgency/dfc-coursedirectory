@@ -109,9 +109,9 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
 
             var filteredLiveCourses = from Course c in allCourses.Where(c => BitmaskHelper.IsSet(c.CourseStatus, RecordStatus.Live)).ToList().OrderBy(x => x.QualificationCourseTitle) select c;
             var pendingCourses = from Course c in allCourses.Where(c => c.CourseStatus == RecordStatus.MigrationPending || c.CourseStatus == RecordStatus.BulkUloadPending)
-                select c;
+                                 select c;
 
-            var model = new ProviderCoursesViewModel
+            var model = new ProviderCoursesViewModel()
             {
                 PendingCoursesCount = pendingCourses?.Count(),
                 ProviderCourseRuns = new List<ProviderCourseRunViewModel>()
@@ -185,7 +185,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
             {
                 Id = "level-" + s++.ToString(),
                 Value = r.Key,
-                Text = "level " + r.Key,
+                Text = "Level " + r.Key,
                 Name = "level"
             }).ToList();
 
@@ -276,6 +276,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
 
             var filteredLiveCourses = from Course c in allCourses.Where(c => BitmaskHelper.IsSet(c.CourseStatus, RecordStatus.Live)).ToList().OrderBy(x => x.QualificationCourseTitle) select c;
 
+
             var model = new ProviderCoursesViewModel();
 
             model.ProviderCourseRuns = new List<ProviderCourseRunViewModel>();
@@ -340,6 +341,17 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
 
             }
 
+            if (!string.IsNullOrEmpty(requestModel.Keyword))
+            {
+                model.ProviderCourseRuns = model.ProviderCourseRuns
+                    .Where(x => x.CourseName.ToLower().Contains(requestModel.Keyword.ToLower())
+                                || x.QualificationCourseTitle.ToLower().Contains(requestModel.Keyword.ToLower())
+                                || x.LearnAimRef.ToLower().Contains(requestModel.Keyword.ToLower())
+                                || (!string.IsNullOrEmpty(x.CourseTextId) && x.CourseTextId.ToLower().Contains(requestModel.Keyword.ToLower()))
+                                ).ToList();
+            }
+
+
             List<ProviderCourseRunViewModel> aa = new List<ProviderCourseRunViewModel>();
             if (requestModel.LevelFilter.Length > 0)
             {
@@ -385,7 +397,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
             {
                 Id = "level-" + s++.ToString(),
                 Value = r.Key,
-                Text = "level " + r.Key,
+                Text = "Level " + r.Key,
                 Name = "level",
                 IsSelected = requestModel.LevelFilter.Length > 0 && requestModel.LevelFilter.Contains(r.Key)
             }).ToList();
