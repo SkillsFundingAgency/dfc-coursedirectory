@@ -3,7 +3,7 @@
 
 <div class=" cd-fullwidth-container govuk-!-padding-top-9">
     <div class="govuk-width-container cd-course-page">
-        <a href="Courses/CourseListfullwidth4" class="govuk-back-link">Back</a>
+        <a asp-controller="ProviderCourses" asp-action="Index" class="govuk-back-link">Back</a>
         <main class="govuk-main-wrapper">
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-two-thirds">
@@ -12,8 +12,8 @@
                     <table class="govuk-table">
                         <thead class="govuk-table__head">
                             <tr class="govuk-table__row">
-                                <th class="govuk-table__header" scope="col">Lars/QAN:</th>
-                                <th class="govuk-table__header" scope="col">@Model.LearnAimRef</th>
+                                <th class="govuk-table__header" scope="row">Lars/QAN:</th>
+                                <td class="govuk-table__cell">@Model.LearnAimRef</td>
                             </tr>
                         </thead>
                         <tbody class="govuk-table__body">
@@ -53,11 +53,11 @@
                         <tbody class="govuk-table__body">
                             <tr class="govuk-table__row">
                                 <th class="govuk-table__header" scope="row">Url:</th>
-                                <td class="govuk-table__cell"><a href="@Model.CourseURL">@Model.CourseURL</a></td>
+                                <td class="govuk-table__cell"><a href="@Model.CourseURL" target="_blank">@Model.CourseURL</a></td>
                             </tr>
                             <tr class="govuk-table__row">
                                 <th class="govuk-table__header" scope="row">Cost:</th>
-                                <td class="govuk-table__cell">@Model.Cost</td>
+                                <td class="govuk-table__cell">£@Model.Cost</td>
                             </tr>
                             <tr class="govuk-table__row">
                                 <th class="govuk-table__header" scope="row">Cost description:</th>
@@ -95,7 +95,7 @@
                                     }
                                     else
                                     {
-                                        <td class="govuk-table__cell">@Model.StartDate</td>
+                                        <td class="govuk-table__cell">@Model.StartDate.Value.ToShortDateString()</td>
                                     }
                                 }
 
@@ -106,7 +106,7 @@
 
 
                     <h3 class="govuk-heading-m govuk-!-margin-top-0">
-                        <a href="#">About this course</a>
+                        About this course
                     </h3>
                     <table class="govuk-table">
                         <tbody>
