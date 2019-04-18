@@ -188,8 +188,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 var response = await _httpClient.PostAsync(_providerSearchUri, content);
                 _logger.LogHttpResponseMessage("Provider search service http response", response);
 
-                if (response.IsSuccessStatusCode)
-                {
+                if (response.IsSuccessStatusCode) {
                     var json = await response.Content.ReadAsStringAsync();
 
                     //if (!json.StartsWith("["))

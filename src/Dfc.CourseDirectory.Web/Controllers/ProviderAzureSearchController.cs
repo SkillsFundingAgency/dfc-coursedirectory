@@ -55,6 +55,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             ProviderAzureSearchResultModel model = new ProviderAzureSearchResultModel();
 
+            var a = await _courseService.ProviderSearchAsync(criteria);
+
             //if (requestModel != null) {
             if (criteria != null) {
 
