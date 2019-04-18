@@ -232,7 +232,13 @@
                     <h3 class="govuk-heading-s govuk-!-margin-top-3 govuk-!-margin-bottom-0">Is it on the Course directory?</h3>
                     <a class="govuk-link" href="#">Yes - view online</a>
                     <hr>
-                    <p>Last published: <br>@Model.UpdatedDate.Value.ToShortDateString()</p>
+                    @{
+                        if (Model.UpdatedDate.HasValue)
+                        {
+                            <p>Last published: <br>@Model.UpdatedDate.Value.ToShortDateString()</p>
+                        }
+                    }
+
                     <hr>
 
                     <h3 class="govuk-heading-m m20">Duplicate</h3>
@@ -252,10 +258,72 @@
                         remove it from the course
                         directory
                     </p>
-                    <a class="govuk-link" href="#">Delete this course</a>
+                    <a href="#" class="govuk-link archive" id="archive-@Model.CourseInstanceId" data-course-run-id="@Model.CourseInstanceId" style="padding-right:1em">Delete This Course</a>
+
+                    <a id="course-confirm-archive-@Model.CourseInstanceId" class="govuk-button" asp-controller="Courses" asp-action="Archive"
+                       asp-route-courseId="@Model.CourseId"
+                       asp-route-courseRunId="@Model.CourseInstanceId"
+                       asp-route-level="@Model.NotionalNVQLevelv2"
+                       asp-route-qualificationType="@Model.QualificationType"
+                       asp-route-courseName="@Model.CourseName"
+                       style="display: none;padding-right:1em">Confirm delete</a>
+
+                    <a href="#" class="govuk-link cancel-archive" id="course-cancel-archive-@Model.CourseInstanceId" data-course-run-id="@Model.CourseInstanceId" hidden="hidden">Cancel</a>
                 </div>
             </div>
 
         </main>
     </div>
 </div>
+<script>
+    (function ($) {
+        $(function () {
+            var $archiveButton = $(".archive");
+
+            var $cancelArchiveButton = $(".cancel-archive");
+
+            $cancelArchiveButton.on("click",
+                function (event) {
+                    event.preventDefault();
+                    {
+                        var courseRunId = $(this).attr("data-course-run-id");
+
+                        var archiveOption = $("#archive-" + courseRunId);
+                        archiveOption.show();
+
+                        var confirmArchive = $("#course-confirm-archive-" + courseRunId);
+                        confirmArchive.hide();
+
+                        var archiveCancelDelete = $("#course-cancel-archive-" + courseRunId);
+                        archiveCancelDelete.hide();
+
+                    }
+                });
+
+
+            $archiveButton.on("click",
+                function (event) {
+                    event.preventDefault();
+
+                    $('.govuk-button').hide();
+
+                    $('.cancel-archive').hide();
+
+                    $('.archive').show();
+
+                    var courseRunId = $(this).attr("data-course-run-id");
+
+                    var archiveOption = $("#archive-" + courseRunId);
+                    archiveOption.hide();
+
+                    var confirmArchive = $("#course-confirm-archive-" + courseRunId);
+                    confirmArchive.show();
+
+                    var archiveCancelDelete = $("#course-cancel-archive-" + courseRunId);
+                    archiveCancelDelete.show().css("display", "block");
+
+                });
+            
+        });
+    })(jQuery);
+</script>
