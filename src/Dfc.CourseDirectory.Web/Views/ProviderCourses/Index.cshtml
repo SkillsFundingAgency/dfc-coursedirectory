@@ -35,13 +35,13 @@
                         </p>
                     </li>
                     @if (Model.PendingCoursesCount.HasValue && Model.PendingCoursesCount.Value > 0)
-                        {
-                            <li>
-                                <p>
-                                    <a href="~/Migration" class="govuk-link">or add information to @Model.PendingCoursesCount of your courses </a>that can’t be published until they are fixed
-                                </p>
-                            </li>
-                        }
+                    {
+                        <li>
+                            <p>
+                                <a href="~/Migration" class="govuk-link">or add information to @Model.PendingCoursesCount of your courses </a>that can’t be published until they are fixed
+                            </p>
+                        </li>
+                    }
                 </ul>
 
 
@@ -56,16 +56,16 @@
                 <span class="govuk-caption-xl">Course directory</span>
                 <h1 class="govuk-heading-xl">Your published courses</h1>
                 <p class="govuk-body-l">These are the courses you have listed on the course directory.</p>
-                
+
                 <div>
                     <header class="cd-hero-search">
                         <div class="content-container">
                             <div class="grid-row govuk-body" data-sf-element="Row">
                                 <div class="column-two-thirds">
                                     @*<div>
-                                        <h1 class="govuk-heading-l govuk-!-margin-top-4">@ViewBag.Title</h1>
-                                        <p class="column-two-thirds">@ViewBag.Subtext</p>
-                                    </div>*@
+                                            <h1 class="govuk-heading-l govuk-!-margin-top-4">@ViewBag.Title</h1>
+                                            <p class="column-two-thirds">@ViewBag.Subtext</p>
+                                        </div>*@
                                     <form action="@ViewBag.Target" class="site-search ui-front" id="header-search" method="post" role="search">
                                         <div class="header-search-content">
 
@@ -73,7 +73,7 @@
                                                 @*<label class="cd-search__label" for="search">Search</label>*@
                                                 <input class="govuk-input govuk-!-width-three-quarters search-input js-search-focus" id="search" name="SearchTerm" type="search">
                                                 <div class="cd-c-search__item cd-search__submit-wrapper">
-                                                    <button type="submit" class=" submit">Search</button>
+                                                    <button type="submit" id="searchButton" class=" submit">Search</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -88,7 +88,7 @@
 
                     <div id="results">
 
-                        @await Component.InvokeAsync(nameof(ProviderCoursesResults),Model)
+                        @await Component.InvokeAsync(nameof(ProviderCoursesResults), Model)
                     </div>
 
                 </div>
@@ -98,150 +98,169 @@
 
     }
 }
-        <script>
-            (function ($) {
-                $(function () {
-                   
+<script>
+    (function ($) {
+        $(function () {
+
+            var $courseSearchTerm = $("#search");
+            var $buttonSearch = $("#searchButton");
 
 
-                    var assignEventsToAllCheckboxes = function () {
-                        var $levelFilterCheckboxes = $("input[name='level']:checkbox");
-                        var $deliverymodeFilterCheckboxes = $("input[name='deliverymode']:checkbox");
-                        var $venueFilterCheckboxes = $("input[name='venue']:checkbox");
-                        var $attendancePatternFilterCheckboxes = $("input[name='attendancepattern']:checkbox");
-                        var $regionFilterCheckboxes = $("input[name='region']:checkbox");
+            var assignEventsToAllCheckboxes = function () {
+                var $levelFilterCheckboxes = $("input[name='level']:checkbox");
+                var $deliverymodeFilterCheckboxes = $("input[name='deliverymode']:checkbox");
+                var $venueFilterCheckboxes = $("input[name='venue']:checkbox");
+                var $attendancePatternFilterCheckboxes = $("input[name='attendancepattern']:checkbox");
+                var $regionFilterCheckboxes = $("input[name='region']:checkbox");
 
-                        $levelFilterCheckboxes.on("click", debounce(doSearch, 1500));
-                        $deliverymodeFilterCheckboxes.on("click", debounce(doSearch, 1500));
-                        $venueFilterCheckboxes.on("click", debounce(doSearch, 1500));
-                        $attendancePatternFilterCheckboxes.on("click", debounce(doSearch, 1500));
-                        $regionFilterCheckboxes.on("click", debounce(doSearch, 1500));
-                    };
+                $levelFilterCheckboxes.on("click", debounce(doSearch, 1500));
+                $deliverymodeFilterCheckboxes.on("click", debounce(doSearch, 1500));
+                $venueFilterCheckboxes.on("click", debounce(doSearch, 1500));
+                $attendancePatternFilterCheckboxes.on("click", debounce(doSearch, 1500));
+                $regionFilterCheckboxes.on("click", debounce(doSearch, 1500));
+            };
 
-                    $( document ).ready(function() {
-                        assignEventsToAllCheckboxes();
-                    });
+            $(document).ready(function () {
+                assignEventsToAllCheckboxes();
+            });
+
+            var debounce = function (cb, delay) {
+                var inDebounce;
+                return function () {
+                    var context = this;
+                    var args = arguments;
+                    clearTimeout(inDebounce);
+                    inDebounce = setTimeout(function () {
+                        cb.apply(context, args);
+                    },
+                        delay);
+                };
+            };
+
+            var isNullOrWhitespace = function (input) {
+                if (typeof input === 'undefined' || input == null) return true;
+                return input.replace(/\s/g, '').length < 3;
+            }
+
+            var replaceAll = function (search, find, replace) {
+                return search.split(find).join(replace);
+            };
+
+            var makeRequestWithUrl = function (url, success) {
+                console.log(url);
+                $.get(url, success);
+            };
 
 
-                    var debounce = function (cb, delay) {
-                        var inDebounce;
-                        return function () {
-                            var context = this;
-                            var args = arguments;
-                            clearTimeout(inDebounce);
-                            inDebounce = setTimeout(function () {
-                                cb.apply(context, args);
-                            },
-                                delay);
-                        };
-                    };
 
-                    var isNullOrWhitespace = function (input) {
-                        if (typeof input === 'undefined' || input == null) return true;
-                        return input.replace(/\s/g, '').length < 3;
+            var doSearch = function () {
+                var runSearch = false;
+                if (($courseSearchTerm.val().length > 0)) {
+
+                    if (isNullOrWhitespace($courseSearchTerm.val())) {
+
+                    } else {
+                        runSearch = true;
                     }
-
-                    var replaceAll = function (search, find, replace) {
-                        return search.split(find).join(replace);
-                    };
-
-                    var makeRequestWithUrl = function (url, success) {
-                        console.log(url);
-                        $.get(url, success);
-                    };
-
-                  
-
-                    var doSearch = function () {
-
-                        var $allCheckedLevelFilterCheckboxes =
-                            $("input[name='level']:checkbox:checked");
-                        var $allCheckedDeliveryModeFilterCheckboxes =
-                            $("input[name='deliverymode']:checkbox:checked");
-                        var $allCheckedVenuesFilterCheckboxes =
-                            $("input[name='venue']:checkbox:checked");
-                        var $allCheckedAttendancePatternFilterCheckboxes =
-                            $("input[name='attendancepattern']:checkbox:checked");
-                        var $allCheckedRegionFilterCheckboxes =
-                            $("input[name='region']:checkbox:checked");
-
-                        makeRequestWithPayload({
-                                LevelFilter: $allCheckedLevelFilterCheckboxes.map(function () {
-                                return $(this).val();
-                            }).get(),
-                            DeliveryModeFilter: $allCheckedDeliveryModeFilterCheckboxes.map(function () {
-                                return $(this).val();
-                            }).get(),
-                            VenueFilter: $allCheckedVenuesFilterCheckboxes.map(function () {
-                                    return $(this).val();
-                            }).get(),
-                                AttendancePatternFilter: $allCheckedAttendancePatternFilterCheckboxes.map(function () {
-                                    return $(this).val();
-                                }).get(),
-                            RegionFilter: $allCheckedRegionFilterCheckboxes.map(function () {
-                                    return $(this).val();
-                                }).get()
-                        },
-                            onSucess);
-                    };
+                } else {
+                    runSearch = true;
+                }
 
 
-                    var assignEventToClearAllFiltersLink = function () {
-                        var $clearAllFiltersLink = $("#ClearAllFilters");
 
-                        $clearAllFiltersLink.on("click",
-                            function (e) {
-                                region
-                                e.preventDefault();
-                                var $allCheckedFilterCheckboxes = $(
-                                    "input[name='level']:checkbox:checked, input[name='deliverymode']:checkbox:checked:checkbox, input[name='venue']:checkbox:checked:checkbox, input[name='attendancepattern']:checkbox:checked:checkbox, input[name='region']:checkbox:checked:checkbox");
-                                var allCheckedFilterCheckboxesLength = $allCheckedFilterCheckboxes.length;
+                if (runSearch === true) {
+                    var $allCheckedLevelFilterCheckboxes =
+                        $("input[name='level']:checkbox:checked");
+                    var $allCheckedDeliveryModeFilterCheckboxes =
+                        $("input[name='deliverymode']:checkbox:checked");
+                    var $allCheckedVenuesFilterCheckboxes =
+                        $("input[name='venue']:checkbox:checked");
+                    var $allCheckedAttendancePatternFilterCheckboxes =
+                        $("input[name='attendancepattern']:checkbox:checked");
+                    var $allCheckedRegionFilterCheckboxes =
+                        $("input[name='region']:checkbox:checked");
 
-                                for (var i = 0; i < allCheckedFilterCheckboxesLength; i++) {
-                                    if (i === (allCheckedFilterCheckboxesLength - 1)) {
-                                        $($allCheckedFilterCheckboxes[i]).trigger("click");
-                                    } else {
-                                        $($allCheckedFilterCheckboxes[i]).prop('checked', false);
-                                    }
-                                }
-                            });
-                    };
+                    makeRequestWithPayload({
+                        Keyword: $courseSearchTerm.val(),
+                        LevelFilter: $allCheckedLevelFilterCheckboxes.map(function () {
+                            return $(this).val();
+                        }).get(),
+                        DeliveryModeFilter: $allCheckedDeliveryModeFilterCheckboxes.map(function () {
+                            return $(this).val();
+                        }).get(),
+                        VenueFilter: $allCheckedVenuesFilterCheckboxes.map(function () {
+                            return $(this).val();
+                        }).get(),
+                        AttendancePatternFilter: $allCheckedAttendancePatternFilterCheckboxes.map(function () {
+                            return $(this).val();
+                        }).get(),
+                        RegionFilter: $allCheckedRegionFilterCheckboxes.map(function () {
+                            return $(this).val();
+                        }).get()
+                    },
+                        onSucess);
+                }
 
-                    //var assignEventsToLarsSearchPagination = function () {
-                    //    var $larsSearchResultPaginationItems = $("#results .pagination .pagination__item");
-                    //    $larsSearchResultPaginationItems.on("click",
-                    //        function (e) {
-                    //            e.preventDefault();
-                    //            var url = $(e.target).attr("href");
-                    //            makeRequestWithUrl(url, onSucess);
-                    //        });
-                    //};
+            };
 
-                    var onSucess = function (data) {
 
-                        $('#results').html("");
-                        $('#results').html(data);
+            var assignEventToClearAllFiltersLink = function () {
+                var $clearAllFiltersLink = $("#ClearAllFilters");
 
-                        //$('#Filters').css('visibility', 'visible');
+                $clearAllFiltersLink.on("click",
+                    function (e) {
+                        region
+                        e.preventDefault();
+                        var $allCheckedFilterCheckboxes = $(
+                            "input[name='level']:checkbox:checked, input[name='deliverymode']:checkbox:checked:checkbox, input[name='venue']:checkbox:checked:checkbox, input[name='attendancepattern']:checkbox:checked:checkbox, input[name='region']:checkbox:checked:checkbox");
+                        var allCheckedFilterCheckboxesLength = $allCheckedFilterCheckboxes.length;
 
-                        assignEventsToAllCheckboxes();
-                        assignEventToClearAllFiltersLink();
-                        //assignEventsToLarsSearchPagination();
-                    };
+                        for (var i = 0; i < allCheckedFilterCheckboxesLength; i++) {
+                            if (i === (allCheckedFilterCheckboxesLength - 1)) {
+                                $($allCheckedFilterCheckboxes[i]).trigger("click");
+                            } else {
+                                $($allCheckedFilterCheckboxes[i]).prop('checked', false);
+                            }
+                        }
+                    });
+            };
 
-                    var replaceAll = function (search, find, replace) {
-                        return search.split(find).join(replace);
-                    };
+            //var assignEventsToLarsSearchPagination = function () {
+            //    var $larsSearchResultPaginationItems = $("#results .pagination .pagination__item");
+            //    $larsSearchResultPaginationItems.on("click",
+            //        function (e) {
+            //            e.preventDefault();
+            //            var url = $(e.target).attr("href");
+            //            makeRequestWithUrl(url, onSucess);
+            //        });
+            //};
 
-                    var makeRequestWithPayload = function (payload, success) {
-                        console.log(payload);
-                        var qs = $.param(payload);
-                        qs = replaceAll(qs, "%5B%5D", "");
-                        $.get("/ProviderCourses/FilterCourses?" + qs, success);
-                    };
+            var onSucess = function (data) {
 
-                  
+                $('#results').html("");
+                $('#results').html(data);
 
-                });
-            })(jQuery);
-        </script>
+                //$('#Filters').css('visibility', 'visible');
+
+                assignEventsToAllCheckboxes();
+                assignEventToClearAllFiltersLink();
+                //assignEventsToLarsSearchPagination();
+            };
+
+            var replaceAll = function (search, find, replace) {
+                return search.split(find).join(replace);
+            };
+
+            var makeRequestWithPayload = function (payload, success) {
+                console.log(payload);
+                var qs = $.param(payload);
+                qs = replaceAll(qs, "%5B%5D", "");
+                $.get("/ProviderCourses/FilterCourses?" + qs, success);
+            };
+
+            $courseSearchTerm.on("keyup", debounce(doSearch, 400));
+            $buttonSearch.on("click", doSearch);
+
+        });
+    })(jQuery);
+</script>

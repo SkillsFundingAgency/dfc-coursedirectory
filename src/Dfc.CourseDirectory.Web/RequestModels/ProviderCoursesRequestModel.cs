@@ -8,6 +8,7 @@
     {
 
 
+        public string Keyword { get; set; }
 
         public string[] LevelFilter { get; set; }
         public string[] DeliveryModeFilter { get; set; }
