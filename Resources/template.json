@@ -146,6 +146,18 @@
         "description": "API host key (code) needed to access the coursetext service function app (REST API)"
       }
     },
+    "findCourseApiUrl": {
+      "type": "string",
+      "metadata": {
+        "description": "API URL for the course API REST services"
+      }
+    },
+    "findCourseApiKey": {
+      "type": "securestring",
+      "metadata": {
+        "description": "API host key for above"
+      }
+    },
     "appServicePlanSize": {
       "type": "string",
       "defaultValue": "1",
@@ -513,6 +525,22 @@
               {
                 "name": "CourseTextServiceSettings__ApiKey",
                 "value": "[parameters('courseTextApiKey')]"
+              },
+              {
+                "name": "FindACourseServiceSettings__ApiUrl",
+                "value": "[parameters('findCourseApiUrl')]"
+              },
+              {
+                "name": "FindACourseServiceSettings__ApiKey",
+                "value": "not yet in use"
+              },
+              {
+                "name": "FindACourseServiceSettings__UserName",
+                "value": "APIUser"
+              },
+              {
+                "name": "FindACourseServiceSettings__Password",
+                "value": "[parameters('findCourseApiKey')]"
               }
             ]
           },
