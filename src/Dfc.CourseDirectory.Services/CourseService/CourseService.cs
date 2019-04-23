@@ -13,6 +13,7 @@ using Dfc.CourseDirectory.Models.Models;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Newtonsoft.Json;
 using Dfc.CourseDirectory.Models.Models.Courses;
+using Dfc.CourseDirectory.Models.Models.Providers;
 using System.Net;
 using System.Text.RegularExpressions;
 using Dfc.CourseDirectory.Common.Settings;
@@ -20,6 +21,7 @@ using System.Linq;
 using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Models.Regions;
 using static Dfc.CourseDirectory.Services.CourseService.CourseValidationResult;
+
 
 namespace Dfc.CourseDirectory.Services.CourseService
 {
@@ -164,7 +166,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
         }
 
         // TODO - Provider search is in the course service for now, needs moving!
-        public async Task<IResult<ProviderSearchResult>> ProviderSearchAsync(IProviderSearchCriteria criteria)
+        public async Task<IResult<ProviderAzureSearchResultModel>> ProviderSearchAsync(ProviderSearchCriteria criteria)
         {
             Throw.IfNull(criteria, nameof(criteria));
             _logger.LogMethodEnter();
@@ -173,9 +175,6 @@ namespace Dfc.CourseDirectory.Services.CourseService
 
                 _logger.LogInformationObject("Provider search criteria", criteria);
                 _logger.LogInformationObject("Provider search URI", _providerSearchUri);
-
-                //if (!criteria.Something.HasValue)
-                //    return Result.Fail<IProviderSearchResult>("Provider search criteria invalid");
 
                 if (!_httpClient.DefaultRequestHeaders.Any(h => h.Key == "UserName"))
                     _httpClient.DefaultRequestHeaders.Add("UserName", _apiUserName);
@@ -189,27 +188,31 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 _logger.LogHttpResponseMessage("Provider search service http response", response);
 
                 if (response.IsSuccessStatusCode) {
+
+                    if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+                        return Result.Ok<ProviderAzureSearchResultModel>(new ProviderAzureSearchResultModel());
+
                     var json = await response.Content.ReadAsStringAsync();
 
                     //if (!json.StartsWith("["))
                     //    json = "[" + json + "]";
 
                     _logger.LogInformationObject("Provider search service json response", json);
-                    ProviderSearchResult providers = JsonConvert.DeserializeObject<ProviderSearchResult>(json);
+                    ProviderAzureSearchResultModel providers = JsonConvert.DeserializeObject<ProviderAzureSearchResultModel>(json);
 
                     //ProviderSearchResult searchResult = new ProviderSearchResult(providers);
-                    return Result.Ok<ProviderSearchResult>(providers); // searchResult);
+                    return Result.Ok<ProviderAzureSearchResultModel>(providers); // searchResult);
 
                 } else
-                    return Result.Fail<ProviderSearchResult>("Provider search service unsuccessful http response");
+                    return Result.Fail<ProviderAzureSearchResultModel>("Provider search service unsuccessful http response");
 
             } catch (HttpRequestException hre) {
                 _logger.LogException("Provider search service http request error", hre);
-                return Result.Fail<ProviderSearchResult>("Provider search service http request error.");
+                return Result.Fail<ProviderAzureSearchResultModel>("Provider search service http request error.");
 
             } catch (Exception e) {
                 _logger.LogException("Provider search service unknown error.", e);
-                return Result.Fail<ProviderSearchResult>("Provider search service unknown error.");
+                return Result.Fail<ProviderAzureSearchResultModel>("Provider search service unknown error.");
 
             } finally {
                 _logger.LogMethodExit();

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Dfc.CourseDirectory.Common;
+using Dfc.CourseDirectory.Common.Interfaces;
 using Dfc.CourseDirectory.Models.Models.Providers;
 using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.CourseService;
@@ -51,11 +52,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         [Authorize]
-        public async Task<IActionResult> Index([FromQuery] IProviderSearchCriteria criteria) //ProviderAzureSearchRequestModel requestModel)
+        public async Task<IActionResult> Index([FromQuery] ProviderSearchCriteria criteria) //ProviderAzureSearchRequestModel requestModel)
         {
             ProviderAzureSearchResultModel model = new ProviderAzureSearchResultModel();
-
-            var a = await _courseService.ProviderSearchAsync(criteria);
 
             //if (requestModel != null) {
             if (criteria != null) {
@@ -66,21 +65,20 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 //    _providerSearchSettings.ItemsPerPage,
                 //    (ProviderSearchFacet[])Enum.GetValues(typeof(ProviderSearchFacet)));
 
-                var result = await _courseService.ProviderSearchAsync(criteria);
+                IResult<ProviderAzureSearchResultModel> result = await _courseService.ProviderSearchAsync(criteria);
 
                 if (result.IsSuccess && result.HasValue) {
 
                     //var filters = _providerSearchHelper.GetProviderSearchFilterModels(result.Value.SearchFacets, requestModel);
                     //var items = _providerSearchHelper.GetProviderSearchResultItemModels(result.Value.Value);
 
-                    model = new ProviderAzureSearchResultModel(); // (criteria.Keyword, result.Value.Value.Select(p => new Provider() ));
-                        //requestModel.SearchTerm,
-                        //items,
-                        //Request.GetDisplayUrl(),
-                        //_providerSearchSettings.PageParamName,
-                        //_providerSearchSettings.ItemsPerPage,
-                        //result.Value.ODataCount ?? 0,
-                        //filters);
+                    model = result.Value; // new ProviderAzureSearchResultModel()
+                    //{
+                    //    ODataContext = result.Value.ODataContext,
+                    //    SearchFacets = result.Value.SearchFacets,
+                    //    Value = result.Value.Value,
+                    //    ODataCount = result.Value.ODataCount
+                    //};
 
                 } else {
                     model = new ProviderAzureSearchResultModel(); //ProviderSearchResultModel(result.Error);

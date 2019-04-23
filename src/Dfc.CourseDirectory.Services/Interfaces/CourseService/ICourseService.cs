@@ -8,6 +8,7 @@ using Dfc.CourseDirectory.Models.Interfaces.Courses;
 using Dfc.CourseDirectory.Models.Models;
 using Dfc.CourseDirectory.Models.Models.Courses;
 using Dfc.CourseDirectory.Models.Models.Regions;
+using Dfc.CourseDirectory.Models.Models.Providers;
 using Dfc.CourseDirectory.Services.CourseService;
 
 
@@ -17,7 +18,7 @@ namespace Dfc.CourseDirectory.Services.Interfaces.CourseService
     {
         Task<IResult<ICourse>> AddCourseAsync(ICourse course);
         Task<IResult<ICourseSearchResult>> GetYourCoursesByUKPRNAsync(ICourseSearchCriteria criteria);
-        Task<IResult<ProviderSearchResult>> ProviderSearchAsync(IProviderSearchCriteria criteria);
+        Task<IResult<ProviderAzureSearchResultModel>> ProviderSearchAsync(ProviderSearchCriteria criteria);
         Task<IResult<ICourse>> UpdateCourseAsync(ICourse course);
         Task<IResult<ICourse>> GetCourseByIdAsync(IGetCourseByIdCriteria criteria);
         Task<IResult> ArchiveProviderLiveCourses(int? UKPRN);

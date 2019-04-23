@@ -2,7 +2,7 @@
 using System;
 
 
-namespace Dfc.CourseDirectory.Web.ViewComponents.ProviderSearchResult
+namespace Dfc.CourseDirectory.Models.Models.Providers
 {
     public class ProviderAzureSearchResultItem
     {

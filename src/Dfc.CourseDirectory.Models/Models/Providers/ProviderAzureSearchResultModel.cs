@@ -2,10 +2,9 @@
 using System;
 using System.Collections.Generic;
 using Dfc.CourseDirectory.Common.Interfaces;
-using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 
 
-namespace Dfc.CourseDirectory.Web.ViewComponents.ProviderSearchResult
+namespace Dfc.CourseDirectory.Models.Models.Providers
 {
     public class ProviderAzureSearchResultModel //: IProviderAzureSearchResultModel
     {
