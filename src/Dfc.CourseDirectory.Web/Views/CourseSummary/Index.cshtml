@@ -95,7 +95,7 @@
                                     }
                                     else
                                     {
-                                        <td class="govuk-table__cell">@Model.StartDate.Value.ToShortDateString()</td>
+                                        <td class="govuk-table__cell">@Model.StartDate.Value.ToString("dd/MM/yyyy")</td>
                                     }
                                 }
 
@@ -235,7 +235,7 @@
                     @{
                         if (Model.UpdatedDate.HasValue)
                         {
-                            <p>Last published: <br>@Model.UpdatedDate.Value.ToShortDateString()</p>
+                            <p>Last published: <br>@Model.UpdatedDate.Value.ToString("dd/MM/yyyy")</p>
                         }
                     }
 

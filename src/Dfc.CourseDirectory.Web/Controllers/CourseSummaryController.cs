@@ -78,15 +78,17 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 vm.VenueName = _venueService.GetVenueByIdAsync(new GetVenueByIdCriteria(courseRun.VenueId.Value.ToString())).Result.Value.VenueName;
             }
-            if(courseRun.CourseURL.Contains("http") || courseRun.CourseURL.Contains("https"))
+            if(!string.IsNullOrEmpty(courseRun.CourseURL))
             {
-                vm.CourseURL = courseRun.CourseURL;
+                if (courseRun.CourseURL.Contains("http") || courseRun.CourseURL.Contains("https"))
+                {
+                    vm.CourseURL = courseRun.CourseURL;
+                }
+                else
+                {
+                    vm.CourseURL = "http://" + courseRun.CourseURL;
+                }
             }
-            else
-            {
-                vm.CourseURL = "http://" + courseRun.CourseURL;
-            }
-
             return View(vm);
         }
     }
