@@ -1,5 +1,6 @@
 ﻿using Dfc.CourseDirectory.Models.Models.Courses;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Dfc.CourseDirectory.Web.ViewModels.CourseSummary
@@ -32,12 +33,26 @@ namespace Dfc.CourseDirectory.Web.ViewModels.CourseSummary
         public decimal? Cost { get; set; }
         public string CostDescription { get; set; }
         public DurationUnit DurationUnit { get; set; }
+        public IEnumerable<string> Regions { get; set; }
+
         public int? DurationValue { get; set; }
         public string ProviderCourseID { get; set; }
         public DeliveryMode DeliveryMode { get; set; }
         public bool FlexibleStartDate { get; set; }
         public DateTime? StartDate { get; set; }
+        public AttendancePattern AttendancePattern { get; set; }
+        public StudyMode StudyMode { get; set; }
         public DateTime? UpdatedDate { get; set; }
         public string UpdatedBy { get; set; }
+    }
+
+    public class CourseSummaryFilterItemModel
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string Text { get; set; }
+        public string Value { get; set; }
+
+
     }
 }
