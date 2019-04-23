@@ -10,12 +10,16 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
 {
     public enum DeliveryMode
     {
+        [Display(Name = "Undefined")]
         [Description("Undefined")]
         Undefined = 0,
+        [Display(Name = "Classroom based")]
         [Description("Classroom based")]
         ClassroomBased = 1,
+        [Display(Name = "Online")]
         [Description("Online")]
         Online = 2,
+        [Display(Name = "Work based")]
         [Description("Work based")]
         WorkBased = 3
     }
@@ -38,8 +42,10 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
     {
         [Description("Undefined")]
         Undefined = 0,
+        [Display(Name = "Full-time")]
         [Description("Full-time")]
         FullTime = 1,
+        [Display(Name = "Part-time")]
         [Description("Part-time")]
         PartTime = 2,
         [Description("Flexible")]
@@ -57,13 +63,16 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         Evening = 2,
         [Description("Weekend")]
         Weekend = 3,
+        [Display(Name = "Day/Block Release")]
         [Description("Day/Block Release")]
         DayOrBlockRelease = 4
     }
     public enum StartDateType
     {
+        [Display(Name = "Defined Start Date")]
         [Description("Defined Start Date")]
         SpecifiedStartDate = 1,
+        [Display(Name = "Flexible Start Date")]
         [Description("Select a flexible start date")] 
         FlexibleStartDate = 2,
     }
