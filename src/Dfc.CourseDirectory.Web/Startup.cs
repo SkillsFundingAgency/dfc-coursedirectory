@@ -123,6 +123,7 @@ namespace Dfc.CourseDirectory.Web
             services.AddScoped<IVenueService, VenueService>();
 
             services.Configure<CourseServiceSettings>(Configuration.GetSection(nameof(CourseServiceSettings)));
+            services.Configure<FindACourseServiceSettings>(Configuration.GetSection(nameof(FindACourseServiceSettings)));
             services.AddScoped<ICourseService, CourseService>();
 
             services.Configure<CourseTextServiceSettings>(Configuration.GetSection(nameof(CourseTextServiceSettings)));
