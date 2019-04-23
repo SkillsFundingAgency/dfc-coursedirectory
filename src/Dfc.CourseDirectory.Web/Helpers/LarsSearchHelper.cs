@@ -30,11 +30,14 @@ namespace Dfc.CourseDirectory.Web.Helpers
             sb = BuildUpFilterStringBuilder(sb, "AwardOrgAimRef", larsSearchRequestModel.AwardOrgAimRefFilter);
 
 
-            if (sb.Length != 0) {
+            if (sb.Length != 0)
+            {
                 new LarsSearchFilterBuilder(sb).And().AppendOpeningBracket().Field("CertificationEndDate")
                     .GreaterThanOrEqualTo(DateTimeOffset.UtcNow.ToString("yyyy-MM-dd")).Or()
                     .Field("CertificationEndDate eq null").AppendClosingBracket();
-            } else {
+            }
+            else
+            {
                 new LarsSearchFilterBuilder(sb).Field("CertificationEndDate")
                     .GreaterThanOrEqualTo(DateTimeOffset.UtcNow.ToString("yyyy-MM-dd")).Or()
                     .Field("CertificationEndDate eq null");
@@ -131,17 +134,17 @@ namespace Dfc.CourseDirectory.Web.Helpers
 
             var r = awardOrgAimRefFilter.Items.ToList();
 
-           foreach (var award in awardOrgAimRefFilter.Items)
+            foreach (var award in awardOrgAimRefFilter.Items)
             {
                 if (award.Value == "APP H CAT C" || award.Value == "APP H CAT D" || award.Value == "APP H CAT H" || award.Value == "APP H CAT N")
                 {
-                   r.Remove(award);
+                    r.Remove(award);
                 }
                 else
                 {
                     award.Text = Categories.AllCategories.Where(x => x.Id == award.Text).Select(x => x.Category).SingleOrDefault();
                 }
-                
+
             }
 
             awardOrgAimRefFilter.Items = r;
@@ -163,7 +166,8 @@ namespace Dfc.CourseDirectory.Web.Helpers
             var notionalNVQLevelv2Filter = GetLarsSearchFilterModel(
                 "Qualification Level",
                 "NotionalNVQLevelv2Filter",
-                (value) => $"Level {value}",
+                 //(value) => $"Level {value}",
+                 (value) => value,
                 larsSearchFacets.NotionalNVQLevelv2,
                 larsSearchRequestModel.NotionalNVQLevelv2Filter);
 
@@ -242,13 +246,13 @@ namespace Dfc.CourseDirectory.Web.Helpers
                             .Or().PrependOpeningBracket();
                     }
                 }
-                if (filters.Length-1 > i)
+                if (filters.Length - 1 > i)
                 {
                     new LarsSearchFilterBuilder(stringBuilder)
                         .Field(fieldName)
                         .EqualTo(filters[i])
                         .Or();
-                    
+
                 }
                 else
                 {
@@ -289,16 +293,56 @@ namespace Dfc.CourseDirectory.Web.Helpers
             var items = new List<LarsSearchFilterItemModel>();
             var count = 0;
 
-            foreach (var item in searchFacets)
+            var textValue = string.Empty;
+
+            foreach (var item in searchFacets.OrderBy(x=>x.Value))
             {
+                textValue = string.Empty;
+
+                if (title.ToLower().Contains("level"))
+                {
+                    switch (item.Value.ToLower())
+                    {
+                        case "e":
+                            textValue = "Entry Level";
+                            break;
+                        case "x":
+                            textValue = "X - Not applicable/unknown";
+                            break;
+                        case "h":
+                            textValue = "Higher";
+                            break;
+                        case "m":
+                            textValue = "Mixed";
+                            break;
+                        default:
+                            textValue = "Level " + item.Value;
+                            break;
+
+                    }
+                }
+                else
+                {
+                    textValue = item.Value;
+
+                }
+
                 string value = string.IsNullOrWhiteSpace(item.Value) ? "(blank)" : item.Value;
                 items.Add(new LarsSearchFilterItemModel(
                     $"{facetName}-{count++}",
                     facetName,
-                    textStrategy?.Invoke(value),
+                   textValue,
                     value,
                     item.Count,
                     selectedValues.Contains(value)));
+            }
+
+            var entryItem = items.Where(x => x.Text.ToLower().Contains("entry")).SingleOrDefault();
+
+            if (entryItem != null)
+            {
+                items.Remove(entryItem);
+                items.Insert(0, entryItem);
             }
 
             var model = new LarsSearchFilterModel(title, items);

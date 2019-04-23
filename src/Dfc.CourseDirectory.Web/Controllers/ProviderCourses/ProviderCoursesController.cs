@@ -20,13 +20,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authorization;
 using Dfc.CourseDirectory.Web.ViewModels.ProviderCourses;
+using Dfc.CourseDirectory.Web.Extensions;
 
 namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
 {
     public class ProviderCoursesController : Controller
     {
+        private readonly IHttpContextAccessor _contextAccessor;
         private readonly ILogger<ProviderCoursesController> _logger;
-        private readonly ISession _session;
+        private ISession _session => _contextAccessor.HttpContext.Session;
         private readonly ICourseService _courseService;
         private readonly IVenueService _venueService;
 
@@ -42,7 +44,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
             Throw.IfNull(venueService, nameof(venueService));
 
             _logger = logger;
-            _session = contextAccessor.HttpContext.Session;
+            _contextAccessor = contextAccessor;
             _courseService = courseService;
             _venueService = venueService;
         }
@@ -177,17 +179,61 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
 
             }
 
-
-
+            _session.SetObject("ProviderCourses", model.ProviderCourseRuns);
 
             int s = 0;
-            levelFilterItems = model.ProviderCourseRuns.GroupBy(x => x.NotionalNVQLevelv2).OrderBy(x => x.Key).Select(r => new ProviderCoursesFilterItemModel()
+            var textValue = string.Empty;
+            var levelFilter = model.ProviderCourseRuns.GroupBy(x => x.NotionalNVQLevelv2).OrderBy(x => x.Key).ToList();
+            foreach(var level in levelFilter)
             {
-                Id = "level-" + s++.ToString(),
-                Value = r.Key,
-                Text = "Level " + r.Key,
-                Name = "level"
-            }).ToList();
+                textValue = string.Empty;
+
+                switch (level.Key.ToLower())
+                {
+                    case "e":
+                        textValue = "Entry Level";
+                        break;
+                    case "x":
+                        textValue = "X - Not applicable/unknown";
+                        break;
+                    case "h":
+                        textValue = "Higher";
+                        break;
+                    case "m":
+                        textValue = "Mixed";
+                        break;
+                    default:
+                        textValue = "Level " + level.Key;
+                        break;
+
+                }
+
+                ProviderCoursesFilterItemModel itemModel = new ProviderCoursesFilterItemModel()
+                {
+                    Id = "level-" + s++.ToString(),
+                    Value = level.Key,
+                    Text = textValue,
+                    Name = "level"
+                };
+
+                levelFilterItems.Add(itemModel);
+            }
+
+            var entryItem = levelFilterItems.Where(x => x.Text.ToLower().Contains("entry")).SingleOrDefault();
+
+            if (entryItem != null)
+            {
+                levelFilterItems.Remove(entryItem);
+                levelFilterItems.Insert(0, entryItem);
+            }
+
+            //levelFilterItems = model.ProviderCourseRuns.GroupBy(x => x.NotionalNVQLevelv2).OrderBy(x => x.Key).Select(r => new ProviderCoursesFilterItemModel()
+            //{
+            //    Id = "level-" + s++.ToString(),
+            //    Value = r.Key,
+            //    Text = "Level " + r.Key,
+            //    Name = "level"
+            //}).ToList();
 
             s = 0;
             deliveryModelFilterItems = model.ProviderCourseRuns.GroupBy(x => x.DeliveryMode).OrderBy(x => x.Key).Select(r => new ProviderCoursesFilterItemModel()
@@ -287,59 +333,70 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
             List<ProviderCoursesFilterItemModel> regionFilterItems = new List<ProviderCoursesFilterItemModel>();
             List<ProviderCoursesFilterItemModel> attendanceModeFilterItems = new List<ProviderCoursesFilterItemModel>();
 
-            foreach (var course in filteredLiveCourses)
+            if (requestModel.AttendancePatternFilter.Length==0 & requestModel.DeliveryModeFilter.Length==0 && requestModel.LevelFilter.Length==0 && requestModel.RegionFilter.Length==0 && requestModel.VenueFilter.Length==0)
             {
-                var filteredLiveCourseRuns = new List<CourseRun>();
 
-                filteredLiveCourseRuns = course.CourseRuns.ToList();
-                filteredLiveCourseRuns.RemoveAll(x => x.RecordStatus != RecordStatus.Live);
-
-                foreach (var cr in filteredLiveCourseRuns)
+                foreach (var course in filteredLiveCourses)
                 {
-                    ProviderCourseRunViewModel courseRunModel = new ProviderCourseRunViewModel()
+                    var filteredLiveCourseRuns = new List<CourseRun>();
+
+                    filteredLiveCourseRuns = course.CourseRuns.ToList();
+                    filteredLiveCourseRuns.RemoveAll(x => x.RecordStatus != RecordStatus.Live);
+
+                    foreach (var cr in filteredLiveCourseRuns)
                     {
-                        AwardOrgCode = course.AwardOrgCode,
-                        LearnAimRef = course.LearnAimRef,
-                        NotionalNVQLevelv2 = course.NotionalNVQLevelv2,
-                        QualificationType = course.QualificationType,
-                        CourseId = course.id,
-                        QualificationCourseTitle = course.QualificationCourseTitle,
-                        CourseRunId = cr.id.ToString(),
-                        CourseTextId = cr.ProviderCourseID,
-                        AttendancePattern = cr.AttendancePattern.ToDescription(),
-                        Cost = cr.Cost.HasValue ? $"£ {cr.Cost.Value:0.00}" : string.Empty,
-                        CourseName = cr.CourseName,
-                        DeliveryMode = cr.DeliveryMode.ToDescription(),
-                        RegionIdList = cr.Regions != null
-                            ? FormattedRegionIds(allRegions, cr.Regions)
-                            : string.Empty,
-                        Duration = cr.DurationValue.HasValue
-                                                        ? $"{cr.DurationValue.Value} {cr.DurationUnit.ToDescription()}"
-                                                        : $"0 {cr.DurationUnit.ToDescription()}",
-                        Venue = cr.VenueId.HasValue
-                                                        ? FormatAddress(GetVenueByIdFrom(venueResult.Value, cr.VenueId.Value))
-                                                        : string.Empty,
-                        Region = cr.Regions != null
-                                                        ? FormattedRegionsByIds(allRegions, cr.Regions)
-                                                        : string.Empty,
-                        StartDate = cr.FlexibleStartDate
-                                                        ? "Flexible start date"
-                                                        : cr.StartDate?.ToString("dd/MM/yyyy"),
-                        StudyMode = cr.StudyMode == Models.Models.Courses.StudyMode.Undefined
-                                                        ? string.Empty
-                                                        : cr.StudyMode.ToDescription(),
-                        Url = cr.CourseURL
+                        ProviderCourseRunViewModel courseRunModel = new ProviderCourseRunViewModel()
+                        {
+                            AwardOrgCode = course.AwardOrgCode,
+                            LearnAimRef = course.LearnAimRef,
+                            NotionalNVQLevelv2 = course.NotionalNVQLevelv2,
+                            QualificationType = course.QualificationType,
+                            CourseId = course.id,
+                            QualificationCourseTitle = course.QualificationCourseTitle,
+                            CourseRunId = cr.id.ToString(),
+                            CourseTextId = cr.ProviderCourseID,
+                            AttendancePattern = cr.AttendancePattern.ToDescription(),
+                            Cost = cr.Cost.HasValue ? $"£ {cr.Cost.Value:0.00}" : string.Empty,
+                            CourseName = cr.CourseName,
+                            DeliveryMode = cr.DeliveryMode.ToDescription(),
+                            RegionIdList = cr.Regions != null
+                                ? FormattedRegionIds(allRegions, cr.Regions)
+                                : string.Empty,
+                            Duration = cr.DurationValue.HasValue
+                                                            ? $"{cr.DurationValue.Value} {cr.DurationUnit.ToDescription()}"
+                                                            : $"0 {cr.DurationUnit.ToDescription()}",
+                            Venue = cr.VenueId.HasValue
+                                                            ? FormatAddress(GetVenueByIdFrom(venueResult.Value, cr.VenueId.Value))
+                                                            : string.Empty,
+                            Region = cr.Regions != null
+                                                            ? FormattedRegionsByIds(allRegions, cr.Regions)
+                                                            : string.Empty,
+                            StartDate = cr.FlexibleStartDate
+                                                            ? "Flexible start date"
+                                                            : cr.StartDate?.ToString("dd/MM/yyyy"),
+                            StudyMode = cr.StudyMode == Models.Models.Courses.StudyMode.Undefined
+                                                            ? string.Empty
+                                                            : cr.StudyMode.ToDescription(),
+                            Url = cr.CourseURL
 
 
 
-                    };
+                        };
 
-                    model.ProviderCourseRuns.Add(courseRunModel);
+                        model.ProviderCourseRuns.Add(courseRunModel);
 
+
+                    }
 
                 }
-
             }
+            else
+            {
+                model.ProviderCourseRuns = _session.GetObject<List<ProviderCourseRunViewModel>>("ProviderCourses");
+            }
+          
+
+           
 
             if (!string.IsNullOrEmpty(requestModel.Keyword))
             {
@@ -391,6 +448,9 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
 
                 model.ProviderCourseRuns = filterResults;
             }
+
+            _session.SetObject("ProviderCourses", model.ProviderCourseRuns);
+
 
             int s = 0;
             levelFilterItems = model.ProviderCourseRuns.GroupBy(x => x.NotionalNVQLevelv2).OrderBy(x => x.Key).Select(r => new ProviderCoursesFilterItemModel()
