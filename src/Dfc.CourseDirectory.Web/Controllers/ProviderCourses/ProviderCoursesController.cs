@@ -351,8 +351,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
                                 ).ToList();
             }
 
-
-            List<ProviderCourseRunViewModel> aa = new List<ProviderCourseRunViewModel>();
             if (requestModel.LevelFilter.Length > 0)
             {
                 model.ProviderCourseRuns = model.ProviderCourseRuns.Where(x => requestModel.LevelFilter.Contains(x.NotionalNVQLevelv2)).ToList();
@@ -377,8 +375,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
 
             if (requestModel.RegionFilter.Length > 0)
             {
-              
 
+                List<ProviderCourseRunViewModel> allResults = model.ProviderCourseRuns.ToList();
                 List<ProviderCourseRunViewModel> filterResults = new List<ProviderCourseRunViewModel>();
                 foreach (var regionFilter in requestModel.RegionFilter)
                 {
@@ -386,7 +384,11 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
                         .Where(x => string.Equals(x.Id, regionFilter, StringComparison.CurrentCultureIgnoreCase))
                         .Select(d => d.RegionName).FirstOrDefault();
 
-                    filterResults.AddRange(model.ProviderCourseRuns.Where(x =>x.Region.Contains(region)));
+                    var results = allResults.Where(x => x.Region.Contains(region));
+
+                    filterResults.AddRange(results);
+
+                    allResults.RemoveAll(x => x.Region.Contains(region));
                 }
 
                 model.ProviderCourseRuns = filterResults;
