@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Dfc.CourseDirectory.Web.Controllers
@@ -60,8 +61,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     (LarsSearchFacet[])Enum.GetValues(typeof(LarsSearchFacet)));
 
                 var result = await _larsSearchService.SearchAsync(criteria);
-
-                if (result.IsSuccess && result.HasValue)
+                if (result.IsSuccess && result.HasValue && result.Value.Value.Count() > 0)
                 {
                     var filters = _larsSearchHelper.GetLarsSearchFilterModels(result.Value.SearchFacets, requestModel);
                     var items = _larsSearchHelper.GetLarsSearchResultItemModels(result.Value.Value);
