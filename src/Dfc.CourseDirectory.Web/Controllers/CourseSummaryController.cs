@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Models.Interfaces.Courses;
 using Dfc.CourseDirectory.Models.Models.Courses;
+using Dfc.CourseDirectory.Models.Models.Regions;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
@@ -70,6 +71,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 ProviderCourseID = courseRun.ProviderCourseID,
                 DeliveryMode = courseRun.DeliveryMode,
                 FlexibleStartDate = courseRun.FlexibleStartDate,
+                StudyMode = courseRun.StudyMode,
+                AttendancePattern = courseRun.AttendancePattern,
                 StartDate = courseRun.StartDate,
                 UpdatedDate = courseRun.UpdatedDate,
                 UpdatedBy = courseRun.UpdatedBy
@@ -89,7 +92,46 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     vm.CourseURL = "http://" + courseRun.CourseURL;
                 }
             }
+            if(courseRun.Regions != null)
+            {
+                var allRegions = _courseService.GetRegions().RegionItems;
+                var regions = GetRegions().RegionItems.Select(x => x.Id);
+                vm.Regions = FormattedRegionsByIds(allRegions, courseRun.Regions);
+            }
             return View(vm);
         }
+        internal IEnumerable<string> FormattedRegionsByIds(IEnumerable<RegionItemModel> list, IEnumerable<string> ids)
+        {
+            if (list == null) list = new List<RegionItemModel>();
+            if (ids == null) ids = new List<string>();
+
+            var regionNames = (from regionItemModel in list
+                               from subRegionItemModel in regionItemModel.SubRegion
+                               where ids.Contains(subRegionItemModel.Id)
+                               select regionItemModel.RegionName).Distinct().OrderBy(x => x);
+
+            return regionNames;
+        }
+        private SelectRegionModel GetRegions()
+        {
+            var selectRegion = new SelectRegionModel
+            {
+                LabelText = "Select course region",
+                HintText = "For example, South West",
+                AriaDescribedBy = "Select all that apply."
+            };
+
+            if (selectRegion.RegionItems != null && selectRegion.RegionItems.Any())
+            {
+                selectRegion.RegionItems = selectRegion.RegionItems.OrderBy(x => x.RegionName);
+                foreach (var selectRegionRegionItem in selectRegion.RegionItems)
+                {
+                    selectRegionRegionItem.SubRegion = selectRegionRegionItem.SubRegion.OrderBy(x => x.SubRegionName).ToList();
+                }
+            }
+
+            return selectRegion;
+        }
     }
+
 }

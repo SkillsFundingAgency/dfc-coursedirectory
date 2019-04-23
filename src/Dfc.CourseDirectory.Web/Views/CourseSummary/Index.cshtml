@@ -1,4 +1,5 @@
 ﻿@using Dfc.CourseDirectory.Models.Enums
+@using Dfc.CourseDirectory.Models.Models.Courses
 @model Dfc.CourseDirectory.Web.ViewModels.CourseSummary.CourseSummaryViewModel
 
 <div class=" cd-fullwidth-container govuk-!-padding-top-9">
@@ -45,12 +46,61 @@
 
                     <table class="govuk-table">
                         <thead class="govuk-table__head">
-                            <tr class="govuk-table__row">
-                                <th class="govuk-table__header" scope="col">Venue:</th>
-                                <th class="govuk-table__header" scope="col">@Model.VenueName</th>
-                            </tr>
+
                         </thead>
                         <tbody class="govuk-table__body">
+                            <tr class="govuk-table__row">
+                                <th class="govuk-table__header" scope="col">Course Name:</th>
+                                <td class="govuk-table__cell" scope="col">@Model.CourseName</td>
+                            </tr>
+                            <tr class="govuk-table__row">
+                                <th class="govuk-table__header" scope="row">ID:</th>
+                                <td class="govuk-table__cell">@Model.ProviderCourseID</td>
+                            </tr>
+                            <tr class="govuk-table__row">
+                                <th class="govuk-table__header" scope="row">Delivery:</th>
+                                <td class="govuk-table__cell">@Model.DeliveryMode</td>
+                            </tr>
+                            <tr class="govuk-table__row">
+                                <th class="govuk-table__header" scope="row">Start date:</th>
+                                @{
+                                    if (Model.FlexibleStartDate == true)
+                                    {
+                                        <td class="govuk-table__cell">Flexible start date</td>
+                                    }
+                                    else
+                                    {
+                                        <td class="govuk-table__cell">@Model.StartDate.Value.ToString("dd/MM/yyyy")</td>
+                                    }
+                                }
+                            </tr>
+                            @{
+                                if (Model.DeliveryMode == DeliveryMode.WorkBased)
+                                {
+                                    <tr class="govuk-table__row">
+                                        <th class="govuk-table__header" scope="col">Regions:</th>
+                                        @{
+                                            <td class="govuk-table__cell">
+                                                @foreach (var region in Model.Regions)
+                                                {
+                                                    @region
+                                                    <br />
+                                                }
+                                            </td>
+                                        }
+
+                                    </tr>
+                                }
+                            }
+                            @{
+                                if (Model.DeliveryMode == DeliveryMode.ClassroomBased)
+                                {
+                                    <tr class="govuk-table__row">
+                                        <th class="govuk-table__header" scope="col">Venue:</th>
+                                        <td class="govuk-table__cell" scope="col">@Model.VenueName</td>
+                                    </tr>
+                                }
+                            }
                             <tr class="govuk-table__row">
                                 <th class="govuk-table__header" scope="row">Url:</th>
                                 <td class="govuk-table__cell"><a href="@Model.CourseURL" target="_blank">@Model.CourseURL</a></td>
@@ -78,28 +128,19 @@
                                 <th class="govuk-table__header" scope="row">Duration:</th>
                                 <td class="govuk-table__cell">@Model.DurationValue @Model.DurationUnit</td>
                             </tr>
-                            <tr class="govuk-table__row">
-                                <th class="govuk-table__header" scope="row">ID:</th>
-                                <td class="govuk-table__cell">@Model.ProviderCourseID</td>
-                            </tr>
-                            <tr class="govuk-table__row">
-                                <th class="govuk-table__header" scope="row">Delivery:</th>
-                                <td class="govuk-table__cell">@Model.DeliveryMode</td>
-                            </tr>
-                            <tr class="govuk-table__row">
-                                <th class="govuk-table__header" scope="row">Start date:</th>
-                                @{
-                                    if (Model.FlexibleStartDate == true)
-                                    {
-                                        <td class="govuk-table__cell">Flexible start date</td>
-                                    }
-                                    else
-                                    {
-                                        <td class="govuk-table__cell">@Model.StartDate.Value.ToString("dd/MM/yyyy")</td>
-                                    }
+                            @{
+                                if (Model.DeliveryMode == DeliveryMode.ClassroomBased)
+                                {
+                                    <tr class="govuk-table__row">
+                                        <th class="govuk-table__header" scope="row">Full time or part time:</th>
+                                        <td class="govuk-table__cell">@Model.StudyMode</td>
+                                    </tr>
+                                    <tr class="govuk-table__row">
+                                        <th class="govuk-table__header" scope="row">Attendance:</th>
+                                        <td class="govuk-table__cell">@Model.AttendancePattern</td>
+                                    </tr>
                                 }
-
-                            </tr>
+                            }
 
                         </tbody>
                     </table>
