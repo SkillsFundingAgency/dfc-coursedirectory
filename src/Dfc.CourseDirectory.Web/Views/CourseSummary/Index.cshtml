@@ -1,7 +1,12 @@
 ﻿@using Dfc.CourseDirectory.Models.Enums
 @using Dfc.CourseDirectory.Models.Models.Courses
+@using Dfc.CourseDirectory.Web.Helpers
+@using System.ComponentModel.DataAnnotations
 @model Dfc.CourseDirectory.Web.ViewModels.CourseSummary.CourseSummaryViewModel
 
+@{
+    var deliveryModeAttribute = Model.DeliveryMode.GetAttribute<DisplayAttribute>();
+}
 <div class=" cd-fullwidth-container govuk-!-padding-top-9">
     <div class="govuk-width-container cd-course-page">
         <a asp-controller="ProviderCourses" asp-action="Index" class="govuk-back-link">Back</a>
@@ -59,7 +64,7 @@
                             </tr>
                             <tr class="govuk-table__row">
                                 <th class="govuk-table__header" scope="row">Delivery:</th>
-                                <td class="govuk-table__cell">@Model.DeliveryMode</td>
+                                <td class="govuk-table__cell">@deliveryModeAttribute.Name</td>
                             </tr>
                             <tr class="govuk-table__row">
                                 <th class="govuk-table__header" scope="row">Start date:</th>
@@ -372,7 +377,7 @@
                     archiveCancelDelete.show().css("display", "block");
 
                 });
-            
+
         });
     })(jQuery);
 </script>
