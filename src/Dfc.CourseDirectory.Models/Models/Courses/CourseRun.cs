@@ -40,6 +40,7 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
     }
     public enum StudyMode
     {
+        [Display(Name = "Undefined")]
         [Description("Undefined")]
         Undefined = 0,
         [Display(Name = "Full-time")]
@@ -48,6 +49,7 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         [Display(Name = "Part-time")]
         [Description("Part-time")]
         PartTime = 2,
+        [Display(Name = "Flexible")]
         [Description("Flexible")]
         Flexible = 3
 
@@ -55,12 +57,16 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
 
     public enum AttendancePattern
     {
+        [Display(Name = "Undefined")]
         [Description("Undefined")]
         Undefined = 0,
+        [Display(Name = "Daytime")]
         [Description("Daytime")]
         Daytime = 1,
+        [Display(Name = "Evening")]
         [Description("Evening")]
         Evening = 2,
+        [Display(Name = "Weekend")]
         [Description("Weekend")]
         Weekend = 3,
         [Display(Name = "Day/Block Release")]
