@@ -43,7 +43,10 @@
                                 </div>
                             </div>
                         </form>
-                        <a class="govuk-link" asp-controller="UnregulatedCourses" asp-action="UnknownZCode">I don't know the Z code</a>
+                        <div id="results">
+                            <a class="govuk-link" asp-controller="UnregulatedCourses" asp-action="UnknownZCode">I don't know the Z code</a>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -142,6 +145,115 @@
                     $validationMessageSearchTerm.hide();
                     $validationMessageSearchTerm.css("margin-bottom", "0");
             }
+
+
+
+
+
+
+
+
+
+
+            var debounce = function (cb, delay) {
+                var inDebounce;
+                return function () {
+                    var context = this;
+                    var args = arguments;
+                    clearTimeout(inDebounce);
+                    inDebounce = setTimeout(function () {
+                        cb.apply(context, args);
+                    },
+                        delay);
+                };
+            };
+
+            var isNullOrWhitespace = function (input) {
+                if (typeof input === 'undefined' || input == null) return true;
+                return input.replace(/\s/g, '').length < 3;
+            }
+
+            var replaceAll = function (search, find, replace) {
+                return search.split(find).join(replace);
+            };
+
+            var makeRequestWithUrl = function (url, success) {
+                console.log(url);
+                $.get(url, success);
+            };
+
+            //var removeSearchResults = function () {
+            //    var $larsSearchResultContainer = $("#LarsSearchResultContainer");
+            //    $larsSearchResultContainer.html("");
+            //};
+
+            //var replaceSearchResult = function (searchResults) {
+            //    var $larsSearchResultContainer = $("#LarsSearchResultContainer");
+            //    $larsSearchResultContainer.html("");
+            //    $larsSearchResultContainer.html(searchResults);
+            //};
+
+            var $larsSearchTerm = $("#LarsSearchTerm");
+            var $buttonSearch = $("#searchQualification");
+
+            var doSearch = function () {
+
+                Level1Id: $('#LevelOneSelect').val();
+                Level2Id: $('#LevelTwoSelect').val();
+
+                    var $allCheckedNotionalNvqLevelV2FilterCheckboxes =
+                        $("input[name='NotionalNVQLevelv2Filter']:checkbox:checked");
+                    var $allCheckedAwardAimRefFilterCheckboxes =
+                        $("input[name='AwardOrgAimRefFilter']:checkbox:checked");
+
+                makeRequestWithPayload({
+                    Level1Id: $('#LevelOneSelect').val(),
+                    Level2Id: $('#LevelTwoSelect').val(),
+                        NotionalNVQLevelv2Filter: $allCheckedNotionalNvqLevelV2FilterCheckboxes.map(function () {
+                            return $(this).val();
+                        }).get(),
+                    AwardOrgAimRefFilter: $allCheckedAwardAimRefFilterCheckboxes.map(function () {
+                            return $(this).val();
+                        }).get()
+                    },
+                        onSucess);
+               // }
+            };
+
+        
+
+            var onSucess = function (data) {
+
+                $('#results').html("");
+                $('#results').html(data);
+
+                //$('#Filters').css('visibility', 'visible');
+
+                //assignEventsToAllCheckboxes();
+                //assignEventToClearAllFiltersLink();
+                //assignEventsToLarsSearchPagination();
+            };
+
+            $buttonSearch.on("click", doSearch);
+
+            $(document).keypress(function (e) {
+                if (e.which === 13) {
+                    e.preventDefault();
+                }
+            });
+
+            var replaceAll = function (search, find, replace) {
+                return search.split(find).join(replace);
+            };
+
+            var makeRequestWithPayload = function (payload, success) {
+                console.log(payload);
+                var qs = $.param(payload);
+                qs = replaceAll(qs, "%5B%5D", "");
+                $.get("/UnregulatedCourses/ZCodeNotKnown?" + qs, success);
+            };
+
+
         });
     })(jQuery);
 </script>

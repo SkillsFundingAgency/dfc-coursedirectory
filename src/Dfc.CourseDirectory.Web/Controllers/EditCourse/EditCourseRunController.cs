@@ -148,8 +148,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                     }
 
                     if (courseRun.Regions == null) return View("EditCourseRun", vm);
-
-                    foreach (var selectRegionRegionItem in vm.SelectRegion.RegionItems)
+                    
+                    foreach (var selectRegionRegionItem in vm.SelectRegion.RegionItems.OrderBy(x=>x.RegionName))
                     {
                         foreach (var subRegionItemModel in selectRegionRegionItem.SubRegion)
                         {
