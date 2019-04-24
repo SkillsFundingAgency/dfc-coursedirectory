@@ -259,13 +259,11 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                     var updatedCourse = await _courseService.UpdateCourseAsync(courseForEdit.Value);
                     if (updatedCourse.IsSuccess && updatedCourse.HasValue)
                     {
-                        return RedirectToAction("Courses", "Provider",
+                        return RedirectToAction("index", "ProviderCourses",
                             new
                             {
                                 notificationTitle = "New course added",
                                 notificationMessage = "You added",
-                                level = updatedCourse.Value.NotionalNVQLevelv2,
-                                courseId = updatedCourse.Value.id,
                                 courseRunId = copiedCourseRun.id
                             });
                     }
