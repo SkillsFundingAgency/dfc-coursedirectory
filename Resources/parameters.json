@@ -73,6 +73,12 @@
     },
     "courseTextApiKey": {
       "value": "not-a-real-key"
+    },
+    "findCourseApiUrl": {
+      "value": "https://api.net/coursedirectory/courses/"
+    },
+    "findCourseApiKey": {
+      "value": "not-a-real-key"
     }
   }
 }
