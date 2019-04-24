@@ -3,7 +3,9 @@
 @using Dfc.CourseDirectory.Web.Helpers
 @using System.ComponentModel.DataAnnotations
 @model Dfc.CourseDirectory.Web.ViewModels.CourseSummary.CourseSummaryViewModel
-
+@{
+    Layout = "_Layout_Your_Courses";
+}
 @{
     var deliveryModeAttribute = Model.DeliveryMode.GetAttribute<DisplayAttribute>();
     var attendanceAttribute = Model.AttendancePattern.GetAttribute<DisplayAttribute>();
