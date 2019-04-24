@@ -283,6 +283,10 @@
                         {
                             <p>Last published: <br>@Model.UpdatedDate.Value.ToString("dd MMMM yyyy")</p>
                         }
+                        else
+                        {
+                            <p>Created: <br>@Model.CreatedDate.ToString("dd MMMM yyyy")</p>
+                        }
                     }
 
                     <hr>

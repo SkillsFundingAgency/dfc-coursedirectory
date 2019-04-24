@@ -76,6 +76,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 StudyMode = courseRun.StudyMode,
                 AttendancePattern = courseRun.AttendancePattern,
                 StartDate = courseRun.StartDate,
+                CreatedBy = courseRun.CreatedBy,
+                CreatedDate = courseRun.CreatedDate,
                 UpdatedDate = courseRun.UpdatedDate,
                 UpdatedBy = courseRun.UpdatedBy
             };
