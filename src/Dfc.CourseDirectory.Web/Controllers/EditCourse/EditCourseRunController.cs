@@ -315,14 +315,11 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                                      NotificationMessage = "Start date edited"
                                  });
                             default:
-                                return RedirectToAction("Courses", "Provider",
+                                return RedirectToAction("index", "ProviderCourses",
                                     new
                                     {
-                                        level = courseForEdit.Value.NotionalNVQLevelv2,
                                         NotificationTitle = "Course edited",
                                         NotificationMessage = "You edited",
-                                        qualificationType = courseForEdit.Value.QualificationType,
-                                        courseId = updatedCourse.Value.id,
                                         courseRunId = model.CourseRunId
                                     });
 

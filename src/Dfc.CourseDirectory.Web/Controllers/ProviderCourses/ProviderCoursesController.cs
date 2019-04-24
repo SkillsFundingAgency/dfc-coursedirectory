@@ -93,7 +93,10 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
         }
 
         [Authorize]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(
+            Guid? courseRunId,
+            string notificationTitle,
+            string notificationMessage)
         {
             _session.SetString("Option", "Courses");
             int? UKPRN = _session.GetInt32("UKPRN");
@@ -293,12 +296,34 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
                 regionFilterItems.Add(regionFilterItem);
             }
 
+            var notificationCourseName = string.Empty;
+            var notificationAnchorTag = string.Empty;
+
+            if (courseRunId.HasValue && courseRunId.Value != Guid.Empty)
+            {
+                notificationCourseName = model.ProviderCourseRuns.Where(x => x.CourseRunId == courseRunId.Value.ToString()).Select(x => x.QualificationCourseTitle).FirstOrDefault().ToString();
+
+                notificationAnchorTag = courseRunId.HasValue
+              ? $"<a id=\"courseeditlink\" class=\"govuk-link\" href=\"#\" data-courserunid=\"{courseRunId}\" >{notificationMessage} {notificationCourseName}</a>"
+              : $"<a id=\"courseeditlink\" class=\"govuk-link\" href=\"#\">{notificationMessage} {notificationCourseName}</a>";
+            }
+            else
+            {
+                notificationTitle = string.Empty;
+            }
+
+          
+
+
+
             model.HasFilters = false;
             model.Levels = levelFilterItems;
             model.DeliveryModes = deliveryModelFilterItems;
             model.Venues = venueFilterItems;
             model.AttendancePattern = attendanceModeFilterItems;
             model.Regions = regionFilterItems;
+            model.NotificationTitle = notificationTitle;
+            model.NotificationMessage = notificationAnchorTag;
             return View(model);
         }
 
