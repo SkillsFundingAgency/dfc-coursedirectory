@@ -476,7 +476,9 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
                 model.ProviderCourseRuns = filterResults;
             }
 
-            _session.SetObject("ProviderCourses", model.ProviderCourseRuns);
+            model.ProviderCourseRuns = model.ProviderCourseRuns.OrderBy(x => x.CourseName).ToList();
+
+            _session.SetObject("ProviderCourses", model.ProviderCourseRuns.OrderBy(x=>x.CourseName));
 
 
             int s = 0;
