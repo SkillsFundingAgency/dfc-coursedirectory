@@ -6,6 +6,8 @@
 
 @{
     var deliveryModeAttribute = Model.DeliveryMode.GetAttribute<DisplayAttribute>();
+    var attendanceAttribute = Model.AttendancePattern.GetAttribute<DisplayAttribute>();
+    var studyModeAttribute = Model.StudyMode.GetAttribute<DisplayAttribute>();
 }
 <div class=" cd-fullwidth-container govuk-!-padding-top-9">
     <div class="govuk-width-container cd-course-page">
@@ -138,11 +140,11 @@
                                 {
                                     <tr class="govuk-table__row">
                                         <th class="govuk-table__header" scope="row">Full time or part time:</th>
-                                        <td class="govuk-table__cell">@Model.StudyMode</td>
+                                        <td class="govuk-table__cell">@studyModeAttribute.Name</td>
                                     </tr>
                                     <tr class="govuk-table__row">
                                         <th class="govuk-table__header" scope="row">Attendance:</th>
-                                        <td class="govuk-table__cell">@Model.AttendancePattern</td>
+                                        <td class="govuk-table__cell">@attendanceAttribute.Name</td>
                                     </tr>
                                 }
                             }
