@@ -26,6 +26,9 @@ namespace Dfc.CourseDirectory.Web.ViewModels.ProviderCourses
 
         public int? PendingCoursesCount { get; set; }
 
+        public string NotificationTitle { get; set; }
+        public string NotificationMessage { get; set; }
+
 
     }
 }
