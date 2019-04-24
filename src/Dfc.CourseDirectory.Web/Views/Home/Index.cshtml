@@ -98,7 +98,7 @@
                         <ul class="govuk-list">
                             <li><a class="govuk-link" asp-controller="Qualifications" asp-action="Index">Publish a course</a></li>
                             @*<li><a class="govuk-link" asp-controller="Lars" asp-action="Index">Search for a course</a></li>*@
-                            <li><a class="govuk-link" asp-controller="Provider" asp-action="Courses">@((Model?.LiveCourseCount != null && Model?.LiveCourseCount > 0) ? "Manage your courses" : "")</a></li>
+                            <li><a class="govuk-link" asp-controller="ProviderCourses" asp-action="Index">@((Model?.LiveCourseCount != null && Model?.LiveCourseCount > 0) ? "Manage your courses" : "")</a></li>
                         </ul>
                     </div>
                 </div>
