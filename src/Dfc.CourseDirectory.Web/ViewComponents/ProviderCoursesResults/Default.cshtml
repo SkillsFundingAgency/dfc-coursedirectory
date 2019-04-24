@@ -165,7 +165,7 @@ else
         @foreach (var courseRun in Model.ProviderCourseRuns)
         {
             <div class="courserun border">
-                <div class="courserun__row1">
+                <div class="courserun__row1" id="@courseRun.CourseRunId">
                     @if (!string.IsNullOrEmpty(courseRun.CourseName))
                     {
                         <h3 class="coursename">@courseRun.CourseName</h3>

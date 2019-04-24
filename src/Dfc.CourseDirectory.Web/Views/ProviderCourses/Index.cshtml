@@ -14,6 +14,8 @@
             <main id="Cd-course-list" class="govuk-main-wrapper">
                 <span class="govuk-caption-xl">Course directory</span>
                 <h1 class="govuk-heading-xl">Your published courses</h1>
+
+
                 <p class="govuk-body-l">
                     You have no courses listed on the course directory.
                 </p>
@@ -55,17 +57,28 @@
             <main id="Cd-course-list" class="govuk-main-wrapper">
                 <span class="govuk-caption-xl">Course directory</span>
                 <h1 class="govuk-heading-xl">Your published courses</h1>
+                 @if (!string.IsNullOrWhiteSpace(Model.NotificationTitle))
+                {
+                    @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+                    {
+                        NotificationTitle = Model.NotificationTitle,
+                        NotificationMessage = Model.NotificationMessage,
+                        ClassType = "info-summary"
+                    })
+                }
+
                 <p class="govuk-body-l">These are the courses you have listed on the course directory.</p>
 
+               
                 <div>
                     <header class="cd-hero-search">
                         <div class="content-container">
                             <div class="grid-row govuk-body" data-sf-element="Row">
                                 <div class="column-two-thirds">
                                     @*<div>
-                                            <h1 class="govuk-heading-l govuk-!-margin-top-4">@ViewBag.Title</h1>
-                                            <p class="column-two-thirds">@ViewBag.Subtext</p>
-                                        </div>*@
+                                <h1 class="govuk-heading-l govuk-!-margin-top-4">@ViewBag.Title</h1>
+                                <p class="column-two-thirds">@ViewBag.Subtext</p>
+                            </div>*@
                                     <form action="@ViewBag.Target" class="site-search ui-front" id="header-search" method="post" role="search">
                                         <div class="header-search-content">
 
@@ -154,6 +167,7 @@
 
 
             var doSearch = function () {
+                $(".cd-info-summary").hide();
                 var runSearch = false;
                 if (($courseSearchTerm.val().length > 0)) {
 
@@ -259,6 +273,36 @@
 
             $courseSearchTerm.on("keyup", debounce(doSearch, 400));
             $buttonSearch.on("click", doSearch);
+
+
+             $courseeditlink = $("#courseeditlink");
+            if ($courseeditlink.length) {
+                $courseeditlink.on("click", function (event) {
+                    event.preventDefault();
+                    //var courseId = $(this).attr('data-courseid');
+                    var courseRunId = $(this).attr('data-courserunid');
+                    //var $courseId = $("#" + courseId);
+                    var $courseRunId = $("#" + courseRunId);
+
+                    //if (!$courseId.hasClass("govuk-accordion__section--expanded")) {
+                    //    $courseId.addClass("govuk-accordion__section--expanded");
+                    //}
+
+                    //if (courseId !== "" || courseId !== undefined) {
+                    //    $("html,body").animate({
+                    //        scrollTop: $courseId.offset().top
+                    //    }, "slow");
+                    //}
+
+                    if (courseRunId !== "" || courseRunId !== undefined) {
+                        $("html,body").animate({
+                            scrollTop: $courseRunId.offset().top
+                        }, "slow");
+                    }
+
+
+                });
+            }
 
         });
     })(jQuery);
