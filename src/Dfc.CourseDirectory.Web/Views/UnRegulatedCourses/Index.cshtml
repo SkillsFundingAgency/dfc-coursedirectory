@@ -1,5 +1,4 @@
-﻿
-@using Dfc.CourseDirectory.Web.ViewComponents.Notification
+﻿@using Dfc.CourseDirectory.Web.ViewComponents.Notification
 @model UnRegulatedSearchViewModel
 
 <div class="cd-hero-grey">
@@ -13,15 +12,15 @@
 
                             <h1 class="govuk-heading-l govuk-!-margin-top-4">Search for a course provision</h1>
 
-                            @if (!string.IsNullOrEmpty(Model.NotificationTitle))
-                            {
+                            @*<div id="notFoundMessage" style="display:none">
                                 @await Component.InvokeAsync(nameof(Notification), new NotificationModel
                                 {
-                                    NotificationTitle = Model.NotificationTitle,
-                                    NotificationMessage = Model.NotificationMessage,
-                                    ClassType = "error-summary"
+                                NotificationTitle = "Z code does not exist",
+                                NotificationMessage = "Check the code you have entered and try again",
+                                ClassType = "error-summary"
                                 })
-                            }
+                            </div>*@
+
 
                             <p class="column-two-thirds">Find the provision you'll be awarding with the course</p>
                         </div>
@@ -31,9 +30,9 @@
                                 <div class="search-input-wrapper">
                                     @*@if (!string.IsNullOrWhiteSpace(Model.HintText))
                                         {
-                                            <span class="govuk-hint">
-                                                @Model.HintText
-                                            </span>
+                                        <span class="govuk-hint">
+                                            @Model.HintText
+                                        </span>
                                         }*@
 
                                     <input class="govuk-input govuk-!-width-one-third search-input js-search-focus" asp-for="@Model.Search" type="text" placeholder="Enter a Z code">
@@ -43,8 +42,9 @@
                                 </div>
                             </div>
                         </form>
+                        <a class="govuk-link" id="unKnownLink" asp-controller="UnregulatedCourses" asp-action="UnknownZCode">I don't know the Z code</a>
                         <div id="results">
-                            <a class="govuk-link" asp-controller="UnregulatedCourses" asp-action="UnknownZCode">I don't know the Z code</a>
+
                         </div>
 
                     </div>
@@ -57,6 +57,40 @@
 <script>
     (function ($) {
         $(function () {
+
+
+                        var doSearch = function () {
+
+                makeRequestWithPayload({
+                    Search: $('#Search').val()
+                    },
+                        onSucess);
+
+            };
+
+
+
+            var onSucess = function (data) {
+
+                $('#unKnownLink').hide();
+                $('#results').html("");
+                $('#results').html(data);
+
+            };
+
+
+            var makeRequestWithPayload = function (payload, success) {
+                //console.log(payload);
+                var qs = $.param(payload);
+                qs = replaceAll(qs, "%5B%5D", "");
+                $.get("/UnregulatedCourses/FindNonRegulated?" + qs, success);
+            };
+
+
+
+               var replaceAll = function (search, find, replace) {
+                return search.split(find).join(replace);
+            };
 
 
 
@@ -123,7 +157,8 @@
 
 
                     HideValidationErrorMessage();
-                    $("#zCodeSearch").submit();
+                    doSearch();
+                   // $("#zCodeSearch").submit();
                 }
                 else {
                     //$providerSearchResultContainer.html("");
@@ -148,110 +183,6 @@
 
 
 
-
-
-
-
-
-
-
-            var debounce = function (cb, delay) {
-                var inDebounce;
-                return function () {
-                    var context = this;
-                    var args = arguments;
-                    clearTimeout(inDebounce);
-                    inDebounce = setTimeout(function () {
-                        cb.apply(context, args);
-                    },
-                        delay);
-                };
-            };
-
-            var isNullOrWhitespace = function (input) {
-                if (typeof input === 'undefined' || input == null) return true;
-                return input.replace(/\s/g, '').length < 3;
-            }
-
-            var replaceAll = function (search, find, replace) {
-                return search.split(find).join(replace);
-            };
-
-            var makeRequestWithUrl = function (url, success) {
-                console.log(url);
-                $.get(url, success);
-            };
-
-            //var removeSearchResults = function () {
-            //    var $larsSearchResultContainer = $("#LarsSearchResultContainer");
-            //    $larsSearchResultContainer.html("");
-            //};
-
-            //var replaceSearchResult = function (searchResults) {
-            //    var $larsSearchResultContainer = $("#LarsSearchResultContainer");
-            //    $larsSearchResultContainer.html("");
-            //    $larsSearchResultContainer.html(searchResults);
-            //};
-
-            var $larsSearchTerm = $("#LarsSearchTerm");
-            var $buttonSearch = $("#searchQualification");
-
-            var doSearch = function () {
-
-                Level1Id: $('#LevelOneSelect').val();
-                Level2Id: $('#LevelTwoSelect').val();
-
-                    var $allCheckedNotionalNvqLevelV2FilterCheckboxes =
-                        $("input[name='NotionalNVQLevelv2Filter']:checkbox:checked");
-                    var $allCheckedAwardAimRefFilterCheckboxes =
-                        $("input[name='AwardOrgAimRefFilter']:checkbox:checked");
-
-                makeRequestWithPayload({
-                    Level1Id: $('#LevelOneSelect').val(),
-                    Level2Id: $('#LevelTwoSelect').val(),
-                        NotionalNVQLevelv2Filter: $allCheckedNotionalNvqLevelV2FilterCheckboxes.map(function () {
-                            return $(this).val();
-                        }).get(),
-                    AwardOrgAimRefFilter: $allCheckedAwardAimRefFilterCheckboxes.map(function () {
-                            return $(this).val();
-                        }).get()
-                    },
-                        onSucess);
-               // }
-            };
-
-        
-
-            var onSucess = function (data) {
-
-                $('#results').html("");
-                $('#results').html(data);
-
-                //$('#Filters').css('visibility', 'visible');
-
-                //assignEventsToAllCheckboxes();
-                //assignEventToClearAllFiltersLink();
-                //assignEventsToLarsSearchPagination();
-            };
-
-            $buttonSearch.on("click", doSearch);
-
-            $(document).keypress(function (e) {
-                if (e.which === 13) {
-                    e.preventDefault();
-                }
-            });
-
-            var replaceAll = function (search, find, replace) {
-                return search.split(find).join(replace);
-            };
-
-            var makeRequestWithPayload = function (payload, success) {
-                console.log(payload);
-                var qs = $.param(payload);
-                qs = replaceAll(qs, "%5B%5D", "");
-                $.get("/UnregulatedCourses/ZCodeNotKnown?" + qs, success);
-            };
 
 
         });
