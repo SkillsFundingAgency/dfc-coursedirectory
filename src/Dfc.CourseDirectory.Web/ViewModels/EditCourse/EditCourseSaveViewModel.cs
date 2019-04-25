@@ -30,8 +30,9 @@ namespace Dfc.CourseDirectory.Web.ViewModels.EditCourse
         public bool AdvancedLearnerLoan { get; set; }
 
         public Guid? CourseId { get; set; }
-
+        public Guid? CourseRunId { get; set; }
         public PublishMode Mode { get; set; }
+        public string CourseName { get; set; }
 
     }
 
