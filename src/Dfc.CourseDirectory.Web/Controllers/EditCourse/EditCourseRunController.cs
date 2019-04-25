@@ -148,8 +148,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                     }
 
                     if (courseRun.Regions == null) return View("EditCourseRun", vm);
-
-                    foreach (var selectRegionRegionItem in vm.SelectRegion.RegionItems)
+                    
+                    foreach (var selectRegionRegionItem in vm.SelectRegion.RegionItems.OrderBy(x=>x.RegionName))
                     {
                         foreach (var subRegionItemModel in selectRegionRegionItem.SubRegion)
                         {
@@ -315,14 +315,11 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                                      NotificationMessage = "Start date edited"
                                  });
                             default:
-                                return RedirectToAction("Courses", "Provider",
+                                return RedirectToAction("index", "ProviderCourses",
                                     new
                                     {
-                                        level = courseForEdit.Value.NotionalNVQLevelv2,
                                         NotificationTitle = "Course edited",
                                         NotificationMessage = "You edited",
-                                        qualificationType = courseForEdit.Value.QualificationType,
-                                        courseId = updatedCourse.Value.id,
                                         courseRunId = model.CourseRunId
                                     });
 

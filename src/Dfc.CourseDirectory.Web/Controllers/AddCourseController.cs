@@ -696,8 +696,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             if (result.IsSuccess && result.HasValue)
             {
-                return RedirectToAction("Courses", "Provider",
-                    new { level = notionalNvqLevelv2 });
+                return RedirectToAction("Index", "ProviderCourses",
+                    new {
+                        CourseRunId = courseRuns[0].id,
+                        NotificationTitle = "Course added",
+                        NotificationMessage = "You added",
+                    });
             }
 
             return RedirectToAction("Index",
