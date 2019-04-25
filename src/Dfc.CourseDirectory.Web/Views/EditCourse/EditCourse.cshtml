@@ -102,30 +102,33 @@
         }
     }
 
-    <li class="flex-item" style="padding-top: 15px">
-        @switch (Model.Mode)
-        {
-            case PublishMode.Migration:
-                @Html.ActionLink("Cancel", "Index", "PublishCourses", new { publishMode = Model.Mode }, new { @class = "govuk-link" })
-                break;
-            case PublishMode.BulkUpload:
-                @Html.ActionLink("Cancel", "Index", "PublishCourses", new { publishMode = Model.Mode }, new { @class = "govuk-link" })
-                break;
-            default:
-                @Html.ActionLink("Cancel", "Index", "PublishCourses", new
-                {
-               level = @Model.NotionalNVQLevelv2,
-               courseId = @Model.CourseId,
-               courseRunId = Model.CourseRunId,
-               learnAimRef = @Model.LearnAimRef,
-               notionalNVQLevelv2 = @Model.NotionalNVQLevelv2,
-               awardOrgCode = @Model.AwardOrgCode,
-               learnAimRefTitle = @Model.LearnAimRefTitle,
-               learnAimRefTypeDesc = @Model.QualificationType
-           }, new { @class = "govuk-link" })
-                break;
-        }
-    </li>
+<li class="flex-item" style="padding-top: 15px">
+    @switch (Model.Mode)
+    {
+        case PublishMode.Migration:
+            @Html.ActionLink("Cancel", "Index", "PublishCourses", new { publishMode = Model.Mode }, new { @class = "govuk-link" })
+            break;
+        case PublishMode.BulkUpload:
+            @Html.ActionLink("Cancel", "Index", "PublishCourses", new { publishMode = Model.Mode }, new { @class = "govuk-link" })
+            break;
+        case PublishMode.Summary:
+            @Html.ActionLink("Cancel", "Index", "CourseSummary", new { Model.CourseId, Model.CourseRunId }, new { @class = "govuk-link" })
+            break;
+        default:
+            @Html.ActionLink("Cancel", "Index", "PublishCourses", new
+            {
+           level = @Model.NotionalNVQLevelv2,
+           courseId = @Model.CourseId,
+           courseRunId = Model.CourseRunId,
+           learnAimRef = @Model.LearnAimRef,
+           notionalNVQLevelv2 = @Model.NotionalNVQLevelv2,
+           awardOrgCode = @Model.AwardOrgCode,
+           learnAimRefTitle = @Model.LearnAimRefTitle,
+           learnAimRefTypeDesc = @Model.QualificationType
+       }, new { @class = "govuk-link" })
+            break;
+    }
+</li>
 </ul>
 
 </form>
