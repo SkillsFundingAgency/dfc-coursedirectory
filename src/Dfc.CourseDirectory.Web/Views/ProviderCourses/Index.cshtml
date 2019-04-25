@@ -225,16 +225,18 @@
                     function (e) {
                         e.preventDefault();
                         var $allCheckedFilterCheckboxes = $(
-                            "input[name='level']:checkbox:checked, input[name='deliverymode']:checkbox:checked:checkbox, input[name='venue']:checkbox:checked:checkbox, input[name='attendancepattern']:checkbox:checked:checkbox, input[name='region']:checkbox:checked:checkbox");
+                            "input[name='level']:checkbox, input[name='deliverymode']:checkbox, input[name='venue']:checkbox, input[name='attendancepattern']:checkbox, input[name='region']:checkbox");
                         var allCheckedFilterCheckboxesLength = $allCheckedFilterCheckboxes.length;
 
                         for (var i = 0; i < allCheckedFilterCheckboxesLength; i++) {
-                            if (i === (allCheckedFilterCheckboxesLength - 1)) {
-                                $($allCheckedFilterCheckboxes[i]).trigger("click");
-                            } else {
+                            //if (i === (allCheckedFilterCheckboxesLength - 1)) {
+                            //    $($allCheckedFilterCheckboxes[i]).trigger("click");
+                            //} else {
                                 $($allCheckedFilterCheckboxes[i]).prop('checked', false);
-                            }
+                           // }
                         }
+                        //$($allCheckedFilterCheckboxes[0]).trigger("click");
+                        doSearch();
                     });
             };
 
