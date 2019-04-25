@@ -940,14 +940,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 {
                     foreach (var selectedVenue in addCourseSection2Session.SelectedVenues)
                     {
-                        viewModel.SelectVenue.VenueItems.First(x => x.Id == selectedVenue.ToString()).Checked = true;
+                        viewModel.SelectVenue.VenueItems.FirstOrDefault(x => x.Id == selectedVenue.ToString()).Checked = true;
                     }
                 }
                 if (addCourseSection2Session.SelectedRegions != null)
                 {
                     foreach (var selectedRegion in addCourseSection2Session.SelectedRegions)
                     {
-                        viewModel.SelectRegion.RegionItems.First(x => x.Id == selectedRegion.ToString()).Checked = true;
+                        viewModel.SelectRegion.RegionItems.FirstOrDefault(x => x.Id == selectedRegion.ToString()).Checked = true;
                     }
                 }
             }
