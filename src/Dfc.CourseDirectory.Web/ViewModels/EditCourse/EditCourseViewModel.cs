@@ -33,14 +33,14 @@ namespace Dfc.CourseDirectory.Web.ViewModels.EditCourse
         public WhereNextModel WhereNext { get; set; }
 
         public Guid? CourseId { get; set; }
-
+        public Guid? CourseRunId { get; set; }
         public string QualificationType { get; set; }
 
         public bool? AdultEducationBudget { get; set; }
         public bool? AdvancedLearnerLoan{ get; set; }
 
         public PublishMode Mode { get; set; }
-
+        public string CourseName { get; set; }
 
        // public string NotionalNVQLevelv2 { get; set; }
 

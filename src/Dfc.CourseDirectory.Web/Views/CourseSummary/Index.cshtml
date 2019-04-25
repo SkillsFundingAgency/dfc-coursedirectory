@@ -331,6 +331,24 @@
                        style="display: none;padding-right:1em">Confirm delete</a>
 
                     <a href="#" class="govuk-link cancel-archive" id="course-cancel-archive-@Model.CourseInstanceId" data-course-run-id="@Model.CourseInstanceId" hidden="hidden">Cancel</a>
+                    <hr>
+                    <h3 class="govuk-heading-m m20">Edit What your learners need to know</h3>
+                    <p>
+                        Making any changes will update
+                        all of the courses that share this
+                        qualification
+                    </p>
+                    <a class="govuk-link"
+                       asp-controller="EditCourse"
+                       asp-action="Index"
+                       asp-route-courseId="@Model.CourseId"
+                       asp-route-courseRunId="@Model.CourseInstanceId"
+                       asp-route-learnAimRef="@Model.LearnAimRef"
+                       asp-route-notionalNVQLevelv2="course.NotionalNVQLevelv2"
+                       asp-route-awardOrgCode="@Model.AwardOrgCode"
+                       asp-route-learnAimRefTitle="@Model.QualificationCourseTitle"
+                       asp-route-learnAimRefTypeDesc="@Model.QualificationType"
+                       asp-route-mode="@PublishMode.Summary">Make Changes</a>
                 </div>
             </div>
 

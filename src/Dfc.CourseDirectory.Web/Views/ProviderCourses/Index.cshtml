@@ -57,7 +57,7 @@
             <main id="Cd-course-list" class="govuk-main-wrapper">
                 <span class="govuk-caption-xl">Course directory</span>
                 <h1 class="govuk-heading-xl">Your published courses</h1>
-                 @if (!string.IsNullOrWhiteSpace(Model.NotificationTitle))
+                @if (!string.IsNullOrWhiteSpace(Model.NotificationTitle))
                 {
                     @await Component.InvokeAsync(nameof(Notification), new NotificationModel
                     {
