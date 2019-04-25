@@ -61,7 +61,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     (LarsSearchFacet[])Enum.GetValues(typeof(LarsSearchFacet)));
 
                 var result = await _larsSearchService.SearchAsync(criteria);
-                if (result.IsSuccess && result.HasValue && result.Value.Value.Count() > 0)
+                if (result.IsSuccess && result.HasValue) // && result.Value.Value.Count() > 0)
                 {
                     var filters = _larsSearchHelper.GetLarsSearchFilterModels(result.Value.SearchFacets, requestModel);
                     var items = _larsSearchHelper.GetLarsSearchResultItemModels(result.Value.Value);

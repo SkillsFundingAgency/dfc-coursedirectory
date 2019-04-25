@@ -1,9 +1,10 @@
-﻿@using Dfc.CourseDirectory.Web.ViewComponents.Extensions;
-
+﻿
+@using Dfc.CourseDirectory.Web.ViewComponents.Extensions;
 @model Dfc.CourseDirectory.Web.ViewComponents.Pagination.PaginationModel;
 
-@if (Model.HasErrors)
-{
+
+@if (Model.HasErrors) {
+
     <div class="govuk-grid-column-full">
         <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
             <h2 class="govuk-error-summary__title" id="error-summary-title">
@@ -21,9 +22,9 @@
             </div>
         </div>
     </div>
-}
-else if (Model.Items.Count() > 0)
-{
+
+} else if (Model.Items.Any()) {
+
     <nav class="pagination" role="navigation" aria-label="Pagination navigation">
         <ul>
             @foreach (var item in Model.Items)
@@ -32,4 +33,14 @@ else if (Model.Items.Count() > 0)
             }
         </ul>
     </nav>
+
+} else {
+
+    <div class="govuk-grid-column-full">
+        <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+            <h2 class="govuk-error-summary__title" id="error-summary-title">
+                No records found
+            </h2>
+        </div>
+    </div>
 }

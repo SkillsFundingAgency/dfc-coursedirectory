@@ -1,4 +1,5 @@
-﻿@using Dfc.CourseDirectory.Web.ViewComponents.Extensions
+﻿
+@using Dfc.CourseDirectory.Web.ViewComponents.Extensions
 @using Dfc.CourseDirectory.Web.ViewComponents.Pagination;
 @using Microsoft.AspNetCore.Http
 @using Microsoft.AspNetCore.Identity
@@ -15,13 +16,13 @@
 }
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-
 @model Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult.LarsSearchResultModel;
+
 
 <div class="govuk-grid-row">
 
-    @if (Model.HasErrors)
-    {
+    @if (Model.HasErrors) {
+
         <div class="govuk-grid-column-full">
             <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
                 <h2 class="govuk-error-summary__title" id="error-summary-title">
@@ -39,9 +40,8 @@
                 </div>
             </div>
         </div>
-    }
-    else if (Model.Items.Any())
-    {
+
+    } else if (Model.Items.Any()) {
 
         <div class="govuk-heading-s lars-search-results govuk-!-font-weight-regular">
             Found <span class="govuk-!-font-weight-bold">@Model.TotalCount</span> results for <span class="govuk-!-font-weight-bold">@Model.SearchTerm</span>
@@ -106,13 +106,11 @@
                     @*<p class="govuk-body"><a class="govuk-link" href="#">Add this qualification</a></p>*@
 
                     @{
-
                         if (adminLogin.Succeeded || providerLogin.Succeeded)
                         {
                             <a asp-controller="AddCourse" asp-action="AddCourse" asp-route-learnAimRef=@item.LearnAimRef asp-route-notionalNVQLevelv2=@item.NotionalNVQLevelv2 asp-route-awardOrgCode=@item.AwardOrgCode asp-route-learnAimRefTitle=@item.LearnAimRefTitle asp-route-learnAimRefTypeDesc=@item.LearnAimRefTypeDesc class="link--button" id="">Add this qualification</a>
                         }
                     }
-                    
 
                 </div>
                 }
@@ -129,18 +127,17 @@
                          isSliding = true
                      })
         </div>
-    }
-    @*else if (!string.IsNullOrWhiteSpace(Model.SearchTerm) && !Model.Items.Any())
-    {
+
+    } else if (!string.IsNullOrWhiteSpace(Model.SearchTerm)) { // && !Model.Items.Any())
+
         <div class="govuk-grid-column-full">
             <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
-
                 <h2 class="govuk-error-summary__title" id="error-summary-title">
                     No records found
                 </h2>
             </div>
         </div>
-    }*@
+    }
 </div>
 
 <script>
