@@ -21,8 +21,8 @@ namespace Dfc.CourseDirectory.Models.Models.Providers
         public Status Status { get; set; }
 
         // Apprenticeship related
-        public int ProviderId { get; set; }
-        public int UPIN { get; set; } // Needed to get LearnerSatisfaction & EmployerSatisfaction from FEChoices
+        public int? ProviderId { get; set; }
+        public int? UPIN { get; set; } // Needed to get LearnerSatisfaction & EmployerSatisfaction from FEChoices
         public string TradingName { get; set; }
         public bool NationalApprenticeshipProvider { get; set; }
         public string MarketingInformation { get; set; }
