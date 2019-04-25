@@ -301,15 +301,29 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
 
             if (courseRunId.HasValue && courseRunId.Value != Guid.Empty)
             {
-                notificationCourseName = model.ProviderCourseRuns.Where(x => x.CourseRunId == courseRunId.Value.ToString()).Select(x => x.QualificationCourseTitle).FirstOrDefault().ToString();
+                bool courseRunExists = model.ProviderCourseRuns.Any(x => x.CourseRunId == courseRunId.ToString());
 
-                notificationAnchorTag = courseRunId.HasValue
-              ? $"<a id=\"courseeditlink\" class=\"govuk-link\" href=\"#\" data-courserunid=\"{courseRunId}\" >{notificationMessage} {notificationCourseName}</a>"
-              : $"<a id=\"courseeditlink\" class=\"govuk-link\" href=\"#\">{notificationMessage} {notificationCourseName}</a>";
+                if(courseRunExists == false)
+                {
+                    model.NotificationTitle = notificationTitle;
+                    model.NotificationMessage = notificationMessage;
+                }
+                else
+                {
+                    notificationCourseName = model.ProviderCourseRuns.Where(x => x.CourseRunId == courseRunId.Value.ToString()).Select(x => x.QualificationCourseTitle).FirstOrDefault().ToString();
+
+                    notificationAnchorTag = courseRunId.HasValue
+                  ? $"<a id=\"courseeditlink\" class=\"govuk-link\" href=\"#\" data-courserunid=\"{courseRunId}\" >{notificationMessage} {notificationCourseName}</a>"
+                  : $"<a id=\"courseeditlink\" class=\"govuk-link\" href=\"#\">{notificationMessage} {notificationCourseName}</a>";
+                    model.NotificationTitle = notificationTitle;
+                    model.NotificationMessage = notificationAnchorTag;
+                }
+
             }
             else
             {
                 notificationTitle = string.Empty;
+                notificationAnchorTag = string.Empty;
             }
 
           
@@ -322,8 +336,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
             model.Venues = venueFilterItems;
             model.AttendancePattern = attendanceModeFilterItems;
             model.Regions = regionFilterItems;
-            model.NotificationTitle = notificationTitle;
-            model.NotificationMessage = notificationAnchorTag;
+
             return View(model);
         }
 
