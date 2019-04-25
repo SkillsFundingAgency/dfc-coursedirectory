@@ -1,7 +1,9 @@
 ﻿@using Dfc.CourseDirectory.Common.Settings
 @using Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult
 @model Dfc.CourseDirectory.Web.ViewModels.VenueSearchResultsViewModel
-
+@{
+    Layout = "_Layout_Your_Courses";
+}
 @using Microsoft.Extensions.Options
 @{
     ViewData["Title"] = "Your Venues";
@@ -20,10 +22,10 @@
     @await Component.InvokeAsync(nameof(VenueSearchResult), Model.Result)
 
 </div>
-    <script>
+<script>
     (function ($) {
         $(function () {
             $('a.edit-venue-link:first-child').attr("tabIndex", 5);
         });
     })(jQuery);
-    </script>
+</script>

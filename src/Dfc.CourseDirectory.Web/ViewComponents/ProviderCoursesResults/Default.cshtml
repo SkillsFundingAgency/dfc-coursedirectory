@@ -6,6 +6,7 @@
 @using Microsoft.AspNetCore.Authorization;
 @using Dfc.CourseDirectory.Services.UnregulatedProvision
 @using Dfc.CourseDirectory.Web.ViewModels
+@using Dfc.CourseDirectory.Web.ViewComponents.Notification
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
@@ -13,13 +14,25 @@
 
 @if (!Model.ProviderCourseRuns.Any())
 {
-    <div class="cd-grid-coloumn-20 govuk-body" style="width: 100%">
-        <h1> No courses found that match your search criteria </h1>
+    <div class="cd-grid-coloumn-20 govuk-body" style="width: 100%;padding-left: 0.75em;">
+        @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+                 {
+                     NotificationTitle = "",
+                     NotificationMessage = "No courses found that match your search criteria",
+                     ClassType = "error-summary"
+                 })
     </div>
+
+    @*@await Component.InvokeAsync(nameof(Notification), new NotificationModel
+                  {
+                      NotificationTitle = "",
+                      NotificationMessage = "No courses found that match your search criteria",
+                      ClassType = "error-summary"
+                  })*@
     @*<div class="cd-grid-coloumn-80 ">
-       
-    </div>*@
-   
+
+        </div>*@
+
 }
 else
 {
@@ -55,7 +68,7 @@ else
                 </fieldset>
             </div>
         </div>
-        @if (Model.DeliveryModes.Any() && Model.DeliveryModes.Count() > 1)
+        @if (Model.DeliveryModes.Any())
         {
             <div class="govuk-form-group govuk-!-font-size-14">
                 <div class="accordion govuk-heading-s active">Filter by delivery mode</div>
@@ -81,7 +94,7 @@ else
             </div>
         }
 
-        @if (Model.Venues.Any() && Model.Venues.Count() > 1)
+        @if (Model.Venues.Any())
         {
             <div class="govuk-form-group govuk-!-font-size-14">
                 <div class="accordion govuk-heading-s active">Filter by venue</div>
@@ -162,7 +175,7 @@ else
     </div>
     <div class="cd-grid-coloumn-80 ">
 
-        @foreach (var courseRun in Model.ProviderCourseRuns)
+        @foreach (var courseRun in Model.ProviderCourseRuns.OrderBy(x=>x.CourseName))
         {
             <div class="courserun border">
                 <div class="courserun__row1" id="@courseRun.CourseRunId">
