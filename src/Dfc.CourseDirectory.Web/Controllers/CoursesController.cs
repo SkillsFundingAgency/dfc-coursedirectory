@@ -93,14 +93,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
 
             //may need changing, not sure what message if anything needs to be displayed
-            return RedirectToAction("Courses", "Provider",
+            return RedirectToAction("Index", "ProviderCourses",
                 new
                 {
-                    level = level,
-                    NotificationTitle = "Course deleted " + courseName,
-                    NotificationMessage = "You archived" + courseName,
-                    qualificationType = qualificationType,
-                    courseId = courseId
+                    notificationTitle = "Course deleted: " + courseName,
+                    courseRunId = courseRunId
                 });
         }
 
