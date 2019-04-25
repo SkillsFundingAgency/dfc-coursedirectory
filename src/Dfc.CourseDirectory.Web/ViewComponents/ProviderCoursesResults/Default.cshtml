@@ -55,7 +55,7 @@ else
                 </fieldset>
             </div>
         </div>
-        @if (Model.DeliveryModes.Any() && Model.DeliveryModes.Count() > 1)
+        @if (Model.DeliveryModes.Any() )
         {
             <div class="govuk-form-group govuk-!-font-size-14">
                 <div class="accordion govuk-heading-s active">Filter by delivery mode</div>
@@ -81,7 +81,7 @@ else
             </div>
         }
 
-        @if (Model.Venues.Any() && Model.Venues.Count() > 1)
+        @if (Model.Venues.Any() )
         {
             <div class="govuk-form-group govuk-!-font-size-14">
                 <div class="accordion govuk-heading-s active">Filter by venue</div>
@@ -107,7 +107,7 @@ else
             </div>
         }
 
-        @if (Model.AttendancePattern.Any() && Model.AttendancePattern.Count() > 1)
+        @if (Model.AttendancePattern.Any())
         {
             <div class="govuk-form-group govuk-!-font-size-14">
                 <div class="accordion govuk-heading-s active">Filter by attendance mode</div>
@@ -132,7 +132,7 @@ else
                 </div>
             </div>
         }
-        @if (Model.Regions.Any() && Model.Regions.Count() > 1)
+        @if (Model.Regions.Any())
         {
             <div class="govuk-form-group govuk-!-font-size-14">
                 <div class="accordion govuk-heading-s active">Filter by region</div>
