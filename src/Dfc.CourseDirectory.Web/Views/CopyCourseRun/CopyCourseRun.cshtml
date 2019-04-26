@@ -215,18 +215,18 @@
                 {
                     case PublishMode.Summary:
                         {
-                            @Html.ActionLink("Cancel", "Index", "ProviderCourses", null, new { @class = "govuk-link" })
+                            @Html.ActionLink("Cancel", "Index", "CourseSummary", new { Model.CourseId, Model.CourseRunId }, new { @class = "govuk-link" })
                             break;
                         }
                     default:
                         {
                             @Html.ActionLink("Cancel", "Courses", "Provider", new { qualificationType = @Model.QualificationType }, new { @class = "govuk-link" })
-                                break;
+                            break;
                         }
                 }
             }
 
-            </li>
+        </li>
     
 
         </ul>
