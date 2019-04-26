@@ -17,6 +17,12 @@
     }
 }
 
+.cd-subHead-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
 .navigation-container {
     border-bottom: 1px solid #bfc1c3;
 
@@ -27,6 +33,7 @@
 
         .cd-secondary-nav--item {
             text-decoration: none;
+            padding-right:1em;
         }
     }
 }
