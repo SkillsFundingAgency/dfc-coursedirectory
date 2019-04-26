@@ -15,6 +15,6 @@ namespace Dfc.CourseDirectory.Services.Interfaces.BaseDataAccess
         SqlParameter GetParameterOut(string parameter, SqlDbType type, object value = null, ParameterDirection parameterDirection = ParameterDirection.InputOutput);
         int ExecuteNonQuery(string procedureName, List<DbParameter> parameters, CommandType commandType = CommandType.StoredProcedure);
         object ExecuteScalar(string procedureName, List<SqlParameter> parameters);
-        DataTable GetDataReader(string procedureName, List<SqlParameter> parameters);
+        DataTable GetDataReader(string procedureName, List<SqlParameter> parameters, CommandType commandType);
     }
 }

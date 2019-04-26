@@ -37,7 +37,7 @@ namespace Dfc.CourseDirectory.Web.Helpers
         }
         public bool CheckUserLoggedIn()
         {
-            if (_signInManager.IsSignedIn(_contextAccessor.HttpContext.User))
+            if (_contextAccessor.HttpContext.User.Identity.IsAuthenticated)
             {
                 return true;
             }

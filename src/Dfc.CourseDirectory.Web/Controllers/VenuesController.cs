@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using Dfc.CourseDirectory.Common;
@@ -73,8 +74,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
         public async Task<IActionResult> Index()
         {
             _session.SetString("Option", "Venues");
-            var providerUKPRN = User.Claims.SingleOrDefault(x => x.Type == "UKPRN");
-            if (providerUKPRN != null)
+            Claim providerUKPRN = User.Claims.Where(x => x.Type == "UKPRN").SingleOrDefault();
+            if (!String.IsNullOrEmpty(providerUKPRN.Value))
             {
                 _session.SetInt32("UKPRN", Int32.Parse(providerUKPRN.Value));
             }

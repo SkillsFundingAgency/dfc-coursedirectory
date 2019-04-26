@@ -18,7 +18,7 @@
 @{
     var provSearch = HttpContextAccessor.HttpContext.Session.GetInt32("ProviderSearch");
     ViewData["Title"] = "Find a Provider";
-    var isSignedIn = SignInManager.IsSignedIn(User);
+    var isSignedIn = User.Identity.IsAuthenticated;
 }
 <div>
 
@@ -32,7 +32,7 @@
 <div id="VenueSearchResultContainer">
     @if (isSignedIn) //And is an ITSM OR Admin users
     {
-        var authorised = await Authorization.AuthorizeAsync(User, "ElevatedUserRole");
+                var authorised = await Authorization.AuthorizeAsync(User, "ElevatedUserRole");
 
         if (authorised.Succeeded)
         {

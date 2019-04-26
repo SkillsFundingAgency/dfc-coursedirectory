@@ -37,7 +37,7 @@ namespace Dfc.CourseDirectory.Services.AuthService
                 param
 
             };
-            var dt = BaseDataAccess.GetDataReader("dbo.dfc_GetUserAuthorisationDetailsByEmail", dbParameters);
+            var dt = BaseDataAccess.GetDataReader("dbo.dfc_GetUserAuthorisationDetailsByEmail", dbParameters, CommandType.StoredProcedure);
             AuthUserDetails details = ExtractUserDetails(dt);
             return details;
         }
