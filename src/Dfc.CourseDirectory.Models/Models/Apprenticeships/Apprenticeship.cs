@@ -15,6 +15,7 @@ namespace Dfc.CourseDirectory.Models.Models.Apprenticeships
         [Description("Framework Code")]
         FrameworkCode = 2
     }
+
     public class Apprenticeship
     {
         public Guid id { get; set; } // Cosmos DB id

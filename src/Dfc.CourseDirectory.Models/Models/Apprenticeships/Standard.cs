@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Dfc.CourseDirectory.Models.Models.Apprenticeships
 {
-    public class ApprenticeshipStandard
+    public class Standard
     {
         public Guid id { get; set; } // Cosmos DB id
 
