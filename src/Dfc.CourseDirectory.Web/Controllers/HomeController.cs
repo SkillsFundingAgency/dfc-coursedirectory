@@ -8,7 +8,8 @@ using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.Services.Interfaces;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
-
+using System.Security.Claims;
+using System;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -50,6 +51,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _session.SetString("Option","Home");
             ViewBag.StatusMessage = errmsg;
 
+            if(User.Identity.IsAuthenticated && _session.GetInt32("UKPRN") == null)
+            {
+                Claim UKPRN = User.Claims.Where(x => x.Type == "UKPRN").SingleOrDefault();
+                if(!String.IsNullOrEmpty(UKPRN.Value))
+                {
+                    _session.SetInt32("UKPRN", Int32.Parse(UKPRN.Value));
+                }
+                
+            }
             if (_session.GetInt32("UKPRN") == null)
                 return View();
             else

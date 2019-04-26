@@ -4,14 +4,17 @@
 @inject SignInManager<User> SignInManager
 @inject UserManager<User> UserManager
 
-<form id="logout" asp-area="Identity" asp-antiforgery="true" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post" id="logoutForm" class="navbar-right">
-    @if (SignInManager.IsSignedIn(User))
-    {
-    <div class="govuk-grid-column-one-half right">
-        @UserManager.GetUserName(User)
-     
-        <a href="#" id="submit-link" class="button" onclick="logout.submit();">Sign out</a>
-    </div>
+@if (User.Identity.IsAuthenticated)
+{
+<div class="govuk-grid-column-one-half right">
+    @{ 
+        string email = User.Claims.Where(c => c.Type == "email")
+                    .Select(c => c.Value).SingleOrDefault();
     }
-</form>
+    @email
+
+    <a asp-action="Logout" asp-controller="Auth" id="submit-link" class="button">Sign out</a>
+</div>
+}
+
 

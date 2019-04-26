@@ -176,7 +176,7 @@
 @*<div class="cd-header-blue">
         <div class="cd-fullwidth-container">
             <div class="govuk-grid-row row">
-                @if (SignInManager.IsSignedIn(User))
+                @if (User.Identity.IsAuthenticated)
                 {
                     <div class="govuk-grid-column-one-half">
                         @{
@@ -205,7 +205,7 @@
                 <div class="govuk-grid-column-full">
 
                     @{
-                        if (SignInManager.IsSignedIn(User))
+                        if (User.Identity.IsAuthenticated)
                         {
                             var authorised = await Authorization.AuthorizeAsync(User, "ElevatedUserRole");
                             var superUser = await Authorization.AuthorizeAsync(User, "SuperUser");
