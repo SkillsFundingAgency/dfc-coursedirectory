@@ -34,28 +34,20 @@
 </head>
 
 
-
+<partial name="_GovukHeaderPartial_Your_Courses" />
 
 <body class="govuk-template__body app-body-class">
 
     <a href="#main-content" class="govuk-skip-link">Skip to main content</a>
 
-    <partial name="_GovukHeaderPartial_Your_Courses" />
 
-    <div class=" cd-fullwidth-container">
+    <div class=" cd-fullwidth-container" id="main-content">
+        @await Component.InvokeAsync(nameof(GovukPhaseBanner))
 
-
-
-        @RenderBody()
-
+        <main class="govuk-main-wrapper app-main-class" id="main-content" role="main">
+            @RenderBody()
+        </main>
     </div>
-    @*<div class=" cd-fullwidth-container" id="main-content">
-            @await Component.InvokeAsync(nameof(GovukPhaseBanner))
-
-            <main class="govuk-main-wrapper app-main-class" id="main-content" role="main">
-                @RenderBody()
-            </main>
-        </div>*@
 
     <script>
         document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');

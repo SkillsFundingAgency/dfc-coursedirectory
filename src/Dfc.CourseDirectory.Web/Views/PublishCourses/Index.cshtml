@@ -1,13 +1,11 @@
-﻿@{
-    Layout = "_Layout_Your_Courses";
-}
+﻿
 
 @using Dfc.CourseDirectory.Web.ViewComponents.Notification
 @using Dfc.CourseDirectory.Web.ViewComponents.PublishCourses.Publish
 @model Dfc.CourseDirectory.Web.ViewModels.PublishCourses.PublishViewModel
 
 <form asp-controller="PublishCourses" asp-action="Index" id="PublishCourses">
-
+    
     @if (!string.IsNullOrWhiteSpace(Model.NotificationTitle))
     {
         @await Component.InvokeAsync(nameof(Notification), new NotificationModel

@@ -106,29 +106,12 @@ namespace Dfc.CourseDirectory.Services.CourseService
 
         public SelectRegionModel GetRegions()
         {
-            //return new SelectRegionModel
-            //{
-            //    LabelText = "Select course region",
-            //    HintText = "For example, South West",
-            //    AriaDescribedBy = "Select all that apply.",
-            //};
-            var selectRegion = new SelectRegionModel
+            return new SelectRegionModel
             {
                 LabelText = "Select course region",
                 HintText = "For example, South West",
-                AriaDescribedBy = "Select all that apply."
+                AriaDescribedBy = "Select all that apply.",
             };
-
-            if (selectRegion.RegionItems != null && selectRegion.RegionItems.Any())
-            {
-                selectRegion.RegionItems = selectRegion.RegionItems.OrderBy(x => x.RegionName);
-                foreach (var selectRegionRegionItem in selectRegion.RegionItems)
-                {
-                    selectRegionRegionItem.SubRegion = selectRegionRegionItem.SubRegion.OrderBy(x => x.SubRegionName).ToList();
-                }
-            }
-
-            return selectRegion;
         }
 
         public async Task<IResult<ICourse>> GetCourseByIdAsync(IGetCourseByIdCriteria criteria)
