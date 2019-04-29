@@ -117,16 +117,16 @@ namespace Dfc.CourseDirectory.Services.BaseDataAccess
             return returnValue;
         }
 
-        public DataTable GetDataReader(string command, List<SqlParameter> parameters)
+        public DataTable GetDataReader(string procedureName, List<SqlParameter> parameters, CommandType commandType = CommandType.StoredProcedure)
         {
-            
+
             DbDataReader ds;
             DataTable values = new DataTable();
             try
             {
-                SqlConnection connection = this.GetConnection();
+                DbConnection connection = this.GetConnection();
                 {
-                    SqlCommand cmd = new SqlCommand(cmdText: command, connection: connection);
+                    DbCommand cmd = this.GetCommand(connection, procedureName, commandType);
                     if (parameters != null && parameters.Count > 0)
                     {
                         cmd.Parameters.AddRange(parameters.ToArray());
@@ -140,7 +140,7 @@ namespace Dfc.CourseDirectory.Services.BaseDataAccess
                 //LogException("Failed to GetDataReader for " + procedureName, ex, parameters);
                 throw;
             }
-            
+
             return values;
         }
     }

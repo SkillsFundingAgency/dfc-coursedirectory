@@ -44,7 +44,7 @@
 
 <div class="cd-subHead">
     <div class="cd-fullwidth-container cd-subHead-container">
-        @if (SignInManager.IsSignedIn(User))
+        @if (User.Identity.IsAuthenticated)
         {
 
             var adminLogin = await Authorization.AuthorizeAsync(User, "Admin");
@@ -68,19 +68,21 @@
                         <a href="#" id="submit-link" class="button" onclick="logout.submit();">Sign out</a>
                     </span>*@
 
-                <form id="logout" asp-area="Identity" asp-antiforgery="true" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post" id="logoutForm" class="navbar-right">
-                    @if (SignInManager.IsSignedIn(User))
+                <div class="navbar-right">
+                    @if (User.Identity.IsAuthenticated)
                     {
                         <span>
-                            @UserManager.GetUserName(User)
-
-
+                            @{ 
+                                string email = User.Claims.Where(c => c.Type == "email")
+                                            .Select(c => c.Value).SingleOrDefault();
+                            }
+                            @email
                         </span>
                         <span>
-                            <a href="#" id="submit-link" class="button" onclick="logout.submit();" style="color: #fff!important;margin-left: 20px;">Sign out</a>
+                            <a asp-action="Logout" asp-controller="Auth" id="submit-link" class="button">Sign out</a>
                         </span>
                     }
-                </form>
+                </div>
 
 
             </div>
@@ -113,7 +115,7 @@
         <a class="cd-secondary-nav--item" ahref="">item</a>*@
 
         @{
-            if (SignInManager.IsSignedIn(User))
+            if (User.Identity.IsAuthenticated)
             {
                 var authorised = await Authorization.AuthorizeAsync(User, "ElevatedUserRole");
                 var superUser = await Authorization.AuthorizeAsync(User, "SuperUser");
@@ -176,7 +178,7 @@
 @*<div class="cd-header-blue">
         <div class="cd-fullwidth-container">
             <div class="govuk-grid-row row">
-                @if (SignInManager.IsSignedIn(User))
+                @if (User.Identity.IsAuthenticated)
                 {
                     <div class="govuk-grid-column-one-half">
                         @{
@@ -205,7 +207,7 @@
                 <div class="govuk-grid-column-full">
 
                     @{
-                        if (SignInManager.IsSignedIn(User))
+                        if (User.Identity.IsAuthenticated)
                         {
                             var authorised = await Authorization.AuthorizeAsync(User, "ElevatedUserRole");
                             var superUser = await Authorization.AuthorizeAsync(User, "SuperUser");
