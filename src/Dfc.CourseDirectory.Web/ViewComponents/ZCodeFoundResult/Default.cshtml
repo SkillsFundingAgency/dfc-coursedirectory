@@ -6,6 +6,7 @@
 @using Microsoft.AspNetCore.Authorization;
 @using Dfc.CourseDirectory.Services.UnregulatedProvision
 @using Dfc.CourseDirectory.Web.ViewComponents.ZCodeFoundResult
+@using Dfc.CourseDirectory.Web.ViewComponents.Notification
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @model ZCodeFoundResultModel;
@@ -42,8 +43,15 @@
 else
 {
     <div class=" govuk-!-margin-top-4 ">
-        <h1>Z code does not exist</h1>
-        <h2>Check the code you have entered and try again</h2>
+        @*<h1>Z code does not exist</h1>
+            <h2>Check the code you have entered and try again</h2>*@
+        @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+                  {
+                      NotificationTitle = "Z code does not exist",
+                      NotificationMessage = "Check the code you have entered and try agai",
+                      ClassType = "error-summary"
+                  })
+
     </div>
 }
 

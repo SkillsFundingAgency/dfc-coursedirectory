@@ -17,6 +17,12 @@
   font-weight: 800;
 }
 
+.cd-subHead-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
 .navigation-container {
   border-bottom: 1px solid #bfc1c3;
 }
@@ -29,6 +35,7 @@
 
 .navigation-container .cd-secondary-nav .cd-secondary-nav--item {
   text-decoration: none;
+  padding-right: 1em;
 }
 
 .cd-fullwidth-container {
