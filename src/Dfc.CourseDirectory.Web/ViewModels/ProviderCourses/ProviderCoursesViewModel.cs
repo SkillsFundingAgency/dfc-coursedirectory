@@ -7,11 +7,14 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Web.ViewModels.YourCourses;
+using System.ComponentModel.DataAnnotations;
 
 namespace Dfc.CourseDirectory.Web.ViewModels.ProviderCourses
 {
     public class ProviderCoursesViewModel
     {
+        [RegularExpression(@"[a-zA-Z0-9 \¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\" + "\"" + @"\\]+", ErrorMessage = "Search contains invalid characters")]
+        public string Search { get; set; }
         public bool HasFilters { get; set; }
         public IList<ProviderCourseRunViewModel> ProviderCourseRuns { get; set;}
 

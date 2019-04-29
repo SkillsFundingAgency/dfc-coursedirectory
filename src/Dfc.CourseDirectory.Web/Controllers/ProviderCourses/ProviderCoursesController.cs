@@ -445,6 +445,10 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
                     .Where(x => x.CourseName.ToLower().Contains(requestModel.Keyword.ToLower())
                                 || x.QualificationCourseTitle.ToLower().Contains(requestModel.Keyword.ToLower())
                                 || x.LearnAimRef.ToLower().Contains(requestModel.Keyword.ToLower())
+                                 || x.AttendancePattern.ToLower().Contains(requestModel.Keyword.ToLower())
+                                  || x.DeliveryMode.ToLower().Contains(requestModel.Keyword.ToLower())
+                                   || x.Venue.ToLower().Contains(requestModel.Keyword.ToLower())
+                                    || x.Region.ToLower().Contains(requestModel.Keyword.ToLower())
                                 || (!string.IsNullOrEmpty(x.CourseTextId) && x.CourseTextId.ToLower().Contains(requestModel.Keyword.ToLower()))
                                 ).ToList();
             }
