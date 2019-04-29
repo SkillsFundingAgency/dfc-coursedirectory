@@ -181,7 +181,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                     courseForEdit.Value.AdultEducationBudget = model.AdultEducationBudget;
                     courseForEdit.Value.AdvancedLearnerLoan = model.AdvancedLearnerLoan;
                     courseForEdit.Value.IsValid = true; // The same for Live, BulkUpload, Migration
-                    courseForEdit.Value.UpdatedBy = User.FindFirst(ClaimTypes.NameIdentifier)?.Value; // User.Identity.Name;
+                    courseForEdit.Value.UpdatedBy = User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(); // User.Identity.Name;
                     courseForEdit.Value.UpdatedDate = DateTime.Now;
 
                     var updatedCourse = await _courseService.UpdateCourseAsync(courseForEdit.Value);
