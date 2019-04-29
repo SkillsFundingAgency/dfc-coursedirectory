@@ -359,6 +359,8 @@ namespace Dfc.CourseDirectory.Web
 
                         if (isSpuriousAuthCbRequest)
                         {
+                            _logger.LogWarning("Spurious log in attempt received for DFE sign in");
+
                             context.HandleResponse();
                             context.Response.StatusCode = 302;
                             context.Response.Headers["Location"] = "/";
@@ -373,6 +375,7 @@ namespace Dfc.CourseDirectory.Web
                         // This is derived from the recommended approach: https://github.com/aspnet/Security/issues/1165
                         OnRemoteFailure = ctx =>
                     {
+                        _logger.LogWarning("Remote failure for DFE-sign in");
                         ctx.Response.Redirect("/");
                         ctx.HandleResponse();
                         return Task.FromResult(0);
