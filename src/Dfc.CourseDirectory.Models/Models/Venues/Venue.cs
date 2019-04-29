@@ -46,7 +46,7 @@ namespace Dfc.CourseDirectory.Models.Models.Venues
         public decimal Latitude { get; set; }
         [JsonProperty("LONGITUDE")]
         public decimal Longitude { get; set; }
-        public VenueStatus Status { get; }
+        public VenueStatus Status { get; set; }
         public DateTime DateAdded { get; }
         public DateTime DateUpdated { get; }
         public string UpdatedBy { get; }
