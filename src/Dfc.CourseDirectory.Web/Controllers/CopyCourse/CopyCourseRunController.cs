@@ -220,7 +220,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                     copiedCourseRun.FlexibleStartDate = flexibleStartDate;
                     copiedCourseRun.StartDate = specifiedStartDate;
                     copiedCourseRun.CreatedDate=DateTime.Now;
-                    copiedCourseRun.CreatedBy = User.Identity.Name;
+                    copiedCourseRun.CreatedBy = User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault();
 
                     switch (model.DeliveryMode)
                     {

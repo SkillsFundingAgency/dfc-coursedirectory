@@ -236,7 +236,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                     courseRunForEdit.FlexibleStartDate = flexibleStartDate;
                     courseRunForEdit.StartDate = specifiedStartDate;
                     courseRunForEdit.UpdatedDate = DateTime.Now;
-                    courseRunForEdit.UpdatedBy = User.FindFirst(ClaimTypes.NameIdentifier)?.Value; // User.Identity.Name;
+                    courseRunForEdit.UpdatedBy = User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault();
 
                     switch (model.DeliveryMode)
                     {
