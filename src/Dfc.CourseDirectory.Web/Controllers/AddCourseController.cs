@@ -209,8 +209,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 CourseName = Session.GetString("LearnAimRefTitle"),
                 ProviderUKPRN = UKPRN,
                 SelectVenue = await GetVenuesByUkprn(UKPRN),
-                SelectRegion = _courseService.GetRegions()
-
+                SelectRegion = GetRegions()
             };
 
             Session.SetObject(SessionVenues, viewModel.SelectVenue);
@@ -643,7 +642,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     DurationValue = addCourseSection2.DurationLength,
                     StudyMode = StudyMode.Undefined,
                     AttendancePattern = AttendancePattern.Undefined,
-                    Regions = _courseService.GetRegions().RegionItems.Select(x => x.Id),
+                    Regions = GetRegions().RegionItems.Select(x => x.Id),
                     CreatedDate = DateTime.Now,
                     CreatedBy = "ProviderPortal-AddCourse",
                     RecordStatus = RecordStatus.Live // TODO - To Be Decided
@@ -778,26 +777,26 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return selectVenue;
         }
 
-        //private SelectRegionModel GetRegions()
-        //{
-        //    var selectRegion = new SelectRegionModel
-        //    {
-        //        LabelText = "Select course region",
-        //        HintText = "For example, South West",
-        //        AriaDescribedBy = "Select all that apply."
-        //    };
+        private SelectRegionModel GetRegions()
+        {
+            var selectRegion = new SelectRegionModel
+            {
+                LabelText = "Select course region",
+                HintText = "For example, South West",
+                AriaDescribedBy = "Select all that apply."
+            };
 
-        //    if (selectRegion.RegionItems != null && selectRegion.RegionItems.Any())
-        //    {
-        //        selectRegion.RegionItems = selectRegion.RegionItems.OrderBy(x => x.RegionName);
-        //        foreach (var selectRegionRegionItem in selectRegion.RegionItems)
-        //        {
-        //            selectRegionRegionItem.SubRegion = selectRegionRegionItem.SubRegion.OrderBy(x => x.SubRegionName).ToList();
-        //        }
-        //    }
+            if (selectRegion.RegionItems != null && selectRegion.RegionItems.Any())
+            {
+                selectRegion.RegionItems = selectRegion.RegionItems.OrderBy(x => x.RegionName);
+                foreach (var selectRegionRegionItem in selectRegion.RegionItems)
+                {
+                    selectRegionRegionItem.SubRegion = selectRegionRegionItem.SubRegion.OrderBy(x => x.SubRegionName).ToList();
+                }
+            }
 
-        //    return selectRegion;
-        //}
+            return selectRegion;
+        }
 
         internal void RemoveSessionVariables()
         {
@@ -914,7 +913,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             };
 
             viewModel.SelectVenue = await GetVenuesByUkprn(UKPRN);
-            viewModel.SelectRegion = _courseService.GetRegions();
+            viewModel.SelectRegion = GetRegions();
 
             Session.SetObject(SessionVenues, viewModel.SelectVenue);
             Session.SetObject(SessionRegions, viewModel.SelectRegion);

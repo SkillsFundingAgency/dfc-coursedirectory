@@ -1,9 +1,7 @@
 ﻿@using Dfc.CourseDirectory.Models.Enums
 @using Dfc.CourseDirectory.Web.Helpers
 @model RegulatedViewModel
-@{
-    Layout = "_Layout_Your_Courses";
-}
+
 <form asp-controller="RegulatedQualification" asp-action="RegulatedTypeSelected" method="post" id="QualificationType">
 
     <div class="govuk-form-group">
@@ -17,27 +15,26 @@
                 </div>
                 <div class="govuk-radios__item">
                     @Html.RadioButtonFor(m => m.RegulatedType, RegulatedType.NonRegulated, new { @class = "govuk-radios__input", id = RegulatedType.NonRegulated })
-                    <label class="govuk-label govuk-radios__label" for="@RegulatedType.NonRegulated">
-                        @WebHelper.GetEnumDescription(RegulatedType.NonRegulated)
+                    <label class="govuk-label govuk-radios__label" for="@RegulatedType.NonRegulated">@WebHelper.GetEnumDescription(RegulatedType.NonRegulated)
                     <span class="govuk-hint">
                         Not overseen by Ofqual or the QAA for Higher Education
                     </span>
-                </label>
-
+                    </label>
+                    
+                </div>
             </div>
-        </div>
-    </fieldset>
-</div>
-<br />
-<button type="submit" class="govuk-button" id="next">Next</button>
+        </fieldset>
+    </div>
+    <br />
+    <button type="submit" class="govuk-button" id="next">Next</button>
 </form>
 
 <script>
-    (function ($) {
+    (function($) {
         $(function () {
             var validStates = [];
             var $button = $("#next");
-
+          
             var $qualificationType = $("#SelectQualificationType").govUkRadios();
 
             function isAllValid(currentValue) {
@@ -47,7 +44,7 @@
             function validate() {
 
                 validStates = [];
-
+               
                 $qualificationType.govUkRadios("validState");
 
                 if ($.requiredValidate($qualificationType.find("input[type='radio']:checked").val())) {
@@ -55,7 +52,7 @@
                     validStates.push(true);
                 } else {
                     $qualificationType.govUkRadios("invalidState", $qualificationType.attr("val-required-message"));
-                    validStates.push(false);
+                   validStates.push(false);
                 }
             }
 
