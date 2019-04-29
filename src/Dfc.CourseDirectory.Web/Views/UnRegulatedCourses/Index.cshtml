@@ -118,6 +118,8 @@
 
             $elementSearchTerm.on("blur", function () {
                 $errorSummary.hide();
+
+
                 var result = validator.element($elementSearchTerm);
                 if (result) {
                     HideValidationErrorMessage();

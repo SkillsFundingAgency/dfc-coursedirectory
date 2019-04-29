@@ -329,6 +329,7 @@
                 function (event) {
                     event.preventDefault();
                     {
+                        $(".cd-success-summary").hide();
                         $liveCoursesExistMessage.hide();
                         $pendingCoursesExistMessage.hide();
 
@@ -353,7 +354,7 @@
             $deleteButton.on("click",
                 function (event) {
                     event.preventDefault();
-
+                                            $(".cd-success-summary").hide();
                     $liveCoursesExistMessage.hide();
                     $pendingCoursesExistMessage.hide();
 

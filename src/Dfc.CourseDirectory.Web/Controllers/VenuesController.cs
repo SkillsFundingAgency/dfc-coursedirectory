@@ -440,10 +440,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             var bulkUploadPendingCourseRuns = Courses.SelectMany(x => x.CourseRuns).Where(x => x.RecordStatus == Models.Enums.RecordStatus.BulkUloadPending && x.VenueId == VenueId).ToList();
 
+            var migrationReadyForLiveCourseRuns = Courses.SelectMany(x => x.CourseRuns).Where(x => x.RecordStatus == Models.Enums.RecordStatus.MigrationReadyToGoLive && x.VenueId == VenueId).ToList();
+
+            var bulkUploadReadyForLiveCourseRuns = Courses.SelectMany(x => x.CourseRuns).Where(x => x.RecordStatus == Models.Enums.RecordStatus.BulkUploadReadyToGoLive && x.VenueId == VenueId).ToList();
+
             var model = new DeleteVenueCheckViewModel()
             {
                 LiveCoursesExist = liveCourseRuns?.Count() > 0,
-                PendingCoursesExist = migrationPendingCourseRuns?.Count() > 0 || bulkUploadPendingCourseRuns?.Count() > 0,
+                PendingCoursesExist = migrationPendingCourseRuns?.Count() > 0 || bulkUploadPendingCourseRuns?.Count() > 0 || migrationReadyForLiveCourseRuns?.Count() > 0 || bulkUploadReadyForLiveCourseRuns?.Count() > 0,
 
             };
 
