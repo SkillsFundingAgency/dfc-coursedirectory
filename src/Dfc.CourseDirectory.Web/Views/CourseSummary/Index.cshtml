@@ -1,9 +1,17 @@
 ﻿@using Dfc.CourseDirectory.Models.Enums
 @using Dfc.CourseDirectory.Models.Models.Courses
+@using Dfc.CourseDirectory.Web.Helpers
+@using System.ComponentModel.DataAnnotations
 @model Dfc.CourseDirectory.Web.ViewModels.CourseSummary.CourseSummaryViewModel
+@{
+    Layout = "_Layout_Your_Courses";
+}
+@{
+    var deliveryModeAttribute = Model.DeliveryMode.GetAttribute<DisplayAttribute>();
+    var attendanceAttribute = Model.AttendancePattern.GetAttribute<DisplayAttribute>();
+    var studyModeAttribute = Model.StudyMode.GetAttribute<DisplayAttribute>();
+}
 
-<div class=" cd-fullwidth-container govuk-!-padding-top-9">
-    <div class="govuk-width-container cd-course-page">
         <a asp-controller="ProviderCourses" asp-action="Index" class="govuk-back-link">Back</a>
         <main class="govuk-main-wrapper">
             <div class="govuk-grid-row">
@@ -59,7 +67,7 @@
                             </tr>
                             <tr class="govuk-table__row">
                                 <th class="govuk-table__header" scope="row">Delivery:</th>
-                                <td class="govuk-table__cell">@Model.DeliveryMode</td>
+                                <td class="govuk-table__cell">@deliveryModeAttribute.Name</td>
                             </tr>
                             <tr class="govuk-table__row">
                                 <th class="govuk-table__header" scope="row">Start date:</th>
@@ -78,7 +86,7 @@
                                 if (Model.DeliveryMode == DeliveryMode.WorkBased)
                                 {
                                     <tr class="govuk-table__row">
-                                        <th class="govuk-table__header" scope="col">Regions:</th>
+                                        <th class="govuk-table__header" scope="col" style="vertical-align: text-top;">Region(s):</th>
                                         @{
                                             <td class="govuk-table__cell">
                                                 @foreach (var region in Model.Regions)
@@ -103,7 +111,7 @@
                             }
                             <tr class="govuk-table__row">
                                 <th class="govuk-table__header" scope="row">Url:</th>
-                                <td class="govuk-table__cell"><a href="@Model.CourseURL" target="_blank">@Model.CourseURL</a></td>
+                                <td class="govuk-table__cell"><a href="@Model.CourseURL" target="_blank" style="word-break: break-all">@Model.CourseURL</a></td>
                             </tr>
                             <tr class="govuk-table__row">
                                 <th class="govuk-table__header" scope="row">Cost:</th>
@@ -133,11 +141,11 @@
                                 {
                                     <tr class="govuk-table__row">
                                         <th class="govuk-table__header" scope="row">Full time or part time:</th>
-                                        <td class="govuk-table__cell">@Model.StudyMode</td>
+                                        <td class="govuk-table__cell">@studyModeAttribute.Name</td>
                                     </tr>
                                     <tr class="govuk-table__row">
                                         <th class="govuk-table__header" scope="row">Attendance:</th>
-                                        <td class="govuk-table__cell">@Model.AttendancePattern</td>
+                                        <td class="govuk-table__cell">@attendanceAttribute.Name</td>
                                     </tr>
                                 }
                             }
@@ -147,7 +155,7 @@
 
 
                     <h3 class="govuk-heading-m govuk-!-margin-top-0">
-                        About this course
+                        What your learners need to know
                     </h3>
                     <table class="govuk-table">
                         <tbody>
@@ -276,15 +284,19 @@
                         {
                             <p>Last published: <br>@Model.UpdatedDate.Value.ToString("dd MMMM yyyy")</p>
                         }
+                        else
+                        {
+                            <p>Created: <br>@Model.CreatedDate.ToString("dd MMMM yyyy")</p>
+                        }
                     }
 
                     <hr>
 
-                    <h3 class="govuk-heading-m m20">Duplicate</h3>
+                    <h3 class="govuk-heading-m m20">Copy</h3>
                     <p>
                         If you run another course that
                         offers this qualification, you
-                        can duplicate this course,
+                        can copy this course,
                         edit the details and save it
                         as a new course.
                     </p>
@@ -298,7 +310,7 @@
                        asp-route-learnAimRefTypeDesc="@Model.QualificationType"
                        asp-route-courseId="@Model.CourseId"
                        asp-route-courseRunId="@Model.CourseInstanceId"
-                       asp-route-publishMode="@PublishMode.Summary">Duplicate this course</a>
+                       asp-route-publishMode="@PublishMode.Summary">Copy this course</a>
                     <hr>
 
                     <h3 class="govuk-heading-m m20">Delete</h3>
@@ -307,7 +319,7 @@
                         remove it from the course
                         directory
                     </p>
-                    <a href="#" class="govuk-link archive" id="archive-@Model.CourseInstanceId" data-course-run-id="@Model.CourseInstanceId" style="padding-right:1em">Delete This Course</a>
+                    <a href="#" class="govuk-link archive" id="archive-@Model.CourseInstanceId" data-course-run-id="@Model.CourseInstanceId" style="padding-right:1em">Delete this course</a>
 
                     <a id="course-confirm-archive-@Model.CourseInstanceId" class="govuk-button" asp-controller="Courses" asp-action="Archive"
                        asp-route-courseId="@Model.CourseId"
@@ -318,12 +330,29 @@
                        style="display: none;padding-right:1em">Confirm delete</a>
 
                     <a href="#" class="govuk-link cancel-archive" id="course-cancel-archive-@Model.CourseInstanceId" data-course-run-id="@Model.CourseInstanceId" hidden="hidden">Cancel</a>
+                    <hr>
+                    <h3 class="govuk-heading-m m20">Edit What your learners need to know</h3>
+                    <p>
+                        Making any changes will update
+                        all of the courses that share this
+                        qualification
+                    </p>
+                    <a class="govuk-link"
+                       asp-controller="EditCourse"
+                       asp-action="Index"
+                       asp-route-courseId="@Model.CourseId"
+                       asp-route-courseRunId="@Model.CourseInstanceId"
+                       asp-route-learnAimRef="@Model.LearnAimRef"
+                       asp-route-notionalNVQLevelv2="course.NotionalNVQLevelv2"
+                       asp-route-awardOrgCode="@Model.AwardOrgCode"
+                       asp-route-learnAimRefTitle="@Model.QualificationCourseTitle"
+                       asp-route-learnAimRefTypeDesc="@Model.QualificationType"
+                       asp-route-mode="@PublishMode.Summary">Make changes</a>
                 </div>
             </div>
 
         </main>
-    </div>
-</div>
+
 <script>
     (function ($) {
         $(function () {
@@ -372,7 +401,7 @@
                     archiveCancelDelete.show().css("display", "block");
 
                 });
-            
+
         });
     })(jQuery);
 </script>

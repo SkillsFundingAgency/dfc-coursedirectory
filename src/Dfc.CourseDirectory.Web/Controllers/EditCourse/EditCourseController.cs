@@ -59,7 +59,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> Index(string learnAimRef, string notionalNVQLevelv2, string awardOrgCode, string learnAimRefTitle, string learnAimRefTypeDesc,  Guid? courseId, bool fromBulkUpload, PublishMode mode)
+        public async Task<IActionResult> Index(string learnAimRef, string notionalNVQLevelv2, string awardOrgCode, string learnAimRefTitle, string learnAimRefTypeDesc,  Guid? courseId, Guid? courseRunId, bool fromBulkUpload, PublishMode mode)
         {
 
             int? UKPRN;
@@ -81,11 +81,13 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                 {
                     EditCourseViewModel vm = new EditCourseViewModel
                     {
+                        CourseName = course.Value.QualificationCourseTitle,
                         AwardOrgCode = awardOrgCode,
                         LearnAimRef = learnAimRef,
                         LearnAimRefTitle = learnAimRefTitle,
                         NotionalNVQLevelv2 = notionalNVQLevelv2,
-
+                        CourseId = courseId,
+                        CourseRunId = courseRunId,
                         Mode = mode,
                         CourseFor = new CourseForModel()
                         {
@@ -193,6 +195,15 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                                 {
                                     publishMode = model.Mode,
                                     courseId = model.CourseId
+                                });
+                        case PublishMode.Summary:
+                            return RedirectToAction("Index", "ProviderCourses",
+                                new
+                                {
+                                    publishMode = model.Mode,
+                                    courseId = model.CourseId,
+                                    courseRunId = model.CourseRunId,
+                                    NotificationTitle = "Course updated:",
                                 });
                         default:
                             return RedirectToAction("Courses", "Provider",

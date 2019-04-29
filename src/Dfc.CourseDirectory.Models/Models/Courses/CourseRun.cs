@@ -10,14 +10,16 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
 {
     public enum DeliveryMode
     {
+        [Display(Name = "Undefined")]
         [Description("Undefined")]
         Undefined = 0,
-        [DisplayName("Classroom based")]
+        [Display(Name = "Classroom based")]
         [Description("Classroom based")]
         ClassroomBased = 1,
+        [Display(Name = "Online")]
         [Description("Online")]
         Online = 2,
-        [DisplayName("Work based")]
+        [Display(Name = "Work based")]
         [Description("Work based")]
         WorkBased = 3
     }
@@ -38,14 +40,16 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
     }
     public enum StudyMode
     {
+        [Display(Name = "Undefined")]
         [Description("Undefined")]
         Undefined = 0,
-        [DisplayName("Full-time")]
+        [Display(Name = "Full-time")]
         [Description("Full-time")]
         FullTime = 1,
-        [DisplayName("Part-time")]
+        [Display(Name = "Part-time")]
         [Description("Part-time")]
         PartTime = 2,
+        [Display(Name = "Flexible")]
         [Description("Flexible")]
         Flexible = 3
 
@@ -53,24 +57,28 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
 
     public enum AttendancePattern
     {
+        [Display(Name = "Undefined")]
         [Description("Undefined")]
         Undefined = 0,
+        [Display(Name = "Daytime")]
         [Description("Daytime")]
         Daytime = 1,
+        [Display(Name = "Evening")]
         [Description("Evening")]
         Evening = 2,
+        [Display(Name = "Weekend")]
         [Description("Weekend")]
         Weekend = 3,
-        [DisplayName("Day/Block Release")]
+        [Display(Name = "Day/Block Release")]
         [Description("Day/Block Release")]
         DayOrBlockRelease = 4
     }
     public enum StartDateType
     {
-        [DisplayName("Defined Start Date")]
+        [Display(Name = "Defined Start Date")]
         [Description("Defined Start Date")]
         SpecifiedStartDate = 1,
-        [DisplayName("Flexible Start Date")]
+        [Display(Name = "Flexible Start Date")]
         [Description("Select a flexible start date")] 
         FlexibleStartDate = 2,
     }

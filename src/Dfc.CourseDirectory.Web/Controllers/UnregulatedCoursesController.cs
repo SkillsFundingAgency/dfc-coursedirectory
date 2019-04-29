@@ -10,6 +10,7 @@ using Dfc.CourseDirectory.Services.UnregulatedProvision;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.RequestModels;
 using Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult;
+using Dfc.CourseDirectory.Web.ViewComponents.ZCodeFoundResult;
 using Dfc.CourseDirectory.Web.ViewComponents.ZCodeSearchResult;
 using Dfc.CourseDirectory.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -58,11 +59,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         [Authorize]
-        [HttpPost]
-        public async Task<IActionResult> Index(UnRegulatedSearchViewModel theModel)
+        public async Task<IActionResult> FindNonRegulated(UnRegulatedSearchViewModel theModel)
         {
-            ZCodeSearchResultModel model = new ZCodeSearchResultModel();
-
+            // ZCodeSearchResultModel model = new ZCodeSearchResultModel();
+            ZCodeFoundResultModel model = new ZCodeFoundResultModel();
             //if (theModel.Search.ToLower() == "z9999999")
             //{
             //    return RedirectToAction("Index", "UnregulatedCourses",
@@ -78,79 +78,59 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 SearchTerm = theModel.Search
             };
 
-            // requestModel.SectorSubjectAreaTier1Filter= new string[1];
-            //requestModel.SectorSubjectAreaTier1Filter[0] = "1.00";
+            var criteria = _larsSearchHelper.GetLarsSearchCriteria(
+                requestModel,
+                _paginationHelper.GetCurrentPageNo(Request.GetDisplayUrl(), _larsSearchSettings.PageParamName),
+                _larsSearchSettings.ItemsPerPage,
+                (LarsSearchFacet[])Enum.GetValues(typeof(LarsSearchFacet)));
 
-            if (requestModel == null)
+
+
+            //var criteria = new LarsSearchCriteria(
+            //    "",
+            //    1,
+            //    1,
+            //    null,
+            //    (LarsSearchFacet[])Enum.GetValues(typeof(LarsSearchFacet)));
+
+            var result = await _larsSearchService.SearchAsync(criteria);
+
+            if (result.IsSuccess && result.HasValue)
             {
-                // model = new ZCodeSearchResultModel();
-            }
-            else
-            {
-                var criteria = _larsSearchHelper.GetLarsSearchCriteria(
-                    requestModel,
-                    _paginationHelper.GetCurrentPageNo(Request.GetDisplayUrl(), _larsSearchSettings.PageParamName),
-                    _larsSearchSettings.ItemsPerPage,
-                    (LarsSearchFacet[])Enum.GetValues(typeof(LarsSearchFacet)));
+                //var filters = _larsSearchHelper.GetLarsSearchFilterModels(result.Value.SearchFacets, requestModel);
+                //var items = _larsSearchHelper.GetLarsSearchResultItemModels(result.Value.Value);
 
-
-
-                //var criteria = new LarsSearchCriteria(
-                //    "",
-                //    1,
-                //    1,
-                //    null,
-                //    (LarsSearchFacet[])Enum.GetValues(typeof(LarsSearchFacet)));
-
-                var result = await _larsSearchService.SearchAsync(criteria);
-
-                if (result.IsSuccess && result.HasValue)
+                //model = new LarsSearchResultModel(
+                //    requestModel.SearchTerm,
+                //    items,
+                //    Request.GetDisplayUrl(),
+                //    _larsSearchSettings.PageParamName,
+                //    _larsSearchSettings.ItemsPerPage,
+                //    result.Value.ODataCount ?? 0,
+                //    filters);
+                if (result.Value.Value.Any())
                 {
-                    //var filters = _larsSearchHelper.GetLarsSearchFilterModels(result.Value.SearchFacets, requestModel);
-                    //var items = _larsSearchHelper.GetLarsSearchResultItemModels(result.Value.Value);
-
-                    //model = new LarsSearchResultModel(
-                    //    requestModel.SearchTerm,
-                    //    items,
-                    //    Request.GetDisplayUrl(),
-                    //    _larsSearchSettings.PageParamName,
-                    //    _larsSearchSettings.ItemsPerPage,
-                    //    result.Value.ODataCount ?? 0,
-                    //    filters);
-                    if (result.Value.Value.Count() > 0)
+                    model = result.Value.Value.Select(x => new ZCodeFoundResultModel()
                     {
-                        var zCodeResults = new List<ZCodeSearchResultItemModel>();
+                        AwardOrgCode = x.AwardOrgCode,
+                        AwardOrgName = x.AwardOrgName,
+                        LearnAimRef = x.LearnAimRef,
+                        LearnAimRefTitle = x.LearnAimRefTitle,
+                        LearnAimRefTypeDesc = x.LearnAimRefTypeDesc,
+                        NotionalNVQLevelv2 = x.NotionalNVQLevelv2
+                    }).FirstOrDefault();
 
-                        foreach (var item in result.Value.Value)
-                        {
-                            zCodeResults.Add(new ZCodeSearchResultItemModel()
-                            {
-                                AwardOrgCode = item.AwardOrgCode,
-                                AwardOrgName = item.AwardOrgName,
-                                LearnAimRef = item.LearnAimRef,
-                                LearnAimRefTitle = item.LearnAimRefTitle,
-                                LearnAimRefTypeDesc = item.LearnAimRefTypeDesc,
-                                NotionalNVQLevelv2 = item.NotionalNVQLevelv2
 
-                            });
-                        }
-
-                        model.Items = zCodeResults;
-
-                        return View("ZCodeResults", model);
-                    }
 
                 }
+
+
+
             }
+            return ViewComponent(nameof(ViewComponents.ZCodeFoundResult.ZCodeFoundResult), model);
 
-            _logger.LogMethodExit();
 
-            return RedirectToAction("Index", "UnregulatedCourses",
-                    new
-                    {
-                        NotificationTitle = "Z code does not exist",
-                        NotificationMessage = "Check the code you have entered and try again"
-                    });
+
 
         }
 

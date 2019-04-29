@@ -209,7 +209,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 CourseName = Session.GetString("LearnAimRefTitle"),
                 ProviderUKPRN = UKPRN,
                 SelectVenue = await GetVenuesByUkprn(UKPRN),
-                SelectRegion = GetRegions()
+                SelectRegion = _courseService.GetRegions()
+
             };
 
             Session.SetObject(SessionVenues, viewModel.SelectVenue);
@@ -642,7 +643,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     DurationValue = addCourseSection2.DurationLength,
                     StudyMode = StudyMode.Undefined,
                     AttendancePattern = AttendancePattern.Undefined,
-                    Regions = GetRegions().RegionItems.Select(x => x.Id),
+                    Regions = _courseService.GetRegions().RegionItems.Select(x => x.Id),
                     CreatedDate = DateTime.Now,
                     CreatedBy = "ProviderPortal-AddCourse",
                     RecordStatus = RecordStatus.Live // TODO - To Be Decided
@@ -696,8 +697,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             if (result.IsSuccess && result.HasValue)
             {
-                return RedirectToAction("Courses", "Provider",
-                    new { level = notionalNvqLevelv2 });
+                return RedirectToAction("Index", "ProviderCourses",
+                    new {
+                        CourseRunId = courseRuns[0].id,
+                        NotificationTitle = "Course added",
+                        NotificationMessage = "You added",
+                    });
             }
 
             return RedirectToAction("Index",
@@ -773,26 +778,26 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return selectVenue;
         }
 
-        private SelectRegionModel GetRegions()
-        {
-            var selectRegion = new SelectRegionModel
-            {
-                LabelText = "Select course region",
-                HintText = "For example, South West",
-                AriaDescribedBy = "Select all that apply."
-            };
+        //private SelectRegionModel GetRegions()
+        //{
+        //    var selectRegion = new SelectRegionModel
+        //    {
+        //        LabelText = "Select course region",
+        //        HintText = "For example, South West",
+        //        AriaDescribedBy = "Select all that apply."
+        //    };
 
-            if (selectRegion.RegionItems != null && selectRegion.RegionItems.Any())
-            {
-                selectRegion.RegionItems = selectRegion.RegionItems.OrderBy(x => x.RegionName);
-                foreach (var selectRegionRegionItem in selectRegion.RegionItems)
-                {
-                    selectRegionRegionItem.SubRegion = selectRegionRegionItem.SubRegion.OrderBy(x => x.SubRegionName).ToList();
-                }
-            }
+        //    if (selectRegion.RegionItems != null && selectRegion.RegionItems.Any())
+        //    {
+        //        selectRegion.RegionItems = selectRegion.RegionItems.OrderBy(x => x.RegionName);
+        //        foreach (var selectRegionRegionItem in selectRegion.RegionItems)
+        //        {
+        //            selectRegionRegionItem.SubRegion = selectRegionRegionItem.SubRegion.OrderBy(x => x.SubRegionName).ToList();
+        //        }
+        //    }
 
-            return selectRegion;
-        }
+        //    return selectRegion;
+        //}
 
         internal void RemoveSessionVariables()
         {
@@ -909,7 +914,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             };
 
             viewModel.SelectVenue = await GetVenuesByUkprn(UKPRN);
-            viewModel.SelectRegion = GetRegions();
+            viewModel.SelectRegion = _courseService.GetRegions();
 
             Session.SetObject(SessionVenues, viewModel.SelectVenue);
             Session.SetObject(SessionRegions, viewModel.SelectRegion);
@@ -936,14 +941,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 {
                     foreach (var selectedVenue in addCourseSection2Session.SelectedVenues)
                     {
-                        viewModel.SelectVenue.VenueItems.First(x => x.Id == selectedVenue.ToString()).Checked = true;
+                        viewModel.SelectVenue.VenueItems.FirstOrDefault(x => x.Id == selectedVenue.ToString()).Checked = true;
                     }
                 }
                 if (addCourseSection2Session.SelectedRegions != null)
                 {
                     foreach (var selectedRegion in addCourseSection2Session.SelectedRegions)
                     {
-                        viewModel.SelectRegion.RegionItems.First(x => x.Id == selectedRegion.ToString()).Checked = true;
+                        viewModel.SelectRegion.RegionItems.FirstOrDefault(x => x.Id == selectedRegion.ToString()).Checked = true;
                     }
                 }
             }

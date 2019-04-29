@@ -1,6 +1,9 @@
-﻿
-@using Dfc.CourseDirectory.Web.ViewComponents.Notification
+﻿@using Dfc.CourseDirectory.Web.ViewComponents.Notification
 @model UnRegulatedSearchViewModel
+
+@{
+    Layout = "_Layout_Your_Courses";
+}
 
 <div class="cd-hero-grey">
     <div class="govuk-width-container">
@@ -13,15 +16,15 @@
 
                             <h1 class="govuk-heading-l govuk-!-margin-top-4">Search for a course provision</h1>
 
-                            @if (!string.IsNullOrEmpty(Model.NotificationTitle))
-                            {
-                                @await Component.InvokeAsync(nameof(Notification), new NotificationModel
-                                {
-                                    NotificationTitle = Model.NotificationTitle,
-                                    NotificationMessage = Model.NotificationMessage,
+                            @*<div id="notFoundMessage" style="display:none">
+                                    @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+                                    {
+                                    NotificationTitle = "Z code does not exist",
+                                    NotificationMessage = "Check the code you have entered and try again",
                                     ClassType = "error-summary"
-                                })
-                            }
+                                    })
+                                </div>*@
+
 
                             <p class="column-two-thirds">Find the provision you'll be awarding with the course</p>
                         </div>
@@ -31,9 +34,9 @@
                                 <div class="search-input-wrapper">
                                     @*@if (!string.IsNullOrWhiteSpace(Model.HintText))
                                         {
-                                            <span class="govuk-hint">
-                                                @Model.HintText
-                                            </span>
+                                        <span class="govuk-hint">
+                                            @Model.HintText
+                                        </span>
                                         }*@
 
                                     <input class="govuk-input govuk-!-width-one-third search-input js-search-focus" asp-for="@Model.Search" type="text" placeholder="Enter a Z code">
@@ -43,7 +46,11 @@
                                 </div>
                             </div>
                         </form>
-                        <a class="govuk-link" asp-controller="UnregulatedCourses" asp-action="UnknownZCode">I don't know the Z code</a>
+                        <a class="govuk-link" id="unKnownLink" asp-controller="UnregulatedCourses" asp-action="UnknownZCode">I don't know the Z code</a>
+                        <div id="results">
+
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -54,6 +61,40 @@
 <script>
     (function ($) {
         $(function () {
+
+
+                        var doSearch = function () {
+
+                makeRequestWithPayload({
+                    Search: $('#Search').val()
+                    },
+                        onSucess);
+
+            };
+
+
+
+            var onSucess = function (data) {
+
+                $('#unKnownLink').hide();
+                $('#results').html("");
+                $('#results').html(data);
+
+            };
+
+
+            var makeRequestWithPayload = function (payload, success) {
+                //console.log(payload);
+                var qs = $.param(payload);
+                qs = replaceAll(qs, "%5B%5D", "");
+                $.get("/UnregulatedCourses/FindNonRegulated?" + qs, success);
+            };
+
+
+
+               var replaceAll = function (search, find, replace) {
+                return search.split(find).join(replace);
+            };
 
 
 
@@ -120,7 +161,8 @@
 
 
                     HideValidationErrorMessage();
-                    $("#zCodeSearch").submit();
+                    doSearch();
+                   // $("#zCodeSearch").submit();
                 }
                 else {
                     //$providerSearchResultContainer.html("");
@@ -142,6 +184,11 @@
                     $validationMessageSearchTerm.hide();
                     $validationMessageSearchTerm.css("margin-bottom", "0");
             }
+
+
+
+
+
         });
     })(jQuery);
 </script>
