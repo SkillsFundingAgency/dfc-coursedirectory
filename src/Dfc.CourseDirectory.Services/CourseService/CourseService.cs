@@ -117,7 +117,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 LabelText = "Select course region",
                 HintText = "For example, South West",
                 AriaDescribedBy = "Select all that apply."
-            };
+            }; 
 
             if (selectRegion.RegionItems != null && selectRegion.RegionItems.Any())
             {
