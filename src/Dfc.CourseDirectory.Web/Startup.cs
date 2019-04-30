@@ -97,7 +97,10 @@ namespace Dfc.CourseDirectory.Web
             
             services.AddOptions();
 
-            services.Configure<BaseDataAccessSettings>(Configuration.GetSection(nameof(BaseDataAccessSettings)));
+            services.Configure<BaseDataAccessSettings>(options =>
+            {
+                options.ConnectionString = Configuration.GetConnectionString("DefaultConnection");
+            });
             services.AddScoped<IBaseDataAccess, BaseDataAccess>();
 
             services.AddSingleton<IAuthService, AuthService>();
