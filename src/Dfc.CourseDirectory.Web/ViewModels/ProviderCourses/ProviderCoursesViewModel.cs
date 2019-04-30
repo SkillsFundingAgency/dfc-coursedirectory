@@ -32,6 +32,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels.ProviderCourses
         public string NotificationTitle { get; set; }
         public string NotificationMessage { get; set; }
 
+        public string CourseRunId { get; set; }
 
     }
 }
