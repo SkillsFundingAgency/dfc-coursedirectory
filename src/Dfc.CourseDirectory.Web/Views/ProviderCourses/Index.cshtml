@@ -175,9 +175,19 @@
                 $attendancePatternFilterCheckboxes.on("click", debounce(doSearch, 1500));
                 $regionFilterCheckboxes.on("click", debounce(doSearch, 1500));
             };
-
+            
             $(document).ready(function () {
                 assignEventsToAllCheckboxes();
+
+                var courseRunGuid = '@Model.CourseRunId';
+                
+                var summary = $("#cd-info-summary");
+                if (courseRunGuid !== "" || courseRunGuid !== undefined && summary === undefined) {
+                    var $courseRunId = $("#" + courseRunGuid);
+                    $("html,body").animate({
+                        scrollTop: $courseRunId.offset().top
+                    }, "slow");
+                }
             });
 
             var debounce = function (cb, delay) {
