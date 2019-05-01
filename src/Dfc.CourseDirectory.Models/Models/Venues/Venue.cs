@@ -9,8 +9,9 @@ namespace Dfc.CourseDirectory.Models.Models.Venues
 {
     public enum VenueStatus
     {
-        Live = 97,
-        Archived = 98,
+        Imported = 0,
+        Live = 1,
+        Deleted = 2,
         Uknown = 99
     }
 
