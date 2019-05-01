@@ -466,7 +466,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
 
             IVenue updatedVenue = _venueService.GetVenueByIdAsync(new GetVenueByIdCriteria(VenueId.ToString())).Result.Value;
-            updatedVenue.Status = VenueStatus.Archived;
+            updatedVenue.Status = VenueStatus.Deleted;
 
             updatedVenue =  _venueService.UpdateAsync(updatedVenue).Result.Value;
 
