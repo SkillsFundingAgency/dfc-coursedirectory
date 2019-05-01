@@ -21,7 +21,7 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Venues
         string PostCode { get; }
         decimal Latitude { get; set; }
         decimal Longitude { get; set; }
-        VenueStatus Status { get; }
+        VenueStatus Status { get; set; }
         DateTime DateAdded { get; }
         DateTime DateUpdated { get; }
         string UpdatedBy { get; }

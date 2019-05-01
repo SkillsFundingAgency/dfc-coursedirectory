@@ -10,8 +10,9 @@ namespace Dfc.CourseDirectory.Models.Models.Venues
 {
     public enum VenueStatus
     {
-        Live = 97,
-        Archived = 98,
+        Imported = 0,
+        Live = 1,
+        Deleted = 2,
         Uknown = 99
     }
 
@@ -47,7 +48,7 @@ namespace Dfc.CourseDirectory.Models.Models.Venues
         public decimal Latitude { get; set; }
         [JsonProperty("LONGITUDE")]
         public decimal Longitude { get; set; }
-        public VenueStatus Status { get; }
+        public VenueStatus Status { get; set; }
         public DateTime DateAdded { get; }
         public DateTime DateUpdated { get; }
         public string UpdatedBy { get; }

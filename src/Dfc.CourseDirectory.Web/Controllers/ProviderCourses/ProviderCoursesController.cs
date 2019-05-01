@@ -301,6 +301,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
 
             if (courseRunId.HasValue && courseRunId.Value != Guid.Empty)
             {
+                model.CourseRunId = courseRunId.Value.ToString();
                 bool courseRunExists = model.ProviderCourseRuns.Any(x => x.CourseRunId == courseRunId.ToString());
 
                 if(courseRunExists == false)
@@ -445,6 +446,10 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
                     .Where(x => x.CourseName.ToLower().Contains(requestModel.Keyword.ToLower())
                                 || x.QualificationCourseTitle.ToLower().Contains(requestModel.Keyword.ToLower())
                                 || x.LearnAimRef.ToLower().Contains(requestModel.Keyword.ToLower())
+                                 || x.AttendancePattern.ToLower().Contains(requestModel.Keyword.ToLower())
+                                  || x.DeliveryMode.ToLower().Contains(requestModel.Keyword.ToLower())
+                                   || x.Venue.ToLower().Contains(requestModel.Keyword.ToLower())
+                                    || x.Region.ToLower().Contains(requestModel.Keyword.ToLower())
                                 || (!string.IsNullOrEmpty(x.CourseTextId) && x.CourseTextId.ToLower().Contains(requestModel.Keyword.ToLower()))
                                 ).ToList();
             }
