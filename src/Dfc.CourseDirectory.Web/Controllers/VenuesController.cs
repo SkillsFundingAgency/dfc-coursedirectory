@@ -5,10 +5,14 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using Dfc.CourseDirectory.Common;
+using Dfc.CourseDirectory.Models.Interfaces.Venues;
+using Dfc.CourseDirectory.Models.Models.Courses;
 using Dfc.CourseDirectory.Models.Models.Onspd;
 using Dfc.CourseDirectory.Models.Models.Venues;
 using Dfc.CourseDirectory.Services;
+using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces;
+using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.OnspdService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 using Dfc.CourseDirectory.Services.OnspdService;
@@ -39,9 +43,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IVenueService _venueService;
         private readonly IOnspdSearchHelper _onspdSearchHelper;
+        private readonly ICourseService _courseService;
+
         private ISession _session => _contextAccessor.HttpContext.Session;
 
-        
+
         public VenuesController(
             ILogger<VenuesController> logger,
             IPostCodeSearchService postCodeSearchService,
@@ -49,13 +55,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
             IVenueSearchHelper venueSearchHelper,
             IHttpContextAccessor contextAccessor,
             IVenueService venueService,
-            IOnspdSearchHelper onspdSearchHelper)
+            IOnspdSearchHelper onspdSearchHelper,
+            ICourseService courseService)
         {
             Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(postCodeSearchService, nameof(postCodeSearchService));
             Throw.IfNull(venueSearchSettings, nameof(venueSearchSettings));
             Throw.IfNull(contextAccessor, nameof(contextAccessor));
             Throw.IfNull(venueService, nameof(venueService));
+            Throw.IfNull(courseService, nameof(courseService));
 
             _logger = logger;
             _postCodeSearchService = postCodeSearchService;
@@ -64,6 +72,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _contextAccessor = contextAccessor;
             _venueService = venueService;
             _onspdSearchHelper = onspdSearchHelper;
+            _courseService = courseService;
         }
         /// <summary>
         /// Need to return a VenueSearchResultModel within the VenueSearchResultModel
@@ -91,8 +100,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
 
-           
-         
+
+
         }
         private async Task<VenueSearchResultsViewModel> GetVenues(int ukprn)
         {
@@ -128,6 +137,41 @@ namespace Dfc.CourseDirectory.Web.Controllers
             };
             return viewModel;
         }
+
+        private async Task<VenueSearchResultsViewModel> GetVenues(VenueSearchResultItemModel deletedVenue)
+        {
+            var UKPRN = _session.GetInt32("UKPRN");
+
+            if (!UKPRN.HasValue)
+            {
+                return null;
+            }
+            VenueSearchRequestModel requestModel = new VenueSearchRequestModel
+            {
+                SearchTerm = UKPRN.ToString()
+            };
+
+            VenueSearchResultModel model;
+            var criteria = _venueSearchHelper.GetVenueSearchCriteria(requestModel);
+            var result = await _venueService.SearchAsync(criteria);
+            if (result.IsSuccess && result.HasValue)
+            {
+                var items = _venueSearchHelper.GetVenueSearchResultItemModels(result.Value.Value);
+                model = new VenueSearchResultModel(
+                    items, deletedVenue);
+            }
+            else
+            {
+                model = new VenueSearchResultModel(result.Error);
+            }
+
+            var viewModel = new VenueSearchResultsViewModel
+            {
+                Result = model
+            };
+            return viewModel;
+        }
+
         [Authorize]
         public IActionResult AddVenue()
         {
@@ -267,7 +311,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
-            
+
 
             var onspd = _onspdSearchHelper.GetOnsPostcodeData(requestModel.Postcode);
             var latitude = onspd.lat;
@@ -280,10 +324,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     UKPRN.Value,
                     requestModel.VenueName,
                     requestModel.AddressLine1,
-                    (null != requestModel.AddressLine2 ? requestModel.AddressLine2 : string.Empty) ,
+                    (null != requestModel.AddressLine2 ? requestModel.AddressLine2 : string.Empty),
                     null,
                     requestModel.TownOrCity,
-                    (null != requestModel.County ? requestModel.County : string.Empty), 
+                    (null != requestModel.County ? requestModel.County : string.Empty),
                     requestModel.Postcode,
                     latitude,
                     longitude,
@@ -295,7 +339,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 var updatedVenue = await _venueService.UpdateAsync(venue);
                 updated = true;
                 venueID = updatedVenue.Value.ID;
-              
+
             }
             else
             {
@@ -372,6 +416,63 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return View(model);
         }
 
+        [Authorize]
+        public async Task<IActionResult> CheckForCourses(Guid VenueId)
+        {
+            List<Course> Courses = new List<Course>();
 
+            int? UKPRN = _session.GetInt32("UKPRN");
+
+            if (!UKPRN.HasValue)
+            {
+                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
+            }
+
+
+            ICourseSearchResult coursesByUKPRN = (!UKPRN.HasValue
+                   ? null
+                   : _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(UKPRN))
+                       .Result.Value);
+            Courses = coursesByUKPRN.Value.SelectMany(o => o.Value).SelectMany(i => i.Value).ToList();
+
+            var liveCourseRuns = Courses.SelectMany(x => x.CourseRuns).Where(x => x.RecordStatus == Models.Enums.RecordStatus.Live && x.VenueId == VenueId).ToList();
+
+            var migrationPendingCourseRuns = Courses.SelectMany(x => x.CourseRuns).Where(x => x.RecordStatus == Models.Enums.RecordStatus.MigrationPending && x.VenueId == VenueId).ToList();
+
+            var bulkUploadPendingCourseRuns = Courses.SelectMany(x => x.CourseRuns).Where(x => x.RecordStatus == Models.Enums.RecordStatus.BulkUloadPending && x.VenueId == VenueId).ToList();
+
+            var migrationReadyForLiveCourseRuns = Courses.SelectMany(x => x.CourseRuns).Where(x => x.RecordStatus == Models.Enums.RecordStatus.MigrationReadyToGoLive && x.VenueId == VenueId).ToList();
+
+            var bulkUploadReadyForLiveCourseRuns = Courses.SelectMany(x => x.CourseRuns).Where(x => x.RecordStatus == Models.Enums.RecordStatus.BulkUploadReadyToGoLive && x.VenueId == VenueId).ToList();
+
+            var model = new DeleteVenueCheckViewModel()
+            {
+                LiveCoursesExist = liveCourseRuns?.Count() > 0,
+                PendingCoursesExist = migrationPendingCourseRuns?.Count() > 0 || bulkUploadPendingCourseRuns?.Count() > 0 || migrationReadyForLiveCourseRuns?.Count() > 0 || bulkUploadReadyForLiveCourseRuns?.Count() > 0,
+
+            };
+
+            return Ok(model);
+        }
+
+        [Authorize]
+        public async Task<IActionResult> DeleteVenue(Guid VenueId)
+        {
+            int? UKPRN = _session.GetInt32("UKPRN");
+
+            if (!UKPRN.HasValue)
+            {
+                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
+            }
+
+            IVenue updatedVenue = _venueService.GetVenueByIdAsync(new GetVenueByIdCriteria(VenueId.ToString())).Result.Value;
+            updatedVenue.Status = VenueStatus.Deleted;
+
+            updatedVenue =  _venueService.UpdateAsync(updatedVenue).Result.Value;
+
+            VenueSearchResultItemModel deletedVenue = new VenueSearchResultItemModel(HttpUtility.HtmlEncode(updatedVenue.VenueName), updatedVenue.Address1, updatedVenue.Address2, updatedVenue.Town, updatedVenue.County, updatedVenue.PostCode, updatedVenue.ID);
+
+            return View("VenueSearchResults", await GetVenues(deletedVenue));
+        }
     }
 }

@@ -13,6 +13,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult
         public IEnumerable<string> Errors { get; }
         public string SearchTerm { get; }
         public bool Updated { get; }
+        public bool Deleted { get; }
         public VenueSearchResultItemModel NewItem { get; }
         public IEnumerable<VenueSearchResultItemModel> Items { get; }
 
@@ -45,6 +46,18 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult
             Items = items;
             Updated = updated;
         }
+        public VenueSearchResultModel(
+           IEnumerable<VenueSearchResultItemModel> items,
+           VenueSearchResultItemModel deletedItem)
+        {
+            Throw.IfNull(items, nameof(items));
+
+            Errors = new string[] { };
+            NewItem = deletedItem;
+            Deleted = true;
+            Items = items;
+        }
+
         protected override IEnumerable<object> GetEqualityComponents()
         {
             yield return HasErrors;
