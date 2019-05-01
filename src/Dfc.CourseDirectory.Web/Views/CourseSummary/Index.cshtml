@@ -12,7 +12,7 @@
     var studyModeAttribute = Model.StudyMode.GetAttribute<DisplayAttribute>();
 }
 
-        <a asp-controller="ProviderCourses" asp-action="Index" class="govuk-back-link">Back</a>
+        <a asp-controller="ProviderCourses" asp-action="Index" asp-route-courseRunId="@Model.CourseInstanceId" class="govuk-back-link">Back</a>
         <main class="govuk-main-wrapper">
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-two-thirds">
@@ -282,7 +282,7 @@
                     @{
                         if (Model.UpdatedDate.HasValue)
                         {
-                            <p>Last published: <br>@Model.UpdatedDate.Value.ToString("dd MMMM yyyy")</p>
+                            <p>Last updated: <br>@Model.UpdatedDate.Value.ToString("dd MMMM yyyy")</p>
                         }
                         else
                         {

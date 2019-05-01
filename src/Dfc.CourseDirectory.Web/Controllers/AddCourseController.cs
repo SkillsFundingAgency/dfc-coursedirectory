@@ -695,8 +695,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         AttendancePattern = addCourseSection2.AttendanceMode,
                         Regions = addCourseSection2.SelectedRegions,
                         CreatedDate = DateTime.Now,
-                        CreatedBy = "ProviderPortal-AddCourse", // TODO - Change to the name of the logged person 
-
+                        CreatedBy = User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
                         RecordStatus = RecordStatus.Live // TODO - To Be Decided
                     };
 
@@ -732,7 +731,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     AttendancePattern = AttendancePattern.Undefined,
                     Regions = addCourseSection2.SelectedRegions,
                     CreatedDate = DateTime.Now,
-                    CreatedBy = "ProviderPortal-AddCourse", // TODO - Change to the name of the logged person 
+                    CreatedBy = User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
                     RecordStatus = RecordStatus.Live, // TODO - To Be Decided
                     SubRegions = subRegions
                 };
@@ -760,7 +759,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     AttendancePattern = AttendancePattern.Undefined,
                     Regions = _courseService.GetRegions().RegionItems.Select(x => x.Id),
                     CreatedDate = DateTime.Now,
-                    CreatedBy = "ProviderPortal-AddCourse",
+                    CreatedBy = User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
                     RecordStatus = RecordStatus.Live // TODO - To Be Decided
                 };
 
@@ -801,7 +800,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 CourseRuns = courseRuns,
 
                 CreatedDate = DateTime.Now,
-                CreatedBy = "ProviderPortal-AddCourse", // TODO - Change to the name of the logged person
+                CreatedBy = User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault()
 
                 //RecordStatus = RecordStatus.Live // TODO - To Be Decided
             };

@@ -301,6 +301,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
 
             if (courseRunId.HasValue && courseRunId.Value != Guid.Empty)
             {
+                model.CourseRunId = courseRunId.Value.ToString();
                 bool courseRunExists = model.ProviderCourseRuns.Any(x => x.CourseRunId == courseRunId.ToString());
 
                 if(courseRunExists == false)
