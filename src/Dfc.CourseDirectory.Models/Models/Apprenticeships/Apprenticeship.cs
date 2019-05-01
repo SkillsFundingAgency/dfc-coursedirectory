@@ -1,4 +1,5 @@
 ﻿using Dfc.CourseDirectory.Models.Enums;
+using Dfc.CourseDirectory.Models.Interfaces.Apprenticeships;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -15,8 +16,19 @@ namespace Dfc.CourseDirectory.Models.Models.Apprenticeships
         [Description("Framework Code")]
         FrameworkCode = 2
     }
+    public enum ApprenticeshipLocationType
+    {
+        [Description("Undefined")]
+        Undefined = 0,
+        [Description("Classroom based")] // Venue
+        ClassroomBased = 1,
+        [Description("Employer based")] // Region
+        EmployerBased = 2,
+        [Description("Classroom based and employer based")] // Venue with added 
+        ClassroomBasedAndEmployerBased = 3
+    }
 
-    public class Apprenticeship
+    public class Apprenticeship : IApprenticeship
     {
         public Guid id { get; set; } // Cosmos DB id
 
@@ -24,7 +36,7 @@ namespace Dfc.CourseDirectory.Models.Models.Apprenticeships
         public int? TribalProviderId { get; set; } // For backwards compatibility with Tribal
 
         public Guid ProviderId { get; set; } // ???
-        public string ProviderUKPRN { get; set; } // As we are trying to inforce unique UKPRN per Provider
+        public int ProviderUKPRN { get; set; } // As we are trying to inforce unique UKPRN per Provider
 
         // Related like that or by 3 & 2 composite keys
         public ApprenticeshipType ApprenticeshipType { get; set; }
@@ -37,6 +49,8 @@ namespace Dfc.CourseDirectory.Models.Models.Apprenticeships
         public string ContactTelephone { get; set; }
         public string ContactEmail { get; set; }
         public string ContactWebsite { get; set; }
+
+        public IEnumerable<ApprenticeshipLocation> ApprenticeshipLocations { get; set; }
 
         // Standard auditing properties 
         public RecordStatus RecordStatus { get; set; }

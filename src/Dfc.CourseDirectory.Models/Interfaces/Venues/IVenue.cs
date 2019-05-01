@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Models.Venues;
 
 namespace Dfc.CourseDirectory.Models.Interfaces.Venues
@@ -24,6 +25,13 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Venues
         DateTime DateAdded { get; }
         DateTime DateUpdated { get; }
         string UpdatedBy { get; }
+
+        // Apprenticeship related
+        LocationType LocationType { get; set; }
+        int? LocationId { get; set; }
+        string Telephone { get; set; }
+        string Email { get; set; }
+        string Website { get; set; }
     }
 }
 

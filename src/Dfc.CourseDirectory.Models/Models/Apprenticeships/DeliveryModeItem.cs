@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Dfc.CourseDirectory.Models.Interfaces.Apprenticeships;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Dfc.CourseDirectory.Models.Models.Apprenticeships
 {
-    public class DeliveryModeItem
+    public class DeliveryModeItem : IDeliveryModeItem
     {
         public int DeliveryModeId { get; set; }
         public string DeliveryModeName { get; set; }

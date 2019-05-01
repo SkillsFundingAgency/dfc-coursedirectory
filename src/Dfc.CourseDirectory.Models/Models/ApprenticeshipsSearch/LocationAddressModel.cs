@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Dfc.CourseDirectory.Models.Interfaces.ApprenticeshipsSearch;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Dfc.CourseDirectory.Models.Models.ApprenticeshipsSearch
 {
-    public class LocationAddressModel
+    public class LocationAddressModel : ILocationAddressModel
     {
         public string address1 { get; set; }
         public string address2 { get; set; }

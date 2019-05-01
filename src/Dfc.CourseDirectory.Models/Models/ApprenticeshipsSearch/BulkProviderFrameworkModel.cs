@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Dfc.CourseDirectory.Models.Interface.ApprenticeshipsSearch;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Dfc.CourseDirectory.Models.Models.ApprenticeshipsSearch
 {
-    public class BulkProviderFrameworkModel
+    public class BulkProviderFrameworkModel : IBulkProviderFrameworkModel
     {
         //  public int id { get; set; }
         public int frameworkCode { get; set; }

@@ -1,11 +1,12 @@
 ﻿using Dfc.CourseDirectory.Models.Enums;
+using Dfc.CourseDirectory.Models.Interfaces.Apprenticeships;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Dfc.CourseDirectory.Models.Models.Apprenticeships
 {
-    public class Standard
+    public class Standard : IStandard
     {
         public Guid id { get; set; } // Cosmos DB id
 

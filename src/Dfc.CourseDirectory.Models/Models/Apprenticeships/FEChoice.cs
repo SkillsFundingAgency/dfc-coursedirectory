@@ -6,15 +6,14 @@ using System.Text;
 
 namespace Dfc.CourseDirectory.Models.Models.Apprenticeships
 {
-    public class ProgType : IProgType
+    public class FEChoice : IFEChoice
     {
         public Guid id { get; set; } // Cosmos DB id
 
-        public int ProgTypeId { get; set; }
-        public string ProgTypeDesc { get; set; }
-        public string ProgTypeDesc2 { get; set; }
-        public DateTime? EffectiveFrom { get; set; }
-        public DateTime? EffectiveTo { get; set; }
+        public int UPIN { get; set; }
+        public double? LearnerDestination { get; set; }
+        public double? LearnerSatisfaction { get; set; }
+        public double? EmployerSatisfaction { get; set; }
 
         // Standard auditing properties 
         public RecordStatus RecordStatus { get; set; }
