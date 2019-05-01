@@ -17,11 +17,11 @@
     }
 
 
-    <div class="">
-        <select asp-for="@Model.VenueId" asp-items="@Model.Venues" class="govuk-select" val-required-message="Select venue"> 
+<div class="">
+    <select asp-for="@Model.VenueId" asp-items="@Model.Venues" class="govuk-select" val-required-message="Select venue"></select>
 
-        </select>
-    </div>
+    @Html.ActionLink("Add a new venue", "AddVenue", "Venues", new { }, new { @class = "govuk-link" })
+</div>
 </div>
 
 <script>
