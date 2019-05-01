@@ -10,6 +10,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
         public string LabelText { get; set; }
         public string HintText { get; set; }
         public string AriaDescribedBy { get; set; }
+        public bool National { get; set; }
 
         public SelectRegionModel()
         {
