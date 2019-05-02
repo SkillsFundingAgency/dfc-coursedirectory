@@ -21,7 +21,7 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Apprenticeships
         Guid? FrameworkId { get; set; }
         Guid? StandardId { get; set; }
 
-        // It's a duplication of the framework and standard relations
+        // It's a duplication of the framework and standard relations.
         int FrameworkCode { get; set; }
         int ProgType { get; set; }
         int PathwayCode { get; set; }
