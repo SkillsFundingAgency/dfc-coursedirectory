@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Newtonsoft.Json;
+using Dfc.CourseDirectory.Models.Enums;
 
 namespace Dfc.CourseDirectory.Models.Models.Venues
 {
@@ -52,7 +53,14 @@ namespace Dfc.CourseDirectory.Models.Models.Venues
         public DateTime DateUpdated { get; }
         public string UpdatedBy { get; }
 
-        public Venue(
+        // Apprenticeship related
+        public LocationType LocationType { get; set; }
+        public int? LocationId { get; set; }
+        public string Telephone { get; set; }
+        public string Email { get; set; }
+        public string Website { get; set; }
+
+public Venue(
             string id,
             int ukPrn,
             string venueName,
