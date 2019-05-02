@@ -43,6 +43,13 @@ namespace Dfc.CourseDirectory.Models.Models.Apprenticeships
         public Guid? FrameworkId { get; set; }
         public Guid? StandardId { get; set; }
 
+        // It's a duplication of the framework and standard relations
+        public int FrameworkCode { get; set; }
+        public int ProgType { get; set; }
+        public int PathwayCode { get; set; }
+        public int StandardCode { get; set; }
+        public int Version { get; set; }
+
         // Common properties for Standard & Framework
         public string MarketingInformation { get; set; }
         public string Url { get; set; }
