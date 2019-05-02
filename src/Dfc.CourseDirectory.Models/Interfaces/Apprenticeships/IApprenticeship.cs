@@ -21,6 +21,13 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Apprenticeships
         Guid? FrameworkId { get; set; }
         Guid? StandardId { get; set; }
 
+        // It's a duplication of the framework and standard relations.
+        int FrameworkCode { get; set; }
+        int ProgType { get; set; }
+        int PathwayCode { get; set; }
+        int StandardCode { get; set; }
+        int Version { get; set; }
+
         // Common properties for Standard & Framework
         string MarketingInformation { get; set; }
         string Url { get; set; }
