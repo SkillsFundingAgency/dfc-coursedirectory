@@ -234,6 +234,9 @@ namespace Dfc.CourseDirectory.Web
             }).AddCookie(options =>
             {
                 options.ExpireTimeSpan = TimeSpan.FromHours(6);
+                options.SlidingExpiration = true;
+                options.LogoutPath = "/Home";
+                options.AccessDeniedPath = "/Identity/Account/Login";
                 options.Events = new CookieAuthenticationEvents
                 {
 
