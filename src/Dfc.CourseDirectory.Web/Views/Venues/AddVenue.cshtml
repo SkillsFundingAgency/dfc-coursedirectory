@@ -1,5 +1,8 @@
 ﻿@using Dfc.CourseDirectory.Web.ViewComponents.VenueName
 @using Dfc.CourseDirectory.Web.ViewComponents.PostcodeLookup
+@using Microsoft.AspNetCore.Http;
+
+@inject IHttpContextAccessor HttpContextAccessor
 
 <div class="govuk-grid-row">
 
@@ -26,7 +29,21 @@
             <div class="govuk-form-group">
                 <a id="manualLink" class="govuk-link" asp-controller="Venues" asp-action="AddVenueManualAddress" asp-route-edit="false">Enter address manually</a>
             </div>
-            @Html.ActionLink("Cancel", "Index", "Venues", null, new { @class = "govuk-link" })
+
+            @{
+                var option = HttpContextAccessor.HttpContext.Session.GetString("Option");
+                if (option.ToUpper() == "ADDNEWVENUE")
+                {
+                    @Html.ActionLink("Cancel", "SummaryToAddCourseRun", "AddCourse", null, new { @class = "govuk-link" })
+                }
+                else
+                {
+                     @Html.ActionLink("Cancel", "Index", "Venues", null, new { @class = "govuk-link" })
+                }
+            }
+
+
+
         </form>
     </div>
 </div>
@@ -34,7 +51,7 @@
 <script>
     (function ($) {
         $(function () {
-          
+
         });
     })(jQuery);
 </script>

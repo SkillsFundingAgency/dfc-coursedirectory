@@ -4,13 +4,15 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Newtonsoft.Json;
+using Dfc.CourseDirectory.Models.Enums;
 
 namespace Dfc.CourseDirectory.Models.Models.Venues
 {
     public enum VenueStatus
     {
-        Live = 97,
-        Archived = 98,
+        Imported = 0,
+        Live = 1,
+        Deleted = 2,
         Uknown = 99
     }
 
@@ -51,7 +53,14 @@ namespace Dfc.CourseDirectory.Models.Models.Venues
         public DateTime DateUpdated { get; }
         public string UpdatedBy { get; }
 
-        public Venue(
+        // Apprenticeship related
+        public LocationType LocationType { get; set; }
+        public int? LocationId { get; set; }
+        public string Telephone { get; set; }
+        public string Email { get; set; }
+        public string Website { get; set; }
+
+public Venue(
             string id,
             int ukPrn,
             string venueName,

@@ -223,7 +223,7 @@
 
                 }
 
-                @if (adminLogin.Succeeded || providerLogin.Succeeded)
+                @if ((adminLogin.Succeeded || providerLogin.Succeeded) && Model.Items.Any() & Model.Items.Count() > 5)
                 {
                     <div class="govuk-form-group" style="margin-top: 30px;">
                         <button type="submit" class="govuk-button">

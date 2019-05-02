@@ -102,7 +102,17 @@ namespace Dfc.CourseDirectory.Models.Enums
         NonRegulated = 1
     }
 
-  
+    public enum LocationType
+    {
+        [Description("Undefined")]
+        Undefined = 0,
+        [Description("Venue")]
+        Venue = 1,
+        [Description("Region")]
+        Region = 2,
+        [Description("SubRegion")]
+        SubRegion = 3
+    }
 
 
     public class Enums
