@@ -21,6 +21,7 @@ namespace Dfc.CourseDirectory.Web.RequestModels
         public int DurationLength { get; set; }
         public StudyMode StudyMode { get; set; }
         public AttendancePattern AttendanceMode { get; set; }
+        public bool National { get; set; }
 
         public Guid[] SelectedVenues { get; set; }
         public string[] SelectedRegions { get; set; }

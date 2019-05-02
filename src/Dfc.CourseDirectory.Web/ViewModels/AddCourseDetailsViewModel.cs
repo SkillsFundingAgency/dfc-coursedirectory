@@ -2,6 +2,7 @@
 using Dfc.CourseDirectory.Models.Models;
 using Dfc.CourseDirectory.Models.Models.Courses;
 using Dfc.CourseDirectory.Models.Models.Regions;
+using Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseRegion;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.SelectVenue;
 
 namespace Dfc.CourseDirectory.Web.ViewModels
@@ -45,7 +46,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels
         public string CostDescription { get; set; }
 
         public SelectVenueModel SelectVenue { get; set; }
-        public SelectRegionModel SelectRegion { get; set; }
+        public ChooseRegionModel ChooseRegion { get; set; }
 
         public DeliveryMode DeliveryMode { get; set; }
         public string CourseProviderReference { get; set; }

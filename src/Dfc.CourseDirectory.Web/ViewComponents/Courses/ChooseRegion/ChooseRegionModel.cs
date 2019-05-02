@@ -10,6 +10,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseRegion
 {
     public class ChooseRegionModel
     {
+        public bool National { get; set; }
         public SelectRegionModel Regions { get; set; }
 
       

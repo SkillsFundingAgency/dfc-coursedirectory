@@ -22,6 +22,8 @@ namespace Dfc.CourseDirectory.Web.ViewModels
         public string AttendancePattern { get; set; }
         public string AttendanceTime { get; set; }
 
+        public bool National { get; set; }
+
         public string WhoIsThisCourseFor { get; set; }
         public string EntryRequirements { get; set; }
         public string WhatYouWillLearn { get; set; }

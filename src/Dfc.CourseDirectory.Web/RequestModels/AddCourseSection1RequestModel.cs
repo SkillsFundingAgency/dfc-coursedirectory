@@ -17,7 +17,7 @@ namespace Dfc.CourseDirectory.Web.RequestModels
         public string WhatYouNeed { get; set; }
         public string HowAssessed { get; set; }
         public string WhereNext { get; set; }
-
+        public bool National { get; set; }
         public bool AdultEducationBudget { get; set; }
         public bool AdvancedLearnerLoan { get; set; }
 

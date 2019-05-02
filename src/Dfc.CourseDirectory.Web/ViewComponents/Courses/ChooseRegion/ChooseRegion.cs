@@ -31,10 +31,10 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseRegion
             _contextAccessor = contextAccessor;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync(SelectRegionModel selectRegion)
+        public async Task<IViewComponentResult> InvokeAsync(ChooseRegionModel model)
         {
-            ChooseRegionModel model = new ChooseRegionModel();
-            model.Regions = selectRegion ?? _courseService.GetRegions();
+            if(model.Regions == null)
+                model.Regions =_courseService.GetRegions();
 
             return View("~/ViewComponents/Courses/ChooseRegion/Default.cshtml", model);
         }
