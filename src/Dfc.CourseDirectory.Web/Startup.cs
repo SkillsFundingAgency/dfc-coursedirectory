@@ -317,7 +317,7 @@ namespace Dfc.CourseDirectory.Web
                 {
                     throw new Exception("Missing environment variable " + envKeyClientSecret + " - get this from the DfE Sign-in team.");
                 }
-
+                
                 options.ClientSecret = clientSecret.ToString();
                 options.ResponseType = OpenIdConnectResponseType.Code;
                 options.GetClaimsFromUserInfoEndpoint = true;
@@ -341,6 +341,7 @@ namespace Dfc.CourseDirectory.Web
                     InboundClaimTypeMap = new Dictionary<string, string>(),
                     TokenLifetimeInMinutes = 20,
                     SetDefaultTimesOnTokenCreation = true,
+                    
                 };
                 options.ProtocolValidator = new OpenIdConnectProtocolValidator
                 {

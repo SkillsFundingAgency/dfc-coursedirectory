@@ -85,7 +85,7 @@
         @await Component.InvokeAsync(nameof(AddStartDate), new AddStartDateModel()
         {
             StartDateType = Model.StartDateType,
-            Day = Model.Day,
+            Day = Model.Day ,
             Month = Model.Month,
             Year = Model.Year,
             DayAriaDescribedBy = "",
@@ -114,20 +114,13 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
                 <div class="govuk-checkboxes" id="SelectVenueCheckBoxes" val-required-message="Select a venue">
-                    @{ var i = 0;
-                        var venues = new List<string>();
-                        var regions = new List<Guid>();
-                        //Guid[] venues;
-                        //string[] regions;
-                    }
+                    @{ var i = 0; }
                     @if (Model.SelectVenue.VenueItems.Count() == 1)
                     {
                         <div class="govuk-checkboxes__item">
                             <input class="govuk-checkboxes__input" id="VenueName-@i" name="SelectedVenues" type="checkbox" value="@Model.SelectVenue.VenueItems.First().Id" checked="checked" onclick="return false;" />
                             <label class="govuk-label govuk-checkboxes__label" for="SelectedVenues">@Model.SelectVenue.VenueItems.First().VenueName</label>
                         </div>
-                        venues.Add(Model.SelectVenue.VenueItems.First().Id);
-                        //venues = @Model.SelectVenue.VenueItems.First().Id;
                     }
                     else
                     {
@@ -138,46 +131,8 @@
                                 <input class="govuk-checkboxes__input" id="VenueName-@i" name="SelectedVenues" type="checkbox" value="@item.Id" @item.Checked.ThenNullableCheck() />
                                 <label class="govuk-label govuk-checkboxes__label" for="SelectedVenues">@item.VenueName</label>
                             </div>
-                            @if (item.Checked.HasValue)
-                            {
-                                @if (item.Checked.Value == true)
-                                {
-                                    venues.Add(item.Id);
-                                }
-                            }
-
                         }
                     }
-                    <a class="govuk-link" id="addNewVenue">Add a new venue</a>
-                    @*@Html.ActionLink("link text", "AddNewVenue", "AddCourse", new { SelectedVenues = new Guid[] { Guid.NewGuid() } }, null)*@
-
-                    @*@Html.ActionLink("link text", "AddNewVenue", "AddCourse", new { SelectedVenues = @Model.SelectVenue }, null)*@
-
-                    @*<a asp-controller="AddCourse" asp-action="AddNewVenue" class="link--button" id=""
-                        asp-route-CourseName="@Model.CourseName"
-                        asp-route-CourseProviderReference="@Model.CourseProviderReference"
-                        asp-route-DeliveryMode="@Model.DeliveryMode"
-                        asp-route-StartDateType="@Model.StartDateType "
-                        asp-route-Day="@Model.Day "
-                        asp-route-Month="@Model.Month "
-                        asp-route-Year="@Model.Year "
-                        asp-route-Url="@Model.Url "
-                        asp-route-Cost="@Model.Cost "
-                        asp-route-CostDescription="@Model.CostDescription "
-                        asp-route-AdvancedLearnerLoan="@Model.AdvancedLearnerLoan "
-                        asp-route-DurationUnit="@Model.DurationUnit "
-                        asp-route-DurationLength="@Model.DurationLength "
-                        asp-route-StudyMode="@Model.StudyMode "
-                        asp-route-AttendanceMode="@Model.AttendanceMode "
-                        asp-route-SelectedVenues="@venues.ToArray()"
-                        asp-route-SelectedRegions=@null
-                        asp-route-CourseMode="@Model.CourseMode">Add a new venue</a>*@
-
-                    @*@Html.ActionLink("Add a new venue", "AddNewVenue", "AddCourse", new { }, new { @class = "govuk-link" })*@
-                    }
-
-
-
                 </div>
             </div>
         </div>
@@ -185,43 +140,10 @@
 
     <div class="govuk-form-group" id="RegionItemsCheckboxList" style="@Model.DeliveryMode.IfNotWorkBasedDisplayNone()">
         <div id="sectionRegions">
-            @await Component.InvokeAsync(nameof(ChooseRegion), Model.SelectRegion)
+            @await Component.InvokeAsync(nameof(ChooseRegion), Model.ChooseRegion)
         </div>
     </div>
 
-    @*<div class="govuk-form-group" id="RegionItemsCheckboxList" style="@Model.DeliveryMode.IfNotWorkBasedDisplayNone()">
-            <label class="govuk-label" for="select-region">
-                @Model.SelectRegion.LabelText
-            </label>
-            <span id="select-region-hint" class="govuk-hint">
-                @Model.SelectRegion.HintText
-            </span>
-            <div class="govuk-grid-row">
-                <div class="govuk-grid-column-full">
-                    <div class="govuk-checkboxes" id="SelectRegionCheckBoxes" val-required-message="Select a region">
-                        @{ var j = 0; }
-                        @if (Model.SelectRegion.RegionItems.Count() == 1)
-                        {
-                            <div class="govuk-checkboxes__item">
-                                <input class="govuk-checkboxes__input" id="RegionName-@j" name="SelectedRegions" type="checkbox" value="@Model.SelectRegion.RegionItems.First().Id" checked="checked" onclick="return false;" />
-                                <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@Model.SelectRegion.RegionItems.First().RegionName</label>
-                            </div>
-                        }
-                        else
-                        {
-                            foreach (var item in Model.SelectRegion.RegionItems)
-                            {
-                                j++;
-                                <div class="govuk-checkboxes__item">
-                                    <input class="govuk-checkboxes__input" id="RegionName-@j" name="SelectedRegions" type="checkbox" value="@item.Id" @item.Checked.ThenNullableCheck() />
-                                    <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@item.RegionName</label>
-                                </div>
-                            }
-                        }
-                    </div>
-                </div>
-            </div>
-        </div>*@
 
     <div id="sectionUrl">
         @await Component.InvokeAsync(nameof(UrlInput), new UrlInputModel
@@ -251,7 +173,7 @@
         @await Component.InvokeAsync(nameof(Duration), new DurationModel
         {
             DurationLength = Model.DurationLength,
-            DurationUnit = Model.DurationUnit,
+            DurationUnit =  Model.DurationUnit,
             LabelText = "Duration",
             HintText = "Select the duration of the course",
             AriaDescribedBy = "Select course duration"
@@ -318,9 +240,6 @@
     (function($) {
         $(function () {
             var validStates = [];
-
-            var $addNewVenueButton = $("#addNewVenue");
-
             var $button = $("#publish");
             var $errorSummary = $("#errorsummary").govUkErrorSummary();
             var $courseName = $("#@nameof(Model.CourseName)").govUkInput();
@@ -346,7 +265,7 @@
 
             //Default options on page load
             var $defaultAttendancePattern = $("#@AttendancePattern.Daytime");
-            $defaultAttendancePattern.prop("checked", true);
+            $defaultAttendancePattern.prop("checked", true);            
             var $defaultStudyMode = $("#@StudyMode.FullTime");
             $defaultStudyMode.prop("checked", true);
 
@@ -533,8 +452,9 @@
                 $regions.govUkCheckboxes("validState");
                 $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $regions[0].id);
                 $errorSummary.govUkErrorSummary("hideIfEmpty")
+                var $nationalRadio = $("#nationalRadioButtons input[type=radio]:checked").val();
                 validStates.push(true);
-                if (isWorkBased & !$.requiredValidate($regions.find("input[type='checkbox']:checked").val())) {
+                if (isWorkBased & !$.requiredValidate($regions.find("input[type='checkbox']:checked").val()) & $nationalRadio === "false") {
                     $regions.govUkCheckboxes("invalidState", $regions.attr("val-required-message"));
                     var regionsErrorHashLinks = $regions.govUkCheckboxes("getErrorHashLinks");
                     $errorSummary.govUkErrorSummary("add", regionsErrorHashLinks);
@@ -665,30 +585,6 @@
                 }
             }
 
-            // $addNewVenueButton.on("click", function (event) {
-            //    event.preventDefault();
-
-            //     var countedCheckedCheckboxes = $venueCheckboxes.filter(':checked').length;
-
-            //             $.ajax({
-            //url: '/AddCourse/AddNewVenue',
-            //type: "GET",
-            //dataType: "json",
-            //data: JSON.stringify({
-            //    ProviderId: $('#ProviderId').val(),
-            //    UKPRN: $('#SearchTerm').val()
-            //}),
-            //contentType: "application/json; charset=utf-8",
-            //success: function (data) {
-
-            //},
-            //error: function (xhr, ajaxOptions, thrownError) {
-
-            //}
-            //             });
-
-            //});
-
             $button.on("click", function (event) {
                 event.preventDefault();
                 validate();
@@ -757,4 +653,3 @@
         });
     })(jQuery);
 </script>
-

@@ -24,6 +24,7 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Courses
         int? DurationValue { get; set; }
         StudyMode StudyMode { get; set; }
         AttendancePattern AttendancePattern { get; set; }
+        bool National { get; set; }
         IEnumerable<string> Regions { get; }
         RecordStatus RecordStatus { get; set; }
         DateTime CreatedDate { get; set; }

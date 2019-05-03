@@ -346,7 +346,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     //viewModel.SelectRegion = GetRegions();
 
                     _session.SetObject(SessionVenues, viewModel.SelectVenue);
-                    _session.SetObject(SessionRegions, viewModel.SelectRegion);
+                    _session.SetObject(SessionRegions, viewModel.ChooseRegion.Regions);
 
                     if (addCourseSection2Session != null)
                     {
@@ -383,7 +383,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         {
                             foreach (var selectedRegion in addCourseSection2Session.SelectedRegions)
                             {
-                                viewModel.SelectRegion.RegionItems.First(x => x.Id == selectedRegion.ToString())
+                                viewModel.ChooseRegion.Regions.RegionItems.First(x => x.Id == selectedRegion.ToString())
                                     .Checked = true;
                             }
                         }
@@ -1281,7 +1281,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
            // viewModel.SelectRegion = GetRegions();
 
             _session.SetObject(SessionVenues, viewModel.SelectVenue);
-            _session.SetObject(SessionRegions, viewModel.SelectRegion);
+            _session.SetObject(SessionRegions, viewModel.ChooseRegion.Regions);
 
             if (addCourseSection2Session != null)
             {
@@ -1313,7 +1313,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 {
                     foreach (var selectedRegion in addCourseSection2Session.SelectedRegions)
                     {
-                        viewModel.SelectRegion.RegionItems.First(x => x.Id == selectedRegion.ToString()).Checked = true;
+                        viewModel.ChooseRegion.Regions.RegionItems.First(x => x.Id == selectedRegion.ToString()).Checked = true;
                     }
                 }
             }
