@@ -1,5 +1,7 @@
 ﻿@using Dfc.CourseDirectory.Models.Enums
 @using Dfc.CourseDirectory.Models.Models.Courses
+@using Dfc.CourseDirectory.Models.Models.Venues
+@using Dfc.CourseDirectory.Web.Extensions
 @using Dfc.CourseDirectory.Web.ViewComponents.CourseName
 @using Dfc.CourseDirectory.Web.ViewComponents.CourseProviderReference
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.AddStartDate
@@ -12,12 +14,58 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.Extensions
 @using Dfc.CourseDirectory.Web.ViewComponents.Notification
 @using Dfc.CourseDirectory.Web.ViewComponents.UrlInput
+@using Microsoft.AspNetCore.Http
 @using StudyMode = Dfc.CourseDirectory.Models.Models.Courses.StudyMode
 @model Dfc.CourseDirectory.Web.ViewModels.EditCourse.EditCourseRunViewModel
 
+@{
+    Layout = "_Layout_Your_Courses";
+}
+
+@inject IHttpContextAccessor HttpContextAccessor
 <h1 class="govuk-heading-l" style="padding-top: 20px;">
     Edit course details
 </h1>
+
+@{
+    var newVenueObject = HttpContextAccessor.HttpContext.Session.GetObject<AddedVenueModel>("NewAddedVenue");
+    if (newVenueObject != null)
+    {
+        string message = "";
+        if (!string.IsNullOrWhiteSpace(newVenueObject.VenueName))
+        {
+            message += string.Concat(newVenueObject.VenueName, ", ");
+        }
+        if (!string.IsNullOrWhiteSpace(newVenueObject.AddressLine1))
+        {
+            message += string.Concat(newVenueObject.AddressLine1, ", ");
+        }
+        if (!string.IsNullOrWhiteSpace(newVenueObject.AddressLine2))
+        {
+            message += string.Concat(newVenueObject.AddressLine2, ", ");
+        }
+        if (!string.IsNullOrWhiteSpace(newVenueObject.Town))
+        {
+            message += string.Concat(newVenueObject.Town, ", ");
+        }
+        if (!string.IsNullOrWhiteSpace(newVenueObject.County))
+        {
+            message += string.Concat(@newVenueObject.County, ", ");
+        }
+        if (!string.IsNullOrWhiteSpace(newVenueObject.PostCode))
+        {
+            message += newVenueObject.PostCode;
+
+        }
+
+        @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+        {
+            NotificationTitle = "New venue added:",
+            NotificationMessage = message,
+            ClassType = "success-summary"
+        })
+    }
+}
 
 @await Component.InvokeAsync(nameof(Notification), new NotificationModel
 {
@@ -44,11 +92,13 @@
     @Html.HiddenFor(x => x.QualificationType)
     @Html.HiddenFor(x => x.Mode)
     @Html.HiddenFor(x => x.CurrentCourseRunDate)
+    @Html.HiddenFor(x => x.ValPastDateRef)
+    @Html.HiddenFor(x => x.Mode)
 
-@Html.HiddenFor(x => x.LearnAimRefTitle)
-@Html.HiddenFor(x => x.NotionalNVQLevelv2)
-@Html.HiddenFor(x => x.AwardOrgCode)
-@Html.HiddenFor(x => x.LearnAimRef)
+    @Html.HiddenFor(x => x.LearnAimRefTitle)
+    @Html.HiddenFor(x => x.NotionalNVQLevelv2)
+    @Html.HiddenFor(x => x.AwardOrgCode)
+    @Html.HiddenFor(x => x.LearnAimRef)
 
     <div class="section" id="sectionCourseName">
         @await Component.InvokeAsync(nameof(CourseName), new CourseNameModel
@@ -128,7 +178,7 @@
                 {
                     <details class="govuk-details">
                         <summary class="govuk-details__summary">
-                            <span id="region"@item.Id class="govuk-details__summary-text">
+                            <span id="region" @item.Id class="govuk-details__summary-text">
                                 @item.RegionName
                             </span>
                         </summary>
@@ -142,7 +192,7 @@
                                     x++;
 
                                     <div class="govuk-checkboxes__item">
-                                        <input class="govuk-checkboxes__input" id="RegionName-@x" region-id="@item.Id" name="SelectedRegions" type="checkbox" value="@subregion.Id" @subregion.Checked.ThenNullableCheck()/>
+                                        <input class="govuk-checkboxes__input" id="RegionName-@x" region-id="@item.Id" name="SelectedRegions" type="checkbox" value="@subregion.Id" @subregion.Checked.ThenNullableCheck() />
                                         <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@subregion.SubRegionName</label>
                                     </div>
 
@@ -257,14 +307,16 @@
             var $addNewVenueButton = $("#addNewVenue");
             var $courseId = $("#@nameof(Model.CourseId)");
             var $courseRunId = $("#@nameof(Model.CourseRunId)");
+            var $mode = $("#@nameof(Model.Mode)");
 
-            
             var $learnAimRefTitle = $("#@nameof(Model.LearnAimRefTitle)");
             var $notionalNVQLevelv2 = $("#@nameof(Model.NotionalNVQLevelv2)");
             var $awardOrgCode = $("#@nameof(Model.AwardOrgCode)");
             var $learnAimRef = $("#@nameof(Model.LearnAimRef)");
 
-
+            var $day = $("#Day");
+            var $month = $("#Month");
+            var $year = $("#Year");
 
             var validStates = [];
             var $button = $("#save");
@@ -644,12 +696,6 @@
             $addNewVenueButton.on("click", function (e) {
                 e.preventDefault();
 
-                var $allCheckedVenues =
-                    $("input[name='SelectedVenues']:checkbox:checked");
-                var $allCheckedRegions =
-                    $("input[name='SelectedRegions']:checkbox:checked");
-
-
                 makeRequestWithPayload({
                     LearnAimRefTitle: $learnAimRefTitle.val(),
                     NotionalNVQLevelv2: $notionalNVQLevelv2.val(),
@@ -661,23 +707,19 @@
                     CourseProviderReference: $courseProviderReference.val(),
                     DeliveryMode: $radioDeliveryMode.find("input[type='radio']:checked").val(),
                     StartDateType: $("input[name='StartDateType']:checked").val(),
-                    //Day
-                    // Month
-                    // Year
+                    VenueId:$selectedVenue.val(),
+                    Day:$day.val(),
+                     Month:$month.val(),
+                     Year:$year.val(),
                     Url: $url.val(),
                     Cost: $cost.val(),
                     CostDescription: $costDescription.val(),
+                    Mode:$mode.val(),
                     //AdvancedLearnerLoan
                     DurationUnit: $duration.find("select").val(),
                     DurationLength: $duration.find("input").val(),
                     StudyMode: $studyMode.find("input[type='radio']:checked").val(),
-                    AttendanceMode: $attendance.find("input[type='radio']:checked").val(),
-                    SelectedVenues: $allCheckedVenues.map(function () {
-                        return $(this).val();
-                    }).get(),
-                    LevelFilter: $allCheckedRegions.map(function () {
-                        return $(this).val();
-                    }).get()
+                    AttendanceMode: $attendance.find("input[type='radio']:checked").val()
 
 
                 },
@@ -747,7 +789,7 @@
 
             $("a").on("click",
                 function(e) {
-                    
+
                     var $regionId = $(this).attr('region-id');
 
                     if ($regionId) {

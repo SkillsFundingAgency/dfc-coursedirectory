@@ -389,6 +389,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 return RedirectToAction("Reload", "EditCourseRun");
             }
 
+            if (option.ToUpper() == "ADDNEWVENUEFORCOPY")
+            {
+                return RedirectToAction("Reload", "CopyCourseRun");
+            }
+
             if (option.ToUpper() == "ADDNEWVENUE")
             {
                 return RedirectToAction("SummaryToAddCourseRun", "AddCourse");

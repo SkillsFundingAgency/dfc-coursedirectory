@@ -1,5 +1,7 @@
 ﻿@using Dfc.CourseDirectory.Models.Enums
 @using Dfc.CourseDirectory.Models.Models.Courses
+@using Dfc.CourseDirectory.Models.Models.Venues
+@using Dfc.CourseDirectory.Web.Extensions
 @using Dfc.CourseDirectory.Web.ViewComponents.CourseName
 @using Dfc.CourseDirectory.Web.ViewComponents.CourseProviderReference
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.AddStartDate
@@ -12,12 +14,56 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.Extensions
 @using Dfc.CourseDirectory.Web.ViewComponents.Notification
 @using Dfc.CourseDirectory.Web.ViewComponents.UrlInput
+@using Microsoft.AspNetCore.Http
 @using StudyMode = Dfc.CourseDirectory.Models.Models.Courses.StudyMode
 @model Dfc.CourseDirectory.Web.ViewModels.CopyCourse.CopyCourseRunViewModel
-
+@{
+    Layout = "_Layout_Your_Courses";
+}
+@inject IHttpContextAccessor HttpContextAccessor
 <h1 class="govuk-heading-l" style="padding-top: 20px;">
     Copy course
 </h1>
+
+@{
+    var newVenueObject = HttpContextAccessor.HttpContext.Session.GetObject<AddedVenueModel>("NewAddedVenue");
+    if (newVenueObject != null)
+    {
+        string message = "";
+        if (!string.IsNullOrWhiteSpace(newVenueObject.VenueName))
+        {
+            message += string.Concat(newVenueObject.VenueName, ", ");
+        }
+        if (!string.IsNullOrWhiteSpace(newVenueObject.AddressLine1))
+        {
+            message += string.Concat(newVenueObject.AddressLine1, ", ");
+        }
+        if (!string.IsNullOrWhiteSpace(newVenueObject.AddressLine2))
+        {
+            message += string.Concat(newVenueObject.AddressLine2, ", ");
+        }
+        if (!string.IsNullOrWhiteSpace(newVenueObject.Town))
+        {
+            message += string.Concat(newVenueObject.Town, ", ");
+        }
+        if (!string.IsNullOrWhiteSpace(newVenueObject.County))
+        {
+            message += string.Concat(@newVenueObject.County, ", ");
+        }
+        if (!string.IsNullOrWhiteSpace(newVenueObject.PostCode))
+        {
+            message += newVenueObject.PostCode;
+
+        }
+
+        @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+        {
+            NotificationTitle = "New venue added:",
+            NotificationMessage = message,
+            ClassType = "success-summary"
+        })
+    }
+}
 
 @await Component.InvokeAsync(nameof(Notification), new NotificationModel
 {
@@ -41,6 +87,11 @@
     @Html.HiddenFor(x => x.CourseId)
     @Html.HiddenFor(x => x.CourseRunId)
     @Html.HiddenFor(x => x.QualificationType)
+    @Html.HiddenFor(x => x.LearnAimRefTitle)
+    @Html.HiddenFor(x => x.NotionalNVQLevelv2)
+    @Html.HiddenFor(x => x.AwardOrgCode)
+    @Html.HiddenFor(x => x.LearnAimRef)
+
 
     <div class="section" id="sectionCourseName">
         @await Component.InvokeAsync(nameof(CourseName), new CourseNameModel
@@ -120,7 +171,7 @@
                 {
                     <details class="govuk-details">
                         <summary class="govuk-details__summary">
-                            <span id="region"@item.Id class="govuk-details__summary-text">
+                            <span id="region" @item.Id class="govuk-details__summary-text">
                                 @item.RegionName
                             </span>
                         </summary>
@@ -134,7 +185,7 @@
                                     x++;
 
                                     <div class="govuk-checkboxes__item">
-                                        <input class="govuk-checkboxes__input" id="RegionName-@x" region-id="@item.Id" name="SelectedRegions" type="checkbox" value="@subregion.Id" @subregion.Checked.ThenNullableCheck()/>
+                                        <input class="govuk-checkboxes__input" id="RegionName-@x" region-id="@item.Id" name="SelectedRegions" type="checkbox" value="@subregion.Id" @subregion.Checked.ThenNullableCheck() />
                                         <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@subregion.SubRegionName</label>
                                     </div>
 
@@ -142,7 +193,7 @@
                             </div>
                         </div>
                     </details>
-                                    }
+                }
             </div>
         </div>
     </div>
@@ -227,19 +278,32 @@
             }
 
         </li>
-    
-
-        </ul>
-    
 
 
+    </ul>
 
-    </form>
-    
 
-    <script>
+
+
+</form>
+
+
+<script>
         (function($) {
-        $(function () {
+            $(function () {
+                var $addNewVenueButton = $("#addNewVenue");
+                var $courseId = $("#@nameof(Model.CourseId)");
+                var $courseRunId = $("#@nameof(Model.CourseRunId)");
+
+                var $learnAimRefTitle = $("#@nameof(Model.LearnAimRefTitle)");
+                var $notionalNVQLevelv2 = $("#@nameof(Model.NotionalNVQLevelv2)");
+                var $awardOrgCode = $("#@nameof(Model.AwardOrgCode)");
+                var $learnAimRef = $("#@nameof(Model.LearnAimRef)");
+
+                var $day = $("#Day");
+                var $month = $("#Month");
+                var $year = $("#Year");
+
                         var validStates = [];
                         var $courseName = $("#@nameof(Model.CourseName)").govUkInput();
                         var $URL = $("#@nameof(Model.Url)").govUkInput();
@@ -255,9 +319,11 @@
 
                         var $radioDeliveryMode = $("#DeliveryModeRadioButtons").govUkRadios();
                         var $radioStudyMode = $("#StudyModeRadioButtons").govUkRadios();
-                        var $radioAttendance = $("#AttendanceRadioButtons").govUkRadios();
+                var $radioAttendance = $("#AttendanceRadioButtons").govUkRadios();
 
-                        var $selectvenue = $("#selectvenue").govUkSelect();
+
+
+
 
                         var $selectedvenue = $("#@nameof(Model.VenueId)").govUkSelect();
 
@@ -623,9 +689,62 @@
 
             });
 
+                var replaceAll = function (search, find, replace) {
+                    return search.split(find).join(replace);
+                };
+
+                var makeRequestWithPayload = function (payload, success) {
+                    console.log(payload);
+                    var qs = $.param(payload);
+                    qs = replaceAll(qs, "%5B%5D", "");
+                    $.get("/CopyCourseRun/AddNewVenue?" + qs, success);
+                };
+
+
+
+                var onSucess = function (data) {
+                    window.location.href = data;
+                };
+
+                $addNewVenueButton.on("click", function (e) {
+                    e.preventDefault();
+
+                    makeRequestWithPayload({
+                        LearnAimRefTitle: $learnAimRefTitle.val(),
+                        NotionalNVQLevelv2: $notionalNVQLevelv2.val(),
+                        AwardOrgCode: $awardOrgCode.val(),
+                        LearnAimRef: $learnAimRef.val(),
+                        CourseName: $courseName.val(),
+                        CourseId: $courseId.val(),
+                        CourseRunId: $courseRunId.val(),
+                        CourseProviderReference: $courseProviderReference.val(),
+                        DeliveryMode: $radioDeliveryMode.find("input[type='radio']:checked").val(),
+                        StartDateType: $("input[name='StartDateType']:checked").val(),
+                        VenueId: $selectedvenue.val(),
+                        Day: $day.val(),
+                        Month: $month.val(),
+                        Year: $year.val(),
+                        Url: $URL.val(),
+                        Cost: $cost.val(),
+                        CostDescription: $costDescription.val(),
+  
+                        //AdvancedLearnerLoan
+                        DurationUnit: $duration.find("select").val(),
+                        DurationLength: $duration.find("input").val(),
+                        StudyMode: $radioStudyMode.find("input[type='radio']:checked").val(),
+                        AttendanceMode: $radioAttendance.find("input[type='radio']:checked").val()
+
+
+
+                    },
+                        onSucess);
+
+                });
+
+
             $("a").on("click",
                 function(e) {
-                    
+
                     var $regionId = $(this).attr('region-id');
 
                     if ($regionId) {

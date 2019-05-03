@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Models.Courses;
 using Dfc.CourseDirectory.Web.ViewModels;
 
@@ -27,14 +28,14 @@ namespace Dfc.CourseDirectory.Web.RequestModels
         public StudyMode StudyMode { get; set; }
         public AttendancePattern AttendanceMode { get; set; }
 
-        public Guid[] SelectedVenues { get; set; }
+        public Guid VenueId { get; set; }
 
-
-        public string[] SelectedRegions { get; set; }
 
         public Guid? CourseId { get; set; }
         public Guid CourseRunId { get; set; }
 
         public CourseMode CourseMode { get; set; }
+
+        public PublishMode Mode { get; set; }
     }
 }
