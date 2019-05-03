@@ -1,10 +1,12 @@
-﻿@model Dfc.CourseDirectory.Web.ViewComponents.VenueAddressSelectionConfirmation.VenueAddressSelectionConfirmationModel
+﻿@using Microsoft.AspNetCore.Http;
+@model Dfc.CourseDirectory.Web.ViewComponents.VenueAddressSelectionConfirmation.VenueAddressSelectionConfirmationModel
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@inject IHttpContextAccessor HttpContextAccessor
 
 <form id="postCodeSearchResultForm" asp-controller="Venues" method="post">
     <div class="govuk-grid-row">
-        
+
         @Html.HiddenFor(x => x.Id)
         @Html.HiddenFor(x => x.Address)
         @Html.HiddenFor(x => x.Address.Id)
@@ -72,6 +74,7 @@
                 <button type="submit" asp-action="AddVenueSelectionConfirmation" class="govuk-button" id="">
                     Continue
                 </button>
+              
                 @{
                     if (string.IsNullOrWhiteSpace(Model.Id))
                     {

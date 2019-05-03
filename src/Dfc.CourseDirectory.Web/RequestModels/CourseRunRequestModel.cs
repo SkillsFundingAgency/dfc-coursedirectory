@@ -5,8 +5,12 @@ using Dfc.CourseDirectory.Web.ViewModels;
 
 namespace Dfc.CourseDirectory.Web.RequestModels
 {
-    public class AddCourseRequestModel
+    public class CourseRunRequestModel
     {
+        public string LearnAimRefTitle { get; set; }
+        public string NotionalNVQLevelv2 { get; set; }
+        public string AwardOrgCode { get; set; }
+        public string LearnAimRef { get; set; }
         public string CourseName { get; set; }
         public string CourseProviderReference { get; set; }
         public DeliveryMode DeliveryMode { get; set; }

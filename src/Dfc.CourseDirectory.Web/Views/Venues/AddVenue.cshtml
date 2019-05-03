@@ -2,6 +2,10 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.PostcodeLookup
 @using Microsoft.AspNetCore.Http;
 
+@{
+    Layout = "_Layout_Your_Courses";
+}
+
 @inject IHttpContextAccessor HttpContextAccessor
 
 <div class="govuk-grid-row">
@@ -38,7 +42,7 @@
                 }
                 else
                 {
-                     @Html.ActionLink("Cancel", "Index", "Venues", null, new { @class = "govuk-link" })
+                    @Html.ActionLink("Cancel", "Index", "Venues", null, new { @class = "govuk-link" })
                 }
             }
 

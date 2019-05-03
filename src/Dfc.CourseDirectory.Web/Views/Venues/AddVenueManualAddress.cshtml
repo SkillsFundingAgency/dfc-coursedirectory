@@ -1,6 +1,11 @@
 ﻿@using Dfc.CourseDirectory.Web.ViewComponents.VenueName
 @using Dfc.CourseDirectory.Web.ViewComponents.ManualAddress
 @model Dfc.CourseDirectory.Web.ViewModels.VenueAddressSelectionConfirmationViewModel
+
+@{
+    Layout = "_Layout_Your_Courses";
+}
+
 @{
     if (Model.Id != null)
     {
@@ -17,7 +22,7 @@
 }
 
 <form asp-controller="Venues" asp-action="VenueAddressManualConfirmation" method="post">
-    
+
 
     @await Component.InvokeAsync(nameof(VenueName), new VenueNameModel
     {

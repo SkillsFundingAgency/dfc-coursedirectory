@@ -1,5 +1,4 @@
-﻿
-@using Dfc.CourseDirectory.Web.Extensions
+﻿@using Dfc.CourseDirectory.Web.Extensions
 @using Dfc.CourseDirectory.Web.ViewComponents.CourseName
 @using Dfc.CourseDirectory.Web.ViewComponents.CourseProviderReference
 @using Dfc.CourseDirectory.Web.ViewComponents.UrlInput
@@ -20,8 +19,10 @@
 @using Microsoft.AspNetCore.Mvc.Rendering
 @using StudyMode = Dfc.CourseDirectory.Models.Models.Courses.StudyMode
 @using Dfc.CourseDirectory.Models.Models.Courses
-
-
+@using Dfc.CourseDirectory.Models.Models.Venues
+@{
+    Layout = "_Layout_Your_Courses";
+}
 @inject IHttpContextAccessor HttpContextAccessor
 
 @model AddCourseDetailsViewModel
@@ -29,6 +30,47 @@
 <h1 class="govuk-heading-l" style="padding-top: 20px;">
     Add course details
 </h1>
+
+@{
+    var newVenueObject = HttpContextAccessor.HttpContext.Session.GetObject<AddedVenueModel>("NewAddedVenue");
+    if (newVenueObject != null)
+    {
+        string message = "";
+        if (!string.IsNullOrWhiteSpace(newVenueObject.VenueName))
+        {
+            message += string.Concat(newVenueObject.VenueName, ", ");
+        }
+        if (!string.IsNullOrWhiteSpace(newVenueObject.AddressLine1))
+        {
+            message += string.Concat(newVenueObject.AddressLine1, ", ");
+        }
+        if (!string.IsNullOrWhiteSpace(newVenueObject.AddressLine2))
+        {
+            message += string.Concat(newVenueObject.AddressLine2, ", ");
+        }
+        if (!string.IsNullOrWhiteSpace(newVenueObject.Town))
+        {
+            message += string.Concat(newVenueObject.Town, ", ");
+        }
+        if (!string.IsNullOrWhiteSpace(newVenueObject.County))
+        {
+            message += string.Concat(@newVenueObject.County, ", ");
+        }
+        if (!string.IsNullOrWhiteSpace(newVenueObject.PostCode))
+        {
+            message += newVenueObject.PostCode;
+
+        }
+
+        @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+{
+    NotificationTitle = "New venue added:",
+    NotificationMessage = message,
+    ClassType = "success-summary"
+})
+    }
+}
+
 
 @await Component.InvokeAsync(nameof(Notification), new NotificationModel
 {
@@ -54,52 +96,52 @@
     <div id="sectionCourseName">
         @await Component.InvokeAsync(nameof(CourseName), new CourseNameModel
         {
-            CourseName = Model.CourseName,
-            LabelText = "Course name",
-            HintText = "This is the name people will see when they search for your course.",
-            AriaDescribedBy = "Please enter the course name."
+        CourseName = Model.CourseName,
+        LabelText = "Course name",
+        HintText = "This is the name people will see when they search for your course.",
+        AriaDescribedBy = "Please enter the course name."
         })
     </div>
 
     <div id="sectionCourseProviderReference">
         @await Component.InvokeAsync(nameof(CourseProviderReference), new CourseProviderReferenceModel
         {
-            CourseProviderReference = Model.CourseProviderReference,
-            LabelText = "ID",
-            HintText = "This is how you identify a course in your internal system.",
-            AriaDescribedBy = "Please enter the ID for this course"
+        CourseProviderReference = Model.CourseProviderReference,
+        LabelText = "ID",
+        HintText = "This is how you identify a course in your internal system.",
+        AriaDescribedBy = "Please enter the ID for this course"
         })
     </div>
 
     <div id="sectionDeliveryType">
         @await Component.InvokeAsync(nameof(DeliveryType), new DeliveryTypeModel
         {
-            DeliveryMode = Model.DeliveryMode,
-            LabelText = "Delivery Mode",
-            HintText = "Select how this course will be delivered",
-            AriaDescribedBy = "How the course will be delivered"
+        DeliveryMode = Model.DeliveryMode,
+        LabelText = "Delivery Mode",
+        HintText = "Select how this course will be delivered",
+        AriaDescribedBy = "How the course will be delivered"
         })
     </div>
 
     <div id="sectionStartDate">
         @await Component.InvokeAsync(nameof(AddStartDate), new AddStartDateModel()
         {
-            StartDateType = Model.StartDateType,
-            Day = Model.Day,
-            Month = Model.Month,
-            Year = Model.Year,
-            DayAriaDescribedBy = "",
-            DayLabelText = "Day",
-            MonthAriaDescribedBy = "",
-            MonthLabelText = "Month",
-            YearAriaDescribedBy = "",
-            YearLabelText = "Year",
-            AriaDescribedBy = "",
-            SpecifiedDateHintText = "e.g. 'For example, 30 9 2019",
-            FlexibleDateHintText = "Or select a flexible start date:",
-            LabelText = "Start date",
-            ValPastDateRef = DateTime.Now,
-            ValPastDateMessage = "Start Date cannot be earlier than today’s date"
+        StartDateType = Model.StartDateType,
+        Day = Model.Day,
+        Month = Model.Month,
+        Year = Model.Year,
+        DayAriaDescribedBy = "",
+        DayLabelText = "Day",
+        MonthAriaDescribedBy = "",
+        MonthLabelText = "Month",
+        YearAriaDescribedBy = "",
+        YearLabelText = "Year",
+        AriaDescribedBy = "",
+        SpecifiedDateHintText = "e.g. 'For example, 30 9 2019",
+        FlexibleDateHintText = "Or select a flexible start date:",
+        LabelText = "Start date",
+        ValPastDateRef = DateTime.Now,
+        ValPastDateMessage = "Start Date cannot be earlier than today’s date"
         })
     </div>
 
@@ -115,10 +157,7 @@
             <div class="govuk-grid-column-full">
                 <div class="govuk-checkboxes" id="SelectVenueCheckBoxes" val-required-message="Select a venue">
                     @{ var i = 0;
-                        var venues = new List<string>();
-                        var regions = new List<Guid>();
-                        //Guid[] venues;
-                        //string[] regions;
+
                     }
                     @if (Model.SelectVenue.VenueItems.Count() == 1)
                     {
@@ -126,8 +165,6 @@
                             <input class="govuk-checkboxes__input" id="VenueName-@i" name="SelectedVenues" type="checkbox" value="@Model.SelectVenue.VenueItems.First().Id" checked="checked" onclick="return false;" />
                             <label class="govuk-label govuk-checkboxes__label" for="SelectedVenues">@Model.SelectVenue.VenueItems.First().VenueName</label>
                         </div>
-                        venues.Add(Model.SelectVenue.VenueItems.First().Id);
-                        //venues = @Model.SelectVenue.VenueItems.First().Id;
                     }
                     else
                     {
@@ -138,17 +175,12 @@
                                 <input class="govuk-checkboxes__input" id="VenueName-@i" name="SelectedVenues" type="checkbox" value="@item.Id" @item.Checked.ThenNullableCheck() />
                                 <label class="govuk-label govuk-checkboxes__label" for="SelectedVenues">@item.VenueName</label>
                             </div>
-                            @if (item.Checked.HasValue)
-                            {
-                                @if (item.Checked.Value == true)
-                                {
-                                    venues.Add(item.Id);
-                                }
-                            }
+
 
                         }
                     }
-                    <a class="govuk-link" id="addNewVenue">Add a new venue</a>
+
+                    <a href="#" class="govuk-link" id="addNewVenue">Add a new venue</a>
                     @*@Html.ActionLink("link text", "AddNewVenue", "AddCourse", new { SelectedVenues = new Guid[] { Guid.NewGuid() } }, null)*@
 
                     @*@Html.ActionLink("link text", "AddNewVenue", "AddCourse", new { SelectedVenues = @Model.SelectVenue }, null)*@
@@ -174,7 +206,7 @@
                         asp-route-CourseMode="@Model.CourseMode">Add a new venue</a>*@
 
                     @*@Html.ActionLink("Add a new venue", "AddNewVenue", "AddCourse", new { }, new { @class = "govuk-link" })*@
-                    }
+
 
 
 
@@ -202,21 +234,21 @@
                         @{ var j = 0; }
                         @if (Model.SelectRegion.RegionItems.Count() == 1)
                         {
-                            <div class="govuk-checkboxes__item">
-                                <input class="govuk-checkboxes__input" id="RegionName-@j" name="SelectedRegions" type="checkbox" value="@Model.SelectRegion.RegionItems.First().Id" checked="checked" onclick="return false;" />
-                                <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@Model.SelectRegion.RegionItems.First().RegionName</label>
-                            </div>
+                        <div class="govuk-checkboxes__item">
+                            <input class="govuk-checkboxes__input" id="RegionName-@j" name="SelectedRegions" type="checkbox" value="@Model.SelectRegion.RegionItems.First().Id" checked="checked" onclick="return false;" />
+                            <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@Model.SelectRegion.RegionItems.First().RegionName</label>
+                        </div>
                         }
                         else
                         {
-                            foreach (var item in Model.SelectRegion.RegionItems)
-                            {
-                                j++;
-                                <div class="govuk-checkboxes__item">
-                                    <input class="govuk-checkboxes__input" id="RegionName-@j" name="SelectedRegions" type="checkbox" value="@item.Id" @item.Checked.ThenNullableCheck() />
-                                    <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@item.RegionName</label>
-                                </div>
-                            }
+                        foreach (var item in Model.SelectRegion.RegionItems)
+                        {
+                        j++;
+                        <div class="govuk-checkboxes__item">
+                            <input class="govuk-checkboxes__input" id="RegionName-@j" name="SelectedRegions" type="checkbox" value="@item.Id" @item.Checked.ThenNullableCheck() />
+                            <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@item.RegionName</label>
+                        </div>
+                        }
                         }
                     </div>
                 </div>
@@ -226,61 +258,63 @@
     <div id="sectionUrl">
         @await Component.InvokeAsync(nameof(UrlInput), new UrlInputModel
         {
-            Url = Model.Url,
-            LabelText = "URL",
-            HintText = "Enter the URL for this course e.g. http://www.google.com",
-            AriaDescribedBy = "Enter the URL for this course"
+        Url = Model.Url,
+        LabelText = "URL",
+        HintText = "Enter the URL for this course e.g. http://www.google.com",
+        AriaDescribedBy = "Enter the URL for this course"
         })
     </div>
 
     <div id="sectionCost">
         @await Component.InvokeAsync(nameof(Cost), new CostModel
         {
-            Cost = Model.Cost,
-            CostDescription = Model.CostDescription,
-            CostLabelText = "Cost",
-            CostHintText = "Enter the cost for the course in pounds and pence e.g. 125.00",
-            CostAriaDescribedBy = "Enter the cost in pounds and pence",
-            CostDescriptionLabelText = "Cost description",
-            CostDescriptionHintText = "Enter details related to the cost of this course",
-            CostDescriptionAriaDescribedBy = "Enter details of related to the cost of this course"
+        Cost = Model.Cost,
+        CostDescription = Model.CostDescription,
+        CostLabelText = "Cost",
+        CostHintText = "Enter the cost for the course in pounds and pence e.g. 125.00",
+        CostAriaDescribedBy = "Enter the cost in pounds and pence",
+        CostDescriptionLabelText = "Cost description",
+        CostDescriptionHintText = "Enter details related to the cost of this course",
+        CostDescriptionAriaDescribedBy = "Enter details of related to the cost of this course"
         })
     </div>
 
     <div id="sectionDuration">
         @await Component.InvokeAsync(nameof(Duration), new DurationModel
         {
-            DurationLength = Model.DurationLength,
-            DurationUnit = Model.DurationUnit,
-            LabelText = "Duration",
-            HintText = "Select the duration of the course",
-            AriaDescribedBy = "Select course duration"
+        DurationLength = Model.DurationLength,
+        DurationUnit = Model.DurationUnit,
+        LabelText = "Duration",
+        HintText = "Select the duration of the course",
+        AriaDescribedBy = "Select course duration"
         })
     </div>
 
     <div id="FullPartTimeRadioButtons" style="display: none;">
         @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode.StudyMode), new StudyModeModel
         {
-            StudyMode = Model.StudyMode,
-            LabelText = "Full time or part time",
-            HintText = "Select the attendance pattern"
+        StudyMode = Model.StudyMode,
+        LabelText = "Full time or part time",
+        HintText = "Select the attendance pattern"
         })
     </div>
 
     <div id="AttendancePatternRadioButtons" style="display: none;">
         @await Component.InvokeAsync(nameof(Attendance), new AttendanceModel
         {
-            AttendanceMode = Model.AttendanceMode,
-            LabelText = "Attendance",
-            HintText = "Select the time of day the course takes place"
+        AttendanceMode = Model.AttendanceMode,
+        LabelText = "Attendance",
+        HintText = "Select the time of day the course takes place"
         })
     </div>
 
 
 
     @{
-        var lastAddCoursePage = HttpContextAccessor.HttpContext.Session.GetObject<AddCoursePage>("LastAddCoursePage");
-        var summaryPageLoadedAtLeastOnce = HttpContextAccessor.HttpContext.Session.GetObject<bool>("SummaryLoadedAtLeastOnce");
+        var lastAddCoursePage = HttpContextAccessor.HttpContext.Session.GetObject<AddCoursePage>
+            ("LastAddCoursePage");
+        var summaryPageLoadedAtLeastOnce = HttpContextAccessor.HttpContext.Session.GetObject<bool>
+            ("SummaryLoadedAtLeastOnce");
         switch (lastAddCoursePage)
         {
             case AddCoursePage.AddCourse:
@@ -665,29 +699,67 @@
                 }
             }
 
-            // $addNewVenueButton.on("click", function (event) {
-            //    event.preventDefault();
 
-            //     var countedCheckedCheckboxes = $venueCheckboxes.filter(':checked').length;
+             var replaceAll = function (search, find, replace) {
+                return search.split(find).join(replace);
+            };
 
-            //             $.ajax({
-            //url: '/AddCourse/AddNewVenue',
-            //type: "GET",
-            //dataType: "json",
-            //data: JSON.stringify({
-            //    ProviderId: $('#ProviderId').val(),
-            //    UKPRN: $('#SearchTerm').val()
-            //}),
-            //contentType: "application/json; charset=utf-8",
-            //success: function (data) {
+    var makeRequestWithPayload = function (payload, success) {
+                console.log(payload);
+                var qs = $.param(payload);
+                qs = replaceAll(qs, "%5B%5D", "");
+                $.get("/AddCourse/AddNewVenue?" + qs, success);
+            };
 
-            //},
-            //error: function (xhr, ajaxOptions, thrownError) {
 
-            //}
-            //             });
 
-            //});
+                    var onSucess = function (data) {
+                        window.location.href = data;
+                    };
+
+                    $addNewVenueButton.on("click", function (e) {
+                        e.preventDefault();
+
+                   var $allCheckedVenues =
+                            $("input[name='SelectedVenues']:checkbox:checked");
+                         var $allCheckedRegions =
+                        $("input[name='SelectedRegions']:checkbox:checked");
+
+
+                        makeRequestWithPayload({
+                            CourseName: $courseName.val(),
+                             CourseProviderReference: $courseProviderReference.val(),
+        DeliveryMode: $radioDeliveryMode.find("input[type='radio']:checked").val(),
+         StartDateType:$("input[name='StartDateType']:checked").val(),
+       //Day
+       // Month
+       // Year
+        Url:$url.val(),
+         Cost:$cost.val(),
+         CostDescription :$costDescription.val(),
+         //AdvancedLearnerLoan
+         DurationUnit :$duration.find("select").val(),
+         DurationLength:$duration.find("input").val(),
+         StudyMode:$studyMode.find("input[type='radio']:checked").val() ,
+         AttendanceMode:$attendance.find("input[type='radio']:checked").val(),
+                        SelectedVenues: $allCheckedVenues.map(function () {
+                            return $(this).val();
+                        }).get(),
+                        LevelFilter: $allCheckedRegions.map(function () {
+                            return $(this).val();
+                        }).get()
+
+
+                    },
+                        onSucess);
+
+                    });
+
+
+
+
+
+
 
             $button.on("click", function (event) {
                 event.preventDefault();

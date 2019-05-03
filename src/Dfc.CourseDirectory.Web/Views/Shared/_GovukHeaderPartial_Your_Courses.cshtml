@@ -1,4 +1,5 @@
 ﻿
+@using Dfc.CourseDirectory.Services.Interfaces
 @using Microsoft.AspNetCore.Identity
 @using Dfc.CourseDirectory.Web.Areas.Identity.Data;
 @using Microsoft.AspNetCore.Authorization;
@@ -12,6 +13,12 @@
 
 @inject IProviderService providerService
 @inject UserManager<User> UserManager
+@inject IGovukPhaseBannerService bannerService
+
+@{
+    var bannerSettings = bannerService.GetSettings();
+
+}
 <header class="govuk-header " role="banner" data-module="header">
     @*<div class="govuk-header__container govuk-width-container">*@
     <div class="govuk-header__container cd-fullwidth-container">
@@ -72,7 +79,7 @@
                     @if (User.Identity.IsAuthenticated)
                     {
                         <span>
-                            @{ 
+                            @{
                                 string email = User.Claims.Where(c => c.Type == "email")
                                             .Select(c => c.Value).SingleOrDefault();
                             }
@@ -99,20 +106,20 @@
 </div>
 
 <div class="govuk-phase-banner cd-fullwidth-container">
-<p class="govuk-phase-banner__content">
-    <strong class="govuk-tag govuk-phase-banner__content__tag ">
-        Beta
-    </strong>
-    <span class="govuk-phase-banner__text">
-        This is a new service – your
-        <a class="govuk-link" href="#">feedback</a> will help us to improve it.
-    </span>
-</p>
+    <p class="govuk-phase-banner__content">
+        <strong class="govuk-tag govuk-phase-banner__content__tag ">
+            @bannerSettings.Tag
+        </strong>
+        <span class="govuk-phase-banner__text">
+            This is a new service – your
+            <a class="govuk-link" href="@bannerSettings.LinkUrl">@bannerSettings.LinkText</a> will help us to improve it.
+        </span>
+    </p>
 </div>
 <div class="navigation-container cd-fullwidth-container govuk-body">
     <nav class="cd-secondary-nav">
         @*<a class="cd-secondary-nav--item" ahref="">venue</a>
-        <a class="cd-secondary-nav--item" ahref="">item</a>*@
+            <a class="cd-secondary-nav--item" ahref="">item</a>*@
 
         @{
             if (User.Identity.IsAuthenticated)
@@ -175,102 +182,6 @@
     </nav>
 </div>
 
-@*<div class="cd-header-blue">
-        <div class="cd-fullwidth-container">
-            <div class="govuk-grid-row row">
-                @if (User.Identity.IsAuthenticated)
-                {
-                    <div class="govuk-grid-column-one-half">
-                        @{
-                            var adminLogin = await Authorization.AuthorizeAsync(User, "Admin");
-                            var providerLogin = await Authorization.AuthorizeAsync(User, "Provider");
-
-                            var providerName = "";
-                            var ukPRN = HttpContextAccessor.HttpContext.Session.GetInt32("UKPRN");
-                            if (ukPRN != null)
-                            {
-                                var providerSearchResult = await providerService.GetProviderByPRNAsync(new ProviderSearchCriteria(ukPRN.ToString()));
-                                providerName = providerSearchResult.Value.Value.FirstOrDefault()?.ProviderName;
-                            }
-                        }
-                        @providerName
-                    </div>
-                    <partial name="_LoginPartial" />
-                }
-            </div>
-        </div>
-    </div>
-
-    <div class="cd-header-menu">
-        <div class="cd-fullwidth-container">
-            <div class="govuk-grid-row row">
-                <div class="govuk-grid-column-full">
-
-                    @{
-                        if (User.Identity.IsAuthenticated)
-                        {
-                            var authorised = await Authorization.AuthorizeAsync(User, "ElevatedUserRole");
-                            var superUser = await Authorization.AuthorizeAsync(User, "SuperUser");
-
-                            <a class="govuk-header__link" href="/">
-                                Home
-                            </a>
-
-
-                            <a class="" href="/RegulatedQualification">
-                                Qualifications
-                            </a>
-
-
-                            <a class="" href="/Venues">
-                                Venues
-                            </a>
-
-                            if (authorised.Succeeded)
-                            {
-                                <a class="" href="/Provider">
-                                    Add Provider
-                                </a>
-
-
-
-
-                            }
-
-                            <a class="" href="/ProviderCourses/Index">
-                                Courses
-                            </a>
-
-                            if (authorised.Succeeded || superUser.Succeeded)
-                            {
-
-                                <a class="" href="/BulkUpload">
-                                    Bulk Upload
-                                </a>
-
-                            }
-                            var pendingCourses = HttpContextAccessor.HttpContext.Session.GetString("PendingCourses");
-
-                            if (pendingCourses == "true")
-                            {
-                                if (authorised.Succeeded || superUser.Succeeded)
-                                {
-                                    <a class="" href="/Migration">
-                                        Migration
-                                    </a>
-
-                                }
-                            }
-
-                        }
-                    }
-
-
-                </div>
-
-            </div>
-        </div>
-    </div>*@
 
 
 

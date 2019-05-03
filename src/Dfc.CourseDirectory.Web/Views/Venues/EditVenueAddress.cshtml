@@ -1,6 +1,8 @@
 ﻿@using Dfc.CourseDirectory.Web.ViewComponents.EditVenueAddress
 @model Dfc.CourseDirectory.Web.ViewComponents.EditVenueAddress.EditVenueAddressModel
-
+@{
+    Layout = "_Layout_Your_Courses";
+}
 <h1 class="govuk-heading-l">Edit venue address</h1>
 @await Component.InvokeAsync(nameof(EditVenueAddress), new { model = Model })
 
