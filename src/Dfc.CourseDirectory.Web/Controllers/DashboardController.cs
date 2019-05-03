@@ -59,7 +59,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                                                  .SelectMany(o => o.Value)
                                                  .SelectMany(i => i.Value);
 
-            int[] pendingStatuses = new int[] { (int)RecordStatus.Pending, (int)RecordStatus.BulkUloadPending, (int)RecordStatus.APIPending, (int)RecordStatus.MigrationPending };
+            int[] pendingStatuses = new int[] { (int)RecordStatus.Pending, (int)RecordStatus.BulkUloadPending, (int)RecordStatus.APIPending, (int)RecordStatus.MigrationPending, (int)RecordStatus.MigrationReadyToGoLive, (int)RecordStatus.BulkUploadReadyToGoLive };
             IEnumerable<Course> validCourses = courses.Where(c => c.IsValid);
             //IEnumerable<Course> pendingCourses = from Course c in courses
             //                                     from int s in pendingStatuses

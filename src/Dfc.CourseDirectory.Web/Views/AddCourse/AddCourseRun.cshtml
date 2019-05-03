@@ -126,22 +126,22 @@
     <div id="sectionStartDate">
         @await Component.InvokeAsync(nameof(AddStartDate), new AddStartDateModel()
         {
-        StartDateType = Model.StartDateType,
-        Day = Model.Day,
-        Month = Model.Month,
-        Year = Model.Year,
-        DayAriaDescribedBy = "",
-        DayLabelText = "Day",
-        MonthAriaDescribedBy = "",
-        MonthLabelText = "Month",
-        YearAriaDescribedBy = "",
-        YearLabelText = "Year",
-        AriaDescribedBy = "",
-        SpecifiedDateHintText = "e.g. 'For example, 30 9 2019",
-        FlexibleDateHintText = "Or select a flexible start date:",
-        LabelText = "Start date",
-        ValPastDateRef = DateTime.Now,
-        ValPastDateMessage = "Start Date cannot be earlier than today’s date"
+            StartDateType = Model.StartDateType,
+            Day = Model.Day ,
+            Month = Model.Month,
+            Year = Model.Year,
+            DayAriaDescribedBy = "",
+            DayLabelText = "Day",
+            MonthAriaDescribedBy = "",
+            MonthLabelText = "Month",
+            YearAriaDescribedBy = "",
+            YearLabelText = "Year",
+            AriaDescribedBy = "",
+            SpecifiedDateHintText = "e.g. 'For example, 30 9 2019",
+            FlexibleDateHintText = "Or select a flexible start date:",
+            LabelText = "Start date",
+            ValPastDateRef = DateTime.Now,
+            ValPastDateMessage = "Start Date cannot be earlier than today’s date"
         })
     </div>
 
@@ -156,9 +156,7 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
                 <div class="govuk-checkboxes" id="SelectVenueCheckBoxes" val-required-message="Select a venue">
-                    @{ var i = 0;
-
-                    }
+                    @{ var i = 0; }
                     @if (Model.SelectVenue.VenueItems.Count() == 1)
                     {
                         <div class="govuk-checkboxes__item">
@@ -217,7 +215,7 @@
 
     <div class="govuk-form-group" id="RegionItemsCheckboxList" style="@Model.DeliveryMode.IfNotWorkBasedDisplayNone()">
         <div id="sectionRegions">
-            @await Component.InvokeAsync(nameof(ChooseRegion), Model.SelectRegion)
+            @await Component.InvokeAsync(nameof(ChooseRegion), Model.ChooseRegion)
         </div>
     </div>
 
@@ -352,9 +350,6 @@
     (function($) {
         $(function () {
             var validStates = [];
-
-            var $addNewVenueButton = $("#addNewVenue");
-
             var $button = $("#publish");
             var $errorSummary = $("#errorsummary").govUkErrorSummary();
             var $courseName = $("#@nameof(Model.CourseName)").govUkInput();
@@ -380,7 +375,7 @@
 
             //Default options on page load
             var $defaultAttendancePattern = $("#@AttendancePattern.Daytime");
-            $defaultAttendancePattern.prop("checked", true);
+            $defaultAttendancePattern.prop("checked", true);            
             var $defaultStudyMode = $("#@StudyMode.FullTime");
             $defaultStudyMode.prop("checked", true);
 
@@ -567,8 +562,9 @@
                 $regions.govUkCheckboxes("validState");
                 $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $regions[0].id);
                 $errorSummary.govUkErrorSummary("hideIfEmpty")
+                var $nationalRadio = $("#nationalRadioButtons input[type=radio]:checked").val();
                 validStates.push(true);
-                if (isWorkBased & !$.requiredValidate($regions.find("input[type='checkbox']:checked").val())) {
+                if (isWorkBased & !$.requiredValidate($regions.find("input[type='checkbox']:checked").val()) & $nationalRadio === "false") {
                     $regions.govUkCheckboxes("invalidState", $regions.attr("val-required-message"));
                     var regionsErrorHashLinks = $regions.govUkCheckboxes("getErrorHashLinks");
                     $errorSummary.govUkErrorSummary("add", regionsErrorHashLinks);
@@ -829,4 +825,3 @@
         });
     })(jQuery);
 </script>
-

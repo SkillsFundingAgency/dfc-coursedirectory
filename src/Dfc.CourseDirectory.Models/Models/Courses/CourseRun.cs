@@ -134,6 +134,7 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         public int? DurationValue { get; set; }
         public StudyMode StudyMode { get; set; }
         public AttendancePattern AttendancePattern { get; set; }
+        public bool National { get; set; }
         public IEnumerable<string> Regions { get; set; }
         public RecordStatus RecordStatus { get; set; }
         public DateTime CreatedDate { get; set; }

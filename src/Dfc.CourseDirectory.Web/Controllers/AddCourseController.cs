@@ -18,6 +18,7 @@ using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 using Dfc.CourseDirectory.Web.Extensions;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.RequestModels;
+using Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseRegion;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseFor;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.EntryRequirements;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.FundingOptions;
@@ -209,12 +210,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 CourseName = Session.GetString("LearnAimRefTitle"),
                 ProviderUKPRN = UKPRN,
                 SelectVenue = await GetVenuesByUkprn(UKPRN),
-                SelectRegion = _courseService.GetRegions()
+                ChooseRegion = new ChooseRegionModel
+                {
+                    Regions = _courseService.GetRegions()
+                }
 
             };
 
             Session.SetObject(SessionVenues, viewModel.SelectVenue);
-            Session.SetObject(SessionRegions, viewModel.SelectRegion);
+            Session.SetObject(SessionRegions, viewModel.ChooseRegion.Regions);
 
             if (addCourseSection2Session != null)
             {
@@ -237,6 +241,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     ? string.Empty
                     : addCourseSection2Session.Cost.ToString();
                 viewModel.CostDescription = addCourseSection2Session.CostDescription;
+                viewModel.ChooseRegion.National = addCourseSection2Session.National;
+
                 viewModel.DurationLength = addCourseSection2Session.DurationLength.ToString();
 
                 viewModel.DurationUnit = addCourseSection2Session.DurationUnit;
@@ -256,7 +262,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 {
                     foreach (var selectedRegion in addCourseSection2Session.SelectedRegions)
                     {
-                        viewModel.SelectRegion.RegionItems.First(x => x.Id == selectedRegion.ToString())
+                        viewModel.ChooseRegion.Regions.RegionItems.First(x => x.Id == selectedRegion.ToString())
                             .Checked = true;
                     }
                 }
@@ -417,6 +423,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 HowAssessed = addCourse.HowAssessed,
                 HowYouWillLearn = addCourse.HowYouWillLearn,
                 CourseName = model.CourseName,
+                National = model.National,
                 CourseId = model.CourseProviderReference,
                 DeliveryMode = model.DeliveryMode.ToDescription(),
                 DeliveryModeEnum = model.DeliveryMode,
@@ -444,19 +451,26 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     summaryViewModel.Venues = venues;
                     break;
                 case DeliveryMode.WorkBased:
-                    regions.AddRange(from availableRegionsRegionItem in availableRegions.RegionItems
-                        from subRegionItemModel in availableRegionsRegionItem.SubRegion
-                        from modelSelectedRegion in model.SelectedRegions
-                        where modelSelectedRegion == subRegionItemModel.Id
-                        select subRegionItemModel.SubRegionName);
+
+                    if(model.National)
+                    {
+                        regions.Add("National");
+                    }
+                    else
+                    {
+                        regions.AddRange(from availableRegionsRegionItem in availableRegions.RegionItems
+                                         from subRegionItemModel in availableRegionsRegionItem.SubRegion
+                                         from modelSelectedRegion in model.SelectedRegions
+                                         where modelSelectedRegion == subRegionItemModel.Id
+                                         select subRegionItemModel.SubRegionName);
 
 
-                    regions.AddRange(from availableRegionsRegionItem in availableRegions.RegionItems
-                        from modelSelectedRegion in model.SelectedRegions
-                        where modelSelectedRegion == availableRegionsRegionItem.Id
-                        select availableRegionsRegionItem.RegionName
-                    );
-
+                        regions.AddRange(from availableRegionsRegionItem in availableRegions.RegionItems
+                                         from modelSelectedRegion in model.SelectedRegions
+                                         where modelSelectedRegion == availableRegionsRegionItem.Id
+                                         select availableRegionsRegionItem.RegionName
+                        );
+                    }
                     summaryViewModel.Regions = regions;
                     break;
             }
@@ -522,6 +536,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 CourseLength = addCourseRun.DurationLength + " " + addCourseRun.DurationUnit,
                 AttendancePattern = addCourseRun.StudyMode.ToDescription(),
                 AttendanceTime = addCourseRun.AttendanceMode.ToDescription(),
+                National = addCourseRun.National,
                 StartDate = addCourseRun.StartDateType == "FlexibleStartDate"
                     ? "Flexible"
                     : addCourseRun.Day + "/" + addCourseRun.Month + "/" + addCourseRun.Year
@@ -546,10 +561,18 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                     break;
                 case DeliveryMode.WorkBased:
-                    regions.AddRange(from region in availableRegions.RegionItems
-                        from modelSelectedRegion in addCourseRun.SelectedRegions
-                        where modelSelectedRegion == region.Id
-                        select region.RegionName);
+                    if(model.National)
+                    {
+                        regions.Add("National");
+                    }
+                    else
+                    {
+                        regions.AddRange(from region in availableRegions.RegionItems
+                                         from modelSelectedRegion in addCourseRun.SelectedRegions
+                                         where modelSelectedRegion == region.Id
+                                         select region.RegionName);
+                    }
+
                     break;
             }
 
@@ -710,16 +733,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 }
             }
 
-            if (addCourseSection2.DeliveryMode == DeliveryMode.WorkBased
-                && addCourseSection2.SelectedRegions != null
-                && addCourseSection2.SelectedRegions.Any())
+            if (addCourseSection2.DeliveryMode == DeliveryMode.WorkBased)
             {
-                var availableRegions = new SelectRegionModel();
-
-                string[] selectedRegions =  availableRegions.SubRegionsDataCleanse(addCourseSection2.SelectedRegions.ToList());
-
-                var subRegions = selectedRegions.Select(selectedRegion => availableRegions.GetRegionFromName(selectedRegion)).ToList();
-
                 var courseRun = new CourseRun
                 {
                     id = Guid.NewGuid(),
@@ -736,14 +751,32 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     DurationValue = addCourseSection2.DurationLength,
                     StudyMode = StudyMode.Undefined,
                     AttendancePattern = AttendancePattern.Undefined,
-                    Regions = addCourseSection2.SelectedRegions,
                     CreatedDate = DateTime.Now,
                     CreatedBy = User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
                     RecordStatus = RecordStatus.Live, // TODO - To Be Decided
-                    SubRegions = subRegions
                 };
+                var availableRegions = new SelectRegionModel();
 
+                if (addCourseSection2.National == false)
+                {
+                    if (addCourseSection2.SelectedRegions != null && addCourseSection2.SelectedRegions.Any())
+                    {
+
+                        courseRun.Regions = addCourseSection2.SelectedRegions;
+                        string[] selectedRegions = availableRegions.SubRegionsDataCleanse(addCourseSection2.SelectedRegions.ToList());
+
+                        courseRun.SubRegions = selectedRegions.Select(selectedRegion => availableRegions.GetRegionFromName(selectedRegion)).ToList();
+                    }
+                }
+                else
+                {
+                    courseRun.National = true;
+                    courseRun.Regions = availableRegions.RegionItems.Select(x => (string)x.Id).ToList();
+
+                }
+                
                 courseRuns.Add(courseRun);
+
             }
 
             if (addCourseSection2.DeliveryMode == DeliveryMode.Online)
@@ -909,26 +942,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return selectVenue;
         }
 
-        //private SelectRegionModel GetRegions()
-        //{
-        //    var selectRegion = new SelectRegionModel
-        //    {
-        //        LabelText = "Select course region",
-        //        HintText = "For example, South West",
-        //        AriaDescribedBy = "Select all that apply."
-        //    };
-
-        //    if (selectRegion.RegionItems != null && selectRegion.RegionItems.Any())
-        //    {
-        //        selectRegion.RegionItems = selectRegion.RegionItems.OrderBy(x => x.RegionName);
-        //        foreach (var selectRegionRegionItem in selectRegion.RegionItems)
-        //        {
-        //            selectRegionRegionItem.SubRegion = selectRegionRegionItem.SubRegion.OrderBy(x => x.SubRegionName).ToList();
-        //        }
-        //    }
-
-        //    return selectRegion;
-        //}
 
         internal void RemoveSessionVariables()
         {
@@ -1041,14 +1054,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 AwardOrgCode = Session.GetString("AwardOrgCode"),
                 NotionalNVQLevelv2 = Session.GetString("NotionalNVQLevelv2"),
                 CourseName = Session.GetString("LearnAimRefTitle"),
-                ProviderUKPRN = UKPRN
+                ProviderUKPRN = UKPRN,
+                ChooseRegion = new ChooseRegionModel()
             };
 
             viewModel.SelectVenue = await GetVenuesByUkprn(UKPRN);
-            viewModel.SelectRegion = _courseService.GetRegions();
+            viewModel.ChooseRegion.Regions = _courseService.GetRegions();
 
             Session.SetObject(SessionVenues, viewModel.SelectVenue);
-            Session.SetObject(SessionRegions, viewModel.SelectRegion);
+            Session.SetObject(SessionRegions, viewModel.ChooseRegion.Regions);
 
             if (addCourseSection2Session != null)
             {
@@ -1064,6 +1078,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 viewModel.Day = addCourseSection2Session.Day;
                 viewModel.Month = addCourseSection2Session.Month;
                 viewModel.Year = addCourseSection2Session.Year;
+                viewModel.ChooseRegion.National = addCourseSection2Session.National;
                 viewModel.Url = addCourseSection2Session.Url;
                 viewModel.Cost = addCourseSection2Session.Cost == null ? string.Empty : addCourseSection2Session.Cost.ToString();
                 viewModel.CostDescription = addCourseSection2Session.CostDescription;
@@ -1084,7 +1099,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 {
                     foreach (var selectedRegion in addCourseSection2Session.SelectedRegions)
                     {
-                        viewModel.SelectRegion.RegionItems.FirstOrDefault(x => x.Id == selectedRegion.ToString()).Checked = true;
+                        viewModel.ChooseRegion.Regions.RegionItems.FirstOrDefault(x => x.Id == selectedRegion.ToString()).Checked = true;
                     }
                 }
             }
