@@ -17,6 +17,7 @@ using Dfc.CourseDirectory.Services.Interfaces.OnspdService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 using Dfc.CourseDirectory.Services.OnspdService;
 using Dfc.CourseDirectory.Services.VenueService;
+using Dfc.CourseDirectory.Web.Extensions;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.RequestModels;
 using Dfc.CourseDirectory.Web.ViewComponents.EditVenueAddress;
@@ -46,6 +47,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly ICourseService _courseService;
 
         private ISession _session => _contextAccessor.HttpContext.Session;
+
 
 
         public VenuesController(
@@ -367,7 +369,35 @@ namespace Dfc.CourseDirectory.Web.Controllers
             //Since we are updating or adding lets pass the model to the GetVenues method
             VenueSearchResultItemModel newItem = new VenueSearchResultItemModel(HttpUtility.HtmlEncode(requestModel.VenueName), requestModel.AddressLine1, requestModel.AddressLine2, requestModel.TownOrCity, requestModel.County, requestModel.Postcode, venueID);
 
-            return View("VenueSearchResults", await GetVenues(UKPRN.Value, newItem, updated));
+            var addedVenueModel = new AddedVenueModel
+            {
+                VenueName = HttpUtility.HtmlEncode(requestModel.VenueName),
+                AddressLine1=  requestModel.AddressLine1,
+                AddressLine2= requestModel.AddressLine2,
+                County= requestModel.County,
+                Id= venueID,
+                PostCode= requestModel.Postcode,
+                Town = requestModel.TownOrCity
+            };
+
+            _session.SetObject("NewAddedVenue", addedVenueModel);
+
+            string option = _contextAccessor.HttpContext.Session.GetString("Option");
+
+            if (option.ToUpper() == "ADDNEWVENUEFOREDIT")
+            {
+                return RedirectToAction("Reload", "EditCourseRun");
+            }
+
+            if (option.ToUpper() == "ADDNEWVENUE")
+            {
+                return RedirectToAction("SummaryToAddCourseRun", "AddCourse");
+            }
+           
+                return View("VenueSearchResults", await GetVenues(UKPRN.Value, newItem, updated));
+            
+
+            
         }
         [Authorize]
         [HttpPost]
@@ -468,7 +498,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             IVenue updatedVenue = _venueService.GetVenueByIdAsync(new GetVenueByIdCriteria(VenueId.ToString())).Result.Value;
             updatedVenue.Status = VenueStatus.Deleted;
 
-            updatedVenue =  _venueService.UpdateAsync(updatedVenue).Result.Value;
+            updatedVenue = _venueService.UpdateAsync(updatedVenue).Result.Value;
 
             VenueSearchResultItemModel deletedVenue = new VenueSearchResultItemModel(HttpUtility.HtmlEncode(updatedVenue.VenueName), updatedVenue.Address1, updatedVenue.Address2, updatedVenue.Town, updatedVenue.County, updatedVenue.PostCode, updatedVenue.ID);
 

@@ -280,9 +280,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         [Authorize]
-        [HttpGet]
+        //public IActionResult AddNewVenue(Guid[] projectId)
         public IActionResult AddNewVenue(AddCourseRequestModel model)
         {
+           // var model = new AddCourseRequestModel();
             // AddCourseRun - going to Summary
             //Session.SetObject(SessionAddCourseSection2, model);
             //Session.SetObject(SessionLastAddCoursePage, AddCoursePage.AddCourseRun);
@@ -332,12 +333,16 @@ namespace Dfc.CourseDirectory.Web.Controllers
             switch (model.DeliveryMode)
             {
                 case DeliveryMode.ClassroomBased:
-                    venues.AddRange(from summaryVenueVenueItem in availableVenues.VenueItems
-                                    from modelSelectedVenue in model.SelectedVenues
-                                    where modelSelectedVenue.ToString() == summaryVenueVenueItem.Id
-                                    select summaryVenueVenueItem.VenueName);
 
-                    summaryViewModel.Venues = venues;
+                    if (model.SelectedVenues != null)
+                    {
+                        venues.AddRange(from summaryVenueVenueItem in availableVenues.VenueItems
+                                        from modelSelectedVenue in model.SelectedVenues
+                                        where modelSelectedVenue.ToString() == summaryVenueVenueItem.Id
+                                        select summaryVenueVenueItem.VenueName);
+
+                        summaryViewModel.Venues = venues;
+                    }
                     break;
                 case DeliveryMode.WorkBased:
                     regions.AddRange(from availableRegionsRegionItem in availableRegions.RegionItems
@@ -371,11 +376,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
 
             summaryViewModel.FundingOptions = fundingOptions;
-            Session.SetObject(SessionLastAddCoursePage, AddCoursePage.AddCourseRun);
+            Session.SetObject(SessionLastAddCoursePage, AddCoursePage.AddCourse);
+         
 
+            return Json(Url.Action("AddVenue", "Venues"));
 
-
-            return RedirectToAction("AddVenue", "Venues");
+            //return RedirectToAction("AddVenue", "Venues");
 
         }
 
@@ -484,7 +490,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             summaryViewModel.FundingOptions = fundingOptions;
             Session.SetObject(SessionLastAddCoursePage, AddCoursePage.AddCourseRun);
-
+            Session.Remove("AddNewVenue");
+            Session.Remove("Option");
             return View("Summary", summaryViewModel);
         }
 
@@ -588,7 +595,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             // set the last page
             Session.SetObject(SessionLastAddCoursePage, AddCoursePage.AddCourse);
-
+            Session.Remove("NewAddedVenue");
             // return view
             return View(summaryViewModel);
         }
@@ -879,8 +886,18 @@ namespace Dfc.CourseDirectory.Web.Controllers
             if (addCourseRun == null)
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
 
+            int UKPRN = 0;
+            if (Session.GetInt32("UKPRN").HasValue)
+            {
+                UKPRN = Session.GetInt32("UKPRN").Value;
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
+            }
+
             // set the last page
-            Session.SetObject(SessionLastAddCoursePage, AddCoursePage.AddCourseRun);
+            Session.SetObject(SessionLastAddCoursePage, AddCoursePage.AddCourse);
 
             // old BackToAddCourseSection2
             return View("AddCourseRun", addCourseRun);

@@ -37,7 +37,7 @@
     <div class="cd-action-container">
 
         <a asp-controller="AddCourse" asp-action="AddCourse" asp-route-learnAimRef=@Model?.LearnAimRef asp-route-notionalNVQLevelv2=@Model?.NotionalNVQLevelv2 asp-route-awardOrgCode=@Model?.AwardOrgCode asp-route-learnAimRefTitle=@Model?.LearnAimRefTitle asp-route-learnAimRefTypeDesc=@Model?.LearnAimRefTypeDesc class="govuk-button" id="">Choose</a>
-        @Html.ActionLink("Cancel", "index", "UnregulatedCourses", new { }, new { @class = "govuk-link" })
+        @Html.ActionLink("Cancel", "index", "RegulatedQualification", new { }, new { @class = "govuk-link" })
     </div>
 }
 else

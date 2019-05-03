@@ -1,7 +1,10 @@
 ﻿@using Dfc.CourseDirectory.Web.ViewComponents.EditVenueName
 @model Dfc.CourseDirectory.Web.ViewComponents.EditVenueName.EditVenueNameModel
 
+@{
+    Layout = "_Layout_Your_Courses";
+}
 <h1 class="govuk-heading-l">Edit venue name</h1>
 <form method="post" id="edit-venue-form" asp-controller="Venues" asp-action="EditVenueName">
-    @await Component.InvokeAsync(nameof(EditVenueName), new { model = Model})
+    @await Component.InvokeAsync(nameof(EditVenueName), new { model = Model })
 </form>

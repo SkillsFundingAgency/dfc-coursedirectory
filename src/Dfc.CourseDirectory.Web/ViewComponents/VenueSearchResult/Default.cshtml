@@ -279,14 +279,22 @@
                 var continueDelete = true;
 
                 if (data.liveCoursesExist) {
-                    $liveCoursesExistMessage.show();
                     continueDelete = false;
+                    $liveCoursesExistMessage.show();
+                    $('html,body').animate({
+                        scrollTop: $liveCoursesExistMessage.offset().top
+                    });
+                   
                 }
 
                 if (continueDelete) {
                     if (data.pendingCoursesExist) {
+                        continueDelete = false;
                         $pendingCoursesExistMessage.show();
-                        continueDelete = false
+                        $('html,body').animate({
+                            scrollTop: $pendingCoursesExistMessage.offset().top
+                        });
+                       
                     }
                 }
 

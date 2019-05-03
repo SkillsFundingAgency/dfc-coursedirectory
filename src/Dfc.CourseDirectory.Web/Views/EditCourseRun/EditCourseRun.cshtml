@@ -45,6 +45,11 @@
     @Html.HiddenFor(x => x.Mode)
     @Html.HiddenFor(x => x.CurrentCourseRunDate)
 
+@Html.HiddenFor(x => x.LearnAimRefTitle)
+@Html.HiddenFor(x => x.NotionalNVQLevelv2)
+@Html.HiddenFor(x => x.AwardOrgCode)
+@Html.HiddenFor(x => x.LearnAimRef)
+
     <div class="section" id="sectionCourseName">
         @await Component.InvokeAsync(nameof(CourseName), new CourseNameModel
         {
@@ -248,6 +253,19 @@
 <script>
     (function($) {
         $(function () {
+
+            var $addNewVenueButton = $("#addNewVenue");
+            var $courseId = $("#@nameof(Model.CourseId)");
+            var $courseRunId = $("#@nameof(Model.CourseRunId)");
+
+            
+            var $learnAimRefTitle = $("#@nameof(Model.LearnAimRefTitle)");
+            var $notionalNVQLevelv2 = $("#@nameof(Model.NotionalNVQLevelv2)");
+            var $awardOrgCode = $("#@nameof(Model.AwardOrgCode)");
+            var $learnAimRef = $("#@nameof(Model.LearnAimRef)");
+
+
+
             var validStates = [];
             var $button = $("#save");
             var $errorSummary = $("#errorsummary").govUkErrorSummary();
@@ -597,6 +615,76 @@
                     $("#editCourseRun").submit();
                 }
             });
+
+
+
+
+
+
+
+
+
+            var replaceAll = function (search, find, replace) {
+                return search.split(find).join(replace);
+            };
+
+            var makeRequestWithPayload = function (payload, success) {
+                console.log(payload);
+                var qs = $.param(payload);
+                qs = replaceAll(qs, "%5B%5D", "");
+                $.get("/EditCourseRun/AddNewVenue?" + qs, success);
+            };
+
+
+
+            var onSucess = function (data) {
+                window.location.href = data;
+            };
+
+            $addNewVenueButton.on("click", function (e) {
+                e.preventDefault();
+
+                var $allCheckedVenues =
+                    $("input[name='SelectedVenues']:checkbox:checked");
+                var $allCheckedRegions =
+                    $("input[name='SelectedRegions']:checkbox:checked");
+
+
+                makeRequestWithPayload({
+                    LearnAimRefTitle: $learnAimRefTitle.val(),
+                    NotionalNVQLevelv2: $notionalNVQLevelv2.val(),
+                    AwardOrgCode: $awardOrgCode.val(),
+                    LearnAimRef: $learnAimRef.val(),
+                        CourseName: $courseName.val(),
+                        CourseId: $courseId.val(),
+                        CourseRunId: $courseRunId.val(),
+                    CourseProviderReference: $courseProviderReference.val(),
+                    DeliveryMode: $radioDeliveryMode.find("input[type='radio']:checked").val(),
+                    StartDateType: $("input[name='StartDateType']:checked").val(),
+                    //Day
+                    // Month
+                    // Year
+                    Url: $url.val(),
+                    Cost: $cost.val(),
+                    CostDescription: $costDescription.val(),
+                    //AdvancedLearnerLoan
+                    DurationUnit: $duration.find("select").val(),
+                    DurationLength: $duration.find("input").val(),
+                    StudyMode: $studyMode.find("input[type='radio']:checked").val(),
+                    AttendanceMode: $attendance.find("input[type='radio']:checked").val(),
+                    SelectedVenues: $allCheckedVenues.map(function () {
+                        return $(this).val();
+                    }).get(),
+                    LevelFilter: $allCheckedRegions.map(function () {
+                        return $(this).val();
+                    }).get()
+
+
+                },
+                    onSucess);
+
+            });
+
 
             $deliveryRadios.change(function () {
                 var $venueChoice = $("#sectionVenue");
