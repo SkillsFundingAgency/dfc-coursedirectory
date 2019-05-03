@@ -11,7 +11,10 @@ using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 using Dfc.CourseDirectory.Services.VenueService;
+using Dfc.CourseDirectory.Web.Extensions;
 using Dfc.CourseDirectory.Web.Helpers;
+using Dfc.CourseDirectory.Web.RequestModels;
+using Dfc.CourseDirectory.Web.ViewComponents.Courses.SelectVenue;
 using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.Web.ViewModels.CopyCourse;
 using Dfc.CourseDirectory.Web.ViewModels.EditCourse;
@@ -40,7 +43,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
             IOptions<CourseServiceSettings> courseSearchSettings,
             IHttpContextAccessor contextAccessor,
             ICourseService courseService,
-            IVenueService venueService)
+            IVenueService venueService,
+            IVenueSearchHelper venueSearchHelper)
         {
             Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(courseSearchSettings, nameof(courseSearchSettings));
@@ -52,6 +56,201 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
             _contextAccessor = contextAccessor;
             _courseService = courseService;
             _venueService = venueService;
+            _venueSearchHelper = venueSearchHelper;
+        }
+
+        [Authorize]
+        public IActionResult AddNewVenue(CourseRunRequestModel model)
+        {
+            _session.SetString("Option", "AddNewVenueForCopy");
+
+            CopyCourseRunViewModel vm = new CopyCourseRunViewModel
+            {
+                AwardOrgCode = model.AwardOrgCode,
+                LearnAimRef = model.LearnAimRef,
+                LearnAimRefTitle = model.LearnAimRefTitle,
+                NotionalNVQLevelv2 = model.NotionalNVQLevelv2,
+                PublishMode = model.Mode,
+                CourseId = model.CourseId,
+                CourseRunId = model.CourseRunId,
+                CourseName = model.CourseName,
+                VenueId = model.VenueId,
+                DeliveryMode = model.DeliveryMode,
+
+                CourseProviderReference = model.CourseProviderReference,
+                DurationUnit = model.DurationUnit,
+                DurationLength = model.DurationLength.ToString(),
+                StartDateType = model.StartDateType.ToUpper() == "SPECIFIEDSTARTDATE"
+                    ? StartDateType.SpecifiedStartDate
+                    : StartDateType.FlexibleStartDate,
+                Day = model.Day,
+                Month = model.Month,
+                Year = model.Year,
+                StudyMode = model.StudyMode,
+                Url = model.Url,
+                Cost = model.Cost.ToString(),
+                CostDescription = model.CostDescription,
+                AttendanceMode = model.AttendanceMode,
+            };
+
+            _session.SetObject("CopyCourseRunObject", vm);
+
+            return Json(Url.Action("AddVenue", "Venues"));
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> Reload()
+        {
+            int? UKPRN;
+
+            if (_session.GetInt32("UKPRN") != null)
+            {
+                UKPRN = _session.GetInt32("UKPRN").Value;
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
+            }
+
+            List<SelectListItem> courseRunVenues = new List<SelectListItem>();
+
+            var venues = await GetVenuesByUkprn(UKPRN.Value);
+
+            foreach (var venue in venues.VenueItems)
+            {
+                var item = new SelectListItem { Text = venue.VenueName, Value = venue.Id };
+                courseRunVenues.Add(item);
+            }
+
+            var regions = _courseService.GetRegions();
+
+
+            var cachedData = _session.GetObject<CopyCourseRunViewModel>("CopyCourseRunObject");
+
+
+            var course = await _courseService.GetCourseByIdAsync(new GetCourseByIdCriteria(cachedData.CourseId.Value));
+
+            var courseRun = course.Value.CourseRuns.SingleOrDefault(cr => cr.id == cachedData.CourseRunId);
+
+
+            CopyCourseRunViewModel vm = new CopyCourseRunViewModel
+            {
+                AwardOrgCode = cachedData.AwardOrgCode,
+                LearnAimRef = cachedData.LearnAimRef,
+                LearnAimRefTitle = cachedData.LearnAimRefTitle,
+
+                //Mode = mode,
+                CourseId = course.Value.id,
+                CourseRunId = courseRun.id,
+                CourseName = courseRun?.CourseName,
+                Venues = courseRunVenues,
+                VenueId = courseRun.VenueId ?? (Guid?)null,
+                SelectRegion = regions,
+                DeliveryMode = courseRun.DeliveryMode,
+
+                CourseProviderReference = courseRun?.ProviderCourseID,
+                DurationUnit = courseRun.DurationUnit,
+                DurationLength = courseRun?.DurationValue?.ToString(),
+                StartDateType = courseRun.FlexibleStartDate
+                    ? StartDateType.FlexibleStartDate
+                    : StartDateType.SpecifiedStartDate,
+                Day = courseRun.StartDate?.Day.ToString("00"),
+                Month = courseRun.StartDate?.Month.ToString("00"),
+                Year = courseRun.StartDate?.Year.ToString("0000"),
+                StudyMode = courseRun.StudyMode,
+                Url = courseRun.CourseURL,
+                Cost = courseRun.Cost?.ToString("F"),
+                CostDescription = courseRun.CostDescription,
+                AttendanceMode = courseRun.AttendancePattern,
+                QualificationType = course.Value.QualificationType,
+                NotionalNVQLevelv2 = course.Value.NotionalNVQLevelv2
+            };
+
+            vm.CourseName = cachedData.CourseName;
+            vm.AttendanceMode = cachedData.AttendanceMode;
+            vm.Cost = cachedData.Cost;
+            vm.CostDescription = cachedData.CostDescription;
+            vm.CourseProviderReference = cachedData.CourseProviderReference;
+            vm.Day = cachedData.Day;
+            vm.Month = cachedData.Month;
+            vm.Year = cachedData.Year;
+            vm.DeliveryMode = cachedData.DeliveryMode;
+            vm.DurationLength = cachedData.DurationLength;
+            vm.DurationUnit = cachedData.DurationUnit;
+            vm.StartDateType = cachedData.StartDateType;
+            vm.StudyMode = cachedData.StudyMode;
+            vm.Url = cachedData.Url;
+            vm.VenueId = cachedData.VenueId;
+
+            if (courseRun.Regions == null) return View("CopyCourseRun", vm);
+
+            foreach (var selectRegionRegionItem in vm.SelectRegion.RegionItems.OrderBy(x => x.RegionName))
+            {
+                foreach (var subRegionItemModel in selectRegionRegionItem.SubRegion)
+                {
+                    if (courseRun.Regions.Contains(subRegionItemModel.Id))
+                    {
+                        subRegionItemModel.Checked = true;
+                    }
+                }
+            }
+
+            if (vm.SelectRegion.RegionItems != null && vm.SelectRegion.RegionItems.Any())
+            {
+                vm.SelectRegion.RegionItems = vm.SelectRegion.RegionItems.OrderBy(x => x.RegionName);
+                foreach (var selectRegionRegionItem in vm.SelectRegion.RegionItems)
+                {
+                    selectRegionRegionItem.SubRegion =
+                        selectRegionRegionItem.SubRegion.OrderBy(x => x.SubRegionName).ToList();
+                }
+            }
+
+         
+
+            return View("CopyCourseRun", vm);
+
+
+
+
+        }
+
+
+        private async Task<SelectVenueModel> GetVenuesByUkprn(int ukprn)
+        {
+            var selectVenue = new SelectVenueModel
+            {
+                LabelText = "Select course venue",
+                HintText = "Select all that apply.",
+                AriaDescribedBy = "Select all that apply.",
+                Ukprn = ukprn
+            };
+            var requestModel = new VenueSearchRequestModel { SearchTerm = ukprn.ToString() };
+            var criteria = _venueSearchHelper.GetVenueSearchCriteria(requestModel);
+            var result = await _venueService.SearchAsync(criteria);
+            if (result.IsSuccess && result.HasValue)
+            {
+                var items = _venueSearchHelper.GetVenueSearchResultItemModels(result.Value.Value);
+                var venueItems = new List<VenueItemModel>();
+
+                foreach (var venueSearchResultItemModel in items)
+                {
+                    venueItems.Add(new VenueItemModel
+                    {
+                        Id = venueSearchResultItemModel.Id,
+                        VenueName = venueSearchResultItemModel.VenueName
+                    });
+                }
+
+                selectVenue.VenueItems = venueItems;
+                if (venueItems.Count == 1)
+                {
+                    selectVenue.HintText = string.Empty;
+                    selectVenue.AriaDescribedBy = string.Empty;
+                }
+            }
+
+            return selectVenue;
         }
 
 
@@ -255,6 +454,9 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
 
                     courseRuns.Add(copiedCourseRun);
                     courseForEdit.Value.CourseRuns = courseRuns;
+
+                    _session.Remove("NewAddedVenue");
+                    _session.Remove("Option");
 
                     var updatedCourse = await _courseService.UpdateCourseAsync(courseForEdit.Value);
                     if (updatedCourse.IsSuccess && updatedCourse.HasValue)
