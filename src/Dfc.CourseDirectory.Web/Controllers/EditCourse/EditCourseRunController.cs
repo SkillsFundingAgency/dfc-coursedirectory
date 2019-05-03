@@ -69,103 +69,45 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
         }
 
         [Authorize]
-        //public IActionResult AddNewVenue(Guid[] projectId)
         public IActionResult AddNewVenue(CourseRunRequestModel model)
         {
-            // var model = new AddCourseRequestModel();
-            // AddCourseRun - going to Summary
-            //Session.SetObject(SessionAddCourseSection2, model);
-            //Session.SetObject(SessionLastAddCoursePage, AddCoursePage.AddCourseRun);
+
             _session.SetString("Option", "AddNewVenueForEdit");
 
-            // AddCourseRun - going to Summary
-            _session.SetObject(SessionAddCourseSection2, model);
-            //var addCourse = _session.GetObject<AddCourseSection1RequestModel>(SessionAddCourseSection1);
-            var availableVenues = _session.GetObject<SelectVenueModel>(SessionVenues);
-            var availableRegions = _session.GetObject<SelectRegionModel>(SessionRegions);
 
-            var venues = new List<string>();
-            var regions = new List<string>();
-
-            // sort regions out
-            model.SelectedRegions = availableRegions.SubRegionsDataCleanse(model.SelectedRegions?.ToList() ?? new List<string>());
             EditCourseRunViewModel vm = new EditCourseRunViewModel
             {
                 AwardOrgCode = model.AwardOrgCode,
-                //LearnAimRef = learnAimRef,
-                //LearnAimRefTitle = learnAimRefTitle,
-
-                //Mode = mode,
-                //CourseId = courseId.Value,
-                //CourseRunId = courseRunId,
-                //CourseName = courseRun?.CourseName,
+                LearnAimRef = model.LearnAimRef,
+                LearnAimRefTitle = model.LearnAimRefTitle,
+                NotionalNVQLevelv2 = model.NotionalNVQLevelv2,
+                Mode = model.Mode,
+                CourseId = model.CourseId,
+                CourseRunId = model.CourseRunId,
+                CourseName = model.CourseName,
                 //Venues = availableVenues
-                //VenueId = courseRun.VenueId ?? (Guid?)null,
+                VenueId = model.VenueId,
                 //SelectRegion = regions,
-                //DeliveryMode = courseRun.DeliveryMode,
+                DeliveryMode = model.DeliveryMode,
 
-                //CourseProviderReference = courseRun?.ProviderCourseID,
-                //DurationUnit = courseRun.DurationUnit,
-                //DurationLength = courseRun?.DurationValue?.ToString(),
-                //StartDateType = courseRun.FlexibleStartDate
-                //    ? StartDateType.FlexibleStartDate
-                //    : StartDateType.SpecifiedStartDate,
-                //Day = courseRun.StartDate?.Day.ToString("00"),
-                //Month = courseRun.StartDate?.Month.ToString("00"),
-                //Year = courseRun.StartDate?.Year.ToString("0000"),
-                //StudyMode = courseRun.StudyMode,
-                //Url = courseRun.CourseURL,
-                //Cost = courseRun.Cost?.ToString("F"),
-                //CostDescription = courseRun.CostDescription,
-                //AttendanceMode = courseRun.AttendancePattern,
-                //QualificationType = course.Value.QualificationType,
-                //NotionalNVQLevelv2 = course.Value.NotionalNVQLevelv2,
-                //CurrentCourseRunDate = courseRun.StartDate
+                CourseProviderReference = model.CourseProviderReference,
+                DurationUnit = model.DurationUnit,
+                DurationLength = model.DurationLength.ToString(),
+                StartDateType = model.StartDateType.ToUpper() == "SPECIFIEDSTARTDATE"
+                    ? StartDateType.SpecifiedStartDate
+                    : StartDateType.FlexibleStartDate,
+                Day = model.Day,
+                Month = model.Month,
+                Year = model.Year,
+                StudyMode = model.StudyMode,
+                Url = model.Url,
+                Cost = model.Cost.ToString(),
+                CostDescription = model.CostDescription,
+                AttendanceMode = model.AttendanceMode,
             };
 
-            //if (mode == PublishMode.BulkUpload || mode == PublishMode.DataQualityIndicator)
-            //{
-            //    vm.ValPastDateRef = DateTime.Now;
-            //    vm.ValPastDateMessage = "Start Date cannot be earlier than today’s date";
-
-            //    //var venueExists = vm.Venues.Any(x => x.Text == )
-            //}
-            //else
-            //{
-            //    vm.ValPastDateRef = courseRun.StartDate ?? DateTime.Now;
-            //    if (courseRun.FlexibleStartDate == true)
-            //    {
-            //        vm.ValPastDateMessage = "Start Date cannot be earlier than today’s date";
-            //    }
-            //    else
-            //    {
-            //        vm.ValPastDateMessage = "New Start Date cannot be before the pre-edited Start Date";
-            //    }
-
-            //}
-
-            //if (courseRun.Regions == null) return View("EditCourseRun", vm);
-
-            //foreach (var selectRegionRegionItem in vm.SelectRegion.RegionItems.OrderBy(x => x.RegionName))
-            //{
-            //    foreach (var subRegionItemModel in selectRegionRegionItem.SubRegion)
-            //    {
-            //        if (courseRun.Regions.Contains(subRegionItemModel.Id))
-            //        {
-            //            subRegionItemModel.Checked = true;
-            //        }
-            //    }
-            //}
-
-            //if (vm.SelectRegion.RegionItems != null && vm.SelectRegion.RegionItems.Any())
-            //{
-            //    vm.SelectRegion.RegionItems = vm.SelectRegion.RegionItems.OrderBy(x => x.RegionName);
-            //    foreach (var selectRegionRegionItem in vm.SelectRegion.RegionItems)
-            //    {
-            //        selectRegionRegionItem.SubRegion = selectRegionRegionItem.SubRegion.OrderBy(x => x.SubRegionName).ToList();
-            //    }
-            //}
-             _session.SetObject("EditCourseRunObject", vm);
+          
+            _session.SetObject("EditCourseRunObject", vm);
 
 
             return Json(Url.Action("AddVenue", "Venues"));
@@ -214,9 +156,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
         [Authorize]
         public async Task<IActionResult> Reload()
         {
-
-          
-
             int? UKPRN;
 
             if (_session.GetInt32("UKPRN") != null)
@@ -228,117 +167,117 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
 
-            var vm=_session.GetObject<EditCourseRunViewModel> ("EditCourseRunObject");
+            List<SelectListItem> courseRunVenues = new List<SelectListItem>();
 
-            return View("EditCourseRun",vm);
+            var venues = await GetVenuesByUkprn(UKPRN.Value);
 
-            //List<SelectListItem> courseRunVenues = new List<SelectListItem>();
+            foreach (var venue in venues.VenueItems)
+            {
+                var item = new SelectListItem { Text = venue.VenueName, Value = venue.Id };
+                courseRunVenues.Add(item);
+            }
 
-            ////VenueSearchCriteria criteria = new VenueSearchCriteria(UKPRN.ToString(), null);
-            //var venues = await GetVenuesByUkprn(UKPRN.Value);
+            var regions = _courseService.GetRegions();
 
-            //foreach (var venue in venues.VenueItems)
-            //{
-            //    var item = new SelectListItem { Text = venue.VenueName, Value = venue.Id };
-            //    courseRunVenues.Add(item);
-            //};
 
-            //var regions = _courseService.GetRegions();
+            var cachedData = _session.GetObject<EditCourseRunViewModel>("EditCourseRunObject");
 
-            //_session.SetObject(SessionVenues, venues);
-            //_session.SetObject(SessionRegions, regions);
 
-            //if (courseId.HasValue)
-            //{
-            //    var course = await _courseService.GetCourseByIdAsync(new GetCourseByIdCriteria(courseId.Value));
+            var course = await _courseService.GetCourseByIdAsync(new GetCourseByIdCriteria(cachedData.CourseId.Value));
 
-            //    var courseRun = course.Value.CourseRuns.SingleOrDefault(cr => cr.id == courseRunId);
+            var courseRun = course.Value.CourseRuns.SingleOrDefault(cr => cr.id == cachedData.CourseRunId);
 
-            //    if (courseRun != null)
-            //    {
-            //        EditCourseRunViewModel vm = new EditCourseRunViewModel
-            //        {
-            //            AwardOrgCode = awardOrgCode,
-            //            LearnAimRef = learnAimRef,
-            //            LearnAimRefTitle = learnAimRefTitle,
 
-            //            Mode = mode,
-            //            CourseId = courseId.Value,
-            //            CourseRunId = courseRunId,
-            //            CourseName = courseRun?.CourseName,
-            //            Venues = courseRunVenues,
-            //            VenueId = courseRun.VenueId ?? (Guid?)null,
-            //            SelectRegion = regions,
-            //            DeliveryMode = courseRun.DeliveryMode,
+            EditCourseRunViewModel vm = new EditCourseRunViewModel
+            {
+                AwardOrgCode = cachedData.AwardOrgCode,
+                LearnAimRef = cachedData.LearnAimRef,
+                LearnAimRefTitle = cachedData.LearnAimRefTitle,
 
-            //            CourseProviderReference = courseRun?.ProviderCourseID,
-            //            DurationUnit = courseRun.DurationUnit,
-            //            DurationLength = courseRun?.DurationValue?.ToString(),
-            //            StartDateType = courseRun.FlexibleStartDate
-            //                ? StartDateType.FlexibleStartDate
-            //                : StartDateType.SpecifiedStartDate,
-            //            Day = courseRun.StartDate?.Day.ToString("00"),
-            //            Month = courseRun.StartDate?.Month.ToString("00"),
-            //            Year = courseRun.StartDate?.Year.ToString("0000"),
-            //            StudyMode = courseRun.StudyMode,
-            //            Url = courseRun.CourseURL,
-            //            Cost = courseRun.Cost?.ToString("F"),
-            //            CostDescription = courseRun.CostDescription,
-            //            AttendanceMode = courseRun.AttendancePattern,
-            //            QualificationType = course.Value.QualificationType,
-            //            NotionalNVQLevelv2 = course.Value.NotionalNVQLevelv2,
-            //            CurrentCourseRunDate = courseRun.StartDate
-            //        };
+                //Mode = mode,
+                CourseId = course.Value.id,
+                CourseRunId = courseRun.id,
+                CourseName = courseRun?.CourseName,
+                Venues = courseRunVenues,
+                VenueId = courseRun.VenueId ?? (Guid?)null,
+                SelectRegion = regions,
+                DeliveryMode = courseRun.DeliveryMode,
 
-            //        if (mode == PublishMode.BulkUpload || mode == PublishMode.DataQualityIndicator)
-            //        {
-            //            vm.ValPastDateRef = DateTime.Now;
-            //            vm.ValPastDateMessage = "Start Date cannot be earlier than today’s date";
+                CourseProviderReference = courseRun?.ProviderCourseID,
+                DurationUnit = courseRun.DurationUnit,
+                DurationLength = courseRun?.DurationValue?.ToString(),
+                StartDateType = courseRun.FlexibleStartDate
+                    ? StartDateType.FlexibleStartDate
+                    : StartDateType.SpecifiedStartDate,
+                Day = courseRun.StartDate?.Day.ToString("00"),
+                Month = courseRun.StartDate?.Month.ToString("00"),
+                Year = courseRun.StartDate?.Year.ToString("0000"),
+                StudyMode = courseRun.StudyMode,
+                Url = courseRun.CourseURL,
+                Cost = courseRun.Cost?.ToString("F"),
+                CostDescription = courseRun.CostDescription,
+                AttendanceMode = courseRun.AttendancePattern,
+                QualificationType = course.Value.QualificationType,
+                NotionalNVQLevelv2 = course.Value.NotionalNVQLevelv2,
+                CurrentCourseRunDate = courseRun.StartDate
+            };
 
-            //            //var venueExists = vm.Venues.Any(x => x.Text == )
-            //        }
-            //        else
-            //        {
-            //            vm.ValPastDateRef = courseRun.StartDate ?? DateTime.Now;
-            //            if (courseRun.FlexibleStartDate == true)
-            //            {
-            //                vm.ValPastDateMessage = "Start Date cannot be earlier than today’s date";
-            //            }
-            //            else
-            //            {
-            //                vm.ValPastDateMessage = "New Start Date cannot be before the pre-edited Start Date";
-            //            }
+            if (cachedData.Mode == PublishMode.BulkUpload || cachedData.Mode == PublishMode.DataQualityIndicator)
+            {
+                vm.ValPastDateRef = DateTime.Now;
+                vm.ValPastDateMessage = "Start Date cannot be earlier than today’s date";
 
-            //        }
+                //var venueExists = vm.Venues.Any(x => x.Text == )
+            }
+            else
+            {
+                vm.ValPastDateRef = courseRun.StartDate ?? DateTime.Now;
+                vm.ValPastDateMessage = courseRun.FlexibleStartDate == true ? "Start Date cannot be earlier than today’s date" : "New Start Date cannot be before the pre-edited Start Date";
+            }
 
-            //        if (courseRun.Regions == null) return View("EditCourseRun", vm);
+            if (courseRun.Regions == null) return View("EditCourseRun", vm);
 
-            //        foreach (var selectRegionRegionItem in vm.SelectRegion.RegionItems.OrderBy(x => x.RegionName))
-            //        {
-            //            foreach (var subRegionItemModel in selectRegionRegionItem.SubRegion)
-            //            {
-            //                if (courseRun.Regions.Contains(subRegionItemModel.Id))
-            //                {
-            //                    subRegionItemModel.Checked = true;
-            //                }
-            //            }
-            //        }
+            foreach (var selectRegionRegionItem in vm.SelectRegion.RegionItems.OrderBy(x => x.RegionName))
+            {
+                foreach (var subRegionItemModel in selectRegionRegionItem.SubRegion)
+                {
+                    if (courseRun.Regions.Contains(subRegionItemModel.Id))
+                    {
+                        subRegionItemModel.Checked = true;
+                    }
+                }
+            }
 
-            //        if (vm.SelectRegion.RegionItems != null && vm.SelectRegion.RegionItems.Any())
-            //        {
-            //            vm.SelectRegion.RegionItems = vm.SelectRegion.RegionItems.OrderBy(x => x.RegionName);
-            //            foreach (var selectRegionRegionItem in vm.SelectRegion.RegionItems)
-            //            {
-            //                selectRegionRegionItem.SubRegion = selectRegionRegionItem.SubRegion.OrderBy(x => x.SubRegionName).ToList();
-            //            }
-            //        }
+            if (vm.SelectRegion.RegionItems != null && vm.SelectRegion.RegionItems.Any())
+            {
+                vm.SelectRegion.RegionItems = vm.SelectRegion.RegionItems.OrderBy(x => x.RegionName);
+                foreach (var selectRegionRegionItem in vm.SelectRegion.RegionItems)
+                {
+                    selectRegionRegionItem.SubRegion =
+                        selectRegionRegionItem.SubRegion.OrderBy(x => x.SubRegionName).ToList();
+                }
+            }
 
-            //        return View("EditCourseRun", vm);
-            //    }
-            //}
+            vm.CourseName = cachedData.CourseName;
+            vm.AttendanceMode = cachedData.AttendanceMode;
+            vm.Cost = cachedData.Cost;
+            vm.CostDescription = cachedData.CostDescription;
+            vm.CourseProviderReference = cachedData.CourseProviderReference;
+            vm.Day = cachedData.Day;
+            vm.Month = cachedData.Month;
+            vm.Year = cachedData.Year;
+            vm.DeliveryMode = cachedData.DeliveryMode;
+            vm.DurationLength = cachedData.DurationLength;
+            vm.DurationUnit = cachedData.DurationUnit;
+            vm.StartDateType = cachedData.StartDateType;
+            vm.StudyMode = cachedData.StudyMode;
+            vm.Url = cachedData.Url;
+            vm.VenueId = cachedData.VenueId;
 
-            ////error page
-            //return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View("EditCourseRun", vm);
+
+
+
 
         }
 
@@ -441,8 +380,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                     }
 
                     if (courseRun.Regions == null) return View("EditCourseRun", vm);
-                    
-                    foreach (var selectRegionRegionItem in vm.SelectRegion.RegionItems.OrderBy(x=>x.RegionName))
+
+                    foreach (var selectRegionRegionItem in vm.SelectRegion.RegionItems.OrderBy(x => x.RegionName))
                     {
                         foreach (var subRegionItemModel in selectRegionRegionItem.SubRegion)
                         {
@@ -471,7 +410,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 
         }
 
-        
+
 
 
         [HttpPost]
@@ -583,6 +522,9 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                             courseRunForEdit.RecordStatus = RecordStatus.Live;
                             break;
                     }
+
+                    _session.Remove("NewAddedVenue");
+                    _session.Remove("Option");
 
                     var updatedCourse = await _courseService.UpdateCourseAsync(courseForEdit.Value);
                     if (updatedCourse.IsSuccess && updatedCourse.HasValue)
