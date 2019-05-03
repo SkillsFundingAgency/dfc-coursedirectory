@@ -235,6 +235,22 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                 vm.ValPastDateMessage = courseRun.FlexibleStartDate == true ? "Start Date cannot be earlier than today’s date" : "New Start Date cannot be before the pre-edited Start Date";
             }
 
+            vm.CourseName = cachedData.CourseName;
+            vm.AttendanceMode = cachedData.AttendanceMode;
+            vm.Cost = cachedData.Cost;
+            vm.CostDescription = cachedData.CostDescription;
+            vm.CourseProviderReference = cachedData.CourseProviderReference;
+            vm.Day = cachedData.Day;
+            vm.Month = cachedData.Month;
+            vm.Year = cachedData.Year;
+            vm.DeliveryMode = cachedData.DeliveryMode;
+            vm.DurationLength = cachedData.DurationLength;
+            vm.DurationUnit = cachedData.DurationUnit;
+            vm.StartDateType = cachedData.StartDateType;
+            vm.StudyMode = cachedData.StudyMode;
+            vm.Url = cachedData.Url;
+            vm.VenueId = cachedData.VenueId;
+
             if (courseRun.Regions == null) return View("EditCourseRun", vm);
 
             foreach (var selectRegionRegionItem in vm.SelectRegion.RegionItems.OrderBy(x => x.RegionName))
@@ -258,21 +274,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                 }
             }
 
-            vm.CourseName = cachedData.CourseName;
-            vm.AttendanceMode = cachedData.AttendanceMode;
-            vm.Cost = cachedData.Cost;
-            vm.CostDescription = cachedData.CostDescription;
-            vm.CourseProviderReference = cachedData.CourseProviderReference;
-            vm.Day = cachedData.Day;
-            vm.Month = cachedData.Month;
-            vm.Year = cachedData.Year;
-            vm.DeliveryMode = cachedData.DeliveryMode;
-            vm.DurationLength = cachedData.DurationLength;
-            vm.DurationUnit = cachedData.DurationUnit;
-            vm.StartDateType = cachedData.StartDateType;
-            vm.StudyMode = cachedData.StudyMode;
-            vm.Url = cachedData.Url;
-            vm.VenueId = cachedData.VenueId;
+          
 
             return View("EditCourseRun", vm);
 
