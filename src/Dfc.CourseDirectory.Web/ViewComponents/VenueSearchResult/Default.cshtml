@@ -39,19 +39,31 @@
 
 <form id="venueSearchResultForm" asp-controller="Venues" asp-action="AddVenue" method="get">
     @{
-        if (Model.Items.Any() && Model.NewItem != null)
+ string message = "";
+
+        if (Model.Deleted)
         {
-            if (Model.Updated)
+            message = "Venue ";
+            if (!string.IsNullOrWhiteSpace(Model.NewItem.VenueName))
             {
-                @*if (Model.Updated)
-                    {
-                        <span class="govuk-heading-m">Your venue updated:</span>
-                    }
-                    else
-                    {
-                        <span class="govuk-heading-m">New venue added:</span>
-                    }*@
-                string message = "";
+                message += string.Concat(Model.NewItem.VenueName);
+            }
+
+            message += string.Concat(" has been deleted");
+
+            @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+       {
+
+           NotificationTitle = "",
+           NotificationMessage = message,
+           ClassType = "success-summary"
+       });
+        }
+        else
+        {
+            if (Model.Items.Any() && Model.NewItem != null)
+            {
+               
                 if (!string.IsNullOrWhiteSpace(Model.NewItem.VenueName))
                 {
                     message += string.Concat(Model.NewItem.VenueName, ", ");
@@ -79,6 +91,7 @@
                 }
 
 
+
                 @await Component.InvokeAsync(nameof(Notification), new NotificationModel
            {
 
@@ -86,28 +99,9 @@
                NotificationMessage = message,
                ClassType = "success-summary"
            });
-            }
-            else
-            {
-                if (Model.Deleted)
-                {
-                    string message = "Venue ";
-                    if (!string.IsNullOrWhiteSpace(Model.NewItem.VenueName))
-                    {
-                        message += string.Concat(Model.NewItem.VenueName);
-                    }
-                    
-                    message += string.Concat(" has been deleted");
 
-                    @await Component.InvokeAsync(nameof(Notification), new NotificationModel
-               {
-
-                   NotificationTitle = "",
-                   NotificationMessage = message,
-                   ClassType = "success-summary"
-               });
-                }
             }
+
 
         }
     }
@@ -272,7 +266,7 @@
 
             };
 
-            
+
 
             var onSucess = function (data) {
 
@@ -284,7 +278,7 @@
                     $('html,body').animate({
                         scrollTop: $liveCoursesExistMessage.offset().top
                     });
-                   
+
                 }
 
                 if (continueDelete) {
@@ -294,7 +288,7 @@
                         $('html,body').animate({
                             scrollTop: $pendingCoursesExistMessage.offset().top
                         });
-                       
+
                     }
                 }
 
@@ -323,7 +317,7 @@
                 return search.split(find).join(replace);
             };
 
-             
+
 
             var makeRequestWithPayload = function (payload, success) {
                 console.log(payload);
@@ -362,7 +356,7 @@
             $deleteButton.on("click",
                 function (event) {
                     event.preventDefault();
-                                            $(".cd-success-summary").hide();
+                    $(".cd-success-summary").hide();
                     $liveCoursesExistMessage.hide();
                     $pendingCoursesExistMessage.hide();
 

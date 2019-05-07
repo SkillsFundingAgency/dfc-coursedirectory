@@ -380,17 +380,25 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 Town = requestModel.TownOrCity
             };
 
-            _session.SetObject("NewAddedVenue", addedVenueModel);
+          
 
             string option = _contextAccessor.HttpContext.Session.GetString("Option");
 
             if (option.ToUpper() == "ADDNEWVENUEFOREDIT")
             {
+                _session.SetObject("NewAddedVenue", addedVenueModel);
                 return RedirectToAction("Reload", "EditCourseRun");
+            }
+
+            if (option.ToUpper() == "ADDNEWVENUEFORCOPY")
+            {
+                _session.SetObject("NewAddedVenue", addedVenueModel);
+                return RedirectToAction("Reload", "CopyCourseRun");
             }
 
             if (option.ToUpper() == "ADDNEWVENUE")
             {
+                _session.SetObject("NewAddedVenue", addedVenueModel);
                 return RedirectToAction("SummaryToAddCourseRun", "AddCourse");
             }
            

@@ -118,8 +118,8 @@
         {
         DeliveryMode = Model.DeliveryMode,
         LabelText = "Delivery Mode",
-        HintText = "Select how this course will be delivered",
-        AriaDescribedBy = "How the course will be delivered"
+        HintText = "How will this course be delivered",
+        AriaDescribedBy = "Select how you will deliver this course"
         })
     </div>
 
@@ -179,35 +179,6 @@
                     }
 
                     <a href="#" class="govuk-link" id="addNewVenue">Add a new venue</a>
-                    @*@Html.ActionLink("link text", "AddNewVenue", "AddCourse", new { SelectedVenues = new Guid[] { Guid.NewGuid() } }, null)*@
-
-                    @*@Html.ActionLink("link text", "AddNewVenue", "AddCourse", new { SelectedVenues = @Model.SelectVenue }, null)*@
-
-                    @*<a asp-controller="AddCourse" asp-action="AddNewVenue" class="link--button" id=""
-                        asp-route-CourseName="@Model.CourseName"
-                        asp-route-CourseProviderReference="@Model.CourseProviderReference"
-                        asp-route-DeliveryMode="@Model.DeliveryMode"
-                        asp-route-StartDateType="@Model.StartDateType "
-                        asp-route-Day="@Model.Day "
-                        asp-route-Month="@Model.Month "
-                        asp-route-Year="@Model.Year "
-                        asp-route-Url="@Model.Url "
-                        asp-route-Cost="@Model.Cost "
-                        asp-route-CostDescription="@Model.CostDescription "
-                        asp-route-AdvancedLearnerLoan="@Model.AdvancedLearnerLoan "
-                        asp-route-DurationUnit="@Model.DurationUnit "
-                        asp-route-DurationLength="@Model.DurationLength "
-                        asp-route-StudyMode="@Model.StudyMode "
-                        asp-route-AttendanceMode="@Model.AttendanceMode "
-                        asp-route-SelectedVenues="@venues.ToArray()"
-                        asp-route-SelectedRegions=@null
-                        asp-route-CourseMode="@Model.CourseMode">Add a new venue</a>*@
-
-                    @*@Html.ActionLink("Add a new venue", "AddNewVenue", "AddCourse", new { }, new { @class = "govuk-link" })*@
-
-
-
-
                 </div>
             </div>
         </div>
@@ -218,40 +189,6 @@
             @await Component.InvokeAsync(nameof(ChooseRegion), Model.ChooseRegion)
         </div>
     </div>
-
-    @*<div class="govuk-form-group" id="RegionItemsCheckboxList" style="@Model.DeliveryMode.IfNotWorkBasedDisplayNone()">
-            <label class="govuk-label" for="select-region">
-                @Model.SelectRegion.LabelText
-            </label>
-            <span id="select-region-hint" class="govuk-hint">
-                @Model.SelectRegion.HintText
-            </span>
-            <div class="govuk-grid-row">
-                <div class="govuk-grid-column-full">
-                    <div class="govuk-checkboxes" id="SelectRegionCheckBoxes" val-required-message="Select a region">
-                        @{ var j = 0; }
-                        @if (Model.SelectRegion.RegionItems.Count() == 1)
-                        {
-                        <div class="govuk-checkboxes__item">
-                            <input class="govuk-checkboxes__input" id="RegionName-@j" name="SelectedRegions" type="checkbox" value="@Model.SelectRegion.RegionItems.First().Id" checked="checked" onclick="return false;" />
-                            <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@Model.SelectRegion.RegionItems.First().RegionName</label>
-                        </div>
-                        }
-                        else
-                        {
-                        foreach (var item in Model.SelectRegion.RegionItems)
-                        {
-                        j++;
-                        <div class="govuk-checkboxes__item">
-                            <input class="govuk-checkboxes__input" id="RegionName-@j" name="SelectedRegions" type="checkbox" value="@item.Id" @item.Checked.ThenNullableCheck() />
-                            <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@item.RegionName</label>
-                        </div>
-                        }
-                        }
-                    </div>
-                </div>
-            </div>
-        </div>*@
 
     <div id="sectionUrl">
         @await Component.InvokeAsync(nameof(UrlInput), new UrlInputModel
@@ -349,6 +286,7 @@
 <script>
     (function($) {
         $(function () {
+                            var $addNewVenueButton = $("#addNewVenue");
             var validStates = [];
             var $button = $("#publish");
             var $errorSummary = $("#errorsummary").govUkErrorSummary();
@@ -378,6 +316,12 @@
             $defaultAttendancePattern.prop("checked", true);            
             var $defaultStudyMode = $("#@StudyMode.FullTime");
             $defaultStudyMode.prop("checked", true);
+            var $nationalTrue = $("#National_true");
+            $nationalTrue.prop("checked", false);
+            var $nationalFalse = $("#National_false");
+            $nationalFalse.prop("checked", false);
+            var $regionSection = $("#regions-section");
+            $regionSection.hide();
 
             switch ($radioDeliveryMode.find("input[type='radio']:checked").val()) {
                 case "ClassroomBased":
