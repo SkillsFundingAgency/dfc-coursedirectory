@@ -486,11 +486,26 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                         var venues = (IEnumerable<Venue>)venueResult.Value.Value;
                         if (venues.Count().Equals(1))
                         {
-                            courseRun.VenueId = new Guid(venues.FirstOrDefault().ID);
+                            if (venues.FirstOrDefault().Status.Equals(VenueStatus.Live))
+                            {
+                                courseRun.VenueId = new Guid(venues.FirstOrDefault().ID);
+                            }
+                            else
+                            {
+                                validationMessages.Add($"Venue is not LIVE (The status is { venues.FirstOrDefault().Status }) for VenueName { bulkUploadCourse.VenueName } - Line { bulkUploadCourse.BulkUploadLineNumber },  LARS_QAN = { bulkUploadCourse.LearnAimRef }, ID = { bulkUploadCourse.ProviderCourseID }");                               
+                            }                           
                         }
                         else
                         {
                             validationMessages.Add($"We have obtained muliple Venues for { bulkUploadCourse.VenueName } - Line { bulkUploadCourse.BulkUploadLineNumber },  LARS_QAN = { bulkUploadCourse.LearnAimRef }, ID = { bulkUploadCourse.ProviderCourseID }");
+                            if (venues.FirstOrDefault().Status.Equals(VenueStatus.Live))
+                            {
+                                courseRun.VenueId = new Guid(venues.FirstOrDefault().ID);
+                            }
+                            else
+                            {
+                                validationMessages.Add($"The selected Venue is not LIVE (The status is { venues.FirstOrDefault().Status }) for VenueName { bulkUploadCourse.VenueName } - Line { bulkUploadCourse.BulkUploadLineNumber },  LARS_QAN = { bulkUploadCourse.LearnAimRef }, ID = { bulkUploadCourse.ProviderCourseID }");
+                            }
                         }
                     }
                     else
