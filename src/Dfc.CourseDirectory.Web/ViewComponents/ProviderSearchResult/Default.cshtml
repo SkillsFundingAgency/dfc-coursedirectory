@@ -9,7 +9,7 @@
     var provSearch = HttpContextAccessor.HttpContext.Session.GetInt32("ProviderSearch");
 }
 
-@if (Model.Items.Any() && Model.Items.FirstOrDefault() != null)
+@if (Model.Items.Any() && Model.Items.FirstOrDefault() != null && !Model.HasErrors)
 {
 <div class="govuk-width-container govuk-!-margin-top-4">
     <span class="govuk-caption-xl"> Course Provider</span>
