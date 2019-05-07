@@ -23,16 +23,6 @@
                  })
     </div>
 
-    @*@await Component.InvokeAsync(nameof(Notification), new NotificationModel
-                  {
-                      NotificationTitle = "",
-                      NotificationMessage = "No courses found that match your search criteria",
-                      ClassType = "error-summary"
-                  })*@
-    @*<div class="cd-grid-coloumn-80 ">
-
-        </div>*@
-
 }
 else
 {
@@ -177,38 +167,46 @@ else
 
         @foreach (var courseRun in Model.ProviderCourseRuns.OrderBy(x=>x.CourseName))
         {
-            <div class="courserun border">
-                <div class="courserun__row1" id="@courseRun.CourseRunId">
-                    @if (!string.IsNullOrEmpty(courseRun.CourseName))
-                    {
-                        <h3 class="coursename">@courseRun.CourseName</h3>
-                    }
-                    <h4 class="coursename smaller ">
-
-                        @if (!string.IsNullOrEmpty(courseRun.QualificationCourseTitle))
-                        {
-                            <small>@courseRun.QualificationCourseTitle </small>
-                        }
-                        @if (!string.IsNullOrEmpty(courseRun.LearnAimRef))
-                        {
-                            <small>
-                                <span>LARS/QAN:@courseRun.LearnAimRef</span>
-                            </small>
-                        }
-
-                    </h4>
-                </div>
-
-                @if (courseRun.DeliveryMode == "Classroom based")
+        <div class="courserun border">
+            <div class="courserun__row1" id="@courseRun.CourseRunId">
+                @if (!string.IsNullOrEmpty(courseRun.CourseName))
                 {
-                    if (!string.IsNullOrEmpty(courseRun.Venue))
-                    {
-                        <div class="courserun__row2">
-                            <span class="">@courseRun.Venue</span>
-                        </div>
-                    }
+                    <h3 class="coursename">@courseRun.CourseName</h3>
                 }
-                @if (courseRun.DeliveryMode == "Work based")
+                <h4 class="coursename smaller ">
+
+                    @if (!string.IsNullOrEmpty(courseRun.QualificationCourseTitle))
+                    {
+                        <small>@courseRun.QualificationCourseTitle </small>
+                    }
+                    @if (!string.IsNullOrEmpty(courseRun.LearnAimRef))
+                    {
+                        <small>
+                            <span>LARS/QAN:@courseRun.LearnAimRef</span>
+                        </small>
+                    }
+
+                </h4>
+            </div>
+
+            @if (courseRun.DeliveryMode == "Classroom based")
+            {
+                if (!string.IsNullOrEmpty(courseRun.Venue))
+                {
+                    <div class="courserun__row2">
+                        <span class="">@courseRun.Venue</span>
+                    </div>
+                }
+            }
+            @if (courseRun.DeliveryMode == "Work based")
+            {
+                if (courseRun.National)
+                {
+                    <div class="courserun__row2">
+                        <span class="">National</span>
+                    </div>
+                }
+                else
                 {
                     if (!string.IsNullOrEmpty(courseRun.Region))
                     {
@@ -217,50 +215,51 @@ else
                         </div>
                     }
                 }
+            }
 
 
-                <div class="courserun__row3">
-                    @if (!string.IsNullOrEmpty(courseRun.CourseTextId))
+            <div class="courserun__row3">
+                @if (!string.IsNullOrEmpty(courseRun.CourseTextId))
+                {
+                    <span>@courseRun.CourseTextId</span>
+                }
+
+                @if (courseRun.DeliveryMode == "Classroom based")
+                {
+                    if (!string.IsNullOrEmpty(courseRun.AttendancePattern))
                     {
-                        <span>@courseRun.CourseTextId</span>
+                        <span id="attendance">@courseRun.AttendancePattern</span>
                     }
-
-                    @if (courseRun.DeliveryMode == "Classroom based")
-                    {
-                        if (!string.IsNullOrEmpty(courseRun.AttendancePattern))
-                        {
-                            <span id="attendance">@courseRun.AttendancePattern</span>
-                        }
-                    }
-                    @if (!string.IsNullOrEmpty(courseRun.NotionalNVQLevelv2))
-                    {
-                        <span>Level @courseRun.NotionalNVQLevelv2</span>
-                    }
+                }
+                @if (!string.IsNullOrEmpty(courseRun.NotionalNVQLevelv2))
+                {
+                    <span>Level @courseRun.NotionalNVQLevelv2</span>
+                }
 
 
-                    @if (!string.IsNullOrEmpty(courseRun.DeliveryMode))
+                @if (!string.IsNullOrEmpty(courseRun.DeliveryMode))
+                {
+                    <span id="deliverymode">@courseRun.DeliveryMode</span>
+                }
+                @if (courseRun.DeliveryMode == "Classroom based")
+                {
+                    @if (!string.IsNullOrEmpty(courseRun.StudyMode))
                     {
-                        <span id="deliverymode">@courseRun.DeliveryMode</span>
+                        <span id="studymode">@courseRun.StudyMode</span>
                     }
-                    @if (courseRun.DeliveryMode == "Classroom based")
-                    {
-                        @if (!string.IsNullOrEmpty(courseRun.StudyMode))
-                        {
-                            <span id="studymode">@courseRun.StudyMode</span>
-                        }
-                    }
-                    @if (!string.IsNullOrEmpty(courseRun.StartDate))
-                    {
-                        <span>@courseRun.StartDate</span>
-                    }
+                }
+                @if (!string.IsNullOrEmpty(courseRun.StartDate))
+                {
+                    <span>@courseRun.StartDate</span>
+                }
 
-                </div>
-                <div class="courserun__row4">
-                    @Html.ActionLink("Select", "Index", "CourseSummary", new { courseRun.CourseId, courseRun.CourseRunId }, null)
-                    @*<a class="govuk-link" asp-controller="CourseSummary"  asp-action="Index" asp-route-id="@courseRun.c">Select</a>*@
-
-                </div>
             </div>
+            <div class="courserun__row4">
+                @Html.ActionLink("Select", "Index", "CourseSummary", new { courseRun.CourseId, courseRun.CourseRunId }, null)
+                @*<a class="govuk-link" asp-controller="CourseSummary"  asp-action="Index" asp-route-id="@courseRun.c">Select</a>*@
+
+            </div>
+        </div>
         }
 
     </div>

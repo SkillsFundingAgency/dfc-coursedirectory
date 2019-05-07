@@ -59,25 +59,10 @@
   
         <header class="cd-hero-search">
             <div class="content-container">
-                @*<a asp-controller="RegulatedQualification" asp-action="Index" class="govuk-back-link">Back</a>*@
                 <div class="grid-row" data-sf-element="Row">
                     <div class="column-two-thirds">
                         <div>
 
-                            @*<h1 class="govuk-heading-l govuk-!-margin-top-4">Search for a course provision</h1>*@
-
-                            @*<div id="notFoundMessage" style="display:none">
-            @await Component.InvokeAsync(nameof(Notification), new NotificationModel
-            {
-            NotificationTitle = "Z code does not exist",
-            NotificationMessage = "Check the code you have entered and try again",
-            ClassType = "error-summary"
-            })
-        </div>*@
-
-
-                            @*<p class="column-two-thirds">Find the provision you'll be awarding with the course</p>*@
-                            @*<p class="govuk-body-l">These are the courses you have listed on the course directory.</p>*@
                             <span class="govuk-caption-xl">Course directory</span>
                             <h1 class="govuk-heading-xl">Your published courses</h1>
                             @if (!string.IsNullOrWhiteSpace(Model.NotificationTitle))
@@ -96,12 +81,7 @@
                             <div class="header-search-content">
                                 <span asp-validation-for="@Model.Search" class="govuk-error-message"></span>
                                 <div class="search-input-wrapper">
-                                    @*@if (!string.IsNullOrWhiteSpace(Model.HintText))
-                                    {
-                                    <span class="govuk-hint">
-                                        @Model.HintText
-                                    </span>
-                                    }*@
+
 
                                     <input class="govuk-input search-input js-search-focus" asp-for="@Model.Search" type="text">
                                     <div class="cd-c-search__item cd-search__submit-wrapper">
@@ -110,7 +90,6 @@
                                 </div>
                             </div>
                         </form>
-                        @*<a class="govuk-link" id="unKnownLink" asp-controller="UnregulatedCourses" asp-action="UnknownZCode">I don't know the Z code</a>*@
 
                         <div class="govuk-grid-row  ">
 
@@ -142,7 +121,6 @@
 
             var $searchForm = $("#zCodeSearch");
 
-            //var $errorSummary = $(".cd-error-summary");
 
             var $elementSearchTerm = $("#@nameof(Model.Search)");
 
@@ -156,9 +134,6 @@
             var validator = $form.validate();
 
 
-
-
-            //var $courseSearchTerm = $("#search");
             var $buttonSearch = $("#searchButton");
 
 
@@ -285,37 +260,24 @@
                         var allCheckedFilterCheckboxesLength = $allCheckedFilterCheckboxes.length;
 
                         for (var i = 0; i < allCheckedFilterCheckboxesLength; i++) {
-                            //if (i === (allCheckedFilterCheckboxesLength - 1)) {
-                            //    $($allCheckedFilterCheckboxes[i]).trigger("click");
-                            //} else {
+
                             $($allCheckedFilterCheckboxes[i]).prop('checked', false);
-                            // }
+
                         }
-                        //$($allCheckedFilterCheckboxes[0]).trigger("click");
+
                         doSearch();
                     });
             };
 
-            //var assignEventsToLarsSearchPagination = function () {
-            //    var $larsSearchResultPaginationItems = $("#results .pagination .pagination__item");
-            //    $larsSearchResultPaginationItems.on("click",
-            //        function (e) {
-            //            e.preventDefault();
-            //            var url = $(e.target).attr("href");
-            //            makeRequestWithUrl(url, onSucess);
-            //        });
-            //};
 
             var onSucess = function (data) {
 
                 $('#results').html("");
                 $('#results').html(data);
 
-                //$('#Filters').css('visibility', 'visible');
 
                 assignEventsToAllCheckboxes();
                 assignEventToClearAllFiltersLink();
-                //assignEventsToLarsSearchPagination();
             };
 
             var replaceAll = function (search, find, replace) {
@@ -344,8 +306,6 @@
                     $validationMessageSearchTerm.css("margin-bottom", "0");
             }
 
-            //$elementSearchTerm.on("keyup", debounce(doSearch, 400));
-            //$buttonSearch.on("click", doSearch);
 
              $buttonSearch.on("click", function () {
 
@@ -381,20 +341,16 @@
               });
 
       function ValidateAndSearchForProvider() {
-                //$errorSummary.hide();
                 var trimmed = $elementSearchTerm.val().trim();
                 $elementSearchTerm.val(trimmed);
                 $elementSearchTerm.trigger("blur");
                 var result = validator.element($elementSearchTerm);
                 if (result) {
 
-
                     HideValidationErrorMessage();
                     doSearch();
-                   // $("#zCodeSearch").submit();
                 }
                 else {
-                    //$providerSearchResultContainer.html("");
                     ShowValidationErrorMessage();
                 }
             }
@@ -410,20 +366,9 @@
             if ($courseeditlink.length) {
                 $courseeditlink.on("click", function (event) {
                     event.preventDefault();
-                    //var courseId = $(this).attr('data-courseid');
                     var courseRunId = $(this).attr('data-courserunid');
-                    //var $courseId = $("#" + courseId);
                     var $courseRunId = $("#" + courseRunId);
 
-                    //if (!$courseId.hasClass("govuk-accordion__section--expanded")) {
-                    //    $courseId.addClass("govuk-accordion__section--expanded");
-                    //}
-
-                    //if (courseId !== "" || courseId !== undefined) {
-                    //    $("html,body").animate({
-                    //        scrollTop: $courseId.offset().top
-                    //    }, "slow");
-                    //}
 
                     if (courseRunId !== "" || courseRunId !== undefined) {
                         $("html,body").animate({
