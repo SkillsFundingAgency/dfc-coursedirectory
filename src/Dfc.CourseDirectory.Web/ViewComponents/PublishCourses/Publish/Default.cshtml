@@ -39,12 +39,18 @@
                 @(Model.NumberOfCoursesInFiles.Equals(1) ? "This course has" : "These courses have") no errors but will not be listed on the course directory until you publish @(Model.NumberOfCoursesInFiles.Equals(1) ? "it" : "them").
             </p>
         }
-        else
+        else if (@Model.NumberOfCoursesInFiles > 0)
         {
             <h1 class="govuk-govuk-grid-column-one-half-l">Fix errors and publish</h1>
             <p>
+
                 It has not been possible to migrate @Model.NumberOfCoursesInFiles of your courses from the old Course Directory to new Course Directory. @(Model.NumberOfCoursesInFiles.Equals(1) ? "This course" : "These courses") cannot be listed on the new Course Directory until you fix the errors.
+
             </p>
+        }
+        else
+        {
+            <h1 class="govuk-govuk-grid-column-one-half-l">No Courses to Migrate</h1>
         }
     }
     @if (Model.PublishMode.Equals(PublishMode.DataQualityIndicator))
