@@ -73,14 +73,26 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 ProviderCourseID = courseRun.ProviderCourseID,
                 DeliveryMode = courseRun.DeliveryMode,
                 FlexibleStartDate = courseRun.FlexibleStartDate,
+                StartDate = courseRun.StartDate,
                 StudyMode = courseRun.StudyMode,
                 AttendancePattern = courseRun.AttendancePattern,
-                StartDate = courseRun.StartDate,
                 CreatedBy = courseRun.CreatedBy,
                 CreatedDate = courseRun.CreatedDate,
-                UpdatedDate = courseRun.UpdatedDate,
-                UpdatedBy = courseRun.UpdatedBy
+
             };
+
+            //Determine newer edited date
+            if (course.UpdatedDate > courseRun.UpdatedDate)
+            {
+                vm.UpdatedDate = course.UpdatedDate;
+                vm.UpdatedBy = course.UpdatedBy;
+            }
+            else
+            {
+                vm.UpdatedDate = courseRun.UpdatedDate;
+                vm.UpdatedBy = courseRun.UpdatedBy;
+            }
+
             if(vm.VenueId != null)
             {
                 vm.VenueName = _venueService.GetVenueByIdAsync(new GetVenueByIdCriteria(courseRun.VenueId.Value.ToString())).Result.Value.VenueName;
@@ -96,6 +108,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     vm.CourseURL = "http://" + courseRun.CourseURL;
                 }
             }
+
             if(courseRun.Regions != null)
             {
                 var allRegions = _courseService.GetRegions().RegionItems;
