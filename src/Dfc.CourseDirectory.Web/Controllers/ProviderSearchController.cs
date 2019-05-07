@@ -17,6 +17,8 @@ using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.CourseService;
 using System.Collections.Generic;
 using Dfc.CourseDirectory.Models.Enums;
+using Dfc.CourseDirectory.Web.ViewModels;
+using System.Diagnostics;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -63,28 +65,25 @@ namespace Dfc.CourseDirectory.Web.Controllers
         //[Authorize(Policy = "ElevatedUserRole")]
         public async Task<IActionResult> Index([FromQuery] ProviderSearchRequestModel requestModel)
         {
-            
-            if(!_userHelper.IsUserAuthorised(policy: "ElevatedUserRole").Result)
-            {
-                return new ContentResult
+           
+                if (!_userHelper.IsUserAuthorised(policy: "ElevatedUserRole").Result)
                 {
-                    ContentType = "text/html",
-                    Content = "<script>location.reload();</script>"
-                };
-            }
-            _logger.LogMethodEnter();
-            _logger.LogInformationObject("RequestModel", requestModel);
-            //Set the UKPRN here in session
+                    return new ContentResult
+                    {
+                        ContentType = "text/html",
+                        Content = "<script>location.reload();</script>"
+                    };
+                }
+                _logger.LogMethodEnter();
+                _logger.LogInformationObject("RequestModel", requestModel);
+           
+
+            ProviderSearchResultModel model = new ProviderSearchResultModel();
             
 
-            ProviderSearchResultModel model;
-
-            if (requestModel == null)
+            try
             {
-                model = new ProviderSearchResultModel();
-            }
-            else
-            {
+               
                 var criteria = _providerSearchHelper.GetProviderSearchCriteria(requestModel);
 
                 var result = await _providerService.GetProviderByPRNAsync(criteria);
@@ -132,43 +131,61 @@ namespace Dfc.CourseDirectory.Web.Controllers
                             {
                                 PostCode = providerContactTypeL?.FirstOrDefault()?.ContactAddress?.PostCode;
                             }
+                        
 
                             model.AddressTypeL = string.Concat(AddressLine1, AddressLine2, AddressLine3, PostCode);
                             model.TelephoneTypeL = providerContactTypeL?.FirstOrDefault()?.ContactTelephone1;
                             model.WebTypeL = providerContactTypeL?.FirstOrDefault()?.ContactWebsiteAddress;
                             model.EmailTypeL = providerContactTypeL?.FirstOrDefault()?.ContactEmail;
                         }
-                       if(provider.Status == Status.Onboarded)
-                       {
+                        if (provider.Status == Status.Onboarded)
+                        {
                             var UKPRN = Convert.ToInt32(requestModel.SearchTerm);
+                            //Set the UKPRN here in session
                             _session.SetInt32("UKPRN", Convert.ToInt32(requestModel.SearchTerm));
                             _session.SetString("PendingCourses", "true");
 
                             IEnumerable<ICourseStatusCountResult> counts = _courseService.GetCourseCountsByStatusForUKPRN(new CourseSearchCriteria(UKPRN))
-                                                              .Result
-                                                              .Value;
+                                                                .Result
+                                                                .Value;
                             int[] pendingStatuses = new int[] { (int)RecordStatus.Pending, (int)RecordStatus.BulkUloadPending, (int)RecordStatus.APIPending, (int)RecordStatus.MigrationPending };
 
                             var pendingCourseCount = (from ICourseStatusCountResult c in counts
-                                                      join int p in pendingStatuses
-                                                      on c.Status equals p
-                                                      select c.Count).Sum();
+                                                        join int p in pendingStatuses
+                                                        on c.Status equals p
+                                                        select c.Count).Sum();
 
-                            if (pendingCourseCount > 0) {
+                            if (pendingCourseCount > 0)
+                            {
                                 _session.SetString("PendingCourses", "true");
-                            } else {
+                            }
+                            else
+                            {
                                 _session.SetString("PendingCourses", "false");
                             }
 
-                       }
+                        }
+                           
                     }
                 }
+                _logger.LogInformationObject("Model", model);
+                       
+                    
+
+
             }
-            _logger.LogInformationObject("Model", model);
-            _logger.LogMethodExit();
+            catch (Exception ex)
+            {
+                _logger.LogException(ex);
+                model.Errors = new string[] { "Application Error: " + ex.Message };
 
-            
+                return ViewComponent(nameof(ViewComponents.ProviderSearchResult.ProviderSearchResult), model);
+            }
+            finally
+            {
+                _logger.LogMethodExit();
 
+            }
             return ViewComponent(nameof(ViewComponents.ProviderSearchResult.ProviderSearchResult), model);
         }
 

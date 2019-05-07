@@ -9,7 +9,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.ProviderSearchResult
     public class ProviderSearchResultModel : ValueObject<ProviderSearchResultModel>, IViewComponentModel
     {
         public bool HasErrors => Errors.Count() > 0;
-        public IEnumerable<string> Errors { get; }
+        public IEnumerable<string> Errors { get; set; }
         public string SearchTerm { get; }
         public IEnumerable<Provider> Items { get; set; }
 
