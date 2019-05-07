@@ -169,7 +169,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
                         StudyMode = cr.StudyMode == Models.Models.Courses.StudyMode.Undefined
                                                         ? string.Empty
                                                         : cr.StudyMode.ToDescription(),
-                        Url = cr.CourseURL
+                        Url = cr.CourseURL,
+                        National = cr.National
 
 
 

@@ -34,7 +34,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels.ProviderCourses
         public string RegionIdList { get; set; }
 
         public Guid? VenueId { get; set; }
-
+        public bool National { get; set; }
     }
 }
 
