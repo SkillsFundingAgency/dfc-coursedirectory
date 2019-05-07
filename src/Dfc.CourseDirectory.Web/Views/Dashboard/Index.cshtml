@@ -6,8 +6,11 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.Notification
 @using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 
-@model Dfc.CourseDirectory.Web.ViewModels.DashboardViewModel;
+@{
+    Layout = "_Layout_Your_Courses";
+}
 
+@model Dfc.CourseDirectory.Web.ViewModels.DashboardViewModel;
 
 @*
     @inject IAuthorizationService Authorization
@@ -43,18 +46,18 @@
     <span class="govuk-caption-xl">Course Directory</span>
     <h1 class="govuk-heading-xl">Course management dashboard</h1>
     <hr />
-    <br/>
+    <br />
 
     @*<div class="cd-info-summary" aria-labelledby="info-summary-title" role="alert" tabindex="-1" data-module="info-summary">
-        <h2 class="cd-info-summary__title" id="info-summary-title">
-            @Model.ValidationHeader
-        </h2>
-        <div class="cd-info-summary__body">
-            @foreach (string msg in Model.ValidationMessages) {
-                <p>@msg</p>
-            }
-        </div>
-    </div>*@
+            <h2 class="cd-info-summary__title" id="info-summary-title">
+                @Model.ValidationHeader
+            </h2>
+            <div class="cd-info-summary__body">
+                @foreach (string msg in Model.ValidationMessages) {
+                    <p>@msg</p>
+                }
+            </div>
+        </div>*@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-one-quarter">
             <div class="cd-status-panel">
@@ -69,24 +72,24 @@
                 </ul>
             </div>
         </div>
-@*
-        <div class="govuk-grid-column-one-quarter">
-            <div class="cd-status-panel">
-                <h3 class="govuk-heading-l">@Model.ArchivedCourseCount</h3>
-                <div class="govuk-heading-s">Archived courses</div>
+        @*
+            <div class="govuk-grid-column-one-quarter">
+                <div class="cd-status-panel">
+                    <h3 class="govuk-heading-l">@Model.ArchivedCourseCount</h3>
+                    <div class="govuk-heading-s">Archived courses</div>
+                </div>
+                <div>
+                    <ul class="govuk-list">
+                        <li>
+                            <a class="govuk-link" href="#">Archive course</a>
+                        </li>
+                        <li>
+                            <a class="govuk-link" href="#">Restore courses</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
-            <div>
-                <ul class="govuk-list">
-                    <li>
-                        <a class="govuk-link" href="#">Archive course</a>
-                    </li>
-                    <li>
-                        <a class="govuk-link" href="#">Restore courses</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-*@
+        *@
         <div class="govuk-grid-column-one-quarter">
             <div class="cd-status-panel">
                 <h3 class="govuk-heading-l">@Model.PendingCourseCount</h3>
@@ -105,18 +108,18 @@
         </div>
     </div>
     @*<h2 class="govuk-heading-l">Recent activity</h2>
-    <div class="cd-activity-item">
-        <h3 class="govuk-heading-m cd-activity-item-heading ">Maths and applied physics</h3>
-        <span class="cd-activity-item-tag">Course ID</span> <span class="cd-activity-item-tag"> Venue</span> <span class="cd-activity-item-tag"> full-time</span> <span class="cd-activity-item-tag">25/03/2019</span>
-    </div>
-    <div class="cd-activity-item">
-        <h3 class="govuk-heading-m cd-activity-item-heading ">Maths and applied physics</h3>
-        <span class="cd-activity-item-tag">Course ID</span> <span class="cd-activity-item-tag"> Venue</span> <span class="cd-activity-item-tag"> full-time</span> <span class="cd-activity-item-tag">25/03/2019</span>
-    </div>
-    <div class="cd-activity-item">
-        <h3 class="govuk-heading-m cd-activity-item-heading ">Maths and applied physics</h3>
-        <span class="cd-activity-item-tag">Course ID</span> <span class="cd-activity-item-tag"> Venue</span> <span class="cd-activity-item-tag"> full-time</span> <span class="cd-activity-item-tag">25/03/2019</span>
-    </div>*@
+        <div class="cd-activity-item">
+            <h3 class="govuk-heading-m cd-activity-item-heading ">Maths and applied physics</h3>
+            <span class="cd-activity-item-tag">Course ID</span> <span class="cd-activity-item-tag"> Venue</span> <span class="cd-activity-item-tag"> full-time</span> <span class="cd-activity-item-tag">25/03/2019</span>
+        </div>
+        <div class="cd-activity-item">
+            <h3 class="govuk-heading-m cd-activity-item-heading ">Maths and applied physics</h3>
+            <span class="cd-activity-item-tag">Course ID</span> <span class="cd-activity-item-tag"> Venue</span> <span class="cd-activity-item-tag"> full-time</span> <span class="cd-activity-item-tag">25/03/2019</span>
+        </div>
+        <div class="cd-activity-item">
+            <h3 class="govuk-heading-m cd-activity-item-heading ">Maths and applied physics</h3>
+            <span class="cd-activity-item-tag">Course ID</span> <span class="cd-activity-item-tag"> Venue</span> <span class="cd-activity-item-tag"> full-time</span> <span class="cd-activity-item-tag">25/03/2019</span>
+        </div>*@
 </div>
 
 

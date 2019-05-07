@@ -59,11 +59,11 @@
         }
 
         @await Component.InvokeAsync(nameof(Notification), new NotificationModel
-        {
-            NotificationTitle = "New venue added:",
-            NotificationMessage = message,
-            ClassType = "success-summary"
-        })
+   {
+       NotificationTitle = "New venue added:",
+       NotificationMessage = message,
+       ClassType = "success-summary"
+   })
     }
 }
 
@@ -102,36 +102,55 @@
 
     <div class="section" id="sectionCourseName">
         @await Component.InvokeAsync(nameof(CourseName), new CourseNameModel
-        {
-        CourseName = Model.CourseName,
-        LabelText = "Course name",
-        HintText = "This is the name people will see when they search for your course.",
-        AriaDescribedBy = "Please enter the course name."
-        })
+   {
+       CourseName = Model.CourseName,
+       LabelText = "Course name",
+       HintText = "This is the name people will see when they search for your course.",
+       AriaDescribedBy = "Please enter the course name."
+   })
     </div>
 
     <div class="section" id="sectionCourseProviderReference">
         @await Component.InvokeAsync(nameof(CourseProviderReference), new CourseProviderReferenceModel
-        {
-        CourseProviderReference = Model.CourseProviderReference,
-        LabelText = "ID",
-        HintText = "This is how you identify a course in your internal system.",
-        AriaDescribedBy = "Please enter the ID for this course"
-        })
+   {
+       CourseProviderReference = Model.CourseProviderReference,
+       LabelText = "ID",
+       HintText = "This is how you identify a course in your internal system.",
+       AriaDescribedBy = "Please enter the ID for this course"
+   })
     </div>
 
     <div class="section" id="sectionDeliveryType">
         @await Component.InvokeAsync(nameof(DeliveryType), new DeliveryTypeModel
-        {
-        DeliveryMode = Model.DeliveryMode,
-        LabelText = "Delivery Mode",
+   {
+       DeliveryMode = Model.DeliveryMode,
+       LabelText = "Delivery Mode",
         HintText = "How will this course be delivered",
         AriaDescribedBy = "Select how you will deliver this course"
-        })
+   })
     </div>
 
     <div class="section" id="sectionStartDate">
         @await Component.InvokeAsync(nameof(AddStartDate), new AddStartDateModel()
+   {
+       StartDateType = Model.StartDateType,
+       Day = Model.Day,
+       Month = Model.Month,
+       Year = Model.Year,
+       DayAriaDescribedBy = "",
+       DayLabelText = "Day",
+       MonthAriaDescribedBy = "",
+       MonthLabelText = "Month",
+       YearAriaDescribedBy = "",
+       YearLabelText = "Year",
+       AriaDescribedBy = "",
+       SpecifiedDateHintText = "e.g. For example, 30 9 2019",
+       FlexibleDateHintText = "Or select a flexible start date:",
+       LabelText = "Start date",
+       CurrentStartDate = Model.CurrentCourseRunDate,
+       ValPastDateRef = Model.ValPastDateRef,
+       ValPastDateMessage = Model.ValPastDateMessage
+   })
         {
             StartDateType = Model.StartDateType,
             Day = Model.Day ,
@@ -154,12 +173,20 @@
     </div>
 
     <div class="section" id="sectionVenue" style="@Model.DeliveryMode.IfNotClassroomBasedDisplayNone()">
+        @{var displayLink = true;
+            if (Model.Mode == PublishMode.BulkUpload || Model.Mode == PublishMode.Migration)
+            {
+                displayLink = false;
+            }
+        }
         @await Component.InvokeAsync(nameof(ChooseVenue), new ChooseVenueModel()
         {
         LabelText = "Venue",
         AriaDescribedBy = "Venue",
         HintText = "Select course run venue",
-        VenueId = Model.VenueId ?? (Guid?)null
+        VenueId = Model.VenueId ?? (Guid?)null,
+        DisplayLink = displayLink
+
         })
     </div>
 
