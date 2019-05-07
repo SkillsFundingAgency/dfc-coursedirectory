@@ -230,7 +230,8 @@ namespace Dfc.CourseDirectory.Services.VenueService
                     var settings = new JsonSerializerSettings {
                         ContractResolver = new VenueSearchResultContractResolver()
                     };
-                    var venues = JsonConvert.DeserializeObject<IEnumerable<Venue>>(json, settings).Where(x=>x.Status== VenueStatus.Imported && x.Status == VenueStatus.Live).OrderBy(x => x.VenueName).ToList();
+                    var venues = JsonConvert.DeserializeObject<IEnumerable<Venue>>(json, settings).Where(x=>x.Status== VenueStatus.Imported || x.Status == VenueStatus.Live).OrderBy(x => x.VenueName).ToList();
+                   // var venues = JsonConvert.DeserializeObject<IEnumerable<Venue>>(json, settings).OrderBy(x => x.VenueName).ToList();
                     return Result.Ok<IVenueSearchResult>(new VenueSearchResult(venues));
 
                 } else {
