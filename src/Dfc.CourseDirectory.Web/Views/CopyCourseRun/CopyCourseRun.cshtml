@@ -144,16 +144,22 @@
     </div>
 
     <div class="section" id="sectionVenue" style="@Model.DeliveryMode.IfNotClassroomBasedDisplayNone()">
-        @* <div class="govuk-form-group" id="VenueChoice" style="@Model.DeliveryMode.IfNotClassroomBasedDisplayNone()">*@
+        @{var displayLink = true;
+            if (Model.PublishMode == PublishMode.BulkUpload || Model.PublishMode == PublishMode.Migration)
+            {
+                displayLink = false;
+            }
+        }
         @await Component.InvokeAsync(nameof(ChooseVenue), new ChooseVenueModel()
    {
        LabelText = "Venue",
        AriaDescribedBy = "Venue",
        HintText = "Select course run venue",
        Venues = Model.Venues,
-       VenueId = Model.VenueId
+       VenueId = Model.VenueId,
+       DisplayLink = displayLink
    })
-        @*</div>*@
+
     </div>
 
     <div class="section" id="sectionRegion">
