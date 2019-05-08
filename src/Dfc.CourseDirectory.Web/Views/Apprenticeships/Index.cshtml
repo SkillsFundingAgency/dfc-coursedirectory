@@ -4,63 +4,61 @@
     Layout = "_Layout_Your_Courses";
 }
 
+@model Dfc.CourseDirectory.Web.ViewModels.Apprenticeships.ApprenticeshipsViewModel
 
+<div class="cd-hero-grey">
 
+    <header class="cd-hero-search">
+        <div class="content-container">
+            <div class="grid-row" data-sf-element="Row">
+                <div class="column-two-thirds">
+                    <div>
+                        <a asp-controller="" asp-action="" class="govuk-back-link">Back</a><br />
+                        <span class="govuk-caption-xl">Course directory</span>
+                        <h1 class="govuk-heading-xl">Find apprenticeship training offers</h1>
+                        @*@if (!string.IsNullOrWhiteSpace(Model.NotificationTitle))
+        {
+            @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+            {
+                NotificationTitle = Model.NotificationTitle,
+                NotificationMessage = Model.NotificationMessage,
+                ClassType = "info-summary"
+            })
+        }*@
 
-
-        <div class="cd-hero-grey">
-
-            <header class="cd-hero-search">
-                <div class="content-container">
-                    <div class="grid-row" data-sf-element="Row">
-                        <div class="column-two-thirds">
-                            <div>
-
-                                <span class="govuk-caption-xl">Course directory</span>
-                                <h1 class="govuk-heading-xl">Find apprenticeship training offers</h1>
-                                @*@if (!string.IsNullOrWhiteSpace(Model.NotificationTitle))
-                                {
-                                    @await Component.InvokeAsync(nameof(Notification), new NotificationModel
-                                    {
-                                        NotificationTitle = Model.NotificationTitle,
-                                        NotificationMessage = Model.NotificationMessage,
-                                        ClassType = "info-summary"
-                                    })
-                                }*@
-
-                                <p class="govuk-body-l">Search by apprenticeship name or keyword</p>
-                            </div>
-                            <form class="govuk-!-margin-bottom-9" id="zCodeSearch" asp-controller="ProviderCourses" asp-action="FilterCourses" method="post">
-                                <div class="header-search-content">
-                                    @*<span asp-validation-for="@Model.Search" class="govuk-error-message"></span>*@
-                                    <div class="search-input-wrapper">
-
-
-                                        <input class="govuk-input search-input js-search-focus" id="ApprenticeshipSearchTerm" type="text">
-                                        <div class="cd-c-search__item cd-search__submit-wrapper">
-                                            <button type="button" class=" submit" id="searchApprenticeships">Search</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
-
-                            <div class="govuk-grid-row  ">
-
-                                <div id="results">
-
-                                    @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships.ApprenticeshipSearch.ApprenticeshipSearch))
-                                </div>
-
-                            </div>
-
-                        </div>
+                        <p class="govuk-body-l">Search by apprenticeship name or keyword</p>
                     </div>
+                    <form class="govuk-!-margin-bottom-9" id="ApprenticeshipSearchForm" asp-controller="Apprenticeships" asp-action="ApprenticeshipSearch" method="post">
+                        <div class="header-search-content">
+                            <span asp-validation-for="@Model.Search" class="govuk-error-message"></span>
+                            <div class="search-input-wrapper">
+
+
+                                <input class="govuk-input search-input js-search-focus" id="ApprenticeshipSearchTerm" asp-for="@Model.Search" type="text">
+                                <div class="cd-c-search__item cd-search__submit-wrapper">
+                                    <button type="button" class=" submit" id="searchApprenticeships">Search</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="govuk-grid-row  ">
+
+                        <div id="results">
+
+                            @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships.ApprenticeshipSearch.ApprenticeshipSearch))
+                        </div>
+
+                    </div>
+
                 </div>
-            </header>
+            </div>
         </div>
+    </header>
+</div>
 
 
 
 
 
-    
+

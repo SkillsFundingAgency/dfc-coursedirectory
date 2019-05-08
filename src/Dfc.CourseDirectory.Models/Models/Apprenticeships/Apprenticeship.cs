@@ -65,5 +65,7 @@ namespace Dfc.CourseDirectory.Models.Models.Apprenticeships
         public string CreatedBy { get; set; }
         public DateTime? UpdatedDate { get; set; }
         public string UpdatedBy { get; set; }
+
+        public string NotionalNVQLevelv2 { get; set; }
     }
 }
