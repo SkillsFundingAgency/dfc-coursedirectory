@@ -4,6 +4,7 @@ using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Models;
 using Dfc.CourseDirectory.Models.Models.Courses;
 using Dfc.CourseDirectory.Models.Models.Regions;
+using Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseRegion;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Dfc.CourseDirectory.Web.ViewModels.EditCourse
@@ -23,11 +24,9 @@ namespace Dfc.CourseDirectory.Web.ViewModels.EditCourse
         public string DurationLength { get; set; }
         public string Cost { get; set; }
         public string CostDescription { get; set; }
-
         public List<SelectListItem> Venues { get; set; }
         public Guid? VenueId { get; set; }
-
-        public SelectRegionModel SelectRegion { get; set; }
+        public ChooseRegionModel ChooseRegion { get; set; }
         public DeliveryMode DeliveryMode { get; set; }
         public string CourseProviderReference { get; set; }
         public string Url { get; set; }
