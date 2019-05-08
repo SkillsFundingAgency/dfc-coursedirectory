@@ -46,7 +46,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ViewModels\Apprenticeships\" />
     <Folder Include="ViewModels\ProviderApprenticeships\" />
     <Folder Include="wwwroot\vendor\" />
   </ItemGroup>
@@ -145,6 +144,9 @@
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="ViewComponents\VenueSearch\Default.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\AddApprenticeshipDetails\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\Apprenticeships\Index.cshtml">
