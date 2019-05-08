@@ -68,7 +68,7 @@
 @await Component.InvokeAsync(nameof(Notification), new NotificationModel
 {
     NotificationTitle = "Qualification details",
-    NotificationMessage = @Model.LearnAimRefTitle + "<br>" + "Level: " + @Model.NotionalNVQLevelv2 + "<br> Awarding organisation: " + @Model.AwardOrgCode + "<br> LARS / QAN: " + @Model.LearnAimRef,
+    NotificationMessage = @Model.CourseName + "<br>" + "Level: " + @Model.NotionalNVQLevelv2 + "<br> Awarding organisation: " + @Model.AwardOrgCode + "<br> LARS / QAN: " + @Model.LearnAimRef,
     ClassType = "info-summary"
 })
 

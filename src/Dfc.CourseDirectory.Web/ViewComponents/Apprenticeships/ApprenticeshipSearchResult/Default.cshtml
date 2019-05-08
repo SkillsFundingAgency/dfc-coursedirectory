@@ -1,0 +1,160 @@
+﻿
+@using Dfc.CourseDirectory.Web.ViewComponents.Extensions
+@using Dfc.CourseDirectory.Web.ViewComponents.Pagination;
+@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Identity
+@using Dfc.CourseDirectory.Web.Areas.Identity.Data;
+@using Microsoft.AspNetCore.Authorization;
+@using Dfc.CourseDirectory.Web.ViewComponents.Notification
+
+@inject IAuthorizationService Authorization
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+
+@{
+    var adminLogin = await Authorization.AuthorizeAsync(User, "Admin");
+    var providerLogin = await Authorization.AuthorizeAsync(User, "Provider");
+}
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships.ApprenticeshipSearchResult.ApprenticeshipsSearchResultModel;
+
+@if (!Model.Items.Any())
+{
+    <div class="cd-grid-coloumn-20 govuk-body" style="width: 100%;padding-left: 0.75em;">
+        @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+                 {
+                     NotificationTitle = "",
+                     NotificationMessage = "No apprenticeships found that match your search criteria",
+                     ClassType = "error-summary"
+                 })
+    </div>
+
+}
+else
+{
+
+
+    <div class=" ">
+
+        @foreach (var apprenticeship in Model.Items.OrderBy(x => x.ApprenticeshipName))
+        {
+            <div class="courserun border">
+                <div class="courserun__row1" id="1">
+                    @if (!string.IsNullOrEmpty(apprenticeship.ApprenticeshipName))
+                    {
+                        <h3 class="coursename">@apprenticeship.ApprenticeshipName</h3>
+                    }
+                    @*<h4 class="coursename smaller ">
+
+                            @if (!string.IsNullOrEmpty(courseRun.QualificationCourseTitle))
+                            {
+                                <small>@courseRun.QualificationCourseTitle </small>
+                            }
+                            @if (!string.IsNullOrEmpty(courseRun.LearnAimRef))
+                            {
+                                <small>
+                                    <span>LARS/QAN:@courseRun.LearnAimRef</span>
+                                </small>
+                            }
+
+                        </h4>*@
+                </div>
+
+                @*@if (courseRun.DeliveryMode == "Classroom based")
+                    {
+                        if (!string.IsNullOrEmpty(courseRun.Venue))
+                        {
+                            <div class="courserun__row2">
+                                <span class="">@courseRun.Venue</span>
+                            </div>
+                        }
+                    }
+                    @if (courseRun.DeliveryMode == "Work based")
+                    {
+                        if (courseRun.National)
+                        {
+                            <div class="courserun__row2">
+                                <span class="">National</span>
+                            </div>
+                        }
+                        else
+                        {
+                            if (!string.IsNullOrEmpty(courseRun.Region))
+                            {
+                                <div class="courserun__row2">
+                                    <span class="">@courseRun.Region</span>
+                                </div>
+                            }
+                        }
+                    }
+
+
+                    <div class="courserun__row3">
+                        @if (!string.IsNullOrEmpty(courseRun.CourseTextId))
+                        {
+                            <span>@courseRun.CourseTextId</span>
+                        }
+
+                        @if (courseRun.DeliveryMode == "Classroom based")
+                        {
+                            if (!string.IsNullOrEmpty(courseRun.AttendancePattern))
+                            {
+                                <span id="attendance">@courseRun.AttendancePattern</span>
+                            }
+                        }
+                        @if (!string.IsNullOrEmpty(courseRun.NotionalNVQLevelv2))
+                        {
+                            <span>Level @courseRun.NotionalNVQLevelv2</span>
+                        }
+
+
+                        @if (!string.IsNullOrEmpty(courseRun.DeliveryMode))
+                        {
+                            <span id="deliverymode">@courseRun.DeliveryMode</span>
+                        }
+                        @if (courseRun.DeliveryMode == "Classroom based")
+                        {
+                            @if (!string.IsNullOrEmpty(courseRun.StudyMode))
+                            {
+                                <span id="studymode">@courseRun.StudyMode</span>
+                            }
+                        }
+                        @if (!string.IsNullOrEmpty(courseRun.StartDate))
+                        {
+                            <span>@courseRun.StartDate</span>
+                        }
+
+                    </div>*@
+                <div class="courserun__row4">
+                    @Html.ActionLink("Choose this apprenticeship", "", "", new { }, null)
+
+
+                </div>
+            </div>
+        }
+
+    </div>
+}
+
+<script>
+    (function ($) {
+        $(function () {
+
+            //var acc = document.getElementsByClassName("accordion");
+            //var i;
+
+            //for (i = 0; i < acc.length; i++) {
+            //    acc[i].addEventListener("click", function () {
+            //        this.classList.toggle("active");
+            //        var panel = this.nextElementSibling;
+            //        if (panel.style.display === "none") {
+            //            panel.style.display = "block";
+            //        } else {
+            //            panel.style.display = "none";
+            //        }
+            //    });
+            //}
+        });
+    })(jQuery);
+</script>
