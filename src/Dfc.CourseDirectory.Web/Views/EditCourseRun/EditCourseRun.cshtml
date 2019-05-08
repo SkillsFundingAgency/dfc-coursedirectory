@@ -11,6 +11,7 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.DeliveryType
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.Duration
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseRegion
 @using Dfc.CourseDirectory.Web.ViewComponents.Extensions
 @using Dfc.CourseDirectory.Web.ViewComponents.Notification
 @using Dfc.CourseDirectory.Web.ViewComponents.UrlInput
@@ -172,45 +173,9 @@
         })
     </div>
 
-    <div class="section" id="sectionRegion">
-        @*No view component here in order to get checkbox list validation to work without it's own form*@
-        <div class="govuk-form-group" id="RegionItemsCheckboxList" style="@Model.DeliveryMode.IfNotWorkBasedDisplayNone()">
-            <label id="govuk-label-SelectRegionCheckBoxes" class="govuk-label" for="select-region">
-                @Model.SelectRegion.LabelText
-            </label>
-            <span id="select-region-hint" class="govuk-hint">
-                @Model.SelectRegion.HintText
-            </span>
-
-            <div class="govuk-checkboxes" id="SelectRegionCheckBoxes" val-required-message="Select at least one region">
-                @foreach (var item in Model.SelectRegion.RegionItems)
-                {
-                    <details class="govuk-details">
-                        <summary class="govuk-details__summary">
-                            <span id="region" @item.Id class="govuk-details__summary-text">
-                                @item.RegionName
-                            </span>
-                        </summary>
-                        <div class="govuk-form-group">
-                            <h3><a class="govuk-link" id="SelectAll" region-id="@item.Id" href="#">Select all</a></h3>
-                            <div class="flex-container govuk-grid-row region-checkboxes" id="details-content-@item.Id" aria-hidden="true">
-
-                                @{ var x = 0; }
-                                @foreach (var subregion in item.SubRegion)
-                                {
-                                    x++;
-
-                                    <div class="govuk-checkboxes__item">
-                                        <input class="govuk-checkboxes__input" id="RegionName-@x" region-id="@item.Id" name="SelectedRegions" type="checkbox" value="@subregion.Id" @subregion.Checked.ThenNullableCheck() />
-                                        <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@subregion.SubRegionName</label>
-                                    </div>
-
-                                }
-                            </div>
-                        </div>
-                    </details>
-                }
-            </div>
+    <div class="govuk-form-group" id="RegionItemsCheckboxList" style="@Model.DeliveryMode.IfNotWorkBasedDisplayNone()">
+        <div id="sectionRegions">
+            @await Component.InvokeAsync(nameof(ChooseRegion), Model.ChooseRegion)
         </div>
     </div>
 
@@ -245,7 +210,7 @@
         @await Component.InvokeAsync(nameof(Duration), new DurationModel
         {
         DurationLength = Model.DurationLength,
-        DurationUnit =  Model.DurationUnit,
+        DurationUnit = Model.DurationUnit,
         LabelText = "Duration",
         HintText = "Select the duration of the course",
         AriaDescribedBy = "Select course duration"
@@ -291,7 +256,8 @@
                     @Html.ActionLink("Cancel", "Index", "CourseSummary", new { Model.CourseId, Model.CourseRunId }, new { @class = "govuk-link" })
                     break;
                 default:
-                    @Html.ActionLink("Cancel", "Courses", "Provider", new {
+                    @Html.ActionLink("Cancel", "Courses", "Provider", new
+                    {
                    level = @Model.NotionalNVQLevelv2,
                    courseId = @Model.CourseId,
                    courseRunId = @Model.CourseRunId,
@@ -537,8 +503,9 @@
                 $regions.govUkCheckboxes("validState");
                 $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $regions[0].id);
                 $errorSummary.govUkErrorSummary("hideIfEmpty")
+                var $nationalRadio = $("#nationalRadioButtons input[type=radio]:checked").val();
                 validStates.push(true);
-                if (isWorkBased & !$.requiredValidate($regions.find("input[type='checkbox']:checked").val())) {
+                if (isWorkBased & !$.requiredValidate($regions.find("input[type='checkbox']:checked").val()) & $nationalRadio === "false") {
                     $regions.govUkCheckboxes("invalidState", $regions.attr("val-required-message"));
                     var regionsErrorHashLinks = $regions.govUkCheckboxes("getErrorHashLinks");
                     $errorSummary.govUkErrorSummary("add", regionsErrorHashLinks);
