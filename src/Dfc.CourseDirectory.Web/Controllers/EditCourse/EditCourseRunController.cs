@@ -26,6 +26,7 @@ using Dfc.CourseDirectory.Web.Extensions;
 using Dfc.CourseDirectory.Web.RequestModels;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.SelectVenue;
 using Microsoft.ApplicationInsights;
+using Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseRegion;
 
 namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 {
@@ -73,8 +74,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
         {
 
             _session.SetString("Option", "AddNewVenueForEdit");
-
-
             EditCourseRunViewModel vm = new EditCourseRunViewModel
             {
                 AwardOrgCode = model.AwardOrgCode,
@@ -200,9 +199,12 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                 CourseName = courseRun?.CourseName,
                 Venues = courseRunVenues,
                 VenueId = courseRun.VenueId ?? (Guid?)null,
-                SelectRegion = regions,
+                ChooseRegion = new ChooseRegionModel
+                {
+                    National = courseRun.National,
+                    Regions = regions
+                },
                 DeliveryMode = courseRun.DeliveryMode,
-
                 CourseProviderReference = courseRun?.ProviderCourseID,
                 DurationUnit = courseRun.DurationUnit,
                 DurationLength = courseRun?.DurationValue?.ToString(),
@@ -253,7 +255,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 
             if (courseRun.Regions == null) return View("EditCourseRun", vm);
 
-            foreach (var selectRegionRegionItem in vm.SelectRegion.RegionItems.OrderBy(x => x.RegionName))
+            foreach (var selectRegionRegionItem in vm.ChooseRegion.Regions.RegionItems.OrderBy(x => x.RegionName))
             {
                 foreach (var subRegionItemModel in selectRegionRegionItem.SubRegion)
                 {
@@ -264,10 +266,10 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                 }
             }
 
-            if (vm.SelectRegion.RegionItems != null && vm.SelectRegion.RegionItems.Any())
+            if (vm.ChooseRegion.Regions.RegionItems != null && vm.ChooseRegion.Regions.RegionItems.Any())
             {
-                vm.SelectRegion.RegionItems = vm.SelectRegion.RegionItems.OrderBy(x => x.RegionName);
-                foreach (var selectRegionRegionItem in vm.SelectRegion.RegionItems)
+                vm.ChooseRegion.Regions.RegionItems = vm.ChooseRegion.Regions.RegionItems.OrderBy(x => x.RegionName);
+                foreach (var selectRegionRegionItem in vm.ChooseRegion.Regions.RegionItems)
                 {
                     selectRegionRegionItem.SubRegion =
                         selectRegionRegionItem.SubRegion.OrderBy(x => x.SubRegionName).ToList();
@@ -338,7 +340,11 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                         CourseName = courseRun?.CourseName,
                         Venues = courseRunVenues,
                         VenueId = courseRun.VenueId ?? (Guid?)null,
-                        SelectRegion = regions,
+                        ChooseRegion = new ChooseRegionModel
+                        {
+                            National = courseRun.National,
+                            Regions = regions
+                        },
                         DeliveryMode = courseRun.DeliveryMode,
 
                         CourseProviderReference = courseRun?.ProviderCourseID,
@@ -383,7 +389,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 
                     if (courseRun.Regions == null) return View("EditCourseRun", vm);
 
-                    foreach (var selectRegionRegionItem in vm.SelectRegion.RegionItems.OrderBy(x => x.RegionName))
+                    foreach (var selectRegionRegionItem in vm.ChooseRegion.Regions.RegionItems.OrderBy(x => x.RegionName))
                     {
                         foreach (var subRegionItemModel in selectRegionRegionItem.SubRegion)
                         {
@@ -394,10 +400,10 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                         }
                     }
 
-                    if (vm.SelectRegion.RegionItems != null && vm.SelectRegion.RegionItems.Any())
+                    if (vm.ChooseRegion.Regions.RegionItems != null && vm.ChooseRegion.Regions.RegionItems.Any())
                     {
-                        vm.SelectRegion.RegionItems = vm.SelectRegion.RegionItems.OrderBy(x => x.RegionName);
-                        foreach (var selectRegionRegionItem in vm.SelectRegion.RegionItems)
+                        vm.ChooseRegion.Regions.RegionItems = vm.ChooseRegion.Regions.RegionItems.OrderBy(x => x.RegionName);
+                        foreach (var selectRegionRegionItem in vm.ChooseRegion.Regions.RegionItems)
                         {
                             selectRegionRegionItem.SubRegion = selectRegionRegionItem.SubRegion.OrderBy(x => x.SubRegionName).ToList();
                         }
@@ -488,16 +494,21 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                             break;
                         case DeliveryMode.WorkBased:
                             courseRunForEdit.VenueId = null;
-                            courseRunForEdit.Regions = model.SelectedRegions;
                             var availableRegions = new SelectRegionModel();
-
-                            string[] selectedRegions = availableRegions.SubRegionsDataCleanse(courseRunForEdit.Regions.ToList());
-
-                            var subRegions = selectedRegions.Select(selectedRegion => availableRegions.GetRegionFromName(selectedRegion)).ToList();
-                            courseRunForEdit.SubRegions = subRegions;
-                            courseRunForEdit.AttendancePattern = AttendancePattern.Undefined;
-                            courseRunForEdit.StudyMode = StudyMode.Undefined;
-
+                            if (model.National)
+                            {
+                                courseRunForEdit.National = true;
+                                courseRunForEdit.Regions = availableRegions.RegionItems.Select(x => x.Id).ToList();
+                            }
+                            else
+                            {
+                                courseRunForEdit.Regions = model.SelectedRegions;                           
+                                string[] selectedRegions = availableRegions.SubRegionsDataCleanse(courseRunForEdit.Regions.ToList());
+                                var subRegions = selectedRegions.Select(selectedRegion => availableRegions.GetRegionFromName(selectedRegion)).ToList();
+                                courseRunForEdit.SubRegions = subRegions;
+                                courseRunForEdit.AttendancePattern = AttendancePattern.Undefined;
+                                courseRunForEdit.StudyMode = StudyMode.Undefined;
+                            }
                             break;
                         case DeliveryMode.Online:
 

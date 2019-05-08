@@ -24,6 +24,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseRegion;
 
 namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
 {
@@ -146,7 +147,12 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                 CourseName = courseRun?.CourseName,
                 Venues = courseRunVenues,
                 VenueId = courseRun.VenueId ?? (Guid?)null,
-                SelectRegion = regions,
+                ChooseRegion = new ChooseRegionModel
+                {
+                    National = courseRun.National,
+                    Regions = regions,
+                },
+                
                 DeliveryMode = courseRun.DeliveryMode,
 
                 CourseProviderReference = courseRun?.ProviderCourseID,
@@ -185,7 +191,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
 
             if (courseRun.Regions == null) return View("CopyCourseRun", vm);
 
-            foreach (var selectRegionRegionItem in vm.SelectRegion.RegionItems.OrderBy(x => x.RegionName))
+            foreach (var selectRegionRegionItem in vm.ChooseRegion.Regions.RegionItems.OrderBy(x => x.RegionName))
             {
                 foreach (var subRegionItemModel in selectRegionRegionItem.SubRegion)
                 {
@@ -196,10 +202,10 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                 }
             }
 
-            if (vm.SelectRegion.RegionItems != null && vm.SelectRegion.RegionItems.Any())
+            if (vm.ChooseRegion.Regions.RegionItems != null && vm.ChooseRegion.Regions.RegionItems.Any())
             {
-                vm.SelectRegion.RegionItems = vm.SelectRegion.RegionItems.OrderBy(x => x.RegionName);
-                foreach (var selectRegionRegionItem in vm.SelectRegion.RegionItems)
+                vm.ChooseRegion.Regions.RegionItems = vm.ChooseRegion.Regions.RegionItems.OrderBy(x => x.RegionName);
+                foreach (var selectRegionRegionItem in vm.ChooseRegion.Regions.RegionItems)
                 {
                     selectRegionRegionItem.SubRegion =
                         selectRegionRegionItem.SubRegion.OrderBy(x => x.SubRegionName).ToList();
@@ -301,9 +307,12 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                         CourseName = courseRun?.CourseName,
                         Venues = courseRunVenues,
                         VenueId = courseRun.VenueId ?? Guid.Empty,
-                        SelectRegion = regions,
+                        ChooseRegion = new ChooseRegionModel
+                        {
+                            National = courseRun.National,
+                            Regions = regions
+                        },
                         DeliveryMode = courseRun.DeliveryMode,
-
                         CourseProviderReference = courseRun?.ProviderCourseID,
                         DurationUnit = courseRun.DurationUnit,
                         DurationLength = courseRun?.DurationValue?.ToString(),
@@ -325,7 +334,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
 
                     if (courseRun.Regions == null) return View("CopyCourseRun", vm);
 
-                    foreach (var selectRegionRegionItem in vm.SelectRegion.RegionItems)
+                    foreach (var selectRegionRegionItem in vm.ChooseRegion.Regions.RegionItems)
                     {
                         foreach (var subRegionItemModel in selectRegionRegionItem.SubRegion)
                         {
@@ -336,10 +345,10 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                         }
                     }
 
-                    if (vm.SelectRegion.RegionItems != null && vm.SelectRegion.RegionItems.Any())
+                    if (vm.ChooseRegion.Regions.RegionItems != null && vm.ChooseRegion.Regions.RegionItems.Any())
                     {
-                        vm.SelectRegion.RegionItems = vm.SelectRegion.RegionItems.OrderBy(x => x.RegionName);
-                        foreach (var selectRegionRegionItem in vm.SelectRegion.RegionItems)
+                        vm.ChooseRegion.Regions.RegionItems = vm.ChooseRegion.Regions.RegionItems.OrderBy(x => x.RegionName);
+                        foreach (var selectRegionRegionItem in vm.ChooseRegion.Regions.RegionItems)
                         {
                             selectRegionRegionItem.SubRegion = selectRegionRegionItem.SubRegion.OrderBy(x => x.SubRegionName).ToList();
                         }
@@ -432,16 +441,25 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                             break;
                         case DeliveryMode.WorkBased:
                             copiedCourseRun.VenueId = null;
-                            copiedCourseRun.Regions = model.SelectedRegions;
+                            
                             var availableRegions = new SelectRegionModel();
 
-                            string[] selectedRegions = availableRegions.SubRegionsDataCleanse(copiedCourseRun.Regions.ToList());
+                            if(model.National)
+                            {
+                                copiedCourseRun.National = true;
+                                copiedCourseRun.Regions = availableRegions.RegionItems.Select(x => x.Id).ToList();
+                            }
+                            else
+                            {
+                                copiedCourseRun.Regions = model.SelectedRegions;
+                                string[] selectedRegions = availableRegions.SubRegionsDataCleanse(copiedCourseRun.Regions.ToList());
 
-                            var subRegions = selectedRegions.Select(selectedRegion => availableRegions.GetRegionFromName(selectedRegion)).ToList();
-                            copiedCourseRun.SubRegions = subRegions;
+                                var subRegions = selectedRegions.Select(selectedRegion => availableRegions.GetRegionFromName(selectedRegion)).ToList();
+                                copiedCourseRun.SubRegions = subRegions;
 
-                            copiedCourseRun.AttendancePattern = AttendancePattern.Undefined;
-                            copiedCourseRun.StudyMode = StudyMode.Undefined;
+                                copiedCourseRun.AttendancePattern = AttendancePattern.Undefined;
+                                copiedCourseRun.StudyMode = StudyMode.Undefined;
+                            }
                             break;
                         case DeliveryMode.Online:
 
