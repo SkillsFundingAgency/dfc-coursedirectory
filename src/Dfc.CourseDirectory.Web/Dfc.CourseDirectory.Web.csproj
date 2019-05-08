@@ -46,6 +46,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="ViewModels\Apprenticeships\" />
+    <Folder Include="ViewModels\ProviderApprenticeships\" />
     <Folder Include="wwwroot\vendor\" />
   </ItemGroup>
 
@@ -61,6 +63,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="ViewComponents\Apprenticeships\ApprenticeshipSearchResult\Default.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="ViewComponents\Apprenticeships\ApprenticeshipSearch\Default.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="ViewComponents\Courses\ChooseRegion\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
@@ -137,6 +145,9 @@
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="ViewComponents\VenueSearch\Default.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Apprenticeships\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\Dashboard\Index.cshtml">
