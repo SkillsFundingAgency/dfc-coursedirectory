@@ -10,9 +10,9 @@
         <div class="govuk-form-group">
             <fieldset class="govuk-fieldset" aria-describedby="changed-name-hint">
                 <label id="govuk-label-nationalRadioButtons" class="govuk-label">Can you deliver this course anywhere in England?</label>
-                <span id="more-detail-hint" class="govuk-hint">Answering yes will show you are a national provider</span>
                 <div id="nationalRadioButtons" class="govuk-radios govuk-radios--inline" style="margin-bottom: 30px;"
-                     val-required-message="Select region type">
+                     val-required-message="Choose if you can deliver this course anywhere in England">
+                    <span id="more-detail-hint" class="govuk-hint">Answering yes will show you are a national provider</span>
                     <div class="govuk-radios__item">
                         @Html.RadioButtonFor(m => m.National, true, new { @class = "govuk-radios__input", id = nameof(Model.National) + "_true" })
                         <label class="govuk-label govuk-radios__label">Yes</label>
@@ -74,9 +74,6 @@
                 if ($checked === "True") {
                     $regionSection.hide();
                 }
-
-                
-
 
                 $nationalRadios.change(function () {
                     switch (this.id) {
