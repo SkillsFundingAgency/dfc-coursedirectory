@@ -157,12 +157,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
                         Venue = cr.VenueId.HasValue
                                                         ? FormatAddress(GetVenueByIdFrom(venueResult.Value, cr.VenueId.Value))
                                                         : string.Empty,
-                        Region = cr.Regions != null
-                                                        ? FormattedRegionsByIds(allRegions, cr.Regions)
-                                                        : string.Empty,
-                        RegionIdList = cr.Regions != null
-                            ? FormattedRegionIds(allRegions, cr.Regions)
-                            : string.Empty,
                         StartDate = cr.FlexibleStartDate
                                                         ? "Flexible start date"
                                                         : cr.StartDate?.ToString("dd/MM/yyyy"),
@@ -175,7 +169,17 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
 
 
                     };
-
+                    //If National
+                    if(cr.National)
+                    {
+                        courseRunModel.Region = string.Join(", ", allRegions.Select(x => x.RegionName).ToList()); 
+                        courseRunModel.RegionIdList = string.Join(", ", allRegions.Select(x => x.Id).ToList());
+                    }
+                    else
+                    {
+                        courseRunModel.Region = cr.Regions != null ? FormattedRegionsByIds(allRegions, cr.Regions) : string.Empty;
+                        courseRunModel.RegionIdList = cr.Regions != null ? FormattedRegionIds(allRegions, cr.Regions) : string.Empty;
+                    }
                     model.ProviderCourseRuns.Add(courseRunModel);
 
 
