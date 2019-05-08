@@ -36,13 +36,23 @@
 
             @{
                 var option = HttpContextAccessor.HttpContext.Session.GetString("Option");
-                if (option.ToUpper() == "ADDNEWVENUE")
+               
+                
+
+                switch (option.ToUpper())
                 {
-                    @Html.ActionLink("Cancel", "SummaryToAddCourseRun", "AddCourse", null, new { @class = "govuk-link" })
-                }
-                else
-                {
-                    @Html.ActionLink("Cancel", "Index", "Venues", null, new { @class = "govuk-link" })
+                    case "ADDNEWVENUE":
+                        @Html.ActionLink("Cancel", "SummaryToAddCourseRun", "AddCourse", null, new { @class = "govuk-link" })
+                        break;
+                    case "ADDNEWVENUEFOREDIT":
+                        @Html.ActionLink("Cancel", "Reload", "EditCourseRun", null, new { @class = "govuk-link" })
+                        break;
+                    case "ADDNEWVENUEFORCOPY":
+                        @Html.ActionLink("Cancel", "Reload", "CopyCourseRun", null, new { @class = "govuk-link" })
+                        break;
+                    default:
+                        @Html.ActionLink("Cancel", "Index", "Venues", null, new { @class = "govuk-link" })
+                        break;
                 }
             }
 

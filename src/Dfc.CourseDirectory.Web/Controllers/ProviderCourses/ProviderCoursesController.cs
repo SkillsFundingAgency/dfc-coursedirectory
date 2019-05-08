@@ -312,7 +312,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
                 }
                 else
                 {
-                    notificationCourseName = model.ProviderCourseRuns.Where(x => x.CourseRunId == courseRunId.Value.ToString()).Select(x => x.QualificationCourseTitle).FirstOrDefault().ToString();
+                    notificationCourseName = model.ProviderCourseRuns.Where(x => x.CourseRunId == courseRunId.Value.ToString()).Select(x => x.CourseName).FirstOrDefault().ToString();
 
                     notificationAnchorTag = courseRunId.HasValue
                   ? $"<a id=\"courseeditlink\" class=\"govuk-link\" href=\"#\" data-courserunid=\"{courseRunId}\" >{notificationMessage} {notificationCourseName}</a>"
