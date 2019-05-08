@@ -1,4 +1,6 @@
 ﻿using Dfc.CourseDirectory.Common;
+using Dfc.CourseDirectory.Models.Enums;
+using Dfc.CourseDirectory.Models.Models.Apprenticeships;
 using Dfc.CourseDirectory.Web.ViewComponents.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -9,9 +11,11 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships.ApprenticeshipS
     public class ApprenticeShipsSearchResultItemModel
     {
         public string ApprenticeshipName { get; set; }
+
+        public string ApprenticeshipType { get; set; }
         //public string LearnAimRef { get; }
         //public string LearnAimRefTitle { get; }
-        //public string NotionalNVQLevelv2 { get; }
+        public string NotionalNVQLevelv2 { get; set; }
         //public string AwardOrgCode { get; }
         //public string LearnDirectClassSystemCode1 { get; }
         //public string LearnDirectClassSystemCode2 { get; }
