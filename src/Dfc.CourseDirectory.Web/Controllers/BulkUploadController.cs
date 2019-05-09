@@ -69,8 +69,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
 
             BulkUploadViewModel vm = new BulkUploadViewModel();
+            string errorMessage;
 
-            if (bulkUploadFile.Length > 0)
+            if (ValidateFile(bulkUploadFile, out errorMessage))
             {
                 int providerUKPRN = UKPRN.Value;
                 string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -108,15 +109,50 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     });
                 }
             }
+            else
+            {
 
-            var noFileError = new List<string>
+                var noFileError = new List<string>
                 {
-                    "No file uploaded"
+                    errorMessage
                 };
-            vm.errors = noFileError;
-                return View(vm);
+                vm.errors = noFileError;
+            }
+            return View(vm);
   
 
+        }
+        /// <summary>
+        /// Server side validation to match and extend the client-side validation
+        /// </summary>
+        /// <param name="bulkUploadFile"></param>
+        /// <returns></returns>
+        private bool ValidateFile(IFormFile bulkUploadFile, out string errorMessage)
+        {
+            if(bulkUploadFile.Length == 0)
+            {
+                errorMessage = "No file uploaded";
+                return false;
+            }
+
+            if (!bulkUploadFile.FileName.EndsWith(".csv") || bulkUploadFile.FileName.Replace(".csv", string.Empty).Contains(".") || bulkUploadFile.Name != "bulkUploadFile")
+            {
+                errorMessage = "Invalid file name";
+                return false;
+            }
+            if(!bulkUploadFile.ContentDisposition.Contains("filename"))
+            {
+                errorMessage = "Invalid upload";
+                return false;
+            }
+            if (bulkUploadFile.Length > 209715200)
+            {
+                errorMessage = "File too large";
+                return false;
+            }
+
+            errorMessage = string.Empty;
+            return true;
         }
 
     }
