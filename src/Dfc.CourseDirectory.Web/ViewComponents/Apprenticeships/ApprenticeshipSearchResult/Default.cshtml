@@ -40,7 +40,9 @@ else
     }
     else
     {
-
+        <div class="govuk-heading-s lars-search-results govuk-!-font-weight-regular">
+            Found <span class="govuk-!-font-weight-bold">@Model.Items.Count()</span> results for <span class="govuk-!-font-weight-bold">@Model.SearchTerm</span>
+        </div>
 
         @foreach (var apprenticeship in Model.Items.OrderBy(x => x.ApprenticeshipName))
         {
@@ -73,7 +75,7 @@ else
 
                 </div>
                 <div class="courserun__row4" style="border-top:none">
-                    @Html.ActionLink("Choose this apprenticeship", "AddApprenticeShipDetails",  "Apprenticeships", new { }, null)
+                    @Html.ActionLink("Choose this apprenticeship", "AddApprenticeShipDetails", "Apprenticeships", new { }, null)
 
 
                 </div>
