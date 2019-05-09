@@ -11,8 +11,6 @@
 @using Microsoft.AspNetCore.Authorization;
 
 @inject IAuthorizationService Authorization
-@inject SignInManager<User> SignInManager
-@inject UserManager<User> UserManager
 
 @{
     var adminLogin = await Authorization.AuthorizeAsync(User, "Admin");
