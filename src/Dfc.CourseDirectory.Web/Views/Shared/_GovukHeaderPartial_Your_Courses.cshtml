@@ -9,10 +9,7 @@
 
 @inject IHttpContextAccessor HttpContextAccessor
 @inject IAuthorizationService Authorization
-@inject SignInManager<User> SignInManager
-
 @inject IProviderService providerService
-@inject UserManager<User> UserManager
 @inject IGovukPhaseBannerService bannerService
 
 @{
@@ -66,15 +63,6 @@
             }
             <span class="cd-subHead--item">@providerName</span>
             <div class="cd-subHead--item">
-                @*<span>
-                        @UserManager.GetUserName(User)
-
-
-                    </span>
-                    <span>
-                        <a href="#" id="submit-link" class="button" onclick="logout.submit();">Sign out</a>
-                    </span>*@
-
                 <div class="navbar-right">
                     @if (User.Identity.IsAuthenticated)
                     {
@@ -93,13 +81,6 @@
 
 
             </div>
-            @*<span class="cd-subHead--item">
-                    <partial name="_LoginPartial" />
-                </span>*@
-
-            @*<div class="cd-subHead--item">*@
-
-            @*</div>*@
         }
 
     </div>
@@ -118,9 +99,6 @@
 </div>
 <div class="navigation-container cd-fullwidth-container govuk-body">
     <nav class="cd-secondary-nav">
-        @*<a class="cd-secondary-nav--item" ahref="">venue</a>
-            <a class="cd-secondary-nav--item" ahref="">item</a>*@
-
         @{
             if (User.Identity.IsAuthenticated)
             {

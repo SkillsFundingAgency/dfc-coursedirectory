@@ -28,8 +28,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.EntityFrameworkCore;
@@ -150,40 +148,6 @@ namespace Dfc.CourseDirectory.Web
             services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-
-            services.AddIdentity<User, IdentityRole>(options => {
-                options.Tokens.PasswordResetTokenProvider = TokenOptions.DefaultEmailProvider;
-                options.SignIn.RequireConfirmedEmail = false;
-                options.Password.RequireDigit = true;
-                options.Password.RequiredLength = 8;
-                options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequireUppercase = true;
-                options.Password.RequireLowercase = false;
-
-                //Password rules
-                options.Password.RequireNonAlphanumeric = false;
-
-            }).AddEntityFrameworkStores<ApplicationDbContext>()
-               .AddDefaultTokenProviders();
-
-            services.AddScoped<SignInManager<User>, SignInManager<User>>();
-            services.AddSingleton<IEmailSender, EmailSender>();
-
-            services.Configure<SecurityStampValidatorOptions>(options =>
-            {
-                options.ValidationInterval = TimeSpan.FromMinutes(1);
-            });
-            services.ConfigureApplicationCookie(options =>
-            {
-                // Cookie settings
-                options.Cookie.HttpOnly = true;
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
-                options.LogoutPath = "/Home";
-                options.LoginPath = "/Identity/Account/Login";
-                options.AccessDeniedPath = "/Identity/Account/Login";
-                options.ReturnUrlParameter = "/Home";
-                options.SlidingExpiration = true;
-            });
             services.AddMvc(options =>
             {
 
@@ -235,8 +199,6 @@ namespace Dfc.CourseDirectory.Web
             {
                 options.ExpireTimeSpan = TimeSpan.FromHours(6);
                 options.SlidingExpiration = true;
-                options.LogoutPath = "/Home";
-                options.AccessDeniedPath = "/Identity/Account/Login";
                 options.Events = new CookieAuthenticationEvents
                 {
 

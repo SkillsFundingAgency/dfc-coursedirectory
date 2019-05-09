@@ -8,8 +8,6 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.Notification
 
 @inject IAuthorizationService Authorization
-@inject SignInManager<User> SignInManager
-@inject UserManager<User> UserManager
 
 @{
     var adminLogin = await Authorization.AuthorizeAsync(User, "Admin");
