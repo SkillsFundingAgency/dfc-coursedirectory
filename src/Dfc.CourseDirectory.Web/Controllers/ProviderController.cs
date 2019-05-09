@@ -18,6 +18,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authorization;
+using Dfc.CourseDirectory.Web.ViewModels;
+using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
+using Dfc.CourseDirectory.Web.RequestModels;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -27,22 +30,27 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly ISession _session;
         private readonly ICourseService _courseService;
         private readonly IVenueService _venueService;
+        private readonly IProviderService _providerService;
 
         public ProviderController(
             ILogger<ProviderController> logger,
             IHttpContextAccessor contextAccessor,
             ICourseService courseService,
-            IVenueService venueService)
+            IVenueService venueService,
+            IProviderService providerService
+            )
         {
             Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(contextAccessor, nameof(contextAccessor));
             Throw.IfNull(courseService, nameof(courseService));
             Throw.IfNull(venueService, nameof(venueService));
+            Throw.IfNull(providerService, nameof(providerService));
 
             _logger = logger;
             _session = contextAccessor.HttpContext.Session;
             _courseService = courseService;
             _venueService = venueService;
+            _providerService = providerService;
         }
 
         [Authorize(Policy = "ElevatedUserRole")]
@@ -68,17 +76,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
         internal string FormatAddress(Venue venue)
         {
             if (venue == null) return string.Empty;
-
-            //var list = new List<string>
-            //{
-            //    venue.Address1,
-            //    venue.Address2,
-            //    venue.Address3,
-            //    venue.County,
-            //    venue.VenueName
-            //}
-            //.Where(x => !string.IsNullOrWhiteSpace(x))
-            //.ToList();
 
             return venue.VenueName;
         }
@@ -114,6 +111,89 @@ namespace Dfc.CourseDirectory.Web.Controllers
             var found = courses.FirstOrDefault(x => x.Id == id)?.QualificationTitle;
 
             return found;
+        }
+
+        [Authorize]
+        public async Task<IActionResult> Alias(ProviderAliasRequestModel request)
+        {
+
+            return View();
+        }
+
+        [Authorize]
+        public async Task<IActionResult> BriefOverview(ProviderBriefOverviewRequestModel request)
+        {
+
+            return View();
+        }
+
+        [Authorize]
+        public async Task<IActionResult> Details()
+        {
+            var model = new ProviderDetailsViewModel();
+
+            int? UKPRN = _session.GetInt32("UKPRN");
+
+            if (!UKPRN.HasValue)
+            {
+                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
+            }
+
+            var providerSearchResult = await _providerService.GetProviderByPRNAsync(new Dfc.CourseDirectory.Services.ProviderService.ProviderSearchCriteria(UKPRN.ToString()));
+
+            if (providerSearchResult.IsSuccess)
+            {
+                var provider = providerSearchResult.Value.Value.FirstOrDefault();
+
+                model.Status = provider.ProviderStatus;
+                model.ProviderName = provider.ProviderName;
+                model.LegalName = provider.ProviderName;
+                model.TradingName = provider.ProviderName;
+                model.AliasName = provider.ProviderAliases.FirstOrDefault()?.ProviderAlias== null ? "":"";
+                model.UKPRN = UKPRN.ToString();
+                model.BriefOverview = provider.MarketingInformation;
+
+                var providerContactTypeL = provider.ProviderContact.Where(s => s.ContactType.Equals("L", StringComparison.InvariantCultureIgnoreCase));
+                string AddressLine1 = string.Empty;
+                if (!(string.IsNullOrEmpty(providerContactTypeL.FirstOrDefault()?.ContactAddress?.PAON?.Description)
+                    && string.IsNullOrEmpty(providerContactTypeL.FirstOrDefault()?.ContactAddress?.StreetDescription)))
+                {
+                    AddressLine1 = providerContactTypeL.FirstOrDefault()?.ContactAddress?.PAON?.Description
+                                    + " " + providerContactTypeL.FirstOrDefault()?.ContactAddress?.StreetDescription + ", ";
+                }
+                string AddressLine2 = string.Empty;
+                if (providerContactTypeL.FirstOrDefault()?.ContactAddress?.Locality != null)
+                {
+                    AddressLine2 = providerContactTypeL.FirstOrDefault()?.ContactAddress?.Locality.ToString() + ", ";
+                }
+
+                string AddressLine3 = string.Empty;
+                if (!string.IsNullOrEmpty(providerContactTypeL.FirstOrDefault()?.ContactAddress?.Items?.FirstOrDefault()))
+                {
+                    AddressLine3 = providerContactTypeL.FirstOrDefault()?.ContactAddress?.Items?.FirstOrDefault() + ", ";
+                }
+
+                string PostCode = string.Empty;
+                if (!string.IsNullOrEmpty(providerContactTypeL?.FirstOrDefault()?.ContactAddress?.PostCode))
+                {
+                    PostCode = providerContactTypeL?.FirstOrDefault()?.ContactAddress?.PostCode;
+                }
+
+
+                model.AddressLine1 = AddressLine1;
+                model.AddressLine2 = AddressLine2;
+                model.PostCode = PostCode;
+
+                model.Telephone = providerContactTypeL?.FirstOrDefault()?.ContactTelephone1;
+                model.Web = providerContactTypeL?.FirstOrDefault()?.ContactWebsiteAddress;
+                model.Email = providerContactTypeL?.FirstOrDefault()?.ContactEmail;
+
+            }
+
+            
+
+
+            return View(model);
         }
 
         [Authorize]

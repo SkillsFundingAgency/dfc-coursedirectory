@@ -1,0 +1,159 @@
+﻿@using Dfc.CourseDirectory.Models.Enums
+@using Dfc.CourseDirectory.Models.Models.Courses
+@using Dfc.CourseDirectory.Web.Helpers
+@using System.ComponentModel.DataAnnotations
+@model Dfc.CourseDirectory.Web.ViewModels.ProviderDetailsViewModel
+@{
+    Layout = "_Layout_Your_Courses";
+}
+
+<a asp-controller="" asp-action="" class="govuk-back-link">Back</a>
+<main class="govuk-main-wrapper">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-xl">Course Directory</span>
+            <h1 class="govuk-heading-xl">@Model.ProviderName</h1>
+            <table class="govuk-table">
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <th class="govuk-table__header" scope="row">Course directory status</th>
+
+                        <td class="govuk-table__cell">@Model.Status</td>
+                        <td class="govuk-table__cell"></td>
+                    </tr>
+                </thead>
+                <tbody class="govuk-table__body">
+                    <tr class="govuk-table__row">
+                        <th class="govuk-table__header" scope="row">UKPRN</th>
+
+                        <td class="govuk-table__cell">@Model.UKPRN</td>
+                        <td class="govuk-table__cell"></td>
+
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <th class="govuk-table__header" scope="row">Name registered with UKRLP</th>
+
+                        <td class="govuk-table__cell">@Model.LegalName</td>
+                        <td class="govuk-table__cell"></td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <th class="govuk-table__header" scope="row">Trading name</th>
+
+                        <td class="govuk-table__cell">@Model.TradingName</td>
+                        <td class="govuk-table__cell"></td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <th class="govuk-table__header" scope="row">Your alias</th>
+                        <td class="govuk-table__cell">@Model.AliasName</td>
+                        <td class="govuk-table__cell">
+                            @if (string.IsNullOrEmpty(Model.AliasName))
+                            {
+                                <a class="govuk-link" style="padding-right:1em"
+                                   asp-controller="Provider"
+                                   asp-action="Alias"
+                                   asp-route-ukPRN="@Model.UKPRN"
+                                   asp-route-alias="@Model.AliasName">Add</a>
+                            }
+                            else
+                            {
+                                <a class="govuk-link" style="padding-right:1em"
+                                   asp-controller="Provider"
+                                   asp-action="Alias"
+                                   asp-route-ukPRN="@Model.UKPRN"
+                                   asp-route-alias="@Model.AliasName">Edit</a>
+                            }
+
+                        </td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <th class="govuk-table__header" scope="row">Bried overview of your organisation for employers</th>
+                        <td class="govuk-table__cell"></td>
+                        <td class="govuk-table__cell">
+                            @if (string.IsNullOrEmpty(Model.BriefOverview))
+                            {
+                                <a class="govuk-link" style="padding-right:1em"
+                                   asp-controller="Provider"
+                                   asp-action="BriefOverview"
+                                   asp-route-ukPRN="@Model.UKPRN"
+                                   asp-route-alias="@Model.BriefOverview">Add</a>
+                            }
+                            else
+                            {
+                                <a class="govuk-link" style="padding-right:1em"
+                                   asp-controller="Provider"
+                                   asp-action="BriefOverview"
+                                   asp-route-ukPRN="@Model.UKPRN"
+                                   asp-route-alias="@Model.BriefOverview">Edit</a>
+                            }
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+
+        </div>
+
+        <div class="govuk-grid-column-one-third govuk-related-items">
+            <h3 class="govuk-heading-m">Contact details</h3>
+
+
+            <h3 class="govuk-heading-m m20">Address</h3>
+            <p>
+                @Model.AddressLine1
+                @Model.AddressLine2
+                @Model.PostCode
+            </p>
+            @*<a class="govuk-link" style="padding-right:1em"
+           asp-controller="CopyCourseRun"
+           asp-action="Index"
+           asp-route-learnAimRef="@Model.LearnAimRef"
+           asp-route-notionalNVQLevelv2="@Model.NotionalNVQLevelv2"
+           asp-route-awardOrgCode="@Model.AwardOrgCode"
+           asp-route-learnAimRefTitle="@Model.QualificationCourseTitle"
+           asp-route-learnAimRefTypeDesc="@Model.QualificationType"
+           asp-route-courseId="@Model.CourseId"
+           asp-route-courseRunId="@Model.CourseInstanceId"
+           asp-route-publishMode="@PublishMode.Summary">Copy this course</a>
+        <hr>*@
+
+            <h3 class="govuk-heading-m m20">Web</h3>
+            <p>
+                @Model.Web
+            </p>
+            @*<a href="#" class="govuk-link archive" id="archive-@Model.CourseInstanceId" data-course-run-id="@Model.CourseInstanceId" style="padding-right:1em">Delete this course</a>*@
+
+            @*<a id="course-confirm-archive-@Model.CourseInstanceId" class="govuk-button" asp-controller="Courses" asp-action="Archive"
+           asp-route-courseId="@Model.CourseId"
+           asp-route-courseRunId="@Model.CourseInstanceId"
+           asp-route-level="@Model.NotionalNVQLevelv2"
+           asp-route-qualificationType="@Model.QualificationType"
+           asp-route-courseName="@Model.CourseName"
+           style="display: none;padding-right:1em">Confirm delete</a>
+
+        <a href="#" class="govuk-link cancel-archive" id="course-cancel-archive-@Model.CourseInstanceId" data-course-run-id="@Model.CourseInstanceId" hidden="hidden">Cancel</a>
+        <hr>*@
+            <h3 class="govuk-heading-m m20">Email</h3>
+            <p>
+                @Model.Email
+            </p>
+            <h3 class="govuk-heading-m m20">Telephone</h3>
+            <p>
+                @Model.Telephone
+            </p>
+
+        </div>
+    </div>
+
+</main>
+
+<script>
+    (function ($) {
+        $(function () {
+            
+
+
+          
+
+        });
+    })(jQuery);
+</script>
