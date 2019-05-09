@@ -161,6 +161,15 @@
     <Content Update="Views\ProviderCourses\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\Provider\BriefOverview.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Provider\Alias.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Provider\Details.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\PublishCourses\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
