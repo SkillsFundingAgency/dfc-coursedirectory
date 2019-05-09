@@ -307,7 +307,7 @@
             var $regionItemsCheckboxList = $("#RegionItemsCheckboxList");
             var $fullPartTimeRadioButtons = $("#FullPartTimeRadioButtons");
             var $attendancePatternRadioButtons = $("#AttendancePatternRadioButtons");
-
+            var $national = $("#nationalRadioButtons").govUkCheckboxes();
             var isClassroomBased = true;
             var isOnline = false;
             var isWorkBased = false;
@@ -507,9 +507,21 @@
                 $regions.govUkCheckboxes("validState");
                 $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $regions[0].id);
                 $errorSummary.govUkErrorSummary("hideIfEmpty")
-                var $nationalRadio = $("#nationalRadioButtons input[type=radio]:checked").val();
+                var $nationalRadioChecked = $("#nationalRadioButtons input[type=radio]:checked").val();
+
+                $national.govUkCheckboxes("validState");
+                $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $national[0].id);
+                $errorSummary.govUkErrorSummary("hideIfEmpty");
                 validStates.push(true);
-                if (isWorkBased & !$.requiredValidate($regions.find("input[type='checkbox']:checked").val()) & $nationalRadio === "false") {
+                if ($nationalRadioChecked == undefined && isWorkBased) {
+                    $national.govUkCheckboxes("invalidState", $national.attr("val-required-message"));
+                    var nationalErrorHashLinks = $national.govUkCheckboxes("getErrorHashLinks");
+                    $errorSummary.govUkErrorSummary("add", nationalErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
+                    validStates.push(false);
+                }
+                validStates.push(true);
+                if (isWorkBased & !$.requiredValidate($regions.find("input[type='checkbox']:checked").val()) & $nationalRadioChecked === "false") {
                     $regions.govUkCheckboxes("invalidState", $regions.attr("val-required-message"));
                     var regionsErrorHashLinks = $regions.govUkCheckboxes("getErrorHashLinks");
                     $errorSummary.govUkErrorSummary("add", regionsErrorHashLinks);
