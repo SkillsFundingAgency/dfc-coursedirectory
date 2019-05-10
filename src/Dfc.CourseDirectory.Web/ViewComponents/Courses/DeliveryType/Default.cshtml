@@ -9,7 +9,7 @@
         <label id="govuk-label-DeliveryModeRadioButtons" class="govuk-label">@Model.LabelText</label>
         <span id="more-detail-hint" class="govuk-hint">@Model.HintText</span>
         <span id="second-detail-hint" class="govuk-hint">@Model.SecondHintText</span>
-        <div id="DeliveryModeRadioButtons" class="govuk-radios govuk-radios--inline" style="margin-bottom: 30px;"
+        <div id="DeliveryModeRadioButtons" class="govuk-radios govuk-radios--inline"
              val-required-message="Select Delivery Mode">
             <div class="govuk-radios__item">
                 @Html.RadioButtonFor(m => m.DeliveryMode, DeliveryMode.ClassroomBased, new { @class = "govuk-radios__input", id = @DeliveryMode.ClassroomBased })
