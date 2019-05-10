@@ -44,7 +44,7 @@
     foreach (var courseRun in course.CourseRuns.OrderBy(x => x.CourseName))
     {
         @if ((Model.PublishMode.Equals(PublishMode.BulkUpload) && courseRun.RecordStatus == RecordStatus.BulkUloadPending) ||
-        (Model.PublishMode.Equals(PublishMode.Migration) && courseRun.RecordStatus == RecordStatus.MigrationPending))
+       (Model.PublishMode.Equals(PublishMode.Migration) && courseRun.RecordStatus == RecordStatus.MigrationPending))
         {
             <div id="courserunid" style="display:none">@courseRun.id</div>
 
@@ -101,27 +101,31 @@
         }
         else
         {
-            <div id="courserunid" style="display:none">@courseRun.id</div>
+            if (Model.PublishMode == PublishMode.DataQualityIndicator)
+            {
+                <div id="courserunid" style="display:none">@courseRun.id</div>
 
-            <div class="error-line-in" id="CourseRunId_@courseRun.id">
-                <div class="govuk-grid-column-one-third col">@courseRun.CourseName</div>
-                <div class="govuk-grid-column-two-thirds">
-                    <div class="govuk-grid-column-one-third col">
-                        <div class="error-box start-date-error">Start date is in the past</div>
-                    </div>
-                    <div class="govuk-grid-column-two-thirds align-right col right center">
+                <div class="error-line-in" id="CourseRunId_@courseRun.id">
+                    <div class="govuk-grid-column-one-third col">@courseRun.CourseName</div>
+                    <div class="govuk-grid-column-two-thirds">
+                        <div class="govuk-grid-column-one-third col">
+                            <div class="error-box start-date-error">Start date is in the past</div>
+                        </div>
+                        <div class="govuk-grid-column-two-thirds align-right col right center">
 
-                        <a id="course-run-fix-@courseRun.id" class="error-link fix" asp-controller="EditCourseRun" asp-action="Index"
-                           asp-route-courseId="@course.id" asp-route-courseRunId="@courseRun.id"
-                           asp-route-learnAimRef="@course.LearnAimRef"
-                           asp-route-notionalNVQLevelv2="course.NotionalNVQLevelv2"
-                           asp-route-awardOrgCode="@course.AwardOrgCode"
-                           asp-route-learnAimRefTitle="@course.QualificationCourseTitle"
-                           asp-route-learnAimRefTypeDesc="@course.QualificationType"
-                           asp-route-mode=@Model.PublishMode>Fix</a>
+                            <a id="course-run-fix-@courseRun.id" class="error-link fix" asp-controller="EditCourseRun" asp-action="Index"
+                               asp-route-courseId="@course.id" asp-route-courseRunId="@courseRun.id"
+                               asp-route-learnAimRef="@course.LearnAimRef"
+                               asp-route-notionalNVQLevelv2="course.NotionalNVQLevelv2"
+                               asp-route-awardOrgCode="@course.AwardOrgCode"
+                               asp-route-learnAimRefTitle="@course.QualificationCourseTitle"
+                               asp-route-learnAimRefTypeDesc="@course.QualificationType"
+                               asp-route-mode=@Model.PublishMode>Fix</a>
+                        </div>
                     </div>
                 </div>
-            </div>
+            }
+
         }
     }
 }
