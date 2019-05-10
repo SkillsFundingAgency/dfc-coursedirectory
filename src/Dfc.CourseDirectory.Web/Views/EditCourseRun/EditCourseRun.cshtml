@@ -173,7 +173,7 @@
         })
     </div>
 
-    <div class="govuk-form-group" id="RegionItemsCheckboxList" style="@Model.DeliveryMode.IfNotWorkBasedDisplayNone()">
+    <div class="section" id="RegionItemsCheckboxList" style="@Model.DeliveryMode.IfNotWorkBasedDisplayNone()">
         <div id="sectionRegions">
             @await Component.InvokeAsync(nameof(ChooseRegion), Model.ChooseRegion)
         </div>
@@ -309,7 +309,7 @@
             var $duration = $("#duration").govUkDurationInput();
             var $studyMode = $("#StudyModeRadioButtons").govUkRadios();
             var $attendance = $("#AttendanceRadioButtons").govUkRadios();
-
+            var $national = $("#nationalRadioButtons").govUkCheckboxes();
             var $regionItemsCheckboxList = $("#RegionItemsCheckboxList");
             var $fullPartTimeRadioButtons = $("#FullPartTimeRadioButtons");
             var $attendancePatternRadioButtons = $("#AttendancePatternRadioButtons");
@@ -512,9 +512,22 @@
                 $regions.govUkCheckboxes("validState");
                 $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $regions[0].id);
                 $errorSummary.govUkErrorSummary("hideIfEmpty")
-                var $nationalRadio = $("#nationalRadioButtons input[type=radio]:checked").val();
+                var $nationalRadioChecked = $("#nationalRadioButtons input[type=radio]:checked").val();
+
+                $national.govUkCheckboxes("validState");
+                $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $national[0].id);
+                $errorSummary.govUkErrorSummary("hideIfEmpty");
+
                 validStates.push(true);
-                if (isWorkBased & !$.requiredValidate($regions.find("input[type='checkbox']:checked").val()) & $nationalRadio === "false") {
+                if ($nationalRadioChecked == undefined && isWorkBased) {
+                    $national.govUkCheckboxes("invalidState", $national.attr("val-required-message"));
+                    var nationalErrorHashLinks = $national.govUkCheckboxes("getErrorHashLinks");
+                    $errorSummary.govUkErrorSummary("add", nationalErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
+                    validStates.push(false);
+                }
+                validStates.push(true);
+                if (isWorkBased & !$.requiredValidate($regions.find("input[type='checkbox']:checked").val()) & $nationalRadioChecked === "False") {
                     $regions.govUkCheckboxes("invalidState", $regions.attr("val-required-message"));
                     var regionsErrorHashLinks = $regions.govUkCheckboxes("getErrorHashLinks");
                     $errorSummary.govUkErrorSummary("add", regionsErrorHashLinks);

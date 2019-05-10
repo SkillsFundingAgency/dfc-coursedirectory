@@ -164,10 +164,8 @@
 
     </div>
 
-    <div class="govuk-form-group" id="RegionItemsCheckboxList" style="@Model.DeliveryMode.IfNotWorkBasedDisplayNone()">
-        <div id="sectionRegions">
+    <div class="section" id="RegionItemsCheckboxList" style="@Model.DeliveryMode.IfNotWorkBasedDisplayNone()">
             @await Component.InvokeAsync(nameof(ChooseRegion), Model.ChooseRegion)
-        </div>
     </div>
 
 
@@ -282,9 +280,8 @@
             var $courseProviderReference = $("#@nameof(Model.CourseProviderReference)").govUkInput();
             var $deliveryRadios = $("#DeliveryModeRadioButtons input[type=radio]");
             var $regionItemsCheckboxList = $("#RegionItemsCheckboxList");
-            var $regionCheckboxes = $("#SelectRegionCheckBoxes input[type=checkbox]");
             var $duration = $("#duration").govUkDurationInput();
-
+            var $regions = $("#SelectRegionCheckBoxes").govUkCheckboxes();
             var $durationDropdown = $("#durationDropDown").govUkSelect();
 
             var $checkboxsregions = $("#SelectRegionCheckBoxes").govUkCheckboxes();
@@ -294,7 +291,7 @@
             var $radioAttendance = $("#AttendanceRadioButtons").govUkRadios();
 
             var $selectedvenue = $("#@nameof(Model.VenueId)").govUkSelect();
-
+            var $national = $("#nationalRadioButtons").govUkCheckboxes();
             var $startDate = $("#start_date").govUkDateInput();
 
             var $cost = $("#@nameof(Model.Cost)").govUkInput();
@@ -369,6 +366,7 @@
                 $selectedvenue.govUkSelect("validState");
                 $cost.govUkInput("validState");
                 $URL.govUkInput("validState");
+                $regions.govUkCheckboxes("validState");
                 $radioDeliveryMode.govUkRadios("validState");
                 $radioStudyMode.govUkRadios("validState");
                 $radioAttendance.govUkRadios("validState");
@@ -409,15 +407,20 @@
                         validStates.push(true);
                 }
 
-                if (isWorkBased) {
-                    var $nationalRadio = $("#nationalRadioButtons input[type=radio]:checked").val();
-                    if ($.requiredValidate($checkboxsregions.find("input[type='checkbox']:checked").val()) || $nationalRadio === "True") {
-                        $checkboxsregions.govUkCheckboxes("validState");
-                        validStates.push(true);
-                    } else {
-                        $checkboxsregions.govUkCheckboxes("invalidState", $checkboxsregions.attr("val-required-message"));
-                        validStates.push(false);
-                    }
+                // regions
+                $regions.govUkCheckboxes("validState");
+                var $nationalRadioChecked = $("#nationalRadioButtons input[type=radio]:checked").val();
+
+                $national.govUkCheckboxes("validState");
+                validStates.push(true);
+                if ($nationalRadioChecked == undefined && isWorkBased) {
+                    $national.govUkCheckboxes("invalidState", $national.attr("val-required-message"));
+                    validStates.push(false);
+                }
+                validStates.push(true);
+                if (isWorkBased & !$.requiredValidate($regions.find("input[type='checkbox']:checked").val()) & $nationalRadioChecked === "False") {
+                    $regions.govUkCheckboxes("invalidState", $regions.attr("val-required-message"));
+                    validStates.push(false);
                 }
 
                 if (!$.requiredValidate($courseName.val())) {
@@ -562,7 +565,7 @@
                 if (errorArray.length > 0) {
 
 
-                    var $errorField = $("#" + errorArray[0].closest('.section').id);
+                    //var $errorField = $("#" + errorArray[0].closest('.section').id);
                     //$('html,body').animate({ scrollTop: $errorField.offset().top }, 'slow');
 
                     var notificationBody = "";
