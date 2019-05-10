@@ -38,6 +38,7 @@
                 var Option = HttpContextAccessor.HttpContext.Session.GetString("Option");
             }
 
+
             <button type="button" role="button" class="govuk-header__menu-button js-header-toggle" aria-controls="navigation" aria-label="Show or hide Top Level Navigation">Menu</button>
 
         </div>
@@ -50,6 +51,8 @@
     <div class="cd-fullwidth-container cd-subHead-container">
         @if (User.Identity.IsAuthenticated)
         {
+            var authorised = await Authorization.AuthorizeAsync(User, "ElevatedUserRole");
+            var superUser = await Authorization.AuthorizeAsync(User, "SuperUser");
 
             var adminLogin = await Authorization.AuthorizeAsync(User, "Admin");
             var providerLogin = await Authorization.AuthorizeAsync(User, "Provider");
@@ -61,7 +64,17 @@
                 var providerSearchResult = await providerService.GetProviderByPRNAsync(new ProviderSearchCriteria(ukPRN.ToString()));
                 providerName = providerSearchResult.Value.Value.FirstOrDefault()?.ProviderName;
             }
-            <span class="cd-subHead--item">@providerName</span>
+            @if (superUser.Succeeded)
+            {
+                <a asp-controller="Provider" asp-action="Details" class="cd-subHead--item" style="color: #fff!important;text-decoration:none">
+                    @providerName
+                </a>
+            }
+            else
+            {
+                <span class="cd-subHead--item">@providerName</span>
+            }
+
             <div class="cd-subHead--item">
                 <div class="navbar-right">
                     @if (User.Identity.IsAuthenticated)
@@ -74,7 +87,7 @@
                             @email
                         </span>
                         <span>
-                            <a asp-action="Logout" asp-controller="Auth" id="submit-link" style="color: #fff!important;margin-left: 20px;text-decoration:none"class="button">Sign out</a>
+                            <a asp-action="Logout" asp-controller="Auth" id="submit-link" style="color: #fff!important;margin-left: 20px;text-decoration:none" class="button">Sign out</a>
                         </span>
                     }
                 </div>
