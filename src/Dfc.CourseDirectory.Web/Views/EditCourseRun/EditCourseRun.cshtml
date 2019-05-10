@@ -784,36 +784,6 @@
                         }
                 }
             });
-
-            $("a").on("click",
-                function(e) {
-
-                    var $regionId = $(this).attr('region-id');
-
-                    if ($regionId) {
-                        e.preventDefault();
-                        var $selectAllText = $(this).text();
-                        var $allCheckedCheckboxes = $("input[region-id='" + $regionId + "']:checkbox");
-                        var allCheckedFilterCheckboxesLength = $allCheckedCheckboxes.length;
-
-                        for (var i = 0; i < allCheckedFilterCheckboxesLength; i++) {
-                            if ($selectAllText === "Select all") {
-                                $($allCheckedCheckboxes[i]).prop('checked', true);
-
-                            } else {
-                                $($allCheckedCheckboxes[i]).prop('checked', false);
-
-                            }
-                        }
-
-                        if ($selectAllText === "Select all") {
-                            $(this).text("Clear all");
-                        } else {
-                            $(this).text("Select all");
-                        }
-                    }
-                });
-
         });
     })(jQuery);
 </script>
