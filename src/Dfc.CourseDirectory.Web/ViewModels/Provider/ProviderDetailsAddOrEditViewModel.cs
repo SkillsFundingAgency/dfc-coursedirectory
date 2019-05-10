@@ -10,7 +10,7 @@ using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 
 namespace Dfc.CourseDirectory.Web.ViewModels
 {
-    public class ProviderAliasViewModel
+    public class ProviderDetailsAddOrEditViewModel
     {
 
 
@@ -19,7 +19,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels
 
         public string AliasName { get; set; }
 
-     
+        public string BriefOverview { get; set; }
 
 
 

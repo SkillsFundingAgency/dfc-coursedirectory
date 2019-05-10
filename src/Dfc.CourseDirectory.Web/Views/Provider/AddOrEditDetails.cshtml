@@ -1,0 +1,131 @@
+﻿@using Dfc.CourseDirectory.Models.Enums
+@using Dfc.CourseDirectory.Models.Models.Courses
+@using Dfc.CourseDirectory.Web.Helpers
+@using System.ComponentModel.DataAnnotations
+@model Dfc.CourseDirectory.Web.ViewModels.ProviderDetailsAddOrEditViewModel
+@{
+    Layout = "_Layout_Your_Courses";
+}
+
+<a asp-controller="Provider" asp-action="Details" class="govuk-back-link">Back</a>
+<form asp-controller="Provider" asp-action="AddOrEditDetails" id="editProviderDetails" onkeypress="return event.keyCode != 13;">
+    <main class="govuk-main-wrapper">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <span class="govuk-caption-xl">Course Directory</span>
+                <h1 class="govuk-heading-xl">Edit your details</h1>
+
+                <div id="costContainer" class="govuk-form-group">
+                    <label id="govuk-label-Cost" class="govuk-label">
+                        Your alias
+                    </label>
+
+
+                    @{ var regex = @"^[a-zA-Z0-9 /\n/\r/\¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`" + "\"" + "\\\\]+$"; }
+
+                    <input class="govuk-input govuk-input--width-10" style="display:inline;" asp-for="@Model.AliasName" type="text" aria-describedby=""
+                           val-max-length="100"
+                           val-max-length-message="Provider Alias Name' must be 100 characters or less"
+                            val-regex="@regex"
+                                  val-regex-message="Provider Alias Name contains invalid characters">
+                </div>
+
+                <div class="govuk-character-count" data-module="character-count" data-maxlength="750">
+                    <div class="govuk-form-group">
+                        <label class="govuk-label" for="word-count">
+                            Brief overview of your organisation for employers
+                        </label>
+
+                        <textarea class="govuk-textarea js-character-count " asp-for="@Model.BriefOverview" rows="5"
+                                  val-max-length="750"
+                                  val-max-length-message="Brief Overview of Your Organisation for Employers' must be 750 characters or less"
+                                  val-regex="@regex"
+                                  val-regex-message="Brief Overview of Your Organisation for Employers’ contains invalid characters">
+
+        </textarea>
+                    </div>
+                </div>
+
+                <ul class="flex-container">
+                    <li class="flex-item">
+                        <button name="saveButton" type="submit" class="govuk-button" id="save">
+                            Save
+                        </button>
+                    </li>
+                    <li class="flex-item" style="padding-top: 15px">
+
+                        @Html.ActionLink("Cancel", "Details", "Provider", new { }, new { @class = "govuk-link" })
+
+
+                    </li>
+
+
+                </ul>
+
+            </div>
+        </div>
+    </main>
+</form>
+
+<script>
+    (function ($) {
+        $(function () {
+
+             var validStates = [];
+            var $save = $("#save");
+
+            var $alias = $("#@nameof(Model.AliasName)").govUkInput();
+
+            var $briefoverview = $("#@nameof(Model.BriefOverview)").govUkTextarea();
+
+
+            function validate() {
+
+                validStates = [];
+
+                if (!$.regexValidate({ regex: $alias.attr("val-regex") }, $alias.val())) {
+                    $alias.govUkInput("invalidState", $alias.attr("val-regex-message"));
+                    validStates.push(false);
+                } else if (
+                    !$.maxLengthValidate({ max: $alias.attr("val-max-length") }, $alias.val())) {
+                    $alias.govUkInput("invalidState", $alias.attr("val-max-length-message"));
+                    validStates.push(false);
+                }
+                else {
+                    $alias.govUkInput("validState");
+                    validStates.push(true);
+                }
+
+                if (!$.regexValidate({ regex: $briefoverview.attr("val-regex") }, $briefoverview.val())) {
+                    $briefoverview.govUkTextarea("invalidState", $briefoverview.attr("val-regex-message"));
+                    validStates.push(false);
+                } else if (
+                    !$.maxLengthValidate({ max: $briefoverview.attr("val-max-length") }, $briefoverview.val())) {
+                    $briefoverview.govUkTextarea("invalidState", $briefoverview.attr("val-max-length-message"));
+                    validStates.push(false);
+                }
+                else {
+                    $briefoverview.govUkTextarea("validState");
+                    validStates.push(true);
+                }
+            }
+
+             function isAllValid(currentValue) {
+                return currentValue === true;
+            }
+
+             $save.on("click",
+                function(event) {
+                    event.preventDefault();
+
+                    validate();
+
+                    if (validStates.every(isAllValid)) {
+                        $("#editProviderDetails").submit();
+                    }
+
+                });
+
+        });
+    })(jQuery);
+</script>
