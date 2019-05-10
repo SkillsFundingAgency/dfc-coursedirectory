@@ -4,14 +4,13 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @model Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseRegion.ChooseRegionModel
 
-
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-full">
-        <div class="govuk-form-group">
+<div class="govuk-form-group">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
             <fieldset class="govuk-fieldset" aria-describedby="changed-name-hint">
                 <label id="govuk-label-nationalRadioButtons" class="govuk-label">Can you deliver this course anywhere in England?</label>
                 <div id="nationalRadioButtons" class="govuk-radios govuk-radios--inline" style="margin-bottom: 30px;"
-                     val-required-message="Choose if you can deliver this course anywhere in England">
+                        val-required-message="Choose if you can deliver this course anywhere in England">
                     <span id="more-detail-hint" class="govuk-hint">Answering yes will show you are a national provider</span>
                     <div class="govuk-radios__item">
                         @Html.RadioButtonFor(m => m.National, true, new { @class = "govuk-radios__input", id = nameof(Model.National) + "_true" })
@@ -23,75 +22,76 @@
                     </div>
                 </div>
             </fieldset>
-        </div>
-        <div id="regions-section">
-            <label class="govuk-label" for="select-region">
-                @Model.Regions.LabelText
-            </label>
-            <span id="select-region-hint" class="govuk-hint">
-                @Model.Regions.HintText
-            </span>
-            <div class="govuk-checkboxes" id="SelectRegionCheckBoxes" val-required-message="Select at least one region">
-                @foreach (var item in Model.Regions.RegionItems)
-                {
-                    <details class="govuk-details">
-                        <summary class="govuk-details__summary">
-                            <span id="region" @item.Id class="govuk-details__summary-text">
-                                @item.RegionName
-                            </span>
-                        </summary>
-                        <div class="govuk-form-group">
-                            <h3><a class="govuk-link" id="SelectAll" region-id="@item.Id" href="#">Select all</a></h3>
-                            <div class="flex-container govuk-grid-row region-checkboxes" id="details-content-@item.Id" aria-hidden="true">
+            <div id="regions-section">
+                <label class="govuk-label" id="govuk-label-SelectRegionCheckBoxes" for="select-region">
+                    @Model.Regions.LabelText
+                </label>
+                <span id="select-region-hint" class="govuk-hint">
+                    @Model.Regions.HintText
+                </span>
+                <div class="govuk-checkboxes" id="SelectRegionCheckBoxes" val-required-message="Select at least one region">
+                    @foreach (var item in Model.Regions.RegionItems)
+                    {
+                        <details class="govuk-details">
+                            <summary class="govuk-details__summary">
+                                <span id="region" @item.Id class="govuk-details__summary-text">
+                                    @item.RegionName
+                                </span>
+                            </summary>
+                            <div class="govuk-form-group">
+                                <h3><a class="govuk-link" id="SelectAll" region-id="@item.Id" href="#">Select all</a></h3>
+                                <div class="flex-container govuk-grid-row region-checkboxes" id="details-content-@item.Id" aria-hidden="true">
 
-                                @{ var x = 0; }
-                                @foreach (var subregion in item.SubRegion)
-                                {
-                                    x++;
+                                    @{ var x = 0; }
+                                    @foreach (var subregion in item.SubRegion)
+                                    {
+                                        x++;
 
-                                    <div class="govuk-checkboxes__item">
-                                        <input class="govuk-checkboxes__input" id="RegionName-@x" region-id="@item.Id" name="SelectedRegions" type="checkbox" value="@subregion.Id" @subregion.Checked.ThenNullableCheck() />
-                                        <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@subregion.SubRegionName</label>
-                                    </div>
+                                        <div class="govuk-checkboxes__item">
+                                            <input class="govuk-checkboxes__input" id="RegionName-@x" region-id="@item.Id" name="SelectedRegions" type="checkbox" value="@subregion.Id" @subregion.Checked.ThenNullableCheck() />
+                                            <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@subregion.SubRegionName</label>
+                                        </div>
 
-                                }
+                                    }
+                                </div>
                             </div>
-                        </div>
-                    </details>
-                }
+                        </details>
+                    }
 
+                </div>
             </div>
         </div>
     </div>
 </div>
+        
 
-    <script>
-        (function ($) {
-            $(function () {
-                var $nationalRadios = $("#nationalRadioButtons input[type=radio]");
-                var $checked = $("#nationalRadioButtons input[type=radio]:checked").val();
-                var $regionSection = $("#regions-section");
-                if ($checked === "True") {
-                    $regionSection.hide();
+<script>
+    (function ($) {
+        $(function () {
+            var $nationalRadios = $("#nationalRadioButtons input[type=radio]");
+            var $checked = $("#nationalRadioButtons input[type=radio]:checked").val();
+            var $regionSection = $("#regions-section");
+            if ($checked === "True") {
+                $regionSection.hide();
+            }
+
+            $nationalRadios.change(function () {
+                switch (this.id) {
+                    case "National_true":
+                        {
+                            $regionSection.hide();
+                            break;
+                        }
+                    case "National_false":
+                        {
+                            $regionSection.show();
+                            break;
+                        }
                 }
-
-                $nationalRadios.change(function () {
-                    switch (this.id) {
-                        case "National_true":
-                            {
-                                $regionSection.hide();
-                                break;
-                            }
-                        case "National_false":
-                            {
-                                $regionSection.show();
-                                break;
-                            }
-                    }
-                });
+            });
             $("a").on("click",
-                function(e) {
-                        
+                function (e) {
+
                     var $regionId = $(this).attr('region-id');
 
                     if ($regionId) {
@@ -118,5 +118,5 @@
                     }
                 });
             });
-        })(jQuery);
-    </script>
+    })(jQuery);
+</script>
