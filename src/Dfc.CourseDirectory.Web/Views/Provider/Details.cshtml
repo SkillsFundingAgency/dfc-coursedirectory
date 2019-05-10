@@ -50,17 +50,19 @@
                             {
                                 <a class="govuk-link" style="padding-right:1em"
                                    asp-controller="Provider"
-                                   asp-action="Alias"
+                                   asp-action="AddOrEditDetails"
                                    asp-route-ukPRN="@Model.UKPRN"
-                                   asp-route-alias="@Model.AliasName">Add</a>
+                                   asp-route-alias="@Model.AliasName"
+                                   asp-route-briefoverview="@Model.BriefOverview">Add</a>
                             }
                             else
                             {
                                 <a class="govuk-link" style="padding-right:1em"
                                    asp-controller="Provider"
-                                   asp-action="Alias"
+                                   asp-action="AddOrEditDetails"
                                    asp-route-ukPRN="@Model.UKPRN"
-                                   asp-route-alias="@Model.AliasName">Edit</a>
+                                   asp-route-alias="@Model.AliasName"
+                                   asp-route-briefoverview="@Model.BriefOverview">Edit</a>
                             }
 
                         </td>
@@ -73,17 +75,19 @@
                             {
                                 <a class="govuk-link" style="padding-right:1em"
                                    asp-controller="Provider"
-                                   asp-action="BriefOverview"
+                                   asp-action="AddOrEditDetails"
                                    asp-route-ukPRN="@Model.UKPRN"
-                                   asp-route-alias="@Model.BriefOverview">Add</a>
+                                     asp-route-alias="@Model.AliasName"
+                                   asp-route-briefoverview="@Model.BriefOverview">Add</a>
                             }
                             else
                             {
                                 <a class="govuk-link" style="padding-right:1em"
                                    asp-controller="Provider"
-                                   asp-action="BriefOverview"
+                                   asp-action="AddOrEditDetails"
                                    asp-route-ukPRN="@Model.UKPRN"
-                                   asp-route-alias="@Model.BriefOverview">Edit</a>
+                                     asp-route-alias="@Model.AliasName"
+                                   asp-route-briefoverview="@Model.BriefOverview">Edit</a>
                             }
                         </td>
                     </tr>
@@ -103,35 +107,13 @@
                 @Model.AddressLine2
                 @Model.PostCode
             </p>
-            @*<a class="govuk-link" style="padding-right:1em"
-           asp-controller="CopyCourseRun"
-           asp-action="Index"
-           asp-route-learnAimRef="@Model.LearnAimRef"
-           asp-route-notionalNVQLevelv2="@Model.NotionalNVQLevelv2"
-           asp-route-awardOrgCode="@Model.AwardOrgCode"
-           asp-route-learnAimRefTitle="@Model.QualificationCourseTitle"
-           asp-route-learnAimRefTypeDesc="@Model.QualificationType"
-           asp-route-courseId="@Model.CourseId"
-           asp-route-courseRunId="@Model.CourseInstanceId"
-           asp-route-publishMode="@PublishMode.Summary">Copy this course</a>
-        <hr>*@
+
 
             <h3 class="govuk-heading-m m20">Web</h3>
             <p>
                 @Model.Web
             </p>
-            @*<a href="#" class="govuk-link archive" id="archive-@Model.CourseInstanceId" data-course-run-id="@Model.CourseInstanceId" style="padding-right:1em">Delete this course</a>*@
 
-            @*<a id="course-confirm-archive-@Model.CourseInstanceId" class="govuk-button" asp-controller="Courses" asp-action="Archive"
-           asp-route-courseId="@Model.CourseId"
-           asp-route-courseRunId="@Model.CourseInstanceId"
-           asp-route-level="@Model.NotionalNVQLevelv2"
-           asp-route-qualificationType="@Model.QualificationType"
-           asp-route-courseName="@Model.CourseName"
-           style="display: none;padding-right:1em">Confirm delete</a>
-
-        <a href="#" class="govuk-link cancel-archive" id="course-cancel-archive-@Model.CourseInstanceId" data-course-run-id="@Model.CourseInstanceId" hidden="hidden">Cancel</a>
-        <hr>*@
             <h3 class="govuk-heading-m m20">Email</h3>
             <p>
                 @Model.Email

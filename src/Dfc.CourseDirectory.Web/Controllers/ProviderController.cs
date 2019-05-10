@@ -114,18 +114,35 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         [Authorize]
-        public async Task<IActionResult> Alias(ProviderAliasRequestModel request)
+        public async Task<IActionResult> AddOrEditDetails(ProviderAddOrEditRequestModel request)
         {
 
-            return View();
+            ProviderDetailsAddOrEditViewModel model = new ProviderDetailsAddOrEditViewModel();
+            model.AliasName = request.AliasName;
+            model.BriefOverview = request.BriefOverview;
+            return View(model);
         }
 
         [Authorize]
-        public async Task<IActionResult> BriefOverview(ProviderBriefOverviewRequestModel request)
+        [HttpPost]
+        public async Task<IActionResult> AddOrEditDetails(ProviderDetailsAddOrEditViewModel model)
         {
+            int? UKPRN = _session.GetInt32("UKPRN");
 
-            return View();
+            if (!UKPRN.HasValue)
+            {
+                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
+            }
+
+            //TODO
+            //CALL UPDATE PROVIDER SERVICE
+
+
+            return RedirectToAction("Details", "Provider", new {  });
         }
+
+
+
 
         [Authorize]
         public async Task<IActionResult> Details()
