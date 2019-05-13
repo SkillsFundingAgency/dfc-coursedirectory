@@ -167,7 +167,7 @@ namespace Dfc.CourseDirectory.Services.ProviderService
                 {
                     var json = await response.Content.ReadAsStringAsync();
 
-                    _logger.LogInformationObject("Provider add service json response", json);
+                    _logger.LogInformationObject("Provider update service json response", json);
 
 
                     var providerResult = JsonConvert.DeserializeObject<Provider>(json);
@@ -177,19 +177,19 @@ namespace Dfc.CourseDirectory.Services.ProviderService
                 }
                 else
                 {
-                    return Result.Fail("Provider add service unsuccessful http response");
+                    return Result.Fail("Provider update service unsuccessful http response");
                 }
             }
             catch (HttpRequestException hre)
             {
-                _logger.LogException("Provider add service http request error", hre);
-                return Result.Fail<IProvider>("Provider add service http request error.");
+                _logger.LogException("Provider update service http request error", hre);
+                return Result.Fail("Provider adupdated service http request error.");
             }
             catch (Exception e)
             {
-                _logger.LogException("Provider add service unknown error.", e);
+                _logger.LogException("Provider update service unknown error.", e);
 
-                return Result.Fail<IProvider>("Provider add service unknown error.");
+                return Result.Fail("Provider update service unknown error.");
             }
             finally
             {
