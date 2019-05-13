@@ -1,4 +1,5 @@
-﻿using Dfc.CourseDirectory.Common;
+﻿
+using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Common.Interfaces;
 using Dfc.CourseDirectory.Models.Interfaces.Providers;
 using Dfc.CourseDirectory.Models.Models.Providers;
@@ -20,6 +21,7 @@ namespace Dfc.CourseDirectory.Services.ProviderService
         private readonly HttpClient _httpClient;
         private readonly Uri _getProviderByPRNUri;
         private readonly Uri _updateProviderByIdUri;
+        private readonly Uri _updateProviderDetailsUri;
 
         public ProviderService(
             ILogger<ProviderService> logger,
@@ -35,6 +37,7 @@ namespace Dfc.CourseDirectory.Services.ProviderService
 
             _getProviderByPRNUri = settings.Value.ToGetProviderByPRNUri();
             _updateProviderByIdUri = settings.Value.ToUpdateProviderByIdUri();
+            _updateProviderDetailsUri = settings.Value.ToUpdateProviderDetailsUri();
         }
 
         public async Task<IResult<IProviderSearchResult>> GetProviderByPRNAsync(IProviderSearchCriteria criteria)
@@ -142,6 +145,57 @@ namespace Dfc.CourseDirectory.Services.ProviderService
                 _logger.LogMethodExit();
             }
         }
+
+        public async Task<IResult> UpdateProviderDetails(IProvider provider)
+        {
+            Throw.IfNull(provider, nameof(provider));
+            _logger.LogMethodEnter();
+
+            try
+            {
+                _logger.LogInformationObject("Provider add object.", provider);
+                _logger.LogInformationObject("Provider add URI", _updateProviderDetailsUri);
+
+                var providerJson = JsonConvert.SerializeObject(provider);
+
+                var content = new StringContent(providerJson, Encoding.UTF8, "application/json");
+                var response = await _httpClient.PostAsync(_updateProviderDetailsUri, content);
+
+                _logger.LogHttpResponseMessage("Provider update service http response", response);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+
+                    _logger.LogInformationObject("Provider add service json response", json);
+
+
+                    var providerResult = JsonConvert.DeserializeObject<Provider>(json);
+
+
+                    return Result.Ok(providerResult);
+                }
+                else
+                {
+                    return Result.Fail("Provider add service unsuccessful http response");
+                }
+            }
+            catch (HttpRequestException hre)
+            {
+                _logger.LogException("Provider add service http request error", hre);
+                return Result.Fail<IProvider>("Provider add service http request error.");
+            }
+            catch (Exception e)
+            {
+                _logger.LogException("Provider add service unknown error.", e);
+
+                return Result.Fail<IProvider>("Provider add service unknown error.");
+            }
+            finally
+            {
+                _logger.LogMethodExit();
+            }
+        }
     }
 
     internal static class ProviderServiceSettingsExtensions
@@ -154,6 +208,10 @@ namespace Dfc.CourseDirectory.Services.ProviderService
         internal static Uri ToUpdateProviderByIdUri(this IProviderServiceSettings extendee)
         {
             return new Uri($"{extendee.ApiUrl + "UpdateProviderById?code=" + extendee.ApiKey}");
+        }
+        internal static Uri ToUpdateProviderDetailsUri(this IProviderServiceSettings extendee)
+        {
+            return new Uri($"{extendee.ApiUrl + "UpdateProviderDetails?code=" + extendee.ApiKey}");
         }
     }
 

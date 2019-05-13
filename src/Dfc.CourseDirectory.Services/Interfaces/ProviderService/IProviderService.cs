@@ -8,5 +8,6 @@ namespace Dfc.CourseDirectory.Services.Interfaces.ProviderService
     {
         Task<IResult<IProviderSearchResult>> GetProviderByPRNAsync(IProviderSearchCriteria criteria);
         Task<IResult<IProvider>> AddProviderAsync(IProviderAdd provider);
+        Task<IResult> UpdateProviderDetails(IProvider provider);
     }
 }

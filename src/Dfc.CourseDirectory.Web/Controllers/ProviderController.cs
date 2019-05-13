@@ -21,6 +21,8 @@ using Microsoft.AspNetCore.Authorization;
 using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 using Dfc.CourseDirectory.Web.RequestModels;
+using Dfc.CourseDirectory.Models.Models.Providers;
+using Dfc.CourseDirectory.Models.Interfaces.Providers;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -133,10 +135,32 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
+            var providerSearchResult = await _providerService.GetProviderByPRNAsync(new Services.ProviderService.ProviderSearchCriteria(UKPRN.ToString()));
 
-            //TODO
-            //CALL UPDATE PROVIDER SERVICE
+            if(providerSearchResult.IsSuccess)
+            {
+           
+                Provider provider = providerSearchResult.Value.Value.FirstOrDefault();
+                provider.MarketingInformation = model.BriefOverview;
+                provider.ProviderAliases = new IProvideralias[1]
+                {
+                    new Provideralias
+                    {
+                        ProviderAlias = model.AliasName
+                    }
+                };
 
+                try
+                {
+                    var result = await _providerService.UpdateProviderDetails(provider);
+                    
+                }
+                catch (Exception)
+                {
+                    //Behaviour to be determined for failure
+                }
+
+            }
 
             return RedirectToAction("Details", "Provider", new {  });
         }
