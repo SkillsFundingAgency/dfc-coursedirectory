@@ -120,6 +120,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
             ProviderDetailsAddOrEditViewModel model = new ProviderDetailsAddOrEditViewModel();
             model.AliasName = request.AliasName;
             model.BriefOverview = request.BriefOverview;
+
+            //model.BriefOverview = "<h6>xccssdsdssdsds</h6>\r\n<h1>fdffgf</h1>";
             return View(model);
         }
 
