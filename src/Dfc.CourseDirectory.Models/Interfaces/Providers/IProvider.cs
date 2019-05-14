@@ -27,5 +27,6 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Providers
         string TradingName { get; set; }
         bool NationalApprenticeshipProvider { get; set; }
         string MarketingInformation { get; set; }
+        string Alias { get; set; }
     }
 }
