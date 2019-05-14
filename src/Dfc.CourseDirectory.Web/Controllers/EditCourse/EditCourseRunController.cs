@@ -140,12 +140,13 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                     });
                 }
 
-                selectVenue.VenueItems = venueItems;
                 if (venueItems.Count == 1)
                 {
                     selectVenue.HintText = string.Empty;
                     selectVenue.AriaDescribedBy = string.Empty;
                 }
+
+                selectVenue.VenueItems = venueItems;
             }
 
             return selectVenue;

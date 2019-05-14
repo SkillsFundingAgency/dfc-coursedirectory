@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Options;
 using Dfc.CourseDirectory.Web.RequestModels;
+using Dfc.CourseDirectory.Models.Models.Venues;
 
 namespace Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseVenue
 {
@@ -46,7 +47,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseVenue
                 {
                     var defaultItem = new SelectListItem { Text = "Select", Value = "" };
 
-                    foreach (var venue in result.Value.Value)
+                    foreach (var venue in result.Value.Value.Where(x => x.Status == VenueStatus.Live))
                     {
                         var item = new SelectListItem { Text = venue.VenueName, Value = venue.ID };
                         venues.Add(item);
