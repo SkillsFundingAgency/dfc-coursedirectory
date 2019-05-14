@@ -23,7 +23,7 @@
 
                     @{ var regex = @"^[a-zA-Z0-9 /\n/\r/\¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`" + "\"" + "\\\\]+$"; }
 
-                    <input class="govuk-input govuk-input--width-10" style="display:inline;" asp-for="@Model.AliasName" type="text" aria-describedby=""
+                    <input class="govuk-input" style="display:inline;" asp-for="@Model.AliasName" type="text" aria-describedby=""
                            val-max-length="100"
                            val-max-length-message="Provider Alias Name' must be 100 characters or less"
                            val-regex="@regex"
@@ -86,8 +86,8 @@
            selector: '#brief',
            plugins: "wordcount advlist lists",
   toolbar: "wordcount",
-           height: 500,
-    width:500,
+           height: 650,
+    width:925,
            menubar: false,
     statusbar: true,
     resize: false,
