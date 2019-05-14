@@ -28,18 +28,6 @@ namespace Dfc.CourseDirectory.Models.Models.Apprenticeships
         ClassroomBasedAndEmployerBased = 3
     }
 
-    public enum LocationType
-    {
-        [Description("Undefined")]
-        Undefined = 0,
-        [Description("Venue")]
-        Venue = 1,
-        [Description("Region")] 
-        Region = 2,
-        [Description("SubRegion")] 
-        SubRegion = 3
-    }
-
     public class Apprenticeship : IApprenticeship
     {
         public Guid id { get; set; } // Cosmos DB id
