@@ -14,6 +14,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
     public class SubRegionItemModel
     {
         public string Id { get; set; }
+        public int? ApiLocationId { get; set; }
         public string SubRegionName { get; set; }
         public bool? Checked { get; set; }
         public double Latitude { get; set; }
