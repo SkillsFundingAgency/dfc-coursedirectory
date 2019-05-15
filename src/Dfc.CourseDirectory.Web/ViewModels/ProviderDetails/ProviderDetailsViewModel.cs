@@ -41,6 +41,10 @@ namespace Dfc.CourseDirectory.Web.ViewModels
 
         public string BriefOverview { get; set; }
 
+        public string Alias { get; set; }
+
+        public string UnitedKingdomProviderReferenceNumber { get; set; }
+
 
 
     }

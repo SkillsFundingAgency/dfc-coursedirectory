@@ -44,15 +44,15 @@
                     </tr>
                     <tr class="govuk-table__row">
                         <th class="govuk-table__header" scope="row">Your alias</th>
-                        <td class="govuk-table__cell">@Model.AliasName</td>
+                        <td class="govuk-table__cell">@Model.Alias</td>
                         <td class="govuk-table__cell">
-                            @if (string.IsNullOrEmpty(Model.AliasName))
+                            @if (string.IsNullOrEmpty(Model.Alias))
                             {
                                 <a class="govuk-link" style="padding-right:1em"
                                    asp-controller="Provider"
                                    asp-action="AddOrEditDetails"
                                    asp-route-ukPRN="@Model.UKPRN"
-                                   asp-route-alias="@Model.AliasName"
+                                   asp-route-alias="@Model.Alias"
                                    asp-route-briefoverview="@Model.BriefOverview">Add</a>
                             }
                             else
@@ -61,7 +61,7 @@
                                    asp-controller="Provider"
                                    asp-action="AddOrEditDetails"
                                    asp-route-ukPRN="@Model.UKPRN"
-                                   asp-route-alias="@Model.AliasName"
+                                   asp-route-alias="@Model.Alias"
                                    asp-route-briefoverview="@Model.BriefOverview">Edit</a>
                             }
 
@@ -77,7 +77,7 @@
                                    asp-controller="Provider"
                                    asp-action="AddOrEditDetails"
                                    asp-route-ukPRN="@Model.UKPRN"
-                                     asp-route-alias="@Model.AliasName"
+                                   asp-route-alias="@Model.Alias"
                                    asp-route-briefoverview="@Model.BriefOverview">Add</a>
                             }
                             else
@@ -86,10 +86,14 @@
                                    asp-controller="Provider"
                                    asp-action="AddOrEditDetails"
                                    asp-route-ukPRN="@Model.UKPRN"
-                                     asp-route-alias="@Model.AliasName"
+                                   asp-route-alias="@Model.Alias"
                                    asp-route-briefoverview="@Model.BriefOverview">Edit</a>
                             }
                         </td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <td colspan="6" class="govuk-table__cell" scope="row">@Html.Raw(Model.BriefOverview)</td>
+                        
                     </tr>
                 </tbody>
             </table>
