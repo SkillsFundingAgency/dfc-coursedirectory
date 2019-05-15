@@ -22,9 +22,7 @@
     Layout = "_Layout_Your_Courses";
 }
 @inject IHttpContextAccessor HttpContextAccessor
-<h1 class="govuk-heading-l" style="padding-top: 20px;">
-    Copy course
-</h1>
+
 
 @{
     var newVenueObject = HttpContextAccessor.HttpContext.Session.GetObject<AddedVenueModel>("NewAddedVenue");
@@ -72,7 +70,9 @@
     NotificationMessage = @Model.CourseName + "<br>" + "Level: " + @Model.NotionalNVQLevelv2 + "<br> Awarding organisation: " + @Model.AwardOrgCode + "<br> LARS / QAN: " + @Model.LearnAimRef,
     ClassType = "info-summary"
 })
-
+<h1 class="govuk-heading-l" style="padding-top: 20px;">
+    Copy course
+</h1>
 <form asp-controller="CopyCourseRun" asp-action="Index" id="editCourseRun" onkeypress="return event.keyCode != 13;">
 
     <div id="errorsummary" style="display:none">

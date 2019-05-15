@@ -61,7 +61,7 @@
         <div class="govuk-body">
             <main id="Cd-course-list" class="govuk-main-wrapper">
                 <span class="govuk-caption-xl">Course directory</span>
-                <h1 class="govuk-heading-xl">Your published courses</h1>
+
 
                 @if (!string.IsNullOrWhiteSpace(Model.NotificationTitle))
                 {
@@ -72,7 +72,7 @@
                         ClassType = "info-summary"
                     })
                 }
-
+                <h1 class="govuk-heading-xl">Your published courses</h1>
                 <p class="govuk-body-l">These courses are listed on the course directory.</p>
                 <div class="govuk-grid-row govuk-!-margin-top-9 ">
                     <div class="cd-grid-coloumn-20 govuk-body">
@@ -115,7 +115,7 @@
                                 <div class="govuk-accordion__section" id="@course.Id">
                                     <div class="govuk-accordion__section-header">
                                         <h2 class="govuk-accordion__section-heading">
-                                            <span class="govuk-accordion__section-button" id="accordion-default-heading-@course.Id" aria-controls="accordion-default-content-@course.Id" >
+                                            <span class="govuk-accordion__section-button" id="accordion-default-heading-@course.Id" aria-controls="accordion-default-content-@course.Id">
                                                 @course.QualificationTitle (@course.Facet)
                                             </span>
 
@@ -208,8 +208,8 @@
                                                 </div>
                                                 <div class="courserun__row4">
                                                     @*<a class="govuk-link" asp-controller="Courses" asp-action="Summaryedit">Edit</a>
-                                                        <a href="#" class="govuk-link">Duplicate</a>
-                                                        <a href="#" class="govuk-link">Delete</a>*@
+                                            <a href="#" class="govuk-link">Duplicate</a>
+                                            <a href="#" class="govuk-link">Delete</a>*@
 
                                                     <a class="govuk-link" style="padding-right:1em"
                                                        asp-controller="EditCourseRun"

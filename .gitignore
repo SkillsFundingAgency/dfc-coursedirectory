@@ -284,3 +284,4 @@ c/source/repos/dfc-coursedirectory3/src/Dfc.CourseDirectory.Web/appsettings.Deve
 /src/Dfc.CourseDirectory.Web/Views/Account/UserProfile.cshtml
 /src/Dfc.CourseDirectory.Web/Views/UserAuth/Index.cshtml
 /src/Dfc.CourseDirectory.Web/wwwroot/BulkUploads
+/src/Dfc.CourseDirectory.Web/Helpers/IFileHelper.cs

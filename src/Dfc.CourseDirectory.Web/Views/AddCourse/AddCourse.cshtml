@@ -26,9 +26,7 @@
     @Html.HiddenFor(x => x.courseMode)
     @Html.HiddenFor(x => x.CourseId)
 
-    <h1 class="govuk-heading-l" style="padding-top: 20px;">
-        Complete your qualification details
-    </h1>
+
 
     @await Component.InvokeAsync(nameof(Notification), new NotificationModel
     {
@@ -36,7 +34,9 @@
         NotificationMessage = @Model.LearnAimRefTitle + "<br>" + "Level: " + @Model.NotionalNVQLevelv2 + "<br> Awarding organisation: " + @Model.AwardOrgCode + "<br> LARS / QAN: " + @Model.LearnAimRef,
         ClassType = "info-summary"
     })
-
+    <h1 class="govuk-heading-l" style="padding-top: 20px;">
+        Complete your qualification details
+    </h1>
     <div id="errorsummary" class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary" style="display: none;">
         <h2 class="govuk-error-summary__title" id="error-summary-title">
             There is an issue with this qualification
