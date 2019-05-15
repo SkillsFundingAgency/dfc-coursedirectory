@@ -148,7 +148,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                             IEnumerable<ICourseStatusCountResult> counts = _courseService.GetCourseCountsByStatusForUKPRN(new CourseSearchCriteria(UKPRN))
                                                                 .Result
                                                                 .Value;
-                            int[] pendingStatuses = new int[] { (int)RecordStatus.Pending, (int)RecordStatus.BulkUloadPending, (int)RecordStatus.APIPending, (int)RecordStatus.MigrationPending };
+                            int[] pendingStatuses = new int[] { (int)RecordStatus.Pending, (int)RecordStatus.BulkUploadPending, (int)RecordStatus.APIPending, (int)RecordStatus.MigrationPending };
 
                             var pendingCourseCount = (from ICourseStatusCountResult c in counts
                                                         join int p in pendingStatuses

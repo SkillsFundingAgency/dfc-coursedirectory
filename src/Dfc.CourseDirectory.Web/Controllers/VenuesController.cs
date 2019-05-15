@@ -347,7 +347,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 Venue venue = new Venue(
                     null,
-                     UKPRN.Value,
+                    UKPRN.Value,
                     requestModel.VenueName,
                     requestModel.AddressLine1,
                     (null != requestModel.AddressLine2 ? requestModel.AddressLine2 : string.Empty),
@@ -477,7 +477,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             var migrationPendingCourseRuns = Courses.SelectMany(x => x.CourseRuns).Where(x => x.RecordStatus == Models.Enums.RecordStatus.MigrationPending && x.VenueId == VenueId).ToList();
 
-            var bulkUploadPendingCourseRuns = Courses.SelectMany(x => x.CourseRuns).Where(x => x.RecordStatus == Models.Enums.RecordStatus.BulkUloadPending && x.VenueId == VenueId).ToList();
+            var bulkUploadPendingCourseRuns = Courses.SelectMany(x => x.CourseRuns).Where(x => x.RecordStatus == Models.Enums.RecordStatus.BulkUploadPending && x.VenueId == VenueId).ToList();
 
             var migrationReadyForLiveCourseRuns = Courses.SelectMany(x => x.CourseRuns).Where(x => x.RecordStatus == Models.Enums.RecordStatus.MigrationReadyToGoLive && x.VenueId == VenueId).ToList();
 

@@ -16,17 +16,10 @@
 
                             <h1 class="govuk-heading-l govuk-!-margin-top-4">Search for a course provision</h1>
 
-                            @*<div id="notFoundMessage" style="display:none">
-                                    @await Component.InvokeAsync(nameof(Notification), new NotificationModel
-                                    {
-                                    NotificationTitle = "Z code does not exist",
-                                    NotificationMessage = "Check the code you have entered and try again",
-                                    ClassType = "error-summary"
-                                    })
-                                </div>*@
+                           
 
 
-                            <p class="column-two-thirds">Find the provision you'll be awarding with the course</p>
+                            <p class="column-two-thirds">Search by Z code for the provision you are awarding with this course</p>
                         </div>
                         <form class="govuk-!-margin-bottom-9" id="zCodeSearch" asp-controller="UnregulatedCourses" asp-action="Index" method="post">
                             <div class="header-search-content">
