@@ -169,6 +169,7 @@ namespace Dfc.CourseDirectory.Web
 
             services.AddResponseCaching();
             services.AddSession(options => {
+    
                 options.IdleTimeout = TimeSpan.FromMinutes(30);
                 options.Cookie.HttpOnly = true;
 
@@ -197,7 +198,7 @@ namespace Dfc.CourseDirectory.Web
 
             }).AddCookie(options =>
             {
-                options.ExpireTimeSpan = TimeSpan.FromHours(6);
+                options.ExpireTimeSpan = TimeSpan.FromHours(1);
                 options.SlidingExpiration = true;
                 options.Events = new CookieAuthenticationEvents
                 {
@@ -228,9 +229,9 @@ namespace Dfc.CourseDirectory.Web
                                 // new access token and refresh token
                                 var refreshToken = refreshTokenClaim.Value;
 
-                            var clientId = Configuration.GetSection("DFESignInSettings:ClientID");
+                            var clientId = Configuration.GetSection("DFESignInSettings:ClientID").Value;
                             const string envKeyClientSecret = "DFESignInSettings:ClientSecret";
-                            var clientSecret = Configuration.GetSection(nameof(envKeyClientSecret));
+                            var clientSecret = Configuration.GetSection("DFESignInSettings:ClientSecret").Value;
                             if (string.IsNullOrWhiteSpace(clientSecret.ToString()))
                             {
                                 throw new Exception("Missing environment variable " + envKeyClientSecret + " - get this from the DfE Sign-in team.");
@@ -248,8 +249,8 @@ namespace Dfc.CourseDirectory.Web
 
                                 identity.AddClaims(new[]
                                 {
-                                        new Claim("access_token", response.AccessToken),
-                                            new Claim("refresh_token", response.RefreshToken)
+                                    new Claim("access_token", response.AccessToken),
+                                    new Claim("refresh_token", response.RefreshToken)
                                 });
 
                                     // indicate to the cookie middleware to renew the session cookie
@@ -301,7 +302,7 @@ namespace Dfc.CourseDirectory.Web
                 options.SecurityTokenValidator = new JwtSecurityTokenHandler
                 {
                     InboundClaimTypeMap = new Dictionary<string, string>(),
-                    TokenLifetimeInMinutes = 20,
+                    TokenLifetimeInMinutes = 60,
                     SetDefaultTimesOnTokenCreation = true,
                     
                 };
@@ -310,6 +311,7 @@ namespace Dfc.CourseDirectory.Web
                     RequireSub = true,
                     RequireStateValidation = false,
                     NonceLifetime = TimeSpan.FromMinutes(15)
+                    
                 };
 
                 options.DisableTelemetry = true;
