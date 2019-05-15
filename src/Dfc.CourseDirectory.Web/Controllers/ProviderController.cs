@@ -21,6 +21,8 @@ using Microsoft.AspNetCore.Authorization;
 using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 using Dfc.CourseDirectory.Web.RequestModels;
+using Dfc.CourseDirectory.Models.Models.Providers;
+using Dfc.CourseDirectory.Models.Interfaces.Providers;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -118,8 +120,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
 
             ProviderDetailsAddOrEditViewModel model = new ProviderDetailsAddOrEditViewModel();
-            model.AliasName = request.AliasName;
+            model.AliasName = request.Alias;
             model.BriefOverview = request.BriefOverview;
+
+            //model.BriefOverview = "<h6>xccssdsdssdsds</h6>\r\n<h1>fdffgf</h1>";
             return View(model);
         }
 
@@ -133,10 +137,30 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
+            var providerSearchResult = await _providerService.GetProviderByPRNAsync(new Services.ProviderService.ProviderSearchCriteria(UKPRN.ToString()));
 
-            //TODO
-            //CALL UPDATE PROVIDER SERVICE
+            if(providerSearchResult.IsSuccess)
+            {
+           
+                Provider provider = providerSearchResult.Value.Value.FirstOrDefault();
+                provider.MarketingInformation = model.BriefOverview;
+                provider.Alias = model.AliasName;
 
+                try
+                {
+                    var result = await _providerService.UpdateProviderDetails(provider);
+                    if (result.IsSuccess)
+                    {
+                        //log something
+                    }
+
+                }
+                catch (Exception)
+                {
+                    //Behaviour to be determined for failure
+                }
+
+            }
 
             return RedirectToAction("Details", "Provider", new {  });
         }
@@ -165,10 +189,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 model.Status = provider.ProviderStatus;
                 model.ProviderName = provider.ProviderName;
                 model.LegalName = provider.ProviderName;
-                model.TradingName = provider.ProviderName;
-                model.AliasName = provider.ProviderAliases.FirstOrDefault()?.ProviderAlias== null ? "":"";
+                model.TradingName = provider.ProviderAliases.FirstOrDefault()?.ProviderAlias?.ToString();
+                model.AliasName = provider.ProviderAliases.FirstOrDefault()?.ProviderAlias?.ToString();
                 model.UKPRN = UKPRN.ToString();
+                model.UnitedKingdomProviderReferenceNumber = provider.UnitedKingdomProviderReferenceNumber;
                 model.BriefOverview = provider.MarketingInformation;
+                model.Alias = provider.Alias;
 
                 var providerContactTypeL = provider.ProviderContact.Where(s => s.ContactType.Equals("L", StringComparison.InvariantCultureIgnoreCase));
                 string AddressLine1 = string.Empty;

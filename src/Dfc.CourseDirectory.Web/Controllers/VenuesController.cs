@@ -347,7 +347,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 Venue venue = new Venue(
                     null,
-                     UKPRN.Value,
+                    UKPRN.Value,
                     requestModel.VenueName,
                     requestModel.AddressLine1,
                     (null != requestModel.AddressLine2 ? requestModel.AddressLine2 : string.Empty),
