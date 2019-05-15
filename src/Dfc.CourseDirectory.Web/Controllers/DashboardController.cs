@@ -59,12 +59,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
                                                  .SelectMany(o => o.Value)
                                                  .SelectMany(i => i.Value);
 
-            int[] pendingStatuses = new int[] { (int)RecordStatus.Pending, (int)RecordStatus.BulkUloadPending, (int)RecordStatus.APIPending, (int)RecordStatus.MigrationPending, (int)RecordStatus.MigrationReadyToGoLive, (int)RecordStatus.BulkUploadReadyToGoLive };
+            int[] pendingStatuses = new int[] { (int)RecordStatus.Pending, (int)RecordStatus.BulkUploadPending, (int)RecordStatus.APIPending, (int)RecordStatus.MigrationPending, (int)RecordStatus.MigrationReadyToGoLive, (int)RecordStatus.BulkUploadReadyToGoLive };
+            int[] bulkStatuses = new int[] { (int)RecordStatus.BulkUploadPending };
             IEnumerable<Course> validCourses = courses.Where(c => c.IsValid);
-            //IEnumerable<Course> pendingCourses = from Course c in courses
-            //                                     from int s in pendingStatuses
-            //                                     where ((int)c.CourseStatus & s) > 0
-            //                                     select c;
+           
 
 
             IEnumerable<CourseValidationResult> results = service.CourseValidationMessages(validCourses, ValidationMode.DataQualityIndicator).Value;

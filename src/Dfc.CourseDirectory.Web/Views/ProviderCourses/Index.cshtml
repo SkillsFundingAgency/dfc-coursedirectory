@@ -64,7 +64,7 @@
                         <div>
 
                             <span class="govuk-caption-xl">Course directory</span>
-                            <h1 class="govuk-heading-xl">Your published courses</h1>
+
                             @if (!string.IsNullOrWhiteSpace(Model.NotificationTitle))
                             {
                                 @await Component.InvokeAsync(nameof(Notification), new NotificationModel
@@ -74,7 +74,7 @@
                                     ClassType = "info-summary"
                                 })
                             }
-
+                            <h1 class="govuk-heading-xl">Your published courses</h1>
                             <p class="govuk-body-l">These are the courses you have listed on the course directory.</p>
                         </div>
                         <form class="govuk-!-margin-bottom-9" id="zCodeSearch" asp-controller="ProviderCourses" asp-action="FilterCourses" method="post">
