@@ -7,14 +7,6 @@
 
 @model Dfc.CourseDirectory.Web.ViewModels.VenueAddressSelectionConfirmationViewModel
 
-
-@await Component.InvokeAsync(nameof(VenueAddressSelectionConfirmation), new VenueAddressSelectionConfirmationModel
-    {
-        Id = Model.Id,
-        Address = Model.Address,
-        VenueName = Model.VenueName
-    })
-
 @{
     if (Model.Id != null)
     {
@@ -25,3 +17,11 @@
         <h1 class="govuk-heading-xl">Add a venue</h1>
     }
 }
+
+@await Component.InvokeAsync(nameof(VenueAddressSelectionConfirmation), new VenueAddressSelectionConfirmationModel
+    {
+        Id = Model.Id,
+        Address = Model.Address,
+        VenueName = Model.VenueName
+    })
+
