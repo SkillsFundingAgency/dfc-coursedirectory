@@ -12,7 +12,7 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Apprenticeships
 
         Guid? LocationId { get; set; }
         int? ApiLocationId { get; set; }
-        List<string> DeliveryModes { get; set; }
+        List<int> DeliveryModes { get; set; }
 
         ApprenticeshipLocationType ApprenticeshipLocationType { get; set; }
 
