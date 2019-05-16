@@ -9,6 +9,7 @@ namespace Dfc.CourseDirectory.Models.Models.Apprenticeships
     public class ApprenticeshipLocation : IApprenticeshipLocation
     {
         public Guid id { get; set; } // Cosmos DB id
+        public int ApprenticeshipLocationId { get; set; }
 
         public Guid? LocationId { get; set; }
         public int? ApiLocationId { get; set; }
