@@ -15,7 +15,16 @@
                 <span class="govuk-caption-xl">Course Directory</span>
                 <h1 class="govuk-heading-xl">Edit your details</h1>
 
-                <div id="costContainer" class="govuk-form-group">
+                <div id="errorsummary" class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary" style="display: none;">
+                    <h2 class="govuk-error-summary__title" id="error-summary-title">
+                        There is an issue with this provider
+                    </h2>
+                    <div class="govuk-error-summary__body">
+                        <ul class="govuk-list govuk-error-summary__list"></ul>
+                    </div>
+                </div>
+
+                <div id="aliasContainer" class="govuk-form-group">
                     <label id="govuk-label-Cost" class="govuk-label">
                         Your alias
                     </label>
@@ -33,21 +42,21 @@
                 <div class="govuk-character-count">
                     <div class="govuk-form-group">
 
-                        <span id="briefOverviewMax" class="" style="display: none" 
-                                  val-max-length="750"
-                                  val-max-length-message="Brief Overview of Your Organisation for Employers' must be 750 characters or less">Brief Overview of Your Organisation for Employers, must be 750 characters or less</span>
+                        <span id="briefOverviewMax" class="" style="display: none"
+                              val-max-length="750"
+                              val-max-length-message="Brief Overview of Your Organisation for Employers must be 750 characters or less">Brief Overview of Your Organisation for Employers, must be 750 characters or less</span>
                         <span id="briefOverviewInvalid" class="" style="display: none"
-                               val-regex="@regex"
-                               val-regex-message="Brief Overview of Your Organisation for Employers’ contains invalid characters">Brief Overview of Your Organisation for Employers, contains invalid characters</span>
+                              val-regex="@regex"
+                              val-regex-message="Brief Overview of Your Organisation for Employers contains invalid characters">Brief Overview of Your Organisation for Employers, contains invalid characters</span>
                         <label class="govuk-label" for="word-count">
                             Brief overview of your organisation for employers
                         </label>
 
                         <textarea class="govuk-textarea js-character-count " asp-for="@Model.BriefOverview" rows="5" id="brief"
                                   val-max-length="750"
-                                  val-max-length-message="Brief Overview of Your Organisation for Employers' must be 750 characters or less"
+                                  val-max-length-message="Brief Overview of Your Organisation for Employers must be 750 characters or less"
                                   val-regex="@regex"
-                                  val-regex-message="Brief Overview of Your Organisation for Employers’ contains invalid characters">
+                                  val-regex-message="Brief Overview of Your Organisation for Employers contains invalid characters">
 
         </textarea>
                     </div>
@@ -93,10 +102,10 @@
     resize: false,
             toolbar: 'formatselect | bold | numlist bullist | removeformat ',
                  }).then(function (editors) {
-                     
+
                      $(".tox-statusbar__path").hide();
                       $(".tox-statusbar__branding").hide();
-                     
+
                     $(".tox-statusbar__wordcount").trigger( "click" );
 });
 
@@ -112,23 +121,40 @@
 
             var $alias = $("#@nameof(Model.AliasName)").govUkInput();
 
-            var $briefoverview = $("#brief").govUkTextarea();
-          
+           // var $briefoverview = $("#brief").govUkTextarea();
+
+            var $errorSummary = $("#errorsummary").govUkErrorSummary();
+
 
             function validate() {
+
+                            $maxBriefOverview.removeClass("govuk-error-message");
+                $maxBriefOverview.hide();
+
+                
+            $invalidBriefOverview.removeClass("govuk-error-message");
+                $invalidBriefOverview.hide();
 
             validStates = [];
 
             if (!$.regexValidate({ regex: $alias.attr("val-regex") }, $alias.val())) {
-            $alias.govUkInput("invalidState", $alias.attr("val-regex-message"));
+                $alias.govUkInput("invalidState", $alias.attr("val-regex-message"));
+                   var aliasErrorHashLinks = $alias.govUkInput("getErrorHashLinks");
+                    $errorSummary.govUkErrorSummary("add", aliasErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
             validStates.push(false);
             } else if (
             !$.maxLengthValidate({ max: $alias.attr("val-max-length") }, $alias.val())) {
-            $alias.govUkInput("invalidState", $alias.attr("val-max-length-message"));
+                $alias.govUkInput("invalidState", $alias.attr("val-max-length-message"));
+                                   var aliasErrorHashLinks = $alias.govUkInput("getErrorHashLinks");
+                    $errorSummary.govUkErrorSummary("add", aliasErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
             validStates.push(false);
             }
             else {
                 $alias.govUkInput("validState");
+                 $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $alias[0].id);
+                    $errorSummary.govUkErrorSummary("hideIfEmpty")
                 validStates.push(true);
             }
 
@@ -143,6 +169,15 @@
 
                 $(".tox-editor-container").closest(".govuk-form-group").addClass("govuk-form-group--error");
 
+                        var element = $invalidBriefOverview;
+                     var $anchor = document.createElement("a");
+                $anchor.href =  "#briefOverviewInvalid";
+                $anchor.innerHTML = element.text();
+                $anchor.id = "error-hash-link-" + "briefOverViewInvalid" + "-" + 1;
+
+                     $errorSummary.govUkErrorSummary("add", $anchor);
+                $errorSummary.govUkErrorSummary("show");
+
                 validStates.push(false);
             } else if (
                 !$.maxLengthValidate({ max: "750" }, tinymce.get('brief').getBody().innerText)) {
@@ -155,11 +190,24 @@
 
                 $(".tox-editor-container").closest(".govuk-form-group").addClass("govuk-form-group--error");
 
+                        var element = $maxBriefOverview;
+                     var $anchor = document.createElement("a");
+                $anchor.href =  "#briefOverviewMax";
+                $anchor.innerHTML = element.text();
+                $anchor.id = "error-hash-link-" + "briefOverviewMax" + "-" + 1;
+
+                     $errorSummary.govUkErrorSummary("add", $anchor);
+                $errorSummary.govUkErrorSummary("show");
+
                 validStates.push(false);
             }
             else
             {
 
+            $maxBriefOverview.removeClass("govuk-error-message");
+                $maxBriefOverview.hide();
+
+                
             $invalidBriefOverview.removeClass("govuk-error-message");
             $invalidBriefOverview.hide();
 
@@ -169,7 +217,13 @@
             $(".tox-editor-container").closest(".govuk-form-group").removeClass("govuk-form-group--error");
 
             validStates.push(true);
-            }
+                }
+                 if (!validStates.every(isAllValid)) {
+                    $("html, body").animate({
+                        scrollTop: $errorSummary.offset().top
+                    }, 600);
+                    $errorSummary.focus();
+                }
             }
 
             function isAllValid(currentValue) {
@@ -186,8 +240,9 @@
             $("#editProviderDetails").submit();
             }
 
+
             });
 
             });
             })(jQuery);
-            </script>
+</script>

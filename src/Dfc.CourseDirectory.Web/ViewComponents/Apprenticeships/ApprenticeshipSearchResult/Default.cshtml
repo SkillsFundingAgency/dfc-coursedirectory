@@ -42,13 +42,13 @@ else
             Found <span class="govuk-!-font-weight-bold">@Model.Items.Count()</span> results for <span class="govuk-!-font-weight-bold">@Model.SearchTerm</span>
         </div>
 
-        @foreach (var apprenticeship in Model.Items.OrderBy(x => x.ApprenticeshipName))
+        @foreach (var apprenticeship in Model.Items.OrderBy(x => x.ApprenticeshipTitle))
         {
             <div class="courserun border">
                 <div class="courserun__row1" id="1">
-                    @if (!string.IsNullOrEmpty(apprenticeship.ApprenticeshipName))
+                    @if (!string.IsNullOrEmpty(apprenticeship.ApprenticeshipTitle))
                     {
-                        <h3 class="coursename" style="display:inline-flex">@apprenticeship.ApprenticeshipName</h3>
+                        <h3 class="coursename" style="display:inline-flex">@apprenticeship.ApprenticeshipTitle</h3>
 
                         @if (!string.IsNullOrEmpty(apprenticeship.ApprenticeshipType))
                         {
@@ -73,8 +73,11 @@ else
 
                 </div>
                 <div class="courserun__row4" style="border-top:none">
-                    @Html.ActionLink("Choose this apprenticeship", "AddApprenticeShipDetails", "Apprenticeships", new { }, null)
-
+                    @*@Html.ActionLink("Choose this apprenticeship", "ApprenticeShipDetails", "Apprenticeships", new { }, null)*@
+                    <a class="govuk-link"
+                       asp-controller="Apprenticeships"
+                       asp-action="ApprenticeShipDetails"
+                       asp-route-apprenticeshiptitle="@apprenticeship.ApprenticeshipTitle">Choose this apprenticeship</a>
 
                 </div>
             </div>

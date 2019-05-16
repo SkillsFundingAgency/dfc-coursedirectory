@@ -102,6 +102,16 @@ namespace Dfc.CourseDirectory.Models.Enums
         NonRegulated = 1
     }
 
+    public enum ApprenticeshipDelivery
+    {
+        [Description("At one of your locations")]
+        YourLocation = 0,
+        [Description("At an employer's address")]
+        EmployersAddress = 1,
+        [Description("Both")]
+        Both = 2
+    }
+
     public enum LocationType
     {
         [Description("Undefined")]
