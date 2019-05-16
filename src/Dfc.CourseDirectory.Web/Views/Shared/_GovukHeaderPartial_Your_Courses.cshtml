@@ -66,7 +66,7 @@
             }
             @if (superUser.Succeeded)
             {
-                <a asp-controller="Provider" asp-action="Details" class="cd-subHead--item" style="color: #fff!important;text-decoration:none">
+                <a asp-controller="Provider" asp-action="Details" class="cd-subHead--item" style="color: #fff!important">
                     @providerName
                 </a>
             }
@@ -87,7 +87,7 @@
                             @email
                         </span>
                         <span>
-                            <a asp-action="Logout" asp-controller="Auth" id="submit-link" style="color: #fff!important;margin-left: 20px;text-decoration:none" class="button">Sign out</a>
+                            <a asp-action="Logout" asp-controller="Auth" id="submit-link" style="color: #fff!important;margin-left: 20px;" class="button">Sign out</a>
                         </span>
                     }
                 </div>
@@ -145,6 +145,10 @@
 
                 <a class="cd-secondary-nav--item" href="/ProviderCourses/Index">
                     Courses
+                </a>
+
+                <a class="cd-secondary-nav--item" href="/Apprenticeships/Index">
+                    Apprenticeships
                 </a>
 
                 if (authorised.Succeeded || superUser.Succeeded)

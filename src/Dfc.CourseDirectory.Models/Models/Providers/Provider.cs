@@ -28,6 +28,8 @@ namespace Dfc.CourseDirectory.Models.Models.Providers
         public string MarketingInformation { get; set; }
         public string Alias { get; set; }
 
+        public string Alias { get; set; }
+
         public Provider(Providercontact[] providercontact, Provideralias[] provideraliases, Verificationdetail[] verificationdetails)
         {
             ProviderContact = providercontact;

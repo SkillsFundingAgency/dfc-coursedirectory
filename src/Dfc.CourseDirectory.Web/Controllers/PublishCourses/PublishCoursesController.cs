@@ -73,8 +73,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
 
                     //TODO replace with call to service to return by status
                     vm.PublishMode = PublishMode.BulkUpload;
-                    var bulkUploadedCourses = Courses.Where(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.BulkUloadPending || cr.RecordStatus == RecordStatus.BulkUploadReadyToGoLive)).ToList();
-                    vm.NumberOfCoursesInFiles = bulkUploadedCourses.SelectMany(s => s.CourseRuns.Where(cr => cr.RecordStatus == RecordStatus.BulkUloadPending || cr.RecordStatus == RecordStatus.BulkUploadReadyToGoLive)).Count();
+                    var bulkUploadedCourses = Courses.Where(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.BulkUploadPending || cr.RecordStatus == RecordStatus.BulkUploadReadyToGoLive)).ToList();
+                    vm.NumberOfCoursesInFiles = bulkUploadedCourses.SelectMany(s => s.CourseRuns.Where(cr => cr.RecordStatus == RecordStatus.BulkUploadPending || cr.RecordStatus == RecordStatus.BulkUploadReadyToGoLive)).Count();
                     vm.Courses = bulkUploadedCourses.OrderBy(x => x.QualificationCourseTitle);
                     vm.AreAllReadyToBePublished = CheckAreAllReadyToBePublished(bulkUploadedCourses, PublishMode.BulkUpload);
 
@@ -230,7 +230,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                             AreAllReadyToBePublished = true;
                         break;
                     case PublishMode.BulkUpload:
-                        var hasInvalidBulkUploadCourseRuns = courses.Any(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.BulkUloadPending));
+                        var hasInvalidBulkUploadCourseRuns = courses.Any(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.BulkUploadPending));
                         if (!hasInvalidBulkUploadCourseRuns)
                             AreAllReadyToBePublished = true;
                         break;

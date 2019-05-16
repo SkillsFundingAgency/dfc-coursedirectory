@@ -23,20 +23,27 @@
 
                     @{ var regex = @"^[a-zA-Z0-9 /\n/\r/\¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`" + "\"" + "\\\\]+$"; }
 
-                    <input class="govuk-input govuk-input--width-10" style="display:inline;" asp-for="@Model.AliasName" type="text" aria-describedby=""
+                    <input class="govuk-input" style="display:inline;" asp-for="@Model.AliasName" type="text" aria-describedby=""
                            val-max-length="100"
                            val-max-length-message="Provider Alias Name' must be 100 characters or less"
-                            val-regex="@regex"
-                                  val-regex-message="Provider Alias Name contains invalid characters">
+                           val-regex="@regex"
+                           val-regex-message="Provider Alias Name contains invalid characters">
                 </div>
 
-                <div class="govuk-character-count" data-module="character-count" data-maxlength="750">
+                <div class="govuk-character-count">
                     <div class="govuk-form-group">
+
+                        <span id="briefOverviewMax" class="" style="display: none" 
+                                  val-max-length="750"
+                                  val-max-length-message="Brief Overview of Your Organisation for Employers' must be 750 characters or less">Brief Overview of Your Organisation for Employers, must be 750 characters or less</span>
+                        <span id="briefOverviewInvalid" class="" style="display: none"
+                               val-regex="@regex"
+                               val-regex-message="Brief Overview of Your Organisation for Employers’ contains invalid characters">Brief Overview of Your Organisation for Employers, contains invalid characters</span>
                         <label class="govuk-label" for="word-count">
                             Brief overview of your organisation for employers
                         </label>
 
-                        <textarea class="govuk-textarea js-character-count " asp-for="@Model.BriefOverview" rows="5"
+                        <textarea class="govuk-textarea js-character-count " asp-for="@Model.BriefOverview" rows="5" id="brief"
                                   val-max-length="750"
                                   val-max-length-message="Brief Overview of Your Organisation for Employers' must be 750 characters or less"
                                   val-regex="@regex"
@@ -68,64 +75,119 @@
 </form>
 
 <script>
+
     (function ($) {
         $(function () {
+
+
+            $(document).ready(function () {
+
+                 tinymce.init({
+           selector: '#brief',
+           plugins: "wordcount advlist lists",
+  toolbar: "wordcount",
+           height: 650,
+    width:925,
+           menubar: false,
+    statusbar: true,
+    resize: false,
+            toolbar: 'formatselect | bold | numlist bullist | removeformat ',
+                 }).then(function (editors) {
+                     
+                     $(".tox-statusbar__path").hide();
+                      $(".tox-statusbar__branding").hide();
+                     
+                    $(".tox-statusbar__wordcount").trigger( "click" );
+});
+
+            });
+
+
 
              var validStates = [];
             var $save = $("#save");
 
+            var $maxBriefOverview = $("#briefOverviewMax");
+            var $invalidBriefOverview = $("#briefOverviewInvalid");
+
             var $alias = $("#@nameof(Model.AliasName)").govUkInput();
 
-            var $briefoverview = $("#@nameof(Model.BriefOverview)").govUkTextarea();
-
+            var $briefoverview = $("#brief").govUkTextarea();
+          
 
             function validate() {
 
-                validStates = [];
+            validStates = [];
 
-                if (!$.regexValidate({ regex: $alias.attr("val-regex") }, $alias.val())) {
-                    $alias.govUkInput("invalidState", $alias.attr("val-regex-message"));
-                    validStates.push(false);
-                } else if (
-                    !$.maxLengthValidate({ max: $alias.attr("val-max-length") }, $alias.val())) {
-                    $alias.govUkInput("invalidState", $alias.attr("val-max-length-message"));
-                    validStates.push(false);
-                }
-                else {
-                    $alias.govUkInput("validState");
-                    validStates.push(true);
-                }
-
-                if (!$.regexValidate({ regex: $briefoverview.attr("val-regex") }, $briefoverview.val())) {
-                    $briefoverview.govUkTextarea("invalidState", $briefoverview.attr("val-regex-message"));
-                    validStates.push(false);
-                } else if (
-                    !$.maxLengthValidate({ max: $briefoverview.attr("val-max-length") }, $briefoverview.val())) {
-                    $briefoverview.govUkTextarea("invalidState", $briefoverview.attr("val-max-length-message"));
-                    validStates.push(false);
-                }
-                else {
-                    $briefoverview.govUkTextarea("validState");
-                    validStates.push(true);
-                }
+            if (!$.regexValidate({ regex: $alias.attr("val-regex") }, $alias.val())) {
+            $alias.govUkInput("invalidState", $alias.attr("val-regex-message"));
+            validStates.push(false);
+            } else if (
+            !$.maxLengthValidate({ max: $alias.attr("val-max-length") }, $alias.val())) {
+            $alias.govUkInput("invalidState", $alias.attr("val-max-length-message"));
+            validStates.push(false);
+            }
+            else {
+                $alias.govUkInput("validState");
+                validStates.push(true);
             }
 
-             function isAllValid(currentValue) {
-                return currentValue === true;
+
+
+            if (!$.regexValidate({ regex:$invalidBriefOverview.attr("val-regex") }, tinymce.get('brief').getBody().innerText.trim())) {
+                $invalidBriefOverview.addClass("govuk-error-message");
+                $invalidBriefOverview.show();
+
+                $(".tox-editor-container").addClass("text-error");
+                $(".tox-statusbar").addClass("status-error");
+
+                $(".tox-editor-container").closest(".govuk-form-group").addClass("govuk-form-group--error");
+
+                validStates.push(false);
+            } else if (
+                !$.maxLengthValidate({ max: "750" }, tinymce.get('brief').getBody().innerText)) {
+
+                $maxBriefOverview.addClass("govuk-error-message");
+                $maxBriefOverview.show();
+
+                $(".tox-editor-container").addClass("text-error");
+                $(".tox-statusbar").addClass("status-error");
+
+                $(".tox-editor-container").closest(".govuk-form-group").addClass("govuk-form-group--error");
+
+                validStates.push(false);
+            }
+            else
+            {
+
+            $invalidBriefOverview.removeClass("govuk-error-message");
+            $invalidBriefOverview.hide();
+
+            $(".tox-editor-container").removeClass("text-error");
+            $(".tox-statusbar").removeClass("status-error");
+
+            $(".tox-editor-container").closest(".govuk-form-group").removeClass("govuk-form-group--error");
+
+            validStates.push(true);
+            }
             }
 
-             $save.on("click",
-                function(event) {
-                    event.preventDefault();
+            function isAllValid(currentValue) {
+            return currentValue === true;
+            }
 
-                    validate();
+            $save.on("click",
+            function(event) {
+            event.preventDefault();
 
-                    if (validStates.every(isAllValid)) {
-                        $("#editProviderDetails").submit();
-                    }
+            validate();
 
-                });
+            if (validStates.every(isAllValid)) {
+            $("#editProviderDetails").submit();
+            }
 
-        });
-    })(jQuery);
-</script>
+            });
+
+            });
+            })(jQuery);
+            </script>

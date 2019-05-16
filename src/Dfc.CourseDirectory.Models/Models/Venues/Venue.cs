@@ -56,11 +56,14 @@ namespace Dfc.CourseDirectory.Models.Models.Venues
 
         // Apprenticeship related
         public int? LocationId { get; set; }
+        [JsonProperty("PHONE")]
         public string Telephone { get; set; }
+        [JsonProperty("EMAIL")]
         public string Email { get; set; }
+        [JsonProperty("WEBSITE")]
         public string Website { get; set; }
 
-public Venue(
+        public Venue(
             string id,
             int ukPrn,
             string venueName,
@@ -70,6 +73,9 @@ public Venue(
             string town,
             string county,
             string postcode,
+            //string telephone,
+            //string email,
+            //string website,
             decimal latitude,
             decimal longitude,
             VenueStatus status,
@@ -93,13 +99,15 @@ public Venue(
             Town = town;
             County = county;
             PostCode = postcode;
+            //Telephone = telephone;
+            //Email = email;
+            //Website = website;
             Latitude = latitude;
             Longitude = longitude;
             Status = status;
             UpdatedBy = updatedBy;
             DateAdded = dateAdded;
             DateUpdated = dateUpdated;
-
         }
 
 
@@ -117,6 +125,9 @@ public Venue(
             string town,
             string county,
             string postcode,
+            string phone,
+            string email,
+            string website,
             decimal latitude,
             decimal longitude,
             VenueStatus status,
@@ -134,7 +145,6 @@ public Venue(
             //Throw.IfNullOrWhiteSpace(postcode, nameof(postcode));
             //Throw.IfNullOrWhiteSpace(updatedBy, nameof(updatedBy));
 
-
             ID = id;
             UKPRN = ukPrn;
             ProviderID = providerID;
@@ -147,13 +157,15 @@ public Venue(
             Town = town;
             County = county;
             PostCode = postcode;
+            Telephone = phone;
+            Email = email;
+            Website = website;
             Latitude = latitude;
             Longitude = longitude;
             Status = status;
             UpdatedBy = updatedBy;
             DateAdded = dateAdded;
             DateUpdated = dateUpdated;
-
         }
 
 
@@ -186,7 +198,6 @@ public Venue(
             //Throw.IfNullOrWhiteSpace(postcode, nameof(postcode));
             //Throw.IfNullOrWhiteSpace(updatedBy, nameof(updatedBy));
 
-
             ID = id;
             UKPRN = ukPrn;
             VenueName = venueName;
@@ -201,7 +212,6 @@ public Venue(
             Status = status;
             UpdatedBy = updatedBy;
             DateUpdated = dateUpdated;
-
         }
 
 
@@ -219,6 +229,9 @@ public Venue(
             yield return Town;
             yield return County;
             yield return PostCode;
+            yield return Telephone;
+            yield return Email;
+            yield return Website;
             yield return Latitude;
             yield return Longitude;
             yield return Status;
