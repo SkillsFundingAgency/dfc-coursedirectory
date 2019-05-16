@@ -43,7 +43,7 @@
 
     foreach (var courseRun in course.CourseRuns.OrderBy(x => x.CourseName))
     {
-        @if ((Model.PublishMode.Equals(PublishMode.BulkUpload) && courseRun.RecordStatus == RecordStatus.BulkUloadPending) ||
+        @if ((Model.PublishMode.Equals(PublishMode.BulkUpload) && courseRun.RecordStatus == RecordStatus.BulkUploadPending) ||
        (Model.PublishMode.Equals(PublishMode.Migration) && courseRun.RecordStatus == RecordStatus.MigrationPending))
         {
             <div id="courserunid" style="display:none">@courseRun.id</div>

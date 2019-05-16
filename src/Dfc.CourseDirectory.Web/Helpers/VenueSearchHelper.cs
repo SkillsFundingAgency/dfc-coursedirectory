@@ -32,7 +32,7 @@ namespace Dfc.CourseDirectory.Web.Helpers
 
             var items = new List<VenueSearchResultItemModel>();
 
-            foreach (var item in venueSearchResult)
+            foreach (var item in venueSearchResult.Where(x => x.Status == VenueStatus.Live))
             {
                 items.Add(new VenueSearchResultItemModel(
                     item.VenueName,

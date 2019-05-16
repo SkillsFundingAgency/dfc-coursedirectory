@@ -6,7 +6,7 @@
 }
 @using Microsoft.Extensions.Options
 @{
-    ViewData["Title"] = "Your Venues";
+    ViewData["Title"] = "Your venues";
 }
 <div>
     @*<div class="govuk-breadcrumbs">
@@ -17,7 +17,7 @@
             </ol>
         </div>*@
 
-    <h1 class="govuk-heading-xl">Your Venues</h1>
+    <h1 class="govuk-heading-xl">Your venues</h1>
 
     @await Component.InvokeAsync(nameof(VenueSearchResult), Model.Result)
 

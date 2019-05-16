@@ -9,10 +9,11 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Apprenticeships
     public interface IApprenticeshipLocation
     {
         Guid id { get; set; } // Cosmos DB id
+        int ApprenticeshipLocationId { get; set; }
 
-        Guid LocationId { get; set; }
-        int? TribalLocationId { get; set; }
-        List<string> DeliveryModes { get; set; }
+        Guid? LocationGuidId { get; set; }
+        int? LocationId { get; set; }
+        List<int> DeliveryModes { get; set; }
 
         ApprenticeshipLocationType ApprenticeshipLocationType { get; set; }
 

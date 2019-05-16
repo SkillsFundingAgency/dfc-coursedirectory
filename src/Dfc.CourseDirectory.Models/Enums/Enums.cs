@@ -39,7 +39,7 @@ namespace Dfc.CourseDirectory.Models.Enums
         [Description("Deleted")]
         Deleted = 8,
         [Description("BulkUload Pending")]
-        BulkUloadPending = 16,
+        BulkUploadPending = 16,
         [Description("BulkUpload Ready To Go Live")]
         BulkUploadReadyToGoLive = 32,
         [Description("API Pending")]

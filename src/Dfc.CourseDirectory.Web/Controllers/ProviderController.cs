@@ -282,8 +282,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
             var filteredCourses = from Course c in Courses.Where(c => BitmaskHelper.IsSet(c.CourseStatus, RecordStatus.Live)).ToList().OrderBy(x => x.QualificationCourseTitle)
                                   select c;
 
-            var pendingCourses = from Course c in Courses.Where(c => c.CourseStatus == RecordStatus.MigrationPending || c.CourseStatus == RecordStatus.BulkUloadPending)
-                                 select c;
+            var pendingCourses = from Course c in Courses.Where(c => c.CourseStatus== RecordStatus.MigrationPending || c.CourseStatus== RecordStatus.BulkUploadPending)
+                                  select c;
 
             foreach (var course in filteredCourses)
             {
