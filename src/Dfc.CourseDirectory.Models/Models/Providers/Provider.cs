@@ -25,8 +25,7 @@ namespace Dfc.CourseDirectory.Models.Models.Providers
         public int? UPIN { get; set; } // Needed to get LearnerSatisfaction & EmployerSatisfaction from FEChoices
         public string TradingName { get; set; }
         public bool NationalApprenticeshipProvider { get; set; }
-        public string MarketingInformation { get; set; }       
-
+        public string MarketingInformation { get; set; }
         public string Alias { get; set; }
 
         public Provider(Providercontact[] providercontact, Provideralias[] provideraliases, Verificationdetail[] verificationdetails)

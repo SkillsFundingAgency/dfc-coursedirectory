@@ -10,9 +10,10 @@ namespace Dfc.CourseDirectory.Models.Models.Venues
 {
     public enum VenueStatus
     {
-        Imported = 0,
+        Undefined = 0,
         Live = 1,
         Deleted = 2,
+        Pending = 3,
         Uknown = 99
     }
 
@@ -54,7 +55,6 @@ namespace Dfc.CourseDirectory.Models.Models.Venues
         public string UpdatedBy { get; }
 
         // Apprenticeship related
-        public LocationType LocationType { get; set; }
         public int? LocationId { get; set; }
         [JsonProperty("PHONE")]
         public string Telephone { get; set; }
