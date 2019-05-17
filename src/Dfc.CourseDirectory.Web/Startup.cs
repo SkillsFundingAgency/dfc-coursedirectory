@@ -219,7 +219,7 @@ namespace Dfc.CourseDirectory.Web
                             // assume a timeout of 20 minutes.
                             var timeElapsed = DateTimeOffset.UtcNow.Subtract(x.Properties.IssuedUtc.Value);
 
-                        if (timeElapsed > TimeSpan.FromMinutes(19.5))
+                        if (timeElapsed > TimeSpan.FromMinutes(59.5))
                         {
                             var identity = (ClaimsIdentity)x.Principal.Identity;
                             var accessTokenClaim = identity.FindFirst("access_token");
@@ -310,7 +310,7 @@ namespace Dfc.CourseDirectory.Web
                 {
                     RequireSub = true,
                     RequireStateValidation = false,
-                    NonceLifetime = TimeSpan.FromMinutes(15)
+                    NonceLifetime = TimeSpan.FromMinutes(60)
                     
                 };
 
