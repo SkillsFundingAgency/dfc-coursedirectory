@@ -33,8 +33,8 @@ namespace Dfc.CourseDirectory.Web.ViewModels.CourseSummary
         public decimal? Cost { get; set; }
         public string CostDescription { get; set; }
         public DurationUnit DurationUnit { get; set; }
+        public bool National { get; set; }
         public IEnumerable<string> Regions { get; set; }
-
         public int? DurationValue { get; set; }
         public string ProviderCourseID { get; set; }
         public DeliveryMode DeliveryMode { get; set; }
