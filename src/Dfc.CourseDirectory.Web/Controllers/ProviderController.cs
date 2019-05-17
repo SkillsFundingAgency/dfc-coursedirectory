@@ -88,9 +88,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
             if (ids == null) ids = new List<string>();
 
             var regionNames = (from regionItemModel in list
-                from subRegionItemModel in regionItemModel.SubRegion
-                where ids.Contains(subRegionItemModel.Id)
-                select regionItemModel.RegionName).Distinct().OrderBy(x=>x).ToList();
+                               from subRegionItemModel in regionItemModel.SubRegion
+                               where ids.Contains(subRegionItemModel.Id)
+                               select regionItemModel.RegionName).Distinct().OrderBy(x => x).ToList();
 
             return string.Join(", ", regionNames);
         }
@@ -116,12 +116,27 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         [Authorize]
-        public async Task<IActionResult> AddOrEditDetails(ProviderAddOrEditRequestModel request)
+        public async Task<IActionResult> AddOrEditDetails()
         {
 
-            ProviderDetailsAddOrEditViewModel model = new ProviderDetailsAddOrEditViewModel();
-            model.AliasName = request.Alias;
-            model.BriefOverview = request.BriefOverview;
+            var model = new ProviderDetailsAddOrEditViewModel();
+
+            int? UKPRN = _session.GetInt32("UKPRN");
+
+            if (!UKPRN.HasValue)
+            {
+                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
+            }
+
+            var providerSearchResult = await _providerService.GetProviderByPRNAsync(new Dfc.CourseDirectory.Services.ProviderService.ProviderSearchCriteria(UKPRN.ToString()));
+
+            if (providerSearchResult.IsSuccess)
+            {
+                model = new ProviderDetailsAddOrEditViewModel();
+                model.AliasName = providerSearchResult.Value.Value.FirstOrDefault()?.Alias;
+                model.BriefOverview = providerSearchResult.Value.Value.FirstOrDefault()?.MarketingInformation;
+            }
+
 
             //model.BriefOverview = "<h6>xccssdsdssdsds</h6>\r\n<h1>fdffgf</h1>";
             return View(model);
@@ -139,9 +154,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
             var providerSearchResult = await _providerService.GetProviderByPRNAsync(new Services.ProviderService.ProviderSearchCriteria(UKPRN.ToString()));
 
-            if(providerSearchResult.IsSuccess)
+            if (providerSearchResult.IsSuccess)
             {
-           
+
                 Provider provider = providerSearchResult.Value.Value.FirstOrDefault();
                 provider.MarketingInformation = model.BriefOverview;
                 provider.Alias = model.AliasName;
@@ -162,7 +177,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             }
 
-            return RedirectToAction("Details", "Provider", new {  });
+            return RedirectToAction("Details", "Provider", new { });
         }
 
 
@@ -171,6 +186,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [Authorize]
         public async Task<IActionResult> Details()
         {
+
             var model = new ProviderDetailsViewModel();
 
             int? UKPRN = _session.GetInt32("UKPRN");
@@ -202,18 +218,18 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     && string.IsNullOrEmpty(providerContactTypeL.FirstOrDefault()?.ContactAddress?.StreetDescription)))
                 {
                     AddressLine1 = providerContactTypeL.FirstOrDefault()?.ContactAddress?.PAON?.Description
-                                    + " " + providerContactTypeL.FirstOrDefault()?.ContactAddress?.StreetDescription + ", ";
+                                    + " " + providerContactTypeL.FirstOrDefault()?.ContactAddress?.StreetDescription;
                 }
                 string AddressLine2 = string.Empty;
                 if (providerContactTypeL.FirstOrDefault()?.ContactAddress?.Locality != null)
                 {
-                    AddressLine2 = providerContactTypeL.FirstOrDefault()?.ContactAddress?.Locality.ToString() + ", ";
+                    AddressLine2 = providerContactTypeL.FirstOrDefault()?.ContactAddress?.Locality.ToString();
                 }
 
                 string AddressLine3 = string.Empty;
                 if (!string.IsNullOrEmpty(providerContactTypeL.FirstOrDefault()?.ContactAddress?.Items?.FirstOrDefault()))
                 {
-                    AddressLine3 = providerContactTypeL.FirstOrDefault()?.ContactAddress?.Items?.FirstOrDefault() + ", ";
+                    AddressLine3 = providerContactTypeL.FirstOrDefault()?.ContactAddress?.Items?.FirstOrDefault();
                 }
 
                 string PostCode = string.Empty;
@@ -233,7 +249,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             }
 
-            
+
 
 
             return View(model);
@@ -291,14 +307,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
             else
             {
-                if (!filteredCourses.Any(x => x.NotionalNVQLevelv2==level))
+                if (!filteredCourses.Any(x => x.NotionalNVQLevelv2 == level))
                 {
                     level = levelFilters.FirstOrDefault()?.Key;
                 }
             }
 
             foreach (var levels in levelFilters)
-            { 
+            {
 
                 var lf = new QualificationLevelFilterViewModel()
                 {
@@ -325,30 +341,30 @@ namespace Dfc.CourseDirectory.Web.Controllers
                             QualificationType = course.QualificationType,
                             Facet = course.CourseRuns.Count().ToString(),
                             CourseRuns = course.CourseRuns.Select(y => new CourseRunViewModel
-                                {
-                                    Id = y.id.ToString(),
-                                    CourseId = y.ProviderCourseID,
-                                    AttendancePattern = y.AttendancePattern.ToDescription(),
-                                    Cost = y.Cost.HasValue ? $"£ {y.Cost.Value:0.00}" : string.Empty,
-                                    CourseName = y.CourseName,
-                                    DeliveryMode = y.DeliveryMode.ToDescription(),
-                                    Duration = y.DurationValue.HasValue
+                            {
+                                Id = y.id.ToString(),
+                                CourseId = y.ProviderCourseID,
+                                AttendancePattern = y.AttendancePattern.ToDescription(),
+                                Cost = y.Cost.HasValue ? $"£ {y.Cost.Value:0.00}" : string.Empty,
+                                CourseName = y.CourseName,
+                                DeliveryMode = y.DeliveryMode.ToDescription(),
+                                Duration = y.DurationValue.HasValue
                                         ? $"{y.DurationValue.Value} {y.DurationUnit.ToDescription()}"
                                         : $"0 {y.DurationUnit.ToDescription()}",
-                                    Venue = y.VenueId.HasValue
+                                Venue = y.VenueId.HasValue
                                         ? FormatAddress(GetVenueByIdFrom(venueResult.Value, y.VenueId.Value))
                                         : string.Empty,
-                                    Region = y.Regions != null
+                                Region = y.Regions != null
                                         ? FormattedRegionsByIds(allRegions, y.Regions)
                                         : string.Empty,
-                                    StartDate = y.FlexibleStartDate
+                                StartDate = y.FlexibleStartDate
                                         ? "Flexible start date"
                                         : y.StartDate?.ToString("dd/MM/yyyy"),
-                                    StudyMode = y.StudyMode == Models.Models.Courses.StudyMode.Undefined
+                                StudyMode = y.StudyMode == Models.Models.Courses.StudyMode.Undefined
                                         ? string.Empty
                                         : y.StudyMode.ToDescription(),
-                                    Url = y.CourseURL
-                                })
+                                Url = y.CourseURL
+                            })
                                 .OrderBy(y => y.CourseName)
                                 .ToList()
                         };

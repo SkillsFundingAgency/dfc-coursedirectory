@@ -122,7 +122,7 @@
                 var charCode = event.which ? event.which : event.keyCode;
                 var trimmed = $elementCost.val().trim();//.replace(".", "");
 
-                if (trimmed.includes(".")) {
+                if (trimmed.indexOf(".")>= 0) {
                     if (charCode === 46) {
                         return false;
                     }

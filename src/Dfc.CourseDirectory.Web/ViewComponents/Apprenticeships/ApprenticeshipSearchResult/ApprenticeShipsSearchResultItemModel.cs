@@ -10,7 +10,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships.ApprenticeshipS
 {
     public class ApprenticeShipsSearchResultItemModel
     {
-        public string ApprenticeshipName { get; set; }
+        public string ApprenticeshipTitle { get; set; }
 
         public string ApprenticeshipType { get; set; }
         //public string LearnAimRef { get; }

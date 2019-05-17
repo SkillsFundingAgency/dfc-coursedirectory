@@ -51,18 +51,14 @@
                                 <a class="govuk-link" style="padding-right:1em"
                                    asp-controller="Provider"
                                    asp-action="AddOrEditDetails"
-                                   asp-route-ukPRN="@Model.UKPRN"
-                                   asp-route-alias="@Model.Alias"
-                                   asp-route-briefoverview="@Model.BriefOverview">Add</a>
+                                   >Add</a>
                             }
                             else
                             {
                                 <a class="govuk-link" style="padding-right:1em"
                                    asp-controller="Provider"
                                    asp-action="AddOrEditDetails"
-                                   asp-route-ukPRN="@Model.UKPRN"
-                                   asp-route-alias="@Model.Alias"
-                                   asp-route-briefoverview="@Model.BriefOverview">Edit</a>
+                                  >Edit</a>
                             }
 
                         </td>
@@ -76,18 +72,14 @@
                                 <a class="govuk-link" style="padding-right:1em"
                                    asp-controller="Provider"
                                    asp-action="AddOrEditDetails"
-                                   asp-route-ukPRN="@Model.UKPRN"
-                                   asp-route-alias="@Model.Alias"
-                                   asp-route-briefoverview="@Model.BriefOverview">Add</a>
+                                  >Add</a>
                             }
                             else
                             {
                                 <a class="govuk-link" style="padding-right:1em"
                                    asp-controller="Provider"
                                    asp-action="AddOrEditDetails"
-                                   asp-route-ukPRN="@Model.UKPRN"
-                                   asp-route-alias="@Model.Alias"
-                                   asp-route-briefoverview="@Model.BriefOverview">Edit</a>
+                                  >Edit</a>
                             }
                         </td>
                     </tr>
@@ -108,7 +100,15 @@
             <h3 class="govuk-heading-m m20">Address</h3>
             <p>
                 @Model.AddressLine1
+               
+            </p>
+            <p>
+               
                 @Model.AddressLine2
+               
+            </p>
+            <p>
+              
                 @Model.PostCode
             </p>
 
