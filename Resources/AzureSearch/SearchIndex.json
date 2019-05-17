@@ -1,0 +1,26 @@
+[
+	{
+	    "name": "onspd",
+	    "fields": [
+		    { "name": "pcd", "type": "Edm.String", "key": true, "sortable": false, "facetable": false },
+			{ "name": "pcd2", "type": "Edm.String", "sortable": false, "facetable": false },
+			{ "name": "pcds", "type": "Edm.String", "sortable": false, "facetable": false },
+			{ "name": "dointr", "type": "Edm.String", "searchable": false, "filterable": false, "sortable": false, "facetable": false },
+			{ "name": "doterm", "type": "Edm.String", "searchable": false, "filterable": false, "sortable": false, "facetable": false },
+			{ "name": "oscty", "type": "Edm.String", "searchable": false, "filterable": false, "sortable": false, "facetable": false },
+			{ "name": "oslaua", "type": "Edm.String", "searchable": false, "filterable": false, "sortable": false, "facetable": false },
+			{ "name": "osward", "type": "Edm.String", "searchable": false, "filterable": false, "sortable": false, "facetable": false },
+			{ "name": "prsh", "type": "Edm.String", "searchable": false, "filterable": false, "sortable": false, "facetable": false },
+			{ "name": "ctry", "type": "Edm.String", "searchable": false, "filterable": false, "sortable": false, "facetable": false },
+			{ "name": "rgn", "type": "Edm.String", "searchable": false, "filterable": false, "sortable": false, "facetable": false },
+			{ "name": "lat", "type": "Edm.Double", "filterable": false, "sortable": false, "facetable": false },
+			{ "name": "long", "type": "Edm.Double", "filterable": false, "sortable": false, "facetable": false },
+			{ "name": "Parish", "type": "Edm.String", "searchable": false, "filterable": false, "sortable": false, "facetable": false },
+			{ "name": "LocalAuthority", "type": "Edm.String", "searchable": false, "filterable": false, "sortable": false, "facetable": false },
+			{ "name": "Region", "type": "Edm.String", "searchable": false, "filterable": false, "sortable": false, "facetable": false },
+			{ "name": "County", "type": "Edm.String", "searchable": false, "filterable": false, "sortable": false, "facetable": false },
+			{ "name": "Country", "type": "Edm.String", "searchable": false, "filterable": false, "sortable": false, "facetable": false },
+			{ "name": "updated", "type": "Edm.DateTimeOffset", "filterable": false, "sortable": false, "facetable": false }
+		]
+	}
+]

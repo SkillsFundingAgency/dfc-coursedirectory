@@ -481,7 +481,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                     courseRunForEdit.StartDate = specifiedStartDate;
                     courseRunForEdit.UpdatedDate = DateTime.Now;
                     courseRunForEdit.UpdatedBy = User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault();
-
+                    //Set to false by default
+                    courseRunForEdit.National = false;
                     switch (model.DeliveryMode)
                     {
                         case DeliveryMode.ClassroomBased:
@@ -503,6 +504,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                             }
                             else
                             {
+                                
                                 courseRunForEdit.Regions = model.SelectedRegions;                           
                                 string[] selectedRegions = availableRegions.SubRegionsDataCleanse(courseRunForEdit.Regions.ToList());
                                 var subRegions = selectedRegions.Select(selectedRegion => availableRegions.GetRegionFromName(selectedRegion)).ToList();
