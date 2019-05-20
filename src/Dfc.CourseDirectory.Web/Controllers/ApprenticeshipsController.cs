@@ -8,6 +8,7 @@ using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Models.Apprenticeships;
 using Dfc.CourseDirectory.Models.Models.Courses;
 using Dfc.CourseDirectory.Services.CourseService;
+using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 using Dfc.CourseDirectory.Services.VenueService;
@@ -32,21 +33,24 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private ISession _session => _contextAccessor.HttpContext.Session;
         private readonly ICourseService _courseService;
         private readonly IVenueService _venueService;
-
+        private readonly IApprenticeshipService _apprenticeshipService;
 
         public ApprenticeshipsController(
             ILogger<ApprenticeshipsController> logger,
-            IHttpContextAccessor contextAccessor, ICourseService courseService, IVenueService venueService)
+            IHttpContextAccessor contextAccessor, ICourseService courseService, IVenueService venueService,
+            IApprenticeshipService apprenticeshipService)
         {
             Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(contextAccessor, nameof(contextAccessor));
             Throw.IfNull(courseService, nameof(courseService));
             Throw.IfNull(venueService, nameof(venueService));
+            Throw.IfNull(apprenticeshipService, nameof(apprenticeshipService));
 
             _logger = logger;
             _contextAccessor = contextAccessor;
             _courseService = courseService;
             _venueService = venueService;
+            _apprenticeshipService = apprenticeshipService;
         }
 
         [Authorize]
@@ -64,6 +68,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             if (!string.IsNullOrEmpty(requestModel.SearchTerm))
             {
+               // var result = _apprenticeshipService.StandardsAndFrameworksSearch(requestModel.SearchTerm);
+
                 //stub
                 var listOfApprenticeships = new List<ApprenticeShipsSearchResultItemModel>();
                 listOfApprenticeships.Add(new ApprenticeShipsSearchResultItemModel()

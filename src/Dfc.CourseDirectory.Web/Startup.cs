@@ -1,12 +1,14 @@
 ﻿using Dfc.CourseDirectory.Common.Settings;
 using Dfc.CourseDirectory.Models.Models.Auth;
 using Dfc.CourseDirectory.Services;
+using Dfc.CourseDirectory.Services.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.AuthService;
 using Dfc.CourseDirectory.Services.BaseDataAccess;
 using Dfc.CourseDirectory.Services.BulkUploadService;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.CourseTextService;
 using Dfc.CourseDirectory.Services.Interfaces;
+using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.Interfaces.AuthService;
 using Dfc.CourseDirectory.Services.Interfaces.BaseDataAccess;
 using Dfc.CourseDirectory.Services.Interfaces.BulkUploadService;
@@ -144,6 +146,9 @@ namespace Dfc.CourseDirectory.Web
             services.AddScoped<IOnspdSearchHelper, OnspdSearchHelper>();
             services.AddScoped<IUserHelper, UserHelper>();
             services.AddScoped<IBulkUploadService, BulkUploadService>();
+
+            services.Configure<ApprenticeshipServiceSettings>(Configuration.GetSection(nameof(ApprenticeshipServiceSettings)));
+            services.AddScoped<IApprenticeshipService, ApprenticeshipService>();
 
             services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
