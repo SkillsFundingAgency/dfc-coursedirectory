@@ -381,7 +381,7 @@ namespace Dfc.CourseDirectory.Web
 
                             });
 
-                            _logger.LogInformation("User " + email + " has been authenticated by DFE");
+                            _logger.LogWarning("User " + email + " has been authenticated by DFE");
 
                             //Course Directory Authorisation
                             try
@@ -396,7 +396,7 @@ namespace Dfc.CourseDirectory.Web
                                     new Claim("role_id", details.RoleId.ToString()),
                                     new Claim(ClaimTypes.Role, details.RoleName)
                                 });
-                                _logger.LogInformation("User " + email + " has been authorised");
+                                _logger.LogWarning("User " + email + " has been authorised");
                             }
                             catch(Exception ex)
                             {
