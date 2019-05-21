@@ -18,7 +18,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
     public class AuthController : Controller
     {
         private readonly IHttpContextAccessor _contextAccessor;
-
         private ISession _session => _contextAccessor.HttpContext.Session;
 
         public AuthController(IHttpContextAccessor contextAccessor)
