@@ -1,4 +1,5 @@
 ﻿using Dfc.CourseDirectory.Services.Interfaces.BaseDataAccess;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -12,9 +13,12 @@ namespace Dfc.CourseDirectory.Services.BaseDataAccess
     public class BaseDataAccess : IBaseDataAccess
     {
         public string ConnectionString { get; set; }
-        public BaseDataAccess(IOptions<BaseDataAccessSettings> settings)
+        private readonly ILogger _logger;
+        public BaseDataAccess(IOptions<BaseDataAccessSettings> settings,
+            ILoggerFactory logFactory)
         {
             this.ConnectionString = settings.Value.ConnectionString;
+            _logger = logFactory.CreateLogger<BaseDataAccess>();
         }
 
         public SqlConnection GetConnection()
@@ -119,25 +123,26 @@ namespace Dfc.CourseDirectory.Services.BaseDataAccess
 
         public DataTable GetDataReader(string procedureName, List<SqlParameter> parameters, CommandType commandType = CommandType.StoredProcedure)
         {
-
+            _logger.LogInformation("Running: " + procedureName + " to get user tokens");
             DbDataReader ds;
             DataTable values = new DataTable();
             try
             {
                 DbConnection connection = this.GetConnection();
                 {
+                    _logger.LogInformation("Opening DB Connection");
                     DbCommand cmd = this.GetCommand(connection, procedureName, commandType);
                     if (parameters != null && parameters.Count > 0)
                     {
                         cmd.Parameters.AddRange(parameters.ToArray());
                     }
-
+                    _logger.LogInformation("Executing data reader");
                     values.Load(cmd.ExecuteReader(CommandBehavior.CloseConnection));
                 }
             }
             catch (Exception ex)
             {
-                //LogException("Failed to GetDataReader for " + procedureName, ex, parameters);
+                _logger.LogError("Failed to GetDataReader for " + procedureName, ex, parameters);
                 throw;
             }
 
