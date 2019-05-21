@@ -367,31 +367,47 @@ namespace Dfc.CourseDirectory.Web
                         // redeemed it for an access token and a refresh token,
                         // and validated the identity token
                         OnTokenValidated = x =>
-                    {
-                        var identity = (ClaimsIdentity)x.Principal.Identity;
+                        {
+                        
+                            //DFE Tokens
+                            var identity = (ClaimsIdentity)x.Principal.Identity;
                        
-                        string email = identity.Claims.Where(c => c.Type == "email")
-                        .Select(c => c.Value).SingleOrDefault();
-
-                        AuthUserDetails details = AuthService.GetDetailsByEmail(email);
-
-                            // store both access and refresh token in the claims - hence in the cookie
+                            string email = identity.Claims.Where(c => c.Type == "email")
+                            .Select(c => c.Value).SingleOrDefault();
 
                             identity.AddClaims(new[]
-                        {
-                                    new Claim("access_token", x.TokenEndpointResponse.AccessToken),
-                                    new Claim("refresh_token", x.TokenEndpointResponse.RefreshToken),
+    {
+                                new Claim("access_token", x.TokenEndpointResponse.AccessToken),
+                                new Claim("refresh_token", x.TokenEndpointResponse.RefreshToken)
+
+                            });
+
+                            _logger.LogInformation("User " + email + " has been authenticated by DFE");
+
+                            //Course Directory Authorisation
+                            try
+                            {
+                                AuthUserDetails details = AuthService.GetDetailsByEmail(email);
+
+                                // store both access and refresh token in the claims - hence in the cookie
+                                identity.AddClaims(new[]
+                                {
                                     new Claim("UKPRN", details.UKPRN),
                                     new Claim("user_id", details.UserId.ToString()),
                                     new Claim("role_id", details.RoleId.ToString()),
                                     new Claim(ClaimTypes.Role, details.RoleName)
+                                });
+                            }
+                            catch(Exception ex)
+                            {
+                                _logger.LogError("Error authorising user", ex);
+                            }
 
-                        });
 
                             // so that we don't issue a session cookie but one with a fixed expiration
                             x.Properties.IsPersistent = true;
-                        return Task.CompletedTask;
-                    }
+                            return Task.CompletedTask;
+                        }
                 };
             });
 
