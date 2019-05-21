@@ -106,8 +106,7 @@ namespace Dfc.CourseDirectory.Web
             services.AddSingleton<IAuthService, AuthService>();
             var authSp = services.BuildServiceProvider();
             AuthService = authSp.GetService<IAuthService>();
-            services.AddScoped<IAuthService, AuthService>();
-            
+
             services.Configure<GovukPhaseBannerSettings>(Configuration.GetSection(nameof(GovukPhaseBannerSettings)));
             services.AddScoped<IGovukPhaseBannerService, GovukPhaseBannerService>();
 
@@ -397,6 +396,7 @@ namespace Dfc.CourseDirectory.Web
                                     new Claim("role_id", details.RoleId.ToString()),
                                     new Claim(ClaimTypes.Role, details.RoleName)
                                 });
+                                _logger.LogInformation("User " + email + " has been authorised");
                             }
                             catch(Exception ex)
                             {
