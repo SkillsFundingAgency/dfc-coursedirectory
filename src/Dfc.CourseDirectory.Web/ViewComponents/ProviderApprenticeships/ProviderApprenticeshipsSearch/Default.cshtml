@@ -1,11 +1,11 @@
-﻿@using Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships.ApprenticeshipSearchResult;
+﻿@using Dfc.CourseDirectory.Web.ViewComponents.ProviderApprenticeships.ProviderApprenticeshipSearchResult;
 
-@model Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships.ApprenticeshipSearch.ApprenticeshipSearchModel;
+@model Dfc.CourseDirectory.Web.ViewComponents.ProviderApprenticeships.ProviderApprenticeshipSearch.ProviderApprenticeshipsSearchModel;
 
 <div class="lars-search cd-hero-search">
 
-    <div id="ApprenticeshipsSearchResultContainer" class="" style="margin-left:10px;margin-right:10px">
-        @await Component.InvokeAsync(nameof(ApprenticeshipSearchResult))
+    <div id="ProviderApprenticeshipsSearchResultContainer" class="" style="margin-left:10px;margin-right:10px">
+        @await Component.InvokeAsync(nameof(ProviderApprenticeshipSearchResult))
     </div>
 </div>
 
@@ -16,17 +16,17 @@
               var formGroupErrorClass = "govuk-form-group--error";
             var elementErrorClass = "govuk-input--error";
 
-            var $searchForm = $("#ApprenticeshipSearchForm");
+            var $searchForm = $("#ProviderApprenticeshipSearchForm");
 
 
-            var $apprenticeshipSearchTerm = $("#ApprenticeshipSearchTerm");
-            var $buttonSearch = $("#searchApprenticeships");
+            var $providerApprenticeshipSearchTerm = $("#ProviderApprenticeshipSearchTerm");
+            var $buttonSearch = $("#searchProviderApprenticeships");
 
-            var $validationMessageSearchTerm = $apprenticeshipSearchTerm.prev("[data-valmsg-for='#ApprenticeshipSearchTerm']");
+            var $validationMessageSearchTerm = $providerApprenticeshipSearchTerm.prev("[data-valmsg-for='#ProviderApprenticeshipSearchTerm']");
             $validationMessageSearchTerm.css("margin-bottom", "0");
 
-            var $formGroupSearchTerm = $apprenticeshipSearchTerm.closest('.govuk-form-group');
-            var $form = $apprenticeshipSearchTerm.closest("form");
+            var $formGroupSearchTerm = $providerApprenticeshipSearchTerm.closest('.govuk-form-group');
+            var $form = $providerApprenticeshipSearchTerm.closest("form");
 
             $form.addTriggersToJqueryValidate().triggerElementValidationsOnFormValidation();
             var validator = $form.validate();
@@ -55,16 +55,16 @@
              //   }
              // });
 
-              //  $apprenticeshipSearchTerm.on("keyup", function () {
+             //   $apprenticeshipSearchTerm.on("keyup", function () {
 
-              //  var result = validator.element($apprenticeshipSearchTerm);
-              //  if (result) {
-              //      HideValidationErrorMessage();
-              //     doSearch();
-              //  } else {
-              //      ShowValidationErrorMessage();
-              //  }
-              //});
+             //   var result = validator.element($apprenticeshipSearchTerm);
+             //   if (result) {
+             //       HideValidationErrorMessage();
+             //      doSearch();
+             //   } else {
+             //       ShowValidationErrorMessage();
+             //   }
+             // });
 
       //function ValidateAndSearchForProvider() {
       //          var trimmed = $apprenticeshipSearchTerm.val().trim();
@@ -96,8 +96,6 @@
                 };
             };
 
-         
-
             var isNullOrWhitespace = function (input) {
                 if (typeof input === 'undefined' || input == null) return true;
                 return input.replace(/\s/g, '').length < 3;
@@ -111,27 +109,27 @@
                 console.log(payload);
                 var qs = $.param(payload);
                 qs = replaceAll(qs, "%5B%5D", "");
-                $.get("/Apprenticeships/ApprenticeshipSearch?" + qs, success);
+                $.get("/ProviderApprenticeships/ProviderApprenticeshipsSearch?" + qs, success);
             };
 
             var removeSearchResults = function () {
-                var $larsSearchResultContainer = $("#ApprenticeshipsSearchResultContainer");
+                var $larsSearchResultContainer = $("#ProviderApprenticeshipsSearchResultContainer");
                 $larsSearchResultContainer.html("");
             };
 
             var replaceSearchResult = function (searchResults) {
-                var $larsSearchResultContainer = $("#ApprenticeshipsSearchResultContainer");
-                $larsSearchResultContainer.html("");
-                $larsSearchResultContainer.html(searchResults);
+                var $providerApprenticeshipsSearchResultContainer = $("#ProviderApprenticeshipsSearchResultContainer");
+                $providerApprenticeshipsSearchResultContainer.html("");
+                $providerApprenticeshipsSearchResultContainer.html(searchResults);
             };
 
 
 
             var doSearch = function () {
 
-                var runSearch = false;
+                 var runSearch = false;
 
-                var result = validator.element($apprenticeshipSearchTerm);
+                var result = validator.element($providerApprenticeshipSearchTerm);
                 if (result) {
                     HideValidationErrorMessage();
                     runSearch = true;
@@ -139,13 +137,13 @@
                     ShowValidationErrorMessage();
                 }
 
-                if (isNullOrWhitespace($apprenticeshipSearchTerm.val())) {
+                if (isNullOrWhitespace($providerApprenticeshipSearchTerm.val())) {
                     removeSearchResults();
                 } else {
 
                     if (runSearch == true) {
                         makeRequestWithPayload({
-                            SearchTerm: $apprenticeshipSearchTerm.val()
+                            SearchTerm: $providerApprenticeshipSearchTerm.val()
 
                         },
                             onSucess);
@@ -159,7 +157,7 @@
 
             };
 
-                 $apprenticeshipSearchTerm.on("keyup", debounce(doSearch, 400));
+              $providerApprenticeshipSearchTerm.on("keyup", debounce(doSearch, 400));
             $buttonSearch.on("click", doSearch);
 
             //$(document).keypress(function (e) {
@@ -170,16 +168,16 @@
             //});
 
              function ShowValidationErrorMessage() {
-                    $apprenticeshipSearchTerm.addClass(elementErrorClass);
+                    $providerApprenticeshipSearchTerm.addClass(elementErrorClass);
                     $formGroupSearchTerm.addClass(formGroupErrorClass);
                     $searchForm.addClass("govuk-form-group, govuk-form-group--error");
                     $validationMessageSearchTerm.show();
                  $validationMessageSearchTerm.css("margin-bottom", "15px");
-                  var $larsSearchResultContainer = $("#ApprenticeshipsSearchResultContainer");
-                $larsSearchResultContainer.html("");
+                  var $providerApprenticeshipsSearchResultContainer = $("#ProviderApprenticeshipsSearchResultContainer");
+                $providerApprenticeshipsSearchResultContainer.html("");
             }
             function HideValidationErrorMessage() {
-                    $apprenticeshipSearchTerm.removeClass(elementErrorClass);
+                    $providerApprenticeshipSearchTerm.removeClass(elementErrorClass);
                     $formGroupSearchTerm.removeClass(formGroupErrorClass);
                     $searchForm.removeClass("govuk-form-group, govuk-form-group--error");
                     $validationMessageSearchTerm.hide();

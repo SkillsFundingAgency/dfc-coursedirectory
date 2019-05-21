@@ -1,0 +1,75 @@
+﻿@using Dfc.CourseDirectory.Models.Enums
+@using Dfc.CourseDirectory.Web.Helpers
+@{
+    Layout = "_Layout_Your_Courses";
+}
+
+@model Dfc.CourseDirectory.Web.ViewModels.Apprenticeships.ApprenticeshipLocationChoiceSelectionViewModel
+
+
+
+    <form class="govuk-!-margin-bottom-9" id="ApprenticeshipLocationChoiceSelectionForm" asp-controller="Apprenticeships" asp-action="ApprenticeshipLocationChoiceSelection" method="post">
+        <a asp-controller="Apprenticeships" asp-action="ApprenticeShipDelivery" class="govuk-back-link">Back</a><br />
+        <h1 class="govuk-heading-xl">Can you deliver this training at employers' locations anywhere in england? (Stubbed)</h1>
+        <span class="govuk-caption-xl">This will flag you as a national provider to people searching for apprenticeship training</span>
+        <br />
+        <div class="govuk-form-group">
+            <fieldset class="govuk-fieldset">
+                
+                <div class="govuk-radios" val-required-message="Choose 1 option to continue" id="ApprenticeshipLocationChoice">
+                    <div class="govuk-radios__item">
+                        @Html.RadioButtonFor(m => m.NationalApprenticeship, NationalApprenticeship.Yes, new { @class = "govuk-radios__input", id = NationalApprenticeship.Yes })
+                        <label class="govuk-label govuk-radios__label" for="@NationalApprenticeship.Yes">@WebHelper.GetEnumDescription(NationalApprenticeship.Yes)</label>
+                    </div>
+                    <div class="govuk-radios__item">
+                        @Html.RadioButtonFor(m => m.NationalApprenticeship, NationalApprenticeship.No, new { @class = "govuk-radios__input", id = NationalApprenticeship.No })
+                        <label class="govuk-label govuk-radios__label" for="@NationalApprenticeship.No">@WebHelper.GetEnumDescription(NationalApprenticeship.No)</label>
+                    </div>
+
+                </div>
+            </fieldset>
+        </div>
+        <br />
+        <button type="submit" class="govuk-button" id="next">Continue</button>
+    </form>
+
+<script>
+    (function ($) {
+        $(function () {
+            var validStates = [];
+            var $button = $("#next");
+
+            var $apprenticeshipLocationChoice = $("#ApprenticeshipLocationChoice").govUkRadios();
+
+            function isAllValid(currentValue) {
+                return currentValue === true;
+            }
+
+            function validate() {
+
+                validStates = [];
+
+                $apprenticeshipLocationChoice.govUkRadios("validState");
+
+                if ($.requiredValidate($apprenticeshipLocationChoice.find("input[type='radio']:checked").val())) {
+                    $apprenticeshipLocationChoice.govUkRadios("validState");
+                    validStates.push(true);
+                } else {
+                    $apprenticeshipLocationChoice.govUkRadios("invalidState", $apprenticeshipLocationChoice.attr("val-required-message"));
+                    validStates.push(false);
+                }
+            }
+
+            $button.on("click", function (event) {
+                event.preventDefault();
+                validate();
+                if (validStates.every(isAllValid)) {
+                    $("#ApprenticeshipLocationChoiceSelectionForm").submit();
+                }
+            });
+
+        });
+    })(jQuery);
+</script>
+
+
