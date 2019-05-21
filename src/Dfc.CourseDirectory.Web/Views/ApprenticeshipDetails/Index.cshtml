@@ -204,6 +204,11 @@
                       $requiredInfo.removeClass("govuk-error-message");
                 $requiredInfo.hide();
 
+                $email.val($email.val().trim());
+                $website.val($website.val().trim());
+                $contactUs.val($contactUs.val().trim());
+                          $telephone.val($telephone.val().trim());
+
                 $errorSummary.govUkErrorSummary("removeAll");
                 $email.govUkInput("validState");
                 $telephone.govUkInput("validState");
@@ -319,7 +324,7 @@
 
                   var enteredWebsite = $website.val();
                 var websiteToValidate = "";
-                if ($website.val().includes("http")) {
+                if ($website.val().indexOf("http")>=0) {
                     websiteToValidate = enteredWebsite.substring(enteredWebsite.indexOf("//") + 2, enteredWebsite.length);
                 }
                 else {
@@ -349,7 +354,7 @@
 
                   var enteredContactUs = $contactUs.val();
                 var contactUsToValidate = "";
-                if ($contactUs.val().includes("http")) {
+                if ($contactUs.val().indexOf("http")>=0) {
                     contactUsToValidate = enteredContactUs.substring(enteredContactUs.indexOf("//") + 2, enteredContactUs.length);
                 }
                 else {

@@ -1,12 +1,14 @@
 ﻿using Dfc.CourseDirectory.Common.Settings;
 using Dfc.CourseDirectory.Models.Models.Auth;
 using Dfc.CourseDirectory.Services;
+using Dfc.CourseDirectory.Services.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.AuthService;
 using Dfc.CourseDirectory.Services.BaseDataAccess;
 using Dfc.CourseDirectory.Services.BulkUploadService;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.CourseTextService;
 using Dfc.CourseDirectory.Services.Interfaces;
+using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.Interfaces.AuthService;
 using Dfc.CourseDirectory.Services.Interfaces.BaseDataAccess;
 using Dfc.CourseDirectory.Services.Interfaces.BulkUploadService;
@@ -104,8 +106,7 @@ namespace Dfc.CourseDirectory.Web
             services.AddSingleton<IAuthService, AuthService>();
             var authSp = services.BuildServiceProvider();
             AuthService = authSp.GetService<IAuthService>();
-            services.AddScoped<IAuthService, AuthService>();
-            
+
             services.Configure<GovukPhaseBannerSettings>(Configuration.GetSection(nameof(GovukPhaseBannerSettings)));
             services.AddScoped<IGovukPhaseBannerService, GovukPhaseBannerService>();
 
@@ -144,6 +145,9 @@ namespace Dfc.CourseDirectory.Web
             services.AddScoped<IOnspdSearchHelper, OnspdSearchHelper>();
             services.AddScoped<IUserHelper, UserHelper>();
             services.AddScoped<IBulkUploadService, BulkUploadService>();
+
+            //services.Configure<ApprenticeshipServiceSettings>(Configuration.GetSection(nameof(ApprenticeshipServiceSettings)));
+            //services.AddScoped<IApprenticeshipService, ApprenticeshipService>();
 
             services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
@@ -219,7 +223,7 @@ namespace Dfc.CourseDirectory.Web
                             // assume a timeout of 20 minutes.
                             var timeElapsed = DateTimeOffset.UtcNow.Subtract(x.Properties.IssuedUtc.Value);
 
-                        if (timeElapsed > TimeSpan.FromMinutes(19.5))
+                        if (timeElapsed > TimeSpan.FromMinutes(59.5))
                         {
                             var identity = (ClaimsIdentity)x.Principal.Identity;
                             var accessTokenClaim = identity.FindFirst("access_token");
@@ -310,7 +314,7 @@ namespace Dfc.CourseDirectory.Web
                 {
                     RequireSub = true,
                     RequireStateValidation = false,
-                    NonceLifetime = TimeSpan.FromMinutes(15)
+                    NonceLifetime = TimeSpan.FromMinutes(60)
                     
                 };
 
@@ -362,31 +366,48 @@ namespace Dfc.CourseDirectory.Web
                         // redeemed it for an access token and a refresh token,
                         // and validated the identity token
                         OnTokenValidated = x =>
-                    {
-                        var identity = (ClaimsIdentity)x.Principal.Identity;
+                        {
+                        
+                            //DFE Tokens
+                            var identity = (ClaimsIdentity)x.Principal.Identity;
                        
-                        string email = identity.Claims.Where(c => c.Type == "email")
-                        .Select(c => c.Value).SingleOrDefault();
-
-                        AuthUserDetails details = AuthService.GetDetailsByEmail(email);
-
-                            // store both access and refresh token in the claims - hence in the cookie
+                            string email = identity.Claims.Where(c => c.Type == "email")
+                            .Select(c => c.Value).SingleOrDefault();
 
                             identity.AddClaims(new[]
-                        {
-                                    new Claim("access_token", x.TokenEndpointResponse.AccessToken),
-                                    new Claim("refresh_token", x.TokenEndpointResponse.RefreshToken),
+    {
+                                new Claim("access_token", x.TokenEndpointResponse.AccessToken),
+                                new Claim("refresh_token", x.TokenEndpointResponse.RefreshToken)
+
+                            });
+
+                            _logger.LogInformation("User " + email + " has been authenticated by DFE");
+
+                            //Course Directory Authorisation
+                            try
+                            {
+                                AuthUserDetails details = AuthService.GetDetailsByEmail(email);
+
+                                // store both access and refresh token in the claims - hence in the cookie
+                                identity.AddClaims(new[]
+                                {
                                     new Claim("UKPRN", details.UKPRN),
                                     new Claim("user_id", details.UserId.ToString()),
                                     new Claim("role_id", details.RoleId.ToString()),
                                     new Claim(ClaimTypes.Role, details.RoleName)
+                                });
+                                _logger.LogInformation("User " + email + " has been authorised");
+                            }
+                            catch(Exception ex)
+                            {
+                                _logger.LogError("Error authorising user", ex);
+                            }
 
-                        });
 
                             // so that we don't issue a session cookie but one with a fixed expiration
                             x.Properties.IsPersistent = true;
-                        return Task.CompletedTask;
-                    }
+                            return Task.CompletedTask;
+                        }
                 };
             });
 

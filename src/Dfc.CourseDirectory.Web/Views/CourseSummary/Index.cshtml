@@ -88,13 +88,21 @@
                                     <tr class="govuk-table__row">
                                         <th class="govuk-table__header" scope="col" style="vertical-align: text-top;">Region(s):</th>
                                         @{
-                                            <td class="govuk-table__cell">
-                                                @foreach (var region in Model.Regions)
-                                                {
-                                                    @region
-                                                    <br />
-                                                }
-                                            </td>
+                                            if (Model.National)
+                                            {
+                                                <td class="govuk-table__cell">National</td>
+                                            }
+                                            else
+                                            {
+                                                <td class="govuk-table__cell">
+                                                    @foreach (var region in Model.Regions)
+                                                    {
+                                                        @region
+                                                        <br />
+                                                    }
+                                                </td>
+                                            }
+
                                         }
 
                                     </tr>

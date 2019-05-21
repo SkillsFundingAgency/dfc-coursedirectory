@@ -56,6 +56,7 @@ namespace Dfc.CourseDirectory.Models.Models.Venues
 
         // Apprenticeship related
         public int? LocationId { get; set; }
+        public int? TribalLocationId { get; set; }
         [JsonProperty("PHONE")]
         public string Telephone { get; set; }
         [JsonProperty("EMAIL")]

@@ -25,7 +25,7 @@
                 </div>
 
                 <div id="aliasContainer" class="govuk-form-group">
-                    <label id="govuk-label-Cost" class="govuk-label">
+                    <label id="govuk-label-AliasName" class="govuk-label">
                         Your alias
                     </label>
 
@@ -34,7 +34,7 @@
 
                     <input class="govuk-input" style="display:inline;" asp-for="@Model.AliasName" type="text" aria-describedby=""
                            val-max-length="100"
-                           val-max-length-message="Provider Alias Name' must be 100 characters or less"
+                           val-max-length-message="Provider Alias Name must be 100 characters or less"
                            val-regex="@regex"
                            val-regex-message="Provider Alias Name contains invalid characters">
                 </div>
@@ -47,7 +47,7 @@
                               val-max-length-message="Brief Overview of Your Organisation for Employers must be 750 characters or less">Brief Overview of Your Organisation for Employers, must be 750 characters or less</span>
                         <span id="briefOverviewInvalid" class="" style="display: none"
                               val-regex="@regex"
-                              val-regex-message="Brief Overview of Your Organisation for Employers contains invalid characters">Brief Overview of Your Organisation for Employers, contains invalid characters</span>
+                              val-regex-message="Brief Overview of Your Organisation for Employers contains invalid characters">Brief Overview of Your Organisation for Employers contains invalid characters</span>
                         <label class="govuk-label" for="word-count">
                             Brief overview of your organisation for employers
                         </label>
@@ -121,10 +121,7 @@
 
             var $alias = $("#@nameof(Model.AliasName)").govUkInput();
 
-           // var $briefoverview = $("#brief").govUkTextarea();
-
             var $errorSummary = $("#errorsummary").govUkErrorSummary();
-
 
             function validate() {
 
@@ -135,7 +132,11 @@
             $invalidBriefOverview.removeClass("govuk-error-message");
                 $invalidBriefOverview.hide();
 
-            validStates = [];
+                validStates = [];
+
+                $alias.val($alias.val().trim());
+               
+
 
             if (!$.regexValidate({ regex: $alias.attr("val-regex") }, $alias.val())) {
                 $alias.govUkInput("invalidState", $alias.attr("val-regex-message"));
@@ -160,7 +161,7 @@
 
 
 
-            if (!$.regexValidate({ regex:$invalidBriefOverview.attr("val-regex") }, tinymce.get('brief').getBody().innerText.trim())) {
+            if (!$.regexValidate({ regex:$invalidBriefOverview.attr("val-regex") }, tinymce.get('brief').getBody().innerText)) {
                 $invalidBriefOverview.addClass("govuk-error-message");
                 $invalidBriefOverview.show();
 
