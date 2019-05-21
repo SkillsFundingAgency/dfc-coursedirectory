@@ -28,7 +28,7 @@ namespace Dfc.CourseDirectory.Services.AuthService
         }
         public AuthUserDetails GetDetailsByEmail(string email)
         {
-            _logger.LogInformation("Getting auth tokens for " + email);
+            _logger.LogWarning("Getting auth tokens for " + email);
             SqlParameter param = new SqlParameter()
             {
                 ParameterName = "@Email",
@@ -46,7 +46,7 @@ namespace Dfc.CourseDirectory.Services.AuthService
         }
         private AuthUserDetails ExtractUserDetails(DataTable dt)
         {
-            _logger.LogInformation("Extracting User Data");
+            _logger.LogWarning("Extracting User Data");
             AuthUserDetails details = new AuthUserDetails(
                 userId: (((string)dt.Rows[0]["UserId"] != string.Empty) ? Guid.Parse(dt.Rows[0]["UserId"].ToString()) : Guid.Empty),
                 email: dt.Rows[0]["Email"].ToString(),

@@ -123,20 +123,20 @@ namespace Dfc.CourseDirectory.Services.BaseDataAccess
 
         public DataTable GetDataReader(string procedureName, List<SqlParameter> parameters, CommandType commandType = CommandType.StoredProcedure)
         {
-            _logger.LogInformation("Running: " + procedureName + " to get user tokens");
+            _logger.LogWarning("Running: " + procedureName + " to get user tokens");
             DbDataReader ds;
             DataTable values = new DataTable();
             try
             {
                 DbConnection connection = this.GetConnection();
                 {
-                    _logger.LogInformation("Opening DB Connection");
+                    _logger.LogWarning("Opening DB Connection");
                     DbCommand cmd = this.GetCommand(connection, procedureName, commandType);
                     if (parameters != null && parameters.Count > 0)
                     {
                         cmd.Parameters.AddRange(parameters.ToArray());
                     }
-                    _logger.LogInformation("Executing data reader");
+                    _logger.LogWarning("Executing data reader");
                     values.Load(cmd.ExecuteReader(CommandBehavior.CloseConnection));
                 }
             }
