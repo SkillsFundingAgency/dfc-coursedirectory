@@ -1,0 +1,80 @@
+﻿@using Dfc.CourseDirectory.Models.Enums
+@using Dfc.CourseDirectory.Web.Helpers
+@using Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships
+@{
+    Layout = "_Layout_Your_Courses";
+}
+
+@model Dfc.CourseDirectory.Web.ViewModels.Apprenticeships.ApprenticeshipDeliveryOptionsViewModel
+
+<form class="govuk-!-margin-bottom-9" id="ApprenticeshipDeliveryOptionsForm" asp-controller="Apprenticeships" asp-action="ApprenticeShipDeliveryOptions" method="post">
+    <div class="cd-dashboard govuk-grid-row govuk-body ">
+        <a asp-controller="Apprenticeships" asp-action="ApprenticeShipDelivery" class="govuk-back-link">Back</a><br />
+        <div class="govuk-form-group govuk-grid-column-two-thirds">
+            <fieldset class="govuk-fieldset" aria-describedby="how-contacted-conditional-hint">
+                <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+                    <h1 class="govuk-fieldset__heading">
+                        Select delivery options
+                    </h1>
+                </legend>
+
+                @await Component.InvokeAsync(nameof(ChooseLocation), new ChooseLocationModel()
+       {
+       LabelText = "Select location",
+       HintText = "",
+       LocationId = Model.LocationId ?? (Guid?)null,
+       DisplayLink = true
+
+       })
+
+ 
+
+
+                <div class="govuk-form-group">
+                    <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
+                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+                            <h2 class="govuk-fieldset__heading">
+                                How is the training delivered at this location?
+
+                            </h2>
+                        </legend>
+                        <span id="waste-hint" class="govuk-hint">
+                            Select all that apply.
+                        </span>
+                        <div class="govuk-checkboxes">
+                            <div class="govuk-checkboxes__item">
+                                <input class="govuk-checkboxes__input" type="checkbox" asp-for="@Model.DayRelease">
+                                <label class="govuk-label govuk-checkboxes__label"
+                                    @WebHelper.GetEnumDescription(ApprenticeShipDeliveryLocation.DayRelease)
+                                </label>
+                            </div>
+                            <div class="govuk-checkboxes__item">
+                                <input class="govuk-checkboxes__input" type="checkbox" asp-for="@Model.BlockRelease">
+                                <label class="govuk-label govuk-checkboxes__label">
+                                    @WebHelper.GetEnumDescription(ApprenticeShipDeliveryLocation.BlockRelease)
+                                </label>
+                            </div>
+
+                         
+
+
+
+
+                        </div>
+                    </fieldset>
+                </div>
+
+
+
+
+            </fieldset>
+            <br />
+
+            <button type="submit" class="govuk-button" id="next">Continue</button>
+        </div>
+    </div>
+</form>
+
+
+
+

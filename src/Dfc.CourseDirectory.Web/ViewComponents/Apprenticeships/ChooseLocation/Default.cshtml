@@ -1,0 +1,35 @@
+﻿
+@using Dfc.CourseDirectory.Web.Helpers;
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships.ChooseLocationModel
+
+
+
+<div class="govuk-form-group">
+    <label id="govuk-label-@nameof(@Model.LocationId)" class="govuk-label" asp-for="@Model.LabelText">
+        @Model.LabelText
+    </label>
+    @if (!string.IsNullOrWhiteSpace(Model.HintText))
+    {
+        <span class="govuk-hint">
+            @Model.HintText
+        </span>
+    }
+
+
+    <div class="">
+        <select asp-for="@Model.LocationId" asp-items="@Model.Locations" class="govuk-select" val-required-message="Select location"></select>
+        @if (Model.DisplayLink)
+        {
+            <a href="#" class="govuk-link" id="addNewLocation">I need to add a location to this list</a>
+        }
+    </div>
+</div>
+
+<script>
+    (function ($) {
+        $(function () {
+
+        });
+    })(jQuery);
+</script>
