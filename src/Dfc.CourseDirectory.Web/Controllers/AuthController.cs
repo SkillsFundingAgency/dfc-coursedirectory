@@ -30,7 +30,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             await HttpContext.ChallengeAsync(new AuthenticationProperties() { RedirectUri = returnUrl });
         }
-
         
         [Authorize]
         public async Task Logout()
