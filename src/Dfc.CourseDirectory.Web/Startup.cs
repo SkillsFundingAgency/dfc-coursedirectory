@@ -146,8 +146,8 @@ namespace Dfc.CourseDirectory.Web
             services.AddScoped<IUserHelper, UserHelper>();
             services.AddScoped<IBulkUploadService, BulkUploadService>();
 
-            services.Configure<ApprenticeshipServiceSettings>(Configuration.GetSection(nameof(ApprenticeshipServiceSettings)));
-            services.AddScoped<IApprenticeshipService, ApprenticeshipService>();
+            //services.Configure<ApprenticeshipServiceSettings>(Configuration.GetSection(nameof(ApprenticeshipServiceSettings)));
+            //services.AddScoped<IApprenticeshipService, ApprenticeshipService>();
 
             services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
