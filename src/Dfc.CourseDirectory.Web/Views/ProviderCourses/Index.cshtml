@@ -11,100 +11,100 @@
 
     if (!hasCourses)
     {
-<div class="govuk-body">
-    <main id="Cd-course-list" class="govuk-main-wrapper">
-        <span class="govuk-caption-xl">Course directory</span>
-        <h1 class="govuk-heading-xl">Your published courses</h1>
+        <div class="govuk-body">
+            <main id="Cd-course-list" class="govuk-main-wrapper">
+                <span class="govuk-caption-xl">Course directory</span>
+                <h1 class="govuk-heading-xl">Your published courses</h1>
 
 
-        <p class="govuk-body-l">
-            You have no courses listed on the course directory.
-        </p>
-        <h3 class="govukbody govuk-heading-m">What next?</h3>
-
-        <p>
-            <span class="govuk-caption-xl">You can</span>
-        </p>
-
-        <ul>
-            <li>
-                <p>
-                    <a href="~/RegulatedQualification" class="govuk-link">publish a course </a>to the course directory
+                <p class="govuk-body-l">
+                    You have no courses listed on the course directory.
                 </p>
-            </li>
-            <li>
+                <h3 class="govukbody govuk-heading-m">What next?</h3>
+
                 <p>
-                    <a href="~/BulkUpload" class="govuk-link">publish all your courses </a> with a file upload
+                    <span class="govuk-caption-xl">You can</span>
                 </p>
-            </li>
-            @if (Model.PendingCoursesCount.HasValue && Model.PendingCoursesCount.Value > 0)
-            {
-            <li>
-                <p>
-                    <a href="~/Migration" class="govuk-link">or add information to @Model.PendingCoursesCount of your courses </a>that can’t be published until they are fixed
-                </p>
-            </li>
-            }
-        </ul>
+
+                <ul>
+                    <li>
+                        <p>
+                            <a href="~/RegulatedQualification" class="govuk-link">publish a course </a>to the course directory
+                        </p>
+                    </li>
+                    <li>
+                        <p>
+                            <a href="~/BulkUpload" class="govuk-link">publish all your courses </a> with a file upload
+                        </p>
+                    </li>
+                    @if (Model.PendingCoursesCount.HasValue && Model.PendingCoursesCount.Value > 0)
+                    {
+                        <li>
+                            <p>
+                                <a href="~/Migration" class="govuk-link">or add information to @Model.PendingCoursesCount of your courses </a>that can’t be published until they are fixed
+                            </p>
+                        </li>
+                    }
+                </ul>
 
 
-    </main>
-</div>
+            </main>
+        </div>
     }
     else
     {
 
 
-<div class="cd-hero-grey">
-  
-        <header class="cd-hero-search">
-            <div class="content-container">
-                <div class="grid-row" data-sf-element="Row">
-                    <div class="column-two-thirds">
-                        <div>
+        <div class="cd-hero-grey">
 
-                            <span class="govuk-caption-xl">Course directory</span>
+            <header class="cd-hero-search">
+                <div class="content-container">
+                    <div class="grid-row" data-sf-element="Row">
+                        <div class="column-two-thirds">
+                            <div>
 
-                            @if (!string.IsNullOrWhiteSpace(Model.NotificationTitle))
-                            {
-                                @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+                                <span class="govuk-caption-xl">Course directory</span>
+
+                                @if (!string.IsNullOrWhiteSpace(Model.NotificationTitle))
                                 {
-                                    NotificationTitle = Model.NotificationTitle,
-                                    NotificationMessage = Model.NotificationMessage,
-                                    ClassType = "info-summary"
-                                })
-                            }
-                            <h1 class="govuk-heading-xl">Your published courses</h1>
-                            <p class="govuk-body-l">These are the courses you have listed on the course directory.</p>
-                        </div>
-                        <form class="govuk-!-margin-bottom-9" id="zCodeSearch" asp-controller="ProviderCourses" asp-action="FilterCourses" method="post">
-                            <div class="header-search-content">
-                                <span asp-validation-for="@Model.Search" class="govuk-error-message"></span>
-                                <div class="search-input-wrapper">
+                                    @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+                                    {
+                                        NotificationTitle = Model.NotificationTitle,
+                                        NotificationMessage = Model.NotificationMessage,
+                                        ClassType = "info-summary"
+                                    })
+                                }
+                                <h1 class="govuk-heading-xl">Your published courses</h1>
+                                <p class="govuk-body-l">These are the courses you have listed on the course directory.</p>
+                            </div>
+                            <form class="govuk-!-margin-bottom-9" id="zCodeSearch" asp-controller="ProviderCourses" asp-action="FilterCourses" method="post">
+                                <div class="header-search-content">
+                                    <span asp-validation-for="@Model.Search" class="govuk-error-message"></span>
+                                    <div class="search-input-wrapper">
 
 
-                                    <input class="govuk-input search-input js-search-focus" asp-for="@Model.Search" type="text">
-                                    <div class="cd-c-search__item cd-search__submit-wrapper">
-                                        <button type="button" class=" submit" id="searchButton">Search</button>
+                                        <input class="govuk-input search-input js-search-focus" asp-for="@Model.Search" type="text">
+                                        <div class="cd-c-search__item cd-search__submit-wrapper">
+                                            <button type="button" class=" submit" id="searchButton">Search</button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </form>
+                            </form>
 
-                        <div class="govuk-grid-row  ">
+                            <div class="govuk-grid-row  ">
 
-                            <div id="results">
+                                <div id="results">
 
-                                @await Component.InvokeAsync(nameof(ProviderCoursesResults), Model)
+                                    @await Component.InvokeAsync(nameof(ProviderCoursesResults), Model)
+                                </div>
+
                             </div>
 
                         </div>
-
                     </div>
                 </div>
-            </div>
-        </header>
-    </div>
+            </header>
+        </div>
 
 
 
@@ -150,12 +150,12 @@
                 $attendancePatternFilterCheckboxes.on("click", debounce(doSearch, 1500));
                 $regionFilterCheckboxes.on("click", debounce(doSearch, 1500));
             };
-            
+
             $(document).ready(function () {
                 assignEventsToAllCheckboxes();
 
                 var courseRunGuid = '@Model.CourseRunId';
-                
+
                 var summary = $("#cd-info-summary");
                 if (courseRunGuid !== "" || courseRunGuid !== undefined && summary === undefined) {
                     var $courseRunId = $("#" + courseRunGuid);
@@ -197,16 +197,25 @@
             var doSearch = function () {
                 $(".cd-info-summary").hide();
 
-
-
                 var runSearch = false;
+
+
+
+
                 if (($elementSearchTerm.val().length > 0)) {
 
                     if (isNullOrWhitespace($elementSearchTerm.val())) {
 
                     } else {
-                        runSearch = true;
+                           var result = validator.element($elementSearchTerm);
+                if (result) {
+                    HideValidationErrorMessage();
+                    runSearch = true;
+                } else {
+                    ShowValidationErrorMessage();
+                }
                     }
+                
                 } else {
                     runSearch = true;
                 }
@@ -306,39 +315,41 @@
                     $validationMessageSearchTerm.css("margin-bottom", "0");
             }
 
+              $elementSearchTerm.on("keyup", debounce(doSearch, 400));
+            $buttonSearch.on("click", doSearch);
 
-             $buttonSearch.on("click", function () {
+             //$buttonSearch.on("click", function () {
+             //    debounce(doSearch, 400);
+             //   var result = validator.element($elementSearchTerm);
+             //   if (result) {
+             //       HideValidationErrorMessage();
+             //       doSearch();
+             //   } else {
+             //       ShowValidationErrorMessage();
+             //   }
+             //});
 
-                var result = validator.element($elementSearchTerm);
-                if (result) {
-                    HideValidationErrorMessage();
-                    doSearch();
-                } else {
-                    ShowValidationErrorMessage();
-                }
-             });
+             // $elementSearchTerm.on("blur", function () {
+             //     debounce(doSearch, 400);
+             //   var result = validator.element($elementSearchTerm);
+             //   if (result) {
+             //       HideValidationErrorMessage();
+             //       doSearch();
+             //   } else {
+             //       ShowValidationErrorMessage();
+             //   }
+             // });
 
-              $elementSearchTerm.on("blur", function () {
-
-                var result = validator.element($elementSearchTerm);
-                if (result) {
-                    HideValidationErrorMessage();
-                    doSearch();
-                } else {
-                    ShowValidationErrorMessage();
-                }
-              });
-
-                $elementSearchTerm.on("keyup", function () {
-
-                var result = validator.element($elementSearchTerm);
-                if (result) {
-                    HideValidationErrorMessage();
-                    doSearch();
-                } else {
-                    ShowValidationErrorMessage();
-                }
-              });
+              //  $elementSearchTerm.on("keyup", function () {
+              //      debounce(doSearch, 400);
+              //  var result = validator.element($elementSearchTerm);
+              //  if (result) {
+              //      HideValidationErrorMessage();
+              //      doSearch();
+              //  } else {
+              //      ShowValidationErrorMessage();
+              //  }
+              //});
 
       function ValidateAndSearchForProvider() {
                 var trimmed = $elementSearchTerm.val().trim();

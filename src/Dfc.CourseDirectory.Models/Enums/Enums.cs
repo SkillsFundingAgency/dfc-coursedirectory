@@ -1,8 +1,68 @@
 ﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace Dfc.CourseDirectory.Models.Enums
 {
 
+    public enum ApprenticeShipPreviousPage
+    {
+        [Display(Name = "Undefined")]
+        [Description("Undefined")]
+        Undefined = 0,
+        [Display(Name = "Details")]
+        [Description("Details")]
+        Details = 1,
+        [Display(Name = "DeliveryLocation")]
+        [Description("DeliveryLocation")]
+        DeliveryLocation = 2,
+        [Display(Name = "DeliveryOptions")]
+        [Description("DeliveryOptions")]
+        DeliveryOptions = 3,
+        [Display(Name = "LocationChoice")]
+        [Description("LocationChoice")]
+        LocationChoice = 4,
+        [Display(Name = "LocationRegions")]
+        [Description("LocationRegions")]
+        LocationRegions = 5,
+        [Display(Name = "Summary")]
+        [Description("Summary")]
+        Summary = 6,
+        [Display(Name = "Complete")]
+        [Description("Complete")]
+        Complete = 7,
+        [Display(Name = "YourApprenticeships")]
+        [Description("YourApprenticeships")]
+        YourApprenticeships = 8
+
+    }
+
+    public enum ApprenticeShipMode
+    {
+        [Display(Name = "Undefined")]
+        [Description("Undefined")]
+        Undefined = 0,
+        [Display(Name = "Add new")]
+        [Description("Add")]
+        Add = 1,
+        [Display(Name = "Edit")]
+        [Description("Edit")]
+        Edit = 2
+
+    }
+
+    public enum ApprenticeShipDeliveryLocation
+    {
+        [Display(Name = "Undefined")]
+        [Description("Undefined")]
+        Undefined = 0,
+        [Display(Name = "Day release")]
+        [Description("DayRelease")]
+        DayRelease = 1,
+        [Display(Name = "Block release")]
+        [Description("BlockRelease")]
+        BlockRelease = 2
+
+    }
     public enum PublishMode
     {
         [Description("Default")]
@@ -104,12 +164,14 @@ namespace Dfc.CourseDirectory.Models.Enums
 
     public enum ApprenticeshipDelivery
     {
+        [Description("Undefined")]
+        Undefined = 0,
         [Description("At one of your locations")]
-        YourLocation = 0,
+        YourLocation = 1,
         [Description("At an employer's address")]
-        EmployersAddress = 1,
+        EmployersAddress = 2,
         [Description("Both")]
-        Both = 2
+        Both = 3
     }
 
     public enum LocationType
@@ -122,6 +184,16 @@ namespace Dfc.CourseDirectory.Models.Enums
         Region = 2,
         [Description("SubRegion")]
         SubRegion = 3
+    }
+
+    public enum NationalApprenticeship
+    {
+        [Description("Undefined")]
+        Undefined = 0,
+        [Description("Yes")]
+        Yes = 1,
+        [Description("No")]
+        No = 2
     }
 
 
