@@ -13,7 +13,7 @@ namespace Dfc.CourseDirectory.Services.BaseDataAccess
     public class BaseDataAccess : IBaseDataAccess
     {
         public string ConnectionString { get; set; }
-        private readonly ILogger _logger;
+        private readonly ILogger<BaseDataAccess> _logger;
         public BaseDataAccess(IOptions<BaseDataAccessSettings> settings,
             ILoggerFactory logFactory)
         {
@@ -123,26 +123,26 @@ namespace Dfc.CourseDirectory.Services.BaseDataAccess
 
         public DataTable GetDataReader(string procedureName, List<SqlParameter> parameters, CommandType commandType = CommandType.StoredProcedure)
         {
-            _logger.LogWarning("Running: " + procedureName + " to get user tokens");
+            _logger.LogCritical("Running: " + procedureName + " to get user tokens");
             DbDataReader ds;
             DataTable values = new DataTable();
             try
             {
                 DbConnection connection = this.GetConnection();
                 {
-                    _logger.LogWarning("Opening DB Connection");
+                    _logger.LogCritical("Opening DB Connection");
                     DbCommand cmd = this.GetCommand(connection, procedureName, commandType);
                     if (parameters != null && parameters.Count > 0)
                     {
                         cmd.Parameters.AddRange(parameters.ToArray());
                     }
-                    _logger.LogWarning("Executing data reader");
+                    _logger.LogCritical("Executing data reader");
                     values.Load(cmd.ExecuteReader(CommandBehavior.CloseConnection));
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError("Failed to GetDataReader for " + procedureName, ex, parameters);
+                _logger.LogCritical("Failed to GetDataReader for " + procedureName, ex, parameters);
                 throw;
             }
 
