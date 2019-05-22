@@ -211,9 +211,6 @@ namespace Dfc.CourseDirectory.Services.CourseService
 
                     var json = await response.Content.ReadAsStringAsync();
 
-                    //if (!json.StartsWith("["))
-                    //    json = "[" + json + "]";
-
                     _logger.LogInformationObject("Provider search service json response", json);
                     ProviderAzureSearchResultModel providers = JsonConvert.DeserializeObject<ProviderAzureSearchResultModel>(json);
 
