@@ -215,7 +215,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
                     ProviderAzureSearchResultModel providers = JsonConvert.DeserializeObject<ProviderAzureSearchResultModel>(json);
 
                     //ProviderSearchResult searchResult = new ProviderSearchResult(providers);
-                    return Result.Ok<ProviderAzureSearchResultModel>(providers); // searchResult);
+                    return Result.Ok<ProviderAzureSearchResultModel>(providers);
 
                 } else
                     return Result.Fail<ProviderAzureSearchResultModel>("Provider search service unsuccessful http response");
