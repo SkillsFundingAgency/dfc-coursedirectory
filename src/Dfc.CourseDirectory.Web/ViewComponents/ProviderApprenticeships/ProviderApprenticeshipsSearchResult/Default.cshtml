@@ -16,7 +16,7 @@
 }
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-@model Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships.ApprenticeshipSearchResult.ApprenticeshipsSearchResultModel;
+@model Dfc.CourseDirectory.Web.ViewComponents.ProviderApprenticeships.ProviderApprenticeshipSearchResult.ProviderApprenticeshipsSearchResultModel;
 
 @if (Model.Items == null)
 {
@@ -73,14 +73,20 @@ else
                 <div class="courserun__row3" id="1">
 
                 </div>
-                <div class="courserun__row4" style="border-top:none">
+                <div class="courserun__row4">
                     @*@Html.ActionLink("Choose this apprenticeship", "ApprenticeShipDetails", "Apprenticeships", new { }, null)*@
                     <a class="govuk-link"
                        asp-controller="Apprenticeships"
-                       asp-action="ApprenticeShipDetails"
+                       asp-action="ApprenticeshipSummary"
                        asp-route-apprenticeshiptitle="@apprenticeship.ApprenticeshipTitle"
                        asp-route-apprenticeshipmode="@ApprenticeShipMode.Add"
-                       asp-route-apprenticeshippreviouspage="@ApprenticeShipPreviousPage.YourApprenticeships">Choose this apprenticeship</a>
+                       asp-route-apprenticeshippreviouspage="@ApprenticeShipPreviousPage.YourApprenticeships">View and edit</a>
+                    <a class="govuk-link"
+                       asp-controller="ProviderApprenticeships"
+                       asp-action="DeleteApprenticeship"
+                       asp-route-apprenticeshiptitle="@apprenticeship.ApprenticeshipTitle"
+                       asp-route-apprenticeshipmode="@ApprenticeShipMode.Add"
+                       asp-route-apprenticeshippreviouspage="@ApprenticeShipPreviousPage.YourApprenticeships">Delete</a>
 
                 </div>
             </div>

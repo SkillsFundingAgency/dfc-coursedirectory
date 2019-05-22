@@ -1,0 +1,50 @@
+﻿@using Dfc.CourseDirectory.Models.Enums
+@using Dfc.CourseDirectory.Web.Helpers
+@{
+    Layout = "_Layout_Your_Courses";
+}
+
+@model Dfc.CourseDirectory.Web.ViewModels.Apprenticeships.ApprenticeshipSummaryViewModel
+
+
+<form class="govuk-!-margin-bottom-9" id="ApprenticeshipSummaryForm" asp-controller="Apprenticeships" asp-action="ApprenticeshipSummary" method="post">
+    <a asp-controller="Apprenticeships" asp-action="ApprenticeShipDelivery" class="govuk-back-link">Back</a><br />
+    <div class="cd-dashboard ">
+
+
+        <div class="">
+
+
+            <main class="govuk-mainwrapper " id="main-content" role="main">
+                <div class="govuk-grid-row">
+                    <div class="govuk-grid-column-two-thirds-from-desktop">
+                        <span class="govuk-caption-xl">@Model?.ApprenticeshipDetailViewModel?.ApprenticeshipTitle</span>
+                        <h1 class="govuk-heading-xl">Check and publish to the course directory (Stubbed)</h1>
+
+
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Apprenticeship information for employers
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Html.Raw(Model.ApprenticeshipDetailViewModel.Information)
+                            </dd>
+                            <dd class="govuk-summary-list__actions">
+                                <a class="" asp-controller="Apprenticeships" asp-action="ApprenticeshipDetails">Change</a>
+
+                            </dd>
+                        </div>
+
+                        <button type="submit" class="govuk-button" id="next">Publish</button>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+
+
+
+
+    </div>
+
+</form>

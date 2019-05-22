@@ -55,6 +55,8 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
 
     }
 
+
+
     public enum AttendancePattern
     {
         [Display(Name = "Undefined")]

@@ -47,7 +47,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ViewModels\ProviderApprenticeships\" />
     <Folder Include="wwwroot\vendor\" />
   </ItemGroup>
 
@@ -63,10 +62,19 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="ViewComponents\ProviderApprenticeships\ProviderApprenticeshipsSearchResult\Default.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="ViewComponents\ProviderApprenticeships\ProviderApprenticeshipsSearch\Default.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="ViewComponents\Apprenticeships\ApprenticeshipSearchResult\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="ViewComponents\Apprenticeships\ApprenticeshipSearch\Default.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="ViewComponents\Apprenticeships\ChooseLocation\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="ViewComponents\Courses\ChooseRegion\Default.cshtml">
@@ -147,6 +155,21 @@
     <Content Update="ViewComponents\VenueSearch\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\ApprenticeshipComplete\Index.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\ApprenticeshipRegions\Index.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\ApprenticeshipDeliveryOptions\Index.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\ApprenticeshipSummary\Index.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\ApprenticeshipLocationChoiceSelection\Index.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\ApprenticeshipDelivery\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
@@ -160,6 +183,9 @@
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\Migration\Index.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\ProviderApprenticeships\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\ProviderCourses\Index.cshtml">

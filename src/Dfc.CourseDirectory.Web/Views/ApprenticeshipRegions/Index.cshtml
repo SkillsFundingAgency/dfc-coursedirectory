@@ -1,0 +1,70 @@
+﻿@using Dfc.CourseDirectory.Models.Enums
+@using Dfc.CourseDirectory.Web.Helpers
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseRegion
+@using Dfc.CourseDirectory.Web.ViewComponents.Extensions
+@{
+    Layout = "_Layout_Your_Courses";
+}
+
+@model Dfc.CourseDirectory.Web.ViewModels.Apprenticeships.ApprenticeshipRegionsViewModel
+
+
+
+<form class="govuk-!-margin-bottom-9" id="ApprenticeshipRegionsForm" asp-controller="Apprenticeships" asp-action="ApprenticeShipRegions" method="post">
+    <div class="govuk-form-group">
+        <fieldset class="govuk-fieldset">
+            <a asp-controller="Apprenticeships" asp-action="ApprenticeshipLocationChoiceSelection" class="govuk-back-link">Back</a><br />
+            <h1 class="govuk-heading-xl">Select the regions where you provide this training (Stubbed)</h1>
+            <br />
+
+            <div id="regions-section">
+                <label class="govuk-label" id="govuk-label-SelectRegionCheckBoxes" for="select-region">
+                    @Model.ChooseRegion.Regions.LabelText
+                </label>
+                <span id="select-region-hint" class="govuk-hint">
+                    @Model.ChooseRegion.Regions.HintText
+                </span>
+                <div class="govuk-checkboxes" id="SelectRegionCheckBoxes" val-required-message="Select at least one region">
+                    @foreach (var item in Model.ChooseRegion.Regions.RegionItems)
+                    {
+                        <details class="govuk-details">
+                            <summary class="govuk-details__summary">
+                                <span id="region" @item.Id class="govuk-details__summary-text">
+                                    @item.RegionName
+                                </span>
+                            </summary>
+                            <div class="govuk-form-group">
+                                <h3><a class="govuk-link" id="SelectAll" region-id="@item.Id" href="#">Select all</a></h3>
+                                <div class="flex-container govuk-grid-row region-checkboxes" id="details-content-@item.Id" aria-hidden="true">
+
+                                    @{ var x = 0; }
+                                    @foreach (var subregion in item.SubRegion)
+                                    {
+                                        x++;
+
+                                        <div class="govuk-checkboxes__item">
+                                            <input class="govuk-checkboxes__input" id="RegionName-@x" region-id="@item.Id" name="SelectedRegions" type="checkbox" value="@subregion.Id" @subregion.Checked.ThenNullableCheck() />
+                                            <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@subregion.SubRegionName</label>
+                                        </div>
+
+                                    }
+                                </div>
+                            </div>
+                        </details>
+                    }
+
+                </div>
+            </div>
+
+        </fieldset>
+    </div>
+    <br />
+
+    <button type="submit" class="govuk-button" id="next">Continue</button>
+</form>
+
+
+
+
+
+

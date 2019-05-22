@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Web.ViewModels.YourCourses;
 using System.ComponentModel.DataAnnotations;
+using Dfc.CourseDirectory.Models.Enums;
 
 namespace Dfc.CourseDirectory.Web.ViewModels.Apprenticeships
 {
@@ -15,6 +16,8 @@ namespace Dfc.CourseDirectory.Web.ViewModels.Apprenticeships
     {
         public string ApprenticeshipTitle { get; set; }
 
+        public ApprenticeShipMode ApprenticeshipMode { get; set; }
+        public ApprenticeShipPreviousPage ApprenticeshipPreviousPage { get; set; }
         public string Information { get; set; }
 
 
