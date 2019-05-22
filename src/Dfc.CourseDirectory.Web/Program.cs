@@ -18,7 +18,7 @@ namespace Dfc.CourseDirectory.Web
                 builder) =>
                 {
                     builder.AddConfiguration(context.Configuration.GetSection("Logging"));
-                    var ikey = context.Configuration.GetSection("ApplicationInsights:InstrumentationKey");
+                    var ikey = context.Configuration.GetSection("APPINSIGHTS_INSTRUMENTATIONKEY");
                     builder.AddApplicationInsights(ikey.Value);
 
                 }
