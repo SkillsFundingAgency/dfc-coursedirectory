@@ -65,7 +65,7 @@
                 </div>
 
 
-                @await Component.InvokeAsync(nameof(DeliveryOptionsList), Model)
+                @await Component.InvokeAsync(nameof(DeliveryOptionsList), Model.DeliveryOptionsListItemModel)
 
                 @*@if (Model.DeliveryOptionsListItemModel != null)
                 {

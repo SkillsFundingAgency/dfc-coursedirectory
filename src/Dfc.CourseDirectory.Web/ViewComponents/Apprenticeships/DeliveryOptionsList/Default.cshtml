@@ -1,11 +1,11 @@
 ﻿
 @using Dfc.CourseDirectory.Web.Helpers;
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-@*@model Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships.DeliveryOptionsListModel*@
-@model Dfc.CourseDirectory.Web.ViewModels.Apprenticeships.ApprenticeshipDeliveryOptionsViewModel
+@model Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships.DeliveryOptionsListModel
+@*@model Dfc.CourseDirectory.Web.ViewModels.Apprenticeships.ApprenticeshipDeliveryOptionsViewModel*@
 
 
-@if (Model.DeliveryOptionsListItemModel != null)
+@if (Model != null)
 {
     <table id="ResultsTable" class="govuk-table hide">
         <caption class="govuk-table__caption">Delivery options</caption>
@@ -18,22 +18,23 @@
             </tr>
         </thead>
         <tbody>
-            @for (int i = 0; i < Model.DeliveryOptionsListItemModel.DeliveryOptionsListItemModel.Count; i++)
+            @for (int i = 0; i < Model.DeliveryOptionsListItemModel.Count; i++)
             {
-                @Html.HiddenFor(model => Model.DeliveryOptionsListItemModel.DeliveryOptionsListItemModel[i].LocationId)
+                @*@Html.HiddenFor(model => Model.DeliveryOptionsListItemModel.DeliveryOptionsListItemModel[i].LocationId)
                 @Html.HiddenFor(model => Model.DeliveryOptionsListItemModel.DeliveryOptionsListItemModel[i].LocationName)
                 @Html.HiddenFor(model => Model.DeliveryOptionsListItemModel.DeliveryOptionsListItemModel[i].Delivery)
-                @Html.HiddenFor(model => Model.DeliveryOptionsListItemModel.DeliveryOptionsListItemModel[i].Radius)
+                @Html.HiddenFor(model => Model.DeliveryOptionsListItemModel.DeliveryOptionsListItemModel[i].Radius)*@
 
                 <tr class="govuk-table__row">
-                    @*<td class="govuk-table__header" scope="col">
+                    <td class="govuk-table__header" scope="col">
                         @{
-                            var idvalue = "DeliveryOptionsListItemModel.DeliveryOptionsListItemModel[" + i + "].LocationName";
+                            var idvalue = "DeliveryOptionsListItemModel_DeliveryOptionsListItemModel_" + i + "__LocationName";
                         }
+                        @Html.HiddenFor(m => m.DeliveryOptionsListItemModel[i].LocationName, new { @class = "", id = "DeliveryOptionsListItemModel_DeliveryOptionsListItemModel_0__LocationName"})
                         <label class="" id=@idvalue> @Model.DeliveryOptionsListItemModel[i].LocationName</label>
-                    </td>*@
-                    <td class="govuk-table__cell" scope="col">@Model.DeliveryOptionsListItemModel.DeliveryOptionsListItemModel[i].Delivery</td>
-                    <td class="govuk-table__cell" scope="col">@Model.DeliveryOptionsListItemModel.DeliveryOptionsListItemModel[i].Radius</td>
+                    </td>
+                    <td class="govuk-table__cell" scope="col">@Model.DeliveryOptionsListItemModel[i].Delivery</td>
+                    <td class="govuk-table__cell" scope="col">@Model.DeliveryOptionsListItemModel[i].Radius</td>
                     <td class="govuk-table__cell" scope="col"><a class="" asp-controller="" asp-action="">Edit</a></td>
 
                 </tr>

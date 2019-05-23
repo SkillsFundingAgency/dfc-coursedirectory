@@ -189,7 +189,35 @@
              var $contactUs = $("#@nameof(Model.ContactUsIUrl)").govUkInput();
              var $telephone = $("#@nameof(Model.Telephone)").govUkInput();
 
+              $website.on("blur", function () {
+                var trimmed = $website.val().trim().toLowerCase();
+                $website.val(trimmed);
+                if ($website.val() !== "") {
 
+
+                    if ($website.val().indexOf("http") >= 0 || $website.val().indexOf("https")>=0) {
+
+                }
+                else {
+                    $website.val("http://" + trimmed);
+                    }
+                }
+              });
+
+              $contactUs.on("blur", function () {
+                var trimmed = $contactUs.val().trim().toLowerCase();
+                $contactUs.val(trimmed);
+                if ($contactUs.val() !== "") {
+
+
+                    if ($contactUs.val().indexOf("http") >= 0 || $contactUs.val().indexOf("https")>=0) {
+
+                }
+                else {
+                    $contactUs.val("http://" + trimmed);
+                    }
+                }
+            });
 
             function isAllValid(currentValue) {
                 return currentValue === true;
@@ -364,14 +392,14 @@
                 }
 
                  // contact us (
-                 if (!$.regexValidate({ regex: $contactUs.attr("val-regex") }, $contactUs.val())) {
+                 if (!$.regexValidate({ regex: $contactUs.attr("val-regex") }, contactUsToValidate)) {
                     $contactUs.govUkInput("invalidState", $contactUs.attr("val-regex-message"));
                     var contactUsErrorHashLinks = $contactUs.govUkInput("getErrorHashLinks");
                     $errorSummary.govUkErrorSummary("add", contactUsErrorHashLinks);
                     $errorSummary.govUkErrorSummary("show");
                     validStates.push(false);
                 } else if (
-                    !$.maxLengthValidate({ max: $contactUs.attr("val-max-length") }, $contactUs.val())) {
+                    !$.maxLengthValidate({ max: $contactUs.attr("val-max-length") }, contactUsToValidate)) {
                     $contactUs.govUkInput("invalidState", $contactUs.attr("val-max-length-message"));
                     var contactUsErrorHashLinks = $contactUs.govUkInput("getErrorHashLinks");
                     $errorSummary.govUkErrorSummary("add", contactUsErrorHashLinks);
