@@ -220,7 +220,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
             else
             {
-                model.DeliveryOptionsListItemModel = new List<DeliveryOptionsListItemModel>();
+                model.DeliveryOptionsListItemModel = new DeliveryOptionsListModel();
+                model.DeliveryOptionsListItemModel.DeliveryOptionsListItemModel = new List<DeliveryOptionsListItemModel>();
             }
 
 
@@ -243,10 +244,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     //var deliveryOptionsListModel = new DeliveryOptionsListModel();
                     //deliveryOptionsListModel.DeliveryOptionsListItemModel = new List<DeliveryOptionsListItemModel>();
 
-                    model.DeliveryOptionsListItemModel = new List<DeliveryOptionsListItemModel>();
+                    model.DeliveryOptionsListItemModel = new DeliveryOptionsListModel();
+                    List<DeliveryOptionsListItemModel> list = new List<DeliveryOptionsListItemModel>();
+                    model.DeliveryOptionsListItemModel.DeliveryOptionsListItemModel = list;
                 }
 
-                model.DeliveryOptionsListItemModel.Add(new DeliveryOptionsListItemModel()
+                model.DeliveryOptionsListItemModel.DeliveryOptionsListItemModel.Add(new DeliveryOptionsListItemModel()
                 {
                     Delivery = "100% employer based",
                     LocationId = Guid.NewGuid(),

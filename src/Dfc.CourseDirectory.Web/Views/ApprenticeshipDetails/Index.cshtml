@@ -32,9 +32,11 @@
 
                             @{ var regex = @"^[a-zA-Z0-9 /\n/\r/\¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`" + "\"" + "\\\\]+$"; }
                             @{ var emailRegEx = @"^([\w\!\#$\%\&\'\*\+\-\/\=\?\^\`{\|\}\~]+\.)*[\w\!\#$\%\&\'\*\+\-\/\=\?\^\`{\|\}\~]+@((((([a-z0-9]{1}[a-z0-9\-]{0,62}[a-z0-9]{1})|[a-z])\.)+[a-z]{2,6})|(\d{1,3}\.){3}\d{1,3}(\:\d{1,5})?)$"; }
-                            @*@{ var telephoneRegEx = @"^(?:(?:\(?(?:00|\+)([1-4]\d\d|[1-9]\d?)\)?)?[\-\.\ \\\/]?)?((?:\(?\d{1,}\)?[\-\.\ \\\/]?){0,})(?:[\-\.\ \\\/]?(?:#|ext\.?|extension|x)[\-\.\ \\\/]?(\d+))?$";}*@
 
-                            @{ var telephoneRegEx = @"^(((\+44\s?\d{4}|\(?0\d{4}\)?)\s?\d{3}\s?\d{3})|((\+44\s?\d{3}|\(?0\d{3}\)?)\s?\d{3}\s?\d{4})|((\+44\s?\d{2}|\(?0\d{2}\)?)\s?\d{4}\s?\d{4}))(\s?\#(\d{4}|\d{3}))?$";}
+                            @*@{ var telephoneRegEx = @"^(((\+44\s?\d{4}|\(?0\d{4}\)?)\s?\d{3}\s?\d{3})|((\+44\s?\d{3}|\(?0\d{3}\)?)\s?\d{3}\s?\d{4})|((\+44\s?\d{2}|\(?0\d{2}\)?)\s?\d{4}\s?\d{4}))(\s?\#(\d{4}|\d{3}))?$";}*@
+
+                            @{ var telephoneRegEx = @"^(((\+44)? ?(\(0\))? ?)|(0))( ?[0-9]{3,4}){3}?$";}
+
 
 
                             @{ var websiteRegEx = @"^([-a-zA-Z0-9]{2,256}\.)+[a-z]{2,10}(\/.*)?";}
@@ -104,14 +106,14 @@
 
                                 <input class="govuk-input govuk-input--width-20" style="display:inline;" asp-for="@Model.Telephone" type="text" aria-describedby=""
                                        val-required-message="Enter telephone"
-                                        val-min-length="11"
+                                       val-min-length="11"
                                        val-min-length-message="Telephone should be minimum 11 characters"
                                        val-max-length="30"
                                        val-max-length-message="Telephone should be no more than 30 characters"
                                        val-regex="@telephoneRegEx"
-                                       val-regex-message="Telephone should only have numbers andspaces">
+                                       val-regex-message="Telephone should only have numbers and spaces">
 
-                            </div> 
+                            </div>
 
                             <div id="ContactUsContainer" class="govuk-form-group">
                                 <label id="govuk-label-Cost" class="govuk-label">

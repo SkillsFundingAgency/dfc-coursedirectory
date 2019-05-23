@@ -65,9 +65,9 @@
                 </div>
 
 
-                @*@await Component.InvokeAsync(nameof(DeliveryOptionsList), Model.DeliveryOptionsListItemModel)*@
+                @await Component.InvokeAsync(nameof(DeliveryOptionsList), Model)
 
-                @if (Model.DeliveryOptionsListItemModel != null)
+                @*@if (Model.DeliveryOptionsListItemModel != null)
                 {
                     <table id="ResultsTable" class="govuk-table hide">
                         <caption class="govuk-table__caption">Delivery options</caption>
@@ -98,7 +98,7 @@
 
                         </tbody>
                     </table>
-                }
+                }*@
 
 
             </fieldset>
