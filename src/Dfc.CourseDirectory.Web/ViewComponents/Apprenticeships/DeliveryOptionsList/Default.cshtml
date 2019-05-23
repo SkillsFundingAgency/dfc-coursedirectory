@@ -1,10 +1,11 @@
 ﻿
 @using Dfc.CourseDirectory.Web.Helpers;
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-@model List<Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships.DeliveryOptionsListItemModel>
+@*@model Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships.DeliveryOptionsListModel*@
+@model Dfc.CourseDirectory.Web.ViewModels.Apprenticeships.ApprenticeshipDeliveryOptionsViewModel
 
 
-@if (Model != null)
+@if (Model.DeliveryOptionsListItemModel != null)
 {
     <table id="ResultsTable" class="govuk-table hide">
         <caption class="govuk-table__caption">Delivery options</caption>
@@ -17,20 +18,25 @@
             </tr>
         </thead>
         <tbody>
-            @for (int i = 0; i < Model.Count; i++)
+            @for (int i = 0; i < Model.DeliveryOptionsListItemModel.DeliveryOptionsListItemModel.Count; i++)
             {
-                @*@Html.HiddenFor(model => Model[i].LocationId)
-                @Html.HiddenFor(model => Model[i].LocationName)
-                @Html.HiddenFor(model => Model[i].Delivery)
-                @Html.HiddenFor(model => Model[i].Radius)*@
+                @Html.HiddenFor(model => Model.DeliveryOptionsListItemModel.DeliveryOptionsListItemModel[i].LocationId)
+                @Html.HiddenFor(model => Model.DeliveryOptionsListItemModel.DeliveryOptionsListItemModel[i].LocationName)
+                @Html.HiddenFor(model => Model.DeliveryOptionsListItemModel.DeliveryOptionsListItemModel[i].Delivery)
+                @Html.HiddenFor(model => Model.DeliveryOptionsListItemModel.DeliveryOptionsListItemModel[i].Radius)
 
-            <tr class="govuk-table__row">
-                <td class="govuk-table__header" scope="col">@Model[i].LocationName</td>
-                <td class="govuk-table__cell" scope="col">@Model[i].Delivery</td>
-                <td class="govuk-table__cell" scope="col">@Model[i].Radius</td>
-                <td class="govuk-table__cell" scope="col"><a class="" asp-controller="" asp-action="">Edit</a></td>
-                
-            </tr>
+                <tr class="govuk-table__row">
+                    @*<td class="govuk-table__header" scope="col">
+                        @{
+                            var idvalue = "DeliveryOptionsListItemModel.DeliveryOptionsListItemModel[" + i + "].LocationName";
+                        }
+                        <label class="" id=@idvalue> @Model.DeliveryOptionsListItemModel[i].LocationName</label>
+                    </td>*@
+                    <td class="govuk-table__cell" scope="col">@Model.DeliveryOptionsListItemModel.DeliveryOptionsListItemModel[i].Delivery</td>
+                    <td class="govuk-table__cell" scope="col">@Model.DeliveryOptionsListItemModel.DeliveryOptionsListItemModel[i].Radius</td>
+                    <td class="govuk-table__cell" scope="col"><a class="" asp-controller="" asp-action="">Edit</a></td>
+
+                </tr>
             }
 
         </tbody>

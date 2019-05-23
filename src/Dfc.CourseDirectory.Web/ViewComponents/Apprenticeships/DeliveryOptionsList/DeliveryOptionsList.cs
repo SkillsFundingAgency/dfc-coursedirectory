@@ -12,14 +12,15 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Options;
 using Dfc.CourseDirectory.Web.RequestModels;
 using Dfc.CourseDirectory.Models.Models.Venues;
+using Dfc.CourseDirectory.Web.ViewModels.Apprenticeships;
 
 namespace Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships
 {
     public class DeliveryOptionsList : ViewComponent
     {
-        public async Task<IViewComponentResult> InvokeAsync(List<DeliveryOptionsListItemModel> DeliveryOptionsListItemModel)
+        public async Task<IViewComponentResult> InvokeAsync(ApprenticeshipDeliveryOptionsViewModel model)
         {
-            return View("~/ViewComponents/Apprenticeships/DeliveryOptionsList/Default.cshtml", DeliveryOptionsListItemModel);
+            return View("~/ViewComponents/Apprenticeships/DeliveryOptionsList/Default.cshtml", model);
 
         }
     }
