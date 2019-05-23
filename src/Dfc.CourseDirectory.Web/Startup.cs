@@ -1,4 +1,5 @@
-﻿using Dfc.CourseDirectory.Common.Settings;
+﻿using Dfc.CourseDirectory.Common;
+using Dfc.CourseDirectory.Common.Settings;
 using Dfc.CourseDirectory.Models.Models.Auth;
 using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.ApprenticeshipService;
@@ -52,12 +53,13 @@ namespace Dfc.CourseDirectory.Web
     {
         public IConfiguration Configuration { get; }
         private IAuthService AuthService;
-        private readonly ILogger _logger;
+        private readonly ILogger<Startup> _logger;
         private readonly IHostingEnvironment _env;
-        public Startup(IHostingEnvironment env, ILoggerFactory logFactory)
+        public Startup(IHostingEnvironment env, ILogger<Startup> logger, IConfiguration config)
         {
             _env = env;
-            _logger = logFactory.CreateLogger<Startup>();
+            _logger = logger;
+            
             var builder = new ConfigurationBuilder()
                 .SetBasePath(_env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
@@ -72,9 +74,10 @@ namespace Dfc.CourseDirectory.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton(Configuration);
             services.AddApplicationInsightsTelemetry(Configuration);
+            services.AddSingleton(Configuration);
 
+            _logger.LogCritical("Logging from ConfigureServices.");
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
@@ -367,7 +370,8 @@ namespace Dfc.CourseDirectory.Web
                         // and validated the identity token
                         OnTokenValidated = x =>
                         {
-                        
+
+                            _logger.LogMethodEnter();
                             //DFE Tokens
                             var identity = (ClaimsIdentity)x.Principal.Identity;
                        
@@ -381,7 +385,7 @@ namespace Dfc.CourseDirectory.Web
 
                             });
 
-                            _logger.LogWarning("User " + email + " has been authenticated by DFE");
+                            _logger.LogCritical("User " + email + " has been authenticated by DFE");
 
                             //Course Directory Authorisation
                             try
@@ -417,11 +421,9 @@ namespace Dfc.CourseDirectory.Web
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory,
-             IServiceProvider serviceProvider)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             loggerFactory.AddApplicationInsights(app.ApplicationServices, LogLevel.Debug);
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
