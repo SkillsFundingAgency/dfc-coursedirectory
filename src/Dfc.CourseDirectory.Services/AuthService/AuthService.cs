@@ -18,17 +18,17 @@ namespace Dfc.CourseDirectory.Services.AuthService
     public class AuthService : IAuthService
     {
         private readonly IBaseDataAccess BaseDataAccess;
-        private readonly ILogger _logger;
+        private readonly ILogger<AuthService> _logger;
         public AuthService(
             IBaseDataAccess baseDataAccess,
-            ILoggerFactory logFactory)
+            ILogger<AuthService> logger)
         {
             BaseDataAccess = baseDataAccess;
-            _logger = logFactory.CreateLogger<AuthService>();
+            _logger = logger;
         }
         public AuthUserDetails GetDetailsByEmail(string email)
         {
-            _logger.LogWarning("Getting auth tokens for " + email);
+            _logger.LogCritical("Getting auth tokens for " + email);
             SqlParameter param = new SqlParameter()
             {
                 ParameterName = "@Email",
@@ -40,8 +40,17 @@ namespace Dfc.CourseDirectory.Services.AuthService
                 param
 
             };
-            var dt = BaseDataAccess.GetDataReader("dbo.dfc_GetUserAuthorisationDetailsByEmail", dbParameters, CommandType.StoredProcedure);
-            AuthUserDetails details = ExtractUserDetails(dt);
+            AuthUserDetails details = null;
+            try
+            {
+                var dt = BaseDataAccess.GetDataReader("dbo.dfc_GetUserAuthorisationDetailsByEmail", dbParameters, CommandType.StoredProcedure);
+                details = ExtractUserDetails(dt);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogCritical("Login failed for " + email, ex);
+            }
+
             return details;
         }
         private AuthUserDetails ExtractUserDetails(DataTable dt)
