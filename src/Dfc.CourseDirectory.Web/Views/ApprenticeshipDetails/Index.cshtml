@@ -43,13 +43,13 @@
                                 <div class="govuk-form-group">
 
                                     <span id="infoRequired" class="" style="display: none"
-                                          val-required-message="Apprenticeship information required">Apprenticeship information required</span>
+                                          val-required-message="Enter Apprenticeship information for employers">Enter Apprenticeship information for employers</span>
                                     <span id="infoMax" class="" style="display: none"
                                           val-max-length="750"
-                                          val-max-length-message="Apprenticeship information for employers is too long’ / ‘Enter no more than 750 characters">Apprenticeship information for employers is too long’ / ‘Enter no more than 750 characters</span>
+                                          val-max-length-message="Apprenticeship information for employers should be no more than 750 characters">Apprenticeship information for employers should be no more than 750 characters</span>
                                     <span id="infoInvalid" class="" style="display: none"
                                           val-regex="@regex"
-                                          val-regex-message="Apprenticeship information for employers contains invalid characters’ / ‘Use only letters, numbers, spaces and commonly-used punctuation">Apprenticeship information for employers contains invalid characters’ / ‘Use only letters, numbers, spaces and commonly-used punctuation</span>
+                                          val-regex-message="Apprenticeship information for employers should only have letters, numbers, spaces and commonly-used punctuation">Apprenticeship information for employers should only have letters, numbers, spaces and commonly-used punctuation</span>
                                     <label class="govuk-label" for="word-count">
                                         Apprenticeship information for employers
                                     </label>
@@ -70,9 +70,9 @@
                                 </span>
                                 <input class="govuk-input govuk-input--width-20" style="display:inline;" asp-for="@Model.Website" type="text" aria-describedby=""
                                        val-max-length="255"
-                                       val-max-length-message="Apprenticeship web page is too long' / ‘Enter no more than 255 characters"
+                                       val-max-length-message="Apprenticeship web page should be no more than 255 characters"
                                        val-regex="@websiteRegEx"
-                                       val-regex-message="Apprenticeship web page is not in the right format' / ‘Start with http://">
+                                       val-regex-message="Apprenticeship web page should only have letters, numbers, spaces and commonly-used punctuation">
                             </div>
 
 
@@ -88,9 +88,9 @@
                                 <input class="govuk-input govuk-input--width-20" style="display:inline;" asp-for="@Model.Email" type="text" aria-describedby=""
                                        val-required-message="Enter email"
                                        val-max-length="255"
-                                       val-max-length-message="Email is too long / Enter no more than 255 characters"
+                                       val-max-length-message="Email should be no more than 255 characters"
                                        val-regex="@emailRegEx"
-                                       val-regex-message="Email contains invalid characters' / 'Use only letters, numbers, spaces and commonly-used punctuation">
+                                       val-regex-message="Email should have an ampersand">
 
 
                             </div>
@@ -104,14 +104,14 @@
 
                                 <input class="govuk-input govuk-input--width-20" style="display:inline;" asp-for="@Model.Telephone" type="text" aria-describedby=""
                                        val-required-message="Enter telephone"
-                                       val-min-length="11"
-                                       val-min-length-message="Telephone not long enough' \ ‘Enter at least 11 characters"
+                                        val-min-length="11"
+                                       val-min-length-message="Telephone should be minimum 11 characters"
                                        val-max-length="30"
-                                       val-max-length-message="Telephone is too long' \ ‘Enter no more than 30 characters"
+                                       val-max-length-message="Telephone should be no more than 30 characters"
                                        val-regex="@telephoneRegEx"
-                                       val-regex-message="Telephone is not in the right format’ \ 'Use only, numbers, spaces, brackets and +">
+                                       val-regex-message="Telephone should only have numbers andspaces">
 
-                            </div>
+                            </div> 
 
                             <div id="ContactUsContainer" class="govuk-form-group">
                                 <label id="govuk-label-Cost" class="govuk-label">
@@ -122,9 +122,9 @@
 
                                 <input class="govuk-input govuk-input--width-20" style="display:inline;" asp-for="@Model.ContactUsIUrl" type="text" aria-describedby=""
                                        val-max-length="255"
-                                       val-max-length-message="Contact us page is too long' / 'Enter no more than 255 characters"
+                                       val-max-length-message="Contact us page should be no more than 255 characters"
                                        val-regex="@websiteRegEx"
-                                       val-regex-message="Contact us page contains invalid characters' / 'Use only letters, numbers, spaces and commonly-used punctuation">
+                                       val-regex-message="Contact us page should only have letters, numbers, spaces and commonly-used punctuation">
 
                             </div>
 

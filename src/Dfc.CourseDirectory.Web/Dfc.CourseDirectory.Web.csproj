@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="ViewComponents\Apprenticeships\DeliveryOptionsList\DeliveryOptionsListModel.cs" />
     <Compile Remove="ViewComponents\Courses\Duration\DurationUnitModel.cs" />
     <Compile Remove="ViewComponents\ProviderSearchResult\ProviderSearchResultItemModel.cs" />
     <Compile Remove="ViewComponents\ZCodeSearchResult\LarsSearchFilterItemModel.cs" />
@@ -62,6 +63,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="ViewComponents\Apprenticeships\DeliveryOptionsList\Default.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="ViewComponents\ProviderApprenticeships\ProviderApprenticeshipsSearchResult\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
