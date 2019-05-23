@@ -214,22 +214,32 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                 var providerContactTypeL = provider.ProviderContact.Where(s => s.ContactType.Equals("L", StringComparison.InvariantCultureIgnoreCase));
                 string AddressLine1 = string.Empty;
-                if (!(string.IsNullOrEmpty(providerContactTypeL.FirstOrDefault()?.ContactAddress?.PAON?.Description)
-                    && string.IsNullOrEmpty(providerContactTypeL.FirstOrDefault()?.ContactAddress?.StreetDescription)))
+                if (providerContactTypeL.FirstOrDefault()?.ContactAddress?.SAON?.Description != null)
                 {
-                    AddressLine1 = providerContactTypeL.FirstOrDefault()?.ContactAddress?.PAON?.Description
-                                    + " " + providerContactTypeL.FirstOrDefault()?.ContactAddress?.StreetDescription;
+                    AddressLine1 = providerContactTypeL.FirstOrDefault()?.ContactAddress?.SAON?.Description.ToString();
                 }
                 string AddressLine2 = string.Empty;
-                if (providerContactTypeL.FirstOrDefault()?.ContactAddress?.Locality != null)
+                if (providerContactTypeL.FirstOrDefault()?.ContactAddress?.PAON?.Description != null)
                 {
-                    AddressLine2 = providerContactTypeL.FirstOrDefault()?.ContactAddress?.Locality.ToString();
+                    AddressLine2 = providerContactTypeL.FirstOrDefault()?.ContactAddress?.PAON?.Description.ToString();
                 }
 
                 string AddressLine3 = string.Empty;
+                if (providerContactTypeL.FirstOrDefault()?.ContactAddress?.StreetDescription != null)
+                {
+                    AddressLine3 = providerContactTypeL.FirstOrDefault()?.ContactAddress?.StreetDescription.ToString();
+                }
+
+                string AddressLine4 = string.Empty;
+                if (providerContactTypeL.FirstOrDefault()?.ContactAddress?.Locality != null)
+                {
+                    AddressLine4 = providerContactTypeL.FirstOrDefault()?.ContactAddress?.Locality.ToString();
+                }
+
+                string TownCity = string.Empty;
                 if (!string.IsNullOrEmpty(providerContactTypeL.FirstOrDefault()?.ContactAddress?.Items?.FirstOrDefault()))
                 {
-                    AddressLine3 = providerContactTypeL.FirstOrDefault()?.ContactAddress?.Items?.FirstOrDefault();
+                    TownCity = providerContactTypeL.FirstOrDefault()?.ContactAddress?.Items?.FirstOrDefault() + ", ";
                 }
 
                 string PostCode = string.Empty;
@@ -241,6 +251,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                 model.AddressLine1 = AddressLine1;
                 model.AddressLine2 = AddressLine2;
+                model.AddressLine3 = AddressLine3;
+                model.AddressLine4 = AddressLine4;
+                model.TownCity = TownCity;
+                
                 model.PostCode = PostCode;
 
                 model.Telephone = providerContactTypeL?.FirstOrDefault()?.ContactTelephone1;

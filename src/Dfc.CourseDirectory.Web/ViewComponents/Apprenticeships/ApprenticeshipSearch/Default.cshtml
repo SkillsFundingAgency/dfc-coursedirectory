@@ -162,12 +162,12 @@
                  $apprenticeshipSearchTerm.on("keyup", debounce(doSearch, 400));
             $buttonSearch.on("click", doSearch);
 
-            //$(document).keypress(function (e) {
-            //    if (e.which === 13) {
-            //        e.preventDefault();
-            //        ValidateAndSearchForProvider();
-            //    }
-            //});
+            $(document).keypress(function (e) {
+                if (e.which === 13) {
+                    e.preventDefault();
+                    //ValidateAndSearchForProvider();
+                }
+            });
 
              function ShowValidationErrorMessage() {
                     $apprenticeshipSearchTerm.addClass(elementErrorClass);

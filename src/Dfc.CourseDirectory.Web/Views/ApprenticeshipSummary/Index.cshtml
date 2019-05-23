@@ -30,7 +30,34 @@
                                 @Html.Raw(Model.ApprenticeshipDetailViewModel.Information)
                             </dd>
                             <dd class="govuk-summary-list__actions">
-                                <a class="" asp-controller="Apprenticeships" asp-action="ApprenticeshipDetails">Change</a>
+                                <a class="" asp-controller="Apprenticeships" asp-action="ApprenticeshipDetails">Edit</a>
+
+                            </dd>
+                        </div>
+
+
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Apprenticeship webpage
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.ApprenticeshipDetailViewModel.Website
+                            </dd>
+                            <dd class="govuk-summary-list__actions">
+                                <a class="" asp-controller="Apprenticeships" asp-action="ApprenticeshipDetails">Edit</a>
+
+                            </dd>
+                        </div>
+
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                               Contact URL
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.ApprenticeshipDetailViewModel.ContactUsIUrl
+                            </dd>
+                            <dd class="govuk-summary-list__actions">
+                                <a class="" asp-controller="Apprenticeships" asp-action="ApprenticeshipDetails">Edit</a>
 
                             </dd>
                         </div>
