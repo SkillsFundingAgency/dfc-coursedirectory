@@ -1,0 +1,55 @@
+﻿
+@using Dfc.CourseDirectory.Web.ViewComponents.ProviderAzureSearchResult
+
+
+@{  
+    ViewData["Title"] = "Provider search";
+}
+
+<div>
+    @*<div class="govuk-breadcrumbs">
+            <ol class="govuk-breadcrumbs__list">
+                <li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="your-courses">Home</a></li>
+                <li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="Providers">Providers</a></li>
+                <li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link">@ViewBag.Title</a></li>
+            </ol>
+        </div>*@
+
+
+    <div class="cd-hero-green">
+        <div class="">
+            <header class="cd-hero-search">
+                <div class="content-container">
+
+                    <div class="grid-row" data-sf-element="Row">
+                        <div class="column-two-thirds">
+                            <div>
+                                <h1 class="govuk-heading-l govuk-!-margin-top-4">Provider search</h1>
+                                <p class="column-two-thirds govuk-heading-m">Search by providers by PRN, Name or Address</p>
+                            </div>
+                            <form class="site-search ui-front" id="header-search">
+
+                                <div class="search-input-wrapper">
+                                    <input class="govuk-input search-input js-search-focus" placeholder="Search" id="ProviderSearchTerm" name="ProviderSearchTerm" type="text" autofocus>
+                                    <div class="cd-c-search__item cd-search__submit-wrapper">
+                                        <button type="button" class=" submit" id="searchProvider">Search</button>
+                                    </div>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+            </header>
+        </div>
+    </div>
+
+
+
+
+
+    <div id="ProviderSearchResultContainer">
+        @await Component.InvokeAsync(nameof(ProviderAzureSearchResult), Model)
+    </div>
+</div>
