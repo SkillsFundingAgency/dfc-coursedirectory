@@ -350,6 +350,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
         [Authorize]
         public async Task<IActionResult> FilterCourses(ProviderCoursesRequestModel requestModel)
         {
+
             _session.SetString("Option", "Courses");
             int? UKPRN = _session.GetInt32("UKPRN");
 

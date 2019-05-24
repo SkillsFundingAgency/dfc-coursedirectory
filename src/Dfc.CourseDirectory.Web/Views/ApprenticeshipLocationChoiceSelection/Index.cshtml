@@ -8,30 +8,30 @@
 
 
 
-    <form class="govuk-!-margin-bottom-9" id="ApprenticeshipLocationChoiceSelectionForm" asp-controller="Apprenticeships" asp-action="ApprenticeshipLocationChoiceSelection" method="post">
-        <a asp-controller="Apprenticeships" asp-action="ApprenticeShipDelivery" class="govuk-back-link">Back</a><br />
-        <h1 class="govuk-heading-xl">Can you deliver this training at employers' locations anywhere in england? (Stubbed)</h1>
-        <span class="govuk-caption-xl">This will flag you as a national provider to people searching for apprenticeship training</span>
-        <br />
-        <div class="govuk-form-group">
-            <fieldset class="govuk-fieldset">
-                
-                <div class="govuk-radios" val-required-message="Choose 1 option to continue" id="ApprenticeshipLocationChoice">
-                    <div class="govuk-radios__item">
-                        @Html.RadioButtonFor(m => m.NationalApprenticeship, NationalApprenticeship.Yes, new { @class = "govuk-radios__input", id = NationalApprenticeship.Yes })
-                        <label class="govuk-label govuk-radios__label" for="@NationalApprenticeship.Yes">@WebHelper.GetEnumDescription(NationalApprenticeship.Yes)</label>
-                    </div>
-                    <div class="govuk-radios__item">
-                        @Html.RadioButtonFor(m => m.NationalApprenticeship, NationalApprenticeship.No, new { @class = "govuk-radios__input", id = NationalApprenticeship.No })
-                        <label class="govuk-label govuk-radios__label" for="@NationalApprenticeship.No">@WebHelper.GetEnumDescription(NationalApprenticeship.No)</label>
-                    </div>
+<form class="govuk-!-margin-bottom-9" id="ApprenticeshipLocationChoiceSelectionForm" asp-controller="Apprenticeships" asp-action="ApprenticeshipLocationChoiceSelection" method="post">
+    <a asp-controller="Apprenticeships" asp-action="ApprenticeShipDelivery" class="govuk-back-link">Back</a><br />
+    <h1 class="govuk-heading-xl">Can you deliver this training at employers’ locations anywhere in England?</h1>
+    <span class="govuk-caption-xl">This will flag you as a national provider to people searching for apprenticeship training</span>
+    <br />
+    <div class="govuk-form-group">
+        <fieldset class="govuk-fieldset">
 
+            <div class="govuk-radios" val-required-message="Select Can you deliver this training at employer’s locations anywhere in England?" id="ApprenticeshipLocationChoice">
+                <div class="govuk-radios__item">
+                    @Html.RadioButtonFor(m => m.NationalApprenticeship, NationalApprenticeship.Yes, new { @class = "govuk-radios__input", id = NationalApprenticeship.Yes })
+                    <label class="govuk-label govuk-radios__label" for="@NationalApprenticeship.Yes">@WebHelper.GetEnumDescription(NationalApprenticeship.Yes)</label>
                 </div>
-            </fieldset>
-        </div>
-        <br />
-        <button type="submit" class="govuk-button" id="next">Continue</button>
-    </form>
+                <div class="govuk-radios__item">
+                    @Html.RadioButtonFor(m => m.NationalApprenticeship, NationalApprenticeship.No, new { @class = "govuk-radios__input", id = NationalApprenticeship.No })
+                    <label class="govuk-label govuk-radios__label" for="@NationalApprenticeship.No">@WebHelper.GetEnumDescription(NationalApprenticeship.No)</label>
+                </div>
+
+            </div>
+        </fieldset>
+    </div>
+    <br />
+    <button type="submit" class="govuk-button" id="next">Continue</button>
+</form>
 
 <script>
     (function ($) {

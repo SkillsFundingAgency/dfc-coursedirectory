@@ -15,6 +15,7 @@ using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Extensions;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.RequestModels;
+using Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships;
 using Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships.ApprenticeshipSearchResult;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseRegion;
 using Dfc.CourseDirectory.Web.ViewModels;
@@ -74,7 +75,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             if (!string.IsNullOrEmpty(requestModel.SearchTerm))
             {
-               // var result = _apprenticeshipService.StandardsAndFrameworksSearch(requestModel.SearchTerm);
+                // var result = _apprenticeshipService.StandardsAndFrameworksSearch(requestModel.SearchTerm);
 
                 //stub
                 var listOfApprenticeships = new List<ApprenticeShipsSearchResultItemModel>();
@@ -121,7 +122,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 model.ApprenticeshipPreviousPage = request.PreviousPage;
             }
 
-            return View("../ApprenticeShipDetails/Index",model);
+            return View("../ApprenticeShipDetails/Index", model);
         }
 
         [Authorize]
@@ -168,11 +169,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     return View("../ApprenticeShips/Index");
 
             }
-            
+
         }
 
-        
-               [Authorize]
+
+        [Authorize]
         public IActionResult ApprenticeshipLocationChoiceSelection()
         {
             var model = new ApprenticeshipLocationChoiceSelectionViewModel();
@@ -195,7 +196,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 case NationalApprenticeship.Yes:
                     return RedirectToAction("ApprenticeshipSummary", "Apprenticeships");
-                    
+
                 case NationalApprenticeship.No:
                     return RedirectToAction("ApprenticeshipRegions", "Apprenticeships");
 
@@ -205,9 +206,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
         }
 
-        
 
-             [Authorize]
+
+        [Authorize]
         public IActionResult ApprenticeshipDeliveryOptions()
         {
             var model = new ApprenticeshipDeliveryOptionsViewModel();
@@ -217,6 +218,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 model = ApprenticeshipDeliveryOptionsViewModel;
             }
+            else
+            {
+                model.DeliveryOptionsListItemModel = new DeliveryOptionsListModel();
+                model.DeliveryOptionsListItemModel.DeliveryOptionsListItemModel = new List<DeliveryOptionsListItemModel>();
+            }
 
 
             return View("../ApprenticeshipDeliveryOptions/Index", model);
@@ -224,11 +230,38 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         [Authorize]
         [HttpPost]
-        public IActionResult ApprenticeshipDeliveryOptions(ApprenticeshipDeliveryOptionsViewModel model)
+        public IActionResult ApprenticeshipDeliveryOptions(ApprenticeshipDeliveryOptionsViewModel model, string submit)
         {
             _session.SetObject("ApprenticeshipDeliveryOptionsViewModel", model);
+            if (submit == "continue")
+            {
+                return RedirectToAction("ApprenticeshipSummary", "Apprenticeships");
+            }
+            else
+            {
+                if (model.DeliveryOptionsListItemModel == null)
+                {
+                    //var deliveryOptionsListModel = new DeliveryOptionsListModel();
+                    //deliveryOptionsListModel.DeliveryOptionsListItemModel = new List<DeliveryOptionsListItemModel>();
 
-            return RedirectToAction("ApprenticeshipSummary", "Apprenticeships");
+                    model.DeliveryOptionsListItemModel = new DeliveryOptionsListModel();
+                    List<DeliveryOptionsListItemModel> list = new List<DeliveryOptionsListItemModel>();
+                    model.DeliveryOptionsListItemModel.DeliveryOptionsListItemModel = list;
+                }
+
+                model.DeliveryOptionsListItemModel.DeliveryOptionsListItemModel.Add(new DeliveryOptionsListItemModel()
+                {
+                    Delivery = "100% employer based",
+                    LocationId = Guid.NewGuid(),
+                    LocationName="Birmingham",
+                    Radius = "125 miles"
+                
+                });
+
+                return View("../ApprenticeshipDeliveryOptions/Index", model);
+
+            }
+
 
 
         }
@@ -251,7 +284,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
             else
             {
-                model.ApprenticeshipDetailViewModel = new ApprenticeshipDetailViewModel() { ApprenticeshipTitle="Test"};
+                model.ApprenticeshipDetailViewModel = new ApprenticeshipDetailViewModel() { ApprenticeshipTitle = "Test" };
             }
 
             if (ApprenticeshipDeliveryViewModel != null)
@@ -322,7 +355,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 model = ApprenticeshipRegionsViewModel;
             }
 
-            
+
 
             return View("../ApprenticeshipRegions/Index", model);
         }
@@ -362,7 +395,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         public IActionResult AddAnotherApprenticeship()
         {
 
-            
+
 
             return RedirectToAction("Index", "Apprenticeships");
 

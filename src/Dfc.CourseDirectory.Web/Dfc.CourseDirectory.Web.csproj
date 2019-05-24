@@ -62,6 +62,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="ViewComponents\Apprenticeships\DeliveryOptionsList\Default.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="ViewComponents\ProviderApprenticeships\ProviderApprenticeshipsSearchResult\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

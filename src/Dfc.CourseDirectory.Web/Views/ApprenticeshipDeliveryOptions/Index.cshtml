@@ -27,7 +27,7 @@
 
        })
 
- 
+
 
 
                 <div class="govuk-form-group">
@@ -45,7 +45,7 @@
                             <div class="govuk-checkboxes__item">
                                 <input class="govuk-checkboxes__input" type="checkbox" asp-for="@Model.DayRelease">
                                 <label class="govuk-label govuk-checkboxes__label"
-                                    @WebHelper.GetEnumDescription(ApprenticeShipDeliveryLocation.DayRelease)
+                                       @WebHelper.GetEnumDescription(ApprenticeShipDeliveryLocation.DayRelease)
                                 </label>
                             </div>
                             <div class="govuk-checkboxes__item">
@@ -55,7 +55,7 @@
                                 </label>
                             </div>
 
-                         
+
 
 
 
@@ -65,12 +65,47 @@
                 </div>
 
 
+                @await Component.InvokeAsync(nameof(DeliveryOptionsList), Model.DeliveryOptionsListItemModel)
+
+                @*@if (Model.DeliveryOptionsListItemModel != null)
+                {
+                    <table id="ResultsTable" class="govuk-table hide">
+                        <caption class="govuk-table__caption">Delivery options</caption>
+                        <thead class="govuk-table__head">
+                            <tr class="govuk-table__row">
+                                <th class="govuk-table__header" scope="col">Location</th>
+                                <th class="govuk-table__header" scope="col">Delivery</th>
+                                <th class="govuk-table__header" scope="col">Radius</th>
+                                <th class="govuk-table__header" scope="col"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < Model.DeliveryOptionsListItemModel.Count; i++)
+                            {
+                               @Html.HiddenFor(model => Model.DeliveryOptionsListItemModel[i].LocationId)
+                        @Html.HiddenFor(model => Model.DeliveryOptionsListItemModel[i].LocationName)
+                        @Html.HiddenFor(model => Model.DeliveryOptionsListItemModel[i].Delivery)
+                        @Html.HiddenFor(model => Model.DeliveryOptionsListItemModel[i].Radius)
+
+                                <tr class="govuk-table__row">
+                                    <td class="govuk-table__header" scope="col">@Model.DeliveryOptionsListItemModel[i].LocationName</td>
+                                    <td class="govuk-table__cell" scope="col">@Model.DeliveryOptionsListItemModel[i].Delivery</td>
+                                    <td class="govuk-table__cell" scope="col">@Model.DeliveryOptionsListItemModel[i].Radius</td>
+                                    <td class="govuk-table__cell" scope="col"><a class="" asp-controller="" asp-action="">Edit</a></td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                }*@
 
 
             </fieldset>
             <br />
 
-            <button type="submit" class="govuk-button" id="next">Continue</button>
+            <button type="submit" class="govuk-button" id="next1" name="submit" value="continue">Continue</button>
+            <button type="submit" class="govuk-button" id="next2" name="submit" value="addanother">Add another</button>
         </div>
     </div>
 </form>
