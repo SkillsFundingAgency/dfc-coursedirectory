@@ -12,7 +12,7 @@
 @if (Model.Items.Any() && Model.Items.FirstOrDefault() != null && !Model.HasErrors)
 {
 <div class="">
-    <span class="govuk-caption-xl"> Course Provider</span>
+    <span class="govuk-caption-xl"> Course provider</span>
     @if (provSearch == 0)
     {
         <h1 class="govuk-heading-xl">Provider Details</h1>
@@ -71,11 +71,11 @@
         <table class="govuk-table">
             <tbody class="govuk-table__body">
                 <tr class="govuk-table__row">
-                    <th class="govuk-table__header" scope="row">Course Directory Status</th>
+                    <th class="govuk-table__header" scope="row">Course directory status</th>
                     <td class="govuk-table__cell"><span id="RegisteredStatusText">@provider.Status</span></td>
                 </tr>
                 <tr class="govuk-table__row">
-                    <th class="govuk-table__header" scope="row">UKPRN Status</th>
+                    <th class="govuk-table__header" scope="row">UKPRN status</th>
                     <td class="govuk-table__cell">@provider.ProviderStatus</td>
                 </tr>
                 <tr class="govuk-table__row">
@@ -116,12 +116,12 @@
                     && provSearch == 0
             )
         {
-            <a id="btnOnboardProvider" onclick="OnBoardProvider(); return false;" href="#" class="govuk-button"><span id="btnOnboardProviderText">Add Provider</span></a>
+            <a id="btnOnboardProvider" onclick="OnBoardProvider(); return false;" href="#" class="govuk-button"><span id="btnOnboardProviderText">Add provider</span></a>
         }
         else if (provSearch == 1 && provider.Status.Equals(Status.Onboarded))
         {
             @*<a id="btnShowCourses" href="/Courses" class="govuk-button"><span id="btnShowCoursesText">View Courses</span></a>*@
-            <a id="btnQualificationList" asp-controller="ProviderCourses" asp-action="Index" class="govuk-button"><span id="btnQualificationListText">View Courses</span></a>
+            <a id="btnQualificationList" asp-controller="ProviderCourses" asp-action="Index" class="govuk-button"><span id="btnQualificationListText">View courses</span></a>
             @*<a id="btnQualificationList2" asp-controller="ProviderCourses" asp-action="Index" class="govuk-button"><span id="btnQualificationListText2">View Courses ( A Your Courses Story )</span></a>*@
         }
     }
