@@ -7,108 +7,75 @@
 
 @model Dfc.CourseDirectory.Web.ViewModels.Apprenticeships.ApprenticeshipDeliveryOptionsViewModel
 
-<form class="govuk-!-margin-bottom-9" id="ApprenticeshipDeliveryOptionsForm" asp-controller="Apprenticeships" asp-action="ApprenticeShipDeliveryOptions" method="post">
-    <div class="cd-dashboard govuk-grid-row govuk-body ">
+    <form class="govuk-!-margin-bottom-9" id="ApprenticeshipDeliveryOptionsForm" asp-controller="Apprenticeships" asp-action="ApprenticeShipDeliveryOptions" method="post">
         <a asp-controller="Apprenticeships" asp-action="ApprenticeShipDelivery" class="govuk-back-link">Back</a><br />
-        <div class="govuk-form-group govuk-grid-column-two-thirds">
-            <fieldset class="govuk-fieldset" aria-describedby="how-contacted-conditional-hint">
-                <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
-                    <h1 class="govuk-fieldset__heading">
-                        Select delivery options
-                    </h1>
-                </legend>
+        <div class="cd-dashboard govuk-grid-row govuk-body ">
 
-                @await Component.InvokeAsync(nameof(ChooseLocation), new ChooseLocationModel()
-       {
-       LabelText = "Select location",
-       HintText = "",
-       LocationId = Model.LocationId ?? (Guid?)null,
-       DisplayLink = true
+            <div class="govuk-form-group govuk-grid-column-two-thirds">
+                <fieldset class="govuk-fieldset" aria-describedby="how-contacted-conditional-hint">
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+                        <h1 class="govuk-fieldset__heading">
+                            Select delivery options
+                        </h1>
+                    </legend>
 
-       })
+                    @await Component.InvokeAsync(nameof(ChooseLocation), new ChooseLocationModel()
+
+           {
+           LabelText = "Select location",
+           HintText = "",
+           LocationId = Model.LocationId ?? (Guid?)null,
+           DisplayLink = false
+
+           })
 
 
 
 
-                <div class="govuk-form-group">
-                    <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
-                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
-                            <h2 class="govuk-fieldset__heading">
-                                How is the training delivered at this location?
+                    <div class="govuk-form-group govuk-!-margin-top-9">
+                        <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
+                            <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+                                <h2 class="govuk-heading-m">
+                                    How is the training delivered at this location?
 
-                            </h2>
-                        </legend>
-                        <span id="waste-hint" class="govuk-hint">
-                            Select all that apply.
-                        </span>
-                        <div class="govuk-checkboxes">
-                            <div class="govuk-checkboxes__item">
-                                <input class="govuk-checkboxes__input" type="checkbox" asp-for="@Model.DayRelease">
-                                <label class="govuk-label govuk-checkboxes__label"
-                                       @WebHelper.GetEnumDescription(ApprenticeShipDeliveryLocation.DayRelease)
-                                </label>
+                                </h2>
+                            </legend>
+                            <span id="waste-hint" class="govuk-hint">
+                                Select all that apply.
+                            </span>
+                            <div class="govuk-checkboxes">
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" type="checkbox" asp-for="@Model.DayRelease">
+                                    <label class="govuk-label govuk-checkboxes__label">
+                                        @WebHelper.GetEnumDescription(ApprenticeShipDeliveryLocation.DayRelease)
+                                    </label>
+                                </div>
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" type="checkbox" asp-for="@Model.BlockRelease">
+                                    <label class="govuk-label govuk-checkboxes__label">
+                                        @WebHelper.GetEnumDescription(ApprenticeShipDeliveryLocation.BlockRelease)
+                                    </label>
+                                </div>
                             </div>
-                            <div class="govuk-checkboxes__item">
-                                <input class="govuk-checkboxes__input" type="checkbox" asp-for="@Model.BlockRelease">
-                                <label class="govuk-label govuk-checkboxes__label">
-                                    @WebHelper.GetEnumDescription(ApprenticeShipDeliveryLocation.BlockRelease)
-                                </label>
-                            </div>
+                        </fieldset>
+                    </div>
+
+
+                    <div class="govuk-!-margin-top-9">
+                        @*<a type="submit" class="govuk-button govuk-!-margin-right-2" id="next1" name="submit" value="continue">Save and continue</a>
+                        <a type="submit" id="List" class="govuk-button govuk-button--secondary" id="next2" name="submit" value="addanother">Save and add another</a>*@
+                        <button type="submit" class="govuk-button" id="next1" name="submit" value="continue">Save and continue</button>
+                        <button type="submit" class="govuk-button govuk-button--secondary" id="next2" name="submit" value="addanother">Save and add another</button>
+
+                    </div>
+
+                    @await Component.InvokeAsync(nameof(DeliveryOptionsList), Model.DeliveryOptionsListItemModel)
 
 
 
-
-
-
-                        </div>
-                    </fieldset>
-                </div>
-
-
-                @await Component.InvokeAsync(nameof(DeliveryOptionsList), Model.DeliveryOptionsListItemModel)
-
-                @*@if (Model.DeliveryOptionsListItemModel != null)
-                {
-                    <table id="ResultsTable" class="govuk-table hide">
-                        <caption class="govuk-table__caption">Delivery options</caption>
-                        <thead class="govuk-table__head">
-                            <tr class="govuk-table__row">
-                                <th class="govuk-table__header" scope="col">Location</th>
-                                <th class="govuk-table__header" scope="col">Delivery</th>
-                                <th class="govuk-table__header" scope="col">Radius</th>
-                                <th class="govuk-table__header" scope="col"></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @for (int i = 0; i < Model.DeliveryOptionsListItemModel.Count; i++)
-                            {
-                               @Html.HiddenFor(model => Model.DeliveryOptionsListItemModel[i].LocationId)
-                        @Html.HiddenFor(model => Model.DeliveryOptionsListItemModel[i].LocationName)
-                        @Html.HiddenFor(model => Model.DeliveryOptionsListItemModel[i].Delivery)
-                        @Html.HiddenFor(model => Model.DeliveryOptionsListItemModel[i].Radius)
-
-                                <tr class="govuk-table__row">
-                                    <td class="govuk-table__header" scope="col">@Model.DeliveryOptionsListItemModel[i].LocationName</td>
-                                    <td class="govuk-table__cell" scope="col">@Model.DeliveryOptionsListItemModel[i].Delivery</td>
-                                    <td class="govuk-table__cell" scope="col">@Model.DeliveryOptionsListItemModel[i].Radius</td>
-                                    <td class="govuk-table__cell" scope="col"><a class="" asp-controller="" asp-action="">Edit</a></td>
-
-                                </tr>
-                            }
-
-                        </tbody>
-                    </table>
-                }*@
-
-
-            </fieldset>
-            <br />
-
-            <button type="submit" class="govuk-button" id="next1" name="submit" value="continue">Continue</button>
-            <button type="submit" class="govuk-button" id="next2" name="submit" value="addanother">Add another</button>
+            </div>
         </div>
-    </div>
-</form>
+    </form>
 
 
 
