@@ -323,7 +323,17 @@ namespace Dfc.CourseDirectory.Web.Helpers
                 }
                 else
                 {
-                    textValue = item.Value;
+                    if (String.IsNullOrWhiteSpace(item.Value))
+                    {
+
+                        //If this occurs, filter is blank, and should be skipped
+                        continue;
+                    }
+                    else
+                    {
+                        textValue = item.Value;
+                    }
+                    
 
                 }
 

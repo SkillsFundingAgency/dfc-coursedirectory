@@ -221,7 +221,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             else
             {
                 model.DeliveryOptionsListItemModel = new DeliveryOptionsListModel();
-                model.DeliveryOptionsListItemModel.DeliveryOptionsListItemModel = new List<DeliveryOptionsListItemModel>();
+                model.DeliveryOptionsListItemModel.DeliveryOptionsListItemModel = null; ;
             }
 
 
@@ -241,8 +241,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 if (model.DeliveryOptionsListItemModel == null)
                 {
-                    //var deliveryOptionsListModel = new DeliveryOptionsListModel();
-                    //deliveryOptionsListModel.DeliveryOptionsListItemModel = new List<DeliveryOptionsListItemModel>();
 
                     model.DeliveryOptionsListItemModel = new DeliveryOptionsListModel();
                     List<DeliveryOptionsListItemModel> list = new List<DeliveryOptionsListItemModel>();

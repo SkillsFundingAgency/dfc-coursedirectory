@@ -18,50 +18,113 @@
             <main class="govuk-mainwrapper " id="main-content" role="main">
                 <div class="govuk-grid-row">
                     <div class="govuk-grid-column-two-thirds-from-desktop">
-                        <span class="govuk-caption-xl">@Model?.ApprenticeshipDetailViewModel?.ApprenticeshipTitle</span>
-                        <h1 class="govuk-heading-xl">Check and publish to the course directory (Stubbed)</h1>
+                        <h1 class="govuk-heading-xl">Check your answers before saving</h1>
 
+                        <h2 class="govuk-heading-m">@Model?.ApprenticeshipDetailViewModel?.ApprenticeshipTitle</h2>
 
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Apprenticeship information for employers
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @Html.Raw(Model.ApprenticeshipDetailViewModel.Information)
-                            </dd>
-                            <dd class="govuk-summary-list__actions">
-                                <a class="" asp-controller="Apprenticeships" asp-action="ApprenticeshipDetails">Edit</a>
+                        <dl class="govuk-summary-list ">
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Apprenticeship information for employers
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @Html.Raw(Model.ApprenticeshipDetailViewModel.Information)
+                                </dd>
+                                <dd class="govuk-summary-list__actions">
+                                    <a class="" asp-controller="Apprenticeships" asp-action="ApprenticeshipDetails">Change</a>
 
-                            </dd>
-                        </div>
+                                </dd>
+                            </div>
+                        </dl>
+                        <dl class="govuk-summary-list ">
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Apprenticeship webpage
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @Model.ApprenticeshipDetailViewModel.Website
+                                </dd>
+                                <dd class="govuk-summary-list__actions">
+                                    <a class="" asp-controller="Apprenticeships" asp-action="ApprenticeshipDetails">Change</a>
 
+                                </dd>
+                            </div>
+                        </dl>
+                        <dl class="govuk-summary-list ">
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Email
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @Model.ApprenticeshipDetailViewModel.Email
+                                </dd>
+                                <dd class="govuk-summary-list__actions">
+                                    <a class="" asp-controller="Apprenticeships" asp-action="ApprenticeshipDetails">Change</a>
 
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Apprenticeship webpage
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @Model.ApprenticeshipDetailViewModel.Website
-                            </dd>
-                            <dd class="govuk-summary-list__actions">
-                                <a class="" asp-controller="Apprenticeships" asp-action="ApprenticeshipDetails">Edit</a>
+                                </dd>
+                            </div>
+                        </dl>
+                        <dl class="govuk-summary-list ">
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Contact URL
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @Model.ApprenticeshipDetailViewModel.ContactUsIUrl
+                                </dd>
+                                <dd class="govuk-summary-list__actions">
+                                    <a class="" asp-controller="Apprenticeships" asp-action="ApprenticeshipDetails">Change</a>
 
-                            </dd>
-                        </div>
+                                </dd>
+                            </div>
+                        </dl>
 
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                               Contact URL
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @Model.ApprenticeshipDetailViewModel.ContactUsIUrl
-                            </dd>
-                            <dd class="govuk-summary-list__actions">
-                                <a class="" asp-controller="Apprenticeships" asp-action="ApprenticeshipDetails">Edit</a>
-
-                            </dd>
-                        </div>
-
+                        <table class="govuk-table">
+                            <caption class="govuk-table__caption">Delivery options</caption>
+                            @*<a class="govuk-link" href="#">
+                                Edit
+                            </a>*@
+                            <thead class="govuk-table__head">
+                                <tr class="govuk-table__row">
+                                    <th class="govuk-table__header" scope="col">Location</th>
+                                    <th class="govuk-table__header" scope="col">Delivery</th>
+                                    <th class="govuk-table__header" scope="col">Radius</th>
+                                    @*<th class="govuk-table__header" scope="col"></th>*@
+                                </tr>
+                            </thead>
+                            <tbody class="govuk-table__body">
+                                <tr class="govuk-table__row">
+                                    <th class="govuk-table__header" scope="row">Birmingham</th>
+                                    <td class="govuk-table__cell">100% employer based</td>
+                                    <td class="govuk-table__cell">125 miles</td>
+                                    @*<td class="govuk-table__cell">
+                                        <a class="govuk-link" href="#">
+                                            Edit
+                                        </a>
+                                    </td>*@
+                                </tr>
+                                <tr class="govuk-table__row">
+                                    <th class="govuk-table__header" scope="row">Leeds</th>
+                                    <td class="govuk-table__cell">100% employer based, Work based</td>
+                                    <td class="govuk-table__cell">250 miles</td>
+                                    @*<td class="govuk-table__cell">
+                                        <a class="govuk-link" href="#">
+                                            Edit
+                                        </a>
+                                    </td>*@
+                                </tr>
+                                <tr class="govuk-table__row">
+                                    <th class="govuk-table__header" scope="row">Liverpool</th>
+                                    <td class="govuk-table__cell">100% employer based</td>
+                                    <td class="govuk-table__cell">25 miles</td>
+                                    @*<td class="govuk-table__cell">
+                                        <a class="govuk-link" href="#">
+                                            Edit
+                                        </a>
+                                    </td>*@
+                                </tr>
+                            </tbody>
+                        </table>
                         <button type="submit" class="govuk-button" id="next">Publish</button>
                     </div>
                 </div>
