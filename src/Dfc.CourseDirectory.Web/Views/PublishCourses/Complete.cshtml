@@ -4,16 +4,20 @@
 @using Dfc.CourseDirectory.Models.Enums
 @model Dfc.CourseDirectory.Web.ViewModels.PublishCourses.PublishCompleteViewModel
 
+@{
+    Layout = "_Layout_Your_Courses";
+}
+
 <div class="govuk-panel govuk-panel--confirmation">
     @if (Model.Mode.Equals(PublishMode.BulkUpload))
     {
-    <div class="govuk-panel__body">
-        <h1 class="govuk-panel__title">
-            Your file has been published
-        </h1>
+        <div class="govuk-panel__body">
+            <h1 class="govuk-panel__title">
+                Your file has been published
+            </h1>
 
-        You have added <strong>@Model.NumberOfCoursesPublished</strong> @(Model.NumberOfCoursesPublished.Equals(1) ? "course" : "courses") to the course directory
-    </div>
+            You have added <strong>@Model.NumberOfCoursesPublished</strong> @(Model.NumberOfCoursesPublished.Equals(1) ? "course" : "courses") to the course directory
+        </div>
     }
 
     @if (Model.Mode.Equals(PublishMode.Migration))
