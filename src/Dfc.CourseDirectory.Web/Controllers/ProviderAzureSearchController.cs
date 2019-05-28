@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;
@@ -17,7 +18,8 @@ using Dfc.CourseDirectory.Services.Interfaces;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.RequestModels;
-using Dfc.CourseDirectory.Web.ViewComponents.ProviderSearchResult;
+using Dfc.CourseDirectory.Web.ViewComponents.ProviderAzureSearchResult;
+using Dfc.CourseDirectory.Web.ViewModels.ProviderSearch;
 
 
 namespace Dfc.CourseDirectory.Web.Controllers
@@ -54,38 +56,51 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [Authorize]
         public async Task<IActionResult> Index([FromQuery] ProviderSearchCriteria criteria) //ProviderAzureSearchRequestModel requestModel)
         {
-            ProviderAzureSearchResultModel model = new ProviderAzureSearchResultModel();
+            //ProviderAzureSearchResultModel model = new ProviderAzureSearchResultModel();
 
-            //if (requestModel != null) {
-            if (criteria != null) {
+            ////if (requestModel != null) {
+            //if (criteria != null) {
 
-                //var criteria = _providerSearchHelper.GetAzureSearchCriteria(
-                //    requestModel,
-                //    _paginationHelper.GetCurrentPageNo(Request.GetDisplayUrl(), _providerSearchSettings.PageParamName),
-                //    _providerSearchSettings.ItemsPerPage,
-                //    (ProviderSearchFacet[])Enum.GetValues(typeof(ProviderSearchFacet)));
+            //    //var criteria = _providerSearchHelper.GetAzureSearchCriteria(
+            //    //    requestModel,
+            //    //    _paginationHelper.GetCurrentPageNo(Request.GetDisplayUrl(), _providerSearchSettings.PageParamName),
+            //    //    _providerSearchSettings.ItemsPerPage,
+            //    //    (ProviderSearchFacet[])Enum.GetValues(typeof(ProviderSearchFacet)));
 
-                IResult<ProviderAzureSearchResultModel> result = await _courseService.ProviderSearchAsync(criteria);
+            //    IResult<ProviderAzureSearchResults> result = await _courseService.ProviderSearchAsync(criteria);
 
-                if (result.IsSuccess && result.HasValue) {
+            //    if (result.IsSuccess && result.HasValue) {
 
-                    //var filters = _providerSearchHelper.GetProviderSearchFilterModels(result.Value.SearchFacets, requestModel);
-                    //var items = _providerSearchHelper.GetProviderSearchResultItemModels(result.Value.Value);
+            //        //var filters = _providerSearchHelper.GetProviderSearchFilterModels(result.Value.SearchFacets, requestModel);
+            //        //var items = _providerSearchHelper.GetProviderSearchResultItemModels(result.Value.Value);
 
-                    model = result.Value; // new ProviderAzureSearchResultModel()
-                    //{
-                    //    ODataContext = result.Value.ODataContext,
-                    //    SearchFacets = result.Value.SearchFacets,
-                    //    Value = result.Value.Value,
-                    //    ODataCount = result.Value.ODataCount
-                    //};
+            //        model = new ProviderAzureSearchResultModel(criteria.Keyword, result.Value?.Value);
+            //        //{
+            //        //    ODataContext = result.Value.ODataContext,
+            //        //    SearchFacets = result.Value.SearchFacets,
+            //        //    Value = result.Value.Value,
+            //        //    ODataCount = result.Value.ODataCount
+            //        //};
 
-                } else {
-                    model = new ProviderAzureSearchResultModel(); //ProviderSearchResultModel(result.Error);
-                }
+            //    } else {
+            //        model = new ProviderAzureSearchResultModel(); //ProviderSearchResultModel(result.Error);
+            //    }
+            //}
+            //_logger.LogMethodExit();
+            //return ViewComponent(nameof(ViewComponents.ProviderAzureSearchResult.ProviderAzureSearchResult), model);
+
+
+
+            if (criteria == null || string.IsNullOrWhiteSpace(criteria.Keyword))
+                return View(new ProviderSearchViewModel() { Search = criteria.Keyword, Providers = new List<ProviderAzureSearchResultItem>() });
+            else {
+                //ProviderSearchCriteria criteria = new ProviderSearchCriteria() { Keyword = Keyword }; //, Town = new[] { Keyword } };
+                ProviderAzureSearchResults result = (await _courseService.ProviderSearchAsync(criteria)).Value;
+                ProviderSearchViewModel model = new ProviderSearchViewModel() { Search = criteria.Keyword, Providers = result.Value };
+                //return View(model);
+                return ViewComponent(nameof(ViewComponents.ProviderAzureSearchResult.ProviderAzureSearchResult), model);
             }
-            _logger.LogMethodExit();
-            return ViewComponent(nameof(ViewComponents.ProviderSearchResult.ProviderSearchResult), model);
+
         }
     }
 }
