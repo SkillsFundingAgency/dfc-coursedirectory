@@ -37,7 +37,7 @@
 
 <form id="venueSearchResultForm" asp-controller="Venues" asp-action="AddVenue" method="get">
     @{
- string message = "";
+        string message = "";
 
         if (Model.Deleted)
         {
@@ -61,7 +61,7 @@
         {
             if (Model.Items.Any() && Model.NewItem != null)
             {
-               
+
                 if (!string.IsNullOrWhiteSpace(Model.NewItem.VenueName))
                 {
                     message += string.Concat(Model.NewItem.VenueName, ", ");
@@ -91,18 +91,19 @@
 
 
                 @await Component.InvokeAsync(nameof(Notification), new NotificationModel
-           {
+                {
 
-               NotificationTitle = Model.Updated ? "Your venue updated:" : "New venue added:",
-               NotificationMessage = message,
-               ClassType = "success-summary"
-           });
+                    NotificationTitle = Model.Updated ? "Your venue updated:" : "New venue added:",
+                    NotificationMessage = message,
+                    ClassType = "success-summary"
+                });
 
             }
 
 
         }
     }
+    <h1 class="govuk-heading-xl">Your venues</h1>
     <div class="venue-list">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
