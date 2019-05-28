@@ -90,7 +90,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             //return ViewComponent(nameof(ViewComponents.ProviderAzureSearchResult.ProviderAzureSearchResult), model);
 
 
-
             if (criteria == null || string.IsNullOrWhiteSpace(criteria.Keyword))
                 return View(new ProviderSearchViewModel() { Search = criteria.Keyword, Providers = new List<ProviderAzureSearchResultItem>() });
             else {
@@ -100,7 +99,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 //return View(model);
                 return ViewComponent(nameof(ViewComponents.ProviderAzureSearchResult.ProviderAzureSearchResult), model);
             }
-
         }
     }
 }
