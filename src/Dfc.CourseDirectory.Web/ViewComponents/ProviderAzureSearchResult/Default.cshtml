@@ -1,0 +1,47 @@
+﻿
+@using Microsoft.AspNetCore.Http
+@using Dfc.CourseDirectory.Models.Models.Providers;
+@using Dfc.CourseDirectory.Web.ViewComponents.Notification
+@*@model Dfc.CourseDirectory.Web.ViewComponents.ProviderAzureSearchResult.ProviderAzureSearchResultModel;*@
+@using Dfc.CourseDirectory.Web.ViewModels.ProviderSearch
+@inject IHttpContextAccessor HttpContextAccessor
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model ProviderSearchViewModel
+
+
+@{
+    //var provSearch = HttpContextAccessor.HttpContext.Session.GetInt32("ProviderSearch");
+}
+
+@if (Model.Providers != null && Model.Providers.Any() && Model.Providers.FirstOrDefault() != null) // && !Model.HasErrors)
+{
+    <div class="">
+        <table class="cd-provider-results govuk-table">
+            <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    <th class="govuk-table__header" scope="col">UKRPN</th>
+                    <th class="govuk-table__header" scope="col">Name</th>
+                    <th class="govuk-table__header" scope="col">Town/City</th>
+                    <th class="govuk-table__header" scope="col">Postcode</th>
+                    <th class="govuk-table__header" scope="col">UKPRN Status</th>
+                    <th class="govuk-table__header" scope="col"></th>
+                </tr>
+            </thead>
+            <tbody class="govuk-table__body">
+                @foreach (ProviderAzureSearchResultItem p in Model.Providers)
+                {
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell">@p.UKPRN</td>
+                        <td class="govuk-table__cell">@p.Name</td>
+                        <td class="govuk-table__cell">@p.Town</td>
+                        <td class="govuk-table__cell">@p.Postcode</td>
+                        <td class="govuk-table__cell">(status)</td>
+                        <td class="govuk-table__cell">
+                            <a href="/Providers/Details">View</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
