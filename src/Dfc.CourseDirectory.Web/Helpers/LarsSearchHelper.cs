@@ -164,7 +164,7 @@ namespace Dfc.CourseDirectory.Web.Helpers
             var filters = new List<LarsSearchFilterModel>();
 
             var notionalNVQLevelv2Filter = GetLarsSearchFilterModel(
-                "Qualification Level",
+                "Qualification level",
                 "NotionalNVQLevelv2Filter",
                  //(value) => $"Level {value}",
                  (value) => value,
@@ -172,7 +172,7 @@ namespace Dfc.CourseDirectory.Web.Helpers
                 larsSearchRequestModel.NotionalNVQLevelv2Filter);
 
             var awardOrgCodeFilter = GetLarsSearchFilterModel(
-                "Awarding Organisation",
+                "Awarding organisation",
                 "AwardOrgCodeFilter",
                 (value) => value,
                 larsSearchFacets.AwardOrgCode,
@@ -323,7 +323,17 @@ namespace Dfc.CourseDirectory.Web.Helpers
                 }
                 else
                 {
-                    textValue = item.Value;
+                    if (String.IsNullOrWhiteSpace(item.Value))
+                    {
+
+                        //If this occurs, filter is blank, and should be skipped
+                        continue;
+                    }
+                    else
+                    {
+                        textValue = item.Value;
+                    }
+                    
 
                 }
 

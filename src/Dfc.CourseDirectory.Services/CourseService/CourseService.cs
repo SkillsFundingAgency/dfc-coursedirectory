@@ -715,6 +715,8 @@ namespace Dfc.CourseDirectory.Services.CourseService
             // StartDate & FlexibleStartDate
             if (courseRun.StartDate != null)
             {
+                courseRun.FlexibleStartDate = false; // COUR-746-StartDate
+
                 switch (validationMode)
                 {
                     case ValidationMode.AddCourseRun:

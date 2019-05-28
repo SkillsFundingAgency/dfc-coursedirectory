@@ -199,7 +199,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
                 switch (level.Key.ToLower())
                 {
                     case "e":
-                        textValue = "Entry Level";
+                        textValue = "Entry level";
                         break;
                     case "x":
                         textValue = "X - Not applicable/unknown";
