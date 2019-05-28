@@ -12,5 +12,6 @@ namespace Dfc.CourseDirectory.Models.Models.Providers
         public string Town { get; set; }
         public string Region { get; set; }
         public string ProviderId { get; set; }
+        public string UKPRN { get; set; }
     }
 }

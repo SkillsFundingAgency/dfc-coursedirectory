@@ -11,7 +11,7 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
     {
         public string ODataContext { get; set; }
         public int? ODataCount { get; set; }
-        public dynamic SearchFacets { get; set; }
+        public dynamic SearchFacets { get; set; } //ProviderSearchFacets SearchFacets { get; set; }
         public IEnumerable<ProviderSearchResultItem> Value { get; set; }
     }
 }
