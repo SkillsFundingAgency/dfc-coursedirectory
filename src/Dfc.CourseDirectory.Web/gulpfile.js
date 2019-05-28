@@ -42,9 +42,9 @@ var jsVendorDeps = {
     "jquery-validation": {
         "dist/**.min.js": ""
     },
-    "jquery-validation-unobtrusive": {
-        "dist/**/*.min.js": ""
-    },
+    //"jquery-validation-unobtrusive": {
+    //    "dist/**/*.min.js": ""
+    //},
     "govuk-frontend": {
         "all.js": ""
     }
