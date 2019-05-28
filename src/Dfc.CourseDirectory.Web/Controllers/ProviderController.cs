@@ -239,7 +239,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 string TownCity = string.Empty;
                 if (!string.IsNullOrEmpty(providerContactTypeL.FirstOrDefault()?.ContactAddress?.Items?.FirstOrDefault()))
                 {
-                    TownCity = providerContactTypeL.FirstOrDefault()?.ContactAddress?.Items?.FirstOrDefault() + ", ";
+                    TownCity = providerContactTypeL.FirstOrDefault()?.ContactAddress?.Items?.FirstOrDefault();
                 }
 
                 string PostCode = string.Empty;

@@ -313,10 +313,10 @@
             var isWorkBased = false;
 
             //Default options on page load
-            var $defaultAttendancePattern = $("#@AttendancePattern.Daytime");
+            @*var $defaultAttendancePattern = $("#@AttendancePattern.Daytime");
             $defaultAttendancePattern.prop("checked", true);            
             var $defaultStudyMode = $("#@StudyMode.FullTime");
-            $defaultStudyMode.prop("checked", true);
+            $defaultStudyMode.prop("checked", true);*@
             var $nationalTrue = $("#National_true");
             $nationalTrue.prop("checked", false);
             var $nationalFalse = $("#National_false");
@@ -357,6 +357,8 @@
             function isAllValid(currentValue) {
                 return currentValue === true;
             }
+
+            
 
             function validate() {
 
@@ -644,13 +646,25 @@
                     validStates.push(false);
                 }
 
+                 
                 if (!validStates.every(isAllValid)) {
                     $("html, body").animate({
                         scrollTop: $errorSummary.offset().top
                     }, 600);
                     $errorSummary.focus();
                 }
+
+                return validStates.every(isAllValid);
             }
+
+               var $goToSection1Link = $("#goToSection1Link");
+            $goToSection1Link.click(function () {
+                event.preventDefault();
+               // if (validate()) {
+                    $("#addCourseSection2").attr("action", "AddCourseRunToAddCourse");
+                    $("#addCourseSection2").submit();
+                //}
+            });
 
 
              var replaceAll = function (search, find, replace) {
