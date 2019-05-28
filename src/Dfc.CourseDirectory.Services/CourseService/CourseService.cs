@@ -183,7 +183,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
         }
 
         // TODO - Provider search is in the course service for now, needs moving!
-        public async Task<IResult<ProviderAzureSearchResultModel>> ProviderSearchAsync(ProviderSearchCriteria criteria)
+        public async Task<IResult<ProviderAzureSearchResults>> ProviderSearchAsync(ProviderSearchCriteria criteria)
         {
             Throw.IfNull(criteria, nameof(criteria));
             _logger.LogMethodEnter();
@@ -207,26 +207,26 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 if (response.IsSuccessStatusCode) {
 
                     if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
-                        return Result.Ok<ProviderAzureSearchResultModel>(new ProviderAzureSearchResultModel());
+                        return Result.Ok<ProviderAzureSearchResults>(new ProviderAzureSearchResults());
 
                     var json = await response.Content.ReadAsStringAsync();
 
                     _logger.LogInformationObject("Provider search service json response", json);
-                    ProviderAzureSearchResultModel providers = JsonConvert.DeserializeObject<ProviderAzureSearchResultModel>(json);
+                    ProviderAzureSearchResults providers = JsonConvert.DeserializeObject<ProviderAzureSearchResults>(json);
 
                     //ProviderSearchResult searchResult = new ProviderSearchResult(providers);
-                    return Result.Ok<ProviderAzureSearchResultModel>(providers); // searchResult);
+                    return Result.Ok<ProviderAzureSearchResults>(providers); // searchResult);
 
                 } else
-                    return Result.Fail<ProviderAzureSearchResultModel>("Provider search service unsuccessful http response");
+                    return Result.Fail<ProviderAzureSearchResults>("Provider search service unsuccessful http response");
 
             } catch (HttpRequestException hre) {
                 _logger.LogException("Provider search service http request error", hre);
-                return Result.Fail<ProviderAzureSearchResultModel>("Provider search service http request error.");
+                return Result.Fail<ProviderAzureSearchResults>("Provider search service http request error.");
 
             } catch (Exception e) {
                 _logger.LogException("Provider search service unknown error.", e);
-                return Result.Fail<ProviderAzureSearchResultModel>("Provider search service unknown error.");
+                return Result.Fail<ProviderAzureSearchResults>("Provider search service unknown error.");
 
             } finally {
                 _logger.LogMethodExit();
