@@ -29,38 +29,26 @@ namespace Dfc.CourseDirectory.Web.Controllers
     public class ProviderAzureSearchController : Controller
     {
         private readonly ILogger<ProviderAzureSearchController> _logger;
-        private readonly ICourseServiceSettings _courseServiceSettings;
         private readonly ICourseService _courseService;
-        private readonly IProviderSearchHelper _providerSearchHelper;
-        private readonly IPaginationHelper _paginationHelper;
         private readonly IHttpContextAccessor _contextAccessor;
         private ISession _session => _contextAccessor.HttpContext.Session;
 
         public ProviderAzureSearchController(
             ILogger<ProviderAzureSearchController> logger,
-            //IOptions<CourseServiceSettings> courseServiceSettings,
             ICourseService courseService,
-            IHttpContextAccessor contextAccessor) //,
-            //IProviderSearchHelper providerSearchHelper,
-            //IPaginationHelper paginationHelper)
+            IHttpContextAccessor contextAccessor)
         {
             Throw.IfNull(logger, nameof(logger));
-            //Throw.IfNull(courseServiceSettings, nameof(courseServiceSettings));
             Throw.IfNull(courseService, nameof(courseService));
             Throw.IfNull(contextAccessor, nameof(contextAccessor));
-            //Throw.IfNull(providerSearchHelper, nameof(providerSearchHelper));
-            //Throw.IfNull(paginationHelper, nameof(paginationHelper));
 
             _logger = logger;
-            //_courseServiceSettings = courseServiceSettings.Value;
             _courseService = courseService;
             _contextAccessor = contextAccessor;
-            //_providerSearchHelper = providerSearchHelper;
-            //_paginationHelper = paginationHelper;
         }
 
         [Authorize]
-        public async Task<IActionResult> Index([FromQuery] ProviderSearchCriteria criteria) //ProviderAzureSearchRequestModel requestModel)
+        public async Task<IActionResult> Index([FromQuery] ProviderSearchCriteria criteria)
         {
             if (criteria == null || string.IsNullOrWhiteSpace(criteria.Keyword))
                 return View(new ProviderSearchViewModel() { Search = criteria.Keyword, Providers = new List<ProviderAzureSearchResultItem>() });
