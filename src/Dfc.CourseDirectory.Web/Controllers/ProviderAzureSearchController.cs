@@ -56,40 +56,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [Authorize]
         public async Task<IActionResult> Index([FromQuery] ProviderSearchCriteria criteria) //ProviderAzureSearchRequestModel requestModel)
         {
-            //ProviderAzureSearchResultModel model = new ProviderAzureSearchResultModel();
-
-            ////if (requestModel != null) {
-            //if (criteria != null) {
-
-            //    //var criteria = _providerSearchHelper.GetAzureSearchCriteria(
-            //    //    requestModel,
-            //    //    _paginationHelper.GetCurrentPageNo(Request.GetDisplayUrl(), _providerSearchSettings.PageParamName),
-            //    //    _providerSearchSettings.ItemsPerPage,
-            //    //    (ProviderSearchFacet[])Enum.GetValues(typeof(ProviderSearchFacet)));
-
-            //    IResult<ProviderAzureSearchResults> result = await _courseService.ProviderSearchAsync(criteria);
-
-            //    if (result.IsSuccess && result.HasValue) {
-
-            //        //var filters = _providerSearchHelper.GetProviderSearchFilterModels(result.Value.SearchFacets, requestModel);
-            //        //var items = _providerSearchHelper.GetProviderSearchResultItemModels(result.Value.Value);
-
-            //        model = new ProviderAzureSearchResultModel(criteria.Keyword, result.Value?.Value);
-            //        //{
-            //        //    ODataContext = result.Value.ODataContext,
-            //        //    SearchFacets = result.Value.SearchFacets,
-            //        //    Value = result.Value.Value,
-            //        //    ODataCount = result.Value.ODataCount
-            //        //};
-
-            //    } else {
-            //        model = new ProviderAzureSearchResultModel(); //ProviderSearchResultModel(result.Error);
-            //    }
-            //}
-            //_logger.LogMethodExit();
-            //return ViewComponent(nameof(ViewComponents.ProviderAzureSearchResult.ProviderAzureSearchResult), model);
-
-
             if (criteria == null || string.IsNullOrWhiteSpace(criteria.Keyword))
                 return View(new ProviderSearchViewModel() { Search = criteria.Keyword, Providers = new List<ProviderAzureSearchResultItem>() });
             else {
