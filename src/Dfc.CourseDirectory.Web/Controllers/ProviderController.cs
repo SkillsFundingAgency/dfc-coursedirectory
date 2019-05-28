@@ -205,61 +205,75 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 model.Status = provider.ProviderStatus;
                 model.ProviderName = provider.ProviderName;
                 model.LegalName = provider.ProviderName;
-                model.TradingName = provider.ProviderAliases.FirstOrDefault()?.ProviderAlias?.ToString();
-                model.AliasName = provider.ProviderAliases.FirstOrDefault()?.ProviderAlias?.ToString();
+
+                if (provider.ProviderAliases != null)
+                {
+                    model.TradingName = provider.ProviderAliases?.FirstOrDefault()?.ProviderAlias?.ToString();
+                    model.AliasName = provider.ProviderAliases.FirstOrDefault()?.ProviderAlias?.ToString();
+                }
+              
                 model.UKPRN = UKPRN.ToString();
                 model.UnitedKingdomProviderReferenceNumber = provider.UnitedKingdomProviderReferenceNumber;
                 model.BriefOverview = provider.MarketingInformation;
                 model.Alias = provider.Alias;
 
-                var providerContactTypeL = provider.ProviderContact.Where(s => s.ContactType.Equals("L", StringComparison.InvariantCultureIgnoreCase));
                 string AddressLine1 = string.Empty;
-                if (providerContactTypeL.FirstOrDefault()?.ContactAddress?.SAON?.Description != null)
-                {
-                    AddressLine1 = providerContactTypeL.FirstOrDefault()?.ContactAddress?.SAON?.Description.ToString();
-                }
                 string AddressLine2 = string.Empty;
-                if (providerContactTypeL.FirstOrDefault()?.ContactAddress?.PAON?.Description != null)
-                {
-                    AddressLine2 = providerContactTypeL.FirstOrDefault()?.ContactAddress?.PAON?.Description.ToString();
-                }
-
                 string AddressLine3 = string.Empty;
-                if (providerContactTypeL.FirstOrDefault()?.ContactAddress?.StreetDescription != null)
-                {
-                    AddressLine3 = providerContactTypeL.FirstOrDefault()?.ContactAddress?.StreetDescription.ToString();
-                }
-
                 string AddressLine4 = string.Empty;
-                if (providerContactTypeL.FirstOrDefault()?.ContactAddress?.Locality != null)
-                {
-                    AddressLine4 = providerContactTypeL.FirstOrDefault()?.ContactAddress?.Locality.ToString();
-                }
-
                 string TownCity = string.Empty;
-                if (!string.IsNullOrEmpty(providerContactTypeL.FirstOrDefault()?.ContactAddress?.Items?.FirstOrDefault()))
-                {
-                    TownCity = providerContactTypeL.FirstOrDefault()?.ContactAddress?.Items?.FirstOrDefault();
-                }
-
                 string PostCode = string.Empty;
-                if (!string.IsNullOrEmpty(providerContactTypeL?.FirstOrDefault()?.ContactAddress?.PostCode))
+
+                if (provider.ProviderContact != null)
                 {
-                    PostCode = providerContactTypeL?.FirstOrDefault()?.ContactAddress?.PostCode;
+                    var providerContactTypeL = provider.ProviderContact.Where(s => s.ContactType.Equals("L", StringComparison.InvariantCultureIgnoreCase));
+                    if (providerContactTypeL.FirstOrDefault()?.ContactAddress?.SAON?.Description != null)
+                    {
+                        AddressLine1 = providerContactTypeL.FirstOrDefault()?.ContactAddress?.SAON?.Description.ToString();
+                    }
+
+                    if (providerContactTypeL.FirstOrDefault()?.ContactAddress?.PAON?.Description != null)
+                    {
+                        AddressLine2 = providerContactTypeL.FirstOrDefault()?.ContactAddress?.PAON?.Description.ToString();
+                    }
+
+
+                    if (providerContactTypeL.FirstOrDefault()?.ContactAddress?.StreetDescription != null)
+                    {
+                        AddressLine3 = providerContactTypeL.FirstOrDefault()?.ContactAddress?.StreetDescription.ToString();
+                    }
+
+
+                    if (providerContactTypeL.FirstOrDefault()?.ContactAddress?.Locality != null)
+                    {
+                        AddressLine4 = providerContactTypeL.FirstOrDefault()?.ContactAddress?.Locality.ToString();
+                    }
+
+
+                    if (!string.IsNullOrEmpty(providerContactTypeL.FirstOrDefault()?.ContactAddress?.Items?.FirstOrDefault()))
+                    {
+                        TownCity = providerContactTypeL.FirstOrDefault()?.ContactAddress?.Items?.FirstOrDefault();
+                    }
+
+
+                    if (!string.IsNullOrEmpty(providerContactTypeL?.FirstOrDefault()?.ContactAddress?.PostCode))
+                    {
+                        PostCode = providerContactTypeL?.FirstOrDefault()?.ContactAddress?.PostCode;
+                    }
+
+
+                    model.AddressLine1 = AddressLine1;
+                    model.AddressLine2 = AddressLine2;
+                    model.AddressLine3 = AddressLine3;
+                    model.AddressLine4 = AddressLine4;
+                    model.TownCity = TownCity;
+
+                    model.PostCode = PostCode;
+
+                    model.Telephone = providerContactTypeL?.FirstOrDefault()?.ContactTelephone1;
+                    model.Web = providerContactTypeL?.FirstOrDefault()?.ContactWebsiteAddress;
+                    model.Email = providerContactTypeL?.FirstOrDefault()?.ContactEmail;
                 }
-
-
-                model.AddressLine1 = AddressLine1;
-                model.AddressLine2 = AddressLine2;
-                model.AddressLine3 = AddressLine3;
-                model.AddressLine4 = AddressLine4;
-                model.TownCity = TownCity;
-                
-                model.PostCode = PostCode;
-
-                model.Telephone = providerContactTypeL?.FirstOrDefault()?.ContactTelephone1;
-                model.Web = providerContactTypeL?.FirstOrDefault()?.ContactWebsiteAddress;
-                model.Email = providerContactTypeL?.FirstOrDefault()?.ContactEmail;
 
             }
 
