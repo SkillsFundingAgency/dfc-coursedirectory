@@ -59,10 +59,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
             if (criteria == null || string.IsNullOrWhiteSpace(criteria.Keyword))
                 return View(new ProviderSearchViewModel() { Search = criteria.Keyword, Providers = new List<ProviderAzureSearchResultItem>() });
             else {
-                //ProviderSearchCriteria criteria = new ProviderSearchCriteria() { Keyword = Keyword }; //, Town = new[] { Keyword } };
                 ProviderAzureSearchResults result = (await _courseService.ProviderSearchAsync(criteria)).Value;
                 ProviderSearchViewModel model = new ProviderSearchViewModel() { Search = criteria.Keyword, Providers = result.Value };
-                //return View(model);
                 return ViewComponent(nameof(ViewComponents.ProviderAzureSearchResult.ProviderAzureSearchResult), model);
             }
         }
