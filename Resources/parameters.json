@@ -35,14 +35,14 @@
     "courseApiUrl": {
       "value": "https://my.api.net/api/course/"
     },
+    "courseApiKey": {
+      "value": "not-a-real-key"
+    },
     "apprenticeshipApiKey": {
       "value": "not-a-real-key"
     },
     "apprenticeshipApiUrl": {
       "value": "https://my.api.net/api/apprenticeship/"
-    },
-    "courseApiKey": {
-      "value": "not-a-real-key"
     },
     "searchDomain": {
       "value": "search.example.net"
