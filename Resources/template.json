@@ -74,6 +74,18 @@
         "description": "API host key (code) needed to access the course service function app (REST API)"
       }
     },
+    "apprenticeshipApiUrl": {
+      "type": "string",
+      "metadata": {
+        "description": "API URL for the course services"
+      }
+    },
+    "apprenticeshipApiKey": {
+      "type": "securestring",
+      "metadata": {
+        "description": "API host key (code) needed to access the course service function app (REST API)"
+      }
+    },
     "searchDomain": {
       "type": "string",
       "metadata": {
@@ -445,6 +457,14 @@
               {
                 "name": "CourseServiceSettings__ApiKey",
                 "value": "[parameters('courseApiKey')]"
+              },
+              {
+                "name": "ApprenticeshipServiceSettings__ApiUr",
+                "value": "[parameters('apprenticeshipApiUrl')]"
+              },
+              {
+                "name": "ApprenticeshipServiceSettings__ApiKey",
+                "value": "[parameters('apprenticeshipApiKey')]"
               },
               {
                 "name": "AppUISettings__VenueNameComponentSettings__VenueName_Label",

@@ -35,6 +35,12 @@
     "courseApiUrl": {
       "value": "https://my.api.net/api/course/"
     },
+    "apprenticeshipApiKey": {
+      "value": "not-a-real-key"
+    },
+    "apprenticeshipApiUrl": {
+      "value": "https://my.api.net/api/apprenticeship/"
+    },
     "courseApiKey": {
       "value": "not-a-real-key"
     },
