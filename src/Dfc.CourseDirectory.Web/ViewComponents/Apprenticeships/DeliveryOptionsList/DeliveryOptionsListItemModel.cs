@@ -10,9 +10,11 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships
 
     public class DeliveryOptionsListItemModel
     {
-        public Guid? LocationId { get; set; }
+        public string LocationId { get; set; }
 
         public string LocationName { get; set; }
+
+        public string PostCode { get; set; }
 
 
         public string Delivery { get; set; }
