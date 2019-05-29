@@ -196,7 +196,6 @@ namespace Dfc.CourseDirectory.Models.Enums
         No = 2
     }
 
-
     public class Enums
     {
     }

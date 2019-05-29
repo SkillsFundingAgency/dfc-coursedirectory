@@ -1,31 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Web;
-using Dfc.CourseDirectory.Common;
+﻿using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Models.Enums;
-using Dfc.CourseDirectory.Models.Models.Apprenticeships;
-using Dfc.CourseDirectory.Models.Models.Courses;
-using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
-using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Extensions;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.RequestModels;
 using Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships;
 using Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships.ApprenticeshipSearchResult;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseRegion;
-using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.Web.ViewModels.Apprenticeships;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Internal;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -36,24 +27,24 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private ISession _session => _contextAccessor.HttpContext.Session;
         private readonly ICourseService _courseService;
         private readonly IVenueService _venueService;
-        //private readonly IApprenticeshipService _apprenticeshipService;
+        private readonly IApprenticeshipService _apprenticeshipService;
 
         public ApprenticeshipsController(
             ILogger<ApprenticeshipsController> logger,
             IHttpContextAccessor contextAccessor, ICourseService courseService, IVenueService venueService
-            /*,IApprenticeshipService apprenticeshipService*/)
+            , IApprenticeshipService apprenticeshipService)
         {
             Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(contextAccessor, nameof(contextAccessor));
             Throw.IfNull(courseService, nameof(courseService));
             Throw.IfNull(venueService, nameof(venueService));
-            //Throw.IfNull(apprenticeshipService, nameof(apprenticeshipService));
+            Throw.IfNull(apprenticeshipService, nameof(apprenticeshipService));
 
             _logger = logger;
             _contextAccessor = contextAccessor;
             _courseService = courseService;
             _venueService = venueService;
-            //_apprenticeshipService = apprenticeshipService;
+            _apprenticeshipService = apprenticeshipService;
         }
 
         [Authorize]
@@ -75,29 +66,41 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             if (!string.IsNullOrEmpty(requestModel.SearchTerm))
             {
-                // var result = _apprenticeshipService.StandardsAndFrameworksSearch(requestModel.SearchTerm);
+                var result = await _apprenticeshipService.StandardsAndFrameworksSearch(requestModel.SearchTerm);
 
-                //stub
                 var listOfApprenticeships = new List<ApprenticeShipsSearchResultItemModel>();
-                listOfApprenticeships.Add(new ApprenticeShipsSearchResultItemModel()
-                {
-                    ApprenticeshipTitle = "Test Apprenticeship 1",
-                    ApprenticeshipType = "Framework",
-                    NotionalNVQLevelv2 = "1 (equivalent to A levels at grades A to E)"
-                });
-                listOfApprenticeships.Add(new ApprenticeShipsSearchResultItemModel()
-                {
-                    ApprenticeshipTitle = "Test Apprenticeship 2",
-                    ApprenticeshipType = string.Empty,
-                    NotionalNVQLevelv2 = "2 (equivalent to A levels at grades A to E)"
-                });
-                listOfApprenticeships.Add(new ApprenticeShipsSearchResultItemModel()
-                {
-                    ApprenticeshipTitle = "Test Apprenticeship 3",
-                    ApprenticeshipType = "Framework",
-                    NotionalNVQLevelv2 = "3 (equivalent to A levels at grades A to E)"
-                });
 
+                if (result.IsSuccess && result.HasValue)
+                {
+                    foreach(var item in result.Value)
+                    {
+                        listOfApprenticeships.Add(new ApprenticeShipsSearchResultItemModel()
+                        {
+                            ApprenticeshipTitle = item.StandardName ?? item.NasTitle,
+                            id = item.id,
+                            StandardCode = item.StandardCode,
+                            Version = item.Version,
+                            StandardSectorCode = item.StandardSectorCode,
+                            URLLink = item.URLLink,
+                            OtherBodyApprovalRequired = item.OtherBodyApprovalRequired,
+                            ApprenticeshipType = item.ApprenticeshipType,
+                            EffectiveFrom = item.EffectiveFrom,
+                            CreatedDateTimeUtc = item.CreatedDateTimeUtc, 
+                            ModifiedDateTimeUtc = item.ModifiedDateTimeUtc,
+                            RecordStatusId = item.RecordStatusId,
+                            FrameworkCode = item.FrameworkCode,
+                            ProgType = item.ProgType,
+                            PathwayCode = item.PathwayCode,
+                            PathwayName = item.PathwayName,
+                            NasTitle = item.NasTitle,
+                            EffectiveTo = item.EffectiveTo,
+                            SectorSubjectAreaTier1 = item.SectorSubjectAreaTier1,
+                            SectorSubjectAreaTier2 = item.SectorSubjectAreaTier2,
+                            NotionalEndLevel = item.NotionalEndLevel
+                        });
+                    }
+                }
+                
                 model.Items = listOfApprenticeships;
             }
 
