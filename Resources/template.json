@@ -77,13 +77,13 @@
     "apprenticeshipApiUrl": {
       "type": "string",
       "metadata": {
-        "description": "API URL for the course services"
+        "description": "API URL for the apprentischip services"
       }
     },
     "apprenticeshipApiKey": {
       "type": "securestring",
       "metadata": {
-        "description": "API host key (code) needed to access the course service function app (REST API)"
+        "description": "API host key (code) needed to access the apprenticeship service function app (REST API)"
       }
     },
     "searchDomain": {
