@@ -1,10 +1,12 @@
 ﻿
 using System;
 using System.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Dfc.CourseDirectory.Common;
@@ -17,7 +19,8 @@ using Dfc.CourseDirectory.Services.Interfaces;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.RequestModels;
-using Dfc.CourseDirectory.Web.ViewComponents.ProviderSearchResult;
+using Dfc.CourseDirectory.Web.ViewComponents.ProviderAzureSearchResult;
+using Dfc.CourseDirectory.Web.ViewModels.ProviderSearch;
 
 
 namespace Dfc.CourseDirectory.Web.Controllers
@@ -26,66 +29,45 @@ namespace Dfc.CourseDirectory.Web.Controllers
     public class ProviderAzureSearchController : Controller
     {
         private readonly ILogger<ProviderAzureSearchController> _logger;
-        private readonly ICourseServiceSettings _courseServiceSettings;
         private readonly ICourseService _courseService;
-        private readonly IProviderSearchHelper _providerSearchHelper;
-        private readonly IPaginationHelper _paginationHelper;
+        private readonly IHttpContextAccessor _contextAccessor;
+        private ISession _session => _contextAccessor.HttpContext.Session;
 
         public ProviderAzureSearchController(
             ILogger<ProviderAzureSearchController> logger,
-            IOptions<CourseServiceSettings> courseServiceSettings,
             ICourseService courseService,
-            IProviderSearchHelper providerSearchHelper,
-            IPaginationHelper paginationHelper)
+            IHttpContextAccessor contextAccessor)
         {
             Throw.IfNull(logger, nameof(logger));
-            Throw.IfNull(courseServiceSettings, nameof(courseServiceSettings));
             Throw.IfNull(courseService, nameof(courseService));
-            Throw.IfNull(providerSearchHelper, nameof(providerSearchHelper));
-            Throw.IfNull(paginationHelper, nameof(paginationHelper));
+            Throw.IfNull(contextAccessor, nameof(contextAccessor));
 
             _logger = logger;
-            _courseServiceSettings = courseServiceSettings.Value;
             _courseService = courseService;
-            _providerSearchHelper = providerSearchHelper;
-            _paginationHelper = paginationHelper;
+            _contextAccessor = contextAccessor;
         }
 
         [Authorize]
-        public async Task<IActionResult> Index([FromQuery] ProviderSearchCriteria criteria) //ProviderAzureSearchRequestModel requestModel)
+        public async Task<IActionResult> Index([FromQuery] ProviderSearchCriteria criteria)
         {
-            ProviderAzureSearchResultModel model = new ProviderAzureSearchResultModel();
-
-            //if (requestModel != null) {
-            if (criteria != null) {
-
-                //var criteria = _providerSearchHelper.GetAzureSearchCriteria(
-                //    requestModel,
-                //    _paginationHelper.GetCurrentPageNo(Request.GetDisplayUrl(), _providerSearchSettings.PageParamName),
-                //    _providerSearchSettings.ItemsPerPage,
-                //    (ProviderSearchFacet[])Enum.GetValues(typeof(ProviderSearchFacet)));
-
-                IResult<ProviderAzureSearchResultModel> result = await _courseService.ProviderSearchAsync(criteria);
-
-                if (result.IsSuccess && result.HasValue) {
-
-                    //var filters = _providerSearchHelper.GetProviderSearchFilterModels(result.Value.SearchFacets, requestModel);
-                    //var items = _providerSearchHelper.GetProviderSearchResultItemModels(result.Value.Value);
-
-                    model = result.Value; // new ProviderAzureSearchResultModel()
-                    //{
-                    //    ODataContext = result.Value.ODataContext,
-                    //    SearchFacets = result.Value.SearchFacets,
-                    //    Value = result.Value.Value,
-                    //    ODataCount = result.Value.ODataCount
-                    //};
-
-                } else {
-                    model = new ProviderAzureSearchResultModel(); //ProviderSearchResultModel(result.Error);
-                }
+            if (criteria == null || string.IsNullOrWhiteSpace(criteria.Keyword))
+                return View(new ProviderSearchViewModel() { Search = criteria.Keyword, Providers = new List<ProviderAzureSearchResultItem>() });
+            else {
+                ProviderAzureSearchResults result = (await _courseService.ProviderSearchAsync(criteria)).Value;
+                ProviderSearchViewModel model = new ProviderSearchViewModel() { Search = criteria.Keyword, Providers = result.Value };
+                return ViewComponent(nameof(ViewComponents.ProviderAzureSearchResult.ProviderAzureSearchResult), model);
             }
-            _logger.LogMethodExit();
-            return ViewComponent(nameof(ViewComponents.ProviderSearchResult.ProviderSearchResult), model);
+        }
+
+        [Authorize]
+        public async Task<IActionResult> SelectProvider([FromQuery] string UKPRN)
+        {
+            if (string.IsNullOrWhiteSpace(UKPRN) || !int.TryParse(UKPRN, out int value))
+                return new NoContentResult();
+            else {
+                _session.SetInt32("UKPRN", value);
+                return RedirectToAction("Index", "Dashboard"); //"Home");
+            }
         }
     }
 }

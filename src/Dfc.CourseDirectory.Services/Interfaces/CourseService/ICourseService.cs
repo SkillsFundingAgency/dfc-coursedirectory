@@ -18,7 +18,7 @@ namespace Dfc.CourseDirectory.Services.Interfaces.CourseService
     {
         Task<IResult<ICourse>> AddCourseAsync(ICourse course);
         Task<IResult<ICourseSearchResult>> GetYourCoursesByUKPRNAsync(ICourseSearchCriteria criteria);
-        Task<IResult<ProviderAzureSearchResultModel>> ProviderSearchAsync(ProviderSearchCriteria criteria);
+        Task<IResult<ProviderAzureSearchResults>> ProviderSearchAsync(ProviderSearchCriteria criteria);
         Task<IResult<ICourse>> UpdateCourseAsync(ICourse course);
         Task<IResult<ICourse>> GetCourseByIdAsync(IGetCourseByIdCriteria criteria);
         Task<IResult> ArchiveProviderLiveCourses(int? UKPRN);
