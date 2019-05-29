@@ -45,15 +45,29 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships
 
                 if (result.IsSuccess && result.HasValue)
                 {
-                    var defaultItem = new SelectListItem { Text = "Select", Value = "" };
+                    //var defaultItem = new SelectListItem { Text = "Select", Value = "",Selected=true };
 
                     foreach (var venue in result.Value.Value.Where(x => x.Status == VenueStatus.Live))
                     {
                         var item = new SelectListItem { Text = venue.VenueName, Value = venue.ID };
-                        venues.Add(item);
+
+                        DeliveryOptionsListItemModel alreadyAdded = null;
+
+                        if (model.DeliveryOptionsListItemModel != null)
+                        {
+                            if (model.DeliveryOptionsListItemModel.DeliveryOptionsListItemModel != null)
+                            {
+                                alreadyAdded = model.DeliveryOptionsListItemModel.DeliveryOptionsListItemModel.Where(x => x.LocationId == item.Value).FirstOrDefault();
+                            }
+                        }
+                        if (alreadyAdded == null)
+                        {
+                            venues.Add(item);
+                        }
                     };
 
-                    venues.Insert(0,defaultItem);
+
+                   //venues.Insert(0, defaultItem);
                 }
 
             }

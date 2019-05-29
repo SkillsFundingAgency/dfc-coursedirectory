@@ -8,7 +8,7 @@
 <div class="cd-hero-grey">
 
     <header class="cd-hero-search">
-        <div class="content-container">
+        <div class="content-container govuk-body">
             <div class="grid-row" data-sf-element="Row">
                 <div class="column-two-thirds">
                     <div>
@@ -31,7 +31,8 @@
                             </div>
 
                             @{ var regex = @"^[a-zA-Z0-9 /\n/\r/\¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`" + "\"" + "\\\\]+$"; }
-                            @{ var emailRegEx = @"^([\w\!\#$\%\&\'\*\+\-\/\=\?\^\`{\|\}\~]+\.)*[\w\!\#$\%\&\'\*\+\-\/\=\?\^\`{\|\}\~]+@((((([a-z0-9]{1}[a-z0-9\-]{0,62}[a-z0-9]{1})|[a-z])\.)+[a-z]{2,6})|(\d{1,3}\.){3}\d{1,3}(\:\d{1,5})?)$"; }
+                            @*@{ var emailRegEx = @"^([\w\!\#$\%\&\'\*\+\-\/\=\?\^\`{\|\}\~]+\.)*[\w\!\#$\%\&\'\*\+\-\/\=\?\^\`{\|\}\~]+@((((([a-z0-9]{1}[a-z0-9\-]{0,62}[a-z0-9]{1})|[a-z])\.)+[a-z]{2,6})|(\d{1,3}\.){3}\d{1,3}(\:\d{1,5})?)$"; }*@
+                            @{ var emailRegEx = @"^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$"; }
 
                             @*@{ var telephoneRegEx = @"^(((\+44\s?\d{4}|\(?0\d{4}\)?)\s?\d{3}\s?\d{3})|((\+44\s?\d{3}|\(?0\d{3}\)?)\s?\d{3}\s?\d{4})|((\+44\s?\d{2}|\(?0\d{2}\)?)\s?\d{4}\s?\d{4}))(\s?\#(\d{4}|\d{3}))?$";}*@
 
@@ -77,11 +78,8 @@
                                        val-regex-message="Apprenticeship web page should only have letters, numbers, spaces and commonly-used punctuation">
                             </div>
 
-
+                            <h2 class="">Contact details</h2>
                             <div id="ContactUsContainer" class="govuk-form-group">
-                                <label id="govuk-label-ContactUs" class="govuk-label">
-                                    Contact details
-                                </label>
                                 <span id="more-detail-hint" class="govuk-hint">Who can employers contact about this apprenticeship training?</span>
 
                                 <label id="govuk-label-Email" class="govuk-label">
