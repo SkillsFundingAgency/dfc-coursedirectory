@@ -118,7 +118,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
 
             var model = new ProviderCoursesViewModel()
             {
-                PendingCoursesCount = pendingCourses?.Count(),
+                PendingCoursesCount = pendingCourses?.SelectMany(c => c.CourseRuns)?.Count(),
                 ProviderCourseRuns = new List<ProviderCourseRunViewModel>()
             };
 
