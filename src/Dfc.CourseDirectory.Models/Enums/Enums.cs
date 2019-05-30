@@ -56,10 +56,10 @@ namespace Dfc.CourseDirectory.Models.Enums
         [Description("Undefined")]
         Undefined = 0,
         [Display(Name = "Day release")]
-        [Description("DayRelease")]
+        [Description("Day Release")]
         DayRelease = 1,
         [Display(Name = "Block release")]
-        [Description("BlockRelease")]
+        [Description("Block Release")]
         BlockRelease = 2
 
     }

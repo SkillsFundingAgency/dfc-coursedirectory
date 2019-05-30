@@ -6,7 +6,7 @@
 @{
     ViewData["Title"] = "Add a Provider";
     ViewData["Subtext"] = "Enter UKPRN number";
-    ViewData["Placeholder"] = "Search by UKPRN, provider name, address or postcode";
+    ViewData["Placeholder"] = "Search by UKPRN";
 }
 
 
@@ -134,6 +134,7 @@
                     $elementSearchTerm.removeClass(elementErrorClass);
                     $formGroupSearchTerm.removeClass(formGroupErrorClass);
                     $searchForm.removeClass("govuk-form-group, govuk-form-group--error");
+                    $('.failure-container').remove();
                     $validationMessageSearchTerm.hide();
                     $validationMessageSearchTerm.css("margin-bottom", "0");              
             }

@@ -7,76 +7,190 @@
 
 @model Dfc.CourseDirectory.Web.ViewModels.Apprenticeships.ApprenticeshipDeliveryOptionsViewModel
 
-    <form class="govuk-!-margin-bottom-9" id="ApprenticeshipDeliveryOptionsForm" asp-controller="Apprenticeships" asp-action="ApprenticeShipDeliveryOptions" method="post">
-        <a asp-controller="Apprenticeships" asp-action="ApprenticeShipDelivery" class="govuk-back-link">Back</a><br />
-        <div class="cd-dashboard govuk-grid-row govuk-body ">
+<form class="govuk-!-margin-bottom-9" id="ApprenticeshipDeliveryOptionsForm" asp-controller="Apprenticeships" asp-action="Add" method="post">
+    <a asp-controller="Apprenticeships" asp-action="ApprenticeShipDelivery" class="govuk-back-link">Back</a><br />
 
-            <div class="govuk-form-group govuk-grid-column-two-thirds">
-                <fieldset class="govuk-fieldset" aria-describedby="how-contacted-conditional-hint">
-                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
-                        <h1 class="govuk-fieldset__heading">
-                            Select delivery options
-                        </h1>
-                    </legend>
-
-                    @await Component.InvokeAsync(nameof(ChooseLocation), new ChooseLocationModel()
-
-           {
-           LabelText = "Select location",
-           HintText = "",
-           LocationId = Model.LocationId ?? (Guid?)null,
-           DisplayLink = false
-
-           })
-
-
-
-
-                    <div class="govuk-form-group govuk-!-margin-top-9">
-                        <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
-                            <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
-                                <h2 class="govuk-heading-m">
-                                    How is the training delivered at this location?
-
-                                </h2>
-                            </legend>
-                            <span id="waste-hint" class="govuk-hint">
-                                Select all that apply.
-                            </span>
-                            <div class="govuk-checkboxes">
-                                <div class="govuk-checkboxes__item">
-                                    <input class="govuk-checkboxes__input" type="checkbox" asp-for="@Model.DayRelease">
-                                    <label class="govuk-label govuk-checkboxes__label">
-                                        @WebHelper.GetEnumDescription(ApprenticeShipDeliveryLocation.DayRelease)
-                                    </label>
-                                </div>
-                                <div class="govuk-checkboxes__item">
-                                    <input class="govuk-checkboxes__input" type="checkbox" asp-for="@Model.BlockRelease">
-                                    <label class="govuk-label govuk-checkboxes__label">
-                                        @WebHelper.GetEnumDescription(ApprenticeShipDeliveryLocation.BlockRelease)
-                                    </label>
-                                </div>
-                            </div>
-                        </fieldset>
-                    </div>
-
-
-                    <div class="govuk-!-margin-top-9">
-                        @*<a type="submit" class="govuk-button govuk-!-margin-right-2" id="next1" name="submit" value="continue">Save and continue</a>
-                        <a type="submit" id="List" class="govuk-button govuk-button--secondary" id="next2" name="submit" value="addanother">Save and add another</a>*@
-                        <button type="submit" class="govuk-button" id="next1" name="submit" value="continue">Save and continue</button>
-                        <button type="submit" class="govuk-button govuk-button--secondary" id="next2" name="submit" value="addanother">Save and add another</button>
-
-                    </div>
-
-                    @await Component.InvokeAsync(nameof(DeliveryOptionsList), Model.DeliveryOptionsListItemModel)
-
-
-
-            </div>
+    <div id="errorsummary" class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary" style="display: none;">
+        <h2 class="govuk-error-summary__title" id="error-summary-title">
+            There is an issue with this apprenticeship
+        </h2>
+        <div class="govuk-error-summary__body">
+            <ul class="govuk-list govuk-error-summary__list"></ul>
         </div>
-    </form>
+    </div>
+
+    <div class="cd-dashboard govuk-grid-row govuk-body ">
+
+        <div class="govuk-form-group govuk-grid-column-two-thirds">
+            <fieldset class="govuk-fieldset" aria-describedby="how-contacted-conditional-hint">
+                <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+                    <h1 class="govuk-fieldset__heading">
+                        Select delivery options
+                    </h1>
+                </legend>
+
+                @await Component.InvokeAsync(nameof(ChooseLocation), new ChooseLocationModel()
+
+       {
+       LabelText = "Select location",
+       HintText = "",
+       LocationId = Model.LocationId ?? (Guid?)null,
+       DisplayLink = false,
+       DeliveryOptionsListItemModel = Model.DeliveryOptionsListItemModel
+
+       })
+
+                <div class="govuk-form-group govuk-!-margin-top-9">
+                    <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
+                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+                            <h2 class="govuk-heading-m">
+                                How is the training delivered at this location?
+
+                            </h2>
+                        </legend>
+                        <span id="waste-hint" class="govuk-hint">
+                            Select all that apply.
+                        </span>
+                        <div id="deliveryoptions" class="govuk-checkboxes" val-required-message="Select how is the training delivered at this location">
+                            <div class="govuk-checkboxes__item">
+                                <input class="govuk-checkboxes__input" type="checkbox" asp-for="@Model.DayRelease">
+                                <label class="govuk-label govuk-checkboxes__label">
+                                    @WebHelper.GetEnumDescription(ApprenticeShipDeliveryLocation.DayRelease)
+                                </label>
+                            </div>
+                            <div class="govuk-checkboxes__item">
+                                <input class="govuk-checkboxes__input" type="checkbox" asp-for="@Model.BlockRelease">
+                                <label class="govuk-label govuk-checkboxes__label">
+                                    @WebHelper.GetEnumDescription(ApprenticeShipDeliveryLocation.BlockRelease)
+                                </label>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
 
 
+                <div class="govuk-!-margin-top-9">
+
+                    @Html.ActionLink("Save and continue", "ApprenticeshipSummary", "Apprenticeships", new { }, new { @class = "govuk-button" })
+
+                    <button class="govuk-button govuk-button--secondary" id="next2" asp-action="Add" asp-controller="Apprenticeships">Save and add another</button>
+
+                </div>
+
+
+
+                @await Component.InvokeAsync(nameof(DeliveryOptionsList), Model.DeliveryOptionsListItemModel)
+
+
+
+        </div>
+    </div>
+</form>
+
+<script>
+    (function ($) {
+        $(function () {
+            var $SaveAndContinue = $("#next1");
+            var $AddAnother = $("#next2");
+            var validStates = [];
+            var $errorSummary = $("#errorsummary").govUkErrorSummary();
+            var $selectedVenue = $("#@nameof(Model.LocationId)").govUkSelect();
+            var $checkboxesdeliverymethod = $("#deliveryoptions").govUkCheckboxes();
+            var $TooManyLoctions = $("#TooManyLocations");
+
+             function isAllValid(currentValue) {
+                return currentValue === true;
+            }
+
+            function validate() {
+
+                validStates = [];
+                $errorSummary.govUkErrorSummary("removeAll");
+                $selectedVenue.govUkSelect("validState");
+                $checkboxesdeliverymethod.govUkCheckboxes("validState");
+
+                var rowCount = $('#ResultsTable tr').length;
+
+                if (rowCount === 250) {
+                    validStates.push(false);
+
+                    var element = $TooManyLoctions;
+                    var $anchor = document.createElement("a");
+                    $anchor.href = "#TooManyLocations";
+                    $anchor.innerHTML = element.text();
+                    $anchor.id = "error-hash-link-" + "a" + "-" + 1;
+
+                    $errorSummary.govUkErrorSummary("add", $anchor);
+                    $errorSummary.govUkErrorSummary("show");
+                    $TooManyLoctions.addClass("govuk-error-message");
+                     $TooManyLoctions.closest(".govuk-form-group").addClass("govuk-form-group--error");
+                    $TooManyLoctions.show();
+                }
+                else {
+                      $TooManyLoctions.closest(".govuk-form-group").removeClass("govuk-form-group--error");
+                       $TooManyLoctions.removeClass("govuk-error-message");
+                    $TooManyLoctions.hide();
+                }
+
+                // venue
+                $selectedVenue.govUkSelect("validState");
+                $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $selectedVenue[0].id);
+                $errorSummary.govUkErrorSummary("hideIfEmpty")
+                validStates.push(true);
+                if (!$.requiredValidate($selectedVenue.val())) {
+                    $selectedVenue.govUkSelect("invalidState", $selectedVenue.attr("val-required-message"));
+                    var selectedVenueErrorHashLinks = $selectedVenue.govUkSelect("getErrorHashLinks");
+                    $errorSummary.govUkErrorSummary("add", selectedVenueErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
+                    validStates.push(false);
+                }
+
+                 $checkboxesdeliverymethod.govUkCheckboxes("validState");
+                $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $checkboxesdeliverymethod[0].id);
+                $errorSummary.govUkErrorSummary("hideIfEmpty")
+                validStates.push(true);
+                if ($.requiredValidate($checkboxesdeliverymethod.find("input[type='checkbox']:checked").val())) {
+                    $checkboxesdeliverymethod.govUkCheckboxes("validState");
+                     validStates.push(true);
+                } else {
+                    $checkboxesdeliverymethod.govUkCheckboxes("invalidState", $checkboxesdeliverymethod.attr("val-required-message"));
+                     var deliveryMethodErrorHashLinks = $checkboxesdeliverymethod.govUkCheckboxes("getErrorHashLinks");
+                    $errorSummary.govUkErrorSummary("add", deliveryMethodErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
+                     validStates.push(false);
+                }
+
+
+
+                if (!validStates.every(isAllValid)) {
+                    $("html, body").animate({
+                        scrollTop: $errorSummary.offset().top
+                    }, 600);
+                    $errorSummary.focus();
+                }
+            }
+
+
+            //$('#ApprenticeshipDeliveryOptionsForm').submit(function (event) {
+            //     event.preventDefault();
+            //    validate();
+            //          if (validStates.every(isAllValid)) {
+            //              $AddAnother.trigger('click'); 
+            //    }
+            //});
+
+
+            $AddAnother.on("click", function (event) {
+                 event.preventDefault();
+                 validate();
+                if (validStates.every(isAllValid)) {
+                    $("#ApprenticeshipDeliveryOptionsForm").submit();
+                }
+
+            });
+
+        });
+    })(jQuery);
+</script>
 
 
