@@ -8,7 +8,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships.ApprenticeshipS
     public class ApprenticeshipsSearchResultModel
     {
        
-        public string SearchTerm { get; }
+        public string SearchTerm { get; set; }
         public IEnumerable<ApprenticeShipsSearchResultItemModel> Items { get; set; }
        
     }

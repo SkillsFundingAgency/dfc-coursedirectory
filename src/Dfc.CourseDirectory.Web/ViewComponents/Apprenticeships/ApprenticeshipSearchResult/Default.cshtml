@@ -28,7 +28,7 @@ else
 
     if (!Model.Items.Any())
     {
-        <div class="cd-grid-coloumn-20 govuk-body" style="width: 100%;padding-left: 0.75em;">
+        <div class="govuk-grid-column-two-thirds">
             @await Component.InvokeAsync(nameof(Notification), new NotificationModel
        {
            NotificationTitle = "",
@@ -39,59 +39,46 @@ else
     }
     else
     {
-        <div class="govuk-heading-s lars-search-results govuk-!-font-weight-regular">
-            Found <span class="govuk-!-font-weight-bold">@Model.Items.Count()</span> results for <span class="govuk-!-font-weight-bold">@Model.SearchTerm</span>
-        </div>
+        <div class="govuk-grid-row">
 
-        @foreach (var apprenticeship in Model.Items.OrderBy(x => x.ApprenticeshipTitle))
-        {
-            <div class="courserun border">
-                <div class="courserun__row1" id="1">
-                    @if (!string.IsNullOrEmpty(apprenticeship.ApprenticeshipTitle))
+            <div class="govuk-grid-column-two-thirds  ">
+
+                <div class="cd-apprenticeships-results hide govuk-body visible">
+                    <div class="govuk-!-margin-bottom-4">
+                        <span>Found <strong>@Model.Items.Count()</strong> results for <strong> @Model.SearchTerm</strong></span>
+                    </div>
+
+                    @foreach (var apprenticeship in Model.Items.OrderBy(x => x.ApprenticeshipTitle))
                     {
-                        <h3 class="coursename" style="display:inline-flex">@apprenticeship.ApprenticeshipTitle</h3>
-
-                        @if (!string.IsNullOrEmpty(apprenticeship.ApprenticeshipType))
-                        {
-                            @if (apprenticeship.ApprenticeshipType.ToUpper() == "FRAMEWORK")
-                            {
-                                <span style="background-color: darkgray;color: white;padding: 5px;">@apprenticeship.ApprenticeshipType</span>
-                            }
-                        }
+                        <div>
+                            <div class="cd-apprenticeships-search-result__container">
+                                <h3 class="govuk-heading-m" style="display:inline-flex">@apprenticeship.ApprenticeshipTitle</h3>
+                                @if (!string.IsNullOrEmpty(apprenticeship.ApprenticeshipType))
+                                {
+                                    @if (apprenticeship.ApprenticeshipType.ToUpper() == "FRAMEWORK")
+                                    {
+                                        <span style="background-color: darkgray;color: white;padding: 5px;">@apprenticeship.ApprenticeshipType</span>
+                                    }
+                                }
+                                @if (!string.IsNullOrEmpty(apprenticeship.NotionalNVQLevelv2))
+                                {
+                                    <p class="govuk-body">Level: <span class="govuk-!-font-weight-bold">@apprenticeship.NotionalNVQLevelv2</span></p>
+                                }
+                                <a class="govuk-link"
+                                   asp-controller="Apprenticeships"
+                                   asp-action="ApprenticeShipDetails"
+                                   asp-route-apprenticeshiptitle="@apprenticeship.ApprenticeshipTitle"
+                                   asp-route-apprenticeshipmode="@ApprenticeShipMode.Add"
+                                   asp-route-apprenticeshippreviouspage="@ApprenticeShipPreviousPage.YourApprenticeships">Choose this apprenticeship</a>
+                            </div>
+                        </div>
 
                     }
-                </div>
-
-
-                <div class="courserun__row2" id="1" style="display:inline-flex;">
-
-                    @if (!string.IsNullOrEmpty(apprenticeship.NotionalNVQLevelv2))
-                    {
-                        <span style="padding-right: 0.25em;" class=""><strong>Level: </strong></span><span style="padding-right: 0.25em;">@apprenticeship.NotionalNVQLevelv2</span>
-                    }
-                </div>
-                <div class="courserun__row3" id="1">
-
-                </div>
-                <div class="courserun__row4" style="border-top:none">
-                    @*@Html.ActionLink("Choose this apprenticeship", "ApprenticeShipDetails", "Apprenticeships", new { }, null)*@
-                    <a class="govuk-link"
-                       asp-controller="Apprenticeships"
-                       asp-action="ApprenticeShipDetails"
-                       asp-route-apprenticeshiptitle="@apprenticeship.ApprenticeshipTitle"
-                       asp-route-apprenticeshipmode="@ApprenticeShipMode.Add"
-                       asp-route-apprenticeshippreviouspage="@ApprenticeShipPreviousPage.YourApprenticeships">Choose this apprenticeship</a>
 
                 </div>
             </div>
-
-
-
-        }
-
-
+        </div>
     }
-
 }
 
 <script>

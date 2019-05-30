@@ -85,22 +85,23 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 {
                     ApprenticeshipTitle = "Test Apprenticeship 1",
                     ApprenticeshipType = "Framework",
-                    NotionalNVQLevelv2 = "1 (equivalent to A levels at grades A to E)"
+                    NotionalNVQLevelv2 = "1"
                 });
                 listOfApprenticeships.Add(new ApprenticeShipsSearchResultItemModel()
                 {
                     ApprenticeshipTitle = "Test Apprenticeship 2",
                     ApprenticeshipType = string.Empty,
-                    NotionalNVQLevelv2 = "2 (equivalent to A levels at grades A to E)"
+                    NotionalNVQLevelv2 = "2"
                 });
                 listOfApprenticeships.Add(new ApprenticeShipsSearchResultItemModel()
                 {
                     ApprenticeshipTitle = "Test Apprenticeship 3",
                     ApprenticeshipType = "Framework",
-                    NotionalNVQLevelv2 = "3 (equivalent to A levels at grades A to E)"
+                    NotionalNVQLevelv2 = "3"
                 });
 
                 model.Items = listOfApprenticeships;
+                model.SearchTerm = requestModel.SearchTerm;
             }
 
             return ViewComponent(nameof(ViewComponents.Apprenticeships.ApprenticeshipSearchResult.ApprenticeshipSearchResult), model);
@@ -501,12 +502,29 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 Regions = _courseService.GetRegions()
             };
 
-            var ApprenticeshipRegionsViewModel = _session.GetObject<ApprenticeshipRegionsViewModel>("ApprenticeshipRegionsViewModel");
-            if (ApprenticeshipRegionsViewModel != null)
-            {
-                model = ApprenticeshipRegionsViewModel;
-            }
+            //var ApprenticeshipRegionsViewModel = _session.GetObject<ApprenticeshipRegionsViewModel>("ApprenticeshipRegionsViewModel");
+            //if (ApprenticeshipRegionsViewModel != null)
+            //{
+            //    model = ApprenticeshipRegionsViewModel;
+            //}
 
+            var SelectedRegions = _session.GetObject<string[]>("SelectedRegions");
+            if (SelectedRegions != null)
+            {
+
+
+
+                foreach (var selectRegionRegionItem in model.ChooseRegion.Regions.RegionItems.OrderBy(x => x.RegionName))
+                {
+                    foreach (var subRegionItemModel in selectRegionRegionItem.SubRegion)
+                    {
+                        if (SelectedRegions.Contains(subRegionItemModel.Id))
+                        {
+                            subRegionItemModel.Checked = true;
+                        }
+                    }
+                }
+            }
 
 
             return View("../ApprenticeshipRegions/Index", model);
@@ -514,8 +532,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         [Authorize]
         [HttpPost]
-        public IActionResult ApprenticeshipRegions(ApprenticeshipRegionsViewModel model)
+        public IActionResult ApprenticeshipRegions(string[] SelectedRegions)
         {
+            _session.SetObject("SelectedRegions", SelectedRegions);
 
             return RedirectToAction("ApprenticeshipSummary", "Apprenticeships");
 
