@@ -11,9 +11,9 @@ namespace Dfc.CourseDirectory.Models.Models.Apprenticeships
     {
         [Description("Undefined")]
         Undefined = 0,
-        [Description("Standard Code")]
+        [Description("Standard")]
         StandardCode = 1,
-        [Description("Framework Code")]
+        [Description("Framework")]
         FrameworkCode = 2
     }
     public enum ApprenticeshipLocationType
