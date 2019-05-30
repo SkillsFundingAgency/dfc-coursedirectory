@@ -559,7 +559,7 @@
     // Create the defaults once
     var pluginName = "govUkTextarea",
         defaults = {
-            errorCssClass: "govuk-input--error"
+            errorCssClass: "govuk-textarea--error"
         };
 
     // The actual plugin constructor

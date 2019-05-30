@@ -1,4 +1,5 @@
-﻿using Dfc.CourseDirectory.Models.Interfaces.Apprenticeships;
+﻿using Dfc.CourseDirectory.Models.Enums;
+using Dfc.CourseDirectory.Models.Interfaces.Apprenticeships;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,9 +14,11 @@ namespace Dfc.CourseDirectory.Models.Models.Apprenticeships
         public string StandardName { get; set; }
         public string StandardSectorCode { get; set; }
         public string URLLink { get; set; }
+        public string NotionalEndLevel { get; set; }
         public string OtherBodyApprovalRequired { get; set; }
 
         //Generic
+        public ApprenticeshipType ApprenticeshipType { get; set; }
         public DateTime EffectiveFrom { get; set; }
         public DateTime? CreatedDateTimeUtc { get; set; }
         public DateTime? ModifiedDateTimeUtc { get; set; }

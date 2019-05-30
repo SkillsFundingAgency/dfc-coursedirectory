@@ -6,7 +6,7 @@ using Dfc.CourseDirectory.Common.Interfaces;
 
 namespace Dfc.CourseDirectory.Models.Models.Providers
 {
-    public class ProviderAzureSearchResultModel //: IProviderAzureSearchResultModel
+    public class ProviderAzureSearchResults //: IProviderAzureSearchResultModel
     {
         public string ODataContext { get; set; }
         public int? ODataCount { get; set; }

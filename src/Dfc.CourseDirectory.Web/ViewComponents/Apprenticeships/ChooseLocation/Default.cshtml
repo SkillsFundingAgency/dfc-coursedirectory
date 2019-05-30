@@ -18,7 +18,9 @@
 
 
     <div class="">
-        <select asp-for="@Model.LocationId" asp-items="@Model.Locations" class="govuk-select" val-required-message="Select location"></select>
+        <select asp-for="@Model.LocationId" asp-items="@Model.Locations" class="govuk-select" val-required-message="Select location">
+            <option selected value="">select</option>
+        </select>
         @if (Model.DisplayLink)
         {
             <a href="#" class="govuk-link" id="addNewLocation">I need to add a location to this list</a>

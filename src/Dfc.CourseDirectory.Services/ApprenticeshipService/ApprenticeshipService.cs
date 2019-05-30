@@ -1,6 +1,7 @@
 ﻿using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Common.Interfaces;
 using Dfc.CourseDirectory.Models.Interfaces.Apprenticeships;
+using Dfc.CourseDirectory.Models.Models.Apprenticeships;
 using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -52,8 +53,8 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
                 {
                     var json = await response.Content.ReadAsStringAsync();
 
-                    _logger.LogInformationObject("Get your courses service json response", json);
-                    var results = JsonConvert.DeserializeObject<IEnumerable<IStandardsAndFrameworks>>(json);
+                    _logger.LogInformationObject("Get your apprenticeship service json response", json);
+                    IEnumerable<StandardsAndFrameworks> results = JsonConvert.DeserializeObject<IEnumerable<StandardsAndFrameworks>>(json);
 
                     return Result.Ok<IEnumerable<IStandardsAndFrameworks>>(results);
 
@@ -89,4 +90,5 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             return new Uri($"{extendee.ApiUrl + "StandardsAndFrameworksSearch?code=" + extendee.ApiKey}");
         }
     }
+    
 }
