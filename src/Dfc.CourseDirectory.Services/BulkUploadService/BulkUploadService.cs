@@ -503,7 +503,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 else
                 {
                     //GetVenuesByPRNAndNameCriteria venueCriteria = new GetVenuesByPRNAndNameCriteria(bulkUploadCourse.ProviderUKPRN.ToString(), bulkUploadCourse.VenueName);
-                    var venueResultCache = cachedVenues.Where(o => o.VenueName.ToLower() == bulkUploadCourse.VenueName.ToLower()).ToList();
+                    var venueResultCache = cachedVenues.Where(o => o.VenueName.ToLower() == bulkUploadCourse.VenueName.ToLower() && o.Status == VenueStatus.Live).ToList();
 
                     if (null != venueResultCache && venueResultCache.Count > 0)
                     {
