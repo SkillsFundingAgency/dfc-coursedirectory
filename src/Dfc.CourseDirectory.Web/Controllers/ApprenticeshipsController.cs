@@ -253,7 +253,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 model.DeliveryOptionsListItemModel.DeliveryOptionsListItemModel.Add(new DeliveryOptionsListItemModel()
                 {
                     Delivery = "100% employer based",
-                    LocationId = Guid.NewGuid(),
+                    LocationId = Guid.NewGuid().ToString(),
                     LocationName="Birmingham",
                     Radius = "125 miles"
                 
