@@ -42,7 +42,8 @@
 
 .cd-fullwidth-container {
   width: 90%;
-  margin: 0 auto;
+  max-width: 1400px;
+  margin: 0px auto;
   /*need to fix these media queries*/
 }
 

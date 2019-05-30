@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Dfc.CourseDirectory.Web.Controllers
@@ -72,7 +73,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                 if (result.IsSuccess && result.HasValue)
                 {
-                    foreach(var item in result.Value)
+                    foreach (var item in result.Value)
                     {
                         listOfApprenticeships.Add(new ApprenticeShipsSearchResultItemModel()
                         {
@@ -85,7 +86,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                             OtherBodyApprovalRequired = item.OtherBodyApprovalRequired,
                             ApprenticeshipType = item.ApprenticeshipType,
                             EffectiveFrom = item.EffectiveFrom,
-                            CreatedDateTimeUtc = item.CreatedDateTimeUtc, 
+                            CreatedDateTimeUtc = item.CreatedDateTimeUtc,
                             ModifiedDateTimeUtc = item.ModifiedDateTimeUtc,
                             RecordStatusId = item.RecordStatusId,
                             FrameworkCode = item.FrameworkCode,
@@ -100,8 +101,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         });
                     }
                 }
-                
+
                 model.Items = listOfApprenticeships;
+                model.SearchTerm = requestModel.SearchTerm;
             }
 
             return ViewComponent(nameof(ViewComponents.Apprenticeships.ApprenticeshipSearchResult.ApprenticeshipSearchResult), model);
@@ -254,9 +256,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 {
                     Delivery = "100% employer based",
                     LocationId = Guid.NewGuid().ToString(),
-                    LocationName="Birmingham",
+                    LocationName = "Birmingham",
                     Radius = "125 miles"
-                
+
                 });
 
                 return View("../ApprenticeshipDeliveryOptions/Index", model);
@@ -350,12 +352,29 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 Regions = _courseService.GetRegions()
             };
 
-            var ApprenticeshipRegionsViewModel = _session.GetObject<ApprenticeshipRegionsViewModel>("ApprenticeshipRegionsViewModel");
-            if (ApprenticeshipRegionsViewModel != null)
-            {
-                model = ApprenticeshipRegionsViewModel;
-            }
+            //var ApprenticeshipRegionsViewModel = _session.GetObject<ApprenticeshipRegionsViewModel>("ApprenticeshipRegionsViewModel");
+            //if (ApprenticeshipRegionsViewModel != null)
+            //{
+            //    model = ApprenticeshipRegionsViewModel;
+            //}
 
+            var SelectedRegions = _session.GetObject<string[]>("SelectedRegions");
+            if (SelectedRegions != null)
+            {
+
+
+
+                foreach (var selectRegionRegionItem in model.ChooseRegion.Regions.RegionItems.OrderBy(x => x.RegionName))
+                {
+                    foreach (var subRegionItemModel in selectRegionRegionItem.SubRegion)
+                    {
+                        if (SelectedRegions.Contains(subRegionItemModel.Id))
+                        {
+                            subRegionItemModel.Checked = true;
+                        }
+                    }
+                }
+            }
 
 
             return View("../ApprenticeshipRegions/Index", model);
@@ -363,8 +382,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         [Authorize]
         [HttpPost]
-        public IActionResult ApprenticeshipRegions(ApprenticeshipRegionsViewModel model)
+        public IActionResult ApprenticeshipRegions(string[] SelectedRegions)
         {
+            _session.SetObject("SelectedRegions", SelectedRegions);
 
             return RedirectToAction("ApprenticeshipSummary", "Apprenticeships");
 
