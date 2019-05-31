@@ -164,7 +164,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             switch (model.ApprenticeshipDelivery)
             {
                 case ApprenticeshipDelivery.Both:
-                    return View("../ApprenticeShips/Index");
+                    return RedirectToAction("ApprenticeshipDeliveryOptionsCombined", "Apprenticeships");
                 case ApprenticeshipDelivery.EmployersAddress:
                     return RedirectToAction("ApprenticeshipLocationChoiceSelection", "Apprenticeships");
 
@@ -231,6 +231,26 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
 
             return View("../ApprenticeshipDeliveryOptions/Index", model);
+        }
+
+        [Authorize]
+        public IActionResult ApprenticeshipDeliveryOptionsCombined()
+        {
+            var model = new ApprenticeshipDeliveryOptionsCombinedViewModel();
+
+            var ApprenticeshipDeliveryOptionsCombinedViewModel = _session.GetObject<ApprenticeshipDeliveryOptionsCombinedViewModel>("ApprenticeshipDeliveryOptionsCombinedViewModel");
+            if (ApprenticeshipDeliveryOptionsCombinedViewModel != null)
+            {
+                model = ApprenticeshipDeliveryOptionsCombinedViewModel;
+            }
+            else
+            {
+                model.DeliveryOptionsListItemModel = new DeliveryOptionsListModel();
+                model.DeliveryOptionsListItemModel.DeliveryOptionsListItemModel = null; ;
+            }
+
+
+            return View("../ApprenticeshipDeliveryOptionsCombined/Index", model);
         }
 
         [Authorize]
