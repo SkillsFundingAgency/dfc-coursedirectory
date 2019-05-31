@@ -71,7 +71,11 @@ else
                                     <a class="govuk-link" style="display:inline-flex"
                                        asp-controller="Apprenticeships"
                                        asp-action="ApprenticeShipDetails"
-                                       asp-route-apprenticeshiptitle="@apprenticeship.ApprenticeshipTitle">Choose this apprenticeship</a>
+                                       asp-route-apprenticeshiptitle="@apprenticeship.ApprenticeshipTitle"
+                                       asp-route-id="@apprenticeship.id"
+                                       asp-route-standardcode="@apprenticeship.StandardCode"
+                                       asp-route-frameworkcode="@apprenticeship.FrameworkCode"
+                                       asp-route-ApprenticeshipType="@apprenticeship.ApprenticeshipType">Choose this apprenticeship</a>
                                 </p>
                             </div>
                         </div>

@@ -126,9 +126,23 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
             else
             {
+                model.Id = request.Id;
                 model.ApprenticeshipTitle = request.ApprenticeshipTitle;
-                model.ApprenticeshipMode = request.ApprenticeshipMode;
                 model.ApprenticeshipPreviousPage = request.PreviousPage;
+                model.ApprenticeshipType = request.ApprenticeshipType;
+                switch(request.ApprenticeshipType)
+                {
+                    case ApprenticeshipType.StandardCode:
+                        {
+                            model.StandardCode = request.StandardCode;
+                            break;
+                        }
+                    case ApprenticeshipType.FrameworkCode:
+                        {
+                            model.FrameworkCode = request.FrameworkCode;
+                            break;
+                        }
+                }
             }
 
             return View("../ApprenticeShipDetails/Index", model);
