@@ -52,12 +52,20 @@ else
                                     @if (apprenticeship.ApprenticeshipType == ApprenticeshipType.FrameworkCode)
                                     {
                                         <span style="background-color: darkgray;color: white;padding: 5px;margin-left:10px">@apprenticeship.ApprenticeshipType.ToDescription()</span>
+
                                     }
                                 </h3>
-                               
-                                @if (!string.IsNullOrEmpty(apprenticeship.NotionalEndLevel))
-                                {
-                                    <p class="govuk-body">Level: <span class="govuk-!-font-weight-bold">@apprenticeship.NotionalEndLevel</span></p>
+
+                                @{
+                                    if (!string.IsNullOrEmpty(apprenticeship.NotionalEndLevel))
+                                    {
+                                        <p class="govuk-body">Level: <span class="govuk-!-font-weight-bold">@apprenticeship.NotionalEndLevel</span></p>
+                                    }
+                                    else
+                                    {
+                                        <p class="govuk-body"><span class="govuk-!-font-weight-bold">@apprenticeship.ProgTypeDesc</span></p>
+                                    }
+
                                 }
                                 <p class="govuk-body">
                                     <a class="govuk-link" style="display:inline-flex"
