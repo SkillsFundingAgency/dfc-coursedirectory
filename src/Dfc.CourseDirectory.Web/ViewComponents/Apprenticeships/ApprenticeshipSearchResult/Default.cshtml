@@ -20,16 +20,14 @@
 }
 else
 {
-    <div class="govuk-grid-row">
 
-        <div class="govuk-grid-column-two-thirds  ">
             @if (!Model.Items.Any())
             {
                 <div class="">
                     @await Component.InvokeAsync(nameof(Notification), new NotificationModel
                {
                    NotificationTitle = "",
-                   NotificationMessage = "No apprenticeships found that match your search criteria",
+                   NotificationMessage = "No results found. Enter a different apprenticeship name or keyword",
                    ClassType = "error-summary"
                })
                 </div>
@@ -73,8 +71,7 @@ else
                         </div>
 
             }
-        </div>
-    </div>
+
 }
 
 <script>

@@ -29,16 +29,21 @@
                     </h1>
                 </legend>
 
+                @*<select asp-for="@Model.LocationId" asp-items="@Model.Locations" class="govuk-select" val-required-message="Select location">
+                        <option value="">select</option>
+                        <option selected value=@Guid.NewGuid()>test</option>
+                    </select>*@
+
                 @await Component.InvokeAsync(nameof(ChooseLocation), new ChooseLocationModel()
 
-       {
-       LabelText = "Select location",
-       HintText = "",
-       LocationId = Model.LocationId ?? (Guid?)null,
-       DisplayLink = false,
-       DeliveryOptionsListItemModel = Model.DeliveryOptionsListItemModel
+                    {
+                    LabelText = "Select location",
+                    HintText = "",
+                    LocationId = Model.LocationId ?? (Guid?)null,
+                    DisplayLink = false,
+                    DeliveryOptionsListItemModel = Model.DeliveryOptionsListItemModel
 
-       })
+                    })
 
                 <div class="govuk-form-group govuk-!-margin-top-9">
                     <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
@@ -71,7 +76,17 @@
 
                 <div class="govuk-!-margin-top-9">
 
-                    @Html.ActionLink("Save and continue", "ApprenticeshipSummary", "Apprenticeships", new { }, new { @class = "govuk-button" })
+
+
+
+                    <a id="continue" class="govuk-button">t1</a>
+
+                    @*@Html.ActionLink("Save and continue", "ApprenticeshipSummary", "Apprenticeships", new { }, new { @class = "govuk-button" })*@
+                    @*@Html.ActionLink("Save and continue", "Continue", "Apprenticeships", new { Model.BlockRelease }, new { @class = "govuk-button" })
+                        <a id="manualLink" class="govuk-link" asp-controller="Apprenticeships" asp-action="Continue" asp-route-LocationId=@Model.LocationId>t1</a>
+
+                        @Html.ActionLink("t2", "Continue", "Apprenticeships", new { Model.LocationId }, new { @class = "govuk-button" })*@
+
 
                     <button class="govuk-button govuk-button--secondary" id="next2" asp-action="Add" asp-controller="Apprenticeships">Save and add another</button>
 
@@ -87,6 +102,8 @@
     </div>
 </form>
 
+
+
 <script>
     (function ($) {
         $(function () {
@@ -97,8 +114,12 @@
             var $selectedVenue = $("#@nameof(Model.LocationId)").govUkSelect();
             var $checkboxesdeliverymethod = $("#deliveryoptions").govUkCheckboxes();
             var $TooManyLoctions = $("#TooManyLocations");
+            var $Continue = $("#continue");
 
-             function isAllValid(currentValue) {
+     var $DayRelease =$("#@nameof(Model.DayRelease)")
+    var $BlockRelease = $("#@nameof(Model.BlockRelease)")
+
+            function isAllValid(currentValue) {
                 return currentValue === true;
             }
 
@@ -123,12 +144,12 @@
                     $errorSummary.govUkErrorSummary("add", $anchor);
                     $errorSummary.govUkErrorSummary("show");
                     $TooManyLoctions.addClass("govuk-error-message");
-                     $TooManyLoctions.closest(".govuk-form-group").addClass("govuk-form-group--error");
+                    $TooManyLoctions.closest(".govuk-form-group").addClass("govuk-form-group--error");
                     $TooManyLoctions.show();
                 }
                 else {
-                      $TooManyLoctions.closest(".govuk-form-group").removeClass("govuk-form-group--error");
-                       $TooManyLoctions.removeClass("govuk-error-message");
+                    $TooManyLoctions.closest(".govuk-form-group").removeClass("govuk-form-group--error");
+                    $TooManyLoctions.removeClass("govuk-error-message");
                     $TooManyLoctions.hide();
                 }
 
@@ -145,19 +166,19 @@
                     validStates.push(false);
                 }
 
-                 $checkboxesdeliverymethod.govUkCheckboxes("validState");
+                $checkboxesdeliverymethod.govUkCheckboxes("validState");
                 $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $checkboxesdeliverymethod[0].id);
                 $errorSummary.govUkErrorSummary("hideIfEmpty")
                 validStates.push(true);
                 if ($.requiredValidate($checkboxesdeliverymethod.find("input[type='checkbox']:checked").val())) {
                     $checkboxesdeliverymethod.govUkCheckboxes("validState");
-                     validStates.push(true);
+                    validStates.push(true);
                 } else {
                     $checkboxesdeliverymethod.govUkCheckboxes("invalidState", $checkboxesdeliverymethod.attr("val-required-message"));
-                     var deliveryMethodErrorHashLinks = $checkboxesdeliverymethod.govUkCheckboxes("getErrorHashLinks");
+                    var deliveryMethodErrorHashLinks = $checkboxesdeliverymethod.govUkCheckboxes("getErrorHashLinks");
                     $errorSummary.govUkErrorSummary("add", deliveryMethodErrorHashLinks);
                     $errorSummary.govUkErrorSummary("show");
-                     validStates.push(false);
+                    validStates.push(false);
                 }
 
 
@@ -175,9 +196,57 @@
             //     event.preventDefault();
             //    validate();
             //          if (validStates.every(isAllValid)) {
-            //              $AddAnother.trigger('click'); 
+            //              $AddAnother.trigger('click');
             //    }
             //});
+
+
+            $Continue.on("click", function (event) {
+                event.preventDefault();
+
+                var rowCount = $('#ResultsTable tr').length;
+
+                if (rowCount >= 1) {
+                    $.ajax({
+                        url: '/Apprenticeships/Continue',
+                        type: "GET",
+                        dataType: "json",
+                        data: { LocationId: $selectedVenue.val(), DayRelease: $("#@nameof(Model.DayRelease)").val(), BlockRelease: $("#@nameof(Model.BlockRelease)").val(), RowCount: rowCount },
+
+                        contentType: "application/json; charset=utf-8",
+                        success: function (data) {
+                            window.location.href = data;
+                        },
+                        error: function (xhr, ajaxOptions, thrownError) {
+
+                        }
+                    });
+                }
+                else {
+                    validate();
+                    if (validStates.every(isAllValid)) {
+
+                         $.ajax({
+                        url: '/Apprenticeships/Continue',
+                        type: "GET",
+                        dataType: "json",
+                        data: { LocationId: $selectedVenue.val(), DayRelease: $("#@nameof(Model.DayRelease)").val(), BlockRelease: $("#@nameof(Model.BlockRelease)").val(), RowCount: rowCount },
+
+                        contentType: "application/json; charset=utf-8",
+                        success: function (data) {
+                            window.location.href = data;
+                        },
+                        error: function (xhr, ajaxOptions, thrownError) {
+
+                        }
+                    });
+
+
+                    }
+                }
+
+
+                });
 
 
             $AddAnother.on("click", function (event) {
