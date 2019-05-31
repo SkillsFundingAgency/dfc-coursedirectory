@@ -34,6 +34,7 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Apprenticeships
         DateTime EffectiveTo { get; }
         string SectorSubjectAreaTier1 { get; }
         string SectorSubjectAreaTier2 { get; }
-
+        string ProgTypeDesc { get; }
+        string ProgTypeDesc2 { get; }
     }
 }
