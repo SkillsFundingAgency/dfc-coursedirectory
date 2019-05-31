@@ -22,9 +22,11 @@
                     <ul class="govuk-list govuk-error-summary__list"></ul>
                 </div>
             </div>
-
+            @Html.HiddenFor(x => x.Id)
+            @Html.HiddenFor(x => x.StandardCode)
+            @Html.HiddenFor(x => x.FrameworkCode)
             @Html.HiddenFor(x => x.ApprenticeshipTitle)
-            @Html.HiddenFor(x => x.ApprenticeshipMode)
+            @Html.HiddenFor(x => x.ApprenticeshipType)
             @Html.HiddenFor(x => x.ApprenticeshipPreviousPage)
 
 
