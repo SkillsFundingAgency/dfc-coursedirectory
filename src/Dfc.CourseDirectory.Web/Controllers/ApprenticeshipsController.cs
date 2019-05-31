@@ -97,7 +97,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
                             EffectiveTo = item.EffectiveTo,
                             SectorSubjectAreaTier1 = item.SectorSubjectAreaTier1,
                             SectorSubjectAreaTier2 = item.SectorSubjectAreaTier2,
-                            NotionalEndLevel = item.NotionalEndLevel
+                            NotionalEndLevel = item.NotionalEndLevel,
+                            ProgTypeDesc = item.ProgTypeDesc,
+                            ProgTypeDesc2 = item.ProgTypeDesc2,
+                            
                         });
                     }
                 }

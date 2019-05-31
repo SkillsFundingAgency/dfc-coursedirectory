@@ -33,6 +33,7 @@ namespace Dfc.CourseDirectory.Models.Models.Apprenticeships
         public DateTime EffectiveTo { get; set; }
         public string SectorSubjectAreaTier1 { get; set; }
         public string SectorSubjectAreaTier2 { get; set; }
-
+        public string ProgTypeDesc { get; set; }
+        public string ProgTypeDesc2 { get; set; }
     }
 }
