@@ -1,5 +1,6 @@
 ﻿using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Models.Enums;
+using Dfc.CourseDirectory.Models.Models.Apprenticeships;
 using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
@@ -336,6 +337,51 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpPost]
         public IActionResult ApprenticeshipSummary(ApprenticeshipSummaryViewModel model)
         {
+            Apprenticeship apprenticeship = new Apprenticeship
+            {
+                //id { get; set; } //Set in Cosmos
+                //ApprenticeshipId // For backwards compatibility with Tribal (Where does this come from?)
+                //TribalProviderId // For backwards compatibility with Tribal (Where does this come from?)
+                //ProviderId // Is this from our Provider collection?
+                ProviderUKPRN = int.Parse(_session.GetString("UKPRN")), // As we are trying to inforce unique UKPRN per Provider
+                        // Related like that or by 3 & 2 composite keys
+                //ApprenticeshipType = model.ApprenticeshipDetailViewModel.
+                //public Guid? FrameworkId { get; set; }
+               // public Guid? StandardId { get; set; }
+    }
+
+            /*
+
+
+
+
+
+        // It's a duplication of the framework and standard relations
+        public int? FrameworkCode { get; set; }
+        public int? ProgType { get; set; } 
+        public int? PathwayCode { get; set; }
+        public int? StandardCode { get; set; }
+        public int? Version { get; set; }
+
+        // Common properties for Standard & Framework
+        public string MarketingInformation { get; set; }
+        public string Url { get; set; }
+        public string ContactTelephone { get; set; }
+        public string ContactEmail { get; set; }
+        public string ContactWebsite { get; set; }
+
+        public IEnumerable<ApprenticeshipLocation> ApprenticeshipLocations { get; set; }
+
+        // Standard auditing properties 
+        public RecordStatus RecordStatus { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public string CreatedBy { get; set; }
+        public DateTime? UpdatedDate { get; set; }
+        public string UpdatedBy { get; set; }
+
+        public string NotionalNVQLevelv2 { get; set; }
+             
+             */
             //_session.Remove("ApprenticeshipDetailViewModel");
             //_session.Remove("ApprenticeshipDeliveryViewModel");
             //_session.Remove("ApprenticeshipLocationChoiceSelectionViewModel");
