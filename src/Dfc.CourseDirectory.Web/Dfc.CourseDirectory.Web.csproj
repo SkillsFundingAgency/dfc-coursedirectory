@@ -164,6 +164,9 @@
     <Content Update="Views\ApprenticeshipComplete\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\ApprenticeshipDeliveryOptionsCombined\Index.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\ApprenticeshipRegions\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

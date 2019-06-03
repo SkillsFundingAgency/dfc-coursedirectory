@@ -8,31 +8,47 @@
 
 
 
-<div class="apprenticeship-search-page">
-    <div>
-        <h1 class="govuk-heading-l govuk-!-margin-top-4">Find apprenticeship</h1>
-        <p class="column-two-thirds govuk-body">Search by name or keyword for the apprenticeship delivered by your training course.</p>
-    </div>
-    <form class="govuk-!-margin-bottom-9" id="ApprenticeshipSearchForm" asp-controller="Apprenticeships" asp-action="ApprenticeshipSearch" method="post">
 
-        <div class="site-search ui-front" id="header-search" role="search">
-            <div class="header-search-content govuk-!-width-two-thirds">
 
-                <div class="search-input-wrapper govuk-!-margin-bottom-4">
 
-                    <input class="govuk-input search-input js-search-focus" id="ApprenticeshipSearchTerm" asp-for="@Model.Search" type="text">
+        <div class="content-container">
+            <div class="govuk-grid-row" data-sf-element="Row">
+                <div class="govuk-grid-column-two-thirds">
+                    <div>
+                        <a asp-controller="Home" asp-action="Index" class="govuk-back-link">Back</a><br />
+                        <h1 class="govuk-heading-l govuk-!-margin-top-4">Find apprenticeship</h1>
+                        <p class="column-two-thirds govuk-body">Search by name or keyword for the apprenticeship this training is for.</p>
 
-                    <div class="cd-c-search__item cd-search__submit-wrapper">
-                        <button type="submit" class=" submit" id="searchApprenticeships">Search</button>
+
+                        @*<p class="govuk-body-l">Search by apprenticeship name or keyword</p>*@
                     </div>
+                    <form class="govuk-!-margin-bottom-9" id="ApprenticeshipSearchForm" asp-controller="Apprenticeships" asp-action="ApprenticeshipSearch" method="post">
+                        <div class="header-search-content">
+                            <span asp-validation-for="@Model.Search" class="govuk-error-message"></span>
+                            <div class="search-input-wrapper">
+
+
+                                <input class="govuk-input search-input js-search-focus" id="ApprenticeshipSearchTerm" asp-for="@Model.Search" type="text">
+                                <div class="cd-c-search__item cd-search__submit-wrapper">
+                                    <button type="button" class=" submit" id="searchApprenticeships">Search</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+
+
+                    <div id="results">
+
+                        @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships.ApprenticeshipSearch.ApprenticeshipSearch))
+                    </div>
+
+
+
                 </div>
             </div>
         </div>
-    </form>
-    <div id="results">
-        @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships.ApprenticeshipSearch.ApprenticeshipSearch))
-    </div>
-</div>
+
 
 
 
