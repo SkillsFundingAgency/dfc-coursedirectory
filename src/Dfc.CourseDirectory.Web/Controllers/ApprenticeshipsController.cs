@@ -131,6 +131,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 model.ApprenticeshipTitle = request.ApprenticeshipTitle;
                 model.ApprenticeshipPreviousPage = request.PreviousPage;
                 model.ApprenticeshipType = request.ApprenticeshipType;
+                model.ProgType = request.ProgType;
+                model.PathwayCode = request.PathwayCode;
+                model.Version = request.Version;
+                model.NotionalEndLevel = request.NotionalEndLevel;
+
                 switch(request.ApprenticeshipType)
                 {
                     case ApprenticeshipType.StandardCode:
@@ -339,14 +344,78 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         [Authorize]
         [HttpPost]
-        public IActionResult ApprenticeshipSummary(ApprenticeshipSummaryViewModel model)
+        public async Task<IActionResult> ApprenticeshipSummary(ApprenticeshipSummaryViewModel model)
         {
+
+            Apprenticeship apprenticeship = new Apprenticeship
+            {
+                id = Guid.NewGuid()
+            };
+            //Apprenticeship apprenticeship = new Apprenticeship
+            //{
+            //    //ApprenticeshipId // For backwards compatibility with Tribal (Where does this come from?)
+            //    //TribalProviderId // For backwards compatibility with Tribal (Where does this come from?)#
+
+            //    //ProviderId // Is this from our Provider collection?
+            //    ProviderUKPRN = int.Parse(_session.GetString("UKPRN")),
+
+            //    ApprenticeshipType = model.ApprenticeshipDetailViewModel.ApprenticeshipType,
+            //    StandardCode = model.ApprenticeshipDetailViewModel.StandardCode,
+            //    FrameworkCode = model.ApprenticeshipDetailViewModel.FrameworkCode,
+            //    ProgType = model.ApprenticeshipDetailViewModel.ProgType,
+            //    MarketingInformation = model.ApprenticeshipDetailViewModel.Information,
+            //    Url = model.ApprenticeshipDetailViewModel.Website,
+            //    ContactTelephone = model.ApprenticeshipDetailViewModel.Telephone,
+            //    ContactEmail = model.ApprenticeshipDetailViewModel.Email,
+            //    ContactWebsite = model.ApprenticeshipDetailViewModel.ContactUsIUrl,
+            //    CreatedDate = DateTime.Now,
+            //    CreatedBy = User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
+            //    RecordStatus = RecordStatus.Live,
+            //    PathwayCode = model.ApprenticeshipDetailViewModel.PathwayCode,
+            //    Version = model.ApprenticeshipDetailViewModel.Version,
+            //    NotionalEndLevel = model.ApprenticeshipDetailViewModel.NotionalEndLevel,
+
+            //    //NEED TO ADD
+            //    //ApprenticeshipLocations =
+
+                
+            //};
+
+
+
+
+            //switch(apprenticeship.ApprenticeshipType)
+            //{
+            //    case ApprenticeshipType.StandardCode:
+            //    {
+            //        apprenticeship.StandardId = model.ApprenticeshipDetailViewModel.Id;
+            //        break;
+            //    }
+            //case ApprenticeshipType.FrameworkCode:
+            //    {
+            //        apprenticeship.FrameworkId = model.ApprenticeshipDetailViewModel.Id;
+            //        break;
+            //    }
+            //}
+
+
+            var result = await _apprenticeshipService.AddApprenticeship(apprenticeship);
+
+            if(result.IsSuccess)
+            {
+                return RedirectToAction("ApprenticeshipComplete", "Apprenticeships");
+            }
+            else
+            {
+                //Action needs to be decided if failure
+                return RedirectToPage("error");
+            }
             //_session.Remove("ApprenticeshipDetailViewModel");
             //_session.Remove("ApprenticeshipDeliveryViewModel");
             //_session.Remove("ApprenticeshipLocationChoiceSelectionViewModel");
             //_session.Remove("ApprenticeshipDeliveryOptionsViewModel");
             //_session.Remove("ApprenticeshipRegionsViewModel");
-            return RedirectToAction("ApprenticeshipComplete", "Apprenticeships");
+            
 
         }
 
