@@ -1,5 +1,6 @@
 ﻿using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Models.Enums;
+using Dfc.CourseDirectory.Models.Models.Apprenticeships;
 using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
@@ -98,7 +99,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
                             EffectiveTo = item.EffectiveTo,
                             SectorSubjectAreaTier1 = item.SectorSubjectAreaTier1,
                             SectorSubjectAreaTier2 = item.SectorSubjectAreaTier2,
-                            NotionalEndLevel = item.NotionalEndLevel
+                            NotionalEndLevel = item.NotionalEndLevel,
+                            ProgTypeDesc = item.ProgTypeDesc,
+                            ProgTypeDesc2 = item.ProgTypeDesc2,
+                            
                         });
                     }
                 }
@@ -123,9 +127,23 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
             else
             {
+                model.Id = request.Id;
                 model.ApprenticeshipTitle = request.ApprenticeshipTitle;
-                model.ApprenticeshipMode = request.ApprenticeshipMode;
                 model.ApprenticeshipPreviousPage = request.PreviousPage;
+                model.ApprenticeshipType = request.ApprenticeshipType;
+                switch(request.ApprenticeshipType)
+                {
+                    case ApprenticeshipType.StandardCode:
+                        {
+                            model.StandardCode = request.StandardCode;
+                            break;
+                        }
+                    case ApprenticeshipType.FrameworkCode:
+                        {
+                            model.FrameworkCode = request.FrameworkCode;
+                            break;
+                        }
+                }
             }
 
             return View("../ApprenticeShipDetails/Index", model);
