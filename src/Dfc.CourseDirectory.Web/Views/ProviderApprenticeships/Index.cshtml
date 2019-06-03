@@ -16,15 +16,7 @@
                         <a asp-controller="Home" asp-action="Index" class="govuk-back-link">Back</a><br />
                         <span class="govuk-caption-xl">Course directory</span>
                         <h1 class="govuk-heading-xl">Your published apprenticeship training</h1>
-                        @*@if (!string.IsNullOrWhiteSpace(Model.NotificationTitle))
-        {
-            @await Component.InvokeAsync(nameof(Notification), new NotificationModel
-            {
-                NotificationTitle = Model.NotificationTitle,
-                NotificationMessage = Model.NotificationMessage,
-                ClassType = "info-summary"
-            })
-        }*@
+                     
 
                         <p class="govuk-body-l">Search by apprenticeship name or keyword</p>
                     </div>

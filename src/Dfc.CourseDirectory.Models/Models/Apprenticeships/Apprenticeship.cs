@@ -11,9 +11,9 @@ namespace Dfc.CourseDirectory.Models.Models.Apprenticeships
     {
         [Description("Undefined")]
         Undefined = 0,
-        [Description("Standard Code")]
+        [Description("Standard")]
         StandardCode = 1,
-        [Description("Framework Code")]
+        [Description("Framework")]
         FrameworkCode = 2
     }
     public enum ApprenticeshipLocationType
@@ -66,6 +66,6 @@ namespace Dfc.CourseDirectory.Models.Models.Apprenticeships
         public DateTime? UpdatedDate { get; set; }
         public string UpdatedBy { get; set; }
 
-        public string NotionalNVQLevelv2 { get; set; }
+        public string NotionalEndLevel { get; set; }
     }
 }
