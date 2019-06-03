@@ -241,6 +241,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
             if (ApprenticeshipDeliveryOptionsViewModel != null)
             {
                 model = ApprenticeshipDeliveryOptionsViewModel;
+                model.BlockRelease = false;
+                model.DayRelease = false;
             }
             else
             {
