@@ -130,6 +130,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 model.ApprenticeshipTitle = request.ApprenticeshipTitle;
                 model.ApprenticeshipPreviousPage = request.PreviousPage;
                 model.ApprenticeshipType = request.ApprenticeshipType;
+                model.ProgType = request.ProgType;
+                model.PathwayCode = request.PathwayCode;
+                model.Version = request.Version;
+                model.NotionalEndLevel = request.NotionalEndLevel;
+
                 switch(request.ApprenticeshipType)
                 {
                     case ApprenticeshipType.StandardCode:
@@ -349,59 +354,78 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         [Authorize]
         [HttpPost]
-        public IActionResult ApprenticeshipSummary(ApprenticeshipSummaryViewModel model)
+        public async Task<IActionResult> ApprenticeshipSummary(ApprenticeshipSummaryViewModel model)
         {
+
             Apprenticeship apprenticeship = new Apprenticeship
             {
-                //id { get; set; } //Set in Cosmos
-                //ApprenticeshipId // For backwards compatibility with Tribal (Where does this come from?)
-                //TribalProviderId // For backwards compatibility with Tribal (Where does this come from?)
-                //ProviderId // Is this from our Provider collection?
-                ProviderUKPRN = int.Parse(_session.GetString("UKPRN")), // As we are trying to inforce unique UKPRN per Provider
-                        // Related like that or by 3 & 2 composite keys
-                //ApprenticeshipType = model.ApprenticeshipDetailViewModel.
-                //public Guid? FrameworkId { get; set; }
-               // public Guid? StandardId { get; set; }
-    }
+                id = Guid.NewGuid()
+            };
+            //Apprenticeship apprenticeship = new Apprenticeship
+            //{
+            //    //ApprenticeshipId // For backwards compatibility with Tribal (Where does this come from?)
+            //    //TribalProviderId // For backwards compatibility with Tribal (Where does this come from?)#
 
-            /*
+            //    //ProviderId // Is this from our Provider collection?
+            //    ProviderUKPRN = int.Parse(_session.GetString("UKPRN")),
+
+            //    ApprenticeshipType = model.ApprenticeshipDetailViewModel.ApprenticeshipType,
+            //    StandardCode = model.ApprenticeshipDetailViewModel.StandardCode,
+            //    FrameworkCode = model.ApprenticeshipDetailViewModel.FrameworkCode,
+            //    ProgType = model.ApprenticeshipDetailViewModel.ProgType,
+            //    MarketingInformation = model.ApprenticeshipDetailViewModel.Information,
+            //    Url = model.ApprenticeshipDetailViewModel.Website,
+            //    ContactTelephone = model.ApprenticeshipDetailViewModel.Telephone,
+            //    ContactEmail = model.ApprenticeshipDetailViewModel.Email,
+            //    ContactWebsite = model.ApprenticeshipDetailViewModel.ContactUsIUrl,
+            //    CreatedDate = DateTime.Now,
+            //    CreatedBy = User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
+            //    RecordStatus = RecordStatus.Live,
+            //    PathwayCode = model.ApprenticeshipDetailViewModel.PathwayCode,
+            //    Version = model.ApprenticeshipDetailViewModel.Version,
+            //    NotionalEndLevel = model.ApprenticeshipDetailViewModel.NotionalEndLevel,
+
+            //    //NEED TO ADD
+            //    //ApprenticeshipLocations =
+
+                
+            //};
 
 
 
 
+            //switch(apprenticeship.ApprenticeshipType)
+            //{
+            //    case ApprenticeshipType.StandardCode:
+            //    {
+            //        apprenticeship.StandardId = model.ApprenticeshipDetailViewModel.Id;
+            //        break;
+            //    }
+            //case ApprenticeshipType.FrameworkCode:
+            //    {
+            //        apprenticeship.FrameworkId = model.ApprenticeshipDetailViewModel.Id;
+            //        break;
+            //    }
+            //}
 
-        // It's a duplication of the framework and standard relations
-        public int? FrameworkCode { get; set; }
-        public int? ProgType { get; set; } 
-        public int? PathwayCode { get; set; }
-        public int? StandardCode { get; set; }
-        public int? Version { get; set; }
 
-        // Common properties for Standard & Framework
-        public string MarketingInformation { get; set; }
-        public string Url { get; set; }
-        public string ContactTelephone { get; set; }
-        public string ContactEmail { get; set; }
-        public string ContactWebsite { get; set; }
+            var result = await _apprenticeshipService.AddApprenticeship(apprenticeship);
 
-        public IEnumerable<ApprenticeshipLocation> ApprenticeshipLocations { get; set; }
-
-        // Standard auditing properties 
-        public RecordStatus RecordStatus { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public string CreatedBy { get; set; }
-        public DateTime? UpdatedDate { get; set; }
-        public string UpdatedBy { get; set; }
-
-        public string NotionalNVQLevelv2 { get; set; }
-             
-             */
+            if(result.IsSuccess)
+            {
+                return RedirectToAction("ApprenticeshipComplete", "Apprenticeships");
+            }
+            else
+            {
+                //Action needs to be decided if failure
+                return RedirectToPage("error");
+            }
             //_session.Remove("ApprenticeshipDetailViewModel");
             //_session.Remove("ApprenticeshipDeliveryViewModel");
             //_session.Remove("ApprenticeshipLocationChoiceSelectionViewModel");
             //_session.Remove("ApprenticeshipDeliveryOptionsViewModel");
             //_session.Remove("ApprenticeshipRegionsViewModel");
-            return RedirectToAction("ApprenticeshipComplete", "Apprenticeships");
+            
 
         }
 

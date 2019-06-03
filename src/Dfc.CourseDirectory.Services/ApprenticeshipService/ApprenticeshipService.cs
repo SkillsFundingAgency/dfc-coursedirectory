@@ -8,7 +8,9 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Dfc.CourseDirectory.Services.ApprenticeshipService
@@ -17,7 +19,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
     {
         private readonly ILogger<ApprenticeshipService> _logger;
         private readonly HttpClient _httpClient;
-        private readonly Uri _getStandardsAndFrameworksUri;
+        private readonly Uri _getStandardsAndFrameworksUri, _addApprenticeshipUri;
 
 
         public ApprenticeshipService(
@@ -33,6 +35,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             _httpClient = httpClient;
 
             _getStandardsAndFrameworksUri = settings.Value.GetStandardsAndFrameworksUri();
+            _addApprenticeshipUri = settings.Value.AddApprenticeshipUri();
 
         }
 
@@ -67,7 +70,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             }
             catch (HttpRequestException hre)
             {
-                _logger.LogException("Get your courses service http request error", hre);
+                _logger.LogException("Get your Standards and Frameworks service http request error", hre);
                 return Result.Fail<IEnumerable<IStandardsAndFrameworks>>("Standards and Frameworks service http request error.");
 
             }
@@ -81,6 +84,60 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
                 _logger.LogMethodExit();
             }
         }
+        public async Task<IResult<IApprenticeship>> AddApprenticeship(IApprenticeship apprenticeship)
+        {
+            _logger.LogMethodEnter();
+            Throw.IfNull(apprenticeship, nameof(apprenticeship));
+
+            try
+            {
+                _logger.LogInformationObject("Apprenticeship add object.", apprenticeship);
+                _logger.LogInformationObject("Apprenticeship add URI", _addApprenticeshipUri);
+
+                var apprenticeshipJson = JsonConvert.SerializeObject(apprenticeship);
+
+                var content = new StringContent(apprenticeshipJson, Encoding.UTF8, "application/json");
+                var response = await _httpClient.PostAsync(_addApprenticeshipUri, content);
+
+                _logger.LogHttpResponseMessage("Apprenticeship add service http response", response);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+
+                    _logger.LogInformationObject("Apprenticeship add service json response", json);
+
+
+                    var apprenticeshipResult = JsonConvert.DeserializeObject<Apprenticeship>(json);
+
+
+                    return Result.Ok<IApprenticeship>(apprenticeshipResult);
+                }
+                else if (response.StatusCode == HttpStatusCode.TooManyRequests)
+                {
+                    return Result.Fail<IApprenticeship>("Apprenticeship add service unsuccessful http response - TooManyRequests");
+                }
+                else
+                {
+                    return Result.Fail<IApprenticeship>("Apprenticeship add service unsuccessful http response - ResponseStatusCode: " + response.StatusCode);
+                }
+            }
+            catch (HttpRequestException hre)
+            {
+                _logger.LogException("Apprenticeship add service http request error", hre);
+                return Result.Fail<IApprenticeship>("Apprenticeship add service http request error.");
+            }
+            catch (Exception e)
+            {
+                _logger.LogException("Apprenticeship add service unknown error.", e);
+
+                return Result.Fail<IApprenticeship>("Apprenticeship add service unknown error.");
+            }
+            finally
+            {
+                _logger.LogMethodExit();
+            }
+        }
 
     }
     internal static class ApprenticeshipServiceSettingsExtensions
@@ -88,6 +145,10 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
         internal static Uri GetStandardsAndFrameworksUri(this IApprenticeshipServiceSettings extendee)
         {
             return new Uri($"{extendee.ApiUrl + "StandardsAndFrameworksSearch?code=" + extendee.ApiKey}");
+        }
+        internal static Uri AddApprenticeshipUri(this IApprenticeshipServiceSettings extendee)
+        {
+            return new Uri($"{extendee.ApiUrl + "AddApprenticeship?code=" + extendee.ApiKey}");
         }
     }
     
