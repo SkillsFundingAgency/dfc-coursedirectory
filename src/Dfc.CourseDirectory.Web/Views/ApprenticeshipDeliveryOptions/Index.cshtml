@@ -73,26 +73,13 @@
                     </fieldset>
                 </div>
 
-
                 <div class="govuk-!-margin-top-9">
 
-
-
-
-                    <a id="continue" class="govuk-button">t1</a>
-
-                    @*@Html.ActionLink("Save and continue", "ApprenticeshipSummary", "Apprenticeships", new { }, new { @class = "govuk-button" })*@
-                    @*@Html.ActionLink("Save and continue", "Continue", "Apprenticeships", new { Model.BlockRelease }, new { @class = "govuk-button" })
-                        <a id="manualLink" class="govuk-link" asp-controller="Apprenticeships" asp-action="Continue" asp-route-LocationId=@Model.LocationId>t1</a>
-
-                        @Html.ActionLink("t2", "Continue", "Apprenticeships", new { Model.LocationId }, new { @class = "govuk-button" })*@
-
+                    <a id="continue" class="govuk-button">Save and continue</a>
 
                     <button class="govuk-button govuk-button--secondary" id="next2" asp-action="Add" asp-controller="Apprenticeships">Save and add another</button>
 
                 </div>
-
-
 
                 @await Component.InvokeAsync(nameof(DeliveryOptionsList), Model.DeliveryOptionsListItemModel)
 
@@ -190,15 +177,6 @@
                     $errorSummary.focus();
                 }
             }
-
-
-            //$('#ApprenticeshipDeliveryOptionsForm').submit(function (event) {
-            //     event.preventDefault();
-            //    validate();
-            //          if (validStates.every(isAllValid)) {
-            //              $AddAnother.trigger('click');
-            //    }
-            //});
 
 
             $Continue.on("click", function (event) {
