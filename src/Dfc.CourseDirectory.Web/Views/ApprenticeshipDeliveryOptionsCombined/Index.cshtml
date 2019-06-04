@@ -52,7 +52,7 @@
                             </div>
 
                         </div>
-                        <div class="govuk-checkboxes__item" >
+                        <div class="govuk-checkboxes__item">
                             <input class="govuk-checkboxes__input" id="employer" name="waste" type="checkbox" value="mines" checked disabled>
                             <label class="govuk-label govuk-checkboxes__label" for="employer">
                                 Employers address
@@ -61,76 +61,70 @@
 
 
                     </fieldset>
-                    </div>
+                </div>
 
-                    <div class="govuk-form-group  govuk-!-margin-left-9">
-
-
-                        @await Component.InvokeAsync(nameof(ChooseLocation), new ChooseLocationModel()
-
-                 {
-                 LabelText = "Select location",
-                 HintText = "",
-                 LocationId = Model.LocationId ?? (Guid?)null,
-                 DisplayLink = false,
-                 DeliveryOptionsListItemModel = Model.DeliveryOptionsListItemModel
-
-                 })
-                        <br />
-                        <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
-                            <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
-                                <h3 class="govuk-fieldset__heading"  id="govuk-label-@nameof(@Model.Radius)">
-                                    How is the training delivered at this location?
-
-                                </h3>
-                            </legend>
-                            <span id="waste-hint" class="govuk-hint">
-                                How far are you willing to travel from the selected location?
-
-                            </span>
-                            <div class="govuk-form-group">
-
-                                <input class="govuk-input govuk-input--width-4 govuk-!-margin-right-3" asp-for="@Model.Radius" type="text" pattern="[0-9]*" maxlength="3"
-                                       val-required-message="Select How far you are willing to travel from selected location"
-                                val-range-min="1" 
-                                val-range-max="999" 
-                                val-range-message="Miles must be  between 1 and 999" /> 
-                                <span>miles</span>
-                            </div>
-                            <p>Or</p>
-                            <div class="govuk-checkboxes__item">
-                                <input class="govuk-checkboxes__input" type="checkbox" asp-for="@Model.National">
-                                <label class="govuk-label govuk-checkboxes__label" >
-                                    Across England
-                                </label>
-                            </div>
-                        </fieldset>
-                    </div>
+                <div class="govuk-form-group  govuk-!-margin-left-9">
 
 
+                    @await Component.InvokeAsync(nameof(ChooseLocation), new ChooseLocationModel()
 
- 
+             {
+             LabelText = "Select location",
+             HintText = "",
+             LocationId = Model.LocationId ?? (Guid?)null,
+             DisplayLink = false,
+             DeliveryOptionsListItemModel = Model.DeliveryOptionsListItemModel
 
+             })
+                    <br />
+                    <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
+                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+                            <h3 class="govuk-fieldset__heading" id="govuk-label-@nameof(@Model.Radius)">
+                                How is the training delivered at this location?
 
-                @*@Html.ActionLink("Save and continue", "ApprenticeshipSummary", "Apprenticeships", new { }, new { @class = "govuk-button" })
+                            </h3>
+                        </legend>
+                        <span id="waste-hint" class="govuk-hint">
+                            How far are you willing to travel from the selected location?
 
-        <button class="govuk-button govuk-button--secondary" id="next2" asp-action="AddCombined" asp-controller="Apprenticeships">Save and add another</button>*@
+                        </span>
+                        <div class="govuk-form-group">
+
+                            <input class="govuk-input govuk-input--width-4 govuk-!-margin-right-3" asp-for="@Model.Radius" type="text" pattern="[0-9]*" maxlength="3"
+                                   val-required-message="Select How far you are willing to travel from selected location"
+                                   val-range-min="1"
+                                   val-range-max="999"
+                                   val-range-message="Miles must be  between 1 and 999" />
+                            <span>miles</span>
+                        </div>
+                        <p>Or</p>
+                        <div class="govuk-checkboxes__item">
+                            <input class="govuk-checkboxes__input" type="checkbox" asp-for="@Model.National">
+                            <label class="govuk-label govuk-checkboxes__label">
+                                Across England
+                            </label>
+                        </div>
+                    </fieldset>
+                </div>
+
 
                 <div class="govuk-!-margin-top-9">
 
-
-
-
                     <a id="continue" class="govuk-button">Save and continue</a>
-
-
 
                     <button class="govuk-button govuk-button--secondary" id="next2" asp-action="Add" asp-controller="Apprenticeships">Save and add another</button>
 
                 </div>
 
-
-
+                @if (Model.DeliveryOptionsListItemModel.DeliveryOptionsListItemModel != null && Model.DeliveryOptionsListItemModel.DeliveryOptionsListItemModel.Count() > 0)
+                {
+                <div class="summary--linked-title">
+                    <h2 class="govuk-heading-s">Delivery options </h2>
+                </div>
+                }
+                @{
+                    Model.DeliveryOptionsListItemModel.SummaryPage = false;
+                }
                 @await Component.InvokeAsync(nameof(DeliveryOptionsList), Model.DeliveryOptionsListItemModel)
 
             </div>
