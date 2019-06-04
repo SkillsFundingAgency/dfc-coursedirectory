@@ -79,13 +79,8 @@
 
 
 
-                    <a id="continue" class="govuk-button">t1</a>
+                    <a id="continue" class="govuk-button">Save and continue</a>
 
-                    @*@Html.ActionLink("Save and continue", "ApprenticeshipSummary", "Apprenticeships", new { }, new { @class = "govuk-button" })*@
-                    @*@Html.ActionLink("Save and continue", "Continue", "Apprenticeships", new { Model.BlockRelease }, new { @class = "govuk-button" })
-                        <a id="manualLink" class="govuk-link" asp-controller="Apprenticeships" asp-action="Continue" asp-route-LocationId=@Model.LocationId>t1</a>
-
-                        @Html.ActionLink("t2", "Continue", "Apprenticeships", new { Model.LocationId }, new { @class = "govuk-button" })*@
 
 
                     <button class="govuk-button govuk-button--secondary" id="next2" asp-action="Add" asp-controller="Apprenticeships">Save and add another</button>
@@ -207,20 +202,44 @@
                 var rowCount = $('#ResultsTable tr').length;
 
                 if (rowCount >= 1) {
-                    $.ajax({
-                        url: '/Apprenticeships/Continue',
-                        type: "GET",
-                        dataType: "json",
-                        data: { LocationId: $selectedVenue.val(), DayRelease: $("#@nameof(Model.DayRelease)").val(), BlockRelease: $("#@nameof(Model.BlockRelease)").val(), RowCount: rowCount },
 
-                        contentType: "application/json; charset=utf-8",
-                        success: function (data) {
-                            window.location.href = data;
-                        },
-                        error: function (xhr, ajaxOptions, thrownError) {
+                    if ($selectedVenue.val() !== "") {
+                        validate();
+                        if (validStates.every(isAllValid)) {
 
-                        }
-                    });
+                             $.ajax({
+                            url: '/Apprenticeships/Continue',
+                            type: "GET",
+                            dataType: "json",
+                            data: { LocationId: $selectedVenue.val(), DayRelease: $("#@nameof(Model.DayRelease)").val(), BlockRelease: $("#@nameof(Model.BlockRelease)").val(), RowCount: rowCount },
+
+                            contentType: "application/json; charset=utf-8",
+                            success: function (data) {
+                                window.location.href = data;
+                            },
+                            error: function (xhr, ajaxOptions, thrownError) {
+
+                            }
+                             });
+
+                        };
+                    }
+                    else {
+                        $.ajax({
+                            url: '/Apprenticeships/Continue',
+                            type: "GET",
+                            dataType: "json",
+                            data: { LocationId: $selectedVenue.val(), DayRelease: $("#@nameof(Model.DayRelease)").val(), BlockRelease: $("#@nameof(Model.BlockRelease)").val(), RowCount: rowCount },
+
+                            contentType: "application/json; charset=utf-8",
+                            success: function (data) {
+                                window.location.href = data;
+                            },
+                            error: function (xhr, ajaxOptions, thrownError) {
+
+                            }
+                        });
+                    }
                 }
                 else {
                     validate();
