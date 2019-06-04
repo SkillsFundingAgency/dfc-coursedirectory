@@ -26,6 +26,10 @@ namespace Dfc.CourseDirectory.Web.ViewModels.Apprenticeships
 
         public DeliveryOptionsListModel DeliveryOptionsListItemModel { get; set; }
 
+        public int? Radius { get; set; }
+
+        public bool? National { get; set; }
+
 
     }
 }

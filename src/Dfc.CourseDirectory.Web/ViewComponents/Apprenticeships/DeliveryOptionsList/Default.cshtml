@@ -4,7 +4,7 @@
 @model Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships.DeliveryOptionsListModel
 
 
-@if (Model.DeliveryOptionsListItemModel != null)
+@if (Model.DeliveryOptionsListItemModel != null && Model.DeliveryOptionsListItemModel.Count()> 0)
 {
     <div class="govuk-form-group">
 
@@ -17,6 +17,7 @@
                 <tr class="govuk-table__row">
                     <th class="govuk-table__header" scope="col">Location</th>
                     <th class="govuk-table__header" scope="col">Delivery method</th>
+                    <th class="govuk-table__header" scope="col">Radius</th>
                     <th class="govuk-table__header" scope="col"></th>
                 </tr>
             </thead>
@@ -38,48 +39,72 @@
                         var locationIdFieldName = "].LocationId";
                         var postcodeFieldName = "].PostCode";
 
-                        <tr class="govuk-table__row">
+                                <tr class="govuk-table__row">
 
 
-                            @{
-                                var idValue = @baseId + @i.ToString() + @locationFieldId;
-                                var nameValue = @baseName + @i.ToString() + @locationFieldName;
+                                    @{
+                                        var idValue = @baseId + @i.ToString() + @locationFieldId;
+                                        var nameValue = @baseName + @i.ToString() + @locationFieldName;
 
-                                <input id="@idValue" name="@nameValue" type="hidden" value="@Model.DeliveryOptionsListItemModel[i].LocationName">
+                                        <input id="@idValue" name="@nameValue" type="hidden" value="@Model.DeliveryOptionsListItemModel[i].LocationName">
 
-                                idValue = @baseId + @i.ToString() + @locationIdFieldId;
-                                nameValue = @baseName + @i.ToString() + @locationIdFieldName;
+                                        idValue = @baseId + @i.ToString() + @locationIdFieldId;
+                                        nameValue = @baseName + @i.ToString() + @locationIdFieldName;
 
-                                <input id="@idValue" name="@nameValue" type="hidden" value="@Model.DeliveryOptionsListItemModel[i].LocationId">
+                                        <input id="@idValue" name="@nameValue" type="hidden" value="@Model.DeliveryOptionsListItemModel[i].LocationId">
 
-                                idValue = @baseId + @i.ToString() + @postcodeFieldId;
-                                nameValue = @baseName + @i.ToString() + @postcodeFieldName;
+                                        idValue = @baseId + @i.ToString() + @postcodeFieldId;
+                                        nameValue = @baseName + @i.ToString() + @postcodeFieldName;
 
-                                <input id="@idValue" name="@nameValue" type="hidden" value="@Model.DeliveryOptionsListItemModel[i].PostCode">
+                                        <input id="@idValue" name="@nameValue" type="hidden" value="@Model.DeliveryOptionsListItemModel[i].PostCode">
 
-                                idValue = @baseId + @i.ToString() + @deliveryFieldId;
-                                nameValue = @baseName + @i.ToString() + @deliveryFieldName;
+                                        idValue = @baseId + @i.ToString() + @deliveryFieldId;
+                                        nameValue = @baseName + @i.ToString() + @deliveryFieldName;
 
-                                <input id="@idValue" name="@nameValue" type="hidden" value="@Model.DeliveryOptionsListItemModel[i].Delivery">
+                                        <input id="@idValue" name="@nameValue" type="hidden" value="@Model.DeliveryOptionsListItemModel[i].Delivery">
 
-                                idValue = @baseId + @i.ToString() + @radiusFieldId;
-                                nameValue = @baseName + @i.ToString() + @radiusFieldName;
+                                        idValue = @baseId + @i.ToString() + @radiusFieldId;
+                                        nameValue = @baseName + @i.ToString() + @radiusFieldName;
 
-                                <input id="@idValue" name="@nameValue" type="hidden" value="@Model.DeliveryOptionsListItemModel[i].Radius">
+                                        <input id="@idValue" name="@nameValue" type="hidden" value="@Model.DeliveryOptionsListItemModel[i].Radius">
 
-                                <td class="govuk-table__header" scope="col">
-                                    <span>@Model.DeliveryOptionsListItemModel[i].LocationName</span>
-                                    <br>
-                                    <span class="govuk-hint">@Model.DeliveryOptionsListItemModel[i].PostCode</span>
-                                </td>
-                                <td class="govuk-table__cell" scope="col">@Model.DeliveryOptionsListItemModel[i].Delivery</td>
+                                        <td class="govuk-table__header" scope="col">
+                                            <span>@Model.DeliveryOptionsListItemModel[i].LocationName</span>
+                                            <br>
+                                            <span class="govuk-hint">@Model.DeliveryOptionsListItemModel[i].PostCode</span>
+                                        </td>
+                                        <td class="govuk-table__cell" scope="col">@Model.DeliveryOptionsListItemModel[i].Delivery</td>
+
+                                        @if (Model.DeliveryOptionsListItemModel[i].Radius != null)
+                                        {
+                                            <td class="govuk-table__cell" scope="col">@Model.DeliveryOptionsListItemModel[i].Radius Miles</td>
+                                        }
+                                        else
+                                        {
+                                            @if (Model.DeliveryOptionsListItemModel[i].National != null)
+                                            {
+                                                <td class="govuk-table__cell" scope="col">Across England</td>
+                                            }
+                                            else
+                                            {
+                                                <td class="govuk-table__cell" scope="col"></td>
+                                            }
+                                        }
+
                                 <td class="govuk-table__cell" scope="col">
+                                    @if (Model.DeliveryOptionsListItemModel[i].National.HasValue && Model.DeliveryOptionsListItemModel[i].National==true)
+                                    {
+                                        <a class="" asp-controller="Apprenticeships" asp-action="DeleteCombined" asp-route-locationid=@Model.DeliveryOptionsListItemModel[i].LocationId>Delete</a>
+                                    }
+                                    else
+                                    {
+                                        <a class="" asp-controller="Apprenticeships" asp-action="Delete" asp-route-locationid=@Model.DeliveryOptionsListItemModel[i].LocationId>Delete</a>
+                                    }
 
-                                    <a class="" asp-controller="Apprenticeships" asp-action="Delete" asp-route-locationid=@Model.DeliveryOptionsListItemModel[i].LocationId>Delete</a>
 
                                 </td>
-                            }
-                        </tr>
+                                    }
+                                </tr>
                     }
                 }
             </tbody>
