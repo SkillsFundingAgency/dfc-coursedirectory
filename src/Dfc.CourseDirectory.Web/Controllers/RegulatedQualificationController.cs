@@ -15,7 +15,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         [Authorize]
-        //[HttpPost]
         public IActionResult RegulatedTypeSelected(RegulatedViewModel regulatedViewModel)
         {
             if (regulatedViewModel.RegulatedType == RegulatedType.Regulated)
