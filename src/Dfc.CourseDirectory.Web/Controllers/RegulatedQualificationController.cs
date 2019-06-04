@@ -7,13 +7,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
 {
     public class RegulatedQualificationController : Controller
     {
+        [HttpGet]
+        [Authorize]
         public IActionResult Index()
         {
             return View();
         }
 
         [Authorize]
-        [HttpPost]
+        //[HttpPost]
         public IActionResult RegulatedTypeSelected(RegulatedViewModel regulatedViewModel)
         {
             if (regulatedViewModel.RegulatedType == RegulatedType.Regulated)
