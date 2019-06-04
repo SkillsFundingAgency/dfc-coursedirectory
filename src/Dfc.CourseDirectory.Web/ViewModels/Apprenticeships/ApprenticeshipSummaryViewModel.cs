@@ -24,7 +24,9 @@ namespace Dfc.CourseDirectory.Web.ViewModels.Apprenticeships
 
         public ApprenticeshipDeliveryOptionsViewModel ApprenticeshipDeliveryOptionsViewModel { get; set; }
 
+        public ApprenticeshipDeliveryOptionsCombinedViewModel ApprenticeshipDeliveryOptionsCombinedViewModel { get; set; }
 
+        public string[] ApprenticeshipRegions { get; set; }
 
 
 

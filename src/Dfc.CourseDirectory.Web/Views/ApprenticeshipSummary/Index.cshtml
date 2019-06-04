@@ -1,5 +1,6 @@
 ﻿@using Dfc.CourseDirectory.Models.Enums
 @using Dfc.CourseDirectory.Web.Helpers
+@using Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships
 @{
     Layout = "_Layout_Your_Courses";
 }
@@ -79,52 +80,25 @@
                             </div>
                         </dl>
 
-                        <table class="govuk-table">
-                            <caption class="govuk-table__caption">Delivery options</caption>
-                            @*<a class="govuk-link" href="#">
-                                Edit
-                            </a>*@
-                            <thead class="govuk-table__head">
-                                <tr class="govuk-table__row">
-                                    <th class="govuk-table__header" scope="col">Location</th>
-                                    <th class="govuk-table__header" scope="col">Delivery</th>
-                                    <th class="govuk-table__header" scope="col">Radius</th>
-                                    @*<th class="govuk-table__header" scope="col"></th>*@
-                                </tr>
-                            </thead>
-                            <tbody class="govuk-table__body">
-                                <tr class="govuk-table__row">
-                                    <th class="govuk-table__header" scope="row">Birmingham</th>
-                                    <td class="govuk-table__cell">100% employer based</td>
-                                    <td class="govuk-table__cell">125 miles</td>
-                                    @*<td class="govuk-table__cell">
-                                        <a class="govuk-link" href="#">
-                                            Edit
-                                        </a>
-                                    </td>*@
-                                </tr>
-                                <tr class="govuk-table__row">
-                                    <th class="govuk-table__header" scope="row">Leeds</th>
-                                    <td class="govuk-table__cell">100% employer based, Work based</td>
-                                    <td class="govuk-table__cell">250 miles</td>
-                                    @*<td class="govuk-table__cell">
-                                        <a class="govuk-link" href="#">
-                                            Edit
-                                        </a>
-                                    </td>*@
-                                </tr>
-                                <tr class="govuk-table__row">
-                                    <th class="govuk-table__header" scope="row">Liverpool</th>
-                                    <td class="govuk-table__cell">100% employer based</td>
-                                    <td class="govuk-table__cell">25 miles</td>
-                                    @*<td class="govuk-table__cell">
-                                        <a class="govuk-link" href="#">
-                                            Edit
-                                        </a>
-                                    </td>*@
-                                </tr>
-                            </tbody>
-                        </table>
+                        <div class="summary--linked-title">
+                            <h2 class="govuk-heading-s">Delivery options </h2>
+                            <a class="govuk-link float-right " asp-controller="Apprenticeships" asp-action="ApprenticeshipDetails">
+                                Change
+                            </a>
+                        </div>
+
+                        @{
+                            Model.ApprenticeshipDeliveryOptionsViewModel.DeliveryOptionsListItemModel.SummaryPage = true;
+                        }
+                        @if (Model.ApprenticeshipDeliveryOptionsViewModel != null)
+                        {
+                            @await Component.InvokeAsync(nameof(DeliveryOptionsList), Model.ApprenticeshipDeliveryOptionsViewModel.DeliveryOptionsListItemModel)
+                        }
+                        else
+                        {
+                            @await Component.InvokeAsync(nameof(DeliveryOptionsList), Model.ApprenticeshipDeliveryOptionsCombinedViewModel.DeliveryOptionsListItemModel)
+                        }
+
                         <button type="submit" class="govuk-button" id="next">Publish</button>
                     </div>
                 </div>
