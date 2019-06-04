@@ -193,13 +193,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
             var addCourseSection2Session = Session.GetObject<AddCourseRequestModel>(SessionAddCourseSection2);
 
             if (Session.GetInt32("UKPRN") != null)
-            {
                 UKPRN = Session.GetInt32("UKPRN").Value;
-            }
             else
-            {
                 return RedirectToAction("Index", "Home", new {errmsg = "Please select a Provider."});
-            }
 
             var viewModel = new AddCourseDetailsViewModel
             {
@@ -210,11 +206,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 CourseName = Session.GetString("LearnAimRefTitle"),
                 ProviderUKPRN = UKPRN,
                 SelectVenue = await GetVenuesByUkprn(UKPRN),
-                ChooseRegion = new ChooseRegionModel
-                {
+                ChooseRegion = new ChooseRegionModel {
                     Regions = _courseService.GetRegions()
                 }
-
             };
 
             Session.SetObject(SessionVenues, viewModel.SelectVenue);
@@ -227,11 +221,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 viewModel.DeliveryMode = addCourseSection2Session.DeliveryMode;
 
                 if (!string.IsNullOrEmpty(addCourseSection2Session.StartDateType))
-                {
                     viewModel.StartDateType = (StartDateType)Enum.Parse(typeof(StartDateType),
                         addCourseSection2Session.StartDateType);
-                }
-               
 
                 viewModel.Day = addCourseSection2Session.Day;
                 viewModel.Month = addCourseSection2Session.Month;
@@ -249,33 +240,31 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                 viewModel.StudyMode = addCourseSection2Session.StudyMode;
                 viewModel.AttendanceMode = addCourseSection2Session.AttendanceMode;
-                if (addCourseSection2Session.SelectedVenues != null)
-                {
-                    foreach (var selectedVenue in addCourseSection2Session.SelectedVenues)
-                    {
-                        viewModel.SelectVenue.VenueItems.First(x => x.Id == selectedVenue.ToString()).Checked =
-                            true;
+                if (addCourseSection2Session.SelectedVenues != null) {
+                    foreach (var selectedVenue in addCourseSection2Session.SelectedVenues) {
+                        viewModel.SelectVenue.VenueItems.First(x => x.Id == selectedVenue.ToString()).Checked = true;
                     }
                 }
 
-                if (addCourseSection2Session.SelectedRegions != null)
-                {
-                    foreach (var selectedRegion in addCourseSection2Session.SelectedRegions)
-                    {
-                        viewModel.ChooseRegion.Regions.RegionItems.First(x => x.Id == selectedRegion.ToString())
-                            .Checked = true;
+                if (addCourseSection2Session.SelectedRegions != null) {
+                    foreach (var selectedRegion in addCourseSection2Session.SelectedRegions) {
+                        viewModel.ChooseRegion
+                                 .Regions
+                                 .RegionItems
+                                 .First(x => x.Id == selectedRegion.ToString())
+                                 .Checked = true;
                     }
                 }
-            }
-            else
-            {
+
+            } else {
+                viewModel.StudyMode = StudyMode.FullTime;
+                viewModel.AttendanceMode = AttendancePattern.Daytime;
                 viewModel.DurationUnit = DurationUnit.Months;
                 viewModel.DeliveryMode = DeliveryMode.ClassroomBased;
                 viewModel.StartDateType = StartDateType.SpecifiedStartDate;
             }
 
             Session.SetObject(SessionLastAddCoursePage, AddCoursePage.AddCourse);
-
             return View("AddCourseRun", viewModel);
         }
 

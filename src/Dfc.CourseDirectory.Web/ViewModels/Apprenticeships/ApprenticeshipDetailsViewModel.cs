@@ -20,6 +20,10 @@ namespace Dfc.CourseDirectory.Web.ViewModels.Apprenticeships
         public int? StandardCode { get; set; }
         public int? FrameworkCode { get; set; }
         public string ApprenticeshipTitle { get; set; }
+        public int? ProgType { get; set; }
+        public string NotionalEndLevel { get; set; }
+        public int? Version { get; set; }
+        public int? PathwayCode { get; set; }
         public ApprenticeshipType ApprenticeshipType { get; set; }
         public ApprenticeShipPreviousPage ApprenticeshipPreviousPage { get; set; }
         public string Information { get; set; }
