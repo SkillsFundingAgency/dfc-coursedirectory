@@ -86,6 +86,15 @@
 
                 </div>
 
+                @if (Model.DeliveryOptionsListItemModel.DeliveryOptionsListItemModel != null && Model.DeliveryOptionsListItemModel.DeliveryOptionsListItemModel.Count() > 0)
+                {
+                    <div class="summary--linked-title">
+                        <h2 class="govuk-heading-s">Delivery options </h2>
+                    </div>
+                }
+                @{
+                    Model.DeliveryOptionsListItemModel.SummaryPage = false;
+                }
                 @await Component.InvokeAsync(nameof(DeliveryOptionsList), Model.DeliveryOptionsListItemModel)
 
 
