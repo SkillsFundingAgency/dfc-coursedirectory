@@ -176,8 +176,8 @@ namespace Dfc.CourseDirectory.Web
 
             services.AddResponseCaching();
             services.AddSession(options => {
-    
-                options.IdleTimeout = TimeSpan.FromMinutes(30);
+
+                options.IdleTimeout = TimeSpan.FromSeconds(18); //FromMinutes(30);
                 options.Cookie.HttpOnly = true;
 
             });
@@ -205,7 +205,7 @@ namespace Dfc.CourseDirectory.Web
 
             }).AddCookie(options =>
             {
-                options.ExpireTimeSpan = TimeSpan.FromHours(1);
+                options.ExpireTimeSpan = TimeSpan.FromSeconds(18); //FromHours(1);
                 options.SlidingExpiration = true;
                 options.Events = new CookieAuthenticationEvents
                 {
@@ -226,7 +226,7 @@ namespace Dfc.CourseDirectory.Web
                             // assume a timeout of 20 minutes.
                             var timeElapsed = DateTimeOffset.UtcNow.Subtract(x.Properties.IssuedUtc.Value);
 
-                        if (timeElapsed > TimeSpan.FromMinutes(59.5))
+                        if (timeElapsed > TimeSpan.FromSeconds(18)) //FromMinutes(59.5))
                         {
                             var identity = (ClaimsIdentity)x.Principal.Identity;
                             var accessTokenClaim = identity.FindFirst("access_token");
@@ -309,7 +309,7 @@ namespace Dfc.CourseDirectory.Web
                 options.SecurityTokenValidator = new JwtSecurityTokenHandler
                 {
                     InboundClaimTypeMap = new Dictionary<string, string>(),
-                    TokenLifetimeInMinutes = 60,
+                    TokenLifetimeInMinutes = 1, //60,
                     SetDefaultTimesOnTokenCreation = true,
                     
                 };
@@ -317,7 +317,7 @@ namespace Dfc.CourseDirectory.Web
                 {
                     RequireSub = true,
                     RequireStateValidation = false,
-                    NonceLifetime = TimeSpan.FromMinutes(60)
+                    NonceLifetime = TimeSpan.FromSeconds(18) //.FromMinutes(60)
                     
                 };
 

@@ -29,19 +29,16 @@
             if (provider.Status.Equals(Status.Onboarded))
             {
                 @await Component.InvokeAsync(nameof(Notification), new NotificationModel
-           {
-
+            {
                NotificationTitle = "",
                NotificationMessage = "A Provider record for the entered UKPRN has already been on-boarded within the Course Directory.",
                ClassType = "success-summary"
                 });
-
             }
             else if (!(provider.ProviderStatus.Equals("Active", StringComparison.InvariantCultureIgnoreCase) || provider.ProviderStatus.Equals("Verified", StringComparison.InvariantCultureIgnoreCase)))
             {
                 @await Component.InvokeAsync(nameof(Notification), new NotificationModel
                 {
-
                     NotificationTitle = "",
                     NotificationMessage = "UKPRN has been deactivated and cannot be added to the Course Directory.",
                     ClassType = "warning-summary"
@@ -52,16 +49,12 @@
             {
                 @await Component.InvokeAsync(nameof(Notification), new NotificationModel
                 {
-
                     NotificationTitle = "",
                     NotificationMessage = "This Provider record for the entered UKPRN has not been on-boarded to the Course Directory.",
                     ClassType = "info-summary"
                 });
             }
         }
-
-
-
 
 
 
