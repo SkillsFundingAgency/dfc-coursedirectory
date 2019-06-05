@@ -11,9 +11,8 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.PostcodeLookup
     {
         [Required(AllowEmptyStrings = false, ErrorMessage = "Enter a postcode")]
         [MaxLength(8, ErrorMessage = "Postcode must be 8 characters or less")]
-        
 
-        [RegularExpression("([Gg][Ii][Rr] 0[Aa]{2})|((([A-Za-z][0-9]{1,2})|(([A-Za-z][A-Ha-hJ-Yj-y][0-9]{1,2})|(([A-Za-z][0-9][A-Za-z])|([A-Za-z][A-Ha-hJ-Yj-y][0-9][A-Za-z]?))))\\s?[0-9][A-Za-z]{2})", ErrorMessage = "Postcode must be a valid format and only include letters a to z and numbers")]
+        [RegularExpression("([abcdefghijklmnoprstuwyzABCDEFGHIJKLMNOPRSTUWYZ][0-9]|[abcdefghjkstuwABCDEFGHJKSTUW][0-9][0-9]|[abcdefghijklmnoprstuwyzABCDEFGHIJKLMNOPRSTUWYZ][abcdefghklmnopqrstuvwxyABCDEFGHKLMNOPQRSTUVWXY][0-9]|[abcdefghijklmnoprstuwyzABCDEFGHIJKLMNOPRSTUWYZ][abcdefghklmnopqrstuvwxyABCDEFGHKLMNOPQRSTUVWXY][0-9][0-9]|[abcdefghijklmnoprstuwyzABCDEFGHIJKLMNOPRSTUWYZ][0-9][abcdefghjkstuwABCDEFGHJKSTUW]|[abcdefghijklmnoprstuwyzABCDEFGHIJKLMNOPRSTUWYZ][abcdefghklmnopqrstuvwxyABCDEFGHKLMNOPQRSTUVWXY][0-9][abehmnprvwxyABEHMNPRVWXY]) ([0-9][abdefghjlnpqrstuwxyzABDEFGHJLNPQRSTUWXYZ][abdefghjlnpqrstuwxyzABDEFGHJLNPQRSTUWXYZ])", ErrorMessage = "Postcode must be a valid format and only include letters a to z, numbers and spaces")]
         public string Postcode { get; set; }
         public string PostcodeLabelText { get; set; }
         public string PostcodeHintText { get; set; }
