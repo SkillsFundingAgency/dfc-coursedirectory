@@ -1,4 +1,5 @@
-﻿@using Dfc.CourseDirectory.Models.Enums
+﻿
+@using Dfc.CourseDirectory.Models.Enums
 @using Dfc.CourseDirectory.Models.Models.Courses
 @using Dfc.CourseDirectory.Web.Helpers
 @using System.ComponentModel.DataAnnotations
@@ -7,9 +8,10 @@
     Layout = "_Layout_Your_Courses";
 }
 
+
 <a asp-controller="" asp-action="" class="govuk-back-link">Back</a>
 <main class="govuk-main-wrapper">
-    <div class="govuk-grid-row">
+    <div class="govuk-grid-row" x-ms-format-detection="none">
         <div class="govuk-grid-column-two-thirds">
             <span class="govuk-caption-xl">Course Directory</span>
             <h1 class="govuk-heading-xl">@Model.ProviderName</h1>
@@ -17,7 +19,6 @@
                 <thead class="govuk-table__head">
                     <tr class="govuk-table__row">
                         <th class="govuk-table__header" scope="row">Course directory status</th>
-
                         <td class="govuk-table__cell">@Model.Status</td>
                         <td class="govuk-table__cell"></td>
                     </tr>
@@ -25,20 +26,16 @@
                 <tbody class="govuk-table__body">
                     <tr class="govuk-table__row">
                         <th class="govuk-table__header" scope="row">UKPRN</th>
-
                         <td class="govuk-table__cell">@Model.UKPRN</td>
                         <td class="govuk-table__cell"></td>
-
                     </tr>
                     <tr class="govuk-table__row">
                         <th class="govuk-table__header" scope="row">Name registered with UKRLP</th>
-
                         <td class="govuk-table__cell">@Model.LegalName</td>
                         <td class="govuk-table__cell"></td>
                     </tr>
                     <tr class="govuk-table__row">
                         <th class="govuk-table__header" scope="row">Trading name</th>
-
                         <td class="govuk-table__cell">@Model.TradingName</td>
                         <td class="govuk-table__cell"></td>
                     </tr>
@@ -46,33 +43,26 @@
                         <th class="govuk-table__header" scope="row">Your alias</th>
                         <td class="govuk-table__cell">@Model.Alias</td>
                         <td class="govuk-table__cell">
-                            @if (string.IsNullOrEmpty(Model.Alias))
-                            {
+                            @if (string.IsNullOrEmpty(Model.Alias)) {
                                 <a class="govuk-link" style="padding-right:1em"
                                    asp-controller="Provider"
                                    asp-action="AddOrEditDetails">Add</a>
-                            }
-                            else
-                            {
+                            } else {
                                 <a class="govuk-link" style="padding-right:1em"
                                    asp-controller="Provider"
                                    asp-action="AddOrEditDetails">Edit</a>
                             }
-
                         </td>
                     </tr>
                     <tr class="govuk-table__row">
                         <th class="govuk-table__header" scope="row">Brief overview of your organisation for employers</th>
                         <td class="govuk-table__cell"></td>
                         <td class="govuk-table__cell">
-                            @if (string.IsNullOrEmpty(Model.BriefOverview))
-                            {
+                            @if (string.IsNullOrEmpty(Model.BriefOverview)) {
                                 <a class="govuk-link" style="padding-right:1em"
                                    asp-controller="Provider"
                                    asp-action="AddOrEditDetails">Add</a>
-                            }
-                            else
-                            {
+                            } else {
                                 <a class="govuk-link" style="padding-right:1em"
                                    asp-controller="Provider"
                                    asp-action="AddOrEditDetails">Edit</a>
@@ -81,11 +71,9 @@
                     </tr>
                     <tr class="govuk-table__row">
                         <td colspan="6" class="govuk-table__cell" scope="row">@Html.Raw(Model.BriefOverview)</td>
-
                     </tr>
                 </tbody>
             </table>
-
 
         </div>
 
@@ -95,20 +83,14 @@
             <h3 class="govuk-heading-m m20" style="margin:0px">Address</h3>
             <p style="margin:0px">
                 @Model.AddressLine1
-
             </p>
             <p style="margin:0px">
-
                 @Model.AddressLine2
-
             </p>
             <p style="margin:0px">
-
                 @Model.AddressLine3
-
             </p>
             <p style="margin:0px">
-
                 @Model.AddressLine4
             </p>
             <p style="margin:0px">
@@ -118,12 +100,10 @@
                 @Model.PostCode
             </p>
 
-
             <h3 class="govuk-heading-m m20" style="margin-bottom:0px">Web</h3>
             <p style="margin-top:0px">
                 @Model.Web
             </p>
-
             <h3 class="govuk-heading-m m20" style="margin-bottom:0px">Email</h3>
             <p style="margin-top:0px">
                 @Model.Email
@@ -132,7 +112,6 @@
             <p style="margin-top:0px">
                 @Model.Telephone
             </p>
-
         </div>
     </div>
 
@@ -141,10 +120,6 @@
 <script>
     (function ($) {
         $(function () {
-            
-
-
-          
 
         });
     })(jQuery);
