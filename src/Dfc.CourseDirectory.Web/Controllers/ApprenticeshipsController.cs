@@ -530,40 +530,31 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 locations.Add(apprenticeshipLocation);
             }
 
-            Apprenticeship apprenticeship = new Apprenticeship();
-
-
-            //ApprenticeshipId // For backwards compatibility with Tribal (Where does this come from?)
-            //TribalProviderId // For backwards compatibility with Tribal (Where does this come from?)#
-
-            //ProviderId // Is this from our Provider collection?
-
-            apprenticeship.id = Guid.NewGuid();
-            apprenticeship.ProviderUKPRN = UKPRN;
-
-            apprenticeship.ApprenticeshipType = model.ApprenticeshipDetailViewModel.ApprenticeshipType;
-            apprenticeship.StandardCode = model.ApprenticeshipDetailViewModel.StandardCode;
-            apprenticeship.FrameworkCode = model.ApprenticeshipDetailViewModel.FrameworkCode;
-            apprenticeship.ProgType = model.ApprenticeshipDetailViewModel.ProgType;
-            apprenticeship.MarketingInformation = model.ApprenticeshipDetailViewModel.Information;
-            apprenticeship.Url = model.ApprenticeshipDetailViewModel.Website;
-            apprenticeship.ContactTelephone = model.ApprenticeshipDetailViewModel.Telephone;
-            apprenticeship.ContactEmail = model.ApprenticeshipDetailViewModel.Email;
-            apprenticeship.ContactWebsite = model.ApprenticeshipDetailViewModel.ContactUsIUrl;
-            apprenticeship.CreatedDate = DateTime.Now;
-            apprenticeship.CreatedBy = User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault();
-            apprenticeship.RecordStatus = RecordStatus.Live;
-            apprenticeship.PathwayCode = model.ApprenticeshipDetailViewModel.PathwayCode;
-            apprenticeship.Version = model.ApprenticeshipDetailViewModel.Version;
-            apprenticeship.NotionalEndLevel = model.ApprenticeshipDetailViewModel.NotionalEndLevel;
-
-            //NEED TO ADD
-            apprenticeship.ApprenticeshipLocations = locations;
-
-
-
-
-
+            Apprenticeship apprenticeship = new Apprenticeship
+            {
+                //ApprenticeshipId // For backwards compatibility with Tribal (Where does this come from?)
+                //TribalProviderId // For backwards compatibility with Tribal (Where does this come from?)#
+                //ProviderId // Is this from our Provider collection?
+                id = Guid.NewGuid(),
+                ProviderUKPRN = UKPRN,
+                ApprenticeshipTitle = model.ApprenticeshipDetailViewModel.ApprenticeshipTitle,
+                ApprenticeshipType = model.ApprenticeshipDetailViewModel.ApprenticeshipType,
+                StandardCode = model.ApprenticeshipDetailViewModel.StandardCode,
+                FrameworkCode = model.ApprenticeshipDetailViewModel.FrameworkCode,
+                ProgType = model.ApprenticeshipDetailViewModel.ProgType,
+                MarketingInformation = model.ApprenticeshipDetailViewModel.Information,
+                Url = model.ApprenticeshipDetailViewModel.Website,
+                ContactTelephone = model.ApprenticeshipDetailViewModel.Telephone,
+                ContactEmail = model.ApprenticeshipDetailViewModel.Email,
+                ContactWebsite = model.ApprenticeshipDetailViewModel.ContactUsIUrl,
+                CreatedDate = DateTime.Now,
+                CreatedBy = User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
+                RecordStatus = RecordStatus.Live,
+                PathwayCode = model.ApprenticeshipDetailViewModel.PathwayCode,
+                Version = model.ApprenticeshipDetailViewModel.Version,
+                NotionalEndLevel = model.ApprenticeshipDetailViewModel.NotionalEndLevel,
+                ApprenticeshipLocations = locations
+            };
 
             switch (apprenticeship.ApprenticeshipType)
             {

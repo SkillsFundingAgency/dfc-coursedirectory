@@ -40,12 +40,12 @@
                     <div class="govuk-grid-row  ">
 
                         <div id="results">
-                            @if (!hasApprenticeships)
+                            @if (hasApprenticeships)
                             {
                                 @await Component.InvokeAsync(nameof(ProviderApprenticeshipSearchResult), new ProviderApprenticeshipsSearchResultModel
                                 {
                                     Items = Model.Apprenticeships
-                                })
+                                });
                             }
 
                         </div>
