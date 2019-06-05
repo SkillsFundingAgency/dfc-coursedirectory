@@ -1,4 +1,5 @@
-﻿using Dfc.CourseDirectory.Common;
+﻿
+using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Common.Settings;
 using Dfc.CourseDirectory.Models.Models.Auth;
 using Dfc.CourseDirectory.Services;
@@ -47,6 +48,7 @@ using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
+
 namespace Dfc.CourseDirectory.Web
 {
     public class Startup
@@ -67,8 +69,6 @@ namespace Dfc.CourseDirectory.Web
                 .AddEnvironmentVariables();
 
             Configuration = builder.Build();
-
-
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -85,7 +85,6 @@ namespace Dfc.CourseDirectory.Web
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-
             services.AddSingleton<IConfiguration>(Configuration);
             services.Configure<VenueNameComponentSettings>(Configuration.GetSection("AppUISettings:VenueNameComponentSettings"));
             services.Configure<CourseForComponentSettings>(Configuration.GetSection("AppUISettings:CourseForComponentSettings"));
@@ -95,8 +94,6 @@ namespace Dfc.CourseDirectory.Web
             services.Configure<WhatYouNeedComponentSettings>(Configuration.GetSection("AppUISettings:WhatYouNeedComponentSettings"));
             services.Configure<HowAssessedComponentSettings>(Configuration.GetSection("AppUISettings:HowAssessedComponentSettings"));
             services.Configure<WhereNextComponentSettings>(Configuration.GetSection("AppUISettings:WhereNextComponentSettings"));
-
-
 
             services.AddOptions();
 
@@ -122,7 +119,6 @@ namespace Dfc.CourseDirectory.Web
             services.AddScoped<IPostCodeSearchService, PostCodeSearchService>();
 
             services.AddScoped<IPostCodeSearchHelper, PostCodeSearchHelper>();
-
 
             services.AddScoped<ILarsSearchHelper, LarsSearchHelper>();
             services.AddScoped<IPaginationHelper, PaginationHelper>();
@@ -158,7 +154,6 @@ namespace Dfc.CourseDirectory.Web
             services.AddMvc(options =>
             {
 
-
             }).SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddSessionStateTempDataProvider();
 
 
@@ -176,10 +171,8 @@ namespace Dfc.CourseDirectory.Web
 
             services.AddResponseCaching();
             services.AddSession(options => {
-
                 options.IdleTimeout = TimeSpan.FromMinutes(30);
                 options.Cookie.HttpOnly = true;
-
             });
 
             //TODO
@@ -300,7 +293,6 @@ namespace Dfc.CourseDirectory.Web
                 options.Scope.Add("openid");
                 options.Scope.Add("email");
                 options.Scope.Add("profile");
-
                 options.Scope.Add("offline_access");
 
                 options.SaveTokens = true;
@@ -311,14 +303,12 @@ namespace Dfc.CourseDirectory.Web
                     InboundClaimTypeMap = new Dictionary<string, string>(),
                     TokenLifetimeInMinutes = 60,
                     SetDefaultTimesOnTokenCreation = true,
-
                 };
                 options.ProtocolValidator = new OpenIdConnectProtocolValidator
                 {
                     RequireSub = true,
                     RequireStateValidation = false,
                     NonceLifetime = TimeSpan.FromMinutes(60)
-
                 };
 
                 options.DisableTelemetry = true;
@@ -407,7 +397,6 @@ namespace Dfc.CourseDirectory.Web
                             _logger.LogError("Error authorising user", ex);
                         }
 
-
                         // so that we don't issue a session cookie but one with a fixed expiration
                         x.Properties.IsPersistent = true;
                         return Task.CompletedTask;
@@ -484,10 +473,6 @@ namespace Dfc.CourseDirectory.Web
                     template: "{controller=ProviderSearch}/{action=OnBoardProvider}/{id?}");
             });
 
-
-
         }
-
-
     }
 }
