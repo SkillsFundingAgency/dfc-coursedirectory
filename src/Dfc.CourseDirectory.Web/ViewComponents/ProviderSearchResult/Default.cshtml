@@ -11,7 +11,7 @@
 
 @if (Model.Items.Any() && Model.Items.FirstOrDefault() != null && !Model.HasErrors)
 {
-<div class="">
+<div x-ms-format-detection="none" class="">
     <span class="govuk-caption-xl"> Course provider</span>
     @if (provSearch == 0)
     {
