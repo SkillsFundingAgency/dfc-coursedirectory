@@ -1,10 +1,13 @@
 ﻿@using Dfc.CourseDirectory.Web.ViewComponents.ProviderApprenticeships.ProviderApprenticeshipSearch
-
+@using Dfc.CourseDirectory.Web.ViewComponents.ProviderApprenticeships.ProviderApprenticeshipSearchResult
 @{
     Layout = "_Layout_Your_Courses";
 }
 
 @model Dfc.CourseDirectory.Web.ViewModels.ProviderApprenticeships.ProviderApprenticeshipsViewModel
+@{
+    var hasApprenticeships = Model.Apprenticeships != null && Model.Apprenticeships.Any();
+}
 
 <div class="cd-hero-grey">
 
@@ -16,7 +19,7 @@
                         <a asp-controller="Home" asp-action="Index" class="govuk-back-link">Back</a><br />
                         <span class="govuk-caption-xl">Course directory</span>
                         <h1 class="govuk-heading-xl">Your published apprenticeship training</h1>
-                     
+
 
                         <p class="govuk-body-l">Search by apprenticeship name or keyword</p>
                     </div>
@@ -37,8 +40,14 @@
                     <div class="govuk-grid-row  ">
 
                         <div id="results">
+                            @if (!hasApprenticeships)
+                            {
+                                @await Component.InvokeAsync(nameof(ProviderApprenticeshipSearchResult), new ProviderApprenticeshipsSearchResultModel
+                                {
+                                    Items = Model.Apprenticeships
+                                })
+                            }
 
-                            @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.Web.ViewComponents.ProviderApprenticeships.ProviderApprenticeshipSearch.ProviderApprenticeshipsSearch))
                         </div>
 
                     </div>

@@ -6,7 +6,8 @@
 @using Dfc.CourseDirectory.Web.Areas.Identity.Data;
 @using Microsoft.AspNetCore.Authorization;
 @using Dfc.CourseDirectory.Web.ViewComponents.Notification
-@using  Dfc.CourseDirectory.Models.Enums
+@using Dfc.CourseDirectory.Models.Enums
+@using Dfc.CourseDirectory.Models.Models.Apprenticeships
 
 @inject IAuthorizationService Authorization
 
@@ -51,13 +52,12 @@ else
                     {
                         <h3 class="coursename" style="display:inline-flex">@apprenticeship.ApprenticeshipTitle</h3>
 
-                        @if (!string.IsNullOrEmpty(apprenticeship.ApprenticeshipType))
+
+                        @if (apprenticeship.ApprenticeshipType == ApprenticeshipType.FrameworkCode)
                         {
-                            @if (apprenticeship.ApprenticeshipType.ToUpper() == "FRAMEWORK")
-                            {
-                                <span style="background-color: darkgray;color: white;padding: 5px;">@apprenticeship.ApprenticeshipType</span>
-                            }
+                            <span style="background-color: darkgray;color: white;padding: 5px;">@apprenticeship.ApprenticeshipType</span>
                         }
+
 
                     }
                 </div>
@@ -65,9 +65,9 @@ else
 
                 <div class="courserun__row2" id="1" style="display:inline-flex;">
 
-                    @if (!string.IsNullOrEmpty(apprenticeship.NotionalNVQLevelv2))
+                    @if (!string.IsNullOrEmpty(apprenticeship.NotionalEndLevel))
                     {
-                        <span style="padding-right: 0.25em;" class=""><strong>Level: </strong></span><span style="padding-right: 0.25em;">@apprenticeship.NotionalNVQLevelv2</span>
+                        <span style="padding-right: 0.25em;" class=""><strong>Level: </strong></span><span style="padding-right: 0.25em;">@apprenticeship.NotionalEndLevel</span>
                     }
                 </div>
                 <div class="courserun__row3" id="1">
