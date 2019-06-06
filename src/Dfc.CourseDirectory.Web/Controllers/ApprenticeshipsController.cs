@@ -498,7 +498,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     id = Guid.NewGuid(),
                     LocationType = LocationType.Region,
                     RecordStatus = RecordStatus.Live,
-
+                    
                 };
 
                 if (!string.IsNullOrEmpty(loc.LocationId))
