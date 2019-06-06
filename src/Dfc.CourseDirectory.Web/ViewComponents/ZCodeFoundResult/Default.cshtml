@@ -1,4 +1,5 @@
-﻿@using Dfc.CourseDirectory.Web.ViewComponents.Extensions
+﻿
+@using Dfc.CourseDirectory.Web.ViewComponents.Extensions
 @using Dfc.CourseDirectory.Web.ViewComponents.Pagination;
 @using Microsoft.AspNetCore.Http
 @using Microsoft.AspNetCore.Identity
@@ -12,13 +13,9 @@
 @model ZCodeFoundResultModel;
 @*<a asp-controller="UnregulatedCourses" asp-action="Index" class="govuk-back-link">Back</a>*@
 
+
 @if (!string.IsNullOrEmpty(Model?.LearnAimRefTitle))
 {
-
-
-
-
-
     <div class=" govuk-!-margin-top-4 ">
         <div class="provision-container govuk-body govuk-!-margin-bottom-3">
             <h2 class="provision-title govuk-heading-l">
@@ -26,70 +23,24 @@
             </h2>
             <span>LARS/QAN :</span> <span>@Model?.LearnAimRef</span><br />
             <span>Level :</span> <span>@Model?.NotionalNVQLevelv2</span><br />
-
-
         </div>
         <br />
-
     </div>
 
-
     <div class="cd-action-container">
-
         <a asp-controller="AddCourse" asp-action="AddCourse" asp-route-learnAimRef=@Model?.LearnAimRef asp-route-notionalNVQLevelv2=@Model?.NotionalNVQLevelv2 asp-route-awardOrgCode=@Model?.AwardOrgCode asp-route-learnAimRefTitle=@Model?.LearnAimRefTitle asp-route-learnAimRefTypeDesc=@Model?.LearnAimRefTypeDesc class="govuk-button" id="">Choose</a>
         @Html.ActionLink("Cancel", "index", "RegulatedQualification", new { }, new { @class = "govuk-link" })
     </div>
-}
-else
-{
+
+} else {
     <div class=" govuk-!-margin-top-4 ">
         @*<h1>Z code does not exist</h1>
             <h2>Check the code you have entered and try again</h2>*@
         @await Component.InvokeAsync(nameof(Notification), new NotificationModel
                   {
                       NotificationTitle = "Z code does not exist",
-                      NotificationMessage = "Check the code you have entered and try agai",
+                      NotificationMessage = "Check the code you have entered and try again",
                       ClassType = "error-summary"
                   })
-
     </div>
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
