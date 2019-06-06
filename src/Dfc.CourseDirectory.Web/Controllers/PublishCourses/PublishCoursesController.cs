@@ -67,7 +67,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                     vm.NumberOfCoursesInFiles = migratedCourses.SelectMany(s => s.CourseRuns.Where(cr => cr.RecordStatus == RecordStatus.MigrationPending || cr.RecordStatus == RecordStatus.MigrationReadyToGoLive)).Count();
                     vm.Courses = migratedCourses.OrderBy(x=>x.QualificationCourseTitle);
                     vm.AreAllReadyToBePublished = CheckAreAllReadyToBePublished(migratedCourses, PublishMode.Migration);
-
+                    vm.Courses = GetErrorMessages(vm.Courses, ValidationMode.MigrateCourse);
                     break;
                 case PublishMode.BulkUpload:
 
@@ -77,7 +77,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                     vm.NumberOfCoursesInFiles = bulkUploadedCourses.SelectMany(s => s.CourseRuns.Where(cr => cr.RecordStatus == RecordStatus.BulkUploadPending || cr.RecordStatus == RecordStatus.BulkUploadReadyToGoLive)).Count();
                     vm.Courses = bulkUploadedCourses.OrderBy(x => x.QualificationCourseTitle);
                     vm.AreAllReadyToBePublished = CheckAreAllReadyToBePublished(bulkUploadedCourses, PublishMode.BulkUpload);
-
+                    vm.Courses = GetErrorMessages(vm.Courses, ValidationMode.BulkUploadCourse);
                     break;
                 case PublishMode.DataQualityIndicator:
                     {
@@ -88,7 +88,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                         var invalidCoursesResult = results.Where(c => c.RunValidationResults.Any(cr => cr.Issues.Count() > 0));
                         var invalidCourses = invalidCoursesResult.Select(c => (Course)c.Course).ToList();
                         var courseRuns = invalidCourses.Select(cr => cr.CourseRuns.Where(x => x.StartDate < DateTime.Today));
-
+                        vm.Courses = GetErrorMessages(vm.Courses, ValidationMode.DataQualityIndicator);
                         List<Course> filteredList = new List<Course>();
                         foreach(var course in invalidCourses)
                         {
@@ -237,6 +237,18 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                 }
                 return AreAllReadyToBePublished;
             }         
+        }
+        internal IEnumerable<Course> GetErrorMessages(IEnumerable<Course> courses, ValidationMode validationMode)
+        {
+            foreach (var course in courses)
+            {
+                course.ValidationErrors = _courseService.ValidateCourse(course);
+                foreach (var courseRun in course.CourseRuns)
+                {
+                    courseRun.ValidationErrors = _courseService.ValidateCourseRun(courseRun, validationMode);
+                }
+            }
+            return courses;
         }
     }
 }
