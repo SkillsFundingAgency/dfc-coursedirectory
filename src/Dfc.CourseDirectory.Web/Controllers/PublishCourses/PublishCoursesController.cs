@@ -321,8 +321,30 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
             return View("../DeleteFileConfirmation/Index", model);
         }
 
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> PublishYourFile()
+        {
+            var model = new PublishYourFileViewModel();
 
-     
+            model.NumberOfCourses = 99;
+
+            return View("../PublishYourFile/Index", model);
+        }
+
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> PublishYourFile(PublishYourFileViewModel model)
+        {
+            //to publish stuff
+            return View("Complete", new PublishCompleteViewModel() { NumberOfCoursesPublished = 99, Mode = PublishMode.BulkUpload });
+        }
+
+
+
+
+
 
 
 
