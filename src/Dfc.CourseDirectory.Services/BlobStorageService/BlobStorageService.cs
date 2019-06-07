@@ -11,7 +11,6 @@ using Microsoft.Azure.Storage.Blob;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Dfc.CourseDirectory.Common;
-using Dfc.CourseDirectory.Models.Interfaces;
 using Dfc.CourseDirectory.Services.Interfaces.BlobStorageService;
 
 
