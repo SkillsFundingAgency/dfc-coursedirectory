@@ -9,6 +9,8 @@ using Dfc.CourseDirectory.Models.Interfaces.Courses;
 using Dfc.CourseDirectory.Models.Models.Courses;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
+using Dfc.CourseDirectory.Services.Interfaces.VenueService;
+using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.ViewModels.PublishCourses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -24,16 +26,19 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
         private readonly IHttpContextAccessor _contextAccessor;
         private ISession _session => _contextAccessor.HttpContext.Session;
         private readonly ICourseService _courseService;
+        private readonly IVenueService _venueService;
 
         public PublishCoursesController(ILogger<PublishCoursesController> logger,
-            IHttpContextAccessor contextAccessor, ICourseService courseService)
+            IHttpContextAccessor contextAccessor, ICourseService courseService,
+            IVenueService venueService)
         {
             Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(courseService, nameof(courseService));
-
+            Throw.IfNull(venueService, nameof(venueService));
             _logger = logger;
             _contextAccessor = contextAccessor;
             _courseService = courseService;
+            _venueService = venueService;
         }
 
         [Authorize]
@@ -68,6 +73,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                     vm.Courses = migratedCourses.OrderBy(x=>x.QualificationCourseTitle);
                     vm.AreAllReadyToBePublished = CheckAreAllReadyToBePublished(migratedCourses, PublishMode.Migration);
                     vm.Courses = GetErrorMessages(vm.Courses, ValidationMode.MigrateCourse);
+                    vm.Venues = GetVenueNames(vm.Courses);
                     break;
                 case PublishMode.BulkUpload:
 
@@ -78,6 +84,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                     vm.Courses = bulkUploadedCourses.OrderBy(x => x.QualificationCourseTitle);
                     vm.AreAllReadyToBePublished = CheckAreAllReadyToBePublished(bulkUploadedCourses, PublishMode.BulkUpload);
                     vm.Courses = GetErrorMessages(vm.Courses, ValidationMode.BulkUploadCourse);
+                    vm.Venues = GetVenueNames(vm.Courses);
                     break;
                 case PublishMode.DataQualityIndicator:
                     {
@@ -89,6 +96,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                         var invalidCourses = invalidCoursesResult.Select(c => (Course)c.Course).ToList();
                         var courseRuns = invalidCourses.Select(cr => cr.CourseRuns.Where(x => x.StartDate < DateTime.Today));
                         vm.Courses = GetErrorMessages(vm.Courses, ValidationMode.DataQualityIndicator);
+                        vm.Venues = GetVenueNames(vm.Courses);
                         List<Course> filteredList = new List<Course>();
                         foreach(var course in invalidCourses)
                         {
@@ -249,6 +257,30 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                 }
             }
             return courses;
+        }
+        internal Dictionary<Guid, string> GetVenueNames(IEnumerable<Course> courses)
+        {
+            Dictionary<Guid, string> venueNames = new Dictionary<Guid, string>();
+            foreach(var course in courses)
+            {
+                foreach(var courseRun in course.CourseRuns)
+                {
+                    if(courseRun.VenueId != Guid.Empty && courseRun.VenueId != null)
+                    {
+                        if (!venueNames.ContainsKey((Guid)courseRun.VenueId))
+                        {
+                            var result = _venueService.GetVenueByIdAsync(new GetVenueByIdCriteria(courseRun.VenueId.ToString()));
+                            if (result.Result.IsSuccess && result.Result.HasValue)
+                            {
+                                Guid.TryParse(result.Result.Value.ID, out Guid venueId);
+                                venueNames.Add(venueId, result.Result.Value.VenueName);
+                            }
+                        }
+                    }
+
+                }
+            }
+            return venueNames;
         }
     }
 }

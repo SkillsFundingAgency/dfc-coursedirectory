@@ -32,19 +32,14 @@
 
     @if (Model.PublishMode.Equals(PublishMode.Migration))
     {
-        if (Model.AreAllReadyToBePublished)
-        {
-            <h1 class="govuk-govuk-grid-column-one-half-l">Publish your courses</h1>
-            <p>
-                @(Model.NumberOfCoursesInFiles.Equals(1) ? "This course has" : "These courses have") no errors but will not be listed on the course directory until you publish @(Model.NumberOfCoursesInFiles.Equals(1) ? "it" : "them").
-            </p>
-        }
-        else if (@Model.NumberOfCoursesInFiles > 0)
+        if(Model.NumberOfCoursesInFiles > 0)
         {
             <h1 class="govuk-govuk-grid-column-one-half-l">Fix errors and publish</h1>
             <p>
 
-                It has not been possible to migrate @Model.NumberOfCoursesInFiles of your courses from the old Course Directory to new Course Directory. @(Model.NumberOfCoursesInFiles.Equals(1) ? "This course" : "These courses") cannot be listed on the new Course Directory until you fix the errors.
+                You must fix these errors before any of your courses can be published
+
+                or you can <a href="#" class="govuk-link">download an error file </a>, fix them at source and upload a new file.
 
             </p>
         }
