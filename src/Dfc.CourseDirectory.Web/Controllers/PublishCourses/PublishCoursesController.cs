@@ -246,6 +246,95 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                 return AreAllReadyToBePublished;
             }         
         }
+
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> WhatDoYouWantToDoNext()
+        {
+            var model = new WhatDoYouWantToDoNextViewModel();
+
+            return View("../WhatDoYouWantToDoNext/Index",model);
+        }
+
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> WhatDoYouWantToDoNext(WhatDoYouWantToDoNextViewModel model)
+        {
+            switch(model.WhatDoYouWantToDoNext)
+            {
+                case Models.Enums.WhatDoYouWantToDoNext.OnScreen:
+                    return RedirectToAction("Index", "PublishCourses", new { publishMode = PublishMode.BulkUpload });
+                case Models.Enums.WhatDoYouWantToDoNext.DownLoad:
+                    return RedirectToAction("DownloadErrorFile", "PublishCourses");
+                case Models.Enums.WhatDoYouWantToDoNext.Delete:
+                    return RedirectToAction("DeleteFile", "PublishCourses");
+                default:
+                    return RedirectToAction("WhatDoYouWantToDoNext", "PublishCourses");
+
+            }
+
+
+            
+        }
+
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> DownloadErrorFile()
+        {
+            var model = new DownloadErrorFileViewModel();
+            model.ErrorFileCreatedDate = DateTime.Now;
+
+            return View("../DownloadErrorFile/Index", model);
+        }
+
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> DownloadErrorFile(DownloadErrorFileViewModel model)
+        {
+            // where to go????
+            return View("../WhatDoYouWantToDoNext/Index", new WhatDoYouWantToDoNextViewModel());
+        }
+
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> DeleteFile()
+        {
+            var model = new DeleteFileViewModel();
+            
+
+            return View("../DeleteFile/Index", model);
+        }
+
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> DeleteFile(DeleteFileViewModel model)
+        {
+            // where to go????
+            return RedirectToAction("DeleteFileConfirmation", "PublishCourses");
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> DeleteFileConfirmation()
+        {
+            var model = new DeleteFileConfirmationViewModel();
+            model.FileUploadedDate = DateTime.Now;
+
+            return View("../DeleteFileConfirmation/Index", model);
+        }
+
+
+     
+
+
+
+        }
         internal IEnumerable<Course> GetErrorMessages(IEnumerable<Course> courses, ValidationMode validationMode)
         {
             foreach (var course in courses)

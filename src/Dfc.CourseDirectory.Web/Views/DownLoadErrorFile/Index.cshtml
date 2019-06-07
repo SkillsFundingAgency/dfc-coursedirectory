@@ -1,0 +1,40 @@
+﻿@using Dfc.CourseDirectory.Models.Enums
+@using Dfc.CourseDirectory.Web.Helpers
+@{
+    Layout = "_Layout_Your_Courses";
+}
+
+@model Dfc.CourseDirectory.Web.ViewModels.PublishCourses.DownloadErrorFileViewModel
+
+
+<div class="content-container">
+    <div class="govuk-grid-row" data-sf-element="Row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <form class="govuk-!-margin-bottom-9" id="DownloadErrorFileForm" asp-controller="PublishCourses" asp-action="DownloadErrorFile" method="post">
+                <a asp-controller="PublishCourses" asp-action="WhatDoYouWantToDoNext" class="govuk-back-link">Back</a><br />
+                <span class="govuk-caption-xl">Course Directory</span>
+                <h1 class="govuk-heading-xl">Download error file (Stubbed)</h1>
+
+                <p class="govuk-body govuk-!-padding-bottom-4">Your error file was created at your bulk upload on @Model.ErrorFileCreatedDate.ToString("dd MMM yyyy hh:mm") (Stubbed)</p>
+                <br />
+
+                <button type="submit" class="govuk-button" id="next">Download</button>
+                <br />
+                <a class="govuk-link" asp-controller="Bulkupload" asp-action="Index">Upload new template</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function ($) {
+        $(function () {
+           
+
+        });
+    })(jQuery);
+</script>
+
+
+

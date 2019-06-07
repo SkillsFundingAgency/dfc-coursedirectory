@@ -162,6 +162,18 @@ namespace Dfc.CourseDirectory.Models.Enums
         NonRegulated = 1
     }
 
+    public enum WhatDoYouWantToDoNext
+    {
+        [Description("Undefined")]
+        Undefined = 0,
+        [Description("Fix the errors on screen using this service")]
+        OnScreen = 1,
+        [Description("Download an error file to fix them at source and start again with a new bulk upload")]
+        DownLoad = 2,
+        [Description("Delete the file you uploaded and make no changes to the Course directory ")]
+        Delete = 3
+    }
+
     public enum ApprenticeshipDelivery
     {
         [Description("Undefined")]
