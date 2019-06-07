@@ -28,7 +28,6 @@ namespace Dfc.CourseDirectory.Services.BlobStorageService
         private readonly string _accountName;
         private readonly string _accountKey;
         private readonly string _container;
-        //private readonly Uri _getSomethingByIdUri;
 
         private readonly CloudStorageAccount _account;
         private readonly CloudBlobClient _blobClient;
