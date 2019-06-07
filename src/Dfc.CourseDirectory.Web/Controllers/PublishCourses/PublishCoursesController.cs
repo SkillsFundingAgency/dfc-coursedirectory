@@ -330,11 +330,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
         }
 
 
-     
-
-
-
-        }
         internal IEnumerable<Course> GetErrorMessages(IEnumerable<Course> courses, ValidationMode validationMode)
         {
             foreach (var course in courses)
@@ -350,11 +345,11 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
         internal Dictionary<Guid, string> GetVenueNames(IEnumerable<Course> courses)
         {
             Dictionary<Guid, string> venueNames = new Dictionary<Guid, string>();
-            foreach(var course in courses)
+            foreach (var course in courses)
             {
-                foreach(var courseRun in course.CourseRuns)
+                foreach (var courseRun in course.CourseRuns)
                 {
-                    if(courseRun.VenueId != Guid.Empty && courseRun.VenueId != null)
+                    if (courseRun.VenueId != Guid.Empty && courseRun.VenueId != null)
                     {
                         if (!venueNames.ContainsKey((Guid)courseRun.VenueId))
                         {
@@ -371,5 +366,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
             }
             return venueNames;
         }
+
     }
 }
