@@ -105,7 +105,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             //Task task = _blobService.UploadFileAsync("uploadtest.csv", ms);
             //task.Wait();
 
-            //ms = new MemoryStream(data); 
+            //ms = new MemoryStream(data);
             //task = _blobService.DownloadFileAsync($"{UKPRN.ToString()}/Bulk Upload/Files/test.csv", ms);
             //task.Wait();
             ms.Position = 0;
