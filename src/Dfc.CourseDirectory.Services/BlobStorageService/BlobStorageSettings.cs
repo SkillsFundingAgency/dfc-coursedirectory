@@ -12,5 +12,7 @@ namespace Dfc.CourseDirectory.Services.BlobStorageService
         public string AccountName { get; set; }
         public string AccountKey { get; set; }
         public string Container { get; set; }
+        //public string BulkUploadPathFormat { get; set; }
+        public string TemplatePath { get; set; }
     }
 }
