@@ -24,6 +24,8 @@ namespace Dfc.CourseDirectory.Services.BlobStorageService
         private readonly string _accountName;
         private readonly string _accountKey;
         private readonly string _container;
+        //private readonly string _bulkUploadPathFormat;
+        private readonly string _templatePath;
 
         private readonly CloudStorageAccount _account;
         private readonly CloudBlobClient _blobClient;
@@ -44,6 +46,8 @@ namespace Dfc.CourseDirectory.Services.BlobStorageService
             _accountName = settings.Value.AccountName;
             _accountKey = settings.Value.AccountKey;
             _container = settings.Value.Container;
+            //_bulkUploadPathFormat = settings.Value.BulkUploadPathFormat;
+            _templatePath = settings.Value.TemplatePath;
 
             //Set up the client
             _account = new CloudStorageAccount(new StorageCredentials(_accountName, _accountKey), true);
@@ -53,8 +57,9 @@ namespace Dfc.CourseDirectory.Services.BlobStorageService
         public Task DownloadFileAsync(string filePath, Stream stream)
         {
             try {
-                CloudBlobContainer container = _blobClient.GetContainerReference(_container);
-                CloudBlockBlob blockBlob = container.GetBlockBlobReference(filePath);
+                //CloudBlobContainer container = _blobClient.GetContainerReference(_container);
+                CloudBlockBlob blockBlob = _blobClient.GetContainerReference(_container)
+                                                      .GetBlockBlobReference(filePath);
 
                 if (blockBlob.ExistsAsync().Result) {
                     _log.LogInformation($"Downloading {filePath} from blob storage");
@@ -76,8 +81,9 @@ namespace Dfc.CourseDirectory.Services.BlobStorageService
         public Task UploadFileAsync(string filePath, Stream stream)
         {
             try {
-                CloudBlobContainer container = _blobClient.GetContainerReference(_container);
-                CloudBlockBlob blockBlob = container.GetBlockBlobReference(filePath);
+                //CloudBlobContainer container = _blobClient.GetContainerReference(_container);
+                CloudBlockBlob blockBlob = _blobClient.GetContainerReference(_container)
+                                                      .GetBlockBlobReference(filePath);
 
                 return blockBlob.UploadFromStreamAsync(stream);
 
@@ -90,5 +96,20 @@ namespace Dfc.CourseDirectory.Services.BlobStorageService
                 return null;
             }
         }
+
+        public Task GetTemplateFileAsync(Stream stream)
+        {
+            return DownloadFileAsync(_templatePath, stream);
+        }
+
+
+
+
+
+
+        //internal static ReturnType Something(this IExtendee extendee) {
+        //    return new ReturnType();
+        //}
+
     }
 }
