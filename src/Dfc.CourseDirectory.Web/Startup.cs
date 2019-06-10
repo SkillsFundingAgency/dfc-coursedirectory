@@ -6,6 +6,7 @@ using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.AuthService;
 using Dfc.CourseDirectory.Services.BaseDataAccess;
+using Dfc.CourseDirectory.Services.BlobStorageService;
 using Dfc.CourseDirectory.Services.BulkUploadService;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.CourseTextService;
@@ -13,6 +14,7 @@ using Dfc.CourseDirectory.Services.Interfaces;
 using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.Interfaces.AuthService;
 using Dfc.CourseDirectory.Services.Interfaces.BaseDataAccess;
+using Dfc.CourseDirectory.Services.Interfaces.BlobStorageService;
 using Dfc.CourseDirectory.Services.Interfaces.BulkUploadService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseTextService;
@@ -117,18 +119,16 @@ namespace Dfc.CourseDirectory.Web
 
             services.Configure<PostCodeSearchSettings>(Configuration.GetSection(nameof(PostCodeSearchSettings)));
             services.AddScoped<IPostCodeSearchService, PostCodeSearchService>();
-
             services.AddScoped<IPostCodeSearchHelper, PostCodeSearchHelper>();
 
             services.AddScoped<ILarsSearchHelper, LarsSearchHelper>();
             services.AddScoped<IPaginationHelper, PaginationHelper>();
 
-            services.AddScoped<IVenueSearchHelper, VenueSearchHelper>();
-
             services.Configure<ProviderServiceSettings>(Configuration.GetSection(nameof(ProviderServiceSettings)));
             services.AddScoped<IProviderService, ProviderService>();
             services.AddScoped<IProviderSearchHelper, ProviderSearchHelper>();
 
+            services.AddScoped<IVenueSearchHelper, VenueSearchHelper>();
             services.Configure<VenueServiceSettings>(Configuration.GetSection(nameof(VenueServiceSettings)));
             services.AddScoped<IVenueService, VenueService>();
 
@@ -143,10 +143,13 @@ namespace Dfc.CourseDirectory.Web
             services.AddScoped<IOnspdService, OnspdService>();
             services.AddScoped<IOnspdSearchHelper, OnspdSearchHelper>();
             services.AddScoped<IUserHelper, UserHelper>();
-            services.AddScoped<IBulkUploadService, BulkUploadService>();
 
             services.Configure<ApprenticeshipServiceSettings>(Configuration.GetSection(nameof(ApprenticeshipServiceSettings)));
             services.AddScoped<IApprenticeshipService, ApprenticeshipService>();
+
+            services.AddScoped<IBulkUploadService, BulkUploadService>();
+            services.Configure<BlobStorageSettings>(Configuration.GetSection(nameof(BlobStorageSettings)));
+            services.AddScoped<IBlobStorageService, BlobStorageService>();
 
             services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
@@ -171,7 +174,7 @@ namespace Dfc.CourseDirectory.Web
 
             services.AddResponseCaching();
             services.AddSession(options => {
-                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.IdleTimeout = TimeSpan.FromMinutes(30); //.FromSeconds(18);
                 options.Cookie.HttpOnly = true;
             });
 
@@ -198,7 +201,7 @@ namespace Dfc.CourseDirectory.Web
 
             }).AddCookie(options =>
             {
-                options.ExpireTimeSpan = TimeSpan.FromHours(1);
+                options.ExpireTimeSpan = TimeSpan.FromHours(1); //.FromSeconds(18); 
                 options.SlidingExpiration = true;
                 options.Events = new CookieAuthenticationEvents
                 {
@@ -219,7 +222,7 @@ namespace Dfc.CourseDirectory.Web
                         // assume a timeout of 20 minutes.
                         var timeElapsed = DateTimeOffset.UtcNow.Subtract(x.Properties.IssuedUtc.Value);
 
-                        if (timeElapsed > TimeSpan.FromMinutes(59.5))
+                    if (timeElapsed > TimeSpan.FromMinutes(59.5)) //.FromSeconds(18)) ;
                         {
                             var identity = (ClaimsIdentity)x.Principal.Identity;
                             var accessTokenClaim = identity.FindFirst("access_token");
@@ -301,14 +304,14 @@ namespace Dfc.CourseDirectory.Web
                 options.SecurityTokenValidator = new JwtSecurityTokenHandler
                 {
                     InboundClaimTypeMap = new Dictionary<string, string>(),
-                    TokenLifetimeInMinutes = 60,
+                    TokenLifetimeInMinutes = 60, //1,
                     SetDefaultTimesOnTokenCreation = true,
                 };
                 options.ProtocolValidator = new OpenIdConnectProtocolValidator
                 {
                     RequireSub = true,
                     RequireStateValidation = false,
-                    NonceLifetime = TimeSpan.FromMinutes(60)
+                    NonceLifetime = TimeSpan.FromMinutes(60) //.FromSeconds(18)
                 };
 
                 options.DisableTelemetry = true;
