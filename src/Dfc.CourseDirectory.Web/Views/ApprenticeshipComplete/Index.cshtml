@@ -3,6 +3,9 @@
 @using Dfc.CourseDirectory.Web.Areas.Identity.Data;
 @using Dfc.CourseDirectory.Models.Enums
 @model Dfc.CourseDirectory.Web.ViewModels.Apprenticeships.ApprenticeshipCompleteViewModel
+@{
+    Layout = "_Layout_Your_Courses";
+}
 
 <div class="govuk-panel govuk-panel--confirmation">
 
@@ -13,17 +16,17 @@
 
         @Model.ApprenticeshipName has been added to the Course directory
     </div>
-    
+
 
     @*@if (Model.Mode.Equals(PublishMode.Migration))
-    {
-        <div class="govuk-panel__body">
-            <h1 class="govuk-panel__title">
-                Migration complete
-            </h1>
-            You have published <strong>@Model.NumberOfCoursesPublished</strong> @(Model.NumberOfCoursesPublished.Equals(1) ? "course" : "courses") to the course directory.
-        </div>
-    }*@
+        {
+            <div class="govuk-panel__body">
+                <h1 class="govuk-panel__title">
+                    Migration complete
+                </h1>
+                You have published <strong>@Model.NumberOfCoursesPublished</strong> @(Model.NumberOfCoursesPublished.Equals(1) ? "course" : "courses") to the course directory.
+            </div>
+        }*@
 </div>
 <div class="Publish-Complete">
     <div class="govuk-!-margin-top-6">

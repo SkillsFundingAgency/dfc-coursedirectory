@@ -7,14 +7,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.ProviderApprenticeships.Provide
     {
         public IViewComponentResult Invoke(ProviderApprenticeshipsSearchResultModel model)
         {
-
-
-
             var actualModel = model ?? new ProviderApprenticeshipsSearchResultModel();
-
-         
-
-
             return View("~/ViewComponents/ProviderApprenticeships/ProviderApprenticeshipsSearchResult/Default.cshtml", actualModel);
         }
     }

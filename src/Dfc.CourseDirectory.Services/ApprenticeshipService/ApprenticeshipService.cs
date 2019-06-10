@@ -19,7 +19,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
     {
         private readonly ILogger<ApprenticeshipService> _logger;
         private readonly HttpClient _httpClient;
-        private readonly Uri _getStandardsAndFrameworksUri, _addApprenticeshipUri;
+        private readonly Uri _getStandardsAndFrameworksUri, _addApprenticeshipUri, _getApprenticeshipByUKPRNUri;
 
 
         public ApprenticeshipService(
@@ -36,6 +36,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
 
             _getStandardsAndFrameworksUri = settings.Value.GetStandardsAndFrameworksUri();
             _addApprenticeshipUri = settings.Value.AddApprenticeshipUri();
+            _getApprenticeshipByUKPRNUri = settings.Value.GetApprenticeshipByUKPRNUri();
 
         }
 
@@ -139,6 +140,51 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             }
         }
 
+        public async Task<IResult<IEnumerable<IApprenticeship>>> GetApprenticeshipByUKPRN(string criteria)
+        {
+            Throw.IfNullOrWhiteSpace(criteria, nameof(criteria));
+            _logger.LogMethodEnter();
+
+            try
+            {
+                _logger.LogInformationObject("Search Apprenticeship by UKPRN Criteria", criteria);
+
+
+                var response = await _httpClient.GetAsync(new Uri(_getApprenticeshipByUKPRNUri.AbsoluteUri + "&UKPRN=" + criteria));
+                _logger.LogHttpResponseMessage("Search Apprenticeship by UKPRN service http response", response);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+
+                    _logger.LogInformationObject("Search Apprenticeship by UKPRN json response", json);
+                    IEnumerable<Apprenticeship> results = JsonConvert.DeserializeObject<IEnumerable<Apprenticeship>>(json);
+
+                    return Result.Ok<IEnumerable<IApprenticeship>>(results);
+
+                }
+                else
+                {
+                    return Result.Fail<IEnumerable<IApprenticeship>>("Search Apprenticeship by UKPRN service unsuccessful http response");
+                }
+
+            }
+            catch (HttpRequestException hre)
+            {
+                _logger.LogException("Search Apprenticeship by UKPRN service http request error", hre);
+                return Result.Fail<IEnumerable<IApprenticeship>>("Search Apprenticeship by UKPRN service http request error.");
+
+            }
+            catch (Exception e)
+            {
+                _logger.LogException("Standards and Frameworks unknown error.", e);
+                return Result.Fail<IEnumerable<IApprenticeship>>("Search Apprenticeship by UKPRN service unknown error.");
+            }
+            finally
+            {
+                _logger.LogMethodExit();
+            }
+        }
     }
     internal static class ApprenticeshipServiceSettingsExtensions
     {
@@ -149,6 +195,10 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
         internal static Uri AddApprenticeshipUri(this IApprenticeshipServiceSettings extendee)
         {
             return new Uri($"{extendee.ApiUrl + "AddApprenticeship?code=" + extendee.ApiKey}");
+        }
+        internal static Uri GetApprenticeshipByUKPRNUri(this IApprenticeshipServiceSettings extendee)
+        {
+            return new Uri($"{extendee.ApiUrl + "GetApprenticeshipByUKPRN?code=" + extendee.ApiKey}");
         }
     }
     
