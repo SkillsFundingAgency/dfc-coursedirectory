@@ -11,5 +11,6 @@ namespace Dfc.CourseDirectory.Services.Interfaces.BlobStorageService
     {
         Task DownloadFileAsync(string filePath, Stream stream);
         Task UploadFileAsync(string filePath, Stream stream);
+        Task GetBulkUploadTemplateFileAsync(Stream stream);
     }
 }
