@@ -21,64 +21,74 @@
 else
 {
 
-            @if (!Model.Items.Any())
-            {
-                <div class="">
-                    @await Component.InvokeAsync(nameof(Notification), new NotificationModel
-               {
-                   NotificationTitle = "",
-                   NotificationMessage = "No results found. Enter a different apprenticeship name or keyword",
-                   ClassType = "error-summary"
-               })
-                </div>
-            }
-            else
-            {
-              
+    @if (!Model.Items.Any())
+    {
+        <div class="">
+            @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+       {
+           NotificationTitle = "",
+           NotificationMessage = "No results found. Enter a different apprenticeship name or keyword",
+           ClassType = "error-summary"
+       })
+        </div>
+    }
+    else
+    {
 
-                        <div class="cd-apprenticeships-results hide govuk-body visible">
-                            <div class="govuk-!-margin-bottom-4">
-                                <span>Found <strong>@Model.Items.Count()</strong> results for <strong> @Model.SearchTerm</strong></span>
-                            </div>
 
-                            @foreach (var apprenticeship in Model.Items.OrderBy(x => x.ApprenticeshipTitle))
+        <div class="cd-apprenticeships-results hide govuk-body visible">
+            <div class="govuk-!-margin-bottom-4">
+                <span>Found <strong>@Model.Items.Count()</strong> results for <strong> @Model.SearchTerm</strong></span>
+            </div>
+
+            @foreach (var apprenticeship in Model.Items.OrderBy(x => x.ApprenticeshipTitle))
+            {
+                <div>
+                    <div class="cd-apprenticeships-search-result__container">
+                        <h3 class="govuk-heading-m" style="display:inline-flex">
+                            @apprenticeship.ApprenticeshipTitle
+
+                            @if (apprenticeship.ApprenticeshipType == ApprenticeshipType.FrameworkCode)
                             {
-                                <div>
-                                    <div class="cd-apprenticeships-search-result__container">
-                                        <h3 class="govuk-heading-m" style="display:inline-flex">
-                                            @apprenticeship.ApprenticeshipTitle
-                                            @if (apprenticeship.ApprenticeshipType == ApprenticeshipType.FrameworkCode)
-                                            {
-                                                <span style="background-color: darkgray;color: white;padding: 5px;margin-left:10px">@apprenticeship.ApprenticeshipType.ToDescription()</span>
-                                            }
-                                        </h3>
-
-                                        @if (!string.IsNullOrEmpty(apprenticeship.NotionalEndLevel))
-                                        {
-                                            <p class="govuk-body">Level: <span class="govuk-!-font-weight-bold">@apprenticeship.NotionalEndLevel</span></p>
-                                        }
-                                        <p class="govuk-body">
-                                            <a class="govuk-link" style="display:inline-flex"
-                                                asp-controller="Apprenticeships"
-                                                asp-action="ApprenticeShipDetails"
-                                                asp-route-apprenticeshiptitle="@apprenticeship.ApprenticeshipTitle"
-                                                asp-route-id="@apprenticeship.id"
-                                                asp-route-progtype="@apprenticeship.ProgType"
-                                                asp-route-standardcode="@apprenticeship.StandardCode"
-                                                asp-route-frameworkcode="@apprenticeship.FrameworkCode"
-                                                asp-route-pathwaycode="@apprenticeship.PathwayCode"
-                                                asp-route-version="@apprenticeship.Version"
-                                                asp-route-NotionalEndLevel="@apprenticeship.NotionalEndLevel"
-                                                asp-route-ApprenticeshipType="@apprenticeship.ApprenticeshipType">Choose this apprenticeship</a>
-                                        </p>
-                                    </div>
-                                </div>
-
+                                <span style="background-color: darkgray;color: white;padding: 5px;margin-left:10px">@apprenticeship.ApprenticeshipType.ToDescription()</span>
                             }
+                        </h3>
+                        @if (apprenticeship.OtherBodyApprovalRequired == "Y")
+                        {
+                    <span id="more-detail-hint" class="govuk-hint">
+                        You may need approval from the regulator of this occupation before you can deliver this training.<br />
+                        The <a href="https://www.instituteforapprenticeships.org/developing-new-apprenticeships/resources/regulated-occupations/" target="_blank">Institute for Apprenticeships</a> can tell you more
+                    </span>
 
-                        </div>
+
+                        }
+
+                        @if (!string.IsNullOrEmpty(apprenticeship.NotionalEndLevel))
+                        {
+                            <p class="govuk-body">Level: <span class="govuk-!-font-weight-bold">@apprenticeship.NotionalEndLevel</span></p>
+                        }
+                        <p class="govuk-body">
+                            <a class="govuk-link" style="display:inline-flex"
+                               asp-controller="Apprenticeships"
+                               asp-action="ApprenticeShipDetails"
+                               asp-route-apprenticeshiptitle="@apprenticeship.ApprenticeshipTitle"
+                               asp-route-id="@apprenticeship.id"
+                               asp-route-progtype="@apprenticeship.ProgType"
+                               asp-route-standardcode="@apprenticeship.StandardCode"
+                               asp-route-frameworkcode="@apprenticeship.FrameworkCode"
+                               asp-route-pathwaycode="@apprenticeship.PathwayCode"
+                               asp-route-version="@apprenticeship.Version"
+                               asp-route-NotionalEndLevel="@apprenticeship.NotionalEndLevel"
+                               asp-route-ApprenticeshipType="@apprenticeship.ApprenticeshipType">Choose this apprenticeship</a>
+                        </p>
+                    </div>
+                </div>
 
             }
+
+        </div>
+
+    }
 
 }
 

@@ -1,8 +1,8 @@
-﻿tinymce.PluginManager.add('charactercount', function (editor) {
+﻿tinymce.PluginManager.add('test', function (editor) {
     var self = this;
 
     function update() {
-        editor.theme.panel.find('#charactercount').text(['Characters: {0}', self.getCount()]);
+        editor.theme.panel.find('#charactercount').text(['wibble: {0}', self.getCount()]);
     }
 
     editor.on('init', function () {
@@ -21,6 +21,7 @@
                 editor.on('setcontent beforeaddundo', update);
 
                 editor.on('keyup', function (e) {
+                    alert("heelo");
                     update();
                 });
             }, 0);
