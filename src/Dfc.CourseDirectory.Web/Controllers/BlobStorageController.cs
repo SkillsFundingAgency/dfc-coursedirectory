@@ -64,18 +64,22 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return View(); //vm);
         }
 
-        [Authorize]
-        public FileStreamResult GetErrors(int? UKPRN)
+        public FileStreamResult GetBulkUploadTemplateFile()
         {
-            //string connstring = "DefaultEndpointsProtocol=https;AccountName=dfcdevprovstr;AccountKey=AXw/m1t6k0r0sbwIiZQUn7OjbCOrycxJwZjsXf27Az5+RjGHkovPSZ+MwBH//PPxCNLWbNXT38xVQh1WDKLYnw==";
+            MemoryStream ms = new MemoryStream();
+            Task task = _blobService.GetBulkUploadTemplateFileAsync(ms);
+            task.Wait();
+            ms.Position = 0;
+            FileStreamResult result = new FileStreamResult(ms, MediaTypeNames.Text.Plain);
+            result.FileDownloadName = "bulk upload template.csv";
+            return result;
+        }
+
+        [Authorize]
+        public FileStreamResult GetBulkUploadErrors(int? UKPRN)
+        {
             if (!UKPRN.HasValue)
                 return null;
-
-            //StringBuilder sb = new StringBuilder();
-            //sb.Append($"ID,Row Number,Column Name,Error Description{Environment.NewLine}");
-            //sb.Append($"1,abc,def{Environment.NewLine}");
-            //sb.Append($"2,ghi,jkl{Environment.NewLine}");
-            //sb.Append($"3,uvw,xyz{Environment.NewLine}");
 
             IEnumerable<Course> courses = _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(UKPRN))
                                                         .Result
@@ -96,21 +100,28 @@ namespace Dfc.CourseDirectory.Web.Controllers
                                                                     .Select(i => string.Join(",", new string[] { counter.ToString(), counter++.ToString(), i, i } ))
                                                              );
             string report = string.Join(Environment.NewLine, headers.Concat(csvlines));
-
-
-
-            byte[] data = Encoding.ASCII.GetBytes(report); // sb.ToString());
+            byte[] data = Encoding.ASCII.GetBytes(report);
             MemoryStream ms = new MemoryStream(data);
-            Task task = _blobService.UploadFileAsync($"{UKPRN.ToString()}/Bulk Upload/Files/uploadtest.csv", ms);
-            task.Wait();
+            //Task task = _blobService.UploadFileAsync("uploadtest.csv", ms);
+            //task.Wait();
 
-            ms = new MemoryStream(data);
-            task = _blobService.DownloadFileAsync($"{UKPRN.ToString()}/Bulk Upload/Files/test.csv", ms);
-            task.Wait();
+            //ms = new MemoryStream(data);
+            //task = _blobService.DownloadFileAsync($"{UKPRN.ToString()}/Bulk Upload/Files/test.csv", ms);
+            //task.Wait();
             ms.Position = 0;
             FileStreamResult result = new FileStreamResult(ms, MediaTypeNames.Text.Plain);
-            result.FileDownloadName = "This is a file downloaded from memory.csv";
+            DateTime d = DateTime.UtcNow;
+            result.FileDownloadName = $"Bulk_upload_error_{d.Day.TwoChars()}_{d.Month.TwoChars()}_{d.Year}_{d.Hour.TwoChars()}_{d.Minute.TwoChars()}.csv";
             return result;
         }
     }
+
+    internal static class TwoCharsClass
+    {
+        internal static string TwoChars(this int extendee)
+        {
+            return extendee.ToString().Length < 2 ? $"0{extendee.ToString()}" : extendee.ToString();
+        }
+    }
+
 }
