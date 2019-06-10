@@ -152,6 +152,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
+
+            model.BriefOverview.TrimEnd();
+            model.AliasName.Trim();
             var providerSearchResult = await _providerService.GetProviderByPRNAsync(new Services.ProviderService.ProviderSearchCriteria(UKPRN.ToString()));
 
             if (providerSearchResult.IsSuccess)
