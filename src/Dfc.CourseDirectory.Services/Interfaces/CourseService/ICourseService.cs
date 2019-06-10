@@ -31,5 +31,6 @@ namespace Dfc.CourseDirectory.Services.Interfaces.CourseService
         IResult<IList<CourseValidationResult>> CourseValidationMessages(IEnumerable<ICourse> courses, ValidationMode mode);
         Task<IResult<IEnumerable<ICourseStatusCountResult>>> GetCourseCountsByStatusForUKPRN(ICourseSearchCriteria criteria);
         Task<IResult<IEnumerable<ICourse>>> GetRecentCourseChangesByUKPRN(ICourseSearchCriteria criteria);
+        Task<IResult> DeleteBulkUploadCourses(int UKPRN);
     }
 }
