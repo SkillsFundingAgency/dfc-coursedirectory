@@ -33,6 +33,8 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
 
         public IEnumerable<CourseRun> CourseRuns { get; set; }
         public bool IsValid { get; set; }
+
+        public IEnumerable<string> ValidationErrors { get; set; }
         public RecordStatus CourseStatus
         {
             get

@@ -32,5 +32,6 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Courses
         DateTime? UpdatedDate { get; set; }
         string UpdatedBy { get; set; }
         IEnumerable<SubRegionItemModel> SubRegions { get; set; }
+        IEnumerable<string> ValidationErrors { get; set; }
     }
 }

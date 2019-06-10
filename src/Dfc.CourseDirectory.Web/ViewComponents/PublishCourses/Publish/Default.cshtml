@@ -18,33 +18,23 @@
         {
             <h1 class="govuk-govuk-grid-column-one-half-l">Fix errors and publish</h1>
             <p>
-                @if (Model.NumberOfCoursesInFiles.Equals(1))
-                {
-                    <text>Your file of @Model.NumberOfCoursesInFiles course has been uploaded. It will not be listed on the course directory until you publish it. You must fix any errors first.</text>
-                }
-                else
-                {
-                    <text>Your file of @Model.NumberOfCoursesInFiles courses has been uploaded. They will not be listed on the course directory until you publish them. You must fix any errors first.</text>
-                }
+                You must fix these errors before any of your courses can be published.
+                <br />
+                Or you can <a asp-controller="PublishCourses" asp-action="DownloadErrorFile" class="govuk-link">download an error file </a>, fix them at source and upload a new file.
             </p>
         }
     }
 
     @if (Model.PublishMode.Equals(PublishMode.Migration))
     {
-        if (Model.AreAllReadyToBePublished)
-        {
-            <h1 class="govuk-govuk-grid-column-one-half-l">Publish your courses</h1>
-            <p>
-                @(Model.NumberOfCoursesInFiles.Equals(1) ? "This course has" : "These courses have") no errors but will not be listed on the course directory until you publish @(Model.NumberOfCoursesInFiles.Equals(1) ? "it" : "them").
-            </p>
-        }
-        else if (@Model.NumberOfCoursesInFiles > 0)
+        if(Model.NumberOfCoursesInFiles > 0)
         {
             <h1 class="govuk-govuk-grid-column-one-half-l">Fix errors and publish</h1>
             <p>
 
-                It has not been possible to migrate @Model.NumberOfCoursesInFiles of your courses from the old Course Directory to new Course Directory. @(Model.NumberOfCoursesInFiles.Equals(1) ? "This course" : "These courses") cannot be listed on the new Course Directory until you fix the errors.
+                You must fix these errors before any of your courses can be published.
+                <br />
+                Or you can <a asp-controller="PublishCourses" asp-action="DownloadErrorFile" class="govuk-link">download an error file </a>, fix them at source and upload a new file.
 
             </p>
         }

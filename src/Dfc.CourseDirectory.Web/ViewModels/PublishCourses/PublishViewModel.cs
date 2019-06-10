@@ -9,6 +9,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels.PublishCourses
     {
         public IEnumerable<Course> Courses { get; set; }
 
+        public Dictionary<Guid, string> Venues { get; set; }
         public int NumberOfCoursesInFiles { get; set; }
 
         public PublishMode PublishMode { get; set; }
