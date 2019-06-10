@@ -1,6 +1,7 @@
 ﻿@using System.Text.RegularExpressions
 @using Dfc.CourseDirectory.Models.Enums
 @using Dfc.CourseDirectory.Models.Models.Courses
+@using Dfc.CourseDirectory.Web.Helpers
 @model Dfc.CourseDirectory.Web.ViewModels.PublishCourses.PublishViewModel
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
@@ -10,24 +11,26 @@
 
 @foreach (var course in Model.Courses)
 {
-    <div class="error-line" id="CourseId_@course.id">
-        <div class="govuk-grid-column-one-third m100 col"><strong>@course.QualificationCourseTitle</strong><br />LEVEL: @course.NotionalNVQLevelv2, @course.AwardOrgCode, Lars: @course.LearnAimRef</div>
+    if (!course.IsValid)
+    {
+        <div class="error-line" id="CourseId_@course.id">
+            <div class="govuk-grid-column-two-thirds m100 col">
+                <div class="govuk-form-group--error">
+                    <strong>@course.QualificationCourseTitle</strong>
+                    <br />LEVEL: @course.NotionalNVQLevelv2, @course.AwardOrgCode, Lars: @course.LearnAimRef
 
-        <div id="courseid" style="display:none">@course.id</div>
-        <div class="govuk-grid-column-two-thirds">
-            @if (course.IsValid)
-            {
-                if (Model.PublishMode != PublishMode.DataQualityIndicator)
-                {
-                    <div class="govuk-grid-column-one-third col"><div class="error-box no-error">No errors</div></div>
-                    <div class="govuk-grid-column-two-thirds align-right col right center">&nbsp;</div>
-                }
+                    @foreach (var error in course.ValidationErrors)
+                    {
+                        <span class="govuk-error-message">@error</span>
+                    }
+                </div>
 
-            }
-            else
-            {
-                <div class="govuk-grid-column-one-third col"><div class="error-box">Errors</div></div>
-                <div class="govuk-grid-column-two-thirds align-right col right center">
+
+
+            </div>
+            <div id="courseid" style="display:none">@course.id</div>
+            <div class="govuk-grid-column-one-third">
+                <div class="align-right col right center">
                     <a id="course-fix-@course.id" class="error-link" asp-controller="EditCourse" asp-action="Index" style="display:block"
                        asp-route-courseId="@course.id"
                        asp-route-learnAimRef="@course.LearnAimRef"
@@ -37,24 +40,76 @@
                        asp-route-learnAimRefTypeDesc="@course.QualificationType"
                        asp-route-mode=@Model.PublishMode>Fix</a>
                 </div>
-            }
+            </div>
         </div>
-    </div>
+    }
+
 
     foreach (var courseRun in course.CourseRuns.OrderBy(x => x.CourseName))
     {
         @if ((Model.PublishMode.Equals(PublishMode.BulkUpload) && courseRun.RecordStatus == RecordStatus.BulkUploadPending) ||
-       (Model.PublishMode.Equals(PublishMode.Migration) && courseRun.RecordStatus == RecordStatus.MigrationPending))
+(Model.PublishMode.Equals(PublishMode.Migration) && courseRun.RecordStatus == RecordStatus.MigrationPending))
         {
             <div id="courserunid" style="display:none">@courseRun.id</div>
 
-            <div class="error-line-in" id="CourseRunId_@courseRun.id">
-                <div class="govuk-grid-column-one-third col">@courseRun.CourseName</div>
-                <div class="govuk-grid-column-two-thirds">
-                    <div class="govuk-grid-column-one-third col">
-                        <div class="error-box">Errors</div>
+            <div class="error-line" id="CourseRunId_@courseRun.id">
+
+                <div class="govuk-grid-column-two-thirds m100 col">
+                    <div class="govuk-form-group--error">
+                        <strong>@courseRun.CourseName</strong>
+                        <br />
+                        <div class="govuk-grid-row">
+                            <div class="govuk-grid-column-one-quarter">
+                                <span>@courseRun.CourseInstanceId</span>
+                            </div>
+                            <div class="govuk-grid-column-one-quarter">
+                                @if (courseRun.VenueId != null)
+                                {
+                                    <span>@Model.Venues[(Guid)courseRun.VenueId]</span>
+                                }
+                                else
+                                {
+                                    <span>&nbsp;</span>
+                                }
+
+                            </div>
+                            <div class="govuk-grid-column-one-quarter">
+                                @if (courseRun.StudyMode == StudyMode.Undefined)
+                                {
+                                    <span>&nbsp;</span>
+                                }
+                                else
+                                {
+                                    <span>@courseRun.StudyMode.ToDescription()</span>
+                                }
+
+                            </div>
+                            <div class="govuk-grid-column-one-quarter">
+                                @if (courseRun.StartDate.HasValue)
+                                {
+                                    <span>@courseRun.StartDate.Value.ToString("dd'/'MM'/'yyyy")</span>
+                                }
+                                else if (courseRun.FlexibleStartDate)
+                                {
+                                    <span>Flexible Start Date</span>
+                                }
+                                else
+                                {
+                                    <span>&nbsp;</span>
+                                }
+
+                            </div>
+                        </div>
+                        @foreach (var error in courseRun.ValidationErrors)
+                        {
+                            <span class="govuk-error-message">@error</span>
+                        }
                     </div>
-                    <div class="govuk-grid-column-two-thirds align-right col right center">
+                    
+
+                </div>
+                <div class="govuk-grid-column-one-third">
+                    <div class="align-right col right center">
 
                         <a id="course-run-fix-@courseRun.id" class="error-link fix" asp-controller="EditCourseRun" asp-action="Index"
                            asp-route-courseId="@course.id" asp-route-courseRunId="@courseRun.id"
@@ -64,40 +119,9 @@
                            asp-route-learnAimRefTitle="@course.QualificationCourseTitle"
                            asp-route-learnAimRefTypeDesc="@course.QualificationType"
                            asp-route-mode=@Model.PublishMode>Fix</a>
-
-                        @if (courseRun.RecordStatus == RecordStatus.MigrationPending)
-                        {
-                            <a href="#" class="error-link delete" id="delete-@courseRun.id" data-course-run-id="@courseRun.id">Delete</a>
-
-                            <a id="migration-confirm-delete-@courseRun.id" class="govuk-button" asp-controller="PublishCourses" asp-action="Delete"
-                               asp-route-courseId="@course.id"
-                               asp-route-courseRunId="@courseRun.id" asp-route-courseName="@courseRun.CourseName" asp-route-mode=@Model.PublishMode style="display: none">Confirm delete</a>
-
-                            <a href="#" class="error-link cancel-delete" id="migration-cancel-delete-@courseRun.id" data-course-run-id="@courseRun.id" style="display: none">Cancel</a>
-                        }
                     </div>
                 </div>
             </div>
-        }
-        else if ((Model.PublishMode.Equals(PublishMode.BulkUpload) && courseRun.RecordStatus == RecordStatus.BulkUploadReadyToGoLive) ||
-            (Model.PublishMode.Equals(PublishMode.Migration) && courseRun.RecordStatus == RecordStatus.MigrationReadyToGoLive))
-        {
-
-
-            <div id="courserunid" style="display:none">@courseRun.id</div>
-
-            <div class="error-line-in" id="CourseRunId_@courseRun.id">
-                <div class="govuk-grid-column-one-third col">@courseRun.CourseName</div>
-                <div class="govuk-grid-column-two-thirds">
-                    <div class="govuk-grid-column-one-third col">
-                        <div class="error-box no-error">No errors</div>
-                    </div>
-                    <div class="govuk-grid-column-two-thirds align-right col right center">
-                        &nbsp;
-                    </div>
-                </div>
-            </div>
-
         }
         else
         {
@@ -105,14 +129,10 @@
             {
                 <div id="courserunid" style="display:none">@courseRun.id</div>
 
-                <div class="error-line-in" id="CourseRunId_@courseRun.id">
-                    <div class="govuk-grid-column-one-third col">@courseRun.CourseName</div>
-                    <div class="govuk-grid-column-two-thirds">
-                        <div class="govuk-grid-column-one-third col">
-                            <div class="error-box start-date-error">Start date is in the past</div>
-                        </div>
+                <div class="error-line" id="CourseRunId_@courseRun.id">
+                    <div class="govuk-grid-column-two-thirds col">@courseRun.CourseName</div>
+                    <div class="govuk-grid-column-one-third">
                         <div class="govuk-grid-column-two-thirds align-right col right center">
-
                             <a id="course-run-fix-@courseRun.id" class="error-link fix" asp-controller="EditCourseRun" asp-action="Index"
                                asp-route-courseId="@course.id" asp-route-courseRunId="@courseRun.id"
                                asp-route-learnAimRef="@course.LearnAimRef"
@@ -129,68 +149,3 @@
         }
     }
 }
-
-<script>
-    (function ($) {
-        $(function () {
-
-
-
-            var $deleteButton = $(".delete");
-
-            var $canceldeleteButton = $(".cancel-delete");
-
-            var $fixButton = $(".fix");
-
-            $canceldeleteButton.on("click",
-                function (event) {
-                    event.preventDefault();
-                    {
-                        var courseRunId = $(this).attr("data-course-run-id");
-
-                        var deleteOptions = $("#delete-" + courseRunId);
-                        deleteOptions.show();
-
-                        var migrationConfirmDelete = $("#migration-confirm-delete-" + courseRunId);
-                        migrationConfirmDelete.hide();
-
-                        var migrationCancelDelete = $("#migration-cancel-delete-" + courseRunId);
-                        migrationCancelDelete.hide();
-
-                        var fix = $("#course-run-fix-" + courseRunId);
-                        fix.show();
-                    }
-                });
-
-
-            $deleteButton.on("click",
-                function (event) {
-                    event.preventDefault();
-
-                    $('.govuk-button').hide();
-
-                    $('.cancel-delete').hide();
-
-                    $('.delete').show();
-
-                    $('.fix').show();
-
-                    var courseRunId = $(this).attr("data-course-run-id");
-
-                    var deleteOptions = $("#delete-" + courseRunId);
-                    deleteOptions.hide();
-
-                    var migrationConfirmDelete = $("#migration-confirm-delete-" + courseRunId);
-                    migrationConfirmDelete.show();
-
-                    var migrationCancelDelete = $("#migration-cancel-delete-" + courseRunId);
-                    migrationCancelDelete.show();
-
-                    var fix = $("#course-run-fix-" + courseRunId);
-                    fix.hide();
-
-                });
-        });
-    })(jQuery);
-</script>
-
