@@ -97,19 +97,10 @@ namespace Dfc.CourseDirectory.Services.BlobStorageService
             }
         }
 
-        public Task GetTemplateFileAsync(Stream stream)
+        public Task GetBulkUploadTemplateFileAsync(Stream stream)
         {
             return DownloadFileAsync(_templatePath, stream);
         }
-
-
-
-
-
-
-        //internal static ReturnType Something(this IExtendee extendee) {
-        //    return new ReturnType();
-        //}
 
     }
 }
