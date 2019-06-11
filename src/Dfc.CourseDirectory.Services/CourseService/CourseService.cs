@@ -585,7 +585,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 if (!HasOnlyFollowingValidCharacters(course.CourseDescription))
                     validationMessages.Add("Course For decription contains invalid character");
                 if (course.CourseDescription.Length > _courseForTextFieldMaxChars)
-                    validationMessages.Add($"Course For decription must be { _courseForTextFieldMaxChars } characters or less");
+                    validationMessages.Add($"Who Is This Course For? decription must be { _courseForTextFieldMaxChars } characters or less");
             }
 
             // EntryRequirements
@@ -601,45 +601,45 @@ namespace Dfc.CourseDirectory.Services.CourseService
             if (!string.IsNullOrEmpty(course.WhatYoullLearn))
             {
                 if (!HasOnlyFollowingValidCharacters(course.WhatYoullLearn))
-                    validationMessages.Add("What You'll Learn contains invalid character");
+                    validationMessages.Add("What you will Learn contains invalid character");
                 if (course.WhatYoullLearn.Length > _whatWillLearnTextFieldMaxChars)
-                    validationMessages.Add($"What You'll Learn must be { _whatWillLearnTextFieldMaxChars } characters or less");
+                    validationMessages.Add($"What you will Learn must be { _whatWillLearnTextFieldMaxChars } characters or less");
             }
 
             // HowYoullLearn 
             if (!string.IsNullOrEmpty(course.HowYoullLearn))
             {
                 if (!HasOnlyFollowingValidCharacters(course.HowYoullLearn))
-                    validationMessages.Add("How You'll Learn contains invalid character");
+                    validationMessages.Add("How you'll learn contains invalid character");
                 if (course.HowYoullLearn.Length > _howYouWillLearnTextFieldMaxChars)
-                    validationMessages.Add($"How You'll Learn must be { _howYouWillLearnTextFieldMaxChars } characters or less");
+                    validationMessages.Add($"How you'll learn must be { _howYouWillLearnTextFieldMaxChars } characters or less");
             }
 
             // WhatYoullNeed 
             if (!string.IsNullOrEmpty(course.WhatYoullNeed))
             {
                 if (!HasOnlyFollowingValidCharacters(course.WhatYoullNeed))
-                    validationMessages.Add("What You'll Need contains invalid character");
+                    validationMessages.Add("What you'll need to bring contains invalid character");
                 if (course.WhatYoullNeed.Length > _whatYouNeedTextFieldMaxChars)
-                    validationMessages.Add($"What You'll Need must be { _whatYouNeedTextFieldMaxChars } characters or less");
+                    validationMessages.Add($"What you'll need to bring must be { _whatYouNeedTextFieldMaxChars } characters or less");
             }
 
             // HowYoullBeAssessed 
             if (!string.IsNullOrEmpty(course.HowYoullBeAssessed))
             {
                 if (!HasOnlyFollowingValidCharacters(course.HowYoullBeAssessed))
-                    validationMessages.Add("How You'll Be Assessed contains invalid character");
+                    validationMessages.Add("How you'll be assessed contains invalid character");
                 if (course.HowYoullBeAssessed.Length > _howAssessedTextFieldMaxChars)
-                    validationMessages.Add($"How You'll Be Assessed must be { _howAssessedTextFieldMaxChars } characters or less");
+                    validationMessages.Add($"How you'll be assessed must be { _howAssessedTextFieldMaxChars } characters or less");
             }
 
             // WhereNext 
             if (!string.IsNullOrEmpty(course.WhereNext))
             {
                 if (!HasOnlyFollowingValidCharacters(course.WhereNext))
-                    validationMessages.Add("Where Next contains invalid character");
+                    validationMessages.Add("'Where next' contains invalid character");
                 if (course.WhereNext.Length > _whereNextTextFieldMaxChars)
-                    validationMessages.Add($"Where Next must be { _whereNextTextFieldMaxChars } characters or less");
+                    validationMessages.Add($"'Where next' must be { _whereNextTextFieldMaxChars } characters or less");
             }
 
             return validationMessages;
@@ -662,7 +662,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             // CourseName
             if (string.IsNullOrEmpty(courseRun.CourseName))
             {
-                validationMessages.Add("Course Name is required"); // "Enter Course Name"
+                validationMessages.Add("Enter Course Name");
             }
             else
             {
@@ -688,7 +688,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
 
                     // VenueId
                     if (courseRun.VenueId == null || courseRun.VenueId == Guid.Empty)
-                        validationMessages.Add($"Select a venue");
+                        validationMessages.Add($"Select venue");
 
                     // StudyMode
                     if (courseRun.StudyMode.Equals(StudyMode.Undefined))
@@ -710,7 +710,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
                     break;
                 case DeliveryMode.Undefined: // Question ???
                 default:
-                    validationMessages.Add($"DeliveryMode is Undefined. We are not checking the specific fields now. On editing you can select the appropriate Delivery Mode and the rest of the fields will be validated accordingly.");
+                    validationMessages.Add($"Select Delivery Mode");
                     break;
             }
 
@@ -720,28 +720,27 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 courseRun.FlexibleStartDate = false; // COUR-746-StartDate
 
                 switch (validationMode)
-                {
+                { 
                     case ValidationMode.AddCourseRun:
                     case ValidationMode.CopyCourseRun:
-                        if (courseRun.StartDate < DateTime.Now || courseRun.StartDate > DateTime.Now.AddYears(2))
-                            validationMessages.Add($"Start Date cannot be before Today's Date and must be less than or equal to 2 years from Today's Date");
+                    case ValidationMode.EditCourseBU:
+                    case ValidationMode.BulkUploadCourse:
+                        if (courseRun.StartDate < DateTime.Now)
+                        {
+                            validationMessages.Add($"Start Date cannot earlier than Today's Date");
+                        }
+                        if (courseRun.StartDate > DateTime.Now.AddYears(2))
+                        {
+                            validationMessages.Add($"Start Date cannot be later than 2 years from today’s date");
+                        }
                         break;
                     case ValidationMode.EditCourseYC:
                     case ValidationMode.EditCourseMT:
                         // It cannot be done easily as we need both value - the newly entered and the previous. Call to saved version or modification in the model
                         break;
-                    case ValidationMode.EditCourseBU:
-                        // If the Provider does the editing on the same day of uploading it's fine. But from next day forward ?????????
-                        if (courseRun.StartDate < DateTime.Now || courseRun.StartDate > DateTime.Now.AddYears(2))
-                            validationMessages.Add($"Start Date cannot be before Today's Date and must be less than or equal to 2 years from Today's Date");
-                        break;
-                    case ValidationMode.BulkUploadCourse:
-                        if (courseRun.StartDate < DateTime.Now || courseRun.StartDate > DateTime.Now.AddYears(2))
-                            validationMessages.Add($"Start Date cannot be before Today's Date and must be less than or equal to 2 years from Today's Date");
-                        break;
                     case ValidationMode.MigrateCourse:
                         if (courseRun.StartDate > DateTime.Now.AddYears(2))
-                            validationMessages.Add($"Start Date must be less than or equal to 2 years from Today's Date");
+                            validationMessages.Add($"Start Date cannot be later than 2 years from today’s date");
                         break;
                     case ValidationMode.Undefined:
                     default:
