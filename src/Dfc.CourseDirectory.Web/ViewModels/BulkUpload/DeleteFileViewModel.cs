@@ -10,12 +10,12 @@ using Dfc.CourseDirectory.Web.ViewModels.YourCourses;
 using System.ComponentModel.DataAnnotations;
 using Dfc.CourseDirectory.Models.Enums;
 
-namespace Dfc.CourseDirectory.Web.ViewModels.PublishCourses
+namespace Dfc.CourseDirectory.Web.ViewModels.BulkUpload
 {
-    public class DeleteFileConfirmationViewModel
+    public class DeleteFileViewModel
     {
 
-       public DateTime FileUploadedDate { get; set; }
+       
 
 
     }

@@ -1,4 +1,5 @@
 
+using System;
 using System.Collections.Generic;
 using Dfc.CourseDirectory.Models.Models.Courses;
 
@@ -14,5 +15,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels
         public int PendingCourseCount { get; set; }
         public IEnumerable<Course> RecentlyModifiedCourses { get; set; }
         public string SuccessHeader { get; set; }
+
+        public DateTime MigrationRunDate { get; set; }
     }
 }

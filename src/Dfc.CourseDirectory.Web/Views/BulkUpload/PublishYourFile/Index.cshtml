@@ -4,28 +4,29 @@
     Layout = "_Layout_Your_Courses";
 }
 
-@model Dfc.CourseDirectory.Web.ViewModels.PublishCourses.DeleteFileViewModel
+@model Dfc.CourseDirectory.Web.ViewModels.BulkUpload.PublishYourFileViewModel
 
 
 <div class="content-container">
     <div class="govuk-grid-row" data-sf-element="Row">
         <div class="govuk-grid-column-two-thirds">
 
-            <form class="govuk-!-margin-bottom-9" id="DownloadErrorFileForm" asp-controller="PublishCourses" asp-action="DeleteFile" method="post">
+            <form class="govuk-!-margin-bottom-9" id="DownloadErrorFileForm" asp-controller="Bulkupload" asp-action="PublishYourFile" method="post">
                 @*<a asp-controller="PublishCourses" asp-action="WhatDoYouWantToDoNext" class="govuk-back-link">Back</a><br />*@
                 <span class="govuk-caption-xl">Course Directory</span>
-                <h1 class="govuk-heading-xl">Delete this file (Stubbed)</h1>
+                <h1 class="govuk-heading-xl">Publish your file (Stubbed)</h1>
 
                 <p class="govuk-body govuk-!-padding-bottom-4">
-                    The courses in this file will not be published to the Course directory.<br />You can upload another file at any time.
+
+                    Your file of  @Model.NumberOfCourses @(Model.NumberOfCourses.Equals(1) ? "course" : "courses") has no errors and is ready to be published to the Course directory. <br />This will replace all of the courses you currently have listed.
                 </p>
 
                 <ul class="flex-container">
                     <li class="flex-item">
-                        <button type="submit" class="govuk-button" id="next">Continue</button>
+                        <button type="submit" class="govuk-button" id="next">Publish</button>
                     </li>
                     <li class="flex-item" style="padding-top: 15px">
-                        <a class="govuk-link" asp-controller="PublishCourses" asp-action="WhatDoYouWantToDoNext">Cancel</a>
+                        <a class="govuk-link" asp-controller="Home" asp-action="Index">Cancel</a>
                     </li>
                 </ul>
              
