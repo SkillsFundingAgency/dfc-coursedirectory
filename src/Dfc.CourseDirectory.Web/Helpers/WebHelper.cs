@@ -1,8 +1,8 @@
-﻿
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using Dfc.CourseDirectory.Models.Enums;
 
 
 namespace Dfc.CourseDirectory.Web.Helpers
@@ -24,6 +24,17 @@ namespace Dfc.CourseDirectory.Web.Helpers
                     .FirstOrDefault()
                     ?.GetCustomAttribute<DescriptionAttribute>()
                     ?.Description;
+        }
+
+        public static string GetEnumSubtext(Enum value)
+        {
+            return
+                value
+                    .GetType()
+                    .GetMember(value.ToString())
+                    .FirstOrDefault()
+                    ?.GetCustomAttribute<HintAttribute>()
+                    ?.Hint;
         }
     }
 }

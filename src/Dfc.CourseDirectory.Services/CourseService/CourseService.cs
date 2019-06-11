@@ -39,6 +39,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
         private readonly Uri _getRecentCourseChangesByUKPRNUri;
         private readonly Uri _changeCourseRunStatusesForUKPRNSelectionUri;
         private readonly Uri _archiveLiveCoursesUri;
+        private readonly Uri _deleteBulkUploadCoursesUri;
 
         private readonly int _courseForTextFieldMaxChars;
         private readonly int _entryRequirementsTextFieldMaxChars;
@@ -90,6 +91,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             _getCourseCountsByStatusForUKPRNUri = settings.Value.ToGetCourseCountsByStatusForUKPRNUri();
             _getRecentCourseChangesByUKPRNUri = settings.Value.ToGetRecentCourseChangesByUKPRNUri();
             _changeCourseRunStatusesForUKPRNSelectionUri = settings.Value.ToChangeCourseRunStatusesForUKPRNSelectionUri();
+            _deleteBulkUploadCoursesUri = settings.Value.ToDeleteBulkUploadCoursesUri();
 
             _courseForTextFieldMaxChars = courseForComponentSettings.Value.TextFieldMaxChars;
             _entryRequirementsTextFieldMaxChars = entryRequirementsComponentSettings.Value.TextFieldMaxChars;
@@ -889,6 +891,24 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 return Result.Fail("Update course unsuccessful http response");
             }
         }
+        public async Task<IResult> DeleteBulkUploadCourses(int UKPRN)
+        {
+            Throw.IfLessThan(0, UKPRN, nameof(UKPRN));
+
+            var response = await _httpClient.GetAsync(new Uri(_updateStatusUri.AbsoluteUri
+                + "&UKPRN=" + UKPRN));
+            _logger.LogHttpResponseMessage("Delete Bulk Upload Course Status http response", response);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return Result.Ok();
+
+            }
+            else
+            {
+                return Result.Fail("Update course unsuccessful http response");
+            }
+        }
     }
 
     internal static class IGetCourseByIdCriteriaExtensions
@@ -948,6 +968,10 @@ namespace Dfc.CourseDirectory.Services.CourseService
         internal static Uri ToChangeCourseRunStatusesForUKPRNSelectionUri(this ICourseServiceSettings extendee)
         {
             return new Uri($"{extendee.ApiUrl + "ChangeCourseRunStatusesForUKPRNSelection?code=" + extendee.ApiKey}");
+        }
+        internal static Uri ToDeleteBulkUploadCoursesUri(this ICourseServiceSettings extendee)
+        {
+            return new Uri($"{extendee.ApiUrl + "DeleteBulkUploadCourses?code=" + extendee.ApiKey}");
         }
     }
     internal static class FindACourseServiceSettingsExtensions

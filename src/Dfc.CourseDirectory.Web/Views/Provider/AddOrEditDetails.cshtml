@@ -83,37 +83,12 @@
     </main>
 </form>
 
-<script>
 
+<script>
     (function ($) {
         $(function () {
 
-
-            $(document).ready(function () {
-
-                 tinymce.init({
-           selector: '#brief',
-           plugins: "wordcount advlist lists",
-  toolbar: "wordcount",
-           height: 650,
-    width:925,
-           menubar: false,
-    statusbar: true,
-    resize: false,
-            toolbar: 'formatselect | bold | numlist bullist | removeformat ',
-                 }).then(function (editors) {
-
-                     $(".tox-statusbar__path").hide();
-                      $(".tox-statusbar__branding").hide();
-
-                    $(".tox-statusbar__wordcount").trigger( "click" );
-});
-
-            });
-
-
-
-             var validStates = [];
+    var validStates = [];
             var $save = $("#save");
 
             var $maxBriefOverview = $("#briefOverviewMax");
@@ -123,127 +98,268 @@
 
             var $errorSummary = $("#errorsummary").govUkErrorSummary();
 
-            function validate() {
+            var $maxLength = $maxBriefOverview.attr('val-max-length');
 
-                            $maxBriefOverview.removeClass("govuk-error-message");
-                $maxBriefOverview.hide();
 
-                
+            tinymce.init({
+                selector: '#brief',
+                plugins: "advlist lists autoresize test",
+                menubar: false,
+                statusbar: false,
+                resize: false,
+                in_height: 450,
+                height: '75%',
+                autoresize_min_height: 600,
+                autoresize_max_height: 800,
+                toolbar: 'formatselect | bold | numlist bullist | removeformat ',
+            }).then(function (editors) {
+                $(".mce-branding").hide();
+            });
+
+            tinymce.PluginManager.add('test', function (editor) {
+                var self = this;
+
+                function update() {
+
+                    var $left = ($maxLength - self.getCount());
+                    var chars = $maxLength - self.getCount();
+                    if (chars === 1) {
+
+                         $(".mce-container").removeClass("text-error");
+
+                        $("#brief_info").removeClass("govuk-error-message");
+                        $("#brief_info").addClass("govuk-hint");
+                        $("#brief_info").text('You have ' + chars + ' character remaining');
+                    }
+
+                    if (chars >= 1) {
+
+                        $(".mce-container").removeClass("text-error");
+
+                        $("#brief_info").removeClass("govuk-error-message");
+                        $("#brief_info").addClass("govuk-hint");
+                        $("#brief_info").text('You have ' + chars + ' characters remaining');
+                    }
+
+                    if (chars < 0) {
+
+                        $(".mce-container").addClass("text-error");
+
+                        $("#brief_info").addClass("govuk-error-message");
+                        $("#brief_info").removeClass("govuk-hint");
+                        $(".mce-container").addClass("text-error");
+                        if (self.getCount() - parseInt($maxLength) == 1) {
+                            $("#brief_info").text('You have ' + (self.getCount() - parseInt($maxLength)).toString() + ' character too many');
+                        }
+                        else {
+                            $("#brief_info").text('You have ' + (self.getCount() - parseInt($maxLength)).toString() + ' characters too many');
+                        }
+                    }
+
+                    if (chars === 0) {
+
+                        $(".mce-container").removeClass("text-error");
+                        $("#brief_info").removeClass("govuk-error-message");
+                        $("#brief_info").addClass("govuk-hint");
+                        $(".mce-container").removeClass("text-error");
+                        $("#brief_info").text('You have ' + chars + ' characters remaining');
+                    }
+
+
+                }
+
+                editor.on('init', function () {
+
+                    var ele = document.createElement("span");
+
+                    var message = "";
+                    var chars = $maxLength - self.getCount();
+                    if (chars === 1) {
+
+                        ele.className = "govuk-hint govuk-character-count__message"
+                        message='You have ' + chars + ' character remaining';
+                    }
+
+                    if (chars >= 1) {
+                        ele.className = "govuk-hint govuk-character-count__message"
+                        message='You have ' + chars + ' characters remaining';
+                    }
+
+                    if (chars < 0) {
+
+                        $(".mce-container").addClass("text-error");
+
+                        $(".mce-container").closest(".govuk-form-group").addClass("govuk-form-group--error");
+
+                         ele.className = "govuk-character-count__message govuk-error-message"
+                        $(".mce-container").addClass("text-error");
+                        if (self.getCount() - parseInt($maxLength) == 1) {
+                            message='You have ' + (self.getCount() - parseInt($maxLength)).toString() + ' character too many';
+                        }
+                        else {
+                            message='You have ' + (self.getCount() - parseInt($maxLength)).toString() + ' characters too many';
+                        }
+                    }
+
+                    if (chars === 0) {
+                         ele.className = "govuk-hint govuk-character-count__message"
+                        $(".mce-container").removeClass("text-error");
+                       message='You have ' + chars + ' characters remaining';
+                    }
+
+                    window.setTimeout(function () {
+                        
+                        ele.id = "brief_info"
+                        ele.innerHTML = message;
+                        $("#brief").after(ele);
+
+                        editor.on('setcontent beforeaddundo', update);
+
+                        editor.on('keyup', function (e) {
+ 
+                            update();
+                        });
+                    }, 0);
+
+                    validate();
+
+                });
+
+                self.getCount = function () {
+                    var tx = editor.getContent({ format: 'raw' });
+                    var decoded = decodeHtml(tx);
+                    var decodedStripped = decoded.replace(/(<([^>]+)>)/ig, "").trim();
+                    var tc = decodedStripped.length;
+
+                    return tc;
+                };
+
+                function decodeHtml(html) {
+                    var txt = document.createElement("textarea");
+                    txt.innerHTML = html;
+                    return txt.value;
+                }
+            });
+
+
+ 
+
+
+        function validate() {
+
+            $maxBriefOverview.removeClass("govuk-error-message");
+            $maxBriefOverview.hide();
+
             $invalidBriefOverview.removeClass("govuk-error-message");
-                $invalidBriefOverview.hide();
+            $invalidBriefOverview.hide();
 
-                validStates = [];
+            validStates = [];
 
-                $alias.val($alias.val().trim());
-               
-
+            $alias.val($alias.val().trim());
 
             if (!$.regexValidate({ regex: $alias.attr("val-regex") }, $alias.val())) {
                 $alias.govUkInput("invalidState", $alias.attr("val-regex-message"));
-                   var aliasErrorHashLinks = $alias.govUkInput("getErrorHashLinks");
-                    $errorSummary.govUkErrorSummary("add", aliasErrorHashLinks);
-                    $errorSummary.govUkErrorSummary("show");
-            validStates.push(false);
+                var aliasErrorHashLinks = $alias.govUkInput("getErrorHashLinks");
+                $errorSummary.govUkErrorSummary("add", aliasErrorHashLinks);
+                $errorSummary.govUkErrorSummary("show");
+                validStates.push(false);
             } else if (
-            !$.maxLengthValidate({ max: $alias.attr("val-max-length") }, $alias.val())) {
+                !$.maxLengthValidate({ max: $alias.attr("val-max-length") }, $alias.val())) {
                 $alias.govUkInput("invalidState", $alias.attr("val-max-length-message"));
-                                   var aliasErrorHashLinks = $alias.govUkInput("getErrorHashLinks");
-                    $errorSummary.govUkErrorSummary("add", aliasErrorHashLinks);
-                    $errorSummary.govUkErrorSummary("show");
-            validStates.push(false);
+                var aliasErrorHashLinks = $alias.govUkInput("getErrorHashLinks");
+                $errorSummary.govUkErrorSummary("add", aliasErrorHashLinks);
+                $errorSummary.govUkErrorSummary("show");
+                validStates.push(false);
             }
             else {
                 $alias.govUkInput("validState");
-                 $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $alias[0].id);
-                    $errorSummary.govUkErrorSummary("hideIfEmpty")
+                $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $alias[0].id);
+                $errorSummary.govUkErrorSummary("hideIfEmpty")
                 validStates.push(true);
             }
 
-
-
-            if (!$.regexValidate({ regex:$invalidBriefOverview.attr("val-regex") }, tinymce.get('brief').getBody().innerText)) {
+            if (!$.regexValidate({ regex: $invalidBriefOverview.attr("val-regex") }, tinymce.get('brief').getBody().textContent.replace(/(<([^>]+)>)/ig, "").trim())) {
                 $invalidBriefOverview.addClass("govuk-error-message");
                 $invalidBriefOverview.show();
 
-                $(".tox-editor-container").addClass("text-error");
-                $(".tox-statusbar").addClass("status-error");
+                $(".mce-container").addClass("text-error");
 
-                $(".tox-editor-container").closest(".govuk-form-group").addClass("govuk-form-group--error");
+                $(".mce-container").closest(".govuk-form-group").addClass("govuk-form-group--error");
 
-                        var element = $invalidBriefOverview;
-                     var $anchor = document.createElement("a");
-                $anchor.href =  "#briefOverviewInvalid";
+                var element = $invalidBriefOverview;
+                var $anchor = document.createElement("a");
+                $anchor.href = "#briefOverviewInvalid";
                 $anchor.innerHTML = element.text();
                 $anchor.id = "error-hash-link-" + "briefOverViewInvalid" + "-" + 1;
 
-                     $errorSummary.govUkErrorSummary("add", $anchor);
+                $errorSummary.govUkErrorSummary("add", $anchor);
                 $errorSummary.govUkErrorSummary("show");
 
                 validStates.push(false);
             } else if (
-                !$.maxLengthValidate({ max: "750" }, tinymce.get('brief').getBody().innerText)) {
+
+                !$.maxLengthValidate({ max: "750" }, tinymce.get('brief').getBody().textContent.replace(/(<([^>]+)>)/ig, "").trim())) {
 
                 $maxBriefOverview.addClass("govuk-error-message");
                 $maxBriefOverview.show();
 
-                $(".tox-editor-container").addClass("text-error");
-                $(".tox-statusbar").addClass("status-error");
+                $(".mce-container").addClass("text-error");
 
-                $(".tox-editor-container").closest(".govuk-form-group").addClass("govuk-form-group--error");
+                $(".mce-container").closest(".govuk-form-group").addClass("govuk-form-group--error");
 
-                        var element = $maxBriefOverview;
-                     var $anchor = document.createElement("a");
-                $anchor.href =  "#briefOverviewMax";
+                var element = $maxBriefOverview;
+                var $anchor = document.createElement("a");
+                $anchor.href = "#briefOverviewMax";
                 $anchor.innerHTML = element.text();
                 $anchor.id = "error-hash-link-" + "briefOverviewMax" + "-" + 1;
 
-                     $errorSummary.govUkErrorSummary("add", $anchor);
+                $errorSummary.govUkErrorSummary("add", $anchor);
                 $errorSummary.govUkErrorSummary("show");
 
                 validStates.push(false);
             }
-            else
-            {
-
-            $maxBriefOverview.removeClass("govuk-error-message");
+            else {
+                $maxBriefOverview.removeClass("govuk-error-message");
                 $maxBriefOverview.hide();
 
-                
-            $invalidBriefOverview.removeClass("govuk-error-message");
-            $invalidBriefOverview.hide();
+                $invalidBriefOverview.removeClass("govuk-error-message");
+                $invalidBriefOverview.hide();
+                $(".mce-container").removeClass("text-error");
+                $(".mce-container").closest(".govuk-form-group").removeClass("govuk-form-group--error");
 
-            $(".tox-editor-container").removeClass("text-error");
-            $(".tox-statusbar").removeClass("status-error");
-
-            $(".tox-editor-container").closest(".govuk-form-group").removeClass("govuk-form-group--error");
-
-            validStates.push(true);
-                }
-                 if (!validStates.every(isAllValid)) {
-                    $("html, body").animate({
-                        scrollTop: $errorSummary.offset().top
-                    }, 600);
-                    $errorSummary.focus();
-                }
+                validStates.push(true);
             }
 
-            function isAllValid(currentValue) {
+            if (!validStates.every(isAllValid)) {
+                $("html, body").animate({
+                    crollTop: $errorSummary.offset().top
+                }, 600);
+                $errorSummary.focus();
+            }
+        }
+
+        function isAllValid(currentValue) {
             return currentValue === true;
             }
 
-            $save.on("click",
-            function(event) {
+            function insert(str, index, value) {
+    return str.substr(0, index) + value + str.substr(index);
+}
+
+        $save.on("click", function (event) {
             event.preventDefault();
 
             validate();
 
             if (validStates.every(isAllValid)) {
-            $("#editProviderDetails").submit();
+                
+                $(tinymce.get("brief").getBody()).find('a').attr('target', '_blank');
+                tinymce.get("brief").getBody().textContent.trimEnd();
+                $("#editProviderDetails").submit();
             }
 
+        });
 
-            });
-
-            });
-            })(jQuery);
+       });
+    })(jQuery);
 </script>
