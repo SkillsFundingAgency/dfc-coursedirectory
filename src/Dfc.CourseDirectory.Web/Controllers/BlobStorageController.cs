@@ -17,10 +17,10 @@ using Microsoft.Azure.Storage.Blob;
 using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Models.Courses;
+using Dfc.CourseDirectory.Services.BlobStorageService;
 using Dfc.CourseDirectory.Services.CourseService;
-using Dfc.CourseDirectory.Services.Interfaces.CourseService;
-using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.Services.Interfaces.BlobStorageService;
+using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 
 
 namespace Dfc.CourseDirectory.Web.Controllers
@@ -102,12 +102,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
             string report = string.Join(Environment.NewLine, headers.Concat(csvlines));
             byte[] data = Encoding.ASCII.GetBytes(report);
             MemoryStream ms = new MemoryStream(data);
+
+            //IEnumerable<BlobFileInfo> files = _blobService.GetFileList($"{UKPRN.ToString()}/Bulk Upload/Files/");
             //Task task = _blobService.UploadFileAsync("uploadtest.csv", ms);
             //task.Wait();
 
             //ms = new MemoryStream(data);
             //task = _blobService.DownloadFileAsync($"{UKPRN.ToString()}/Bulk Upload/Files/test.csv", ms);
             //task.Wait();
+
             ms.Position = 0;
             FileStreamResult result = new FileStreamResult(ms, MediaTypeNames.Text.Plain);
             DateTime d = DateTime.UtcNow;
