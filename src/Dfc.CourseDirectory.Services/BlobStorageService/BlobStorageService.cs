@@ -90,6 +90,7 @@ namespace Dfc.CourseDirectory.Services.BlobStorageService
         {
             try {
                 CloudBlockBlob blockBlob = _container.GetBlockBlobReference(filePath);
+                ArchiveFiles(filePath);
 
                 stream.Position = 0;
                 return blockBlob.UploadFromStreamAsync(stream);
