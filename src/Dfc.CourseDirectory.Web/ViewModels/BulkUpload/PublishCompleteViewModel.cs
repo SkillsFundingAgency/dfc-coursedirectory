@@ -1,6 +1,6 @@
 ﻿using Dfc.CourseDirectory.Models.Enums;
 
-namespace Dfc.CourseDirectory.Web.ViewModels.PublishCourses
+namespace Dfc.CourseDirectory.Web.ViewModels.BulkUpload
 {
     public class PublishCompleteViewModel
     {
