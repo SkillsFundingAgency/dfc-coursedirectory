@@ -12,5 +12,6 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Notification
 
         public string ClassType { get; set; }
 
+        public string Link { get; set; }
     }
 }

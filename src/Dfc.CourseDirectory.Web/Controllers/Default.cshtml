@@ -14,13 +14,15 @@
                 @Model.NotificationTitle
             </h2>
         }
-    <div class="@divBodyClass">
-
-        <span style="color:black">
-            @Html.Raw(@Model.NotificationMessage)
-
-        </span>
-        <span>@Html.Raw(@Model.Link)</span>
-    </div>
+        <div class="@divBodyClass">
+            
+            <span>
+                @Html.Raw(@Model.NotificationMessage)
+                @if (!string.IsNullOrEmpty(Model.Link))
+                {
+                    <span style="color:black"> @Html.Raw(@Model.Link)</span>
+                }
+            </span>
+        </div>
     </div>
 }

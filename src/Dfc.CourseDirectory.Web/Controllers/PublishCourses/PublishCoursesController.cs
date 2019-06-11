@@ -11,6 +11,7 @@ using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 using Dfc.CourseDirectory.Services.VenueService;
+using Dfc.CourseDirectory.Web.ViewModels.BulkUpload;
 using Dfc.CourseDirectory.Web.ViewModels.PublishCourses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -248,36 +249,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
         }
 
 
-        [Authorize]
-        [HttpGet]
-        public async Task<IActionResult> WhatDoYouWantToDoNext()
-        {
-            var model = new WhatDoYouWantToDoNextViewModel();
-
-            return View("../WhatDoYouWantToDoNext/Index",model);
-        }
-
-
-        [Authorize]
-        [HttpPost]
-        public async Task<IActionResult> WhatDoYouWantToDoNext(WhatDoYouWantToDoNextViewModel model)
-        {
-            switch(model.WhatDoYouWantToDoNext)
-            {
-                case Models.Enums.WhatDoYouWantToDoNext.OnScreen:
-                    return RedirectToAction("Index", "PublishCourses", new { publishMode = PublishMode.BulkUpload });
-                case Models.Enums.WhatDoYouWantToDoNext.DownLoad:
-                    return RedirectToAction("DownloadErrorFile", "PublishCourses");
-                case Models.Enums.WhatDoYouWantToDoNext.Delete:
-                    return RedirectToAction("DeleteFile", "PublishCourses");
-                default:
-                    return RedirectToAction("WhatDoYouWantToDoNext", "PublishCourses");
-
-            }
-
-
-            
-        }
+       
 
 
         [Authorize]
@@ -291,63 +263,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
         }
 
 
-        [Authorize]
-        [HttpPost]
-        public async Task<IActionResult> DownloadErrorFile(DownloadErrorFileViewModel model)
-        {
-            // where to go????
-            return View("../WhatDoYouWantToDoNext/Index", new WhatDoYouWantToDoNextViewModel());
-        }
-
-
-        [Authorize]
-        [HttpGet]
-        public async Task<IActionResult> DeleteFile()
-        {
-            var model = new DeleteFileViewModel();
-            
-
-            return View("../DeleteFile/Index", model);
-        }
-
-
-        [Authorize]
-        [HttpPost]
-        public async Task<IActionResult> DeleteFile(DeleteFileViewModel model)
-        {
-            // where to go????
-            return RedirectToAction("DeleteFileConfirmation", "PublishCourses");
-        }
-
-        [Authorize]
-        [HttpGet]
-        public async Task<IActionResult> DeleteFileConfirmation()
-        {
-            var model = new DeleteFileConfirmationViewModel();
-            model.FileUploadedDate = DateTime.Now;
-
-            return View("../DeleteFileConfirmation/Index", model);
-        }
-
-        [Authorize]
-        [HttpGet]
-        public async Task<IActionResult> PublishYourFile()
-        {
-            var model = new PublishYourFileViewModel();
-
-            model.NumberOfCourses = 99;
-
-            return View("../PublishYourFile/Index", model);
-        }
-
-
-        [Authorize]
-        [HttpPost]
-        public async Task<IActionResult> PublishYourFile(PublishYourFileViewModel model)
-        {
-            //to publish stuff
-            return View("Complete", new PublishCompleteViewModel() { NumberOfCoursesPublished = 99, Mode = PublishMode.BulkUpload });
-        }
+     
 
 
 

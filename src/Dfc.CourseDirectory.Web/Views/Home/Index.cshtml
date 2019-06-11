@@ -46,15 +46,24 @@
             ViewData["Title"] = "Course management dashboard";
 
 
-           var message = Model.LiveCourseCount > 0 ? " courses" : " course";
- 
+            var message = Model.LiveCourseCount > 0 ? " courses" : " course";
+
 
             @await Component.InvokeAsync(nameof(Notification), new NotificationModel
             {
-                NotificationTitle = "",
-                NotificationMessage = Model.LiveCourseCount.ToString() + message + " have been migrated to the new Course directory. Any courses with a missing LARS have been deleted." + "<a class='govuk-link' asp-controller='Home' asp-action='Index'> What now?</a>",
-                ClassType = "info-summary"
+                NotificationTitle = "No migration errors",
+                NotificationMessage = Model.LiveCourseCount.ToString() + message + " have been migrated to the new Course directory. Any courses with a missing LARS have been deleted.",
+                ClassType = "info-summary",
+                Link = "<a class='govuk-link' href='/Migration/Options'> What now?</a>"
             })
+
+            @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+           {
+               NotificationTitle = "Bulk upload errors",
+               NotificationMessage = "Stubbed",
+               ClassType = "info-summary",
+               Link = "<a class='govuk-link' href='/Bulkupload/WhatDoYouWantToDoNext'>What next?</a>"
+           })
 
             <span class="govuk-caption-xl">Course Directory</span>
 
@@ -81,8 +90,8 @@
                                     <a href="/DQI">@msg</a>
 
                                 }
-                                <br />
-                                <a href="/PublishCourses/WhatDOYouWantToDoNext">(Stubbed) what next?</a>
+                                @*<br />
+                                <a href="/PublishCourses/WhatDoYouWantToDoNext">(Stubbed) what next?</a>*@
                             </div>
                         </div>
                     </div>
