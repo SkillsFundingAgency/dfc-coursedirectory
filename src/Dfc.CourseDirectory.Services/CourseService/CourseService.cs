@@ -662,7 +662,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             // CourseName
             if (string.IsNullOrEmpty(courseRun.CourseName))
             {
-                validationMessages.Add("Course Name is required"); // "Enter Course Name"
+                validationMessages.Add("Enter Course Name");
             }
             else
             {
@@ -688,7 +688,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
 
                     // VenueId
                     if (courseRun.VenueId == null || courseRun.VenueId == Guid.Empty)
-                        validationMessages.Add($"Select a venue");
+                        validationMessages.Add($"Select venue");
 
                     // StudyMode
                     if (courseRun.StudyMode.Equals(StudyMode.Undefined))
@@ -710,7 +710,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
                     break;
                 case DeliveryMode.Undefined: // Question ???
                 default:
-                    validationMessages.Add($"DeliveryMode is Undefined. We are not checking the specific fields now. On editing you can select the appropriate Delivery Mode and the rest of the fields will be validated accordingly.");
+                    validationMessages.Add($"Select Delivery Mode");
                     break;
             }
 
