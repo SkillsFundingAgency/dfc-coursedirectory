@@ -1,19 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Services.Interfaces.BulkUploadService;
-using Dfc.CourseDirectory.Web.ViewModels.BulkUpload;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System.Security.Claims;
 using Dfc.CourseDirectory.Models.Enums;
-using Dfc.CourseDirectory.Models.Models.Courses;
+using Dfc.CourseDirectory.Web.ViewModels.Migration;
 
 
 namespace Dfc.CourseDirectory.Web.Controllers
@@ -53,7 +47,26 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return RedirectToAction("Index", "PublishCourses", new { publishMode = PublishMode.Migration });
         }
 
-      
+        [Authorize]
+        [HttpGet]
+        public IActionResult Options()
+        {
+            return View("../Migration/Options/Index");
+        }
 
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> Options(OptionsViewModel viewModel )
+        {
+            switch (viewModel.MigrationOption)
+            {
+                case MigrationOptions.CheckCourses:
+                    return RedirectToAction("Index", "ProviderCourses");
+                case MigrationOptions.StartAgain:
+                    return RedirectToAction("Index", "BulkUpload");
+                default:
+                  return RedirectToAction("Options", "Migration");
+            }
+        }
     }
 }
