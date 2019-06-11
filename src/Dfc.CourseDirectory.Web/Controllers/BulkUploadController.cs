@@ -15,6 +15,7 @@ using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Services.Interfaces.BlobStorageService;
 using Dfc.CourseDirectory.Services.Interfaces.BulkUploadService;
 using Dfc.CourseDirectory.Web.ViewModels.BulkUpload;
+using Dfc.CourseDirectory.Web.ViewModels.PublishCourses;
 
 
 namespace Dfc.CourseDirectory.Web.Controllers
@@ -99,6 +100,106 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 vm.errors = new string[] { errorMessage };
             }
             return View(vm);
+  
+
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> WhatDoYouWantToDoNext()
+        {
+            var model = new WhatDoYouWantToDoNextViewModel();
+
+            return View("../BulkUpload/WhatDoYouWantToDoNext/Index", model);
+        }
+
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> WhatDoYouWantToDoNext(WhatDoYouWantToDoNextViewModel model)
+        {
+            switch (model.WhatDoYouWantToDoNext)
+            {
+                case Models.Enums.WhatDoYouWantToDoNext.OnScreen:
+                    return RedirectToAction("Index", "PublishCourses", new { publishMode = PublishMode.BulkUpload });
+                case Models.Enums.WhatDoYouWantToDoNext.DownLoad:
+                    return RedirectToAction("DownloadErrorFile", "BulkUpload");
+                case Models.Enums.WhatDoYouWantToDoNext.Delete:
+                    return RedirectToAction("DeleteFile", "BulkUpload");
+                default:
+                    return RedirectToAction("WhatDoYouWantToDoNext", "BulkUpload");
+
+            }
+        }
+
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> DownloadErrorFile()
+        {
+            var model = new DownloadErrorFileViewModel();
+            model.ErrorFileCreatedDate = DateTime.Now;
+
+            return View("../Bulkupload/DownloadErrorFile/Index", model);
+        }
+
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> DownloadErrorFile(DownloadErrorFileViewModel model)
+        {
+            // where to go????
+            return View("../Bulkupload/WhatDoYouWantToDoNext/Index", new WhatDoYouWantToDoNextViewModel());
+        }
+
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> DeleteFile()
+        {
+            var model = new DeleteFileViewModel();
+
+
+            return View("../Bulkupload/DeleteFile/Index", model);
+        }
+
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> DeleteFile(DeleteFileViewModel model)
+        {
+            // where to go????
+            return RedirectToAction("DeleteFileConfirmation", "PublishCourses");
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> DeleteFileConfirmation()
+        {
+            var model = new DeleteFileConfirmationViewModel();
+            model.FileUploadedDate = DateTime.Now;
+
+            return View("../Bulkupload/DeleteFileConfirmation/Index", model);
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> PublishYourFile()
+        {
+            var model = new PublishYourFileViewModel();
+
+            model.NumberOfCourses = 99;
+
+            return View("../Bulkupload/PublishYourFile/Index", model);
+        }
+
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> PublishYourFile(PublishYourFileViewModel model)
+        {
+            //to publish stuff
+            return View("../Bulkupload/Complete/Index", new PublishCompleteViewModel() { NumberOfCoursesPublished = 99, Mode = PublishMode.BulkUpload });
         }
 
         /// <summary>

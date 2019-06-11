@@ -4,50 +4,54 @@
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
-<div class="govuk-body cd-file-upload">
-    @if (Model.PublishMode.Equals(PublishMode.BulkUpload))
-    {
-        if (Model.AreAllReadyToBePublished)
+    <div class="govuk-body cd-file-upload">
+        @if (Model.PublishMode.Equals(PublishMode.BulkUpload))
         {
-            <h1 class="govuk-govuk-grid-column-one-half-l">Publish Your Courses</h1>
-            <p>
-                Your file of @Model.NumberOfCoursesInFiles @(Model.NumberOfCoursesInFiles.Equals(1) ? "course" : "courses") has no errors. Publish @(Model.NumberOfCoursesInFiles.Equals(1) ? "it" : "them") to replace your current courses on the course directory.
-            </p>
-        }
-        else
-        {
-            <h1 class="govuk-govuk-grid-column-one-half-l">Fix errors and publish</h1>
-            <p>
-                You must fix these errors before any of your courses can be published.
-                <br />
-                Or you can <a asp-controller="PublishCourses" asp-action="DownloadErrorFile" class="govuk-link">download an error file </a>, fix them at source and upload a new file.
-            </p>
-        }
-    }
+            if (Model.AreAllReadyToBePublished)
+            {
+                <h1 class="govuk-govuk-grid-column-one-half-l">Publish Your Courses</h1>
+                <p>
+                    Your file of @Model.NumberOfCoursesInFiles @(Model.NumberOfCoursesInFiles.Equals(1) ? "course" : "courses") has no errors. Publish @(Model.NumberOfCoursesInFiles.Equals(1) ? "it" : "them") to replace your current courses on the course directory.
+                </p>
+            }
+            else
+            {
+                <div class="govuk-form-group">
+                    <span class="govuk-caption-l">Course Directory</span>
+                    <h1 class="govuk-govuk-grid-column-one-half-l govuk-heading-l">Fix errors</h1>
+                </div>
 
-    @if (Model.PublishMode.Equals(PublishMode.Migration))
-    {
-        if(Model.NumberOfCoursesInFiles > 0)
-        {
-            <h1 class="govuk-govuk-grid-column-one-half-l">Fix errors and publish</h1>
-            <p>
+                <p>You must fix these errors before any of your courses can be published.</p>
+                <p>Or you can <a asp-controller="PublishCourses" asp-action="DownloadErrorFile" class="govuk-link">download an error file </a>, fix them at source and upload a new file.</p>
 
-                You must fix these errors before any of your courses can be published.
-                <br />
-                Or you can <a asp-controller="PublishCourses" asp-action="DownloadErrorFile" class="govuk-link">download an error file </a>, fix them at source and upload a new file.
+            }
+        }
 
-            </p>
-        }
-        else
+        @if (Model.PublishMode.Equals(PublishMode.Migration))
         {
-            <h1 class="govuk-govuk-grid-column-one-half-l">No Courses to Migrate</h1>
+
+            if (Model.NumberOfCoursesInFiles > 0)
+            {
+                <div class="govuk-form-group">
+                    <span class="govuk-caption-l">Course Directory</span>
+                    <h1 class="govuk-govuk-grid-column-one-half-l govuk-heading-l">Fix errors</h1>
+                </div>
+
+                <p>You must fix these errors before any of your courses can be published.</p>
+                <p>Or you can <a asp-controller="PublishCourses" asp-action="DownloadErrorFile" class="govuk-link">download an error file </a>, fix them at source and upload a new file.</p>
+
+
+            }
+            else
+            {
+                <h1 class="govuk-govuk-grid-column-one-half-l">No Courses to Migrate</h1>
+            }
         }
-    }
-    @if (Model.PublishMode.Equals(PublishMode.DataQualityIndicator))
-    {
-        var courseRunCount = Model.Courses.SelectMany(x => x.CourseRuns).Count();
-        <h1 class="govuk-govuk-grid-column-one-half-l">@courseRunCount courses need their start date updating</h1>
-    }
-    <div class="err-top-line"></div>
-    @await Component.InvokeAsync(nameof(PublishCourse), new { model = Model })
-</div>
+        @if (Model.PublishMode.Equals(PublishMode.DataQualityIndicator))
+        {
+            var courseRunCount = Model.Courses.SelectMany(x => x.CourseRuns).Count();
+            <h1 class="govuk-govuk-grid-column-one-half-l">@courseRunCount courses need their start date updating</h1>
+        }
+        <div class="err-top-line"></div>
+        @await Component.InvokeAsync(nameof(PublishCourse), new { model = Model })
+    </div>

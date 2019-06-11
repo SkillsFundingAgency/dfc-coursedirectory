@@ -42,7 +42,7 @@
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="2.1.1" />
     <PackageReference Include="Microsoft.Extensions.Caching.Redis" Version="2.1.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.ApplicationInsights" Version="2.9.1" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.9" />
     <PackageReference Include="Sendgrid" Version="9.10.0" />
   </ItemGroup>
 
@@ -149,7 +149,7 @@
     <Content Update="ViewComponents\Courses\CourseFor\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="ViewComponents\Notification\Default.cshtml">
+    <Content Update="Controllers\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="ViewComponents\ProviderSearchResult\Default.cshtml">
@@ -164,19 +164,22 @@
     <Content Update="Views\ApprenticeshipComplete\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\PublishYourFile\Index.cshtml">
+    <Content Update="Views\BulkUpload\Complete\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\DeleteFileConfirmation\Index.cshtml">
+    <Content Update="Views\BulkUpload\PublishYourFile\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\DeleteFile\Index.cshtml">
+    <Content Update="Views\BulkUpload\DeleteFileConfirmation\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\DownLoadErrorFile\Index.cshtml">
+    <Content Update="Views\BulkUpload\DeleteFile\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\WhatDoYouWantToDoNext\Index.cshtml">
+    <Content Update="Views\BulkUpload\DownLoadErrorFile\Index.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\BulkUpload\WhatDoYouWantToDoNext\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\ApprenticeshipDeliveryOptionsCombined\Index.cshtml">
