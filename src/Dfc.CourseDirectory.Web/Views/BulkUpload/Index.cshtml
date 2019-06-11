@@ -107,7 +107,7 @@
                 <a href="#" class="govuk-link">Download blank template (Excel format)</a>
             </li>
             <li>
-                <a href="#" class="govuk-link">Download blank template (csv format)</a>
+                @Html.ActionLink("Download blank template (csv format)", "GetBulkUploadTemplateFile", "BlobStorage")
             </li>
         </ul>
     </div>
