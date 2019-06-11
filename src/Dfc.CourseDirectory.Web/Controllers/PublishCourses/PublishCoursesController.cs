@@ -96,8 +96,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                         var invalidCoursesResult = results.Where(c => c.RunValidationResults.Any(cr => cr.Issues.Count() > 0));
                         var invalidCourses = invalidCoursesResult.Select(c => (Course)c.Course).ToList();
                         var courseRuns = invalidCourses.Select(cr => cr.CourseRuns.Where(x => x.StartDate < DateTime.Today));
-                        vm.Courses = GetErrorMessages(vm.Courses, ValidationMode.DataQualityIndicator);
-                        vm.Venues = GetVenueNames(vm.Courses);
                         List<Course> filteredList = new List<Course>();
                         foreach(var course in invalidCourses)
                         {
