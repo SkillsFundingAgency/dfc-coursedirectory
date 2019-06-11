@@ -18,6 +18,14 @@
 }
 
 <div>
+
+    @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+{
+NotificationTitle = "",
+NotificationMessage = @Model.LiveCourseCount + @Model.LiveCourseCount > 0 ? " courses":" course" + " have been migrated to the new Course directory. Any courses with a missing LARS have been deleted." + "<a class='govuk-link' asp-controller='Home' asp-action='Index'> What now?</a>",
+ClassType = "info-summary"
+})
+
     <span class="govuk-caption-xl">Course Directory</span>
     <h1 class="govuk-heading-xl">Course management dashboard</h1>
     <hr />
@@ -32,7 +40,7 @@
             <div>
                 <ul class="govuk-list">
                     <li><a class="govuk-link" asp-controller="AddCourse" asp-action="AddCourse">Publish a course</a></li>
-                    
+
                     <li><a class="govuk-link" asp-controller="ProviderCourses" asp-action="Index">@(Model.LiveCourseCount > 0 ? "Manage your courses" : "")</a></li>
                 </ul>
             </div>
