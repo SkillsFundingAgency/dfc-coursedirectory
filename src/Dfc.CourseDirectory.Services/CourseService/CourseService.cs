@@ -720,28 +720,27 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 courseRun.FlexibleStartDate = false; // COUR-746-StartDate
 
                 switch (validationMode)
-                {
+                { 
                     case ValidationMode.AddCourseRun:
                     case ValidationMode.CopyCourseRun:
-                        if (courseRun.StartDate < DateTime.Now || courseRun.StartDate > DateTime.Now.AddYears(2))
-                            validationMessages.Add($"Start Date cannot be before Today's Date and must be less than or equal to 2 years from Today's Date");
+                    case ValidationMode.EditCourseBU:
+                    case ValidationMode.BulkUploadCourse:
+                        if (courseRun.StartDate < DateTime.Now)
+                        {
+                            validationMessages.Add($"Start Date cannot earlier than Today's Date");
+                        }
+                        if (courseRun.StartDate > DateTime.Now.AddYears(2))
+                        {
+                            validationMessages.Add($"Start Date cannot be later than 2 years from today’s date");
+                        }
                         break;
                     case ValidationMode.EditCourseYC:
                     case ValidationMode.EditCourseMT:
                         // It cannot be done easily as we need both value - the newly entered and the previous. Call to saved version or modification in the model
                         break;
-                    case ValidationMode.EditCourseBU:
-                        // If the Provider does the editing on the same day of uploading it's fine. But from next day forward ?????????
-                        if (courseRun.StartDate < DateTime.Now || courseRun.StartDate > DateTime.Now.AddYears(2))
-                            validationMessages.Add($"Start Date cannot be before Today's Date and must be less than or equal to 2 years from Today's Date");
-                        break;
-                    case ValidationMode.BulkUploadCourse:
-                        if (courseRun.StartDate < DateTime.Now || courseRun.StartDate > DateTime.Now.AddYears(2))
-                            validationMessages.Add($"Start Date cannot be before Today's Date and must be less than or equal to 2 years from Today's Date");
-                        break;
                     case ValidationMode.MigrateCourse:
                         if (courseRun.StartDate > DateTime.Now.AddYears(2))
-                            validationMessages.Add($"Start Date must be less than or equal to 2 years from Today's Date");
+                            validationMessages.Add($"Start Date cannot be later than 2 years from today’s date");
                         break;
                     case ValidationMode.Undefined:
                     default:
