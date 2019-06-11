@@ -8,7 +8,7 @@ namespace Dfc.CourseDirectory.Services.Interfaces.BulkUploadService
 {
     public interface IBulkUploadService
     {
-        List<string> ProcessBulkUpload(string bulkUploadFilePath, int providerUKPRN, string userId);
+        List<string> ProcessBulkUpload(Stream stream, int providerUKPRN, string userId);
 
         List<BulkUploadCourse> PolulateLARSData(List<BulkUploadCourse> bulkUploadcourses, out List<string> errors);
 

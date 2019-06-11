@@ -62,7 +62,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             _courseService = courseService;
         }
 
-        public List<string> ProcessBulkUpload(string bulkUploadFilePath, int providerUKPRN, string userId)
+        public List<string> ProcessBulkUpload(Stream stream, int providerUKPRN, string userId)
         {
 
             var errors = new List<string>();
@@ -70,19 +70,17 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             int bulkUploadLineNumber = 2;
             int tempCourseId = 0;
             string previousLearnAimRef = string.Empty;
-            List<int> lineNumbersInCourse = new List<int>();
 
-            try
-            {
-                //Cache Venues
-
-
-                cachedVenues = Task.Run(async () => await _venueService.SearchAsync(new VenueSearchCriteria(providerUKPRN.ToString(), string.Empty))).Result.Value.Value.ToList();
-
-
-                string missingFieldsError = string.Empty; // Field with name 'VENUE' does not exist.
+            try {
+                cachedVenues = Task.Run(async () => await _venueService.SearchAsync(new VenueSearchCriteria(providerUKPRN.ToString(), string.Empty)))
+                                                                       .Result
+                                                                       .Value
+                                                                       .Value
+                                                                       .ToList();
+                string missingFieldsError = string.Empty;
                 int missingFieldsErrorCount = 0;
-                using (var reader = new StreamReader(bulkUploadFilePath))
+                stream.Position = 0;
+                using (var reader = new StreamReader(stream))
                 {
                     using (var csv = new CsvReader(reader))
                     {
@@ -163,8 +161,6 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                                 {
                                     missingFieldsError += " 'ATTENDANCE_PATTERN',"; missingFieldsErrorCount++;
                                 }
-
-
                                 string WHO_IS_THIS_COURSE_FOR = string.Empty;
                                 if (!csv.TryGetField("WHO_IS_THIS_COURSE_FOR", out larsQan))
                                 {
@@ -212,7 +208,6 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                                 }
                             }
 
-
                             if (string.IsNullOrEmpty(missingFieldsError))
                             {
                                 bool isCourseHeader = false;
@@ -226,11 +221,9 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                                 }
 
                                 if (string.IsNullOrEmpty(currentLearnAimRef))
-                                {
                                     errors.Add($"Line { bulkUploadLineNumber }, LARS_QAN = { currentLearnAimRef } => LARS is missing.");
-                                }
-                                else
-                                {
+
+                                else {
                                     var record = new BulkUploadCourse
                                     {
                                         IsCourseHeader = isCourseHeader,
@@ -265,15 +258,11 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                                         record.AdultEducationBudget = csv.GetField("ADULT_EDUCATION_BUDGET").Trim();
                                         record.AdvancedLearnerLoan = csv.GetField("ADVANCED_LEARNER_OPTION").Trim();
                                     }
-
                                     bulkUploadcourses.Add(record);
                                 }
-
                                 previousLearnAimRef = currentLearnAimRef;
-
                             }
                             bulkUploadLineNumber++;
-
                         }
                     }
                 }
@@ -282,35 +271,24 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 {
                     missingFieldsError = missingFieldsError.TrimEnd(',');
                     if (missingFieldsErrorCount.Equals(1))
-                    {
                         errors.Add($"Field with name { missingFieldsError } does not exist");
-                    }
                     else
-                    {
                         errors.Add($"Fields with names { missingFieldsError } do not exist");
-                    }
-
                     return errors;
                 }
 
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 string errorMessage = ex.Message;
                 if (errorMessage.Contains("You can ignore missing fields by setting MissingFieldFound to null.", StringComparison.InvariantCultureIgnoreCase))
                     errorMessage = errorMessage.Replace("You can ignore missing fields by setting MissingFieldFound to null.", string.Empty);
-
                 errors.Add($"We experienced an error. Text: { errorMessage }");
             }
 
             if (errors != null && errors.Count > 0)
-            {
                 return errors;
-            }
-            else
-            {
-                if (bulkUploadcourses == null || bulkUploadcourses.Count.Equals(0))
-                {
+
+            else {
+                if (bulkUploadcourses == null || bulkUploadcourses.Count.Equals(0)) {
                     errors.Add($"The selected file is empty");
                     return errors;
                 }
@@ -321,12 +299,10 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 {
                     // If we have invalid LARS we stop processing
                     return errors;
-                }
-                else
-                {
+
+                } else {
                     // Mapping BulkUploadCourse to Course
                     var courses = MappingBulkUploadCourseToCourse(bulkUploadcourses, userId, out errors);
-
                     return errors;
                 }
             }
