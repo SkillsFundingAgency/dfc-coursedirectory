@@ -17,5 +17,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels
         public string SuccessHeader { get; set; }
 
         public DateTime MigrationRunDate { get; set; }
+
+        public int MigrationPendingCount { get; set; }
     }
 }
