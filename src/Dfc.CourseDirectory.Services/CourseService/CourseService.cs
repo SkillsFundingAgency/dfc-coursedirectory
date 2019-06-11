@@ -585,7 +585,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 if (!HasOnlyFollowingValidCharacters(course.CourseDescription))
                     validationMessages.Add("Course For decription contains invalid character");
                 if (course.CourseDescription.Length > _courseForTextFieldMaxChars)
-                    validationMessages.Add($"Course For decription must be { _courseForTextFieldMaxChars } characters or less");
+                    validationMessages.Add($"Who Is This Course For? decription must be { _courseForTextFieldMaxChars } characters or less");
             }
 
             // EntryRequirements
@@ -601,45 +601,45 @@ namespace Dfc.CourseDirectory.Services.CourseService
             if (!string.IsNullOrEmpty(course.WhatYoullLearn))
             {
                 if (!HasOnlyFollowingValidCharacters(course.WhatYoullLearn))
-                    validationMessages.Add("What You'll Learn contains invalid character");
+                    validationMessages.Add("What you will Learn contains invalid character");
                 if (course.WhatYoullLearn.Length > _whatWillLearnTextFieldMaxChars)
-                    validationMessages.Add($"What You'll Learn must be { _whatWillLearnTextFieldMaxChars } characters or less");
+                    validationMessages.Add($"What you will Learn must be { _whatWillLearnTextFieldMaxChars } characters or less");
             }
 
             // HowYoullLearn 
             if (!string.IsNullOrEmpty(course.HowYoullLearn))
             {
                 if (!HasOnlyFollowingValidCharacters(course.HowYoullLearn))
-                    validationMessages.Add("How You'll Learn contains invalid character");
+                    validationMessages.Add("How you'll learn contains invalid character");
                 if (course.HowYoullLearn.Length > _howYouWillLearnTextFieldMaxChars)
-                    validationMessages.Add($"How You'll Learn must be { _howYouWillLearnTextFieldMaxChars } characters or less");
+                    validationMessages.Add($"How you'll learn must be { _howYouWillLearnTextFieldMaxChars } characters or less");
             }
 
             // WhatYoullNeed 
             if (!string.IsNullOrEmpty(course.WhatYoullNeed))
             {
                 if (!HasOnlyFollowingValidCharacters(course.WhatYoullNeed))
-                    validationMessages.Add("What You'll Need contains invalid character");
+                    validationMessages.Add("What you'll need to bring contains invalid character");
                 if (course.WhatYoullNeed.Length > _whatYouNeedTextFieldMaxChars)
-                    validationMessages.Add($"What You'll Need must be { _whatYouNeedTextFieldMaxChars } characters or less");
+                    validationMessages.Add($"What you'll need to bring must be { _whatYouNeedTextFieldMaxChars } characters or less");
             }
 
             // HowYoullBeAssessed 
             if (!string.IsNullOrEmpty(course.HowYoullBeAssessed))
             {
                 if (!HasOnlyFollowingValidCharacters(course.HowYoullBeAssessed))
-                    validationMessages.Add("How You'll Be Assessed contains invalid character");
+                    validationMessages.Add("How you'll be assessed contains invalid character");
                 if (course.HowYoullBeAssessed.Length > _howAssessedTextFieldMaxChars)
-                    validationMessages.Add($"How You'll Be Assessed must be { _howAssessedTextFieldMaxChars } characters or less");
+                    validationMessages.Add($"How you'll be assessed must be { _howAssessedTextFieldMaxChars } characters or less");
             }
 
             // WhereNext 
             if (!string.IsNullOrEmpty(course.WhereNext))
             {
                 if (!HasOnlyFollowingValidCharacters(course.WhereNext))
-                    validationMessages.Add("Where Next contains invalid character");
+                    validationMessages.Add("'Where next' contains invalid character");
                 if (course.WhereNext.Length > _whereNextTextFieldMaxChars)
-                    validationMessages.Add($"Where Next must be { _whereNextTextFieldMaxChars } characters or less");
+                    validationMessages.Add($"'Where next' must be { _whereNextTextFieldMaxChars } characters or less");
             }
 
             return validationMessages;
