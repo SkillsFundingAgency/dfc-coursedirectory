@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace Dfc.CourseDirectory.Models.Enums
@@ -172,6 +173,17 @@ namespace Dfc.CourseDirectory.Models.Enums
         DownLoad = 2,
         [Description("Delete the file you uploaded and make no changes to the Course directory ")]
         Delete = 3
+    }
+
+    public enum MigrationOptions
+    {
+        Undefined = 0,
+        [Description("Check the courses you have published on the Course Directory.")]
+        [Hint("You can edit and delete them or add a new one.")]
+        CheckCourses = 1,
+        [Description("Start again by publishing all of your courses with a file upload.")]
+        [Hint("This will overwrite and migrated data")]
+        StartAgain = 2
     }
 
     public enum ApprenticeshipDelivery
