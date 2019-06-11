@@ -20,6 +20,7 @@ using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Models.Models.Venues;
+using Dfc.CourseDirectory.Common.Interfaces;
 
 namespace Dfc.CourseDirectory.Services.BulkUploadService
 {
@@ -667,5 +668,6 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
             return default(T);
         }
+
     }
 }
