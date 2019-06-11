@@ -76,7 +76,7 @@ namespace Dfc.CourseDirectory.Models.Enums
         DataQualityIndicator = 3,
         [Description("Summary")]
         Summary = 4
-      
+
     }
     public enum FundingOptions
     {
@@ -173,6 +173,20 @@ namespace Dfc.CourseDirectory.Models.Enums
         DownLoad = 2,
         [Description("Delete the file you uploaded and make no changes to the Course directory ")]
         Delete = 3
+    }
+
+    public enum MigrationErrors
+    {
+        Undefined = 0,
+        [Description("Fix errors on screen using this service.")]
+        [Hint("This will automatically publish the courses to the Course Directory")]
+        FixErrors = 1,
+        [Description("Delete the courses with errors.")]
+        [Hint("You will need to call the help desk to do this.")]
+        DeleteCourses = 2,
+        [Description("Start again by publishing all of your courses with a file upload.")]
+        [Hint("You can download an error file to help you")]
+        StartAgain = 3
     }
 
     public enum MigrationOptions

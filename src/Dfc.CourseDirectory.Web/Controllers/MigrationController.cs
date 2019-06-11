@@ -68,5 +68,35 @@ namespace Dfc.CourseDirectory.Web.Controllers
                   return RedirectToAction("Options", "Migration");
             }
         }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult Errors(int? liveCourses, int? errors)
+        {
+            var model = new ErrorsViewModel
+            {
+                LiveCourses = liveCourses,
+                Errors = errors
+            };
+            
+            return View("../Migration/Errors/Index", model);
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> Errors(ErrorsViewModel model)
+        {
+            switch (model.MigrationErrors)
+            {
+                case MigrationErrors.FixErrors:
+                    return RedirectToAction("Index", "PublishCourses", new { publishMode = PublishMode.Migration });
+                case MigrationErrors.DeleteCourses:
+                    return RedirectToAction("Index", "HelpDesk");
+                case MigrationErrors.StartAgain:
+                    return RedirectToAction("Index", "BulkUpload");
+                default:
+                   return RedirectToAction("Errors");
+            }
+        }
     }
 }
