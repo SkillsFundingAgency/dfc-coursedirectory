@@ -59,10 +59,23 @@ namespace Dfc.CourseDirectory.Web.Controllers
                                                  .SelectMany(o => o.Value)
                                                  .SelectMany(i => i.Value);
 
+
+
+
+
             int[] pendingStatuses = new int[] { (int)RecordStatus.Pending, (int)RecordStatus.BulkUploadPending, (int)RecordStatus.APIPending, (int)RecordStatus.MigrationPending, (int)RecordStatus.MigrationReadyToGoLive, (int)RecordStatus.BulkUploadReadyToGoLive };
             int[] bulkStatuses = new int[] { (int)RecordStatus.BulkUploadPending };
+            int[] migrationStatuses = new int[] { (int)RecordStatus.MigrationPending };
             IEnumerable<Course> validCourses = courses.Where(c => c.IsValid);
-           
+
+
+
+            var a = courses.SelectMany(c => c.CourseRuns);
+            var l = courses.SelectMany(c => c.CourseRuns).Where(x => x.RecordStatus == RecordStatus.Live);
+            var q = courses.SelectMany(c => c.CourseRuns).Where(x => x.RecordStatus == RecordStatus.BulkUploadPending);
+            var w = courses.SelectMany(c => c.CourseRuns).Where(x => x.RecordStatus == RecordStatus.MigrationPending);
+
+
 
 
             IEnumerable<CourseValidationResult> results = service.CourseValidationMessages(validCourses, ValidationMode.DataQualityIndicator).Value;
@@ -80,19 +93,19 @@ namespace Dfc.CourseDirectory.Web.Controllers
                                                                   .Result
                                                                   .Value;
 
+
             DashboardViewModel vm = new DashboardViewModel()
             {
                 SuccessHeader = successHeader,
-                 ValidationHeader = $"{ courseMessages.LongCount() + runMessages.LongCount() } data items require attention",
-                 ValidationMessages = messages,
-                 //LiveCourseCount = counts.FirstOrDefault(c => c.Status == (int)RecordStatus.Live).Count,
-                 LiveCourseCount = validCourses.SelectMany(c => c.CourseRuns).Count(r => r.RecordStatus == RecordStatus.Live),
-                 ArchivedCourseCount = counts.FirstOrDefault(c => c.Status == (int)RecordStatus.Archived).Count,
-                 PendingCourseCount = (from ICourseStatusCountResult c in counts
+                ValidationHeader = $"{ courseMessages.LongCount() + runMessages.LongCount() } data items require attention",
+                ValidationMessages = messages,
+                LiveCourseCount = courses.SelectMany(c => c.CourseRuns).Where(x => x.RecordStatus == RecordStatus.Live).Count(),
+                ArchivedCourseCount = counts.FirstOrDefault(c => c.Status == (int)RecordStatus.Archived).Count,
+                MigrationPendingCount = courses.SelectMany(c => c.CourseRuns).Where(x => x.RecordStatus == RecordStatus.MigrationPending).Count(),
+                PendingCourseCount = (from ICourseStatusCountResult c in counts
                                        join int p in pendingStatuses
                                        on c.Status equals p
-                                       select c.Count).Sum() //,
-                 //RecentlyModifiedCourses = new List<Course>() { new Course(), new Course() }
+                                       select c.Count).Sum()
             };
 
             return vm;
