@@ -237,6 +237,7 @@
     "appInsightsName": "[concat(parameters('projectPrefix'),'-ai')]",
     "appServiceName": "[concat(parameters('projectPrefix'),'-as')]",
     "appServicePlanName": "[concat(parameters('projectPrefix'),'-asp')]",
+    "blobStorageSettingsContainerName": "providerfiles",
     "cosmosDbSQLName": "[concat(parameters('projectPrefix'),'-cdb')]",
     "azureSearchName": "[concat(parameters('projectPrefix'),'-sch')]"
   },
@@ -274,6 +275,26 @@
         "parameters": {
           "storageAccountName": {
             "value": "[parameters('storageAccountName')]"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "2017-05-10",
+      "name": "courseDirectoryStorageContainer",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('deploymentUrlBase'),'Storage/storage-account-arm-container.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "storageAccountName": {
+            "value": "[parameters('storageAccountName')]"
+          },
+          "storageContainerName": {
+            "value": "[variables('blobStorageSettingsContainerName')]"
           }
         }
       }
@@ -561,6 +582,22 @@
               {
                 "name": "FindACourseServiceSettings__Password",
                 "value": "[parameters('findCourseApiKey')]"
+              },
+              {
+                "name": "BlobStorageSettings__AccountName",
+                "value": "[parameters('storageAccountName')]"
+              },
+              {
+                "name": "BlobStorageSettings__AccountKey",
+                "value": "[reference('courseDirectoryStorage').outputs.storageConnectionString.value]"
+              },
+              {
+                "name": "BlobStorageSettings__Container",
+                "value": "[variables('blobStorageSettingsContainerName')]"
+              },
+              {
+                "name": "BlobStorageSettings__TemplatePath",
+                "value": "bulkuploadtemplate.csv"
               }
             ]
           },
