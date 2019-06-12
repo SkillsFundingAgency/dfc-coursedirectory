@@ -237,7 +237,7 @@
     "appInsightsName": "[concat(parameters('projectPrefix'),'-ai')]",
     "appServiceName": "[concat(parameters('projectPrefix'),'-as')]",
     "appServicePlanName": "[concat(parameters('projectPrefix'),'-asp')]",
-    "blobStorageSettingsContainerName": "providerfiles",
+    "blobStorageSettingsContainerName": "provider-files",
     "cosmosDbSQLName": "[concat(parameters('projectPrefix'),'-cdb')]",
     "azureSearchName": "[concat(parameters('projectPrefix'),'-sch')]"
   },
