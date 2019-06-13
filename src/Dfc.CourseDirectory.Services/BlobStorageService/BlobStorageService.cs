@@ -90,7 +90,7 @@ namespace Dfc.CourseDirectory.Services.BlobStorageService
         {
             try {
                 CloudBlockBlob blockBlob = _container.GetBlockBlobReference(filePath);
-                ArchiveFiles(filePath);
+                ArchiveFiles(string.Join("/", filePath.Split("/").Reverse().Skip(1).Reverse()));
 
                 stream.Position = 0;
                 return blockBlob.UploadFromStreamAsync(stream);
@@ -125,15 +125,14 @@ namespace Dfc.CourseDirectory.Services.BlobStorageService
 
         public IEnumerable<CloudBlockBlob> ArchiveFiles(string filePath)
         {
-            try
-            {                
+            try {                
                 IEnumerable<CloudBlockBlob> blobs = _container?.GetDirectoryReference(filePath)
                                                               ?.ListBlobs()
                                                               ?.OfType<CloudBlockBlob>()
                                                     ?? new CloudBlockBlob[] { };
                 foreach(CloudBlockBlob b in blobs)
                 {
-                    _container.GetBlobReference("aaaa/aaa")
+                    _container.GetBlobReference($"Archive/{filePath.Substring(0, 8)}_{b.Uri.Segments.Last()}")
                               .StartCopy(b.Uri);
                     b.DeleteIfExists();
                 }
@@ -141,13 +140,13 @@ namespace Dfc.CourseDirectory.Services.BlobStorageService
                 return blobs;
 
                 //} catch (StorageException stex) {
-                //    _log.LogException($"Exception listing files at {filePath}", stex);
+                //    _log.LogException($"Exception archiving files at {filePath}", stex);
                 //    return null;
 
             }
             catch (Exception ex)
             {
-                _log.LogException($"Exception listing files at {filePath}", ex);
+                _log.LogException($"Exception archiving files at {filePath}", ex);
                 return null;
             }
         }
