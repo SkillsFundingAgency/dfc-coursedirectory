@@ -154,7 +154,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
 
             model.BriefOverview.TrimEnd();
-            model.AliasName.Trim();
+
             var providerSearchResult = await _providerService.GetProviderByPRNAsync(new Services.ProviderService.ProviderSearchCriteria(UKPRN.ToString()));
 
             if (providerSearchResult.IsSuccess)
