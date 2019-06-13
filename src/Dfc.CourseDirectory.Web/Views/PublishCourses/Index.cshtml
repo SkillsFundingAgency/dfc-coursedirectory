@@ -2,9 +2,16 @@
     Layout = "_Layout_Your_Courses";
 }
 
+@using System.Net
 @using Dfc.CourseDirectory.Web.ViewComponents.Notification
 @using Dfc.CourseDirectory.Web.ViewComponents.PublishCourses.Publish
+@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService Authorization
 @model Dfc.CourseDirectory.Web.ViewModels.PublishCourses.PublishViewModel
+
+@{
+    var adminLogin = await Authorization.AuthorizeAsync(User, "Admin");
+}
 
 <form asp-controller="PublishCourses" asp-action="Index" id="PublishCourses">
 
@@ -40,6 +47,11 @@
             if (Model.PublishMode != Dfc.CourseDirectory.Models.Enums.PublishMode.DataQualityIndicator)
             {
                 <div> @Html.ActionLink("Exit without publishing", "Index", "Home", new { }, new { @class = "govuk-link" })</div>
+            }
+
+            if (adminLogin.Succeeded)
+            {
+                <div> @Html.ActionLink("Delete All", "Delete", "Migration", new { }, new { @class = "govuk-button" })</div>
             }
         }
 

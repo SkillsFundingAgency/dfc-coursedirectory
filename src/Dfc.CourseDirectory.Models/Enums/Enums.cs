@@ -200,6 +200,15 @@ namespace Dfc.CourseDirectory.Models.Enums
         StartAgain = 2
     }
 
+    public enum MigrationDeleteOptions
+    {
+        Undefined = 0,
+        [Description("Yes")]
+        DeleteMigrations = 1,
+        [Description("No")]
+        Cancel =2
+    }
+
     public enum ApprenticeshipDelivery
     {
         [Description("Undefined")]

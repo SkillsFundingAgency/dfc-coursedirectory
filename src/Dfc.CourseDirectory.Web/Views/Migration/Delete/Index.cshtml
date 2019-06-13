@@ -1,0 +1,83 @@
+﻿@using Dfc.CourseDirectory.Models.Enums
+@using Dfc.CourseDirectory.Web.Helpers
+@{
+    Layout = "_Layout_Your_Courses";
+}
+
+@model Dfc.CourseDirectory.Web.ViewModels.Migration.DeleteViewModel
+
+
+<div class="content-container">
+    <div class="govuk-grid-row" data-sf-element="Row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <form class="govuk-!-margin-bottom-9" id="WhatDoYouWantToDoNextForm" asp-controller="Migration" asp-action="Delete" method="post">
+                <span class="govuk-caption-xl">Course directory</span>
+                <h1 class="govuk-heading-xl">Delete Courses with migration errors</h1>
+                @if (Model.CourseErrors.HasValue)
+                {
+                    <p>This will cause @Model.CourseErrors.Value course@(Model.CourseErrors.Value > 1 ? "s" : "") to be deleted.</p>
+                }
+                <br />
+              
+                <h3 class="govuk-heading-m">Are you sure? </h3>
+                <div class="govuk-form-group">
+                    <fieldset class="govuk-fieldset">
+
+                        <div class="govuk-radios" val-required-message="Select what do you want to do next?" id="WhatDoYouWantToDoNext">
+                            <div class="govuk-radios__item">
+                                @Html.RadioButtonFor(m => m.MigrationDeleteOptions, MigrationDeleteOptions.DeleteMigrations, new { @class = "govuk-radios__input", id = MigrationDeleteOptions.DeleteMigrations })
+                                <label class="govuk-label govuk-radios__label" for="@MigrationDeleteOptions.DeleteMigrations">@WebHelper.GetEnumDescription(MigrationDeleteOptions.DeleteMigrations)</label>
+                            </div>
+                            <div class="govuk-radios__item">
+                                @Html.RadioButtonFor(m => m.MigrationDeleteOptions, MigrationDeleteOptions.Cancel, new { @class = "govuk-radios__input", id = MigrationDeleteOptions.Cancel })
+                                <label class="govuk-label govuk-radios__label" for="@MigrationDeleteOptions.Cancel">@WebHelper.GetEnumDescription(MigrationDeleteOptions.Cancel) </label>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+                <br />
+                <button type="submit" class="govuk-button" id="next">Continue</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function ($) {
+        $(function () {
+            var validStates = [];
+            var $button = $("#next");
+
+            var $whatDoYouWantToDoNext = $("#WhatDoYouWantToDoNext").govUkRadios();
+
+            function isAllValid(currentValue) {
+                return currentValue === true;
+            }
+
+            function validate() {
+
+                validStates = [];
+
+                $whatDoYouWantToDoNext.govUkRadios("validState");
+
+                if ($.requiredValidate($whatDoYouWantToDoNext.find("input[type='radio']:checked").val())) {
+                    $whatDoYouWantToDoNext.govUkRadios("validState");
+                    validStates.push(true);
+                } else {
+                    $whatDoYouWantToDoNext.govUkRadios("invalidState", $whatDoYouWantToDoNext.attr("val-required-message"));
+                    validStates.push(false);
+                }
+            }
+
+            $button.on("click", function (event) {
+                event.preventDefault();
+                validate();
+                if (validStates.every(isAllValid)) {
+                    $("#WhatDoYouWantToDoNextForm").submit();
+                }
+            });
+
+        });
+    })(jQuery);
+</script>
