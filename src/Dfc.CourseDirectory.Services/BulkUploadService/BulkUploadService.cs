@@ -572,8 +572,8 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 {
                     validationMessages.Add($"AttendancePattern is Undefined, because you have entered ( { bulkUploadCourse.AttendancePattern } ), Line { bulkUploadCourse.BulkUploadLineNumber },  LARS_QAN = { bulkUploadCourse.LearnAimRef }, ID = { bulkUploadCourse.ProviderCourseID }");
                 }
-
-                courseRun.RecordStatus = _courseService.ValidateCourseRun(courseRun, ValidationMode.BulkUploadCourse).Any() ? RecordStatus.BulkUploadPending : RecordStatus.BulkUploadReadyToGoLive;
+                courseRun.BulkUploadErrors = ParseBulkUploadErrors(bulkUploadCourse.BulkUploadLineNumber, _courseService.ValidateCourseRun(courseRun, ValidationMode.BulkUploadCourse));
+                courseRun.RecordStatus = courseRun.BulkUploadErrors.Any() ? RecordStatus.BulkUploadPending : RecordStatus.BulkUploadReadyToGoLive;
 
                 courseRun.CreatedBy = userId;
                 courseRun.CreatedDate = DateTime.Now;
