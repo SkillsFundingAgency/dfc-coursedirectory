@@ -45,19 +45,7 @@
             {
                 ViewData["Title"] = "Course management dashboard";
 
-                //var totalCourses = Model.LiveCourseCount + Model.MigrationPendingCount;
-
-                //var message =WebHelper.GetCourseTextToUse(Model.LiveCourseCount);
-
-                //var message = Model.LiveCourseCount > 0 ? " courses" : " course";
-                //var totalCoursesMessage = totalCourses > 0 ? " courses" : " course";
-                //var migrationPendingCourseMessage = Model.MigrationPendingCount > 0 ? " courses" : " course";
-                //var BulkUploadMessage = Model.BulkUploadTotalCount > 0 ? " courses" : " course";
-                //var BulkUploadErrorMessage = Model.BulkUploadPendingCount > 0 ? " courses" : " course";
-                //var MigrationErrorMessage = Model.BulkUploadTotalCount.ToString() + BulkUploadMessage + " upload in a file on " + Model.FileUploadDate?.ToString("dd/MM/yyyy") + " have " + Model.BulkUploadPendingCount.ToString() + " errors. Fix these to publish all of your courses.";
-                //var MigrationNoErrorMessage = Model.BulkUploadTotalCount.ToString() + BulkUploadMessage + " uploaded on " + Model.FileUploadDate?.ToString("dd/MM/yyyy") + " have no errors, but are not listed on the Course directory becuase you have not published them.";
-                //var MigrationMessage = (Model.BulkUploadTotalCount > 0 & Model.BulkUploadPendingCount == 0) ? MigrationNoErrorMessage : MigrationErrorMessage;
-
+              
                 @if (@Model.MigrationPendingCount == 0)
                 {
                     @await Component.InvokeAsync(nameof(Notification), new NotificationModel

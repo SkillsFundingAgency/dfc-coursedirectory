@@ -4,28 +4,34 @@
     Layout = "_Layout_Your_Courses";
 }
 
-@model Dfc.CourseDirectory.Web.ViewModels.Migration.OptionsViewModel
+@model Dfc.CourseDirectory.Web.ViewModels.Migration.DeleteViewModel
 
 
 <div class="content-container">
     <div class="govuk-grid-row" data-sf-element="Row">
         <div class="govuk-grid-column-two-thirds">
 
-            <form class="govuk-!-margin-bottom-9" id="WhatDoYouWantToDoNextForm" asp-controller="Migration" asp-action="Options" method="post">
+            <form class="govuk-!-margin-bottom-9" id="WhatDoYouWantToDoNextForm" asp-controller="Migration" asp-action="Delete" method="post">
                 <span class="govuk-caption-xl">Course directory</span>
-                <h1 class="govuk-heading-xl">What do you want to do next? </h1>
+                <h1 class="govuk-heading-xl">Delete Courses with migration errors</h1>
+                @if (Model.CourseErrors.HasValue)
+                {
+                    <p>This will cause @Model.CourseErrors.Value course@(Model.CourseErrors.Value > 1 ? "s" : "") to be deleted.</p>
+                }
                 <br />
+              
+                <h3 class="govuk-heading-m">Are you sure? </h3>
                 <div class="govuk-form-group">
                     <fieldset class="govuk-fieldset">
 
                         <div class="govuk-radios" val-required-message="Select what do you want to do next?" id="WhatDoYouWantToDoNext">
                             <div class="govuk-radios__item">
-                                @Html.RadioButtonFor(m => m.MigrationOption, MigrationOptions.CheckCourses, new { @class = "govuk-radios__input", id = MigrationOptions.CheckCourses })
-                                <label class="govuk-label govuk-radios__label" for="@MigrationOptions.CheckCourses">@WebHelper.GetEnumDescription(MigrationOptions.CheckCourses) <span class="govuk-hint">@WebHelper.GetEnumSubtext(MigrationOptions.CheckCourses)</span></label>
+                                @Html.RadioButtonFor(m => m.MigrationDeleteOptions, MigrationDeleteOptions.DeleteMigrations, new { @class = "govuk-radios__input", id = MigrationDeleteOptions.DeleteMigrations })
+                                <label class="govuk-label govuk-radios__label" for="@MigrationDeleteOptions.DeleteMigrations">@WebHelper.GetEnumDescription(MigrationDeleteOptions.DeleteMigrations)</label>
                             </div>
                             <div class="govuk-radios__item">
-                                @Html.RadioButtonFor(m => m.MigrationOption, MigrationOptions.StartAgain, new { @class = "govuk-radios__input", id = MigrationOptions.StartAgain })
-                                <label class="govuk-label govuk-radios__label" for="@MigrationOptions.StartAgain">@WebHelper.GetEnumDescription(MigrationOptions.StartAgain) <span class="govuk-hint">@WebHelper.GetEnumSubtext(MigrationOptions.StartAgain)</span></label>
+                                @Html.RadioButtonFor(m => m.MigrationDeleteOptions, MigrationDeleteOptions.Cancel, new { @class = "govuk-radios__input", id = MigrationDeleteOptions.Cancel })
+                                <label class="govuk-label govuk-radios__label" for="@MigrationDeleteOptions.Cancel">@WebHelper.GetEnumDescription(MigrationDeleteOptions.Cancel) </label>
                             </div>
                         </div>
                     </fieldset>

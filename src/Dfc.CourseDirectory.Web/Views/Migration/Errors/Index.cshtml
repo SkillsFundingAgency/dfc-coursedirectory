@@ -13,13 +13,12 @@
 
             <form class="govuk-!-margin-bottom-9" id="WhatDoYouWantToDoNextForm" asp-controller="Migration" asp-action="Errors" method="post">
                 <span class="govuk-caption-xl">Course directory</span>
-                <h1 class="govuk-heading-xl">The new Course Directory</h1>
+                <h1 class="govuk-heading-xl">What do you want to do next?</h1>
                 @if (Model.Errors.HasValue && Model.LiveCourses.HasValue)
                 {
-                    <p>You have @Model.LiveCourses published courses and @Model.Errors courses with errors that must be fixed. <br /> Any courses with a missing LARS have been deleted.</p>
+            <p>You have @Model.LiveCourses published course@(@Model.LiveCourses > 1 ? "s" : "") and @Model.Errors course@(Model.Errors > 1 ? "s": "") with errors that must be fixed. <br /> Any courses with a missing LARS have been deleted.</p>
                 }
                 <br />
-                <h3 class="govuk-heading-m">What do you want to do next? </h3>
                 <div class="govuk-form-group">
                     <fieldset class="govuk-fieldset">
 
