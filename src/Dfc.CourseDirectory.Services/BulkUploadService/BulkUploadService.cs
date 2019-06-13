@@ -64,7 +64,6 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
         public List<string> ProcessBulkUpload(Stream stream, int providerUKPRN, string userId)
         {
-
             var errors = new List<string>();
             var bulkUploadcourses = new List<BulkUploadCourse>();
             int bulkUploadLineNumber = 2;
@@ -451,8 +450,8 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                     course.WhereNext = bulkUploadCourse.WhereNext;
                     course.AdvancedLearnerLoan = bulkUploadCourse.AdvancedLearnerLoan.Equals("Yes", StringComparison.InvariantCultureIgnoreCase) ? true : false;
                     course.AdultEducationBudget = bulkUploadCourse.AdultEducationBudget.Equals("Yes", StringComparison.InvariantCultureIgnoreCase) ? true : false;
-
-                    course.IsValid = _courseService.ValidateCourse(course).Any() ? false : true;
+                    course.BulkUploadErrors = ParseBulkUploadErrors(bulkUploadCourse.BulkUploadLineNumber, _courseService.ValidateCourse(course));
+                    course.IsValid = course.BulkUploadErrors.Any() ? false : true;
 
                     course.CreatedBy = userId;
                     course.CreatedDate = DateTime.Now;
@@ -668,6 +667,27 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
             return default(T);
         }
+        internal IEnumerable<BulkUploadError> ParseBulkUploadErrors(int lineNumber, IList<KeyValuePair<string,string>> errors)
+        {
+            List<BulkUploadError> errorList = new List<BulkUploadError>();
 
+            
+            foreach(var error in errors)
+            {
+                //If non-bulk upload error
+                if (error.Key == "NULL")
+                {
+                    continue;
+                }
+                BulkUploadError buError = new BulkUploadError
+                {
+                    LineNumber = lineNumber,
+                    Header = error.Key,
+                    Error = error.Value
+                };
+                errorList.Add(buError);
+            }
+            return errorList;
+        }
     }
 }

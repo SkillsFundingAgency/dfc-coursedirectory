@@ -143,11 +143,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return View("../Bulkupload/DownloadErrorFile/Index", model);
         }
 
-
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> DownloadErrorFile(DownloadErrorFileViewModel model)
         {
+            var result = _blobService.DownloadFileAsync()
             // where to go????
             return View("../Bulkupload/WhatDoYouWantToDoNext/Index", new WhatDoYouWantToDoNextViewModel());
         }
