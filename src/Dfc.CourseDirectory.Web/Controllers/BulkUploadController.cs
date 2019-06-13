@@ -100,8 +100,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 vm.errors = new string[] { errorMessage };
             }
             return View(vm);
-  
-
         }
 
         [Authorize]
@@ -137,9 +135,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> DownloadErrorFile()
         {
-            var model = new DownloadErrorFileViewModel();
-            model.ErrorFileCreatedDate = DateTime.Now;
+            int? UKPRN;
+            if (_session.GetInt32("UKPRN") != null)
+                UKPRN = _session.GetInt32("UKPRN").Value;
+            else
+                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
 
+            var model = new DownloadErrorFileViewModel() { ErrorFileCreatedDate = DateTime.Now, UKPRN = UKPRN } ;
             return View("../Bulkupload/DownloadErrorFile/Index", model);
         }
 
@@ -169,7 +171,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         public async Task<IActionResult> DeleteFile(DeleteFileViewModel model)
         {
             // where to go????
-            return RedirectToAction("DeleteFileConfirmation", "PublishCourses");
+            return RedirectToAction("DeleteFileConfirmation", "Bulkupload");
         }
 
         [Authorize]

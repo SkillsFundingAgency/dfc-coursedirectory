@@ -8,6 +8,7 @@ using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Interfaces.Courses;
 using Dfc.CourseDirectory.Models.Models.Courses;
 using Dfc.CourseDirectory.Services.CourseService;
+using Dfc.CourseDirectory.Services.Interfaces.BlobStorageService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 using Dfc.CourseDirectory.Services.VenueService;
@@ -28,18 +29,21 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
         private ISession _session => _contextAccessor.HttpContext.Session;
         private readonly ICourseService _courseService;
         private readonly IVenueService _venueService;
+        private readonly IBlobStorageService _blobStorageService;
 
         public PublishCoursesController(ILogger<PublishCoursesController> logger,
             IHttpContextAccessor contextAccessor, ICourseService courseService,
-            IVenueService venueService)
+            IVenueService venueService,IBlobStorageService blobStorageService)
         {
             Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(courseService, nameof(courseService));
             Throw.IfNull(venueService, nameof(venueService));
+            Throw.IfNull(blobStorageService, nameof(blobStorageService));
             _logger = logger;
             _contextAccessor = contextAccessor;
             _courseService = courseService;
             _venueService = venueService;
+            _blobStorageService = blobStorageService;
         }
 
         [Authorize]
@@ -96,8 +100,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                         var invalidCoursesResult = results.Where(c => c.RunValidationResults.Any(cr => cr.Issues.Count() > 0));
                         var invalidCourses = invalidCoursesResult.Select(c => (Course)c.Course).ToList();
                         var courseRuns = invalidCourses.Select(cr => cr.CourseRuns.Where(x => x.StartDate < DateTime.Today));
-                        vm.Courses = GetErrorMessages(vm.Courses, ValidationMode.DataQualityIndicator);
-                        vm.Venues = GetVenueNames(vm.Courses);
                         List<Course> filteredList = new List<Course>();
                         foreach(var course in invalidCourses)
                         {
@@ -113,7 +115,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
 
                         if(courseRuns.Count() == 0 && courseId != null && courseRunId != null)
                         {
-                            var dashboardVm = DashboardController.GetDashboardViewModel(_courseService, _session.GetInt32("UKPRN"), notificationTitle);
+                            var dashboardVm = DashboardController.GetDashboardViewModel(_courseService, _blobStorageService,_session.GetInt32("UKPRN"), notificationTitle);
                             return RedirectToAction("IndexSuccess", "Home", dashboardVm);
                         }
 

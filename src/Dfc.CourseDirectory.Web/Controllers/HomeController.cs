@@ -10,6 +10,7 @@ using Dfc.CourseDirectory.Services.Interfaces;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using System.Security.Claims;
 using System;
+using Dfc.CourseDirectory.Services.Interfaces.BlobStorageService;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -19,22 +20,27 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly ILarsSearchService _larsSearchService;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly ICourseService _courseService;
+        private readonly IBlobStorageService _blobStorageService;
+
         private ISession _session => _contextAccessor.HttpContext.Session;
 
         public HomeController(
             ILogger<HomeController> logger,
             ILarsSearchService larsSearchService,
             ICourseService courseService,
+            IBlobStorageService blobStorageService,
             IHttpContextAccessor contextAccessor)
         {
             Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(contextAccessor, nameof(contextAccessor));
             Throw.IfNull(courseService, nameof(courseService));
+            Throw.IfNull(blobStorageService, nameof(blobStorageService));
 
             _logger = logger;
             _larsSearchService = larsSearchService;
             _contextAccessor = contextAccessor;
             _courseService = courseService;
+            _blobStorageService = blobStorageService;
             //Set this todisplay the Search Provider fork of the ProviderSearchResult ViewComponent
         }
 
@@ -64,7 +70,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 return View();
             else
             {
-                var vm = DashboardController.GetDashboardViewModel(_courseService, _session.GetInt32("UKPRN"), "");
+
+                var vm = DashboardController.GetDashboardViewModel(_courseService, _blobStorageService, _session.GetInt32("UKPRN"), "");
                 if (vm.PendingCourseCount > 0)
                 {
                     _session.SetString("PendingCourses", "true");
@@ -85,7 +92,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 if (vm == null)
                 {
-                    vm = DashboardController.GetDashboardViewModel(_courseService, _session.GetInt32("UKPRN"), "");
+                    vm = DashboardController.GetDashboardViewModel(_courseService, _blobStorageService,_session.GetInt32("UKPRN"), "");
                 }
                 if (vm.PendingCourseCount > 0)
                 {

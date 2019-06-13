@@ -209,6 +209,9 @@
     <Content Update="Views\Dashboard\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\Migration\DeleteConfirmed\Index.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Migration\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

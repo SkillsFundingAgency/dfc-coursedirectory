@@ -4,7 +4,7 @@
     Layout = "_Layout_Your_Courses";
 }
 
-@model Dfc.CourseDirectory.Web.ViewModels.BulkUpload.DeleteFileConfirmationViewModel
+
 
 
 
@@ -15,8 +15,8 @@
                 <h1 class="govuk-panel__title">
                     File deleted
                 </h1>
-                <br />
-                Your file uploaded on @Model.FileUploadedDate.ToString("dd MMM yyyy hh:mm") has been deleted. No changes have been made to the Course directory
+                @* Your file uploaded on @Model.FileUploadedDate.ToString("dd MMM yyyy hh:mm") has been deleted. No Changes have been made to the Course directory (stubbed)*@
+                All pending migration courses with errors have been deleted
             </div>
 
         </div>
@@ -27,6 +27,7 @@
     @Html.ActionLink("Back to the dashboard", "Index", "Home", new { }, new { @class = "govuk-link" })
 </div>
 
+
 <script>
     (function ($) {
         $(function () {
@@ -35,6 +36,3 @@
         });
     })(jQuery);
 </script>
-
-
-
