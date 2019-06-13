@@ -589,7 +589,7 @@
               },
               {
                 "name": "BlobStorageSettings__AccountKey",
-                "value": "[reference('courseDirectoryStorage').outputs.storageConnectionString.value]"
+                "value": "[reference('courseDirectoryStorage').outputs.storageKey.value]"
               },
               {
                 "name": "BlobStorageSettings__Container",
