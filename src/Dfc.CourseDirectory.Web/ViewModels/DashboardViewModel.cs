@@ -19,5 +19,17 @@ namespace Dfc.CourseDirectory.Web.ViewModels
         public DateTime MigrationRunDate { get; set; }
 
         public int MigrationPendingCount { get; set; }
+
+        public DateTimeOffset? FileUploadDate { get; set; }
+
+        public int BulkUploadPendingCount { get; set; }
+
+        public int BulkUploadReadyToGoLiveCount { get; set; }
+
+        public int BulkUploadTotalCount { get; set; }
+
+        public string MigrationOKMessage { get; set; }
+        public string MigrationErrorMessage { get; set; }
+        public string BulkUploadMessage { get; set; }
     }
 }

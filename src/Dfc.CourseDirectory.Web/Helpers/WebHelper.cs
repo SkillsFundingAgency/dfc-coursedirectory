@@ -13,7 +13,15 @@ namespace Dfc.CourseDirectory.Web.Helpers
     public static class WebHelper
     {
 
-       
+       public static string GetCourseTextToUse(int val)
+        {
+            if (val.Equals(1))
+            {
+                return " Course";
+            }
+            return " Courses";
+            
+        }
 
         public static string GetEnumDescription(Enum value)
         {

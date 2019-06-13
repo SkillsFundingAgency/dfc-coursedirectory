@@ -45,17 +45,26 @@
             {
                 ViewData["Title"] = "Course management dashboard";
 
-                var totalCourses = Model.LiveCourseCount + Model.MigrationPendingCount;
-                var message = Model.LiveCourseCount > 0 ? " courses" : " course";
-                var totalCoursesMessage = totalCourses > 0 ? " courses" : " course";
-                var migrationPendingCourseMessage = Model.MigrationPendingCount > 0 ? " courses" : " course";
+                //var totalCourses = Model.LiveCourseCount + Model.MigrationPendingCount;
+
+                //var message =WebHelper.GetCourseTextToUse(Model.LiveCourseCount);
+
+                //var message = Model.LiveCourseCount > 0 ? " courses" : " course";
+                //var totalCoursesMessage = totalCourses > 0 ? " courses" : " course";
+                //var migrationPendingCourseMessage = Model.MigrationPendingCount > 0 ? " courses" : " course";
+                //var BulkUploadMessage = Model.BulkUploadTotalCount > 0 ? " courses" : " course";
+                //var BulkUploadErrorMessage = Model.BulkUploadPendingCount > 0 ? " courses" : " course";
+                //var MigrationErrorMessage = Model.BulkUploadTotalCount.ToString() + BulkUploadMessage + " upload in a file on " + Model.FileUploadDate?.ToString("dd/MM/yyyy") + " have " + Model.BulkUploadPendingCount.ToString() + " errors. Fix these to publish all of your courses.";
+                //var MigrationNoErrorMessage = Model.BulkUploadTotalCount.ToString() + BulkUploadMessage + " uploaded on " + Model.FileUploadDate?.ToString("dd/MM/yyyy") + " have no errors, but are not listed on the Course directory becuase you have not published them.";
+                //var MigrationMessage = (Model.BulkUploadTotalCount > 0 & Model.BulkUploadPendingCount == 0) ? MigrationNoErrorMessage : MigrationErrorMessage;
 
                 @if (@Model.MigrationPendingCount == 0)
                 {
                     @await Component.InvokeAsync(nameof(Notification), new NotificationModel
                     {
                         NotificationTitle = "No migration errors",
-                        NotificationMessage = Model.LiveCourseCount.ToString() + message + " have been migrated to the new Course directory. Any courses with a missing LARS have been deleted.",
+                        NotificationMessage = Model.MigrationOKMessage,
+                        //NotificationMessage = Model.LiveCourseCount.ToString() + Model.LiveCourseCount > 0 ? " courses" : " course" + " have been migrated to the new Course directory. Any courses with a missing LARS have been deleted.",
                         ClassType = "info-summary",
                          Link = "<a class='govuk-link' href='/Migration/Options'> What now?</a>"
                     })
@@ -66,19 +75,23 @@
                     @await Component.InvokeAsync(nameof(Notification), new NotificationModel
                     {
                         NotificationTitle = "Migration errors",
-                        NotificationMessage = totalCourses.ToString() + totalCoursesMessage + " have been migrated to the new Course directory. You have " + @Model.MigrationPendingCount.ToString() + migrationPendingCourseMessage + " with errors and these must be fixed before they can be published.",
+                        NotificationMessage = Model.MigrationErrorMessage,
+                       // NotificationMessage = totalCourses.ToString() + totalCoursesMessage + " have been migrated to the new Course directory. You have " + @Model.MigrationPendingCount.ToString() + migrationPendingCourseMessage + " with errors and these must be fixed before they can be published.",
                         ClassType = "info-summary",
                         Link = "<a class='govuk-link' href='/Migration/Options'> What now?</a>"
                     })
                 }
 
-                @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+                @if (Model.BulkUploadReadyToGoLiveCount > 0)
                 {
-                    NotificationTitle = "Bulk upload errors",
-                    NotificationMessage = "Stubbed",
-                    ClassType = "info-summary",
-                    Link = "<a class='govuk-link' href='/Bulkupload/WhatDoYouWantToDoNext'>What next?</a>"
-                })
+                    @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+                    {
+                        NotificationTitle = "Bulk upload",
+                        NotificationMessage = Model.BulkUploadMessage,
+                        ClassType = "info-summary",
+                        Link = "<a class='govuk-link' href='/Bulkupload/WhatDoYouWantToDoNext'>What next?</a>"
+                    })
+                }
 
                 <span class="govuk-caption-xl">Course Directory</span>
 
@@ -102,7 +115,7 @@
                                 <div class="cd-info-summary__list">
                                     @foreach (string msg in Model?.ValidationMessages)
                                     {
-                                        <a href="/DQI">@msg</a>
+                                        < a href = "/DQI" > @msg </ a >
 
                                     }
                                     @*<br />

@@ -169,7 +169,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         public async Task<IActionResult> DeleteFile(DeleteFileViewModel model)
         {
             // where to go????
-            return RedirectToAction("DeleteFileConfirmation", "PublishCourses");
+            return RedirectToAction("DeleteFileConfirmation", "Bulkupload");
         }
 
         [Authorize]

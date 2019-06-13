@@ -15,7 +15,8 @@ using Dfc.CourseDirectory.Models.Models.Courses;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Web.ViewModels;
-
+using Dfc.CourseDirectory.Services.Interfaces.BlobStorageService;
+using Dfc.CourseDirectory.Web.Helpers;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -25,6 +26,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly ILogger<DashboardController> _logger;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly ICourseService _courseService;
+        private readonly IBlobStorageService _blobStorageService;
 
         private IHostingEnvironment _env;
         private ISession _session => _contextAccessor.HttpContext.Session;
@@ -33,21 +35,24 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 ILogger<DashboardController> logger,
                 IHttpContextAccessor contextAccessor,
                 ICourseService courseService,
+                IBlobStorageService blobStorageService,
                 IHostingEnvironment env)
         {
             Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(contextAccessor, nameof(contextAccessor));
             Throw.IfNull(courseService, nameof(courseService));
+            Throw.IfNull(blobStorageService, nameof(blobStorageService));
             Throw.IfNull(env, nameof(env));
 
             _logger = logger;
             _contextAccessor = contextAccessor;
             _courseService = courseService;
+            _blobStorageService = blobStorageService;
             _env = env;
         }
 
 
-        public static DashboardViewModel GetDashboardViewModel(ICourseService service, int? UKPRN, string successHeader)
+        public static DashboardViewModel GetDashboardViewModel(ICourseService service, IBlobStorageService blobStorageService, int? UKPRN, string successHeader)
         {
             if (!UKPRN.HasValue)
                 return new DashboardViewModel();
@@ -59,29 +64,19 @@ namespace Dfc.CourseDirectory.Web.Controllers
                                                  .SelectMany(o => o.Value)
                                                  .SelectMany(i => i.Value);
 
-
-
-
-
             int[] pendingStatuses = new int[] { (int)RecordStatus.Pending, (int)RecordStatus.BulkUploadPending, (int)RecordStatus.APIPending, (int)RecordStatus.MigrationPending, (int)RecordStatus.MigrationReadyToGoLive, (int)RecordStatus.BulkUploadReadyToGoLive };
             int[] bulkStatuses = new int[] { (int)RecordStatus.BulkUploadPending };
             int[] migrationStatuses = new int[] { (int)RecordStatus.MigrationPending };
             IEnumerable<Course> validCourses = courses.Where(c => c.IsValid);
 
-
-
-            var a = courses.SelectMany(c => c.CourseRuns);
-            var l = courses.SelectMany(c => c.CourseRuns).Where(x => x.RecordStatus == RecordStatus.Live);
-            var q = courses.SelectMany(c => c.CourseRuns).Where(x => x.RecordStatus == RecordStatus.BulkUploadPending);
-            var w = courses.SelectMany(c => c.CourseRuns).Where(x => x.RecordStatus == RecordStatus.MigrationPending);
-
-
-
+            var all = courses.SelectMany(c => c.CourseRuns);
+            var live = courses.SelectMany(c => c.CourseRuns).Where(x => x.RecordStatus == RecordStatus.Live);
+            var bulkUploadPending = courses.SelectMany(c => c.CourseRuns).Where(x => x.RecordStatus == RecordStatus.BulkUploadPending);
+            var migrationPending = courses.SelectMany(c => c.CourseRuns).Where(x => x.RecordStatus == RecordStatus.MigrationPending);
+            var bulkUploadReadyToGoLive = courses.SelectMany(c => c.CourseRuns).Where(x => x.RecordStatus == RecordStatus.BulkUploadReadyToGoLive);
 
             IEnumerable<CourseValidationResult> results = service.CourseValidationMessages(validCourses, ValidationMode.DataQualityIndicator).Value;
           
-
-            //IEnumerable<CourseValidationResult> results = service.CourseValidationMessages(courses, ValidationMode.BulkUploadCourse).Value;
             IEnumerable<string> courseMessages = results.SelectMany(c => c.Issues);
             IEnumerable<string> runMessages    = results.SelectMany(c => c.RunValidationResults)
                                                         .SelectMany(r => r.Issues);
@@ -93,7 +88,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
                                                                   .Result
                                                                   .Value;
 
-
             DashboardViewModel vm = new DashboardViewModel()
             {
                 SuccessHeader = successHeader,
@@ -103,11 +97,31 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 ArchivedCourseCount = counts.FirstOrDefault(c => c.Status == (int)RecordStatus.Archived).Count,
                 MigrationPendingCount = courses.SelectMany(c => c.CourseRuns).Where(x => x.RecordStatus == RecordStatus.MigrationPending).Count(),
                 PendingCourseCount = (from ICourseStatusCountResult c in counts
-                                       join int p in pendingStatuses
-                                       on c.Status equals p
-                                       select c.Count).Sum()
+                                      join int p in pendingStatuses
+                                      on c.Status equals p
+                                      select c.Count).Sum(),
+                BulkUploadPendingCount = bulkUploadPending.Count(),
+                BulkUploadReadyToGoLiveCount = bulkUploadReadyToGoLive.Count(),
+                BulkUploadTotalCount = bulkUploadPending.Count()+ bulkUploadReadyToGoLive.Count()
+
+
             };
 
+            IEnumerable<Services.BlobStorageService.BlobFileInfo> list = blobStorageService.GetFileList(UKPRN + "/Bulk Upload/Files/").OrderByDescending(x => x.DateUploaded).ToList();
+            if (list.Any())
+            {
+                vm.FileUploadDate = list.FirstOrDefault().DateUploaded.Value;
+            }
+
+            var totalCourses = vm.LiveCourseCount + vm.MigrationPendingCount;
+
+            var BulkUpLoadErrorMessage = vm.BulkUploadTotalCount.ToString() + WebHelper.GetCourseTextToUse(vm.BulkUploadTotalCount) + " upload in a file on " + vm.FileUploadDate?.ToString("dd/MM/yyyy") + " have " + vm.BulkUploadPendingCount.ToString() + " errors. Fix these to publish all of your courses.";
+            var BulkUpLoadNoErrorMessage = vm.BulkUploadTotalCount.ToString() + WebHelper.GetCourseTextToUse(vm.BulkUploadPendingCount) + " uploaded on " + vm.FileUploadDate?.ToString("dd/MM/yyyy") + " have no errors, but are not listed on the Course directory becuase you have not published them.";
+            vm.BulkUploadMessage = (vm.BulkUploadTotalCount > 0 & vm.BulkUploadPendingCount == 0) ? BulkUpLoadNoErrorMessage : BulkUpLoadErrorMessage;
+
+            vm.MigrationErrorMessage = totalCourses.ToString() + WebHelper.GetCourseTextToUse(totalCourses) + " have been migrated to the new Course directory. You have " + vm.MigrationPendingCount.ToString() + WebHelper.GetCourseTextToUse(vm.MigrationPendingCount) + " with errors and these must be fixed before they can be published.";
+            vm.MigrationOKMessage = vm.LiveCourseCount.ToString() + WebHelper.GetCourseTextToUse(vm.LiveCourseCount) + " have been migrated to the new Course directory. Any courses with a missing LARS have been deleted.";
+            
             return vm;
         }
 
@@ -121,7 +135,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             if (!UKPRN.HasValue)
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
 
-            var vm = GetDashboardViewModel(_courseService, UKPRN, "");
+            var vm = GetDashboardViewModel(_courseService, _blobStorageService,UKPRN, "");
 
             if (vm.PendingCourseCount > 0)
             {
