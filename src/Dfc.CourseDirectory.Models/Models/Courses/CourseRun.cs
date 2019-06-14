@@ -145,5 +145,6 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         public string UpdatedBy { get; set; }
         public IEnumerable<SubRegionItemModel> SubRegions { get; set; }
         public IEnumerable<string> ValidationErrors { get; set; }
+        public IEnumerable<BulkUploadError> BulkUploadErrors { get; set; }
     }
 }

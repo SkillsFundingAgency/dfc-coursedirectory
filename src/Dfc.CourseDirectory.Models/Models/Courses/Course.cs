@@ -35,6 +35,7 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         public bool IsValid { get; set; }
 
         public IEnumerable<string> ValidationErrors { get; set; }
+        public IEnumerable<BulkUploadError> BulkUploadErrors { get; set; }
         public RecordStatus CourseStatus
         {
             get
