@@ -45,6 +45,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             Throw.IfNull(contextAccessor, nameof(contextAccessor));
             Throw.IfNull(bulkUploadService, nameof(bulkUploadService));
             Throw.IfNull(blobService, nameof(blobService));
+            Throw.IfNull(courseService, nameof(courseService));
             Throw.IfNull(env, nameof(env));
             Throw.IfNull(courseService, nameof(courseService));
 
@@ -52,6 +53,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _contextAccessor = contextAccessor;
             _bulkUploadService = bulkUploadService;
             _blobService = blobService;
+            _courseService = courseService;
             _env = env;
             _courseService = courseService;
         }
@@ -180,16 +182,46 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteFile(DeleteFileViewModel model)
         {
-            // where to go????
-            return RedirectToAction("DeleteFileConfirmation", "Bulkupload");
+            DateTimeOffset fileUploadDate = new DateTimeOffset();
+            int? sUKPRN = _session.GetInt32("UKPRN");
+            int UKPRN;
+            if (!sUKPRN.HasValue)
+            {
+                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
+            }
+            else
+            {
+                UKPRN = sUKPRN ?? 0;
+            }
+
+            IEnumerable<Services.BlobStorageService.BlobFileInfo> list = _blobService.GetFileList(UKPRN + "/Bulk Upload/Files/").OrderByDescending(x => x.DateUploaded).ToList();
+            if (list.Any())
+            {
+                fileUploadDate = list.FirstOrDefault().DateUploaded.Value;
+                var archiveFilesResult = _blobService.ArchiveFiles($"{UKPRN.ToString()}/Bulk Upload/Files/");
+            }
+
+           
+            var deleteBulkuploadResults = _courseService.DeleteBulkUploadCourses(UKPRN);
+
+            if (deleteBulkuploadResults.Result.IsSuccess)
+            {
+                return RedirectToAction("DeleteFileConfirmation", "Bulkupload", new { fileUploadDate = fileUploadDate });
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home", new { errmsg = "Delete All Bulk Uploaded Courses Error" });
+            }
+
+           
         }
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> DeleteFileConfirmation()
+        public async Task<IActionResult> DeleteFileConfirmation(DateTimeOffset fileUploadDate)
         {
             var model = new DeleteFileConfirmationViewModel();
-            model.FileUploadedDate = DateTime.Now;
+            model.FileUploadedDate = fileUploadDate.ToString("dd MMM yyyy hh:mm");
 
             return View("../Bulkupload/DeleteFileConfirmation/Index", model);
         }

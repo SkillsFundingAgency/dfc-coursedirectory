@@ -126,11 +126,22 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Delete(DeleteViewModel model)
         {
+
+            int? sUKPRN = _session.GetInt32("UKPRN");
+            int UKPRN;
+            if (!sUKPRN.HasValue)
+            {
+                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
+            }
+            else
+            {
+                UKPRN = sUKPRN ?? 0;
+            }
+
             switch (model.MigrationDeleteOptions)
             {
                 case MigrationDeleteOptions.DeleteMigrations:
-                    await _courseService.ChangeCourseRunStatusesForUKPRNSelection(1, (int)RecordStatus.MigrationPending,
-                        (int)RecordStatus.Archived);
+                    await _courseService.ChangeCourseRunStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.MigrationPending,(int)RecordStatus.Archived);
                     return View("../Migration/DeleteConfirmed/Index");
                 case MigrationDeleteOptions.Cancel:
                     return RedirectToAction("Index", "PublishCourses", new { publishMode = PublishMode.Migration });

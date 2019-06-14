@@ -1,8 +1,5 @@
-﻿
-@using Dfc.CourseDirectory.Models.Enums
-@using Dfc.CourseDirectory.Models.Models.Courses
-@using Dfc.CourseDirectory.Web.Helpers
-@using System.ComponentModel.DataAnnotations
+﻿@using Dfc.CourseDirectory.Web.Helpers
+@using Dfc.CourseDirectory.Models.Models.Providers
 @model Dfc.CourseDirectory.Web.ViewModels.ProviderDetailsViewModel
 @{
     Layout = "_Layout_Your_Courses";
@@ -43,11 +40,14 @@
                         <th class="govuk-table__header" scope="row">Your alias</th>
                         <td class="govuk-table__cell">@Model.Alias</td>
                         <td class="govuk-table__cell">
-                            @if (string.IsNullOrEmpty(Model.Alias)) {
+                            @if (string.IsNullOrEmpty(Model.Alias))
+                            {
                                 <a class="govuk-link" style="padding-right:1em"
                                    asp-controller="Provider"
                                    asp-action="AddOrEditDetails">Add</a>
-                            } else {
+                            }
+                            else
+                            {
                                 <a class="govuk-link" style="padding-right:1em"
                                    asp-controller="Provider"
                                    asp-action="AddOrEditDetails">Edit</a>
@@ -55,14 +55,37 @@
                         </td>
                     </tr>
                     <tr class="govuk-table__row">
+                        <th class="govuk-table__header" scope="row">Provider Type</th>
+                        <td class="govuk-table__cell">@WebHelper.GetEnumDescription(Model.ProviderType)</td>
+                        <td class="govuk-table__cell">
+                            @if (Model.ProviderType == ProviderType.undefined)
+                            {
+                                <a class="govuk-link" style="padding-right:1em"
+                                   asp-controller="Provider"
+                                   asp-action="AddOrEditDetails"
+                                   asp-route-updateProviderType="true">Add</a>
+                            }
+                            else
+                            {
+                                <a class="govuk-link" style="padding-right:1em"
+                                   asp-controller="Provider"
+                                   asp-action="AddOrEditDetails"
+                                   asp-route-updateProviderType="true">Edit</a>
+                            }
+                        </td>
+                    </tr>
+                    <tr class="govuk-table__row">
                         <th class="govuk-table__header" scope="row">Brief overview of your organisation for employers</th>
                         <td class="govuk-table__cell"></td>
                         <td class="govuk-table__cell">
-                            @if (string.IsNullOrEmpty(Model.BriefOverview)) {
+                            @if (string.IsNullOrEmpty(Model.BriefOverview))
+                            {
                                 <a class="govuk-link" style="padding-right:1em"
                                    asp-controller="Provider"
                                    asp-action="AddOrEditDetails">Add</a>
-                            } else {
+                            }
+                            else
+                            {
                                 <a class="govuk-link" style="padding-right:1em"
                                    asp-controller="Provider"
                                    asp-action="AddOrEditDetails">Edit</a>
@@ -109,7 +132,7 @@
                 @Model.Email
             </p>
             <h3 class="govuk-heading-m m20" style="margin-bottom:0px">Telephone</h3>
-            <p style="margin-top:0px" >
+            <p style="margin-top:0px">
                 @Model.Telephone
             </p>
         </div>

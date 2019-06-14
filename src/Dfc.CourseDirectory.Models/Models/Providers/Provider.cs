@@ -1,6 +1,7 @@
 ﻿using Dfc.CourseDirectory.Models.Interfaces.Providers;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 
 namespace Dfc.CourseDirectory.Models.Models.Providers
@@ -35,6 +36,7 @@ namespace Dfc.CourseDirectory.Models.Models.Providers
             VerificationDetails = verificationdetails;
 
         }
+        public ProviderType ProviderType { get; set; }
     }
 
     public enum Status
@@ -42,5 +44,16 @@ namespace Dfc.CourseDirectory.Models.Models.Providers
         Registered = 0,
         Onboarded = 1,
         Unregistered = 2
+    }
+
+    public enum ProviderType
+    {
+        undefined = 0,
+        [Description("F.E.")]
+        Fe = 1,
+        [Description("Apprenticeships")]
+        Apprenticeship = 2,
+        [Description("Both")]
+        Both = Fe | Apprenticeship
     }
 }
