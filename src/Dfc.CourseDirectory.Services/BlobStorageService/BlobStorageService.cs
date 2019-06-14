@@ -35,7 +35,7 @@ namespace Dfc.CourseDirectory.Services.BlobStorageService
         private readonly string _templatePath;
 
         private readonly CloudStorageAccount _account;
-        private readonly CloudBlobClient _blobClient;
+        //private readonly CloudBlobClient _blobClient;
         private readonly CloudBlobContainer _container;
 
         public BlobStorageService(
