@@ -86,19 +86,17 @@ namespace Dfc.CourseDirectory.Web.Controllers
                                                         .Value
                                                         .Value
                                                         .SelectMany(o => o.Value)
-                                                        .SelectMany(i => i.Value);
+                                                        .SelectMany(i => i.Value)
+                                                        .Where( x => x.CourseStatus == RecordStatus.BulkUploadPending || x.CourseStatus == RecordStatus.BulkUploadReadyToGoLive);
 
-            //int[] pendingStatuses = new int[] { (int)RecordStatus.Pending, (int)RecordStatus.BulkUploadPending, (int)RecordStatus.APIPending, (int)RecordStatus.MigrationPending, (int)RecordStatus.MigrationReadyToGoLive, (int)RecordStatus.BulkUploadReadyToGoLive };
-            //int[] bulkStatuses = new int[] { (int)RecordStatus.BulkUploadPending };
-            //IEnumerable<Course> validCourses = courses.Where(c => c.IsValid);
+            var courseBUErrors = courses.Where(x => x.BulkUploadErrors != null).SelectMany(y => y.BulkUploadErrors).ToList();
+            var courseRunsBUErrors = courses.SelectMany(x => x.CourseRuns.Where(y => y.BulkUploadErrors != null).SelectMany(y => y.BulkUploadErrors)).ToList();
+            var totalErrorList = courseBUErrors.Union(courseRunsBUErrors).OrderBy(x => x.LineNumber);                     
 
-            IEnumerable<CourseValidationResult> results = _courseService.CourseValidationMessages(courses, ValidationMode.EditCourseBU).Value;
 
             int counter = 1;
-            IEnumerable<string> headers = new string[] { "ID,Row Number,Column Name,Error Description" };
-            IEnumerable<string> csvlines = results.SelectMany(r => r.Issues
-                                                                    .Select(i => string.Join(",", new string[] { counter.ToString(), counter++.ToString(), i, i } ))
-                                                             );
+            IEnumerable<string> headers = new string[] { "Row Number,Column Name,Error Description" };
+            IEnumerable<string> csvlines = totalErrorList.Select(i => string.Join(",", new string[] { i.LineNumber.ToString(), i.Header, i.Error } ));
             string report = string.Join(Environment.NewLine, headers.Concat(csvlines));
             byte[] data = Encoding.ASCII.GetBytes(report);
             MemoryStream ms = new MemoryStream(data);
@@ -114,7 +112,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             ms.Position = 0;
             FileStreamResult result = new FileStreamResult(ms, MediaTypeNames.Text.Plain);
             DateTime d = DateTime.UtcNow;
-            result.FileDownloadName = $"Bulk_upload_error_{d.Day.TwoChars()}_{d.Month.TwoChars()}_{d.Year}_{d.Hour.TwoChars()}_{d.Minute.TwoChars()}.csv";
+            result.FileDownloadName = $"Bulk_upload_errors_{UKPRN}_{d.Day.TwoChars()}_{d.Month.TwoChars()}_{d.Year}_{d.Hour.TwoChars()}_{d.Minute.TwoChars()}.csv";
             return result;
         }
     }

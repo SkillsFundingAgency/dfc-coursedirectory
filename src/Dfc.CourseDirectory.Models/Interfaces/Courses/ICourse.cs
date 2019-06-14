@@ -38,5 +38,6 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Courses
         bool IsValid { get; set; }
         IEnumerable<CourseRun> CourseRuns { get; set; }
         IEnumerable<string> ValidationErrors { get; set; }
+        IEnumerable<BulkUploadError> BulkUploadErrors { get; set; }
     }
 }
