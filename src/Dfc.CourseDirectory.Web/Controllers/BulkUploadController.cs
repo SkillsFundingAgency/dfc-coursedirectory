@@ -16,7 +16,7 @@ using Dfc.CourseDirectory.Services.Interfaces.BlobStorageService;
 using Dfc.CourseDirectory.Services.Interfaces.BulkUploadService;
 using Dfc.CourseDirectory.Web.ViewModels.BulkUpload;
 using Dfc.CourseDirectory.Web.ViewModels.PublishCourses;
-
+using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -27,6 +27,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IBulkUploadService _bulkUploadService;
         private readonly IBlobStorageService _blobService;
+        private readonly ICourseService _courseService;
 
         private IHostingEnvironment _env;
         private ISession _session => _contextAccessor.HttpContext.Session;
@@ -36,6 +37,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 IHttpContextAccessor contextAccessor,
                 IBulkUploadService bulkUploadService,
                 IBlobStorageService blobService,
+                ICourseService courseService,
                 IHostingEnvironment env)
         {
             Throw.IfNull(logger, nameof(logger));
@@ -43,12 +45,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
             Throw.IfNull(bulkUploadService, nameof(bulkUploadService));
             Throw.IfNull(blobService, nameof(blobService));
             Throw.IfNull(env, nameof(env));
+            Throw.IfNull(courseService, nameof(courseService));
 
             _logger = logger;
             _contextAccessor = contextAccessor;
             _bulkUploadService = bulkUploadService;
             _blobService = blobService;
             _env = env;
+            _courseService = courseService;
         }
 
 
@@ -144,7 +148,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             var model = new DownloadErrorFileViewModel() { ErrorFileCreatedDate = DateTime.Now, UKPRN = UKPRN } ;
             return View("../Bulkupload/DownloadErrorFile/Index", model);
         }
-
 
         [Authorize]
         [HttpPost]

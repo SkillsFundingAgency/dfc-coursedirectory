@@ -274,10 +274,10 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
         {
             foreach (var course in courses)
             {
-                course.ValidationErrors = _courseService.ValidateCourse(course);
+                course.ValidationErrors = _courseService.ValidateCourse(course).Select(x => x.Value);
                 foreach (var courseRun in course.CourseRuns)
                 {
-                    courseRun.ValidationErrors = _courseService.ValidateCourseRun(courseRun, validationMode);
+                    courseRun.ValidationErrors = _courseService.ValidateCourseRun(courseRun, validationMode).Select(x => x.Value);
                 }
             }
             return courses;
