@@ -441,7 +441,7 @@
               },
               {
                 "name": "PostCodeSearchSettings__FindAddressesBaseUrl",
-                "value": "http://services.postcodeanywhere.co.uk/CapturePlus/Interactive/Find/2.1/json.ws?"
+                "value": "https://services.postcodeanywhere.co.uk/PostcodeAnywhere/Interactive/FindByPostcode/v1.00/json3.ws?"
               },
               {
                 "name": "PostCodeSearchSettings__RetrieveAddressBaseUrl",

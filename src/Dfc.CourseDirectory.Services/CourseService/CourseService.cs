@@ -443,14 +443,14 @@ namespace Dfc.CourseDirectory.Services.CourseService
 
                     if(mode != ValidationMode.DataQualityIndicator)
                     {
-                        cvr.Issues = ValidateCourse(c);
+                        cvr.Issues = ValidateCourse(c).Select(x => x.Value).ToList();
                     }
                     else
                     {
                         cvr.Issues = new List<string>();
                     }
                     foreach (ICourseRun r in c.CourseRuns)
-                        cvr.RunValidationResults.Add(new CourseRunValidationResult() { Run = r, Issues = ValidateCourseRun(r, mode) });
+                        cvr.RunValidationResults.Add(new CourseRunValidationResult() { Run = r, Issues = ValidateCourseRun(r, mode).Select(x => x.Value)});
                     results.Add(cvr);
                 }
                 return Result.Ok(results);
@@ -571,90 +571,90 @@ namespace Dfc.CourseDirectory.Services.CourseService
             }
         }
 
-        public IList<string> ValidateCourse(ICourse course)
+        public IList<KeyValuePair<string,string>> ValidateCourse(ICourse course)
         {
-            var validationMessages = new List<string>();
+            List<KeyValuePair<string, string>> validationMessages = new List<KeyValuePair<string, string>>();
 
             // CourseDescription
             if (string.IsNullOrEmpty(course.CourseDescription))
             {
-                validationMessages.Add("Course For decription is required");
+                validationMessages.Add(new KeyValuePair<string, string>("WHO_IS_THIS_COURSE_FOR", "Course For description is required"));
             }
             else
             {
                 if (!HasOnlyFollowingValidCharacters(course.CourseDescription))
-                    validationMessages.Add("Course For decription contains invalid character");
+                    validationMessages.Add(new KeyValuePair<string, string>("WHO_IS_THIS_COURSE_FOR", "Course For description contains invalid character"));
                 if (course.CourseDescription.Length > _courseForTextFieldMaxChars)
-                    validationMessages.Add($"Who Is This Course For? decription must be { _courseForTextFieldMaxChars } characters or less");
+                    validationMessages.Add(new KeyValuePair<string, string>("WHO_IS_THIS_COURSE_FOR",$"Who is this course for? must be { _courseForTextFieldMaxChars } characters or less"));
             }
 
             // EntryRequirements
             if (!string.IsNullOrEmpty(course.EntryRequirements))
             {
                 if (!HasOnlyFollowingValidCharacters(course.EntryRequirements))
-                    validationMessages.Add("Entry Requirements contains invalid character");
+                    validationMessages.Add(new KeyValuePair<string, string>("ENTRY_REQUIREMENTS", "Entry Requirements contains invalid character"));
                 if (course.EntryRequirements.Length > _entryRequirementsTextFieldMaxChars)
-                    validationMessages.Add($"Entry Requirements must be { _entryRequirementsTextFieldMaxChars } characters or less");
+                    validationMessages.Add(new KeyValuePair<string, string>("ENTRY_REQUIREMENTS", $"Entry Requirements must be { _entryRequirementsTextFieldMaxChars } characters or less"));
             }
 
             // WhatYoullLearn 
             if (!string.IsNullOrEmpty(course.WhatYoullLearn))
             {
                 if (!HasOnlyFollowingValidCharacters(course.WhatYoullLearn))
-                    validationMessages.Add("What you will Learn contains invalid character");
+                    validationMessages.Add(new KeyValuePair<string, string>("WHAT_YOU_WILL_LEARN", "What you will Learn contains invalid character"));
                 if (course.WhatYoullLearn.Length > _whatWillLearnTextFieldMaxChars)
-                    validationMessages.Add($"What you will Learn must be { _whatWillLearnTextFieldMaxChars } characters or less");
+                    validationMessages.Add(new KeyValuePair<string, string>("WHAT_YOU_WILL_LEARN", $"What you will Learn must be { _whatWillLearnTextFieldMaxChars } characters or less"));
             }
 
             // HowYoullLearn 
             if (!string.IsNullOrEmpty(course.HowYoullLearn))
             {
                 if (!HasOnlyFollowingValidCharacters(course.HowYoullLearn))
-                    validationMessages.Add("How you'll learn contains invalid character");
+                    validationMessages.Add(new KeyValuePair<string, string>("HOW_YOU_WILL_LEARN", "How you'll learn contains invalid character"));
                 if (course.HowYoullLearn.Length > _howYouWillLearnTextFieldMaxChars)
-                    validationMessages.Add($"How you'll learn must be { _howYouWillLearnTextFieldMaxChars } characters or less");
+                    validationMessages.Add(new KeyValuePair<string, string>("HOW_YOU_WILL_LEARN", $"How you'll learn must be { _howYouWillLearnTextFieldMaxChars } characters or less"));
             }
 
             // WhatYoullNeed 
             if (!string.IsNullOrEmpty(course.WhatYoullNeed))
             {
                 if (!HasOnlyFollowingValidCharacters(course.WhatYoullNeed))
-                    validationMessages.Add("What you'll need to bring contains invalid character");
+                    validationMessages.Add(new KeyValuePair<string, string>("WHAT_YOU_WILL_NEED_TO_BRING", "What you'll need to bring contains invalid character"));
                 if (course.WhatYoullNeed.Length > _whatYouNeedTextFieldMaxChars)
-                    validationMessages.Add($"What you'll need to bring must be { _whatYouNeedTextFieldMaxChars } characters or less");
+                    validationMessages.Add(new KeyValuePair<string, string>("WHAT_YOU_WILL_NEED_TO_BRING", $"What you'll need to bring must be { _whatYouNeedTextFieldMaxChars } characters or less"));
             }
 
             // HowYoullBeAssessed 
             if (!string.IsNullOrEmpty(course.HowYoullBeAssessed))
             {
                 if (!HasOnlyFollowingValidCharacters(course.HowYoullBeAssessed))
-                    validationMessages.Add("How you'll be assessed contains invalid character");
+                    validationMessages.Add(new KeyValuePair<string, string>("HOW_YOU_WILL_BE_ASSESSED", "How you'll be assessed contains invalid character"));
                 if (course.HowYoullBeAssessed.Length > _howAssessedTextFieldMaxChars)
-                    validationMessages.Add($"How you'll be assessed must be { _howAssessedTextFieldMaxChars } characters or less");
+                    validationMessages.Add(new KeyValuePair<string, string>("HOW_YOU_WILL_BE_ASSESSED", $"How you'll be assessed must be { _howAssessedTextFieldMaxChars } characters or less"));
             }
 
             // WhereNext 
             if (!string.IsNullOrEmpty(course.WhereNext))
             {
                 if (!HasOnlyFollowingValidCharacters(course.WhereNext))
-                    validationMessages.Add("'Where next' contains invalid character");
+                    validationMessages.Add(new KeyValuePair<string, string>("WHERE_NEXT", "'Where next' contains invalid character"));
                 if (course.WhereNext.Length > _whereNextTextFieldMaxChars)
-                    validationMessages.Add($"'Where next' must be { _whereNextTextFieldMaxChars } characters or less");
+                    validationMessages.Add(new KeyValuePair<string, string>("WHERE_NEXT", $"'Where next' must be { _whereNextTextFieldMaxChars } characters or less"));
             }
 
             return validationMessages;
         }
 
-        public IList<string> ValidateCourseRun(ICourseRun courseRun, ValidationMode validationMode)
+        public IList<KeyValuePair<string, string>> ValidateCourseRun(ICourseRun courseRun, ValidationMode validationMode)
         {
-            var validationMessages = new List<string>();
+            IList<KeyValuePair<string, string>> validationMessages = new List<KeyValuePair<string, string>>();
 
             //Filtered down validation rules for DQI based on story
             //To be made more generic when we bring additional rules in
             if (validationMode == ValidationMode.DataQualityIndicator)
             {
                 if (courseRun.StartDate < DateTime.Today)
-                    validationMessages.Add($"courses need their start date updating");
+                    validationMessages.Add(new KeyValuePair<string, string>("START_DATE", $"courses need their start date updating"));
                 return validationMessages;
             }
 
@@ -662,23 +662,23 @@ namespace Dfc.CourseDirectory.Services.CourseService
             // CourseName
             if (string.IsNullOrEmpty(courseRun.CourseName))
             {
-                validationMessages.Add("Enter Course Name");
+                validationMessages.Add(new KeyValuePair<string, string>("COURSE_NAME", "Enter Course Name"));
             }
             else
             {
                 if (!HasOnlyFollowingValidCharacters(courseRun.CourseName))
-                    validationMessages.Add("Course Name contains invalid character");
+                    validationMessages.Add(new KeyValuePair<string, string>("COURSE_NAME", "Course Name contains invalid character"));
                 if (courseRun.CourseName.Length > 255)
-                    validationMessages.Add($"Course Name must be 255 characters or less");
+                    validationMessages.Add(new KeyValuePair<string, string>("COURSE_NAME", $"Course Name must be 255 characters or less"));
             }
 
             // ProviderCourseID
             if (!string.IsNullOrEmpty(courseRun.ProviderCourseID))
             {
                 if (!HasOnlyFollowingValidCharacters(courseRun.ProviderCourseID))
-                    validationMessages.Add("ID contains invalid characters");
+                    validationMessages.Add(new KeyValuePair<string, string>("ID", "ID contains invalid characters"));
                 if (courseRun.ProviderCourseID.Length > 255)
-                    validationMessages.Add($"The maximum length of 'ID' is 255 characters");
+                    validationMessages.Add(new KeyValuePair<string, string>("ID", $"The maximum length of 'ID' is 255 characters"));
             }
 
             // DeliveryMode
@@ -688,15 +688,15 @@ namespace Dfc.CourseDirectory.Services.CourseService
 
                     // VenueId
                     if (courseRun.VenueId == null || courseRun.VenueId == Guid.Empty)
-                        validationMessages.Add($"Select venue");
+                        validationMessages.Add(new KeyValuePair<string, string>("VENUE", $"Select venue"));
 
                     // StudyMode
                     if (courseRun.StudyMode.Equals(StudyMode.Undefined))
-                        validationMessages.Add($"Select Study Mode");
+                        validationMessages.Add(new KeyValuePair<string, string>("STUDY_MODE", $"Select Study Mode"));
 
                     // AttendancePattern
                     if (courseRun.AttendancePattern.Equals(AttendancePattern.Undefined))
-                        validationMessages.Add($"Select Attendance Pattern");
+                        validationMessages.Add(new KeyValuePair<string, string>("ATTENDANCE_PATTERN", $"Select Attendance Pattern"));
 
                     break;
                 case DeliveryMode.Online:
@@ -706,11 +706,11 @@ namespace Dfc.CourseDirectory.Services.CourseService
 
                     // Regions
                     if (courseRun.Regions == null || courseRun.Regions.Count().Equals(0))
-                        validationMessages.Add($"Select a region");
+                        validationMessages.Add(new KeyValuePair<string, string>("NULL", $"Select a region"));
                     break;
                 case DeliveryMode.Undefined: // Question ???
                 default:
-                    validationMessages.Add($"Select Delivery Mode");
+                    validationMessages.Add(new KeyValuePair<string, string>("NULL", $"Select Delivery Mode"));
                     break;
             }
 
@@ -727,11 +727,11 @@ namespace Dfc.CourseDirectory.Services.CourseService
                     case ValidationMode.BulkUploadCourse:
                         if (courseRun.StartDate < DateTime.Now)
                         {
-                            validationMessages.Add($"Start Date cannot earlier than Today's Date");
+                            validationMessages.Add(new KeyValuePair<string, string>("NULL", $"Start Date cannot be earlier than today's date"));
                         }
                         if (courseRun.StartDate > DateTime.Now.AddYears(2))
                         {
-                            validationMessages.Add($"Start Date cannot be later than 2 years from today’s date");
+                            validationMessages.Add(new KeyValuePair<string, string>("NULL", $"Start Date cannot be later than 2 years from today’s date"));
                         }
                         break;
                     case ValidationMode.EditCourseYC:
@@ -740,60 +740,60 @@ namespace Dfc.CourseDirectory.Services.CourseService
                         break;
                     case ValidationMode.MigrateCourse:
                         if (courseRun.StartDate > DateTime.Now.AddYears(2))
-                            validationMessages.Add($"Start Date cannot be later than 2 years from today’s date");
+                            validationMessages.Add(new KeyValuePair<string, string>("NULL", $"Start Date cannot be later than 2 years from today’s date"));
                         break;
                     case ValidationMode.Undefined:
                     default:
-                        validationMessages.Add($"Validation Mode was not defined.");
+                        validationMessages.Add(new KeyValuePair<string, string>("NULL", $"Validation Mode was not defined."));
                         break;
                 }
             }
 
             if (courseRun.StartDate == null && courseRun.FlexibleStartDate == false)
-                validationMessages.Add($"Either 'Defined Start Date' or 'Flexible Start Date' has to be provided");
+                validationMessages.Add(new KeyValuePair<string, string>("START_DATE+FLEXIBLE_START_DATE", $"Either 'Defined Start Date' or 'Flexible Start Date' has to be provided"));
 
             // CourseURL
             if (!string.IsNullOrEmpty(courseRun.CourseURL))
             {
                 if (!IsValidUrl(courseRun.CourseURL))
-                    validationMessages.Add("The format of URL is incorrect");
+                    validationMessages.Add(new KeyValuePair<string, string>("URL", "The format of URL is incorrect"));
                 if (courseRun.CourseURL.Length > 255)
-                    validationMessages.Add($"The maximum length of URL is 255 characters");
+                    validationMessages.Add(new KeyValuePair<string, string>("URL", $"The maximum length of URL is 255 characters"));
             }
 
             // Cost & CostDescription
             if (string.IsNullOrEmpty(courseRun.CostDescription) && courseRun.Cost.Equals(null))
-                validationMessages.Add($"Enter cost or cost description");
+                validationMessages.Add(new KeyValuePair<string, string>("COST", $"Enter cost or cost description"));
 
             if (!string.IsNullOrEmpty(courseRun.CostDescription))
             {
                 if (!HasOnlyFollowingValidCharacters(courseRun.CostDescription))
-                    validationMessages.Add("Cost Description contains invalid characters");
+                    validationMessages.Add(new KeyValuePair<string, string>("COST_DESCRIPTION", "Cost Description contains invalid characters"));
                 if (courseRun.CostDescription.Length > 255)
-                    validationMessages.Add($"Cost description must be 255 characters or less");
+                    validationMessages.Add(new KeyValuePair<string, string>("COST_DESCRIPTION", $"Cost description must be 255 characters or less"));
             }
 
             if (!courseRun.Cost.Equals(null))
             {
                 if (!IsCorrectCostFormatting(courseRun.Cost.ToString()))
-                    validationMessages.Add($"Enter the cost in pounds and pence");
+                    validationMessages.Add(new KeyValuePair<string, string>("COST", $"Enter the cost in pounds and pence"));
                 if(courseRun.Cost > decimal.Parse("999999.99"))
-                    validationMessages.Add($"Maximum allowed cost value is 999,999.99");
+                    validationMessages.Add(new KeyValuePair<string, string>("COST", $"Maximum allowed cost value is 999,999.99"));
             }
 
             // DurationUnit
             if (courseRun.DurationUnit.Equals(DurationUnit.Undefined))
-                validationMessages.Add($"Select Duration Unit");
+                validationMessages.Add(new KeyValuePair<string, string>("DURATION_UNIT", $"Select Duration Unit"));
 
             // DurationValue
             if (courseRun.DurationValue.Equals(null))
             {
-                validationMessages.Add($"Enter Duration");
+                validationMessages.Add(new KeyValuePair<string, string>("DURATION", $"Enter Duration"));
             }
             else
             {
                 if (!ValidDurationValue(courseRun.DurationValue?.ToString()))
-                    validationMessages.Add("Duration must be numeric and maximum length is 3 digits");
+                    validationMessages.Add(new KeyValuePair<string, string>("DURATION", "Duration must be numeric and maximum length is 3 digits"));
             }
 
             return validationMessages;
@@ -894,7 +894,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
         {
             Throw.IfLessThan(0, UKPRN, nameof(UKPRN));
 
-            var response = await _httpClient.GetAsync(new Uri(_updateStatusUri.AbsoluteUri
+            var response = await _httpClient.GetAsync(new Uri(_deleteBulkUploadCoursesUri.AbsoluteUri
                 + "&UKPRN=" + UKPRN));
             _logger.LogHttpResponseMessage("Delete Bulk Upload Course Status http response", response);
 

@@ -116,7 +116,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         [Authorize]
-        public async Task<IActionResult> AddOrEditDetails()
+        public async Task<IActionResult> AddOrEditDetails(bool updateProviderType)
         {
 
             var model = new ProviderDetailsAddOrEditViewModel();
@@ -135,11 +135,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 model = new ProviderDetailsAddOrEditViewModel();
                 model.AliasName = providerSearchResult.Value.Value.FirstOrDefault()?.Alias;
                 model.BriefOverview = providerSearchResult.Value.Value.FirstOrDefault()?.MarketingInformation;
+                model.ProviderType = providerSearchResult.Value.Value.FirstOrDefault()?.ProviderType ?? ProviderType.undefined;
             }
 
-
-            //model.BriefOverview = "<h6>xccssdsdssdsds</h6>\r\n<h1>fdffgf</h1>";
-            return View(model);
+            return updateProviderType ? View("UpdateProviderType", model) : View(model);
         }
 
         [Authorize]
@@ -154,7 +153,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
 
             model.BriefOverview.TrimEnd();
-            model.AliasName.Trim();
+
             var providerSearchResult = await _providerService.GetProviderByPRNAsync(new Services.ProviderService.ProviderSearchCriteria(UKPRN.ToString()));
 
             if (providerSearchResult.IsSuccess)
@@ -163,6 +162,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 Provider provider = providerSearchResult.Value.Value.FirstOrDefault();
                 provider.MarketingInformation = model.BriefOverview;
                 provider.Alias = model.AliasName;
+                provider.ProviderType = model.ProviderType;
 
                 try
                 {
@@ -182,9 +182,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             return RedirectToAction("Details", "Provider", new { });
         }
-
-
-
 
         [Authorize]
         public async Task<IActionResult> Details()
@@ -219,6 +216,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 model.UnitedKingdomProviderReferenceNumber = provider.UnitedKingdomProviderReferenceNumber;
                 model.BriefOverview = provider.MarketingInformation;
                 model.Alias = provider.Alias;
+                model.ProviderType = provider.ProviderType;
 
                 string AddressLine1 = string.Empty;
                 string AddressLine2 = string.Empty;

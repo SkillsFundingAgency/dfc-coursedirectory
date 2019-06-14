@@ -33,5 +33,6 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Courses
         string UpdatedBy { get; set; }
         IEnumerable<SubRegionItemModel> SubRegions { get; set; }
         IEnumerable<string> ValidationErrors { get; set; }
+        IEnumerable<BulkUploadError> BulkUploadErrors { get; set; }
     }
 }

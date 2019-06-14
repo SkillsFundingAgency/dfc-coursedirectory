@@ -8,6 +8,7 @@ using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Interfaces.Courses;
 using Dfc.CourseDirectory.Models.Models.Courses;
 using Dfc.CourseDirectory.Services.CourseService;
+using Dfc.CourseDirectory.Services.Interfaces.BlobStorageService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 using Dfc.CourseDirectory.Services.VenueService;
@@ -28,18 +29,21 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
         private ISession _session => _contextAccessor.HttpContext.Session;
         private readonly ICourseService _courseService;
         private readonly IVenueService _venueService;
+        private readonly IBlobStorageService _blobStorageService;
 
         public PublishCoursesController(ILogger<PublishCoursesController> logger,
             IHttpContextAccessor contextAccessor, ICourseService courseService,
-            IVenueService venueService)
+            IVenueService venueService,IBlobStorageService blobStorageService)
         {
             Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(courseService, nameof(courseService));
             Throw.IfNull(venueService, nameof(venueService));
+            Throw.IfNull(blobStorageService, nameof(blobStorageService));
             _logger = logger;
             _contextAccessor = contextAccessor;
             _courseService = courseService;
             _venueService = venueService;
+            _blobStorageService = blobStorageService;
         }
 
         [Authorize]
@@ -111,7 +115,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
 
                         if(courseRuns.Count() == 0 && courseId != null && courseRunId != null)
                         {
-                            var dashboardVm = DashboardController.GetDashboardViewModel(_courseService, _session.GetInt32("UKPRN"), notificationTitle);
+                            var dashboardVm = DashboardController.GetDashboardViewModel(_courseService, _blobStorageService,_session.GetInt32("UKPRN"), notificationTitle);
                             return RedirectToAction("IndexSuccess", "Home", dashboardVm);
                         }
 
@@ -270,10 +274,10 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
         {
             foreach (var course in courses)
             {
-                course.ValidationErrors = _courseService.ValidateCourse(course);
+                course.ValidationErrors = _courseService.ValidateCourse(course).Select(x => x.Value);
                 foreach (var courseRun in course.CourseRuns)
                 {
-                    courseRun.ValidationErrors = _courseService.ValidateCourseRun(courseRun, validationMode);
+                    courseRun.ValidationErrors = _courseService.ValidateCourseRun(courseRun, validationMode).Select(x => x.Value);
                 }
             }
             return courses;

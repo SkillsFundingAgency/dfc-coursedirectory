@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Models.Models.Providers;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 
@@ -49,7 +50,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels
 
         public string UnitedKingdomProviderReferenceNumber { get; set; }
 
-
+        public ProviderType ProviderType { get; set; }
 
     }
 }
