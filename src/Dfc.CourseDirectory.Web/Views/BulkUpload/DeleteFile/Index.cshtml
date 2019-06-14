@@ -12,7 +12,6 @@
         <div class="govuk-grid-column-two-thirds">
 
             <form class="govuk-!-margin-bottom-9" id="DownloadErrorFileForm" asp-controller="BulkUpload" asp-action="DeleteFile" method="post">
-                @*<a asp-controller="PublishCourses" asp-action="WhatDoYouWantToDoNext" class="govuk-back-link">Back</a><br />*@
                 <span class="govuk-caption-xl">Course Directory</span>
                 <h1 class="govuk-heading-xl">Delete this file (Stubbed)</h1>
 
@@ -25,7 +24,7 @@
                         <button type="submit" class="govuk-button" id="next">Continue</button>
                     </li>
                     <li class="flex-item" style="padding-top: 15px">
-                        <a class="govuk-link" asp-controller="PublishCourses" asp-action="WhatDoYouWantToDoNext">Cancel</a>
+                        <a class="govuk-link" asp-controller="BulkUpload" asp-action="WhatDoYouWantToDoNext">Cancel</a>
                     </li>
                 </ul>
              
