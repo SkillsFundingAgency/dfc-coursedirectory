@@ -69,11 +69,19 @@ namespace Dfc.CourseDirectory.Web.Controllers
             int[] migrationStatuses = new int[] { (int)RecordStatus.MigrationPending };
             IEnumerable<Course> validCourses = courses.Where(c => c.IsValid);
 
-            var all = courses.SelectMany(c => c.CourseRuns);
-            var live = courses.SelectMany(c => c.CourseRuns).Where(x => x.RecordStatus == RecordStatus.Live);
-            var bulkUploadPending = courses.SelectMany(c => c.CourseRuns).Where(x => x.RecordStatus == RecordStatus.BulkUploadPending);
-            var migrationPending = courses.SelectMany(c => c.CourseRuns).Where(x => x.RecordStatus == RecordStatus.MigrationPending);
-            var bulkUploadReadyToGoLive = courses.SelectMany(c => c.CourseRuns).Where(x => x.RecordStatus == RecordStatus.BulkUploadReadyToGoLive);
+            IEnumerable<CourseRun> all = courses.SelectMany(c => c.CourseRuns);
+            IEnumerable<CourseRun> live =                       courses.SelectMany(c => c.CourseRuns)
+                                                                       .Where(x => x.RecordStatus == RecordStatus.Live);
+            IEnumerable<Course>    bulkUploadCoursesPending =   courses.Where(x => ((int)x.CourseStatus & (int)RecordStatus.BulkUploadPending) > 0);
+            IEnumerable<CourseRun> bulkUploadRunsPending =      courses.SelectMany(c => c.CourseRuns)
+                                                                       .Where(x => x.RecordStatus == RecordStatus.BulkUploadPending);
+            IEnumerable<CourseRun> migrationPending =           courses.SelectMany(c => c.CourseRuns)
+                                                                       .Where(x => x.RecordStatus == RecordStatus.MigrationPending);
+            IEnumerable<CourseRun> bulkUploadReadyToGoLive =    courses.SelectMany(c => c.CourseRuns)
+                                                                       .Where(x => x.RecordStatus == RecordStatus.BulkUploadReadyToGoLive);
+
+
+            //var aaa = courses.Where(c => c.CourseStatus != RecordStatus.Archived);
 
             IEnumerable<CourseValidationResult> results = service.CourseValidationMessages(validCourses, ValidationMode.DataQualityIndicator).Value;
           
@@ -100,28 +108,22 @@ namespace Dfc.CourseDirectory.Web.Controllers
                                       join int p in pendingStatuses
                                       on c.Status equals p
                                       select c.Count).Sum(),
-                BulkUploadPendingCount = bulkUploadPending.Count(),
+                BulkUploadPendingCount = bulkUploadCoursesPending.Count() + bulkUploadRunsPending.Count(),
                 BulkUploadReadyToGoLiveCount = bulkUploadReadyToGoLive.Count(),
-                BulkUploadTotalCount = bulkUploadPending.Count()+ bulkUploadReadyToGoLive.Count()
-
-
+                BulkUploadTotalCount = bulkUploadCoursesPending.Count()+ bulkUploadReadyToGoLive.Count()
             };
 
             IEnumerable<Services.BlobStorageService.BlobFileInfo> list = blobStorageService.GetFileList(UKPRN + "/Bulk Upload/Files/").OrderByDescending(x => x.DateUploaded).ToList();
             if (list.Any())
-            {
                 vm.FileUploadDate = list.FirstOrDefault().DateUploaded.Value;
-            }
 
             var totalCourses = vm.LiveCourseCount + vm.MigrationPendingCount;
-
             var BulkUpLoadErrorMessage = vm.BulkUploadTotalCount.ToString() + WebHelper.GetCourseTextToUse(vm.BulkUploadTotalCount) + " upload in a file on " + vm.FileUploadDate?.ToString("dd/MM/yyyy") + " have " + vm.BulkUploadPendingCount.ToString() + " errors. Fix these to publish all of your courses.";
             var BulkUpLoadNoErrorMessage = vm.BulkUploadTotalCount.ToString() + WebHelper.GetCourseTextToUse(vm.BulkUploadPendingCount) + " uploaded on " + vm.FileUploadDate?.ToString("dd/MM/yyyy") + " have no errors, but are not listed on the Course directory becuase you have not published them.";
-            vm.BulkUploadMessage = (vm.BulkUploadTotalCount > 0 & vm.BulkUploadPendingCount == 0) ? BulkUpLoadNoErrorMessage : BulkUpLoadErrorMessage;
 
+            vm.BulkUploadMessage = (vm.BulkUploadTotalCount > 0 & vm.BulkUploadPendingCount == 0) ? BulkUpLoadNoErrorMessage : BulkUpLoadErrorMessage;
             vm.MigrationErrorMessage = totalCourses.ToString() + WebHelper.GetCourseTextToUse(totalCourses) + " have been migrated to the new Course directory. You have " + vm.MigrationPendingCount.ToString() + WebHelper.GetCourseTextToUse(vm.MigrationPendingCount) + " with errors and these must be fixed before they can be published.";
             vm.MigrationOKMessage = vm.LiveCourseCount.ToString() + WebHelper.GetCourseTextToUse(vm.LiveCourseCount) + " have been migrated to the new Course directory. Any courses with a missing LARS have been deleted.";
-            
             return vm;
         }
 
