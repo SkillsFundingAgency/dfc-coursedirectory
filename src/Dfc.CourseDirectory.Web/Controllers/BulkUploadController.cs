@@ -16,7 +16,7 @@ using Dfc.CourseDirectory.Services.Interfaces.BlobStorageService;
 using Dfc.CourseDirectory.Services.Interfaces.BulkUploadService;
 using Dfc.CourseDirectory.Web.ViewModels.BulkUpload;
 using Dfc.CourseDirectory.Web.ViewModels.PublishCourses;
-
+using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -27,6 +27,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IBulkUploadService _bulkUploadService;
         private readonly IBlobStorageService _blobService;
+        private readonly ICourseService _courseService;
 
         private IHostingEnvironment _env;
         private ISession _session => _contextAccessor.HttpContext.Session;
@@ -36,18 +37,21 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 IHttpContextAccessor contextAccessor,
                 IBulkUploadService bulkUploadService,
                 IBlobStorageService blobService,
+                ICourseService courseService,
                 IHostingEnvironment env)
         {
             Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(contextAccessor, nameof(contextAccessor));
             Throw.IfNull(bulkUploadService, nameof(bulkUploadService));
             Throw.IfNull(blobService, nameof(blobService));
+            Throw.IfNull(courseService, nameof(courseService));
             Throw.IfNull(env, nameof(env));
 
             _logger = logger;
             _contextAccessor = contextAccessor;
             _bulkUploadService = bulkUploadService;
             _blobService = blobService;
+            _courseService = courseService;
             _env = env;
         }
 
@@ -170,16 +174,46 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteFile(DeleteFileViewModel model)
         {
-            // where to go????
-            return RedirectToAction("DeleteFileConfirmation", "Bulkupload");
+            DateTimeOffset fileUploadDate = new DateTimeOffset();
+            int? sUKPRN = _session.GetInt32("UKPRN");
+            int UKPRN;
+            if (!sUKPRN.HasValue)
+            {
+                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
+            }
+            else
+            {
+                UKPRN = sUKPRN ?? 0;
+            }
+
+            IEnumerable<Services.BlobStorageService.BlobFileInfo> list = _blobService.GetFileList(UKPRN + "/Bulk Upload/Files/").OrderByDescending(x => x.DateUploaded).ToList();
+            if (list.Any())
+            {
+                fileUploadDate = list.FirstOrDefault().DateUploaded.Value;
+                var archiveFilesResult = _blobService.ArchiveFiles($"{UKPRN.ToString()}/Bulk Upload/Files/");
+            }
+
+           
+            var deleteBulkuploadResults = _courseService.DeleteBulkUploadCourses(UKPRN);
+
+            if (deleteBulkuploadResults.Result.IsSuccess)
+            {
+                return RedirectToAction("DeleteFileConfirmation", "Bulkupload", new { fileUploadDate = fileUploadDate });
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home", new { errmsg = "Delete All Bulk Uploaded Courses Error" });
+            }
+
+           
         }
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> DeleteFileConfirmation()
+        public async Task<IActionResult> DeleteFileConfirmation(DateTimeOffset fileUploadDate)
         {
             var model = new DeleteFileConfirmationViewModel();
-            model.FileUploadedDate = DateTime.Now;
+            model.FileUploadedDate = fileUploadDate.ToString("dd MMM yyyy hh:mm");
 
             return View("../Bulkupload/DeleteFileConfirmation/Index", model);
         }

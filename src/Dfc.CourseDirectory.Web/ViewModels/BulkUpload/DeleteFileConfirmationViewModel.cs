@@ -15,7 +15,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels.BulkUpload
     public class DeleteFileConfirmationViewModel
     {
 
-       public DateTime FileUploadedDate { get; set; }
+       public string FileUploadedDate { get; set; }
 
 
     }

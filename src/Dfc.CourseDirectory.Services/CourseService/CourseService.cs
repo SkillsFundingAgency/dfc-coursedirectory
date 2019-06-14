@@ -894,7 +894,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
         {
             Throw.IfLessThan(0, UKPRN, nameof(UKPRN));
 
-            var response = await _httpClient.GetAsync(new Uri(_updateStatusUri.AbsoluteUri
+            var response = await _httpClient.GetAsync(new Uri(_deleteBulkUploadCoursesUri.AbsoluteUri
                 + "&UKPRN=" + UKPRN));
             _logger.LogHttpResponseMessage("Delete Bulk Upload Course Status http response", response);
 
