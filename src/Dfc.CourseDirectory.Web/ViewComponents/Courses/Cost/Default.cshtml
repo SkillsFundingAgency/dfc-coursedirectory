@@ -17,7 +17,9 @@
 
     <span class="govuk-body">£</span>
     <input class="govuk-input govuk-input--width-10" style="display:inline;" asp-for="@Model.Cost" type="text" aria-describedby="@Model.CostAriaDescribedBy"
-           val-required-message="Enter cost or cost description">
+           val-required-message="Enter cost or cost description"
+           val-max-length="8"
+           val-max-length-message="Maximum allowed cost value is 999,999.99">
 </div>
 
 <div class="govuk-character-count" data-module="character-count" data-maxlength="255">
