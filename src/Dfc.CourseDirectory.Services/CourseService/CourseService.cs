@@ -578,14 +578,14 @@ namespace Dfc.CourseDirectory.Services.CourseService
             // CourseDescription
             if (string.IsNullOrEmpty(course.CourseDescription))
             {
-                validationMessages.Add(new KeyValuePair<string, string>("WHO_IS_THIS_COURSE_FOR", "Course For decription is required"));
+                validationMessages.Add(new KeyValuePair<string, string>("WHO_IS_THIS_COURSE_FOR", "Course For description is required"));
             }
             else
             {
                 if (!HasOnlyFollowingValidCharacters(course.CourseDescription))
                     validationMessages.Add(new KeyValuePair<string, string>("WHO_IS_THIS_COURSE_FOR", "Course For description contains invalid character"));
                 if (course.CourseDescription.Length > _courseForTextFieldMaxChars)
-                    validationMessages.Add(new KeyValuePair<string, string>("WHO_IS_THIS_COURSE_FOR",$"Who Is This Course For? decription must be { _courseForTextFieldMaxChars } characters or less"));
+                    validationMessages.Add(new KeyValuePair<string, string>("WHO_IS_THIS_COURSE_FOR",$"Who is this course for? must be { _courseForTextFieldMaxChars } characters or less"));
             }
 
             // EntryRequirements
@@ -727,7 +727,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
                     case ValidationMode.BulkUploadCourse:
                         if (courseRun.StartDate < DateTime.Now)
                         {
-                            validationMessages.Add(new KeyValuePair<string, string>("NULL", $"Start Date cannot earlier than Today's Date"));
+                            validationMessages.Add(new KeyValuePair<string, string>("NULL", $"Start Date cannot be earlier than today's date"));
                         }
                         if (courseRun.StartDate > DateTime.Now.AddYears(2))
                         {
