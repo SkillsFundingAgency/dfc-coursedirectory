@@ -80,14 +80,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
             IEnumerable<CourseRun> bulkUploadReadyToGoLive =    courses.SelectMany(c => c.CourseRuns)
                                                                        .Where(x => x.RecordStatus == RecordStatus.BulkUploadReadyToGoLive);
 
-
-            //var aaa = courses.Where(c => c.CourseStatus != RecordStatus.Archived);
-
-            IEnumerable<CourseValidationResult> results = service.CourseValidationMessages(validCourses, ValidationMode.DataQualityIndicator).Value;
-          
-            IEnumerable<string> courseMessages = results.SelectMany(c => c.Issues);
-            IEnumerable<string> runMessages    = results.SelectMany(c => c.RunValidationResults)
-                                                        .SelectMany(r => r.Issues);
+            IEnumerable<CourseValidationResult> results = service.CourseValidationMessages(validCourses, ValidationMode.DataQualityIndicator)
+                                                                 .Value;
+            IEnumerable<string> courseMessages =        results.SelectMany(c => c.Issues);
+            IEnumerable<string> runMessages    =        results.SelectMany(c => c.RunValidationResults)
+                                                               .SelectMany(r => r.Issues);
             IEnumerable<string> messages       = courseMessages.Concat(runMessages)
                                                                .GroupBy(i => i)
                                                                .Select(g => $"{ g.LongCount() } { g.Key }");
