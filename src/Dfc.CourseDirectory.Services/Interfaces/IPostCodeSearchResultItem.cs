@@ -3,7 +3,7 @@
     public interface IPostCodeSearchResultItem
     {
         string Id { get; }
-        string Text { get; }
+        string StreetAddress { get; }
 
     }
 }

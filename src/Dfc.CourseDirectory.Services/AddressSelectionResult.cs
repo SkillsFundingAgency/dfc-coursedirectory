@@ -9,20 +9,21 @@ namespace Dfc.CourseDirectory.Services
     public class AddressSelectionResult : ValueObject<AddressSelectionResult>, IAddressSelectionResult
     {
 
-        public bool HasErrors => Errors.Count() > 0;
+        public bool HasErrors => (Errors != null && Errors.Count() > 0);
         public IEnumerable<string> Errors { get; }
 
-        public string Id { get; }
+        //public string Id { get; }
         public string Line1 { get; }
         [JsonProperty(Required = Required.AllowNull)]
         public string Line2 { get; }
 
+        [JsonProperty("PostTown")]
         public string City { get; }
 
-        [JsonProperty("province")]
+        [JsonProperty("County")]
         public string County { get; }
 
-        [JsonProperty("postalcode")]
+        [JsonProperty("Postcode")]
         public string PostCode { get; }
 
         public AddressSelectionResult()
@@ -36,7 +37,7 @@ namespace Dfc.CourseDirectory.Services
         }
 
         public AddressSelectionResult(
-            string id,
+            //string id,
             string line1,
             string line2,
             string city,
@@ -44,11 +45,11 @@ namespace Dfc.CourseDirectory.Services
             string postcode
            )
         {
-            Throw.IfNullOrWhiteSpace(id, nameof(id));
+            //Throw.IfNullOrWhiteSpace(id, nameof(id));
             Throw.IfNullOrWhiteSpace(line1, nameof(line1));
             Throw.IfNullOrWhiteSpace(postcode, nameof(postcode));
             Errors = new string[] { };
-            Id = id;
+            //Id = id;
             Line1 = line1;
             Line2 = line2;
             City = city;
@@ -60,7 +61,7 @@ namespace Dfc.CourseDirectory.Services
         {
             yield return HasErrors;
             yield return Errors;
-            yield return Id;
+            //yield return Id;
             yield return Line1;
             yield return Line2;
             yield return City;
@@ -68,5 +69,9 @@ namespace Dfc.CourseDirectory.Services
             yield return PostCode;
         }
 
+    }
+    public class AddressSelectionResults
+    {
+        public IEnumerable<AddressSelectionResult> Items { get; set; }
     }
 }
