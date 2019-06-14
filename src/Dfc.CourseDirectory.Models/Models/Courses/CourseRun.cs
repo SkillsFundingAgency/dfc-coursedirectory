@@ -113,7 +113,7 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         public int? CourseInstanceId { get; set; }
         public Guid? VenueId { get; set; }
 
-        [Required(AllowEmptyStrings = false, ErrorMessage = "Enter Course Name")]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Enter course name")]
         [MaxLength(255, ErrorMessage = "The maximum length of Course Name is 255 characters")]
         [RegularExpression(@"[a-zA-Z0-9 \¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\" + "\"" + @"\\]+", ErrorMessage = "Course Name contains invalid characters")]
         public string CourseName { get; set; }
