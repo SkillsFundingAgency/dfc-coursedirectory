@@ -98,7 +98,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             foreach (var item in result.Value.Value)
             {
-                listItems.Add(new SelectListItem(item.Text, item.Id));
+                listItems.Add(new SelectListItem(item.StreetAddress, item.Id));
             }
 
             var model = new PostcodeLookupModel

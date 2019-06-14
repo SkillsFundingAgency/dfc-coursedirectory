@@ -35,7 +35,7 @@ namespace Dfc.CourseDirectory.Web.Helpers
             foreach (var item in postCodeSearchResultItems)
             {
                 items.Add(new PostCodeSearchResultItemModel(
-                    item.Text.Split(',')[0], 
+                    item.StreetAddress.Split(',')[0], 
                     item.Id));
             }
 
