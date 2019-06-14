@@ -17,6 +17,7 @@ using Dfc.CourseDirectory.Services.Interfaces.BulkUploadService;
 using Dfc.CourseDirectory.Web.ViewModels.BulkUpload;
 using Dfc.CourseDirectory.Web.ViewModels.PublishCourses;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
+using Dfc.CourseDirectory.Services.BlobStorageService;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -137,7 +138,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> DownloadErrorFile()
+        public IActionResult DownloadErrorFile()
         {
             int? UKPRN;
             if (_session.GetInt32("UKPRN") != null)
@@ -145,7 +146,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
             else
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
 
-            var model = new DownloadErrorFileViewModel() { ErrorFileCreatedDate = DateTime.Now, UKPRN = UKPRN } ;
+            var model = new DownloadErrorFileViewModel() { ErrorFileCreatedDate = DateTime.Now, UKPRN = UKPRN };
+            IEnumerable<BlobFileInfo> list = _blobService.GetFileList(UKPRN + "/Bulk Upload/Files/").OrderByDescending(x => x.DateUploaded).ToList();
+            if (list.Any())
+            {
+                model.ErrorFileCreatedDate = list.FirstOrDefault().DateUploaded.Value.DateTime;
+            }
+           
             return View("../Bulkupload/DownloadErrorFile/Index", model);
         }
 
