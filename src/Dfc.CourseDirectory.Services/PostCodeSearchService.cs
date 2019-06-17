@@ -52,16 +52,11 @@ namespace Dfc.CourseDirectory.Services
 
                 var postCodeRequest = String.Concat(
                     _uri,
-
-                     "&Key=" + System.Web.HttpUtility.UrlEncode(_APIKey),
-
-                     "&SearchTerm='" + System.Web.HttpUtility.UrlEncode(criteria.Search.ToUpper()) + "'",
-                     "&SearchFor=PostalCodes",
-                     "&LastId=",
-                     "&Country=GBR",
-                     "&LanguagePreference=EN", 
-                     "&MaxSuggestions=",
-                     "&MaxResults="
+                    "&Key=" + System.Web.HttpUtility.UrlEncode(_APIKey),
+                    "&Postcode='" + System.Web.HttpUtility.UrlEncode(criteria.Search.ToUpper()) + "'",
+                    "&SearchFor=PostalCodes",
+                    "&BuildingNumber=" + 10
+               
 
                  );
 
@@ -79,10 +74,10 @@ namespace Dfc.CourseDirectory.Services
                     };
 
                     var locations =
-                        JsonConvert.DeserializeObject<IEnumerable<PostCodeSearchResultItem>>(json, settings);
-                    var searchResult = new PostCodeSearchResult(locations)
+                        JsonConvert.DeserializeObject<PostCodeSearchResultItems>(json, settings);
+                    var searchResult = new PostCodeSearchResult(locations.Items)
                     {
-                        Value = locations
+                        Value = locations.Items
                     };
                     return Result.Ok<IPostCodeSearchResult>(searchResult);
                 }
@@ -147,10 +142,11 @@ namespace Dfc.CourseDirectory.Services
                         ContractResolver = new AddressSelectionResultContractResolver()
                     };
 
-                    var address =
-                        JsonConvert.DeserializeObject<IEnumerable<AddressSelectionResult>>(json, settings).ToList();
+                    var address = JsonConvert.DeserializeObject<AddressSelectionResults>(json, settings).Items.ToList();
+                    //var address = data.Items[0];
 
-                    var searchResult = new AddressSelectionResult(address[0].Id, 
+
+                    var searchResult = new AddressSelectionResult(//address[0].Id, 
                         address[0].Line1, 
                         address[0].Line2,
                         address[0].City,
