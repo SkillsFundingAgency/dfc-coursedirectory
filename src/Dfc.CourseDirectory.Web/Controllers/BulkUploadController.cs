@@ -18,6 +18,8 @@ using Dfc.CourseDirectory.Web.ViewModels.BulkUpload;
 using Dfc.CourseDirectory.Web.ViewModels.PublishCourses;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.BlobStorageService;
+using Dfc.CourseDirectory.Services.CourseService;
+using Dfc.CourseDirectory.Models.Models.Courses;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -63,7 +65,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         public IActionResult Index()
         {
             _session.SetString("Option", "BulkUpload");
-            var model = new BulkUploadViewModel();           
+            var model = new BulkUploadViewModel();
 
             return View("Index", model);
         }
@@ -94,16 +96,21 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 task.Wait();
                 var errors = _bulkUploadService.ProcessBulkUpload(ms, providerUKPRN, userId);
 
-                if (errors.Any()) {
+                if (errors.Any())
+                {
                     vm.errors = errors;
                     return View(vm);
 
-                } else {
+                }
+                else
+                {
                     // All good => redirect to BulkCourses action
                     return RedirectToAction("Index", "PublishCourses", new { publishMode = PublishMode.BulkUpload });
                 }
 
-            } else {
+            }
+            else
+            {
                 vm.errors = new string[] { errorMessage };
             }
             return View(vm);
@@ -154,7 +161,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 model.ErrorFileCreatedDate = list.FirstOrDefault().DateUploaded.Value.DateTime;
             }
-           
+
             return View("../Bulkupload/DownloadErrorFile/Index", model);
         }
 
@@ -201,7 +208,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 var archiveFilesResult = _blobService.ArchiveFiles($"{UKPRN.ToString()}/Bulk Upload/Files/");
             }
 
-           
+
             var deleteBulkuploadResults = _courseService.DeleteBulkUploadCourses(UKPRN);
 
             if (deleteBulkuploadResults.Result.IsSuccess)
@@ -213,7 +220,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 return RedirectToAction("Index", "Home", new { errmsg = "Delete All Bulk Uploaded Courses Error" });
             }
 
-           
+
         }
 
         [Authorize]
@@ -228,11 +235,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> PublishYourFile()
+        public async Task<IActionResult> PublishYourFile(int NumberOfCourses)
         {
             var model = new PublishYourFileViewModel();
 
-            model.NumberOfCourses = 99;
+            model.NumberOfCourses = NumberOfCourses;
 
             return View("../Bulkupload/PublishYourFile/Index", model);
         }
@@ -242,8 +249,38 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> PublishYourFile(PublishYourFileViewModel model)
         {
+            int LiveCourses = 0;
+            int? sUKPRN = _session.GetInt32("UKPRN");
+            int UKPRN;
+            if (!sUKPRN.HasValue)
+            {
+                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
+            }
+            else
+            {
+                UKPRN = sUKPRN ?? 0;
+            }
+
+            var resultArchivingCourses = await _courseService.ChangeCourseRunStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.Live, (int)RecordStatus.Archived);
+            if (resultArchivingCourses.IsSuccess)
+            {
+
+                var response = await _courseService.ChangeCourseRunStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.BulkUploadReadyToGoLive, (int)RecordStatus.Live);
+
+                if (response.IsSuccess)
+                {
+                    IEnumerable<Course> courses = _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(UKPRN))
+                                                     .Result
+                                                     .Value
+                                                     .Value
+                                                     .SelectMany(o => o.Value)
+                                                     .SelectMany(i => i.Value);
+
+                    LiveCourses = courses.SelectMany(c => c.CourseRuns).Where(x => x.RecordStatus == RecordStatus.Live).Count();
+                }
+            }
             //to publish stuff
-            return View("../Bulkupload/Complete/Index", new PublishCompleteViewModel() { NumberOfCoursesPublished = 99, Mode = PublishMode.BulkUpload });
+            return View("../Bulkupload/Complete/Index", new PublishCompleteViewModel() { NumberOfCoursesPublished = LiveCourses, Mode = PublishMode.BulkUpload });
         }
 
         /// <summary>
@@ -253,7 +290,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         /// <returns></returns>
         private bool ValidateFile(IFormFile bulkUploadFile, out string errorMessage)
         {
-            if(bulkUploadFile.Length == 0)
+            if (bulkUploadFile.Length == 0)
             {
                 errorMessage = "No file uploaded";
                 return false;
@@ -264,7 +301,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 errorMessage = "Invalid file name";
                 return false;
             }
-            if(!bulkUploadFile.ContentDisposition.Contains("filename"))
+            if (!bulkUploadFile.ContentDisposition.Contains("filename"))
             {
                 errorMessage = "Invalid upload";
                 return false;
