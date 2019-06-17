@@ -7,14 +7,11 @@ using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseTextService;
-using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseRun;
 using Dfc.CourseDirectory.Web.ViewModels.EditCourse;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Dfc.CourseDirectory.Models.Interfaces.Courses;
-using Dfc.CourseDirectory.Models.Models.Courses;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseFor;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.EntryRequirements;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.HowAssessed;
@@ -24,7 +21,6 @@ using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatYouNeed;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhereNext;
 using Dfc.CourseDirectory.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
 
 namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 {
@@ -59,7 +55,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> Index(string learnAimRef, string notionalNVQLevelv2, string awardOrgCode, string learnAimRefTitle, string learnAimRefTypeDesc,  Guid? courseId, Guid? courseRunId, bool fromBulkUpload, PublishMode mode)
+        public async Task<IActionResult> Index(string learnAimRef, string notionalNVQLevelv2, string awardOrgCode, string learnAimRefTitle, string learnAimRefTypeDesc, Guid? courseId, Guid? courseRunId, bool fromBulkUpload, PublishMode mode)
         {
 
             int? UKPRN;
@@ -184,12 +180,32 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                     courseForEdit.Value.UpdatedBy = User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(); // User.Identity.Name;
                     courseForEdit.Value.UpdatedDate = DateTime.Now;
 
+                    if (model.Mode == PublishMode.Migration)
+                    {
+                        foreach (var courseRun in courseForEdit.Value.CourseRuns.Where(x =>
+                            x.RecordStatus == RecordStatus.MigrationReadyToGoLive))
+                        {
+                            courseRun.RecordStatus = RecordStatus.Live;
+                        }
+                    }
+
                     var updatedCourse = await _courseService.UpdateCourseAsync(courseForEdit.Value);
 
                     switch (model.Mode)
                     {
-                        case PublishMode.BulkUpload:
+
                         case PublishMode.Migration:
+                            var message =
+                                updatedCourse.Value.CourseRuns.Any(x => x.RecordStatus == RecordStatus.MigrationPending)
+                                    ? $"'{updatedCourse.Value.QualificationCourseTitle}' was successfully fixed" : $"'{updatedCourse.Value.QualificationCourseTitle}' was successfully fixed and published";
+                           return RedirectToAction("Index", "PublishCourses",
+                                new
+                                {
+                                    publishMode = model.Mode,
+                                    courseId = model.CourseId,
+                                    notificationTitle = message
+                                });
+                        case PublishMode.BulkUpload:
                             return RedirectToAction("Index", "PublishCourses",
                                 new
                                 {
@@ -214,9 +230,9 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                                     qualificationType = courseForEdit.Value.QualificationType,
                                     courseId = updatedCourse.Value.id
                                 });
-  
+
                     }
-                   
+
 
                 }
             }
