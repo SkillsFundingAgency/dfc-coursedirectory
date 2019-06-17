@@ -128,7 +128,7 @@
         @await Component.InvokeAsync(nameof(AddStartDate), new AddStartDateModel()
         {
             StartDateType = Model.StartDateType,
-            Day = Model.Day ,
+            Day = Model.Day,
             Month = Model.Month,
             Year = Model.Year,
             DayAriaDescribedBy = "",
@@ -314,7 +314,7 @@
 
             //Default options on page load
             @*var $defaultAttendancePattern = $("#@AttendancePattern.Daytime");
-            $defaultAttendancePattern.prop("checked", true);            
+            $defaultAttendancePattern.prop("checked", true);
             var $defaultStudyMode = $("#@StudyMode.FullTime");
             $defaultStudyMode.prop("checked", true);*@
 
@@ -352,7 +352,7 @@
                 return currentValue === true;
             }
 
-            
+
 
             function validate() {
 
@@ -640,7 +640,7 @@
                     validStates.push(false);
                 }
 
-                 
+
                 if (!validStates.every(isAllValid)) {
                     $("html, body").animate({
                         scrollTop: $errorSummary.offset().top
@@ -678,48 +678,42 @@
                         window.location.href = data;
                     };
 
-                    $addNewVenueButton.on("click", function (e) {
-                        e.preventDefault();
+            $addNewVenueButton.on("click", function (e) {
+                e.preventDefault();
 
-                   var $allCheckedVenues =
-                            $("input[name='SelectedVenues']:checkbox:checked");
-                         var $allCheckedRegions =
-                        $("input[name='SelectedRegions']:checkbox:checked");
+               var $allCheckedVenues =
+                        $("input[name='SelectedVenues']:checkbox:checked");
+                     var $allCheckedRegions =
+                    $("input[name='SelectedRegions']:checkbox:checked");
 
 
-                        makeRequestWithPayload({
-                            CourseName: $courseName.val(),
-                             CourseProviderReference: $courseProviderReference.val(),
-        DeliveryMode: $radioDeliveryMode.find("input[type='radio']:checked").val(),
-         StartDateType:$("input[name='StartDateType']:checked").val(),
-       //Day
-       // Month
-       // Year
-        Url:$url.val(),
-         Cost:$cost.val(),
-         CostDescription :$costDescription.val(),
-         //AdvancedLearnerLoan
-         DurationUnit :$duration.find("select").val(),
-         DurationLength:$duration.find("input").val(),
-         StudyMode:$studyMode.find("input[type='radio']:checked").val() ,
-         AttendanceMode:$attendance.find("input[type='radio']:checked").val(),
-                        SelectedVenues: $allCheckedVenues.map(function () {
-                            return $(this).val();
-                        }).get(),
-                        LevelFilter: $allCheckedRegions.map(function () {
-                            return $(this).val();
-                        }).get()
-
+                makeRequestWithPayload({
+                    CourseName: $courseName.val(),
+                    CourseProviderReference: $courseProviderReference.val(),
+                    DeliveryMode: $radioDeliveryMode.find("input[type='radio']:checked").val(),
+                    StartDateType: $("input[name='StartDateType']:checked").val(),
+                    Day: $("#start_date_day").val(),
+                    Month: $("#start_date_month").val(),
+                    Year: $("#start_date_year").val(),
+                    Url:$url.val(),
+                     Cost:$cost.val(),
+                     CostDescription :$costDescription.val(),
+                     //AdvancedLearnerLoan
+                     DurationUnit :$duration.find("select").val(),
+                     DurationLength:$duration.find("input").val(),
+                     StudyMode:$studyMode.find("input[type='radio']:checked").val() ,
+                     AttendanceMode:$attendance.find("input[type='radio']:checked").val(),
+                                    SelectedVenues: $allCheckedVenues.map(function () {
+                                        return $(this).val();
+                                    }).get(),
+                                    LevelFilter: $allCheckedRegions.map(function () {
+                                        return $(this).val();
+                                    }).get()
 
                     },
                         onSucess);
 
-                    });
-
-
-
-
-
+                });
 
 
             $button.on("click", function (event) {
