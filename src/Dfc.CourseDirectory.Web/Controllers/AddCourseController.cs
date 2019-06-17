@@ -207,7 +207,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 ProviderUKPRN = UKPRN,
                 SelectVenue = await GetVenuesByUkprn(UKPRN),
                 ChooseRegion = new ChooseRegionModel {
-                    Regions = _courseService.GetRegions()
+                    Regions = _courseService.GetRegions(),
+                    National = null
+                    
                 }
             };
 
