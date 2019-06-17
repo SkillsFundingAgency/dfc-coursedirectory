@@ -87,7 +87,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                                                         .Value
                                                         .SelectMany(o => o.Value)
                                                         .SelectMany(i => i.Value)
-                                                        .Where( x => ((int)x.CourseStatus & (int)RecordStatus.BulkUploadPending) > 0);
+                                                        .Where((y => ((int)y.CourseStatus & (int)RecordStatus.BulkUploadPending) > 0 
+                                                        || ((int)y.CourseStatus & (int)RecordStatus.BulkUploadReadyToGoLive) > 0));
 
             var courseBUErrors = courses.Where(x => x.BulkUploadErrors != null).SelectMany(y => y.BulkUploadErrors).ToList();
             var courseRunsBUErrors = courses.SelectMany(x => x.CourseRuns.Where(y => y.BulkUploadErrors != null).SelectMany(y => y.BulkUploadErrors)).ToList();
