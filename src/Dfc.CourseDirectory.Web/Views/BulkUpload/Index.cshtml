@@ -17,8 +17,13 @@
     var authorised = await Authorization.AuthorizeAsync(User, "Admin");
 }
 
+
+
+
+
 <div class="govuk-grid-row">
-    <div class="govuk-grid-column-full">
+    <div class="govuk-grid-column-two-thirds">
+        <a id="back" href="#" onclick="window.history.go(-1); return false;" class="govuk-back-link">Back</a><br />
         <h1 class="govuk-heading-xl">
             Upload a file
         </h1>
@@ -124,6 +129,10 @@
                     $("#serverSideError").hide();
                     $("#groupServerSideError").removeClass("govuk-form-group--error");
                 }
+
+                function goBack() {
+  window.history.back();
+}
 
                 $bulkUploadFile.on("change", function () {
                     $bulkUploadFile.govUkFileUpload("validState");
