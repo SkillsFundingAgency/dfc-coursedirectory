@@ -209,9 +209,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
 
 
-            var deleteBulkuploadResults = _courseService.DeleteBulkUploadCourses(UKPRN);
+            var deleteBulkuploadResults = await _courseService.DeleteBulkUploadCourses(UKPRN);
 
-            if (deleteBulkuploadResults.Result.IsSuccess)
+            if (deleteBulkuploadResults.IsSuccess)
             {
                 return RedirectToAction("DeleteFileConfirmation", "Bulkupload", new { fileUploadDate = fileUploadDate });
             }
@@ -228,7 +228,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
         public async Task<IActionResult> DeleteFileConfirmation(DateTimeOffset fileUploadDate)
         {
             var model = new DeleteFileConfirmationViewModel();
-            model.FileUploadedDate = fileUploadDate.ToString("dd MMM yyyy hh:mm");
+
+            DateTime localDateTime = DateTime.Parse(fileUploadDate.ToString());
+            DateTime utcDateTime = localDateTime.ToUniversalTime();
+
+            model.FileUploadedDate = TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, TimeZoneInfo.Local).ToString("dd MMM yyyy HH:mm");
 
             return View("../Bulkupload/DeleteFileConfirmation/Index", model);
         }

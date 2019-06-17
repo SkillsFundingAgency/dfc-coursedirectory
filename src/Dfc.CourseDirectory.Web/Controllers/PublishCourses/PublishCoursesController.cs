@@ -134,7 +134,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
             {
                 if (publishMode == PublishMode.BulkUpload)
                 {
-                    return RedirectToAction("PublishYourFile", "Bulkupload", new { NumberOfCourses = Courses.Where(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.BulkUploadReadyToGoLive)).Count() });
+                    return RedirectToAction("PublishYourFile", "Bulkupload", new { NumberOfCourses = Courses.SelectMany(s => s.CourseRuns.Where(cr => cr.RecordStatus == RecordStatus.BulkUploadReadyToGoLive)).Count() });
                 
                 }
 
