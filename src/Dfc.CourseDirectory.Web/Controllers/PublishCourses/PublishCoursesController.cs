@@ -71,6 +71,10 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
             switch (publishMode)
             {
                 case PublishMode.Migration:
+                    if(Courses.All(x=>x.CourseStatus != RecordStatus.MigrationPending && x.CourseStatus != RecordStatus.MigrationReadyToGoLive))
+                    {
+                        return View("../Migration/Complete/index");
+                    }
                     //TODO replace with call to service to return by status
                     vm.PublishMode = PublishMode.Migration;
                     var migratedCourses = Courses.Where(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.MigrationPending || cr.RecordStatus == RecordStatus.MigrationReadyToGoLive)).ToList();
