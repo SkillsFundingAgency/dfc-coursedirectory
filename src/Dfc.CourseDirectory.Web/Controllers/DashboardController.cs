@@ -119,7 +119,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             if (list.Any())
                 vm.FileUploadDate = list.FirstOrDefault().DateUploaded.Value;
 
-            string BulkUpLoadErrorMessage = vm.BulkUploadTotalCount.ToString() + WebHelper.GetCourseTextToUse(vm.BulkUploadTotalCount) + " upload in a file on " + vm.FileUploadDate?.ToString("dd/MM/yyyy") + " have " + vm.BulkUploadPendingCount.ToString() + " errors. Fix these to publish all of your courses.";
+            string BulkUpLoadErrorMessage = vm.BulkUploadTotalCount.ToString() + WebHelper.GetCourseTextToUse(vm.BulkUploadTotalCount) + " uploaded in a file on " + vm.FileUploadDate?.ToString("dd/MM/yyyy") + " have " + vm.BulkUploadPendingCount.ToString() + " errors. Fix these to publish all of your courses.";
             string BulkUpLoadNoErrorMessage = vm.BulkUploadTotalCount.ToString() + WebHelper.GetCourseTextToUse(vm.BulkUploadPendingCount) + " uploaded on " + vm.FileUploadDate?.ToString("dd/MM/yyyy") + " have no errors, but are not listed on the Course directory becuase you have not published them.";
                 vm.FileCount = list.Count();
             }
