@@ -662,7 +662,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             // CourseName
             if (string.IsNullOrEmpty(courseRun.CourseName))
             {
-                validationMessages.Add(new KeyValuePair<string, string>("COURSE_NAME", "Enter Course Name"));
+                validationMessages.Add(new KeyValuePair<string, string>("COURSE_NAME", "Enter course name"));
             }
             else
             {
