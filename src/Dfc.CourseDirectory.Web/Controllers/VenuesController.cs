@@ -259,7 +259,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 {
                     viewModel.Address = new AddressModel
                     {
-                        Id = searchResult.Value.Id,
+                        //Id = searchResult.Value.Id,
                         AddressLine1 = searchResult.Value.Line1,
                         AddressLine2 = searchResult.Value.Line2,
                         TownOrCity = searchResult.Value.City,

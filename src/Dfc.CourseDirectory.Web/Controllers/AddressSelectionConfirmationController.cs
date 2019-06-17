@@ -40,7 +40,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             if (searchResult.IsSuccess && searchResult.HasValue)
             {
                 model = new AddressSelectionResult(
-                    searchResult.Value.Id,
+                    //searchResult.Value.Id,
                     searchResult.Value.Line1,
                     searchResult.Value.Line2,
                     searchResult.Value.City,

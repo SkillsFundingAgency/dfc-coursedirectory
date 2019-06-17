@@ -2,7 +2,7 @@
 {
     public interface IAddressSelectionResult
     {
-        string Id { get; }
+        //string Id { get; }
         string Line1 { get; }
 
         string Line2 { get; }
