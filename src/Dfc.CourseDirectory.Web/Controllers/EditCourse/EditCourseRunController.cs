@@ -531,7 +531,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                             courseRunForEdit.RecordStatus = RecordStatus.BulkUploadReadyToGoLive;
                             break;
                         case PublishMode.Migration:
-                            courseRunForEdit.RecordStatus = RecordStatus.MigrationReadyToGoLive;
+                            courseRunForEdit.RecordStatus = courseForEdit.Value.IsValid ? RecordStatus.Live : RecordStatus.MigrationReadyToGoLive;
                             break;
                         case PublishMode.DataQualityIndicator:
                         default:
@@ -550,14 +550,17 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                         {
                             case PublishMode.BulkUpload:
                             case PublishMode.Migration:
+                                var message =
+                                    updatedCourse.Value.CourseRuns.Any(x=>x.id == model.CourseRunId && x.RecordStatus == RecordStatus.MigrationPending)
+                                        ? $"'{updatedCourse.Value.QualificationCourseTitle}' was successfully fixed" : $"'{updatedCourse.Value.QualificationCourseTitle}' was successfully fixed and published";
                                 return RedirectToAction("Index", "PublishCourses",
-                                new
-                                {
-                                    publishMode = model.Mode,
-                                    courseId = model.CourseId,
-                                    courseRunId = model.CourseRunId
-
-                                });
+                                    new
+                                    {
+                                        publishMode = model.Mode,
+                                        courseId = model.CourseId,
+                                        courseRunId= model.CourseRunId,
+                                        notificationTitle = message
+                                    });
                             case PublishMode.DataQualityIndicator:
                                 return RedirectToAction("Index", "PublishCourses",
                                  new

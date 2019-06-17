@@ -21,7 +21,7 @@ using Dfc.CourseDirectory.Services.BlobStorageService;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.BlobStorageService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
-
+using System.Text.RegularExpressions;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -87,7 +87,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                                                         .Value
                                                         .SelectMany(o => o.Value)
                                                         .SelectMany(i => i.Value)
-                                                        .Where( x => ((int)x.CourseStatus & (int)RecordStatus.BulkUploadPending) > 0);
+                                                        .Where((y => ((int)y.CourseStatus & (int)RecordStatus.BulkUploadPending) > 0 
+                                                        || ((int)y.CourseStatus & (int)RecordStatus.BulkUploadReadyToGoLive) > 0));
 
             var courseBUErrors = courses.Where(x => x.BulkUploadErrors != null).SelectMany(y => y.BulkUploadErrors).ToList();
             var courseRunsBUErrors = courses.SelectMany(x => x.CourseRuns.Where(y => y.BulkUploadErrors != null).SelectMany(y => y.BulkUploadErrors)).ToList();
@@ -96,7 +97,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             int counter = 1;
             IEnumerable<string> headers = new string[] { "Row Number,Column Name,Error Description" };
-            IEnumerable<string> csvlines = totalErrorList.Select(i => string.Join(",", new string[] { i.LineNumber.ToString(), i.Header, i.Error } ));
+            IEnumerable<string> csvlines = totalErrorList.Select(i => string.Join(",", new string[] { i.LineNumber.ToString(), i.Header, i.Error.Replace(',',' ')} ));
             string report = string.Join(Environment.NewLine, headers.Concat(csvlines));
             byte[] data = Encoding.ASCII.GetBytes(report);
             MemoryStream ms = new MemoryStream(data);
@@ -111,7 +112,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             ms.Position = 0;
             FileStreamResult result = new FileStreamResult(ms, MediaTypeNames.Text.Plain);
-            DateTime d = DateTime.UtcNow;
+            DateTime d = DateTime.Now;
             result.FileDownloadName = $"Bulk_upload_errors_{UKPRN}_{d.Day.TwoChars()}_{d.Month.TwoChars()}_{d.Year}_{d.Hour.TwoChars()}_{d.Minute.TwoChars()}.csv";
             return result;
         }
