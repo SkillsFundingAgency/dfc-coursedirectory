@@ -36,8 +36,8 @@
 
             @{
                 var option = HttpContextAccessor.HttpContext.Session.GetString("Option");
-               
-                
+
+
 
                 switch (option.ToUpper())
                 {
@@ -65,7 +65,7 @@
 <script>
     (function ($) {
         $(function () {
-
+            var $postCode = $("#PostCode)").govUkInput();
         });
     })(jQuery);
 </script>
