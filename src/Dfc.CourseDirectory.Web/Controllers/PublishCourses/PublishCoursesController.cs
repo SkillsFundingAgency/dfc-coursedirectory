@@ -68,6 +68,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                        .Result.Value);
             Courses = coursesByUKPRN.Value.SelectMany(o => o.Value).SelectMany(i => i.Value).ToList();
 
+
             switch (publishMode)
             {
                 case PublishMode.Migration:
