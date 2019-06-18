@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -18,6 +19,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+
 
 namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
 {
@@ -50,20 +52,17 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
         [HttpGet]
         public IActionResult Index(PublishMode publishMode, string notificationTitle, Guid? courseId, Guid? courseRunId)
         {
-
-            PublishViewModel vm = new PublishViewModel();
-
             int? UKPRN = _session.GetInt32("UKPRN");
             if (!UKPRN.HasValue)
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
 
             List<Course> Courses = new List<Course>();
-
             ICourseSearchResult coursesByUKPRN = (!UKPRN.HasValue
                    ? null
                    : _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(UKPRN))
                        .Result.Value);
             Courses = coursesByUKPRN.Value.SelectMany(o => o.Value).SelectMany(i => i.Value).ToList();
+            PublishViewModel vm = new PublishViewModel();
 
             switch (publishMode)
             {
