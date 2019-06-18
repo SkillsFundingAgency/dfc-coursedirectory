@@ -64,9 +64,14 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
             Courses = coursesByUKPRN.Value.SelectMany(o => o.Value).SelectMany(i => i.Value).ToList();
             PublishViewModel vm = new PublishViewModel();
 
+
             switch (publishMode)
             {
                 case PublishMode.Migration:
+                    if(Courses.All(x=>x.CourseStatus != RecordStatus.MigrationPending && x.CourseStatus != RecordStatus.MigrationReadyToGoLive))
+                    {
+                        return View("../Migration/Complete/index");
+                    }
                     //TODO replace with call to service to return by status
                     vm.PublishMode = PublishMode.Migration;
                     var migratedCourses = Courses.Where(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.MigrationPending || cr.RecordStatus == RecordStatus.MigrationReadyToGoLive)).ToList();
@@ -122,6 +127,16 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
             vm.NotificationTitle = notificationTitle;
             vm.CourseId = courseId;
             vm.CourseRunId = courseRunId;
+
+            if (vm.AreAllReadyToBePublished)
+            {
+                if (publishMode == PublishMode.BulkUpload)
+                {
+                    return RedirectToAction("PublishYourFile", "Bulkupload", new { NumberOfCourses = Courses.SelectMany(s => s.CourseRuns.Where(cr => cr.RecordStatus == RecordStatus.BulkUploadReadyToGoLive)).Count() });
+                
+                }
+
+            }
 
             return View("Index", vm);
         }
