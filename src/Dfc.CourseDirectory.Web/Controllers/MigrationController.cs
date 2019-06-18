@@ -102,7 +102,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 case MigrationErrors.FixErrors:
                     return RedirectToAction("Index", "PublishCourses", new { publishMode = PublishMode.Migration });
                 case MigrationErrors.DeleteCourses:
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "HelpDesk");
                 case MigrationErrors.StartAgain:
                     return RedirectToAction("Index", "BulkUpload");
                 default:
