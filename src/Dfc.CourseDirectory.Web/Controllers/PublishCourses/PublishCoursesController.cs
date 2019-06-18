@@ -181,9 +181,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
         [HttpGet]
         public async Task<IActionResult> Delete(Guid courseId, Guid courseRunId,string courseName)
         {
-            //TODO delete
             string notificationTitle = string.Empty;
-
             var result = await _courseService.UpdateStatus(courseId, courseRunId, (int)RecordStatus.Deleted);
 
             if (result.IsSuccess)
