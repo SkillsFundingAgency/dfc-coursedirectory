@@ -54,11 +54,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
             PublishViewModel vm = new PublishViewModel();
 
             int? UKPRN = _session.GetInt32("UKPRN");
-
             if (!UKPRN.HasValue)
-            {
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
-            }
 
             List<Course> Courses = new List<Course>();
 
@@ -80,6 +77,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                     vm.Courses = GetErrorMessages(vm.Courses, ValidationMode.MigrateCourse);
                     vm.Venues = GetVenueNames(vm.Courses);
                     break;
+
                 case PublishMode.BulkUpload:
 
                     //TODO replace with call to service to return by status
@@ -91,39 +89,35 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                     vm.Courses = GetErrorMessages(vm.Courses, ValidationMode.BulkUploadCourse);
                     vm.Venues = GetVenueNames(vm.Courses);
                     break;
+
                 case PublishMode.DataQualityIndicator:
+
+                    vm.PublishMode = PublishMode.DataQualityIndicator;
+                    var validCourses = Courses.Where(x => x.IsValid && ((int)x.CourseStatus & (int)RecordStatus.Live) > 0);
+                    var results = _courseService.CourseValidationMessages(validCourses, ValidationMode.DataQualityIndicator).Value.ToList();
+                    var invalidCoursesResult = results.Where(c => c.RunValidationResults.Any(cr => cr.Issues.Count() > 0));
+                    var invalidCourses = invalidCoursesResult.Select(c => (Course)c.Course).ToList();
+                    var courseRuns = invalidCourses.Select(cr => cr.CourseRuns.Where(x => x.StartDate < DateTime.Today));
+                    List<Course> filteredList = new List<Course>();
+                    foreach(var course in invalidCourses)
                     {
-
-                        vm.PublishMode = PublishMode.DataQualityIndicator;
-                        var validCourses = Courses.Where(x => x.IsValid);
-                        var results = _courseService.CourseValidationMessages(validCourses, ValidationMode.DataQualityIndicator).Value.ToList();
-                        var invalidCoursesResult = results.Where(c => c.RunValidationResults.Any(cr => cr.Issues.Count() > 0));
-                        var invalidCourses = invalidCoursesResult.Select(c => (Course)c.Course).ToList();
-                        var courseRuns = invalidCourses.Select(cr => cr.CourseRuns.Where(x => x.StartDate < DateTime.Today));
-                        List<Course> filteredList = new List<Course>();
-                        foreach(var course in invalidCourses)
+                        var invalidRuns = course.CourseRuns.Where(x => x.StartDate < DateTime.Today);
+                        if (invalidRuns.Any())
                         {
-                            var invalidRuns = course.CourseRuns.Where(x => x.StartDate < DateTime.Today);
-
-                            if (invalidRuns.Count() != 0)
-                            {
-                                course.CourseRuns = invalidRuns;
-                                filteredList.Add(course);
-                            }
-
+                            course.CourseRuns = invalidRuns;
+                            filteredList.Add(course);
                         }
+                    }
 
-                        if(courseRuns.Count() == 0 && courseId != null && courseRunId != null)
-                        {
-                            var dashboardVm = DashboardController.GetDashboardViewModel(_courseService, _blobStorageService,_session.GetInt32("UKPRN"), notificationTitle);
-                            return RedirectToAction("IndexSuccess", "Home", dashboardVm);
-                        }
-
+                    if(courseRuns.Count() == 0 && courseId != null && courseRunId != null)
+                    {
+                        var dashboardVm = DashboardController.GetDashboardViewModel(_courseService, _blobStorageService,_session.GetInt32("UKPRN"), notificationTitle);
+                        return RedirectToAction("IndexSuccess", "Home", dashboardVm);
+                    }
 
                     vm.NumberOfCoursesInFiles = invalidCourses.Count();
-                        vm.Courses = filteredList.OrderBy(x => x.QualificationCourseTitle);
-                        break;
-                    }
+                    vm.Courses = filteredList.OrderBy(x => x.QualificationCourseTitle);
+                    break;
             }
 
             vm.NotificationTitle = notificationTitle;
@@ -142,13 +136,9 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
             int? sUKPRN = _session.GetInt32("UKPRN");
             int UKPRN;
             if (!sUKPRN.HasValue)
-            {
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
-            }
             else
-            {
                 UKPRN = sUKPRN ?? 0;
-            }
 
             CompleteVM.NumberOfCoursesPublished = vm.NumberOfCoursesInFiles; 
 
@@ -160,13 +150,9 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                     var resultPublishMigratedCourses = await _courseService.ChangeCourseRunStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.MigrationReadyToGoLive, (int)RecordStatus.Live);
                     CompleteVM.Mode = PublishMode.Migration;
                     if (resultPublishMigratedCourses.IsSuccess)
-                    {
                         return View("Complete", CompleteVM);
-                    }
                     else
-                    {
                         return RedirectToAction("Index", "Home", new { errmsg = "Publish All Migration-PublishCourses Error" });
-                    }
 
                 case PublishMode.BulkUpload:
 
@@ -178,16 +164,11 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                         var resultPublishBulkUploadedCourses = await _courseService.ChangeCourseRunStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.BulkUploadReadyToGoLive, (int)RecordStatus.Live);
                         CompleteVM.Mode = PublishMode.BulkUpload;
                         if (resultPublishBulkUploadedCourses.IsSuccess)
-                        {
                             return View("Complete", CompleteVM);
-                        }
                         else
-                        {
                             return RedirectToAction("Index", "Home", new { errmsg = "Publish All BulkUpload-PublishCourses Error" });
-                        }
-                    }
-                    else
-                    {
+
+                    } else {
                         return RedirectToAction("Index", "Home", new { errmsg = "Publish All BulkUpload-ArchiveCourses Error" });
                     }
 
@@ -207,14 +188,9 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
             var result = await _courseService.UpdateStatus(courseId, courseRunId, (int)RecordStatus.Deleted);
 
             if (result.IsSuccess)
-            {
-                //do something
                 notificationTitle = courseName + " was successfully deleted";
-            }
             else
-            {
                 notificationTitle = "Error " + courseName + " was not deleted";
-            }
 
             return RedirectToAction("Index", "PublishCourses", new { publishMode = PublishMode.Migration,notificationTitle = notificationTitle });
         }
@@ -228,9 +204,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
 
             var hasInvalidCourses = courses.Any(c => c.IsValid == false);
             if (hasInvalidCourses)
-            {
                 return AreAllReadyToBePublished;
-            }
             else
             {
                 switch (publishMode)
@@ -251,23 +225,14 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
         }
 
 
-       
-
-
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> DownloadErrorFile()
         {
             var model = new DownloadErrorFileViewModel();
             model.ErrorFileCreatedDate = DateTime.Now;
-
             return View("../DownloadErrorFile/Index", model);
         }
-
-
-     
-
-
 
 
         internal IEnumerable<Course> GetErrorMessages(IEnumerable<Course> courses, ValidationMode validationMode)
@@ -276,9 +241,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
             {
                 course.ValidationErrors = _courseService.ValidateCourse(course).Select(x => x.Value);
                 foreach (var courseRun in course.CourseRuns)
-                {
                     courseRun.ValidationErrors = _courseService.ValidateCourseRun(courseRun, validationMode).Select(x => x.Value);
-                }
             }
             return courses;
         }
