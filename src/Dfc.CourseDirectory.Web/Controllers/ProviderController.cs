@@ -23,6 +23,7 @@ using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 using Dfc.CourseDirectory.Web.RequestModels;
 using Dfc.CourseDirectory.Models.Models.Providers;
 using Dfc.CourseDirectory.Models.Interfaces.Providers;
+using Dfc.CourseDirectory.Web.ViewModels.Provider;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -33,13 +34,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly ICourseService _courseService;
         private readonly IVenueService _venueService;
         private readonly IProviderService _providerService;
+        private readonly IAuthorizationService _authorizationService;
 
         public ProviderController(
             ILogger<ProviderController> logger,
             IHttpContextAccessor contextAccessor,
             ICourseService courseService,
             IVenueService venueService,
-            IProviderService providerService
+            IProviderService providerService,
+            IAuthorizationService Authorization
             )
         {
             Throw.IfNull(logger, nameof(logger));
@@ -53,6 +56,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _courseService = courseService;
             _venueService = venueService;
             _providerService = providerService;
+            
         }
 
         [Authorize(Policy = "ElevatedUserRole")]
@@ -115,8 +119,70 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return found;
         }
 
+        [Authorize("Admin")]
+        public async Task<IActionResult> AddOrEditProviderType()
+        {
+            var model = new ProviderTypeAddOrEditViewModel();
+
+            int? UKPRN = _session.GetInt32("UKPRN");
+
+            if (!UKPRN.HasValue)
+            {
+                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
+            }
+
+            var providerSearchResult = await _providerService.GetProviderByPRNAsync(new Dfc.CourseDirectory.Services.ProviderService.ProviderSearchCriteria(UKPRN.ToString()));
+
+            if (providerSearchResult.IsSuccess)
+            {
+                model = new ProviderTypeAddOrEditViewModel();
+                model.ProviderType = providerSearchResult.Value.Value.FirstOrDefault()?.ProviderType ?? ProviderType.undefined;
+            }
+
+            return View("UpdateProviderType", model);
+        }
+
+        [Authorize("Admin")]
+        [HttpPost]
+        public async Task<IActionResult> AddOrEditProviderType(ProviderTypeAddOrEditViewModel model)
+        {
+            int? UKPRN = _session.GetInt32("UKPRN");
+
+            if (!UKPRN.HasValue)
+            {
+                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
+            }
+
+
+            var providerSearchResult = await _providerService.GetProviderByPRNAsync(new Services.ProviderService.ProviderSearchCriteria(UKPRN.ToString()));
+
+            if (providerSearchResult.IsSuccess)
+            {
+
+                Provider provider = providerSearchResult.Value.Value.FirstOrDefault();
+                provider.ProviderType = model.ProviderType;
+
+                try
+                {
+                    var result = await _providerService.UpdateProviderDetails(provider);
+                    if (result.IsSuccess)
+                    {
+                        //log something
+                    }
+
+                }
+                catch (Exception)
+                {
+                    //Behaviour to be determined for failure
+                }
+
+            }
+
+            return RedirectToAction("Details", "Provider", new { });
+        }
+
         [Authorize]
-        public async Task<IActionResult> AddOrEditDetails(bool updateProviderType)
+        public async Task<IActionResult> AddOrEditDetails()
         {
 
             var model = new ProviderDetailsAddOrEditViewModel();
@@ -135,10 +201,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 model = new ProviderDetailsAddOrEditViewModel();
                 model.AliasName = providerSearchResult.Value.Value.FirstOrDefault()?.Alias;
                 model.BriefOverview = providerSearchResult.Value.Value.FirstOrDefault()?.MarketingInformation;
-                model.ProviderType = providerSearchResult.Value.Value.FirstOrDefault()?.ProviderType ?? ProviderType.undefined;
             }
 
-            return updateProviderType ? View("UpdateProviderType", model) : View(model);
+            return View(model);
         }
 
         [Authorize]
@@ -162,7 +227,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 Provider provider = providerSearchResult.Value.Value.FirstOrDefault();
                 provider.MarketingInformation = model.BriefOverview;
                 provider.Alias = model.AliasName;
-                provider.ProviderType = model.ProviderType;
 
                 try
                 {

@@ -710,7 +710,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
                     break;
                 case DeliveryMode.Undefined: // Question ???
                 default:
-                    validationMessages.Add(new KeyValuePair<string, string>("NULL", $"Select Delivery Mode"));
+                    validationMessages.Add(new KeyValuePair<string, string>("DELIVERY_MODE", $"Select Delivery Mode"));
                     break;
             }
 
@@ -727,11 +727,11 @@ namespace Dfc.CourseDirectory.Services.CourseService
                     case ValidationMode.BulkUploadCourse:
                         if (courseRun.StartDate < DateTime.Now)
                         {
-                            validationMessages.Add(new KeyValuePair<string, string>("NULL", $"Start Date cannot be earlier than today's date"));
+                            validationMessages.Add(new KeyValuePair<string, string>("START_DATE", $"Start Date cannot be earlier than today's date"));
                         }
                         if (courseRun.StartDate > DateTime.Now.AddYears(2))
                         {
-                            validationMessages.Add(new KeyValuePair<string, string>("NULL", $"Start Date cannot be later than 2 years from today’s date"));
+                            validationMessages.Add(new KeyValuePair<string, string>("START_DATE", $"Start Date cannot be later than 2 years from today’s date"));
                         }
                         break;
                     case ValidationMode.EditCourseYC:
@@ -740,11 +740,11 @@ namespace Dfc.CourseDirectory.Services.CourseService
                         break;
                     case ValidationMode.MigrateCourse:
                         if (courseRun.StartDate > DateTime.Now.AddYears(2))
-                            validationMessages.Add(new KeyValuePair<string, string>("NULL", $"Start Date cannot be later than 2 years from today’s date"));
+                            validationMessages.Add(new KeyValuePair<string, string>("START_DATE", $"Start Date cannot be later than 2 years from today’s date"));
                         break;
                     case ValidationMode.Undefined:
                     default:
-                        validationMessages.Add(new KeyValuePair<string, string>("NULL", $"Validation Mode was not defined."));
+                        validationMessages.Add(new KeyValuePair<string, string>("START_DATE", $"Validation Mode was not defined."));
                         break;
                 }
             }

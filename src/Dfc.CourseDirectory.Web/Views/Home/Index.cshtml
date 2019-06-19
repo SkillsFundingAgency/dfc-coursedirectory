@@ -66,7 +66,7 @@
                         NotificationMessage = Model.MigrationErrorMessage,
                        // NotificationMessage = totalCourses.ToString() + totalCoursesMessage + " have been migrated to the new Course directory. You have " + @Model.MigrationPendingCount.ToString() + migrationPendingCourseMessage + " with errors and these must be fixed before they can be published.",
                         ClassType = "info-summary",
-                        Link = "<a class='govuk-link' href='/Migration/Options'> What now?</a>"
+                        Link = $"<a class='govuk-link' href='/Migration/Errors?livecourses={Model.LiveCourseCount}&errors={Model.MigrationPendingCount}'> What now?</a>"
                     })
                 }
 
@@ -75,9 +75,8 @@
                     @await Component.InvokeAsync(nameof(Notification), new NotificationModel
                     {
                         NotificationTitle = "Bulk upload",
-                        NotificationMessage = Model.BulkUploadMessage,
                         ClassType = "info-summary",
-                        Link = "<a class='govuk-link' href='/Bulkupload/WhatDoYouWantToDoNext'>What next?</a>"
+                        Link = $"<a class='govuk-link' href='/Bulkupload/WhatDoYouWantToDoNext'>{Model.BulkUploadMessage}</a>"
                     })
                 }
 
