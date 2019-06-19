@@ -696,7 +696,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
 
                     // AttendancePattern
                     if (courseRun.AttendancePattern.Equals(AttendancePattern.Undefined))
-                        validationMessages.Add(new KeyValuePair<string, string>("ATTENDANCE_PATTERN", $"Select Attendance Pattern"));
+                        validationMessages.Add(new KeyValuePair<string, string>("ATTENDANCE_PATTERN", $"Select Attendance Mode"));
 
                     break;
                 case DeliveryMode.Online:
