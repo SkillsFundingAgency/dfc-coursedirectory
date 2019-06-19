@@ -710,7 +710,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
                     break;
                 case DeliveryMode.Undefined: // Question ???
                 default:
-                    validationMessages.Add(new KeyValuePair<string, string>("NULL", $"Select Delivery Mode"));
+                    validationMessages.Add(new KeyValuePair<string, string>("DELIVERY_MODE", $"Select Delivery Mode"));
                     break;
             }
 
