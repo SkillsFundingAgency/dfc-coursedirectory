@@ -20,9 +20,12 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.PostcodeLookup
         public string ButtonText { get; set; }
         public IEnumerable<SelectListItem> Items { get; set; }
         public bool HasItems => Items != null && Items.Any();
+
+        public bool Searched { get; set; }
+
         public string NoneSelectedText => HasItems ? $"{Items.Count()} addresses found" : string.Empty;
 
-        [Required(AllowEmptyStrings = false, ErrorMessage = "Select an address")]
+        //[Required(AllowEmptyStrings = false, ErrorMessage = "Select an address")]
         public string PostcodeId { get; set; }
 
         public PostcodeLookupModel()

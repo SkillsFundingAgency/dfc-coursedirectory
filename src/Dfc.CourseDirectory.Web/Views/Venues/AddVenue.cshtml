@@ -10,12 +10,12 @@
 
 <div class="govuk-grid-row">
 
-    <div class="govuk-grid-column-full">
+    <div class="govuk-grid-column-two-thirds">
         <h1 class="govuk-heading-l" style="padding-top: 20px;">
             Add venue
         </h1>
 
-        <form asp-controller="Venues" asp-action="VenueAddressSelectionConfirmation" method="post">
+        <form id="AddVenue" asp-controller="Venues" asp-action="VenueAddressSelectionConfirmation" method="post">
             @await Component.InvokeAsync(nameof(VenueName), new VenueNameModel
             {
                 LabelText = "Venue name",
@@ -65,6 +65,152 @@
 <script>
     (function ($) {
         $(function () {
+            $("#findAddress").focus();
+
+            var $venueName = $("#@nameof(Model.VenueName)").govUkInput();
+
+            var $selectedAddress = $("#PostcodeId").govUkSelect();
+            var validStates = [];
+            var $continueButton = $("#venueAddressConfirmationSelection");
+            var $manualLink = $("#manualLink");
+            var $formGroupPostcodeId = $selectedAddress.closest(".govuk-form-group");
+            var $container = $selectedAddress.closest(".postcode-lookup__component").parent();
+            var $link = $container.find("a");
+            var $continue = $("#venueAddressConfirmationSelection");
+            var $button = $("#findAddress");
+            var $postcode = $("#@nameof(Model.Postcode)").govUkInput();
+            var $container = $postcode.closest(".postcode-lookup__component").parent();
+
+            //if ($continueButton !== undefined) {
+            //    $manualLink.text("I cannot find my address in the list");
+            //}
+
+
+
+
+
+            function isAllValid(currentValue) {
+                        return currentValue === true;
+            }
+
+             var makePostRequestWithPayload = function (payload, cb) {
+                var qs = $.param(payload);
+                $.get("/PostcodeLookup?" + qs, cb);
+             };
+
+            var onPostCodeSearchSucess = function (data) {
+                $container.html("");
+                $container.html(data);
+                $selectedAddress = $("#PostcodeId").govUkSelect();
+                $continueButton = $("#venueAddressConfirmationSelection");
+                $manualLink.text("I cannot find my address in the list");
+            };
+
+             var makeSelectionRequest = function (cb) {
+                $.get("/PostcodeLookup/Default", cb);
+            };
+
+            var onSelectionSucess = function (data) {
+                $container.html("");
+                $container.html(data);
+            };
+
+            function validateVenueName() {
+
+                $venueName.govUkInput("validState");
+
+                if (!$.requiredValidate($venueName.val())) {
+                    $venueName.govUkInput("invalidState", $venueName.attr("val-required-message"));
+                    validStates.push(false);
+                } else if (
+                    !$.regexValidate({ regex: $venueName.attr("val-regex") }, $venueName.val())) {
+                    $venueName.govUkInput("invalidState", $venueName.attr("val-regex-message"));
+                    validStates.push(false);
+                } else if (
+                    !$.maxLengthValidate({ max: $venueName.attr("val-max-length") }, $venueName.val())) {
+                    $venueName.govUkInput("invalidState", $venueName.attr("val-max-length-message"));
+                    validStates.push(false);
+                } else {
+                    $venueName.govUkInput("validState");
+                    validStates.push(true);
+                }
+                        
+            }
+
+            function validateSelectedAddress() {
+
+                $selectedAddress.govUkSelect("validState");
+                 if ($.requiredValidate($selectedAddress.val()))
+                    {
+                        $selectedAddress.govUkSelect("validState");
+                        validStates.push(true);
+                    }
+                    else
+                    {
+                        $selectedAddress.govUkSelect("invalidState", $selectedAddress.attr("val-required-message"));
+                            validStates.push(false);
+                }
+
+            }
+
+            function validatePostCode() {
+
+                $postcode.govUkInput("validState");
+
+                $("#InvalidPostCode").removeClass("govuk-error-message");
+                $("#InvalidPostCode").hide();
+
+                if (!$.requiredValidate($postcode.val())) {
+                    $postcode.govUkInput("invalidState", $postcode.attr("val-required-message"));
+                    validStates.push(false);
+                } else if (
+                    !$.regexValidate({ regex: $postcode.attr("val-regex") }, $postcode.val())) {
+                    $postcode.govUkInput("invalidState", $postcode.attr("val-regex-message"));
+                    validStates.push(false);
+                } else if (
+                    !$.maxLengthValidate({ max: $postcode.attr("val-max-length") }, $postcode.val())) {
+                    $postcode.govUkInput("invalidState", $postcode.attr("val-max-length-message"));
+                    validStates.push(false);
+                } else {
+                    $postcode.govUkInput("validState");
+                    validStates.push(true);
+                }
+
+                if (!validStates.every(isAllValid)) {
+                    
+                }
+            }
+
+            $(document).on('click','#venueAddressConfirmationSelection',function(e){
+                e.preventDefault();
+                    validStates = [];
+                    validateSelectedAddress();
+                    validateVenueName();
+                    if (validStates.every(isAllValid)) {
+                        $("#AddVenue").submit();
+                    }    
+                       
+            });
+
+              $(document).on('click','#findAddress',function(e){
+                e.preventDefault();
+                    validStates = [];
+                    validatePostCode();
+                    if (validStates.every(isAllValid)) {
+                        makePostRequestWithPayload(
+                            { postcode: $("#Postcode").val() }, onPostCodeSearchSucess);
+                    }    
+              });
+
+            
+              $(document).on('click','#Change',function(e){
+
+
+                  makeSelectionRequest(onSelectionSucess);
+            });
+
+
+
 
         });
     })(jQuery);
