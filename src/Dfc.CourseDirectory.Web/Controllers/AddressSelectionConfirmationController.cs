@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Web.ViewComponents.PostCodeSearchResult;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Dfc.CourseDirectory.Web.Controllers
@@ -27,34 +26,34 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _logger = logger;
             _postCodeSearchService = postCodeSearchService;
         }
-        [Authorize]
-        public async Task<IActionResult> Index([FromQuery] AddressSelectionRequestModel requestModel)
-        {
-            _logger.LogMethodEnter();
+        //[Authorize]
+        //public async Task<IActionResult> Index([FromQuery] AddressSelectionRequestModel requestModel)
+        //{
+        //    _logger.LogMethodEnter();
 
-            AddressSelectionResult model;
+        //    AddressSelectionResult model;
 
-            AddressSelectionCriteria criteria = new AddressSelectionCriteria(requestModel.Id);
-            var searchResult = await _postCodeSearchService.RetrieveAsync(criteria);
+        //    AddressSelectionCriteria criteria = new AddressSelectionCriteria(requestModel.Id);
+        //    var searchResult = await _postCodeSearchService.RetrieveAsync(criteria);
 
-            if (searchResult.IsSuccess && searchResult.HasValue)
-            {
-                model = new AddressSelectionResult(
-                    //searchResult.Value.Id,
-                    searchResult.Value.Line1,
-                    searchResult.Value.Line2,
-                    searchResult.Value.City,
-                    searchResult.Value.County,
-                    searchResult.Value.PostCode);
-            }
-            else
-            {
-                model = new AddressSelectionResult(searchResult.Error);
-            }
+        //    if (searchResult.IsSuccess && searchResult.HasValue)
+        //    {
+        //        model = new AddressSelectionResult(
+        //            //searchResult.Value.Id,
+        //            searchResult.Value.Line1,
+        //            searchResult.Value.Line2,
+        //            searchResult.Value.City,
+        //            searchResult.Value.County,
+        //            searchResult.Value.PostCode);
+        //    }
+        //    else
+        //    {
+        //        model = new AddressSelectionResult(searchResult.Error);
+        //    }
 
-            _logger.LogMethodExit();
+        //    _logger.LogMethodExit();
 
-            return ViewComponent(nameof(ViewComponents.PostCodeSearchResult.PostCodeSearchResult), model);
-        }
+        //    return ViewComponent(nameof(ViewComponents.PostCodeSearchResult.PostCodeSearchResult), model);
+        //}
     }
 }
