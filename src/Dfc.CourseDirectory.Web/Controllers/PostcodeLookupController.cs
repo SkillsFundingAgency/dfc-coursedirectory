@@ -96,16 +96,28 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             var listItems = new List<SelectListItem>();
 
-            foreach (var item in result.Value.Value)
+            if (result.IsSuccess)
             {
-                listItems.Add(new SelectListItem(item.StreetAddress, item.Id));
+                if (result.Value.Value.Count()==0)
+                {
+                    listItems = null;
+                }
+                else
+                {
+                    foreach (var item in result.Value.Value)
+                    {
+                        listItems.Add(new SelectListItem(item.StreetAddress, item.Id));
+                    }
+                }
             }
 
             var model = new PostcodeLookupModel
             {
                 PostcodeLabelText = "Postcode",
                 Postcode = postcode,
-                Items = listItems
+                Items = listItems,
+                Searched = true,
+                ButtonText = "Find address",
             };
 
             return ViewComponent(nameof(ViewComponents.PostcodeLookup.PostcodeLookup), model);

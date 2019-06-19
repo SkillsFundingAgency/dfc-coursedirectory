@@ -119,7 +119,7 @@ namespace Dfc.CourseDirectory.Web
 
             services.Configure<PostCodeSearchSettings>(Configuration.GetSection(nameof(PostCodeSearchSettings)));
             services.AddScoped<IPostCodeSearchService, PostCodeSearchService>();
-            services.AddScoped<IPostCodeSearchHelper, PostCodeSearchHelper>();
+           // services.AddScoped<IPostCodeSearchHelper, PostCodeSearchHelper>();
 
             services.AddScoped<ILarsSearchHelper, LarsSearchHelper>();
             services.AddScoped<IPaginationHelper, PaginationHelper>();
