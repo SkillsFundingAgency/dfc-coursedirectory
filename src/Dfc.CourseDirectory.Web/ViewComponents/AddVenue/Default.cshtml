@@ -13,7 +13,7 @@
                     <input class="govuk-input" id="name" name="name" type="text">
                 </div>
                 <div id="PostcodeLookupContainer">
-                    @await Component.InvokeAsync(nameof(PostcodeLookup), new PostcodeLookupModel())
+                    @await Component.InvokeAsync(nameof(PostcodeLookup), new PostcodeLookupModel() { Searched = false })
                 </div>
                 <div class="govuk-form-group">
                     <button type="submit" class="govuk-button" id="">
