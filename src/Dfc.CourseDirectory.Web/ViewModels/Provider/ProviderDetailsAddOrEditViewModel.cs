@@ -10,7 +10,5 @@ namespace Dfc.CourseDirectory.Web.ViewModels
         public string AliasName { get; set; }
 
         public string BriefOverview { get; set; }
-
-        public ProviderType ProviderType { get; set; }
     }
 }
