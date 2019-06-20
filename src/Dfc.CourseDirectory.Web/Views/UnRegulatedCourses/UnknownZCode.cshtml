@@ -8,52 +8,54 @@
 
 @Html.HiddenFor(x => x.LevelId)
 @Html.HiddenFor(x => x.CategoryId)
-<main class="cd-fullwidth-">
-    <a asp-controller="UnregulatedCourses" asp-action="Index" class="govuk-back-link">Back</a>
-    <div class="grid-row govuk-body" data-sf-element="Row">
-        <div class="">
-            <div>
-                <h1 class="govuk-heading-l govuk-!-margin-top-4">Choose a non-regulated provision</h1>
-            </div>
-            <div class="govuk-form-group">
-                <div class="govuk--row cd-nonregulated-provision">
-                    <div class="cd-flex">
-                        <div class="">
-                            <div class="cd-level-select govuk-form-group">
-                                <label class="govuk-label" for="level1">
-                                    Level 1
-                                </label>
+<div class="grid-row" data-sf-element="Row">
+    <div class="column-two-thirds">
+        <a asp-controller="UnregulatedCourses" asp-action="Index" class="govuk-back-link">Back</a>
+        <div class="grid-row govuk-body" data-sf-element="Row">
+            <div class="">
+                <div>
+                    <h1 class="govuk-heading-l govuk-!-margin-top-4">Choose a non-regulated provision</h1>
+                </div>
+                <div class="govuk-form-group">
+                    <div class="govuk--row cd-nonregulated-provision">
+                        <div class="cd-flex">
+                            <div class="">
+                                <div class="cd-level-select govuk-form-group">
+                                    <label class="govuk-label" for="level1">
+                                        Level 1
+                                    </label>
 
-                                <select asp-for="@Model.Level1Id" asp-items="@Model.Level1" class="govuk-select" id="LevelOneSelect" style="width: 400px"></select>
+                                    <select asp-for="@Model.Level1Id" asp-items="@Model.Level1" class="govuk-select" id="LevelOneSelect" style="width: 400px"></select>
+                                </div>
                             </div>
-                        </div>
-                        <div id="LevelTwo" class="">
-                            <div class="cd-level-select govuk-form-group">
-                                <label class="govuk-label" for="level2">
-                                    Level 2
-                                </label>
+                            <div id="LevelTwo" class="">
+                                <div class="cd-level-select govuk-form-group">
+                                    <label class="govuk-label" for="level2">
+                                        Level 2
+                                    </label>
 
-                                <select asp-for="@Model.Level2Id" asp-items="@Model.Level2" class="govuk-select" id="LevelTwoSelect" disabled style="width: 400px"></select>
+                                    <select asp-for="@Model.Level2Id" asp-items="@Model.Level2" class="govuk-select" id="LevelTwoSelect" disabled style="width: 400px"></select>
 
+                                </div>
                             </div>
                         </div>
                     </div>
+
+                    <div id="results">
+
+                        @await Component.InvokeAsync(nameof(ZCodeSearchResult))
+                    </div>
                 </div>
 
-                <div id="results">
 
-                    @await Component.InvokeAsync(nameof(ZCodeSearchResult))
-                </div>
+
+
+
+
             </div>
-
-
-
-
-
-
         </div>
     </div>
-</main>
+</div>
 
 
 <script>
@@ -150,23 +152,23 @@
                 Level1Id: $('#LevelOneSelect').val();
                 Level2Id: $('#LevelTwoSelect').val();
 
-                    var $allCheckedNotionalNvqLevelV2FilterCheckboxes =
-                        $("input[name='NotionalNVQLevelv2Filter']:checkbox:checked");
-                    var $allCheckedAwardAimRefFilterCheckboxes =
-                        $("input[name='AwardOrgAimRefFilter']:checkbox:checked");
+                var $allCheckedNotionalNvqLevelV2FilterCheckboxes =
+                    $("input[name='NotionalNVQLevelv2Filter']:checkbox:checked");
+                var $allCheckedAwardAimRefFilterCheckboxes =
+                    $("input[name='AwardOrgAimRefFilter']:checkbox:checked");
 
                 makeRequestWithPayload({
                     Level1Id: $('#LevelOneSelect').val(),
                     Level2Id: $('#LevelTwoSelect').val(),
-                        NotionalNVQLevelv2Filter: $allCheckedNotionalNvqLevelV2FilterCheckboxes.map(function () {
-                            return $(this).val();
-                        }).get(),
+                    NotionalNVQLevelv2Filter: $allCheckedNotionalNvqLevelV2FilterCheckboxes.map(function () {
+                        return $(this).val();
+                    }).get(),
                     AwardOrgAimRefFilter: $allCheckedAwardAimRefFilterCheckboxes.map(function () {
-                            return $(this).val();
-                        }).get()
-                    },
-                        onSucess);
-               // }
+                        return $(this).val();
+                    }).get()
+                },
+                    onSucess);
+                // }
             };
 
             var assignEventsToAllCheckboxes = function () {
@@ -209,7 +211,7 @@
 
             var onSucess = function (data) {
 
-               // var results = JSON.parse(data);
+                // var results = JSON.parse(data);
 
                 $('#results').html("");
                 $('#results').html(data);

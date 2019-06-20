@@ -15,6 +15,7 @@
         @Html.HiddenFor(x => x.Address.TownOrCity)
         @Html.HiddenFor(x => x.Address.County)
         @Html.HiddenFor(x => x.Address.Postcode)
+        @Html.HiddenFor(x => x.PostCodeId)
 
         <div class="govuk-grid-column-full">
             <table class="govuk-table">
@@ -60,7 +61,7 @@
                             <label>@Model.Address.Postcode</label><br>
                         </td>
                         <td class="govuk-table__cell">
-                            <button type="submit" asp-action="EditVenueAddress" class="link--button" asp-route-VenueName=@Model.VenueName id="">
+                            <button type="submit" asp-action="EditVenueAddress" class="link--button" asp-route-VenueName=@Model.VenueName asp-route-Id=@Model.Id>
                                 Change
                             </button>
                         </td>
@@ -68,11 +69,11 @@
                 </tbody>
             </table>
             <div class="govuk-form-group">
-                
+
                 <button type="submit" asp-action="AddVenueSelectionConfirmation" class="govuk-button" id="">
                     Save and continue
                 </button>
-              
+
                 @{
                     if (string.IsNullOrWhiteSpace(Model.Id))
                     {
