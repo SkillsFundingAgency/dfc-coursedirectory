@@ -66,6 +66,7 @@
 
   <ItemGroup>
     <None Include="appsettings.Development.json" />
+    <None Include="ViewComponents\EditVenueName\Default.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
