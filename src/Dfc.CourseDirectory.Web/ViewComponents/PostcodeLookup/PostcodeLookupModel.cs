@@ -9,6 +9,8 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.PostcodeLookup
 {
     public class PostcodeLookupModel
     {
+        public string VenueName { get; set; }
+        public string Id { get; set; }
         //[Required(AllowEmptyStrings = false, ErrorMessage = "Enter a postcode")]
         //[MaxLength(8, ErrorMessage = "Postcode must be 8 characters or less")]
 

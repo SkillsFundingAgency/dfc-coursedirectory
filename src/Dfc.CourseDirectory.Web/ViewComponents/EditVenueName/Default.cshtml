@@ -26,7 +26,7 @@
                     </div>
                 </div>
                 <div class="govuk-form-group">
-                    <button type="submit" asp-action="VenueAddressSelectionConfirmation" class="govuk-button">Continue</button>
+                    <button type="submit" id="EditVenueSubmit" asp-action="VenueAddressSelectionConfirmation" class="govuk-button">Continue</button>
                     @Html.ActionLink("Cancel", "EditVenue", "Venues", new { Model.Id}, new { @class = "govuk-link cd-cancel-link" })
                 </div>
 

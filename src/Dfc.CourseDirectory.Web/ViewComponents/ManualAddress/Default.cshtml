@@ -97,9 +97,9 @@
     <input class="govuk-input govuk-input--width-10" asp-for="@Model.Postcode" type="text" aria-describedby="@Model.PostcodeAriaDescribedBy"
              val-required-message="Enter a postcode"
             val-max-length="8"
-           val-max-length-message="Postcode must be 8 characters or less"
+           val-max-length-message="Enter a real postcode"
            val-regex="@postcoeRegEx"
-           val-regex-message="Address line 2 must only include letters a to z, numbers, hyphens and spaces" />
+           val-regex-message="Enter a real postcode" />
 </div>
 
 <script>

@@ -372,15 +372,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
             var addedVenueModel = new AddedVenueModel
             {
                 VenueName = HttpUtility.HtmlEncode(requestModel.VenueName),
-                AddressLine1=  requestModel.AddressLine1,
-                AddressLine2= requestModel.AddressLine2,
-                County= requestModel.County,
-                Id= venueID,
-                PostCode= requestModel.Postcode,
+                AddressLine1 = requestModel.AddressLine1,
+                AddressLine2 = requestModel.AddressLine2,
+                County = requestModel.County,
+                Id = venueID,
+                PostCode = requestModel.Postcode,
                 Town = requestModel.TownOrCity
             };
 
-          
+
 
             string option = _contextAccessor.HttpContext.Session.GetString("Option");
 
@@ -401,11 +401,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 _session.SetObject("NewAddedVenue", addedVenueModel);
                 return RedirectToAction("SummaryToAddCourseRun", "AddCourse");
             }
-           
-                return View("VenueSearchResults", await GetVenues(UKPRN.Value, newItem, updated));
-            
 
-            
+            return View("VenueSearchResults", await GetVenues(UKPRN.Value, newItem, updated));
+
+
+
         }
         [Authorize]
         [HttpPost]
@@ -429,15 +429,33 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
         [Authorize]
         [HttpPost]
-        public IActionResult EditVenueName(EditVenueRequestModel requestModel)
+        public async Task<IActionResult> EditVenueName(EditVenueRequestModel requestModel)
         {
+            AddressModel addressModel = null;
+            GetVenueByIdCriteria criteria = new GetVenueByIdCriteria(requestModel.Id);
+
+            var getVenueByIdResult = await _venueService.GetVenueByIdAsync(criteria);
+            if (getVenueByIdResult.IsSuccess && getVenueByIdResult.HasValue)
+            {
+                addressModel = new AddressModel
+                {
+                    //Id = getVenueByIdResult.Value.ID,
+                    AddressLine1 = getVenueByIdResult.Value.Address1,
+                    AddressLine2 = getVenueByIdResult.Value.Address2,
+                    TownOrCity = getVenueByIdResult.Value.Town,
+                    County = getVenueByIdResult.Value.County,
+                    Postcode = getVenueByIdResult.Value.PostCode
+                };
+            }
+
             EditVenueNameModel model = new EditVenueNameModel
             {
                 VenueName = requestModel.VenueName,
-                PostcodeId = requestModel.Address.Id,
-                Address = requestModel.Address,
+                //PostcodeId = requestModel.Address.Id,
+                Address = addressModel,
                 Id = requestModel.Id
             };
+
             return View(model);
         }
         [Authorize]
