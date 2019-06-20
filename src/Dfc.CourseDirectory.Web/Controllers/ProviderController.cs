@@ -136,7 +136,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             if (providerSearchResult.IsSuccess)
             {
                 model = new ProviderTypeAddOrEditViewModel();
-                model.ProviderType = providerSearchResult.Value.Value.FirstOrDefault()?.ProviderType ?? ProviderType.undefined;
+                model.ProviderType = providerSearchResult.Value.Value.FirstOrDefault()?.ProviderType ?? ProviderType.Undefined;
             }
 
             return View("UpdateProviderType", model);

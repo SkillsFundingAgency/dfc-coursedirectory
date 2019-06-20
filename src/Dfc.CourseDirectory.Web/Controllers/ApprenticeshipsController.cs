@@ -23,6 +23,7 @@ using System.Threading.Tasks;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
+    [Authorize("Apprenticeship")]
     public class ApprenticeshipsController : Controller
     {
         private readonly ILogger<ApprenticeshipsController> _logger;
