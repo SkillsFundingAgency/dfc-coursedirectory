@@ -12,7 +12,7 @@ namespace Dfc.CourseDirectory.Web.Helpers.Attributes
             var session = context.HttpContext.Session.Get("UKPRN");
                 if (controller != null && session == null)
                 {
-                    context.Result = controller.RedirectToAction("Index", "Home");
+                    context.Result = controller.RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
                 }
             base.OnActionExecuting(context);
         }
