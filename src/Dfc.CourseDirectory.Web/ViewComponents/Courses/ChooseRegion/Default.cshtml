@@ -13,12 +13,12 @@
                         val-required-message="Choose if you can deliver this course anywhere in England">
                     <span id="more-detail-hint" class="govuk-hint">Answering yes will show you are a national provider</span>
                     <div class="govuk-radios__item">
-                        @Html.RadioButtonFor(m => m.National, true, new { @class = "govuk-radios__input" })
-                        <label class="govuk-label govuk-radios__label" for="@Model.National">Yes</label>
+                        @Html.RadioButtonFor(m => m.National, true, new { @class = "govuk-radios__input", @id = "nationalTrue" })
+                        <label class="govuk-label govuk-radios__label" for="nationalTrue">Yes</label>
                     </div>
                     <div class="govuk-radios__item">
-                        @Html.RadioButtonFor(m => m.National, false, new { @class = "govuk-radios__input" })
-                        <label class="govuk-label govuk-radios__label" for="@Model.National">No</label>
+                        @Html.RadioButtonFor(m => m.National, false, new { @class = "govuk-radios__input" , @id = "nationalFalse" })
+                        <label class="govuk-label govuk-radios__label" for="nationalFalse">No</label>
                     </div>
                 </div>
             </fieldset>
