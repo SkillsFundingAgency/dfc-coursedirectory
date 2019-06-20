@@ -45,7 +45,7 @@
             {
                 ViewData["Title"] = "Course management dashboard";
 
-              
+
                 @if (@Model.MigrationPendingCount == 0)
                 {
                     @await Component.InvokeAsync(nameof(Notification), new NotificationModel
@@ -102,7 +102,7 @@
                                 <div class="cd-info-summary__list">
                                     @foreach (string msg in Model?.ValidationMessages)
                                     {
-                                        <a href = "/DQI" > @msg </a>
+                                        <a href="/DQI"> @msg </a>
 
                                     }
 
@@ -177,15 +177,54 @@
         }
         else
         {
-            <h1 class="govuk-heading-l">Welcome to the Course Directory</h1>
-            <h3 class="govuk-heading-m">This is the "private beta" of the new Course Directory developed by the National Careers Service.</h3>
-            <br />
-            <h3 class="govuk-heading-m">Please Login below: </h3>
-            <div>
+            @*<h1 class="govuk-heading-l">Welcome to the Course Directory</h1>
+                <h3 class="govuk-heading-m">This is the "private beta" of the new Course Directory developed by the National Careers Service.</h3>
+                <br />
+                <h3 class="govuk-heading-m">Please Login below: </h3>
+                <div>
 
-                <a class="govuk-link" asp-controller="Auth" asp-action="Login">Login</a>
+                    <a class="govuk-link" asp-controller="Auth" asp-action="Login">Login</a>
 
+                </div>*@
+
+
+            <div class="cd-dashboard provider">
+
+
+                <div class="govuk-width-container">
+
+
+                    <main class="govuk-main-wrapper " id="main-content" role="main">
+                        <div class="govuk-grid-row">
+                            <div class="govuk-grid-column-two-thirds">
+                                <h1 class="govuk-heading-xl">Publish to the course directory</h1>
+
+                                <p class="govuk-body">Learning providers who are contracted with the Education and Skills Funding Agency and supply 6-18 and 19+ English provisions must supply information on the courses they run.</p>
+                                <p class="govuk-body">Use this service to:</p>
+
+                                <ul class="govuk-list govuk-list--bullet">
+                                    <li>Publish a new course to the directory</li>
+                                    <li>Edit a course that is already published on the course directory</li>
+                                    <li>Remove a course from the directory if you no longer run it</li>
+                                </ul>
+
+                                <p class="govuk-body">Log in with DfE sign in.</p>
+
+                                <a role="button" draggable="false" class="govuk-button govuk-button--start govuk-!-margin-top-2 govuk-!-margin-bottom-8" asp-controller="Auth" asp-action="Login">Start now</a>
+
+                                @*<a href="https://coursedirectoryproviderportal.org.uk/sa/login" >
+                                    Start now
+                                </a>*@
+
+
+                            </div>
+
+                           
+                        </div>
+                    </main>
+                </div>
             </div>
+
         }
     </div>
 </div>
