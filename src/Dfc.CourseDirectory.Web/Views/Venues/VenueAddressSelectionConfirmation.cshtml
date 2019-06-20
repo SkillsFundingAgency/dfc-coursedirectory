@@ -8,7 +8,7 @@
 @model Dfc.CourseDirectory.Web.ViewModels.VenueAddressSelectionConfirmationViewModel
 
 <div class="govuk-grid-row">
-
+    @Html.HiddenFor(x => x.PostCodeId)
     <div class="govuk-grid-column-two-thirds">
         @{
             if (Model.Id != null)
@@ -21,11 +21,13 @@
             }
         }
 
+
         @await Component.InvokeAsync(nameof(VenueAddressSelectionConfirmation), new VenueAddressSelectionConfirmationModel
             {
                 Id = Model.Id,
                 Address = Model.Address,
-                VenueName = Model.VenueName
+                VenueName = Model.VenueName,
+                PostCodeId = Model.PostCodeId
             })
     </div>
 </div>

@@ -5,180 +5,116 @@
     Layout = "_Layout_Your_Courses";
 }
 
-<div class="cd-hero-grey">
-    <div class="govuk-width-container">
-        <header class="cd-hero-search">
-            <div class="content-container">
-                <a asp-controller="RegulatedQualification" asp-action="Index" class="govuk-back-link">Back</a>
-                <div class="grid-row" data-sf-element="Row">
-                    <div class="column-two-thirds">
-                        <div>
-
-                            <h1 class="govuk-heading-l govuk-!-margin-top-4">Search for a course provision</h1>
-
-                           
+@{ var regex = @"^[zZ]{1}[a-zA-Z0-9]{7}$"; }
 
 
-                            <p class="column-two-thirds">Search by Z code for the provision you are awarding with this course</p>
-                        </div>
-                        <form class="govuk-!-margin-bottom-9" id="zCodeSearch" asp-controller="UnregulatedCourses" asp-action="Index" method="post">
-                            <div class="header-search-content">
-                                <span asp-validation-for="@Model.Search" class="govuk-error-message"></span>
-                                <div class="search-input-wrapper">
-                                    @*@if (!string.IsNullOrWhiteSpace(Model.HintText))
-                                        {
-                                        <span class="govuk-hint">
-                                            @Model.HintText
-                                        </span>
-                                        }*@
+<div class="govuk-grid-row">
 
-                                    <input class="govuk-input govuk-!-width-one-third search-input js-search-focus" asp-for="@Model.Search" type="text" placeholder="Enter a Z code">
-                                    <div class="cd-c-search__item cd-search__submit-wrapper">
-                                        <button type="button" class=" submit" id="searchZCode">Search</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                        <a class="govuk-link" id="unKnownLink" asp-controller="UnregulatedCourses" asp-action="UnknownZCode">I don't know the Z code</a>
-                        <div id="results">
+    <div class="govuk-grid-column-two-thirds">
+        <a asp-controller="RegulatedQualification" asp-action="Index" class="govuk-back-link">Back</a>
+        <div class="grid-row" data-sf-element="Row">
+            <div class="column-two-thirds">
+                <div>
 
-                        </div>
+                    <h1 class="govuk-heading-l govuk-!-margin-top-4">Search for a course provision</h1>
+
+                    <p class="column-two-thirds">Search by Z code for the provision you are awarding with this course</p>
+                </div>
+                <form class="" id="zCodeSearch" asp-controller="UnregulatedCourses" asp-action="Index" method="post">
+
+                    <div class="govuk-form-group">
+
+                        <input class="govuk-input" style="width:95%; float:left" asp-for="@Model.Search" type="text" placeholder="Enter a Z code"
+                               val-required-message="Enter a z code to search"
+                               val-regex="@regex"
+                               val-regex-message="Code must start with Z followed by 7 numbers or letters" />
+
+                        <button id="searchZCode" type="submit" class="submit">Search</button>
+
 
                     </div>
+                </form>
+            </div>
+        </div>
+        <div class="grid-row" data-sf-element="Row">
+            <div class="govuk-form-group">
+                <a class="govuk-link" id="unKnownLink" asp-controller="UnregulatedCourses" asp-action="UnknownZCode" style="padding-left:0.2em">  I don't know the Z code  </a>
+                <br />
+                <br />
+                <div id="results">
+
                 </div>
             </div>
-        </header>
+        </div>
     </div>
+
 </div>
 
 <script>
     (function ($) {
         $(function () {
 
+            var $code = $("#@nameof(Model.Search)").govUkInput();
+            var validStates = [];
+            var $search = $("#searchZCode");
 
-                        var doSearch = function () {
+            var doSearch = function () {
 
+                $('#results').html("");
                 makeRequestWithPayload({
                     Search: $('#Search').val()
-                    },
-                        onSucess);
-
+                }, onSucess);
             };
-
-
 
             var onSucess = function (data) {
 
-                $('#unKnownLink').hide();
+                //$('#unKnownLink').hide();
                 $('#results').html("");
                 $('#results').html(data);
-
             };
 
+            function isAllValid(currentValue) {
+                        return currentValue === true;
+            }
 
             var makeRequestWithPayload = function (payload, success) {
-                //console.log(payload);
                 var qs = $.param(payload);
                 qs = replaceAll(qs, "%5B%5D", "");
                 $.get("/UnregulatedCourses/FindNonRegulated?" + qs, success);
             };
 
-
-
-               var replaceAll = function (search, find, replace) {
+            var replaceAll = function (search, find, replace) {
                 return search.split(find).join(replace);
             };
 
+            function validate() {
 
-
-            var formGroupErrorClass = "govuk-form-group--error";
-            var elementErrorClass = "govuk-input--error";
-
-            var $searchForm = $("#zCodeSearch");
-
-            var $errorSummary = $(".cd-error-summary");
-
-            var $elementSearchTerm = $("#@nameof(Model.Search)");
-
-            var $validationMessageSearchTerm = $elementSearchTerm.prev("[data-valmsg-for='@nameof(Model.Search)']");
-            $validationMessageSearchTerm.css("margin-bottom", "0");
-
-            var $formGroupSearchTerm = $elementSearchTerm.closest('.govuk-form-group');
-            var $form = $elementSearchTerm.closest("form");
-
-            $form.addTriggersToJqueryValidate().triggerElementValidationsOnFormValidation();
-            var validator = $form.validate();
-
-            $elementSearchTerm.on("blur", function () {
-                $errorSummary.hide();
-
-
-                var result = validator.element($elementSearchTerm);
-                if (result) {
-                    HideValidationErrorMessage();
-                } else {
-                    ShowValidationErrorMessage();
+                if (!$.requiredValidate($code.val())) {
+                    $code.govUkInput("invalidState", $code.attr("val-required-message"));
+                    validStates.push(false);
+                } else if (
+                    !$.regexValidate({ regex: $code.attr("val-regex") }, $code.val())) {
+                    $code.govUkInput("invalidState", $code.attr("val-regex-message"));
+                    validStates.push(false);
+                }  else {
+                    $code.govUkInput("validState");
+                    $code.push(true);
                 }
-            });
 
-            $elementSearchTerm.elementValidation(function (element, result) {
-                if (!$formGroupSearchTerm.hasClass(formGroupErrorClass)) {
-                    $validationMessageSearchTerm.hide();
-                }
-                if (result) {
-                    HideValidationErrorMessage();
-                }
-                else {
-                    ShowValidationErrorMessage()
-                }
-            });
+            }
 
 
-            $("#searchZCode").on("click", function (e) {
+            $(document).on('click','#searchZCode',function(e){
                 e.preventDefault();
-                ValidateAndSearchForProvider();
+                    $('#results').html("");
+                    validStates = [];
+                    validate();
+                    if (validStates.every(isAllValid)) {
+                        doSearch();
+                    }
+
             });
 
-            $(document).keypress(function (e) {
-                if (e.which == 13) {
-                    e.preventDefault();
-                   ValidateAndSearchForProvider();
-                }
-            });
-
-            function ValidateAndSearchForProvider() {
-                $errorSummary.hide();
-                var trimmed = $elementSearchTerm.val().trim();
-                $elementSearchTerm.val(trimmed);
-                $elementSearchTerm.trigger("blur");
-                var result = validator.element($elementSearchTerm);
-                if (result) {
-
-
-                    HideValidationErrorMessage();
-                    doSearch();
-                   // $("#zCodeSearch").submit();
-                }
-                else {
-                    //$providerSearchResultContainer.html("");
-                    ShowValidationErrorMessage();
-                }
-            }
-
-            function ShowValidationErrorMessage() {
-                    $elementSearchTerm.addClass(elementErrorClass);
-                    $formGroupSearchTerm.addClass(formGroupErrorClass);
-                    $searchForm.addClass("govuk-form-group, govuk-form-group--error");
-                    $validationMessageSearchTerm.show();
-                    $validationMessageSearchTerm.css("margin-bottom", "15px");
-            }
-            function HideValidationErrorMessage() {
-                    $elementSearchTerm.removeClass(elementErrorClass);
-                    $formGroupSearchTerm.removeClass(formGroupErrorClass);
-                    $searchForm.removeClass("govuk-form-group, govuk-form-group--error");
-                    $validationMessageSearchTerm.hide();
-                    $validationMessageSearchTerm.css("margin-bottom", "0");
-            }
 
 
 

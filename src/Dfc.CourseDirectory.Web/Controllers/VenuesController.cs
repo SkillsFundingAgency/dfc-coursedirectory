@@ -297,6 +297,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 }
             }
 
+            if (!string.IsNullOrEmpty(requestModel.PostcodeId))
+                {
+                viewModel.PostCodeId = requestModel.PostcodeId;
+            }
+              
+            
+
             viewModel.VenueName = requestModel.VenueName;
 
             return View(viewModel);
@@ -432,26 +439,34 @@ namespace Dfc.CourseDirectory.Web.Controllers
         public async Task<IActionResult> EditVenueName(EditVenueRequestModel requestModel)
         {
             AddressModel addressModel = null;
-            GetVenueByIdCriteria criteria = new GetVenueByIdCriteria(requestModel.Id);
 
-            var getVenueByIdResult = await _venueService.GetVenueByIdAsync(criteria);
-            if (getVenueByIdResult.IsSuccess && getVenueByIdResult.HasValue)
+            if (!string.IsNullOrEmpty(requestModel.Id))
             {
-                addressModel = new AddressModel
+                GetVenueByIdCriteria criteria = new GetVenueByIdCriteria(requestModel.Id);
+
+                var getVenueByIdResult = await _venueService.GetVenueByIdAsync(criteria);
+                if (getVenueByIdResult.IsSuccess && getVenueByIdResult.HasValue)
                 {
-                    //Id = getVenueByIdResult.Value.ID,
-                    AddressLine1 = getVenueByIdResult.Value.Address1,
-                    AddressLine2 = getVenueByIdResult.Value.Address2,
-                    TownOrCity = getVenueByIdResult.Value.Town,
-                    County = getVenueByIdResult.Value.County,
-                    Postcode = getVenueByIdResult.Value.PostCode
-                };
+                    addressModel = new AddressModel
+                    {
+                        //Id = getVenueByIdResult.Value.ID,
+                        AddressLine1 = getVenueByIdResult.Value.Address1,
+                        AddressLine2 = getVenueByIdResult.Value.Address2,
+                        TownOrCity = getVenueByIdResult.Value.Town,
+                        County = getVenueByIdResult.Value.County,
+                        Postcode = getVenueByIdResult.Value.PostCode
+                    };
+                }
+            }
+            else
+            {
+                addressModel = requestModel.Address;
             }
 
             EditVenueNameModel model = new EditVenueNameModel
             {
                 VenueName = requestModel.VenueName,
-                //PostcodeId = requestModel.Address.Id,
+                PostcodeId = requestModel.PostcodeId,
                 Address = addressModel,
                 Id = requestModel.Id
             };
