@@ -23,7 +23,7 @@ namespace Dfc.CourseDirectory.Services.UnregulatedProvision
                     Description = "Health, public services, care",
                     SectorSubjectAreaTier2 = new Dictionary<string, string>
                     {
-                        {"1.10", "Medicine and Dentistry"},
+                        {"1.10", "Medicine and dentistry"},
                         {"1.20", "Nursing and medicine"},
                         {"1.30", "Health and social Care"},
                         {"1.40", "Public services"},

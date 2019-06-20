@@ -4,6 +4,8 @@
 
 @{ var regex = @"^([Gg][Ii][Rr] 0[Aa]{2})|((([A-Za-z][0-9]{1,2})|(([A-Za-z][A-Ha-hJ-Yj-y][0-9]{1,2})|(([A-Za-z][0-9][A-Za-z])|([A-Za-z][A-Ha-hJ-Yj-y][0-9][A-Za-z]?))))\s?[0-9][A-Za-z]{2})+$"; }
 
+@Html.HiddenFor(x => x.VenueName)
+@Html.HiddenFor(x => x.Id)
 <div class="postcode-lookup__component">
     @if (Model.HasItems)
     {
@@ -28,54 +30,39 @@
             </button>
         </div>
 
-        <script>
-            (function ($) {
-                $(function () {
-
-
-                });
-            })(jQuery);
-        </script>
     }
     else
     {
-<div class="govuk-form-group">
-    <label class="govuk-label" asp-for="@Model.Postcode">
-        @Model.PostcodeLabelText
-    </label>
-    @if (!string.IsNullOrWhiteSpace(Model.PostcodeHintText))
-    {
-        <span class="govuk-hint">
-            @Model.PostcodeHintText
-        </span>
-    }
+        <div class="govuk-form-group">
+            <label class="govuk-label" asp-for="@Model.Postcode">
+                @Model.PostcodeLabelText
+            </label>
+            @if (!string.IsNullOrWhiteSpace(Model.PostcodeHintText))
+            {
+                <span class="govuk-hint">
+                    @Model.PostcodeHintText
+                </span>
+            }
 
-    @if (Model.Searched && Model.Items== null)
-    {
-        <span id="InvalidPostCode" class="govuk-error-message"
-              val-message="Enter a real postcode">Enter a real postcode</span>
-    }
+            @if (Model.Searched && Model.Items == null)
+            {
+                <span id="InvalidPostCode" class="govuk-error-message"
+                      val-message="Enter a real postcode">Enter a real postcode</span>
+            }
 
-    <input class="govuk-input" asp-for="@Model.Postcode" type="text" autofocus aria-describedby="@Model.PostcodeAriaDescribedBy"
-           val-required-message="Enter postcode"
-           val-max-length="8"
-           val-max-length-message="The maximum length of post code is 8 characters"
-           val-regex="@regex"
-           val-regex-message="Post code contains invalid characters" />
+            <input class="govuk-input govuk-input--width-10" asp-for="@Model.Postcode" type="text" autofocus aria-describedby="@Model.PostcodeAriaDescribedBy"
+                   val-required-message="Enter a postcode"
+                   val-max-length="8"
+                   val-max-length-message="Enter a real postcode"
+                   val-regex="@regex"
+                   val-regex-message="Enter a real postcode" />
 
-</div>
+        </div>
         <div class="govuk-form-group">
             <button type="button" class="govuk-button" id="findAddress">
                 @Model.ButtonText
             </button>
         </div>
 
-        <script>
-            (function ($) {
-                $(function () {
-
-                });
-            })(jQuery);
-        </script>
     }
 </div>

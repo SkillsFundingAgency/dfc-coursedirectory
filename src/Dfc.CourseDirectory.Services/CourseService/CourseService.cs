@@ -788,7 +788,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             // DurationValue
             if (courseRun.DurationValue.Equals(null))
             {
-                validationMessages.Add(new KeyValuePair<string, string>("DURATION", $"Enter Duration"));
+                validationMessages.Add(new KeyValuePair<string, string>("DURATION", $"Enter duration"));
             }
             else
             {
