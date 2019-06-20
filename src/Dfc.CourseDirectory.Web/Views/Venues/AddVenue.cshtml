@@ -81,9 +81,12 @@
             var $postcode = $("#@nameof(Model.Postcode)").govUkInput();
             var $container = $postcode.closest(".postcode-lookup__component").parent();
 
-            //if ($continueButton !== undefined) {
-            //    $manualLink.text("I cannot find my address in the list");
-            //}
+
+            var $elementSearchTerm = $("#@nameof(Model.Postcode)");
+            var $formGroupSearchTerm = $elementSearchTerm.closest('.govuk-form-group');
+
+            var formGroupErrorClass = "govuk-form-group--error";
+            var elementErrorClass = "govuk-input--error";
 
 
 
@@ -101,6 +104,10 @@
             var onPostCodeSearchSucess = function (data) {
                 $container.html("");
                 $container.html(data);
+                if (data.indexOf("govuk-select govuk-!-width-one-half") == -1) {
+                    $("#@nameof(Model.Postcode)").closest(".govuk-form-group").addClass("govuk-form-group--error");
+                    $("#@nameof(Model.Postcode)").addClass("govuk-input--error");
+                }
                 $selectedAddress = $("#PostcodeId").govUkSelect();
                 $continueButton = $("#venueAddressConfirmationSelection");
                 $manualLink.text("I cannot find my address in the list");

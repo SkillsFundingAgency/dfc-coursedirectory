@@ -131,7 +131,7 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         public decimal? Cost { get; set; }
         public string CostDescription { get; set; }       
         public DurationUnit DurationUnit { get; set; }
-        [Required(ErrorMessage = "Enter Duration")]
+        [Required(ErrorMessage = "Enter duration")]
         [RegularExpression("^([0-9]|[0-9][0-9]|[0-9][0-9][0-9])$", ErrorMessage = "Duration must be numeric and maximum length is 3 digits")]
         public int? DurationValue { get; set; }
         public StudyMode StudyMode { get; set; }
