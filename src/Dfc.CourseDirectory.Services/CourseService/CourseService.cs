@@ -781,12 +781,8 @@ namespace Dfc.CourseDirectory.Services.CourseService
                     validationMessages.Add(new KeyValuePair<string, string>("COST", $"Maximum allowed cost value is 999,999.99"));
             }
 
-            // DurationUnit
-            if (courseRun.DurationUnit.Equals(DurationUnit.Undefined))
-                validationMessages.Add(new KeyValuePair<string, string>("DURATION_UNIT", $"Select Duration Unit"));
-
-            // DurationValue
-            if (courseRun.DurationValue.Equals(null))
+            // DurationValue and DurationUnit
+            if (courseRun.DurationValue.Equals(null) || courseRun.DurationUnit.Equals(DurationUnit.Undefined))
             {
                 validationMessages.Add(new KeyValuePair<string, string>("DURATION", $"Enter duration"));
             }
