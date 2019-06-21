@@ -183,5 +183,20 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             return View("Complete/index");
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Report()
+        {
+            var courses = await _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(_session.GetInt32("UKPRN")));
+
+            if (courses.IsFailure)
+            {
+                throw new Exception($"Unable to find courses for UKPRN: {_session.GetInt32("UKPRN")}");
+            }
+
+            var model = new ReportViewModel(courses.Value.Value.SelectMany(o => o.Value).SelectMany(i => i.Value));
+
+            return View("Report/index", model);
+        }
     }
 }

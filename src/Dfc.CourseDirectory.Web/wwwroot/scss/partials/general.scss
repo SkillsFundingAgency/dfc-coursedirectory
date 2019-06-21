@@ -26,7 +26,40 @@
     text-align: center;
     justify-content: center;
     flex-direction: column;
+
+    &.blue {
+        text-align: left;
+        background-color: #005ea5;
+        color: white;
+
+        h2, a {
+            color: white;
+        }
+    }
+
+    &.green {
+        background-color: green;
+    }
+
+    &.red {
+        background-color: red;
+    }
+
+    &.white {
+        background-color: white;
+        text-align: left;
+    }
+
+    &.grey {
+        background-color: #f8f8f8;
+        border: 1px solid #bfc1c3;
+        display: block;
+        text-align: left;
+        flex-direction: row;
+        margin-bottom: 0em;
+    }
 }
+
 .cd-cancel-link {
     margin: 9px 0 6px 13px;
     position: absolute;
@@ -73,4 +106,16 @@
 
 .tox-statusbar__wordcount {
     font-size: 20px !important;
+}
+
+.sidebar {
+    .widget {
+        border-top: 5px solid #005ea5;
+        background-color: #f8f8f8;
+        padding-left: 1rem;
+
+        div {
+            margin-bottom: .5em;
+        }
+    }
 }
