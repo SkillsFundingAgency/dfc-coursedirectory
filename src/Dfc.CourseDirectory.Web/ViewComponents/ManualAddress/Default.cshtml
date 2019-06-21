@@ -2,6 +2,14 @@
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
+@{ 
+    var addressRegex = @"^[a-zA-Z0-9\.\-']+(?: [a-zA-Z0-9\.\-']+)*$";
+
+    var townOrCountyRegex = @"^[a-zA-Z\.\-']+(?: [a-zA-Z\.\-']+)*$";
+
+    var postcoeRegEx = @"^([Gg][Ii][Rr] 0[Aa]{2})|((([A-Za-z][0-9]{1,2})|(([A-Za-z][A-Ha-hJ-Yj-y][0-9]{1,2})|(([A-Za-z][0-9][A-Za-z])|([A-Za-z][A-Ha-hJ-Yj-y][0-9][A-Za-z]?))))\s?[0-9][A-Za-z]{2})+$";
+}
+
 <input asp-for="Id" type="hidden" />.
 
 <div class="govuk-form-group">
@@ -15,8 +23,14 @@
             @Model.AddressLine1HintText
         </span>
     }
-    <span asp-validation-for="@Model.AddressLine1" class="govuk-error-message"></span>
-    <input class="govuk-input" asp-for="@Model.AddressLine1" type="text" aria-describedby="@Model.AddressLine1AriaDescribedBy">
+    @*<span asp-validation-for="@Model.AddressLine1" class="govuk-error-message"></span>*@
+    <input class="govuk-input" asp-for="@Model.AddressLine1" type="text" aria-describedby="@Model.AddressLine1AriaDescribedBy"
+           val-required-message="Enter address line 1"
+           val-max-length="100"
+           val-max-length-message="Address line 1 must be 100 characters or less"
+           val-regex="@addressRegex"
+           val-regex-message="Address line 1 must only include letters a to z, numbers, hyphens and spaces" />
+
 </div>
 
 <div class="govuk-form-group">
@@ -30,16 +44,25 @@
             @Model.AddressLine2HintText
         </span>
     }
-    <span asp-validation-for="@Model.AddressLine2" class="govuk-error-message"></span>
-    <input class="govuk-input" asp-for="@Model.AddressLine2" type="text" aria-describedby="@Model.AddressLine2AriaDescribedBy">
+    @*<span asp-validation-for="@Model.AddressLine2" class="govuk-error-message"></span>*@
+    <input class="govuk-input" asp-for="@Model.AddressLine2" type="text" aria-describedby="@Model.AddressLine2AriaDescribedBy" 
+           val-max-length="100"
+           val-max-length-message="Address line 2 must be 100 characters or less"
+           val-regex="@addressRegex"
+           val-regex-message="Address line 2 must only include letters a to z, numbers, hyphens and spaces" />
 </div>
 
 <div class="govuk-form-group">
     <label class="govuk-label" asp-for="@Model.TownOrCity">
         @Model.TownOrCityLabelText
     </label>
-    <span asp-validation-for="@Model.TownOrCity" class="govuk-error-message"></span>
-    <input class="govuk-input govuk-!-width-two-thirds" asp-for="@Model.TownOrCity" type="text" aria-describedby="@Model.TownOrCityAriaDescribedBy">
+    @*<span asp-validation-for="@Model.TownOrCity" class="govuk-error-message"></span>*@
+    <input class="govuk-input govuk-!-width-two-thirds" asp-for="@Model.TownOrCity" type="text" aria-describedby="@Model.TownOrCityAriaDescribedBy"
+             val-required-message="Enter a town or city"
+            val-max-length="75"
+           val-max-length-message="Town or city must be 75 characters or less"
+           val-regex="@townOrCountyRegex"
+           val-regex-message="Town or city must only include letters a to z, numbers, hyphens and spaces" />
 </div>
 
 <div class="govuk-form-group">
@@ -52,8 +75,12 @@
             @Model.CountyHintText
         </span>
     }
-    <span asp-validation-for="@Model.County" class="govuk-error-message"></span>
-    <input class="govuk-input govuk-!-width-two-thirds" asp-for="@Model.County" type="text" aria-describedby="@Model.CountyAriaDescribedBy">
+    @*<span asp-validation-for="@Model.County" class="govuk-error-message"></span>*@
+    <input class="govuk-input govuk-!-width-two-thirds" asp-for="@Model.County" type="text" aria-describedby="@Model.CountyAriaDescribedBy"
+            val-max-length="75"
+           val-max-length-message="County must be 75 characters or lesss"
+           val-regex="@townOrCountyRegex"
+           val-regex-message="County must only include letters a to z, numbers, hyphens and spaces" />
 </div>
 
 <div class="govuk-form-group">
@@ -66,184 +93,19 @@
             @Model.PostcodeHintText
         </span>
     }
-    <span asp-validation-for="@Model.Postcode" class="govuk-error-message"></span>
-    <input class="govuk-input govuk-input--width-10" asp-for="@Model.Postcode" type="text" aria-describedby="@Model.PostcodeAriaDescribedBy">
+    @*<span asp-validation-for="@Model.Postcode" class="govuk-error-message"></span>*@
+    <input class="govuk-input govuk-input--width-10" asp-for="@Model.Postcode" type="text" aria-describedby="@Model.PostcodeAriaDescribedBy"
+             val-required-message="Enter a postcode"
+            val-max-length="8"
+           val-max-length-message="Enter a real postcode"
+           val-regex="@postcoeRegEx"
+           val-regex-message="Enter a real postcode" />
 </div>
 
 <script>
     (function ($) {
         $(function () {
-            var formGroupErrorClass = 'govuk-form-group--error';
-            var elementErrorClass = "govuk-input--error";
 
-            var $elementAddressLine1 = $("#@nameof(Model.AddressLine1)");
-            var $validationMessageAddressLine1 = $elementAddressLine1.prev("[data-valmsg-for='@nameof(Model.AddressLine1)']");
-            $validationMessageAddressLine1.css("margin-bottom", "0");
-            var $formGroupAddressLine1 = $elementAddressLine1.closest('.govuk-form-group');
-
-            var $form = $elementAddressLine1.closest("form");
-            $form.addTriggersToJqueryValidate().triggerElementValidationsOnFormValidation();
-            var validator = $form.validate();
-
-            $elementAddressLine1.on("blur", function () {
-                var result = validator.element($elementAddressLine1);
-
-                if (result) {
-                    $elementAddressLine1.removeClass(elementErrorClass);
-                    $formGroupAddressLine1.removeClass(formGroupErrorClass);
-                    $validationMessageAddressLine1.hide();
-                    $validationMessageAddressLine1.css("margin-bottom", "0");
-                } else {
-                    $elementAddressLine1.addClass(elementErrorClass);
-                    $formGroupAddressLine1.addClass(formGroupErrorClass);
-                    $validationMessageAddressLine1.show();
-                    $validationMessageAddressLine1.css("margin-bottom", "15px");
-                }
-            });
-
-            $elementAddressLine1.elementValidation(function (element, result) {
-                if (!$formGroupAddressLine1.hasClass(formGroupErrorClass)) {
-                    $validationMessageAddressLine1.hide();
-                }
-
-                if (result) {
-                    $elementAddressLine1.removeClass(elementErrorClass);
-                    $formGroupAddressLine1.removeClass(formGroupErrorClass);
-                    $validationMessageAddressLine1.css("margin-bottom", "0");
-                }
-            });
-
-            var $elementAddressLine2 = $("#@nameof(Model.AddressLine2)");
-            var $validationMessageAddressLine2 = $elementAddressLine2.prev("[data-valmsg-for='@nameof(Model.AddressLine2)']");
-            $validationMessageAddressLine2.css("margin-bottom", "0");
-            var $formGroupAddressLine2 = $elementAddressLine2.closest('.govuk-form-group');
-
-            $elementAddressLine2.on("blur", function () {
-                var result = validator.element($elementAddressLine2);
-
-                if (result) {
-                    $elementAddressLine2.removeClass(elementErrorClass);
-                    $formGroupAddressLine2.removeClass(formGroupErrorClass);
-                    $validationMessageAddressLine2.hide();
-                    $validationMessageAddressLine2.css("margin-bottom", "0");
-                } else {
-                    $elementAddressLine2.addClass(elementErrorClass);
-                    $formGroupAddressLine2.addClass(formGroupErrorClass);
-                    $validationMessageAddressLine2.show();
-                    $validationMessageAddressLine2.css("margin-bottom", "15px");
-                }
-            });
-
-            $elementAddressLine2.elementValidation(function (element, result) {
-                if (!$formGroupAddressLine2.hasClass(formGroupErrorClass)) {
-                    $validationMessageAddressLine2.hide();
-                }
-
-                if (result) {
-                    $elementAddressLine2.removeClass(elementErrorClass);
-                    $formGroupAddressLine2.removeClass(formGroupErrorClass);
-                    $validationMessageAddressLine2.css("margin-bottom", "0");
-                }
-            });
-
-            var $elementTownOrCity = $("#@nameof(Model.TownOrCity)");
-            var $validationMessageTownOrCity = $elementTownOrCity.prev("[data-valmsg-for='@nameof(Model.TownOrCity)']");
-            $validationMessageTownOrCity.css("margin-bottom", "0");
-            var $formGroupTownOrCity = $elementTownOrCity.closest('.govuk-form-group');
-
-            $elementTownOrCity.on("blur", function () {
-                var result = validator.element($elementTownOrCity);
-
-                if (result) {
-                    $elementTownOrCity.removeClass(elementErrorClass);
-                    $formGroupTownOrCity.removeClass(formGroupErrorClass);
-                    $validationMessageTownOrCity.hide();
-                    $validationMessageTownOrCity.css("margin-bottom", "0");
-                } else {
-                    $elementTownOrCity.addClass(elementErrorClass);
-                    $formGroupTownOrCity.addClass(formGroupErrorClass);
-                    $validationMessageTownOrCity.show();
-                    $validationMessageTownOrCity.css("margin-bottom", "15px");
-                }
-            });
-
-            $elementTownOrCity.elementValidation(function (element, result) {
-                if (!$formGroupTownOrCity.hasClass(formGroupErrorClass)) {
-                    $validationMessageTownOrCity.hide();
-                }
-
-                if (result) {
-                    $elementTownOrCity.removeClass(elementErrorClass);
-                    $formGroupTownOrCity.removeClass(formGroupErrorClass);
-                    $validationMessageTownOrCity.css("margin-bottom", "0");
-                }
-            });
-
-            var $elementCounty = $("#@nameof(Model.County)");
-            var $validationMessageCounty = $elementCounty.prev("[data-valmsg-for='@nameof(Model.County)']");
-            $validationMessageCounty.css("margin-bottom", "0");
-            var $formGroupCounty = $elementCounty.closest('.govuk-form-group');
-
-            $elementCounty.on("blur", function () {
-                var result = validator.element($elementCounty);
-
-                if (result) {
-                    $elementCounty.removeClass(elementErrorClass);
-                    $formGroupCounty.removeClass(formGroupErrorClass);
-                    $validationMessageCounty.hide();
-                    $validationMessageCounty.css("margin-bottom", "0");
-                } else {
-                    $elementCounty.addClass(elementErrorClass);
-                    $formGroupCounty.addClass(formGroupErrorClass);
-                    $validationMessageCounty.show();
-                    $validationMessageCounty.css("margin-bottom", "15px");
-                }
-            });
-
-            $elementCounty.elementValidation(function (element, result) {
-                if (!$formGroupCounty.hasClass(formGroupErrorClass)) {
-                    $validationMessageCounty.hide();
-                }
-
-                if (result) {
-                    $elementCounty.removeClass(elementErrorClass);
-                    $formGroupCounty.removeClass(formGroupErrorClass);
-                    $validationMessageCounty.css("margin-bottom", "0");
-                }
-            });
-
-            var $elementPostcode = $("#@nameof(Model.Postcode)");
-            var $validationMessagePostcode = $elementPostcode.prev("[data-valmsg-for='@nameof(Model.Postcode)']");
-            $validationMessagePostcode.css("margin-bottom", "0");
-            var $formGroupPostcode = $elementPostcode.closest('.govuk-form-group');
-
-            $elementPostcode.on("blur", function () {
-                var result = validator.element($elementPostcode);
-
-                if (result) {
-                    $elementPostcode.removeClass(elementErrorClass);
-                    $formGroupPostcode.removeClass(formGroupErrorClass);
-                    $validationMessagePostcode.hide();
-                    $validationMessagePostcode.css("margin-bottom", "0");
-                } else {
-                    $elementPostcode.addClass(elementErrorClass);
-                    $formGroupPostcode.addClass(formGroupErrorClass);
-                    $validationMessagePostcode.show();
-                    $validationMessagePostcode.css("margin-bottom", "15px");
-                }
-            });
-
-            $elementPostcode.elementValidation(function (element, result) {
-                if (!$formGroupPostcode.hasClass(formGroupErrorClass)) {
-                    $validationMessagePostcode.hide();
-                }
-
-                if (result) {
-                    $elementPostcode.removeClass(elementErrorClass);
-                    $formGroupPostcode.removeClass(formGroupErrorClass);
-                    $validationMessagePostcode.css("margin-bottom", "0");
-                }
-            });
         });
     })(jQuery);
 </script>

@@ -13,12 +13,20 @@
 
             <form class="govuk-!-margin-bottom-9" id="WhatDoYouWantToDoNextForm" asp-controller="Migration" asp-action="Options" method="post">
                 <span class="govuk-caption-xl">Course directory</span>
+                <div id="errorsummary" class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary" style="display: none;">
+                    <h2 class="govuk-error-summary__title" id="error-summary-title">
+                        There is a problem
+                    </h2>
+                    <div class="govuk-error-summary__body">
+                        <ul class="govuk-list govuk-error-summary__list"></ul>
+                    </div>
+                </div>
                 <h1 class="govuk-heading-xl">What do you want to do next? </h1>
                 <br />
                 <div class="govuk-form-group">
                     <fieldset class="govuk-fieldset">
 
-                        <div class="govuk-radios" val-required-message="Select what do you want to do next?" id="WhatDoYouWantToDoNext">
+                        <div class="govuk-radios" val-required-message="Select 'What do you want to do next?'" id="WhatDoYouWantToDoNext">
                             <div class="govuk-radios__item">
                                 @Html.RadioButtonFor(m => m.MigrationOption, MigrationOptions.CheckCourses, new { @class = "govuk-radios__input", id = MigrationOptions.CheckCourses })
                                 <label class="govuk-label govuk-radios__label" for="@MigrationOptions.CheckCourses">@WebHelper.GetEnumDescription(MigrationOptions.CheckCourses) <span class="govuk-hint">@WebHelper.GetEnumSubtext(MigrationOptions.CheckCourses)</span></label>
@@ -36,12 +44,12 @@
         </div>
     </div>
 </div>
-
 <script>
     (function ($) {
         $(function () {
             var validStates = [];
             var $button = $("#next");
+            var $errorSummary = $("#errorsummary").govUkErrorSummary();
 
             var $whatDoYouWantToDoNext = $("#WhatDoYouWantToDoNext").govUkRadios();
 
@@ -52,15 +60,23 @@
             function validate() {
 
                 validStates = [];
-
+                $errorSummary.govUkErrorSummary("removeAll");
                 $whatDoYouWantToDoNext.govUkRadios("validState");
 
                 if ($.requiredValidate($whatDoYouWantToDoNext.find("input[type='radio']:checked").val())) {
                     $whatDoYouWantToDoNext.govUkRadios("validState");
                     validStates.push(true);
+                  
                 } else {
                     $whatDoYouWantToDoNext.govUkRadios("invalidState", $whatDoYouWantToDoNext.attr("val-required-message"));
                     validStates.push(false);
+                    var element = $whatDoYouWantToDoNext;
+                    var $anchor = document.createElement("a");
+                    $anchor.href =  "#WhatDoYouWantToDoNext";
+                    $anchor.innerHTML = $whatDoYouWantToDoNext.attr("val-required-message");
+                    $anchor.id = "error-hash-link-" + "a" + "-" + 1;
+                    $errorSummary.govUkErrorSummary("add", $anchor);
+                    $errorSummary.govUkErrorSummary("show");
                 }
             }
 

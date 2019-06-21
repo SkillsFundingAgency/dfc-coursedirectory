@@ -20,7 +20,6 @@ using Dfc.CourseDirectory.Web.Helpers;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
-
     public class DashboardController : Controller
     {
         private readonly ILogger<DashboardController> _logger;
@@ -126,6 +125,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                                                     + (bulkUploadCoursesPending.SelectMany(c => c.BulkUploadErrors).Count() + bulkUploadRunsPending.SelectMany(r => r.BulkUploadErrors).Count()).ToString()
                                                     + " errors. Fix these to publish all of your courses.";
             string BulkUpLoadNoErrorMessage = vm.BulkUploadTotalCount.ToString() + WebHelper.GetCourseTextToUse(vm.BulkUploadPendingCount) + " uploaded on " + vm.FileUploadDate?.ToString("dd/MM/yyyy") + " have no errors, but are not listed on the Course directory becuase you have not published them.";
+            vm.FileCount = list.Count();
 
             int MigrationLiveCount = courses.Where(x => x.CourseStatus == RecordStatus.Live && x.CreatedBy == "DFC – Course Migration Tool")
                                             .SelectMany(c => c.CourseRuns)

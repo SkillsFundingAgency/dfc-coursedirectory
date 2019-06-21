@@ -70,7 +70,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 return View();
             else
             {
-
                 var vm = DashboardController.GetDashboardViewModel(_courseService, _blobStorageService, _session.GetInt32("UKPRN"), "");
                 if (vm.PendingCourseCount > 0)
                 {

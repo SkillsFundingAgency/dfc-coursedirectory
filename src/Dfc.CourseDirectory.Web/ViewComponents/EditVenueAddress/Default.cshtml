@@ -16,12 +16,13 @@
                         <div class="govuk-form-group">
                             <div id="VenueNameContainer">
                                 @await Component.InvokeAsync(nameof(PostcodeLookup), new PostcodeLookupModel
-                                {
-                                    Postcode = Model.Address.Postcode,
-                                    PostcodeLabelText = "Venue postcode",
-                                    PostcodeAriaDescribedBy = "Please enter the postcode.",
-                                    ButtonText = "Find address"
-                                })
+                           {
+                               Postcode = Model.Address.Postcode,
+                               PostcodeLabelText = "Venue postcode",
+                               PostcodeAriaDescribedBy = "Please enter the postcode.",
+                               ButtonText = "Find address",
+                               Searched = false
+                           })
 
                             </div>
                         </div>

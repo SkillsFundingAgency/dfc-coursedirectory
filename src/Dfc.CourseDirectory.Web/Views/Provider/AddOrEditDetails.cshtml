@@ -1,12 +1,15 @@
-﻿@using Dfc.CourseDirectory.Models.Enums
-@using Dfc.CourseDirectory.Models.Models.Courses
-@using Dfc.CourseDirectory.Web.Helpers
-@using System.ComponentModel.DataAnnotations
+﻿@using Microsoft.AspNetCore.Authorization
+
+@inject IAuthorizationService Authorization
+
+@{
+    var apprenticeshipUser = await Authorization.AuthorizeAsync(User, "Apprenticeship");
+}
+
 @model Dfc.CourseDirectory.Web.ViewModels.ProviderDetailsAddOrEditViewModel
 @{
     Layout = "_Layout_Your_Courses";
 }
-
 <a asp-controller="Provider" asp-action="Details" class="govuk-back-link">Back</a>
 <form asp-controller="Provider" asp-action="AddOrEditDetails" id="editProviderDetails" onkeypress="return event.keyCode != 13;">
     <main class="govuk-main-wrapper">
@@ -38,31 +41,35 @@
                            val-regex="@regex"
                            val-regex-message="Provider Alias Name contains invalid characters">
                 </div>
+                @if (apprenticeshipUser.Succeeded)
+                {
+                    <div class="govuk-character-count">
+                        <div class="govuk-form-group">
 
-                <div class="govuk-character-count">
-                    <div class="govuk-form-group">
+                            <span id="briefOverviewMax" class="" style="display: none"
+                                  val-max-length="750"
+                                  val-max-length-message="Brief Overview of Your Organisation for Employers must be 750 characters or less">Brief Overview of Your Organisation for Employers, must be 750 characters or less</span>
+                            <span id="briefOverviewInvalid" class="" style="display: none"
+                                  val-regex="@regex"
+                                  val-regex-message="Brief Overview of Your Organisation for Employers contains invalid characters">Brief Overview of Your Organisation for Employers contains invalid characters</span>
+                            <label class="govuk-label" for="word-count">
+                                Brief overview of your organisation for employers
+                            </label>
 
-                        <span id="briefOverviewMax" class="" style="display: none"
-                              val-max-length="750"
-                              val-max-length-message="Brief Overview of Your Organisation for Employers must be 750 characters or less">Brief Overview of Your Organisation for Employers, must be 750 characters or less</span>
-                        <span id="briefOverviewInvalid" class="" style="display: none"
-                              val-regex="@regex"
-                              val-regex-message="Brief Overview of Your Organisation for Employers contains invalid characters">Brief Overview of Your Organisation for Employers contains invalid characters</span>
-                        <label class="govuk-label" for="word-count">
-                            Brief overview of your organisation for employers
-                        </label>
-
-                        <textarea class="govuk-textarea js-character-count " asp-for="@Model.BriefOverview" rows="5" id="brief"
+                            <textarea class="govuk-textarea js-character-count " asp-for="@Model.BriefOverview" rows="5" id="brief"
                                   val-max-length="750"
                                   val-max-length-message="Brief Overview of Your Organisation for Employers must be 750 characters or less"
                                   val-regex="@regex"
                                   val-regex-message="Brief Overview of Your Organisation for Employers contains invalid characters">
 
-        </textarea>
+                            </textarea>
+                        </div>
                     </div>
-                </div>
-                
-                @Html.HiddenFor(m=>m.ProviderType)
+                }
+                else
+                {
+                    @Html.HiddenFor(x=>x.BriefOverview,new{id="" })
+                }
 
                 <ul class="flex-container">
                     <li class="flex-item">
@@ -98,79 +105,84 @@
 
             var $alias = $("#@nameof(Model.AliasName)").govUkInput();
 
-            var $errorSummary = $("#errorsummary").govUkErrorSummary();
+    var $errorSummary = $("#errorsummary").govUkErrorSummary();
 
-            var $maxLength = $maxBriefOverview.attr('val-max-length');
-
-
-            tinymce.init({
-                selector: '#brief',
-                plugins: "advlist lists autoresize test",
-                menubar: false,
-                statusbar: false,
-                resize: false,
-                in_height: 450,
-                height: '75%',
-                autoresize_min_height: 600,
-                autoresize_max_height: 800,
-                toolbar: 'formatselect | bold | numlist bullist | removeformat ',
-            }).then(function (editors) {
-                $(".mce-branding").hide();
-            });
-
-            tinymce.PluginManager.add('test', function (editor) {
-                var self = this;
-
-                function update() {
-
-                    var $left = ($maxLength - self.getCount());
-                    var chars = $maxLength - self.getCount();
-                    if (chars === 1) {
-
-                         $(".mce-container").removeClass("text-error");
-
-                        $("#brief_info").removeClass("govuk-error-message");
-                        $("#brief_info").addClass("govuk-hint");
-                        $("#brief_info").text('You have ' + chars + ' character remaining');
-                    }
-
-                    if (chars >= 1) {
-
-                        $(".mce-container").removeClass("text-error");
-
-                        $("#brief_info").removeClass("govuk-error-message");
-                        $("#brief_info").addClass("govuk-hint");
-                        $("#brief_info").text('You have ' + chars + ' characters remaining');
-                    }
-
-                    if (chars < 0) {
-
-                        $(".mce-container").addClass("text-error");
-
-                        $("#brief_info").addClass("govuk-error-message");
-                        $("#brief_info").removeClass("govuk-hint");
-                        $(".mce-container").addClass("text-error");
-                        if (self.getCount() - parseInt($maxLength) == 1) {
-                            $("#brief_info").text('You have ' + (self.getCount() - parseInt($maxLength)).toString() + ' character too many');
-                        }
-                        else {
-                            $("#brief_info").text('You have ' + (self.getCount() - parseInt($maxLength)).toString() + ' characters too many');
-                        }
-                    }
-
-                    if (chars === 0) {
-
-                        $(".mce-container").removeClass("text-error");
-                        $("#brief_info").removeClass("govuk-error-message");
-                        $("#brief_info").addClass("govuk-hint");
-                        $(".mce-container").removeClass("text-error");
-                        $("#brief_info").text('You have ' + chars + ' characters remaining');
-                    }
+    var $maxLength = $maxBriefOverview.attr('val-max-length');
 
 
+    tinymce.init({
+        selector: '#brief',
+        plugins: "advlist lists autoresize test",
+        menubar: false,
+        statusbar: false,
+        resize: false,
+        in_height: 450,
+        height: '75%',
+        autoresize_min_height: 600,
+        autoresize_max_height: 800,
+        toolbar: 'formatselect | bold | numlist bullist | removeformat ',
+    }).then(function(editors) {
+        $(".mce-branding").hide();
+    });
+
+    tinymce.PluginManager.add('test',
+        function(editor) {
+            var self = this;
+
+            function update() {
+
+                var $left = ($maxLength - self.getCount());
+                var chars = $maxLength - self.getCount();
+                if (chars === 1) {
+
+                    $(".mce-container").removeClass("text-error");
+
+                    $("#brief_info").removeClass("govuk-error-message");
+                    $("#brief_info").addClass("govuk-hint");
+                    $("#brief_info").text('You have ' + chars + ' character remaining');
                 }
 
-                editor.on('init', function () {
+                if (chars >= 1) {
+
+                    $(".mce-container").removeClass("text-error");
+
+                    $("#brief_info").removeClass("govuk-error-message");
+                    $("#brief_info").addClass("govuk-hint");
+                    $("#brief_info").text('You have ' + chars + ' characters remaining');
+                }
+
+                if (chars < 0) {
+
+                    $(".mce-container").addClass("text-error");
+
+                    $("#brief_info").addClass("govuk-error-message");
+                    $("#brief_info").removeClass("govuk-hint");
+                    $(".mce-container").addClass("text-error");
+                    if (self.getCount() - parseInt($maxLength) == 1) {
+                        $("#brief_info").text('You have ' +
+                            (self.getCount() - parseInt($maxLength)).toString() +
+                            ' character too many');
+                    } else {
+                        $("#brief_info").text('You have ' +
+                            (self.getCount() - parseInt($maxLength)).toString() +
+                            ' characters too many');
+                    }
+                }
+
+                if (chars === 0) {
+
+                    $(".mce-container").removeClass("text-error");
+                    $("#brief_info").removeClass("govuk-error-message");
+                    $("#brief_info").addClass("govuk-hint");
+                    $(".mce-container").removeClass("text-error");
+                    $("#brief_info").text('You have ' + chars + ' characters remaining');
+                }
+
+
+            }
+
+            editor.on('init',
+                function() {
 
                     var ele = document.createElement("span");
 
@@ -179,12 +191,12 @@
                     if (chars === 1) {
 
                         ele.className = "govuk-hint govuk-character-count__message"
-                        message='You have ' + chars + ' character remaining';
+                        message = 'You have ' + chars + ' character remaining';
                     }
 
                     if (chars >= 1) {
                         ele.className = "govuk-hint govuk-character-count__message"
-                        message='You have ' + chars + ' characters remaining';
+                        message = 'You have ' + chars + ' characters remaining';
                     }
 
                     if (chars < 0) {
@@ -193,92 +205,95 @@
 
                         $(".mce-container").closest(".govuk-form-group").addClass("govuk-form-group--error");
 
-                         ele.className = "govuk-character-count__message govuk-error-message"
+                        ele.className = "govuk-character-count__message govuk-error-message"
                         $(".mce-container").addClass("text-error");
                         if (self.getCount() - parseInt($maxLength) == 1) {
-                            message='You have ' + (self.getCount() - parseInt($maxLength)).toString() + ' character too many';
-                        }
-                        else {
-                            message='You have ' + (self.getCount() - parseInt($maxLength)).toString() + ' characters too many';
+                            message = 'You have ' +
+                                (self.getCount() - parseInt($maxLength)).toString() +
+                                ' character too many';
+                        } else {
+                            message = 'You have ' +
+                                (self.getCount() - parseInt($maxLength)).toString() +
+                                ' characters too many';
                         }
                     }
 
                     if (chars === 0) {
-                         ele.className = "govuk-hint govuk-character-count__message"
+                        ele.className = "govuk-hint govuk-character-count__message"
                         $(".mce-container").removeClass("text-error");
-                       message='You have ' + chars + ' characters remaining';
+                        message = 'You have ' + chars + ' characters remaining';
                     }
 
-                    window.setTimeout(function () {
-                        
-                        ele.id = "brief_info"
-                        ele.innerHTML = message;
-                        $("#brief").after(ele);
+                    window.setTimeout(function() {
 
-                        editor.on('setcontent beforeaddundo', update);
+                            ele.id = "brief_info"
+                            ele.innerHTML = message;
+                            $("#brief").after(ele);
 
-                        editor.on('keyup', function (e) {
- 
-                            update();
-                        });
-                    }, 0);
+                            editor.on('setcontent beforeaddundo', update);
+
+                            editor.on('keyup',
+                                function(e) {
+
+                                    update();
+                                });
+                        },
+                        0);
 
                     validate();
 
                 });
 
-                self.getCount = function () {
-                    var tx = editor.getContent({ format: 'raw' });
-                    var decoded = decodeHtml(tx);
-                    var decodedStripped = decoded.replace(/(<([^>]+)>)/ig, "").trim();
-                    var tc = decodedStripped.length;
+            self.getCount = function() {
+                var tx = editor.getContent({ format: 'raw' });
+                var decoded = decodeHtml(tx);
+                var decodedStripped = decoded.replace(/(<([^>]+)>)/ig, "").trim();
+                var tc = decodedStripped.length;
 
-                    return tc;
-                };
+                return tc;
+            };
 
-                function decodeHtml(html) {
-                    var txt = document.createElement("textarea");
-                    txt.innerHTML = html;
-                    return txt.value;
-                }
-            });
-
-
- 
-
-
-        function validate() {
-
-            $maxBriefOverview.removeClass("govuk-error-message");
-            $maxBriefOverview.hide();
-
-            $invalidBriefOverview.removeClass("govuk-error-message");
-            $invalidBriefOverview.hide();
-
-            validStates = [];
-
-            $alias.val($alias.val().trim());
-
-            if (!$.regexValidate({ regex: $alias.attr("val-regex") }, $alias.val())) {
-                $alias.govUkInput("invalidState", $alias.attr("val-regex-message"));
-                var aliasErrorHashLinks = $alias.govUkInput("getErrorHashLinks");
-                $errorSummary.govUkErrorSummary("add", aliasErrorHashLinks);
-                $errorSummary.govUkErrorSummary("show");
-                validStates.push(false);
-            } else if (
-                !$.maxLengthValidate({ max: $alias.attr("val-max-length") }, $alias.val())) {
-                $alias.govUkInput("invalidState", $alias.attr("val-max-length-message"));
-                var aliasErrorHashLinks = $alias.govUkInput("getErrorHashLinks");
-                $errorSummary.govUkErrorSummary("add", aliasErrorHashLinks);
-                $errorSummary.govUkErrorSummary("show");
-                validStates.push(false);
+            function decodeHtml(html) {
+                var txt = document.createElement("textarea");
+                txt.innerHTML = html;
+                return txt.value;
             }
-            else {
-                $alias.govUkInput("validState");
-                $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $alias[0].id);
-                $errorSummary.govUkErrorSummary("hideIfEmpty")
-                validStates.push(true);
-            }
+        });
+
+
+    function validate() {
+
+        $maxBriefOverview.removeClass("govuk-error-message");
+        $maxBriefOverview.hide();
+
+        $invalidBriefOverview.removeClass("govuk-error-message");
+        $invalidBriefOverview.hide();
+
+        validStates = [];
+
+        $alias.val($alias.val().trim());
+
+        if (!$.regexValidate({ regex: $alias.attr("val-regex") }, $alias.val())) {
+            $alias.govUkInput("invalidState", $alias.attr("val-regex-message"));
+            var aliasErrorHashLinks = $alias.govUkInput("getErrorHashLinks");
+            $errorSummary.govUkErrorSummary("add", aliasErrorHashLinks);
+            $errorSummary.govUkErrorSummary("show");
+            validStates.push(false);
+        } else if (
+            !$.maxLengthValidate({ max: $alias.attr("val-max-length") }, $alias.val())) {
+            $alias.govUkInput("invalidState", $alias.attr("val-max-length-message"));
+            var aliasErrorHashLinks = $alias.govUkInput("getErrorHashLinks");
+            $errorSummary.govUkErrorSummary("add", aliasErrorHashLinks);
+            $errorSummary.govUkErrorSummary("show");
+            validStates.push(false);
+        } else {
+            $alias.govUkInput("validState");
+            $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $alias[0].id);
+            $errorSummary.govUkErrorSummary("hideIfEmpty")
+            validStates.push(true);
+        }
+
+        if (tinymce.get("brief") !== null) {
 
             if (!$.regexValidate({ regex: $invalidBriefOverview.attr("val-regex") }, tinymce.get('brief').getBody().textContent.replace(/(<([^>]+)>)/ig, "").trim())) {
                 $invalidBriefOverview.addClass("govuk-error-message");
@@ -330,11 +345,12 @@
                 $(".mce-container").closest(".govuk-form-group").removeClass("govuk-form-group--error");
 
                 validStates.push(true);
+                }
             }
 
             if (!validStates.every(isAllValid)) {
                 $("html, body").animate({
-                    crollTop: $errorSummary.offset().top
+                    scrollTop: $errorSummary.offset().top
                 }, 600);
                 $errorSummary.focus();
             }
@@ -354,9 +370,11 @@
             validate();
 
             if (validStates.every(isAllValid)) {
-                
-                $(tinymce.get("brief").getBody()).find('a').attr('target', '_blank');
-                tinymce.get("brief").getBody().textContent.trimEnd();
+
+                if (tinymce.get("brief") !== null) {
+                    $(tinymce.get("brief").getBody()).find('a').attr('target', '_blank');
+                    tinymce.get("brief").getBody().textContent.trimEnd();
+                }
                 $("#editProviderDetails").submit();
             }
 

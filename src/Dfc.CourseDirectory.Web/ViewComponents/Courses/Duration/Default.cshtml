@@ -19,10 +19,10 @@
     <div id="duration" class="duration-container"
          val-range-min="1" 
          val-range-max="999" 
-         val-duration-message="Enter Duration"> 
+         val-duration-message="Enter duration"> 
         <div class="govuk-date-input__item"> 
             <div class="govuk-form-group"> 
-                <input pattern="[0-9]*" class="govuk-input govuk-input--width-2" style="display: inline;" asp-for="@Model.DurationLength" type="number" maxlength="3" aria-describedby="@Model.AriaDescribedBy">
+                <input pattern="^[0-9]*$" class="govuk-input govuk-input--width-2" style="display: inline;" asp-for="@Model.DurationLength" type="number" maxlength="3" aria-describedby="@Model.AriaDescribedBy">
 
             </div> 
         </div> 

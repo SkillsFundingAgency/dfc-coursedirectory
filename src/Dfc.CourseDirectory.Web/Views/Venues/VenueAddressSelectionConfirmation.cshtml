@@ -7,21 +7,27 @@
 
 @model Dfc.CourseDirectory.Web.ViewModels.VenueAddressSelectionConfirmationViewModel
 
-@{
-    if (Model.Id != null)
-    {
-        <h1 class="govuk-heading-xl">Edit venue details</h1>
-    }
-    else
-    {
-        <h1 class="govuk-heading-xl">Add a venue</h1>
-    }
-}
+<div class="govuk-grid-row">
+    @Html.HiddenFor(x => x.PostCodeId)
+    <div class="govuk-grid-column-two-thirds">
+        @{
+            if (Model.Id != null)
+            {
+                <h1 class="govuk-heading-xl">Edit venue details</h1>
+            }
+            else
+            {
+                <h1 class="govuk-heading-xl">Add a venue</h1>
+            }
+        }
 
-@await Component.InvokeAsync(nameof(VenueAddressSelectionConfirmation), new VenueAddressSelectionConfirmationModel
-    {
-        Id = Model.Id,
-        Address = Model.Address,
-        VenueName = Model.VenueName
-    })
 
+        @await Component.InvokeAsync(nameof(VenueAddressSelectionConfirmation), new VenueAddressSelectionConfirmationModel
+            {
+                Id = Model.Id,
+                Address = Model.Address,
+                VenueName = Model.VenueName,
+                PostCodeId = Model.PostCodeId
+            })
+    </div>
+</div>

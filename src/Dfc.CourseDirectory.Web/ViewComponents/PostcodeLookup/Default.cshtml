@@ -2,6 +2,10 @@
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
+@{ var regex = @"^([Gg][Ii][Rr] 0[Aa]{2})|((([A-Za-z][0-9]{1,2})|(([A-Za-z][A-Ha-hJ-Yj-y][0-9]{1,2})|(([A-Za-z][0-9][A-Za-z])|([A-Za-z][A-Ha-hJ-Yj-y][0-9][A-Za-z]?))))\s?[0-9][A-Za-z]{2})+$"; }
+
+@Html.HiddenFor(x => x.VenueName)
+@Html.HiddenFor(x => x.Id)
 <div class="postcode-lookup__component">
     @if (Model.HasItems)
     {
@@ -15,8 +19,7 @@
             <a href="#" class="govuk-link" id="Change">Change</a>
         </div>
         <div class="govuk-form-group">
-            <span asp-validation-for="@Model.PostcodeId" class="govuk-error-message"></span>
-            <select asp-items="@Model.Items" asp-for="@Model.PostcodeId" class="govuk-select govuk-!-width-one-half" required>
+            <select asp-items="@Model.Items" asp-for="@Model.PostcodeId" class="govuk-select govuk-!-width-one-half" val-required-message="Select an address">
                 <option value="">@Model.NoneSelectedText</option>
             </select>
         </div>
@@ -27,98 +30,6 @@
             </button>
         </div>
 
-        <script>
-            (function ($) {
-                $(function () {
-
-                    //comment
-                    var $continueButton = $("#venueAddressConfirmationSelection");
-                    var $manualLink = $("#manualLink");
-                    if ($continueButton !== undefined) {
-                        $manualLink.text("I cannot find my address in the list");
-                    }
-
-                    var $changeLink = $("#Change");
-                    $changeLink.on("click", function (e) {
-                        $manualLink.text("Enter address manually");
-                    });
-
-                    var formGroupErrorClass = "govuk-form-group--error";
-                    var elementErrorClass = "govuk-input--error";
-                    var $elementPostcodeId = $("#@nameof(Model.PostcodeId)");
-                    var $validationMessagePostcodeId = $elementPostcodeId.prev("[data-valmsg-for='@nameof(Model.PostcodeId)']");
-                    $validationMessagePostcodeId.css("margin-bottom", "0");
-                    var $formGroupPostcodeId = $elementPostcodeId.closest(".govuk-form-group");
-                    var $container = $elementPostcodeId.closest(".postcode-lookup__component").parent();
-                    var $link = $container.find("a");
-
-                    var $form = $elementPostcodeId.closest("form");
-                    $form.addTriggersToJqueryValidate().triggerElementValidationsOnFormValidation();
-                    var validator = $form.validate();
-
-                    var $continue = $("#venueAddressConfirmationSelection");
-                    $continue.on("click", function (e) {
-                        //$form = $continue.closest("form");
-                        var $venueName = $("#VenueName");
-                        $venueName.trigger("blur");
-                        var $postcode = $("#Postcode");
-                        $postcode.trigger("blur");
-                        var $postcodeId = $("#PostcodeId");
-                        $postcodeId.trigger("blur");
-                    });
-
-                    $elementPostcodeId.on("blur", function () {
-                        var result = validator.element($elementPostcodeId);
-                        var $postcodeIdSpanError = $("#PostcodeId-error");
-
-                        if (result) {
-                            $elementPostcodeId.removeClass(elementErrorClass);
-                            $formGroupPostcodeId.removeClass(formGroupErrorClass);
-                            $validationMessagePostcodeId.hide();
-                            $validationMessagePostcodeId.css("margin-bottom", "0");
-                        } else {
-                            $elementPostcodeId.addClass(elementErrorClass);
-                            $formGroupPostcodeId.addClass(formGroupErrorClass);
-                            $postcodeIdSpanError.html("");
-                            $postcodeIdSpanError.html($elementPostcodeId.data("val-required"));
-                            $validationMessagePostcodeId.show();
-                            $validationMessagePostcodeId.css("margin-bottom", "15px");
-                        }
-                    });
-
-                    $elementPostcodeId.elementValidation(function (element, result) {
-                        if (!$formGroupPostcodeId.hasClass(formGroupErrorClass)) {
-                            $validationMessagePostcodeId.hide();
-                        }
-
-                        var $postcodeIdSpanError = $("#PostcodeId-error");
-
-                        if (result) {
-                            $elementPostcodeId.removeClass(elementErrorClass);
-                            $formGroupPostcodeId.removeClass(formGroupErrorClass);
-                            $validationMessagePostcodeId.css("margin-bottom", "0");
-                        } else {
-                            $postcodeIdSpanError.html("");
-                            $postcodeIdSpanError.html($elementPostcodeId.data("val-required"));
-                        }
-                    });
-
-                    var makeRequest = function (cb) {
-                        $.get("/PostcodeLookup/Default", cb);
-                    };
-
-                    var onSucess = function (data) {
-                        $container.html("");
-                        $container.html(data);
-                    };
-
-                    $link.on("click", function (e) {
-                        e.preventDefault();
-                        makeRequest(onSucess);
-                    });
-                });
-            })(jQuery);
-        </script>
     }
     else
     {
@@ -132,8 +43,20 @@
                     @Model.PostcodeHintText
                 </span>
             }
-            <span asp-validation-for="@Model.Postcode" class="govuk-error-message"></span>
-            <input class="govuk-input govuk-input--width-10" asp-for="@Model.Postcode" type="text" aria-describedby="@Model.PostcodeAriaDescribedBy">
+
+            @if (Model.Searched && Model.Items == null)
+            {
+                <span id="InvalidPostCode" class="govuk-error-message"
+                      val-message="Enter a real postcode">Enter a real postcode</span>
+            }
+
+            <input class="govuk-input govuk-input--width-10" asp-for="@Model.Postcode" type="text" autofocus aria-describedby="@Model.PostcodeAriaDescribedBy"
+                   val-required-message="Enter a postcode"
+                   val-max-length="8"
+                   val-max-length-message="Enter a real postcode"
+                   val-regex="@regex"
+                   val-regex-message="Enter a real postcode" />
+
         </div>
         <div class="govuk-form-group">
             <button type="button" class="govuk-button" id="findAddress">
@@ -141,74 +64,5 @@
             </button>
         </div>
 
-        <script>
-            (function ($) {
-                $(function () {
-                    var formGroupErrorClass = "govuk-form-group--error";
-                    var elementErrorClass = "govuk-input--error";
-
-                    var $elementPostcode = $("#@nameof(Model.Postcode)");
-                    var $validationMessagePostcode = $elementPostcode.prev("[data-valmsg-for='@nameof(Model.Postcode)']");
-                    $validationMessagePostcode.css("margin-bottom", "0");
-                    var $formGroupPostcode = $elementPostcode.closest(".govuk-form-group");
-                    var $button = $formGroupPostcode.next(".govuk-form-group").find("button");
-                    var $container = $elementPostcode.closest(".postcode-lookup__component").parent();
-
-                    var $form = $elementPostcode.closest("form");
-                    $form.addTriggersToJqueryValidate().triggerElementValidationsOnFormValidation();
-                    var validator = $form.validate();
-
-                    $elementPostcode.on("blur", function () {
-                        var result = validator.element($elementPostcode);
-
-                        if (result) {
-                            $elementPostcode.removeClass(elementErrorClass);
-                            $formGroupPostcode.removeClass(formGroupErrorClass);
-                            $validationMessagePostcode.hide();
-                            $validationMessagePostcode.css("margin-bottom", "0");
-                        } else {
-                            $elementPostcode.addClass(elementErrorClass);
-                            $formGroupPostcode.addClass(formGroupErrorClass);
-                            $validationMessagePostcode.show();
-                            $validationMessagePostcode.css("margin-bottom", "15px");
-                        }
-                    });
-
-                    $elementPostcode.elementValidation(function (element, result) {
-                        if (!$formGroupPostcode.hasClass(formGroupErrorClass)) {
-                            $validationMessagePostcode.hide();
-                        }
-
-                        if (result) {
-                            $elementPostcode.removeClass(elementErrorClass);
-                            $formGroupPostcode.removeClass(formGroupErrorClass);
-                            $validationMessagePostcode.css("margin-bottom", "0");
-                        }
-                    });
-
-                    var makeRequestWithPayload = function (payload, cb) {
-                        var qs = $.param(payload);
-                        $.get("/PostcodeLookup?" + qs, cb);
-                    };
-
-                    var onSucess = function (data) {
-                        $container.html("");
-                        $container.html(data);
-                    };
-
-                    $button.on("click", function (e) {
-                        e.preventDefault();
-                        $elementPostcode.trigger("blur");
-                        var result = validator.element($elementPostcode);
-
-                        if (result) {
-                            makeRequestWithPayload({
-                                Postcode: $elementPostcode.val()
-                            }, onSucess);
-                        }
-                    });
-                });
-            })(jQuery);
-        </script>
     }
 </div>

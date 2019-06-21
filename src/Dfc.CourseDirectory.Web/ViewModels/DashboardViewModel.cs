@@ -31,5 +31,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels
         public string MigrationOKMessage { get; set; }
         public string MigrationErrorMessage { get; set; }
         public string BulkUploadMessage { get; set; }
+
+        public int FileCount { get; set; }
     }
 }

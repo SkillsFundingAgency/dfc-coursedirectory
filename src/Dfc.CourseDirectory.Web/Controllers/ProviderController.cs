@@ -1,28 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Dfc.CourseDirectory.Common;
+﻿using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Helpers;
 using Dfc.CourseDirectory.Models.Models.Courses;
+using Dfc.CourseDirectory.Models.Models.Providers;
 using Dfc.CourseDirectory.Models.Models.Regions;
 using Dfc.CourseDirectory.Models.Models.Venues;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
+using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Helpers;
+using Dfc.CourseDirectory.Web.ViewModels;
+using Dfc.CourseDirectory.Web.ViewModels.Provider;
 using Dfc.CourseDirectory.Web.ViewModels.YourCourses;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Authorization;
-using Dfc.CourseDirectory.Web.ViewModels;
-using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
-using Dfc.CourseDirectory.Web.RequestModels;
-using Dfc.CourseDirectory.Models.Models.Providers;
-using Dfc.CourseDirectory.Models.Interfaces.Providers;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Dfc.CourseDirectory.Web.Helpers.Attributes;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -33,14 +33,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly ICourseService _courseService;
         private readonly IVenueService _venueService;
         private readonly IProviderService _providerService;
+        private readonly IAuthorizationService _authorizationService;
 
         public ProviderController(
             ILogger<ProviderController> logger,
             IHttpContextAccessor contextAccessor,
             ICourseService courseService,
             IVenueService venueService,
-            IProviderService providerService
-            )
+            IProviderService providerService,
+            IAuthorizationService Authorization, IAuthorizationService authorizationService)
         {
             Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(contextAccessor, nameof(contextAccessor));
@@ -53,6 +54,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _courseService = courseService;
             _venueService = venueService;
             _providerService = providerService;
+            _authorizationService = authorizationService;
         }
 
         [Authorize(Policy = "ElevatedUserRole")]
@@ -115,44 +117,31 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return found;
         }
 
-        [Authorize]
-        public async Task<IActionResult> AddOrEditDetails(bool updateProviderType)
+        [Authorize("Admin")]
+        [SelectedProviderNeeded]
+        public async Task<IActionResult> AddOrEditProviderType()
         {
-
-            var model = new ProviderDetailsAddOrEditViewModel();
+            var model = new ProviderTypeAddOrEditViewModel();
 
             int? UKPRN = _session.GetInt32("UKPRN");
-
-            if (!UKPRN.HasValue)
-            {
-                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
-            }
 
             var providerSearchResult = await _providerService.GetProviderByPRNAsync(new Dfc.CourseDirectory.Services.ProviderService.ProviderSearchCriteria(UKPRN.ToString()));
 
             if (providerSearchResult.IsSuccess)
             {
-                model = new ProviderDetailsAddOrEditViewModel();
-                model.AliasName = providerSearchResult.Value.Value.FirstOrDefault()?.Alias;
-                model.BriefOverview = providerSearchResult.Value.Value.FirstOrDefault()?.MarketingInformation;
-                model.ProviderType = providerSearchResult.Value.Value.FirstOrDefault()?.ProviderType ?? ProviderType.undefined;
+                model = new ProviderTypeAddOrEditViewModel();
+                model.ProviderType = providerSearchResult.Value.Value.FirstOrDefault()?.ProviderType ?? ProviderType.Undefined;
             }
 
-            return updateProviderType ? View("UpdateProviderType", model) : View(model);
+            return View("UpdateProviderType", model);
         }
 
-        [Authorize]
+        [Authorize("Admin")]
         [HttpPost]
-        public async Task<IActionResult> AddOrEditDetails(ProviderDetailsAddOrEditViewModel model)
+        [SelectedProviderNeeded]
+        public async Task<IActionResult> AddOrEditProviderType(ProviderTypeAddOrEditViewModel model)
         {
             int? UKPRN = _session.GetInt32("UKPRN");
-
-            if (!UKPRN.HasValue)
-            {
-                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
-            }
-
-            model.BriefOverview.TrimEnd();
 
             var providerSearchResult = await _providerService.GetProviderByPRNAsync(new Services.ProviderService.ProviderSearchCriteria(UKPRN.ToString()));
 
@@ -160,8 +149,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
 
                 Provider provider = providerSearchResult.Value.Value.FirstOrDefault();
-                provider.MarketingInformation = model.BriefOverview;
-                provider.Alias = model.AliasName;
                 provider.ProviderType = model.ProviderType;
 
                 try
@@ -184,17 +171,74 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         [Authorize]
+        [SelectedProviderNeeded]
+        public async Task<IActionResult> AddOrEditDetails()
+        {
+            var model = new ProviderDetailsAddOrEditViewModel();
+
+            int? UKPRN = _session.GetInt32("UKPRN");
+
+            var providerSearchResult = await _providerService.GetProviderByPRNAsync(new Dfc.CourseDirectory.Services.ProviderService.ProviderSearchCriteria(UKPRN.ToString()));
+
+            if (providerSearchResult.IsSuccess)
+            {
+                model = new ProviderDetailsAddOrEditViewModel();
+                model.AliasName = providerSearchResult.Value.Value.FirstOrDefault()?.Alias;
+                model.BriefOverview = providerSearchResult.Value.Value.FirstOrDefault()?.MarketingInformation;
+            }
+
+            return View(model);
+        }
+
+        [Authorize]
+        [HttpPost]
+        [SelectedProviderNeeded]
+        public async Task<IActionResult> AddOrEditDetails(ProviderDetailsAddOrEditViewModel model)
+        {
+            int? UKPRN = _session.GetInt32("UKPRN");
+
+            var apprenticeshipUser = await _authorizationService.AuthorizeAsync(User, "Apprenticeship");
+
+            if (!string.IsNullOrEmpty(model.BriefOverview)) model.BriefOverview.TrimEnd();
+
+            var providerSearchResult = await _providerService.GetProviderByPRNAsync(new Services.ProviderService.ProviderSearchCriteria(UKPRN.ToString()));
+
+            if (providerSearchResult.IsSuccess)
+            {
+
+                Provider provider = providerSearchResult.Value.Value.FirstOrDefault();
+
+                if (apprenticeshipUser.Succeeded) provider.MarketingInformation = model.BriefOverview;
+
+                provider.Alias = model.AliasName;
+
+                try
+                {
+                    var result = await _providerService.UpdateProviderDetails(provider);
+                    if (result.IsSuccess)
+                    {
+                        //log something
+                    }
+
+                }
+                catch (Exception)
+                {
+                    //Behaviour to be determined for failure
+                }
+
+            }
+
+            return RedirectToAction("Details", "Provider", new { });
+        }
+
+        [Authorize]
+        [SelectedProviderNeeded]
         public async Task<IActionResult> Details()
         {
 
             var model = new ProviderDetailsViewModel();
 
             int? UKPRN = _session.GetInt32("UKPRN");
-
-            if (!UKPRN.HasValue)
-            {
-                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
-            }
 
             var providerSearchResult = await _providerService.GetProviderByPRNAsync(new Dfc.CourseDirectory.Services.ProviderService.ProviderSearchCriteria(UKPRN.ToString()));
 
@@ -285,6 +329,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         [Authorize]
+        [SelectedProviderNeeded]
         public async Task<IActionResult> Courses(
             string level,
             Guid? courseId,
@@ -295,11 +340,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             _session.SetString("Option", "Courses");
             int? UKPRN = _session.GetInt32("UKPRN");
-
-            if (!UKPRN.HasValue)
-            {
-                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
-            }
 
             var courseResult = (await _courseService.GetCoursesByLevelForUKPRNAsync(new CourseSearchCriteria(UKPRN))).Value;
             var venueResult = (await _venueService.SearchAsync(new VenueSearchCriteria(UKPRN.ToString(), string.Empty))).Value;
