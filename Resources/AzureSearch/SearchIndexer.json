@@ -9,8 +9,7 @@
                 "sourceFieldName":  "pcd",
                 "targetFieldName":  "pcd",
                 "mappingFunction" : {
-                    "name" : "base64Decode",
-                    "parameters" : { "useHttpServerUtilityUrlTokenDecode" : true }
+                    "name" : "base64Encode"
                 }
             }
         ]
