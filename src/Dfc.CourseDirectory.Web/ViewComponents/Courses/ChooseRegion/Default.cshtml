@@ -13,12 +13,12 @@
                         val-required-message="Choose if you can deliver this course anywhere in England">
                     <span id="more-detail-hint" class="govuk-hint">Answering yes will show you are a national provider</span>
                     <div class="govuk-radios__item">
-                        @Html.RadioButtonFor(m => m.National, true, new { @class = "govuk-radios__input", id = nameof(Model.National) + "_true" })
-                        <label class="govuk-label govuk-radios__label">Yes</label>
+                        @Html.RadioButtonFor(m => m.National, true, new { @class = "govuk-radios__input", @id = "nationalTrue" })
+                        <label class="govuk-label govuk-radios__label" for="nationalTrue">Yes</label>
                     </div>
                     <div class="govuk-radios__item">
-                        @Html.RadioButtonFor(m => m.National, false, new { @class = "govuk-radios__input", id = nameof(Model.National) + "_false" })
-                        <label class="govuk-label govuk-radios__label">No</label>
+                        @Html.RadioButtonFor(m => m.National, false, new { @class = "govuk-radios__input" , @id = "nationalFalse" })
+                        <label class="govuk-label govuk-radios__label" for="nationalFalse">No</label>
                     </div>
                 </div>
             </fieldset>
@@ -69,20 +69,37 @@
     (function ($) {
         $(function () {
             var $nationalRadios = $("#nationalRadioButtons input[type=radio]");
-            var $checked = $("#nationalRadioButtons input[type=radio]:checked").val();
             var $regionSection = $("#regions-section");
-            if ($checked === "True") {
-                $regionSection.hide();
+
+            @*if (@Model.National == null) {
+                for (var i = 0; i < $nationalRadios.length; i++) {
+                    $nationalRadios[i].checked == false;
+                }
             }
+            else {*@
+                var $checked = $("#nationalRadioButtons input[type=radio]:checked").val();
+                switch ($checked) {
+                    case "True":
+                    case undefined: {
+                        $regionSection.hide();
+                        break;
+                    }
+                    case "false": {
+                        $regionSection.show();
+                        break;
+                    }
+                }
+            //}
+
 
             $nationalRadios.change(function () {
-                switch (this.id) {
-                    case "National_true":
+                switch (this.value) {
+                    case "True":
                         {
                             $regionSection.hide();
                             break;
                         }
-                    case "National_false":
+                    case "False":
                         {
                             $regionSection.show();
                             break;

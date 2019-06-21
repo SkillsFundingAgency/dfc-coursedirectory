@@ -11,5 +11,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.VenueAddressSelectionConfirmati
         public string Id { get; set; }
         public string VenueName { get; set; }
         public AddressModel Address { get; set; }
+
+        public string PostCodeId { get; set; }
     }
 }

@@ -59,6 +59,9 @@ namespace Dfc.CourseDirectory.Web
         private IAuthService AuthService;
         private readonly ILogger<Startup> _logger;
         private readonly IHostingEnvironment _env;
+        //Undefined is only part of these policy until the batch import to update ProviderType is run
+        private readonly List<string> _feClaims = new List<string> {"Fe", "Both", "Undefined" };
+        private readonly List<string> _apprenticeshipClaims = new List<string> { "Apprenticeship", "Both", "Undefined" };
         public Startup(IHostingEnvironment env, ILogger<Startup> logger, IConfiguration config)
         {
             _env = env;
@@ -105,28 +108,29 @@ namespace Dfc.CourseDirectory.Web
             });
             services.AddScoped<IBaseDataAccess, BaseDataAccess>();
 
+            services.Configure<ProviderServiceSettings>(Configuration.GetSection(nameof(ProviderServiceSettings)));
+            services.AddScoped<IProviderService, ProviderService>();
+            services.AddScoped<IProviderSearchHelper, ProviderSearchHelper>();
+
+            services.AddTransient((provider) => new HttpClient());
+
             services.AddSingleton<IAuthService, AuthService>();
             var authSp = services.BuildServiceProvider();
             AuthService = authSp.GetService<IAuthService>();
-
             services.Configure<GovukPhaseBannerSettings>(Configuration.GetSection(nameof(GovukPhaseBannerSettings)));
             services.AddScoped<IGovukPhaseBannerService, GovukPhaseBannerService>();
 
-            services.AddTransient((provider) => new HttpClient());
 
             services.Configure<LarsSearchSettings>(Configuration.GetSection(nameof(LarsSearchSettings)));
             services.AddScoped<ILarsSearchService, LarsSearchService>();
 
             services.Configure<PostCodeSearchSettings>(Configuration.GetSection(nameof(PostCodeSearchSettings)));
             services.AddScoped<IPostCodeSearchService, PostCodeSearchService>();
-            services.AddScoped<IPostCodeSearchHelper, PostCodeSearchHelper>();
+            // services.AddScoped<IPostCodeSearchHelper, PostCodeSearchHelper>();
 
             services.AddScoped<ILarsSearchHelper, LarsSearchHelper>();
             services.AddScoped<IPaginationHelper, PaginationHelper>();
 
-            services.Configure<ProviderServiceSettings>(Configuration.GetSection(nameof(ProviderServiceSettings)));
-            services.AddScoped<IProviderService, ProviderService>();
-            services.AddScoped<IProviderSearchHelper, ProviderSearchHelper>();
 
             services.AddScoped<IVenueSearchHelper, VenueSearchHelper>();
             services.Configure<VenueServiceSettings>(Configuration.GetSection(nameof(VenueServiceSettings)));
@@ -167,13 +171,22 @@ namespace Dfc.CourseDirectory.Web
                 options.AddPolicy("SuperUser", policy => policy.RequireRole("Developer", "Helpdesk", "Provider Superuser"));
                 options.AddPolicy("Helpdesk", policy => policy.RequireRole("Helpdesk"));
                 options.AddPolicy("Provider", policy => policy.RequireRole("Provider User", "Provider Superuser"));
+                options.AddPolicy("Apprenticeship", policy =>
+                    policy.RequireAssertion(x => (!x.User.IsInRole("Provider Superuser") && !x.User.IsInRole("Provider User")) ||
+                                                 x.User.Claims.Any(c => c.Type == "ProviderType" &&
+                                                                        _apprenticeshipClaims.Contains(c.Value))));
+                options.AddPolicy("Fe", policy =>
+                    policy.RequireAssertion(x => (!x.User.IsInRole("Provider Superuser") && !x.User.IsInRole("Provider User")) ||
+                                                                             x.User.Claims.Any(c => c.Type == "ProviderType" && 
+                                                                                                    _feClaims.Contains(c.Value))));
             });
             services.AddDistributedMemoryCache();
 
             services.Configure<FormOptions>(x => x.ValueCountLimit = 2048);
 
             services.AddResponseCaching();
-            services.AddSession(options => {
+            services.AddSession(options =>
+            {
                 options.IdleTimeout = TimeSpan.FromMinutes(30); //.FromSeconds(18);
                 options.Cookie.HttpOnly = true;
             });
@@ -222,7 +235,7 @@ namespace Dfc.CourseDirectory.Web
                         // assume a timeout of 20 minutes.
                         var timeElapsed = DateTimeOffset.UtcNow.Subtract(x.Properties.IssuedUtc.Value);
 
-                    if (timeElapsed > TimeSpan.FromMinutes(59.5)) //.FromSeconds(18)) ;
+                        if (timeElapsed > TimeSpan.FromMinutes(59.5)) //.FromSeconds(18)) ;
                         {
                             var identity = (ClaimsIdentity)x.Principal.Identity;
                             var accessTokenClaim = identity.FindFirst("access_token");
@@ -383,7 +396,7 @@ namespace Dfc.CourseDirectory.Web
                         //Course Directory Authorisation
                         try
                         {
-                            AuthUserDetails details = AuthService.GetDetailsByEmail(email);
+                            AuthUserDetails details = AuthService.GetDetailsByEmail(email).Result;
 
                             // store both access and refresh token in the claims - hence in the cookie
                             identity.AddClaims(new[]
@@ -391,7 +404,8 @@ namespace Dfc.CourseDirectory.Web
                                     new Claim("UKPRN", details.UKPRN),
                                     new Claim("user_id", details.UserId.ToString()),
                                     new Claim("role_id", details.RoleId.ToString()),
-                                    new Claim(ClaimTypes.Role, details.RoleName)
+                                    new Claim(ClaimTypes.Role, details.RoleName),
+                                    new Claim("ProviderType", details.ProviderType)
                                 });
                             _logger.LogWarning("User " + email + " has been authorised");
                         }
@@ -426,7 +440,8 @@ namespace Dfc.CourseDirectory.Web
                 app.UseHsts();
             }
 
-            app.UseStatusCodePages(async context => {
+            app.UseStatusCodePages(async context =>
+            {
                 var response = context.HttpContext.Response;
 
                 if (response.StatusCode == (int)HttpStatusCode.Unauthorized ||

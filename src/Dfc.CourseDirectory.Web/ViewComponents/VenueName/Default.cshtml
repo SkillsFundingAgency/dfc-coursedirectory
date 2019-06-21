@@ -5,6 +5,8 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @inject IOptions<VenueNameComponentSettings> venueNameComponentSettings
 
+@{ var regex = @"^\S+(?: \S+)*$"; }
+
 <div class="govuk-form-group">
     <label class="govuk-label" asp-for="@Model.VenueName">
         @venueNameComponentSettings.Value.VenueName_Label
@@ -15,51 +17,20 @@
             @Model.HintText
         </span>
     }
-    <span asp-validation-for="@Model.VenueName" class="govuk-error-message"></span>
-    <input class="govuk-input" asp-for="@Model.VenueName" type="text" aria-describedby="@Model.AriaDescribedBy">
+
+
+    <input class="govuk-input" asp-for="@Model.VenueName" type="text" aria-describedby="@Model.AriaDescribedBy"
+           val-required-message="Enter a venue name"
+           val-max-length="255"
+           val-max-length-message="Venue name must be 255 characters or less"
+           val-regex="@regex"
+           val-regex-message="Venue name must not have any leading, trailing or contain multiple consecutive spaces" />
 </div>
 
 <script>
     (function ($) {
         $(function () {
-            var formGroupErrorClass = "govuk-form-group--error";
-            var elementErrorClass = "govuk-input--error";
-            var $elementVenueName = $("#@nameof(Model.VenueName)");
-            var $validationMessageVenueName = $elementVenueName.prev("[data-valmsg-for='@nameof(Model.VenueName)']");
-            $validationMessageVenueName.css("margin-bottom", "0");
-            var $formGroupVenueName = $elementVenueName.closest('.govuk-form-group');
 
-            var $form = $elementVenueName.closest("form");
-            $form.addTriggersToJqueryValidate().triggerElementValidationsOnFormValidation();
-            var validator = $form.validate();
-
-            $elementVenueName.on("blur", function () {
-                var result = validator.element($elementVenueName);
-
-                if (result) {
-                    $elementVenueName.removeClass(elementErrorClass);
-                    $formGroupVenueName.removeClass(formGroupErrorClass);
-                    $validationMessageVenueName.hide();
-                    $validationMessageVenueName.css("margin-bottom", "0");
-                } else {
-                    $elementVenueName.addClass(elementErrorClass);
-                    $formGroupVenueName.addClass(formGroupErrorClass);
-                    $validationMessageVenueName.show();
-                    $validationMessageVenueName.css("margin-bottom", "15px");
-                }
-            });
-
-            $elementVenueName.elementValidation(function (element, result) {
-                if (!$formGroupVenueName.hasClass(formGroupErrorClass)) {
-                    $validationMessageVenueName.hide();
-                }
-
-                if (result) {
-                    $elementVenueName.removeClass(elementErrorClass);
-                    $formGroupVenueName.removeClass(formGroupErrorClass);
-                    $validationMessageVenueName.css("margin-bottom", "0");
-                }
-            });
         });
     })(jQuery);
 </script>

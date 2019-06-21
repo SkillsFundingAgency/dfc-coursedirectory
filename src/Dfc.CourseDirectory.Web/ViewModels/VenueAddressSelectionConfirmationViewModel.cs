@@ -15,5 +15,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels
 
         public string Id { get; set; }
 
+        public string PostCodeId { get; set; }
+
     }
 }

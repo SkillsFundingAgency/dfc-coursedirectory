@@ -8,16 +8,30 @@
 
   <ItemGroup>
     <Compile Remove="ViewComponents\AddressSelectionConfirmation\**" />
+    <Compile Remove="ViewComponents\AddVenueManual\**" />
+    <Compile Remove="ViewComponents\AddVenue\**" />
+    <Compile Remove="ViewComponents\PostCodeSearch\**" />
     <Compile Remove="Views\Venue\**" />
     <Content Remove="ViewComponents\AddressSelectionConfirmation\**" />
+    <Content Remove="ViewComponents\AddVenueManual\**" />
+    <Content Remove="ViewComponents\AddVenue\**" />
+    <Content Remove="ViewComponents\PostCodeSearch\**" />
     <Content Remove="Views\Venue\**" />
     <EmbeddedResource Remove="ViewComponents\AddressSelectionConfirmation\**" />
+    <EmbeddedResource Remove="ViewComponents\AddVenueManual\**" />
+    <EmbeddedResource Remove="ViewComponents\AddVenue\**" />
+    <EmbeddedResource Remove="ViewComponents\PostCodeSearch\**" />
     <EmbeddedResource Remove="Views\Venue\**" />
     <None Remove="ViewComponents\AddressSelectionConfirmation\**" />
+    <None Remove="ViewComponents\AddVenueManual\**" />
+    <None Remove="ViewComponents\AddVenue\**" />
+    <None Remove="ViewComponents\PostCodeSearch\**" />
     <None Remove="Views\Venue\**" />
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Helpers\IPostCodeSearchHelper.cs" />
+    <Compile Remove="Helpers\PostCodeSearchHelper.cs" />
     <Compile Remove="ViewComponents\Courses\Duration\DurationUnitModel.cs" />
     <Compile Remove="ViewComponents\ProviderSearchResult\ProviderSearchResultItemModel.cs" />
     <Compile Remove="ViewComponents\ZCodeSearchResult\LarsSearchFilterItemModel.cs" />
@@ -52,6 +66,7 @@
 
   <ItemGroup>
     <None Include="appsettings.Development.json" />
+    <None Include="ViewComponents\EditVenueName\Default.cshtml" />
   </ItemGroup>
 
   <ItemGroup>

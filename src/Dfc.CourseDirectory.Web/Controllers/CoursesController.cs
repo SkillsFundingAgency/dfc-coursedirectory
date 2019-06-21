@@ -1,22 +1,16 @@
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Text;
 using Dfc.CourseDirectory.Common;
+using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Interfaces.Courses;
 using Dfc.CourseDirectory.Models.Models.Courses;
-using Dfc.CourseDirectory.Services.Interfaces.CourseService;
+using Dfc.CourseDirectory.Models.Models.Regions;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.CourseTextService;
+using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseTextService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
-using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Extensions;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.RequestModels;
-using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseFor;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseRun;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.EntryRequirements;
@@ -26,20 +20,21 @@ using Dfc.CourseDirectory.Web.ViewComponents.Courses.SelectVenue;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatWillLearn;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatYouNeed;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhereNext;
+using Dfc.CourseDirectory.Web.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using CourseRun = Dfc.CourseDirectory.Models.Models.Courses.CourseRun;
-using Dfc.CourseDirectory.Models.Enums;
-using Dfc.CourseDirectory.Models.Models;
-using Dfc.CourseDirectory.Models.Models.Regions;
-using Microsoft.AspNetCore.Mvc.Formatters;
-using Microsoft.AspNetCore.Authorization;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
+    [Authorize("Fe")]
     public class CoursesController : Controller
     {
         private readonly ILogger<CoursesController> _logger;

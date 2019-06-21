@@ -13,10 +13,18 @@
 
             <form class="govuk-!-margin-bottom-9" id="WhatDoYouWantToDoNextForm" asp-controller="Migration" asp-action="Errors" method="post">
                 <span class="govuk-caption-xl">Course directory</span>
+                <div id="errorsummary" class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary" style="display: none;">
+                    <h2 class="govuk-error-summary__title" id="error-summary-title">
+                        There is a problem
+                    </h2>
+                    <div class="govuk-error-summary__body">
+                        <ul class="govuk-list govuk-error-summary__list"></ul>
+                    </div>
+                </div>
                 <h1 class="govuk-heading-xl">What do you want to do next?</h1>
                 @if (Model.Errors.HasValue && Model.LiveCourses.HasValue)
                 {
-            <p>You have @Model.LiveCourses published course@(@Model.LiveCourses > 1 ? "s" : "") and @Model.Errors course@(Model.Errors > 1 ? "s": "") with errors that must be fixed. <br /> Any courses with a missing LARS have been deleted.</p>
+                    <p>You have @Model.LiveCourses published course@(@Model.LiveCourses > 1 ? "s" : "") and @Model.Errors course@(Model.Errors > 1 ? "s" : "") with errors that must be fixed. <br /> Any courses with a missing LARS have been deleted.</p>
                 }
                 <br />
                 <div class="govuk-form-group">
@@ -41,56 +49,65 @@
                                 @Html.RadioButtonFor(m => m.MigrationErrors, MigrationErrors.StartAgain, new { @class = "govuk-radios__input", id = MigrationErrors.StartAgain })
                                 <label class="govuk-label govuk-radios__label" for="@MigrationErrors.StartAgain">
                                     @WebHelper.GetEnumDescription(MigrationErrors.StartAgain)
-                                <span class="govuk-hint"> @WebHelper.GetEnumSubtext(MigrationErrors.StartAgain)</span>
-                            </label>
+                                    <span class="govuk-hint"> @WebHelper.GetEnumSubtext(MigrationErrors.StartAgain)</span>
+                                </label>
+                            </div>
+
                         </div>
+                    </fieldset>
+                </div>
+                <br />
 
-                    </div>
-                </fieldset>
-            </div>
-            <br />
-
-            <button type="submit" class="govuk-button" id="next">Continue</button>
-        </form>
+                <button type="submit" class="govuk-button" id="next">Continue</button>
+            </form>
     </div>
 </div>
 </div>
 
-<script>
-    (function ($) {
-        $(function () {
-            var validStates = [];
-            var $button = $("#next");
+<<script>
+     (function ($) {
+         $(function () {
+             var validStates = [];
+             var $button = $("#next");
+             var $errorSummary = $("#errorsummary").govUkErrorSummary();
 
-            var $whatDoYouWantToDoNext = $("#WhatDoYouWantToDoNext").govUkRadios();
+             var $whatDoYouWantToDoNext = $("#WhatDoYouWantToDoNext").govUkRadios();
 
-            function isAllValid(currentValue) {
-                return currentValue === true;
-            }
+             function isAllValid(currentValue) {
+                 return currentValue === true;
+             }
 
-            function validate() {
+             function validate() {
 
-                validStates = [];
+                 validStates = [];
+                 $errorSummary.govUkErrorSummary("removeAll");
+                 $whatDoYouWantToDoNext.govUkRadios("validState");
 
-                $whatDoYouWantToDoNext.govUkRadios("validState");
+                 if ($.requiredValidate($whatDoYouWantToDoNext.find("input[type='radio']:checked").val())) {
+                     $whatDoYouWantToDoNext.govUkRadios("validState");
+                     validStates.push(true);
+                  
+                 } else {
+                     $whatDoYouWantToDoNext.govUkRadios("invalidState", $whatDoYouWantToDoNext.attr("val-required-message"));
+                     validStates.push(false);
+                     var element = $whatDoYouWantToDoNext;
+                     var $anchor = document.createElement("a");
+                     $anchor.href =  "#WhatDoYouWantToDoNext";
+                     $anchor.innerHTML = $whatDoYouWantToDoNext.attr("val-required-message");
+                     $anchor.id = "error-hash-link-" + "a" + "-" + 1;
+                     $errorSummary.govUkErrorSummary("add", $anchor);
+                     $errorSummary.govUkErrorSummary("show");
+                 }
+             }
 
-                if ($.requiredValidate($whatDoYouWantToDoNext.find("input[type='radio']:checked").val())) {
-                    $whatDoYouWantToDoNext.govUkRadios("validState");
-                    validStates.push(true);
-                } else {
-                    $whatDoYouWantToDoNext.govUkRadios("invalidState", $whatDoYouWantToDoNext.attr("val-required-message"));
-                    validStates.push(false);
-                }
-            }
+             $button.on("click", function (event) {
+                 event.preventDefault();
+                 validate();
+                 if (validStates.every(isAllValid)) {
+                     $("#WhatDoYouWantToDoNextForm").submit();
+                 }
+             });
 
-            $button.on("click", function (event) {
-                event.preventDefault();
-                validate();
-                if (validStates.every(isAllValid)) {
-                    $("#WhatDoYouWantToDoNextForm").submit();
-                }
-            });
-
-        });
-    })(jQuery);
-</script>
+         });
+     })(jQuery);
+ </script>

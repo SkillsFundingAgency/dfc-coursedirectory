@@ -48,7 +48,7 @@ namespace Dfc.CourseDirectory.Models.Models.Providers
 
     public enum ProviderType
     {
-        undefined = 0,
+        Undefined = 0,
         [Description("F.E.")]
         Fe = 1,
         [Description("Apprenticeships")]

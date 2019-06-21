@@ -9,10 +9,12 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.PostcodeLookup
 {
     public class PostcodeLookupModel
     {
-        [Required(AllowEmptyStrings = false, ErrorMessage = "Enter a postcode")]
-        [MaxLength(8, ErrorMessage = "Postcode must be 8 characters or less")]
+        public string VenueName { get; set; }
+        public string Id { get; set; }
+        //[Required(AllowEmptyStrings = false, ErrorMessage = "Enter a postcode")]
+        //[MaxLength(8, ErrorMessage = "Postcode must be 8 characters or less")]
 
-        [RegularExpression("([abcdefghijklmnoprstuwyzABCDEFGHIJKLMNOPRSTUWYZ][0-9]|[abcdefghjkstuwABCDEFGHJKSTUW][0-9][0-9]|[abcdefghijklmnoprstuwyzABCDEFGHIJKLMNOPRSTUWYZ][abcdefghklmnopqrstuvwxyABCDEFGHKLMNOPQRSTUVWXY][0-9]|[abcdefghijklmnoprstuwyzABCDEFGHIJKLMNOPRSTUWYZ][abcdefghklmnopqrstuvwxyABCDEFGHKLMNOPQRSTUVWXY][0-9][0-9]|[abcdefghijklmnoprstuwyzABCDEFGHIJKLMNOPRSTUWYZ][0-9][abcdefghjkstuwABCDEFGHJKSTUW]|[abcdefghijklmnoprstuwyzABCDEFGHIJKLMNOPRSTUWYZ][abcdefghklmnopqrstuvwxyABCDEFGHKLMNOPQRSTUVWXY][0-9][abehmnprvwxyABEHMNPRVWXY]) ([0-9][abdefghjlnpqrstuwxyzABDEFGHJLNPQRSTUWXYZ][abdefghjlnpqrstuwxyzABDEFGHJLNPQRSTUWXYZ])", ErrorMessage = "Postcode must be a valid format and only include letters a to z, numbers and spaces")]
+        //[RegularExpression("([abcdefghijklmnoprstuwyzABCDEFGHIJKLMNOPRSTUWYZ][0-9]|[abcdefghjkstuwABCDEFGHJKSTUW][0-9][0-9]|[abcdefghijklmnoprstuwyzABCDEFGHIJKLMNOPRSTUWYZ][abcdefghklmnopqrstuvwxyABCDEFGHKLMNOPQRSTUVWXY][0-9]|[abcdefghijklmnoprstuwyzABCDEFGHIJKLMNOPRSTUWYZ][abcdefghklmnopqrstuvwxyABCDEFGHKLMNOPQRSTUVWXY][0-9][0-9]|[abcdefghijklmnoprstuwyzABCDEFGHIJKLMNOPRSTUWYZ][0-9][abcdefghjkstuwABCDEFGHJKSTUW]|[abcdefghijklmnoprstuwyzABCDEFGHIJKLMNOPRSTUWYZ][abcdefghklmnopqrstuvwxyABCDEFGHKLMNOPQRSTUVWXY][0-9][abehmnprvwxyABEHMNPRVWXY]) ([0-9][abdefghjlnpqrstuwxyzABDEFGHJLNPQRSTUWXYZ][abdefghjlnpqrstuwxyzABDEFGHJLNPQRSTUWXYZ])", ErrorMessage = "Postcode must be a valid format and only include letters a to z, numbers and spaces")]
         public string Postcode { get; set; }
         public string PostcodeLabelText { get; set; }
         public string PostcodeHintText { get; set; }
@@ -20,9 +22,12 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.PostcodeLookup
         public string ButtonText { get; set; }
         public IEnumerable<SelectListItem> Items { get; set; }
         public bool HasItems => Items != null && Items.Any();
+
+        public bool Searched { get; set; }
+
         public string NoneSelectedText => HasItems ? $"{Items.Count()} addresses found" : string.Empty;
 
-        [Required(AllowEmptyStrings = false, ErrorMessage = "Select an address")]
+        //[Required(AllowEmptyStrings = false, ErrorMessage = "Select an address")]
         public string PostcodeId { get; set; }
 
         public PostcodeLookupModel()

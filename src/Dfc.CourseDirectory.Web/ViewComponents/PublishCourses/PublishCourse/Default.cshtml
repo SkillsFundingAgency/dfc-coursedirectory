@@ -1,13 +1,18 @@
 ﻿@using System.Text.RegularExpressions
 @using Dfc.CourseDirectory.Models.Enums
+@using Microsoft.AspNetCore.Authorization;
 @using Dfc.CourseDirectory.Models.Models.Courses
 @using Dfc.CourseDirectory.Web.Helpers
 @model Dfc.CourseDirectory.Web.ViewModels.PublishCourses.PublishViewModel
 
+@inject IAuthorizationService Authorization
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @Html.HiddenFor(x => x.PublishMode)
 
+@{
+    var adminLogin = await Authorization.AuthorizeAsync(User, "Admin");
+}
 
 @foreach (var course in Model.Courses)
 {
@@ -75,7 +80,7 @@
                                 <span>@courseRun.ProviderCourseID</span>
                             </div>
                             <div class="govuk-grid-column-one-quarter">
-                                @if (courseRun.VenueId != null)
+                                @if (courseRun.VenueId != null && Model.Venues.ContainsKey((Guid)courseRun.VenueId))
                                 {
                                     <span>@Model.Venues[(Guid)courseRun.VenueId]</span>
                                 }
@@ -130,11 +135,15 @@
                             }
                         }
                     </div>
-                    
+
 
                 </div>
                 <div class="govuk-grid-column-one-third">
                     <div class="align-right col right center">
+                        @if(adminLogin.Succeeded){
+                        <a asp-action="DeleteCourseRun" asp-controller="Migration"
+                           asp-route-courseId="@course.id" asp-route-courseRunId="@courseRun.id">Delete</a>
+                        }
 
                         <a id="course-run-fix-@courseRun.id" class="error-link fix" asp-controller="EditCourseRun" asp-action="Index"
                            asp-route-courseId="@course.id" asp-route-courseRunId="@courseRun.id"

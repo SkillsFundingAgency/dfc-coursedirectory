@@ -207,7 +207,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 ProviderUKPRN = UKPRN,
                 SelectVenue = await GetVenuesByUkprn(UKPRN),
                 ChooseRegion = new ChooseRegionModel {
-                    Regions = _courseService.GetRegions()
+                    Regions = _courseService.GetRegions(),
+                    National = null
+                    
                 }
             };
 
@@ -248,11 +250,17 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                 if (addCourseSection2Session.SelectedRegions != null) {
                     foreach (var selectedRegion in addCourseSection2Session.SelectedRegions) {
-                        viewModel.ChooseRegion
-                                 .Regions
-                                 .RegionItems
-                                 .First(x => x.Id == selectedRegion.ToString())
-                                 .Checked = true;
+
+                        foreach(var region in viewModel.ChooseRegion.Regions.RegionItems)
+                        {
+                            foreach(var subregion in region.SubRegion)
+                            {
+                                if(subregion.Id == selectedRegion.ToString())
+                                {
+                                    subregion.Checked = true;
+                                }
+                            }
+                        }
                     }
                 }
 
