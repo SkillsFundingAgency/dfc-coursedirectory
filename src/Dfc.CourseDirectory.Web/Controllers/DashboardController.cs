@@ -118,10 +118,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
             if (list.Any())
                 vm.FileUploadDate = list.FirstOrDefault().DateUploaded.Value;
 
-            string BulkUpLoadErrorMessage = vm.BulkUploadTotalCount.ToString() + WebHelper.GetCourseTextToUse(vm.BulkUploadTotalCount) + " uploaded in a file on " + vm.FileUploadDate?.ToString("dd/MM/yyyy") + " have " + vm.BulkUploadPendingCount.ToString() + " errors. Fix these to publish all of your courses.";
+            //string BulkUpLoadErrorMessage = vm.BulkUploadTotalCount.ToString() + WebHelper.GetCourseTextToUse(vm.BulkUploadTotalCount) + " upload in a file on " + vm.FileUploadDate?.ToString("dd/MM/yyyy") + " have " + vm.BulkUploadPendingCount.ToString() + " errors. Fix these to publish all of your courses.";
+            //string BulkUpLoadNoErrorMessage = vm.BulkUploadTotalCount.ToString() + WebHelper.GetCourseTextToUse(vm.BulkUploadPendingCount) + " uploaded on " + vm.FileUploadDate?.ToString("dd/MM/yyyy") + " have no errors, but are not listed on the Course directory becuase you have not published them.";
+            string BulkUpLoadErrorMessage = vm.BulkUploadPendingCount.ToString() + WebHelper.GetCourseTextToUse(vm.BulkUploadTotalCount) + " upload in a file on "
+                                                    + vm.FileUploadDate?.ToString("dd/MM/yyyy") + " have "
+                                                    + (bulkUploadCoursesPending.SelectMany(c => c.BulkUploadErrors).Count() + bulkUploadRunsPending.SelectMany(r => r.BulkUploadErrors).Count()).ToString()
+                                                    + " errors. Fix these to publish all of your courses.";
             string BulkUpLoadNoErrorMessage = vm.BulkUploadTotalCount.ToString() + WebHelper.GetCourseTextToUse(vm.BulkUploadPendingCount) + " uploaded on " + vm.FileUploadDate?.ToString("dd/MM/yyyy") + " have no errors, but are not listed on the Course directory becuase you have not published them.";
-                vm.FileCount = list.Count();
-            
+            vm.FileCount = list.Count();
+
             int MigrationLiveCount = courses.Where(x => x.CourseStatus == RecordStatus.Live && x.CreatedBy == "DFC – Course Migration Tool")
                                             .SelectMany(c => c.CourseRuns)
                                             .Where(x => x.RecordStatus == RecordStatus.Live && x.CreatedBy == "DFC – Course Migration Tool")
