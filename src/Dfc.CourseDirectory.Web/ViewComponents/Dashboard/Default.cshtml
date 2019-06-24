@@ -1,17 +1,35 @@
 ﻿@using Dfc.CourseDirectory.Common.Settings
 @using Microsoft.Extensions.Options
+@using Dfc.CourseDirectory.Web.ViewComponents.Notification
 @model Dfc.CourseDirectory.Web.ViewComponents.Dashboard.DashboardModel
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
-@*<div class="cd-info-summary" aria-labelledby="info-summary-title" role="alert" tabindex="-1" data-module="info-summary">
-    <h2 class="cd-info-summary__title" id="info-summary-title">
-        Info
-    </h2>
-    <div class="cd-info-summary__body">
-        <p>Info message</p>
+
+
+@if (Model.ValidationMessages != null && Model.ValidationMessages.Any())
+{
+    <div class="cd-info-summary" aria-labelledby="info-summary-title" role="alert" tabindex="-1" data-module="info-summary">
+        <div class="cd-info-summary__body">
+            <div class="cd-info-summary__list">
+                @foreach (string msg in Model?.ValidationMessages)
+                {
+                    <a href="/DQI"> @msg </a>
+                }
+            </div>
+        </div>
     </div>
-</div>*@
+}
+
+@if (Model.BulkUploadReadyToGoLiveCount > 0 || Model.BulkUploadPendingCount > 0)
+{
+    @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+    {
+        NotificationTitle = "Bulk upload",
+        ClassType = "info-summary",
+        Link = $"<a class='govuk-link' href='/Bulkupload/WhatDoYouWantToDoNext'>{Model.BulkUploadMessage}</a>"
+    })
+}
 
 <div class="cd-dashboard provider">
     <span class="govuk-caption-xl">Course Directory</span>
@@ -21,8 +39,8 @@
         <div class="govuk-grid-row govuk-!-margin-bottom-6">
             <div class="govuk-grid-column-full ">
 
+
                 <a asp-controller="ProviderCourses" asp-action="Index">
-                @*<a href="http://google.com">*@
                     <div class="govuk-grid-column-one-quarter">
                         <div role="link" class="cd-status-panel grey div--link">
                             <h2 role="link" class="govuk-heading-s">Your published courses</h2>
@@ -31,6 +49,7 @@
 
                     </div>
                 </a>
+
                 <div class="govuk-grid-column-one-half">
 
                     <ul class="govuk-list">
@@ -52,18 +71,21 @@
 
         <div class="govuk-grid-row">
 
-            <div class="govuk-grid-column-full govuk-body">
-                <hr class="spacer" />
-                <div class=" homepage-item govuk-grid-column-one-third">
-                    <div class="cd-status-panel blue">
-                        <a asp-controller="Migration" asp-action="Options" class="govuk-link">Migration</a>
-                        <p>View details of the data we migrated.</p>
+            <hr class="spacer" />
+            <div class="govuk-grid-column-full govuk-body homepage-item--container ">
+                @if (Model.DisplayMigrationButton == true)
+                {
+                    <div class=" homepage-item govuk-grid-column-one-third">
+                        <div class="cd-status-panel blue">
+                            <a asp-controller="Migration" asp-action="Options" class="govuk-link">Migration</a>
+                            <p>View details of the data we migrated.</p>
+                        </div>
                     </div>
-                </div>
+                }
                 <div class="homepage-item govuk-grid-column-one-third">
                     <div class="cd-status-panel grey">
                         <a asp-controller="Venues" asp-action="Index" class="govuk-link">Venues</a>
-                        
+
                         <span class="govuk-heading-s">@Model.VenueCount</span>
                         <p>View, edit and add venues.</p>
                     </div>

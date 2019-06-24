@@ -12,6 +12,10 @@ using System.Security.Claims;
 using System;
 using Dfc.CourseDirectory.Services.Interfaces.BlobStorageService;
 using Microsoft.AspNetCore.Authorization;
+using System.Collections.Generic;
+using Dfc.CourseDirectory.Models.Models.Courses;
+using Dfc.CourseDirectory.Services.CourseService;
+using Dfc.CourseDirectory.Models.Enums;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -49,7 +53,60 @@ namespace Dfc.CourseDirectory.Web.Controllers
             //Set this todisplay the Search Provider fork of the ProviderSearchResult ViewComponent
         }
 
-        public IActionResult Index(string errmsg)
+        public IActionResult Check()
+        {
+            int UKPRN = 0;
+            if (User.Identity.IsAuthenticated)
+            {
+                if (_session.GetInt32("UKPRN") == null)
+                {
+                    Claim UKPRNClaim = User.Claims.Where(x => x.Type == "UKPRN").SingleOrDefault();
+                    if (!String.IsNullOrEmpty(UKPRNClaim.Value))
+                    {
+                        _session.SetInt32("UKPRN", Int32.Parse(UKPRNClaim.Value));
+                    }
+                }
+
+                if (_session.GetInt32("UKPRN").HasValue)
+                {
+                    UKPRN = _session.GetInt32("UKPRN").Value;
+                }
+
+                var authorised = _authorizationService.AuthorizeAsync(User, "ElevatedUserRole").Result;
+
+                if (authorised.Succeeded)
+                {
+                    return View("../Provider/Search");
+                }
+
+                IEnumerable<Course> courses = _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(UKPRN))
+                                            .Result
+                                            .Value
+                                            .Value
+                                            .SelectMany(o => o.Value)
+                                            .SelectMany(i => i.Value);
+
+                IEnumerable<CourseRun> migrationPendingCourses = courses.SelectMany(c => c.CourseRuns).Where(x => x.RecordStatus == RecordStatus.MigrationPending);
+
+                IEnumerable<Course> inValidCourses = courses.Where(c => c.IsValid == false);
+
+                if (inValidCourses.Count() > 0 || migrationPendingCourses.Count() > 0)
+                {
+                    return RedirectToAction("Report", "Migration");
+                }
+
+                return View("../Provider/Dashboard");
+
+            }
+            else
+            {
+                return View("../Provider/Landing");
+
+            }
+
+        }
+
+            public IActionResult Index(string errmsg)
         {
             _session.SetInt32("ProviderSearch", 1);
             _logger.LogMethodEnter();
@@ -79,9 +136,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 {
                     return View("../Provider/Search");
                 }
-                return View("../Provider/Dashboard");
-
-               
+ 
+                    return View("../Provider/Dashboard");
+                
             }
             else
             {
