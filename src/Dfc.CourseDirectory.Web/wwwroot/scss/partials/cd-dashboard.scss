@@ -16,13 +16,22 @@ $grey: #6f777b;
     display: block;
 }
 
+
+.homepage-item {
+    a {
+        font-size: 1.5rem;
+        font-weight: 600;
+    }
+}
+
 .cd-status-panel {
     background-color: #dee0e2;
     display: flex;
     padding: 1em;
     margin-bottom: 1.5em;
     text-align: center;
-    justify-content: center;
+    /*justify-content: center;*/
+    height: 100%;
     flex-direction: column;
 
     &.blue {
@@ -30,7 +39,8 @@ $grey: #6f777b;
         background-color: #005ea5;
         color: white;
 
-        h2, a {
+
+        h2, a, span {
             color: white;
         }
     }
@@ -55,6 +65,7 @@ $grey: #6f777b;
         text-align: left;
         flex-direction: row;
         margin-bottom: 0em;
+        flex: 1;
     }
 }
 
@@ -69,13 +80,6 @@ $grey: #6f777b;
 
 .div--link {
     display: block;
-}
-
-.homepage-item {
-    a {
-        font-size: 1.5rem;
-        font-weight: 600;
-    }
 }
 
 .cd-activity-item {
@@ -119,4 +123,17 @@ $grey: #6f777b;
     }
 }
 
+@media screen and (min-width:640px) and (max-width:1024px) {
+    .homepage-item--container {
+        display: flex;
+    }
 
+    .homepage-item {
+        flex: 1;
+
+        a {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+    }
+}

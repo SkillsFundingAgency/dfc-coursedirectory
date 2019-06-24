@@ -11,6 +11,11 @@ using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using System.Security.Claims;
 using System;
 using Dfc.CourseDirectory.Services.Interfaces.BlobStorageService;
+using Microsoft.AspNetCore.Authorization;
+using System.Collections.Generic;
+using Dfc.CourseDirectory.Models.Models.Courses;
+using Dfc.CourseDirectory.Services.CourseService;
+using Dfc.CourseDirectory.Models.Enums;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -21,6 +26,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly ICourseService _courseService;
         private readonly IBlobStorageService _blobStorageService;
+        private readonly IAuthorizationService _authorizationService;
 
         private ISession _session => _contextAccessor.HttpContext.Session;
 
@@ -29,22 +35,78 @@ namespace Dfc.CourseDirectory.Web.Controllers
             ILarsSearchService larsSearchService,
             ICourseService courseService,
             IBlobStorageService blobStorageService,
-            IHttpContextAccessor contextAccessor)
+            IHttpContextAccessor contextAccessor,
+            IAuthorizationService authorizationService)
         {
             Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(contextAccessor, nameof(contextAccessor));
             Throw.IfNull(courseService, nameof(courseService));
             Throw.IfNull(blobStorageService, nameof(blobStorageService));
+            Throw.IfNull(authorizationService, nameof(authorizationService));
 
             _logger = logger;
             _larsSearchService = larsSearchService;
             _contextAccessor = contextAccessor;
             _courseService = courseService;
             _blobStorageService = blobStorageService;
+            _authorizationService = authorizationService;
             //Set this todisplay the Search Provider fork of the ProviderSearchResult ViewComponent
         }
 
-        public IActionResult Index(string errmsg)
+        public IActionResult Check()
+        {
+            int UKPRN = 0;
+            if (User.Identity.IsAuthenticated)
+            {
+                if (_session.GetInt32("UKPRN") == null)
+                {
+                    Claim UKPRNClaim = User.Claims.Where(x => x.Type == "UKPRN").SingleOrDefault();
+                    if (!String.IsNullOrEmpty(UKPRNClaim.Value))
+                    {
+                        _session.SetInt32("UKPRN", Int32.Parse(UKPRNClaim.Value));
+                    }
+                }
+
+                if (_session.GetInt32("UKPRN").HasValue)
+                {
+                    UKPRN = _session.GetInt32("UKPRN").Value;
+                }
+
+                var authorised = _authorizationService.AuthorizeAsync(User, "ElevatedUserRole").Result;
+
+                if (authorised.Succeeded)
+                {
+                    return View("../Provider/Search");
+                }
+
+                IEnumerable<Course> courses = _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(UKPRN))
+                                            .Result
+                                            .Value
+                                            .Value
+                                            .SelectMany(o => o.Value)
+                                            .SelectMany(i => i.Value);
+
+                IEnumerable<CourseRun> migrationPendingCourses = courses.SelectMany(c => c.CourseRuns).Where(x => x.RecordStatus == RecordStatus.MigrationPending);
+
+                IEnumerable<Course> inValidCourses = courses.Where(c => c.IsValid == false);
+
+                if (inValidCourses.Count() > 0 || migrationPendingCourses.Count() > 0)
+                {
+                    return RedirectToAction("Report", "Migration");
+                }
+
+                return View("../Provider/Dashboard");
+
+            }
+            else
+            {
+                return View("../Provider/Landing");
+
+            }
+
+        }
+
+            public IActionResult Index(string errmsg)
         {
             _session.SetInt32("ProviderSearch", 1);
             _logger.LogMethodEnter();
@@ -57,30 +119,37 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _session.SetString("Option","Home");
             ViewBag.StatusMessage = errmsg;
 
-            if(User.Identity.IsAuthenticated && _session.GetInt32("UKPRN") == null)
+            if (User.Identity.IsAuthenticated)
             {
-                Claim UKPRN = User.Claims.Where(x => x.Type == "UKPRN").SingleOrDefault();
-                if(!String.IsNullOrEmpty(UKPRN.Value))
-                {
-                    _session.SetInt32("UKPRN", Int32.Parse(UKPRN.Value));
+                if (_session.GetInt32("UKPRN") == null)
+                    {
+                    Claim UKPRN = User.Claims.Where(x => x.Type == "UKPRN").SingleOrDefault();
+                    if (!String.IsNullOrEmpty(UKPRN.Value))
+                    {
+                        _session.SetInt32("UKPRN", Int32.Parse(UKPRN.Value));
+                    }
                 }
+               
+                var authorised = _authorizationService.AuthorizeAsync(User, "ElevatedUserRole").Result;
+
+                if (authorised.Succeeded)
+                {
+                    return View("../Provider/Search");
+                }
+ 
+                    return View("../Provider/Dashboard");
                 
             }
-            if (_session.GetInt32("UKPRN") == null)
-                return View();
             else
             {
-                var vm = DashboardController.GetDashboardViewModel(_courseService, _blobStorageService, _session.GetInt32("UKPRN"), "");
-                if (vm.PendingCourseCount > 0)
-                {
-                    _session.SetString("PendingCourses", "true");
-                }
-                else
-                {
-                    _session.SetString("PendingCourses", "false");
-                }
-                return View(vm);
+                return View("../Provider/Landing");
+
             }
+
+               
+            
+
+           
                 
         }
         public IActionResult IndexSuccess(DashboardViewModel vm)
