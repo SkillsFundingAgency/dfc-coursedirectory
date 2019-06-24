@@ -110,7 +110,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                                       join int p in pendingStatuses
                                       on c.Status equals p
                                       select c.Count).Sum(),
-                BulkUploadPendingCount = bulkUploadCoursesPending.Count() + bulkUploadRunsPending.Count(),
+                BulkUploadPendingCount = bulkUploadRunsPending.Count(), // = bulkUploadCoursesPending.Count()
                 BulkUploadReadyToGoLiveCount = bulkUploadReadyToGoLive.Count(),
                 BulkUploadTotalCount = bulkUploadCoursesPending.Count()+ bulkUploadReadyToGoLive.Count()
             };
