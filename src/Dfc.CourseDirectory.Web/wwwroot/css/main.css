@@ -6582,6 +6582,38 @@ ul.sort-list {
   flex-direction: column;
 }
 
+.cd-status-panel.blue {
+  text-align: left;
+  background-color: #005ea5;
+  color: white;
+}
+
+.cd-status-panel.blue h2, .cd-status-panel.blue a {
+  color: white;
+}
+
+.cd-status-panel.green {
+  background-color: green;
+}
+
+.cd-status-panel.red {
+  background-color: red;
+}
+
+.cd-status-panel.white {
+  background-color: white;
+  text-align: left;
+}
+
+.cd-status-panel.grey {
+  background-color: #f8f8f8;
+  border: 1px solid #bfc1c3;
+  display: block;
+  text-align: left;
+  flex-direction: row;
+  margin-bottom: 0em;
+}
+
 .cd-cancel-link {
   margin: 9px 0 6px 13px;
   position: absolute;
@@ -6626,6 +6658,16 @@ ul.sort-list {
 
 .tox-statusbar__wordcount {
   font-size: 20px !important;
+}
+
+.sidebar .widget {
+  border-top: 5px solid #005ea5;
+  background-color: #f8f8f8;
+  padding-left: 1rem;
+}
+
+.sidebar .widget div {
+  margin-bottom: .5em;
 }
 
 #cd-add-qual-button {
@@ -7528,13 +7570,19 @@ select:disabled {
   display: block;
 }
 
+.homepage-item a {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
 .cd-status-panel {
   background-color: #dee0e2;
   display: flex;
   padding: 1em;
   margin-bottom: 1.5em;
   text-align: center;
-  justify-content: center;
+  /*justify-content: center;*/
+  height: 100%;
   flex-direction: column;
 }
 
@@ -7544,7 +7592,7 @@ select:disabled {
   color: white;
 }
 
-.cd-status-panel.blue h2, .cd-status-panel.blue a {
+.cd-status-panel.blue h2, .cd-status-panel.blue a, .cd-status-panel.blue span {
   color: white;
 }
 
@@ -7568,6 +7616,7 @@ select:disabled {
   text-align: left;
   flex-direction: row;
   margin-bottom: 0em;
+  flex: 1;
 }
 
 .white {
@@ -7580,11 +7629,6 @@ select:disabled {
 
 .div--link {
   display: block;
-}
-
-.homepage-item a {
-  font-size: 1.5rem;
-  font-weight: 600;
 }
 
 .cd-activity-item {
@@ -7623,4 +7667,17 @@ select:disabled {
 
 .sidebar .widget div {
   margin-bottom: .5em;
+}
+
+@media screen and (min-width: 640px) and (max-width: 1024px) {
+  .homepage-item--container {
+    display: flex;
+  }
+  .homepage-item {
+    flex: 1;
+  }
+  .homepage-item a {
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
 }

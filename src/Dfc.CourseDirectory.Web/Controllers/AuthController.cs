@@ -26,7 +26,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _contextAccessor = contextAccessor;
         }
 
-        public async Task Login(string returnUrl = "/")
+        public async Task Login(string returnUrl = "/Home/Check")
         {
             await HttpContext.ChallengeAsync(new AuthenticationProperties() { RedirectUri = returnUrl });
         }
