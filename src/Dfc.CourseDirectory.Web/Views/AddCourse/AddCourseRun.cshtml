@@ -607,7 +607,15 @@
                     $errorSummary.govUkErrorSummary("add", durationErrorHashLinks);
                     $errorSummary.govUkErrorSummary("show");
                     validStates.push(false);
-                } else {
+                }
+                    else if ($duration.find("input").val().includes(".")) {
+                    $duration.govUkDurationInput("invalidState", $duration.attr("val-duration-message"));
+                    var durationErrorHashLinks = $duration.govUkDurationInput("getErrorHashLinks");
+                    $errorSummary.govUkErrorSummary("add", durationErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
+                    validStates.push(false);
+                }
+                else {
                     $duration.govUkDurationInput("validState");
                     $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $duration[0].id);
                     $errorSummary.govUkErrorSummary("hideIfEmpty")

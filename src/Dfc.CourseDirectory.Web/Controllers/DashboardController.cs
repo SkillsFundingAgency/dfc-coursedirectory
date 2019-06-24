@@ -78,15 +78,16 @@ namespace Dfc.CourseDirectory.Web.Controllers
                                                                        .Where(x => x.RecordStatus == RecordStatus.MigrationPending);
             IEnumerable<CourseRun> bulkUploadReadyToGoLive =    courses.SelectMany(c => c.CourseRuns)
                                                                        .Where(x => x.RecordStatus == RecordStatus.BulkUploadReadyToGoLive);
+            IEnumerable<CourseValidationResult> results =       service.CourseValidationMessages(validCourses.Where(x => ((int)x.CourseStatus & (int)RecordStatus.Live) > 0),
+                                                                                                 ValidationMode.DataQualityIndicator)
+                                                                       .Value;
 
-            IEnumerable<CourseValidationResult> results = service.CourseValidationMessages(validCourses, ValidationMode.DataQualityIndicator)
-                                                                 .Value;
-            IEnumerable<string> courseMessages =        results.SelectMany(c => c.Issues);
-            IEnumerable<string> runMessages    =        results.SelectMany(c => c.RunValidationResults)
-                                                               .SelectMany(r => r.Issues);
-            IEnumerable<string> messages       = courseMessages.Concat(runMessages)
-                                                               .GroupBy(i => i)
-                                                               .Select(g => $"{ g.LongCount() } { g.Key }");
+            IEnumerable<string> courseMessages   =        results.SelectMany(c => c.Issues);
+            IEnumerable<string> runMessages      =        results.SelectMany(c => c.RunValidationResults)
+                                                                 .SelectMany(r => r.Issues);
+            IEnumerable<string> messages         = courseMessages.Concat(runMessages)
+                                                                 .GroupBy(i => i)
+                                                                 .Select(g => $"{ g.LongCount() } { g.Key }");
 
             IEnumerable<ICourseStatusCountResult> counts = service.GetCourseCountsByStatusForUKPRN(new CourseSearchCriteria(UKPRN))
                                                                   .Result
@@ -118,10 +119,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
             if (list.Any())
                 vm.FileUploadDate = list.FirstOrDefault().DateUploaded.Value;
 
-            string BulkUpLoadErrorMessage = vm.BulkUploadTotalCount.ToString() + WebHelper.GetCourseTextToUse(vm.BulkUploadTotalCount) + " uploaded in a file on " + vm.FileUploadDate?.ToString("dd/MM/yyyy") + " have " + vm.BulkUploadPendingCount.ToString() + " errors. Fix these to publish all of your courses.";
+            //string BulkUpLoadErrorMessage = vm.BulkUploadTotalCount.ToString() + WebHelper.GetCourseTextToUse(vm.BulkUploadTotalCount) + " upload in a file on " + vm.FileUploadDate?.ToString("dd/MM/yyyy") + " have " + vm.BulkUploadPendingCount.ToString() + " errors. Fix these to publish all of your courses.";
+            //string BulkUpLoadNoErrorMessage = vm.BulkUploadTotalCount.ToString() + WebHelper.GetCourseTextToUse(vm.BulkUploadPendingCount) + " uploaded on " + vm.FileUploadDate?.ToString("dd/MM/yyyy") + " have no errors, but are not listed on the Course directory becuase you have not published them.";
+            string BulkUpLoadErrorMessage = vm.BulkUploadPendingCount.ToString() + WebHelper.GetCourseTextToUse(vm.BulkUploadTotalCount) + " upload in a file on "
+                                                    + vm.FileUploadDate?.ToString("dd/MM/yyyy") + " have "
+                                                    + (bulkUploadCoursesPending.SelectMany(c => c.BulkUploadErrors).Count() + bulkUploadRunsPending.SelectMany(r => r.BulkUploadErrors).Count()).ToString()
+                                                    + " errors. Fix these to publish all of your courses.";
             string BulkUpLoadNoErrorMessage = vm.BulkUploadTotalCount.ToString() + WebHelper.GetCourseTextToUse(vm.BulkUploadPendingCount) + " uploaded on " + vm.FileUploadDate?.ToString("dd/MM/yyyy") + " have no errors, but are not listed on the Course directory becuase you have not published them.";
-                vm.FileCount = list.Count();
-            
+            vm.FileCount = list.Count();
+
             int MigrationLiveCount = courses.Where(x => x.CourseStatus == RecordStatus.Live && x.CreatedBy == "DFC – Course Migration Tool")
                                             .SelectMany(c => c.CourseRuns)
                                             .Where(x => x.RecordStatus == RecordStatus.Live && x.CreatedBy == "DFC – Course Migration Tool")
