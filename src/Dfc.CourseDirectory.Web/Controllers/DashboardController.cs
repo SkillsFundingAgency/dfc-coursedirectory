@@ -18,6 +18,7 @@ using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.Services.Interfaces.BlobStorageService;
 using Dfc.CourseDirectory.Web.Helpers;
 
+
 namespace Dfc.CourseDirectory.Web.Controllers
 {
     public class DashboardController : Controller
@@ -49,7 +50,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _blobStorageService = blobStorageService;
             _env = env;
         }
-
 
         public static DashboardViewModel GetDashboardViewModel(ICourseService service, IBlobStorageService blobStorageService, int? UKPRN, string successHeader)
         {
@@ -151,15 +151,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
 
             var vm = GetDashboardViewModel(_courseService, _blobStorageService,UKPRN, "");
-
             if (vm.PendingCourseCount > 0)
-            {
                 _session.SetString("PendingCourses", "true");
-            }
             else
-            {
                 _session.SetString("PendingCourses", "false");
-            }
             return View(vm);
         }
     }
