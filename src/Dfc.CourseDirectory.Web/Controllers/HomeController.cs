@@ -11,6 +11,7 @@ using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using System.Security.Claims;
 using System;
 using Dfc.CourseDirectory.Services.Interfaces.BlobStorageService;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -21,6 +22,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly ICourseService _courseService;
         private readonly IBlobStorageService _blobStorageService;
+        private readonly IAuthorizationService _authorizationService;
 
         private ISession _session => _contextAccessor.HttpContext.Session;
 
@@ -29,18 +31,21 @@ namespace Dfc.CourseDirectory.Web.Controllers
             ILarsSearchService larsSearchService,
             ICourseService courseService,
             IBlobStorageService blobStorageService,
-            IHttpContextAccessor contextAccessor)
+            IHttpContextAccessor contextAccessor,
+            IAuthorizationService authorizationService)
         {
             Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(contextAccessor, nameof(contextAccessor));
             Throw.IfNull(courseService, nameof(courseService));
             Throw.IfNull(blobStorageService, nameof(blobStorageService));
+            Throw.IfNull(authorizationService, nameof(authorizationService));
 
             _logger = logger;
             _larsSearchService = larsSearchService;
             _contextAccessor = contextAccessor;
             _courseService = courseService;
             _blobStorageService = blobStorageService;
+            _authorizationService = authorizationService;
             //Set this todisplay the Search Provider fork of the ProviderSearchResult ViewComponent
         }
 
@@ -57,30 +62,37 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _session.SetString("Option","Home");
             ViewBag.StatusMessage = errmsg;
 
-            if(User.Identity.IsAuthenticated && _session.GetInt32("UKPRN") == null)
+            if (User.Identity.IsAuthenticated)
             {
-                Claim UKPRN = User.Claims.Where(x => x.Type == "UKPRN").SingleOrDefault();
-                if(!String.IsNullOrEmpty(UKPRN.Value))
-                {
-                    _session.SetInt32("UKPRN", Int32.Parse(UKPRN.Value));
+                if (_session.GetInt32("UKPRN") == null)
+                    {
+                    Claim UKPRN = User.Claims.Where(x => x.Type == "UKPRN").SingleOrDefault();
+                    if (!String.IsNullOrEmpty(UKPRN.Value))
+                    {
+                        _session.SetInt32("UKPRN", Int32.Parse(UKPRN.Value));
+                    }
                 }
-                
+               
+                var authorised = _authorizationService.AuthorizeAsync(User, "ElevatedUserRole").Result;
+
+                if (authorised.Succeeded)
+                {
+                    return View("../Provider/Search");
+                }
+                return View("../Provider/Dashboard");
+
+               
             }
-            if (_session.GetInt32("UKPRN") == null)
-                return View();
             else
             {
-                var vm = DashboardController.GetDashboardViewModel(_courseService, _blobStorageService, _session.GetInt32("UKPRN"), "");
-                if (vm.PendingCourseCount > 0)
-                {
-                    _session.SetString("PendingCourses", "true");
-                }
-                else
-                {
-                    _session.SetString("PendingCourses", "false");
-                }
-                return View(vm);
+                return View("../Provider/Landing");
+
             }
+
+               
+            
+
+           
                 
         }
         public IActionResult IndexSuccess(DashboardViewModel vm)

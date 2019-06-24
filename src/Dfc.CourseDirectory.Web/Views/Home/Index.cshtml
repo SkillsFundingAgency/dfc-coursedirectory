@@ -17,7 +17,7 @@
 }
 
 @{
-    var provSearch = HttpContextAccessor.HttpContext.Session.GetInt32("ProviderSearch");
+   // var provSearch = HttpContextAccessor.HttpContext.Session.GetInt32("ProviderSearch");
     ViewData["Title"] = "Find a Provider";
     var isSignedIn = User.Identity.IsAuthenticated;
 }
