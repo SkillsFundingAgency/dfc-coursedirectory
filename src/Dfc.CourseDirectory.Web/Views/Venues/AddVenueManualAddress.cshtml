@@ -65,7 +65,19 @@
             var $addressLine2 = $("#@nameof(Model.Address.AddressLine2)").govUkInput();
             var $townOrCity = $("#@nameof(Model.Address.TownOrCity)").govUkInput();
             var $county = $("#@nameof(Model.Address.County)").govUkInput();
-              var $postCode = $("#@nameof(Model.Address.Postcode)").govUkInput();
+            var $postCode = $("#@nameof(Model.Address.Postcode)").govUkInput();
+             var $duplicateErrorMessage = $("#DuplicateVenueName");
+            var $formGrouVenueName = $venueName.closest(".govuk-form-group");
+
+            
+            var formGroupErrorClass = "govuk-form-group--error";
+            var elementErrorClass = "govuk-error-message";
+            var elementClass = "govuk-input--error"
+
+             $duplicateErrorMessage.removeClass(elementErrorClass);
+             $formGrouVenueName.removeClass(formGroupErrorClass);
+            $duplicateErrorMessage.hide();
+            $venueName.removeClass(elementClass)
 
             var validStates = [];
             var $continueButton = $("#ManualAddressContinue");
@@ -178,12 +190,38 @@
             }
 
 
+             var onCheckVenueSucess = function (data) {
+                if (data == true) {
+                      $duplicateErrorMessage.addClass(elementErrorClass);
+                    $formGrouVenueName.addClass(formGroupErrorClass);
+                    $duplicateErrorMessage.show();
+                     $venueName.addClass(elementClass)
+                }
+                else {
+                       $duplicateErrorMessage.removeClass(elementErrorClass);
+                    $formGrouVenueName.removeClass(formGroupErrorClass);
+                    $duplicateErrorMessage.show();
+                    $venueName.removeClass(elementClass)
+
+                    $("#ManualAddVenueForm").submit();
+                }
+               
+            };
+
+               var makeCheckVenueRequest = function (payload, cb) {
+                var qs = $.param(payload);
+                $.get("/Venues/CheckForVenue?" + qs, cb);
+            };
+
+
+
             $(document).on('click','#ManualAddressContinue',function(e){
                 e.preventDefault();
                     validStates = [];
                     validate();
                     if (validStates.every(isAllValid)) {
-                        $("#ManualAddVenueForm").submit();
+                         makeCheckVenueRequest(
+                            { VenueName:$venueName.val() }, onCheckVenueSucess);
                     }
 
             });

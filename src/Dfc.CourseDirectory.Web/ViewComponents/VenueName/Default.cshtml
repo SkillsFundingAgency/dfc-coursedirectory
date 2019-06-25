@@ -7,25 +7,31 @@
 
 @{ var regex = @"^\S+(?: \S+)*$"; }
 
-<div class="govuk-form-group">
-    <label class="govuk-label" asp-for="@Model.VenueName">
-        @venueNameComponentSettings.Value.VenueName_Label
-    </label>
-    @if (!string.IsNullOrWhiteSpace(Model.HintText))
-    {
-        <span class="govuk-hint">
-            @Model.HintText
-        </span>
-    }
+    <div class="govuk-form-group">
 
 
-    <input class="govuk-input" asp-for="@Model.VenueName" type="text" aria-describedby="@Model.AriaDescribedBy"
-           val-required-message="Enter a venue name"
-           val-max-length="255"
-           val-max-length-message="Venue name must be 255 characters or less"
-           val-regex="@regex"
-           val-regex-message="Venue name must not have any leading, trailing or contain multiple consecutive spaces" />
-</div>
+        <label class="govuk-label" asp-for="@Model.VenueName">
+            @venueNameComponentSettings.Value.VenueName_Label
+        </label>
+        @if (!string.IsNullOrWhiteSpace(Model.HintText))
+        {
+            <span class="govuk-hint">
+                @Model.HintText
+            </span>
+        }
+
+
+
+
+        <span id="DuplicateVenueName" class="" val-message="Venue name already exists" style="display:none">Venue name already exists</span>
+
+        <input class="govuk-input" asp-for="@Model.VenueName" type="text" aria-describedby="@Model.AriaDescribedBy"
+               val-required-message="Enter a venue name"
+               val-max-length="255"
+               val-max-length-message="Venue name must be 255 characters or less"
+               val-regex="@regex"
+               val-regex-message="Venue name must not have any leading, trailing or contain multiple consecutive spaces" />
+    </div>
 
 <script>
     (function ($) {
