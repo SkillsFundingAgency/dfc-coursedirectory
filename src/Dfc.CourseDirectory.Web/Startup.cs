@@ -28,6 +28,8 @@ using Dfc.CourseDirectory.Web.Areas.Identity.Data;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.ViewComponents;
 using IdentityModel.Client;
+using JWT.Algorithms;
+using JWT.Builder;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
@@ -41,6 +43,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -154,7 +157,7 @@ namespace Dfc.CourseDirectory.Web
             services.AddScoped<IBulkUploadService, BulkUploadService>();
             services.Configure<BlobStorageSettings>(Configuration.GetSection(nameof(BlobStorageSettings)));
             services.AddScoped<IBlobStorageService, BlobStorageService>();
-
+            
             services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
@@ -244,7 +247,7 @@ namespace Dfc.CourseDirectory.Web
                             // if we have to refresh, grab the refresh token from the claims, and request
                             // new access token and refresh token
                             var refreshToken = refreshTokenClaim.Value;
-
+                            
                             var clientId = Configuration.GetSection("DFESignInSettings:ClientID").Value;
                             const string envKeyClientSecret = "DFESignInSettings:ClientSecret";
                             var clientSecret = Configuration.GetSection("DFESignInSettings:ClientSecret").Value;
@@ -309,6 +312,7 @@ namespace Dfc.CourseDirectory.Web
                 options.Scope.Add("openid");
                 options.Scope.Add("email");
                 options.Scope.Add("profile");
+                options.Scope.Add("organisation");
                 options.Scope.Add("offline_access");
 
                 options.SaveTokens = true;
@@ -376,14 +380,44 @@ namespace Dfc.CourseDirectory.Web
                     // and validated the identity token
                     OnTokenValidated = x =>
                     {
-
                         _logger.LogMethodEnter();
+
+                        var issuer =  Configuration.GetSection("DFESignInSettings:Issuer").Value;
+                        var audience = Configuration.GetSection("DFESignInSettings:Audience").Value;
+                        var apiSecret = Configuration.GetSection("DFESignInSettings:APISecret").Value;
+
+                        Throw.IfNull(issuer, nameof(issuer));
+                        Throw.IfNull(audience, nameof(audience));
+                        Throw.IfNull(apiSecret, nameof(apiSecret));
+
+                        DFEClaims userClaims = new DFEClaims();
+                        
                         //DFE Tokens
                         var identity = (ClaimsIdentity)x.Principal.Identity;
 
-                        string email = identity.Claims.Where(c => c.Type == "email")
+                        userClaims.UserName = identity.Claims.Where(c => c.Type == "email")
                         .Select(c => c.Value).SingleOrDefault();
 
+                        //DFE Sign on Authorisation
+                         var organisation = JsonConvert.DeserializeObject<Organisation>(identity.Claims.Where(c => c.Type == "organisation")
+                        .Select(c => c.Value).FirstOrDefault());
+
+                        var token = new JwtBuilder()
+                        .WithAlgorithm(new HMACSHA256Algorithm())
+                        .Issuer(issuer)
+                        .Audience(audience)
+                        .WithSecret(apiSecret)
+                        .Build();
+
+                        HttpClient client = new HttpClient();
+                        client.SetBearerToken(token);
+
+                        var response = client.GetAsync($"https://signin-test-papi-as.azurewebsites.net/services/CCE5DB23-7588-4B6B-9CD8-3665A4709484/organisations/{organisation.Id}/users/6E21899F-49A2-4343-B174-056CD6EE7A82").Result;
+
+                        if(response.IsSuccessStatusCode)
+                        {
+                            var json = response.Content.ReadAsStringAsync().Result;
+                        }
                         identity.AddClaims(new[]
 {
                                 new Claim("access_token", x.TokenEndpointResponse.AccessToken),
@@ -391,12 +425,12 @@ namespace Dfc.CourseDirectory.Web
 
                             });
 
-                        _logger.LogCritical("User " + email + " has been authenticated by DFE");
+                        _logger.LogWarning("User " + userClaims.UserName + " has been authenticated by DFE");
 
                         //Course Directory Authorisation
                         try
                         {
-                            AuthUserDetails details = AuthService.GetDetailsByEmail(email).Result;
+                            AuthUserDetails details = AuthService.GetDetailsByEmail(userClaims.UserName).Result;
 
                             // store both access and refresh token in the claims - hence in the cookie
                             identity.AddClaims(new[]
@@ -407,11 +441,11 @@ namespace Dfc.CourseDirectory.Web
                                     new Claim(ClaimTypes.Role, details.RoleName),
                                     new Claim("ProviderType", details.ProviderType)
                                 });
-                            _logger.LogWarning("User " + email + " has been authorised");
+                            _logger.LogWarning("User " + userClaims.UserName + " has been authorised");
                         }
                         catch (Exception ex)
                         {
-                            _logger.LogError("Error authorising user", ex);
+                            _logger.LogWarning("Error authorising user", ex);
                         }
 
                         // so that we don't issue a session cookie but one with a fixed expiration
@@ -425,7 +459,7 @@ namespace Dfc.CourseDirectory.Web
             #endregion
 
         }
-
+        
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
