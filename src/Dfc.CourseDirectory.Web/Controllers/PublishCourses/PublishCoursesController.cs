@@ -121,6 +121,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
 
                     vm.NumberOfCoursesInFiles = invalidCourses.Count();
                     vm.Courses = filteredList.OrderBy(x => x.QualificationCourseTitle);
+                    vm.Venues = GetVenueNames(vm.Courses);
                     break;
             }
 

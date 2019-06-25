@@ -325,7 +325,12 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 if (cachedResult == null)
                 {
                     result = Task.Run(async () => await _larsSearchService.SearchAsync(criteria)).Result.Value.Value.ToList();
-                    cachedQuals.Add(result.FirstOrDefault());
+                    var qual = result.FirstOrDefault();
+                    if(qual != null)
+                    {
+                        cachedQuals.Add(qual);
+                    }
+                    
                 }
                 else
                 {
@@ -395,7 +400,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 }
                 else
                 {
-                    errors.Add($"We couldn't retreive LARS data for LARS { bulkUploadcourse.LearnAimRef }, because of technical reason Error");
+                    errors.Add($"Line {bulkUploadcourse.BulkUploadLineNumber}, LARS_QAN = { bulkUploadcourse.LearnAimRef }, invalid LARS");
                 }
 
             }

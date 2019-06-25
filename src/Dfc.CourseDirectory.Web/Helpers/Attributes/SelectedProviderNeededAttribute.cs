@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Linq;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -9,10 +11,21 @@ namespace Dfc.CourseDirectory.Web.Helpers.Attributes
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             Controller controller = context.Controller as Controller;
-            var session = context.HttpContext.Session.Get("UKPRN");
+            var session = context.HttpContext.Session.GetInt32("UKPRN");
+            var ukprnClaim = context.HttpContext.User.Claims.Where(x => x.Type == "UKPRN");
                 if (controller != null && session == null)
                 {
-                    context.Result = controller.RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
+                    var enumerable = ukprnClaim.ToArray();
+                    if (enumerable.Any() && enumerable.FirstOrDefault()?.Value != null)
+                    {
+                        context.HttpContext.Session.SetInt32("UKPRN", int.Parse(enumerable.FirstOrDefault()?.Value));
+                    }
+                    else
+                    {
+
+                        context.Result = controller.RedirectToAction("Index", "Home",
+                            new {errmsg = "Please select a Provider."});
+                    }
                 }
             base.OnActionExecuting(context);
         }
