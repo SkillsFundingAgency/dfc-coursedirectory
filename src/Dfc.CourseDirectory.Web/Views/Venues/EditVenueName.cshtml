@@ -13,16 +13,17 @@
             @Html.HiddenFor(x => x.PostcodeId)
             @Html.HiddenFor(x => x.Id)
             @await Component.InvokeAsync(nameof(VenueName), new VenueNameModel
-            {
-            LabelText = "Venue name",
-            AriaDescribedBy = "Please enter the venue name."
-            })
+       {
+           LabelText = "Venue name",
+           AriaDescribedBy = "Please enter the venue name.",
+           DuplicateFound = false
+       })
 
             <div class="govuk-form-group">
                 <button class="govuk-button" type="submit" id="editVenueNameSubmit">
                     Continue
                 </button>
-                @Html.ActionLink("Cancel", "VenueAddressSelectionConfirmation", "Venues", new { Model.PostcodeId,Model.VenueName }, new { @class = "govuk-link cd-cancel-link" })
+                @Html.ActionLink("Cancel", "VenueAddressSelectionConfirmation", "Venues", new { Model.PostcodeId,Model.VenueName,Model.Id }, new { @class = "govuk-link cd-cancel-link" })
             </div>
 
 
@@ -38,6 +39,16 @@
 
             var validStates = [];
             var $continueButton = $("#VenueAddressSelectionConfirmation");
+             var $duplicateErrorMessage = $("#DuplicateVenueName");
+             var formGroupErrorClass = "govuk-form-group--error";
+            var elementErrorClass = "govuk-error-message";
+            var elementClass= "govuk-input--error"
+    var $formGrouVenueName = $venueName.closest(".govuk-form-group");
+
+            $duplicateErrorMessage.removeClass(elementErrorClass);
+            $formGrouVenueName.removeClass(formGroupErrorClass);
+            $duplicateErrorMessage.hide();
+            $venueName.removeClass(elementClass)
 
             function isAllValid(currentValue) {
                         return currentValue === true;
@@ -65,14 +76,38 @@
 
             }
 
+             var onCheckVenueSucess = function (data) {
+                if (data == true) {
+                      $duplicateErrorMessage.addClass(elementErrorClass);
+                    $formGrouVenueName.addClass(formGroupErrorClass);
+                    $duplicateErrorMessage.show();
+                     $venueName.addClass(elementClass)
+                }
+                else {
+                       $duplicateErrorMessage.removeClass(elementErrorClass);
+                    $formGrouVenueName.removeClass(formGroupErrorClass);
+                    $duplicateErrorMessage.show();
+                     $venueName.removeClass(elementClass)
+                                           $("#edit-venue-form").submit();
+                }
+               
+            };
+
+               var makeCheckVenueRequest = function (payload, cb) {
+                var qs = $.param(payload);
+                $.get("/Venues/CheckForVenue?" + qs, cb);
+            };
+
 
 
             $(document).on('click','#editVenueNameSubmit',function(e){
                 e.preventDefault();
                     validStates = [];
                     validateVenueName();
-                    if (validStates.every(isAllValid)) {
-                        $("#edit-venue-form").submit();
+                if (validStates.every(isAllValid)) {
+                           makeCheckVenueRequest(
+                            { VenueName:$venueName.val() }, onCheckVenueSucess);
+
                     }
 
             });

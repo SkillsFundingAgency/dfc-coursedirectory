@@ -248,6 +248,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [Authorize]
         public async Task<IActionResult> VenueAddressSelectionConfirmation(VenueAddressSelectionConfirmationRequestModel requestModel)
         {
+
             var viewModel = new VenueAddressSelectionConfirmationViewModel();
 
             if (!string.IsNullOrEmpty(requestModel.PostcodeId))
@@ -485,6 +486,31 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 Address = requestModel.Address
             };
             return View(model);
+        }
+
+        [Authorize]
+        public async Task<IActionResult> CheckForVenue(string VenueName)
+        {
+            int? sUKPRN = _session.GetInt32("UKPRN");
+            int UKPRN;
+            if (!sUKPRN.HasValue)
+            {
+                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
+            }
+            else
+            {
+                UKPRN = sUKPRN ?? 0;
+            }
+
+            var result = _venueService.GetVenuesByPRNAndNameAsync(new GetVenuesByPRNAndNameCriteria(UKPRN.ToString(), VenueName)).Result;
+
+            if (result.IsSuccess && result.Value.Value.Count() > 0)
+            {
+                return Ok(true);
+            }
+            return Ok(false);
+
+
         }
 
         [Authorize]

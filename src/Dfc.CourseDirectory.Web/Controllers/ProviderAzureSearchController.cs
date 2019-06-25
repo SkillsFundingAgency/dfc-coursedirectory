@@ -66,7 +66,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 return new NoContentResult();
             else {
                 _session.SetInt32("UKPRN", value);
-                return RedirectToAction("Index", "Dashboard"); //"Home");
+                return RedirectToAction("Index", "Home"); //"Home");
             }
         }
     }
