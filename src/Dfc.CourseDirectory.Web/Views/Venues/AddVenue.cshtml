@@ -126,6 +126,7 @@
 
             function validateVenueName() {
 
+                 $duplicateErrorMessage.hide();
                 $venueName.govUkInput("validState");
 
                 if (!$.requiredValidate($venueName.val())) {
@@ -148,6 +149,7 @@
 
             function validateSelectedAddress() {
 
+                 $duplicateErrorMessage.hide();
                 $selectedAddress.govUkSelect("validState");
                  if ($.requiredValidate($selectedAddress.val()))
                     {
@@ -164,6 +166,7 @@
 
             function validatePostCode() {
 
+                $duplicateErrorMessage.hide();
                 $postcode.govUkInput("validState");
 
                 $("#InvalidPostCode").removeClass("govuk-error-message");

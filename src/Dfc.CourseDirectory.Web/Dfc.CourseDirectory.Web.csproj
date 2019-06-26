@@ -125,9 +125,6 @@
     <Content Update="ViewComponents\Courses\DeliveryType\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="ViewComponents\Courses\CourseRun\Default.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
     <Content Update="ViewComponents\Courses\Duration\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
@@ -152,9 +149,6 @@
     <Content Update="ViewComponents\Courses\HowYouWillLearn\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-	 <Content Update="ViewComponents\Courses\SelectVenue\Default.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
     <Content Update="ViewComponents\Courses\WhatWillLearn\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
@@ -168,9 +162,6 @@
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="ViewComponents\ProviderSearchResult\Default.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
-    <Content Update="ViewComponents\ProviderSearch\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="ViewComponents\VenueSearch\Default.cshtml">

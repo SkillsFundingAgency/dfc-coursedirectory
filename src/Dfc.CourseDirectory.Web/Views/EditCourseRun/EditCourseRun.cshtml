@@ -344,6 +344,8 @@
                         isClassroomBased = false;
                         isOnline = false;
                         isWorkBased = true;
+                        var $regionSection = $("#regions-section");
+                $regionSection.show();
                         break;
                     }
             }
@@ -780,6 +782,8 @@
                             isWorkBased = true;
                             $attendancePattern.prop("checked", false);
                             $studyMode.prop("checked", false);
+                              var $regionSection = $("#regions-section");
+                $regionSection.show();
                             break;
                         }
                 }
