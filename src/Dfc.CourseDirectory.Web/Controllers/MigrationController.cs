@@ -14,7 +14,8 @@ using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.Helpers.Attributes;
 using Dfc.CourseDirectory.Web.ViewModels.Migration;
-
+using System.Collections.Generic;
+using Dfc.CourseDirectory.Models.Models.Courses;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -195,6 +196,16 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
 
             var model = new ReportViewModel(courses.Value.Value.SelectMany(o => o.Value).SelectMany(i => i.Value));
+
+            IEnumerable<Course> courses1 = _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(_session.GetInt32("UKPRN")))
+                                                .Result
+                                                .Value
+                                                .Value
+                                                .SelectMany(o => o.Value)
+                                                .SelectMany(i => i.Value);
+
+            IEnumerable<CourseRun> bulkUploadReadyToGoLive = courses1.SelectMany(c => c.CourseRuns)
+                                                                       .Where(x => x.RecordStatus == RecordStatus.MigrationPending);
 
             return View("Report/index", model);
         }

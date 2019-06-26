@@ -69,19 +69,39 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
             switch (publishMode)
             {
                 case PublishMode.Migration:
-                    if(Courses.All(x=>x.CourseStatus != RecordStatus.MigrationPending && x.CourseStatus != RecordStatus.MigrationReadyToGoLive))
+                   if (Courses.Where(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.MigrationPending)).Any())
+                    {
+                        vm.PublishMode = PublishMode.Migration;
+                        var migratedCourses = Courses.Where(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.MigrationPending || cr.RecordStatus == RecordStatus.MigrationReadyToGoLive)).ToList();
+                        vm.NumberOfCoursesInFiles = migratedCourses.SelectMany(s => s.CourseRuns.Where(cr => cr.RecordStatus == RecordStatus.MigrationPending || cr.RecordStatus == RecordStatus.MigrationReadyToGoLive)).Count();
+                        vm.Courses = migratedCourses.OrderBy(x => x.QualificationCourseTitle);
+                        vm.AreAllReadyToBePublished = CheckAreAllReadyToBePublished(migratedCourses, PublishMode.Migration);
+                        vm.Courses = GetErrorMessages(vm.Courses, ValidationMode.MigrateCourse);
+                        vm.Venues = GetVenueNames(vm.Courses);
+                        break;
+                    }
+                    else
                     {
                         return View("../Migration/Complete/index");
                     }
+
+                    //if (Courses.Any(x => x.CourseStatus != RecordStatus.MigrationPending && x.CourseStatus != RecordStatus.MigrationReadyToGoLive))
+                    //{
+                    //    return View("../Migration/Complete/index");
+                    //}
+                    //if (Courses.All(x=>x.CourseStatus != RecordStatus.MigrationPending && x.CourseStatus != RecordStatus.MigrationReadyToGoLive))
+                    //{
+                    //    return View("../Migration/Complete/index");
+                    //}
                     //TODO replace with call to service to return by status
-                    vm.PublishMode = PublishMode.Migration;
-                    var migratedCourses = Courses.Where(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.MigrationPending || cr.RecordStatus == RecordStatus.MigrationReadyToGoLive)).ToList();
-                    vm.NumberOfCoursesInFiles = migratedCourses.SelectMany(s => s.CourseRuns.Where(cr => cr.RecordStatus == RecordStatus.MigrationPending || cr.RecordStatus == RecordStatus.MigrationReadyToGoLive)).Count();
-                    vm.Courses = migratedCourses.OrderBy(x=>x.QualificationCourseTitle);
-                    vm.AreAllReadyToBePublished = CheckAreAllReadyToBePublished(migratedCourses, PublishMode.Migration);
-                    vm.Courses = GetErrorMessages(vm.Courses, ValidationMode.MigrateCourse);
-                    vm.Venues = GetVenueNames(vm.Courses);
-                    break;
+                    //vm.PublishMode = PublishMode.Migration;
+                    //var migratedCourses = Courses.Where(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.MigrationPending || cr.RecordStatus == RecordStatus.MigrationReadyToGoLive)).ToList();
+                    //vm.NumberOfCoursesInFiles = migratedCourses.SelectMany(s => s.CourseRuns.Where(cr => cr.RecordStatus == RecordStatus.MigrationPending || cr.RecordStatus == RecordStatus.MigrationReadyToGoLive)).Count();
+                    //vm.Courses = migratedCourses.OrderBy(x=>x.QualificationCourseTitle);
+                    //vm.AreAllReadyToBePublished = CheckAreAllReadyToBePublished(migratedCourses, PublishMode.Migration);
+                    //vm.Courses = GetErrorMessages(vm.Courses, ValidationMode.MigrateCourse);
+                    //vm.Venues = GetVenueNames(vm.Courses);
+                    //break;
 
                 case PublishMode.BulkUpload:
 
