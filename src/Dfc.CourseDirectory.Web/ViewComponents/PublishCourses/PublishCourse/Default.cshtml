@@ -163,8 +163,9 @@
             {
                 <div id="courserunid" style="display:none">@courseRun.id</div>
 
-                <div class="error-line" id="CourseRunId_@courseRun.id">
-                    <div class="govuk-grid-column-two-thirds col">@courseRun.CourseName</div>
+                <div class="error-line" style="flex-wrap: wrap" id="CourseRunId_@courseRun.id">
+                    <div class="govuk-grid-column-two-thirds col"><strong>@courseRun.CourseName</strong></div>
+
                     <div class="govuk-grid-column-one-third">
                         <div class="govuk-grid-column-two-thirds align-right col right center">
                             <a id="course-run-fix-@courseRun.id" class="error-link fix" asp-controller="EditCourseRun" asp-action="Index"
@@ -176,6 +177,12 @@
                                asp-route-learnAimRefTypeDesc="@course.QualificationType"
                                asp-route-mode=@Model.PublishMode>Fix</a>
                         </div>
+                    </div>
+                    <div class="govuk-grid-column-full flat-list">
+                        <span>@courseRun.ProviderCourseID</span>
+                        <span>@Model.Venues.FirstOrDefault(x => x.Key == courseRun.VenueId).Value</span> 
+                        <span>@courseRun.StudyMode</span>
+                        <span>@courseRun.StartDate?.ToShortDateString()</span>
                     </div>
                 </div>
             }
