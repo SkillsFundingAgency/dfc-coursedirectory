@@ -20,6 +20,7 @@ using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.BlobStorageService;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Models.Models.Courses;
+using Dfc.CourseDirectory.Web.Helpers;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -80,47 +81,69 @@ namespace Dfc.CourseDirectory.Web.Controllers
             else
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
 
-
             BulkUploadViewModel vm = new BulkUploadViewModel();
-            string errorMessage;
 
-            if (ValidateFile(bulkUploadFile, out errorMessage))
+            var deleteResult = await _courseService.DeleteBulkUploadCourses(UKPRN.Value);
+
+            if (deleteResult.IsSuccess)
             {
-                int providerUKPRN = UKPRN.Value;
-                string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                string bulkUploadFileNewName = string.Format(@"{0}-{1}", DateTime.Now.ToString("yyMMdd-HHmmss"), bulkUploadFile.FileName);
+                string errorMessage;
 
-                MemoryStream ms = new MemoryStream();
-                bulkUploadFile.CopyTo(ms);
-                Task task = _blobService.UploadFileAsync($"{UKPRN.ToString()}/Bulk Upload/Files/{bulkUploadFileNewName}", ms);
-                task.Wait();
-                var errors = _bulkUploadService.ProcessBulkUpload(ms, providerUKPRN, userId);
-
-                if (errors.Any())
+                if (ValidateFile(bulkUploadFile, out errorMessage))
                 {
-                    vm.errors = errors;
-                    return View(vm);
+                    int providerUKPRN = UKPRN.Value;
+                    string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                    string bulkUploadFileNewName = string.Format(@"{0}-{1}", DateTime.Now.ToString("yyMMdd-HHmmss"), bulkUploadFile.FileName);
+
+                    MemoryStream ms = new MemoryStream();
+                    bulkUploadFile.CopyTo(ms);
+                    Task task = _blobService.UploadFileAsync($"{UKPRN.ToString()}/Bulk Upload/Files/{bulkUploadFileNewName}", ms);
+                    task.Wait();
+                    var errors = _bulkUploadService.ProcessBulkUpload(ms, providerUKPRN, userId);
+
+                    if (errors.Any())
+                    {
+                        vm.errors = errors;
+                        List<Course> Courses = new List<Course>();
+                        ICourseSearchResult coursesByUKPRN = (!UKPRN.HasValue
+                               ? null
+                               : _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(UKPRN))
+                                   .Result.Value);
+                        Courses = coursesByUKPRN.Value.SelectMany(o => o.Value).SelectMany(i => i.Value).ToList();
+                        var bulkUploadedPendingCourses = Courses.Where(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.BulkUploadPending)).Count();
+                        return RedirectToAction("WhatDoYouWantToDoNext", "Bulkupload", new { message = "Your file contained " + bulkUploadedPendingCourses + @WebHelper.GetErrorTextValueToUse(bulkUploadedPendingCourses) + ". You must fix all errors before your courses can be published to the directory." });
+
+
+                    }
+                    else
+                    {
+                        // All good => redirect to BulkCourses action
+                        return RedirectToAction("Index", "PublishCourses", new { publishMode = PublishMode.BulkUpload });
+                    }
 
                 }
                 else
                 {
-                    // All good => redirect to BulkCourses action
-                    return RedirectToAction("Index", "PublishCourses", new { publishMode = PublishMode.BulkUpload });
+                    vm.errors = new string[] { errorMessage };
                 }
-
             }
             else
             {
-                vm.errors = new string[] { errorMessage };
+                vm.errors = new string[] { "Delete failed" };
             }
             return View(vm);
         }
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> WhatDoYouWantToDoNext()
+        public async Task<IActionResult> WhatDoYouWantToDoNext(string message)
         {
             var model = new WhatDoYouWantToDoNextViewModel();
+
+            if (!string.IsNullOrEmpty(message))
+            {
+                model.Message = message;
+            }
 
             return View("../BulkUpload/WhatDoYouWantToDoNext/Index", model);
         }

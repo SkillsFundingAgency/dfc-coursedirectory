@@ -22,11 +22,28 @@
                         <ul class="govuk-list govuk-error-summary__list"></ul>
                     </div>
                 </div>
-                <h1 class="govuk-heading-xl">What do you want to do next?</h1>
+
+                @if (string.IsNullOrEmpty(Model.Message))
+                {
+                    <h1 class="govuk-heading-xl">What do you want to do next?</h1>
+                }
+                else
+                {
+                    <h1 class="govuk-heading-xl">Fix errors</h1>
+                    <h3 class="govuk-heading-s">@Model.Message</h3>
+                }
+
                 <br />
                 <div class="govuk-form-group">
                     <fieldset class="govuk-fieldset">
-
+                        @if (!string.IsNullOrEmpty(Model.Message))
+                        {
+                            <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+                                <h1 class="govuk-fieldset__heading">
+                                    What do you want to do next?
+                                </h1>
+                            </legend>
+                        }
                         <div class="govuk-radios" val-required-message="Select 'What do you want to do next?'" id="WhatDoYouWantToDoNext">
                             <div class="govuk-radios__item">
                                 @Html.RadioButtonFor(m => m.WhatDoYouWantToDoNext, WhatDoYouWantToDoNext.OnScreen, new { @class = "govuk-radios__input", id = WhatDoYouWantToDoNext.OnScreen })
@@ -68,21 +85,21 @@
             function validate() {
 
                 validStates = [];
-                 $errorSummary.govUkErrorSummary("removeAll");
+                $errorSummary.govUkErrorSummary("removeAll");
                 $whatDoYouWantToDoNext.govUkRadios("validState");
 
                 if ($.requiredValidate($whatDoYouWantToDoNext.find("input[type='radio']:checked").val())) {
                     $whatDoYouWantToDoNext.govUkRadios("validState");
                     validStates.push(true);
-                  
+
                 } else {
                     $whatDoYouWantToDoNext.govUkRadios("invalidState", $whatDoYouWantToDoNext.attr("val-required-message"));
                     validStates.push(false);
-                     var element = $whatDoYouWantToDoNext;
-                     var $anchor = document.createElement("a");
-                $anchor.href =  "#WhatDoYouWantToDoNext";
+                    var element = $whatDoYouWantToDoNext;
+                    var $anchor = document.createElement("a");
+                    $anchor.href = "#WhatDoYouWantToDoNext";
                     $anchor.innerHTML = $whatDoYouWantToDoNext.attr("val-required-message");
-                $anchor.id = "error-hash-link-" + "a" + "-" + 1;
+                    $anchor.id = "error-hash-link-" + "a" + "-" + 1;
                     $errorSummary.govUkErrorSummary("add", $anchor);
                     $errorSummary.govUkErrorSummary("show");
                 }

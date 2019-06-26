@@ -549,6 +549,14 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                         switch (model.Mode)
                         {
                             case PublishMode.BulkUpload:
+                                                                return RedirectToAction("Index", "PublishCourses",
+                                    new
+                                    {
+                                        publishMode = model.Mode,
+                                        courseId = model.CourseId,
+                                        courseRunId = model.CourseRunId,
+                                        notificationTitle = ""
+                                    });
                             case PublishMode.Migration:
                                 var message =
                                     updatedCourse.Value.CourseRuns.Any(x=>x.id == model.CourseRunId && x.RecordStatus == RecordStatus.MigrationPending)

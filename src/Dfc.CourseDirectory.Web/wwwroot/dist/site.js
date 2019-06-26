@@ -175,9 +175,18 @@
         }
         if (Array.isArray(messages)) {
             messages.forEach(function (message) {
+
+                var hiddenErrorSpan = document.createElement("span");
+                hiddenErrorSpan.classList.add("govuk-visually-hidden");
+                hiddenErrorSpan.innerHTML = "Error:";
+
                 var span = document.createElement("span");
                 span.classList.add("govuk-error-message");
-                span.innerHTML = message;
+
+                span.appendChild(hiddenErrorSpan);
+                span.appendChild(document.createTextNode(message));
+                
+
                 $(span).insertBefore($errorElement);
             }, this);
         }
