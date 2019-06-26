@@ -51,8 +51,8 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Security.Claims;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-
 
 namespace Dfc.CourseDirectory.Web
 {
@@ -381,66 +381,71 @@ namespace Dfc.CourseDirectory.Web
                     OnTokenValidated = x =>
                     {
                         _logger.LogMethodEnter();
-
+                        _logger.LogWarning("User has been authorised by DFE");
                         var issuer =  Configuration.GetSection("DFESignInSettings:Issuer").Value;
                         var audience = Configuration.GetSection("DFESignInSettings:Audience").Value;
                         var apiSecret = Configuration.GetSection("DFESignInSettings:APISecret").Value;
+                        var apiUri = Configuration.GetSection("DFESignInSettings:APIUri").Value;
 
                         Throw.IfNull(issuer, nameof(issuer));
                         Throw.IfNull(audience, nameof(audience));
                         Throw.IfNull(apiSecret, nameof(apiSecret));
-
-                        DFEClaims userClaims = new DFEClaims();
-                        
-                        //DFE Tokens
-                        var identity = (ClaimsIdentity)x.Principal.Identity;
-
-                        userClaims.UserName = identity.Claims.Where(c => c.Type == "email")
-                        .Select(c => c.Value).SingleOrDefault();
-
-                        //DFE Sign on Authorisation
-                         var organisation = JsonConvert.DeserializeObject<Organisation>(identity.Claims.Where(c => c.Type == "organisation")
-                        .Select(c => c.Value).FirstOrDefault());
+                        Throw.IfNull(apiUri, nameof(apiUri));
 
                         var token = new JwtBuilder()
-                        .WithAlgorithm(new HMACSHA256Algorithm())
-                        .Issuer(issuer)
-                        .Audience(audience)
-                        .WithSecret(apiSecret)
-                        .Build();
+                            .WithAlgorithm(new HMACSHA256Algorithm())
+                            .Issuer(issuer)
+                            .Audience(audience)
+                            .WithSecret(apiSecret)
+                            .Build();
+
+                        //Gather user/org details
+                        var identity = (ClaimsIdentity)x.Principal.Identity;
+                        var organisation = JsonConvert.DeserializeObject<Organisation>(
+                            identity.Claims.Where(c => c.Type == "organisation")
+                            .Select(c => c.Value).FirstOrDefault());
+
+                        DFEClaims userClaims = new DFEClaims
+                        {
+                            UserId = Guid.Parse(identity.Claims.Where(c => c.Type == "sub").Select(c => c.Value).SingleOrDefault()),
+
+                        };
 
                         HttpClient client = new HttpClient();
                         client.SetBearerToken(token);
-
-                        var response = client.GetAsync($"https://signin-test-papi-as.azurewebsites.net/services/CCE5DB23-7588-4B6B-9CD8-3665A4709484/organisations/{organisation.Id}/users/6E21899F-49A2-4343-B174-056CD6EE7A82").Result;
+                        var response = client.GetAsync($"{apiUri}/organisations/{organisation.Id}/users/{userClaims.UserId}").Result;
 
                         if(response.IsSuccessStatusCode)
                         {
                             var json = response.Content.ReadAsStringAsync().Result;
+                            userClaims = JsonConvert.DeserializeObject<DFEClaims>(json);
+                            userClaims.RoleName = userClaims.Roles.Select(r => r.Name).FirstOrDefault();
+                            userClaims.UKPRN = organisation.UKPRN.HasValue ? organisation.UKPRN.Value.ToString() : string.Empty;
+                            userClaims.UserName = identity.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault();
                         }
-                        identity.AddClaims(new[]
-{
-                                new Claim("access_token", x.TokenEndpointResponse.AccessToken),
-                                new Claim("refresh_token", x.TokenEndpointResponse.RefreshToken)
+                        else
+                        {
+                            throw new ArgumentException("Unable to get user details");
+                        }
 
-                            });
-
-                        _logger.LogWarning("User " + userClaims.UserName + " has been authenticated by DFE");
+                        _logger.LogError("User " + userClaims.UserName + " has been authenticated by DFE");
 
                         //Course Directory Authorisation
                         try
                         {
-                            AuthUserDetails details = AuthService.GetDetailsByEmail(userClaims.UserName).Result;
+                            var providerType = AuthService.GetProviderType(UKPRN: userClaims.UKPRN, roleName: userClaims.RoleName).Result;
 
                             // store both access and refresh token in the claims - hence in the cookie
                             identity.AddClaims(new[]
                             {
-                                    new Claim("UKPRN", details.UKPRN),
-                                    new Claim("user_id", details.UserId.ToString()),
-                                    new Claim("role_id", details.RoleId.ToString()),
-                                    new Claim(ClaimTypes.Role, details.RoleName),
-                                    new Claim("ProviderType", details.ProviderType)
-                                });
+                                new Claim("access_token", x.TokenEndpointResponse.AccessToken),
+                                new Claim("refresh_token", x.TokenEndpointResponse.RefreshToken),
+                                new Claim("UKPRN", userClaims.UKPRN),
+                                new Claim("user_id", userClaims.UserId.ToString()),
+                                new Claim(ClaimTypes.Role, userClaims.RoleName),
+                                new Claim("ProviderType", providerType)
+                            });
+
                             _logger.LogWarning("User " + userClaims.UserName + " has been authorised");
                         }
                         catch (Exception ex)
