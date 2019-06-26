@@ -586,14 +586,6 @@
                     $errorSummary.govUkErrorSummary("add", costDescriptionErrorHashLinks);
                     $errorSummary.govUkErrorSummary("show");
                     validStates.push(false);
-                }
-                else if (
-                    !$.maxLengthValidate({ max: $cost.attr("val-max-length") }, $cost.val())) {
-                    $cost.govUkInput("invalidState", $cost.attr("val-max-length-message"));
-                    var costErrorHashLinks = $cost.govUkInput("getErrorHashLinks");
-                    $errorSummary.govUkErrorSummary("add", costErrorHashLinks);
-                    $errorSummary.govUkErrorSummary("show");
-                    validStates.push(false);
                 } else {
                     $cost.govUkInput("validState");
                     $costDescription.govUkTextarea("validState");

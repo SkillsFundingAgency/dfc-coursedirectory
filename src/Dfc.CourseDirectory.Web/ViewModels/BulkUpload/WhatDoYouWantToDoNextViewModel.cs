@@ -17,6 +17,8 @@ namespace Dfc.CourseDirectory.Web.ViewModels.BulkUpload
 
         public WhatDoYouWantToDoNext WhatDoYouWantToDoNext { get; set; }
 
+        public string Message { get; set; }
+
 
     }
 }

@@ -93,7 +93,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
 
             string BulkUpLoadErrorMessage = actualModel.BulkUploadPendingCount.ToString() + WebHelper.GetCourseTextToUse(actualModel.BulkUploadTotalCount) + " upload in a file on "
                                                     + actualModel.FileUploadDate?.ToString("dd/MM/yyyy") + " have "
-                                                    + (bulkUploadCoursesPending.SelectMany(c => c.BulkUploadErrors).Count() + bulkUploadRunsPending.SelectMany(r => r.BulkUploadErrors).Count()).ToString()
+                                                    + (bulkUploadCoursesPending?.SelectMany(c => c.BulkUploadErrors).Count() + bulkUploadRunsPending?.SelectMany(r => r.BulkUploadErrors).Count()).ToString()
                                                     + " errors. Fix these to publish all of your courses.";
 
             string BulkUpLoadNoErrorMessage = actualModel.BulkUploadTotalCount.ToString() + WebHelper.GetCourseTextToUse(actualModel.BulkUploadPendingCount) + " uploaded on " + actualModel.FileUploadDate?.ToString("dd/MM/yyyy") + " have no errors, but are not listed on the Course directory becuase you have not published them.";

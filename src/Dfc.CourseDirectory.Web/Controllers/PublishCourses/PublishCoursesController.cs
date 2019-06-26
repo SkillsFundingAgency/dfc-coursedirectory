@@ -13,6 +13,7 @@ using Dfc.CourseDirectory.Services.Interfaces.BlobStorageService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 using Dfc.CourseDirectory.Services.VenueService;
+using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.ViewModels.BulkUpload;
 using Dfc.CourseDirectory.Web.ViewModels.PublishCourses;
 using Microsoft.AspNetCore.Authorization;
@@ -133,9 +134,19 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                 if (publishMode == PublishMode.BulkUpload)
                 {
                     return RedirectToAction("PublishYourFile", "Bulkupload", new { NumberOfCourses = Courses.SelectMany(s => s.CourseRuns.Where(cr => cr.RecordStatus == RecordStatus.BulkUploadReadyToGoLive)).Count() });
-                
+
                 }
 
+            }
+            else
+            {
+                if (publishMode == PublishMode.BulkUpload)
+                {
+                    var bulkUploadedPendingCourses = Courses.Where(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.BulkUploadPending)).Count();
+                    return RedirectToAction("WhatDoYouWantToDoNext", "Bulkupload", new { message = "Your file contained " + bulkUploadedPendingCourses + @WebHelper.GetErrorTextValueToUse(bulkUploadedPendingCourses) +". You must fix all errors before your courses can be published to the directory."});
+
+
+                }
             }
 
             return View("Index", vm);
