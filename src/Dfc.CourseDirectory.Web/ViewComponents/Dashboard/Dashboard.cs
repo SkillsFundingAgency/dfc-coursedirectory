@@ -1,6 +1,7 @@
 ﻿using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Models.Courses;
+using Dfc.CourseDirectory.Models.Models.Venues;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.BlobStorageService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
@@ -110,13 +111,17 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
             actualModel.VenueCount = 0;
             if (allVenues != null)
             {
-                actualModel.VenueCount = allVenues.Value.Value.Count();
+                actualModel.VenueCount = allVenues.Value.Value.Where(x => x.Status == VenueStatus.Live).Count();
             }
 
-            actualModel.PublishedCourseCount = courses.Where(x => x.CourseStatus == RecordStatus.Live)
-                                                 .SelectMany(c => c.CourseRuns)
-                                                 .Where(x => x.RecordStatus == RecordStatus.Live)
-                                                 .Count();
+            //actualModel.PublishedCourseCount = courses.Where(x => x.CourseStatus == RecordStatus.Live)
+            //                                     .SelectMany(c => c.CourseRuns)
+            //                                     .Where(x => x.RecordStatus == RecordStatus.Live)
+            //                                     .Count();
+
+            actualModel.PublishedCourseCount = courses.SelectMany(c => c.CourseRuns)
+                                              .Where(x => x.RecordStatus == RecordStatus.Live)
+                                              .Count();
 
             return View("~/ViewComponents/Dashboard/Default.cshtml", actualModel);
         }
