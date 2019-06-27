@@ -166,7 +166,10 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                     var message = "";
                     if (fromBulkUpload)
                     {
-                        var bulkUploadedPendingCourses = Courses.Where(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.BulkUploadPending)).Count();
+                        var bulkUploadedPendingCourses = Courses.SelectMany(c => c.CourseRuns)
+                                           .Where(x => x.RecordStatus == RecordStatus.BulkUploadPending)
+                                           .Count();
+                        //var bulkUploadedPendingCourses = Courses.Where(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.BulkUploadPending)).Count();
                         message = "Your file contained " + bulkUploadedPendingCourses + @WebHelper.GetErrorTextValueToUse(bulkUploadedPendingCourses) + ". You must fix all errors before your courses can be published to the directory.";
                         return RedirectToAction("WhatDoYouWantToDoNext", "Bulkupload", new { message = message });
                     }
@@ -207,6 +210,10 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                         return RedirectToAction("Index", "Home", new { errmsg = "Publish All Migration-PublishCourses Error" });
 
                 case PublishMode.BulkUpload:
+
+                    //not sure what to do with result or if these fail?
+                    var deleteMigrationPendingResult = await _courseService.ChangeCourseRunStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.MigrationPending, (int)RecordStatus.Archived);
+                    var deleteMigrationReadyToGoLiveResult = await _courseService.ChangeCourseRunStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.MigrationReadyToGoLive, (int)RecordStatus.Archived);
 
                     //Archive any existing courses
                     var resultArchivingCourses = await _courseService.ChangeCourseRunStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.Live, (int)RecordStatus.Archived);
