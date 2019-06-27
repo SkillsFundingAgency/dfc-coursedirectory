@@ -153,20 +153,13 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
             if (vm.AreAllReadyToBePublished)
             {
                 if (publishMode == PublishMode.BulkUpload)
-                {
                     return RedirectToAction("PublishYourFile", "Bulkupload", new { NumberOfCourses = Courses.SelectMany(s => s.CourseRuns.Where(cr => cr.RecordStatus == RecordStatus.BulkUploadReadyToGoLive)).Count() });
 
-                }
-
-            }
-            else
-            {
+            } else {
                 if (publishMode == PublishMode.BulkUpload)
                 {
                     var bulkUploadedPendingCourses = Courses.Where(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.BulkUploadPending)).Count();
                     return RedirectToAction("WhatDoYouWantToDoNext", "Bulkupload", new { message = "Your file contained " + bulkUploadedPendingCourses + @WebHelper.GetErrorTextValueToUse(bulkUploadedPendingCourses) +". You must fix all errors before your courses can be published to the directory."});
-
-
                 }
             }
 
@@ -284,8 +277,13 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
             foreach (var course in courses)
             {
                 course.ValidationErrors = _courseService.ValidateCourse(course).Select(x => x.Value);
-                foreach (var courseRun in course.CourseRuns)
+                if (validationMode == ValidationMode.BulkUploadCourse && !course.ValidationErrors.Any())
+                    course.BulkUploadErrors = new BulkUploadError[] { };
+                foreach (var courseRun in course.CourseRuns) {
                     courseRun.ValidationErrors = _courseService.ValidateCourseRun(courseRun, validationMode).Select(x => x.Value);
+                    if (validationMode == ValidationMode.BulkUploadCourse && !courseRun.ValidationErrors.Any())
+                        courseRun.BulkUploadErrors = new BulkUploadError[] { };
+                }
             }
             return courses;
         }
