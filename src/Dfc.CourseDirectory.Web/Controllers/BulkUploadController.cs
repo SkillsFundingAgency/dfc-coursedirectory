@@ -83,6 +83,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             BulkUploadViewModel vm = new BulkUploadViewModel();
 
+
+
             var deleteResult = await _courseService.DeleteBulkUploadCourses(UKPRN.Value);
 
             if (deleteResult.IsSuccess)
@@ -105,16 +107,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     {
                         vm.errors = errors;
                         return View(vm);
-                        //vm.errors = errors;
-                        //List<Course> Courses = new List<Course>();
-                        //ICourseSearchResult coursesByUKPRN = (!UKPRN.HasValue
-                        //       ? null
-                        //       : _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(UKPRN))
-                        //           .Result.Value);
-                        //Courses = coursesByUKPRN.Value.SelectMany(o => o.Value).SelectMany(i => i.Value).ToList();
-                        //var bulkUploadedPendingCourses = Courses.Where(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.BulkUploadPending)).Count();
-                        //return RedirectToAction("WhatDoYouWantToDoNext", "Bulkupload", new { message = "Your file contained " + bulkUploadedPendingCourses + @WebHelper.GetErrorTextValueToUse(bulkUploadedPendingCourses) + ". You must fix all errors before your courses can be published to the directory." });
-
+                     
 
                     }
                     else
