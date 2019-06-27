@@ -51,7 +51,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
 
         [Authorize]
         [HttpGet]
-        public IActionResult Index(PublishMode publishMode, string notificationTitle, Guid? courseId, Guid? courseRunId)
+        public IActionResult Index(PublishMode publishMode, string notificationTitle, Guid? courseId, Guid? courseRunId, bool fromBulkUpload)
         {
             int? UKPRN = _session.GetInt32("UKPRN");
             if (!UKPRN.HasValue)
@@ -158,8 +158,16 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
             } else {
                 if (publishMode == PublishMode.BulkUpload)
                 {
-                    var bulkUploadedPendingCourses = Courses.Where(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.BulkUploadPending)).Count();
-                    return RedirectToAction("WhatDoYouWantToDoNext", "Bulkupload", new { message = "Your file contained " + bulkUploadedPendingCourses + @WebHelper.GetErrorTextValueToUse(bulkUploadedPendingCourses) +". You must fix all errors before your courses can be published to the directory."});
+                    var message = "";
+                    if (fromBulkUpload)
+                    {
+                        var bulkUploadedPendingCourses = Courses.Where(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.BulkUploadPending)).Count();
+                        message = "Your file contained " + bulkUploadedPendingCourses + @WebHelper.GetErrorTextValueToUse(bulkUploadedPendingCourses) + ". You must fix all errors before your courses can be published to the directory.";
+                        return RedirectToAction("WhatDoYouWantToDoNext", "Bulkupload", new { message = message });
+                    }
+                  
+                   
+
                 }
             }
 

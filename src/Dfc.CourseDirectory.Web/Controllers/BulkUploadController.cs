@@ -104,21 +104,23 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     if (errors.Any())
                     {
                         vm.errors = errors;
-                        List<Course> Courses = new List<Course>();
-                        ICourseSearchResult coursesByUKPRN = (!UKPRN.HasValue
-                               ? null
-                               : _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(UKPRN))
-                                   .Result.Value);
-                        Courses = coursesByUKPRN.Value.SelectMany(o => o.Value).SelectMany(i => i.Value).ToList();
-                        var bulkUploadedPendingCourses = Courses.Where(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.BulkUploadPending)).Count();
-                        return RedirectToAction("WhatDoYouWantToDoNext", "Bulkupload", new { message = "Your file contained " + bulkUploadedPendingCourses + @WebHelper.GetErrorTextValueToUse(bulkUploadedPendingCourses) + ". You must fix all errors before your courses can be published to the directory." });
+                        return View(vm);
+                        //vm.errors = errors;
+                        //List<Course> Courses = new List<Course>();
+                        //ICourseSearchResult coursesByUKPRN = (!UKPRN.HasValue
+                        //       ? null
+                        //       : _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(UKPRN))
+                        //           .Result.Value);
+                        //Courses = coursesByUKPRN.Value.SelectMany(o => o.Value).SelectMany(i => i.Value).ToList();
+                        //var bulkUploadedPendingCourses = Courses.Where(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.BulkUploadPending)).Count();
+                        //return RedirectToAction("WhatDoYouWantToDoNext", "Bulkupload", new { message = "Your file contained " + bulkUploadedPendingCourses + @WebHelper.GetErrorTextValueToUse(bulkUploadedPendingCourses) + ". You must fix all errors before your courses can be published to the directory." });
 
 
                     }
                     else
                     {
                         // All good => redirect to BulkCourses action
-                        return RedirectToAction("Index", "PublishCourses", new { publishMode = PublishMode.BulkUpload });
+                        return RedirectToAction("Index", "PublishCourses", new { publishMode = PublishMode.BulkUpload, fromBulkUpload = true });
                     }
 
                 }
@@ -144,7 +146,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 model.Message = message;
             }
-
+           
             return View("../BulkUpload/WhatDoYouWantToDoNext/Index", model);
         }
 
@@ -153,10 +155,16 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> WhatDoYouWantToDoNext(WhatDoYouWantToDoNextViewModel model)
         {
+            var fromBulkUpload = false;
+            if (!string.IsNullOrEmpty(model.Message))
+            {
+                fromBulkUpload = true;
+
+            }
             switch (model.WhatDoYouWantToDoNext)
             {
                 case Models.Enums.WhatDoYouWantToDoNext.OnScreen:
-                    return RedirectToAction("Index", "PublishCourses", new { publishMode = PublishMode.BulkUpload });
+                    return RedirectToAction("Index", "PublishCourses", new { publishMode = PublishMode.BulkUpload, fromBulkUpload });
                 case Models.Enums.WhatDoYouWantToDoNext.DownLoad:
                     return RedirectToAction("DownloadErrorFile", "BulkUpload");
                 case Models.Enums.WhatDoYouWantToDoNext.Delete:
