@@ -84,16 +84,11 @@
             var elementClass= "govuk-input--error"
 
 
-                $duplicateErrorMessage.removeClass(elementErrorClass);
-                    $formGrouVenueName.removeClass(formGroupErrorClass);
+            $duplicateErrorMessage.removeClass(elementErrorClass);
+            $formGrouVenueName.removeClass(formGroupErrorClass);
             $duplicateErrorMessage.hide();
             $venueName.removeClass(elementClass)
           
-                  
-        
-
-
-
             function isAllValid(currentValue) {
                         return currentValue === true;
             }
@@ -203,7 +198,7 @@
                 else {
                        $duplicateErrorMessage.removeClass(elementErrorClass);
                     $formGrouVenueName.removeClass(formGroupErrorClass);
-                    $duplicateErrorMessage.show();
+                    $duplicateErrorMessage.hide();
                      $venueName.removeClass(elementClass)
                     $("#AddVenue").submit();
                 }
@@ -230,7 +225,7 @@
                     validateVenueName();
                 if (validStates.every(isAllValid)) {
 
-     makeCheckVenueRequest(
+                            makeCheckVenueRequest(
                             { VenueName:$venueName.val() }, onCheckVenueSucess);
 
                        
