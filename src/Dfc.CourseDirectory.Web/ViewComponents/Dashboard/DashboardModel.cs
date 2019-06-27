@@ -26,5 +26,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
         public string BulkUploadMessage { get; set; }
 
         public bool DisplayMigrationButton { get; set; }
+
+        public bool BulkUpLoadHasErrors { get; set; }
     }
 }

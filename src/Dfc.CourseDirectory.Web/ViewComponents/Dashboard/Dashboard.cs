@@ -92,6 +92,9 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
             if (list.Any())
                 actualModel.FileUploadDate = list.FirstOrDefault().DateUploaded.Value;
 
+
+           actualModel.BulkUpLoadHasErrors = bulkUploadCoursesPending?.SelectMany(c => c.BulkUploadErrors).Count() + bulkUploadRunsPending?.SelectMany(r => r.BulkUploadErrors).Count() > 0;
+
             string BulkUpLoadErrorMessage = actualModel.BulkUploadPendingCount.ToString() + WebHelper.GetCourseTextToUse(actualModel.BulkUploadTotalCount) + " upload in a file on "
                                                     + actualModel.FileUploadDate?.ToString("dd/MM/yyyy") + " have "
                                                     + (bulkUploadCoursesPending?.SelectMany(c => c.BulkUploadErrors).Count() + bulkUploadRunsPending?.SelectMany(r => r.BulkUploadErrors).Count()).ToString()
