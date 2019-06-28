@@ -3,6 +3,7 @@
 @using Microsoft.AspNetCore.Authorization;
 @using Dfc.CourseDirectory.Models.Models.Courses
 @using Dfc.CourseDirectory.Web.Helpers
+@using Microsoft.Azure.Search.Common
 @model Dfc.CourseDirectory.Web.ViewModels.PublishCourses.PublishViewModel
 
 @inject IAuthorizationService Authorization
@@ -140,9 +141,10 @@
                 </div>
                 <div class="govuk-grid-column-one-third">
                     <div class="align-right col right center">
-                        @if(adminLogin.Succeeded){
-                        <a asp-action="DeleteCourseRun" asp-controller="Migration"
-                           asp-route-courseId="@course.id" asp-route-courseRunId="@courseRun.id">Delete</a>
+                        @if (adminLogin.Succeeded)
+                        {
+                            <a asp-action="DeleteCourseRun" asp-controller="Migration"
+                               asp-route-courseId="@course.id" asp-route-courseRunId="@courseRun.id">Delete</a>
                         }
 
                         <a id="course-run-fix-@courseRun.id" class="error-link fix" asp-controller="EditCourseRun" asp-action="Index"
@@ -180,9 +182,49 @@
                     </div>
                     <div class="govuk-grid-column-full flat-list">
                         <span>@courseRun.ProviderCourseID</span>
-                        <span>@Model.Venues.FirstOrDefault(x => x.Key == courseRun.VenueId).Value</span> 
-                        <span>@courseRun.StudyMode</span>
-                        <span>@courseRun.StartDate?.ToShortDateString()</span>
+
+
+                        @if (courseRun.DeliveryMode == DeliveryMode.ClassroomBased)
+                        {
+                            if (courseRun.VenueId != Guid.Empty)
+                            {
+
+                                <span class="">@Model.Venues.FirstOrDefault(x => x.Key == courseRun.VenueId).Value</span>
+
+                            }
+                        }
+                        @if (courseRun.DeliveryMode == DeliveryMode.WorkBased)
+                        {
+                            if (courseRun.National)
+                            {
+
+                                <span class="">National</span>
+
+                            }
+                            else
+                            {
+                                if (courseRun.Regions.Any())
+                                {
+
+                                    <span class="">@courseRun.Regions.ToCommaSeparatedString()</span>
+
+                                }
+                            }
+                        }
+
+                        @if (courseRun.DeliveryMode != DeliveryMode.Undefined)
+                        {
+                            <span id="deliverymode">@courseRun.DeliveryMode</span>
+                        }
+                        @if (courseRun.DeliveryMode == DeliveryMode.ClassroomBased)
+                        {
+                            @if (courseRun.StudyMode != StudyMode.Undefined)
+                            {
+                                <span id="studymode">@courseRun.StudyMode</span>
+                            }
+                        }
+
+                        <span>@courseRun.StartDate?.ToString("dd/MM/yyyy")</span>
                     </div>
                 </div>
             }
