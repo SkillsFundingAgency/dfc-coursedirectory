@@ -23,11 +23,22 @@
 
 @if (Model.BulkUploadReadyToGoLiveCount > 0 || Model.BulkUploadPendingCount > 0)
 {
+    var link = "";
+    @if (Model.BulkUpLoadHasErrors==true)
+    {
+
+        link = $"<a class='govuk-link' href='/Bulkupload/WhatDoYouWantToDoNext'>{Model.BulkUploadMessage}</a>";
+    }
+    else
+    {
+                link = $"<a class='govuk-link' href='/PublishCourses/Index?publishMode=Bulkupload'>{Model.BulkUploadMessage}</a>";
+    }
+
     @await Component.InvokeAsync(nameof(Notification), new NotificationModel
     {
         NotificationTitle = "Bulk upload",
         ClassType = "info-summary",
-        Link = $"<a class='govuk-link' href='/Bulkupload/WhatDoYouWantToDoNext'>{Model.BulkUploadMessage}</a>"
+        Link = link
     })
 }
 
