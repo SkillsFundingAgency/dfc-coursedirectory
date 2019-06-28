@@ -21,6 +21,7 @@ using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Models.Models.Venues;
 using Dfc.CourseDirectory.Common.Interfaces;
+using Dfc.CourseDirectory.Models.Models.Regions;
 
 namespace Dfc.CourseDirectory.Services.BulkUploadService
 {
@@ -254,7 +255,10 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                                         DurationUnit = csv.GetField("DURATION_UNIT").Trim(),
                                         DurationValue = csv.GetField("DURATION").Trim(),
                                         StudyMode = csv.GetField("STUDY_MODE").Trim(),
-                                        AttendancePattern = csv.GetField("ATTENDANCE_PATTERN").Trim()
+                                        AttendancePattern = csv.GetField("ATTENDANCE_PATTERN").Trim(),
+                                        National = csv.GetField("NATIONAL_DELIVERY").Trim(),
+                                        Regions = csv.GetField("REGION").Trim(),
+                                        SubRegions = csv.GetField("SUB_REGION").Trim()
                                     };
 
                                     if (isCourseHeader)
@@ -589,6 +593,30 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 {
                     validationMessages.Add($"AttendancePattern is Undefined, because you have entered ( { bulkUploadCourse.AttendancePattern } ), Line { bulkUploadCourse.BulkUploadLineNumber },  LARS_QAN = { bulkUploadCourse.LearnAimRef }, ID = { bulkUploadCourse.ProviderCourseID }");
                 }
+
+                switch(bulkUploadCourse.National.ToUpperInvariant())
+                {
+                    case "YES":
+                        {
+                            courseRun.National = true;
+                            break;
+                        }
+                    case "NO":
+                        {
+                            courseRun.National = false;
+                            var regionResult = ParseRegionData(bulkUploadCourse.Regions);
+
+                            
+                            break;
+                        }
+                    default:
+                        {
+                            courseRun.National = null;
+                            break;
+                        }
+                }
+
+
                 courseRun.BulkUploadErrors = ParseBulkUploadErrors(bulkUploadCourse.BulkUploadLineNumber, _courseService.ValidateCourseRun(courseRun, ValidationMode.BulkUploadCourse));
                 courseRun.RecordStatus = courseRun.BulkUploadErrors.Any() ? RecordStatus.BulkUploadPending : RecordStatus.BulkUploadReadyToGoLive;
 
@@ -705,6 +733,17 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 errorList.Add(buError);
             }
             return errorList;
+        }
+        internal IResult<IEnumerable<string>> ParseRegionData(string regions)
+        {
+            //var availableRegions = new SelectRegionModel();
+            //courseRun.Regions = addCourseSection2.SelectedRegions;
+            //string[] selectedRegions = availableRegions.SubRegionsDataCleanse(addCourseSection2.SelectedRegions.ToList());
+
+            //courseRun.SubRegions = selectedRegions.Select(selectedRegion => availableRegions.GetRegionFromName(selectedRegion)).ToList();
+            var listofRegions = regions.Split(";").ToList();
+
+            return Result.Ok<IEnumerable<string>>(listofRegions);
         }
     }
 }
