@@ -72,7 +72,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 DurationValue = courseRun.DurationValue,
                 ProviderCourseID = courseRun.ProviderCourseID,
                 DeliveryMode = courseRun.DeliveryMode,
-                National = courseRun.National,
+                National = courseRun.National.Value,
                 FlexibleStartDate = courseRun.FlexibleStartDate,
                 StartDate = courseRun.StartDate,
                 StudyMode = courseRun.StudyMode,
