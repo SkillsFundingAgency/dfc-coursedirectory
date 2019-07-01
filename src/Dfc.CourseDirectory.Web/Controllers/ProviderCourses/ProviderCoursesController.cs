@@ -164,13 +164,13 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
                                                         ? string.Empty
                                                         : cr.StudyMode.ToDescription(),
                         Url = cr.CourseURL,
-                        National = cr.National
+                        National = cr.National.Value
 
 
 
                     };
                     //If National
-                    if(cr.National)
+                    if(cr.National.Value)
                     {
                         courseRunModel.Region = string.Join(", ", allRegions.Select(x => x.RegionName).ToList()); 
                         courseRunModel.RegionIdList = string.Join(", ", allRegions.Select(x => x.Id).ToList());
