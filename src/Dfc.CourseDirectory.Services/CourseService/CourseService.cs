@@ -704,9 +704,17 @@ namespace Dfc.CourseDirectory.Services.CourseService
                     break;
                 case DeliveryMode.WorkBased:
 
-                    // Regions
-                    if (courseRun.Regions == null || courseRun.Regions.Count().Equals(0))
-                        validationMessages.Add(new KeyValuePair<string, string>("NULL", $"Select a region"));
+                    //National
+                    if(courseRun.National == null)
+                    {
+                        validationMessages.Add(new KeyValuePair<string, string>("NATIONAL_DELIVERY", $"Choose if you can deliver this course anywhere in England"));
+                    }
+                    else if(courseRun.National == false)
+                    {
+                        // Regions
+                        if (courseRun.Regions == null || courseRun.Regions.Count().Equals(0))
+                            validationMessages.Add(new KeyValuePair<string, string>("REGION", $"Select at least one region"));
+                    }
                     break;
                 case DeliveryMode.Undefined: // Question ???
                 default:

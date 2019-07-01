@@ -599,19 +599,28 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                     case "YES":
                         {
                             courseRun.National = true;
+                            var availableRegions = new SelectRegionModel();
+                            courseRun.Regions = availableRegions.RegionItems.Select(x => x.Id).ToList();
                             break;
                         }
                     case "NO":
                         {
                             courseRun.National = false;
-                            var regionResult = ParseRegionData(bulkUploadCourse.Regions);
-
-                            
+                            var regionResult = ParseRegionData(bulkUploadCourse.Regions, bulkUploadCourse.SubRegions);
+                            if(regionResult.IsSuccess && regionResult.HasValue)
+                            {
+                                courseRun.Regions = regionResult.Value;
+                            }
+                            else if(regionResult.IsFailure)
+                            {
+                                validationMessages.Add($"Unable to get regions/subregions, Line { bulkUploadCourse.BulkUploadLineNumber },  LARS_QAN = { bulkUploadCourse.LearnAimRef }, ID = { bulkUploadCourse.ProviderCourseID }");
+                            }
                             break;
                         }
                     default:
                         {
                             courseRun.National = null;
+                            validationMessages.Add($"Choose if you can deliver this course anywhere in England, Line { bulkUploadCourse.BulkUploadLineNumber },  LARS_QAN = { bulkUploadCourse.LearnAimRef }, ID = { bulkUploadCourse.ProviderCourseID }");
                             break;
                         }
                 }
@@ -734,16 +743,42 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             }
             return errorList;
         }
-        internal IResult<IEnumerable<string>> ParseRegionData(string regions)
+        internal IResult<IEnumerable<string>> ParseRegionData(string regions, string subRegions)
         {
-            //var availableRegions = new SelectRegionModel();
-            //courseRun.Regions = addCourseSection2.SelectedRegions;
-            //string[] selectedRegions = availableRegions.SubRegionsDataCleanse(addCourseSection2.SelectedRegions.ToList());
+            List<string> totalList = new List<string>();
 
-            //courseRun.SubRegions = selectedRegions.Select(selectedRegion => availableRegions.GetRegionFromName(selectedRegion)).ToList();
-            var listofRegions = regions.Split(";").ToList();
-
-            return Result.Ok<IEnumerable<string>>(listofRegions);
+            var availableRegions = new SelectRegionModel();
+            var availableSubRegions = availableRegions.RegionItems.SelectMany(x => x.SubRegion);
+            var listOfRegions = regions.Split(";").ToList();
+            var listOfSubregions = subRegions.Split(";").ToList();
+            //Get regions
+            foreach(var region in listOfRegions)
+            {
+                var id = availableRegions.RegionItems.Where(x => x.RegionName == region)
+                                                     .Select(y => y.Id);
+                if(id.Count() > 0)
+                {
+                    totalList.Add(id.FirstOrDefault());
+                }
+                else
+                {
+                    return Result.Fail<IEnumerable<string>>("Problem with Bulk upload value");
+                }
+            }
+            foreach(var subRegion in listOfSubregions)
+            {
+                var id = availableSubRegions.Where(x => x.SubRegionName == subRegion)
+                                            .Select(y => y.Id);
+                if (id.Count() > 0)
+                {
+                    totalList.Add(id.FirstOrDefault());
+                }
+                else
+                {
+                    return Result.Fail<IEnumerable<string>>("Problem with Bulk upload value");
+                }
+            }
+            return Result.Ok<IEnumerable<string>>(totalList);
         }
     }
 }
