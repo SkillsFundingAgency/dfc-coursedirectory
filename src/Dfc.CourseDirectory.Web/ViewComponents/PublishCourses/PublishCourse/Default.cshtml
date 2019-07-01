@@ -195,7 +195,7 @@
                         }
                         @if (courseRun.DeliveryMode == DeliveryMode.WorkBased)
                         {
-                            if (courseRun.National)
+                            if (courseRun.National.HasValue && courseRun.National.Value == true)
                             {
 
                                 <span class="">National</span>
