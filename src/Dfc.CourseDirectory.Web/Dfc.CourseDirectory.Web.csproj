@@ -167,7 +167,10 @@
     <Content Update="ViewComponents\VenueSearch\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\ApprenticeshipComplete\Index.cshtml">
+    <Content Update="Views\Apprenticeships\WhatWouldYouLikeToDo\Index.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Apprenticeships\Complete\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\BulkUpload\Complete\Index.cshtml">
@@ -188,28 +191,28 @@
     <Content Update="Views\BulkUpload\WhatDoYouWantToDoNext\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\ApprenticeshipDeliveryOptionsCombined\Index.cshtml">
+    <Content Update="Views\Apprenticeships\DeliveryOptionsCombined\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\ApprenticeshipRegions\Index.cshtml">
+    <Content Update="Views\Apprenticeships\Regions\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\ApprenticeshipDeliveryOptions\Index.cshtml">
+    <Content Update="Views\Apprenticeships\DeliveryOptions\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\ApprenticeshipSummary\Index.cshtml">
+    <Content Update="Views\Apprenticeships\Summary\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\ApprenticeshipLocationChoiceSelection\Index.cshtml">
+    <Content Update="Views\Apprenticeships\LocationChoiceSelection\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\ApprenticeshipDelivery\Index.cshtml">
+    <Content Update="Views\Apprenticeships\Delivery\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\ApprenticeshipDetails\Index.cshtml">
+    <Content Update="Views\Apprenticeships\Details\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\Apprenticeships\Index.cshtml">
+    <Content Update="Views\Apprenticeships\Search\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\Migration\DeleteConfirmed\Index.cshtml">

@@ -5,7 +5,7 @@ using System;
 
 namespace Dfc.CourseDirectory.Web.RequestModels
 {
-    public class ApprenticeShipDetailsRequestModel
+    public class DetailsRequestModel
     {
         public Guid Id { get; set; }
         public int? StandardCode { get; set; }

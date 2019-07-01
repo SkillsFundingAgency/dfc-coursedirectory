@@ -8,14 +8,15 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Web.ViewModels.YourCourses;
 using System.ComponentModel.DataAnnotations;
+using Dfc.CourseDirectory.Models.Enums;
+using Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseRegion;
 
 namespace Dfc.CourseDirectory.Web.ViewModels.Apprenticeships
 {
-    public class ApprenticeshipsViewModel
+    public class RegionsViewModel
     {
-        [RegularExpression(@"[a-zA-Z0-9 \¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\" + "\"" + @"\\]+", ErrorMessage = "Search contains invalid characters")]
-        public string Search { get; set; }
-       
+
+        public ChooseRegionModel ChooseRegion { get; set; }
 
 
     }
