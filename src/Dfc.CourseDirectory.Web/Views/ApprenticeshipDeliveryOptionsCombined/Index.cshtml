@@ -301,8 +301,8 @@
                             dataType: "json",
                                  data: {
                                      LocationId: $selectedVenue.val(),
-                                     DayRelease: $("#@nameof(Model.DayRelease)").val(),
-                                     BlockRelease: $("#@nameof(Model.BlockRelease)").val(),
+                                     DayRelease: $("#DayRelease")[0].checked,
+                                     BlockRelease: $("#BlockRelease")[0].checked,
                                      National: $National.val(),
                                      Radius: $Radius.val(),
                                      RowCount: rowCount
@@ -326,8 +326,8 @@
                             dataType: "json",
                             data: {
                                 LocationId: $selectedVenue.val(),
-                                DayRelease: $("#@nameof(Model.DayRelease)").val(),
-                                BlockRelease: $("#@nameof(Model.BlockRelease)").val(),
+                                DayRelease: $("#DayRelease")[0].checked,
+                                BlockRelease: $("#BlockRelease")[0].checked,
                                  National: $National.val(),
                                      Radius: $Radius.val(),
                                 RowCount: rowCount
@@ -353,8 +353,8 @@
                         dataType: "json",
                     data: {
                                 LocationId: $selectedVenue.val(),
-                                DayRelease: $("#@nameof(Model.DayRelease)").val(),
-                                BlockRelease: $("#@nameof(Model.BlockRelease)").val(),
+                                DayRelease: $("#DayRelease")[0].checked,
+                                BlockRelease: $$("#BlockRelease")[0].checked,
                                  National: $National.val(),
                                      Radius: $Radius.val(),
                                 RowCount: rowCount

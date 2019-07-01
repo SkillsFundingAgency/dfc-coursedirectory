@@ -197,7 +197,7 @@
                 event.preventDefault();
 
                 var rowCount = $('#ResultsTable tr').length;
-
+     
                 if (rowCount >= 1) {
 
                     if ($selectedVenue.val() !== "") {
@@ -208,7 +208,7 @@
                             url: '/Apprenticeships/Continue',
                             type: "GET",
                             dataType: "json",
-                            data: { LocationId: $selectedVenue.val(), DayRelease: $("#@nameof(Model.DayRelease)").val(), BlockRelease: $("#@nameof(Model.BlockRelease)").val(), RowCount: rowCount },
+                            data: { LocationId: $selectedVenue.val(), DayRelease: $("#DayRelease")[0].checked, BlockRelease: $("#BlockRelease")[0].checked, RowCount: rowCount },
 
                             contentType: "application/json; charset=utf-8",
                             success: function (data) {
@@ -226,7 +226,7 @@
                             url: '/Apprenticeships/Continue',
                             type: "GET",
                             dataType: "json",
-                            data: { LocationId: $selectedVenue.val(), DayRelease: $("#@nameof(Model.DayRelease)").val(), BlockRelease: $("#@nameof(Model.BlockRelease)").val(), RowCount: rowCount },
+                            data: { LocationId: $selectedVenue.val(), DayRelease: $("#DayRelease")[0].checked, BlockRelease: $("#BlockRelease")[0].checked, RowCount: rowCount },
 
                             contentType: "application/json; charset=utf-8",
                             success: function (data) {
@@ -246,7 +246,7 @@
                         url: '/Apprenticeships/Continue',
                         type: "GET",
                         dataType: "json",
-                        data: { LocationId: $selectedVenue.val(), DayRelease: $("#@nameof(Model.DayRelease)").val(), BlockRelease: $("#@nameof(Model.BlockRelease)").val(), RowCount: rowCount },
+                        data: { LocationId: $selectedVenue.val(), DayRelease:$("#DayRelease")[0].checked, BlockRelease: $("#BlockRelease")[0].checked, RowCount: rowCount },
 
                         contentType: "application/json; charset=utf-8",
                         success: function (data) {
