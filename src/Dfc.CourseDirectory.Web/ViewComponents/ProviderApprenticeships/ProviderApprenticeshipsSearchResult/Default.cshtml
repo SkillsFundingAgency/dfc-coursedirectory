@@ -40,61 +40,52 @@ else
     }
     else
     {
-        <div class="govuk-heading-s lars-search-results govuk-!-font-weight-regular">
-            Found <span class="govuk-!-font-weight-bold">@Model.Items.Count()</span> results for <span class="govuk-!-font-weight-bold">@Model.SearchTerm</span>
-        </div>
 
-        @foreach (var apprenticeship in Model.Items.OrderBy(x => x.ApprenticeshipTitle))
-        {
-            <div class="courserun border">
-                <div class="courserun__row1" id="1">
-                    @if (!string.IsNullOrEmpty(apprenticeship.ApprenticeshipTitle))
+
+
+
+
+                <div class="cd-apprenticeships-result govuk-body">
+                    <div class="govuk-!-margin-bottom-4">
+                        <span>Found <strong>@Model.Items.Count()</strong> results for <strong>@Model.SearchTerm</strong></span>
+                    </div>
+
+                    @foreach (var apprenticeship in Model.Items.OrderBy(x => x.ApprenticeshipTitle))
                     {
-                        <h3 class="coursename" style="display:inline-flex">@apprenticeship.ApprenticeshipTitle</h3>
-
-
-                        @if (apprenticeship.ApprenticeshipType == ApprenticeshipType.FrameworkCode)
-                        {
-                            <span style="background-color: darkgray;color: white;padding: 5px;">Framework</span>
-                        }
-
-
+                        <div class="cd-your-apprenticeships-search-result__container">
+                            <h3 class="govuk-heading-m">
+                                @apprenticeship.ApprenticeshipTitle
+                                @if (apprenticeship.ApprenticeshipType == ApprenticeshipType.FrameworkCode)
+                                {
+                                    <span class="govuk-!-margin-left-3 govuk-tag tag-grey">Framework</span>
+                                }
+                            </h3>
+                            @if (!string.IsNullOrEmpty(apprenticeship.NotionalEndLevel))
+                            {
+                                <p class="govuk-body">Level: <span class="govuk-!-font-weight-bold">@apprenticeship.NotionalEndLevel</span></p>
+                            }
+                        </div>
+                        <div class="ctas">
+                            <a class="govuk-link"
+                               asp-controller="Apprenticeships"
+                               asp-action="ApprenticeshipSummary"
+                               asp-route-apprenticeshiptitle="@apprenticeship.ApprenticeshipTitle"
+                               asp-route-apprenticeshipmode="@ApprenticeShipMode.Add"
+                               asp-route-apprenticeshippreviouspage="@ApprenticeShipPreviousPage.YourApprenticeships">View and edit</a>
+                            <a class="govuk-link"
+                               asp-controller="ProviderApprenticeships"
+                               asp-action="DeleteApprenticeship"
+                               asp-route-apprenticeshiptitle="@apprenticeship.ApprenticeshipTitle"
+                               asp-route-apprenticeshipmode="@ApprenticeShipMode.Add"
+                               asp-route-apprenticeshippreviouspage="@ApprenticeShipPreviousPage.YourApprenticeships">Delete</a>
+                        </div>
                     }
-                </div>
 
 
-                <div class="courserun__row2" id="1" style="display:inline-flex;">
 
-                    @if (!string.IsNullOrEmpty(apprenticeship.NotionalEndLevel))
-                    {
-                        <span style="padding-right: 0.25em;" class=""><strong>Level: </strong></span><span style="padding-right: 0.25em;">@apprenticeship.NotionalEndLevel></span>
-                    }
-                </div>
-                <div class="courserun__row3" id="1">
+
 
                 </div>
-                <div class="courserun__row4">
-                    @*@Html.ActionLink("Choose this apprenticeship", "ApprenticeShipDetails", "Apprenticeships", new { }, null)*@
-                    <a class="govuk-link"
-                       asp-controller="Apprenticeships"
-                       asp-action="ApprenticeshipSummary"
-                       asp-route-apprenticeshiptitle="@apprenticeship.ApprenticeshipTitle"
-                       asp-route-apprenticeshipmode="@ApprenticeShipMode.Add"
-                       asp-route-apprenticeshippreviouspage="@ApprenticeShipPreviousPage.YourApprenticeships">View and edit</a>
-                    <a class="govuk-link"
-                       asp-controller="ProviderApprenticeships"
-                       asp-action="DeleteApprenticeship"
-                       asp-route-apprenticeshiptitle="@apprenticeship.ApprenticeshipTitle"
-                       asp-route-apprenticeshipmode="@ApprenticeShipMode.Add"
-                       asp-route-apprenticeshippreviouspage="@ApprenticeShipPreviousPage.YourApprenticeships">Delete</a>
-
-                </div>
-            </div>
-
-
-
-        }
-
 
     }
 
