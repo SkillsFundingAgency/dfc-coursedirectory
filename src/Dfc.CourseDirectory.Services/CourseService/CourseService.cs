@@ -727,17 +727,19 @@ namespace Dfc.CourseDirectory.Services.CourseService
             {
                 courseRun.FlexibleStartDate = false; // COUR-746-StartDate
 
+                var currentDate = Convert.ToDateTime(DateTime.Now.ToString("dd/MM/yyyy"));
+
                 switch (validationMode)
                 { 
                     case ValidationMode.AddCourseRun:
                     case ValidationMode.CopyCourseRun:
                     case ValidationMode.EditCourseBU:
                     case ValidationMode.BulkUploadCourse:
-                        if (courseRun.StartDate < DateTime.Now)
+                        if (courseRun.StartDate < currentDate)
                         {
                             validationMessages.Add(new KeyValuePair<string, string>("START_DATE", $"Start Date cannot be earlier than today's date"));
                         }
-                        if (courseRun.StartDate > DateTime.Now.AddYears(2))
+                        if (courseRun.StartDate > currentDate.AddYears(2))
                         {
                             validationMessages.Add(new KeyValuePair<string, string>("START_DATE", $"Start Date cannot be later than 2 years from today’s date"));
                         }
@@ -747,7 +749,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
                         // It cannot be done easily as we need both value - the newly entered and the previous. Call to saved version or modification in the model
                         break;
                     case ValidationMode.MigrateCourse:
-                        if (courseRun.StartDate > DateTime.Now.AddYears(2))
+                        if (courseRun.StartDate > currentDate.AddYears(2))
                             validationMessages.Add(new KeyValuePair<string, string>("START_DATE", $"Start Date cannot be later than 2 years from today’s date"));
                         break;
                     case ValidationMode.Undefined:
