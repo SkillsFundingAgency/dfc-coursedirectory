@@ -435,6 +435,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             return View(viewModel);
         }
+
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> EditVenueName(EditVenueRequestModel requestModel)
@@ -458,9 +459,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         Postcode = getVenueByIdResult.Value.PostCode
                     };
                 }
-            }
-            else
-            {
+
+            } else {
                 addressModel = requestModel.Address;
             }
 
@@ -474,6 +474,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             return View(model);
         }
+
         [Authorize]
         [HttpPost]
         public IActionResult EditVenueAddress(EditVenueRequestModel requestModel)
@@ -494,23 +495,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
             int? sUKPRN = _session.GetInt32("UKPRN");
             int UKPRN;
             if (!sUKPRN.HasValue)
-            {
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
-            }
             else
-            {
                 UKPRN = sUKPRN ?? 0;
-            }
 
             var result = _venueService.GetVenuesByPRNAndNameAsync(new GetVenuesByPRNAndNameCriteria(UKPRN.ToString(), VenueName)).Result;
 
-            if (result.IsSuccess && result.Value.Value.Count() > 0)
-            {
+            if (result.IsSuccess && result.Value.Value.Any() && result.Value.Value.FirstOrDefault()?.Status == VenueStatus.Live)
                 return Ok(true);
-            }
             return Ok(false);
-
-
         }
 
         [Authorize]
@@ -519,12 +512,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
             List<Course> Courses = new List<Course>();
 
             int? UKPRN = _session.GetInt32("UKPRN");
-
             if (!UKPRN.HasValue)
-            {
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
-            }
-
 
             ICourseSearchResult coursesByUKPRN = (!UKPRN.HasValue
                    ? null
