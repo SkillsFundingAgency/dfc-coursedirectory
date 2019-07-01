@@ -153,14 +153,9 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
             if (vm.AreAllReadyToBePublished)
             {
                 if (publishMode == PublishMode.BulkUpload)
-                {
                     return RedirectToAction("PublishYourFile", "Bulkupload", new { NumberOfCourses = Courses.SelectMany(s => s.CourseRuns.Where(cr => cr.RecordStatus == RecordStatus.BulkUploadReadyToGoLive)).Count() });
 
-                }
-
-            }
-            else
-            {
+            } else {
                 if (publishMode == PublishMode.BulkUpload)
                 {
                     var message = "";
@@ -296,9 +291,22 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
         {
             foreach (var course in courses)
             {
+                bool saveMe = false;
                 course.ValidationErrors = _courseService.ValidateCourse(course).Select(x => x.Value);
+                if (validationMode == ValidationMode.BulkUploadCourse && course.BulkUploadErrors.Any() && !course.ValidationErrors.Any()) {
+                    course.BulkUploadErrors = new BulkUploadError[] { };
+                    saveMe = true;
+                }
                 foreach (var courseRun in course.CourseRuns)
+                {
                     courseRun.ValidationErrors = _courseService.ValidateCourseRun(courseRun, validationMode).Select(x => x.Value);
+                    if (validationMode == ValidationMode.BulkUploadCourse && courseRun.BulkUploadErrors.Any() && !courseRun.ValidationErrors.Any())
+                        courseRun.BulkUploadErrors = new BulkUploadError[] { };
+                }
+
+                // Save bulk upload fixed courses so that DQI stats will reflect new error counts
+                if (validationMode == ValidationMode.BulkUploadCourse && saveMe)
+                    _courseService.UpdateCourseAsync(course);
             }
             return courses;
         }

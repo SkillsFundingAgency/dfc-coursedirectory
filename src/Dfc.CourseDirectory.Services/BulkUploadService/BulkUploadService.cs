@@ -205,6 +205,18 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                                 {
                                     missingFieldsError += " 'ADVANCED_LEARNER_OPTION',"; missingFieldsErrorCount++;
                                 }
+                                if (!csv.TryGetField("NATIONAL_DELIVERY", out larsQan))
+                                {
+                                    missingFieldsError += " 'NATIONAL_DELIVERY',"; missingFieldsErrorCount++;
+                                }
+                                if (!csv.TryGetField("REGION", out larsQan))
+                                {
+                                    missingFieldsError += " 'REGION',"; missingFieldsErrorCount++;
+                                }
+                                if (!csv.TryGetField("SUB_REGION", out larsQan))
+                                {
+                                    missingFieldsError += " 'SUB_REGION',"; missingFieldsErrorCount++;
+                                }
                             }
 
                             if (string.IsNullOrEmpty(missingFieldsError))

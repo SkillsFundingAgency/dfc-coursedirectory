@@ -281,7 +281,7 @@
                 //how assessed
                 if (!$.regexValidate({ regex: $howAssessed.attr("val-regex") }, $howAssessed.val())) {
                     $howAssessed.govUkTextarea("invalidState", $howAssessed.attr("val-regex-message"));
-                    var whatYouNeedErrorHashLinks = $whatYouNeed.govUkTextarea("getErrorHashLinks");
+                    var whatYouNeedErrorHashLinks = $howAssessed.govUkTextarea("getErrorHashLinks");
                     $errorSummary.govUkErrorSummary("add", whatYouNeedErrorHashLinks);
                     $errorSummary.govUkErrorSummary("show");
                     validStates.push(false);
