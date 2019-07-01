@@ -59,7 +59,7 @@
                 console.log(payload);
                 var qs = $.param(payload);
                 qs = replaceAll(qs, "%5B%5D", "");
-                $.get("/Apprenticeships/ApprenticeshipSearch?" + qs, success);
+                $.get("/Apprenticeships/Search?" + qs, success);
             };
 
             var removeSearchResults = function () {

@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Globalization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Dfc.CourseDirectory.Common;
@@ -735,6 +736,17 @@ namespace Dfc.CourseDirectory.Services.CourseService
                     case ValidationMode.CopyCourseRun:
                     case ValidationMode.EditCourseBU:
                     case ValidationMode.BulkUploadCourse:
+
+                        _logger.LogWarning(courseRun.StartDate.Value.ToString(CultureInfo.InvariantCulture));
+                        _logger.LogWarning(Convert.ToDateTime(DateTime.Now.ToString("dd/MM/yyyy")).ToString(CultureInfo.InvariantCulture));
+
+                        int result = DateTime.Compare(courseRun.StartDate.Value, Convert.ToDateTime(DateTime.Now.ToString("dd/MM/yyyy")));
+
+                        if (result < 0)
+                        {
+                            _logger.LogWarning("*Simon* Date in the past");
+                        }
+
                         if (courseRun.StartDate < currentDate)
                         {
                             validationMessages.Add(new KeyValuePair<string, string>("START_DATE", $"Start Date cannot be earlier than today's date"));

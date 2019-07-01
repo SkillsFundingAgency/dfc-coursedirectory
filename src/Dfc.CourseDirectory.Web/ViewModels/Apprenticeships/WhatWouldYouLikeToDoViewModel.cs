@@ -12,10 +12,10 @@ using Dfc.CourseDirectory.Models.Enums;
 
 namespace Dfc.CourseDirectory.Web.ViewModels.Apprenticeships
 {
-    public class ApprenticeshipLocationChoiceSelectionViewModel
+    public class WhatWouldYouLikeToDoViewModel
     {
 
-        public NationalApprenticeship NationalApprenticeship { get; set; }
+        public ApprenticeshipWhatWouldYouLikeToDo ApprenticeshipWhatWouldYouLikeToDo { get; set; }
 
 
     }

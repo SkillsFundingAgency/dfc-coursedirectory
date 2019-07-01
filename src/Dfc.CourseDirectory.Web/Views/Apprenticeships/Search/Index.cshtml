@@ -4,7 +4,7 @@
     Layout = "_Layout_Your_Courses";
 }
 
-@model Dfc.CourseDirectory.Web.ViewModels.Apprenticeships.ApprenticeshipsViewModel
+@model Dfc.CourseDirectory.Web.ViewModels.Apprenticeships.SearchViewModel
 
 
 
@@ -22,7 +22,7 @@
 
                         @*<p class="govuk-body-l">Search by apprenticeship name or keyword</p>*@
                     </div>
-                    <form class="govuk-!-margin-bottom-9" id="ApprenticeshipSearchForm" asp-controller="Apprenticeships" asp-action="ApprenticeshipSearch" method="post">
+                    <form class="govuk-!-margin-bottom-9" id="ApprenticeshipSearchForm" asp-controller="Apprenticeships" asp-action="Search" method="post">
                         <div class="header-search-content">
                             <span asp-validation-for="@Model.Search" class="govuk-error-message"></span>
                             <div class="search-input-wrapper">
@@ -40,7 +40,7 @@
 
                     <div id="results">
 
-                        @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships.ApprenticeshipSearch.ApprenticeshipSearch))
+                        @await Component.InvokeAsync(nameof(ApprenticeshipSearch))
                     </div>
 
 
