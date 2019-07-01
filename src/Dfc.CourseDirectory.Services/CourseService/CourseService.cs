@@ -719,7 +719,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             {
                 courseRun.FlexibleStartDate = false; // COUR-746-StartDate
 
-                var currentDate = Convert.ToDateTime(DateTime.Now.ToString("dd/MM/yyyy"));
+                var currentDate = Convert.ToDateTime(DateTime.UtcNow.ToString("dd/MM/yyyy"));
 
                 switch (validationMode)
                 { 
@@ -728,13 +728,9 @@ namespace Dfc.CourseDirectory.Services.CourseService
                     case ValidationMode.EditCourseBU:
                     case ValidationMode.BulkUploadCourse:
                         if (courseRun.StartDate < currentDate)
-                        {
                             validationMessages.Add(new KeyValuePair<string, string>("START_DATE", $"Start Date cannot be earlier than today's date"));
-                        }
                         if (courseRun.StartDate > currentDate.AddYears(2))
-                        {
                             validationMessages.Add(new KeyValuePair<string, string>("START_DATE", $"Start Date cannot be later than 2 years from today’s date"));
-                        }
                         break;
                     case ValidationMode.EditCourseYC:
                     case ValidationMode.EditCourseMT:
