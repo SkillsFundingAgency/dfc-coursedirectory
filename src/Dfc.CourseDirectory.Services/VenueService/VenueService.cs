@@ -248,19 +248,21 @@ namespace Dfc.CourseDirectory.Services.VenueService
                 _logger.LogInformationObject("Get Venue By PRN & Name criteria.", criteria);
                 _logger.LogInformationObject("Get Venue By PRN & Name URI", _getVenueByPRNAndNameUri);
 
-                var content = new StringContent(criteria.ToJson(), Encoding.UTF8, "application/json");
-                var response = await _httpClient.PostAsync(_getVenueByPRNAndNameUri, content);
+                StringContent content = new StringContent(criteria.ToJson(), Encoding.UTF8, "application/json");
+                HttpResponseMessage response = await _httpClient.PostAsync(_getVenueByPRNAndNameUri, content);
 
                 _logger.LogHttpResponseMessage("Get Venue By PRN and Name service http response", response);
                 if (response.IsSuccessStatusCode) {
-                    var json = await response.Content.ReadAsStringAsync();
+                    string json = await response.Content.ReadAsStringAsync();
                     _logger.LogInformationObject("Venue search service json response", json);
 
-                    var settings = new JsonSerializerSettings {
+                    if (string.IsNullOrEmpty(json))
+                        json = "[]";
+
+                    JsonSerializerSettings settings = new JsonSerializerSettings {
                         ContractResolver = new VenueSearchResultContractResolver()
                     };
-                    //var venues = JsonConvert.DeserializeObject<IEnumerable<Venue>>(json, settings).Where(x=>x.Status== VenueStatus.Imported || x.Status == VenueStatus.Live).OrderBy(x => x.VenueName).ToList();
-                   var venues = JsonConvert.DeserializeObject<IEnumerable<Venue>>(json, settings).OrderBy(x => x.VenueName).ToList();
+                    IEnumerable<Venue> venues = JsonConvert.DeserializeObject<IEnumerable<Venue>>(json, settings);
                     return Result.Ok<IVenueSearchResult>(new VenueSearchResult(venues));
 
                 } else {
