@@ -2,7 +2,7 @@
 
 namespace Dfc.CourseDirectory.Web.ViewModels.Apprenticeships
 {
-    public class ApprenticeshipCompleteViewModel
+    public class CompleteViewModel
     {
 
         public string ApprenticeshipName { get; set; }

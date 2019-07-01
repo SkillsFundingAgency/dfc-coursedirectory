@@ -1,0 +1,91 @@
+﻿@using Microsoft.AspNetCore.Authorization;
+@using Microsoft.AspNetCore.Identity
+@using Dfc.CourseDirectory.Web.Areas.Identity.Data;
+@using Dfc.CourseDirectory.Models.Enums
+@using Dfc.CourseDirectory.Web.Helpers
+@model Dfc.CourseDirectory.Web.ViewModels.Apprenticeships.WhatWouldYouLikeToDoViewModel
+@{
+    Layout = "_Layout_Your_Courses";
+}
+
+<form class="govuk-!-margin-bottom-9" id="ApprenticeshipWhatWouldYouLikeToDoForm" asp-controller="Apprenticeships" asp-action="WhatWouldYouLIkeToDo" method="post">
+    <a asp-controller="Home" asp-action="Index" class="govuk-back-link">Back</a>
+    <div class="cd-dashboard provider apprenticeship-type govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <div class="govuk-form-group">
+                <fieldset class="govuk-fieldset">
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+                        <h1 class="govuk-fieldset__heading">
+                            What would you like to do?
+                        </h1>
+                    </legend>
+                    <span id="how-contacted-conditional-hint" class="govuk-hint">
+                        Select one option.
+                    </span>
+
+
+
+
+                    <div class="govuk-radios" val-required-message="Select what would you like to do?" id="ApprenticeshipWhatWouldYouLikeToDo">
+                        <div class="govuk-radios__item">
+                            @Html.RadioButtonFor(m => m.ApprenticeshipWhatWouldYouLikeToDo, ApprenticeshipWhatWouldYouLikeToDo.Add, new { @class = "govuk-radios__input", id = ApprenticeshipWhatWouldYouLikeToDo.Add })
+                            <label class="govuk-label govuk-radios__label" for="@ApprenticeshipWhatWouldYouLikeToDo.Add">@WebHelper.GetEnumDescription(ApprenticeshipWhatWouldYouLikeToDo.Add)</label>
+                        </div>
+                        <div class="govuk-radios__item">
+                            @Html.RadioButtonFor(m => m.ApprenticeshipWhatWouldYouLikeToDo, ApprenticeshipWhatWouldYouLikeToDo.Upload, new { @class = "govuk-radios__input", id = ApprenticeshipWhatWouldYouLikeToDo.Upload })
+                            <label class="govuk-label govuk-radios__label" for="@ApprenticeshipWhatWouldYouLikeToDo.Upload">@WebHelper.GetEnumDescription(ApprenticeshipWhatWouldYouLikeToDo.Upload)</label>
+                        </div>
+                        <div class="govuk-radios__item">
+                            @Html.RadioButtonFor(m => m.ApprenticeshipWhatWouldYouLikeToDo, ApprenticeshipWhatWouldYouLikeToDo.View, new { @class = "govuk-radios__input", id = ApprenticeshipWhatWouldYouLikeToDo.View })
+                            <label class="govuk-label govuk-radios__label" for="@ApprenticeshipWhatWouldYouLikeToDo.View">@WebHelper.GetEnumDescription(ApprenticeshipWhatWouldYouLikeToDo.View)</label>
+                        </div>
+
+                    </div>
+
+                </fieldset>
+
+            </div>
+            <a class="govuk-button" asp-controller="Apprenticeships" asp-action="WhatWouldYouLIkeToDo" id="continue">continue</a>
+        </div>
+    </div>
+</form>
+
+
+<script>
+    (function ($) {
+        $(function () {
+            var validStates = [];
+            var $button = $("#continue");
+
+            var $apprenticeshipWhatWouldYouLikeToDo= $("#ApprenticeshipWhatWouldYouLikeToDo").govUkRadios();
+
+            function isAllValid(currentValue) {
+                return currentValue === true;
+            }
+
+            function validate() {
+
+                validStates = [];
+
+                $apprenticeshipWhatWouldYouLikeToDo.govUkRadios("validState");
+
+                if ($.requiredValidate($apprenticeshipWhatWouldYouLikeToDo.find("input[type='radio']:checked").val())) {
+                    $apprenticeshipWhatWouldYouLikeToDo.govUkRadios("validState");
+                    validStates.push(true);
+                } else {
+                    $apprenticeshipWhatWouldYouLikeToDo.govUkRadios("invalidState", $apprenticeshipWhatWouldYouLikeToDo.attr("val-required-message"));
+                    validStates.push(false);
+                }
+            }
+
+            $button.on("click", function (event) {
+                event.preventDefault();
+                validate();
+                if (validStates.every(isAllValid)) {
+                    $("#ApprenticeshipWhatWouldYouLikeToDoForm").submit();
+                }
+            });
+
+        });
+    })(jQuery);
+</script>

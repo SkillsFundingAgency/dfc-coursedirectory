@@ -13,7 +13,7 @@ using Dfc.CourseDirectory.Models.Models.Apprenticeships;
 
 namespace Dfc.CourseDirectory.Web.ViewModels.Apprenticeships
 {
-    public class ApprenticeshipDetailViewModel
+    public class DetailViewModel
     {
 
         public Guid Id { get; set; }

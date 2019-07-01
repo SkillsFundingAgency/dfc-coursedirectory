@@ -9,14 +9,13 @@ using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Web.ViewModels.YourCourses;
 using System.ComponentModel.DataAnnotations;
 using Dfc.CourseDirectory.Models.Enums;
-using Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseRegion;
 
 namespace Dfc.CourseDirectory.Web.ViewModels.Apprenticeships
 {
-    public class ApprenticeshipRegionsViewModel
+    public class DeliveryViewModel
     {
 
-        public ChooseRegionModel ChooseRegion { get; set; }
+        public ApprenticeshipDelivery ApprenticeshipDelivery { get; set; }
 
 
     }

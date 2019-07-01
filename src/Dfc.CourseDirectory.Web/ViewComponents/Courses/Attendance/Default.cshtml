@@ -7,7 +7,7 @@
     <fieldset class="govuk-fieldset" aria-describedby="changed-name-hint">
         <label id="govuk-label-AttendanceRadioButtons" class="govuk-label">@Model.LabelText</label>
         <span id="more-detail-hint" class="govuk-hint">@Model.HintText</span>
-        <div id="AttendanceRadioButtons" class="govuk-radios govuk-radios--inline"  style="margin-bottom: 30px;"
+        <div id="AttendanceRadioButtons" class="govuk-radios govuk-radios--inline"
             val-required-message="Select Attendance Mode">
             <div class="govuk-radios__item">
                 @Html.RadioButtonFor(m => m.AttendanceMode, AttendancePattern.Daytime, new { @class = "govuk-radios__input daynight", id = @AttendancePattern.Daytime })

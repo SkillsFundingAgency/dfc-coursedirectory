@@ -209,6 +209,18 @@ namespace Dfc.CourseDirectory.Models.Enums
         Cancel =2
     }
 
+    public enum ApprenticeshipWhatWouldYouLikeToDo
+    { 
+        [Description("Undefined")]
+        Undefined = 0,
+        [Description("Add an apprenticeship")]
+        Add = 1,
+        [Description("Add multiple apprenticeships via a file upload")]
+        Upload = 2,
+        [Description("View or make changes to an existing apprenticeship")]
+        View = 3
+    }
+
     public enum ApprenticeshipDelivery
     {
         [Description("Undefined")]
