@@ -725,7 +725,6 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
         {
             List<BulkUploadError> errorList = new List<BulkUploadError>();
 
-            
             foreach(var error in errors)
             {
                 //If non-bulk upload error
@@ -749,33 +748,39 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
             var availableRegions = new SelectRegionModel();
             var availableSubRegions = availableRegions.RegionItems.SelectMany(x => x.SubRegion);
-            var listOfRegions = regions.Split(";").ToList();
-            var listOfSubregions = subRegions.Split(";").ToList();
+            var listOfRegions = regions.Split(";").Select(p => p.Trim()).ToList();
+            var listOfSubregions = subRegions.Split(";").Select(p => p.Trim()).ToList();
             //Get regions
-            foreach(var region in listOfRegions)
+            foreach (var region in listOfRegions)
             {
-                var id = availableRegions.RegionItems.Where(x => x.RegionName == region)
+                if (!string.IsNullOrWhiteSpace(region))
+                {
+                    var id = availableRegions.RegionItems.Where(x => x.RegionName.ToUpper() == region.ToUpper())
                                                      .Select(y => y.Id);
-                if(id.Count() > 0)
-                {
-                    totalList.Add(id.FirstOrDefault());
-                }
-                else
-                {
-                    return Result.Fail<IEnumerable<string>>("Problem with Bulk upload value");
+                    if (id.Count() > 0)
+                    {
+                        totalList.Add(id.FirstOrDefault());
+                    }
+                    else
+                    {
+                        return Result.Fail<IEnumerable<string>>("Problem with Bulk upload value");
+                    }
                 }
             }
             foreach(var subRegion in listOfSubregions)
             {
-                var id = availableSubRegions.Where(x => x.SubRegionName == subRegion)
+                if(!string.IsNullOrEmpty(subRegion))
+                {
+                    var id = availableSubRegions.Where(x => x.SubRegionName.ToUpper() == subRegion.ToUpper())
                                             .Select(y => y.Id);
-                if (id.Count() > 0)
-                {
-                    totalList.Add(id.FirstOrDefault());
-                }
-                else
-                {
-                    return Result.Fail<IEnumerable<string>>("Problem with Bulk upload value");
+                    if (id.Count() > 0)
+                    {
+                        totalList.Add(id.FirstOrDefault());
+                    }
+                    else
+                    {
+                        return Result.Fail<IEnumerable<string>>("Problem with Bulk upload value");
+                    }
                 }
             }
             return Result.Ok<IEnumerable<string>>(totalList);
