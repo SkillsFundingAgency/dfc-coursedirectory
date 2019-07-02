@@ -124,7 +124,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                     var invalidCourses = invalidCoursesResult.Select(c => (Course)c.Course).ToList();
                     var courseRuns = invalidCourses.Select(cr => cr.CourseRuns.Where(x => x.StartDate < DateTime.Today));
                     List<Course> filteredList = new List<Course>();
-                    foreach(var course in invalidCourses)
+                    var allRegions = _courseService.GetRegions().RegionItems;
+                    foreach (var course in invalidCourses)
                     {
                         var invalidRuns = course.CourseRuns.Where(x => x.StartDate < DateTime.Today);
                         if (invalidRuns.Any())
@@ -143,6 +144,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                     vm.NumberOfCoursesInFiles = invalidCourses.Count();
                     vm.Courses = filteredList.OrderBy(x => x.QualificationCourseTitle);
                     vm.Venues = GetVenueNames(vm.Courses);
+                    vm.Regions = allRegions;
                     break;
             }
 

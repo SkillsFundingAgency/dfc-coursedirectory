@@ -5,11 +5,11 @@
     Layout = "_Layout_Your_Courses";
 }
 
-@model Dfc.CourseDirectory.Web.ViewModels.Apprenticeships.ApprenticeshipSummaryViewModel
+@model Dfc.CourseDirectory.Web.ViewModels.Apprenticeships.SummaryViewModel
 
 
-<form class="govuk-!-margin-bottom-9" id="ApprenticeshipSummaryForm" asp-controller="Apprenticeships" asp-action="ApprenticeshipSummary" method="post">
-    <a asp-controller="Apprenticeships" asp-action="ApprenticeShipDelivery" class="govuk-back-link">Back</a><br />
+<form class="govuk-!-margin-bottom-9" id="ApprenticeshipSummaryForm" asp-controller="Apprenticeships" asp-action="Summary" method="post">
+    <a asp-controller="Apprenticeships" asp-action="Delivery" class="govuk-back-link">Back</a><br />
     <div class="cd-dashboard ">
 
 
@@ -21,7 +21,7 @@
                     <div class="govuk-grid-column-two-thirds-from-desktop">
                         <h1 class="govuk-heading-xl">Check your answers before saving</h1>
 
-                        <h2 class="govuk-heading-m">@Model?.ApprenticeshipDetailViewModel?.ApprenticeshipTitle</h2>
+                        <h2 class="govuk-heading-m">@Model?.DetailViewModel?.ApprenticeshipTitle</h2>
 
                         <dl class="govuk-summary-list ">
                             <div class="govuk-summary-list__row">
@@ -29,10 +29,10 @@
                                     Apprenticeship information for employers
                                 </dt>
                                 <dd class="govuk-summary-list__value">
-                                    @Html.Raw(Model.ApprenticeshipDetailViewModel.Information)
+                                    @Html.Raw(Model.DetailViewModel.Information)
                                 </dd>
                                 <dd class="govuk-summary-list__actions">
-                                    <a class="" asp-controller="Apprenticeships" asp-action="ApprenticeshipDetails">Change</a>
+                                    <a class="" asp-controller="Apprenticeships" asp-action="Details">Change</a>
 
                                 </dd>
                             </div>
@@ -43,10 +43,10 @@
                                     Apprenticeship webpage
                                 </dt>
                                 <dd class="govuk-summary-list__value">
-                                    @Model.ApprenticeshipDetailViewModel.Website
+                                    @Model.DetailViewModel.Website
                                 </dd>
                                 <dd class="govuk-summary-list__actions">
-                                    <a class="" asp-controller="Apprenticeships" asp-action="ApprenticeshipDetails">Change</a>
+                                    <a class="" asp-controller="Apprenticeships" asp-action="Details">Change</a>
 
                                 </dd>
                             </div>
@@ -57,10 +57,10 @@
                                     Email
                                 </dt>
                                 <dd class="govuk-summary-list__value">
-                                    @Model.ApprenticeshipDetailViewModel.Email
+                                    @Model.DetailViewModel.Email
                                 </dd>
                                 <dd class="govuk-summary-list__actions">
-                                    <a class="" asp-controller="Apprenticeships" asp-action="ApprenticeshipDetails">Change</a>
+                                    <a class="" asp-controller="Apprenticeships" asp-action="Details">Change</a>
 
                                 </dd>
                             </div>
@@ -71,10 +71,10 @@
                                     Contact URL
                                 </dt>
                                 <dd class="govuk-summary-list__value">
-                                    @Model.ApprenticeshipDetailViewModel.ContactUsIUrl
+                                    @Model.DetailViewModel.ContactUsIUrl
                                 </dd>
                                 <dd class="govuk-summary-list__actions">
-                                    <a class="" asp-controller="Apprenticeships" asp-action="ApprenticeshipDetails">Change</a>
+                                    <a class="" asp-controller="Apprenticeships" asp-action="Details">Change</a>
 
                                 </dd>
                             </div>
@@ -82,21 +82,21 @@
 
                         <div class="summary--linked-title">
                             <h2 class="govuk-heading-s">Delivery options </h2>
-                            <a class="govuk-link float-right " asp-controller="Apprenticeships" asp-action="ApprenticeshipDetails">
+                            <a class="govuk-link float-right " asp-controller="Apprenticeships" asp-action="DeliveryOptions">
                                 Change
                             </a>
                         </div>
 
                         @{
-                            Model.ApprenticeshipDeliveryOptionsViewModel.DeliveryOptionsListItemModel.SummaryPage = true;
+                            Model.DeliveryOptionsViewModel.DeliveryOptionsListItemModel.SummaryPage = true;
                         }
-                        @if (Model.ApprenticeshipDeliveryOptionsViewModel != null)
+                        @if (Model.DeliveryOptionsViewModel != null)
                         {
-                            @await Component.InvokeAsync(nameof(DeliveryOptionsList), Model.ApprenticeshipDeliveryOptionsViewModel.DeliveryOptionsListItemModel)
+                            @await Component.InvokeAsync(nameof(DeliveryOptionsList), Model.DeliveryOptionsViewModel.DeliveryOptionsListItemModel)
                         }
                         else
                         {
-                            @await Component.InvokeAsync(nameof(DeliveryOptionsList), Model.ApprenticeshipDeliveryOptionsCombinedViewModel.DeliveryOptionsListItemModel)
+                            @await Component.InvokeAsync(nameof(DeliveryOptionsList), Model.DeliveryOptionsCombinedViewModel.DeliveryOptionsListItemModel)
                         }
 
                         <button type="submit" class="govuk-button" id="next">Publish</button>

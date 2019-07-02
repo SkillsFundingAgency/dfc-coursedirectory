@@ -21,6 +21,7 @@ using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Models.Models.Venues;
 using Dfc.CourseDirectory.Common.Interfaces;
+using Dfc.CourseDirectory.Models.Models.Regions;
 
 namespace Dfc.CourseDirectory.Services.BulkUploadService
 {
@@ -254,7 +255,10 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                                         DurationUnit = csv.GetField("DURATION_UNIT").Trim(),
                                         DurationValue = csv.GetField("DURATION").Trim(),
                                         StudyMode = csv.GetField("STUDY_MODE").Trim(),
-                                        AttendancePattern = csv.GetField("ATTENDANCE_PATTERN").Trim()
+                                        AttendancePattern = csv.GetField("ATTENDANCE_PATTERN").Trim(),
+                                        National = csv.GetField("NATIONAL_DELIVERY").Trim(),
+                                        Regions = csv.GetField("REGION").Trim(),
+                                        SubRegions = csv.GetField("SUB_REGION").Trim()
                                     };
 
                                     if (isCourseHeader)
@@ -589,6 +593,39 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 {
                     validationMessages.Add($"AttendancePattern is Undefined, because you have entered ( { bulkUploadCourse.AttendancePattern } ), Line { bulkUploadCourse.BulkUploadLineNumber },  LARS_QAN = { bulkUploadCourse.LearnAimRef }, ID = { bulkUploadCourse.ProviderCourseID }");
                 }
+
+                switch(bulkUploadCourse.National.ToUpperInvariant())
+                {
+                    case "YES":
+                        {
+                            courseRun.National = true;
+                            var availableRegions = new SelectRegionModel();
+                            courseRun.Regions = availableRegions.RegionItems.Select(x => x.Id).ToList();
+                            break;
+                        }
+                    case "NO":
+                        {
+                            courseRun.National = false;
+                            var regionResult = ParseRegionData(bulkUploadCourse.Regions, bulkUploadCourse.SubRegions);
+                            if(regionResult.IsSuccess && regionResult.HasValue)
+                            {
+                                courseRun.Regions = regionResult.Value;
+                            }
+                            else if(regionResult.IsFailure)
+                            {
+                                validationMessages.Add($"Unable to get regions/subregions, Line { bulkUploadCourse.BulkUploadLineNumber },  LARS_QAN = { bulkUploadCourse.LearnAimRef }, ID = { bulkUploadCourse.ProviderCourseID }");
+                            }
+                            break;
+                        }
+                    default:
+                        {
+                            courseRun.National = null;
+                            validationMessages.Add($"Choose if you can deliver this course anywhere in England, Line { bulkUploadCourse.BulkUploadLineNumber },  LARS_QAN = { bulkUploadCourse.LearnAimRef }, ID = { bulkUploadCourse.ProviderCourseID }");
+                            break;
+                        }
+                }
+
+
                 courseRun.BulkUploadErrors = ParseBulkUploadErrors(bulkUploadCourse.BulkUploadLineNumber, _courseService.ValidateCourseRun(courseRun, ValidationMode.BulkUploadCourse));
                 courseRun.RecordStatus = courseRun.BulkUploadErrors.Any() ? RecordStatus.BulkUploadPending : RecordStatus.BulkUploadReadyToGoLive;
 
@@ -688,7 +725,6 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
         {
             List<BulkUploadError> errorList = new List<BulkUploadError>();
 
-            
             foreach(var error in errors)
             {
                 //If non-bulk upload error
@@ -705,6 +741,49 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 errorList.Add(buError);
             }
             return errorList;
+        }
+        internal IResult<IEnumerable<string>> ParseRegionData(string regions, string subRegions)
+        {
+            List<string> totalList = new List<string>();
+
+            var availableRegions = new SelectRegionModel();
+            var availableSubRegions = availableRegions.RegionItems.SelectMany(x => x.SubRegion);
+            var listOfRegions = regions.Split(";").Select(p => p.Trim()).ToList();
+            var listOfSubregions = subRegions.Split(";").Select(p => p.Trim()).ToList();
+            //Get regions
+            foreach (var region in listOfRegions)
+            {
+                if (!string.IsNullOrWhiteSpace(region))
+                {
+                    var id = availableRegions.RegionItems.Where(x => x.RegionName.ToUpper() == region.ToUpper())
+                                                     .Select(y => y.Id);
+                    if (id.Count() > 0)
+                    {
+                        totalList.Add(id.FirstOrDefault());
+                    }
+                    else
+                    {
+                        return Result.Fail<IEnumerable<string>>("Problem with Bulk upload value");
+                    }
+                }
+            }
+            foreach(var subRegion in listOfSubregions)
+            {
+                if(!string.IsNullOrEmpty(subRegion))
+                {
+                    var id = availableSubRegions.Where(x => x.SubRegionName.ToUpper() == subRegion.ToUpper())
+                                            .Select(y => y.Id);
+                    if (id.Count() > 0)
+                    {
+                        totalList.Add(id.FirstOrDefault());
+                    }
+                    else
+                    {
+                        return Result.Fail<IEnumerable<string>>("Problem with Bulk upload value");
+                    }
+                }
+            }
+            return Result.Ok<IEnumerable<string>>(totalList);
         }
     }
 }

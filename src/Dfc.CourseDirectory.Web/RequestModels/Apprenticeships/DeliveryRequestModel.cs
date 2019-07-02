@@ -1,7 +1,7 @@
 ﻿
 namespace Dfc.CourseDirectory.Web.RequestModels
 {
-    public class ApprenticeShipDeliveryRequestModel
+    public class DeliveryRequestModel
     {
 
         

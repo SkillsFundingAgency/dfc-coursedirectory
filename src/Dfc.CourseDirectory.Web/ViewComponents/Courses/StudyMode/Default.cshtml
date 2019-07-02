@@ -8,7 +8,7 @@
     <fieldset class="govuk-fieldset" aria-describedby="changed-name-hint">
         <label id="govuk-label-StudyModeRadioButtons" class="govuk-label">@Model.LabelText</label>
         <span id="more-detail-hint" class="govuk-hint">@Model.HintText</span>
-        <div id="StudyModeRadioButtons" class="govuk-radios govuk-radios--inline" style="margin-bottom: 30px;"
+        <div id="StudyModeRadioButtons" class="govuk-radios govuk-radios--inline"
             val-required-message="Select study mode">
             <div class="govuk-radios__item">
                 @Html.RadioButtonFor(m => m.StudyMode, StudyMode.FullTime, new {@class = "govuk-radios__input time", id = @StudyMode.FullTime})

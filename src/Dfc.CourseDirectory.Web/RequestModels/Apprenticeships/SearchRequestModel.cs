@@ -1,7 +1,7 @@
 ﻿
 namespace Dfc.CourseDirectory.Web.RequestModels
 {
-    public class ApprenticeShipSearchRequestModel
+    public class SearchRequestModel
     {
         public string SearchTerm { get; set; }
         

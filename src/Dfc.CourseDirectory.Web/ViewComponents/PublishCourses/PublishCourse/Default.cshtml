@@ -195,7 +195,7 @@
                         }
                         @if (courseRun.DeliveryMode == DeliveryMode.WorkBased)
                         {
-                            if (courseRun.National)
+                            if (courseRun.National.HasValue && courseRun.National.Value == true)
                             {
 
                                 <span class="">National</span>
@@ -205,8 +205,10 @@
                             {
                                 if (courseRun.Regions.Any())
                                 {
+                                    List<string> regions = (from regionItemModel in Model.Regions where 
+                                        regionItemModel.SubRegion.Any(x => courseRun.Regions.Contains(x.Id)) select regionItemModel.RegionName).ToList();
 
-                                    <span class="">@courseRun.Regions.ToCommaSeparatedString()</span>
+                                    <span class="">@regions.ToCommaSeparatedString()</span>
 
                                 }
                             }
