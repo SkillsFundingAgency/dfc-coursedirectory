@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Models.Courses;
+using Dfc.CourseDirectory.Models.Models.Regions;
 
 namespace Dfc.CourseDirectory.Web.ViewModels.PublishCourses
 {
@@ -22,5 +23,6 @@ namespace Dfc.CourseDirectory.Web.ViewModels.PublishCourses
         public Guid? CourseId { get; set; }
 
         public Guid? CourseRunId { get; set; }
+        public IEnumerable<RegionItemModel> Regions { get; set; }
     }
 }
