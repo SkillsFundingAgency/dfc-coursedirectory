@@ -728,7 +728,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             {
                 courseRun.FlexibleStartDate = false; // COUR-746-StartDate
 
-                var currentDate = Convert.ToDateTime(DateTime.UtcNow.ToString("dd/MM/yyyy"));
+                var currentDate = DateTime.UtcNow.Date;
 
                 switch (validationMode)
                 { 
@@ -737,10 +737,10 @@ namespace Dfc.CourseDirectory.Services.CourseService
                     case ValidationMode.EditCourseBU:
                     case ValidationMode.BulkUploadCourse:
 
-                        _logger.LogWarning(courseRun.StartDate.Value.ToString(CultureInfo.InvariantCulture));
-                        _logger.LogWarning(Convert.ToDateTime(DateTime.Now.ToString("dd/MM/yyyy")).ToString(CultureInfo.InvariantCulture));
+                        _logger.LogError("course date" + courseRun.StartDate.Value.Date + "utc Date " + currentDate);
 
-                        int result = DateTime.Compare(courseRun.StartDate.Value, Convert.ToDateTime(DateTime.Now.ToString("dd/MM/yyyy")));
+
+                        int result = DateTime.Compare(courseRun.StartDate.Value.Date, currentDate);
 
                         if (result < 0)
                         {
