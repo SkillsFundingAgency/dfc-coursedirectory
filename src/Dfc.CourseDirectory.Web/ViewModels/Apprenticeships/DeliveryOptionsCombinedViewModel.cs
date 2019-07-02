@@ -14,7 +14,7 @@ using Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships;
 
 namespace Dfc.CourseDirectory.Web.ViewModels.Apprenticeships
 {
-    public class ApprenticeshipDeliveryOptionsCombinedViewModel
+    public class DeliveryOptionsCombinedViewModel
     {
 
         public List<SelectListItem> Locations { get; set; }
