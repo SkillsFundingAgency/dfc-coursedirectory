@@ -920,6 +920,47 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         }
 
+        [Authorize]
+        public IActionResult DeleteConfirm()
+        {
+            var model = new WhatWouldYouLikeToDoViewModel();
+
+
+            return View("../Apprenticeships/ConfirmApprenticeshipDelete/Index", model);
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> DeleteConfirm(WhatWouldYouLikeToDoViewModel theModel)
+        {
+
+            return RedirectToAction("Complete", "Apprenticeships");
+
+
+
+        }
+
+
+        [Authorize]
+        public IActionResult ConfirmationDelete()
+        {
+            var model = new ConfirmationDeleteViewModel();
+
+
+            return View("../Apprenticeships/ConfirmApprenticeshipDelete/Index", model);
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> ConfirmationDelete(ConfirmationDeleteViewModel theModel)
+        {
+            //call service to delete
+            return RedirectToAction("Complete", "Apprenticeships");
+
+
+
+        }
+
 
 
     }

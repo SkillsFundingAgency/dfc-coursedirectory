@@ -167,6 +167,12 @@
     <Content Update="ViewComponents\VenueSearch\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\Apprenticeships\ConfirmationDelete\Index.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Apprenticeships\ConfirmApprenticeshipDelete\Index.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Apprenticeships\WhatWouldYouLikeToDo\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
