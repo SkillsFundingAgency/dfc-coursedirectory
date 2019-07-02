@@ -188,16 +188,28 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Report()
         {
-            var courses = await _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(_session.GetInt32("UKPRN")));
+            var ukprn = _session.GetInt32("UKPRN");
+            if (ukprn == null)
+            {
+                throw new Exception("UKPRN is null");
+            }
+
+            var courses = await _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(ukprn));
+            
 
             if (courses.IsFailure)
             {
-                throw new Exception($"Unable to find courses for UKPRN: {_session.GetInt32("UKPRN")}");
+                throw new Exception($"Unable to find courses for UKPRN: {ukprn}");
             }
 
+            var courseMigrationReport = await _courseService.GetCourseMigrationReport(ukprn.Value);
+            if (courseMigrationReport.IsFailure)
+            {
+                throw new Exception(courseMigrationReport.Error + $"For UKPRN: {ukprn}");
+            }
             var model = new ReportViewModel(courses.Value.Value.SelectMany(o => o.Value).SelectMany(i => i.Value));
 
-            IEnumerable<Course> courses1 = _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(_session.GetInt32("UKPRN")))
+            IEnumerable<Course> courses1 = _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(ukprn))
                                                 .Result
                                                 .Value
                                                 .Value
