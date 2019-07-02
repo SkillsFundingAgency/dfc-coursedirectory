@@ -1,7 +1,5 @@
 ﻿using Dfc.CourseDirectory.Models.Interfaces.Courses;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Dfc.CourseDirectory.Models.Models.Courses
 {
@@ -44,5 +42,8 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         public string DurationValue { get; set; } // ???
         public string StudyMode { get; set; } // StudyMode
         public string AttendancePattern { get; set; } // AttendancePattern
+        public string National { get; set; }
+        public string Regions { get; set; }
+        public string SubRegions { get; set; }
     }
 }

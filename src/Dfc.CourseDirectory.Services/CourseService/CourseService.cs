@@ -705,9 +705,17 @@ namespace Dfc.CourseDirectory.Services.CourseService
                     break;
                 case DeliveryMode.WorkBased:
 
-                    // Regions
-                    if (courseRun.Regions == null || courseRun.Regions.Count().Equals(0))
-                        validationMessages.Add(new KeyValuePair<string, string>("NULL", $"Select a region"));
+                    //National
+                    if(courseRun.National == null)
+                    {
+                        validationMessages.Add(new KeyValuePair<string, string>("NATIONAL_DELIVERY", $"Choose if you can deliver this course anywhere in England"));
+                    }
+                    else if(courseRun.National == false)
+                    {
+                        // Regions
+                        if (courseRun.Regions == null || courseRun.Regions.Count().Equals(0))
+                            validationMessages.Add(new KeyValuePair<string, string>("REGION", $"Select at least one region"));
+                    }
                     break;
                 case DeliveryMode.Undefined: // Question ???
                 default:
@@ -720,7 +728,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             {
                 courseRun.FlexibleStartDate = false; // COUR-746-StartDate
 
-                var currentDate = Convert.ToDateTime(DateTime.Now.ToString("dd/MM/yyyy"));
+                var currentDate = DateTime.UtcNow.Date;
 
                 switch (validationMode)
                 { 
@@ -729,10 +737,10 @@ namespace Dfc.CourseDirectory.Services.CourseService
                     case ValidationMode.EditCourseBU:
                     case ValidationMode.BulkUploadCourse:
 
-                        _logger.LogWarning(courseRun.StartDate.Value.ToString(CultureInfo.InvariantCulture));
-                        _logger.LogWarning(Convert.ToDateTime(DateTime.Now.ToString("dd/MM/yyyy")).ToString(CultureInfo.InvariantCulture));
+                        _logger.LogError("course date" + courseRun.StartDate.Value.Date + "utc Date " + currentDate);
 
-                        int result = DateTime.Compare(courseRun.StartDate.Value, Convert.ToDateTime(DateTime.Now.ToString("dd/MM/yyyy")));
+
+                        int result = DateTime.Compare(courseRun.StartDate.Value.Date, currentDate);
 
                         if (result < 0)
                         {
@@ -740,13 +748,9 @@ namespace Dfc.CourseDirectory.Services.CourseService
                         }
 
                         if (courseRun.StartDate < currentDate)
-                        {
                             validationMessages.Add(new KeyValuePair<string, string>("START_DATE", $"Start Date cannot be earlier than today's date"));
-                        }
                         if (courseRun.StartDate > currentDate.AddYears(2))
-                        {
                             validationMessages.Add(new KeyValuePair<string, string>("START_DATE", $"Start Date cannot be later than 2 years from today’s date"));
-                        }
                         break;
                     case ValidationMode.EditCourseYC:
                     case ValidationMode.EditCourseMT:
