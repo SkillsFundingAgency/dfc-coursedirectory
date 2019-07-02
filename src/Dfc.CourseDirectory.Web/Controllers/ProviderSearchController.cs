@@ -177,7 +177,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogException(ex);
-                model.Errors = new string[] { "Application Error: " + ex.Message };
+                model.Errors = new string[] { "UKPRN required" };
 
                 return ViewComponent(nameof(ViewComponents.ProviderSearchResult.ProviderSearchResult), model);
             }
