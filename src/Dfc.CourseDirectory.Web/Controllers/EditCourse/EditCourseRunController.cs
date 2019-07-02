@@ -392,13 +392,47 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 
                     foreach (var selectRegionRegionItem in vm.ChooseRegion.Regions.RegionItems.OrderBy(x => x.RegionName))
                     {
-                        foreach (var subRegionItemModel in selectRegionRegionItem.SubRegion)
+                        //If Region is returned, check for existence of any subregions
+                        if (courseRun.Regions.Contains(selectRegionRegionItem.Id))
                         {
-                            if (courseRun.Regions.Contains(subRegionItemModel.Id))
+                            var result = from subRegion in selectRegionRegionItem.SubRegion
+                                         where courseRun.Regions.Contains(subRegion.Id)
+                                         select subRegion;
+
+                            //If true, then ignore mass ticking of region code, and tick specific code(s)
+                            if (result.Count() > 0)
                             {
-                                subRegionItemModel.Checked = true;
+
+                                foreach(var subRegion in result)
+                                {
+                                    selectRegionRegionItem.SubRegion.Where(x => x.Id == subRegion.Id).ToList().ForEach(y => y.Checked = true);
+                                }
+
+                               
+                            }
+                            //If false, then tick all subregions
+                            else
+                            {
+                                foreach (var subRegionItemModel in selectRegionRegionItem.SubRegion)
+                                {
+                                    subRegionItemModel.Checked = true;
+                                }
                             }
                         }
+                        //Else, just tick the one subregion per item
+                        else
+                        {
+                            foreach (var subRegionItemModel in selectRegionRegionItem.SubRegion)
+                            {
+                                if (courseRun.Regions.Contains(subRegionItemModel.Id))
+                                {
+                                    subRegionItemModel.Checked = true;
+                                }
+                            }
+                        }
+
+                        
+
                     }
 
                     if (vm.ChooseRegion.Regions.RegionItems != null && vm.ChooseRegion.Regions.RegionItems.Any())
