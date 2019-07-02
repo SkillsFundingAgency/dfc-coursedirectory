@@ -73,7 +73,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
 
             var regionNames = (from regionItemModel in list
                                from subRegionItemModel in regionItemModel.SubRegion
-                               where ids.Contains(subRegionItemModel.Id)
+                               where ids.Contains(subRegionItemModel.Id) || ids.Contains(regionItemModel.Id)
                                select regionItemModel.RegionName).Distinct().OrderBy(x => x).ToList();
 
             return string.Join(", ", regionNames);
