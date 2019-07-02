@@ -32,6 +32,7 @@ namespace Dfc.CourseDirectory.Services.Interfaces.CourseService
         Task<IResult<IEnumerable<ICourseStatusCountResult>>> GetCourseCountsByStatusForUKPRN(ICourseSearchCriteria criteria);
         Task<IResult<IEnumerable<ICourse>>> GetRecentCourseChangesByUKPRN(ICourseSearchCriteria criteria);
         Task<IResult> DeleteBulkUploadCourses(int UKPRN);
+        Task<IResult<CourseMigrationReport>> GetCourseMigrationReport(int UKPRN);
 
     }
 }

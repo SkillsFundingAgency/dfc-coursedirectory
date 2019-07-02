@@ -40,6 +40,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
         private readonly Uri _changeCourseRunStatusesForUKPRNSelectionUri;
         private readonly Uri _archiveLiveCoursesUri;
         private readonly Uri _deleteBulkUploadCoursesUri;
+        private readonly Uri _getCourseMigrationReportByUKPRN;
 
         private readonly int _courseForTextFieldMaxChars;
         private readonly int _entryRequirementsTextFieldMaxChars;
@@ -92,6 +93,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             _getRecentCourseChangesByUKPRNUri = settings.Value.ToGetRecentCourseChangesByUKPRNUri();
             _changeCourseRunStatusesForUKPRNSelectionUri = settings.Value.ToChangeCourseRunStatusesForUKPRNSelectionUri();
             _deleteBulkUploadCoursesUri = settings.Value.ToDeleteBulkUploadCoursesUri();
+            _getCourseMigrationReportByUKPRN = settings.Value.ToGetCourseMigrationReportByUKPRN();
 
             _courseForTextFieldMaxChars = courseForComponentSettings.Value.TextFieldMaxChars;
             _entryRequirementsTextFieldMaxChars = entryRequirementsComponentSettings.Value.TextFieldMaxChars;
@@ -904,6 +906,55 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 return Result.Fail("Update course unsuccessful http response");
             }
         }
+
+        public async Task<IResult<CourseMigrationReport>> GetCourseMigrationReport(int UKPRN)
+        {
+            Throw.IfNull(UKPRN, nameof(UKPRN));
+            _logger.LogMethodEnter();
+
+            try
+            {
+                _logger.LogInformationObject("Get your courses URI", _getYourCoursesUri);
+
+                var response = await _httpClient.GetAsync(new Uri(_getYourCoursesUri.AbsoluteUri + "&UKPRN=" + UKPRN));
+                _logger.LogHttpResponseMessage("Get course migration report service http response", response);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+
+                    if (!json.StartsWith("["))
+                        json = "[" + json + "]";
+
+                    _logger.LogInformationObject("Get course migration report service json response", json);
+                    CourseMigrationReport courseMigrationReport = JsonConvert.DeserializeObject<CourseMigrationReport>(json);
+
+                    return Result.Ok<CourseMigrationReport>(courseMigrationReport);
+
+                }
+                else
+                {
+                    return Result.Fail<CourseMigrationReport>("Get course migration report service unsuccessful http response");
+                }
+
+            }
+            catch (HttpRequestException hre)
+            {
+                _logger.LogException("Get course migration report service http request error", hre);
+                return Result.Fail<CourseMigrationReport>("Get course migration report service http request error.");
+
+            }
+            catch (Exception e)
+            {
+                _logger.LogException("Get course migration report service unknown error.", e);
+                return Result.Fail<CourseMigrationReport>("Get course migration report service unknown error.");
+
+            }
+            finally
+            {
+                _logger.LogMethodExit();
+            }
+        }
     }
 
     internal static class IGetCourseByIdCriteriaExtensions
@@ -967,6 +1018,10 @@ namespace Dfc.CourseDirectory.Services.CourseService
         internal static Uri ToDeleteBulkUploadCoursesUri(this ICourseServiceSettings extendee)
         {
             return new Uri($"{extendee.ApiUrl + "DeleteBulkUploadCourses?code=" + extendee.ApiKey}");
+        }
+        internal static Uri ToGetCourseMigrationReportByUKPRN(this ICourseServiceSettings extendee)
+        {
+            return new Uri($"{extendee.ApiUrl + "GetCourseMigrationReportByUKPRN?code=" + extendee.ApiKey}");
         }
     }
     internal static class FindACourseServiceSettingsExtensions
