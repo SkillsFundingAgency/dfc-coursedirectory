@@ -121,6 +121,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             var model = new DetailViewModel();
 
+
+
             var DetailViewModel = _session.GetObject<DetailViewModel>("DetailViewModel");
             if (DetailViewModel != null)
             {
@@ -913,8 +915,18 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> WhatWouldYouLIkeToDo(WhatWouldYouLikeToDoViewModel theModel)
         {
+            switch (theModel.ApprenticeshipWhatWouldYouLikeToDo)
+            {
+                case ApprenticeshipWhatWouldYouLikeToDo.Add:
+                    return RedirectToAction("Index", "Apprenticeships");
+                case ApprenticeshipWhatWouldYouLikeToDo.Upload:
+                    return RedirectToAction("Index", "Home");
+                case ApprenticeshipWhatWouldYouLikeToDo.View:
+                    return RedirectToAction("Index", "ProviderApprenticeships");
+                default:
+                    return RedirectToAction("Index", "Home");
+            }
 
-                return RedirectToAction("Complete", "Apprenticeships");
           
 
 
@@ -923,29 +935,27 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [Authorize]
         public IActionResult DeleteConfirm()
         {
-            var model = new WhatWouldYouLikeToDoViewModel();
+            var model = new DeleteConfirmViewModel();
 
 
-            return View("../Apprenticeships/ConfirmApprenticeshipDelete/Index", model);
+            return View("../Apprenticeships/ConfirmationDelete/Index", model);
         }
 
-        [Authorize]
-        [HttpPost]
-        public async Task<IActionResult> DeleteConfirm(WhatWouldYouLikeToDoViewModel theModel)
-        {
+        //[Authorize]
+        //[HttpPost]
+        //public async Task<IActionResult> DeleteConfirm(DeleteConfirmViewModel theModel)
+        //{
+           
 
-            return RedirectToAction("Complete", "Apprenticeships");
+        //    return RedirectToAction("ConfirmationDelete", "Apprenticeships");
 
-
-
-        }
+        //}
 
 
         [Authorize]
         public IActionResult ConfirmationDelete()
         {
             var model = new ConfirmationDeleteViewModel();
-
 
             return View("../Apprenticeships/ConfirmApprenticeshipDelete/Index", model);
         }
@@ -954,8 +964,16 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> ConfirmationDelete(ConfirmationDeleteViewModel theModel)
         {
-            //call service to delete
-            return RedirectToAction("Complete", "Apprenticeships");
+            switch (theModel.ApprenticeshipDelete)
+            {
+                case ApprenticeshipDelete.Delete:
+                    //call delete service
+                    return RedirectToAction("Index", "ProviderApprenticeships");
+                case ApprenticeshipDelete.Back:
+                    return RedirectToAction("Index", "ProviderApprenticeships");
+                default:
+                    return RedirectToAction("Index", "Home");
+            }
 
 
 
