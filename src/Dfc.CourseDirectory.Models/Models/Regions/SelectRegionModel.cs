@@ -885,7 +885,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         {
                             Id = "E09000004",
                             ApiLocationId = 94,
-                            SubRegionName = "Bexley,",
+                            SubRegionName = "Bexley",
                             Checked = false,
                             Latitude = 51.44135,
                             Longitude = 0.14861
