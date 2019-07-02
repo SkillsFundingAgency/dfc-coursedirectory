@@ -517,7 +517,7 @@
                     validStates.push(false);
                 }
                 validStates.push(true);
-                if (isWorkBased & !$.requiredValidate($regions.find("input[type='checkbox']:checked").val()) & $nationalRadioChecked === "false") {
+                if (isWorkBased & !$.requiredValidate($regions.find("input[type='checkbox']:checked").val()) & $nationalRadioChecked.toLowerCase() === "false") {
                     $regions.govUkCheckboxes("invalidState", $regions.attr("val-required-message"));
                     var regionsErrorHashLinks = $regions.govUkCheckboxes("getErrorHashLinks");
                     $errorSummary.govUkErrorSummary("add", regionsErrorHashLinks);
