@@ -216,13 +216,13 @@
 
                         @if (courseRun.DeliveryMode != DeliveryMode.Undefined)
                         {
-                            <span id="deliverymode">@courseRun.DeliveryMode</span>
+                            <span id="deliverymode">@WebHelper.GetEnumDescription(courseRun.DeliveryMode)</span>
                         }
                         @if (courseRun.DeliveryMode == DeliveryMode.ClassroomBased)
                         {
                             @if (courseRun.StudyMode != StudyMode.Undefined)
                             {
-                                <span id="studymode">@courseRun.StudyMode</span>
+                                <span id="studymode">@WebHelper.GetEnumDescription(courseRun.StudyMode)</span>
                             }
                         }
 
