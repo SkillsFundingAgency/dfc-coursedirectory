@@ -77,7 +77,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                         vm.Courses = migratedCourses.OrderBy(x => x.QualificationCourseTitle);
                         vm.AreAllReadyToBePublished = CheckAreAllReadyToBePublished(migratedCourses, PublishMode.Migration);
                         vm.Courses = GetErrorMessages(vm.Courses, ValidationMode.MigrateCourse);
-                        vm.Venues = GetVenueNames(vm.Courses);
+                        vm.Venues = VenueHelper.GetVenueNames(vm.Courses, _venueService).Result;
                         break;
                     }
                     else
@@ -112,7 +112,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                     vm.Courses = bulkUploadedCourses.OrderBy(x => x.QualificationCourseTitle);
                     vm.AreAllReadyToBePublished = CheckAreAllReadyToBePublished(bulkUploadedCourses, PublishMode.BulkUpload);
                     vm.Courses = GetErrorMessages(vm.Courses, ValidationMode.BulkUploadCourse);
-                    vm.Venues = GetVenueNames(vm.Courses);
+                    vm.Venues = VenueHelper.GetVenueNames(vm.Courses, _venueService).Result;
                     break;
 
                 case PublishMode.DataQualityIndicator:
@@ -143,7 +143,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
 
                     vm.NumberOfCoursesInFiles = invalidCourses.Count();
                     vm.Courses = filteredList.OrderBy(x => x.QualificationCourseTitle);
-                    vm.Venues = GetVenueNames(vm.Courses);
+                    vm.Venues = VenueHelper.GetVenueNames(vm.Courses,_venueService).Result;
                     vm.Regions = allRegions;
                     break;
             }
@@ -312,30 +312,5 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
             }
             return courses;
         }
-        internal Dictionary<Guid, string> GetVenueNames(IEnumerable<Course> courses)
-        {
-            Dictionary<Guid, string> venueNames = new Dictionary<Guid, string>();
-            foreach (var course in courses)
-            {
-                foreach (var courseRun in course.CourseRuns)
-                {
-                    if (courseRun.VenueId != Guid.Empty && courseRun.VenueId != null)
-                    {
-                        if (!venueNames.ContainsKey((Guid)courseRun.VenueId))
-                        {
-                            var result = _venueService.GetVenueByIdAsync(new GetVenueByIdCriteria(courseRun.VenueId.ToString()));
-                            if (result.Result.IsSuccess && result.Result.HasValue)
-                            {
-                                Guid.TryParse(result.Result.Value.ID, out Guid venueId);
-                                venueNames.Add(venueId, result.Result.Value.VenueName);
-                            }
-                        }
-                    }
-
-                }
-            }
-            return venueNames;
-        }
-
     }
 }
