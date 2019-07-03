@@ -21,8 +21,8 @@
 
 
     <div class="">
-        <select asp-for="@Model.LocationId" asp-items="@Model.Locations" class="govuk-select govuk-!-margin-right-6 govuk-!-margin-bottom-6" val-required-message="Select location">
-            <option selected value="">select</option>
+        <select asp-for="@Model.LocationId" asp-items="@Model.Locations" class="govuk-select" val-required-message="Select location">
+            <option selected value="">Please select</option>
         </select>
         @if (Model.DisplayLink)
         {
