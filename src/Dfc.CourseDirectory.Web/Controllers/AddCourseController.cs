@@ -1096,7 +1096,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 {
                     foreach (var selectedRegion in addCourseSection2Session.SelectedRegions)
                     {
-                        viewModel.ChooseRegion.Regions.RegionItems.FirstOrDefault(x => x.Id == selectedRegion.ToString()).Checked = true;
+                        viewModel.ChooseRegion.Regions.RegionItems.SelectMany(x=>x.SubRegion)
+                            .FirstOrDefault(sb=>sb.Id == selectedRegion).Checked = true;
                     }
                 }
             }
