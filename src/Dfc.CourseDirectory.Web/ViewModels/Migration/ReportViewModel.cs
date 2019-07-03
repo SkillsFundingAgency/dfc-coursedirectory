@@ -12,7 +12,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels.Migration
         public int PublishedCount { get; set; }
         public int CourseCount { get; set; }
 
-        public ReportViewModel(IEnumerable<Course> courses)
+        public ReportViewModel(IEnumerable<Course> courses, CourseMigrationReport report)
         {
             var courseCountStatusList = new List<RecordStatus>
             {
@@ -22,16 +22,14 @@ namespace Dfc.CourseDirectory.Web.ViewModels.Migration
             };
 
             ErrorsCount = courses.SelectMany(c => c.CourseRuns)
-                .Count(x => x.RecordStatus == RecordStatus.MigrationPending);
+                .Count(x=>x.RecordStatus == RecordStatus.MigrationPending || x.RecordStatus == RecordStatus.MigrationReadyToGoLive);
 
-            PublishedCount = courses.Where(x => x.CourseStatus == RecordStatus.Live)
-                .SelectMany(c => c.CourseRuns)
+            PublishedCount = courses.SelectMany(c => c.CourseRuns)
                 .Count(x => x.RecordStatus == RecordStatus.Live);
 
-            CourseCount = courses.SelectMany(x => x.CourseRuns)
-                .Count(x => courseCountStatusList.Contains(x.RecordStatus));
-            //Awaiting new service
-            NoLarsCount = 0;
+            CourseCount = report.PreviousLiveCourseCount;
+
+            NoLarsCount = (report.LarslessCourses.SelectMany(c => c.CourseRuns)).Count();
         }
     }
 }

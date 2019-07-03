@@ -1,7 +1,126 @@
-﻿
-@{
-    ViewData["Title"] = "larsless";
+﻿@using System.Text.RegularExpressions
+@using Dfc.CourseDirectory.Models.Enums
+@using Microsoft.AspNetCore.Authorization;
+@using Dfc.CourseDirectory.Models.Models.Courses
+@using Dfc.CourseDirectory.Web.Helpers
+@using Microsoft.Azure.Search.Common
+@model Dfc.CourseDirectory.Web.ViewModels.Migration.LarslessViewModel
+
+@inject IAuthorizationService Authorization
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@foreach (var course in Model.LarslessCourses)
+{
+    if (!course.IsValid)
+    {
+        <div class="error-line" id="CourseId_@course.id">
+            <div class="govuk-grid-column-two-thirds m100 col">
+                <div class="govuk-form-group--error">
+                    <strong>@course.QualificationCourseTitle</strong>
+                    <br />LEVEL: @course.NotionalNVQLevelv2, @course.AwardOrgCode, Lars: @course.LearnAimRef
+                    @{
+                        if (course.ValidationErrors.Any())
+                        {
+                            <div class="govuk-error-summary__body">
+                                <ul class="govuk-list govuk-error-summary__list">
+
+
+                                    @foreach (var error in course.ValidationErrors)
+                                    {
+                                        <li class="govuk-error-message">@error</li>
+                                    }
+                                </ul>
+                            </div>
+
+                        }
+                    }
+
+                </div>
+
+
+
+            </div>
+            <div id="courseid" style="display:none">@course.id</div>
+        </div>
+    }
+
+
+    foreach (var courseRun in course.CourseRuns.OrderBy(x => x.CourseName))
+    {
+        
+            <div id="courserunid" style="display:none">@courseRun.id</div>
+
+            <div class="error-line" id="CourseRunId_@courseRun.id">
+
+            <div class="govuk-grid-column-two-thirds m100 col">
+                <div class="govuk-form-group--error">
+                    <strong>@courseRun.CourseName</strong>
+                    <br />
+                    <div class="govuk-grid-row">
+                        <div class="govuk-grid-column-one-quarter">
+                            <span>@courseRun.ProviderCourseID</span>
+                        </div>
+                        <div class="govuk-grid-column-one-quarter">
+                            @if (courseRun.VenueId != null && Model.Venues.ContainsKey((Guid)courseRun.VenueId))
+                            {
+                                <span>@Model.Venues[(Guid)courseRun.VenueId]</span>
+                            }
+                            else
+                            {
+                                <span>&nbsp;</span>
+                            }
+
+                        </div>
+                        <div class="govuk-grid-column-one-quarter">
+                            @if (courseRun.StudyMode == StudyMode.Undefined)
+                            {
+                                <span>&nbsp;</span>
+                            }
+                            else
+                            {
+                                <span>@courseRun.StudyMode.ToDescription()</span>
+                            }
+
+                        </div>
+                        <div class="govuk-grid-column-one-quarter">
+                            @if (courseRun.StartDate.HasValue)
+                            {
+                                <span>@courseRun.StartDate.Value.ToString("dd'/'MM'/'yyyy")</span>
+                            }
+                            else if (courseRun.FlexibleStartDate)
+                            {
+                                <span>Flexible Start Date</span>
+                            }
+                            else
+                            {
+                                <span>&nbsp;</span>
+                            }
+
+                        </div>
+                    </div>
+
+                    @{
+                        if (courseRun.ValidationErrors.Any())
+                        {
+                            <div class="govuk-error-summary__body">
+                                <ul class="govuk-list govuk-error-summary__list">
+
+
+                                    @foreach (var error in courseRun.ValidationErrors)
+                                    {
+                                        <li class="govuk-error-message">@error</li>
+                                    }
+                                </ul>
+                            </div>
+
+                        }
+                    }
+                </div>
+
+
+            </div>
+            </div>
+        
+       
+    }
 }
-
-<h2>larsless</h2>
-
