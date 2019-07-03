@@ -320,62 +320,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
             var DeliveryOptionsCombinedViewModel = _session.GetObject<DeliveryOptionsCombinedViewModel>("DeliveryOptionsCombinedViewModel");
             var Regions = _session.GetObject<String[]>("SelectedRegions");
 
-            if (DetailViewModel != null)
-            {
-                model.DetailViewModel = DetailViewModel;
-            }
-            else
-            {
-                model.DetailViewModel = new DetailViewModel() { ApprenticeshipTitle = "Test" };
-            }
-
-            if (DeliveryViewModel != null)
-            {
-                model.DeliveryViewModel = DeliveryViewModel;
-            }
-            else
-            {
-                model.DeliveryViewModel = new DeliveryViewModel();
-            }
-
-            if (DeliveryOptionsViewModel != null)
-            {
-                model.DeliveryOptionsViewModel = DeliveryOptionsViewModel;
-            }
-            else
-            {
-                model.DeliveryOptionsViewModel = new DeliveryOptionsViewModel();
-            }
-
-            if (DeliveryOptionsCombinedViewModel != null)
-            {
-                model.DeliveryOptionsCombinedViewModel = DeliveryOptionsCombinedViewModel;
-            }
-            else
-            {
-                model.DeliveryOptionsCombinedViewModel = new DeliveryOptionsCombinedViewModel();
-            }
-
-            if (Regions != null)
-            {
-                model.Regions = Regions;
-            }
-            else
-            {
-                model.Regions = new string[0];
-            }
-
-
-            if (LocationChoiceSelectionViewModel != null)
-            {
-
-                model.LocationChoiceSelectionViewModel = LocationChoiceSelectionViewModel;
-            }
-            else
-            {
-                model.LocationChoiceSelectionViewModel = new LocationChoiceSelectionViewModel();
-            }
-
+            model.DetailViewModel = DetailViewModel;
+            model.DeliveryViewModel = DeliveryViewModel;
+            model.DeliveryOptionsViewModel = DeliveryOptionsViewModel;
+            model.DeliveryOptionsCombinedViewModel = DeliveryOptionsCombinedViewModel;
+            model.Regions = Regions;
+            model.LocationChoiceSelectionViewModel = LocationChoiceSelectionViewModel;
             return View("../Apprenticeships/Summary/Index", model);
         }
 
