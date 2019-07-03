@@ -16,6 +16,7 @@ using Dfc.CourseDirectory.Web.Helpers.Attributes;
 using Dfc.CourseDirectory.Web.ViewModels.Migration;
 using System.Collections.Generic;
 using Dfc.CourseDirectory.Models.Models.Courses;
+using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -27,6 +28,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly IBulkUploadService _bulkUploadService;
         private readonly IUserHelper _userHelper;
         private readonly ICourseService _courseService;
+        private readonly IVenueService _venueService;
 
         private IHostingEnvironment _env;
         private ISession _session => _contextAccessor.HttpContext.Session;
@@ -35,7 +37,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             ILogger<MigrationController> logger,
             IHttpContextAccessor contextAccessor,
             IBulkUploadService bulkUploadService,
-            IHostingEnvironment env, IUserHelper userHelper, ICourseService courseService)
+            IHostingEnvironment env, IUserHelper userHelper, ICourseService courseService, IVenueService venueService)
         {
             Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(contextAccessor, nameof(contextAccessor));
@@ -48,6 +50,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _env = env;
             _userHelper = userHelper;
             _courseService = courseService;
+            _venueService = venueService;
         }
 
 
@@ -207,19 +210,32 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 throw new Exception(courseMigrationReport.Error + $"For UKPRN: {ukprn}");
             }
-            var model = new ReportViewModel(courses.Value.Value.SelectMany(o => o.Value).SelectMany(i => i.Value));
 
-            IEnumerable<Course> courses1 = _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(ukprn))
-                                                .Result
-                                                .Value
-                                                .Value
-                                                .SelectMany(o => o.Value)
-                                                .SelectMany(i => i.Value);
-
-            IEnumerable<CourseRun> bulkUploadReadyToGoLive = courses1.SelectMany(c => c.CourseRuns)
-                                                                       .Where(x => x.RecordStatus == RecordStatus.MigrationPending);
+            var model = new ReportViewModel(courses.Value.Value.SelectMany(o => o.Value).SelectMany(i => i.Value)
+                ,courseMigrationReport.Value);
 
             return View("Report/index", model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Larsless()
+        {
+            var ukprn = _session.GetInt32("UKPRN");
+            var courseMigrationReport = await _courseService.GetCourseMigrationReport(ukprn.Value);
+            if (courseMigrationReport.IsFailure)
+            {
+                throw new Exception(courseMigrationReport.Error + $"For UKPRN: {ukprn}");
+            }
+
+            var venues = await VenueHelper.GetVenueNames(courseMigrationReport.Value.LarslessCourses, _venueService);
+
+            var model = new LarslessViewModel
+            {
+                LarslessCourses = courseMigrationReport.Value.LarslessCourses,
+                Venues = venues
+            };
+
+            return View("Report/larsless", model);
         }
     }
 }
