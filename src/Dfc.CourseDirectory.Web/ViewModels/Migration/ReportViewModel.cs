@@ -8,9 +8,9 @@ namespace Dfc.CourseDirectory.Web.ViewModels.Migration
     public class ReportViewModel
     {
         public int ErrorsCount { get; set; }
-        public int NoLarsCount { get; set; }
+        public int? NoLarsCount { get; set; }
         public int PublishedCount { get; set; }
-        public int CourseCount { get; set; }
+        public int? CourseCount { get; set; }
 
         public ReportViewModel(IEnumerable<Course> courses, CourseMigrationReport report)
         {
@@ -27,9 +27,18 @@ namespace Dfc.CourseDirectory.Web.ViewModels.Migration
             PublishedCount = courses.SelectMany(c => c.CourseRuns)
                 .Count(x => x.RecordStatus == RecordStatus.Live);
 
-            CourseCount = report.PreviousLiveCourseCount;
+            if (report == null)
+            {
+                CourseCount = null;
+                NoLarsCount = null;
+            }
+            else
+            {
+                CourseCount = report.PreviousLiveCourseCount;
 
-            NoLarsCount = (report.LarslessCourses.SelectMany(c => c.CourseRuns)).Count();
+                NoLarsCount = (report.LarslessCourses.SelectMany(c => c.CourseRuns)).Count();
+
+            }
         }
     }
 }

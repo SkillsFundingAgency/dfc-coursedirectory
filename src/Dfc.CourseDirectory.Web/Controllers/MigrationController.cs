@@ -205,14 +205,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 throw new Exception($"Unable to find courses for UKPRN: {ukprn}");
             }
 
-            var courseMigrationReport = await _courseService.GetCourseMigrationReport(ukprn.Value);
-            if (courseMigrationReport.IsFailure)
-            {
-                throw new Exception(courseMigrationReport.Error + $"For UKPRN: {ukprn}");
-            }
+            var courseMigrationReportResult = await _courseService.GetCourseMigrationReport(ukprn.Value);
+
+            var courseMigrationReport = courseMigrationReportResult?.Value;
 
             var model = new ReportViewModel(courses.Value.Value.SelectMany(o => o.Value).SelectMany(i => i.Value)
-                ,courseMigrationReport.Value);
+                ,courseMigrationReport);
 
             return View("Report/index", model);
         }
