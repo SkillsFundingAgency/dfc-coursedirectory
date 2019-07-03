@@ -228,6 +228,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
 
             var venues = await VenueHelper.GetVenueNames(courseMigrationReport.Value.LarslessCourses, _venueService);
+
+            var model = new LarslessViewModel
+            {
+                LarslessCourses = courseMigrationReport.Value.LarslessCourses,
+                Venues = venues
+            };
+
+            return View("Report/larsless", model);
         }
     }
 }

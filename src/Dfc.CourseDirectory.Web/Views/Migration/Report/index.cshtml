@@ -39,7 +39,8 @@
                             <h3 class="govuk-heading-s">These have no or an expired LARS/QAN</h3>
                             <p>If you still run these courses you will need to publish them to the new course directory.</p>
 
-                            @*<a href="#" class="govuk-button govuk-button--secondary">Download</a>*@
+                            @Html.ActionLink("View courses that weren't transferred", "Larsless", "Migration",null,
+                                new {@class="govuk-button govuk-button--secondary"})
                         </div>
                     </div>
                     <div class="govuk-!-margin-bottom-9">
