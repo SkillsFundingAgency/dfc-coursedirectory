@@ -87,16 +87,19 @@
                             </a>
                         </div>
 
-                        @{
-                            Model.DeliveryOptionsViewModel.DeliveryOptionsListItemModel.SummaryPage = true;
-                        }
+                        @*@{
+                                Model.DeliveryOptionsViewModel.DeliveryOptionsListItemModel.SummaryPage = true;
+                            }*@
                         @if (Model.DeliveryOptionsViewModel != null)
                         {
                             @await Component.InvokeAsync(nameof(DeliveryOptionsList), Model.DeliveryOptionsViewModel.DeliveryOptionsListItemModel)
                         }
                         else
                         {
-                            @await Component.InvokeAsync(nameof(DeliveryOptionsList), Model.DeliveryOptionsCombinedViewModel.DeliveryOptionsListItemModel)
+                            @if (Model.DeliveryOptionsCombinedViewModel != null)
+                            {
+                                @await Component.InvokeAsync(nameof(DeliveryOptionsList), Model.DeliveryOptionsCombinedViewModel.DeliveryOptionsListItemModel)
+                            }
                         }
 
                         <button type="submit" class="govuk-button" id="next">Publish</button>

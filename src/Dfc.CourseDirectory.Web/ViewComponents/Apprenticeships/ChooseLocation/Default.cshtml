@@ -6,9 +6,12 @@
 
 
 <div class="govuk-form-group">
-    <label id="govuk-label-@nameof(@Model.LocationId)" class="govuk-label" asp-for="@Model.LabelText">
+    @*<label id="govuk-label-@nameof(@Model.LocationId)" class="govuk-label" asp-for="@Model.LabelText">
         @Model.LabelText
-    </label>
+    </label>*@
+    <h3 class="" for="sort">
+        @Model.LabelText
+    </h3>
     @if (!string.IsNullOrWhiteSpace(Model.HintText))
     {
         <span class="govuk-hint">
@@ -18,7 +21,7 @@
 
 
     <div class="">
-        <select asp-for="@Model.LocationId" asp-items="@Model.Locations" class="govuk-select" val-required-message="Select location">
+        <select asp-for="@Model.LocationId" asp-items="@Model.Locations" class="govuk-select govuk-!-margin-right-6 govuk-!-margin-bottom-6" val-required-message="Select location">
             <option selected value="">select</option>
         </select>
         @if (Model.DisplayLink)
