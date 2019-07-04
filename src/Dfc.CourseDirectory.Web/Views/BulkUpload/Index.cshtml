@@ -103,8 +103,7 @@
         <h3 class="govuk-heading-m">Template</h3>
         <ul class="govuk-list">
             <li class="govuk-!-padding-bottom-4">
-                <a href="#" class="govuk-link">Download current courses as csv template</a>
-            </li>
+                @Html.ActionLink("Download a template containing your current courses", "GetCurrentCoursesTemplateFile", "BlobStorage")
             </li>
             <li>
                 @Html.ActionLink("Download blank template (csv format)", "GetBulkUploadTemplateFile", "BlobStorage")
