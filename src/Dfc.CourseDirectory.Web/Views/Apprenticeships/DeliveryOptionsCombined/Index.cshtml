@@ -34,7 +34,7 @@
                                 How is the training delivered at this location?
                             </h3>
                         </legend>
-                        <span id="waste-hint" class="govuk-hint">
+                        <span id="govuk-label-deliveryoptions" class="govuk-hint">
                             Select all that apply
                         </span>
                         <div id="deliveryoptions" class="govuk-checkboxes" val-required-message="Select at least one option from Day Release and Block Release">
@@ -84,7 +84,7 @@
 
                             </h3>*@
                         </legend>
-                        <span id="waste-hint" class="govuk-hint">
+                        <span id="govuk-label-Radius" class="govuk-hint">
                             How far are you willing to travel from the selected location?
 
                         </span>
@@ -314,14 +314,20 @@
                 }
             }
 
+            $("#National").change(function () {
+                if ($("#National")[0].checked) {
+                    $("#Radius").val(200);
+                    $("#Radius").attr('disabled', true);
+                } else {
+                    $("#Radius").val('');
+                    $('#Radius').prop("disabled", false);
+                    $('#Radius').removeAttr("disabled");
+                }
+             
+            });
 
-            //$('#ApprenticeshipDeliveryOptionsForm').submit(function (event) {
-            //     event.preventDefault();
-            //    validate();
-            //          if (validStates.every(isAllValid)) {
-            //              $AddAnother.trigger('click');
-            //    }
-            //});
+          
+
 
 
             $Continue.on("click", function (event) {
@@ -343,7 +349,7 @@
                                      LocationId: $selectedVenue.val(),
                                      DayRelease: $("#DayRelease")[0].checked,
                                      BlockRelease: $("#BlockRelease")[0].checked,
-                                     National: $National.val(),
+                                     National: $("#National")[0].checked,
                                      Radius: $Radius.val(),
                                      RowCount: rowCount
                                  },

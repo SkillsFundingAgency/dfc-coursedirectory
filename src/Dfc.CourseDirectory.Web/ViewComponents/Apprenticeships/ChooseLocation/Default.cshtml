@@ -9,7 +9,7 @@
     @*<label id="govuk-label-@nameof(@Model.LocationId)" class="govuk-label" asp-for="@Model.LabelText">
         @Model.LabelText
     </label>*@
-    <h3 class="" for="sort">
+    <h3 class="" for="sort" id="govuk-label-LocationId">
         @Model.LabelText
     </h3>
     @if (!string.IsNullOrWhiteSpace(Model.HintText))
