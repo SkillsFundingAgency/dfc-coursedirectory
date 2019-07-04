@@ -188,13 +188,159 @@
                 return currentValue === true;
             }
 
+            tinymce.init({
+                selector: '#info',
+                plugins: "advlist lists autoresize test",
+                menubar: false,
+                statusbar: false,
+                resize: false,
+                in_height: 450,
+                height: '75%',
+                autoresize_min_height: 600,
+                autoresize_max_height: 800,
+                toolbar: 'formatselect | bold | numlist bullist | removeformat ',
+            }).then(function(editors) {
+                $(".mce-branding").hide();
+            });
+
+            tinymce.PluginManager.add('test',
+                function(editor) {
+                var self = this;
+
+                function update() {
+
+                var $left = ($maxLength - self.getCount());
+                var chars = $maxLength - self.getCount();
+                if (chars === 1) {
+
+                    $(".mce-container").removeClass("text-error");
+
+                    $("#apprenticeship_info").removeClass("govuk-error-message");
+                    $("#apprenticeship_info").addClass("govuk-hint");
+                    $("#apprenticeship_info").text('You have ' + chars + ' character remaining');
+                }
+
+                if (chars >= 1) {
+
+                    $(".mce-container").removeClass("text-error");
+
+                    $("#apprenticeship_info").removeClass("govuk-error-message");
+                    $("#apprenticeship_info").addClass("govuk-hint");
+                    $("#apprenticeship_info").text('You have ' + chars + ' characters remaining');
+                }
+
+                if (chars < 0) {
+
+                    $(".mce-container").addClass("text-error");
+
+                    $("#apprenticeship_info").addClass("govuk-error-message");
+                    $("#apprenticeship_info").removeClass("govuk-hint");
+                    $(".mce-container").addClass("text-error");
+                    if (self.getCount() - parseInt($maxLength) == 1) {
+                        $("#apprenticeship_info").text('You have ' +
+                            (self.getCount() - parseInt($maxLength)).toString() +
+                            ' character too many');
+                    } else {
+                        $("#apprenticeship_info").text('You have ' +
+                            (self.getCount() - parseInt($maxLength)).toString() +
+                            ' characters too many');
+                    }
+                }
+
+                if (chars === 0) {
+
+                    $(".mce-container").removeClass("text-error");
+                    $("#apprenticeship_info").removeClass("govuk-error-message");
+                    $("#apprenticeship_info").addClass("govuk-hint");
+                    $(".mce-container").removeClass("text-error");
+                    $("#apprenticeship_info").text('You have ' + chars + ' characters remaining');
+                }
+
+
+            }
+
+            editor.on('init',
+                function() {
+
+                    var ele = document.createElement("span");
+
+                    var message = "";
+                    var chars = $maxLength - self.getCount();
+                    if (chars === 1) {
+
+                        ele.className = "govuk-hint govuk-character-count__message"
+                        message = 'You have ' + chars + ' character remaining';
+                    }
+
+                    if (chars >= 1) {
+                        ele.className = "govuk-hint govuk-character-count__message"
+                        message = 'You have ' + chars + ' characters remaining';
+                    }
+
+                    if (chars < 0) {
+
+                        $(".mce-container").addClass("text-error");
+
+                        $(".mce-container").closest(".govuk-form-group").addClass("govuk-form-group--error");
+
+                        ele.className = "govuk-character-count__message govuk-error-message"
+                        $(".mce-container").addClass("text-error");
+                        if (self.getCount() - parseInt($maxLength) == 1) {
+                            message = 'You have ' +
+                                (self.getCount() - parseInt($maxLength)).toString() +
+                                ' character too many';
+                        } else {
+                            message = 'You have ' +
+                                (self.getCount() - parseInt($maxLength)).toString() +
+                                ' characters too many';
+                        }
+                    }
+
+                    if (chars === 0) {
+                        ele.className = "govuk-hint govuk-character-count__message"
+                        $(".mce-container").removeClass("text-error");
+                        message = 'You have ' + chars + ' characters remaining';
+                    }
+
+                    window.setTimeout(function() {
+
+                            ele.id = "apprenticeship_info";
+                            ele.innerHTML = message;
+                            $("#info").after(ele);
+
+                            editor.on('setcontent beforeaddundo', update);
+
+                            editor.on('keyup',
+                                function(e) {
+
+                                    update();
+                                });
+                        }, 0);
+
+                    //validate();
+
+                });
+
+            self.getCount = function() {
+                var tx = editor.getContent({ format: 'raw' });
+                var decoded = decodeHtml(tx);
+                var decodedStripped = decoded.replace(/(<([^>]+)>)/ig, "").trim();
+                var tc = decodedStripped.length;
+
+                return tc;
+            };
+
+            function decodeHtml(html) {
+                var txt = document.createElement("textarea");
+                txt.innerHTML = html;
+                return txt.value;
+            }
+                  });
 
 
 
 
-
-
-            function validate() {
+               function validate() {
 
                 validStates = [];
 
@@ -423,159 +569,6 @@
                 $errorSummary.focus();
             }
             };
-
-
-
-
-            tinymce.init({
-                selector: '#info',
-                plugins: "advlist lists autoresize test",
-                menubar: false,
-                statusbar: false,
-                resize: false,
-                in_height: 450,
-                height: '75%',
-                autoresize_min_height: 600,
-                autoresize_max_height: 800,
-                toolbar: 'formatselect | bold | numlist bullist | removeformat ',
-            }).then(function(editors) {
-                $(".mce-branding").hide();
-            });
-
-            tinymce.PluginManager.add('test',
-                function(editor) {
-                var self = this;
-
-                function update() {
-
-                var $left = ($maxLength - self.getCount());
-                var chars = $maxLength - self.getCount();
-                if (chars === 1) {
-
-                    $(".mce-container").removeClass("text-error");
-
-                    $("#apprenticeship_info").removeClass("govuk-error-message");
-                    $("#apprenticeship_info").addClass("govuk-hint");
-                    $("#apprenticeship_info").text('You have ' + chars + ' character remaining');
-                }
-
-                if (chars >= 1) {
-
-                    $(".mce-container").removeClass("text-error");
-
-                    $("#apprenticeship_info").removeClass("govuk-error-message");
-                    $("#apprenticeship_info").addClass("govuk-hint");
-                    $("#apprenticeship_info").text('You have ' + chars + ' characters remaining');
-                }
-
-                if (chars < 0) {
-
-                    $(".mce-container").addClass("text-error");
-
-                    $("#apprenticeship_info").addClass("govuk-error-message");
-                    $("#apprenticeship_info").removeClass("govuk-hint");
-                    $(".mce-container").addClass("text-error");
-                    if (self.getCount() - parseInt($maxLength) == 1) {
-                        $("#apprenticeship_info").text('You have ' +
-                            (self.getCount() - parseInt($maxLength)).toString() +
-                            ' character too many');
-                    } else {
-                        $("#apprenticeship_info").text('You have ' +
-                            (self.getCount() - parseInt($maxLength)).toString() +
-                            ' characters too many');
-                    }
-                }
-
-                if (chars === 0) {
-
-                    $(".mce-container").removeClass("text-error");
-                    $("#apprenticeship_info").removeClass("govuk-error-message");
-                    $("#apprenticeship_info").addClass("govuk-hint");
-                    $(".mce-container").removeClass("text-error");
-                    $("#apprenticeship_info").text('You have ' + chars + ' characters remaining');
-                }
-
-
-            }
-
-            editor.on('init',
-                function() {
-
-                    var ele = document.createElement("span");
-
-                    var message = "";
-                    var chars = $maxLength - self.getCount();
-                    if (chars === 1) {
-
-                        ele.className = "govuk-hint govuk-character-count__message"
-                        message = 'You have ' + chars + ' character remaining';
-                    }
-
-                    if (chars >= 1) {
-                        ele.className = "govuk-hint govuk-character-count__message"
-                        message = 'You have ' + chars + ' characters remaining';
-                    }
-
-                    if (chars < 0) {
-
-                        $(".mce-container").addClass("text-error");
-
-                        $(".mce-container").closest(".govuk-form-group").addClass("govuk-form-group--error");
-
-                        ele.className = "govuk-character-count__message govuk-error-message"
-                        $(".mce-container").addClass("text-error");
-                        if (self.getCount() - parseInt($maxLength) == 1) {
-                            message = 'You have ' +
-                                (self.getCount() - parseInt($maxLength)).toString() +
-                                ' character too many';
-                        } else {
-                            message = 'You have ' +
-                                (self.getCount() - parseInt($maxLength)).toString() +
-                                ' characters too many';
-                        }
-                    }
-
-                    if (chars === 0) {
-                        ele.className = "govuk-hint govuk-character-count__message"
-                        $(".mce-container").removeClass("text-error");
-                        message = 'You have ' + chars + ' characters remaining';
-                    }
-
-                    window.setTimeout(function() {
-
-                            ele.id = "apprenticeship_info";
-                            ele.innerHTML = message;
-                            $("#info").after(ele);
-
-                            editor.on('setcontent beforeaddundo', update);
-
-                            editor.on('keyup',
-                                function(e) {
-
-                                    update();
-                                });
-                        },
-                        0);
-
-                    validate();
-
-                });
-
-            self.getCount = function() {
-                var tx = editor.getContent({ format: 'raw' });
-                var decoded = decodeHtml(tx);
-                var decodedStripped = decoded.replace(/(<([^>]+)>)/ig, "").trim();
-                var tc = decodedStripped.length;
-
-                return tc;
-            };
-
-            function decodeHtml(html) {
-                var txt = document.createElement("textarea");
-                txt.innerHTML = html;
-                return txt.value;
-            }
-                  });
 
 
             $continue.on("click", function (event) {

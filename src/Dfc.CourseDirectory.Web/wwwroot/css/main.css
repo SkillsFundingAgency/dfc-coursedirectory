@@ -7664,9 +7664,18 @@ select:disabled {
 }
 
 .sidebar .widget {
-  border-top: 5px solid #005ea5;
+  border-top: 5px solid #28a197;
   background-color: #f8f8f8;
   padding-left: 1rem;
+}
+
+.sidebar .widget.white {
+  background-color: white;
+  padding: 1em;
+}
+
+.sidebar .widget.blue {
+  border-top: 5px solid #005ea5;
 }
 
 .sidebar .widget div {

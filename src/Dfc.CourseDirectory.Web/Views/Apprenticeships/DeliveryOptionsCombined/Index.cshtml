@@ -35,7 +35,7 @@
                             </h3>
                         </legend>
                         <span id="waste-hint" class="govuk-hint">
-                            Select all that apply.
+                            Select all that apply
                         </span>
                         <div id="deliveryoptions" class="govuk-checkboxes" val-required-message="Select at least one option from Day Release and Block Release">
                             <div class="govuk-checkboxes__item">
@@ -55,7 +55,7 @@
                         <div class="govuk-checkboxes__item">
                             <input class="govuk-checkboxes__input" id="employer" name="waste" type="checkbox" value="mines" checked disabled>
                             <label class="govuk-label govuk-checkboxes__label" for="employer">
-                                Employers address
+                                Employer’s address
                             </label>
                         </div>
 
@@ -69,8 +69,8 @@
                     @await Component.InvokeAsync(nameof(ChooseLocation), new ChooseLocationModel()
 
              {
-             LabelText = "Select location",
-             HintText = "Select a location you can travel from",
+             LabelText = "Location",
+             HintText = "Select a venue you can travel from to deliver training",
              LocationId = Model.LocationId ?? (Guid?)null,
              DisplayLink = true,
              DeliveryOptionsListItemModel = Model.DeliveryOptionsListItemModel
@@ -79,10 +79,10 @@
                     <br />
                     <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
                         <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
-                            <h3 class="govuk-fieldset__heading" id="govuk-label-@nameof(@Model.Radius)">
+                            @*<h3 class="govuk-fieldset__heading" id="govuk-label-@nameof(@Model.Radius)">
                                 How is the training delivered at this location?
 
-                            </h3>
+                            </h3>*@
                         </legend>
                         <span id="waste-hint" class="govuk-hint">
                             How far are you willing to travel from the selected location?
