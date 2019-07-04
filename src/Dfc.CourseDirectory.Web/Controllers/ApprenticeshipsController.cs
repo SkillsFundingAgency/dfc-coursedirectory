@@ -774,6 +774,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         public IActionResult ContinueCombined(string LocationId, bool DayRelease, bool BlockRelease, bool National, string Radius, int RowCount)
         {
+            var RadiusValue = 0;
+
+            RadiusValue = National ? 200 : Convert.ToInt32(Radius);
+
             if (RowCount >= 1)
             {
 
@@ -811,7 +815,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     LocationName = venue.Result.Value.VenueName,
                     PostCode = venue.Result.Value.PostCode,
                     National = National,
-                    Radius = Radius
+                    Radius = RadiusValue.ToString()
 
                 });
 
