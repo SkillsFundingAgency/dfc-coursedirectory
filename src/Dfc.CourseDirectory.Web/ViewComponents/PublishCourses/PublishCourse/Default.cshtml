@@ -72,12 +72,11 @@
 
             <div class="error-line" id="CourseRunId_@courseRun.id">
 
-                <div class="govuk-grid-column-two-thirds m100 col">
+                <div class="govuk-grid-column-three-quarters col">
                     <div class="govuk-form-group--error">
                         <strong>@courseRun.CourseName</strong>
                         <br />
-                        <div class="govuk-grid-row">
-                            <div class="govuk-grid-column-one-quarter">
+                            <div class="govuk-grid-column-one-quarter word-wrap-break">
                                 <span>@courseRun.ProviderCourseID</span>
                             </div>
                             <div class="govuk-grid-column-one-quarter">
@@ -117,7 +116,6 @@
                                 }
 
                             </div>
-                        </div>
 
                         @{
                             if (courseRun.ValidationErrors.Any())
@@ -139,7 +137,7 @@
 
 
                 </div>
-                <div class="govuk-grid-column-one-third">
+                <div class="govuk-grid-column-one-quarter">
                     <div class="align-right col right center">
                         @if (adminLogin.Succeeded)
                         {
