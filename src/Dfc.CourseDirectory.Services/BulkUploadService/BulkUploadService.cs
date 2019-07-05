@@ -546,6 +546,12 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 {
                     courseRun.StartDate = specifiedStartDate;
                 }
+                else if(DateTime.TryParse(bulkUploadCourse.StartDate, out specifiedStartDate))
+                {
+                    //Remove time
+                    specifiedStartDate = specifiedStartDate.Date;
+                    courseRun.StartDate = specifiedStartDate;
+                }
                 else
                 {
                     courseRun.StartDate = null;
