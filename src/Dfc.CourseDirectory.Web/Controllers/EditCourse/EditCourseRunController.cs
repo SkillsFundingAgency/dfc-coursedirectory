@@ -395,29 +395,25 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                         //If Region is returned, check for existence of any subregions
                         if (courseRun.Regions.Contains(selectRegionRegionItem.Id))
                         {
-                            var result = from subRegion in selectRegionRegionItem.SubRegion
+                            var subregionsInList = from subRegion in selectRegionRegionItem.SubRegion
                                          where courseRun.Regions.Contains(subRegion.Id)
                                          select subRegion;
 
-                            //If true, then ignore mass ticking of region code, and tick specific code(s)
-                            if (result.Count() > 0)
+                            //If true, then ignore subregions
+                            if (subregionsInList.Count() > 0)
                             {
-
-                                foreach(var subRegion in result)
+                                foreach(var subRegion in subregionsInList)
                                 {
-                                    selectRegionRegionItem.SubRegion.Where(x => x.Id == subRegion.Id).ToList().ForEach(y => y.Checked = true);
+                                    courseRun.Regions = courseRun.Regions.Where(x => (x != subRegion.Id)).ToList();
+                                    
                                 }
-
-                               
                             }
                             //If false, then tick all subregions
-                            else
+                            foreach (var subRegionItemModel in selectRegionRegionItem.SubRegion)
                             {
-                                foreach (var subRegionItemModel in selectRegionRegionItem.SubRegion)
-                                {
-                                    subRegionItemModel.Checked = true;
-                                }
+                                subRegionItemModel.Checked = true;
                             }
+                            
                         }
                         //Else, just tick the one subregion per item
                         else
