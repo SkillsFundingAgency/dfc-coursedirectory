@@ -22,6 +22,14 @@ using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.BlobStorageService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using System.Text.RegularExpressions;
+using System.Reflection;
+using Dfc.CourseDirectory.Services.Interfaces.VenueService;
+using Dfc.CourseDirectory.Services.VenueService;
+using Dfc.CourseDirectory.Models.Models.Regions;
+using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
+using Dfc.CourseDirectory.Services.ProviderService;
+using System.ComponentModel.DataAnnotations;
+using Dfc.CourseDirectory.Web.Helpers;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -32,6 +40,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly ICourseService _courseService;
         private readonly IBlobStorageService _blobService;
+        private readonly IVenueService _venueService;
+        private readonly IProviderService _providerService;
 
         //private IHostingEnvironment _env;
         private ISession _session => _contextAccessor.HttpContext.Session;
@@ -40,17 +50,23 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 ILogger<BlobStorageController> logger,
                 IHttpContextAccessor contextAccessor,
                 ICourseService courseService,
-                IBlobStorageService blobService)
+                IBlobStorageService blobService,
+                IVenueService venueService,
+                IProviderService providerService)
         {
             Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(contextAccessor, nameof(contextAccessor));
             Throw.IfNull(courseService, nameof(courseService));
+            Throw.IfNull(venueService, nameof(venueService));
             Throw.IfNull(blobService, nameof(blobService));
+            Throw.IfNull(providerService, nameof(providerService));
 
             _logger = logger;
             _contextAccessor = contextAccessor;
             _courseService = courseService;
+            _venueService = venueService;
             _blobService = blobService;
+            _providerService = providerService;
         }
 
         [Authorize]
@@ -74,6 +90,126 @@ namespace Dfc.CourseDirectory.Web.Controllers
             result.FileDownloadName = "bulk upload template.csv";
             return result;
         }
+        public FileStreamResult GetCurrentCoursesTemplateFile()
+        {
+            int? UKPRN = null;
+            IProviderSearchResult providerSearchResult = null;
+            string providerName = String.Empty;
+            if (_session.GetInt32("UKPRN").HasValue)
+            {
+
+                UKPRN = _session.GetInt32("UKPRN").Value;
+                providerSearchResult = _providerService.GetProviderByPRNAsync(new Services.ProviderService.ProviderSearchCriteria(UKPRN.Value.ToString())).Result.Value;
+                providerName = providerSearchResult.Value.FirstOrDefault()?.ProviderName.Replace(" ", "");
+            }
+            if (!UKPRN.HasValue)
+                return null;
+
+            IEnumerable<Course> courses = _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(UKPRN))
+                                            .Result
+                                            .Value
+                                            .Value
+                                            .SelectMany(o => o.Value)
+                                            .SelectMany(i => i.Value)
+                                            .Where((y => ((int)y.CourseStatus & (int)RecordStatus.Live) > 0));
+
+
+            //for each course, convert to CsvCourse
+            List<CsvCourse> csvCourses = new List<CsvCourse>();
+            foreach (var course in courses)
+            {
+                //First course run is on same line as course line
+                var firstCourseRun = course.CourseRuns.First();
+
+                SelectRegionModel selectRegionModel = new SelectRegionModel();
+
+                CsvCourse csvCourse = new CsvCourse
+                {
+                    LearnAimRef = course.LearnAimRef,
+                    CourseDescription = course.CourseDescription.Replace(",", " "),
+                    EntryRequirements = course.EntryRequirements.Replace(",", " "),
+                    WhatYoullLearn = course.WhatYoullLearn.Replace(",", " "),
+                    HowYoullLearn = course.HowYoullLearn.Replace(",", " "),
+                    WhatYoullNeed = course.WhatYoullNeed.Replace(",", " "),
+                    HowYoullBeAssessed = course.HowYoullBeAssessed.Replace(",", " "),
+                    WhereNext = course.WhereNext.Replace(",", " "),
+                    AdvancedLearnerLoan = course.AdvancedLearnerLoan ? "Yes" : "No",
+                    AdultEducationBudget = course.AdultEducationBudget ? "Yes" : "No",
+                    CourseName = firstCourseRun.CourseName.Replace(",", " "),
+                    ProviderCourseID = firstCourseRun.ProviderCourseID,
+                    DeliveryMode = firstCourseRun.DeliveryMode.ToDescription(),
+                    StartDate = firstCourseRun.StartDate.Value.Date,
+                    FlexibleStartDate = firstCourseRun.FlexibleStartDate ? "Yes" : string.Empty,
+                    VenueName = firstCourseRun.VenueId.HasValue ? _venueService.GetVenueByIdAsync(new GetVenueByIdCriteria(firstCourseRun.VenueId.Value.ToString())).Result.Value.VenueName : null,
+                    National = firstCourseRun.National.HasValue ? (firstCourseRun.National.Value ? "Yes" : "No") : string.Empty,
+                    Regions = firstCourseRun.Regions != null ? SemiColonSplit(
+                                                                selectRegionModel.RegionItems
+                                                                .Where(x => firstCourseRun.Regions.Contains(x.Id))
+                                                                .Select(y => y.RegionName).ToList()) 
+                                                                : null,
+                    SubRegions = firstCourseRun.SubRegions != null? SemiColonSplit(firstCourseRun.SubRegions.Select(x => x.SubRegionName).ToList()) : null,
+                    CourseURL = firstCourseRun.CourseURL,
+                    Cost = firstCourseRun.Cost,
+                    CostDescription = firstCourseRun.CostDescription.Replace(",", " "),
+                    DurationValue = firstCourseRun.DurationValue,
+                    DurationUnit = firstCourseRun.DurationUnit.ToDescription(),
+                    StudyMode = firstCourseRun.StudyMode.ToDescription(),
+                    AttendancePattern = firstCourseRun.AttendancePattern.ToDescription()
+                };
+                csvCourses.Add(csvCourse);
+                foreach (var courseRun in course.CourseRuns)
+                {
+                    //Ignore the first course run as we've already captured it
+                    if(courseRun.id == firstCourseRun.id)
+                    {
+                        continue;
+                    }
+
+                    CsvCourse csvCourseRun = new CsvCourse
+                    {
+                        LearnAimRef = course.LearnAimRef,
+                        CourseName = courseRun.CourseName,
+                        ProviderCourseID = courseRun.ProviderCourseID,
+                        DeliveryMode = courseRun.DeliveryMode.ToDescription(),
+                        StartDate = courseRun.StartDate.Value.Date,
+                        FlexibleStartDate = courseRun.FlexibleStartDate ? "Yes" : string.Empty,
+                        VenueName = courseRun.VenueId.HasValue ? _venueService.GetVenueByIdAsync(new GetVenueByIdCriteria(courseRun.VenueId.Value.ToString())).Result.Value.VenueName : null,
+                        National = courseRun.National.HasValue ? (firstCourseRun.National.Value ? "Yes" : "No") : string.Empty,
+                        Regions = courseRun.Regions != null ? SemiColonSplit(
+                                                                selectRegionModel.RegionItems
+                                                                .Where(x => courseRun.Regions.Contains(x.Id))
+                                                                .Select(y => y.RegionName).ToList())
+                                                                : null,
+                        SubRegions = courseRun.SubRegions != null ? SemiColonSplit(courseRun.SubRegions.Select(x => x.SubRegionName).ToList()) : null,
+                        CourseURL = courseRun.CourseURL,
+                        Cost = courseRun.Cost,
+                        CostDescription = courseRun.CostDescription.Replace(",", " "),
+                        DurationValue = courseRun.DurationValue,
+                        DurationUnit = courseRun.DurationUnit.ToDescription(),
+                        StudyMode = courseRun.StudyMode.ToDescription(),
+                        AttendancePattern = courseRun.AttendancePattern.ToDescription()
+                    };
+                    csvCourses.Add(csvCourseRun);
+                }
+            }
+            //foreach courseRun of course, convert to csvCourse
+            //push to csv
+            List<string> csvLines = new List<string>();
+            foreach (var line in ToCsv(csvCourses))
+            {
+                csvLines.Add(line);
+            }
+            string report = string.Join(Environment.NewLine, csvLines);
+            byte[] data = Encoding.ASCII.GetBytes(report);
+            MemoryStream ms = new MemoryStream(data)
+            {
+                Position = 0
+            };
+            FileStreamResult result = new FileStreamResult(ms, MediaTypeNames.Text.Plain);
+            DateTime d = DateTime.Now;
+            result.FileDownloadName = $"{providerName}_Courses_{d.Day.TwoChars()}_{d.Month.TwoChars()}_{d.Year}_{d.Hour.TwoChars()}_{d.Minute.TwoChars()}.csv";
+            return result;
+        }
 
         [Authorize]
         public FileStreamResult GetBulkUploadErrors(int? UKPRN)
@@ -87,16 +223,16 @@ namespace Dfc.CourseDirectory.Web.Controllers
                                                         .Value
                                                         .SelectMany(o => o.Value)
                                                         .SelectMany(i => i.Value)
-                                                        .Where((y => ((int)y.CourseStatus & (int)RecordStatus.BulkUploadPending) > 0 
+                                                        .Where((y => ((int)y.CourseStatus & (int)RecordStatus.BulkUploadPending) > 0
                                                         || ((int)y.CourseStatus & (int)RecordStatus.BulkUploadReadyToGoLive) > 0));
 
             var courseBUErrors = courses.Where(x => x.BulkUploadErrors != null).SelectMany(y => y.BulkUploadErrors).ToList();
             var courseRunsBUErrors = courses.SelectMany(x => x.CourseRuns.Where(y => y.BulkUploadErrors != null).SelectMany(y => y.BulkUploadErrors)).ToList();
-            var totalErrorList = courseBUErrors.Union(courseRunsBUErrors).OrderBy(x => x.LineNumber);                     
+            var totalErrorList = courseBUErrors.Union(courseRunsBUErrors).OrderBy(x => x.LineNumber);
 
 
             IEnumerable<string> headers = new string[] { "Row Number,Column Name,Error Description" };
-            IEnumerable<string> csvlines = totalErrorList.Select(i => string.Join(",", new string[] { i.LineNumber.ToString(), i.Header, i.Error.Replace(',',' ')} ));
+            IEnumerable<string> csvlines = totalErrorList.Select(i => string.Join(",", new string[] { i.LineNumber.ToString(), i.Header, i.Error.Replace(',', ' ') }));
             string report = string.Join(Environment.NewLine, headers.Concat(csvlines));
             byte[] data = Encoding.ASCII.GetBytes(report);
             MemoryStream ms = new MemoryStream(data)
@@ -109,8 +245,30 @@ namespace Dfc.CourseDirectory.Web.Controllers
             result.FileDownloadName = $"Bulk_upload_errors_{UKPRN}_{d.Day.TwoChars()}_{d.Month.TwoChars()}_{d.Year}_{d.Hour.TwoChars()}_{d.Minute.TwoChars()}.csv";
             return result;
         }
-    }
 
+        internal static IEnumerable<string> ToCsv<T>(IEnumerable<T> objectlist, string separator = ",", bool header = true)
+        {
+            PropertyInfo[] properties = typeof(T).GetProperties();
+            if (header)
+            {
+                var headers = from prop in properties
+                              from attr in prop.CustomAttributes
+                              from custAttr in attr.NamedArguments
+                              select custAttr.TypedValue.Value;
+
+                yield return String.Join(separator, headers);
+            }
+            foreach (var o in objectlist)
+            {
+                
+                yield return string.Join(separator, properties.Select(p => (p.GetValue(o, null) ?? "").ToString()));
+            }
+        }
+        internal static string SemiColonSplit(IEnumerable<string> list)
+        {
+            return string.Join(";", list.Select(x => x.ToString()).ToArray());
+        }
+    }
     internal static class TwoCharsClass
     {
         internal static string TwoChars(this int extendee)
@@ -118,5 +276,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return extendee.ToString().Length < 2 ? $"0{extendee.ToString()}" : extendee.ToString();
         }
     }
+
+
 
 }
