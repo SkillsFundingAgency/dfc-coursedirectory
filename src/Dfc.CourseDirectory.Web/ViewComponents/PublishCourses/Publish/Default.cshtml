@@ -22,6 +22,7 @@
                 </div>
 
                 <p>You must fix these errors before any of your courses can be published.</p>
+
                 <p>Or you can <a asp-controller="BulkUpload" asp-action="DownloadErrorFile" class="govuk-link">download an error file </a>, fix them at source and upload a new file.</p>
 
             }
@@ -37,9 +38,9 @@
                     <h1 class="govuk-govuk-grid-column-one-half-l govuk-heading-l">Fix errors</h1>
                 </div>
 
-                <p>You must fix these errors before any of your courses can be published.</p>
-                <p>Or you can <a asp-controller="BulkUpload" asp-action="DownloadErrorFile" class="govuk-link">download an error file </a>, fix them at source and upload a new file.</p>
-
+                <p>We have not transferred @Model.NumberOfCoursesInFiles courses because they have errors. You must fix these to publish them to the course directory. Or you can ensure all of your provision is up to date by 
+                    <a href="/BulkUpload">uploading a file of all your courses</a>.</p>
+                <p>If you no longer run the courses, our  <a href="#">helpdesk can delete them</a>.</p>
 
             }
             else
