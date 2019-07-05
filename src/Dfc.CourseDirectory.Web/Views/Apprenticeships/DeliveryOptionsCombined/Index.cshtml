@@ -229,13 +229,7 @@
                         validStates.push(false);
                     }
 
-                    //if (!$.rangeValidate({ min: $Radius.attr("val-range-min"), max: $Radius.attr("val-range-max") }, $Radius.val())) 
-                    //    $Radius.govUkInput("invalidState", $Radius.attr("val-range-message"));
-                    //    var courseNameErrorHashLinks = $Radius.govUkInput("getErrorHashLinks");
-                    //    $errorSummary.govUkErrorSummary("add", courseNameErrorHashLinks);
-                    //    $errorSummary.govUkErrorSummary("show");
-                    //    validStates.push(false);
-                    //} 
+
 
                     if (!$.requiredValidate($Radius.val())) {
                         $Radius.govUkInput("invalidState", $Radius.attr("val-required-message"));
@@ -276,34 +270,6 @@
                         validStates.push(true);
                 }
 
-              
-                //$Radius.govUkCheckboxes("validState");
-                //    $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $Radius[0].id);
-                //    $errorSummary.govUkErrorSummary("hideIfEmpty")
-                //    validStates.push(true);
-                //if (!$National.is(":checked")) {
-                //    if (!$.requiredValidate($Radius.val())) {
-                //        $Radius.govUkInput("invalidState", $Radius.attr("val-required-message"));
-                //        var radiusErrorHashLinks = $Radius.govUkInput("getErrorHashLinks");
-                //        $errorSummary.govUkErrorSummary("add", radiusErrorHashLinks);
-                //        $errorSummary.govUkErrorSummary("show");
-                //        validStates.push(false);
-                //    } else if ($.rangeValidate({
-                //        min: $Radius.attr("val-range-min"), max: $Radius.attr("val-range-max")
-                //    }, $Radius.val())) {
-                //        $Radius.govUkInput("validState");
-                //        validStates.push(true);
-                //    } else {
-                //        $Radius.govUkInput("invalidState", $Radius.attr("val-range-message"));
-                //        var radiusErrorHashLinks = $Radius.govUkInput("getErrorHashLinks");
-                //        $errorSummary.govUkErrorSummary("add", radiusErrorHashLinks);
-                //        $errorSummary.govUkErrorSummary("show");
-                //        validStates.push(false);
-                //    }
-                //} else {
-
-                //}
-
 
 
                 if (!validStates.every(isAllValid)) {
@@ -335,92 +301,34 @@
 
                 var rowCount = $('#ResultsTable tr').length;
 
-                if (rowCount >= 1) {
+                validate();
+                if (validStates.every(isAllValid)) {
 
-                    if ($selectedVenue.val() !== "") {
-                        validate();
-                        if (validStates.every(isAllValid)) {
-
-                             $.ajax({
-                            url: '/Apprenticeships/ContinueCombined',
-                            type: "GET",
-                            dataType: "json",
-                                 data: {
-                                     LocationId: $selectedVenue.val(),
-                                     DayRelease: $("#DayRelease")[0].checked,
-                                     BlockRelease: $("#BlockRelease")[0].checked,
-                                     National: $("#National")[0].checked,
-                                     Radius: $Radius.val(),
-                                     RowCount: rowCount
-                                 },
-
-                            contentType: "application/json; charset=utf-8",
-                            success: function (data) {
-                                window.location.href = data;
-                            },
-                            error: function (xhr, ajaxOptions, thrownError) {
-
-                            }
-                             });
-
-                        };
-                    }
-                    else {
-                        $.ajax({
-                            url: '/Apprenticeships/ContinueCombined',
-                            type: "GET",
-                            dataType: "json",
-                            data: {
-                                LocationId: $selectedVenue.val(),
-                                DayRelease: $("#DayRelease")[0].checked,
-                                BlockRelease: $("#BlockRelease")[0].checked,
-                                 National: $National.val(),
-                                     Radius: $Radius.val(),
-                                RowCount: rowCount
-                            },
-
-                            contentType: "application/json; charset=utf-8",
-                            success: function (data) {
-                                window.location.href = data;
-                            },
-                            error: function (xhr, ajaxOptions, thrownError) {
-
-                            }
-                        });
-                    }
-                }
-                else {
-                    validate();
-                    if (validStates.every(isAllValid)) {
-
-                         $.ajax({
+                    $.ajax({
                         url: '/Apprenticeships/ContinueCombined',
                         type: "GET",
                         dataType: "json",
-                    data: {
-                                LocationId: $selectedVenue.val(),
-                                DayRelease: $("#DayRelease")[0].checked,
-                                BlockRelease: $("#BlockRelease")[0].checked,
-                                 National: $National.val(),
-                                     Radius: $Radius.val(),
-                                RowCount: rowCount
-                            },
+                        data: {
+                            LocationId: $selectedVenue.val(),
+                            DayRelease: $("#DayRelease")[0].checked,
+                            BlockRelease: $("#BlockRelease")[0].checked,
+                            National: $("#National")[0].checked,
+                            Radius: $Radius.val(),
+                            RowCount: rowCount
+                        },
                         contentType: "application/json; charset=utf-8",
-                        success: function (data) {
+                        success: function(data) {
                             window.location.href = data;
                         },
-                        error: function (xhr, ajaxOptions, thrownError) {
+                        error: function(xhr, ajaxOptions, thrownError) {
 
                         }
                     });
+                
 
 
-                    }
-                }
-
-
-                });
-
+                };
+            });
 
             $AddAnother.on("click", function (event) {
                  event.preventDefault();

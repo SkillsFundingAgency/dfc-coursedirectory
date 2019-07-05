@@ -32,7 +32,7 @@
                                     @Html.Raw(Model.DetailViewModel.Information)
                                 </dd>
                                 <dd class="govuk-summary-list__actions">
-                                    <a class="" asp-controller="Apprenticeships" asp-action="Details">Change</a>
+                                    <a class="" asp-controller="Apprenticeships" asp-action="Details" asp-route-Mode="edit">Change</a>
 
                                 </dd>
                             </div>
@@ -46,7 +46,7 @@
                                     @Model.DetailViewModel.Website
                                 </dd>
                                 <dd class="govuk-summary-list__actions">
-                                    <a class="" asp-controller="Apprenticeships" asp-action="Details">Change</a>
+                                    <a class="" asp-controller="Apprenticeships" asp-action="Details"  asp-route-Mode="edit">Change</a>
 
                                 </dd>
                             </div>
@@ -60,7 +60,7 @@
                                     @Model.DetailViewModel.Email
                                 </dd>
                                 <dd class="govuk-summary-list__actions">
-                                    <a class="" asp-controller="Apprenticeships" asp-action="Details">Change</a>
+                                    <a class="" asp-controller="Apprenticeships" asp-action="Details"  asp-route-Mode="edit">Change</a>
 
                                 </dd>
                             </div>
@@ -74,7 +74,7 @@
                                     @Model.DetailViewModel.ContactUsIUrl
                                 </dd>
                                 <dd class="govuk-summary-list__actions">
-                                    <a class="" asp-controller="Apprenticeships" asp-action="Details">Change</a>
+                                    <a class="" asp-controller="Apprenticeships" asp-action="Details" asp-route-Mode="edit">Change</a>
 
                                 </dd>
                             </div>
@@ -82,9 +82,20 @@
 
                         <div class="summary--linked-title">
                             <h2 class="govuk-heading-s">Delivery options </h2>
-                            <a class="govuk-link float-right " asp-controller="Apprenticeships" asp-action="DeliveryOptions">
-                                Change
-                            </a>
+                            
+                            @if (Model.DeliveryViewModel.ApprenticeshipDelivery == ApprenticeshipDelivery.Both)
+                            {
+                                <a class="govuk-link float-right " asp-controller="Apprenticeships" asp-action="DeliveryOptionsCombined">
+                                    Change
+                                </a>
+                            }
+                            else
+                            {
+                                <a class="govuk-link float-right " asp-controller="Apprenticeships" asp-action="DeliveryOptions">
+                                    Change
+                                </a>
+                            }
+                           
                         </div>
 
                         @*@{
