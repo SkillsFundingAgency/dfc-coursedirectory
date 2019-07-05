@@ -944,7 +944,6 @@ namespace Dfc.CourseDirectory.Services.CourseService
 
                     _logger.LogInformationObject("Get course migration report service json response", json);
                     CourseMigrationReport courseMigrationReport = JsonConvert.DeserializeObject<CourseMigrationReport>(json);
-
                     return Result.Ok<CourseMigrationReport>(courseMigrationReport);
 
                 }

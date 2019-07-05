@@ -37,8 +37,8 @@
                 @await Component.InvokeAsync(nameof(ChooseLocation), new ChooseLocationModel()
 
                     {
-                    LabelText = "Select location",
-                    HintText = "",
+                    LabelText = "Location",
+                    HintText = "Select a venue you can travel from to deliver training",
                     LocationId = Model.LocationId ?? (Guid?)null,
                     DisplayLink = false,
                     DeliveryOptionsListItemModel = Model.DeliveryOptionsListItemModel
@@ -48,15 +48,15 @@
                 <div class="govuk-form-group govuk-!-margin-top-9">
                     <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
                         <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
-                            <h2 class="govuk-heading-m">
+                            @*<h2 class="govuk-heading-m">
                                 How is the training delivered at this location?
 
-                            </h2>
+                            </h2>*@
                         </legend>
-                        <span id="waste-hint" class="govuk-hint">
+                        <span id="govuk-label-deliveryoptions" class="govuk-hint">
                             Select all that apply.
                         </span>
-                        <div id="deliveryoptions" class="govuk-checkboxes" val-required-message="Select how is the training delivered at this location">
+                        <div id="deliveryoptions" class="govuk-checkboxes" val-required-message="Select How far you are willing to travel from selected location">
                             <div class="govuk-checkboxes__item">
                                 <input class="govuk-checkboxes__input" type="checkbox" asp-for="@Model.DayRelease">
                                 <label class="govuk-label govuk-checkboxes__label">

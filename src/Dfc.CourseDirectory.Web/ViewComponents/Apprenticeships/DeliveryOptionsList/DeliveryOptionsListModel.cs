@@ -8,7 +8,6 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships
 {
     public class DeliveryOptionsListModel
     {
-
         public bool? SummaryPage { get; set; }
         public List<DeliveryOptionsListItemModel> DeliveryOptionsListItemModel { get; set; }
 

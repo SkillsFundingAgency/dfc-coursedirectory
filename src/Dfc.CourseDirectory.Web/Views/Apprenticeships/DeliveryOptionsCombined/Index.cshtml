@@ -34,10 +34,10 @@
                                 How is the training delivered at this location?
                             </h3>
                         </legend>
-                        <span id="waste-hint" class="govuk-hint">
-                            Select all that apply.
+                        <span id="govuk-label-deliveryoptions" class="govuk-hint">
+                            Select all that apply
                         </span>
-                        <div id="deliveryoptions" class="govuk-checkboxes" val-required-message="Select how is the training delivered at this location">
+                        <div id="deliveryoptions" class="govuk-checkboxes" val-required-message="Select at least one option from Day Release and Block Release">
                             <div class="govuk-checkboxes__item">
                                 <input class="govuk-checkboxes__input" type="checkbox" asp-for="@Model.DayRelease">
                                 <label class="govuk-label govuk-checkboxes__label">
@@ -55,7 +55,7 @@
                         <div class="govuk-checkboxes__item">
                             <input class="govuk-checkboxes__input" id="employer" name="waste" type="checkbox" value="mines" checked disabled>
                             <label class="govuk-label govuk-checkboxes__label" for="employer">
-                                Employers address
+                                Employer’s address
                             </label>
                         </div>
 
@@ -69,28 +69,28 @@
                     @await Component.InvokeAsync(nameof(ChooseLocation), new ChooseLocationModel()
 
              {
-             LabelText = "Select location",
-             HintText = "",
+             LabelText = "Location",
+             HintText = "Select a venue you can travel from to deliver training",
              LocationId = Model.LocationId ?? (Guid?)null,
-             DisplayLink = false,
+             DisplayLink = true,
              DeliveryOptionsListItemModel = Model.DeliveryOptionsListItemModel
 
              })
                     <br />
                     <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
                         <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
-                            <h3 class="govuk-fieldset__heading" id="govuk-label-@nameof(@Model.Radius)">
+                            @*<h3 class="govuk-fieldset__heading" id="govuk-label-@nameof(@Model.Radius)">
                                 How is the training delivered at this location?
 
-                            </h3>
+                            </h3>*@
                         </legend>
-                        <span id="waste-hint" class="govuk-hint">
+                        <span id="govuk-label-Radius" class="govuk-hint">
                             How far are you willing to travel from the selected location?
 
                         </span>
                         <div class="govuk-form-group">
 
-                            <input class="govuk-input govuk-input--width-4 govuk-!-margin-right-3" asp-for="@Model.Radius" type="text" pattern="[0-9]*" maxlength="3"
+                            <input class="govuk-input govuk-input--width-4 govuk-!-margin-right-3" asp-for="@Model.Radius" type="text" 
                                    val-required-message="Select How far you are willing to travel from selected location"
                                    val-range-min="1"
                                    val-range-max="999"
@@ -143,14 +143,29 @@
             var $TooManyLoctions = $("#TooManyLocations");
             var $Continue = $("#continue");
             var $National = $("#@nameof(Model.National)")
-             var $Radius = $("#@nameof(Model.Radius)").govUkInput();
+            var $Radius = $("#@nameof(Model.Radius)").govUkInput();
 
-     var $DayRelease =$("#@nameof(Model.DayRelease)")
-    var $BlockRelease = $("#@nameof(Model.BlockRelease)")
+            var $DayRelease =$("#@nameof(Model.DayRelease)")
+            var $BlockRelease = $("#@nameof(Model.BlockRelease)")
 
             function isAllValid(currentValue) {
                 return currentValue === true;
             }
+
+            $Radius.on("keypress",
+                function(event) {
+                    var charCode = event.which ? event.which : event.keyCode;
+
+                    if ($Radius.val().length >= 3) {
+                        return false;
+                    };
+
+                    if ((charCode >= 48 && charCode <= 57)) {
+                        return true;
+                    }
+
+                    return false;
+                });
 
             function validate() {
 
@@ -161,7 +176,7 @@
 
                 var rowCount = $('#ResultsTable tr').length;
 
-                if (rowCount === 250) {
+                if (rowCount === 251) {
                     validStates.push(false);
 
                     var element = $TooManyLoctions;
@@ -182,18 +197,7 @@
                     $TooManyLoctions.hide();
                 }
 
-                // venue
-                $selectedVenue.govUkSelect("validState");
-                $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $selectedVenue[0].id);
-                $errorSummary.govUkErrorSummary("hideIfEmpty")
-                validStates.push(true);
-                if (!$.requiredValidate($selectedVenue.val())) {
-                    $selectedVenue.govUkSelect("invalidState", $selectedVenue.attr("val-required-message"));
-                    var selectedVenueErrorHashLinks = $selectedVenue.govUkSelect("getErrorHashLinks");
-                    $errorSummary.govUkErrorSummary("add", selectedVenueErrorHashLinks);
-                    $errorSummary.govUkErrorSummary("show");
-                    validStates.push(false);
-                }
+               
 
                 $checkboxesdeliverymethod.govUkCheckboxes("validState");
                 $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $checkboxesdeliverymethod[0].id);
@@ -211,32 +215,68 @@
                 }
 
                 if (!$National.is(":checked")) {
+
+                    // venue
+                    $selectedVenue.govUkSelect("validState");
+                    $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $selectedVenue[0].id);
+                    $errorSummary.govUkErrorSummary("hideIfEmpty")
+                    validStates.push(true);
+                    if (!$.requiredValidate($selectedVenue.val())) {
+                        $selectedVenue.govUkSelect("invalidState", $selectedVenue.attr("val-required-message"));
+                        var selectedVenueErrorHashLinks = $selectedVenue.govUkSelect("getErrorHashLinks");
+                        $errorSummary.govUkErrorSummary("add", selectedVenueErrorHashLinks);
+                        $errorSummary.govUkErrorSummary("show");
+                        validStates.push(false);
+                    }
+
+                    //if (!$.rangeValidate({ min: $Radius.attr("val-range-min"), max: $Radius.attr("val-range-max") }, $Radius.val())) 
+                    //    $Radius.govUkInput("invalidState", $Radius.attr("val-range-message"));
+                    //    var courseNameErrorHashLinks = $Radius.govUkInput("getErrorHashLinks");
+                    //    $errorSummary.govUkErrorSummary("add", courseNameErrorHashLinks);
+                    //    $errorSummary.govUkErrorSummary("show");
+                    //    validStates.push(false);
+                    //} 
+
                     if (!$.requiredValidate($Radius.val())) {
                         $Radius.govUkInput("invalidState", $Radius.attr("val-required-message"));
                         var courseNameErrorHashLinks = $Radius.govUkInput("getErrorHashLinks");
                         $errorSummary.govUkErrorSummary("add", courseNameErrorHashLinks);
                         $errorSummary.govUkErrorSummary("show");
                         validStates.push(false);
-                    } else if (!$.rangeValidate({min: $Radius.attr("val-range-min"), max: $Radius.attr("val-range-max")}, $Radius.val())) {
-                        $Radius.govUkInput("invalidState");
-                         var courseNameErrorHashLinks = $Radius.govUkInput("getErrorHashLinks");
-                        $errorSummary.govUkErrorSummary("add", courseNameErrorHashLinks);
-                        $errorSummary.govUkErrorSummary("show");
-                        validStates.push(false);
-                    }  else {
+                    } else if (!$.rangeValidate({ min: $Radius.attr("val-range-min"), max: $Radius.attr("val-range-max") }, $Radius.val())) {
+                        $Radius.govUkInput("invalidState", $Radius.attr("val-range-message"));
+                    var courseNameErrorHashLinks = $Radius.govUkInput("getErrorHashLinks");
+                    $errorSummary.govUkErrorSummary("add", courseNameErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
+                    validStates.push(false);
+                }   else {
                         $Radius.govUkInput("validState");
                         $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $Radius[0].id);
                         $errorSummary.govUkErrorSummary("hideIfEmpty")
                         validStates.push(true);
                     }
                 } else {
+
+                    // venue
+                    $selectedVenue.govUkSelect("validState");
+                    $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $selectedVenue[0].id);
+                    $errorSummary.govUkErrorSummary("hideIfEmpty")
+                    validStates.push(true);
+                    if (!$.requiredValidate($selectedVenue.val())) {
+                        $selectedVenue.govUkSelect("invalidState", $selectedVenue.attr("val-required-message"));
+                        var selectedVenueErrorHashLinks = $selectedVenue.govUkSelect("getErrorHashLinks");
+                        $errorSummary.govUkErrorSummary("add", selectedVenueErrorHashLinks);
+                        $errorSummary.govUkErrorSummary("show");
+                        validStates.push(false);
+                    }
+
                     $Radius.govUkInput("validState");
                         $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $Radius[0].id);
                         $errorSummary.govUkErrorSummary("hideIfEmpty")
                         validStates.push(true);
                 }
 
-
+              
                 //$Radius.govUkCheckboxes("validState");
                 //    $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $Radius[0].id);
                 //    $errorSummary.govUkErrorSummary("hideIfEmpty")
@@ -274,14 +314,20 @@
                 }
             }
 
+            $("#National").change(function () {
+                if ($("#National")[0].checked) {
+                    $("#Radius").val(200);
+                    $("#Radius").attr('disabled', true);
+                } else {
+                    $("#Radius").val('');
+                    $('#Radius').prop("disabled", false);
+                    $('#Radius').removeAttr("disabled");
+                }
+             
+            });
 
-            //$('#ApprenticeshipDeliveryOptionsForm').submit(function (event) {
-            //     event.preventDefault();
-            //    validate();
-            //          if (validStates.every(isAllValid)) {
-            //              $AddAnother.trigger('click');
-            //    }
-            //});
+          
+
 
 
             $Continue.on("click", function (event) {
@@ -303,7 +349,7 @@
                                      LocationId: $selectedVenue.val(),
                                      DayRelease: $("#DayRelease")[0].checked,
                                      BlockRelease: $("#BlockRelease")[0].checked,
-                                     National: $National.val(),
+                                     National: $("#National")[0].checked,
                                      Radius: $Radius.val(),
                                      RowCount: rowCount
                                  },
@@ -354,7 +400,7 @@
                     data: {
                                 LocationId: $selectedVenue.val(),
                                 DayRelease: $("#DayRelease")[0].checked,
-                                BlockRelease: $$("#BlockRelease")[0].checked,
+                                BlockRelease: $("#BlockRelease")[0].checked,
                                  National: $National.val(),
                                      Radius: $Radius.val(),
                                 RowCount: rowCount

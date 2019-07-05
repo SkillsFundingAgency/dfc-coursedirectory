@@ -70,7 +70,7 @@
                        val-max-length="255"
                        val-max-length-message="Apprenticeship web page should be no more than 255 characters"
                        val-regex="@websiteRegEx"
-                       val-regex-message="Apprenticeship web page should only have letters, numbers, spaces and commonly-used punctuation">
+                       val-regex-message="Enter a real web page, like http://www.provider.com/apprenticeship">
             </div>
             <h2 class="">Contact details</h2>
 
@@ -104,7 +104,7 @@
                        val-regex-message="Enter a valid telephone number">
             </div>
             <div id="ContactUsContainer" class="govuk-form-group">
-                <label id="govuk-label-Cost" class="govuk-label">
+                <label id="govuk-label-ContactUsIUrl" class="govuk-label">
                     Contact us page
                 </label>
                 <span id="more-detail-hint" class="govuk-hint">You can also add the url of any 'Contact us' page you have on your website</span>
@@ -113,7 +113,7 @@
                        val-max-length="255"
                        val-max-length-message="Contact us page should be no more than 255 characters"
                        val-regex="@websiteRegEx"
-                       val-regex-message="Contact us page should only have letters, numbers, spaces and commonly-used punctuation">
+                       val-regex-message="Enter a real web page, like http://www.provider.com/apprenticeship">
 
             </div>
             <div class="govuk-form-group govuk-!-margin-bottom-6">
@@ -129,65 +129,32 @@
 
         </div>
     </div>
-    </form>
+</form>
 
 
-
-
-
-
-
-
-
-
-
-
-  
-
-
-    <script>
+<script>
     (function($) {
         $(function () {
 
-                        $(document).ready(function () {
-
-                 tinymce.init({
-           selector: '#info',
-           plugins: "wordcount advlist lists autoresize",
-  toolbar: "wordcount",
-           menubar: false,
-    statusbar: true,
-                     resize: false,
-                    min_height:450,
-                     width: '57em',
-  height: '75%',
-  autoresize_min_height: 600,
-  autoresize_max_height: 800,
-            toolbar: 'formatselect | bold | numlist bullist | removeformat ',
-                 }).then(function (editors) {
-
-                     $(".tox-statusbar__path").hide();
-                      $(".tox-statusbar__branding").hide();
-
-                    $(".tox-statusbar__wordcount").trigger( "click" );
-});
-
-                        });
-
-                            var $continueButton = $("#continue");
             var validStates = [];
+            var $continue = $("#continue");
 
-             var $maxInfo = $("#infoMax");
+            var $maxInfo= $("#infoMax");
             var $invalidInfo = $("#infoInvalid");
-              var $requiredInfo = $("#infoRequired");
+            var $requiredInfo = $("#infoRequired");
+
+            var $info = $("#@nameof(Model.Information)").govUkInput();
 
             var $errorSummary = $("#errorsummary").govUkErrorSummary();
+
+            var $maxLength = $maxInfo.attr('val-max-length');
+
             var $email = $("#@nameof(Model.Email)").govUkInput();
             var $website = $("#@nameof(Model.Website)").govUkInput();
-             var $contactUs = $("#@nameof(Model.ContactUsIUrl)").govUkInput();
-             var $telephone = $("#@nameof(Model.Telephone)").govUkInput();
+            var $contactUs = $("#@nameof(Model.ContactUsIUrl)").govUkInput();
+            var $telephone = $("#@nameof(Model.Telephone)").govUkInput();
 
-              $website.on("blur", function () {
+            $website.on("blur", function () {
                 var trimmed = $website.val().trim().toLowerCase();
                 $website.val(trimmed);
                 if ($website.val() !== "") {
@@ -195,14 +162,14 @@
 
                     if ($website.val().indexOf("http") >= 0 || $website.val().indexOf("https")>=0) {
 
-                }
-                else {
-                    $website.val("http://" + trimmed);
+                    }
+                    else {
+                        $website.val("http://" + trimmed);
                     }
                 }
-              });
+            });
 
-              $contactUs.on("blur", function () {
+            $contactUs.on("blur", function () {
                 var trimmed = $contactUs.val().trim().toLowerCase();
                 $contactUs.val(trimmed);
                 if ($contactUs.val() !== "") {
@@ -210,9 +177,9 @@
 
                     if ($contactUs.val().indexOf("http") >= 0 || $contactUs.val().indexOf("https")>=0) {
 
-                }
-                else {
-                    $contactUs.val("http://" + trimmed);
+                    }
+                    else {
+                        $contactUs.val("http://" + trimmed);
                     }
                 }
             });
@@ -221,107 +188,257 @@
                 return currentValue === true;
             }
 
-            function validate() {
+            tinymce.init({
+                selector: '#info',
+                plugins: "advlist lists autoresize test",
+                menubar: false,
+                statusbar: false,
+                resize: false,
+                in_height: 450,
+                height: '75%',
+                autoresize_min_height: 600,
+                autoresize_max_height: 800,
+                toolbar: 'formatselect | bold | numlist bullist | removeformat ',
+            }).then(function(editors) {
+                $(".mce-branding").hide();
+            });
+
+            tinymce.PluginManager.add('test',
+                function(editor) {
+                var self = this;
+
+                function update() {
+
+                var $left = ($maxLength - self.getCount());
+                var chars = $maxLength - self.getCount();
+                if (chars === 1) {
+
+                    $(".mce-container").removeClass("text-error");
+
+                    $("#apprenticeship_info").removeClass("govuk-error-message");
+                    $("#apprenticeship_info").addClass("govuk-hint");
+                    $("#apprenticeship_info").text('You have ' + chars + ' character remaining');
+                }
+
+                if (chars >= 1) {
+
+                    $(".mce-container").removeClass("text-error");
+
+                    $("#apprenticeship_info").removeClass("govuk-error-message");
+                    $("#apprenticeship_info").addClass("govuk-hint");
+                    $("#apprenticeship_info").text('You have ' + chars + ' characters remaining');
+                }
+
+                if (chars < 0) {
+
+                    $(".mce-container").addClass("text-error");
+
+                    $("#apprenticeship_info").addClass("govuk-error-message");
+                    $("#apprenticeship_info").removeClass("govuk-hint");
+                    $(".mce-container").addClass("text-error");
+                    if (self.getCount() - parseInt($maxLength) == 1) {
+                        $("#apprenticeship_info").text('You have ' +
+                            (self.getCount() - parseInt($maxLength)).toString() +
+                            ' character too many');
+                    } else {
+                        $("#apprenticeship_info").text('You have ' +
+                            (self.getCount() - parseInt($maxLength)).toString() +
+                            ' characters too many');
+                    }
+                }
+
+                if (chars === 0) {
+
+                    $(".mce-container").removeClass("text-error");
+                    $("#apprenticeship_info").removeClass("govuk-error-message");
+                    $("#apprenticeship_info").addClass("govuk-hint");
+                    $(".mce-container").removeClass("text-error");
+                    $("#apprenticeship_info").text('You have ' + chars + ' characters remaining');
+                }
+
+
+            }
+
+            editor.on('init',
+                function() {
+
+                    var ele = document.createElement("span");
+
+                    var message = "";
+                    var chars = $maxLength - self.getCount();
+                    if (chars === 1) {
+
+                        ele.className = "govuk-hint govuk-character-count__message"
+                        message = 'You have ' + chars + ' character remaining';
+                    }
+
+                    if (chars >= 1) {
+                        ele.className = "govuk-hint govuk-character-count__message"
+                        message = 'You have ' + chars + ' characters remaining';
+                    }
+
+                    if (chars < 0) {
+
+                        $(".mce-container").addClass("text-error");
+
+                        $(".mce-container").closest(".govuk-form-group").addClass("govuk-form-group--error");
+
+                        ele.className = "govuk-character-count__message govuk-error-message"
+                        $(".mce-container").addClass("text-error");
+                        if (self.getCount() - parseInt($maxLength) == 1) {
+                            message = 'You have ' +
+                                (self.getCount() - parseInt($maxLength)).toString() +
+                                ' character too many';
+                        } else {
+                            message = 'You have ' +
+                                (self.getCount() - parseInt($maxLength)).toString() +
+                                ' characters too many';
+                        }
+                    }
+
+                    if (chars === 0) {
+                        ele.className = "govuk-hint govuk-character-count__message"
+                        $(".mce-container").removeClass("text-error");
+                        message = 'You have ' + chars + ' characters remaining';
+                    }
+
+                    window.setTimeout(function() {
+
+                            ele.id = "apprenticeship_info";
+                            ele.innerHTML = message;
+                            $("#info").after(ele);
+
+                            editor.on('setcontent beforeaddundo', update);
+
+                            editor.on('keyup',
+                                function(e) {
+
+                                    update();
+                                });
+                        }, 0);
+
+                    //validate();
+
+                });
+
+            self.getCount = function() {
+                var tx = editor.getContent({ format: 'raw' });
+                var decoded = decodeHtml(tx);
+                var decodedStripped = decoded.replace(/(<([^>]+)>)/ig, "").trim();
+                var tc = decodedStripped.length;
+
+                return tc;
+            };
+
+            function decodeHtml(html) {
+                var txt = document.createElement("textarea");
+                txt.innerHTML = html;
+                return txt.value;
+            }
+                  });
+
+
+
+
+               function validate() {
 
                 validStates = [];
 
-                  $invalidInfo.removeClass("govuk-error-message");
-                    $invalidInfo.hide();
-                    $maxInfo.removeClass("govuk-error-message");
-                    $maxInfo.hide();
-                      $requiredInfo.removeClass("govuk-error-message");
+                $invalidInfo.removeClass("govuk-error-message");
+                $invalidInfo.hide();
+                $maxInfo.removeClass("govuk-error-message");
+                $maxInfo.hide();
+                $requiredInfo.removeClass("govuk-error-message");
                 $requiredInfo.hide();
 
                 $email.val($email.val().trim());
                 $website.val($website.val().trim());
                 $contactUs.val($contactUs.val().trim());
-                          $telephone.val($telephone.val().trim());
+
+                $telephone.val($telephone.val().trim());
+
+                var str = $telephone.val();
+                str = $telephone.val().replace(/\s+/g, '');
+                $telephone.val(str);
 
                 $errorSummary.govUkErrorSummary("removeAll");
                 $email.govUkInput("validState");
                 $telephone.govUkInput("validState");
 
-                if (!$.requiredValidate(tinymce.get('info').getBody().innerText.trim())) {
+                 if (tinymce.get("info") !== null) {
 
-                    $requiredInfo.addClass("govuk-error-message");
-                    $requiredInfo.show();
+                     if (!$.requiredValidate(tinymce.get('info').getBody().textContent.replace(/(<([^>]+)>)/ig, "").trim())) {
+                         $requiredInfo.addClass("govuk-error-message");
+                         $requiredInfo.show();
 
-                    $(".tox-editor-container").addClass("text-error");
-                    $(".tox-statusbar").addClass("status-error");
+                         $(".mce-container").addClass("text-error");
 
-                    $(".tox-editor-container").closest(".govuk-form-group").addClass("govuk-form-group--error");
+                         $(".mce-container").closest(".govuk-form-group").addClass("govuk-form-group--error");
 
-                    var element = $requiredInfo;
-                     var $anchor = document.createElement("a");
-                $anchor.href =  "#infoRequired";
+                         var element = $requiredInfo;
+                         var $anchor = document.createElement("a");
+                         $anchor.href = "#infoRequired";
+                         $anchor.innerHTML = element.text();
+                         $anchor.id = "error-hash-link-" + "infoRequired" + "-" + 1;
+
+                         $errorSummary.govUkErrorSummary("add", $anchor);
+                         $errorSummary.govUkErrorSummary("show");
+
+                         validStates.push(false);
+                     } else if (!$.regexValidate({ regex: $invalidInfo.attr("val-regex") }, tinymce.get('info').getBody().textContent.replace(/(<([^>]+)>)/ig, "").trim())) {
+                $invalidInfo.addClass("govuk-error-message");
+                $invalidInfo.show();
+
+                $(".mce-container").addClass("text-error");
+
+                $(".mce-container").closest(".govuk-form-group").addClass("govuk-form-group--error");
+
+                var element = $invalidInfo;
+                var $anchor = document.createElement("a");
+                $anchor.href = "#infoInvalid";
                 $anchor.innerHTML = element.text();
-                $anchor.id = "error-hash-link-" + "a" + "-" + 1;
+                $anchor.id = "error-hash-link-" + "infoInvalid" + "-" + 1;
 
-                     $errorSummary.govUkErrorSummary("add", $anchor);
-                    $errorSummary.govUkErrorSummary("show");
+                $errorSummary.govUkErrorSummary("add", $anchor);
+                $errorSummary.govUkErrorSummary("show");
 
+                validStates.push(false);
+            } else if (
 
-                    validStates.push(false);
-                } else if (
-                    !$.regexValidate({ regex: $invalidInfo.attr("val-regex") }, tinymce.get('info').getBody().innerText.trim())) {
-                        $invalidInfo.addClass("govuk-error-message");
-                        $invalidInfo.show();
+                !$.maxLengthValidate({ max: "750" }, tinymce.get('info').getBody().textContent.replace(/(<([^>]+)>)/ig, "").trim())) {
 
-                        $(".tox-editor-container").addClass("text-error");
-                        $(".tox-statusbar").addClass("status-error");
+                $maxInfo.addClass("govuk-error-message");
+                $maxInfo.show();
 
-                        $(".tox-editor-container").closest(".govuk-form-group").addClass("govuk-form-group--error");
+                $(".mce-container").addClass("text-error");
 
-                        var element = $invalidInfo;
-                     var $anchor = document.createElement("a");
-                $anchor.href =  "#infoInvalid";
+                $(".mce-container").closest(".govuk-form-group").addClass("govuk-form-group--error");
+
+                var element = $maxInfo;
+                var $anchor = document.createElement("a");
+                $anchor.href = "#infoMax";
                 $anchor.innerHTML = element.text();
-                $anchor.id = "error-hash-link-" + "b" + "-" + 1;
+                $anchor.id = "error-hash-link-" + "infoMax" + "-" + 1;
 
-                     $errorSummary.govUkErrorSummary("add", $anchor);
-                    $errorSummary.govUkErrorSummary("show");
+                $errorSummary.govUkErrorSummary("add", $anchor);
+                $errorSummary.govUkErrorSummary("show");
 
-                        validStates.push(false);
-                } else if (
-                    !$.maxLengthValidate({ max: "750" }, tinymce.get('info').getBody().innerText)) {
+                validStates.push(false);
+            }
+            else {
+                $maxInfo.removeClass("govuk-error-message");
+                $maxInfo.hide();
 
-                    $maxInfo.addClass("govuk-error-message");
-                    $maxInfo.show();
+                $invalidInfo.removeClass("govuk-error-message");
+                $invalidInfo.hide();
+                $(".mce-container").removeClass("text-error");
+                $(".mce-container").closest(".govuk-form-group").removeClass("govuk-form-group--error");
 
-                    $(".tox-editor-container").addClass("text-error");
-                    $(".tox-statusbar").addClass("status-error");
-
-                    $(".tox-editor-container").closest(".govuk-form-group").addClass("govuk-form-group--error");
-
-                     var element = $maxInfo;
-                     var $anchor = document.createElement("a");
-                $anchor.href =  "#infoMax";
-                $anchor.innerHTML = element.text();
-                $anchor.id = "error-hash-link-" + "c" + "-" + 1;
-
-                     $errorSummary.govUkErrorSummary("add", $anchor);
-                    $errorSummary.govUkErrorSummary("show");
-
-                    validStates.push(false);
-                } else {
-
-                    $invalidInfo.removeClass("govuk-error-message");
-                    $invalidInfo.hide();
-                    $maxInfo.removeClass("govuk-error-message");
-                    $maxInfo.hide();
-                      $requiredInfo.removeClass("govuk-error-message");
-                    $requiredInfo.hide();
-
-                    $(".tox-editor-container").removeClass("text-error");
-                    $(".tox-statusbar").removeClass("status-error");
-
-                    $(".tox-editor-container").closest(".govuk-form-group").removeClass("govuk-form-group--error");
-
-                    validStates.push(true);
+                validStates.push(true);
                 }
+            }
 
-
-                // email
+                 // email
                 if (!$.requiredValidate($email.val())) {
                     $email.govUkInput("invalidState", $email.attr("val-required-message"));
                      var emailErrorHashLinks = $email.govUkInput("getErrorHashLinks");
@@ -445,19 +562,16 @@
                     validStates.push(true);
                 }
 
-                 if (!validStates.every(isAllValid)) {
-                    $("html, body").animate({
-                        scrollTop: $errorSummary.offset().top
-                    }, 600);
-                    $errorSummary.focus();
-                }
+            if (!validStates.every(isAllValid)) {
+                $("html, body").animate({
+                    scrollTop: $errorSummary.offset().top
+                }, 600);
+                $errorSummary.focus();
+            }
             };
 
 
-
-
-
-            $continueButton.on("click", function (event) {
+            $continue.on("click", function (event) {
                 event.preventDefault();
                 validate();
                 if (validStates.every(isAllValid)) {
@@ -468,4 +582,4 @@
 
         });
     })(jQuery);
-    </script>
+</script>
