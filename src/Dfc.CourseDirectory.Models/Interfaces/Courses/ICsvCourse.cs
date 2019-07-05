@@ -19,7 +19,7 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Courses
         string AdultEducationBudget { get; set; }
         string CourseName { get; set; }
         string ProviderCourseID { get; set; }
-        DeliveryMode DeliveryMode { get; set; }
+        string DeliveryMode { get; set; }
         DateTime? StartDate { get; set; }
         string FlexibleStartDate { get; set; }
         string VenueName { get; set; }
@@ -30,8 +30,8 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Courses
         decimal? Cost { get; set; }
         string CostDescription { get; set; }
         int? DurationValue { get; set; }
-        DurationUnit DurationUnit { get; set; }
-        StudyMode StudyMode { get; set; }
-        AttendancePattern AttendancePattern { get; set; }
+        string DurationUnit { get; set; }
+        string StudyMode { get; set; }
+        string AttendancePattern { get; set; }
     }
 }

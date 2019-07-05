@@ -45,7 +45,7 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         public string ProviderCourseID { get; set; }
 
         [Display(Name = "DELIVERY_MODE")]
-        public DeliveryMode DeliveryMode { get; set; }
+        public string DeliveryMode { get; set; }
 
         [Display(Name = "START_DATE")]
         public DateTime? StartDate { get; set; }
@@ -78,13 +78,13 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         public int? DurationValue { get; set; }
 
         [Display(Name = "DURATION_UNIT")]
-        public DurationUnit DurationUnit { get; set; }
+        public string DurationUnit { get; set; }
 
         [Display(Name = "STUDY_MODE")]
-        public StudyMode StudyMode { get; set; }
+        public string StudyMode { get; set; }
 
         [Display(Name = "ATTENDANCE_PATTERN")]
-        public AttendancePattern AttendancePattern { get; set; }
+        public string AttendancePattern { get; set; }
 
     }
 }

@@ -29,6 +29,7 @@ using Dfc.CourseDirectory.Models.Models.Regions;
 using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 using Dfc.CourseDirectory.Services.ProviderService;
 using System.ComponentModel.DataAnnotations;
+using Dfc.CourseDirectory.Web.Helpers;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -136,8 +137,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     AdultEducationBudget = course.AdultEducationBudget ? "Yes" : "No",
                     CourseName = firstCourseRun.CourseName.Replace(",", " "),
                     ProviderCourseID = firstCourseRun.ProviderCourseID,
-                    DeliveryMode = firstCourseRun.DeliveryMode,
-                    StartDate = firstCourseRun.StartDate,
+                    DeliveryMode = firstCourseRun.DeliveryMode.ToDescription(),
+                    StartDate = firstCourseRun.StartDate.Value.Date,
                     FlexibleStartDate = firstCourseRun.FlexibleStartDate ? "Yes" : string.Empty,
                     VenueName = firstCourseRun.VenueId.HasValue ? _venueService.GetVenueByIdAsync(new GetVenueByIdCriteria(firstCourseRun.VenueId.Value.ToString())).Result.Value.VenueName : null,
                     National = firstCourseRun.National.HasValue ? (firstCourseRun.National.Value ? "Yes" : "No") : string.Empty,
@@ -151,9 +152,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     Cost = firstCourseRun.Cost,
                     CostDescription = firstCourseRun.CostDescription.Replace(",", " "),
                     DurationValue = firstCourseRun.DurationValue,
-                    DurationUnit = firstCourseRun.DurationUnit,
-                    StudyMode = firstCourseRun.StudyMode,
-                    AttendancePattern = firstCourseRun.AttendancePattern
+                    DurationUnit = firstCourseRun.DurationUnit.ToDescription(),
+                    StudyMode = firstCourseRun.StudyMode.ToDescription(),
+                    AttendancePattern = firstCourseRun.AttendancePattern.ToDescription()
                 };
                 csvCourses.Add(csvCourse);
                 foreach (var courseRun in course.CourseRuns)
@@ -169,8 +170,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         LearnAimRef = course.LearnAimRef,
                         CourseName = courseRun.CourseName,
                         ProviderCourseID = courseRun.ProviderCourseID,
-                        DeliveryMode = courseRun.DeliveryMode,
-                        StartDate = courseRun.StartDate,
+                        DeliveryMode = courseRun.DeliveryMode.ToDescription(),
+                        StartDate = courseRun.StartDate.Value.Date,
                         FlexibleStartDate = courseRun.FlexibleStartDate ? "Yes" : string.Empty,
                         VenueName = courseRun.VenueId.HasValue ? _venueService.GetVenueByIdAsync(new GetVenueByIdCriteria(courseRun.VenueId.Value.ToString())).Result.Value.VenueName : null,
                         National = courseRun.National.HasValue ? (firstCourseRun.National.Value ? "Yes" : "No") : string.Empty,
@@ -184,9 +185,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         Cost = courseRun.Cost,
                         CostDescription = courseRun.CostDescription.Replace(",", " "),
                         DurationValue = courseRun.DurationValue,
-                        DurationUnit = courseRun.DurationUnit,
-                        StudyMode = courseRun.StudyMode,
-                        AttendancePattern = courseRun.AttendancePattern
+                        DurationUnit = courseRun.DurationUnit.ToDescription(),
+                        StudyMode = courseRun.StudyMode.ToDescription(),
+                        AttendancePattern = courseRun.AttendancePattern.ToDescription()
                     };
                     csvCourses.Add(csvCourseRun);
                 }
