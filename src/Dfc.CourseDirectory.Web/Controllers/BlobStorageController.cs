@@ -166,6 +166,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                     CsvCourse csvCourseRun = new CsvCourse
                     {
+                        LearnAimRef = course.LearnAimRef,
                         CourseName = courseRun.CourseName,
                         ProviderCourseID = courseRun.ProviderCourseID,
                         DeliveryMode = courseRun.DeliveryMode,
