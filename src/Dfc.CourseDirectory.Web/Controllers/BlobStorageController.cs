@@ -208,6 +208,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             result.FileDownloadName = $"{providerName}_Courses_{d.Day.TwoChars()}_{d.Month.TwoChars()}_{d.Year}_{d.Hour.TwoChars()}_{d.Minute.TwoChars()}.csv";
             return result;
         }
+
         [Authorize]
         public FileStreamResult GetBulkUploadErrors(int? UKPRN)
         {
@@ -248,7 +249,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
             PropertyInfo[] properties = typeof(T).GetProperties();
             if (header)
             {
-                yield return String.Join(separator, properties.Select(p => p.CustomAttributes.Select(x => x.NamedArguments.Select(y => y.TypedValue.Value.ToString()))));
+                var headers = from prop in properties
+                              from attr in prop.CustomAttributes
+                              from custAttr in attr.NamedArguments
+                              select custAttr.TypedValue.Value;
+
+                yield return String.Join(separator, headers);
             }
             foreach (var o in objectlist)
             {
