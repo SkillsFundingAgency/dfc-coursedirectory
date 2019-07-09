@@ -1,0 +1,80 @@
+﻿@using Dfc.CourseDirectory.Models.Enums
+@using Dfc.CourseDirectory.Web.Helpers
+@{
+    Layout = "_Layout_Your_Courses";
+}
+
+@model Dfc.CourseDirectory.Web.ViewModels.Apprenticeships.DeliveryViewModel
+
+
+
+    <form class="govuk-!-margin-bottom-9" id="ApprenticeshipDeliveryForm" asp-controller="Apprenticeships" asp-action="Delivery" method="post">
+        <a asp-controller="Apprenticeships" asp-action="Details" class="govuk-back-link">Back</a><br />
+        <h1 class="govuk-heading-xl">Where will this apprenticeship training be delivered?</h1>
+        <br />
+        <div class="govuk-form-group">
+            <fieldset class="govuk-fieldset">
+
+                <div class="govuk-radios" val-required-message="Select Where will this apprenticeship training be delivered?" id="ApprenticeshipDelivery">
+                    <div class="govuk-radios__item">
+                        @Html.RadioButtonFor(m => m.ApprenticeshipDelivery, ApprenticeshipDelivery.YourLocation, new { @class = "govuk-radios__input", id = ApprenticeshipDelivery.YourLocation })
+                        <label class="govuk-label govuk-radios__label" for="@ApprenticeshipDelivery.YourLocation">@WebHelper.GetEnumDescription(ApprenticeshipDelivery.YourLocation)</label>
+                    </div>
+                    <div class="govuk-radios__item">
+                        @Html.RadioButtonFor(m => m.ApprenticeshipDelivery, ApprenticeshipDelivery.EmployersAddress, new { @class = "govuk-radios__input", id = ApprenticeshipDelivery.EmployersAddress })
+                        <label class="govuk-label govuk-radios__label" for="@ApprenticeshipDelivery.EmployersAddress">@WebHelper.GetEnumDescription(ApprenticeshipDelivery.EmployersAddress)</label>
+                    </div>
+                    <div class="govuk-radios__item">
+                        @Html.RadioButtonFor(m => m.ApprenticeshipDelivery, ApprenticeshipDelivery.Both, new { @class = "govuk-radios__input", id = ApprenticeshipDelivery.Both })
+                        <label class="govuk-label govuk-radios__label" for="@ApprenticeshipDelivery.Both">@WebHelper.GetEnumDescription(ApprenticeshipDelivery.Both)</label>
+                    </div>
+
+                </div>
+            </fieldset>
+        </div>
+        <br />
+
+        <button type="submit" class="govuk-button" id="next">Continue</button>
+    </form>
+
+<script>
+    (function ($) {
+        $(function () {
+            var validStates = [];
+            var $button = $("#next");
+
+            var $apprenticeshipDelivery= $("#ApprenticeshipDelivery").govUkRadios();
+
+            function isAllValid(currentValue) {
+                return currentValue === true;
+            }
+
+            function validate() {
+
+                validStates = [];
+
+                $apprenticeshipDelivery.govUkRadios("validState");
+
+                if ($.requiredValidate($apprenticeshipDelivery.find("input[type='radio']:checked").val())) {
+                    $apprenticeshipDelivery.govUkRadios("validState");
+                    validStates.push(true);
+                } else {
+                    $apprenticeshipDelivery.govUkRadios("invalidState", $apprenticeshipDelivery.attr("val-required-message"));
+                    validStates.push(false);
+                }
+            }
+
+            $button.on("click", function (event) {
+                event.preventDefault();
+                validate();
+                if (validStates.every(isAllValid)) {
+                    $("#ApprenticeshipDeliveryForm").submit();
+                }
+            });
+
+        });
+    })(jQuery);
+</script>
+
+
+

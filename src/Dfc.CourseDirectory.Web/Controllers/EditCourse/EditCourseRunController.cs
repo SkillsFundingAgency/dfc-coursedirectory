@@ -392,13 +392,43 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 
                     foreach (var selectRegionRegionItem in vm.ChooseRegion.Regions.RegionItems.OrderBy(x => x.RegionName))
                     {
-                        foreach (var subRegionItemModel in selectRegionRegionItem.SubRegion)
+                        //If Region is returned, check for existence of any subregions
+                        if (courseRun.Regions.Contains(selectRegionRegionItem.Id))
                         {
-                            if (courseRun.Regions.Contains(subRegionItemModel.Id))
+                            var subregionsInList = from subRegion in selectRegionRegionItem.SubRegion
+                                         where courseRun.Regions.Contains(subRegion.Id)
+                                         select subRegion;
+
+                            //If true, then ignore subregions
+                            if (subregionsInList.Count() > 0)
+                            {
+                                foreach(var subRegion in subregionsInList)
+                                {
+                                    courseRun.Regions = courseRun.Regions.Where(x => (x != subRegion.Id)).ToList();
+                                    
+                                }
+                            }
+                            //If false, then tick all subregions
+                            foreach (var subRegionItemModel in selectRegionRegionItem.SubRegion)
                             {
                                 subRegionItemModel.Checked = true;
                             }
+                            
                         }
+                        //Else, just tick the one subregion per item
+                        else
+                        {
+                            foreach (var subRegionItemModel in selectRegionRegionItem.SubRegion)
+                            {
+                                if (courseRun.Regions.Contains(subRegionItemModel.Id))
+                                {
+                                    subRegionItemModel.Checked = true;
+                                }
+                            }
+                        }
+
+                        
+
                     }
 
                     if (vm.ChooseRegion.Regions.RegionItems != null && vm.ChooseRegion.Regions.RegionItems.Any())
@@ -549,6 +579,14 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                         switch (model.Mode)
                         {
                             case PublishMode.BulkUpload:
+                                                                return RedirectToAction("Index", "PublishCourses",
+                                    new
+                                    {
+                                        publishMode = model.Mode,
+                                        courseId = model.CourseId,
+                                        courseRunId = model.CourseRunId,
+                                        notificationTitle = ""
+                                    });
                             case PublishMode.Migration:
                                 var message =
                                     updatedCourse.Value.CourseRuns.Any(x=>x.id == model.CourseRunId && x.RecordStatus == RecordStatus.MigrationPending)

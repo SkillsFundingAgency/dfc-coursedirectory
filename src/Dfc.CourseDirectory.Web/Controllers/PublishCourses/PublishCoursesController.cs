@@ -13,6 +13,7 @@ using Dfc.CourseDirectory.Services.Interfaces.BlobStorageService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 using Dfc.CourseDirectory.Services.VenueService;
+using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.ViewModels.BulkUpload;
 using Dfc.CourseDirectory.Web.ViewModels.PublishCourses;
 using Microsoft.AspNetCore.Authorization;
@@ -50,7 +51,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
 
         [Authorize]
         [HttpGet]
-        public IActionResult Index(PublishMode publishMode, string notificationTitle, Guid? courseId, Guid? courseRunId)
+        public IActionResult Index(PublishMode publishMode, string notificationTitle, Guid? courseId, Guid? courseRunId, bool fromBulkUpload)
         {
             int? UKPRN = _session.GetInt32("UKPRN");
             if (!UKPRN.HasValue)
@@ -68,19 +69,39 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
             switch (publishMode)
             {
                 case PublishMode.Migration:
-                    if(Courses.All(x=>x.CourseStatus != RecordStatus.MigrationPending && x.CourseStatus != RecordStatus.MigrationReadyToGoLive))
+                   if (Courses.Where(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.MigrationPending)).Any())
+                    {
+                        vm.PublishMode = PublishMode.Migration;
+                        var migratedCourses = Courses.Where(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.MigrationPending || cr.RecordStatus == RecordStatus.MigrationReadyToGoLive)).ToList();
+                        vm.NumberOfCoursesInFiles = migratedCourses.SelectMany(s => s.CourseRuns.Where(cr => cr.RecordStatus == RecordStatus.MigrationPending || cr.RecordStatus == RecordStatus.MigrationReadyToGoLive)).Count();
+                        vm.Courses = migratedCourses.OrderBy(x => x.QualificationCourseTitle);
+                        vm.AreAllReadyToBePublished = CheckAreAllReadyToBePublished(migratedCourses, PublishMode.Migration);
+                        vm.Courses = GetErrorMessages(vm.Courses, ValidationMode.MigrateCourse);
+                        vm.Venues = VenueHelper.GetVenueNames(vm.Courses, _venueService).Result;
+                        break;
+                    }
+                    else
                     {
                         return View("../Migration/Complete/index");
                     }
+
+                    //if (Courses.Any(x => x.CourseStatus != RecordStatus.MigrationPending && x.CourseStatus != RecordStatus.MigrationReadyToGoLive))
+                    //{
+                    //    return View("../Migration/Complete/index");
+                    //}
+                    //if (Courses.All(x=>x.CourseStatus != RecordStatus.MigrationPending && x.CourseStatus != RecordStatus.MigrationReadyToGoLive))
+                    //{
+                    //    return View("../Migration/Complete/index");
+                    //}
                     //TODO replace with call to service to return by status
-                    vm.PublishMode = PublishMode.Migration;
-                    var migratedCourses = Courses.Where(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.MigrationPending || cr.RecordStatus == RecordStatus.MigrationReadyToGoLive)).ToList();
-                    vm.NumberOfCoursesInFiles = migratedCourses.SelectMany(s => s.CourseRuns.Where(cr => cr.RecordStatus == RecordStatus.MigrationPending || cr.RecordStatus == RecordStatus.MigrationReadyToGoLive)).Count();
-                    vm.Courses = migratedCourses.OrderBy(x=>x.QualificationCourseTitle);
-                    vm.AreAllReadyToBePublished = CheckAreAllReadyToBePublished(migratedCourses, PublishMode.Migration);
-                    vm.Courses = GetErrorMessages(vm.Courses, ValidationMode.MigrateCourse);
-                    vm.Venues = GetVenueNames(vm.Courses);
-                    break;
+                    //vm.PublishMode = PublishMode.Migration;
+                    //var migratedCourses = Courses.Where(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.MigrationPending || cr.RecordStatus == RecordStatus.MigrationReadyToGoLive)).ToList();
+                    //vm.NumberOfCoursesInFiles = migratedCourses.SelectMany(s => s.CourseRuns.Where(cr => cr.RecordStatus == RecordStatus.MigrationPending || cr.RecordStatus == RecordStatus.MigrationReadyToGoLive)).Count();
+                    //vm.Courses = migratedCourses.OrderBy(x=>x.QualificationCourseTitle);
+                    //vm.AreAllReadyToBePublished = CheckAreAllReadyToBePublished(migratedCourses, PublishMode.Migration);
+                    //vm.Courses = GetErrorMessages(vm.Courses, ValidationMode.MigrateCourse);
+                    //vm.Venues = GetVenueNames(vm.Courses);
+                    //break;
 
                 case PublishMode.BulkUpload:
 
@@ -91,7 +112,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                     vm.Courses = bulkUploadedCourses.OrderBy(x => x.QualificationCourseTitle);
                     vm.AreAllReadyToBePublished = CheckAreAllReadyToBePublished(bulkUploadedCourses, PublishMode.BulkUpload);
                     vm.Courses = GetErrorMessages(vm.Courses, ValidationMode.BulkUploadCourse);
-                    vm.Venues = GetVenueNames(vm.Courses);
+                    vm.Venues = VenueHelper.GetVenueNames(vm.Courses, _venueService).Result;
                     break;
 
                 case PublishMode.DataQualityIndicator:
@@ -103,7 +124,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                     var invalidCourses = invalidCoursesResult.Select(c => (Course)c.Course).ToList();
                     var courseRuns = invalidCourses.Select(cr => cr.CourseRuns.Where(x => x.StartDate < DateTime.Today));
                     List<Course> filteredList = new List<Course>();
-                    foreach(var course in invalidCourses)
+                    var allRegions = _courseService.GetRegions().RegionItems;
+                    foreach (var course in invalidCourses)
                     {
                         var invalidRuns = course.CourseRuns.Where(x => x.StartDate < DateTime.Today);
                         if (invalidRuns.Any())
@@ -121,7 +143,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
 
                     vm.NumberOfCoursesInFiles = invalidCourses.Count();
                     vm.Courses = filteredList.OrderBy(x => x.QualificationCourseTitle);
-                    vm.Venues = GetVenueNames(vm.Courses);
+                    vm.Venues = VenueHelper.GetVenueNames(vm.Courses,_venueService).Result;
+                    vm.Regions = allRegions;
                     break;
             }
 
@@ -132,11 +155,25 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
             if (vm.AreAllReadyToBePublished)
             {
                 if (publishMode == PublishMode.BulkUpload)
-                {
                     return RedirectToAction("PublishYourFile", "Bulkupload", new { NumberOfCourses = Courses.SelectMany(s => s.CourseRuns.Where(cr => cr.RecordStatus == RecordStatus.BulkUploadReadyToGoLive)).Count() });
-                
-                }
 
+            } else {
+                if (publishMode == PublishMode.BulkUpload)
+                {
+                    var message = "";
+                    if (fromBulkUpload)
+                    {
+                        var bulkUploadedPendingCourses = Courses.SelectMany(c => c.CourseRuns)
+                                           .Where(x => x.RecordStatus == RecordStatus.BulkUploadPending)
+                                           .Count();
+                        //var bulkUploadedPendingCourses = Courses.Where(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.BulkUploadPending)).Count();
+                        message = "Your file contained " + bulkUploadedPendingCourses + @WebHelper.GetErrorTextValueToUse(bulkUploadedPendingCourses) + ". You must fix all errors before your courses can be published to the directory.";
+                        return RedirectToAction("WhatDoYouWantToDoNext", "Bulkupload", new { message = message });
+                    }
+                  
+                   
+
+                }
             }
 
             return View("Index", vm);
@@ -170,6 +207,10 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                         return RedirectToAction("Index", "Home", new { errmsg = "Publish All Migration-PublishCourses Error" });
 
                 case PublishMode.BulkUpload:
+
+                    //not sure what to do with result or if these fail?
+                    var deleteMigrationPendingResult = await _courseService.ChangeCourseRunStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.MigrationPending, (int)RecordStatus.Archived);
+                    var deleteMigrationReadyToGoLiveResult = await _courseService.ChangeCourseRunStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.MigrationReadyToGoLive, (int)RecordStatus.Archived);
 
                     //Archive any existing courses
                     var resultArchivingCourses = await _courseService.ChangeCourseRunStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.Live, (int)RecordStatus.Archived);
@@ -252,36 +293,24 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
         {
             foreach (var course in courses)
             {
+                bool saveMe = false;
                 course.ValidationErrors = _courseService.ValidateCourse(course).Select(x => x.Value);
+                if (validationMode == ValidationMode.BulkUploadCourse && course.BulkUploadErrors.Any() && !course.ValidationErrors.Any()) {
+                    course.BulkUploadErrors = new BulkUploadError[] { };
+                    saveMe = true;
+                }
                 foreach (var courseRun in course.CourseRuns)
+                {
                     courseRun.ValidationErrors = _courseService.ValidateCourseRun(courseRun, validationMode).Select(x => x.Value);
+                    if (validationMode == ValidationMode.BulkUploadCourse && courseRun.BulkUploadErrors.Any() && !courseRun.ValidationErrors.Any())
+                        courseRun.BulkUploadErrors = new BulkUploadError[] { };
+                }
+
+                // Save bulk upload fixed courses so that DQI stats will reflect new error counts
+                if (validationMode == ValidationMode.BulkUploadCourse && saveMe)
+                    _courseService.UpdateCourseAsync(course);
             }
             return courses;
         }
-        internal Dictionary<Guid, string> GetVenueNames(IEnumerable<Course> courses)
-        {
-            Dictionary<Guid, string> venueNames = new Dictionary<Guid, string>();
-            foreach (var course in courses)
-            {
-                foreach (var courseRun in course.CourseRuns)
-                {
-                    if (courseRun.VenueId != Guid.Empty && courseRun.VenueId != null)
-                    {
-                        if (!venueNames.ContainsKey((Guid)courseRun.VenueId))
-                        {
-                            var result = _venueService.GetVenueByIdAsync(new GetVenueByIdCriteria(courseRun.VenueId.ToString()));
-                            if (result.Result.IsSuccess && result.Result.HasValue)
-                            {
-                                Guid.TryParse(result.Result.Value.ID, out Guid venueId);
-                                venueNames.Add(venueId, result.Result.Value.VenueName);
-                            }
-                        }
-                    }
-
-                }
-            }
-            return venueNames;
-        }
-
     }
 }

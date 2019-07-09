@@ -16,10 +16,11 @@
         </h1>
 
         <form id="AddVenue" asp-controller="Venues" asp-action="VenueAddressSelectionConfirmation" method="post">
+
             @await Component.InvokeAsync(nameof(VenueName), new VenueNameModel
             {
                 LabelText = "Venue name",
-                AriaDescribedBy = "Please enter the venue name."
+                AriaDescribedBy = "Please enter the venue name.",
             })
 
             <div>
@@ -68,30 +69,26 @@
             $("#findAddress").focus();
 
             var $venueName = $("#@nameof(Model.VenueName)").govUkInput();
-
+            var $duplicateErrorMessage = $("#DuplicateVenueName");
             var $selectedAddress = $("#PostcodeId").govUkSelect();
             var validStates = [];
-            var $continueButton = $("#venueAddressConfirmationSelection");
             var $manualLink = $("#manualLink");
-            var $formGroupPostcodeId = $selectedAddress.closest(".govuk-form-group");
+            var $formGrouVenueName = $venueName.closest(".govuk-form-group");
             var $container = $selectedAddress.closest(".postcode-lookup__component").parent();
-            var $link = $container.find("a");
-            var $continue = $("#venueAddressConfirmationSelection");
-            var $button = $("#findAddress");
             var $postcode = $("#@nameof(Model.Postcode)").govUkInput();
             var $container = $postcode.closest(".postcode-lookup__component").parent();
 
 
-            var $elementSearchTerm = $("#@nameof(Model.Postcode)");
-            var $formGroupSearchTerm = $elementSearchTerm.closest('.govuk-form-group');
-
             var formGroupErrorClass = "govuk-form-group--error";
-            var elementErrorClass = "govuk-input--error";
+            var elementErrorClass = "govuk-error-message";
+            var elementClass= "govuk-input--error"
 
 
-
-
-
+            $duplicateErrorMessage.removeClass(elementErrorClass);
+            $formGrouVenueName.removeClass(formGroupErrorClass);
+            $duplicateErrorMessage.hide();
+            $venueName.removeClass(elementClass)
+          
             function isAllValid(currentValue) {
                         return currentValue === true;
             }
@@ -124,6 +121,7 @@
 
             function validateVenueName() {
 
+                 $duplicateErrorMessage.hide();
                 $venueName.govUkInput("validState");
 
                 if (!$.requiredValidate($venueName.val())) {
@@ -141,11 +139,12 @@
                     $venueName.govUkInput("validState");
                     validStates.push(true);
                 }
-                        
+
             }
 
             function validateSelectedAddress() {
 
+                 $duplicateErrorMessage.hide();
                 $selectedAddress.govUkSelect("validState");
                  if ($.requiredValidate($selectedAddress.val()))
                     {
@@ -162,6 +161,7 @@
 
             function validatePostCode() {
 
+                $duplicateErrorMessage.hide();
                 $postcode.govUkInput("validState");
 
                 $("#InvalidPostCode").removeClass("govuk-error-message");
@@ -184,19 +184,53 @@
                 }
 
                 if (!validStates.every(isAllValid)) {
-                    
+
                 }
             }
 
+            var onCheckVenueSucess = function (data) {
+                if (data == true) {
+                      $duplicateErrorMessage.addClass(elementErrorClass);
+                    $formGrouVenueName.addClass(formGroupErrorClass);
+                    $duplicateErrorMessage.show();
+                     $venueName.addClass(elementClass)
+                }
+                else {
+                       $duplicateErrorMessage.removeClass(elementErrorClass);
+                    $formGrouVenueName.removeClass(formGroupErrorClass);
+                    $duplicateErrorMessage.hide();
+                     $venueName.removeClass(elementClass)
+                    $("#AddVenue").submit();
+                }
+               
+            };
+
+               var makeCheckVenueRequest = function (payload, cb) {
+                var qs = $.param(payload);
+                $.get("/Venues/CheckForVenue?" + qs, cb);
+            };
+
+
+
             $(document).on('click','#venueAddressConfirmationSelection',function(e){
                 e.preventDefault();
+
+                   $duplicateErrorMessage.removeClass(elementErrorClass);
+                    $formGrouVenueName.removeClass(formGroupErrorClass);
+                    $duplicateErrorMessage.show();
+                    $venueName.removeClass(elementClass)
+
                     validStates = [];
                     validateSelectedAddress();
                     validateVenueName();
-                    if (validStates.every(isAllValid)) {
-                        $("#AddVenue").submit();
-                    }    
+                if (validStates.every(isAllValid)) {
+
+                            makeCheckVenueRequest(
+                            { VenueName:$venueName.val() }, onCheckVenueSucess);
+
                        
+                    }
+
             });
 
               $(document).on('click','#findAddress',function(e){
@@ -206,10 +240,10 @@
                     if (validStates.every(isAllValid)) {
                         makePostRequestWithPayload(
                             { postcode: $("#Postcode").val() }, onPostCodeSearchSucess);
-                    }    
+                    }
               });
 
-            
+
               $(document).on('click','#Change',function(e){
 
 

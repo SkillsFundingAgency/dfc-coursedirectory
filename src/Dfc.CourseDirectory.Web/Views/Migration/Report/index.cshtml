@@ -19,56 +19,66 @@
                     </p>
                     <p class="govuk-!-margin-bottom-6">
                         Alternatively, you can overwrite any data transfer and ensure all of your provision is up to date by
-                        @Html.ActionLink("uploading a file of all your courses","Index","BulkUpload",new {},new{@class="govuk-link"})
+                        @Html.ActionLink("uploading a file of all your courses", "Index", "BulkUpload", new { }, new { @class = "govuk-link" })
                     </p>
                     <div class="">
                         <h2 class="govuk-heading-l">@Model.ErrorsCount courses with errors</h2>
                         <div class="govuk-grid-column-full cd-status-panel grey govuk-!-margin-bottom-9">
                             <h3 class="govuk-heading-s">These have errors or missing information</h3>
                             <p>You can still publish these courses if you fix errors first.</p>
-                            @Html.ActionLink("Fix errors","Index","Migration"
-                                ,null,new {@class="govuk-button"})
+                            @Html.ActionLink("Fix errors", "Index", "Migration"
+                                , null, new { @class = "govuk-button" })
                         </div>
                     </div>
-                    @*<div class="">
-                        <div class="govuk-grid-column-one-full">
-                            <h2 class="govuk-heading-l">@Model.NoLarsCount courses with no or expired LARS/QAN numbers </h2>
-                        </div>
+                    @if (Model.NoLarsCount.HasValue)
+                    {
+                        <div class="">
+                            <div class="govuk-grid-column-one-full">
+                                <h2 class="govuk-heading-l">@Model.NoLarsCount courses with no or expired LARS/QAN numbers </h2>
+                            </div>
 
-                        <div class=" cd-status-panel grey govuk-!-margin-bottom-9">
-                            <h3 class="govuk-heading-s">These have no or an expired LARS/QAN</h3>
-                            <p>If you still run these courses you will need to publish them to the new course directory.</p>
+                            <div class=" cd-status-panel grey govuk-!-margin-bottom-9">
+                                <h3 class="govuk-heading-s">These have no or an expired LARS/QAN</h3>
+                                <p>If you still run these courses you will need to publish them to the new course directory.</p>
 
-                            <a href="#" class="govuk-button govuk-button--secondary">Download</a>
+                                @Html.ActionLink("View courses that weren't transferred", "Larsless", "Migration", null,
+                                    new { @class = "govuk-button govuk-button--secondary" })
+                            </div>
                         </div>
-                    </div>*@
+                    }
                     <div class="govuk-!-margin-bottom-9">
                         <div class=" ">
                             <h2 class="govuk-heading-l">@Model.PublishedCount courses now live on the course directory </h2>
                             <div class="govuk-grid-column-one-hal cd-status-panel grey">
                                 <h3 class="govuk-heading-s">These are now live on the course directory</h3>
-                                @Html.ActionLink("Check your published courses", "Index", "ProviderCourses",null,
-                                    new {@class="govuk-button govuk-button--secondary"})
+                                @Html.ActionLink("Check your published courses", "Index", "ProviderCourses", null,
+                                    new { @class = "govuk-button govuk-button--secondary" })
                             </div>
                         </div>
                     </div>
                     <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-6">
-                    @Html.ActionLink("Continue to course directory","Index", "Home",
-                        null,new{@class="govuk-link govuk-!-margin-top-3"})
+                    @Html.ActionLink("Continue to course directory", "Index", "Home",
+                        null, new { @class = "govuk-link govuk-!-margin-top-3" })
                 </div>
                 <div class="govuk-grid-column-one-third">
                     <aside class="sidebar">
                         <div class="widget">
                             <h3>Data transfer details</h3>
-                            @*<div>
-                                <span>Courses on the old directory: </span><span><strong> @Model.CourseCount</strong></span>
-                            </div>*@
+                            @if (Model.CourseCount.HasValue)
+                            {
+                                <div>
+                                    <span>Courses on the old directory: </span><span><strong> @Model.CourseCount</strong></span>
+                                </div>
+                            }
                             <div>
                                 <span>Courses that need action: </span><span><strong> @Model.ErrorsCount</strong></span>
                             </div>
-                            <div>
-                                <span>Courses not transferred:</span><span><strong> @Model.NoLarsCount</strong></span>
-                            </div>
+                            @if (Model.NoLarsCount.HasValue)
+                            {
+                                <div>
+                                    <span>Courses not transferred:</span><span><strong> @Model.NoLarsCount</strong></span>
+                                </div>
+                            }
                             <div class="govuk-!-padding-bottom-6">
                                 <span>Courses successfully published:</span><span><strong> @Model.PublishedCount</strong></span>
                             </div>

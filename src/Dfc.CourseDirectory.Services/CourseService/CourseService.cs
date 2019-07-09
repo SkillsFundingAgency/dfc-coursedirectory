@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Globalization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Dfc.CourseDirectory.Common;
@@ -40,6 +41,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
         private readonly Uri _changeCourseRunStatusesForUKPRNSelectionUri;
         private readonly Uri _archiveLiveCoursesUri;
         private readonly Uri _deleteBulkUploadCoursesUri;
+        private readonly Uri _getCourseMigrationReportByUKPRN;
 
         private readonly int _courseForTextFieldMaxChars;
         private readonly int _entryRequirementsTextFieldMaxChars;
@@ -92,6 +94,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             _getRecentCourseChangesByUKPRNUri = settings.Value.ToGetRecentCourseChangesByUKPRNUri();
             _changeCourseRunStatusesForUKPRNSelectionUri = settings.Value.ToChangeCourseRunStatusesForUKPRNSelectionUri();
             _deleteBulkUploadCoursesUri = settings.Value.ToDeleteBulkUploadCoursesUri();
+            _getCourseMigrationReportByUKPRN = settings.Value.ToGetCourseMigrationReportByUKPRN();
 
             _courseForTextFieldMaxChars = courseForComponentSettings.Value.TextFieldMaxChars;
             _entryRequirementsTextFieldMaxChars = entryRequirementsComponentSettings.Value.TextFieldMaxChars;
@@ -704,9 +707,17 @@ namespace Dfc.CourseDirectory.Services.CourseService
                     break;
                 case DeliveryMode.WorkBased:
 
-                    // Regions
-                    if (courseRun.Regions == null || courseRun.Regions.Count().Equals(0))
-                        validationMessages.Add(new KeyValuePair<string, string>("NULL", $"Select a region"));
+                    //National
+                    if(courseRun.National == null)
+                    {
+                        validationMessages.Add(new KeyValuePair<string, string>("NATIONAL_DELIVERY", $"Choose if you can deliver this course anywhere in England"));
+                    }
+                    else if(courseRun.National == false)
+                    {
+                        // Regions
+                        if (courseRun.Regions == null || courseRun.Regions.Count().Equals(0))
+                            validationMessages.Add(new KeyValuePair<string, string>("REGION", $"Select at least one region"));
+                    }
                     break;
                 case DeliveryMode.Undefined: // Question ???
                 default:
@@ -719,27 +730,36 @@ namespace Dfc.CourseDirectory.Services.CourseService
             {
                 courseRun.FlexibleStartDate = false; // COUR-746-StartDate
 
+                var currentDate = DateTime.UtcNow.Date;
+
                 switch (validationMode)
                 { 
                     case ValidationMode.AddCourseRun:
                     case ValidationMode.CopyCourseRun:
                     case ValidationMode.EditCourseBU:
                     case ValidationMode.BulkUploadCourse:
-                        if (courseRun.StartDate < DateTime.Now)
+
+                        _logger.LogError("course date" + courseRun.StartDate.Value.Date + "utc Date " + currentDate);
+
+
+                        int result = DateTime.Compare(courseRun.StartDate.Value.Date, currentDate);
+
+                        if (result < 0)
                         {
+                            _logger.LogWarning("*Simon* Date in the past");
+                        }
+
+                        if (courseRun.StartDate < currentDate)
                             validationMessages.Add(new KeyValuePair<string, string>("START_DATE", $"Start Date cannot be earlier than today's date"));
-                        }
-                        if (courseRun.StartDate > DateTime.Now.AddYears(2))
-                        {
+                        if (courseRun.StartDate > currentDate.AddYears(2))
                             validationMessages.Add(new KeyValuePair<string, string>("START_DATE", $"Start Date cannot be later than 2 years from today’s date"));
-                        }
                         break;
                     case ValidationMode.EditCourseYC:
                     case ValidationMode.EditCourseMT:
                         // It cannot be done easily as we need both value - the newly entered and the previous. Call to saved version or modification in the model
                         break;
                     case ValidationMode.MigrateCourse:
-                        if (courseRun.StartDate > DateTime.Now.AddYears(2))
+                        if (courseRun.StartDate > currentDate.AddYears(2))
                             validationMessages.Add(new KeyValuePair<string, string>("START_DATE", $"Start Date cannot be later than 2 years from today’s date"));
                         break;
                     case ValidationMode.Undefined:
@@ -797,7 +817,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
 
         public bool HasOnlyFollowingValidCharacters(string value)
         {
-            string regex = @"^[a-zA-Z0-9 /\n/\r/\¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`" + "\"" + "\\\\]+$";
+            string regex = @"^[a-zA-Z0-9 /\n/\r/\\u/\¬\!\£\$\%\^\&\*\\é\\è\\ﬁ\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\•\·\●\\’\‘\“\”\—\-\–\‐\‐\…\:/\°\®\\â\\ç\\ñ\\ü\\ø\♦\™\\t/\s\¼\¾\½\" + "\"" + "\\\\]+$";
             var validUKPRN = Regex.Match(value, regex, RegexOptions.IgnoreCase);
 
             return validUKPRN.Success;
@@ -904,6 +924,52 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 return Result.Fail("Update course unsuccessful http response");
             }
         }
+
+        public async Task<IResult<CourseMigrationReport>> GetCourseMigrationReport(int UKPRN)
+        {
+            Throw.IfNull(UKPRN, nameof(UKPRN));
+            _logger.LogMethodEnter();
+
+            try
+            {
+                _logger.LogInformationObject("Get your courses URI", _getYourCoursesUri);
+
+                var response = await _httpClient.GetAsync(new Uri(_getCourseMigrationReportByUKPRN.AbsoluteUri + "&UKPRN=" + UKPRN));
+                _logger.LogHttpResponseMessage("Get course migration report service http response", response);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+
+
+                    _logger.LogInformationObject("Get course migration report service json response", json);
+                    CourseMigrationReport courseMigrationReport = JsonConvert.DeserializeObject<CourseMigrationReport>(json);
+                    return Result.Ok<CourseMigrationReport>(courseMigrationReport);
+
+                }
+                else
+                {
+                    return Result.Fail<CourseMigrationReport>("Get course migration report service unsuccessful http response");
+                }
+
+            }
+            catch (HttpRequestException hre)
+            {
+                _logger.LogException("Get course migration report service http request error", hre);
+                return Result.Fail<CourseMigrationReport>("Get course migration report service http request error.");
+
+            }
+            catch (Exception e)
+            {
+                _logger.LogException("Get course migration report service unknown error.", e);
+                return Result.Fail<CourseMigrationReport>("Get course migration report service unknown error.");
+
+            }
+            finally
+            {
+                _logger.LogMethodExit();
+            }
+        }
     }
 
     internal static class IGetCourseByIdCriteriaExtensions
@@ -967,6 +1033,10 @@ namespace Dfc.CourseDirectory.Services.CourseService
         internal static Uri ToDeleteBulkUploadCoursesUri(this ICourseServiceSettings extendee)
         {
             return new Uri($"{extendee.ApiUrl + "DeleteBulkUploadCourses?code=" + extendee.ApiKey}");
+        }
+        internal static Uri ToGetCourseMigrationReportByUKPRN(this ICourseServiceSettings extendee)
+        {
+            return new Uri($"{extendee.ApiUrl + "GetCourseMigrationReportByUKPRN?code=" + extendee.ApiKey}");
         }
     }
     internal static class FindACourseServiceSettingsExtensions

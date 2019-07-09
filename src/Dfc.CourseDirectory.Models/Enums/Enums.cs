@@ -37,19 +37,19 @@ namespace Dfc.CourseDirectory.Models.Enums
 
     }
 
-    public enum ApprenticeShipMode
-    {
-        [Display(Name = "Undefined")]
-        [Description("Undefined")]
-        Undefined = 0,
-        [Display(Name = "Add new")]
-        [Description("Add")]
-        Add = 1,
-        [Display(Name = "Edit")]
-        [Description("Edit")]
-        Edit = 2
+    //public enum ApprenticeShipMode
+    //{
+    //    [Display(Name = "Undefined")]
+    //    [Description("Undefined")]
+    //    Undefined = 0,
+    //    [Display(Name = "Add new")]
+    //    [Description("Add")]
+    //    Add = 1,
+    //    [Display(Name = "Edit")]
+    //    [Description("Edit")]
+    //    Edit = 2
 
-    }
+    //}
 
     public enum ApprenticeShipDeliveryLocation
     {
@@ -207,6 +207,30 @@ namespace Dfc.CourseDirectory.Models.Enums
         DeleteMigrations = 1,
         [Description("No")]
         Cancel =2
+    }
+
+    public enum ApprenticeshipWhatWouldYouLikeToDo
+    { 
+        [Description("Undefined")]
+        Undefined = 0,
+        [Description("Add an apprenticeship")]
+        Add = 1,
+        [Description("Add multiple apprenticeships via a file upload")]
+        Upload = 2,
+        [Description("View or make changes to an existing apprenticeship")]
+        View = 3
+    }
+
+
+    public enum ApprenticeshipDelete
+    {
+        [Description("Undefined")]
+        Undefined = 0,
+        [Description("Yes, Delete")]
+        Delete = 1,
+        [Description("No, go back")]
+        Back = 2,
+       
     }
 
     public enum ApprenticeshipDelivery

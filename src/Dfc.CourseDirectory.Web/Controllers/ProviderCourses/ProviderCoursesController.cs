@@ -73,7 +73,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
 
             var regionNames = (from regionItemModel in list
                                from subRegionItemModel in regionItemModel.SubRegion
-                               where ids.Contains(subRegionItemModel.Id)
+                               where ids.Contains(subRegionItemModel.Id) || ids.Contains(regionItemModel.Id)
                                select regionItemModel.RegionName).Distinct().OrderBy(x => x).ToList();
 
             return string.Join(", ", regionNames);
@@ -137,6 +137,9 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
 
                 foreach (var cr in filteredLiveCourseRuns)
                 {
+                    var national = cr.DeliveryMode == DeliveryMode.WorkBased & !cr.National.HasValue ||
+                                   cr.National.GetValueOrDefault();
+
                     ProviderCourseRunViewModel courseRunModel = new ProviderCourseRunViewModel()
                     {
                         AwardOrgCode = course.AwardOrgCode,
@@ -164,13 +167,13 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
                                                         ? string.Empty
                                                         : cr.StudyMode.ToDescription(),
                         Url = cr.CourseURL,
-                        National = cr.National
+                        National = national
 
 
 
                     };
                     //If National
-                    if(cr.National)
+                    if(national)
                     {
                         courseRunModel.Region = string.Join(", ", allRegions.Select(x => x.RegionName).ToList()); 
                         courseRunModel.RegionIdList = string.Join(", ", allRegions.Select(x => x.Id).ToList());

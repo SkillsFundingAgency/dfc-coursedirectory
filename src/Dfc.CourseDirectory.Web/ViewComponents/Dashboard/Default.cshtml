@@ -23,16 +23,27 @@
 
 @if (Model.BulkUploadReadyToGoLiveCount > 0 || Model.BulkUploadPendingCount > 0)
 {
+    var link = "";
+    @if (Model.BulkUpLoadHasErrors==true)
+    {
+
+        link = $"<a class='govuk-link' href='/Bulkupload/WhatDoYouWantToDoNext'>{Model.BulkUploadMessage}</a>";
+    }
+    else
+    {
+                link = $"<a class='govuk-link' href='/PublishCourses/Index?publishMode=Bulkupload'>{Model.BulkUploadMessage}</a>";
+    }
+
     @await Component.InvokeAsync(nameof(Notification), new NotificationModel
     {
         NotificationTitle = "Bulk upload",
         ClassType = "info-summary",
-        Link = $"<a class='govuk-link' href='/Bulkupload/WhatDoYouWantToDoNext'>{Model.BulkUploadMessage}</a>"
+        Link = link
     })
 }
 
 <div class="cd-dashboard provider">
-    <span class="govuk-caption-xl">Course Directory</span>
+    <span class="govuk-caption-xl">Course directory</span>
     <h1 class="govuk-heading-xl cd-dashboard-title">Course management dashboard</h1>
     <hr class="spacer" />
     <div class="govuk-grid-row govuk-!-margin-bottom-9">
@@ -77,7 +88,7 @@
                 {
                     <div class=" homepage-item govuk-grid-column-one-third">
                         <div class="cd-status-panel blue">
-                            <a asp-controller="Migration" asp-action="Options" class="govuk-link">Migration</a>
+                            <a asp-controller="Migration" asp-action="Report" class="govuk-link">Migration</a>
                             <p>View details of the data we migrated.</p>
                         </div>
                     </div>
@@ -93,7 +104,7 @@
                 <div class="homepage-item govuk-grid-column-one-third">
                     <div class="cd-status-panel grey">
                         <a asp-controller="Provider" asp-action="Details" class="govuk-link">Your details</a>
-                        <p>Manage the detials we hold about your organisation.</p>
+                        <p>Manage the details we hold about your organisation.</p>
                     </div>
                 </div>
             </div>

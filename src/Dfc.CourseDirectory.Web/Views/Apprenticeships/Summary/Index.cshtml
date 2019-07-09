@@ -1,0 +1,145 @@
+﻿@using Dfc.CourseDirectory.Models.Enums
+@using Dfc.CourseDirectory.Models.Models.Apprenticeships
+@using Dfc.CourseDirectory.Web.Helpers
+@using Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships
+@{
+    Layout = "_Layout_Your_Courses";
+}
+
+@model Dfc.CourseDirectory.Web.ViewModels.Apprenticeships.SummaryViewModel
+
+
+<form class="govuk-!-margin-bottom-9" id="ApprenticeshipSummaryForm" asp-controller="Apprenticeships" asp-action="Summary" method="post">
+    <a asp-controller="Apprenticeships" asp-action="Delivery" class="govuk-back-link">Back</a><br />
+    <div class="cd-dashboard ">
+
+
+        <div class="">
+
+
+            <main class="govuk-mainwrapper " id="main-content" role="main">
+                <div class="govuk-grid-row">
+                    <div class="govuk-grid-column-two-thirds-from-desktop">
+                        @Html.HiddenFor(x=>x.Mode)
+                        @if (Model.Mode == ApprenticeshipMode.EditYourAprrenticeships)
+                        {
+                            <h1 class="govuk-heading-xl">Check and edit</h1>
+                        }
+                        else
+                        {
+                            <h1 class="govuk-heading-xl">Check your answers before saving</h1>
+                        }
+
+
+
+                        <h2 class="govuk-heading-m">@Model?.DetailViewModel?.ApprenticeshipTitle</h2>
+
+                        <dl class="govuk-summary-list ">
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Apprenticeship information for employers
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @Html.Raw(Model.DetailViewModel.Information)
+                                </dd>
+                                <dd class="govuk-summary-list__actions">
+                                    <a class="" asp-controller="Apprenticeships" asp-action="Details" asp-route-Mode="edit">Change</a>
+
+                                </dd>
+                            </div>
+                        </dl>
+                        <dl class="govuk-summary-list ">
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Apprenticeship webpage
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @Model.DetailViewModel.Website
+                                </dd>
+                                <dd class="govuk-summary-list__actions">
+                                    <a class="" asp-controller="Apprenticeships" asp-action="Details" asp-route-Mode="edit">Change</a>
+
+                                </dd>
+                            </div>
+                        </dl>
+                        <dl class="govuk-summary-list ">
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Email
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @Model.DetailViewModel.Email
+                                </dd>
+                                <dd class="govuk-summary-list__actions">
+                                    <a class="" asp-controller="Apprenticeships" asp-action="Details" asp-route-Mode="edit">Change</a>
+
+                                </dd>
+                            </div>
+                        </dl>
+                        <dl class="govuk-summary-list ">
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Contact URL
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @Model.DetailViewModel.ContactUsIUrl
+                                </dd>
+                                <dd class="govuk-summary-list__actions">
+                                    <a class="" asp-controller="Apprenticeships" asp-action="Details" asp-route-Mode="edit">Change</a>
+
+                                </dd>
+                            </div>
+                        </dl>
+
+                        <div class="summary--linked-title">
+                            <h2 class="govuk-heading-s">Delivery options </h2>
+
+                            @if (Model.DeliveryViewModel.ApprenticeshipDelivery == ApprenticeshipDelivery.Both)
+                            {
+                                <a class="govuk-link float-right " asp-controller="Apprenticeships" asp-action="DeliveryOptionsCombined">
+                                    Change
+                                </a>
+                            }
+                            else
+                            {
+                                <a class="govuk-link float-right " asp-controller="Apprenticeships" asp-action="DeliveryOptions">
+                                    Change
+                                </a>
+                            }
+
+                        </div>
+
+
+                        @if (Model.DeliveryOptionsViewModel != null)
+                        {
+                            @await Component.InvokeAsync(nameof(DeliveryOptionsList), Model.DeliveryOptionsViewModel.DeliveryOptionsListItemModel)
+                        }
+                        else
+                        {
+                            @if (Model.DeliveryOptionsCombinedViewModel != null)
+                             {
+                                 @await Component.InvokeAsync(nameof(DeliveryOptionsList), Model.DeliveryOptionsCombinedViewModel.DeliveryOptionsListItemModel)
+                             }
+                        }
+
+                        @if (Model.Mode == ApprenticeshipMode.EditYourAprrenticeships)
+                        {
+                            <button type="submit" class="govuk-button" id="next">Close</button>
+                        }
+                        else
+                        {
+                            <button type="submit" class="govuk-button" id="next">Publish</button>
+                        }
+
+                    </div>
+                </div>
+            </main>
+        </div>
+
+
+
+
+
+    </div>
+
+</form>

@@ -116,3 +116,11 @@
 .sidebar .widget div {
   margin-bottom: .5em;
 }
+
+.flat-list * {
+  padding-right: 1em;
+}
+
+.word-wrap-break {
+  word-wrap: break-word;
+}

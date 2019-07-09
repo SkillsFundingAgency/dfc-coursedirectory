@@ -1,9 +1,9 @@
-﻿@using Dfc.CourseDirectory.Web.ViewComponents.VenueAddressSelectionConfirmation
+﻿
+@using Dfc.CourseDirectory.Web.ViewComponents.VenueAddressSelectionConfirmation
 
 @{
     Layout = "_Layout_Your_Courses";
 }
-
 @model VenueAddressSelectionConfirmationViewModel
 
 
@@ -11,14 +11,10 @@
 
     <div class="govuk-grid-column-two-thirds">
         @{
-            if (Model.Id != null)
-            {
-                <h1 class="govuk-heading-xl">Edit venue details</h1>
-            }
-            else
-            {
-                <h1 class="govuk-heading-xl">Add a venue</h1>
-
+            if (Model.Id != null) {
+                <h1 class="govuk-heading-l">Edit venue details</h1>
+            } else {
+                <h1 class="govuk-heading-l">Add a venue</h1>
             }
         }
 
@@ -29,10 +25,3 @@
         })
     </div>
 </div>
-
-
-
-
-
-
-

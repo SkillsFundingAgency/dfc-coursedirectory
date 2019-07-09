@@ -19,8 +19,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
     {
         private readonly ILogger<ApprenticeshipService> _logger;
         private readonly HttpClient _httpClient;
-        private readonly Uri _getStandardsAndFrameworksUri, _addApprenticeshipUri, _getApprenticeshipByUKPRNUri;
-
+        private readonly Uri _getStandardsAndFrameworksUri, _addApprenticeshipUri, _getApprenticeshipByUKPRNUri, _getApprenticeshipByIdUri;
 
         public ApprenticeshipService(
             ILogger<ApprenticeshipService> logger,
@@ -37,6 +36,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             _getStandardsAndFrameworksUri = settings.Value.GetStandardsAndFrameworksUri();
             _addApprenticeshipUri = settings.Value.AddApprenticeshipUri();
             _getApprenticeshipByUKPRNUri = settings.Value.GetApprenticeshipByUKPRNUri();
+            _getApprenticeshipByIdUri = settings.Value.GetApprenticeshipByIdUri();
 
         }
 
@@ -140,6 +140,52 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             }
         }
 
+        public async Task<IResult<IApprenticeship>> GetApprenticeshipByIdAsync(string Id)
+        {
+            Throw.IfNullOrWhiteSpace(Id, nameof(Id));
+            _logger.LogMethodEnter();
+
+            try
+            {
+                _logger.LogInformationObject("Get Apprenticeship by Id", Id);
+
+                var response = await _httpClient.GetAsync(new Uri(_getApprenticeshipByIdUri.AbsoluteUri + "&id=" + Id));
+                _logger.LogHttpResponseMessage("Get Apprenticeship by Id service http response", response);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+
+                    _logger.LogInformationObject("Get Apprenticeship by Id json response", json);
+                    Apprenticeship results = JsonConvert.DeserializeObject<Apprenticeship>(json);
+
+                    return Result.Ok<IApprenticeship>(results);
+
+                }
+                else
+                {
+                    return Result.Fail<IApprenticeship>("Get Apprenticeship by Id service unsuccessful http response");
+                }
+
+            }
+            catch (HttpRequestException hre)
+            {
+                _logger.LogException("Get Apprenticeship by Id service http request error", hre);
+                return Result.Fail<IApprenticeship>("Get Apprenticeship by Id service http request error.");
+
+            }
+            catch (Exception e)
+            {
+                _logger.LogException("Get apprenticeship unknown error.", e);
+                return Result.Fail<IApprenticeship>("Get Apprenticeship by Id service unknown error.");
+            }
+            finally
+            {
+                _logger.LogMethodExit();
+            }
+        }
+
+
         public async Task<IResult<IEnumerable<IApprenticeship>>> GetApprenticeshipByUKPRN(string criteria)
         {
             Throw.IfNullOrWhiteSpace(criteria, nameof(criteria));
@@ -199,6 +245,10 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
         internal static Uri GetApprenticeshipByUKPRNUri(this IApprenticeshipServiceSettings extendee)
         {
             return new Uri($"{extendee.ApiUrl + "GetApprenticeshipByUKPRN?code=" + extendee.ApiKey}");
+        }
+        internal static Uri GetApprenticeshipByIdUri(this IApprenticeshipServiceSettings extendee)
+        {
+            return new Uri($"{extendee.ApiUrl + "GetApprenticeshipById?code=" + extendee.ApiKey}");
         }
     }
     

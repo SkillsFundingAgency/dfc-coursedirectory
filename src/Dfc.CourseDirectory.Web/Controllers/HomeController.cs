@@ -88,9 +88,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                 IEnumerable<CourseRun> migrationPendingCourses = courses.SelectMany(c => c.CourseRuns).Where(x => x.RecordStatus == RecordStatus.MigrationPending);
 
-                IEnumerable<Course> inValidCourses = courses.Where(c => c.IsValid == false);
+               // IEnumerable<Course> inValidCourses = courses.Where(c => c.IsValid == false);
 
-                if (inValidCourses.Count() > 0 || migrationPendingCourses.Count() > 0)
+                if (migrationPendingCourses.Count() > 0)
                 {
                     return RedirectToAction("Report", "Migration");
                 }

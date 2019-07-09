@@ -72,7 +72,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 DurationValue = courseRun.DurationValue,
                 ProviderCourseID = courseRun.ProviderCourseID,
                 DeliveryMode = courseRun.DeliveryMode,
-                National = courseRun.National,
+                National = courseRun.DeliveryMode == DeliveryMode.WorkBased & !courseRun.National.HasValue ||
+                           courseRun.National.GetValueOrDefault(),
                 FlexibleStartDate = courseRun.FlexibleStartDate,
                 StartDate = courseRun.StartDate,
                 StudyMode = courseRun.StudyMode,
@@ -125,7 +126,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             var regionNames = (from regionItemModel in list
                                from subRegionItemModel in regionItemModel.SubRegion
-                               where ids.Contains(subRegionItemModel.Id)
+                               where ids.Contains(subRegionItemModel.Id) || ids.Contains(regionItemModel.Id)
                                select regionItemModel.RegionName).Distinct().OrderBy(x => x);
 
             return regionNames;

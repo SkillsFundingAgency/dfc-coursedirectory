@@ -3,6 +3,7 @@
 @using Microsoft.AspNetCore.Authorization;
 @using Dfc.CourseDirectory.Models.Models.Courses
 @using Dfc.CourseDirectory.Web.Helpers
+@using Microsoft.Azure.Search.Common
 @model Dfc.CourseDirectory.Web.ViewModels.PublishCourses.PublishViewModel
 
 @inject IAuthorizationService Authorization
@@ -71,12 +72,11 @@
 
             <div class="error-line" id="CourseRunId_@courseRun.id">
 
-                <div class="govuk-grid-column-two-thirds m100 col">
+                <div class="govuk-grid-column-three-quarters col">
                     <div class="govuk-form-group--error">
                         <strong>@courseRun.CourseName</strong>
                         <br />
-                        <div class="govuk-grid-row">
-                            <div class="govuk-grid-column-one-quarter">
+                            <div class="govuk-grid-column-one-quarter word-wrap-break">
                                 <span>@courseRun.ProviderCourseID</span>
                             </div>
                             <div class="govuk-grid-column-one-quarter">
@@ -116,7 +116,6 @@
                                 }
 
                             </div>
-                        </div>
 
                         @{
                             if (courseRun.ValidationErrors.Any())
@@ -138,11 +137,12 @@
 
 
                 </div>
-                <div class="govuk-grid-column-one-third">
+                <div class="govuk-grid-column-one-quarter">
                     <div class="align-right col right center">
-                        @if(adminLogin.Succeeded){
-                        <a asp-action="DeleteCourseRun" asp-controller="Migration"
-                           asp-route-courseId="@course.id" asp-route-courseRunId="@courseRun.id">Delete</a>
+                        @if (adminLogin.Succeeded)
+                        {
+                            <a asp-action="DeleteCourseRun" asp-controller="Migration"
+                               asp-route-courseId="@course.id" asp-route-courseRunId="@courseRun.id">Delete</a>
                         }
 
                         <a id="course-run-fix-@courseRun.id" class="error-link fix" asp-controller="EditCourseRun" asp-action="Index"
@@ -164,7 +164,7 @@
                 <div id="courserunid" style="display:none">@courseRun.id</div>
 
                 <div class="error-line" style="flex-wrap: wrap" id="CourseRunId_@courseRun.id">
-                    <div class="govuk-grid-column-two-thirds col">@courseRun.CourseName</div>
+                    <div class="govuk-grid-column-two-thirds col"><strong>@courseRun.CourseName</strong></div>
 
                     <div class="govuk-grid-column-one-third">
                         <div class="govuk-grid-column-two-thirds align-right col right center">
@@ -178,7 +178,54 @@
                                asp-route-mode=@Model.PublishMode>Fix</a>
                         </div>
                     </div>
-                    <div class="govuk-grid-column-full flat-list"><span>@courseRun.ProviderCourseID</span> <span>@Model.Venues.FirstOrDefault(x=>x.Key == courseRun.VenueId).Value</span> <span>courseRun.StartDate</span> </div>
+                    <div class="govuk-grid-column-full flat-list">
+                        <span>@courseRun.ProviderCourseID</span>
+
+
+                        @if (courseRun.DeliveryMode == DeliveryMode.ClassroomBased)
+                        {
+                            if (courseRun.VenueId != Guid.Empty)
+                            {
+
+                                <span class="">@Model.Venues.FirstOrDefault(x => x.Key == courseRun.VenueId).Value</span>
+
+                            }
+                        }
+                        @if (courseRun.DeliveryMode == DeliveryMode.WorkBased)
+                        {
+                            if (courseRun.National.HasValue && courseRun.National.Value == true)
+                            {
+
+                                <span class="">National</span>
+
+                            }
+                            else
+                            {
+                                if (courseRun.Regions.Any())
+                                {
+                                    List<string> regions = (from regionItemModel in Model.Regions where 
+                                        regionItemModel.SubRegion.Any(x => courseRun.Regions.Contains(x.Id)) select regionItemModel.RegionName).ToList();
+
+                                    <span class="">@regions.ToCommaSeparatedString()</span>
+
+                                }
+                            }
+                        }
+
+                        @if (courseRun.DeliveryMode != DeliveryMode.Undefined)
+                        {
+                            <span id="deliverymode">@WebHelper.GetEnumDescription(courseRun.DeliveryMode)</span>
+                        }
+                        @if (courseRun.DeliveryMode == DeliveryMode.ClassroomBased)
+                        {
+                            @if (courseRun.StudyMode != StudyMode.Undefined)
+                            {
+                                <span id="studymode">@WebHelper.GetEnumDescription(courseRun.StudyMode)</span>
+                            }
+                        }
+
+                        <span>@courseRun.StartDate?.ToString("dd/MM/yyyy")</span>
+                    </div>
                 </div>
             }
 

@@ -151,7 +151,6 @@
                         Courses
                     </a>
                 }
-
                 if (apprenticeshipUser.Succeeded)
                 {
                     <a class="cd-secondary-nav--item" href="/Apprenticeships/Index">
@@ -163,14 +162,14 @@
                     </a>
                 }
 
-                if (authorised.Succeeded || superUser.Succeeded)
+                @*if (authorised.Succeeded || superUser.Succeeded)
                 {
 
                     <a class="cd-secondary-nav--item" href="/BulkUpload">
                         Bulk Upload
                     </a>
 
-                }
+                }*@
                 var pendingCourses = HttpContextAccessor.HttpContext.Session.GetString("PendingCourses");
 
                 if (pendingCourses == "true")

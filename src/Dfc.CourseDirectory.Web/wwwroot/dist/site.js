@@ -175,9 +175,18 @@
         }
         if (Array.isArray(messages)) {
             messages.forEach(function (message) {
+
+                var hiddenErrorSpan = document.createElement("span");
+                hiddenErrorSpan.classList.add("govuk-visually-hidden");
+                hiddenErrorSpan.innerHTML = "Error:";
+
                 var span = document.createElement("span");
                 span.classList.add("govuk-error-message");
-                span.innerHTML = message;
+
+                span.appendChild(hiddenErrorSpan);
+                span.appendChild(document.createTextNode(message));
+                
+
                 $(span).insertBefore($errorElement);
             }, this);
         }
@@ -283,10 +292,24 @@
         }
         if (Array.isArray(messages)) {
             messages.forEach(function (message) {
+                //var span = document.createElement("span");
+                //span.classList.add("govuk-error-message");
+                //span.innerHTML = message;
+                //$(span).insertBefore(this.element);
+
+                var hiddenErrorSpan = document.createElement("span");
+                hiddenErrorSpan.classList.add("govuk-visually-hidden");
+                hiddenErrorSpan.innerHTML = "Error:";
+
                 var span = document.createElement("span");
                 span.classList.add("govuk-error-message");
-                span.innerHTML = message;
+
+                span.appendChild(hiddenErrorSpan);
+                span.appendChild(document.createTextNode(message));
+
+
                 $(span).insertBefore(this.element);
+
             }, this);
         }
         this._errorMessages = $(this.element).prevAll(".govuk-error-message");
@@ -387,10 +410,25 @@
         }
         if (Array.isArray(messages)) {
             messages.forEach(function (message) {
+                //var span = document.createElement("span");
+                //span.classList.add("govuk-error-message");
+                //span.innerHTML = message;
+                //$(span).insertBefore(this.element);
+
+                var hiddenErrorSpan = document.createElement("span");
+                hiddenErrorSpan.classList.add("govuk-visually-hidden");
+                hiddenErrorSpan.innerHTML = "Error:";
+
                 var span = document.createElement("span");
                 span.classList.add("govuk-error-message");
-                span.innerHTML = message;
+
+                span.appendChild(hiddenErrorSpan);
+                span.appendChild(document.createTextNode(message));
+
+
                 $(span).insertBefore(this.element);
+
+
             }, this);
         }
         this._errorMessages = $(this.element).prevAll(".govuk-error-message");
@@ -491,9 +529,22 @@
         }
         if (Array.isArray(messages)) {
             messages.forEach(function (message) {
+                //var span = document.createElement("span");
+                //span.classList.add("govuk-error-message");
+                //span.innerHTML = message;
+                //$(span).insertBefore(this.element);
+
+                var hiddenErrorSpan = document.createElement("span");
+                hiddenErrorSpan.classList.add("govuk-visually-hidden");
+                hiddenErrorSpan.innerHTML = "Error:";
+
                 var span = document.createElement("span");
                 span.classList.add("govuk-error-message");
-                span.innerHTML = message;
+
+                span.appendChild(hiddenErrorSpan);
+                span.appendChild(document.createTextNode(message));
+
+
                 $(span).insertBefore(this.element);
             }, this);
         }
@@ -599,9 +650,21 @@
         }
         if (Array.isArray(messages)) {
             messages.forEach(function (message) {
+                //var span = document.createElement("span");
+                //span.classList.add("govuk-error-message");
+                //span.innerHTML = message;
+                //$(span).insertBefore(this.element);
+                var hiddenErrorSpan = document.createElement("span");
+                hiddenErrorSpan.classList.add("govuk-visually-hidden");
+                hiddenErrorSpan.innerHTML = "Error:";
+
                 var span = document.createElement("span");
                 span.classList.add("govuk-error-message");
-                span.innerHTML = message;
+
+                span.appendChild(hiddenErrorSpan);
+                span.appendChild(document.createTextNode(message));
+
+
                 $(span).insertBefore(this.element);
             }, this);
         }
@@ -744,10 +807,24 @@
         }
         if (Array.isArray(messages)) {
             messages.forEach(function (message) {
+                //var span = document.createElement("span");
+                //span.classList.add("govuk-error-message");
+                //span.innerHTML = message;
+                //$(span).insertBefore(this.element);
+
+                var hiddenErrorSpan = document.createElement("span");
+                hiddenErrorSpan.classList.add("govuk-visually-hidden");
+                hiddenErrorSpan.innerHTML = "Error:";
+
                 var span = document.createElement("span");
                 span.classList.add("govuk-error-message");
-                span.innerHTML = message;
+
+                span.appendChild(hiddenErrorSpan);
+                span.appendChild(document.createTextNode(message));
+
+
                 $(span).insertBefore(this.element);
+
             }, this);
         }
         this._errorMessages = $(this.element).prevAll(".govuk-error-message");
@@ -899,9 +976,22 @@
         }
         if (Array.isArray(messages)) {
             messages.forEach(function (message) {
+                //var span = document.createElement("span");
+                //span.classList.add("govuk-error-message");
+                //span.innerHTML = message;
+                //$(span).insertBefore(this.element);
+
+                var hiddenErrorSpan = document.createElement("span");
+                hiddenErrorSpan.classList.add("govuk-visually-hidden");
+                hiddenErrorSpan.innerHTML = "Error:";
+
                 var span = document.createElement("span");
                 span.classList.add("govuk-error-message");
-                span.innerHTML = message;
+
+                span.appendChild(hiddenErrorSpan);
+                span.appendChild(document.createTextNode(message));
+
+
                 $(span).insertBefore(this.element);
             }, this);
         }
@@ -1020,9 +1110,21 @@
         }
         if (Array.isArray(messages)) {
             messages.forEach(function (message) {
+                //var span = document.createElement("span");
+                //span.classList.add("govuk-error-message");
+                //span.innerHTML = message;
+                //$(span).insertBefore(this.element);
+                var hiddenErrorSpan = document.createElement("span");
+                hiddenErrorSpan.classList.add("govuk-visually-hidden");
+                hiddenErrorSpan.innerHTML = "Error:";
+
                 var span = document.createElement("span");
                 span.classList.add("govuk-error-message");
-                span.innerHTML = message;
+
+                span.appendChild(hiddenErrorSpan);
+                span.appendChild(document.createTextNode(message));
+
+
                 $(span).insertBefore(this.element);
             }, this);
         }

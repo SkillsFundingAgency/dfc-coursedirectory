@@ -12,8 +12,16 @@ namespace Dfc.CourseDirectory.Web.Helpers
 
     public static class WebHelper
     {
+        public static string GetErrorTextValueToUse(int val)
+        {
+            if (val.Equals(1))
+            {
+                return " error";
+            }
+            return " errors";
 
-       public static string GetCourseTextToUse(int val)
+        }
+        public static string GetCourseTextToUse(int val)
         {
             if (val.Equals(1))
             {

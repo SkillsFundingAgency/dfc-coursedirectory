@@ -140,6 +140,18 @@
         "description": "Path in URL that DfE Signin calls back after sign out"
       }
     },
+    "dfeApiSecret": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Shared secret for DfE Signin"
+      }
+    },
+    "dfeApiUri": {
+      "type": "string",
+      "metadata": {
+        "description": "DfE Siginin Uri"
+      }
+    },
     "sqlCourseDirectoryConnectionString": {
       "type": "string",
       "metadata": {
@@ -393,6 +405,9 @@
           "deployStagingSlot": {
             "value": true
           },
+          "clientAffinity": {
+            "value": true
+          },
           "appServiceAppSettings": {
             "value": [
               {
@@ -558,6 +573,22 @@
               {
                 "name": "DFESignInSettings__SignedOutCallbackPath",
                 "value": "[parameters('dfeSignedOutPath')]"
+              },
+              {
+                "name": "DFESignInSettings__Issuer",
+                "value": "CourseDirectory"
+              },
+              {
+                "name": "DFESignInSettings__Audience",
+                "value": "signin.education.gov.uk"
+              },
+              {
+                "name": "DFESignInSettings__APISecret",
+                "value": "[parameters('dfeApiSecret')]"
+              },
+              {
+                "name": "DFESignInSettings__APIUri",
+                "value": "[parameters('dfeApiUri')]"
               },
               {
                 "name": "CourseTextServiceSettings__ApiUrl",

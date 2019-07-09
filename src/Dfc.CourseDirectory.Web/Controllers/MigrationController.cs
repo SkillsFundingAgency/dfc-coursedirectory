@@ -14,7 +14,9 @@ using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.Helpers.Attributes;
 using Dfc.CourseDirectory.Web.ViewModels.Migration;
-
+using System.Collections.Generic;
+using Dfc.CourseDirectory.Models.Models.Courses;
+using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -26,6 +28,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly IBulkUploadService _bulkUploadService;
         private readonly IUserHelper _userHelper;
         private readonly ICourseService _courseService;
+        private readonly IVenueService _venueService;
 
         private IHostingEnvironment _env;
         private ISession _session => _contextAccessor.HttpContext.Session;
@@ -34,7 +37,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             ILogger<MigrationController> logger,
             IHttpContextAccessor contextAccessor,
             IBulkUploadService bulkUploadService,
-            IHostingEnvironment env, IUserHelper userHelper, ICourseService courseService)
+            IHostingEnvironment env, IUserHelper userHelper, ICourseService courseService, IVenueService venueService)
         {
             Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(contextAccessor, nameof(contextAccessor));
@@ -47,6 +50,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _env = env;
             _userHelper = userHelper;
             _courseService = courseService;
+            _venueService = venueService;
         }
 
 
@@ -187,16 +191,49 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Report()
         {
-            var courses = await _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(_session.GetInt32("UKPRN")));
+            var ukprn = _session.GetInt32("UKPRN");
+            if (ukprn == null)
+            {
+                throw new Exception("UKPRN is null");
+            }
+
+            var courses = await _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(ukprn));
+            
 
             if (courses.IsFailure)
             {
-                throw new Exception($"Unable to find courses for UKPRN: {_session.GetInt32("UKPRN")}");
+                throw new Exception($"Unable to find courses for UKPRN: {ukprn}");
             }
 
-            var model = new ReportViewModel(courses.Value.Value.SelectMany(o => o.Value).SelectMany(i => i.Value));
+            var courseMigrationReportResult = await _courseService.GetCourseMigrationReport(ukprn.Value);
+
+            var courseMigrationReport = courseMigrationReportResult?.Value;
+
+            var model = new ReportViewModel(courses.Value.Value.SelectMany(o => o.Value).SelectMany(i => i.Value)
+                ,courseMigrationReport);
 
             return View("Report/index", model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Larsless()
+        {
+            var ukprn = _session.GetInt32("UKPRN");
+            var courseMigrationReport = await _courseService.GetCourseMigrationReport(ukprn.Value);
+            if (courseMigrationReport.IsFailure)
+            {
+                throw new Exception(courseMigrationReport.Error + $"For UKPRN: {ukprn}");
+            }
+
+            var venues = await VenueHelper.GetVenueNames(courseMigrationReport.Value.LarslessCourses, _venueService);
+
+            var model = new LarslessViewModel
+            {
+                LarslessCourses = courseMigrationReport.Value.LarslessCourses,
+                Venues = venues
+            };
+
+            return View("Report/larsless", model);
         }
     }
 }
