@@ -7,6 +7,19 @@ using System.Text;
 
 namespace Dfc.CourseDirectory.Models.Models.Apprenticeships
 {
+    public enum ApprenticeshipMode
+    {
+        [Description("Undefined")]
+        Undefined = 0,
+        [Description("Add")]
+        Add = 1,
+        [Description("EditApprenticeship")]
+        EditApprenticeship = 2,
+        [Description("EditYourAprrenticeships")]
+        EditYourAprrenticeships = 3,
+            [Description("DeleteYourAprrenticeships")]
+        DeleteYourAprrenticeships = 4
+    }
     public enum ApprenticeshipType
     {
         [Description("Undefined")]

@@ -1,4 +1,5 @@
 ﻿@using Dfc.CourseDirectory.Models.Enums
+@using Dfc.CourseDirectory.Models.Models.Apprenticeships
 @using Dfc.CourseDirectory.Web.Helpers
 @using Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships
 @{
@@ -19,7 +20,17 @@
             <main class="govuk-mainwrapper " id="main-content" role="main">
                 <div class="govuk-grid-row">
                     <div class="govuk-grid-column-two-thirds-from-desktop">
-                        <h1 class="govuk-heading-xl">Check your answers before saving</h1>
+                        @Html.HiddenFor(x=>x.Mode)
+                        @if (Model.Mode == ApprenticeshipMode.EditYourAprrenticeships)
+                        {
+                            <h1 class="govuk-heading-xl">Check and edit</h1>
+                        }
+                        else
+                        {
+                            <h1 class="govuk-heading-xl">Check your answers before saving</h1>
+                        }
+
+
 
                         <h2 class="govuk-heading-m">@Model?.DetailViewModel?.ApprenticeshipTitle</h2>
 
@@ -46,7 +57,7 @@
                                     @Model.DetailViewModel.Website
                                 </dd>
                                 <dd class="govuk-summary-list__actions">
-                                    <a class="" asp-controller="Apprenticeships" asp-action="Details"  asp-route-Mode="edit">Change</a>
+                                    <a class="" asp-controller="Apprenticeships" asp-action="Details" asp-route-Mode="edit">Change</a>
 
                                 </dd>
                             </div>
@@ -60,7 +71,7 @@
                                     @Model.DetailViewModel.Email
                                 </dd>
                                 <dd class="govuk-summary-list__actions">
-                                    <a class="" asp-controller="Apprenticeships" asp-action="Details"  asp-route-Mode="edit">Change</a>
+                                    <a class="" asp-controller="Apprenticeships" asp-action="Details" asp-route-Mode="edit">Change</a>
 
                                 </dd>
                             </div>
@@ -82,7 +93,7 @@
 
                         <div class="summary--linked-title">
                             <h2 class="govuk-heading-s">Delivery options </h2>
-                            
+
                             @if (Model.DeliveryViewModel.ApprenticeshipDelivery == ApprenticeshipDelivery.Both)
                             {
                                 <a class="govuk-link float-right " asp-controller="Apprenticeships" asp-action="DeliveryOptionsCombined">
@@ -95,12 +106,10 @@
                                     Change
                                 </a>
                             }
-                           
+
                         </div>
 
-                        @*@{
-                                Model.DeliveryOptionsViewModel.DeliveryOptionsListItemModel.SummaryPage = true;
-                            }*@
+
                         @if (Model.DeliveryOptionsViewModel != null)
                         {
                             @await Component.InvokeAsync(nameof(DeliveryOptionsList), Model.DeliveryOptionsViewModel.DeliveryOptionsListItemModel)
@@ -108,12 +117,20 @@
                         else
                         {
                             @if (Model.DeliveryOptionsCombinedViewModel != null)
-                            {
-                                @await Component.InvokeAsync(nameof(DeliveryOptionsList), Model.DeliveryOptionsCombinedViewModel.DeliveryOptionsListItemModel)
-                            }
+                             {
+                                 @await Component.InvokeAsync(nameof(DeliveryOptionsList), Model.DeliveryOptionsCombinedViewModel.DeliveryOptionsListItemModel)
+                             }
                         }
 
-                        <button type="submit" class="govuk-button" id="next">Publish</button>
+                        @if (Model.Mode == ApprenticeshipMode.EditYourAprrenticeships)
+                        {
+                            <button type="submit" class="govuk-button" id="next">Close</button>
+                        }
+                        else
+                        {
+                            <button type="submit" class="govuk-button" id="next">Publish</button>
+                        }
+
                     </div>
                 </div>
             </main>

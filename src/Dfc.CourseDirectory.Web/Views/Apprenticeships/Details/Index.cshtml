@@ -191,7 +191,7 @@
 
             tinymce.init({
                 selector: '#info',
-                plugins: "advlist lists autoresize test",
+                plugins: "advlist lists autoresize test paste",
                 menubar: false,
                 statusbar: false,
                 resize: false,
@@ -199,6 +199,7 @@
                 height: '75%',
                 autoresize_min_height: 600,
                 autoresize_max_height: 800,
+                paste_as_text: true,
                 toolbar: 'formatselect | bold | numlist bullist | removeformat ',
             }).then(function(editors) {
                 $(".mce-branding").hide();
