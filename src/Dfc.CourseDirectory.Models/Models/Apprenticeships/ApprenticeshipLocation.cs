@@ -14,6 +14,7 @@ namespace Dfc.CourseDirectory.Models.Models.Apprenticeships
         public Guid? LocationGuidId { get; set; }
         public int? LocationId { get; set; }
         public List<int> DeliveryModes { get; set; }
+        public bool? National { get; set; }
 
         public ApprenticeshipLocationType ApprenticeshipLocationType { get; set; }
         public LocationType LocationType { get; set; }
