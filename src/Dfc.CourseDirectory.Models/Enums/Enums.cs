@@ -37,19 +37,19 @@ namespace Dfc.CourseDirectory.Models.Enums
 
     }
 
-    public enum ApprenticeShipMode
-    {
-        [Display(Name = "Undefined")]
-        [Description("Undefined")]
-        Undefined = 0,
-        [Display(Name = "Add new")]
-        [Description("Add")]
-        Add = 1,
-        [Display(Name = "Edit")]
-        [Description("Edit")]
-        Edit = 2
+    //public enum ApprenticeShipMode
+    //{
+    //    [Display(Name = "Undefined")]
+    //    [Description("Undefined")]
+    //    Undefined = 0,
+    //    [Display(Name = "Add new")]
+    //    [Description("Add")]
+    //    Add = 1,
+    //    [Display(Name = "Edit")]
+    //    [Description("Edit")]
+    //    Edit = 2
 
-    }
+    //}
 
     public enum ApprenticeShipDeliveryLocation
     {

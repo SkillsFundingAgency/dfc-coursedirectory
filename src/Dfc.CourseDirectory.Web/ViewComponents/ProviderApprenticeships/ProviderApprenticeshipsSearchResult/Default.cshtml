@@ -68,16 +68,14 @@ else
                         <div class="ctas">
                             <a class="govuk-link"
                                asp-controller="Apprenticeships"
-                               asp-action="Details"
-                               asp-route-id="@apprenticeship.id"
-                               asp-route-apprenticeshiptitle="@apprenticeship.ApprenticeshipTitle"
-                               asp-route-apprenticeshipmode="@ApprenticeShipMode.Add"
-                               asp-route-apprenticeshippreviouspage="@ApprenticeShipPreviousPage.YourApprenticeships">View and edit</a>
+                               asp-action="Summary"
+                               asp-route-Id="@apprenticeship.id"
+                               asp-route-apprenticeshipMode="@ApprenticeshipMode.EditYourAprrenticeships">View and edit</a>
                             <a class="govuk-link"
                                asp-controller="Apprenticeships"
                                asp-action="ConfirmationDelete"
                                asp-route-apprenticeshiptitle="@apprenticeship.ApprenticeshipTitle"
-                               asp-route-apprenticeshipmode="@ApprenticeShipMode.Add"
+                               asp-route-apprenticeshipmode="@ApprenticeshipMode.DeleteYourAprrenticeships"
                                asp-route-apprenticeshippreviouspage="@ApprenticeShipPreviousPage.YourApprenticeships">Delete</a>
                         </div>
                     }

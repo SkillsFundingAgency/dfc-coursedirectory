@@ -28,6 +28,8 @@ using Dfc.CourseDirectory.Web.Areas.Identity.Data;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.ViewComponents;
 using IdentityModel.Client;
+using JWT.Algorithms;
+using JWT.Builder;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
@@ -41,6 +43,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -48,8 +51,8 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Security.Claims;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-
 
 namespace Dfc.CourseDirectory.Web
 {
@@ -154,7 +157,7 @@ namespace Dfc.CourseDirectory.Web
             services.AddScoped<IBulkUploadService, BulkUploadService>();
             services.Configure<BlobStorageSettings>(Configuration.GetSection(nameof(BlobStorageSettings)));
             services.AddScoped<IBlobStorageService, BlobStorageService>();
-
+            
             services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
@@ -244,7 +247,7 @@ namespace Dfc.CourseDirectory.Web
                             // if we have to refresh, grab the refresh token from the claims, and request
                             // new access token and refresh token
                             var refreshToken = refreshTokenClaim.Value;
-
+                            
                             var clientId = Configuration.GetSection("DFESignInSettings:ClientID").Value;
                             const string envKeyClientSecret = "DFESignInSettings:ClientSecret";
                             var clientSecret = Configuration.GetSection("DFESignInSettings:ClientSecret").Value;
@@ -309,6 +312,7 @@ namespace Dfc.CourseDirectory.Web
                 options.Scope.Add("openid");
                 options.Scope.Add("email");
                 options.Scope.Add("profile");
+                options.Scope.Add("organisation");
                 options.Scope.Add("offline_access");
 
                 options.SaveTokens = true;
@@ -376,42 +380,77 @@ namespace Dfc.CourseDirectory.Web
                     // and validated the identity token
                     OnTokenValidated = x =>
                     {
-
                         _logger.LogMethodEnter();
-                        //DFE Tokens
+                        _logger.LogWarning("User has been authorised by DFE");
+                        var issuer =  Configuration.GetSection("DFESignInSettings:Issuer").Value;
+                        var audience = Configuration.GetSection("DFESignInSettings:Audience").Value;
+                        var apiSecret = Configuration.GetSection("DFESignInSettings:APISecret").Value;
+                        var apiUri = Configuration.GetSection("DFESignInSettings:APIUri").Value;
+
+                        Throw.IfNull(issuer, nameof(issuer));
+                        Throw.IfNull(audience, nameof(audience));
+                        Throw.IfNull(apiSecret, nameof(apiSecret));
+                        Throw.IfNull(apiUri, nameof(apiUri));
+
+                        var token = new JwtBuilder()
+                            .WithAlgorithm(new HMACSHA256Algorithm())
+                            .Issuer(issuer)
+                            .Audience(audience)
+                            .WithSecret(apiSecret)
+                            .Build();
+
+                        //Gather user/org details
                         var identity = (ClaimsIdentity)x.Principal.Identity;
+                        var organisation = JsonConvert.DeserializeObject<Organisation>(
+                            identity.Claims.Where(c => c.Type == "organisation")
+                            .Select(c => c.Value).FirstOrDefault());
 
-                        string email = identity.Claims.Where(c => c.Type == "email")
-                        .Select(c => c.Value).SingleOrDefault();
+                        DFEClaims userClaims = new DFEClaims
+                        {
+                            UserId = Guid.Parse(identity.Claims.Where(c => c.Type == "sub").Select(c => c.Value).SingleOrDefault()),
 
-                        identity.AddClaims(new[]
-{
-                                new Claim("access_token", x.TokenEndpointResponse.AccessToken),
-                                new Claim("refresh_token", x.TokenEndpointResponse.RefreshToken)
+                        };
 
-                            });
+                        HttpClient client = new HttpClient();
+                        client.SetBearerToken(token);
+                        var response = client.GetAsync($"{apiUri}/organisations/{organisation.Id}/users/{userClaims.UserId}").Result;
 
-                        _logger.LogCritical("User " + email + " has been authenticated by DFE");
+                        if(response.IsSuccessStatusCode)
+                        {
+                            var json = response.Content.ReadAsStringAsync().Result;
+                            userClaims = JsonConvert.DeserializeObject<DFEClaims>(json);
+                            userClaims.RoleName = userClaims.Roles.Select(r => r.Name).FirstOrDefault();
+                            userClaims.UKPRN = organisation.UKPRN.HasValue ? organisation.UKPRN.Value.ToString() : string.Empty;
+                            userClaims.UserName = identity.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault();
+                        }
+                        else
+                        {
+                            throw new ArgumentException("Unable to get user details");
+                        }
+
+                        _logger.LogError("User " + userClaims.UserName + " has been authenticated by DFE");
 
                         //Course Directory Authorisation
                         try
                         {
-                            AuthUserDetails details = AuthService.GetDetailsByEmail(email).Result;
+                            var providerType = AuthService.GetProviderType(UKPRN: userClaims.UKPRN, roleName: userClaims.RoleName).Result;
 
                             // store both access and refresh token in the claims - hence in the cookie
                             identity.AddClaims(new[]
                             {
-                                    new Claim("UKPRN", details.UKPRN),
-                                    new Claim("user_id", details.UserId.ToString()),
-                                    new Claim("role_id", details.RoleId.ToString()),
-                                    new Claim(ClaimTypes.Role, details.RoleName),
-                                    new Claim("ProviderType", details.ProviderType)
-                                });
-                            _logger.LogWarning("User " + email + " has been authorised");
+                                new Claim("access_token", x.TokenEndpointResponse.AccessToken),
+                                new Claim("refresh_token", x.TokenEndpointResponse.RefreshToken),
+                                new Claim("UKPRN", userClaims.UKPRN),
+                                new Claim("user_id", userClaims.UserId.ToString()),
+                                new Claim(ClaimTypes.Role, userClaims.RoleName),
+                                new Claim("ProviderType", providerType)
+                            });
+
+                            _logger.LogWarning("User " + userClaims.UserName + " has been authorised");
                         }
                         catch (Exception ex)
                         {
-                            _logger.LogError("Error authorising user", ex);
+                            _logger.LogWarning("Error authorising user", ex);
                         }
 
                         // so that we don't issue a session cookie but one with a fixed expiration
@@ -425,7 +464,7 @@ namespace Dfc.CourseDirectory.Web
             #endregion
 
         }
-
+        
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
