@@ -140,7 +140,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             }
         }
 
-        public async Task<IResult<IApprenticeship>> GetApprenticeshipByIdAsync(String Id)
+        public async Task<IResult<IApprenticeship>> GetApprenticeshipByIdAsync(string Id)
         {
             Throw.IfNullOrWhiteSpace(Id, nameof(Id));
             _logger.LogMethodEnter();
@@ -148,7 +148,6 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             try
             {
                 _logger.LogInformationObject("Get Apprenticeship by Id", Id);
-
 
                 var response = await _httpClient.GetAsync(new Uri(_getApprenticeshipByIdUri.AbsoluteUri + "&id=" + Id));
                 _logger.LogHttpResponseMessage("Get Apprenticeship by Id service http response", response);
