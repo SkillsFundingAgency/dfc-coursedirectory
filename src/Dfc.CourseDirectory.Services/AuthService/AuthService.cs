@@ -79,7 +79,7 @@ namespace Dfc.CourseDirectory.Services.AuthService
             return details;
         }
 
-        private async Task<string> GetProviderType(string UKPRN, string roleName)
+        public async Task<string> GetProviderType(string UKPRN, string roleName)
         {
             if (roleName == "Provider User" || roleName == "Provider Superuser")
             {
