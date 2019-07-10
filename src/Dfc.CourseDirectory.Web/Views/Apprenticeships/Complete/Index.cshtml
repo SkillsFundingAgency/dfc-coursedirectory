@@ -17,16 +17,6 @@
         @Model.ApprenticeshipName has been added to the Course directory
     </div>
 
-
-    @*@if (Model.Mode.Equals(PublishMode.Migration))
-        {
-            <div class="govuk-panel__body">
-                <h1 class="govuk-panel__title">
-                    Migration complete
-                </h1>
-                You have published <strong>@Model.NumberOfCoursesPublished</strong> @(Model.NumberOfCoursesPublished.Equals(1) ? "course" : "courses") to the course directory.
-            </div>
-        }*@
 </div>
 <div class="Publish-Complete">
     <div class="govuk-!-margin-top-6">
@@ -35,6 +25,7 @@
 </div>
 <div class="govuk-form-group">
     @Html.ActionLink("Add another apprenticeship", "AddAnotherApprenticeship", "Apprenticeships", new { }, new { @class = "govuk-link" })
+    <br/>
     @Html.ActionLink("Return to dashboard", "Index", "Home", new { }, new { @class = "govuk-link" })
 
 </div>
