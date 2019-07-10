@@ -29,7 +29,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
     public class CourseService : ICourseService
     {
         private readonly ILogger<CourseService> _logger;
-        CourseServiceSettings _settings;
+        private readonly CourseServiceSettings _settings;
         private readonly HttpClient _httpClient;
         private readonly Uri _addCourseUri;
         private readonly Uri _getYourCoursesUri;
