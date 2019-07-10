@@ -7,21 +7,25 @@
 <div class="govuk-form-group">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
-            <fieldset class="govuk-fieldset" aria-describedby="changed-name-hint">
-                <label id="govuk-label-nationalRadioButtons" class="govuk-label">Can you deliver this course anywhere in England?</label>
-                <div id="nationalRadioButtons" class="govuk-radios govuk-radios--inline" 
-                        val-required-message="Choose if you can deliver this course anywhere in England">
-                    <span id="more-detail-hint" class="govuk-hint">Answering yes will show you are a national provider</span>
-                    <div class="govuk-radios__item">
-                        @Html.RadioButtonFor(m => m.National, true, new { @class = "govuk-radios__input", @id = "nationalTrue" })
-                        <label class="govuk-label govuk-radios__label" for="nationalTrue">Yes</label>
+            @if (Model.UseNationalComponent)
+            {
+                <fieldset class="govuk-fieldset" aria-describedby="changed-name-hint">
+                    <label id="govuk-label-nationalRadioButtons" class="govuk-label">Can you deliver this course anywhere in England?</label>
+                    <div id="nationalRadioButtons" class="govuk-radios govuk-radios--inline"
+                         val-required-message="Choose if you can deliver this course anywhere in England">
+                        <span id="more-detail-hint" class="govuk-hint">Answering yes will show you are a national provider</span>
+                        <div class="govuk-radios__item">
+                            @Html.RadioButtonFor(m => m.National, true, new { @class = "govuk-radios__input", @id = "nationalTrue" })
+                            <label class="govuk-label govuk-radios__label" for="nationalTrue">Yes</label>
+                        </div>
+                        <div class="govuk-radios__item">
+                            @Html.RadioButtonFor(m => m.National, false, new { @class = "govuk-radios__input", @id = "nationalFalse" })
+                            <label class="govuk-label govuk-radios__label" for="nationalFalse">No</label>
+                        </div>
                     </div>
-                    <div class="govuk-radios__item">
-                        @Html.RadioButtonFor(m => m.National, false, new { @class = "govuk-radios__input" , @id = "nationalFalse" })
-                        <label class="govuk-label govuk-radios__label" for="nationalFalse">No</label>
-                    </div>
-                </div>
-            </fieldset>
+                </fieldset>
+            }
+
             <div id="regions-section">
                 <label class="govuk-label" id="govuk-label-SelectRegionCheckBoxes" for="select-region">
                     @Model.Regions.LabelText
@@ -68,15 +72,17 @@
 <script>
     (function ($) {
         $(function () {
-            var $nationalRadios = $("#nationalRadioButtons input[type=radio]");
+
             var $regionSection = $("#regions-section");
 
-            @*if (@Model.National == null) {
-                for (var i = 0; i < $nationalRadios.length; i++) {
-                    $nationalRadios[i].checked == false;
-                }
-            }
-            else {*@
+            //----------------------------------------
+            //National code (May/May not be required)
+            //----------------------------------------
+        
+            var $useNationalComponent = '@Model.UseNationalComponent';
+
+            if ($useNationalComponent == 'True') {
+                var $nationalRadios = $("#nationalRadioButtons input[type=radio]");
                 var $checked = $("#nationalRadioButtons input[type=radio]:checked").val();
                 switch ($checked) {
                     case "True":
@@ -89,23 +95,28 @@
                         break;
                     }
                 }
-            //}
 
 
-            $nationalRadios.change(function () {
-                switch (this.value) {
-                    case "True":
-                        {
-                            $regionSection.hide();
-                            break;
-                        }
-                    case "False":
-                        {
-                            $regionSection.show();
-                            break;
-                        }
-                }
-            });
+                $nationalRadios.change(function () {
+                    switch (this.value) {
+                        case "True":
+                            {
+                                $regionSection.hide();
+                                break;
+                            }
+                        case "False":
+                            {
+                                $regionSection.show();
+                                break;
+                            }
+                    }
+                });
+            }
+            
+            //-----------------------------
+            //Regions Code
+            //-----------------------------
+            
             $("a").on("click",
                 function (e) {
 
