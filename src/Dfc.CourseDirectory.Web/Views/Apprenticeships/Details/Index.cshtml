@@ -3,6 +3,7 @@
     Layout = "_Layout_Your_Courses";
 }
 
+@using Dfc.CourseDirectory.Models.Models.Apprenticeships
 @model Dfc.CourseDirectory.Web.ViewModels.Apprenticeships.DetailViewModel
 
 <form class="govuk-!-margin-bottom-9" id="ApprenticeshipDetailsForm" asp-controller="Apprenticeships" asp-action="Details" method="post">
@@ -12,7 +13,19 @@
         <div>
             <span class="govuk-caption-xl">@Model.ApprenticeshipTitle</span>
             <h1 class="govuk-heading-xl">
-                Add apprenticeship training details
+                @if (Model.Mode == ApprenticeshipMode.EditYourApprenticeships)
+                {
+                    <h1 class="govuk-heading-xl">
+                        Edit apprenticeship training details
+                    </h1>
+                }
+                else
+                {
+                    <h1 class="govuk-heading-xl">
+                        Add apprenticeship training details
+                    </h1>
+                }
+
 
             </h1>
             <div id="errorsummary" class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary" style="display: none;">
@@ -30,6 +43,8 @@
             @Html.HiddenFor(x => x.ApprenticeshipType)
             @Html.HiddenFor(x => x.ApprenticeshipPreviousPage)
             @Html.HiddenFor(x => x.Mode)
+            @Html.HiddenFor(x => x.Cancelled)
+
 
 
 
@@ -39,7 +54,7 @@
             @{ var telephoneRegEx = @"^(((\+44)? ?(\(0\))? ?)|(0))( ?[0-9]{3,4}){3}?$";}
             @{ var websiteRegEx = @"^([-a-zA-Z0-9]{2,256}\.)+[a-z]{2,10}(\/.*)?";}
 
-            <div class="govuk-character-count">
+            <div class="govuk-character-count" id="InformationContainer">
                 <div class="govuk-form-group">
 
                     <span id="infoRequired" class="" style="display: none"
@@ -75,7 +90,7 @@
             </div>
             <h2 class="">Contact details</h2>
 
-            <div id="ContactUsContainer" class="govuk-form-group">
+            <div id="EmailContainer" class="govuk-form-group">
                 <span id="more-detail-hint" class="govuk-hint">Who can employers contact about this apprenticeship training?</span>
 
                 <label id="govuk-label-Email" class="govuk-label">
@@ -122,11 +137,24 @@
 
             </div>
 
+            @if (Model.Mode == ApprenticeshipMode.EditYourApprenticeships)
+            {
+                <div class="cta-container">
+                    <button type="submit" class="govuk-button" id="continue" value="continue">
+                        Save
+                    </button>
+
+                    <a class="govuk-link govuk-!-margin-left-3" asp-controller="Apprenticeships" asp-action="Summary" asp-route-Id=@Model.Id asp-route-apprenticeshipMode=@Model.Mode asp-route-Cancelled=true>Cancel</a>
+                </div>
+            }
+            else
+            {
+                <button type="submit" class="govuk-button" id="continue" value="continue">
+                    Continue
+                </button>
+            }
 
 
-            <button type="submit" class="govuk-button" id="continue" value="continue">
-                Continue
-            </button>
 
         </div>
     </div>
