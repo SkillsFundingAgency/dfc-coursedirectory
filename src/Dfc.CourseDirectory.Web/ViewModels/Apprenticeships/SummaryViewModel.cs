@@ -31,6 +31,8 @@ namespace Dfc.CourseDirectory.Web.ViewModels.Apprenticeships
 
         public ApprenticeshipMode  Mode { get; set; }
 
+        public bool? Cancelled { get; set; }
+
 
 
 

@@ -36,7 +36,9 @@ namespace Dfc.CourseDirectory.Web.ViewModels.Apprenticeships
 
         public string ContactUsIUrl { get; set; }
 
-        public string Mode { get; set; }
+        public ApprenticeshipMode Mode { get; set; }
+
+        public bool? Cancelled { get; set; }
 
 
 
