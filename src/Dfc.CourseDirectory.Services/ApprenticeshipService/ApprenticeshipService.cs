@@ -19,7 +19,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
     {
         private readonly ILogger<ApprenticeshipService> _logger;
         private readonly HttpClient _httpClient;
-        private readonly Uri _getStandardsAndFrameworksUri, _addApprenticeshipUri, _getApprenticeshipByUKPRNUri, _getApprenticeshipByIdUri;
+        private readonly Uri _getStandardsAndFrameworksUri, _addApprenticeshipUri, _getApprenticeshipByUKPRNUri, _getApprenticeshipByIdUri, _updateApprenticshipUri;
 
         public ApprenticeshipService(
             ILogger<ApprenticeshipService> logger,
@@ -37,6 +37,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             _addApprenticeshipUri = settings.Value.AddApprenticeshipUri();
             _getApprenticeshipByUKPRNUri = settings.Value.GetApprenticeshipByUKPRNUri();
             _getApprenticeshipByIdUri = settings.Value.GetApprenticeshipByIdUri();
+            _updateApprenticshipUri = settings.Value.UpdateAprrenticeshipUri();
 
         }
 
@@ -139,7 +140,6 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
                 _logger.LogMethodExit();
             }
         }
-
         public async Task<IResult<IApprenticeship>> GetApprenticeshipByIdAsync(string Id)
         {
             Throw.IfNullOrWhiteSpace(Id, nameof(Id));
@@ -184,8 +184,6 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
                 _logger.LogMethodExit();
             }
         }
-
-
         public async Task<IResult<IEnumerable<IApprenticeship>>> GetApprenticeshipByUKPRN(string criteria)
         {
             Throw.IfNullOrWhiteSpace(criteria, nameof(criteria));
@@ -231,6 +229,54 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
                 _logger.LogMethodExit();
             }
         }
+        public async Task<IResult<IApprenticeship>> UpdateApprenticeshipAsync(IApprenticeship apprenticeship)
+        {
+            _logger.LogMethodEnter();
+            Throw.IfNull(apprenticeship, nameof(apprenticeship));
+
+            try
+            {
+                _logger.LogInformationObject("apprenticeship update object.", apprenticeship);
+                _logger.LogInformationObject("apprenticeship update URI", _updateApprenticshipUri);
+
+                var apprenticeshipJson = JsonConvert.SerializeObject(apprenticeship);
+
+                var content = new StringContent(apprenticeshipJson, Encoding.UTF8, "application/json");
+                var response = await _httpClient.PostAsync(_updateApprenticshipUri, content);
+
+                _logger.LogHttpResponseMessage("Apprenticeship update service http response", response);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+
+                    _logger.LogInformationObject("Apprenticeship update service json response", json);
+
+                    var apprenticeshipResult = JsonConvert.DeserializeObject<Apprenticeship>(json);
+
+                    return Result.Ok<IApprenticeship>(apprenticeshipResult);
+                }
+                else
+                {
+                    return Result.Fail<IApprenticeship>("Appprenticeship update service unsuccessful http response");
+                }
+            }
+            catch (HttpRequestException hre)
+            {
+                _logger.LogException("Apprenticeship update service http request error", hre);
+                return Result.Fail<IApprenticeship>("Apprenticeship update service http request error.");
+            }
+            catch (Exception e)
+            {
+                _logger.LogException("Apprenticeship update service unknown error.", e);
+
+                return Result.Fail<IApprenticeship>("Apprenticeship update service unknown error.");
+            }
+            finally
+            {
+                _logger.LogMethodExit();
+            }
+        }
     }
     internal static class ApprenticeshipServiceSettingsExtensions
     {
@@ -249,6 +295,10 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
         internal static Uri GetApprenticeshipByIdUri(this IApprenticeshipServiceSettings extendee)
         {
             return new Uri($"{extendee.ApiUrl + "GetApprenticeshipById?code=" + extendee.ApiKey}");
+        }
+        internal static Uri UpdateAprrenticeshipUri(this IApprenticeshipServiceSettings extendee)
+        {
+            return new Uri($"{extendee.ApiUrl + "UpdateApprenticeship?code=" + extendee.ApiKey}");
         }
     }
     

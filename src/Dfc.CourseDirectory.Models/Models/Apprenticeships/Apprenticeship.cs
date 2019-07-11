@@ -15,8 +15,8 @@ namespace Dfc.CourseDirectory.Models.Models.Apprenticeships
         Add = 1,
         [Description("EditApprenticeship")]
         EditApprenticeship = 2,
-        [Description("EditYourAprrenticeships")]
-        EditYourAprrenticeships = 3,
+        [Description("EditYourApprenticeships")]
+        EditYourApprenticeships = 3,
             [Description("DeleteYourAprrenticeships")]
         DeleteYourAprrenticeships = 4
     }

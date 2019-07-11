@@ -13,5 +13,7 @@ namespace Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService
         Task<IResult<IEnumerable<IApprenticeship>>> GetApprenticeshipByUKPRN(string criteria);
 
         Task<IResult<IApprenticeship>> GetApprenticeshipByIdAsync(string Id);
+
+        Task<IResult<IApprenticeship>> UpdateApprenticeshipAsync(IApprenticeship apprenticeship);
     }
 }

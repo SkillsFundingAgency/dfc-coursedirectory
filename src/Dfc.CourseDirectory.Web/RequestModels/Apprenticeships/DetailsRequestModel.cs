@@ -18,9 +18,11 @@ namespace Dfc.CourseDirectory.Web.RequestModels
         public int? ProgType { get; set; }
         public ApprenticeShipPreviousPage PreviousPage { get; set; }
 
-        public string Mode { get; set; }
+        public ApprenticeshipMode Mode { get; set; }
 
-        public ApprenticeshipMode ApprenticeshipMode { get; set; }
+        public bool? Cancelled { get; set; }
+
+
 
     }
 }
