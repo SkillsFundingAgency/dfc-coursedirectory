@@ -18,6 +18,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
     public class ApprenticeshipService : IApprenticeshipService
     {
         private readonly ILogger<ApprenticeshipService> _logger;
+        private readonly ApprenticeshipServiceSettings _settings;
         private readonly HttpClient _httpClient;
         private readonly Uri _getStandardsAndFrameworksUri, _addApprenticeshipUri, _getApprenticeshipByUKPRNUri, _getApprenticeshipByIdUri, _updateApprenticshipUri;
 
@@ -31,6 +32,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             Throw.IfNull(settings, nameof(settings));
 
             _logger = logger;
+            _settings = settings.Value;
             _httpClient = httpClient;
 
             _getStandardsAndFrameworksUri = settings.Value.GetStandardsAndFrameworksUri();
@@ -282,24 +284,37 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
     {
         internal static Uri GetStandardsAndFrameworksUri(this IApprenticeshipServiceSettings extendee)
         {
-            return new Uri($"{extendee.ApiUrl + "StandardsAndFrameworksSearch?code=" + extendee.ApiKey}");
+            var uri = new Uri(extendee.ApiUrl);
+            var trimmed = uri.AbsoluteUri.TrimEnd('/');
+            return new Uri($"{trimmed}/StandardsAndFrameworksSearch");
         }
+
         internal static Uri AddApprenticeshipUri(this IApprenticeshipServiceSettings extendee)
         {
-            return new Uri($"{extendee.ApiUrl + "AddApprenticeship?code=" + extendee.ApiKey}");
+            var uri = new Uri(extendee.ApiUrl);
+            var trimmed = uri.AbsoluteUri.TrimEnd('/');
+            return new Uri($"{trimmed}/AddApprenticeship");
         }
+
         internal static Uri GetApprenticeshipByUKPRNUri(this IApprenticeshipServiceSettings extendee)
         {
-            return new Uri($"{extendee.ApiUrl + "GetApprenticeshipByUKPRN?code=" + extendee.ApiKey}");
+            var uri = new Uri(extendee.ApiUrl);
+            var trimmed = uri.AbsoluteUri.TrimEnd('/');
+            return new Uri($"{trimmed}/GetApprenticeshipByUKPRN");
         }
+
         internal static Uri GetApprenticeshipByIdUri(this IApprenticeshipServiceSettings extendee)
         {
-            return new Uri($"{extendee.ApiUrl + "GetApprenticeshipById?code=" + extendee.ApiKey}");
+            var uri = new Uri(extendee.ApiUrl);
+            var trimmed = uri.AbsoluteUri.TrimEnd('/');
+            return new Uri($"{trimmed}/GetApprenticeshipById");
         }
+
         internal static Uri UpdateAprrenticeshipUri(this IApprenticeshipServiceSettings extendee)
         {
-            return new Uri($"{extendee.ApiUrl + "UpdateApprenticeship?code=" + extendee.ApiKey}");
+            var uri = new Uri(extendee.ApiUrl);
+            var trimmed = uri.AbsoluteUri.TrimEnd('/');
+            return new Uri($"{trimmed}/UpdateApprenticeship");
         }
     }
-    
 }
