@@ -10,7 +10,7 @@
     ViewData["Placeholder"] = "Search by UKPRN, provider name, address or postcode";
 }
 
-
+@{ var regex = @"^[1][0-9]{7}$"; }
 <div class="cd-hero-grey">
     <div class="">
         <header class="cd-hero-search">
@@ -19,25 +19,31 @@
                 <div class="grid-row" data-sf-element="Row">
                     <div class="column-two-thirds">
                         <div>
-                         
+
                             <p class="column-two-thirds govuk-heading-m">@ViewBag.Subtext</p>
                         </div>
                         <form class="site-search ui-front" id="header-search">
-                            <div class="header-search-content">
-                                <span asp-validation-for="@Model.SearchTerm" class="govuk-error-message"></span>
-                                <div class="search-input-wrapper">
-                                    @if (!string.IsNullOrWhiteSpace(Model.HintText))
-                                            {
-                                                <span class="govuk-hint">
-                                                    @Model.HintText
-                                                </span>
-                                            }
 
-                                    <input class="govuk-input search-input js-search-focus" asp-for="@Model.SearchTerm" type="text" aria-describedby="@Model.AriaDescribedBy" placeholder="@ViewBag.Placeholder">
+                           
+                            <div class="govuk-form-group">
+                                
+                                    @if (!string.IsNullOrWhiteSpace(Model.HintText))
+                                    {
+                                        <span class="govuk-hint">
+                                            @Model.HintText
+                                        </span>
+                                    }
+
+                                    <input class="govuk-input" style="width:95%; float:left" asp-for="@Model.SearchTerm" type="text" aria-describedby="@Model.AriaDescribedBy"
+                                           placeholder="@ViewBag.Placeholder"
+                                           val-required-message="UKPRN required"
+                                           val-regex="@regex"
+                                           val-regex-message="UKPRN is 8 digit number starting with a 1 e.g. 10000364"/>
                                     <div class="cd-c-search__item cd-search__submit-wrapper">
                                         <button type="button" class=" submit" id="searchProvider">Search</button>
                                     </div>
-                                </div>
+                               
+                                
                             </div>
                         </form>
                     </div>
@@ -50,95 +56,71 @@
     @await Component.InvokeAsync(nameof(ProviderSearchResult))
 </div>
 
+
+
 <script>
-    (function ($) {
-        $(function () {
+    (function($) {
+        $(function() {
 
-            var formGroupErrorClass = "govuk-form-group--error";
-            var elementErrorClass = "govuk-input--error";
-            var $searchForm = $("form.site-search");
+            var $code = $("#@nameof(Model.SearchTerm)").govUkInput();
+            var validStates = [];
+            var $search = $("#searchProvider");
+
             var $elementSearchTerm = $("#@nameof(Model.SearchTerm)");
-            var $providerSearchResultContainer = $("#ProviderSearchResultContainer");
-            var $validationMessageSearchTerm = $elementSearchTerm.prev("[data-valmsg-for='@nameof(Model.SearchTerm)']");
-            $validationMessageSearchTerm.css("margin-bottom", "0");
-            var $formGroupSearchTerm = $elementSearchTerm.closest('.govuk-form-group');
-            var $form = $elementSearchTerm.closest("form");
-            $form.addTriggersToJqueryValidate().triggerElementValidationsOnFormValidation();
-            var validator = $form.validate();
-            $elementSearchTerm.on("blur", function () {
-                var result = validator.element($elementSearchTerm);
-                if (result) {
-                    HideValidationErrorMessage();
-                } else {
-                    ShowValidationErrorMessage();
-                }
-            });
-            $elementSearchTerm.elementValidation(function (element, result) {
-                if (!$formGroupSearchTerm.hasClass(formGroupErrorClass)) {
-                    $validationMessageSearchTerm.hide();
-                }
-                if (result) {
-                    HideValidationErrorMessage();
-                }
-                else {
-                    ShowValidationErrorMessage()
-                }
-            });
 
-            var makeRequestWithPayload = function (payload, cb) {
+            var $providerSearchResultContainer = $("#ProviderSearchResultContainer");
+
+            var makeRequestWithPayload = function(payload, cb) {
                 var qs = $.param(payload);
                 $.get("/ProviderSearch?" + qs, cb);
             };
-            var onSucess = function (data) {
+            var onSucess = function(data) {
                 $providerSearchResultContainer.html("");
                 $providerSearchResultContainer.html(data);
             };
 
-            $("#searchProvider").on("click", function (e) {
-                e.preventDefault();
-                ValidateAndSearchForProvider();
-            });
+            var doSearch = function() {
 
-            $(document).keypress(function (e) {
-                if (e.which == 13) {
-                    e.preventDefault();
-                    ValidateAndSearchForProvider();
-                }
-            });
-
-            function ValidateAndSearchForProvider() {
-                var trimmed = $elementSearchTerm.val().trim();
-                $elementSearchTerm.val(trimmed);
-                $elementSearchTerm.trigger("blur");
-                var result = validator.element($elementSearchTerm);
-                if (result) {
-                    makeRequestWithPayload({
+                $('#results').html("");
+                makeRequestWithPayload({
                         SearchTerm: $elementSearchTerm.val()
-                    }, onSucess);
+                    },
+                    onSucess);
+            };
 
-                    HideValidationErrorMessage();
-                }
-                else {
-                    $providerSearchResultContainer.html("");
-                    ShowValidationErrorMessage();
-                }
+            function isAllValid(currentValue) {
+                return currentValue === true;
             }
 
-            function ShowValidationErrorMessage() {
-                    $elementSearchTerm.addClass(elementErrorClass);
-                    $formGroupSearchTerm.addClass(formGroupErrorClass);
-                    $searchForm.addClass("govuk-form-group, govuk-form-group--error");
-                    $validationMessageSearchTerm.show();
-                    $validationMessageSearchTerm.css("margin-bottom", "15px");              
+            function validate() {
+
+                if (!$.requiredValidate($code.val())) {
+                    $code.govUkInput("invalidState", $code.attr("val-required-message"));
+                    validStates.push(false);
+                } else if (
+                    !$.regexValidate({ regex: $code.attr("val-regex") }, $code.val())) {
+                    $code.govUkInput("invalidState", $code.attr("val-regex-message"));
+                    validStates.push(false);
+                } else {
+                    $code.govUkInput("validState");
+                    $code.push(true);
+                }
+
             }
-            function HideValidationErrorMessage() {
-                    $elementSearchTerm.removeClass(elementErrorClass);
-                    $formGroupSearchTerm.removeClass(formGroupErrorClass);
-                    $searchForm.removeClass("govuk-form-group, govuk-form-group--error");
-                    $('.failure-container').remove();
-                    $validationMessageSearchTerm.hide();
-                    $validationMessageSearchTerm.css("margin-bottom", "0");              
-            }
+
+
+            $(document).on('click',
+                '#searchProvider',
+                function(e) {
+                    e.preventDefault();
+                    $('#results').html("");
+                    validStates = [];
+                    validate();
+                    if (validStates.every(isAllValid)) {
+                        doSearch();
+                    }
+
+                });
         });
     })(jQuery);
 </script>
