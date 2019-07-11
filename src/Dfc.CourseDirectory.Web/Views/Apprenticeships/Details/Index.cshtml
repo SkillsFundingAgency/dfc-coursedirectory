@@ -13,7 +13,7 @@
         <div>
             <span class="govuk-caption-xl">@Model.ApprenticeshipTitle</span>
             <h1 class="govuk-heading-xl">
-                @if (Model.Mode == ApprenticeshipMode.EditYourApprenticeships)
+                @if (Model.Mode == ApprenticeshipMode.EditYourApprenticeships || Model.Mode == ApprenticeshipMode.EditApprenticeship)
                 {
                     <h1 class="govuk-heading-xl">
                         Edit apprenticeship training details
@@ -44,7 +44,7 @@
             @Html.HiddenFor(x => x.ApprenticeshipPreviousPage)
             @Html.HiddenFor(x => x.Mode)
             @Html.HiddenFor(x => x.Cancelled)
-
+            @Html.HiddenFor(x => x.NotionalNVQLevelv2)
 
 
 
@@ -137,7 +137,7 @@
 
             </div>
 
-            @if (Model.Mode == ApprenticeshipMode.EditYourApprenticeships)
+            @if (Model.Mode == ApprenticeshipMode.EditYourApprenticeships || Model.Mode == ApprenticeshipMode.EditApprenticeship)
             {
                 <div class="cta-container">
                     <button type="submit" class="govuk-button" id="continue" value="continue">
