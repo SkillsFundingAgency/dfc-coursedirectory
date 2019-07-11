@@ -45,47 +45,50 @@ else
 
 
 
-                <div class="cd-apprenticeships-result govuk-body">
-                    <div class="govuk-!-margin-bottom-4">
-                        <span>Found <strong>@Model.Items.Count()</strong> results for <strong>@Model.SearchTerm</strong></span>
-                    </div>
-
-                    @foreach (var apprenticeship in Model.Items.OrderBy(x => x.ApprenticeshipTitle))
-                    {
-                        <div class="cd-your-apprenticeships-search-result__container">
-                            <h3 class="govuk-heading-m">
-                                @apprenticeship.ApprenticeshipTitle
-                                @if (apprenticeship.ApprenticeshipType == ApprenticeshipType.FrameworkCode)
-                                {
-                                    <span class="govuk-!-margin-left-3 govuk-tag tag-grey">Framework</span>
-                                }
-                            </h3>
-                            @if (!string.IsNullOrEmpty(apprenticeship.NotionalEndLevel))
-                            {
-                                <p class="govuk-body">Level: <span class="govuk-!-font-weight-bold">@apprenticeship.NotionalEndLevel</span></p>
-                            }
-                        </div>
-                        <div class="ctas">
-                            <a class="govuk-link"
-                               asp-controller="Apprenticeships"
-                               asp-action="ViewAndEdit"
-                               asp-route-Id="@apprenticeship.id"
-                               asp-route-Cancelled=null
-                               asp-route-apprenticeshipMode="@ApprenticeshipMode.EditYourApprenticeships">View and edit</a>
-                            <a class="govuk-link"
-                               asp-controller="Apprenticeships"
-                               asp-action="ConfirmationDelete"
-                               asp-route-apprenticeshiptitle="@apprenticeship.ApprenticeshipTitle"
-                               asp-route-apprenticeshipmode="@ApprenticeshipMode.DeleteYourAprrenticeships"
-                               asp-route-apprenticeshippreviouspage="@ApprenticeShipPreviousPage.YourApprenticeships">Delete</a>
-                        </div>
-                    }
-
-
-
-
-
+        <div class="cd-apprenticeships-result govuk-body">
+            @if (!string.IsNullOrEmpty(Model.SearchTerm))
+            {
+                <div class="govuk-!-margin-bottom-4">
+                    <span>Found <strong>@Model.Items.Count()</strong> results for <strong>@Model.SearchTerm</strong></span>
                 </div>
+            }
+
+            @foreach (var apprenticeship in Model.Items.OrderBy(x => x.ApprenticeshipTitle))
+            {
+                <div class="cd-your-apprenticeships-search-result__container">
+                    <h3 class="govuk-heading-m">
+                        @apprenticeship.ApprenticeshipTitle
+                        @if (apprenticeship.ApprenticeshipType == ApprenticeshipType.FrameworkCode)
+                        {
+                            <span class="govuk-!-margin-left-3 govuk-tag tag-grey">Framework</span>
+                        }
+                    </h3>
+                    @if (!string.IsNullOrEmpty(apprenticeship.NotionalNVQLevelv2))
+                    {
+                        <p class="govuk-body">Level: <span class="govuk-!-font-weight-bold">@apprenticeship.NotionalNVQLevelv2</span></p>
+                    }
+                </div>
+                <div class="ctas">
+                    <a class="govuk-link"
+                       asp-controller="Apprenticeships"
+                       asp-action="ViewAndEdit"
+                       asp-route-Id="@apprenticeship.id"
+                       asp-route-Cancelled=null
+                       asp-route-apprenticeshipMode="@ApprenticeshipMode.EditYourApprenticeships">View and edit</a>
+                    <a class="govuk-link"
+                       asp-controller="Apprenticeships"
+                       asp-action="ConfirmationDelete"
+                       asp-route-apprenticeshiptitle="@apprenticeship.ApprenticeshipTitle"
+                       asp-route-apprenticeshipmode="@ApprenticeshipMode.DeleteYourAprrenticeships"
+                       asp-route-apprenticeshippreviouspage="@ApprenticeShipPreviousPage.YourApprenticeships">Delete</a>
+                </div>
+            }
+
+
+
+
+
+        </div>
 
     }
 
