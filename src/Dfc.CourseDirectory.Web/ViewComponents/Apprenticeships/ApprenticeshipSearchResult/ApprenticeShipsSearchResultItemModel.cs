@@ -11,7 +11,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships.ApprenticeshipS
     public class ApprenticeShipsSearchResultItemModel
     {
         public string ApprenticeshipTitle { get; set; }
-        public string NotionalEndLevel { get; set; }
+        public string NotionalNVQLevelv2 { get; set; }
         public Guid id { get; set; }
         public int? StandardCode { get; set; }
         public string Version { get; set; }

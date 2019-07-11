@@ -21,7 +21,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels.Apprenticeships
         public int? FrameworkCode { get; set; }
         public string ApprenticeshipTitle { get; set; }
         public int? ProgType { get; set; }
-        public string NotionalEndLevel { get; set; }
+        public string NotionalNVQLevelv2 { get; set; }
         public int? Version { get; set; }
         public int? PathwayCode { get; set; }
         public ApprenticeshipType ApprenticeshipType { get; set; }
