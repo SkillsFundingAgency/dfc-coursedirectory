@@ -10,7 +10,7 @@
     <a asp-controller="Apprenticeships" asp-action="Index" class="govuk-back-link">Back</a>
     <div class="cd-dashboard govuk-grid-row govuk-body ">
 
-        <div class="govuk-grid-column-two-thirds">
+        <div>
             <span class="govuk-caption-xl">@Model.ApprenticeshipTitle</span>
             <h1 class="govuk-heading-xl">
                 @if (Model.Mode == ApprenticeshipMode.EditYourApprenticeships || Model.Mode == ApprenticeshipMode.EditApprenticeship)

@@ -11,73 +11,69 @@
 @{
     Layout = "_Layout_Your_Courses";
 }
-<div class="govuk-body cd-file-upload">
-    <div class="govuk-form-group">
-        <span class="govuk-caption-l">Course Directory</span>
-        <h1 class="govuk-govuk-grid-column-one-half-l govuk-heading-l">Courses with no or expired LARS/QAN numbers</h1>
-    </div>
-    <h3 class="govuk-heading-s">These have no or an expired LARS/QAN</h3>
-    <p>If you still run these courses you will need to publish them to the new course directory.</p>
+@Html.ActionLink("Back","Report","Migration", null ,new { @class = "govuk-back-link" })
+<div class="govuk-grid-row govuk-body">
+    <main class="govuk-grid-column-full">
+        <h1 class="govuk-heading-l">Courses not transferred to the new directory</h1>
+        <p class="govuk-!-margin-bottom-6">
+            We have not been able to transfer these courses to the new directory because they had either no LARS/QAN in the old directory or because they had one that was not genuine.
+        </p>
+        <p>
+            If you still run these courses you will need to @Html.ActionLink("publish them to the new course directory.","Index", "RegulatedQualification",null, new{@class="govuk-link"})
+            <br>
+            <br>
+        </p>
 
-    <div class="err-top-line"></div>
-    @foreach (var course in Model.LarslessCourses)
-    {
-        foreach (var courseRun in course.CourseRuns.OrderBy(x => x.CourseName))
+
+        @foreach (var course in Model.LarslessCourses)
         {
-<div id="courserunid" style="display: none">@courseRun.id</div>
-            <div class="error-line" id="@($"CourseRunId_{courseRun.id}")">
-
-                <div class="govuk-grid-column-full col">
-                    <div class="govuk-form-group--error">
-                        <strong>@courseRun.CourseName</strong>
-                        <br />
-                        <div class="govuk-grid-row">
-                            <div class="govuk-grid-column-one-quarter word-wrap-break ">
-                                <span>@courseRun.ProviderCourseID</span>
-                            </div>
-                            <div class="govuk-grid-column-one-quarter">
-                                @if (courseRun.VenueId != null && Model.Venues.ContainsKey((Guid)courseRun.VenueId))
-                                {
-                                    <span>@(Model.Venues[(Guid)courseRun.VenueId] != null ? Model.Venues[(Guid)courseRun.VenueId] : "Unknown")</span>
-                                }
-                                else
-                                {
-                                    <span>&nbsp;</span>
-                                }
-                            </div>
-                            <div class="govuk-grid-column-one-quarter">
-                                @if (courseRun.StudyMode != StudyMode.Undefined)
-                                {
-
-                                    <span>@courseRun.StudyMode.ToDescription()</span>
-
-                                }
-                                else
-                                {
-                                    <span>&nbsp;</span>
-                                }
-                            </div>
-
-                            <div class="govuk-grid-column-one-quarter">
-                                @if (courseRun.StartDate.HasValue)
-                                {
-                                    <span>@courseRun.StartDate.Value.ToString("dd'/'MM'/'yyyy")</span>
-                                }
-                                else if (courseRun.FlexibleStartDate)
-                                {
-                                    <span>Flexible Start Date</span>
-                                }
-                                else
-                                {
-                                    <span>&nbsp;</span>
-                                }
-
-                            </div>
-                        </div>
-
+            foreach (var courseRun in course.CourseRuns.OrderBy(x => x.CourseName))
+            {
+                <div class="cd-activity-item ">
+                    <div class="cd-activity-item-title">
+                        <h3 class="govuk-heading-s cd-activity-item-heading ">@courseRun.CourseName</h3>
                     </div>
+                    <span class="cd-activity-item-tag">@courseRun.ProviderCourseID</span>
+                    @if (courseRun.VenueId != null && Model.Venues.ContainsKey((Guid)courseRun.VenueId))
+                    {
+                        <span class="cd-activity-item-tag">@(Model.Venues[(Guid)courseRun.VenueId] != null ? Model.Venues[(Guid)courseRun.VenueId] : "Unknown")</span>
+                    }
+                    else
+                    {
+                        <span class="cd-activity-item-tag">&nbsp;</span>
+                    }
+
+                    @if (courseRun.StudyMode != StudyMode.Undefined)
+                    {
+
+                        <span class="cd-activity-item-tag">@courseRun.StudyMode.ToDescription()</span>
+
+                    }
+                    else
+                    {
+                        <span class="cd-activity-item-tag">&nbsp;</span>
+                    }
+
+                    @if (courseRun.StartDate.HasValue)
+                    {
+                        <span class="cd-activity-item-tag">@courseRun.StartDate.Value.ToString("dd'/'MM'/'yyyy")</span>
+                    }
+                    else if (courseRun.FlexibleStartDate)
+                    {
+                        <span class="cd-activity-item-tag">Flexible Start Date</span>
+
+                    }
+                    else
+                    {
+                        <span class="cd-activity-item-tag">&nbsp;</span>
+                    }
+                    <span id="migration-error" class="govuk-error-message">
+                        <span class="govuk-visually-hidden">Error:</span> Add a LARS/QAN or Update to a genuine LARS/QAN
+                    </span>
                 </div>
-            </div>
+            }
         }
-    }
+    </main>
 </div>
+
+

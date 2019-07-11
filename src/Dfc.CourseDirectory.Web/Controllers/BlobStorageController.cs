@@ -114,86 +114,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                                             .Where((y => ((int)y.CourseStatus & (int)RecordStatus.Live) > 0));
 
 
-            //for each course, convert to CsvCourse
-            List<CsvCourse> csvCourses = new List<CsvCourse>();
-            foreach (var course in courses)
-            {
-                //First course run is on same line as course line
-                var firstCourseRun = course.CourseRuns.First();
-
-                SelectRegionModel selectRegionModel = new SelectRegionModel();
-
-                CsvCourse csvCourse = new CsvCourse
-                {
-                    LearnAimRef = course.LearnAimRef,
-                    CourseDescription = course.CourseDescription.Replace(",", " "),
-                    EntryRequirements = course.EntryRequirements.Replace(",", " "),
-                    WhatYoullLearn = course.WhatYoullLearn.Replace(",", " "),
-                    HowYoullLearn = course.HowYoullLearn.Replace(",", " "),
-                    WhatYoullNeed = course.WhatYoullNeed.Replace(",", " "),
-                    HowYoullBeAssessed = course.HowYoullBeAssessed.Replace(",", " "),
-                    WhereNext = course.WhereNext.Replace(",", " "),
-                    AdvancedLearnerLoan = course.AdvancedLearnerLoan ? "Yes" : "No",
-                    AdultEducationBudget = course.AdultEducationBudget ? "Yes" : "No",
-                    CourseName = firstCourseRun.CourseName.Replace(",", " "),
-                    ProviderCourseID = firstCourseRun.ProviderCourseID,
-                    DeliveryMode = firstCourseRun.DeliveryMode.ToDescription(),
-                    StartDate = firstCourseRun.StartDate.Value.Date,
-                    FlexibleStartDate = firstCourseRun.FlexibleStartDate ? "Yes" : string.Empty,
-                    VenueName = firstCourseRun.VenueId.HasValue ? _venueService.GetVenueByIdAsync(new GetVenueByIdCriteria(firstCourseRun.VenueId.Value.ToString())).Result.Value.VenueName : null,
-                    National = firstCourseRun.National.HasValue ? (firstCourseRun.National.Value ? "Yes" : "No") : string.Empty,
-                    Regions = firstCourseRun.Regions != null ? SemiColonSplit(
-                                                                selectRegionModel.RegionItems
-                                                                .Where(x => firstCourseRun.Regions.Contains(x.Id))
-                                                                .Select(y => y.RegionName).ToList()) 
-                                                                : null,
-                    SubRegions = firstCourseRun.SubRegions != null? SemiColonSplit(firstCourseRun.SubRegions.Select(x => x.SubRegionName).ToList()) : null,
-                    CourseURL = firstCourseRun.CourseURL,
-                    Cost = firstCourseRun.Cost,
-                    CostDescription = firstCourseRun.CostDescription.Replace(",", " "),
-                    DurationValue = firstCourseRun.DurationValue,
-                    DurationUnit = firstCourseRun.DurationUnit.ToDescription(),
-                    StudyMode = firstCourseRun.StudyMode.ToDescription(),
-                    AttendancePattern = firstCourseRun.AttendancePattern.ToDescription()
-                };
-                csvCourses.Add(csvCourse);
-                foreach (var courseRun in course.CourseRuns)
-                {
-                    //Ignore the first course run as we've already captured it
-                    if(courseRun.id == firstCourseRun.id)
-                    {
-                        continue;
-                    }
-
-                    CsvCourse csvCourseRun = new CsvCourse
-                    {
-                        LearnAimRef = course.LearnAimRef,
-                        CourseName = courseRun.CourseName,
-                        ProviderCourseID = courseRun.ProviderCourseID,
-                        DeliveryMode = courseRun.DeliveryMode.ToDescription(),
-                        StartDate = courseRun.StartDate.Value.Date,
-                        FlexibleStartDate = courseRun.FlexibleStartDate ? "Yes" : string.Empty,
-                        VenueName = courseRun.VenueId.HasValue ? _venueService.GetVenueByIdAsync(new GetVenueByIdCriteria(courseRun.VenueId.Value.ToString())).Result.Value.VenueName : null,
-                        National = courseRun.National.HasValue ? (firstCourseRun.National.Value ? "Yes" : "No") : string.Empty,
-                        Regions = courseRun.Regions != null ? SemiColonSplit(
-                                                                selectRegionModel.RegionItems
-                                                                .Where(x => courseRun.Regions.Contains(x.Id))
-                                                                .Select(y => y.RegionName).ToList())
-                                                                : null,
-                        SubRegions = courseRun.SubRegions != null ? SemiColonSplit(courseRun.SubRegions.Select(x => x.SubRegionName).ToList()) : null,
-                        CourseURL = courseRun.CourseURL,
-                        Cost = courseRun.Cost,
-                        CostDescription = courseRun.CostDescription.Replace(",", " "),
-                        DurationValue = courseRun.DurationValue,
-                        DurationUnit = courseRun.DurationUnit.ToDescription(),
-                        StudyMode = courseRun.StudyMode.ToDescription(),
-                        AttendancePattern = courseRun.AttendancePattern.ToDescription()
-                    };
-                    csvCourses.Add(csvCourseRun);
-                }
-            }
-            //foreach courseRun of course, convert to csvCourse
-            //push to csv
+            var csvCourses = CoursesToCsvCourses(courses);
+            
             List<string> csvLines = new List<string>();
             foreach (var line in ToCsv(csvCourses))
             {
@@ -260,7 +182,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
             foreach (var o in objectlist)
             {
-                
+
                 yield return string.Join(separator, properties.Select(p => (p.GetValue(o, null) ?? "").ToString()));
             }
         }
@@ -268,7 +190,133 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             return string.Join(";", list.Select(x => x.ToString()).ToArray());
         }
-    }
+
+        internal IEnumerable<CsvCourse> CoursesToCsvCourses (IEnumerable<Course> courses)
+        {
+            List<CsvCourse> csvCourses = new List<CsvCourse>();
+
+            foreach (var course in courses)
+            {
+                //First course run is on same line as course line
+                var firstCourseRun = course.CourseRuns.First();
+
+                //Sanitise regions
+                if(firstCourseRun.Regions != null)
+                    firstCourseRun.Regions = SanitiseRegions(firstCourseRun.Regions);
+
+                SelectRegionModel selectRegionModel = new SelectRegionModel();
+
+                CsvCourse csvCourse = new CsvCourse
+                {
+                    LearnAimRef = course.LearnAimRef,
+                    CourseDescription = course.CourseDescription.Replace(",", " "),
+                    EntryRequirements = course.EntryRequirements.Replace(",", " "),
+                    WhatYoullLearn = course.WhatYoullLearn.Replace(",", " "),
+                    HowYoullLearn = course.HowYoullLearn.Replace(",", " "),
+                    WhatYoullNeed = course.WhatYoullNeed.Replace(",", " "),
+                    HowYoullBeAssessed = course.HowYoullBeAssessed.Replace(",", " "),
+                    WhereNext = course.WhereNext.Replace(",", " "),
+                    AdvancedLearnerLoan = course.AdvancedLearnerLoan ? "Yes" : "No",
+                    AdultEducationBudget = course.AdultEducationBudget ? "Yes" : "No",
+                    CourseName = firstCourseRun.CourseName.Replace(",", " "),
+                    ProviderCourseID = firstCourseRun.ProviderCourseID,
+                    DeliveryMode = firstCourseRun.DeliveryMode.ToDescription(),
+                    StartDate = firstCourseRun.StartDate.Value.Date,
+                    FlexibleStartDate = firstCourseRun.FlexibleStartDate ? "Yes" : string.Empty,
+                    VenueName = firstCourseRun.VenueId.HasValue ? _venueService.GetVenueByIdAsync(new GetVenueByIdCriteria(firstCourseRun.VenueId.Value.ToString())).Result.Value.VenueName : null,
+                    National = firstCourseRun.National.HasValue ? (firstCourseRun.National.Value ? "Yes" : "No") : string.Empty,
+                    Regions = firstCourseRun.Regions != null ? SemiColonSplit(
+                                                                selectRegionModel.RegionItems
+                                                                .Where(x => firstCourseRun.Regions.Contains(x.Id))
+                                                                .Select(y => y.RegionName).ToList())
+                                                                : null,
+                    SubRegions = firstCourseRun.SubRegions != null ? SemiColonSplit(
+                                                                    selectRegionModel.RegionItems.SelectMany(
+                                                                        x => x.SubRegion.Where(
+                                                                            y => firstCourseRun.Regions.Contains(y.Id)).Select(
+                                                                                z => z.SubRegionName).ToList())) : null,
+                    CourseURL = firstCourseRun.CourseURL,
+                    Cost = firstCourseRun.Cost,
+                    CostDescription = firstCourseRun.CostDescription.Replace(",", " "),
+                    DurationValue = firstCourseRun.DurationValue,
+                    DurationUnit = firstCourseRun.DurationUnit.ToDescription(),
+                    StudyMode = firstCourseRun.StudyMode.ToDescription(),
+                    AttendancePattern = firstCourseRun.AttendancePattern.ToDescription()
+                };
+                csvCourses.Add(csvCourse);
+                foreach (var courseRun in course.CourseRuns)
+                {
+                    //Ignore the first course run as we've already captured it
+                    if (courseRun.id == firstCourseRun.id)
+                    {
+                        continue;
+                    }
+
+                    //Sanitise regions
+                    if(courseRun.Regions != null)
+                        courseRun.Regions = SanitiseRegions(courseRun.Regions);
+
+                    CsvCourse csvCourseRun = new CsvCourse
+                    {
+                        LearnAimRef = course.LearnAimRef,
+                        CourseName = courseRun.CourseName,
+                        ProviderCourseID = courseRun.ProviderCourseID,
+                        DeliveryMode = courseRun.DeliveryMode.ToDescription(),
+                        StartDate = courseRun.StartDate.Value.Date,
+                        FlexibleStartDate = courseRun.FlexibleStartDate ? "Yes" : string.Empty,
+                        VenueName = courseRun.VenueId.HasValue ? _venueService.GetVenueByIdAsync(new GetVenueByIdCriteria(courseRun.VenueId.Value.ToString())).Result.Value.VenueName : null,
+                        National = courseRun.National.HasValue ? (firstCourseRun.National.Value ? "Yes" : "No") : string.Empty,
+                        Regions = courseRun.Regions != null ? SemiColonSplit(
+                                                                selectRegionModel.RegionItems
+                                                                .Where(x => courseRun.Regions.Contains(x.Id))
+                                                                .Select(y => y.RegionName).ToList())
+                                                                : null,
+                        SubRegions = courseRun.SubRegions != null ? SemiColonSplit(
+                                                                    selectRegionModel.RegionItems.SelectMany(
+                                                                        x => x.SubRegion.Where(
+                                                                            y => courseRun.Regions.Contains(y.Id)).Select(
+                                                                                z => z.SubRegionName).ToList())) : null,
+                        CourseURL = courseRun.CourseURL,
+                        Cost = courseRun.Cost,
+                        CostDescription = courseRun.CostDescription.Replace(",", " "),
+                        DurationValue = courseRun.DurationValue,
+                        DurationUnit = courseRun.DurationUnit.ToDescription(),
+                        StudyMode = courseRun.StudyMode.ToDescription(),
+                        AttendancePattern = courseRun.AttendancePattern.ToDescription()
+                    };
+                    csvCourses.Add(csvCourseRun);
+                }
+            }
+            return csvCourses;
+        }
+
+        internal IEnumerable<string> SanitiseRegions(IEnumerable<string> regions)
+        {
+            SelectRegionModel selectRegionModel = new SelectRegionModel();
+
+            foreach (var selectRegionRegionItem in selectRegionModel.RegionItems.OrderBy(x => x.RegionName))
+            {
+                //If Region is returned, check for existence of any subregions
+                if (regions.Contains(selectRegionRegionItem.Id))
+                {
+                    var subregionsInList = from subRegion in selectRegionRegionItem.SubRegion
+                                           where regions.Contains(subRegion.Id)
+                                           select subRegion;
+
+                    //If true, then ignore subregions
+                    if (subregionsInList.Count() > 0)
+                    {
+                        foreach (var subRegion in subregionsInList)
+                        {
+                            regions = regions.Where(x => (x != subRegion.Id)).ToList();
+
+                        }
+                    }
+                }
+            }
+            return regions;
+        }
+}
     internal static class TwoCharsClass
     {
         internal static string TwoChars(this int extendee)

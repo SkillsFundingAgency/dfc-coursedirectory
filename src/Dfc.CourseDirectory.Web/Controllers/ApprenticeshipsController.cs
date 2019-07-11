@@ -803,7 +803,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             model.ChooseRegion = new ChooseRegionModel
             {
-                Regions = _courseService.GetRegions()
+                Regions = _courseService.GetRegions(),
+                UseNationalComponent = false
             };
 
             //var ApprenticeshipRegionsViewModel = _session.GetObject<ApprenticeshipRegionsViewModel>("ApprenticeshipRegionsViewModel");
