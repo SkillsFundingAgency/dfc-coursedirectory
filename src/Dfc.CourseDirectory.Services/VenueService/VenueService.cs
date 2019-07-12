@@ -209,7 +209,7 @@ namespace Dfc.CourseDirectory.Services.VenueService
                 _logger.LogInformationObject("Get Venue By LocationId URI", _getVenueByLocationIdUri);
 
                 _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
-                var response = await _httpClient.GetAsync(_getVenueByLocationIdUri + $"LocationId={criteria.LocationId}");
+                var response = await _httpClient.GetAsync(_getVenueByLocationIdUri + $"?LocationId={criteria.LocationId}");
                 _logger.LogHttpResponseMessage("Get Venue By LocationId service http response", response);
 
                 if (response.IsSuccessStatusCode) {
@@ -252,7 +252,7 @@ namespace Dfc.CourseDirectory.Services.VenueService
 
                 //StringContent content = new StringContent(criteria.ToJson(), Encoding.UTF8, "application/json");
                 _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
-                HttpResponseMessage response = await _httpClient.GetAsync(_getVenueByPRNAndNameUri + $"prn={criteria.PRN}&name={criteria.Name}");
+                HttpResponseMessage response = await _httpClient.GetAsync(_getVenueByPRNAndNameUri + $"?prn={criteria.PRN}&name={criteria.Name}");
 
                 _logger.LogHttpResponseMessage("Get Venue By PRN and Name service http response", response);
                 if (response.IsSuccessStatusCode) {

@@ -53,7 +53,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
                 _logger.LogInformationObject("Standards and Frameworks Criteria", criteria);
 
 
-                var response = await _httpClient.GetAsync(new Uri(_getStandardsAndFrameworksUri.AbsoluteUri + "&search=" + criteria));
+                var response = await _httpClient.GetAsync(new Uri(_getStandardsAndFrameworksUri.AbsoluteUri + "?search=" + criteria));
                 _logger.LogHttpResponseMessage("Standards and Frameworks service http response", response);
 
                 if (response.IsSuccessStatusCode)
@@ -151,7 +151,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             {
                 _logger.LogInformationObject("Get Apprenticeship by Id", Id);
 
-                var response = await _httpClient.GetAsync(new Uri(_getApprenticeshipByIdUri.AbsoluteUri + "&id=" + Id));
+                var response = await _httpClient.GetAsync(new Uri(_getApprenticeshipByIdUri.AbsoluteUri + "?id=" + Id));
                 _logger.LogHttpResponseMessage("Get Apprenticeship by Id service http response", response);
 
                 if (response.IsSuccessStatusCode)
@@ -196,7 +196,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
                 _logger.LogInformationObject("Search Apprenticeship by UKPRN Criteria", criteria);
 
 
-                var response = await _httpClient.GetAsync(new Uri(_getApprenticeshipByUKPRNUri.AbsoluteUri + "&UKPRN=" + criteria));
+                var response = await _httpClient.GetAsync(new Uri(_getApprenticeshipByUKPRNUri.AbsoluteUri + "?UKPRN=" + criteria));
                 _logger.LogHttpResponseMessage("Search Apprenticeship by UKPRN service http response", response);
 
                 if (response.IsSuccessStatusCode)
