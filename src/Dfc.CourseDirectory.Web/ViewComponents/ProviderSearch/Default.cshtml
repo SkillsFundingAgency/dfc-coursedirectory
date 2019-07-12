@@ -111,6 +111,17 @@
             $(document).keypress(function (e) {
                 if (e.which == 13) {
                     e.preventDefault();
+                    validate();
+                    if (validStates.every(isAllValid)) {
+                        doSearch();
+                    }
+                }
+            });
+
+            $(document).on('click',
+                '#searchProvider',
+                function(e) {
+                    e.preventDefault();
                     $providerSearchResultContainer.html("");
                     validStates = [];
                     validate();
