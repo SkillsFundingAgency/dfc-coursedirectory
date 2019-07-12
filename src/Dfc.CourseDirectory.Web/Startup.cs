@@ -413,9 +413,6 @@ namespace Dfc.CourseDirectory.Web
 
                         HttpClient client = new HttpClient();
 
-                        _logger.LogError(token);
-                        _logger.LogError($"{apiUri}/organisations/{organisation.Id}/users/{userClaims.UserId}");
-
                         client.SetBearerToken(token);
                         var response = client.GetAsync($"{apiUri}/organisations/{organisation.Id}/users/{userClaims.UserId}").Result;
 
