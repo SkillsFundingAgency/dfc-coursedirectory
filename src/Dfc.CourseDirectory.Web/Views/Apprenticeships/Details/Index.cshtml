@@ -8,11 +8,11 @@
 
 <form class="govuk-!-margin-bottom-9" id="ApprenticeshipDetailsForm" asp-controller="Apprenticeships" asp-action="Details" method="post">
     <a asp-controller="Apprenticeships" asp-action="Index" class="govuk-back-link">Back</a>
-    <div class="cd-dashboard govuk-grid-row govuk-body ">
+    <div class="cd-dashboard govuk-body ">
 
         <div>
             <span class="govuk-caption-xl">@Model.ApprenticeshipTitle</span>
-            <h1 class="govuk-heading-xl">
+
                 @if (Model.Mode == ApprenticeshipMode.EditYourApprenticeships)
                 {
                     <h1 class="govuk-heading-xl">
@@ -27,7 +27,7 @@
                 }
 
 
-            </h1>
+
             <div id="errorsummary" class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary" style="display: none;">
                 <h2 class="govuk-error-summary__title" id="error-summary-title">
                     There is a problem
@@ -44,6 +44,7 @@
             @Html.HiddenFor(x => x.ApprenticeshipPreviousPage)
             @Html.HiddenFor(x => x.Mode)
             @Html.HiddenFor(x => x.Cancelled)
+            @Html.HiddenFor(x => x.ShowCancelled)
 
 
 
@@ -137,22 +138,34 @@
 
             </div>
 
-            @if (Model.Mode == ApprenticeshipMode.EditYourApprenticeships)
+            @if (Model.Mode == ApprenticeshipMode.Add)
             {
                 <div class="cta-container">
                     <button type="submit" class="govuk-button" id="continue" value="continue">
                         Save
                     </button>
-
-                    <a class="govuk-link govuk-!-margin-left-3" asp-controller="Apprenticeships" asp-action="Summary" asp-route-Id=@Model.Id asp-route-apprenticeshipMode=@Model.Mode asp-route-Cancelled=true>Cancel</a>
+                    
+                    @if (Model.ShowCancelled.HasValue && Model.ShowCancelled.Value==true)
+                    {
+                        <a class="govuk-link govuk-!-margin-left-3" asp-controller="Apprenticeships" asp-action="Summary" asp-route-Id=@Model.Id asp-route-Mode=@Model.Mode asp-route-Cancelled=true>Cancel</a>
+                    }
                 </div>
             }
-            else
-            {
-                <button type="submit" class="govuk-button" id="continue" value="continue">
-                    Continue
-                </button>
-            }
+                
+                @if (Model.Mode == ApprenticeshipMode.EditYourApprenticeships)
+                {
+                    <div class="cta-container">
+                        <button type="submit" class="govuk-button" id="continue" value="continue">
+                            Save
+                        </button>
+                    
+                        @if (Model.ShowCancelled.HasValue && Model.ShowCancelled.Value==true)
+                        {
+                            <a class="govuk-link govuk-!-margin-left-3" asp-controller="Apprenticeships" asp-action="Summary" asp-route-Id=@Model.Id asp-route-Mode=@Model.Mode asp-route-Cancelled=true>Cancel</a>
+                        }
+                    </div>
+                }
+           
 
 
 

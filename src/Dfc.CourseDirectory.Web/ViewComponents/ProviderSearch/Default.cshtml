@@ -81,7 +81,7 @@
 
             var doSearch = function() {
 
-                $('#results').html("");
+                $providerSearchResultContainer.html("");
                 makeRequestWithPayload({
                         SearchTerm: $elementSearchTerm.val()
                     },
@@ -108,19 +108,30 @@
 
             }
 
-
-            $(document).on('click',
-                '#searchProvider',
-                function(e) {
+            $(document).keypress(function (e) {
+                if (e.which == 13) {
                     e.preventDefault();
-                    $('#results').html("");
+                    $providerSearchResultContainer.html("");
                     validStates = [];
                     validate();
                     if (validStates.every(isAllValid)) {
                         doSearch();
                     }
+                }
+            });
 
-                });
+            //$(document).on('click',
+            //    '#searchProvider',
+            //    function(e) {
+            //        e.preventDefault();
+            //        $('#results').html("");
+            //        validStates = [];
+            //        validate();
+            //        if (validStates.every(isAllValid)) {
+            //            doSearch();
+            //        }
+
+            //    });
         });
     })(jQuery);
 </script>

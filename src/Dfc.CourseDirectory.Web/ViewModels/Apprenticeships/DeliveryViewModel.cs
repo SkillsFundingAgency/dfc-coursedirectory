@@ -9,6 +9,7 @@ using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Web.ViewModels.YourCourses;
 using System.ComponentModel.DataAnnotations;
 using Dfc.CourseDirectory.Models.Enums;
+using Dfc.CourseDirectory.Models.Models.Apprenticeships;
 
 namespace Dfc.CourseDirectory.Web.ViewModels.Apprenticeships
 {
@@ -16,7 +17,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels.Apprenticeships
     {
 
         public ApprenticeshipDelivery ApprenticeshipDelivery { get; set; }
-
+        public ApprenticeshipMode Mode { get; set; }
 
     }
 }

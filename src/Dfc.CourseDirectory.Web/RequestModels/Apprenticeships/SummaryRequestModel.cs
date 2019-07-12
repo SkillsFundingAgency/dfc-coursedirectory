@@ -7,7 +7,7 @@ namespace Dfc.CourseDirectory.Web.RequestModels
     {
         public string Id { get; set; }
 
-        public ApprenticeshipMode apprenticeshipMode { get; set; }
+        public ApprenticeshipMode Mode { get; set; }
 
         public bool cancelled { get; set; }
        

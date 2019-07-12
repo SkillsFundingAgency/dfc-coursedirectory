@@ -1,0 +1,59 @@
+﻿@using Microsoft.AspNetCore.Authorization;
+@using Microsoft.AspNetCore.Identity
+@using Dfc.CourseDirectory.Web.Areas.Identity.Data;
+@using Dfc.CourseDirectory.Models.Enums
+@using Dfc.CourseDirectory.Web.Helpers
+@model Dfc.CourseDirectory.Web.ViewModels.Apprenticeships.DeleteDeliveryOptionViewModel
+@{
+    Layout = "_Layout_Your_Courses";
+}
+
+<form class="govuk-!-margin-bottom-9" id="ApprenticeshipWhatWouldYouLikeToDoForm" asp-controller="Apprenticeships" asp-action="DeleteDeliveryOption" method="post">
+    @if (Model.Combined)
+    {
+        <a asp-controller="Apprenticeships" asp-action="DeliveryOptionsCombined" class="govuk-back-link">Back</a>
+    }
+    else
+    {
+        <a asp-controller="Apprenticeships" asp-action="DeliveryOptions" class="govuk-back-link">Back</a>
+    }
+
+    <div class="cd-dashboard">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                @Html.HiddenFor(x => x.LocationName)
+                @Html.HiddenFor(x => x.Combined)
+                @Html.HiddenFor(x => x.Mode)
+                <span class="govuk-caption-xl">@Model.ApprenticeshipTitle</span>
+
+
+                <h1 class="govuk-heading-xl">
+                    Delete your delivery location
+                </h1>
+
+                <h1 class="govuk-label">
+                    You are about to delete this location
+                </h1>
+                <br />
+
+                <div class="cta-container">
+                    <button type="submit" class="govuk-button" id="delete" value="delete">
+                        Delete
+                    </button>
+
+                    @if (Model.Combined)
+                    {
+                        <a class="govuk-link govuk-!-margin-left-3" asp-controller="Apprenticeships" asp-action="DeliveryOptionsCombined" asp-route-mode="@Model.Mode">Cancel</a>
+                    }
+                    else
+                    {
+                        <a class="govuk-link govuk-!-margin-left-3" asp-controller="Apprenticeships" asp-action="DeliveryOptions" asp-route-mode="@Model.Mode">Cancel</a>
+                    }
+
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+

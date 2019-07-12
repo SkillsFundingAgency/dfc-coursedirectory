@@ -22,7 +22,7 @@ namespace Dfc.CourseDirectory.Web.RequestModels
 
         public bool? Cancelled { get; set; }
 
-
+        public bool? ShowCancelled { get; set; }
 
     }
 }
