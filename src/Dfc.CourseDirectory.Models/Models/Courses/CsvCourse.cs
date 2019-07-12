@@ -48,7 +48,7 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         public string DeliveryMode { get; set; }
 
         [Display(Name = "START_DATE")]
-        public DateTime? StartDate { get; set; }
+        public string StartDate { get; set; }
 
         [Display(Name = "FLEXIBLE_START_DATE")]
         public string FlexibleStartDate { get; set; }

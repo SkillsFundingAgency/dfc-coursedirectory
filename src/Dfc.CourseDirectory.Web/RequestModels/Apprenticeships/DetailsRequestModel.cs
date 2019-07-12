@@ -13,7 +13,7 @@ namespace Dfc.CourseDirectory.Web.RequestModels
         public int? Version { get; set; }
         public int? PathwayCode { get; set; }
         public string ApprenticeshipTitle { get; set; }
-        public string NotionalEndLevel { get; set; }
+        public string NotionalNVQLevelv2 { get; set; }
         public ApprenticeshipType ApprenticeshipType { get; set; }
         public int? ProgType { get; set; }
         public ApprenticeShipPreviousPage PreviousPage { get; set; }

@@ -45,10 +45,13 @@ else
 
 
 
-                <div class="cd-apprenticeships-result govuk-body">
-                    <div class="govuk-!-margin-bottom-4">
-                        <span>Found <strong>@Model.Items.Count()</strong> results for <strong>@Model.SearchTerm</strong></span>
-                    </div>
+        <div class="cd-apprenticeships-result govuk-body">
+            @if (!string.IsNullOrEmpty(Model.SearchTerm))
+            {
+                <div class="govuk-!-margin-bottom-4">
+                    <span>Found <strong>@Model.Items.Count()</strong> results for <strong>@Model.SearchTerm</strong></span>
+                </div>
+            }
 
                     @foreach (var apprenticeship in Model.Items.OrderBy(x => x.ApprenticeshipTitle))
                     {
@@ -85,7 +88,7 @@ else
 
 
 
-                </div>
+        </div>
 
     }
 

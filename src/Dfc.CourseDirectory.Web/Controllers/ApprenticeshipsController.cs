@@ -106,7 +106,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                             EffectiveTo = item.EffectiveTo,
                             SectorSubjectAreaTier1 = item.SectorSubjectAreaTier1,
                             SectorSubjectAreaTier2 = item.SectorSubjectAreaTier2,
-                            NotionalEndLevel = item.NotionalEndLevel,
+                            NotionalNVQLevelv2 = item.NotionalEndLevel,
                             ProgTypeDesc = item.ProgTypeDesc,
                             ProgTypeDesc2 = item.ProgTypeDesc2,
 
@@ -143,7 +143,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 model.ProgType = request.ProgType;
                 model.PathwayCode = request.PathwayCode;
                 model.Version = request.Version;
-                model.NotionalEndLevel = request.NotionalEndLevel;
+                model.NotionalNVQLevelv2 = request.NotionalNVQLevelv2;
                 model.Mode = request.Mode;
 
                 model.Cancelled = request.Cancelled.HasValue && request.Cancelled.Value;
@@ -629,7 +629,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         id = Guid.NewGuid(),
                         LocationType = LocationType.Venue,
                         RecordStatus = RecordStatus.Live,
-                        National = null
+                        National = null,
+                        UpdatedDate=DateTime.Now,
+                        UpdatedBy = 
+                            User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
 
 
                     };
@@ -683,7 +686,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         id = Guid.NewGuid(),
                         LocationType = LocationType.Venue,
                         RecordStatus = RecordStatus.Live,
-                        National = loc.National != null && loc.National.Value
+                        National = loc.National != null && loc.National.Value,
+                        UpdatedDate = DateTime.Now,
+                        UpdatedBy =
+                            User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
                     };
 
                     if (!string.IsNullOrEmpty(loc.LocationId))
@@ -741,24 +747,26 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 RecordStatus = RecordStatus.Live,
                 PathwayCode = model.DetailViewModel.PathwayCode,
                 Version = model.DetailViewModel.Version,
-                NotionalEndLevel = model.DetailViewModel.NotionalEndLevel,
-                ApprenticeshipLocations = locations
+                NotionalNVQLevelv2 = model.DetailViewModel.NotionalNVQLevelv2,
+                ApprenticeshipLocations = locations,
+                UpdatedDate = DateTime.UtcNow,
+                UpdatedBy = User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault()
             };
 
-            switch (apprenticeship.ApprenticeshipType)
-            {
-                case ApprenticeshipType.StandardCode:
-                    {
-                        apprenticeship.StandardId = model.DetailViewModel.Id;
-                        break;
-                    }
+            //switch (apprenticeship.ApprenticeshipType)
+            //{
+            //    case ApprenticeshipType.StandardCode:
+            //        {
+            //            apprenticeship.StandardId = model.DetailViewModel.Id;
+            //            break;
+            //        }
 
-                case ApprenticeshipType.FrameworkCode:
-                    {
-                        apprenticeship.FrameworkId = model.DetailViewModel.Id;
-                        break;
-                    }
-            }
+            //    case ApprenticeshipType.FrameworkCode:
+            //        {
+            //            apprenticeship.FrameworkId = model.DetailViewModel.Id;
+            //            break;
+            //        }
+            //}
 
             if (theModel.Mode == ApprenticeshipMode.EditYourApprenticeships)
             {
@@ -769,9 +777,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 }
 
                 apprenticeship.id = DetailViewModel.Id;
-                apprenticeship.UpdatedDate = DateTime.UtcNow;
-                apprenticeship.UpdatedBy =
-                    User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault();
+              
                 var result = await _apprenticeshipService.UpdateApprenticeshipAsync(apprenticeship);
 
                 if (result.IsSuccess)

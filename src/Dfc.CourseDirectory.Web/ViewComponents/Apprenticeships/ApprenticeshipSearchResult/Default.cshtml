@@ -63,9 +63,9 @@ else
 
                         }
 
-                        @if (!string.IsNullOrEmpty(apprenticeship.NotionalEndLevel))
+                        @if (!string.IsNullOrEmpty(apprenticeship.NotionalNVQLevelv2))
                         {
-                            <p class="govuk-body">Level: <span class="govuk-!-font-weight-bold">@apprenticeship.NotionalEndLevel</span></p>
+                            <p class="govuk-body">Level: <span class="govuk-!-font-weight-bold">@apprenticeship.NotionalNVQLevelv2</span></p>
                         }
                         <p class="govuk-body">
                             <a class="govuk-link" style="display:inline-flex"
@@ -78,7 +78,7 @@ else
                                asp-route-frameworkcode="@apprenticeship.FrameworkCode"
                                asp-route-pathwaycode="@apprenticeship.PathwayCode"
                                asp-route-version="@apprenticeship.Version"
-                               asp-route-NotionalEndLevel="@apprenticeship.NotionalEndLevel"
+                               asp-route-NotionalNVQLevelv2="@apprenticeship.NotionalNVQLevelv2"
                                asp-route-Mode="@ApprenticeshipMode.Add"
                                asp-route-ApprenticeshipType="@apprenticeship.ApprenticeshipType">Choose this apprenticeship</a>
                         </p>

@@ -106,13 +106,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 return null;
 
             IEnumerable<Course> courses = _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(UKPRN))
-                                            .Result
-                                            .Value
-                                            .Value
-                                            .SelectMany(o => o.Value)
-                                            .SelectMany(i => i.Value)
-                                            .Where((y => ((int)y.CourseStatus & (int)RecordStatus.Live) > 0));
-
+                                .Result
+                                .Value
+                                .Value
+                                .SelectMany(o => o.Value)
+                                .SelectMany(i => i.Value)
+                                .Where((y => (int)y.CourseStatus == (int)RecordStatus.Live));
 
             var csvCourses = CoursesToCsvCourses(courses);
             
@@ -201,27 +200,27 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 var firstCourseRun = course.CourseRuns.First();
 
                 //Sanitise regions
-                if(firstCourseRun.Regions != null)
+                if (firstCourseRun.Regions != null)
                     firstCourseRun.Regions = SanitiseRegions(firstCourseRun.Regions);
 
                 SelectRegionModel selectRegionModel = new SelectRegionModel();
 
                 CsvCourse csvCourse = new CsvCourse
                 {
-                    LearnAimRef = course.LearnAimRef,
-                    CourseDescription = course.CourseDescription.Replace(",", " "),
-                    EntryRequirements = course.EntryRequirements.Replace(",", " "),
-                    WhatYoullLearn = course.WhatYoullLearn.Replace(",", " "),
-                    HowYoullLearn = course.HowYoullLearn.Replace(",", " "),
-                    WhatYoullNeed = course.WhatYoullNeed.Replace(",", " "),
-                    HowYoullBeAssessed = course.HowYoullBeAssessed.Replace(",", " "),
-                    WhereNext = course.WhereNext.Replace(",", " "),
+                    LearnAimRef = course.LearnAimRef != null ? SanitiseText(course.LearnAimRef) : String.Empty,
+                    CourseDescription = course.CourseDescription != null ? SanitiseText(course.CourseDescription): String.Empty,
+                    EntryRequirements = course.EntryRequirements != null ? SanitiseText(course.EntryRequirements) : String.Empty,
+                    WhatYoullLearn = course.WhatYoullLearn != null ? SanitiseText(course.WhatYoullLearn) : String.Empty,
+                    HowYoullLearn = course.HowYoullLearn != null ? SanitiseText(course.HowYoullLearn) : String.Empty,
+                    WhatYoullNeed = course.WhatYoullNeed != null ? SanitiseText(course.WhatYoullNeed) : String.Empty,
+                    HowYoullBeAssessed = course.HowYoullBeAssessed != null ? SanitiseText(course.HowYoullBeAssessed) : String.Empty,
+                    WhereNext = course.WhereNext != null ? SanitiseText(course.WhereNext) : String.Empty,
                     AdvancedLearnerLoan = course.AdvancedLearnerLoan ? "Yes" : "No",
                     AdultEducationBudget = course.AdultEducationBudget ? "Yes" : "No",
-                    CourseName = firstCourseRun.CourseName.Replace(",", " "),
-                    ProviderCourseID = firstCourseRun.ProviderCourseID,
+                    CourseName = firstCourseRun.CourseName != null ? SanitiseText(firstCourseRun.CourseName) : String.Empty,
+                    ProviderCourseID = firstCourseRun.ProviderCourseID != null ? SanitiseText(firstCourseRun.ProviderCourseID) : String.Empty,
                     DeliveryMode = firstCourseRun.DeliveryMode.ToDescription(),
-                    StartDate = firstCourseRun.StartDate.Value.Date,
+                    StartDate = firstCourseRun.StartDate.HasValue ? firstCourseRun.StartDate.Value.ToString("dd/MM/yyyy") : string.Empty,
                     FlexibleStartDate = firstCourseRun.FlexibleStartDate ? "Yes" : string.Empty,
                     VenueName = firstCourseRun.VenueId.HasValue ? _venueService.GetVenueByIdAsync(new GetVenueByIdCriteria(firstCourseRun.VenueId.Value.ToString())).Result.Value.VenueName : null,
                     National = firstCourseRun.National.HasValue ? (firstCourseRun.National.Value ? "Yes" : "No") : string.Empty,
@@ -235,9 +234,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                                                                         x => x.SubRegion.Where(
                                                                             y => firstCourseRun.Regions.Contains(y.Id)).Select(
                                                                                 z => z.SubRegionName).ToList())) : null,
-                    CourseURL = firstCourseRun.CourseURL,
+                    CourseURL = firstCourseRun.CourseURL != null ? SanitiseText(firstCourseRun.CourseURL) : String.Empty,
                     Cost = firstCourseRun.Cost,
-                    CostDescription = firstCourseRun.CostDescription.Replace(",", " "),
+                    CostDescription = firstCourseRun.CostDescription != null ? SanitiseText(firstCourseRun.CostDescription) : String.Empty,
                     DurationValue = firstCourseRun.DurationValue,
                     DurationUnit = firstCourseRun.DurationUnit.ToDescription(),
                     StudyMode = firstCourseRun.StudyMode.ToDescription(),
@@ -258,11 +257,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                     CsvCourse csvCourseRun = new CsvCourse
                     {
-                        LearnAimRef = course.LearnAimRef,
-                        CourseName = courseRun.CourseName,
-                        ProviderCourseID = courseRun.ProviderCourseID,
+                        LearnAimRef = course.LearnAimRef != null ? SanitiseText(course.LearnAimRef) : String.Empty,
+                        CourseName = courseRun.CourseName != null ? SanitiseText(courseRun.CourseName) : String.Empty,
+                        ProviderCourseID = courseRun.ProviderCourseID != null ? SanitiseText(courseRun.ProviderCourseID) : String.Empty,
                         DeliveryMode = courseRun.DeliveryMode.ToDescription(),
-                        StartDate = courseRun.StartDate.Value.Date,
+                        StartDate = courseRun.StartDate.HasValue? courseRun.StartDate.Value.ToString("dd/MM/yyyy") : string.Empty,
                         FlexibleStartDate = courseRun.FlexibleStartDate ? "Yes" : string.Empty,
                         VenueName = courseRun.VenueId.HasValue ? _venueService.GetVenueByIdAsync(new GetVenueByIdCriteria(courseRun.VenueId.Value.ToString())).Result.Value.VenueName : null,
                         National = courseRun.National.HasValue ? (firstCourseRun.National.Value ? "Yes" : "No") : string.Empty,
@@ -276,9 +275,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                                                                         x => x.SubRegion.Where(
                                                                             y => courseRun.Regions.Contains(y.Id)).Select(
                                                                                 z => z.SubRegionName).ToList())) : null,
-                        CourseURL = courseRun.CourseURL,
+                        CourseURL = courseRun.CourseURL != null ? SanitiseText(courseRun.CourseURL) : String.Empty,
                         Cost = courseRun.Cost,
-                        CostDescription = courseRun.CostDescription.Replace(",", " "),
+                        CostDescription = courseRun.CostDescription != null? SanitiseText(courseRun.CostDescription) : String.Empty,
                         DurationValue = courseRun.DurationValue,
                         DurationUnit = courseRun.DurationUnit.ToDescription(),
                         StudyMode = courseRun.StudyMode.ToDescription(),
@@ -289,7 +288,16 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
             return csvCourses;
         }
-
+        
+        internal string SanitiseText(string text)
+        {
+            if (text.Contains(","))
+            {
+                text = "\"" + text + "\"";
+            }
+            text = Regex.Replace(text, @"\t|\n|\r", "");
+            return text;
+        }
         internal IEnumerable<string> SanitiseRegions(IEnumerable<string> regions)
         {
             SelectRegionModel selectRegionModel = new SelectRegionModel();
