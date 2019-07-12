@@ -10,6 +10,7 @@
 
 <form class="govuk-!-margin-bottom-9" id="ApprenticeshipLocationChoiceSelectionForm" asp-controller="Apprenticeships" asp-action="LocationChoiceSelection" method="post">
     <a asp-controller="Apprenticeships" asp-action="Delivery" class="govuk-back-link">Back</a><br />
+    @Html.HiddenFor(x=>x.Mode)
     <h1 class="govuk-heading-xl">Can you deliver this training at employers’ locations anywhere in England?</h1>
     <span class="govuk-caption-xl">This will flag you as a national provider to people searching for apprenticeship training</span>
     <br />

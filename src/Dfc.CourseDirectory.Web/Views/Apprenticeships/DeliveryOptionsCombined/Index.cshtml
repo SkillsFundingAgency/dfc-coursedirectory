@@ -1,25 +1,39 @@
 ﻿@using Dfc.CourseDirectory.Models.Enums
 @using Dfc.CourseDirectory.Web.Helpers
 @using Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships
+@using Dfc.CourseDirectory.Web.ViewComponents.Notification
 @{
     Layout = "_Layout_Your_Courses";
 }
 
 @model Dfc.CourseDirectory.Web.ViewModels.Apprenticeships.DeliveryOptionsCombinedViewModel
 
-    <form class="govuk-!-margin-bottom-9" id="ApprenticeshipDeliveryOptionsCombinedForm" asp-controller="Apprenticeships" asp-action="AddCombined" method="post">
-        <a asp-controller="Apprenticeships" asp-action="Delivery" class="govuk-back-link">Back</a><br />
+<form class="govuk-!-margin-bottom-9" id="ApprenticeshipDeliveryOptionsCombinedForm" asp-controller="Apprenticeships" asp-action="AddCombined" method="post">
+    <a asp-controller="Apprenticeships" asp-action="Delivery" class="govuk-back-link">Back</a><br />
 
-        <div id="errorsummary" class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary" style="display: none;">
-            <h2 class="govuk-error-summary__title" id="error-summary-title">
-                There is an issue with this apprenticeship
-            </h2>
-            <div class="govuk-error-summary__body">
-                <ul class="govuk-list govuk-error-summary__list"></ul>
+   
+
+    <div class="cd-dashboard govuk-grid-row govuk-body dual-delivery ">
+        <div class="govuk-grid-column-two-thirds">
+            @Html.HiddenFor(x=>x.Mode)
+            @if (!string.IsNullOrEmpty(@ViewBag.Message))
+            {
+                @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+                {
+                    NotificationTitle = "",
+                    NotificationMessage = @ViewBag.Message,
+                    ClassType = "info-summary"
+                })
+            }
+
+            <div id="errorsummary" class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary" style="display: none;">
+                <h2 class="govuk-error-summary__title" id="error-summary-title">
+                    There is an issue with this apprenticeship
+                </h2>
+                <div class="govuk-error-summary__body">
+                    <ul class="govuk-list govuk-error-summary__list"></ul>
+                </div>
             </div>
-        </div>
-
-        <div class="cd-dashboard govuk-grid-row govuk-body dual-delivery ">
 
             <div class="govuk-form-group">
                 <h1 class="govuk-heading-l">
@@ -44,7 +58,7 @@
                                     @WebHelper.GetEnumDescription(ApprenticeShipDeliveryLocation.DayRelease)
                                 </label>
                             </div>
-                            <div class="govuk-checkboxes__item" style="margin-bottom:10px">
+                            <div class="govuk-checkboxes__item" style="margin-bottom: 10px">
                                 <input class="govuk-checkboxes__input" type="checkbox" asp-for="@Model.BlockRelease">
                                 <label class="govuk-label govuk-checkboxes__label">
                                     @WebHelper.GetEnumDescription(ApprenticeShipDeliveryLocation.BlockRelease)
@@ -68,21 +82,21 @@
 
                     @await Component.InvokeAsync(nameof(ChooseLocation), new ChooseLocationModel()
 
-             {
-             LabelText = "Location",
-             HintText = "Select a venue you can travel from to deliver training",
-             LocationId = Model.LocationId ?? (Guid?)null,
-             DisplayLink = true,
-             DeliveryOptionsListItemModel = Model.DeliveryOptionsListItemModel
+                    {
+                        LabelText = "Location",
+                        HintText = "Select a venue you can travel from to deliver training",
+                        LocationId = Model.LocationId ?? (Guid?) null,
+                        DisplayLink = true,
+                        DeliveryOptionsListItemModel = Model.DeliveryOptionsListItemModel
 
-             })
-                    <br />
+                    })
+                    <br/>
                     <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
                         <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
                             @*<h3 class="govuk-fieldset__heading" id="govuk-label-@nameof(@Model.Radius)">
-                                How is the training delivered at this location?
+                                    How is the training delivered at this location?
 
-                            </h3>*@
+                                </h3>*@
                         </legend>
                         <span id="govuk-label-Radius" class="govuk-hint">
                             How far are you willing to travel from the selected location?
@@ -90,11 +104,11 @@
                         </span>
                         <div class="govuk-form-group">
 
-                            <input class="govuk-input govuk-input--width-4 govuk-!-margin-right-3" asp-for="@Model.Radius" type="text" 
+                            <input class="govuk-input govuk-input--width-4 govuk-!-margin-right-3" asp-for="@Model.Radius" type="text"
                                    val-required-message="Select How far you are willing to travel from selected location"
                                    val-range-min="1"
                                    val-range-max="999"
-                                   val-range-message="Miles must be  between 1 and 999" />
+                                   val-range-message="Miles must be  between 1 and 999"/>
                             <span>miles</span>
                         </div>
                         <p>Or</p>
@@ -118,20 +132,22 @@
 
                 @if (Model.DeliveryOptionsListItemModel.DeliveryOptionsListItemModel != null && Model.DeliveryOptionsListItemModel.DeliveryOptionsListItemModel.Count() > 0)
                 {
-                <div class="summary--linked-title">
-                    <h2 class="govuk-heading-s">Delivery options </h2>
-                </div>
+                    <div class="summary--linked-title">
+                        <h2 class="govuk-heading-s">Delivery options </h2>
+                    </div>
                 }
                 @{
                     Model.DeliveryOptionsListItemModel.SummaryPage = false;
+                    ViewBag.Mode = Model.Mode;
                 }
                 @await Component.InvokeAsync(nameof(DeliveryOptionsList), Model.DeliveryOptionsListItemModel)
 
             </div>
         </div>
-    </form>
+    </div>
+</form>
 
-    <script>
+<script>
     (function ($) {
         $(function () {
             var $SaveAndContinue = $("#next1");
@@ -197,7 +213,7 @@
                     $TooManyLoctions.hide();
                 }
 
-               
+
 
                 $checkboxesdeliverymethod.govUkCheckboxes("validState");
                 $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $checkboxesdeliverymethod[0].id);
@@ -289,10 +305,10 @@
                     $('#Radius').prop("disabled", false);
                     $('#Radius').removeAttr("disabled");
                 }
-             
+
             });
 
-          
+
 
 
 
@@ -314,7 +330,8 @@
                             BlockRelease: $("#BlockRelease")[0].checked,
                             National: $("#National")[0].checked,
                             Radius: $Radius.val(),
-                            RowCount: rowCount
+                            RowCount: rowCount,
+                            Mode:$("#Mode").val()
                         },
                         contentType: "application/json; charset=utf-8",
                         success: function(data) {
@@ -324,7 +341,7 @@
 
                         }
                     });
-                
+
 
 
                 };
@@ -341,5 +358,5 @@
 
         });
     })(jQuery);
-    </script>
+</script>
 

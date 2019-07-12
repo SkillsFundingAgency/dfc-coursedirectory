@@ -8,6 +8,10 @@
 {
     <div class="govuk-form-group">
 
+        @{
+            bool displayRadius = false || !string.IsNullOrEmpty(Model.DeliveryOptionsListItemModel.FirstOrDefault()?.Radius);
+            }
+
         <span id="TooManyLocations" class="" style="display: none"
               val-required-message="Enter Apprenticeship information for employers">Number of locations for this apprenticeship offering is already at the maximum value of 250</span>
 
@@ -17,7 +21,12 @@
                 <tr class="govuk-table__row">
                     <th class="govuk-table__header" scope="col">Location</th>
                     <th class="govuk-table__header" scope="col">Delivery method</th>
-                    <th class="govuk-table__header" scope="col">Radius</th>
+
+                    @if (displayRadius)
+                    {
+                        <th class="govuk-table__header" scope="col">Radius</th>
+                    }
+
 
                     @if (Model.SummaryPage.HasValue && Model.SummaryPage == false)
                     {
@@ -70,7 +79,10 @@
                                 idValue = @baseId + @i.ToString() + @radiusFieldId;
                                 nameValue = @baseName + @i.ToString() + @radiusFieldName;
 
-                                <input id="@idValue" name="@nameValue" type="hidden" value="@Model.DeliveryOptionsListItemModel[i].Radius">
+                                if (displayRadius)
+                                 {
+                                     <input id="@idValue" name="@nameValue" type="hidden" value="@Model.DeliveryOptionsListItemModel[i].Radius">
+                                 }
 
                                 <td class="govuk-table__header" scope="col">
                                     <span>@Model.DeliveryOptionsListItemModel[i].LocationName</span>
@@ -79,33 +91,32 @@
                                 </td>
                                 <td class="govuk-table__cell" scope="col">@Model.DeliveryOptionsListItemModel[i].Delivery</td>
 
-                                @if (Model.DeliveryOptionsListItemModel[i].Radius != null)
-                                {
-                                    <td class="govuk-table__cell" scope="col">@Model.DeliveryOptionsListItemModel[i].Radius Miles</td>
-                                }
-                                else
-                                {
-                                    @if (Model.DeliveryOptionsListItemModel[i].National != null)
-                                    {
-                                        <td class="govuk-table__cell" scope="col">Across England</td>
-                                    }
-                                    else
-                                    {
-                                        <td class="govuk-table__cell" scope="col"></td>
-                                    }
-                                }
+                                @if (displayRadius)
+                                 {
+                                     
+                                     @if (Model.DeliveryOptionsListItemModel[i].Radius != null)
+                                      {
+                                          <td class="govuk-table__cell" scope="col">@Model.DeliveryOptionsListItemModel[i].Radius Miles</td>
+                                      }
+                                      else
+                                      {
+                                          @if (Model.DeliveryOptionsListItemModel[i].National != null)
+                                           {
+                                               <td class="govuk-table__cell" scope="col">Across England</td>
+                                           }
+                                           else
+                                           {
+                                               <td class="govuk-table__cell" scope="col"></td>
+                                           }
+                                      }
+                                 }
 
                                 @if (Model.SummaryPage.HasValue && Model.SummaryPage == false)
                                 {
                                     <td class="govuk-table__cell" scope="col">
-                                        @if (Model.DeliveryOptionsListItemModel[i].National.HasValue && Model.DeliveryOptionsListItemModel[i].National == true)
-                                        {
-                                            <a class="" asp-controller="Apprenticeships" asp-action="DeleteCombined" asp-route-locationid=@Model.DeliveryOptionsListItemModel[i].LocationId>Delete</a>
-                                        }
-                                        else
-                                        {
-                                            <a class="" asp-controller="Apprenticeships" asp-action="Delete" asp-route-locationid=@Model.DeliveryOptionsListItemModel[i].LocationId>Delete</a>
-                                        }
+
+                                        <a class="" asp-controller="Apprenticeships" asp-action="DeleteDeliveryOption" asp-route-LocationName=@Model.DeliveryOptionsListItemModel[i].LocationName asp-route-Mode=@ViewBag.Mode>Delete</a>
+
 
 
                                     </td>
