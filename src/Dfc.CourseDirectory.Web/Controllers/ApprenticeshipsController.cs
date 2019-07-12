@@ -385,7 +385,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 DetailViewModel.FrameworkCode = getApprenticehipByIdResult.Value.FrameworkCode;
                 DetailViewModel.Id = getApprenticehipByIdResult.Value.id;
                 DetailViewModel.Information = getApprenticehipByIdResult.Value.MarketingInformation;
-                DetailViewModel.NotionalEndLevel = getApprenticehipByIdResult.Value.NotionalEndLevel;
+                DetailViewModel.NotionalNVQLevelv2 = getApprenticehipByIdResult.Value.NotionalNVQLevelv2;
                 DetailViewModel.StandardCode = getApprenticehipByIdResult.Value.StandardCode;
                 DetailViewModel.Telephone = getApprenticehipByIdResult.Value.ContactTelephone;
                 DetailViewModel.Website = getApprenticehipByIdResult.Value.ContactWebsite;
