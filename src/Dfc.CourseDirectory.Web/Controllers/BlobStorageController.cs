@@ -106,13 +106,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 return null;
 
             IEnumerable<Course> courses = _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(UKPRN))
-                                            .Result
-                                            .Value
-                                            .Value
-                                            .SelectMany(o => o.Value)
-                                            .SelectMany(i => i.Value)
-                                            .Where((y => ((int)y.CourseStatus & (int)RecordStatus.Live) > 0));
-
+                                .Result
+                                .Value
+                                .Value
+                                .SelectMany(o => o.Value)
+                                .SelectMany(i => i.Value)
+                                .Where((y => (int)y.CourseStatus == (int)RecordStatus.Live));
 
             var csvCourses = CoursesToCsvCourses(courses);
             
