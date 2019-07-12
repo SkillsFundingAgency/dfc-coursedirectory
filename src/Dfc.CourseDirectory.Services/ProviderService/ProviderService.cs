@@ -52,9 +52,9 @@ namespace Dfc.CourseDirectory.Services.ProviderService
                 _logger.LogInformationObject("Provider search criteria.", criteria);
                 _logger.LogInformationObject("Provider search URI", _getProviderByPRNUri);
 
-                var content = new StringContent(criteria.ToJson(), Encoding.UTF8, "application/json");
+                //var content = new StringContent(criteria.ToJson(), Encoding.UTF8, "application/json");
                 _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
-                var response = await _httpClient.PostAsync(_getProviderByPRNUri, content);
+                var response = await _httpClient.GetAsync(_getProviderByPRNUri + $"?PRN={criteria.Search}");
 
                 _logger.LogHttpResponseMessage("Provider search service http response", response);
 
@@ -170,12 +170,14 @@ namespace Dfc.CourseDirectory.Services.ProviderService
 
                 if (response.IsSuccessStatusCode)
                 {
-                    var json = await response.Content.ReadAsStringAsync();
+                    // NOTE: There is no response content payload returned from this api - why? - don't know.
+                    // Therefore commenting this bit out as it will/does cause an exception down stream.
+                    //var json = await response.Content.ReadAsStringAsync();
 
-                    _logger.LogInformationObject("Provider update service json response", json);
+                    //_logger.LogInformationObject("Provider update service json response", json);
 
-
-                    var providerResult = JsonConvert.DeserializeObject<Provider>(json);
+                    // NOTE: deserialising the "providerJson" var set earlier to allow code down stream to run.
+                    var providerResult = JsonConvert.DeserializeObject<Provider>(providerJson);
 
 
                     return Result.Ok(providerResult);

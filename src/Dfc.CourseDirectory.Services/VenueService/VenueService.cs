@@ -297,11 +297,11 @@ namespace Dfc.CourseDirectory.Services.VenueService
                 _logger.LogInformationObject("Venue search URI", _searchVenueUri);
 
                 _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
-                var response = await _httpClient.GetAsync(_searchVenueUri + $"prn={criteria.Search}");
+                var response = await _httpClient.GetAsync(_searchVenueUri + $"?prn={criteria.Search}");
 
                 _logger.LogHttpResponseMessage("Venue search service http response", response);
 
-                if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+                if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
                     return Result.Ok<IVenueSearchResult>(new VenueSearchResult(new List<Venue>()));
 
                 if (response.IsSuccessStatusCode)

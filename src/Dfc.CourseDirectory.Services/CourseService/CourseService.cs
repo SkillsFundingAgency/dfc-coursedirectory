@@ -151,7 +151,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 var content = new StringContent(criteria.ToJson(), Encoding.UTF8, "application/json");
 
                 _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
-                var response = await _httpClient.GetAsync(new Uri(_getCourseByIdUri.AbsoluteUri + "&id=" + criteria.Id));
+                var response = await _httpClient.GetAsync(new Uri(_getCourseByIdUri.AbsoluteUri + "?id=" + criteria.Id));
 
                 _logger.LogHttpResponseMessage("Get Course By Id service http response", response);
 
@@ -259,7 +259,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
                     return Result.Fail<ICourseSearchResult>("Get your courses unknown UKRLP");
 
                 _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
-                var response = await _httpClient.GetAsync(new Uri(_getYourCoursesUri.AbsoluteUri + "&UKPRN=" + criteria.UKPRN));
+                var response = await _httpClient.GetAsync(new Uri(_getYourCoursesUri.AbsoluteUri + "?UKPRN=" + criteria.UKPRN));
 
                 _logger.LogHttpResponseMessage("Get your courses service http response", response);
 
@@ -308,7 +308,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
                     return Result.Fail<ICourseSearchResult>("Get your courses unknown UKRLP");
 
                 _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
-                var response = await _httpClient.GetAsync(new Uri(_getYourCoursesUri.AbsoluteUri + "&UKPRN=" + criteria.UKPRN));
+                var response = await _httpClient.GetAsync(new Uri(_getYourCoursesUri.AbsoluteUri + "?UKPRN=" + criteria.UKPRN));
 
                 _logger.LogHttpResponseMessage("Get your courses service http response", response);
 
@@ -361,7 +361,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
                     return Result.Fail<IEnumerable<ICourseStatusCountResult>>("Get course counts unknown UKRLP");
 
                 _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
-                var response = await _httpClient.GetAsync(new Uri(_getCourseCountsByStatusForUKPRNUri.AbsoluteUri + "&UKPRN=" + criteria.UKPRN));
+                var response = await _httpClient.GetAsync(new Uri(_getCourseCountsByStatusForUKPRNUri.AbsoluteUri + "?UKPRN=" + criteria.UKPRN));
 
                 _logger.LogHttpResponseMessage("Get course counts service http response", response);
 
@@ -410,7 +410,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
                     return Result.Fail<IEnumerable<ICourse>>("Get recent course changes unknown UKRLP");
 
                 _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
-                var response = await _httpClient.GetAsync(new Uri(_getRecentCourseChangesByUKPRNUri.AbsoluteUri + "&UKPRN=" + criteria.UKPRN));
+                var response = await _httpClient.GetAsync(new Uri(_getRecentCourseChangesByUKPRNUri.AbsoluteUri + "?UKPRN=" + criteria.UKPRN));
 
                 _logger.LogHttpResponseMessage("Get recent course changes service http response", response);
 
