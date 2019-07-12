@@ -62,7 +62,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _courseService = courseService;
         }
 
-        //[Authorize(Policy = "ElevatedUserRole")]
+       // [Authorize(Policy = "ElevatedUserRole")]
         public async Task<IActionResult> Index([FromQuery] ProviderSearchRequestModel requestModel)
         {
            

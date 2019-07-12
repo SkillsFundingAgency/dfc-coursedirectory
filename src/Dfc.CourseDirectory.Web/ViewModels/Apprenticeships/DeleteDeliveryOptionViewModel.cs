@@ -13,11 +13,15 @@ using Dfc.CourseDirectory.Models.Models.Apprenticeships;
 
 namespace Dfc.CourseDirectory.Web.ViewModels.Apprenticeships
 {
-    public class LocationChoiceSelectionViewModel
+    public class DeleteDeliveryOptionViewModel
     {
+        public string LocationName { get; set; }
+        public string ApprenticeshipTitle { get; set; }
 
-        public NationalApprenticeship NationalApprenticeship { get; set; }
+       public bool Combined { get; set; }
 
-        public ApprenticeshipMode Mode { get; set; }
+       public ApprenticeshipMode Mode { get; set; }
+
+
     }
 }
