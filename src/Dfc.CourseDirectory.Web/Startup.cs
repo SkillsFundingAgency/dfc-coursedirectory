@@ -363,10 +363,9 @@ namespace Dfc.CourseDirectory.Web
                     // This is derived from the recommended approach: https://github.com/aspnet/Security/issues/1165
                     OnRemoteFailure = ctx =>
                     {
-                        _logger.LogWarning("Remote failure for DFE-sign in");
-                        ctx.Response.Redirect("/");
+                        _logger.LogWarning("Remote failure for DFE-sign in");            
                         ctx.HandleResponse();
-                        return Task.FromResult(0);
+                        return Task.FromException(ctx.Failure);
                     },
 
                     OnRedirectToIdentityProvider = context =>
@@ -404,18 +403,17 @@ namespace Dfc.CourseDirectory.Web
                         var organisation = JsonConvert.DeserializeObject<Organisation>(
                             identity.Claims.Where(c => c.Type == "organisation")
                             .Select(c => c.Value).FirstOrDefault());
-
+                        
+                        if(organisation == null)
+                        {
+                            throw new SystemException("Unable to get organisation details for user");
+                        }
                         DFEClaims userClaims = new DFEClaims
                         {
                             UserId = Guid.Parse(identity.Claims.Where(c => c.Type == "sub").Select(c => c.Value).SingleOrDefault()),
-
                         };
 
                         HttpClient client = new HttpClient();
-
-                        _logger.LogError(token);
-                        _logger.LogError($"{apiUri}/organisations/{organisation.Id}/users/{userClaims.UserId}");
-
                         client.SetBearerToken(token);
                         var response = client.GetAsync($"{apiUri}/organisations/{organisation.Id}/users/{userClaims.UserId}").Result;
 
@@ -429,7 +427,7 @@ namespace Dfc.CourseDirectory.Web
                         }
                         else
                         {
-                            throw new ArgumentException("Unable to get user details");
+                            throw new SystemException("Could not get Role Type for User");
                         }
 
                         _logger.LogError("User " + userClaims.UserName + " has been authenticated by DFE");
@@ -455,6 +453,7 @@ namespace Dfc.CourseDirectory.Web
                         catch (Exception ex)
                         {
                             _logger.LogWarning("Error authorising user", ex);
+                            throw new SystemException("Unable to authorise user");
                         }
 
                         // so that we don't issue a session cookie but one with a fixed expiration
@@ -476,6 +475,9 @@ namespace Dfc.CourseDirectory.Web
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+
+                //Uncomment to redirect to live error page
+                app.UseExceptionHandler("/Home/Error");
             }
             else
             {

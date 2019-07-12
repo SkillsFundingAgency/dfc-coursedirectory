@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using Dfc.CourseDirectory.Models.Models.Courses;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Models.Enums;
+using Microsoft.AspNetCore.Diagnostics;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -197,7 +198,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            var exceptionHandlerPathFeature = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
+
+            return View(new ErrorViewModel
+            {
+                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier,
+                ErrorMessage = exceptionHandlerPathFeature.Error != null ? exceptionHandlerPathFeature.Error.Message : "There has been an error, please contact support",
+                ErrorPath = exceptionHandlerPathFeature.Path != null ? exceptionHandlerPathFeature.Path : string.Empty
+
+            });
         }
     }
 }
