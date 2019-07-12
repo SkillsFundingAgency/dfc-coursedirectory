@@ -292,7 +292,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
         
         internal string SanitiseText(string text)
         {
-            text = text.Replace(",", " ");
+            if (text.Contains(","))
+            {
+                text = "\"" + text + "\"";
+            }
             text = Regex.Replace(text, @"\t|\n|\r", "");
             return text;
         }
