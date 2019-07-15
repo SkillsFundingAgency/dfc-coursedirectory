@@ -150,7 +150,8 @@ namespace Dfc.CourseDirectory.Web
             services.AddScoped<IOnspdService, OnspdService>();
             services.AddScoped<IOnspdSearchHelper, OnspdSearchHelper>();
             services.AddScoped<IUserHelper, UserHelper>();
-
+            services.AddScoped<ICSVHelper, CSVHelper>();
+            services.AddScoped<ICourseProvisionHelper, CourseProvisionHelper>();
             services.Configure<ApprenticeshipServiceSettings>(Configuration.GetSection(nameof(ApprenticeshipServiceSettings)));
             services.AddScoped<IApprenticeshipService, ApprenticeshipService>();
 
@@ -477,7 +478,7 @@ namespace Dfc.CourseDirectory.Web
                 app.UseDeveloperExceptionPage();
 
                 //Uncomment to redirect to live error page
-                app.UseExceptionHandler("/Home/Error");
+                //app.UseExceptionHandler("/Home/Error");
             }
             else
             {
