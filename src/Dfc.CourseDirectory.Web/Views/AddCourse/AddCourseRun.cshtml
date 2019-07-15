@@ -155,14 +155,14 @@
             @Model.SelectVenue.HintText
         </span>
         <div class="govuk-grid-row">
-            <div class="govuk-grid-column-full">
-                <div class="govuk-checkboxes" id="SelectVenueCheckBoxes" val-required-message="Select a venue">
+            <div class="govuk-grid-column-full" id ="Venue_CheckBoxes">
+                <div class="govuk-checkboxes" id="SelectVenueCheckBoxes" aria-labelledby="Venue_CheckBoxes" val-required-message="Select a venue">
                     @{ var i = 0; }
                     @if (Model.SelectVenue.VenueItems.Count() == 1)
                     {
                         <div class="govuk-checkboxes__item">
-                            <input class="govuk-checkboxes__input" id="VenueName-@i" name="SelectedVenues" type="checkbox" value="@Model.SelectVenue.VenueItems.First().Id" checked="checked" onclick="return false;" />
-                            <label class="govuk-label govuk-checkboxes__label" for="SelectedVenues">@Model.SelectVenue.VenueItems.First().VenueName</label>
+                            <input class="govuk-checkboxes__input" id="VenueName-@i" for="VenueName-@i" name="SelectedVenues" type="checkbox" aria-labelledby="VenueName-@i"  value="@Model.SelectVenue.VenueItems.First().Id" checked="checked" onclick="return false;" />
+                            <label id="VenueNameLabel-@i" class="govuk-label govuk-checkboxes__label" for="SelectedVenues" aria-label="VenueName-@i">@Model.SelectVenue.VenueItems.First().VenueName</label>
                         </div>
                     }
                     else
@@ -171,8 +171,8 @@
                         {
                             i++;
                             <div class="govuk-checkboxes__item">
-                                <input class="govuk-checkboxes__input" id="VenueName-@i" name="SelectedVenues" type="checkbox" value="@item.Id" @item.Checked.ThenNullableCheck() />
-                                <label class="govuk-label govuk-checkboxes__label" for="SelectedVenues">@item.VenueName</label>
+                                <input class="govuk-checkboxes__input" id="VenueName-@i" for="VenueName-@i" name="SelectedVenues" type="checkbox" aria-labelledby="VenueName-@i" value="@item.Id" @item.Checked.ThenNullableCheck() />
+                                <label id="VenueNameLabel-@i" class="govuk-label govuk-checkboxes__label" for="SelectedVenues" aria-label="VenueName-@i">@item.VenueName</label>
                             </div>
 
 
