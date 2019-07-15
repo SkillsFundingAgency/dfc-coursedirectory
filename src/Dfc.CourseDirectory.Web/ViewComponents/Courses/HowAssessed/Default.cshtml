@@ -16,7 +16,7 @@
 
 <div class="govuk-character-count" data-module="character-count" data-maxlength=@howAssessedTextFieldMaxChars>
     <div class="govuk-form-group">
-        <label id="govuk-label-@nameof(Model.HowAssessed)" class="govuk-label" for="word-count">
+        <label id="govuk-label-@nameof(Model.HowAssessed)" class="govuk-label" for="word-count" name="HowAssessed">
             @Model.LabelText
         </label>
         @if (!string.IsNullOrWhiteSpace(Model.HintText))
@@ -26,7 +26,7 @@
             </span>
         }
         <textarea class="govuk-textarea js-character-count " asp-for="@Model.HowAssessed" rows="5"
-                     aria-describedby="@Model.AriaDescribedBy"
+                     aria-describedby="@Model.AriaDescribedBy" aria-label="HowAssessed"
                           val-max-length=@howAssessedTextFieldMaxChars val-max-length-message="How you’ll be assessed must be @howAssessedTextFieldMaxChars characters or less"
                           val-regex="@regex"
                           val-regex-message="How you’ll be assessed contains invalid characters"></textarea>

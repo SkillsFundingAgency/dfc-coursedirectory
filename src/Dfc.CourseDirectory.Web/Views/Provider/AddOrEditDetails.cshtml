@@ -12,7 +12,7 @@
 }
 <a asp-controller="Provider" asp-action="Details" class="govuk-back-link">Back</a>
 <form asp-controller="Provider" asp-action="AddOrEditDetails" id="editProviderDetails" onkeypress="return event.keyCode != 13;">
-    <main class="govuk-main-wrapper">
+
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
                 <span class="govuk-caption-xl">Course Directory</span>
@@ -28,14 +28,14 @@
                 </div>
 
                 <div id="aliasContainer" class="govuk-form-group">
-                    <label id="govuk-label-AliasName" class="govuk-label">
+                    <label id="govuk-label-AliasName" class="govuk-label" for="alias-name">
                         Your alias
                     </label>
 
 
                     @{ var regex = @"^[a-zA-Z0-9 /\n/\r/\\u/\¬\!\£\$\%\^\&\*\\é\\è\\ﬁ\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\•\·\●\’\‘\“\”\—\-\–\‐\‐\…\:/\°\®\\â\\ç\\ñ\\ü\\ø\♦\™\\t/\s\¼\¾\½\" + "\"" + "\\\\]+$"; }
 
-                    <input class="govuk-input" style="display:inline;" asp-for="@Model.AliasName" type="text" aria-describedby=""
+                    <input class="govuk-input" style="display:inline;" asp-for="@Model.AliasName" type="text" aria-label="govuk-label-AliasName" aria-describedby="" name="alias-name"
                            val-max-length="100"
                            val-max-length-message="Provider Alias Name must be 100 characters or less"
                            val-regex="@regex"
@@ -89,7 +89,7 @@
 
             </div>
         </div>
-    </main>
+
 </form>
 
 

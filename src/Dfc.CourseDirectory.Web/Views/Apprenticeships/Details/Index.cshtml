@@ -69,7 +69,7 @@
                     <label class="govuk-label" for="word-count">
                         Apprenticeship information for employers
                     </label>
-                    <span id="more-detail-hint" class="govuk-hint">
+                    <span class="govuk-hint">
                         Give information for employers about how you deliver this specific apprenticeship training. For useful advice on how to fill out this section go to the <a href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/746087/course_directory_provider_portal_user_guide_v7.pdf" target="_blank">guidance</a>
                     </span>
                     <textarea class="govuk-textarea" asp-for="@Model.Information" rows="5" id="info"></textarea>
@@ -92,7 +92,7 @@
             <h2 class="">Contact details</h2>
 
             <div id="EmailContainer" class="govuk-form-group">
-                <span id="more-detail-hint" class="govuk-hint">Who can employers contact about this apprenticeship training?</span>
+                <span  class="govuk-hint">Who can employers contact about this apprenticeship training?</span>
 
                 <label id="govuk-label-Email" class="govuk-label">
                     Email
@@ -124,7 +124,7 @@
                 <label id="govuk-label-ContactUsIUrl" class="govuk-label">
                     Contact us page
                 </label>
-                <span id="more-detail-hint" class="govuk-hint">You can also add the url of any 'Contact us' page you have on your website</span>
+                <span  class="govuk-hint">You can also add the url of any 'Contact us' page you have on your website</span>
 
                 <input class="govuk-input" asp-for="@Model.ContactUsIUrl" type="text" aria-describedby=""
                        val-max-length="255"

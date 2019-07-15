@@ -50,8 +50,7 @@
                     {
                         NotificationTitle = "No migration errors",
                         NotificationMessage = Model.MigrationOKMessage,
-                        //NotificationMessage = Model.LiveCourseCount.ToString() + Model.LiveCourseCount > 0 ? " courses" : " course" + " have been migrated to the new Course directory. Any courses with a missing LARS have been deleted.",
-                        ClassType = "info-summary",
+                            ClassType = "info-summary",
                          Link = "<a class='govuk-link' href='/Migration/Options'> What now?</a>"
                     })
                 }
@@ -62,8 +61,7 @@
                     {
                         NotificationTitle = "Migration errors",
                         NotificationMessage = Model.MigrationErrorMessage,
-                       // NotificationMessage = totalCourses.ToString() + totalCoursesMessage + " have been migrated to the new Course directory. You have " + @Model.MigrationPendingCount.ToString() + migrationPendingCourseMessage + " with errors and these must be fixed before they can be published.",
-                        ClassType = "info-summary",
+                           ClassType = "info-summary",
                         Link = $"<a class='govuk-link' href='/Migration/Errors?livecourses={Model.LiveCourseCount}&errors={Model.MigrationPendingCount}'> What now?</a>"
                     })
                 }
@@ -112,25 +110,11 @@
                         <div>
                             <ul class="govuk-list">
                                 <li><a class="govuk-link" asp-controller="RegulatedQualification" asp-action="Index">Publish a course</a></li>
-                                @*<li><a class="govuk-link" asp-controller="Lars" asp-action="Index">Search for a course</a></li>*@
-                                <li><a class="govuk-link" asp-controller="ProviderCourses" asp-action="Index">@((Model?.LiveCourseCount != null && Model?.LiveCourseCount > 0) ? "Manage your courses" : "")</a></li>
+                                  <li><a class="govuk-link" asp-controller="ProviderCourses" asp-action="Index">@((Model?.LiveCourseCount != null && Model?.LiveCourseCount > 0) ? "Manage your courses" : "")</a></li>
                             </ul>
                         </div>
                     </div>
-                    @*
-                        <div class="govuk-grid-column-one-quarter">
-                            <div class="cd-status-panel">
-                                <h3 class="govuk-heading-l">@(Model?.ArchivedCourseCount ?? 0)</h3>
-                                <div class="govuk-heading-s">Archived courses</div>
-                            </div>
-                            <div>
-                                <ul class="govuk-list">
-                                    <li><a class="govuk-link" href="#">Archive course</a></li>
-                                    <li><a class="govuk-link" href="#">Restore courses</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    *@
+
                     <div class="govuk-grid-column-one-quarter">
                         <div class="cd-status-panel">
                             <h3 class="govuk-heading-l">@(Model?.PendingCourseCount ?? 0)</h3>
@@ -138,42 +122,18 @@
                         </div>
                         <div>
                             <ul class="govuk-list">
-                                @*<li><a class="govuk-link" href="#">Benefits calculators</a></li>*@
+
                                 <li><a class="govuk-link" href="~/migration">Migrated courses</a></li>
                             </ul>
                         </div>
                     </div>
                 </div>
-                @*<h2 class="govuk-heading-l">Recent activity</h2>
-                    <div class="cd-activity-item">
-                        <h3 class="govuk-heading-m cd-activity-item-heading ">Maths and applied physics</h3>
-                        <span class="cd-activity-item-tag">Course ID</span> <span class="cd-activity-item-tag"> Venue</span> <span class="cd-activity-item-tag"> full-time</span> <span class="cd-activity-item-tag">25/03/2019</span>
-                    </div>
-                    <div class="cd-activity-item">
-                        <h3 class="govuk-heading-m cd-activity-item-heading ">Maths and applied physics</h3>
-                        <span class="cd-activity-item-tag">Course ID</span> <span class="cd-activity-item-tag"> Venue</span> <span class="cd-activity-item-tag"> full-time</span> <span class="cd-activity-item-tag">25/03/2019</span>
-                    </div>
-                    <div class="cd-activity-item">
-                        <h3 class="govuk-heading-m cd-activity-item-heading ">Maths and applied physics</h3>
-                        <span class="cd-activity-item-tag">Course ID</span> <span class="cd-activity-item-tag"> Venue</span> <span class="cd-activity-item-tag"> full-time</span> <span class="cd-activity-item-tag">25/03/2019</span>
-                    </div>*@
 
-                @*</div>*@
 
             }
         }
         else
         {
-            @*<h1 class="govuk-heading-l">Welcome to the Course Directory</h1>
-                <h3 class="govuk-heading-m">This is the "private beta" of the new Course Directory developed by the National Careers Service.</h3>
-                <br />
-                <h3 class="govuk-heading-m">Please Login below: </h3>
-                <div>
-
-                    <a class="govuk-link" asp-controller="Auth" asp-action="Login">Login</a>
-
-                </div>*@
-
 
             <div class="cd-dashboard provider">
 
@@ -181,7 +141,6 @@
                 <div class="govuk-width-container">
 
 
-                    <main class="govuk-main-wrapper " id="main-content" role="main">
                         <div class="govuk-grid-row">
                             <div class="govuk-grid-column-two-thirds">
                                 <h1 class="govuk-heading-xl">Publish to the course directory</h1>
@@ -205,7 +164,7 @@
 
                            
                         </div>
-                    </main>
+
                 </div>
             </div>
 

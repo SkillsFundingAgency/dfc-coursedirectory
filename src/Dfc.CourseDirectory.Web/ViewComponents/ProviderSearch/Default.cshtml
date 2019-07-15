@@ -26,24 +26,27 @@
 
 
                             <div class="govuk-form-group">
-
+                                
+                                <label id="search-label" for="search-box" class="govuk-label">
+                                    Search for a provider
+                                </label>
                                 @if (!string.IsNullOrWhiteSpace(Model.HintText))
-                                {
-                                    <span class="govuk-hint">
-                                        @Model.HintText
-                                    </span>
-                                }
+                                    {
+                                        <span class="govuk-hint">
+                                            @Model.HintText
+                                        </span>
+                                    }
 
-                                <input class="govuk-input" style="width:95%; float:left" asp-for="@Model.SearchTerm" type="text" aria-describedby="@Model.AriaDescribedBy"
-                                       placeholder="@ViewBag.Placeholder"
-                                       val-required-message="UKPRN required"
-                                       val-regex="@regex"
-                                       val-regex-message="UKPRN is 8 digit number starting with a 1 e.g. 10000364" />
-                                <div class="cd-c-search__item cd-search__submit-wrapper">
-                                    <button type="button" class=" submit" id="searchProvider">Search</button>
-                                </div>
-
-
+                                    <input class="govuk-input" style="width:95%; float:left" asp-for="@Model.SearchTerm" type="text" aria-label="search-label" aria-describedby="search-label" name="search-box"
+                                           placeholder="@ViewBag.Placeholder"
+                                           val-required-message="UKPRN required"
+                                           val-regex="@regex"
+                                           val-regex-message="UKPRN is 8 digit number starting with a 1 e.g. 10000364"/>
+                                    <div class="cd-c-search__item cd-search__submit-wrapper">
+                                        <button type="button" class=" submit" id="searchProvider">Search</button>
+                                    </div>
+                               
+                                
                             </div>
                         </form>
                     </div>

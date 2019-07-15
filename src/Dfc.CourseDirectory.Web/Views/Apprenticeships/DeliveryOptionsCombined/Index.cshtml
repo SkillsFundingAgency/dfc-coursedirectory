@@ -298,12 +298,13 @@
 
             $("#National").change(function () {
                 if ($("#National")[0].checked) {
-                    $("#Radius").val(200);
-                    $("#Radius").attr('disabled', true);
+
+                    //$("#Radius").text(200);
+                    $("#@nameof(Model.Radius)").val("200");
+                    $("#Radius").attr('readonly', true);
                 } else {
-                    $("#Radius").val('');
-                    $('#Radius').prop("disabled", false);
-                    $('#Radius').removeAttr("disabled");
+                    $("#Radius").text("");
+                    $('#Radius').prop("readonly", false);
                 }
 
             });

@@ -15,7 +15,7 @@
 
 <div class="govuk-character-count" data-module="character-count" data-maxlength=@courseForTextFieldMaxChars>
     <div class="govuk-form-group">
-        <label id="govuk-label-@nameof(Model.CourseFor)" class="govuk-label" for="word-count">
+        <label id="govuk-label-@nameof(Model.CourseFor)" class="govuk-label" for="word-count" name="Course-For">
             @Model.LabelText
         </label>
         @if (!string.IsNullOrWhiteSpace(Model.HintText))
@@ -27,7 +27,7 @@
 
 
 
-        <textarea class="govuk-textarea js-character-count " asp-for="@Model.CourseFor" rows="5"
+        <textarea class="govuk-textarea js-character-count " asp-for="@Model.CourseFor" rows="5" aria-label="Course-For"
                   aria-describedby="@Model.AriaDescribedBy"
                   val-required-message="Enter who is this course for"
                   val-max-length="@courseForTextFieldMaxChars" val-max-length-message="Who is this course for? must be @courseForTextFieldMaxChars characters or less"
