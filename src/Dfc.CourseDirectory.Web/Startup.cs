@@ -335,6 +335,7 @@ namespace Dfc.CourseDirectory.Web
                 options.DisableTelemetry = true;
                 options.Events = new OpenIdConnectEvents
                 {
+                    
                     // Sometimes, problems in the OIDC provider (such as session timeouts)
                     // Redirect the user to the /auth/cb endpoint. ASP.NET Core middleware interprets this by default
                     // as a successful authentication and throws in surprise when it doesn't find an authorization code.
@@ -401,14 +402,18 @@ namespace Dfc.CourseDirectory.Web
 
                         //Gather user/org details
                         var identity = (ClaimsIdentity)x.Principal.Identity;
-                        var organisation = JsonConvert.DeserializeObject<Organisation>(
+                        Organisation organisation;
+                        try
+                        {
+                            organisation = JsonConvert.DeserializeObject<Organisation>(
                             identity.Claims.Where(c => c.Type == "organisation")
                             .Select(c => c.Value).FirstOrDefault());
-                        
-                        if(organisation == null)
-                        {
-                            throw new SystemException("Unable to get organisation details for user");
                         }
+                        catch
+                        {
+                            throw new SystemException("Unable to get organisation details from DFE. Please clear session cookies, or try using private browsing mode.");
+                        }
+
                         DFEClaims userClaims = new DFEClaims
                         {
                             UserId = Guid.Parse(identity.Claims.Where(c => c.Type == "sub").Select(c => c.Value).SingleOrDefault()),
