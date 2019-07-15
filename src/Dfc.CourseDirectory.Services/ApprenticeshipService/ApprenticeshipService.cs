@@ -52,7 +52,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             {
                 _logger.LogInformationObject("Standards and Frameworks Criteria", criteria);
 
-
+                _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
                 var response = await _httpClient.GetAsync(new Uri(_getStandardsAndFrameworksUri.AbsoluteUri + "?search=" + criteria));
                 _logger.LogHttpResponseMessage("Standards and Frameworks service http response", response);
 
@@ -101,6 +101,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
                 var apprenticeshipJson = JsonConvert.SerializeObject(apprenticeship);
 
                 var content = new StringContent(apprenticeshipJson, Encoding.UTF8, "application/json");
+                _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
                 var response = await _httpClient.PostAsync(_addApprenticeshipUri, content);
 
                 _logger.LogHttpResponseMessage("Apprenticeship add service http response", response);
@@ -151,6 +152,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             {
                 _logger.LogInformationObject("Get Apprenticeship by Id", Id);
 
+                _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
                 var response = await _httpClient.GetAsync(new Uri(_getApprenticeshipByIdUri.AbsoluteUri + "?id=" + Id));
                 _logger.LogHttpResponseMessage("Get Apprenticeship by Id service http response", response);
 
@@ -195,7 +197,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             {
                 _logger.LogInformationObject("Search Apprenticeship by UKPRN Criteria", criteria);
 
-
+                _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
                 var response = await _httpClient.GetAsync(new Uri(_getApprenticeshipByUKPRNUri.AbsoluteUri + "?UKPRN=" + criteria));
                 _logger.LogHttpResponseMessage("Search Apprenticeship by UKPRN service http response", response);
 
@@ -244,6 +246,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
                 var apprenticeshipJson = JsonConvert.SerializeObject(apprenticeship);
 
                 var content = new StringContent(apprenticeshipJson, Encoding.UTF8, "application/json");
+                _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
                 var response = await _httpClient.PostAsync(_updateApprenticshipUri, content);
 
                 _logger.LogHttpResponseMessage("Apprenticeship update service http response", response);
