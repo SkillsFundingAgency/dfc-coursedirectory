@@ -8,8 +8,12 @@ using System.Threading.Tasks;
 
 namespace Dfc.CourseDirectory.Web.Helpers
 {
+    
     public class CSVHelper : ICSVHelper
     {
+        private const string Quote = "\"";
+        private const string EscapedQuote = "\"\"";
+        private static char[] CharactersToQuote = { ',', '"'};
         public IEnumerable<string> ToCsv<T>(IEnumerable<T> objectlist, string separator = ",", bool header = true)
         {
             PropertyInfo[] properties = typeof(T).GetProperties();
@@ -37,7 +41,7 @@ namespace Dfc.CourseDirectory.Web.Helpers
         {
             if (text.Contains(","))
             {
-                text = "\"" + text + "\"";
+                text = Escape(text);
             }
             text = Regex.Replace(text, @"\t|\n|\r", "");
             return text;
@@ -68,6 +72,13 @@ namespace Dfc.CourseDirectory.Web.Helpers
             }
             return regions;
         }
-
+        internal static string Escape(string s)
+        {
+            if (s.Contains(Quote))
+                s = s.Replace(Quote, EscapedQuote);
+            if (s.IndexOfAny(CharactersToQuote) > -1)
+                s = Quote + s + Quote;
+            return s;
+        }
     }
 }
