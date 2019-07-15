@@ -24,26 +24,26 @@
                         </div>
                         <form class="site-search ui-front" id="header-search">
 
-                           
-                            <div class="govuk-form-group">
-                                
-                                    @if (!string.IsNullOrWhiteSpace(Model.HintText))
-                                    {
-                                        <span class="govuk-hint">
-                                            @Model.HintText
-                                        </span>
-                                    }
 
-                                    <input class="govuk-input" style="width:95%; float:left" asp-for="@Model.SearchTerm" type="text" aria-describedby="@Model.AriaDescribedBy"
-                                           placeholder="@ViewBag.Placeholder"
-                                           val-required-message="UKPRN required"
-                                           val-regex="@regex"
-                                           val-regex-message="UKPRN is 8 digit number starting with a 1 e.g. 10000364"/>
-                                    <div class="cd-c-search__item cd-search__submit-wrapper">
-                                        <button type="button" class=" submit" id="searchProvider">Search</button>
-                                    </div>
-                               
-                                
+                            <div class="govuk-form-group">
+
+                                @if (!string.IsNullOrWhiteSpace(Model.HintText))
+                                {
+                                    <span class="govuk-hint">
+                                        @Model.HintText
+                                    </span>
+                                }
+
+                                <input class="govuk-input" style="width:95%; float:left" asp-for="@Model.SearchTerm" type="text" aria-describedby="@Model.AriaDescribedBy"
+                                       placeholder="@ViewBag.Placeholder"
+                                       val-required-message="UKPRN required"
+                                       val-regex="@regex"
+                                       val-regex-message="UKPRN is 8 digit number starting with a 1 e.g. 10000364" />
+                                <div class="cd-c-search__item cd-search__submit-wrapper">
+                                    <button type="button" class=" submit" id="searchProvider">Search</button>
+                                </div>
+
+
                             </div>
                         </form>
                     </div>
@@ -110,7 +110,7 @@
 
             $(document).keypress(function (e) {
                 if (e.which == 13) {
-                    e.preventDefault();
+                    e.preventDefault();your 
                     validate();
                     if (validStates.every(isAllValid)) {
                         doSearch();
@@ -128,8 +128,7 @@
                     if (validStates.every(isAllValid)) {
                         doSearch();
                     }
-                }
-            });
+                });
 
             //$(document).on('click',
             //    '#searchProvider',
