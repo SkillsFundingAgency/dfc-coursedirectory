@@ -33,7 +33,7 @@
                 <span id="select-region-hint" class="govuk-hint">
                     @Model.Regions.HintText
                 </span>
-                <div class="govuk-checkboxes" id="SelectRegionCheckBoxes" val-required-message="Select at least one region">
+                <div class="govuk-checkboxes" id="SelectRegionCheckBoxes" val-required-message="Select at least one region or sub-region">
                     @foreach (var item in Model.Regions.RegionItems)
                     {
                         <details class="govuk-details">
