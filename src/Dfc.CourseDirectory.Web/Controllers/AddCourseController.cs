@@ -758,7 +758,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 {
                     if (addCourseSection2.SelectedRegions != null && addCourseSection2.SelectedRegions.Any())
                     {
-
+                        courseRun.National = addCourseSection2.National;
                         courseRun.Regions = addCourseSection2.SelectedRegions;
                         string[] selectedRegions = availableRegions.SubRegionsDataCleanse(addCourseSection2.SelectedRegions.ToList());
 

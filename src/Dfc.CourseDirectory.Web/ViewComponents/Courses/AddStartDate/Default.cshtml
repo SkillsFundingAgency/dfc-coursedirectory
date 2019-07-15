@@ -5,18 +5,18 @@
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
-<fieldset class="govuk-fieldset" aria-describedby="changed-name-hint">
+<fieldset class="govuk-fieldset">
 
     <div class="govuk-form-group" id="date">
 
-        <label id="govuk-label-start_date" class="govuk-label" for="sub" style="margin-bottom: 15px">
+        <label id="govuk-label-start_date" class="govuk-label" for="sub" style="margin-bottom: 15px" name="Start-Date">
             @Model.LabelText
 
         </label>
-        <span id="more-detail-hint" class="govuk-hint">@Model.SpecifiedDateHintText</span>
+        <span  class="govuk-hint">@Model.SpecifiedDateHintText</span>
 
         <div class="govuk-form-group" id="startDateFormGroup">
-            <div class="govuk-date-input" id="start_date"
+            <div class="govuk-date-input" id="start_date" aria-label ="Start-Date"
                  val-required-message="Enter start date"
                  val-past-date-ref=@Model.ValPastDateRef.ToString("yyyy-MM-dd")
                  val-past-date-message="@Model.ValPastDateMessage"
@@ -32,7 +32,7 @@
                         <label class="govuk-label govuk-date-input__label" asp-for="@Model.Day">
                             @Model.DayLabelText
                         </label>
-                        <input class="govuk-input govuk-date-input__input govuk-input--width-2" asp-for="@Model.Day" id="start_date_day" type="number" pattern="[0-9]*" onpaste="return false">
+                        <input class="govuk-input govuk-date-input__input govuk-input--width-2" aria-label="@Model.Day" asp-for="@Model.Day"  type="number" pattern="[0-9]*" onpaste="return false">
                     </div>
                 </div>
                 <div class="govuk-date-input__item">
@@ -40,7 +40,7 @@
                         <label class="govuk-label govuk-date-input__label" asp-for="@Model.Month">
                             @Model.MonthLabelText
                         </label>
-                        <input class="govuk-input govuk-date-input__input govuk-input--width-2" asp-for="@Model.Month" id="start_date_month" type="number" pattern="[0-9]*" onpaste="return false">
+                        <input class="govuk-input govuk-date-input__input govuk-input--width-2" aria-label="@Model.Month" asp-for="@Model.Month" type="number" pattern="[0-9]*" onpaste="return false">
                     </div>
                 </div>
                 <div class="govuk-date-input__item">
@@ -48,7 +48,7 @@
                         <label class="govuk-label govuk-date-input__label" asp-for="@Model.Year">
                             @Model.YearLabelText
                         </label>
-                        <input class="govuk-input govuk-date-input__input govuk-input--width-4" asp-for="@Model.Year" id="start_date_year" type="number" pattern="[0-9]*" onpaste="return false">
+                        <input class="govuk-input govuk-date-input__input govuk-input--width-4" aria-label="@Model.Year" asp-for="@Model.Year"  type="number" pattern="[0-9]*" onpaste="return false">
                     </div>
                 </div>
             </div>

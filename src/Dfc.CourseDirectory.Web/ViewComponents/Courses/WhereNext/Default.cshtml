@@ -17,7 +17,7 @@
 
 <div class="govuk-character-count" data-module="character-count" data-maxlength=@whereNextTextFieldMaxChars>
     <div class="govuk-form-group">
-        <label id="govuk-label-@nameof(Model.WhereNext)" class="govuk-label" for="word-count">
+        <label id="govuk-label-@nameof(Model.WhereNext)" class="govuk-label" for="word-count" name="WhereNext">
             @Model.LabelText
         </label>
         @if (!string.IsNullOrWhiteSpace(Model.HintText))
@@ -27,7 +27,7 @@
             </span>
         }
         <textarea class="govuk-textarea js-character-count " asp-for="@Model.WhereNext" rows="5"
-                  aria-describedby="@Model.AriaDescribedBy"
+                  aria-describedby="@Model.AriaDescribedBy" aria-label="WhereNext"
                           val-max-length=@whereNextTextFieldMaxChars val-max-length-message="'Where next' must be @whereNextTextFieldMaxChars characters or less"
                           val-regex="@regex"
                           val-regex-message="Where next contains invalid characters"></textarea>

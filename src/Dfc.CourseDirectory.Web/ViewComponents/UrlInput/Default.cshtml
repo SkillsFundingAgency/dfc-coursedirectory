@@ -18,7 +18,7 @@
             @Model.HintText
         </span>
     }
-    <input class="govuk-input" asp-for="@Model.Url" type="text" aria-describedby="@Model.AriaDescribedBy"
+    <input class="govuk-input" asp-for="@Model.Url" type="text" aria-describedby="@Model.Url"
            val-max-length="255"
            val-max-length-message="The maximum length of URL is 255 characters"
            val-regex="@regex"

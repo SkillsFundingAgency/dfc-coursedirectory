@@ -15,7 +15,7 @@
             @Model.HintText
         </span>
     }
-    <input class="govuk-input" asp-for="@Model.CourseName" type="text" autofocus aria-describedby="@Model.AriaDescribedBy"
+    <input class="govuk-input" asp-for="@Model.CourseName" type="text" autofocus aria-label="@Model.CourseName"
            val-required-message="Enter course name"
            val-max-length="255"
            val-max-length-message="The maximum length of Course Name is 255 characters"

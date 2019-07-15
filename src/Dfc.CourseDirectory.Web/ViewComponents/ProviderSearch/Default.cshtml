@@ -27,14 +27,17 @@
                            
                             <div class="govuk-form-group">
                                 
-                                    @if (!string.IsNullOrWhiteSpace(Model.HintText))
+                                <label id="search-label" for="search-box" class="govuk-label">
+                                    Search for a provider
+                                </label>
+                                @if (!string.IsNullOrWhiteSpace(Model.HintText))
                                     {
                                         <span class="govuk-hint">
                                             @Model.HintText
                                         </span>
                                     }
 
-                                    <input class="govuk-input" style="width:95%; float:left" asp-for="@Model.SearchTerm" type="text" aria-describedby="@Model.AriaDescribedBy"
+                                    <input class="govuk-input" style="width:95%; float:left" asp-for="@Model.SearchTerm" type="text" aria-label="search-label" aria-describedby="search-label" name="search-box"
                                            placeholder="@ViewBag.Placeholder"
                                            val-required-message="UKPRN required"
                                            val-regex="@regex"

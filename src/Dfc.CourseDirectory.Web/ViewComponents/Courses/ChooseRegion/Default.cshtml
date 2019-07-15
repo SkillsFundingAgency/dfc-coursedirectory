@@ -9,11 +9,11 @@
         <div class="govuk-grid-column-full">
             @if (Model.UseNationalComponent)
             {
-                <fieldset class="govuk-fieldset" aria-describedby="changed-name-hint">
+                <fieldset class="govuk-fieldset">
                     <label id="govuk-label-nationalRadioButtons" class="govuk-label">Can you deliver this course anywhere in England?</label>
                     <div id="nationalRadioButtons" class="govuk-radios govuk-radios--inline"
                          val-required-message="Choose if you can deliver this course anywhere in England">
-                        <span id="more-detail-hint" class="govuk-hint">Answering yes will show you are a national provider</span>
+                        <span  class="govuk-hint">Answering yes will show you are a national provider</span>
                         <div class="govuk-radios__item">
                             @Html.RadioButtonFor(m => m.National, true, new { @class = "govuk-radios__input", @id = "nationalTrue" })
                             <label class="govuk-label govuk-radios__label" for="nationalTrue">Yes</label>
@@ -38,7 +38,7 @@
                     {
                         <details class="govuk-details">
                             <summary class="govuk-details__summary">
-                                <span id="region" @item.Id class="govuk-details__summary-text">
+                                <span id="regionLabel+@item.Id" class="govuk-details__summary-text">
                                     @item.RegionName
                                 </span>
                             </summary>

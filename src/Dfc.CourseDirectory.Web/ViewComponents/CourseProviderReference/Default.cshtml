@@ -15,7 +15,7 @@
             @Model.HintText
         </span>
     }
-    <input class="govuk-input" asp-for="@Model.CourseProviderReference" type="text" aria-describedby="@Model.AriaDescribedBy"
+    <input class="govuk-input" asp-for="@Model.CourseProviderReference" type="text" aria-describedby="@Model.CourseProviderReference"
            val-max-length="255"
            val-max-length-message="The maximum length of 'ID' is 255 characters"
            val-regex="@regex"

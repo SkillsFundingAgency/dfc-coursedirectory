@@ -11,18 +11,18 @@
 
         <a asp-controller="RegulatedQualification" asp-action="Index" class="govuk-back-link">Back</a>
         <div class="grid-row" data-sf-element="Row">
-            <div class="column-two-thirds">
+            <div class="column-two-thirds govuk-body">
                 <div>
 
                     <h1 class="govuk-heading-l govuk-!-margin-top-4">Search for a course provision</h1>
 
-                    <p class="column-two-thirds">Search by Z code for the provision you are awarding with this course</p>
+                    <label class="column-two-thirds" name="unregulated-search">Search by Z code for the provision you are awarding with this course</label>
                 </div>
                 <form class="" id="zCodeSearch" asp-controller="UnregulatedCourses" asp-action="Index" method="post">
 
                     <div class="govuk-form-group">
 
-                        <input class="govuk-input" style="width:95%; float:left" asp-for="@Model.Search" type="text" placeholder="Enter a Z code"
+                        <input class="govuk-input" style="width:95%; float:left" asp-for="@Model.Search" type="text" placeholder="Enter a Z code" aria-label="unregulated-search"
                                val-required-message="Enter a z code to search"
                                val-regex="@regex"
                                val-regex-message="Code must start with Z followed by 7 numbers or letters" />
