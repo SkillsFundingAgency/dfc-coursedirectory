@@ -716,7 +716,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
                     {
                         // Regions
                         if (courseRun.Regions == null || courseRun.Regions.Count().Equals(0))
-                            validationMessages.Add(new KeyValuePair<string, string>("REGION", $"Select at least one region"));
+                            validationMessages.Add(new KeyValuePair<string, string>("REGION", $"Select at least one region or sub-region"));
                     }
                     break;
                 case DeliveryMode.Undefined: // Question ???
