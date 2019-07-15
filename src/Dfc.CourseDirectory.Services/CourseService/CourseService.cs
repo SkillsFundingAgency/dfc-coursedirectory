@@ -868,7 +868,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             Throw.IfNull(UKPRN, nameof(UKPRN));
 
             _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
-            var response = await _httpClient.GetAsync(new Uri(_archiveLiveCoursesUri.AbsoluteUri + "&UKPRN=" + UKPRN));
+            var response = await _httpClient.GetAsync(new Uri(_archiveLiveCoursesUri.AbsoluteUri + "?UKPRN=" + UKPRN));
             _logger.LogHttpResponseMessage("Archive courses service http response", response);
 
             if (response.IsSuccessStatusCode)
@@ -889,7 +889,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             Throw.IfNull(StatusToBeChangedTo, nameof(StatusToBeChangedTo));
 
             _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
-            var response = await _httpClient.GetAsync(new Uri(_changeCourseRunStatusesForUKPRNSelectionUri.AbsoluteUri + "&UKPRN=" + UKPRN + "&CurrentStatus=" + CurrentStatus + "&StatusToBeChangedTo=" + StatusToBeChangedTo));
+            var response = await _httpClient.GetAsync(new Uri(_changeCourseRunStatusesForUKPRNSelectionUri.AbsoluteUri + "?UKPRN=" + UKPRN + "&CurrentStatus=" + CurrentStatus + "&StatusToBeChangedTo=" + StatusToBeChangedTo));
             _logger.LogHttpResponseMessage("Archive courses service http response", response);
 
             if (response.IsSuccessStatusCode)
@@ -931,7 +931,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
 
             _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
             var response = await _httpClient.GetAsync(new Uri(_deleteBulkUploadCoursesUri.AbsoluteUri
-                + "&UKPRN=" + UKPRN));
+                + "?UKPRN=" + UKPRN));
             _logger.LogHttpResponseMessage("Delete Bulk Upload Course Status http response", response);
 
             if (response.IsSuccessStatusCode)
@@ -955,7 +955,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 _logger.LogInformationObject("Get your courses URI", _getYourCoursesUri);
 
                 _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
-                var response = await _httpClient.GetAsync(new Uri(_getCourseMigrationReportByUKPRN.AbsoluteUri + "&UKPRN=" + UKPRN));
+                var response = await _httpClient.GetAsync(new Uri(_getCourseMigrationReportByUKPRN.AbsoluteUri + "?UKPRN=" + UKPRN));
                 _logger.LogHttpResponseMessage("Get course migration report service http response", response);
 
                 if (response.IsSuccessStatusCode)
