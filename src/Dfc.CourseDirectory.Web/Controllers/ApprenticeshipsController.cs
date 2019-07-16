@@ -560,6 +560,59 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return View("../Apprenticeships/Summary/Index", model);
         }
 
+
+        private ApprenticeshipLocation CreateDeliveryLocation(DeliveryOptionsListItemModel loc, ApprenticeshipLocationType apprenticeshipLocationType)
+        {
+            List<int> deliveryModes = new List<int>();
+
+            ApprenticeshipLocation apprenticeshipLocation = new ApprenticeshipLocation()
+            {
+                CreatedDate = DateTime.Now,
+                CreatedBy =
+                    User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
+                ApprenticeshipLocationType = apprenticeshipLocationType,
+                id = Guid.NewGuid(),
+                LocationType = LocationType.Venue,
+                RecordStatus = RecordStatus.Live,
+                National = null,
+                UpdatedDate = DateTime.Now,
+                UpdatedBy =
+                    User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
+
+
+            };
+
+            if (!string.IsNullOrEmpty(loc.LocationId))
+            {
+                apprenticeshipLocation.LocationGuidId = new Guid(loc.LocationId);
+            }
+
+            if (!string.IsNullOrEmpty(loc.Radius))
+            {
+                apprenticeshipLocation.Radius = Convert.ToInt32(loc.Radius);
+            }
+
+            var delModes = loc.Delivery.Split(",");
+            foreach (var delMode in delModes)
+            {
+                if (delMode.ToLower() ==
+                    @WebHelper.GetEnumDescription(ApprenticeShipDeliveryLocation.DayRelease).ToLower())
+                {
+                    deliveryModes.Add((int)ApprenticeShipDeliveryLocation.DayRelease);
+                }
+
+                if (delMode.ToLower() == @WebHelper
+                        .GetEnumDescription(ApprenticeShipDeliveryLocation.BlockRelease).ToLower())
+                {
+                    deliveryModes.Add((int)ApprenticeShipDeliveryLocation.BlockRelease);
+                }
+            }
+
+            apprenticeshipLocation.DeliveryModes = deliveryModes;
+
+            return apprenticeshipLocation;
+        }
+
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> Summary(SummaryViewModel theModel)
@@ -618,54 +671,56 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 foreach (var loc in model.DeliveryOptionsViewModel.DeliveryOptionsListItemModel
                     .DeliveryOptionsListItemModel)
                 {
-                    List<int> deliveryModes = new List<int>();
+                    //List<int> deliveryModes = new List<int>();
 
-                    ApprenticeshipLocation apprenticeshipLocation = new ApprenticeshipLocation()
-                    {
-                        CreatedDate = DateTime.Now,
-                        CreatedBy =
-                            User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
-                        ApprenticeshipLocationType = apprenticeshipLocationType,
-                        id = Guid.NewGuid(),
-                        LocationType = LocationType.Venue,
-                        RecordStatus = RecordStatus.Live,
-                        National = null,
-                        UpdatedDate=DateTime.Now,
-                        UpdatedBy = 
-                            User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
+                    //ApprenticeshipLocation apprenticeshipLocation = new ApprenticeshipLocation()
+                    //{
+                    //    CreatedDate = DateTime.Now,
+                    //    CreatedBy =
+                    //        User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
+                    //    ApprenticeshipLocationType = apprenticeshipLocationType,
+                    //    id = Guid.NewGuid(),
+                    //    LocationType = LocationType.Venue,
+                    //    RecordStatus = RecordStatus.Live,
+                    //    National = null,
+                    //    UpdatedDate=DateTime.Now,
+                    //    UpdatedBy = 
+                    //        User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
 
 
-                    };
+                    //};
 
-                    if (!string.IsNullOrEmpty(loc.LocationId))
-                    {
-                        apprenticeshipLocation.LocationGuidId = new Guid(loc.LocationId);
-                    }
+                    //if (!string.IsNullOrEmpty(loc.LocationId))
+                    //{
+                    //    apprenticeshipLocation.LocationGuidId = new Guid(loc.LocationId);
+                    //}
 
-                    if (!string.IsNullOrEmpty(loc.Radius))
-                    {
-                        apprenticeshipLocation.Radius = Convert.ToInt32(loc.Radius);
-                    }
+                    //if (!string.IsNullOrEmpty(loc.Radius))
+                    //{
+                    //    apprenticeshipLocation.Radius = Convert.ToInt32(loc.Radius);
+                    //}
 
-                    var delModes = loc.Delivery.Split(",");
-                    foreach (var delMode in delModes)
-                    {
-                        if (delMode.ToLower() ==
-                            @WebHelper.GetEnumDescription(ApprenticeShipDeliveryLocation.DayRelease).ToLower())
-                        {
-                            deliveryModes.Add((int)ApprenticeShipDeliveryLocation.DayRelease);
-                        }
+                    //var delModes = loc.Delivery.Split(",");
+                    //foreach (var delMode in delModes)
+                    //{
+                    //    if (delMode.ToLower() ==
+                    //        @WebHelper.GetEnumDescription(ApprenticeShipDeliveryLocation.DayRelease).ToLower())
+                    //    {
+                    //        deliveryModes.Add((int)ApprenticeShipDeliveryLocation.DayRelease);
+                    //    }
 
-                        if (delMode.ToLower() == @WebHelper
-                                .GetEnumDescription(ApprenticeShipDeliveryLocation.BlockRelease).ToLower())
-                        {
-                            deliveryModes.Add((int)ApprenticeShipDeliveryLocation.BlockRelease);
-                        }
-                    }
+                    //    if (delMode.ToLower() == @WebHelper
+                    //            .GetEnumDescription(ApprenticeShipDeliveryLocation.BlockRelease).ToLower())
+                    //    {
+                    //        deliveryModes.Add((int)ApprenticeShipDeliveryLocation.BlockRelease);
+                    //    }
+                    //}
 
-                    apprenticeshipLocation.DeliveryModes = deliveryModes;
+                    //apprenticeshipLocation.DeliveryModes = deliveryModes;
 
-                    locations.Add(apprenticeshipLocation);
+                    //locations.Add(apprenticeshipLocation);
+
+                    locations.Add(CreateDeliveryLocation(loc, apprenticeshipLocationType));
                 }
             }
 
@@ -675,52 +730,54 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 foreach (var loc in model.DeliveryOptionsCombinedViewModel.DeliveryOptionsListItemModel
                     .DeliveryOptionsListItemModel)
                 {
-                    List<int> deliveryModes = new List<int>();
+                    //List<int> deliveryModes = new List<int>();
 
-                    ApprenticeshipLocation apprenticeshipLocation = new ApprenticeshipLocation()
-                    {
-                        CreatedDate = DateTime.Now,
-                        CreatedBy =
-                            User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
-                        ApprenticeshipLocationType = apprenticeshipLocationType,
-                        id = Guid.NewGuid(),
-                        LocationType = LocationType.Venue,
-                        RecordStatus = RecordStatus.Live,
-                        National = loc.National != null && loc.National.Value,
-                        UpdatedDate = DateTime.Now,
-                        UpdatedBy =
-                            User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
-                    };
+                    //ApprenticeshipLocation apprenticeshipLocation = new ApprenticeshipLocation()
+                    //{
+                    //    CreatedDate = DateTime.Now,
+                    //    CreatedBy =
+                    //        User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
+                    //    ApprenticeshipLocationType = apprenticeshipLocationType,
+                    //    id = Guid.NewGuid(),
+                    //    LocationType = LocationType.Venue,
+                    //    RecordStatus = RecordStatus.Live,
+                    //    National = loc.National != null && loc.National.Value,
+                    //    UpdatedDate = DateTime.Now,
+                    //    UpdatedBy =
+                    //        User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
+                    //};
 
-                    if (!string.IsNullOrEmpty(loc.LocationId))
-                    {
-                        apprenticeshipLocation.LocationGuidId = new Guid(loc.LocationId);
-                    }
+                    //if (!string.IsNullOrEmpty(loc.LocationId))
+                    //{
+                    //    apprenticeshipLocation.LocationGuidId = new Guid(loc.LocationId);
+                    //}
 
-                    if (!string.IsNullOrEmpty(loc.Radius))
-                    {
-                        apprenticeshipLocation.Radius = Convert.ToInt32(loc.Radius);
-                    }
+                    //if (!string.IsNullOrEmpty(loc.Radius))
+                    //{
+                    //    apprenticeshipLocation.Radius = Convert.ToInt32(loc.Radius);
+                    //}
 
-                    var delModes = loc.Delivery.Split(",");
-                    foreach (var delMode in delModes)
-                    {
-                        if (delMode.ToLower() ==
-                            @WebHelper.GetEnumDescription(ApprenticeShipDeliveryLocation.DayRelease).ToLower())
-                        {
-                            deliveryModes.Add((int)ApprenticeShipDeliveryLocation.DayRelease);
-                        }
+                    //var delModes = loc.Delivery.Split(",");
+                    //foreach (var delMode in delModes)
+                    //{
+                    //    if (delMode.ToLower() ==
+                    //        @WebHelper.GetEnumDescription(ApprenticeShipDeliveryLocation.DayRelease).ToLower())
+                    //    {
+                    //        deliveryModes.Add((int)ApprenticeShipDeliveryLocation.DayRelease);
+                    //    }
 
-                        if (delMode.ToLower() == @WebHelper
-                                .GetEnumDescription(ApprenticeShipDeliveryLocation.BlockRelease).ToLower())
-                        {
-                            deliveryModes.Add((int)ApprenticeShipDeliveryLocation.BlockRelease);
-                        }
-                    }
+                    //    if (delMode.ToLower() == @WebHelper
+                    //            .GetEnumDescription(ApprenticeShipDeliveryLocation.BlockRelease).ToLower())
+                    //    {
+                    //        deliveryModes.Add((int)ApprenticeShipDeliveryLocation.BlockRelease);
+                    //    }
+                    //}
 
-                    apprenticeshipLocation.DeliveryModes = deliveryModes;
+                    //apprenticeshipLocation.DeliveryModes = deliveryModes;
 
-                    locations.Add(apprenticeshipLocation);
+                    //locations.Add(apprenticeshipLocation);
+
+                    locations.Add(CreateDeliveryLocation(loc, apprenticeshipLocationType));
                 }
             }
 
@@ -782,7 +839,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                 if (result.IsSuccess)
                 {
-                    return RedirectToAction("Index", "ProviderApprenticeships", new { });
+                    return RedirectToAction("Index", "ProviderApprenticeships", new { apprenticeshipId = result.Value.id, message = "You edited " + result.Value.ApprenticeshipTitle });
                 }
                 else
                 {

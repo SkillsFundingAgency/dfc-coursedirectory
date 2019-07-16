@@ -1,4 +1,5 @@
-﻿@using Dfc.CourseDirectory.Web.ViewComponents.ProviderApprenticeships.ProviderApprenticeshipSearch
+﻿@using Dfc.CourseDirectory.Web.ViewComponents.Notification
+@using Dfc.CourseDirectory.Web.ViewComponents.ProviderApprenticeships.ProviderApprenticeshipSearch
 @using Dfc.CourseDirectory.Web.ViewComponents.ProviderApprenticeships.ProviderApprenticeshipSearchResult
 @{
     Layout = "_Layout_Your_Courses";
@@ -15,9 +16,22 @@
         <div class="content-container">
             <div class="grid-row" data-sf-element="Row">
                 <div class="column-two-thirds">
+                    
+                   
+
                     <div>
                         <a asp-controller="Home" asp-action="Index" class="govuk-back-link">Back</a><br />
                         <span class="govuk-caption-xl">Course directory</span>
+                        @Html.HiddenFor(x=>x.ApprenticeshipId)
+                        @if (!string.IsNullOrEmpty(@ViewBag.Message))
+                        {
+                            @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+                            {
+                                NotificationTitle = "Course updated",
+                                NotificationMessage = @ViewBag.Message,
+                                ClassType = "info-summary"
+                            })
+                        }
                         <h1 class="govuk-heading-xl">Your published apprenticeship training courses</h1>
 
 
@@ -56,7 +70,51 @@
     </header>
 </div>
 
+<script>
+    (function($) {
+        $(function() {
 
+
+            var $apprenticeshipUpdatedlink = $("#apprenticeshiplink");
+
+            var apprenticeshipId = $("#@nameof(Model.ApprenticeshipId)").val();
+
+            if (apprenticeshipId !== null) {
+
+            
+
+            var $apprenticeshipId = $("#" + apprenticeshipId);
+
+            $('html, body').animate({
+                scrollTop: $apprenticeshipId.offset().top
+            }, 1000);
+
+          }
+
+
+
+
+            $apprenticeshipUpdatedlink.on("click",
+                function (event) {
+                    event.preventDefault();
+
+
+
+                    var apprenticeshipId = $(this).attr('data-apprenticeshipid');
+                    var $apprenticeshipId = $("#" + apprenticeshipId);
+
+                    if (apprenticeshipId !== "" || apprenticeshipId !== undefined) {
+                        $("html,body").animate({
+                            scrollTop: $apprenticeshipId.offset().top
+                        }, "slow");
+                    }
+
+                });
+
+
+        });
+    })(jQuery);
+</script>
 
 
 

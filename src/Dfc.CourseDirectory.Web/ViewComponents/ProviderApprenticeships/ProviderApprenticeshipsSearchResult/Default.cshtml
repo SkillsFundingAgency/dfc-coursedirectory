@@ -55,7 +55,7 @@ else
 
                     @foreach (var apprenticeship in Model.Items.OrderBy(x => x.ApprenticeshipTitle))
                     {
-                        <div class="cd-your-apprenticeships-search-result__container">
+                        <div class="cd-your-apprenticeships-search-result__container" id="@apprenticeship.id">
                             <h3 class="govuk-heading-m">
                                 @apprenticeship.ApprenticeshipTitle
                                 @if (apprenticeship.ApprenticeshipType == ApprenticeshipType.FrameworkCode)

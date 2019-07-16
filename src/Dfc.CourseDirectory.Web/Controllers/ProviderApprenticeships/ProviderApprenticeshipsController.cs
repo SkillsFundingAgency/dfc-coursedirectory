@@ -60,7 +60,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         [Authorize]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(Guid? apprenticeshipId, string message)
         {
             int? UKPRN = _session.GetInt32("UKPRN");
 
@@ -79,6 +79,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 }
             }
 
+            if (apprenticeshipId.HasValue)
+            {
+                var linkMessage =
+                    $"<a id=\"apprenticeshiplink\" class=\"govuk-link\" href=\"#\" data-apprenticeshipid=\"{apprenticeshipId.Value}\">{message}</a>";
+                if (!string.IsNullOrEmpty(message)) ViewBag.Message = linkMessage;
+                ViewBag.ApprenticeshipId = apprenticeshipId.Value;
+            }
 
             return View(model);
         }
@@ -90,31 +97,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             ProviderApprenticeshipsSearchResultModel model = new ProviderApprenticeshipsSearchResultModel();
 
-            //if (!string.IsNullOrEmpty(requestModel.SearchTerm))
-            //{
-            //    //stub
-            //    var listOfApprenticeships = new List<ProviderApprenticeShipsSearchResultItemModel>();
-            //    listOfApprenticeships.Add(new ProviderApprenticeShipsSearchResultItemModel()
-            //    {
-            //        ApprenticeshipTitle = "Test Apprenticeship 1",
-            //        ApprenticeshipType = "Framework",
-            //        NotionalNVQLevelv2 = "1 (equivalent to A levels at grades A to E)"
-            //    });
-            //    listOfApprenticeships.Add(new ProviderApprenticeShipsSearchResultItemModel()
-            //    {
-            //        ApprenticeshipTitle = "Test Apprenticeship 2",
-            //        ApprenticeshipType = string.Empty,
-            //        NotionalNVQLevelv2 = "2 (equivalent to A levels at grades A to E)"
-            //    });
-            //    listOfApprenticeships.Add(new ProviderApprenticeShipsSearchResultItemModel()
-            //    {
-            //        ApprenticeshipTitle = "Test Apprenticeship 3",
-            //        ApprenticeshipType = "Framework",
-            //        NotionalNVQLevelv2 = "3 (equivalent to A levels at grades A to E)"
-            //    });
 
-            //    model.Items = listOfApprenticeships;
-            //}
 
             return ViewComponent(nameof(ViewComponents.ProviderApprenticeships.ProviderApprenticeshipSearchResult.ProviderApprenticeshipSearchResult), model);
         }
