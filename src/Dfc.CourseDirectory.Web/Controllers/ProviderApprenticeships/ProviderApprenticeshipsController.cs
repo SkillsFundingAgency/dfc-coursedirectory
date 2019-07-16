@@ -72,8 +72,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
             ProviderApprenticeshipsViewModel model = new ProviderApprenticeshipsViewModel();
             if (result.IsSuccess && result.HasValue)
             {
+                var allLiveProviderApprenticeships =
+                    result.Value.Where(x => x.RecordStatus == RecordStatus.Live);
+
                 model.Apprenticeships = new List<IApprenticeship>();
-                foreach(var apprenticeship in result.Value)
+                foreach(var apprenticeship in allLiveProviderApprenticeships)
                 {
                     model.Apprenticeships.Add(apprenticeship);
                 }

@@ -78,6 +78,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 var result = await _apprenticeshipService.StandardsAndFrameworksSearch(requestModel.SearchTerm);
 
+
+
                 var listOfApprenticeships = new List<ApprenticeShipsSearchResultItemModel>();
 
                 if (result.IsSuccess && result.HasValue)
@@ -671,54 +673,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 foreach (var loc in model.DeliveryOptionsViewModel.DeliveryOptionsListItemModel
                     .DeliveryOptionsListItemModel)
                 {
-                    //List<int> deliveryModes = new List<int>();
 
-                    //ApprenticeshipLocation apprenticeshipLocation = new ApprenticeshipLocation()
-                    //{
-                    //    CreatedDate = DateTime.Now,
-                    //    CreatedBy =
-                    //        User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
-                    //    ApprenticeshipLocationType = apprenticeshipLocationType,
-                    //    id = Guid.NewGuid(),
-                    //    LocationType = LocationType.Venue,
-                    //    RecordStatus = RecordStatus.Live,
-                    //    National = null,
-                    //    UpdatedDate=DateTime.Now,
-                    //    UpdatedBy = 
-                    //        User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
-
-
-                    //};
-
-                    //if (!string.IsNullOrEmpty(loc.LocationId))
-                    //{
-                    //    apprenticeshipLocation.LocationGuidId = new Guid(loc.LocationId);
-                    //}
-
-                    //if (!string.IsNullOrEmpty(loc.Radius))
-                    //{
-                    //    apprenticeshipLocation.Radius = Convert.ToInt32(loc.Radius);
-                    //}
-
-                    //var delModes = loc.Delivery.Split(",");
-                    //foreach (var delMode in delModes)
-                    //{
-                    //    if (delMode.ToLower() ==
-                    //        @WebHelper.GetEnumDescription(ApprenticeShipDeliveryLocation.DayRelease).ToLower())
-                    //    {
-                    //        deliveryModes.Add((int)ApprenticeShipDeliveryLocation.DayRelease);
-                    //    }
-
-                    //    if (delMode.ToLower() == @WebHelper
-                    //            .GetEnumDescription(ApprenticeShipDeliveryLocation.BlockRelease).ToLower())
-                    //    {
-                    //        deliveryModes.Add((int)ApprenticeShipDeliveryLocation.BlockRelease);
-                    //    }
-                    //}
-
-                    //apprenticeshipLocation.DeliveryModes = deliveryModes;
-
-                    //locations.Add(apprenticeshipLocation);
 
                     locations.Add(CreateDeliveryLocation(loc, apprenticeshipLocationType));
                 }
@@ -730,52 +685,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 foreach (var loc in model.DeliveryOptionsCombinedViewModel.DeliveryOptionsListItemModel
                     .DeliveryOptionsListItemModel)
                 {
-                    //List<int> deliveryModes = new List<int>();
 
-                    //ApprenticeshipLocation apprenticeshipLocation = new ApprenticeshipLocation()
-                    //{
-                    //    CreatedDate = DateTime.Now,
-                    //    CreatedBy =
-                    //        User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
-                    //    ApprenticeshipLocationType = apprenticeshipLocationType,
-                    //    id = Guid.NewGuid(),
-                    //    LocationType = LocationType.Venue,
-                    //    RecordStatus = RecordStatus.Live,
-                    //    National = loc.National != null && loc.National.Value,
-                    //    UpdatedDate = DateTime.Now,
-                    //    UpdatedBy =
-                    //        User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
-                    //};
-
-                    //if (!string.IsNullOrEmpty(loc.LocationId))
-                    //{
-                    //    apprenticeshipLocation.LocationGuidId = new Guid(loc.LocationId);
-                    //}
-
-                    //if (!string.IsNullOrEmpty(loc.Radius))
-                    //{
-                    //    apprenticeshipLocation.Radius = Convert.ToInt32(loc.Radius);
-                    //}
-
-                    //var delModes = loc.Delivery.Split(",");
-                    //foreach (var delMode in delModes)
-                    //{
-                    //    if (delMode.ToLower() ==
-                    //        @WebHelper.GetEnumDescription(ApprenticeShipDeliveryLocation.DayRelease).ToLower())
-                    //    {
-                    //        deliveryModes.Add((int)ApprenticeShipDeliveryLocation.DayRelease);
-                    //    }
-
-                    //    if (delMode.ToLower() == @WebHelper
-                    //            .GetEnumDescription(ApprenticeShipDeliveryLocation.BlockRelease).ToLower())
-                    //    {
-                    //        deliveryModes.Add((int)ApprenticeShipDeliveryLocation.BlockRelease);
-                    //    }
-                    //}
-
-                    //apprenticeshipLocation.DeliveryModes = deliveryModes;
-
-                    //locations.Add(apprenticeshipLocation);
 
                     locations.Add(CreateDeliveryLocation(loc, apprenticeshipLocationType));
                 }
@@ -810,20 +720,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 UpdatedBy = User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault()
             };
 
-            //switch (apprenticeship.ApprenticeshipType)
-            //{
-            //    case ApprenticeshipType.StandardCode:
-            //        {
-            //            apprenticeship.StandardId = model.DetailViewModel.Id;
-            //            break;
-            //        }
 
-            //    case ApprenticeshipType.FrameworkCode:
-            //        {
-            //            apprenticeship.FrameworkId = model.DetailViewModel.Id;
-            //            break;
-            //        }
-            //}
 
             if (theModel.Mode == ApprenticeshipMode.EditYourApprenticeships)
             {
@@ -1229,10 +1126,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         [Authorize]
-        public IActionResult DeleteConfirm()
+        public IActionResult DeleteConfirm(Guid apprenticeshipId, string apprenticeshipTitle)
         {
             var model = new DeleteConfirmViewModel();
-
+            model.ApprenticeshipId = apprenticeshipId;
+            model.ApprenticeshipTitle = apprenticeshipTitle;
 
             return View("../Apprenticeships/ConfirmationDelete/Index", model);
         }
@@ -1249,9 +1147,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
 
         [Authorize]
-        public IActionResult ConfirmationDelete()
+        public IActionResult ConfirmationDelete(Guid ApprenticeshipId, string ApprenticeshipTitle, int level)
         {
             var model = new ConfirmationDeleteViewModel();
+            model.ApprenticeshipId = ApprenticeshipId;
+            model.ApprenticeshipTitle = ApprenticeshipTitle;
+            model.Level = level;
 
             return View("../Apprenticeships/ConfirmApprenticeshipDelete/Index", model);
         }
@@ -1264,7 +1165,22 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 case ApprenticeshipDelete.Delete:
                     //call delete service
-                    return RedirectToAction("Index", "ProviderApprenticeships");
+                    var getApprenticehipByIdResult = await _apprenticeshipService.GetApprenticeshipByIdAsync(theModel.ApprenticeshipId.ToString());
+
+                    if (getApprenticehipByIdResult.IsSuccess && getApprenticehipByIdResult.HasValue)
+                    {
+                        getApprenticehipByIdResult.Value.RecordStatus = RecordStatus.Deleted;
+
+                        var updateApprenticeshipResult =
+                            await _apprenticeshipService.UpdateApprenticeshipAsync(getApprenticehipByIdResult.Value);
+
+                        if (updateApprenticeshipResult.IsSuccess && updateApprenticeshipResult.HasValue)
+                        {
+                            return RedirectToAction("Index", "ProviderApprenticeships");
+                        }
+                    }
+                    
+                    return RedirectToAction("DeleteConfirm", "Apprenticeships", new {ApprenticeshipId = theModel.ApprenticeshipId, ApprenticeshipTitle = theModel.ApprenticeshipTitle });
                 case ApprenticeshipDelete.Back:
                     return RedirectToAction("Index", "ProviderApprenticeships");
                 default:

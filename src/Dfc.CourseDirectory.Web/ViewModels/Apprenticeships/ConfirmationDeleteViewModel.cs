@@ -14,8 +14,9 @@ namespace Dfc.CourseDirectory.Web.ViewModels.Apprenticeships
 {
     public class ConfirmationDeleteViewModel
     {
-        public string ApprenticeshipName { get; set; }
+        public string ApprenticeshipTitle { get; set; }
 
+        public Guid ApprenticeshipId { get; set; }
         public int Level { get; set; }
         public ApprenticeshipDelete ApprenticeshipDelete { get; set; }
 
