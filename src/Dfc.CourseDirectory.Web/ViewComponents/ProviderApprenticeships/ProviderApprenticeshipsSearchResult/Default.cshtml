@@ -78,9 +78,9 @@ else
                             <a class="govuk-link"
                                asp-controller="Apprenticeships"
                                asp-action="ConfirmationDelete"
-                               asp-route-apprenticeshiptitle="@apprenticeship.ApprenticeshipTitle"
-                               asp-route-apprenticeshipmode="@ApprenticeshipMode.DeleteYourAprrenticeships"
-                               asp-route-apprenticeshippreviouspage="@ApprenticeShipPreviousPage.YourApprenticeships">Delete</a>
+                               asp-route-apprenticeshipId="@apprenticeship.id"
+                               asp-route-level="@apprenticeship.NotionalNVQLevelv2"
+                               asp-route-apprenticeshiptitle="@apprenticeship.ApprenticeshipTitle">Delete</a>
                         </div>
                     }
 

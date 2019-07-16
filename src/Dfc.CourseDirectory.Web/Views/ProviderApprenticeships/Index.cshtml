@@ -16,18 +16,18 @@
         <div class="content-container">
             <div class="grid-row" data-sf-element="Row">
                 <div class="column-two-thirds">
-                    
-                   
+
+
 
                     <div>
                         <a asp-controller="Home" asp-action="Index" class="govuk-back-link">Back</a><br />
                         <span class="govuk-caption-xl">Course directory</span>
-                        @Html.HiddenFor(x=>x.ApprenticeshipId)
+                        @Html.HiddenFor(x => x.ApprenticeshipId)
                         @if (!string.IsNullOrEmpty(@ViewBag.Message))
                         {
                             @await Component.InvokeAsync(nameof(Notification), new NotificationModel
                             {
-                                NotificationTitle = "Course updated",
+                                NotificationTitle = "Apprenticeship updated",
                                 NotificationMessage = @ViewBag.Message,
                                 ClassType = "info-summary"
                             })
@@ -52,16 +52,16 @@
                     </form>
 
 
-                        <div id="results">
-                            @if (hasApprenticeships)
+                    <div id="results">
+                        @if (hasApprenticeships)
+                        {
+                            @await Component.InvokeAsync(nameof(ProviderApprenticeshipSearchResult), new ProviderApprenticeshipsSearchResultModel
                             {
-                                @await Component.InvokeAsync(nameof(ProviderApprenticeshipSearchResult), new ProviderApprenticeshipsSearchResultModel
-                                {
-                                    Items = Model.Apprenticeships
-                                });
-                            }
+                                Items = Model.Apprenticeships
+                            });
+                        }
 
-                        </div>
+                    </div>
 
 
                 </div>
@@ -80,16 +80,18 @@
             var apprenticeshipId = $("#@nameof(Model.ApprenticeshipId)").val();
 
             if (apprenticeshipId !== null) {
+                if (apprenticeshipId !== "") {
 
-            
+                    var $apprenticeshipId = $("#" + apprenticeshipId);
 
-            var $apprenticeshipId = $("#" + apprenticeshipId);
+                    $('html, body').animate({
+                            scrollTop: $apprenticeshipId.offset().top
+                        },
+                        1000);
+                }
 
-            $('html, body').animate({
-                scrollTop: $apprenticeshipId.offset().top
-            }, 1000);
+            };
 
-          }
 
 
 

@@ -16,7 +16,8 @@ namespace Dfc.CourseDirectory.Web.ViewModels.Apprenticeships
     {
 
        // public ApprenticeshipWhatWouldYouLikeToDo ApprenticeshipWhatWouldYouLikeToDo { get; set; }
-
+       public Guid ApprenticeshipId { get; set; }
+       public string ApprenticeshipTitle { get; set; }
 
     }
 }

@@ -515,7 +515,7 @@ namespace Dfc.CourseDirectory.Web
             {
                 context.Response.Headers.Add("X-Frame-Options", "SAMEORIGIN");
                 context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
-                context.Response.Headers.Add("X-Xss-Protection", "1");
+                context.Response.Headers.Add("X-Xss-Protection", "1; mode=block");
 
                 context.Response.GetTypedHeaders().CacheControl =
                   new Microsoft.Net.Http.Headers.CacheControlHeaderValue()
