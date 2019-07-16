@@ -98,37 +98,37 @@ namespace Dfc.CourseDirectory.Web.Helpers
 
                 CsvCourse csvCourse = new CsvCourse
                 {
-                    LearnAimRef = course.LearnAimRef != null ? _CSVHelper.SanitiseTextForCSVOutput(course.LearnAimRef) : String.Empty,
-                    CourseDescription = course.CourseDescription != null ? _CSVHelper.SanitiseTextForCSVOutput(course.CourseDescription) : String.Empty,
-                    EntryRequirements = course.EntryRequirements != null ? _CSVHelper.SanitiseTextForCSVOutput(course.EntryRequirements) : String.Empty,
-                    WhatYoullLearn = course.WhatYoullLearn != null ? _CSVHelper.SanitiseTextForCSVOutput(course.WhatYoullLearn) : String.Empty,
-                    HowYoullLearn = course.HowYoullLearn != null ? _CSVHelper.SanitiseTextForCSVOutput(course.HowYoullLearn) : String.Empty,
-                    WhatYoullNeed = course.WhatYoullNeed != null ? _CSVHelper.SanitiseTextForCSVOutput(course.WhatYoullNeed) : String.Empty,
-                    HowYoullBeAssessed = course.HowYoullBeAssessed != null ? _CSVHelper.SanitiseTextForCSVOutput(course.HowYoullBeAssessed) : String.Empty,
-                    WhereNext = course.WhereNext != null ? _CSVHelper.SanitiseTextForCSVOutput(course.WhereNext) : String.Empty,
+                    LearnAimRef = course.LearnAimRef != null ? _CSVHelper.SanitiseTextForCSVOutput(course.LearnAimRef) : string.Empty,
+                    CourseDescription = course.CourseDescription != null ? _CSVHelper.SanitiseTextForCSVOutput(course.CourseDescription) : string.Empty,
+                    EntryRequirements = course.EntryRequirements != null ? _CSVHelper.SanitiseTextForCSVOutput(course.EntryRequirements) : string.Empty,
+                    WhatYoullLearn = course.WhatYoullLearn != null ? _CSVHelper.SanitiseTextForCSVOutput(course.WhatYoullLearn) : string.Empty,
+                    HowYoullLearn = course.HowYoullLearn != null ? _CSVHelper.SanitiseTextForCSVOutput(course.HowYoullLearn) : string.Empty,
+                    WhatYoullNeed = course.WhatYoullNeed != null ? _CSVHelper.SanitiseTextForCSVOutput(course.WhatYoullNeed) : string.Empty,
+                    HowYoullBeAssessed = course.HowYoullBeAssessed != null ? _CSVHelper.SanitiseTextForCSVOutput(course.HowYoullBeAssessed) : string.Empty,
+                    WhereNext = course.WhereNext != null ? _CSVHelper.SanitiseTextForCSVOutput(course.WhereNext) : string.Empty,
                     AdvancedLearnerLoan = course.AdvancedLearnerLoan ? "Yes" : "No",
                     AdultEducationBudget = course.AdultEducationBudget ? "Yes" : "No",
-                    CourseName = firstCourseRun.CourseName != null ? _CSVHelper.SanitiseTextForCSVOutput(firstCourseRun.CourseName) : String.Empty,
-                    ProviderCourseID = firstCourseRun.ProviderCourseID != null ? _CSVHelper.SanitiseTextForCSVOutput(firstCourseRun.ProviderCourseID) : String.Empty,
+                    CourseName = firstCourseRun.CourseName != null ? _CSVHelper.SanitiseTextForCSVOutput(firstCourseRun.CourseName) : string.Empty,
+                    ProviderCourseID = firstCourseRun.ProviderCourseID != null ? _CSVHelper.SanitiseTextForCSVOutput(firstCourseRun.ProviderCourseID) : string.Empty,
                     DeliveryMode = firstCourseRun.DeliveryMode.ToDescription(),
                     StartDate = firstCourseRun.StartDate.HasValue ? firstCourseRun.StartDate.Value.ToString("dd/MM/yyyy") : string.Empty,
                     FlexibleStartDate = firstCourseRun.FlexibleStartDate ? "Yes" : string.Empty,
-                    VenueName = firstCourseRun.VenueId.HasValue ? _venueService.GetVenueByIdAsync(new GetVenueByIdCriteria(firstCourseRun.VenueId.Value.ToString())).Result.Value.VenueName : null,
+                    VenueName = firstCourseRun.VenueId.HasValue ? _venueService.GetVenueByIdAsync(new GetVenueByIdCriteria(firstCourseRun.VenueId.Value.ToString())).Result.Value.VenueName : string.Empty,
                     National = firstCourseRun.National.HasValue ? (firstCourseRun.National.Value ? "Yes" : "No") : string.Empty,
                     Regions = firstCourseRun.Regions != null ? _CSVHelper.SemiColonSplit(
                                                                 selectRegionModel.RegionItems
                                                                 .Where(x => firstCourseRun.Regions.Contains(x.Id))
                                                                 .Select(y => _CSVHelper.SanitiseTextForCSVOutput(y.RegionName).Replace(",","")).ToList())
-                                                                : null,
+                                                                : string.Empty,
                     SubRegions = firstCourseRun.SubRegions != null ? _CSVHelper.SemiColonSplit(
                                                                     selectRegionModel.RegionItems.SelectMany(
                                                                         x => x.SubRegion.Where(
                                                                             y => firstCourseRun.Regions.Contains(y.Id)).Select(
-                                                                                z => _CSVHelper.SanitiseTextForCSVOutput(z.SubRegionName).Replace(",","")).ToList())) : null,
-                    CourseURL = firstCourseRun.CourseURL != null ? _CSVHelper.SanitiseTextForCSVOutput(firstCourseRun.CourseURL) : String.Empty,
-                    Cost = firstCourseRun.Cost,
-                    CostDescription = firstCourseRun.CostDescription != null ? _CSVHelper.SanitiseTextForCSVOutput(firstCourseRun.CostDescription) : String.Empty,
-                    DurationValue = firstCourseRun.DurationValue,
+                                                                                z => _CSVHelper.SanitiseTextForCSVOutput(z.SubRegionName).Replace(",","")).ToList())) : string.Empty,
+                    CourseURL = firstCourseRun.CourseURL != null ? _CSVHelper.SanitiseTextForCSVOutput(firstCourseRun.CourseURL) : string.Empty,
+                    Cost = firstCourseRun.Cost.HasValue ? firstCourseRun.Cost.Value.ToString() : string.Empty,
+                    CostDescription = firstCourseRun.CostDescription != null ? _CSVHelper.SanitiseTextForCSVOutput(firstCourseRun.CostDescription) : string.Empty,
+                    DurationValue = firstCourseRun.DurationValue.HasValue ? firstCourseRun.DurationValue.Value.ToString() : string.Empty,
                     DurationUnit = firstCourseRun.DurationUnit.ToDescription(),
                     StudyMode = firstCourseRun.StudyMode.ToDescription(),
                     AttendancePattern = firstCourseRun.AttendancePattern.ToDescription()
@@ -148,28 +148,28 @@ namespace Dfc.CourseDirectory.Web.Helpers
 
                     CsvCourse csvCourseRun = new CsvCourse
                     {
-                        LearnAimRef = course.LearnAimRef != null ? _CSVHelper.SanitiseTextForCSVOutput(course.LearnAimRef) : String.Empty,
-                        CourseName = courseRun.CourseName != null ? _CSVHelper.SanitiseTextForCSVOutput(courseRun.CourseName) : String.Empty,
-                        ProviderCourseID = courseRun.ProviderCourseID != null ? _CSVHelper.SanitiseTextForCSVOutput(courseRun.ProviderCourseID) : String.Empty,
+                        LearnAimRef = course.LearnAimRef != null ? _CSVHelper.SanitiseTextForCSVOutput(course.LearnAimRef) : string.Empty,
+                        CourseName = courseRun.CourseName != null ? _CSVHelper.SanitiseTextForCSVOutput(courseRun.CourseName) : string.Empty,
+                        ProviderCourseID = courseRun.ProviderCourseID != null ? _CSVHelper.SanitiseTextForCSVOutput(courseRun.ProviderCourseID) : string.Empty,
                         DeliveryMode = courseRun.DeliveryMode.ToDescription(),
                         StartDate = courseRun.StartDate.HasValue ? courseRun.StartDate.Value.ToString("dd/MM/yyyy") : string.Empty,
                         FlexibleStartDate = courseRun.FlexibleStartDate ? "Yes" : string.Empty,
-                        VenueName = courseRun.VenueId.HasValue ? _venueService.GetVenueByIdAsync(new GetVenueByIdCriteria(courseRun.VenueId.Value.ToString())).Result.Value.VenueName : null,
-                        National = courseRun.National.HasValue ? (firstCourseRun.National.Value ? "Yes" : "No") : string.Empty,
+                        VenueName = courseRun.VenueId.HasValue ? _venueService.GetVenueByIdAsync(new GetVenueByIdCriteria(courseRun.VenueId.Value.ToString())).Result.Value.VenueName : string.Empty,
+                        National = courseRun.National.HasValue ? (courseRun.National.Value ? "Yes" : "No") : string.Empty,
                         Regions = courseRun.Regions != null ? _CSVHelper.SemiColonSplit(
                                                                 selectRegionModel.RegionItems
                                                                 .Where(x => courseRun.Regions.Contains(x.Id))
                                                                 .Select(y => _CSVHelper.SanitiseTextForCSVOutput(y.RegionName).Replace(",","")).ToList())
-                                                                : null,
+                                                                : string.Empty,
                         SubRegions = courseRun.SubRegions != null ? _CSVHelper.SemiColonSplit(
                                                                     selectRegionModel.RegionItems.SelectMany(
                                                                         x => x.SubRegion.Where(
                                                                             y => courseRun.Regions.Contains(y.Id)).Select(
-                                                                                z => _CSVHelper.SanitiseTextForCSVOutput(z.SubRegionName).Replace(",","")).ToList())) : null,
-                        CourseURL = courseRun.CourseURL != null ? _CSVHelper.SanitiseTextForCSVOutput(courseRun.CourseURL) : String.Empty,
-                        Cost = courseRun.Cost,
-                        CostDescription = courseRun.CostDescription != null ? _CSVHelper.SanitiseTextForCSVOutput(courseRun.CostDescription) : String.Empty,
-                        DurationValue = courseRun.DurationValue,
+                                                                                z => _CSVHelper.SanitiseTextForCSVOutput(z.SubRegionName).Replace(",","")).ToList())) : string.Empty,
+                        CourseURL = courseRun.CourseURL != null ? _CSVHelper.SanitiseTextForCSVOutput(courseRun.CourseURL) : string.Empty,
+                        Cost = courseRun.Cost.HasValue ? courseRun.Cost.Value.ToString() : string.Empty,
+                        CostDescription = courseRun.CostDescription != null ? _CSVHelper.SanitiseTextForCSVOutput(courseRun.CostDescription) : string.Empty,
+                        DurationValue = courseRun.DurationValue.HasValue ? courseRun.DurationValue.Value.ToString() : string.Empty,
                         DurationUnit = courseRun.DurationUnit.ToDescription(),
                         StudyMode = courseRun.StudyMode.ToDescription(),
                         AttendancePattern = courseRun.AttendancePattern.ToDescription()
