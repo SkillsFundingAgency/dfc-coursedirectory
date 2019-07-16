@@ -69,13 +69,13 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         public string CourseURL { get; set; }
 
         [Display(Name = "COST")]
-        public decimal? Cost { get; set; }
+        public string Cost { get; set; }
 
         [Display(Name = "COST_DESCRIPTION")]
         public string CostDescription { get; set; }
 
         [Display(Name = "DURATION")]
-        public int? DurationValue { get; set; }
+        public string DurationValue { get; set; }
 
         [Display(Name = "DURATION_UNIT")]
         public string DurationUnit { get; set; }
