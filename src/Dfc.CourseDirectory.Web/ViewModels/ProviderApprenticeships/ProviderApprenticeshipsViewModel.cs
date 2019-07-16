@@ -18,6 +18,8 @@ namespace Dfc.CourseDirectory.Web.ViewModels.ProviderApprenticeships
         [RegularExpression(@"[a-zA-Z0-9 \¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\" + "\"" + @"\\]+", ErrorMessage = "Search contains invalid characters")]
         public string Search { get; set; }
         public List<IApprenticeship> Apprenticeships { get; set; }
+
+        public Guid? ApprenticeshipId { get; set; }
        
 
 
