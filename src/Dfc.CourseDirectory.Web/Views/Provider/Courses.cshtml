@@ -271,10 +271,12 @@
 
             $('a.filter:first-child').attr("tabIndex", 5);
 
-
             var $archiveButton = $(".archive");
 
             var $cancelArchiveButton = $(".cancel-archive");
+
+            var $apprenticeshipUpdatedlink = $("#apprenticeshiplink");
+
 
             $cancelArchiveButton.on("click",
                 function (event) {
@@ -293,6 +295,8 @@
 
                     }
                 });
+
+          
 
 
             $archiveButton.on("click",
@@ -326,10 +330,7 @@
                     var courseRunId = $(this).attr('data-courserunid');
                     var $courseId = $("#" + courseId);
                     var $courseRunId = $("#" + courseRunId);
-                    //var hasOpenAttr = $courseId[0].getAttribute('open') !== null;
-                    //if (!hasOpenAttr) {
-                    //    $courseId.find("summary").trigger("click");
-                    //}
+
                     if (!$courseId.hasClass("govuk-accordion__section--expanded")) {
                         $courseId.addClass("govuk-accordion__section--expanded");
                     }
@@ -346,16 +347,7 @@
                         }, "slow");
                     }
 
-                    //if ($courseId.attr("open")) {
-                    //    $("html,body").animate({
-                    //        scrollTop: $courseId.offset().top
-                    //    }, "slow");
-                    //}
-                    //if ($courseRunId.hasClass("govuk-accordion__section--expanded")) {
-                    //    $("html,body").animate({
-                    //        scrollTop: $courseRunId.offset().top
-                    //    }, "slow");
-                    //}
+
                 });
             }
         });
