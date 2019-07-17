@@ -51,7 +51,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Security.Claims;
-using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 
 namespace Dfc.CourseDirectory.Web
@@ -129,8 +128,6 @@ namespace Dfc.CourseDirectory.Web
 
             services.Configure<PostCodeSearchSettings>(Configuration.GetSection(nameof(PostCodeSearchSettings)));
             services.AddScoped<IPostCodeSearchService, PostCodeSearchService>();
-            // services.AddScoped<IPostCodeSearchHelper, PostCodeSearchHelper>();
-
             services.AddScoped<ILarsSearchHelper, LarsSearchHelper>();
             services.AddScoped<IPaginationHelper, PaginationHelper>();
 
@@ -372,7 +369,6 @@ namespace Dfc.CourseDirectory.Web
 
                     OnRedirectToIdentityProvider = context =>
                     {
-                        context.ProtocolMessage.Prompt = "consent";
                         return Task.CompletedTask;
                     },
 
@@ -447,7 +443,6 @@ namespace Dfc.CourseDirectory.Web
                             identity.AddClaims(new[]
                             {
                                 new Claim("access_token", x.TokenEndpointResponse.AccessToken),
-                                new Claim("refresh_token", x.TokenEndpointResponse.RefreshToken),
                                 new Claim("UKPRN", userClaims.UKPRN),
                                 new Claim("user_id", userClaims.UserId.ToString()),
                                 new Claim(ClaimTypes.Role, userClaims.RoleName),
@@ -501,14 +496,8 @@ namespace Dfc.CourseDirectory.Web
             });
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            // app.UseCookiePolicy();
             app.UseSession();
             app.UseAuthentication();
-            // hotfix
-            // workaround for bug in DfE sign in
-            // which appends a trailing slash
-            //app.UseRewriter(new RewriteOptions()
-            //    .AddRedirect("^auth/cb/?.*", "auth/cb"));
 
             //Preventing ClickJacking Attacks
             app.Use(async (context, next) =>
