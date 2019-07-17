@@ -61,7 +61,10 @@ namespace Dfc.CourseDirectory.Models.Enums
         DayRelease = 1,
         [Display(Name = "Block release")]
         [Description("Block Release")]
-        BlockRelease = 2
+        BlockRelease = 2,
+        [Display(Name = "Employer address")]
+        [Description("Employer address")]
+        EmployerAddress = 3
 
     }
     public enum PublishMode
@@ -206,11 +209,11 @@ namespace Dfc.CourseDirectory.Models.Enums
         [Description("Yes")]
         DeleteMigrations = 1,
         [Description("No")]
-        Cancel =2
+        Cancel = 2
     }
 
     public enum ApprenticeshipWhatWouldYouLikeToDo
-    { 
+    {
         [Description("Undefined")]
         Undefined = 0,
         [Description("Add an apprenticeship")]
@@ -230,7 +233,7 @@ namespace Dfc.CourseDirectory.Models.Enums
         Delete = 1,
         [Description("No, go back")]
         Back = 2,
-       
+
     }
 
     public enum ApprenticeshipDelivery

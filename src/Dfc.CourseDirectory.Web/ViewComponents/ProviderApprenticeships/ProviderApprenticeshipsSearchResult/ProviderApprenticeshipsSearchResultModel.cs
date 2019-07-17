@@ -11,6 +11,10 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.ProviderApprenticeships.Provide
        
         public string SearchTerm { get; }
         public List<IApprenticeship> Items { get; set; }
-       
+
+        public ProviderApprenticeshipsSearchResultModel()
+        {
+            Items = new List<IApprenticeship>();
+        }
     }
 }

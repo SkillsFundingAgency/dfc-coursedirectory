@@ -99,8 +99,25 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
 
             ProviderApprenticeshipsSearchResultModel model = new ProviderApprenticeshipsSearchResultModel();
+            
+            int? UKPRN = _session.GetInt32("UKPRN");
+            var result = await _apprenticeshipService.GetApprenticeshipByUKPRN(UKPRN.ToString());
 
-
+            if (result.IsSuccess && result.HasValue)
+            {
+                if (string.IsNullOrEmpty(requestModel.SearchTerm))
+                {
+                    model.Items = result.Value.ToList();
+                }
+                else
+                {
+                    model.Items = result.Value
+                                    .Where(x => (!string.IsNullOrEmpty(x.ApprenticeshipTitle) ? x.ApprenticeshipTitle.ToLower() : "").Contains(requestModel.SearchTerm.ToLower())
+                                                        || (!string.IsNullOrEmpty(x.MarketingInformation) ? x.MarketingInformation.ToLower() : "").Contains(requestModel.SearchTerm.ToLower())
+                                                        || (!string.IsNullOrEmpty(x.NotionalNVQLevelv2) ? x.NotionalNVQLevelv2.ToLower() : "").Contains(requestModel.SearchTerm.ToLower())
+                                                        && x.RecordStatus == RecordStatus.Live).ToList();
+                }
+            }
 
             return ViewComponent(nameof(ViewComponents.ProviderApprenticeships.ProviderApprenticeshipSearchResult.ProviderApprenticeshipSearchResult), model);
         }
@@ -110,10 +127,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             return RedirectToAction("Index", "Apprenticeships");
         }
-            
-
-
-
 
     }
 }
