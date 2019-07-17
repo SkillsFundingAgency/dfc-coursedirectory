@@ -18,7 +18,6 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
     public class ApprenticeshipService : IApprenticeshipService
     {
         private readonly ILogger<ApprenticeshipService> _logger;
-        private readonly ApprenticeshipServiceSettings _settings;
         private readonly HttpClient _httpClient;
         private readonly Uri _getStandardsAndFrameworksUri, _addApprenticeshipUri, _getApprenticeshipByUKPRNUri, _getApprenticeshipByIdUri, _updateApprenticshipUri;
 
@@ -32,7 +31,6 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             Throw.IfNull(settings, nameof(settings));
 
             _logger = logger;
-            _settings = settings.Value;
             _httpClient = httpClient;
 
             _getStandardsAndFrameworksUri = settings.Value.GetStandardsAndFrameworksUri();
@@ -52,8 +50,8 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             {
                 _logger.LogInformationObject("Standards and Frameworks Criteria", criteria);
 
-                _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
-                var response = await _httpClient.GetAsync(new Uri(_getStandardsAndFrameworksUri.AbsoluteUri + "?search=" + criteria));
+
+                var response = await _httpClient.GetAsync(new Uri(_getStandardsAndFrameworksUri.AbsoluteUri + "&search=" + criteria));
                 _logger.LogHttpResponseMessage("Standards and Frameworks service http response", response);
 
                 if (response.IsSuccessStatusCode)
@@ -101,7 +99,6 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
                 var apprenticeshipJson = JsonConvert.SerializeObject(apprenticeship);
 
                 var content = new StringContent(apprenticeshipJson, Encoding.UTF8, "application/json");
-                _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
                 var response = await _httpClient.PostAsync(_addApprenticeshipUri, content);
 
                 _logger.LogHttpResponseMessage("Apprenticeship add service http response", response);
@@ -152,8 +149,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             {
                 _logger.LogInformationObject("Get Apprenticeship by Id", Id);
 
-                _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
-                var response = await _httpClient.GetAsync(new Uri(_getApprenticeshipByIdUri.AbsoluteUri + "?id=" + Id));
+                var response = await _httpClient.GetAsync(new Uri(_getApprenticeshipByIdUri.AbsoluteUri + "&id=" + Id));
                 _logger.LogHttpResponseMessage("Get Apprenticeship by Id service http response", response);
 
                 if (response.IsSuccessStatusCode)
@@ -197,8 +193,8 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             {
                 _logger.LogInformationObject("Search Apprenticeship by UKPRN Criteria", criteria);
 
-                _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
-                var response = await _httpClient.GetAsync(new Uri(_getApprenticeshipByUKPRNUri.AbsoluteUri + "?UKPRN=" + criteria));
+
+                var response = await _httpClient.GetAsync(new Uri(_getApprenticeshipByUKPRNUri.AbsoluteUri + "&UKPRN=" + criteria));
                 _logger.LogHttpResponseMessage("Search Apprenticeship by UKPRN service http response", response);
 
                 if (response.IsSuccessStatusCode)
@@ -246,7 +242,6 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
                 var apprenticeshipJson = JsonConvert.SerializeObject(apprenticeship);
 
                 var content = new StringContent(apprenticeshipJson, Encoding.UTF8, "application/json");
-                _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
                 var response = await _httpClient.PostAsync(_updateApprenticshipUri, content);
 
                 _logger.LogHttpResponseMessage("Apprenticeship update service http response", response);
@@ -287,37 +282,24 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
     {
         internal static Uri GetStandardsAndFrameworksUri(this IApprenticeshipServiceSettings extendee)
         {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/StandardsAndFrameworksSearch");
+            return new Uri($"{extendee.ApiUrl + "StandardsAndFrameworksSearch?code=" + extendee.ApiKey}");
         }
-
         internal static Uri AddApprenticeshipUri(this IApprenticeshipServiceSettings extendee)
         {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/AddApprenticeship");
+            return new Uri($"{extendee.ApiUrl + "AddApprenticeship?code=" + extendee.ApiKey}");
         }
-
         internal static Uri GetApprenticeshipByUKPRNUri(this IApprenticeshipServiceSettings extendee)
         {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/GetApprenticeshipByUKPRN");
+            return new Uri($"{extendee.ApiUrl + "GetApprenticeshipByUKPRN?code=" + extendee.ApiKey}");
         }
-
         internal static Uri GetApprenticeshipByIdUri(this IApprenticeshipServiceSettings extendee)
         {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/GetApprenticeshipById");
+            return new Uri($"{extendee.ApiUrl + "GetApprenticeshipById?code=" + extendee.ApiKey}");
         }
-
         internal static Uri UpdateAprrenticeshipUri(this IApprenticeshipServiceSettings extendee)
         {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/UpdateApprenticeship");
+            return new Uri($"{extendee.ApiUrl + "UpdateApprenticeship?code=" + extendee.ApiKey}");
         }
     }
+    
 }
