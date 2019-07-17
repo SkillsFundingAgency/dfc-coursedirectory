@@ -18,7 +18,6 @@ namespace Dfc.CourseDirectory.Services.CourseTextService
     public class CourseTextService : ICourseTextService
     {
         private readonly ILogger<CourseTextService> _logger;
-        private readonly CourseTextServiceSettings _settings;
         private readonly HttpClient _httpClient;
         private readonly Uri _getYourCourseTextUri;
 
@@ -33,7 +32,6 @@ namespace Dfc.CourseDirectory.Services.CourseTextService
             Throw.IfNull(settings, nameof(settings));
 
             _logger = logger;
-            _settings = settings.Value;
             _httpClient = httpClient;
 
             _getYourCourseTextUri = settings.Value.GetCourseTextUri();
@@ -54,7 +52,6 @@ namespace Dfc.CourseDirectory.Services.CourseTextService
                 if (criteria.LARSRef == "")
                     return Result.Fail<ICourseText>("Blank LARS Ref");
 
-                _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
                 var response = await _httpClient.GetAsync(new Uri(_getYourCourseTextUri.AbsoluteUri + "&LARS=" + criteria.LARSRef));
                 _logger.LogHttpResponseMessage("Get your courses service http response", response);
 
@@ -96,9 +93,7 @@ namespace Dfc.CourseDirectory.Services.CourseTextService
     {
         internal static Uri GetCourseTextUri(this ICourseTextServiceSettings extendee)
         {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/GetCourseTextByLARS");
+            return new Uri($"{extendee.ApiUrl + "GetCourseTextByLARS?code=" + extendee.ApiKey}");
         }
     }
 }
