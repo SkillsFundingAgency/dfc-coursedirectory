@@ -11,102 +11,96 @@
 <form class="govuk-!-margin-bottom-9" id="ApprenticeshipDeliveryOptionsForm" asp-controller="Apprenticeships" asp-action="Add" method="post">
     <a asp-controller="Apprenticeships" asp-action="Delivery" class="govuk-back-link">Back</a><br />
 
-    <div class="cd-dashboard govuk-grid-row govuk-body ">
+    <div class="cd-dashboard govuk-body ">
 
-        <div class="govuk-form-group govuk-grid-column-two-thirds">
-            @Html.HiddenFor(x=>x.Mode)
-            @if (!string.IsNullOrEmpty(@ViewBag.Message))
+
+        @Html.HiddenFor(x => x.Mode)
+        @if (!string.IsNullOrEmpty(@ViewBag.Message))
+        {
+            @await Component.InvokeAsync(nameof(Notification), new NotificationModel
             {
-                @await Component.InvokeAsync(nameof(Notification), new NotificationModel
-                {
-                    NotificationTitle = "",
-                    NotificationMessage = @ViewBag.Message,
-                    ClassType = "info-summary"
-                })
-            }
-            
-            <div id="errorsummary" class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary" style="display: none;">
-                <h2 class="govuk-error-summary__title" id="error-summary-title">
-                    There is an issue with this apprenticeship
-                </h2>
-                <div class="govuk-error-summary__body">
-                    <ul class="govuk-list govuk-error-summary__list"></ul>
-                </div>
+                NotificationTitle = "",
+                NotificationMessage = @ViewBag.Message,
+                ClassType = "info-summary"
+            })
+        }
+
+        <div id="errorsummary" class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary" style="display: none;">
+            <h2 class="govuk-error-summary__title" id="error-summary-title">
+                There is an issue with this apprenticeship
+            </h2>
+            <div class="govuk-error-summary__body">
+                <ul class="govuk-list govuk-error-summary__list"></ul>
             </div>
-            
-            <fieldset class="govuk-fieldset" aria-describedby="how-contacted-conditional-hint">
-                <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
-                    <h1 class="govuk-fieldset__heading">
-                        Select delivery options
-                    </h1>
+        </div>
+
+        <h1 class="govuk-heading-l">Select delivery options</h1>
+
+        @await Component.InvokeAsync(nameof(ChooseLocation), new ChooseLocationModel()
+
+        {
+            LabelText = "Location",
+            HintText = "Select a venue you can travel from to deliver training",
+            LocationId = Model.LocationId ?? (Guid?)null,
+            DisplayLink = true,
+            DeliveryOptionsListItemModel = Model.DeliveryOptionsListItemModel
+
+        })
+
+        <div class="govuk-form-group">
+            <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
+                <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+                    <h2 class="govuk-fieldset__heading">
+                        How is the training delivered at this location?
+                    </h2>
                 </legend>
-
-
-
-                @await Component.InvokeAsync(nameof(ChooseLocation), new ChooseLocationModel()
-
-                    {
-                    LabelText = "Location",
-                    HintText = "Select a venue you can travel from to deliver training",
-                    LocationId = Model.LocationId ?? (Guid?)null,
-                    DisplayLink = false,
-                    DeliveryOptionsListItemModel = Model.DeliveryOptionsListItemModel
-
-                    })
-
-                <div class="govuk-form-group govuk-!-margin-top-9">
-                    <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
-                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
-                            <h2 class="govuk-heading-m">
-                                How is the training delivered at this location?
-                            </h2>
-                        </legend>
-                        <span id="govuk-label-deliveryoptions" class="govuk-hint">
-                            Select all that apply.
-                        </span>
-                        <div id="deliveryoptions" class="govuk-checkboxes" val-required-message="Select how is the training delivered at this location">
-                            <div class="govuk-checkboxes__item">
-                                <input class="govuk-checkboxes__input" type="checkbox" asp-for="@Model.DayRelease">
-                                <label class="govuk-label govuk-checkboxes__label">
-                                    @WebHelper.GetEnumDescription(ApprenticeShipDeliveryLocation.DayRelease)
-                                </label>
-                            </div>
-                            <div class="govuk-checkboxes__item">
-                                <input class="govuk-checkboxes__input" type="checkbox" asp-for="@Model.BlockRelease">
-                                <label class="govuk-label govuk-checkboxes__label">
-                                    @WebHelper.GetEnumDescription(ApprenticeShipDeliveryLocation.BlockRelease)
-                                </label>
-                            </div>
-                        </div>
-                    </fieldset>
-                </div>
-
-            <div class="govuk-!-margin-top-9">
-
-                <a id="continue" class="govuk-button">Save and continue</a>
-
-                <button class="govuk-button govuk-button--secondary" id="next2" asp-action="Add" asp-controller="Apprenticeships">Save and add another</button>
-
-            </div>
-            </fieldset>
-
-                @if (Model.DeliveryOptionsListItemModel.DeliveryOptionsListItemModel != null && Model.DeliveryOptionsListItemModel.DeliveryOptionsListItemModel.Count() > 0)
-                {
-                    <div class="summary--linked-title">
-                        <h2 class="govuk-heading-s">Delivery options </h2>
+                <span id="waste-hint" class="govuk-hint">
+                    Select all that apply.
+                </span>
+                <div class="govuk-checkboxes" id="deliveryoptions" val-required-message="Select how is the training delivered at this location">
+                    <div class="govuk-checkboxes__item">
+                        <input class="govuk-checkboxes__input" type="checkbox" asp-for="@Model.DayRelease" />
+                        <label class="govuk-label govuk-checkboxes__label" for="DayRelease">
+                            @WebHelper.GetEnumDescription(ApprenticeShipDeliveryLocation.DayRelease)
+                        </label>
                     </div>
-                }
-                @{
-                    Model.DeliveryOptionsListItemModel.SummaryPage = false;
-                    ViewBag.Mode = Model.Mode;
+                    <div class="govuk-checkboxes__item">
+                        <input class="govuk-checkboxes__input" type="checkbox" asp-for="@Model.BlockRelease">
+                        <label class="govuk-label govuk-checkboxes__label" for="BlockRelease">
+                            @WebHelper.GetEnumDescription(ApprenticeShipDeliveryLocation.BlockRelease)
+                        </label>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
 
-                }
-                @await Component.InvokeAsync(nameof(DeliveryOptionsList), Model.DeliveryOptionsListItemModel)
 
+        <div class="govuk-!-margin-top-9">
 
+            <a id="continue" class="govuk-button">Save and continue</a>
+
+            <button class="govuk-button govuk-button--secondary" id="next2" asp-action="Add" asp-controller="Apprenticeships">Save and add another</button>
 
         </div>
+
+
+        @if (Model.DeliveryOptionsListItemModel.DeliveryOptionsListItemModel != null && Model.DeliveryOptionsListItemModel.DeliveryOptionsListItemModel.Count() > 0)
+        {
+            <div class="summary--linked-title">
+                <h2 class="govuk-heading-s">Delivery options </h2>
+            </div>
+        }
+        @{
+            Model.DeliveryOptionsListItemModel.SummaryPage = false;
+            ViewBag.Mode = Model.Mode;
+
+        }
+        @await Component.InvokeAsync(nameof(DeliveryOptionsList), Model.DeliveryOptionsListItemModel)
+
+
+
     </div>
+
 </form>
 
 
@@ -202,7 +196,7 @@
                 event.preventDefault();
 
                 var rowCount = $('#ResultsTable tr').length;
-     
+
                 validate();
                 if (validStates.every(isAllValid)) {
 

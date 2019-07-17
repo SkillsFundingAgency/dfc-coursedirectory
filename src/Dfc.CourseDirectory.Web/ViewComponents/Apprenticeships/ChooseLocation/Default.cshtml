@@ -4,32 +4,28 @@
 @model Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships.ChooseLocationModel
 
 
-
 <div class="govuk-form-group">
-    @*<label id="govuk-label-@nameof(@Model.LocationId)" class="govuk-label" asp-for="@Model.LabelText">
+    <label class="govuk-label" for="LocationId">
         @Model.LabelText
-    </label>*@
-    <h3 class="" for="sort" id="govuk-label-LocationId">
-        @Model.LabelText
-    </h3>
+    </label>
     @if (!string.IsNullOrWhiteSpace(Model.HintText))
     {
         <span class="govuk-hint">
             @Model.HintText
         </span>
     }
-
-
-    <div class="">
-        <select asp-for="@Model.LocationId" asp-items="@Model.Locations" class="govuk-select" val-required-message="Select location">
-            <option selected value="">Please select</option>
-        </select>
-        @if (Model.DisplayLink)
-        {
-            <a href="#" class="govuk-link" id="addNewLocation">I need to add a location to this list</a>
-        }
-    </div>
+    <select asp-for="@Model.LocationId" asp-items="@Model.Locations" class="govuk-select" val-required-message="Select location" aria-labelledby="LocationId">
+        <option selected value="">Please select</option>
+    </select>
+    @if (Model.DisplayLink)
+    {
+        <a href="#" class="govuk-link" id="addNewLocation">I need to add a location to this list</a>
+    }
 </div>
+
+
+
+
 
 <script>
     (function ($) {
