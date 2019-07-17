@@ -610,6 +610,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 }
             }
 
+            if (apprenticeshipLocationType == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased)
+            {
+                deliveryModes.Add((int)ApprenticeShipDeliveryLocation.EmployerAddress);
+            }
+
             apprenticeshipLocation.DeliveryModes = deliveryModes;
 
             return apprenticeshipLocation;
@@ -833,11 +838,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             if (model.BlockRelease && model.DayRelease)
             {
-                deliveryMethod = "Day release, Block release";
+                deliveryMethod = "Employer address, Day release, Block release";
             }
             else
             {
-                deliveryMethod = model.DayRelease ? "Day release" : "Block release";
+                deliveryMethod = model.DayRelease ? "Employer address, Day release" : "Employer address, Block release";
             }
 
             DeliveryOptionsCombinedViewModel.DeliveryOptionsListItemModel.DeliveryOptionsListItemModel.Add(new DeliveryOptionsListItemModel()
@@ -1012,12 +1017,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             RadiusValue = National ? 200 : Convert.ToInt32(Radius);
 
-            //if (RowCount >= 1)
-            //{
 
-            //}
-            //else
-            //{
             var DeliveryOptionsCombinedViewModel = _session.GetObject<DeliveryOptionsCombinedViewModel>("DeliveryOptionsCombinedViewModel") ??
                                                                  new DeliveryOptionsCombinedViewModel();
 
@@ -1035,11 +1035,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             if (BlockRelease && DayRelease)
             {
-                deliveryMethod = "Day release, Block release";
+                deliveryMethod = "Employers address, Day release, Block release";
             }
             else
             {
-                deliveryMethod = DayRelease ? "Day release" : "Block release";
+                deliveryMethod = DayRelease ? "Employers address, Day release" : "Employers address, Block release";
             }
 
             DeliveryOptionsCombinedViewModel.DeliveryOptionsListItemModel.DeliveryOptionsListItemModel.Add(new DeliveryOptionsListItemModel()
@@ -1176,11 +1176,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                         if (updateApprenticeshipResult.IsSuccess && updateApprenticeshipResult.HasValue)
                         {
-                            return RedirectToAction("Index", "ProviderApprenticeships");
+
+                            return RedirectToAction("DeleteConfirm", "Apprenticeships", new { ApprenticeshipId = theModel.ApprenticeshipId, ApprenticeshipTitle = theModel.ApprenticeshipTitle });
                         }
+
                     }
-                    
-                    return RedirectToAction("DeleteConfirm", "Apprenticeships", new {ApprenticeshipId = theModel.ApprenticeshipId, ApprenticeshipTitle = theModel.ApprenticeshipTitle });
+                    return RedirectToAction("Index", "ProviderApprenticeships");
+
                 case ApprenticeshipDelete.Back:
                     return RedirectToAction("Index", "ProviderApprenticeships");
                 default:
