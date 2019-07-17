@@ -322,6 +322,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 CourseLength = model.DurationLength + " " + model.DurationUnit,
                 AttendancePattern = model.StudyMode.ToDescription(),
                 AttendanceTime = model.AttendanceMode.ToDescription(),
+
                 StartDate = model.StartDateType == "FlexibleStartDate"
                     ? "Flexible"
                     : model.Day + "/" + model.Month + "/" + model.Year
