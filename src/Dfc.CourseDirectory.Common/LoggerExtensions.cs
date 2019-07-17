@@ -26,7 +26,7 @@ namespace Dfc.CourseDirectory.Common
         {
             if (exception == null) throw new ArgumentNullException(nameof(exception));
 
-            logger.LogError(exception + " {0}", message);
+            logger.LogError(exception, message);
         }
 
         public static void LogException<TCategoryName>(this ILogger<TCategoryName> logger, Exception exception)
