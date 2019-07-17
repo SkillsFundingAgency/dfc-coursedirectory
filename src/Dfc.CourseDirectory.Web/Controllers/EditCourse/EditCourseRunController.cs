@@ -534,7 +534,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                             }
                             else
                             {
-                                
+                                courseRunForEdit.National = false;
                                 courseRunForEdit.Regions = model.SelectedRegions;                           
                                 string[] selectedRegions = availableRegions.SubRegionsDataCleanse(courseRunForEdit.Regions.ToList());
                                 var subRegions = selectedRegions.Select(selectedRegion => availableRegions.GetRegionFromName(selectedRegion)).ToList();
