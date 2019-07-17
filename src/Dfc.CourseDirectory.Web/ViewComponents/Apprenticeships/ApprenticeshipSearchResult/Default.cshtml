@@ -45,44 +45,42 @@ else
             {
                 <div>
                     <div class="cd-apprenticeships-search-result__container">
-                        <h3 class="govuk-heading-m" style="display:inline-flex">
-                            @apprenticeship.ApprenticeshipTitle
+                        <h2 class="govuk-heading-m">@apprenticeship.ApprenticeshipTitle<span class="govuk-!-margin-left-3 govuk-tag">Framework</span></h2>
+                        @if (apprenticeship.ApprenticeshipType == ApprenticeshipType.FrameworkCode)
+                        {
+                            <p class="govuk-body">Level: <span class="govuk-!-font-weight-bold">@apprenticeship.ApprenticeshipType.ToDescription()</span></p>
+                        }
 
-                            @if (apprenticeship.ApprenticeshipType == ApprenticeshipType.FrameworkCode)
+                            @if (apprenticeship.OtherBodyApprovalRequired == "Y")
                             {
-                                <span style="background-color: darkgray;color: white;padding: 5px;margin-left:10px">@apprenticeship.ApprenticeshipType.ToDescription()</span>
+                                <span class="govuk-hint">
+                                    You may need approval from the regulator of this occupation before you can deliver this training.<br />
+                                    The <a href="https://www.instituteforapprenticeships.org/developing-new-apprenticeships/resources/regulated-occupations/" target="_blank">Institute for Apprenticeships</a> can tell you more
+                                </span>
+
+
                             }
-                        </h3>
-                        @if (apprenticeship.OtherBodyApprovalRequired == "Y")
-                        {
-                    <span class="govuk-hint">
-                        You may need approval from the regulator of this occupation before you can deliver this training.<br />
-                        The <a href="https://www.instituteforapprenticeships.org/developing-new-apprenticeships/resources/regulated-occupations/" target="_blank">Institute for Apprenticeships</a> can tell you more
-                    </span>
 
-
-                        }
-
-                        @if (!string.IsNullOrEmpty(apprenticeship.NotionalNVQLevelv2))
-                        {
-                            <p class="govuk-body">Level: <span class="govuk-!-font-weight-bold">@apprenticeship.NotionalNVQLevelv2</span></p>
-                        }
-                        <p class="govuk-body">
-                            <a class="govuk-link" style="display:inline-flex"
-                               asp-controller="Apprenticeships"
-                               asp-action="Details"
-                               asp-route-apprenticeshiptitle="@apprenticeship.ApprenticeshipTitle"
-                               asp-route-id="@apprenticeship.id"
-                               asp-route-progtype="@apprenticeship.ProgType"
-                               asp-route-standardcode="@apprenticeship.StandardCode"
-                               asp-route-frameworkcode="@apprenticeship.FrameworkCode"
-                               asp-route-pathwaycode="@apprenticeship.PathwayCode"
-                               asp-route-version="@apprenticeship.Version"
-                               asp-route-NotionalNVQLevelv2="@apprenticeship.NotionalNVQLevelv2"
-                               asp-route-Mode="@ApprenticeshipMode.Add"
-                               asp-route-ApprenticeshipType="@apprenticeship.ApprenticeshipType">Choose this apprenticeship</a>
-                        </p>
-                    </div>
+                            @if (!string.IsNullOrEmpty(apprenticeship.NotionalNVQLevelv2))
+                            {
+                                <p class="govuk-body">Level: <span class="govuk-!-font-weight-bold">@apprenticeship.NotionalNVQLevelv2</span></p>
+                            }
+                            <p class="govuk-body">
+                                <a class="govuk-link" style="display:inline-flex"
+                                   asp-controller="Apprenticeships"
+                                   asp-action="Details"
+                                   asp-route-apprenticeshiptitle="@apprenticeship.ApprenticeshipTitle"
+                                   asp-route-id="@apprenticeship.id"
+                                   asp-route-progtype="@apprenticeship.ProgType"
+                                   asp-route-standardcode="@apprenticeship.StandardCode"
+                                   asp-route-frameworkcode="@apprenticeship.FrameworkCode"
+                                   asp-route-pathwaycode="@apprenticeship.PathwayCode"
+                                   asp-route-version="@apprenticeship.Version"
+                                   asp-route-NotionalNVQLevelv2="@apprenticeship.NotionalNVQLevelv2"
+                                   asp-route-Mode="@ApprenticeshipMode.Add"
+                                   asp-route-ApprenticeshipType="@apprenticeship.ApprenticeshipType">Choose this apprenticeship</a>
+                            </p>
+                        </div>
                 </div>
 
             }
