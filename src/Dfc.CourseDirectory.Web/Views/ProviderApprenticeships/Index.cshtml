@@ -69,11 +69,62 @@
         </div>
     </header>
 </div>
-
 <script>
-    (function($) {
-        $(function() {
+    (function ($) {
+        $(function () {
+            var $buttonSearch = $("#searchProviderApprenticeships");
+            var $elementSearchTerm = $("#ProviderApprenticeshipSearchTerm");
 
+
+
+            var doSearch = function () {
+                $(".cd-info-summary").hide();
+
+                var isNullOrWhitespace = function (input) {
+                    if (typeof input === 'undefined' || input == null) return true;
+                    return input.replace(/\s/g, '').length < 3;
+                }
+
+                var makeRequestWithPayload = function (payload, success) {
+                    console.log(payload);
+                    var qs = $.param(payload);
+                    qs = replaceAll(qs, "%5B%5D", "");
+                    $.get("/ProviderApprenticeships/ProviderApprenticeshipsSearch?" + qs, success);
+                };
+
+
+                var onSucess = function (data) {
+
+                    $('#results').html("");
+                    $('#results').html(data);
+                };
+
+                $.get("/ProviderApprenticeships/ProviderApprenticeshipsSearch?searchTerm=" + $elementSearchTerm.val(), onSucess);
+
+            };
+
+            $(document).keypress(function (e) {
+                if (e.which == 13) {
+                    e.preventDefault();
+                    doSearch();
+                }
+            });
+
+            var debounce = function (cb, delay) {
+                var inDebounce;
+                return function () {
+                    var context = this;
+                    var args = arguments;
+                    clearTimeout(inDebounce);
+                    inDebounce = setTimeout(function () {
+                            cb.apply(context, args);
+                        },
+                        delay);
+                };
+            };
+
+            $buttonSearch.on("click", doSearch);
+            $elementSearchTerm.on("keyup", debounce(doSearch, 400));
 
             var $apprenticeshipUpdatedlink = $("#apprenticeshiplink");
 
@@ -92,10 +143,6 @@
 
             };
 
-
-
-
-
             $apprenticeshipUpdatedlink.on("click",
                 function (event) {
                     event.preventDefault();
@@ -112,11 +159,11 @@
                     }
 
                 });
-
-
         });
     })(jQuery);
 </script>
+
+
 
 
 
