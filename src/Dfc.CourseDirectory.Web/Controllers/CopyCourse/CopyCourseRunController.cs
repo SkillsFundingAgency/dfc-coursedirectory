@@ -451,6 +451,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                             }
                             else
                             {
+                                copiedCourseRun.National = false;
                                 copiedCourseRun.Regions = model.SelectedRegions;
                                 string[] selectedRegions = availableRegions.SubRegionsDataCleanse(copiedCourseRun.Regions.ToList());
 
