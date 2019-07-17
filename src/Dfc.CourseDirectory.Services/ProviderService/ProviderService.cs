@@ -18,6 +18,7 @@ namespace Dfc.CourseDirectory.Services.ProviderService
     public class ProviderService : IProviderService
     {
         private readonly ILogger<ProviderService> _logger;
+        private readonly ProviderServiceSettings _settings;
         private readonly HttpClient _httpClient;
         private readonly Uri _getProviderByPRNUri;
         private readonly Uri _updateProviderByIdUri;
@@ -33,6 +34,7 @@ namespace Dfc.CourseDirectory.Services.ProviderService
             Throw.IfNull(settings, nameof(settings));
 
             _logger = logger;
+            _settings = settings.Value;
             _httpClient = httpClient;
 
             _getProviderByPRNUri = settings.Value.ToGetProviderByPRNUri();
@@ -50,8 +52,9 @@ namespace Dfc.CourseDirectory.Services.ProviderService
                 _logger.LogInformationObject("Provider search criteria.", criteria);
                 _logger.LogInformationObject("Provider search URI", _getProviderByPRNUri);
 
-                var content = new StringContent(criteria.ToJson(), Encoding.UTF8, "application/json");
-                var response = await _httpClient.PostAsync(_getProviderByPRNUri, content);
+                //var content = new StringContent(criteria.ToJson(), Encoding.UTF8, "application/json");
+                _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
+                var response = await _httpClient.GetAsync(_getProviderByPRNUri + $"?PRN={criteria.Search}");
 
                 _logger.LogHttpResponseMessage("Provider search service http response", response);
 
@@ -108,6 +111,7 @@ namespace Dfc.CourseDirectory.Services.ProviderService
                 var providerJson = JsonConvert.SerializeObject(provider);
 
                 var content = new StringContent(providerJson, Encoding.UTF8, "application/json");
+                _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
                 var response = await _httpClient.PostAsync(_updateProviderByIdUri, content);
 
                 _logger.LogHttpResponseMessage("Provider add service http response", response);
@@ -159,18 +163,21 @@ namespace Dfc.CourseDirectory.Services.ProviderService
                 var providerJson = JsonConvert.SerializeObject(provider);
 
                 var content = new StringContent(providerJson, Encoding.UTF8, "application/json");
+                _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
                 var response = await _httpClient.PostAsync(_updateProviderDetailsUri, content);
 
                 _logger.LogHttpResponseMessage("Provider update service http response", response);
 
                 if (response.IsSuccessStatusCode)
                 {
-                    var json = await response.Content.ReadAsStringAsync();
+                    // NOTE: There is no response content payload returned from this api - why? - don't know.
+                    // Therefore commenting this bit out as it will/does cause an exception down stream.
+                    //var json = await response.Content.ReadAsStringAsync();
 
-                    _logger.LogInformationObject("Provider update service json response", json);
+                    //_logger.LogInformationObject("Provider update service json response", json);
 
-
-                    var providerResult = JsonConvert.DeserializeObject<Provider>(json);
+                    // NOTE: deserialising the "providerJson" var set earlier to allow code down stream to run.
+                    var providerResult = JsonConvert.DeserializeObject<Provider>(providerJson);
 
 
                     return Result.Ok(providerResult);
@@ -202,16 +209,23 @@ namespace Dfc.CourseDirectory.Services.ProviderService
     {
         internal static Uri ToGetProviderByPRNUri(this IProviderServiceSettings extendee)
         {
-            return new Uri($"{extendee.ApiUrl + "GetProviderByPRN?code=" + extendee.ApiKey}");
+            var uri = new Uri(extendee.ApiUrl);
+            var trimmed = uri.AbsoluteUri.TrimEnd('/');
+            return new Uri($"{trimmed}/GetProviderByPRN");
         }
 
         internal static Uri ToUpdateProviderByIdUri(this IProviderServiceSettings extendee)
         {
-            return new Uri($"{extendee.ApiUrl + "UpdateProviderById?code=" + extendee.ApiKey}");
+            var uri = new Uri(extendee.ApiUrl);
+            var trimmed = uri.AbsoluteUri.TrimEnd('/');
+            return new Uri($"{trimmed}/UpdateProviderById");
         }
+
         internal static Uri ToUpdateProviderDetailsUri(this IProviderServiceSettings extendee)
         {
-            return new Uri($"{extendee.ApiUrl + "UpdateProviderDetails?code=" + extendee.ApiKey}");
+            var uri = new Uri(extendee.ApiUrl);
+            var trimmed = uri.AbsoluteUri.TrimEnd('/');
+            return new Uri($"{trimmed}/UpdateProviderDetails");
         }
     }
 
