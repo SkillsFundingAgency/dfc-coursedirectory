@@ -307,7 +307,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 if (!criteria.UKPRN.HasValue)
                     return Result.Fail<ICourseSearchResult>("Get your courses unknown UKRLP");
 
-                _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
+                _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey); 
                 var response = await _httpClient.GetAsync(new Uri(_getYourCoursesUri.AbsoluteUri + "?UKPRN=" + criteria.UKPRN));
 
                 _logger.LogHttpResponseMessage("Get your courses service http response", response);
