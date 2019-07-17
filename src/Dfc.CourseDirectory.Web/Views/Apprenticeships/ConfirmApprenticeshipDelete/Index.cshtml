@@ -21,13 +21,13 @@
             <table class="govuk-table">
                 <tbody class="govuk-table__body">
                 <tr class="govuk-table__row">
-                    <th class="govuk-table__header" scope="row">Apprenticeship name</th>
+                    <td class="govuk-table__header">Apprenticeship name</td>
                     <td class="govuk-table__cell">@Model.ApprenticeshipTitle</td>
                 </tr>
                 @if (Model.Level!=0)
                 {
                     <tr class="govuk-table__row">
-                        <th class="govuk-table__header" scope="row">Apprenticeship level</th>
+                        <td class="govuk-table__header" scope="row">Apprenticeship level</td>
                         <td class="govuk-table__cell">@Model.Level</td>
                     </tr>
                 }
@@ -45,11 +45,12 @@
             
             <div class="govuk-form-group">
                 <fieldset class="govuk-fieldset">
-                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
                         <h1 class="govuk-fieldset__heading">
+                            Please select
                         </h1>
                     </legend>
-                    <div class="govuk-radios govuk-!-margin-bottom-6" val-required-message="Select yes to delete?" id="ApprenticeshipConfirmDelete">
+                    <div class="govuk-radios govuk-!-margin-bottom-6" val-required-message="Select an option" id="ApprenticeshipConfirmDelete">
 
                         <div class="govuk-radios__item">
                             @Html.RadioButtonFor(m =>m.ApprenticeshipDelete, ApprenticeshipDelete.Delete, new { @class = "govuk-radios__input", id = ApprenticeshipDelete.Delete })
