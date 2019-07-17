@@ -27,9 +27,9 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Courses
         string Regions { get; set; }
         string SubRegions { get; set; }
         string CourseURL { get; set; }
-        decimal? Cost { get; set; }
+        string Cost { get; set; }
         string CostDescription { get; set; }
-        int? DurationValue { get; set; }
+        string DurationValue { get; set; }
         string DurationUnit { get; set; }
         string StudyMode { get; set; }
         string AttendancePattern { get; set; }
