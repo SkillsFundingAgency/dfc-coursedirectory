@@ -43,10 +43,23 @@
                                 </span>
                             </summary>
                             <div class="govuk-form-group">
-                                <h3><a class="govuk-link" id="SelectAll" region-id="@item.Id" href="#">Select all</a></h3>
+                                @{
+                                    var toggleStatus = "Select all";
+                                    var regionsSelected = item.SubRegion.Where(y => y.Checked.Value == true).Count();
+
+                                    if (regionsSelected > 0)
+                                    {
+                                        toggleStatus = "Clear all";
+                                    }
+
+                                }
+                                <h3><a class="govuk-link" id="SelectAll" region-id="@item.Id" href="#">@toggleStatus</a></h3>
                                 <div class="flex-container govuk-grid-row region-checkboxes" id="details-content-@item.Id" aria-hidden="true">
 
-                                    @{ var x = 0; }
+                                    @{
+                                        var x = 0;
+
+                                    }
                                     @foreach (var subregion in item.SubRegion)
                                     {
                                         x++;
