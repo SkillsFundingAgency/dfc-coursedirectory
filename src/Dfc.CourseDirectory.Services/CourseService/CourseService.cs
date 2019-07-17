@@ -29,7 +29,6 @@ namespace Dfc.CourseDirectory.Services.CourseService
     public class CourseService : ICourseService
     {
         private readonly ILogger<CourseService> _logger;
-        private readonly CourseServiceSettings _settings;
         private readonly HttpClient _httpClient;
         private readonly Uri _addCourseUri;
         private readonly Uri _getYourCoursesUri;
@@ -82,7 +81,6 @@ namespace Dfc.CourseDirectory.Services.CourseService
 
 
             _logger = logger;
-            _settings = settings.Value;
             _httpClient = httpClient;
 
             _addCourseUri = settings.Value.ToAddCourseUri();
@@ -150,8 +148,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
 
                 var content = new StringContent(criteria.ToJson(), Encoding.UTF8, "application/json");
 
-                _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
-                var response = await _httpClient.GetAsync(new Uri(_getCourseByIdUri.AbsoluteUri + "?id=" + criteria.Id));
+                var response = await _httpClient.GetAsync(new Uri(_getCourseByIdUri.AbsoluteUri + "&id=" + criteria.Id));
 
                 _logger.LogHttpResponseMessage("Get Course By Id service http response", response);
 
@@ -209,10 +206,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 StringContent content = new StringContent(JsonConvert.SerializeObject(criteria),
                                                           Encoding.UTF8,
                                                           "application/json");
-
-                _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
                 var response = await _httpClient.PostAsync(_providerSearchUri, content);
-
                 _logger.LogHttpResponseMessage("Provider search service http response", response);
 
                 if (response.IsSuccessStatusCode) {
@@ -258,9 +252,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 if (!criteria.UKPRN.HasValue)
                     return Result.Fail<ICourseSearchResult>("Get your courses unknown UKRLP");
 
-                _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
-                var response = await _httpClient.GetAsync(new Uri(_getYourCoursesUri.AbsoluteUri + "?UKPRN=" + criteria.UKPRN));
-
+                var response = await _httpClient.GetAsync(new Uri(_getYourCoursesUri.AbsoluteUri + "&UKPRN=" + criteria.UKPRN));
                 _logger.LogHttpResponseMessage("Get your courses service http response", response);
 
                 if (response.IsSuccessStatusCode)
@@ -360,9 +352,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 if (!criteria.UKPRN.HasValue)
                     return Result.Fail<IEnumerable<ICourseStatusCountResult>>("Get course counts unknown UKRLP");
 
-                _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
-                var response = await _httpClient.GetAsync(new Uri(_getCourseCountsByStatusForUKPRNUri.AbsoluteUri + "?UKPRN=" + criteria.UKPRN));
-
+                var response = await _httpClient.GetAsync(new Uri(_getCourseCountsByStatusForUKPRNUri.AbsoluteUri + "&UKPRN=" + criteria.UKPRN));
                 _logger.LogHttpResponseMessage("Get course counts service http response", response);
 
                 if (response.IsSuccessStatusCode)
@@ -409,9 +399,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 if (!criteria.UKPRN.HasValue)
                     return Result.Fail<IEnumerable<ICourse>>("Get recent course changes unknown UKRLP");
 
-                _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
-                var response = await _httpClient.GetAsync(new Uri(_getRecentCourseChangesByUKPRNUri.AbsoluteUri + "?UKPRN=" + criteria.UKPRN));
-
+                var response = await _httpClient.GetAsync(new Uri(_getRecentCourseChangesByUKPRNUri.AbsoluteUri + "&UKPRN=" + criteria.UKPRN));
                 _logger.LogHttpResponseMessage("Get recent course changes service http response", response);
 
                 if (response.IsSuccessStatusCode)
@@ -494,7 +482,6 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 var courseJson = JsonConvert.SerializeObject(course);
 
                 var content = new StringContent(courseJson, Encoding.UTF8, "application/json");
-                _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
                 var response = await _httpClient.PostAsync(_addCourseUri, content);
 
                 _logger.LogHttpResponseMessage("Course add service http response", response);
@@ -551,7 +538,6 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 var courseJson = JsonConvert.SerializeObject(course);
 
                 var content = new StringContent(courseJson, Encoding.UTF8, "application/json");
-                _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
                 var response = await _httpClient.PostAsync(_updateCourseUri, content);
 
                 _logger.LogHttpResponseMessage("Course update service http response", response);
@@ -867,8 +853,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
         {
             Throw.IfNull(UKPRN, nameof(UKPRN));
 
-            _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
-            var response = await _httpClient.GetAsync(new Uri(_archiveLiveCoursesUri.AbsoluteUri + "?UKPRN=" + UKPRN));
+            var response = await _httpClient.GetAsync(new Uri(_archiveLiveCoursesUri.AbsoluteUri + "&UKPRN=" + UKPRN));
             _logger.LogHttpResponseMessage("Archive courses service http response", response);
 
             if (response.IsSuccessStatusCode)
@@ -888,8 +873,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             Throw.IfNull(CurrentStatus, nameof(CurrentStatus));
             Throw.IfNull(StatusToBeChangedTo, nameof(StatusToBeChangedTo));
 
-            _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
-            var response = await _httpClient.GetAsync(new Uri(_changeCourseRunStatusesForUKPRNSelectionUri.AbsoluteUri + "?UKPRN=" + UKPRN + "&CurrentStatus=" + CurrentStatus + "&StatusToBeChangedTo=" + StatusToBeChangedTo));
+            var response = await _httpClient.GetAsync(new Uri(_changeCourseRunStatusesForUKPRNSelectionUri.AbsoluteUri + "&UKPRN=" + UKPRN + "&CurrentStatus=" + CurrentStatus + "&StatusToBeChangedTo=" + StatusToBeChangedTo));
             _logger.LogHttpResponseMessage("Archive courses service http response", response);
 
             if (response.IsSuccessStatusCode)
@@ -908,7 +892,6 @@ namespace Dfc.CourseDirectory.Services.CourseService
             Throw.IfLessThan(0, statusToUpdateTo, nameof(statusToUpdateTo));
             Throw.IfGreaterThan(Enum.GetValues(typeof(RecordStatus)).Cast<int>().Max(), statusToUpdateTo, nameof(statusToUpdateTo));
 
-            _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
             var response = await _httpClient.GetAsync(new Uri(_updateStatusUri.AbsoluteUri
                 + "&CourseId=" + courseId
                 + "&CourseRunId=" + courseRunId
@@ -929,9 +912,8 @@ namespace Dfc.CourseDirectory.Services.CourseService
         {
             Throw.IfLessThan(0, UKPRN, nameof(UKPRN));
 
-            _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
             var response = await _httpClient.GetAsync(new Uri(_deleteBulkUploadCoursesUri.AbsoluteUri
-                + "?UKPRN=" + UKPRN));
+                + "&UKPRN=" + UKPRN));
             _logger.LogHttpResponseMessage("Delete Bulk Upload Course Status http response", response);
 
             if (response.IsSuccessStatusCode)
@@ -954,8 +936,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             {
                 _logger.LogInformationObject("Get your courses URI", _getYourCoursesUri);
 
-                _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
-                var response = await _httpClient.GetAsync(new Uri(_getCourseMigrationReportByUKPRN.AbsoluteUri + "?UKPRN=" + UKPRN));
+                var response = await _httpClient.GetAsync(new Uri(_getCourseMigrationReportByUKPRN.AbsoluteUri + "&UKPRN=" + UKPRN));
                 _logger.LogHttpResponseMessage("Get course migration report service http response", response);
 
                 if (response.IsSuccessStatusCode)
@@ -1017,96 +998,58 @@ namespace Dfc.CourseDirectory.Services.CourseService
     {
         internal static Uri ToAddCourseUri(this ICourseServiceSettings extendee)
         {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/AddCourse");
+            return new Uri($"{extendee.ApiUrl + "AddCourse?code=" + extendee.ApiKey}");
         }
-
         internal static Uri ToGetYourCoursesUri(this ICourseServiceSettings extendee)
         {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/GetCoursesByLevelForUKPRN");
+            return new Uri($"{extendee.ApiUrl + "GetCoursesByLevelForUKPRN?code=" + extendee.ApiKey}");
         }
-
         internal static Uri ToUpdateCourseUri(this ICourseServiceSettings extendee)
         {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/UpdateCourse");
+            return new Uri($"{extendee.ApiUrl + "UpdateCourse?code=" + extendee.ApiKey}");
         }
-
         internal static Uri ToGetCourseByIdUri(this ICourseServiceSettings extendee)
         {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/GetCourseById");
+            return new Uri($"{extendee.ApiUrl + "GetCourseById?code=" + extendee.ApiKey}");
         }
-
         internal static Uri ToArchiveLiveCoursesUri(this ICourseServiceSettings extendee)
         {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/ArchiveProvidersLiveCourses");
+            return new Uri($"{extendee.ApiUrl + "ArchiveProvidersLiveCourses?code=" + extendee.ApiKey}");
         }
-
         internal static Uri ToUpdateStatusUri(this ICourseServiceSettings extendee)
         {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/UpdateStatus");
+            return new Uri($"{extendee.ApiUrl + "UpdateStatus?code=" + extendee.ApiKey}");
         }
-
         internal static Uri ToGetCourseCountsByStatusForUKPRNUri(this ICourseServiceSettings extendee)
         {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/GetCourseCountsByStatusForUKPRN");
+            return new Uri($"{extendee.ApiUrl + "GetCourseCountsByStatusForUKPRN?code=" + extendee.ApiKey}");
         }
-
         internal static Uri ToGetRecentCourseChangesByUKPRNUri(this ICourseServiceSettings extendee)
         {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/GetRecentCourseChangesByUKPRN");
+            return new Uri($"{extendee.ApiUrl + "GetRecentCourseChangesByUKPRN?code=" + extendee.ApiKey}");
         }
-
         internal static Uri ToChangeCourseRunStatusesForUKPRNSelectionUri(this ICourseServiceSettings extendee)
         {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/ChangeCourseRunStatusesForUKPRNSelection");
+            return new Uri($"{extendee.ApiUrl + "ChangeCourseRunStatusesForUKPRNSelection?code=" + extendee.ApiKey}");
         }
-
         internal static Uri ToDeleteBulkUploadCoursesUri(this ICourseServiceSettings extendee)
         {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/DeleteBulkUploadCourses");
+            return new Uri($"{extendee.ApiUrl + "DeleteBulkUploadCourses?code=" + extendee.ApiKey}");
         }
-
         internal static Uri ToGetCourseMigrationReportByUKPRN(this ICourseServiceSettings extendee)
         {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/GetCourseMigrationReportByUKPRN");
+            return new Uri($"{extendee.ApiUrl + "GetCourseMigrationReportByUKPRN?code=" + extendee.ApiKey}");
         }
     }
-
     internal static class FindACourseServiceSettingsExtensions
     {
         internal static Uri ToFindACourseSearchUri(this IFindACourseServiceSettings extendee)
         {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/search");
+            return new Uri($"{extendee.ApiUrl}search");
         }
-
         internal static Uri ToProviderSearchUri(this IFindACourseServiceSettings extendee)
         {
-            var uri = new Uri(extendee.ApiUrl);
-            var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/providersearch");
+            return new Uri($"{extendee.ApiUrl}providersearch");
         }
     }
 }
