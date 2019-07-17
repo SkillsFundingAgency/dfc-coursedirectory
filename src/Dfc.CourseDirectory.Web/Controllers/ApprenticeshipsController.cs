@@ -832,34 +832,46 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 DeliveryOptionsCombinedViewModel.DeliveryOptionsListItemModel.DeliveryOptionsListItemModel = list;
             }
 
-            var venue = _venueService.GetVenueByIdAsync(new GetVenueByIdCriteria(model.LocationId.Value.ToString()));
-
-            string deliveryMethod = string.Empty;
-
-            if (model.BlockRelease && model.DayRelease)
+            if (model.LocationId.HasValue)
             {
-                deliveryMethod = "Employer address, Day release, Block release";
+                var venue = _venueService.GetVenueByIdAsync(
+                    new GetVenueByIdCriteria(model.LocationId.Value.ToString()));
+
+                string deliveryMethod = string.Empty;
+
+                if (model.BlockRelease && model.DayRelease)
+                {
+                    deliveryMethod = "Employer address, Day release, Block release";
+                }
+                else
+                {
+                    deliveryMethod = model.DayRelease
+                        ? "Employer address, Day release"
+                        : "Employer address, Block release";
+                }
+
+                DeliveryOptionsCombinedViewModel.DeliveryOptionsListItemModel.DeliveryOptionsListItemModel.Add(
+                    new DeliveryOptionsListItemModel()
+                    {
+                        Delivery = deliveryMethod,
+                        LocationId = venue.Result.Value.ID.ToString(),
+                        LocationName = venue.Result.Value.VenueName,
+                        PostCode = venue.Result.Value.PostCode,
+                        Radius = model.Radius,
+                        National = model.National
+
+                    });
+
+                DeliveryOptionsCombinedViewModel.Mode = model.Mode;
+
+                _session.SetObject("DeliveryOptionsCombinedViewModel", DeliveryOptionsCombinedViewModel);
+
+                return RedirectToAction("DeliveryOptionsCombined", "Apprenticeships", new { Mode = model.Mode });
             }
-            else
-            {
-                deliveryMethod = model.DayRelease ? "Employer address, Day release" : "Employer address, Block release";
-            }
 
-            DeliveryOptionsCombinedViewModel.DeliveryOptionsListItemModel.DeliveryOptionsListItemModel.Add(new DeliveryOptionsListItemModel()
-            {
-                Delivery = deliveryMethod,
-                LocationId = venue.Result.Value.ID.ToString(),
-                LocationName = venue.Result.Value.VenueName,
-                PostCode = venue.Result.Value.PostCode,
-                Radius = model.Radius,
-                National = model.National
-
-            });
-
-            DeliveryOptionsCombinedViewModel.Mode = model.Mode;
             _session.SetObject("DeliveryOptionsCombinedViewModel", DeliveryOptionsCombinedViewModel);
 
-            return RedirectToAction("DeliveryOptionsCombined", "Apprenticeships", new { Mode = model.Mode });
+            return RedirectToAction("Summary", "Apprenticeships", new { Mode = model.Mode });
         }
 
         [Authorize]
@@ -928,43 +940,47 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 DeliveryOptionsViewModel.DeliveryOptionsListItemModel.DeliveryOptionsListItemModel = list;
             }
 
-            var venue = _venueService.GetVenueByIdAsync(new GetVenueByIdCriteria(model.LocationId.Value.ToString()));
-
-            string deliveryMethod = string.Empty;
-
-            if (model.BlockRelease && model.DayRelease)
+            if (model.LocationId.HasValue)
             {
-                deliveryMethod = "Day release, Block release";
+                var venue = _venueService.GetVenueByIdAsync(
+                    new GetVenueByIdCriteria(model.LocationId.Value.ToString()));
+
+                string deliveryMethod = string.Empty;
+
+                if (model.BlockRelease && model.DayRelease)
+                {
+                    deliveryMethod = "Day release, Block release";
+                }
+                else
+                {
+                    deliveryMethod = model.DayRelease ? "Day release" : "Block release";
+                }
+
+                DeliveryOptionsViewModel.DeliveryOptionsListItemModel.DeliveryOptionsListItemModel.Add(
+                    new DeliveryOptionsListItemModel()
+                    {
+                        Delivery = deliveryMethod,
+                        LocationId = venue.Result.Value.ID.ToString(),
+                        LocationName = venue.Result.Value.VenueName,
+                        PostCode = venue.Result.Value.PostCode
+
+                    });
+
+                DeliveryOptionsViewModel.Mode = model.Mode;
+
+                _session.SetObject("DeliveryOptionsViewModel", DeliveryOptionsViewModel);
+
+                return RedirectToAction("DeliveryOptions", "Apprenticeships", new { Mode = model.Mode });
             }
-            else
-            {
-                deliveryMethod = model.DayRelease ? "Day release" : "Block release";
-            }
-
-            DeliveryOptionsViewModel.DeliveryOptionsListItemModel.DeliveryOptionsListItemModel.Add(new DeliveryOptionsListItemModel()
-            {
-                Delivery = deliveryMethod,
-                LocationId = venue.Result.Value.ID.ToString(),
-                LocationName = venue.Result.Value.VenueName,
-                PostCode = venue.Result.Value.PostCode
-
-            });
-
-            DeliveryOptionsViewModel.Mode = model.Mode;
 
             _session.SetObject("DeliveryOptionsViewModel", DeliveryOptionsViewModel);
 
-            return RedirectToAction("DeliveryOptions", "Apprenticeships", new{Mode = model.Mode});
+            return RedirectToAction("Summary", "Apprenticeships", new { Mode = model.Mode });
         }
 
         public IActionResult Continue(string LocationId, bool DayRelease, bool BlockRelease, int RowCount, ApprenticeshipMode Mode)
         {
-            //if (RowCount >= 1)
-            //{
 
-            //}
-            //else
-            //{
             var DeliveryOptionsViewModel = _session.GetObject<DeliveryOptionsViewModel>("DeliveryOptionsViewModel");
 
             if (DeliveryOptionsViewModel == null)
