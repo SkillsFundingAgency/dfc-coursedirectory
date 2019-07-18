@@ -1,0 +1,83 @@
+pool:
+  name: Continuous Integration 02 - SSD - 160ACU
+  demands:
+  - azureps
+  - npm
+  - node.js
+
+variables:
+  BuildPlatform: 'any cpu'
+  BuildConfiguration: 'release'
+  group: dfc-findacourse-build
+
+resources:
+  repositories:
+  - repository: self
+  - repository: dfc-devops
+    type: github
+    name: SkillsFundingAgency/dfc-devops
+    endpoint: 'GitHub (ESFA)'
+    ref: refs/tags/v1.5.0
+
+trigger:
+  batch: true
+  branches:
+    include:
+    - master
+    - dev
+
+pr:
+  branches:
+    include:
+    - master
+    - dev
+
+steps:
+
+# ARM template
+- template: AzureDevOpsTemplates/Build/dfc-arm-build.yml@dfc-devops
+  parameters:
+    ArmTemplateRoot: '$(System.DefaultWorkingDirectory)\Resources\ArmTemplates'
+
+- task: Npm@1
+  displayName: 'npm install'
+  inputs:
+    workingDir: 'src/Dfc.CourseDirectory.Web'
+    verbose: false
+
+- task: Gulp@0
+  displayName: 'Gulp '
+  inputs:
+    gulpFile: 'src/Dfc.CourseDirectory.Web/gulpfile.js'
+    targets: 'prod'
+
+# restore
+- task: DotNetCoreCLI@2
+  displayName: dotnet restore
+  inputs:
+    command: restore
+    projects: '**/*.csproj'
+
+# build
+- task: DotNetCoreCLI@2
+  displayName: dotnet build
+  inputs:
+    command: build
+    projects: '**/*.csproj'
+    configuration: ${{ variables.buildConfiguration }}
+
+# Test 
+- task: DotNetCoreCLI@2
+  displayName: Test
+  inputs:
+    command: test
+    projects: 'tests/*Tests/*.csproj'
+    arguments: '--configuration $(BuildConfiguration)'
+  continueOnError: true
+
+# Publish
+- task: PublishBuildArtifacts@1
+  displayName: Publish Artifact
+  inputs:
+     pathtoPublish: $(Build.ArtifactStagingDirectory)
+     artifactName: Dfc.CourseDirectory
