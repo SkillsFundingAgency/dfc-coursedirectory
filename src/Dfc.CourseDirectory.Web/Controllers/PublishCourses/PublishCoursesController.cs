@@ -1,18 +1,11 @@
 ﻿
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Models.Enums;
-using Dfc.CourseDirectory.Models.Interfaces.Courses;
 using Dfc.CourseDirectory.Models.Models.Courses;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.BlobStorageService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
-using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.ViewModels.BulkUpload;
 using Dfc.CourseDirectory.Web.ViewModels.PublishCourses;
@@ -20,6 +13,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 
 namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
@@ -85,27 +82,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                         return View("../Migration/Complete/index");
                     }
 
-                    //if (Courses.Any(x => x.CourseStatus != RecordStatus.MigrationPending && x.CourseStatus != RecordStatus.MigrationReadyToGoLive))
-                    //{
-                    //    return View("../Migration/Complete/index");
-                    //}
-                    //if (Courses.All(x=>x.CourseStatus != RecordStatus.MigrationPending && x.CourseStatus != RecordStatus.MigrationReadyToGoLive))
-                    //{
-                    //    return View("../Migration/Complete/index");
-                    //}
-                    //TODO replace with call to service to return by status
-                    //vm.PublishMode = PublishMode.Migration;
-                    //var migratedCourses = Courses.Where(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.MigrationPending || cr.RecordStatus == RecordStatus.MigrationReadyToGoLive)).ToList();
-                    //vm.NumberOfCoursesInFiles = migratedCourses.SelectMany(s => s.CourseRuns.Where(cr => cr.RecordStatus == RecordStatus.MigrationPending || cr.RecordStatus == RecordStatus.MigrationReadyToGoLive)).Count();
-                    //vm.Courses = migratedCourses.OrderBy(x=>x.QualificationCourseTitle);
-                    //vm.AreAllReadyToBePublished = CheckAreAllReadyToBePublished(migratedCourses, PublishMode.Migration);
-                    //vm.Courses = GetErrorMessages(vm.Courses, ValidationMode.MigrateCourse);
-                    //vm.Venues = GetVenueNames(vm.Courses);
-                    //break;
-
                 case PublishMode.BulkUpload:
 
-                    //TODO replace with call to service to return by status
                     vm.PublishMode = PublishMode.BulkUpload;
                     var bulkUploadedCourses = Courses.Where(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.BulkUploadPending || cr.RecordStatus == RecordStatus.BulkUploadReadyToGoLive)).ToList();
                     vm.NumberOfCoursesInFiles = bulkUploadedCourses.SelectMany(s => s.CourseRuns.Where(cr => cr.RecordStatus == RecordStatus.BulkUploadPending || cr.RecordStatus == RecordStatus.BulkUploadReadyToGoLive)).Count();
@@ -163,10 +141,10 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                     var message = "";
                     if (fromBulkUpload)
                     {
-                        var bulkUploadedPendingCourses = Courses.SelectMany(c => c.CourseRuns)
+                        var invalidCourseCount = Courses.Where(x => x.IsValid == false).Count();
+                        var bulkUploadedPendingCourses = (Courses.SelectMany(c => c.CourseRuns)
                                            .Where(x => x.RecordStatus == RecordStatus.BulkUploadPending)
-                                           .Count();
-                        //var bulkUploadedPendingCourses = Courses.Where(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.BulkUploadPending)).Count();
+                                           .Count() + invalidCourseCount);
                         message = "Your file contained " + bulkUploadedPendingCourses + @WebHelper.GetErrorTextValueToUse(bulkUploadedPendingCourses) + ". You must fix all errors before your courses can be published to the directory.";
                         return RedirectToAction("WhatDoYouWantToDoNext", "Bulkupload", new { message = message });
                     }
@@ -208,9 +186,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
 
                 case PublishMode.BulkUpload:
 
-                    //not sure what to do with result or if these fail?
-                    var deleteMigrationPendingResult = await _courseService.ChangeCourseRunStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.MigrationPending, (int)RecordStatus.Archived);
-                    var deleteMigrationReadyToGoLiveResult = await _courseService.ChangeCourseRunStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.MigrationReadyToGoLive, (int)RecordStatus.Archived);
+                    await _courseService.ChangeCourseRunStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.MigrationPending, (int)RecordStatus.Archived);
+                    await _courseService.ChangeCourseRunStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.MigrationReadyToGoLive, (int)RecordStatus.Archived);
 
                     //Archive any existing courses
                     var resultArchivingCourses = await _courseService.ChangeCourseRunStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.Live, (int)RecordStatus.Archived);
@@ -229,7 +206,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                     }
 
                 default:
-                    // TODO: We should have generic error handling page
                     return RedirectToAction("Index", "Home", new { errmsg = "Publish All BulkUpload/Migration Error" });
             }            
         }
