@@ -20,6 +20,7 @@ namespace Dfc.CourseDirectory.Services.VenueService
     public class VenueService : IVenueService
     {
         private readonly ILogger<VenueService> _logger;
+        private readonly VenueServiceSettings _settings;
         private readonly HttpClient _httpClient;
         private readonly Uri _getVenueByIdUri;
         private readonly Uri _getVenueByVenueIdUri;
@@ -39,6 +40,7 @@ namespace Dfc.CourseDirectory.Services.VenueService
             Throw.IfNull(settings, nameof(settings));
 
             _logger = logger;
+            _settings = settings.Value;
             _httpClient = httpClient;
 
             _getVenueByIdUri = settings.Value.ToGetVenueByIdUri();
@@ -63,6 +65,7 @@ namespace Dfc.CourseDirectory.Services.VenueService
                 var venueJson = JsonConvert.SerializeObject(venue);
 
                 var content = new StringContent(venueJson, Encoding.UTF8, "application/json");
+                _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
                 var response = await _httpClient.PostAsync(_updateVenueUri, content);
 
                 _logger.LogHttpResponseMessage("Venue add service http response", response);
@@ -112,9 +115,8 @@ namespace Dfc.CourseDirectory.Services.VenueService
                 _logger.LogInformationObject("Get Venue By Id criteria.", criteria);
                 _logger.LogInformationObject("Get Venue By Id URI", _getVenueByIdUri);
 
-                var content = new StringContent(criteria.ToJson(), Encoding.UTF8, "application/json");
-                
-                var response = await _httpClient.PostAsync(_getVenueByIdUri, content);
+                _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
+                var response = await _httpClient.GetAsync(_getVenueByIdUri.AbsoluteUri + $"?id={criteria.Id}");
 
                 _logger.LogHttpResponseMessage("Get Venue By Id service http response", response);
 
@@ -130,7 +132,7 @@ namespace Dfc.CourseDirectory.Services.VenueService
                     };
                     var venue = JsonConvert.DeserializeObject<Venue>(json, settings);
 
-                   
+
                     return Result.Ok<IVenue>(venue);
                 }
                 else
@@ -161,38 +163,49 @@ namespace Dfc.CourseDirectory.Services.VenueService
             Throw.IfNull(criteria, nameof(criteria));
             _logger.LogMethodEnter();
 
-            try {
+            try
+            {
                 _logger.LogInformationObject("Get Venue By VenueId criteria.", criteria);
                 _logger.LogInformationObject("Get Venue By VenueId URI", _getVenueByVenueIdUri);
 
-                var content = new StringContent(criteria.ToJson(), Encoding.UTF8, "application/json");
-                var response = await _httpClient.PostAsync(_getVenueByVenueIdUri, content);
+                _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
+                var response = await _httpClient.GetAsync(_getVenueByVenueIdUri + $"?venueId={criteria.venueId}");
                 _logger.LogHttpResponseMessage("Get Venue By VenueId service http response", response);
 
-                if (response.IsSuccessStatusCode) {
+                if (response.IsSuccessStatusCode)
+                {
                     var json = await response.Content.ReadAsStringAsync();
                     _logger.LogInformationObject("Get Venue By VenueId service json response", json);
 
-                    var settings = new JsonSerializerSettings {
+                    var settings = new JsonSerializerSettings
+                    {
                         ContractResolver = new VenueSearchResultContractResolver()
                     };
                     var venue = JsonConvert.DeserializeObject<Venue>(json, settings);
 
                     return Result.Ok<IVenue>(venue);
 
-                } else {
+                }
+                else
+                {
                     return Result.Fail<IVenue>("Get Venue By VenueId service unsuccessful http response");
                 }
 
-            } catch (HttpRequestException hre) {
+            }
+            catch (HttpRequestException hre)
+            {
                 _logger.LogException("Get Venue By VenueId service http request error", hre);
                 return Result.Fail<IVenue>("Get Venue By VenueId service http request error.");
 
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 _logger.LogException("Get Venue By VenueId service unknown error.", e);
                 return Result.Fail<IVenue>("Get Venue By VenueId service unknown error.");
 
-            } finally {
+            }
+            finally
+            {
                 _logger.LogMethodExit();
             }
         }
@@ -202,38 +215,49 @@ namespace Dfc.CourseDirectory.Services.VenueService
             Throw.IfNull(criteria, nameof(criteria));
             _logger.LogMethodEnter();
 
-            try {
+            try
+            {
                 _logger.LogInformationObject("Get Venue By LocationId criteria.", criteria);
                 _logger.LogInformationObject("Get Venue By LocationId URI", _getVenueByLocationIdUri);
 
-                var content = new StringContent(criteria.ToJson(), Encoding.UTF8, "application/json");
-                var response = await _httpClient.PostAsync(_getVenueByLocationIdUri, content);
+                _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
+                var response = await _httpClient.GetAsync(_getVenueByLocationIdUri + $"?LocationId={criteria.LocationId}");
                 _logger.LogHttpResponseMessage("Get Venue By LocationId service http response", response);
 
-                if (response.IsSuccessStatusCode) {
+                if (response.IsSuccessStatusCode)
+                {
                     var json = await response.Content.ReadAsStringAsync();
                     _logger.LogInformationObject("Get Venue By LocationId service json response", json);
 
-                    var settings = new JsonSerializerSettings {
+                    var settings = new JsonSerializerSettings
+                    {
                         ContractResolver = new VenueSearchResultContractResolver()
                     };
                     var venue = JsonConvert.DeserializeObject<Venue>(json, settings);
 
                     return Result.Ok<IVenue>(venue);
 
-                } else {
+                }
+                else
+                {
                     return Result.Fail<IVenue>("Get Venue By LocationId service unsuccessful http response");
                 }
 
-            } catch (HttpRequestException hre) {
+            }
+            catch (HttpRequestException hre)
+            {
                 _logger.LogException("Get Venue By LocationId service http request error", hre);
                 return Result.Fail<IVenue>("Get Venue By LocationId service http request error.");
 
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 _logger.LogException("Get Venue By LocationId service unknown error.", e);
                 return Result.Fail<IVenue>("Get Venue By LocationId service unknown error.");
 
-            } finally {
+            }
+            finally
+            {
                 _logger.LogMethodExit();
             }
         }
@@ -248,37 +272,47 @@ namespace Dfc.CourseDirectory.Services.VenueService
                 _logger.LogInformationObject("Get Venue By PRN & Name criteria.", criteria);
                 _logger.LogInformationObject("Get Venue By PRN & Name URI", _getVenueByPRNAndNameUri);
 
-                StringContent content = new StringContent(criteria.ToJson(), Encoding.UTF8, "application/json");
-                HttpResponseMessage response = await _httpClient.PostAsync(_getVenueByPRNAndNameUri, content);
+                //StringContent content = new StringContent(criteria.ToJson(), Encoding.UTF8, "application/json");
+                _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
+                HttpResponseMessage response = await _httpClient.GetAsync(_getVenueByPRNAndNameUri + $"?prn={criteria.PRN}&name={criteria.Name}");
 
                 _logger.LogHttpResponseMessage("Get Venue By PRN and Name service http response", response);
-                if (response.IsSuccessStatusCode) {
+                if (response.IsSuccessStatusCode)
+                {
                     string json = await response.Content.ReadAsStringAsync();
                     _logger.LogInformationObject("Venue search service json response", json);
 
                     if (string.IsNullOrEmpty(json))
                         json = "[]";
 
-                    JsonSerializerSettings settings = new JsonSerializerSettings {
+                    JsonSerializerSettings settings = new JsonSerializerSettings
+                    {
                         ContractResolver = new VenueSearchResultContractResolver()
                     };
                     IEnumerable<Venue> venues = JsonConvert.DeserializeObject<IEnumerable<Venue>>(json, settings);
                     return Result.Ok<IVenueSearchResult>(new VenueSearchResult(venues));
 
-                } else {
+                }
+                else
+                {
                     return Result.Fail<IVenueSearchResult>("Get Venue By PRN & Name service unsuccessful http response");
                 }
             }
 
-            catch (HttpRequestException hre) {
+            catch (HttpRequestException hre)
+            {
                 _logger.LogException("Get Venue By PRN and Name service http request error", hre);
                 return Result.Fail<IVenueSearchResult>("Get Venue By PRN and Name service http request error.");
 
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 _logger.LogException("Get Venue By PRN and Name service unknown error.", e);
                 return Result.Fail<IVenueSearchResult>("Get Venue By PRN and Name service unknown error.");
 
-            } finally {
+            }
+            finally
+            {
                 _logger.LogMethodExit();
             }
         }
@@ -293,12 +327,12 @@ namespace Dfc.CourseDirectory.Services.VenueService
                 _logger.LogInformationObject("Venue search criteria.", criteria);
                 _logger.LogInformationObject("Venue search URI", _searchVenueUri);
 
-                var content = new StringContent(criteria.ToJson(), Encoding.UTF8, "application/json");
-                var response = await _httpClient.PostAsync(_searchVenueUri, content);
+                _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
+                var response = await _httpClient.GetAsync(_searchVenueUri + $"?prn={criteria.Search}");
 
                 _logger.LogHttpResponseMessage("Venue search service http response", response);
 
-                if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+                if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
                     return Result.Ok<IVenueSearchResult>(new VenueSearchResult(new List<Venue>()));
 
                 if (response.IsSuccessStatusCode)
@@ -311,7 +345,6 @@ namespace Dfc.CourseDirectory.Services.VenueService
                     {
                         ContractResolver = new VenueSearchResultContractResolver()
                     };
-                    //var venues = JsonConvert.DeserializeObject<IEnumerable<Venue>>(json, settings).Where(x => x.Status == VenueStatus.Live || x.Status == VenueStatus.Imported).OrderBy(x => x.VenueName).ToList();
                     var venues = JsonConvert.DeserializeObject<IEnumerable<Venue>>(json, settings).OrderBy(x => x.VenueName).ToList();
 
                     if (!String.IsNullOrEmpty(criteria.NewAddressId))
@@ -326,7 +359,9 @@ namespace Dfc.CourseDirectory.Services.VenueService
                     var searchResult = new VenueSearchResult(venues);
                     return Result.Ok<IVenueSearchResult>(searchResult);
 
-                } else {
+                }
+                else
+                {
                     return Result.Fail<IVenueSearchResult>("Venue search service unsuccessful http response");
                 }
             }
@@ -362,6 +397,7 @@ namespace Dfc.CourseDirectory.Services.VenueService
                 var venueJson = JsonConvert.SerializeObject(venue);
 
                 var content = new StringContent(venueJson, Encoding.UTF8, "application/json");
+                _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
                 var response = await _httpClient.PostAsync(_addVenueUri, content);
 
                 _logger.LogHttpResponseMessage("Venue add service http response", response);
@@ -399,42 +435,56 @@ namespace Dfc.CourseDirectory.Services.VenueService
 
         }
     }
-    
+
     internal static class VenueServiceSettingsExtensions
     {
         internal static Uri ToUpdateVenueUrl(this VenueServiceSettings extendee)
         {
-            return new Uri($"{extendee.ApiUrl + "UpdateVenueById?code=" + extendee.ApiKey}");
+            var uri = new Uri(extendee.ApiUrl);
+            var trimmed = uri.AbsoluteUri.TrimEnd('/');
+            return new Uri($"{trimmed}/UpdateVenueById");
         }
 
         internal static Uri ToGetVenueByIdUri(this VenueServiceSettings extendee)
         {
-            return new Uri($"{extendee.ApiUrl + "getvenuebyid?code=" + extendee.ApiKey}");
+            var uri = new Uri(extendee.ApiUrl);
+            var trimmed = uri.AbsoluteUri.TrimEnd('/');
+            return new Uri($"{trimmed}/GetVenueById");
         }
 
         internal static Uri ToGetVenueByVenueIdUri(this VenueServiceSettings extendee)
         {
-            return new Uri($"{extendee.ApiUrl + "GetVenueByVenueId?code=" + extendee.ApiKey}");
+            var uri = new Uri(extendee.ApiUrl);
+            var trimmed = uri.AbsoluteUri.TrimEnd('/');
+            return new Uri($"{trimmed}/GetVenueByVenueId");
         }
 
         internal static Uri ToGetVenueByLocationIdUri(this VenueServiceSettings extendee)
         {
-            return new Uri($"{extendee.ApiUrl + "GetVenueByLocationId?code=" + extendee.ApiKey}");
+            var uri = new Uri(extendee.ApiUrl);
+            var trimmed = uri.AbsoluteUri.TrimEnd('/');
+            return new Uri($"{trimmed}/GetVenueByLocationId");
         }
 
         internal static Uri ToGetVenuesByPRNAndNameUri(this VenueServiceSettings extendee)
         {
-            return new Uri($"{extendee.ApiUrl + "GetVenuesByPRNAndName?code=" + extendee.ApiKey}");
+            var uri = new Uri(extendee.ApiUrl);
+            var trimmed = uri.AbsoluteUri.TrimEnd('/');
+            return new Uri($"{trimmed}/GetVenuesByPRNAndName");
         }
 
         internal static Uri ToSearchVenueUri(this VenueServiceSettings extendee)
         {
-            return new Uri($"{extendee.ApiUrl + "GetVenuesByPRN?code=" + extendee.ApiKey}");
+            var uri = new Uri(extendee.ApiUrl);
+            var trimmed = uri.AbsoluteUri.TrimEnd('/');
+            return new Uri($"{trimmed}/GetVenuesByPRN");
         }
 
         internal static Uri ToAddVenueUri(this VenueServiceSettings extendee)
         {
-            return new Uri($"{extendee.ApiUrl + "addvenue?code=" + extendee.ApiKey}");
+            var uri = new Uri(extendee.ApiUrl);
+            var trimmed = uri.AbsoluteUri.TrimEnd('/');
+            return new Uri($"{trimmed}/AddVenue");
         }
     }
 
@@ -501,7 +551,8 @@ namespace Dfc.CourseDirectory.Services.VenueService
     {
         internal static string ToJson(this IGetVenueByLocationIdCriteria extendee)
         {
-            GetVenueByLocationIdJson json = new GetVenueByLocationIdJson {
+            GetVenueByLocationIdJson json = new GetVenueByLocationIdJson
+            {
                 LocationId = extendee.LocationId
             };
             return JsonConvert.SerializeObject(json);
