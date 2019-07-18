@@ -13,82 +13,93 @@
 <a asp-controller="Provider" asp-action="Details" class="govuk-back-link">Back</a>
 <form asp-controller="Provider" asp-action="AddOrEditDetails" id="editProviderDetails" onkeypress="return event.keyCode != 13;">
 
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-                <span class="govuk-caption-xl">Course Directory</span>
-                <h1 class="govuk-heading-xl">Edit your details</h1>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-xl">Course Directory</span>
+            <h1 class="govuk-heading-xl">Edit your details</h1>
 
-                <div id="errorsummary" class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary" style="display: none;">
-                    <h2 class="govuk-error-summary__title" id="error-summary-title">
-                        There is an issue with this provider
-                    </h2>
-                    <div class="govuk-error-summary__body">
-                        <ul class="govuk-list govuk-error-summary__list"></ul>
-                    </div>
+            <div id="errorsummary" class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary" style="display: none;">
+                <h2 class="govuk-error-summary__title" id="error-summary-title">
+                    There is an issue with this provider
+                </h2>
+                <div class="govuk-error-summary__body">
+                    <ul class="govuk-list govuk-error-summary__list"></ul>
                 </div>
+            </div>
 
-                <div id="aliasContainer" class="govuk-form-group">
-                    <label id="govuk-label-AliasName" class="govuk-label" for="alias-name">
-                        Your alias
-                    </label>
+            <div id="aliasContainer" class="govuk-form-group">
+                <label id="govuk-label-AliasName" class="govuk-label" for="alias-name">
+                    Your alias
+                </label>
 
 
-                    @{ var regex = @"^[a-zA-Z0-9 /\n/\r/\\u/\¬\!\£\$\%\^\&\*\\é\\è\\ﬁ\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\•\·\●\’\‘\“\”\—\-\–\‐\‐\…\:/\°\®\\â\\ç\\ñ\\ü\\ø\♦\™\\t/\s\¼\¾\½\" + "\"" + "\\\\]+$"; }
+                @{ var regex = @"^[a-zA-Z0-9 /\n/\r/\\u/\¬\!\£\$\%\^\&\*\\é\\è\\ﬁ\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\•\·\●\’\‘\“\”\—\-\–\‐\‐\…\:/\°\®\\â\\ç\\ñ\\ü\\ø\♦\™\\t/\s\¼\¾\½\" + "\"" + "\\\\]+$"; }
 
-                    <input class="govuk-input" style="display:inline;" asp-for="@Model.AliasName" type="text" aria-label="govuk-label-AliasName" aria-describedby="" name="alias-name"
-                           val-max-length="100"
-                           val-max-length-message="Provider Alias Name must be 100 characters or less"
-                           val-regex="@regex"
-                           val-regex-message="Provider Alias Name contains invalid characters">
-                </div>
-                @if (apprenticeshipUser.Succeeded)
-                {
-                    <div class="govuk-character-count">
-                        <div class="govuk-form-group">
+                <input class="govuk-input" style="display:inline;" asp-for="@Model.AliasName" type="text" aria-label="govuk-label-AliasName" aria-describedby="" name="aliasName"
+                       val-max-length="100"
+                       val-max-length-message="Provider Alias Name must be 100 characters or less"
+                       val-regex="@regex"
+                       val-regex-message="Provider Alias Name contains invalid characters">
+            </div>
+            <div id="CourseDirectoryNameContainer" class="govuk-form-group">
+                <label id="govuk-label-CourseDirectoryNameName" class="govuk-label" for="course-directory-name">
+                    Course directory name
+                </label>
 
-                            <span id="briefOverviewMax" class="" style="display: none"
-                                  val-max-length="750"
-                                  val-max-length-message="Brief Overview of Your Organisation for Employers must be 750 characters or less"><span class="govuk-visually-hidden">Error:</span>Brief Overview of Your Organisation for Employers, must be 750 characters or less</span>
-                            <span id="briefOverviewInvalid" class="" style="display: none"
-                                  val-regex="@regex"
-                                  val-regex-message="Brief Overview of Your Organisation for Employers contains invalid characters"><span class="govuk-visually-hidden">Error:</span>Brief Overview of Your Organisation for Employers contains invalid characters</span>
-                            <label class="govuk-label" for="word-count">
-                                Brief overview of your organisation for employers
-                            </label>
+                <input class="govuk-input" style="display:inline;" asp-for="@Model.CourseDirectoryName" type="text" aria-label="govuk-label-CourseDirectoryName" aria-describedby="" name="courseDirectoryName"
+                       val-max-length="100"
+                       val-max-length-message="Course Directory Name must be 100 characters or less"
+                       val-regex="@regex"
+                       val-regex-message="Course directory Name contains invalid characters">
+            </div>
+            @if (apprenticeshipUser.Succeeded)
+            {
+                <div class="govuk-character-count">
+                    <div class="govuk-form-group">
 
-                            <textarea class="govuk-textarea js-character-count " asp-for="@Model.BriefOverview" rows="5" id="brief"
+                        <span id="briefOverviewMax" class="" style="display: none"
+                              val-max-length="750"
+                              val-max-length-message="Brief Overview of Your Organisation for Employers must be 750 characters or less"><span class="govuk-visually-hidden">Error:</span>Brief Overview of Your Organisation for Employers, must be 750 characters or less</span>
+                        <span id="briefOverviewInvalid" class="" style="display: none"
+                              val-regex="@regex"
+                              val-regex-message="Brief Overview of Your Organisation for Employers contains invalid characters"><span class="govuk-visually-hidden">Error:</span>Brief Overview of Your Organisation for Employers contains invalid characters</span>
+                        <label class="govuk-label" for="word-count">
+                            Brief overview of your organisation for employers
+                        </label>
+
+                        <textarea class="govuk-textarea js-character-count " asp-for="@Model.BriefOverview" name="briefOverview" rows="5" id="brief"
                                   val-max-length="750"
                                   val-max-length-message="Brief Overview of Your Organisation for Employers must be 750 characters or less"
                                   val-regex="@regex"
                                   val-regex-message="Brief Overview of Your Organisation for Employers contains invalid characters">
 
                             </textarea>
-                        </div>
                     </div>
-                }
-                else
-                {
-                    @Html.HiddenFor(x=>x.BriefOverview,new{id="" })
-                }
+                </div>
+            }
+            else
+            {
+                @Html.HiddenFor(x => x.BriefOverview, new { id = "" })
+            }
 
-                <ul class="flex-container">
-                    <li class="flex-item">
-                        <button name="saveButton" type="submit" class="govuk-button" id="save">
-                            Save
-                        </button>
-                    </li>
-                    <li class="flex-item" style="padding-top: 15px">
+            <ul class="flex-container">
+                <li class="flex-item">
+                    <button name="saveButton" type="submit" class="govuk-button" id="save">
+                        Save
+                    </button>
+                </li>
+                <li class="flex-item" style="padding-top: 15px">
 
-                        @Html.ActionLink("Cancel", "Details", "Provider", new { }, new { @class = "govuk-link" })
-
-
-                    </li>
+                    @Html.ActionLink("Cancel", "Details", "Provider", new { }, new { @class = "govuk-link" })
 
 
-                </ul>
+                </li>
 
-            </div>
+
+            </ul>
+
         </div>
+    </div>
 
 </form>
 
@@ -104,6 +115,7 @@
             var $invalidBriefOverview = $("#briefOverviewInvalid");
 
             var $alias = $("#@nameof(Model.AliasName)").govUkInput();
+            var $courseDirectoryName = $("#@nameof(Model.CourseDirectoryName)").govUkInput();
 
     var $errorSummary = $("#errorsummary").govUkErrorSummary();
 
@@ -290,7 +302,29 @@
         } else {
             $alias.govUkInput("validState");
             $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $alias[0].id);
-            $errorSummary.govUkErrorSummary("hideIfEmpty")
+            $errorSummary.govUkErrorSummary("hideIfEmpty");
+            validStates.push(true);
+        }
+
+        $courseDirectoryName.val($courseDirectoryName.val().trim());
+
+        if (!$.regexValidate({ regex: $courseDirectoryName.attr("val-regex") }, $courseDirectoryName.val())) {
+            $courseDirectoryName.govUkInput("invalidState", $courseDirectoryName.attr("val-regex-message"));
+            var courseDirectoryNameErrorHashLinks = $courseDirectoryName.govUkInput("getErrorHashLinks");
+            $errorSummary.govUkErrorSummary("add", courseDirectoryNameErrorHashLinks);
+            $errorSummary.govUkErrorSummary("show");
+            validStates.push(false);
+        } else if (
+            !$.maxLengthValidate({ max: $courseDirectoryName.attr("val-max-length") }, $courseDirectoryName.val())) {
+            $courseDirectoryName.govUkInput("invalidState", $courseDirectoryName.attr("val-max-length-message"));
+            var courseDirectoryNameErrorHashLinks = $courseDirectoryName.govUkInput("getErrorHashLinks");
+            $errorSummary.govUkErrorSummary("add", courseDirectoryNameErrorHashLinks);
+            $errorSummary.govUkErrorSummary("show");
+            validStates.push(false);
+        } else {
+            $courseDirectoryName.govUkInput("validState");
+            $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $courseDirectoryName[0].id);
+            $errorSummary.govUkErrorSummary("hideIfEmpty");
             validStates.push(true);
         }
 
