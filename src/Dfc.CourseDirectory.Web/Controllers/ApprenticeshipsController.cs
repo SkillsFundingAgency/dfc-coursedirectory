@@ -1,6 +1,8 @@
 ﻿using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Models.Apprenticeships;
+using Dfc.CourseDirectory.Models.Models.Regions;
+using Dfc.CourseDirectory.Models.Models.Venues;
 using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
@@ -20,11 +22,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Models.Interfaces.Venues;
-using Dfc.CourseDirectory.Models.Models.Venues;
-using Dfc.CourseDirectory.Services.Interfaces;
-using Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult;
-using Microsoft.EntityFrameworkCore;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -517,11 +514,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
 
-            //if (requestModel.apprenticeshipMode == ApprenticeshipMode.Undefined)
-            //{
-            //    requestModel.apprenticeshipMode = ApprenticeshipMode.EditApprenticeship;
-            //}
-
             var model = new SummaryViewModel();
 
             var cachedLocations = new List<Venue>();
@@ -544,20 +536,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
             model.DeliveryOptionsCombinedViewModel = DeliveryOptionsCombinedViewModel;
             model.Regions = Regions;
             model.LocationChoiceSelectionViewModel = LocationChoiceSelectionViewModel;
-
-            //if (requestModel.apprenticeshipMode == ApprenticeshipMode.Undefined)
-            //{
-            //    model.Mode = DetailViewModel.Mode;
-            //}
-            //else
-            //{
-            //    model.Mode = requestModel.apprenticeshipMode;
-
-            //}
-
             model.Cancelled = requestModel.cancelled;
             model.Mode = requestModel.Mode;
-            //}
+           
 
             return View("../Apprenticeships/Summary/Index", model);
         }
@@ -810,7 +791,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _session.SetObject("SelectedRegions", SelectedRegions);
 
             return RedirectToAction("Summary", "Apprenticeships", new { ApprenticeshipMode = model.Mode });
-
 
         }
 
@@ -1101,12 +1081,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [Authorize]
         public IActionResult AddAnotherApprenticeship()
         {
-
-
-
             return RedirectToAction("Index", "Apprenticeships");
-
-
         }
 
 
@@ -1150,16 +1125,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             return View("../Apprenticeships/ConfirmationDelete/Index", model);
         }
-
-        //[Authorize]
-        //[HttpPost]
-        //public async Task<IActionResult> DeleteConfirm(DeleteConfirmViewModel theModel)
-        //{
-
-
-        //    return RedirectToAction("ConfirmationDelete", "Apprenticeships");
-
-        //}
 
 
         [Authorize]
@@ -1260,11 +1225,20 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 _session.SetObject("DeliveryOptionsViewModel", DeliveryOptionsViewModel);
             }
 
-
             return RedirectToAction(model.Combined ? "DeliveryOptionsCombined" : "DeliveryOptions", "Apprenticeships", new { message = "Location " + model.LocationName + " deleted", mode = model.Mode });
         }
 
+        internal Dictionary<string, string> SubRegionCodesToDictionary(string[] subRegions)
+        {
+            SelectRegionModel selectRegionModel = new SelectRegionModel();
+            Dictionary<string, string> regionsAndSubregions = new Dictionary<string, string>();
 
+            foreach(var subRegionCode in subRegions)
+            {
+                var regionItem = selectRegionModel.GetRegionFromName(subRegionCode);
 
+            }
+            return regionsAndSubregions;
+        }
     }
 }
