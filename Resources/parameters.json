@@ -114,7 +114,7 @@
       "value": "__SharedResourceGroupName__"
     },
     "appServicePlanSize": {
-      "value": "1"
+      "value": "__aspPricingTierSize__"
     }
   }
 }
