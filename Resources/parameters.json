@@ -3,94 +3,118 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "projectPrefix": {
-      "value": "dfc-foo-cd"
+      "value": "__providerPortalPrefix__"
     },
     "storageAccountName": {
-      "value": "dfcfoocdstr"
+      "value": "__providerPortalStorgeAccName__"
     },
     "postcodeApiUrl": {
-      "value": "https://my.api.net/api/postcode?"
+      "value": "__postcodeApiUrl__"
     },
     "postcodeApiKey": {
-      "value": "not-a-real-key"
+      "value": "__postcodeApiKey__"
     },
     "venueApiUrl": {
-      "value": "https://my.api.net/api/venue/"
+      "value": "__venueServiceApiUrl__"
     },
     "venueApiKey": {
-      "value": "not-a-real-key"
+      "value": "__venueApiKey__"
     },
     "larsApiUrl": {
-      "value": "https://dfc-foo-prov-sch.search.windows.net/indexes/lars/docs/search"
+      "value": "__larsApiUrl__"
     },
     "larsApiKey": {
-      "value": "not-a-real-key"
+      "value": "__azureSearchQueryKey__"
     },
     "providerApiUrl": {
-      "value": "https://my.api.net/api/provider/"
+      "value": "__providerApiUrl__"
     },
     "providerApiKey": {
-      "value": "not-a-real-key"
+      "value": "__providerApiKey__"
     },
     "courseApiUrl": {
-      "value": "https://my.api.net/api/course/"
+      "value": "__courseApiUrl__"
     },
     "courseApiKey": {
-      "value": "not-a-real-key"
+      "value": "__courseApiUrl__"
     },
     "apprenticeshipApiKey": {
-      "value": "not-a-real-key"
+      "value": "__apprenticeshipApiKey__"
     },
     "apprenticeshipApiUrl": {
-      "value": "https://my.api.net/api/apprenticeship/"
+      "value": "__apprenticeshipApiUrl__"
     },
     "searchDomain": {
-      "value": "search.example.net"
+      "value": "__searchFqdn__"
     },
     "searchAdminKey": {
-      "value": "not-a-real-key"
+      "value": "__azureSearchAdminKey__"
     },
     "searchQueryKey": {
-      "value": "not-a-real-key"
+      "value": "__azureSearchQueryKey__"
     },
     "dfeClientID": {
-      "value": "letmein"
+      "value": "__dfeClientID__"
     },
     "dfeClientSecret": {
-      "value": "not-a-real-secret"
+      "value": "__dfeClientSecret__"
     },
     "dfeEndpointUrl": {
-      "value": "https://test.dfe.net/token"
+      "value": "__dfeEndpointUrl__"
     },
     "dfeMetadataUrl": {
-      "value": "https://test.dfe.net/.well-known/openid-configuration"
+      "value": "__dfeMetadataUrl__"
     },
     "dfeCallBackPath": {
-      "value": "/auth"
+      "value": "__dfeCallBackPath__"
     },
     "dfeSignedOutPath": {
-      "value": "/signout"
+      "value": "__dfeSignedOutPath__"
     },
     "dfeApiSecret": {
-      "value": "randon-list-words"
+      "value": "__dfeApiSecret__"
     },
     "dfeApiUri": {
-      "value": "https://my.loginsite.net/endpoint"
+      "value": "__dfeApiUri__"
     },
     "sqlCourseDirectoryConnectionString": {
-      "value": "Server=tcp:dfc-foo-shared-sql-01.database.windows.net,1433;Initial Catalog=database;Persist Security Info=False;User ID=username;Password=password;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+      "value": "__sqlCourseDirectoryConnectionString__"
     },
     "courseTextApiUrl": {
-      "value": "https://my.api.net/api/coursetext/"
+      "value": "__courseTextApiUrl__"
     },
     "courseTextApiKey": {
-      "value": "not-a-real-key"
+      "value": "__courseTextApiKey__"
     },
     "findCourseApiUrl": {
-      "value": "https://api.net/coursedirectory/courses/"
+      "value": "__apimCoursesUrl__"
     },
     "findCourseApiKey": {
-      "value": "not-a-real-key"
+      "value": "__apimCoursesKey__"
+    },
+    "appHostName": {
+      "value": "__appHostName__"
+    },
+    "keyVaultName": {
+      "value": "__SharedKeyVaultName__"
+    },
+    "keyVaultResourceGroup":{
+      "value": "__SharedResourceGroup__"
+    },
+    "certificateName": {
+      "value": "__certificateName__"
+    },
+    "appServicePlanInstances": {
+      "value": "__aspInstances__"
+    },
+    "aseHostingEnvironmentName": {
+      "value": "__AseHostingEnvironmentName__"
+    },
+    "aseResoureGroup": {
+      "value": "__SharedResourceGroupName__"
+    },
+    "appServicePlanSize": {
+      "value": "1"
     }
   }
 }
