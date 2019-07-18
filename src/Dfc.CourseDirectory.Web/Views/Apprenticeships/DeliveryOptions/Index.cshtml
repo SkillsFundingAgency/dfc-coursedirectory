@@ -77,9 +77,9 @@
 
         <div class="govuk-!-margin-top-9">
 
-            <a id="continue" class="govuk-button">Save and continue</a>
+            <a id="continue" class="govuk-button">Continue</a>
 
-            <button class="govuk-button govuk-button--secondary" id="next2" asp-action="Add" asp-controller="Apprenticeships">Save and add another</button>
+            <button class="govuk-button govuk-button--secondary" id="next2" asp-action="Add" asp-controller="Apprenticeships">Add another</button>
 
         </div>
 
@@ -197,25 +197,52 @@
 
                 var rowCount = $('#ResultsTable tr').length;
 
-                validate();
-                if (validStates.every(isAllValid)) {
+                if (rowCount >= 2) {
 
-                     $.ajax({
-                        url: '/Apprenticeships/Continue',
-                        type: "GET",
-                        dataType: "json",
-                        data: { LocationId: $selectedVenue.val(), DayRelease: $("#DayRelease")[0].checked, BlockRelease: $("#BlockRelease")[0].checked, RowCount: rowCount,Mode:$("#Mode").val() },
+                    if (($selectedVenue.val() === "" || $selectedVenue.val() === undefined) && ($("#BlockRelease")[0].checked === false) && ($("#DayRelease")[0].checked === false)) {
+                        $("#ApprenticeshipDeliveryOptionsForm").submit();
+                    } else {
+                        validate();
+                        if (validStates.every(isAllValid)) {
 
-                        contentType: "application/json; charset=utf-8",
-                        success: function (data) {
-                            window.location.href = data;
-                        },
-                        error: function (xhr, ajaxOptions, thrownError) {
+                            $.ajax({
+                                url: '/Apprenticeships/Continue',
+                                type: "GET",
+                                dataType: "json",
+                                data: { LocationId: $selectedVenue.val(), DayRelease: $("#DayRelease")[0].checked, BlockRelease: $("#BlockRelease")[0].checked, RowCount: rowCount,Mode:$("#Mode").val() },
 
-                        }
-                     });
+                                contentType: "application/json; charset=utf-8",
+                                success: function (data) {
+                                    window.location.href = data;
+                                },
+                                error: function (xhr, ajaxOptions, thrownError) {
 
-                };
+                                }
+                            });
+                        };
+                    }
+
+                } else {
+
+                    validate();
+                    if (validStates.every(isAllValid)) {
+
+                        $.ajax({
+                            url: '/Apprenticeships/Continue',
+                            type: "GET",
+                            dataType: "json",
+                            data: { LocationId: $selectedVenue.val(), DayRelease: $("#DayRelease")[0].checked, BlockRelease: $("#BlockRelease")[0].checked, RowCount: rowCount,Mode:$("#Mode").val() },
+
+                            contentType: "application/json; charset=utf-8",
+                            success: function (data) {
+                                window.location.href = data;
+                            },
+                            error: function (xhr, ajaxOptions, thrownError) {
+
+                            }
+                        });
+                    };
+                }
             });
 
 
