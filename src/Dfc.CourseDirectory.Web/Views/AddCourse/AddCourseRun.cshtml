@@ -610,7 +610,8 @@
                     $errorSummary.govUkErrorSummary("show");
                     validStates.push(false);
                 }
-                    else if ($duration.find("input").val().includes(".")) {
+                else if ($duration.find("input").val().indexOf(".") >= 0) {
+                    alert($duration.find("input").val().indexOf("."));
                     $duration.govUkDurationInput("invalidState", $duration.attr("val-decimal-message"));
                     var durationErrorHashLinks = $duration.govUkDurationInput("getErrorHashLinks");
                     $errorSummary.govUkErrorSummary("add", durationErrorHashLinks);
@@ -730,7 +731,8 @@
                 event.preventDefault();
                 validate();
                 if (validStates.every(isAllValid)) {
-                    $("#addCourseSection2").submit();
+                    //$("#addCourseSection2").submit();
+                    $("#addCourseSection2").trigger('submit'); 
                 }
             });
 
