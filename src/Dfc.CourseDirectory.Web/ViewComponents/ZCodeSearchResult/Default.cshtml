@@ -15,9 +15,7 @@
     @if (Model.Items != null && Model.Items.Count() > 0)
     {
 
-        @*<div class="govuk-heading-s lars-search-results govuk-!-font-weight-regular">
-                Found <span class="govuk-!-font-weight-bold">@Model.TotalCount</span> results for <span class="govuk-!-font-weight-bold">@Model.SearchTerm</span>
-            </div>*@
+
 
         <div class="govuk-grid-column-one-quarter">
             @*<h3>filter controls here</h3>*@
@@ -25,32 +23,59 @@
             {
                 if (Model.HasSelectedFilters)
                 {
-                <div class="govuk-form-group">
-                    <h5><a class="govuk-link" id="ClearAllFilters" href="">reset</a></h5>
-                </div>
-                 }
+                    <div class="govuk-form-group">
+                        <h5><a class="govuk-link" id="ClearAllFilters" href="">reset</a></h5>
+                    </div>
+                }
                 foreach (var filter in Model.Filters)
                 {
                     <div class="govuk-form-group govuk-!-font-size-14">
                         <div class="accordion govuk-heading-s">@filter.Title</div>
                         <div class="panel">
-                            <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
+
+                            <fieldset class="govuk-fieldset">
+                                <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+                                    @*<h1 class="govuk-fieldset__heading">
+                                            Which types of waste do you transport?
+                                        </h1>*@
+                                </legend>
+                            
                                 <div class="govuk-checkboxes">
-
-
 
                                     @foreach (var item in filter.Items)
                                     {
                                         <div class="govuk-checkboxes__item">
-                                            <input class="govuk-checkboxes__input" id="@item.Id" name="@item.Name" type="checkbox" value="@item.Value" @item.IsSelected.ThenCheck()>
-                                            <label class="govuk-label govuk-checkboxes__label govuk-!-font-size-14" for="@item.Id">
-
+                                            <input class="govuk-checkboxes__input" id="@item.Id" type="checkbox" value="@item.Value" @item.IsSelected.ThenCheck()>
+                                            <label class="govuk-label govuk-checkboxes__label" for="@item.Id">
                                                 @item.Text (@item.Count)
                                             </label>
                                         </div>
-                                   }
+                                    }
+
                                 </div>
                             </fieldset>
+
+
+
+
+
+                            @*<fieldset class="govuk-fieldset" aria-describedby="">
+                                    <div class="govuk-checkboxes">
+
+
+
+                                        @foreach (var item in filter.Items)
+                                        {
+                                            <div class="govuk-checkboxes__item">
+                                                <input class="govuk-checkboxes__input" id="@item.Id" name="@item.Name" type="checkbox" value="@item.Value" @item.IsSelected.ThenCheck()>
+                                                <label class="govuk-label govuk-checkboxes__label govuk-!-font-size-14" for="@item.Id">
+
+                                                    @item.Text (@item.Count)
+                                                </label>
+                                            </div>
+                                       }
+                                    </div>
+                                </fieldset>*@
                         </div>
                     </div>
                 }
@@ -59,23 +84,14 @@
 
         <div class="govuk-grid-column-three-quarters">
 
-            @*@await Component.InvokeAsync(nameof(Pagination),
-                new
-                {
-                    url = Model.Url,
-                    pageParamName = Model.PageParamName,
-                    totalNoOfItems = Model.TotalCount,
-                    itemsPerPage = Model.ItemsPerPage,
-                    noOfPagesToDisplay = 10,
-                    isSliding = true
-                })*@
+
             <div class="govuk-table govuk-!-font-size-14">
 
 
                 @foreach (var item in Model.Items)
                 {
                     <div class="cd-lars-search-result__container">
-                        <h3 class="govuk-heading-m">@item.LearnAimRefTitle</h3>
+                        <h2 class="govuk-heading-m">@item.LearnAimRefTitle</h2>
                         <p class="govuk-body">LARS:<span class="govuk-!-font-weight-bold"> @item.LearnAimRef</span></p>
                         <p class="govuk-body">Level: <span class="govuk-!-font-weight-bold"> @item.NotionalNVQLevelv2</span></p>
                         @*<p class="govuk-body">Awarding body:<span class="govuk-!-font-weight-bold"> @item.AwardOrgCode</span></p>*@
@@ -101,17 +117,7 @@
                      })
         </div>
     }
-    @*else if (!string.IsNullOrWhiteSpace(Model.SearchTerm) && !Model.Items.Any())
-        {
-            <div class="govuk-grid-column-full">
-                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
 
-                    <h2 class="govuk-error-summary__title" id="error-summary-title">
-                        No records found
-                    </h2>
-                </div>
-            </div>
-        }*@
 </div>
 
 <script>

@@ -25,11 +25,11 @@
 
 } else if (Model.Items.Any()) {
 
-    <nav class="pagination" role="navigation" aria-label="Pagination navigation">
+    <nav class="pagination" role="navigation">
         <ul>
             @foreach (var item in Model.Items)
             {
-                <li><a class="govuk-link pagination__item @item.IsCurrent.ThenCssClasses("pagination__item--current")" href="@item.Url" aria-label="@item.AriaLabel" @item.IsCurrent.ThenAriaCurrent()>@item.Text</a></li>
+                <li><a class="govuk-link pagination__item @item.IsCurrent.ThenCssClasses("pagination__item--current")" href="@item.Url">@item.Text</a></li>
             }
         </ul>
     </nav>

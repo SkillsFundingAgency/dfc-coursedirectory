@@ -385,7 +385,7 @@
                 if ($.requiredValidate($radioDeliveryMode.find("input[type=radio]:checked").val())) {
                     $radioDeliveryMode.govUkRadios("validState");
                     $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $radioDeliveryMode[0].id);
-                    $errorSummary.govUkErrorSummary("hideIfEmpty")
+                    $errorSummary.govUkErrorSummary("hideIfEmpty");
                     validStates.push(true);
                 } else {
                     $radioDeliveryMode.govUkRadios("invalidState", $radioDeliveryMode.attr("val-required-message"));
