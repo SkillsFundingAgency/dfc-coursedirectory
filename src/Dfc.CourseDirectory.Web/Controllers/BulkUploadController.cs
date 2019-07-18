@@ -66,7 +66,19 @@ namespace Dfc.CourseDirectory.Web.Controllers
         public IActionResult Index()
         {
             _session.SetString("Option", "BulkUpload");
-            var model = new BulkUploadViewModel();
+            int? UKPRN;
+            if (_session.GetInt32("UKPRN") != null)
+                UKPRN = _session.GetInt32("UKPRN").Value;
+            else
+                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
+
+            var courseCounts = _courseService.GetCourseCountsByStatusForUKPRN(new CourseSearchCriteria(UKPRN)).Result;
+            var courseErrors = courseCounts.Value.Where(x => (int)x.Status == (int)RecordStatus.MigrationPending || (int)x.Status == (int)RecordStatus.MigrationReadyToGoLive).Count();
+
+            var model = new BulkUploadViewModel
+            {
+                HasMigrationErrors = courseErrors > 0 ? true : false
+            };
 
             return View("Index", model);
         }
