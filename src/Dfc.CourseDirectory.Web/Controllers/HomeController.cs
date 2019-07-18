@@ -92,7 +92,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     return RedirectToAction("Report", "Migration");
                 }
 
-                return View("../Provider/Dashboard");
+                return Redirect("/");
             }
             else
             {
