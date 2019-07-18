@@ -11,6 +11,7 @@ namespace Dfc.CourseDirectory.Models.Models.Providers
         public Guid id { get; set; }
         public string UnitedKingdomProviderReferenceNumber { get; set; }
         public string ProviderName { get; set; }
+        public string CourseDirectoryName { get; set; }
         public string ProviderStatus { get; set; }
         public IProvidercontact[] ProviderContact { get; set; }
         public DateTime ProviderVerificationDate { get; set; }
