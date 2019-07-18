@@ -37,7 +37,7 @@ steps:
 # ARM template
 - template: AzureDevOpsTemplates/Build/dfc-arm-build.yml@dfc-devops
   parameters:
-    ArmTemplateRoot: '$(System.DefaultWorkingDirectory)\Resources\ArmTemplates'
+    ArmTemplateRoot: '$(System.DefaultWorkingDirectory)\Resources\Azure\ArmTemplates'
 
 - task: Npm@1
   displayName: 'npm install'
