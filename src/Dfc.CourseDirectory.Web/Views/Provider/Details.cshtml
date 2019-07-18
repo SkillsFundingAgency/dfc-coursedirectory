@@ -14,7 +14,7 @@
 }
 
 
-    <a asp-controller="" asp-action="" class="govuk-back-link">Back</a>
+<a asp-controller="" asp-action="" class="govuk-back-link">Back</a>
 
         <div class="govuk-grid-row" x-ms-format-detection="none">
             <div class="govuk-grid-column-two-thirds">
@@ -29,39 +29,52 @@
                         </tr>
                     </thead>
                     <tbody class="govuk-table__body">
-                        <tr class="govuk-table__row">
-                            <td class="govuk-table__header" >UKPRN</td>
-                            <td class="govuk-table__cell">@Model.UKPRN</td>
-                            <td class="govuk-table__cell"></td>
-                        </tr>
-                        <tr class="govuk-table__row">
-                            <td class="govuk-table__header">Name registered with UKRLP</td>
-                            <td class="govuk-table__cell">@Model.LegalName</td>
-                            <td class="govuk-table__cell"></td>
-                        </tr>
-                        <tr class="govuk-table__row">
-                            <td class="govuk-table__header" >Trading name</td>
-                            <td class="govuk-table__cell">@Model.TradingName</td>
-                            <td class="govuk-table__cell"></td>
-                        </tr>
-                        <tr class="govuk-table__row">
-                            <td class="govuk-table__header">Your alias</td>
-                            <td class="govuk-table__cell">@Model.Alias</td>
-                            <td class="govuk-table__cell">
-                                @if (string.IsNullOrEmpty(Model.Alias))
-                                {
-                                    <a class="govuk-link" style="padding-right:1em"
-                                       asp-controller="Provider"
-                                       asp-action="AddOrEditDetails">Add</a>
-                                }
-                                else
-                                {
-                                    <a class="govuk-link" style="padding-right:1em"
-                                       asp-controller="Provider"
-                                       asp-action="AddOrEditDetails">Edit</a>
-                                }
-                            </td>
-                        </tr>
+                    <tr class="govuk-table__row">
+                        <th class="govuk-table__header" scope="row">Course directory name</th>
+                        <td class="govuk-table__cell">@Model.ProviderName</td>
+                        <td class="govuk-table__cell">
+                            @if (adminLogin.Succeeded)
+                            {
+                                <a class="govuk-link" style="padding-right: 1em"
+                                   asp-controller="Provider"
+                                   asp-action="AddOrEditDetails">Edit</a>
+
+                            }
+                        </td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__header">UKPRN</td>
+                        <td class="govuk-table__cell">@Model.UKPRN</td>
+                        <td class="govuk-table__cell"></td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__header">Legal name</td>
+                        <td class="govuk-table__cell">@Model.LegalName</td>
+                        <td class="govuk-table__cell"></td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__header">Trading name</td>
+                        <td class="govuk-table__cell">@Model.TradingName</td>
+                        <td class="govuk-table__cell"></td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__header">Your alias</td>
+                        <td class="govuk-table__cell">@Model.Alias</td>
+                        <td class="govuk-table__cell">
+                            @if (string.IsNullOrEmpty(Model.Alias))
+                            {
+                                <a class="govuk-link" style="padding-right: 1em"
+                                   asp-controller="Provider"
+                                   asp-action="AddOrEditDetails">Add</a>
+                            }
+                            else
+                            {
+                                <a class="govuk-link" style="padding-right: 1em"
+                                   asp-controller="Provider"
+                                   asp-action="AddOrEditDetails">Edit</a>
+                            }
+                        </td>
+                    </tr>
                     <tr class="govuk-table__row">
                         <td class="govuk-table__header">Provider Type</td>
                         <td class="govuk-table__cell">@WebHelper.GetEnumDescription(Model.ProviderType)</td>
@@ -112,52 +125,52 @@
                     </tbody>
                 </table>
 
-            </div>
+    </div>
 
             <h2 class="govuk-heading-m" style="margin-bottom:0px">Contact details</h2>
             <div class="govuk-grid-column-one-third govuk-related-items">
 
-                <h3 class="govuk-heading-m m20" style="margin:0px">Address</h3>
-                <p style="margin:0px">
-                    @Model.AddressLine1
-                </p>
-                <p style="margin:0px">
-                    @Model.AddressLine2
-                </p>
-                <p style="margin:0px">
-                    @Model.AddressLine3
-                </p>
-                <p style="margin:0px">
-                    @Model.AddressLine4
-                </p>
-                <p style="margin:0px">
-                    @Model.TownCity
-                </p>
-                <p style="margin-top:0px">
-                    @Model.PostCode
-                </p>
+        <h3 class="govuk-heading-m m20" style="margin:0px">Address</h3>
+        <p style="margin:0px">
+            @Model.AddressLine1
+        </p>
+        <p style="margin:0px">
+            @Model.AddressLine2
+        </p>
+        <p style="margin:0px">
+            @Model.AddressLine3
+        </p>
+        <p style="margin:0px">
+            @Model.AddressLine4
+        </p>
+        <p style="margin:0px">
+            @Model.TownCity
+        </p>
+        <p style="margin-top:0px">
+            @Model.PostCode
+        </p>
 
-                <h3 class="govuk-heading-m m20" style="margin-bottom:0px">Web</h3>
-                <p style="margin-top:0px">
-                    @Model.Web
-                </p>
-                <h3 class="govuk-heading-m m20" style="margin-bottom:0px">Email</h3>
-                <p style="margin-top:0px">
-                    @Model.Email
-                </p>
-                <h3 class="govuk-heading-m m20" style="margin-bottom:0px">Telephone</h3>
-                <p style="margin-top:0px">
-                    @Model.Telephone
-                </p>
-            </div>
-        </div>
+        <h3 class="govuk-heading-m m20" style="margin-bottom:0px">Web</h3>
+        <p style="margin-top:0px">
+            @Model.Web
+        </p>
+        <h3 class="govuk-heading-m m20" style="margin-bottom:0px">Email</h3>
+        <p style="margin-top:0px">
+            @Model.Email
+        </p>
+        <h3 class="govuk-heading-m m20" style="margin-bottom:0px">Telephone</h3>
+        <p style="margin-top:0px">
+            @Model.Telephone
+        </p>
+    </div>
+</div>
 
-  
 
-    <script>
-        (function ($) {
-            $(function () {
 
-            });
-        })(jQuery);
-    </script>
+<script>
+    (function ($) {
+        $(function () {
+
+        });
+    })(jQuery);
+</script>

@@ -182,9 +182,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             if (providerSearchResult.IsSuccess)
             {
+                var provider = providerSearchResult.Value.Value.FirstOrDefault();
+
                 model = new ProviderDetailsAddOrEditViewModel();
-                model.AliasName = providerSearchResult.Value.Value.FirstOrDefault()?.Alias;
-                model.BriefOverview = providerSearchResult.Value.Value.FirstOrDefault()?.MarketingInformation;
+                model.AliasName = provider?.Alias;
+                model.BriefOverview = provider?.MarketingInformation;
+                model.CourseDirectoryName = string.IsNullOrEmpty(provider?.CourseDirectoryName) ? provider?.ProviderName : provider?.CourseDirectoryName;
             }
 
             return View(model);
@@ -211,6 +214,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 if (apprenticeshipUser.Succeeded) provider.MarketingInformation = model.BriefOverview;
 
                 provider.Alias = model.AliasName;
+
+                provider.CourseDirectoryName = model.CourseDirectoryName;
 
                 try
                 {
@@ -247,7 +252,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 var provider = providerSearchResult.Value.Value.FirstOrDefault();
 
                 model.Status = provider.ProviderStatus;
-                model.ProviderName = provider.ProviderName;
+                model.ProviderName = string.IsNullOrEmpty(provider.CourseDirectoryName) ? provider.ProviderName: provider.CourseDirectoryName;
                 model.LegalName = provider.ProviderName;
 
                 if (provider.ProviderAliases != null)
