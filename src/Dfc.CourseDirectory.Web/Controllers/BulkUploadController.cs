@@ -66,7 +66,19 @@ namespace Dfc.CourseDirectory.Web.Controllers
         public IActionResult Index()
         {
             _session.SetString("Option", "BulkUpload");
-            var model = new BulkUploadViewModel();
+            int? UKPRN;
+            if (_session.GetInt32("UKPRN") != null)
+                UKPRN = _session.GetInt32("UKPRN").Value;
+            else
+                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
+
+            var courseCounts = _courseService.GetCourseCountsByStatusForUKPRN(new CourseSearchCriteria(UKPRN)).Result;
+            var courseErrors = courseCounts.Value.Where(x => (int)x.Status == (int)RecordStatus.MigrationPending || (int)x.Status == (int)RecordStatus.MigrationReadyToGoLive).Count();
+
+            var model = new BulkUploadViewModel
+            {
+                HasMigrationErrors = courseErrors > 0 ? true : false
+            };
 
             return View("Index", model);
         }
@@ -277,7 +289,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> PublishYourFile(PublishYourFileViewModel model)
         {
-            int LiveCourses = 0;
             int? sUKPRN = _session.GetInt32("UKPRN");
             int UKPRN;
             if (!sUKPRN.HasValue)
@@ -292,23 +303,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
             var resultArchivingCourses = await _courseService.ChangeCourseRunStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.Live, (int)RecordStatus.Archived);
             if (resultArchivingCourses.IsSuccess)
             {
-
-                var response = await _courseService.ChangeCourseRunStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.BulkUploadReadyToGoLive, (int)RecordStatus.Live);
-
-                if (response.IsSuccess)
-                {
-                    IEnumerable<Course> courses = _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(UKPRN))
-                                                     .Result
-                                                     .Value
-                                                     .Value
-                                                     .SelectMany(o => o.Value)
-                                                     .SelectMany(i => i.Value);
-
-                    LiveCourses = courses.SelectMany(c => c.CourseRuns).Where(x => x.RecordStatus == RecordStatus.Live).Count();
-                }
+                await _courseService.ChangeCourseRunStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.BulkUploadReadyToGoLive, (int)RecordStatus.Live);
             }
             //to publish stuff
-            return View("../Bulkupload/Complete/Index", new PublishCompleteViewModel() { NumberOfCoursesPublished = LiveCourses, Mode = PublishMode.BulkUpload });
+            return View("../Bulkupload/Complete/Index", new PublishCompleteViewModel() { NumberOfCoursesPublished = model.NumberOfCourses, Mode = PublishMode.BulkUpload });
         }
 
         /// <summary>

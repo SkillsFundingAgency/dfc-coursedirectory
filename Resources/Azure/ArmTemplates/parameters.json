@@ -1,0 +1,120 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "projectPrefix": {
+      "value": "__providerPortalPrefix__"
+    },
+    "storageAccountName": {
+      "value": "__providerPortalStorgeAccName__"
+    },
+    "postcodeApiUrl": {
+      "value": "__postcodeApiUrl__"
+    },
+    "postcodeApiKey": {
+      "value": "__postcodeApiKey__"
+    },
+    "venueApiUrl": {
+      "value": "__venueServiceApiUrl__"
+    },
+    "venueApiKey": {
+      "value": "__venueApiKey__"
+    },
+    "larsApiUrl": {
+      "value": "__larsApiUrl__"
+    },
+    "larsApiKey": {
+      "value": "__azureSearchQueryKey__"
+    },
+    "providerApiUrl": {
+      "value": "__providerApiUrl__"
+    },
+    "providerApiKey": {
+      "value": "__providerApiKey__"
+    },
+    "courseApiUrl": {
+      "value": "__courseApiUrl__"
+    },
+    "courseApiKey": {
+      "value": "__courseApiUrl__"
+    },
+    "apprenticeshipApiKey": {
+      "value": "__apprenticeshipApiKey__"
+    },
+    "apprenticeshipApiUrl": {
+      "value": "__apprenticeshipApiUrl__"
+    },
+    "searchDomain": {
+      "value": "__searchFqdn__"
+    },
+    "searchAdminKey": {
+      "value": "__azureSearchAdminKey__"
+    },
+    "searchQueryKey": {
+      "value": "__azureSearchQueryKey__"
+    },
+    "dfeClientID": {
+      "value": "__dfeClientID__"
+    },
+    "dfeClientSecret": {
+      "value": "__dfeClientSecret__"
+    },
+    "dfeEndpointUrl": {
+      "value": "__dfeEndpointUrl__"
+    },
+    "dfeMetadataUrl": {
+      "value": "__dfeMetadataUrl__"
+    },
+    "dfeCallBackPath": {
+      "value": "__dfeCallBackPath__"
+    },
+    "dfeSignedOutPath": {
+      "value": "__dfeSignedOutPath__"
+    },
+    "dfeApiSecret": {
+      "value": "__dfeApiSecret__"
+    },
+    "dfeApiUri": {
+      "value": "__dfeApiUri__"
+    },
+    "sqlCourseDirectoryConnectionString": {
+      "value": "__sqlCourseDirectoryConnectionString__"
+    },
+    "courseTextApiUrl": {
+      "value": "__courseTextApiUrl__"
+    },
+    "courseTextApiKey": {
+      "value": "__courseTextApiKey__"
+    },
+    "findCourseApiUrl": {
+      "value": "__apimCoursesUrl__"
+    },
+    "findCourseApiKey": {
+      "value": "__apimCoursesKey__"
+    },
+    "appHostName": {
+      "value": "__appHostName__"
+    },
+    "keyVaultName": {
+      "value": "__SharedKeyVaultName__"
+    },
+    "keyVaultResourceGroup":{
+      "value": "__SharedResourceGroup__"
+    },
+    "certificateName": {
+      "value": "__certificateName__"
+    },
+    "appServicePlanInstances": {
+      "value": "__aspInstances__"
+    },
+    "aseHostingEnvironmentName": {
+      "value": "__AseHostingEnvironmentName__"
+    },
+    "aseResoureGroup": {
+      "value": "__SharedResourceGroupName__"
+    },
+    "appServicePlanSize": {
+      "value": "__aspPricingTierSize__"
+    }
+  }
+}

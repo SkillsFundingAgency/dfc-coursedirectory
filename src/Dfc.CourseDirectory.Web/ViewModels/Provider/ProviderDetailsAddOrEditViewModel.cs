@@ -6,9 +6,11 @@ namespace Dfc.CourseDirectory.Web.ViewModels
     {
 
         public string UKPRN { get; set; }
-        
+
         public string AliasName { get; set; }
 
         public string BriefOverview { get; set; }
+
+        public string CourseDirectoryName { get; set; }
     }
 }
