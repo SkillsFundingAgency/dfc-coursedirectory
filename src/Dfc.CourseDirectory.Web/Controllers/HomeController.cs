@@ -1,22 +1,21 @@
-﻿
-using System.Diagnostics;
-using System.Linq;
+﻿using Dfc.CourseDirectory.Common;
+using Dfc.CourseDirectory.Models.Enums;
+using Dfc.CourseDirectory.Models.Models.Courses;
+using Dfc.CourseDirectory.Services.CourseService;
+using Dfc.CourseDirectory.Services.Interfaces;
+using Dfc.CourseDirectory.Services.Interfaces.BlobStorageService;
+using Dfc.CourseDirectory.Services.Interfaces.CourseService;
+using Dfc.CourseDirectory.Web.ViewModels;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Dfc.CourseDirectory.Common;
-using Dfc.CourseDirectory.Web.ViewModels;
-using Dfc.CourseDirectory.Services.Interfaces;
-using Dfc.CourseDirectory.Services.Interfaces.CourseService;
-using System.Security.Claims;
 using System;
-using Dfc.CourseDirectory.Services.Interfaces.BlobStorageService;
-using Microsoft.AspNetCore.Authorization;
 using System.Collections.Generic;
-using Dfc.CourseDirectory.Models.Models.Courses;
-using Dfc.CourseDirectory.Services.CourseService;
-using Dfc.CourseDirectory.Models.Enums;
-using Microsoft.AspNetCore.Diagnostics;
+using System.Diagnostics;
+using System.Linq;
+using System.Security.Claims;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -51,7 +50,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _courseService = courseService;
             _blobStorageService = blobStorageService;
             _authorizationService = authorizationService;
-            //Set this todisplay the Search Provider fork of the ProviderSearchResult ViewComponent
         }
 
         public IActionResult Check()
@@ -77,7 +75,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                 if (authorised.Succeeded)
                 {
-                    return View("../Provider/Search");
+                    return RedirectToAction("Index", "SearchProvider");
                 }
 
                 IEnumerable<Course> courses = _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(UKPRN))
@@ -89,25 +87,20 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                 IEnumerable<CourseRun> migrationPendingCourses = courses.SelectMany(c => c.CourseRuns).Where(x => x.RecordStatus == RecordStatus.MigrationPending);
 
-               // IEnumerable<Course> inValidCourses = courses.Where(c => c.IsValid == false);
-
                 if (migrationPendingCourses.Count() > 0)
                 {
                     return RedirectToAction("Report", "Migration");
                 }
 
-                return View("../Provider/Dashboard");
-
+                return Redirect("/");
             }
             else
             {
                 return View("../Provider/Landing");
-
             }
-
         }
 
-            public IActionResult Index(string errmsg)
+        public IActionResult Index(string errmsg)
         {
             _session.SetInt32("ProviderSearch", 1);
             _logger.LogMethodEnter();
@@ -117,51 +110,46 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _logger.LogWarning("3");
             _logger.LogError("4");
             _logger.LogCritical("5");
-            _session.SetString("Option","Home");
+            _session.SetString("Option", "Home");
             ViewBag.StatusMessage = errmsg;
 
             if (User.Identity.IsAuthenticated)
             {
                 if (_session.GetInt32("UKPRN") == null)
-                    {
+                {
                     Claim UKPRN = User.Claims.Where(x => x.Type == "UKPRN").SingleOrDefault();
                     if (!String.IsNullOrEmpty(UKPRN.Value))
                     {
                         _session.SetInt32("UKPRN", Int32.Parse(UKPRN.Value));
                     }
                 }
-               
+
                 var authorised = _authorizationService.AuthorizeAsync(User, "ElevatedUserRole").Result;
 
                 if (authorised.Succeeded)
                 {
-                    return View("../Provider/Search");
+                    return RedirectToAction("Index", "SearchProvider");
                 }
- 
-                    return View("../Provider/Dashboard");
-                
+
+                return View("../Provider/Dashboard");
             }
             else
             {
                 return View("../Provider/Landing");
-
             }
-
-               
-            
-
-           
-                
         }
+
         public IActionResult IndexSuccess(DashboardViewModel vm)
         {
             if (_session.GetInt32("UKPRN") == null)
+            {
                 return View();
+            }
             else
             {
                 if (vm == null)
                 {
-                    vm = DashboardController.GetDashboardViewModel(_courseService, _blobStorageService,_session.GetInt32("UKPRN"), "");
+                    vm = DashboardController.GetDashboardViewModel(_courseService, _blobStorageService, _session.GetInt32("UKPRN"), "");
                 }
                 if (vm.PendingCourseCount > 0)
                 {
@@ -171,9 +159,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 {
                     _session.SetString("PendingCourses", "false");
                 }
+
                 return View("Index", vm);
             }
-
         }
 
         public IActionResult About()
@@ -205,7 +193,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier,
                 ErrorMessage = exceptionHandlerPathFeature.Error != null ? exceptionHandlerPathFeature.Error.Message : "There has been an error, please contact support",
                 ErrorPath = exceptionHandlerPathFeature.Path != null ? exceptionHandlerPathFeature.Path : string.Empty
-
             });
         }
     }
