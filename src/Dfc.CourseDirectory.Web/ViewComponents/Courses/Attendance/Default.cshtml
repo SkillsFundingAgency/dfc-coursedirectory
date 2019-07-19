@@ -1,9 +1,41 @@
-﻿@using Dfc.CourseDirectory.Models.Models.Courses;
+﻿@using Dfc.CourseDirectory.Models.Enums
+@using Dfc.CourseDirectory.Models.Models.Courses;
 @using Dfc.CourseDirectory.Web.Helpers;
 
 @model Dfc.CourseDirectory.Web.ViewComponents.Courses.Attendance.AttendanceModel
 
-<div class="govuk-form-group" id="mode">
+
+
+<div class="govuk-form-group">
+
+    <fieldset class="govuk-fieldset">
+        <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+            <h1 class="govuk-fieldset__heading">
+                @Model.LabelText
+            </h1>
+            <span class="govuk-hint">@Model.HintText</span>
+        </legend>
+        <div class="govuk-radios govuk-radios--inline" val-required-message="Select Attendance Mode" id="AttendanceRadioButtons">
+
+            <div class="govuk-radios__item">
+                @Html.RadioButtonFor(m => m.AttendanceMode, AttendancePattern.Daytime, new {@class = "govuk-radios__input", id = AttendancePattern.Daytime})
+                <label class="govuk-label govuk-radios__label" for="@AttendancePattern.Daytime">@WebHelper.GetEnumDescription(AttendancePattern.Daytime)</label>
+            </div>
+            <div class="govuk-radios__item">
+                @Html.RadioButtonFor(m => m.AttendanceMode, AttendancePattern.Evening, new {@class = "govuk-radios__input", id = AttendancePattern.Evening})
+                <label class="govuk-label govuk-radios__label" for="@AttendancePattern.Evening">@WebHelper.GetEnumDescription(AttendancePattern.Evening)</label>
+            </div>
+            <div class="govuk-radios__item">
+                @Html.RadioButtonFor(m => m.AttendanceMode, AttendancePattern.Weekend, new {@class = "govuk-radios__input", id = AttendancePattern.Weekend})
+                <label class="govuk-label govuk-radios__label" for="@AttendancePattern.Weekend">@WebHelper.GetEnumDescription(AttendancePattern.Weekend)</label>
+            </div>
+           
+        </div>
+    </fieldset>
+</div>
+
+
+@*<div class="govuk-form-group" id="mode">
     <fieldset class="govuk-fieldset">
         <label id="govuk-label-AttendanceRadioButtons" class="govuk-label">@Model.LabelText</label>
         <span  class="govuk-hint">@Model.HintText</span>
@@ -27,4 +59,4 @@
             </div>
         </div>
     </fieldset>
-</div>
+</div>*@

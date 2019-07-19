@@ -24,7 +24,7 @@
         </span>
     }
     @*<span asp-validation-for="@Model.AddressLine1" class="govuk-error-message"></span>*@
-    <input class="govuk-input" asp-for="@Model.AddressLine1" type="text" aria-describedby="@Model.AddressLine1AriaDescribedBy"
+    <input class="govuk-input" asp-for="@Model.AddressLine1" type="text" aria-describedby="@Model.AddressLine1"
            val-required-message="Enter address line 1"
            val-max-length="100"
            val-max-length-message="Address line 1 must be 100 characters or less"
@@ -45,7 +45,7 @@
         </span>
     }
     @*<span asp-validation-for="@Model.AddressLine2" class="govuk-error-message"></span>*@
-    <input class="govuk-input" asp-for="@Model.AddressLine2" type="text" aria-describedby="@Model.AddressLine2AriaDescribedBy" 
+    <input class="govuk-input" asp-for="@Model.AddressLine2" type="text" aria-describedby="@Model.AddressLine2" 
            val-max-length="100"
            val-max-length-message="Address line 2 must be 100 characters or less"
            val-regex="@addressRegex"
@@ -57,7 +57,7 @@
         @Model.TownOrCityLabelText
     </label>
     @*<span asp-validation-for="@Model.TownOrCity" class="govuk-error-message"></span>*@
-    <input class="govuk-input govuk-!-width-two-thirds" asp-for="@Model.TownOrCity" type="text" aria-describedby="@Model.TownOrCityAriaDescribedBy"
+    <input class="govuk-input govuk-!-width-two-thirds" asp-for="@Model.TownOrCity" type="text" aria-describedby="@Model.TownOrCity"
              val-required-message="Enter a town or city"
             val-max-length="75"
            val-max-length-message="Town or city must be 75 characters or less"
@@ -76,7 +76,7 @@
         </span>
     }
     @*<span asp-validation-for="@Model.County" class="govuk-error-message"></span>*@
-    <input class="govuk-input govuk-!-width-two-thirds" asp-for="@Model.County" type="text" aria-describedby="@Model.CountyAriaDescribedBy"
+    <input class="govuk-input govuk-!-width-two-thirds" asp-for="@Model.County" type="text" aria-describedby="@Model.County"
             val-max-length="75"
            val-max-length-message="County must be 75 characters or lesss"
            val-regex="@townOrCountyRegex"
@@ -94,7 +94,7 @@
         </span>
     }
     @*<span asp-validation-for="@Model.Postcode" class="govuk-error-message"></span>*@
-    <input class="govuk-input govuk-input--width-10" asp-for="@Model.Postcode" type="text" aria-describedby="@Model.PostcodeAriaDescribedBy"
+    <input class="govuk-input govuk-input--width-10" asp-for="@Model.Postcode" type="text" aria-describedby="@Model.Postcode"
              val-required-message="Enter a postcode"
             val-max-length="8"
            val-max-length-message="Enter a real postcode"

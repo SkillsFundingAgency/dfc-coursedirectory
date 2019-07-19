@@ -91,6 +91,30 @@
     },
     "findCourseApiKey": {
       "value": "not-a-real-key"
+    },
+    "appHostName": {
+      "value": "some.host.name"
+    },
+    "keyVaultName": {
+      "value": "a-keyvault"
+    },
+    "keyVaultResourceGroup":{
+      "value": "keyvault-rg"
+    },
+    "certificateName": {
+      "value": "certificate-name"
+    },
+    "appServicePlanInstances": {
+      "value": 1
+    },
+    "aseHostingEnvironmentName": {
+      "value": ""
+    },
+    "aseResourceGroup": {
+      "value": ""
+    },
+    "appServicePlanSize": {
+      "value": "1"
     }
   }
 }

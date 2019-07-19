@@ -25,7 +25,7 @@
 
         <span id="DuplicateVenueName" class="" val-message="Venue name already exists" style="display:none"><span class="govuk-visually-hidden">Error:</span>Venue name already exists</span>
 
-        <input class="govuk-input" asp-for="@Model.VenueName" type="text" aria-describedby="@Model.AriaDescribedBy"
+        <input class="govuk-input" asp-for="@Model.VenueName" type="text" aria-describedby="@Model.VenueName"
                val-required-message="Enter a venue name"
                val-max-length="255"
                val-max-length-message="Venue name must be 255 characters or less"
