@@ -10,18 +10,24 @@
         @Html.HiddenFor(x => x.Id)
         @Html.HiddenFor(x => x.Address)
         @Html.HiddenFor(x => x.Address.Id)
-        @Html.HiddenFor(x => x.Address.AddressLine1)
-        @Html.HiddenFor(x => x.Address.AddressLine2)
-        @Html.HiddenFor(x => x.Address.TownOrCity)
+        @*@Html.HiddenFor(x => x.Address.AddressLine1)
+        @Html.HiddenFor(x => x.Address.AddressLine2)*@
+        @*@Html.HiddenFor(x => x.Address.TownOrCity)
         @Html.HiddenFor(x => x.Address.County)
-        @Html.HiddenFor(x => x.Address.Postcode)
+        @Html.HiddenFor(x => x.Address.Postcode)*@
         @Html.HiddenFor(x => x.PostCodeId)
+
+        <input type="hidden" id="AddressLine1" value="@Model.Address.AddressLine1" />
+        <input type="hidden" id="AddressLine2" value="@Model.Address.AddressLine2" />
+        <input type="hidden" id="TownCity" value="@Model.Address.TownOrCity" />
+        <input type="hidden" id="PostCode" value="@Model.Address.Postcode" />
+        <input type="hidden" id="County" value="@Model.Address.County" />
 
         <div class="govuk-grid-column-full">
             <table class="govuk-table">
                 <tbody>
                     <tr>
-                        <th class="govuk-table__header" scope="col">Venue name</th>
+                        <td class="govuk-table__header">Venue name</td>
                         <td class="govuk-table__cell">
                             <input asp-for="@Model.VenueName" type="hidden" />
 
@@ -37,7 +43,7 @@
 
                     </tr>
                     <tr>
-                        <th class="govuk-table__header" scope="col">Venue address</th>
+                        <td class="govuk-table__header">Venue address</td>
                         <td class="govuk-table__cell">
                             <input asp-for="@Model.Address.AddressLine1" name="@nameof(Model.Address.AddressLine1)" type="hidden" />
                             <label>@Model.Address.AddressLine1</label><br>

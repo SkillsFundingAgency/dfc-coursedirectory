@@ -455,7 +455,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                                 copiedCourseRun.Regions = model.SelectedRegions;
                                 string[] selectedRegions = availableRegions.SubRegionsDataCleanse(copiedCourseRun.Regions.ToList());
 
-                                var subRegions = selectedRegions.Select(selectedRegion => availableRegions.GetRegionFromName(selectedRegion)).ToList();
+                                var subRegions = selectedRegions.Select(selectedRegion => availableRegions.GetSubRegionItemByRegionCode(selectedRegion)).ToList();
                                 copiedCourseRun.SubRegions = subRegions;
 
                                 copiedCourseRun.AttendancePattern = AttendancePattern.Undefined;

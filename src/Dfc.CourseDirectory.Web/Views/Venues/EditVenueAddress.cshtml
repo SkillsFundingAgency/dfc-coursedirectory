@@ -9,8 +9,9 @@
         <div class="govuk-grid-column-two-thirds">
             <h1 class="govuk-heading-l">Edit venue address</h1>
             <form method="post" id="edit-venue-form" asp-controller="Venues" asp-action="VenueAddressSelectionConfirmation">
-                @Html.HiddenFor(x => x.VenueName)
-                @Html.HiddenFor(x => x.Id)
+
+                <input type="hidden" id="ModelVenueName" value="@Model.VenueName" />
+                <input type="hidden" id="ModelId" value="@Model.Id" />
                 @await Component.InvokeAsync(nameof(PostcodeLookup), new PostcodeLookupModel
                        {
                            Id = Model.Id,

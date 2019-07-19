@@ -110,7 +110,7 @@
     "aseHostingEnvironmentName": {
       "value": "__AseHostingEnvironmentName__"
     },
-    "aseResoureGroup": {
+    "aseResourceGroup": {
       "value": "__SharedResourceGroupName__"
     },
     "appServicePlanSize": {
