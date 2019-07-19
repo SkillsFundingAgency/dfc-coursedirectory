@@ -75,7 +75,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                 if (authorised.Succeeded)
                 {
-                    return RedirectToAction("Index", "SearchProvider");
+                    return View("../Provider/Search");
                 }
 
                 IEnumerable<Course> courses = _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(UKPRN))
@@ -92,7 +92,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     return RedirectToAction("Report", "Migration");
                 }
 
-                return Redirect("/");
+                return View("../Provider/Dashboard");
             }
             else
             {
@@ -128,7 +128,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                 if (authorised.Succeeded)
                 {
-                    return RedirectToAction("Index", "SearchProvider");
+                    return View("../Provider/Search");
                 }
 
                 return View("../Provider/Dashboard");
