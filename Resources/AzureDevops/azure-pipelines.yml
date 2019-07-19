@@ -37,7 +37,13 @@ steps:
 # ARM template
 - template: AzureDevOpsTemplates/Build/dfc-arm-build.yml@dfc-devops
   parameters:
-    ArmTemplateRoot: '$(System.DefaultWorkingDirectory)\Resources\ArmTemplates'
+    ArmTemplateRoot: '$(System.DefaultWorkingDirectory)\Resources\Azure\ArmTemplates'
+
+- task: CopyFiles@2
+  displayName: 'Copy Files: AzureSearch'
+  inputs:
+    Contents: 'Resources/AzureSearch/*'
+    TargetFolder: '$(build.artifactstagingdirectory)'
 
 - task: Npm@1
   displayName: 'npm install'
@@ -74,6 +80,14 @@ steps:
     projects: 'tests/*Tests/*.csproj'
     arguments: '--configuration $(BuildConfiguration)'
   continueOnError: true
+
+- task: DotNetCoreCLI@2
+  displayName: Publish
+  inputs:
+    command: publish
+    publishWebProjects: True
+    arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)'
+    zipAfterPublish: True
 
 # Publish
 - task: PublishBuildArtifacts@1

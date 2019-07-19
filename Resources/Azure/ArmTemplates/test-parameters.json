@@ -105,12 +105,12 @@
       "value": "certificate-name"
     },
     "appServicePlanInstances": {
-      "value": "1"
+      "value": 1
     },
     "aseHostingEnvironmentName": {
       "value": ""
     },
-    "aseResoureGroup": {
+    "aseResourceGroup": {
       "value": ""
     },
     "appServicePlanSize": {
