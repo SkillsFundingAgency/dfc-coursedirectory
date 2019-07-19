@@ -87,10 +87,9 @@ namespace Dfc.CourseDirectory.Web.Helpers
 
             foreach (var course in courses)
             {
-                //First course run is on same line as course line
+                //First course run is on same line as course line in CSV
                 var firstCourseRun = course.CourseRuns.First();
 
-                //Sanitise regions
                 if (firstCourseRun.Regions != null)
                     firstCourseRun.Regions = _CSVHelper.SanitiseRegionTextForCSVOutput(firstCourseRun.Regions);
 
@@ -99,13 +98,13 @@ namespace Dfc.CourseDirectory.Web.Helpers
                 CsvCourse csvCourse = new CsvCourse
                 {
                     LearnAimRef = course.LearnAimRef != null ? _CSVHelper.SanitiseTextForCSVOutput(course.LearnAimRef) : string.Empty,
-                    CourseDescription = course.CourseDescription != null ? _CSVHelper.SanitiseTextForCSVOutput(course.CourseDescription) : string.Empty,
-                    EntryRequirements = course.EntryRequirements != null ? _CSVHelper.SanitiseTextForCSVOutput(course.EntryRequirements) : string.Empty,
-                    WhatYoullLearn = course.WhatYoullLearn != null ? _CSVHelper.SanitiseTextForCSVOutput(course.WhatYoullLearn) : string.Empty,
-                    HowYoullLearn = course.HowYoullLearn != null ? _CSVHelper.SanitiseTextForCSVOutput(course.HowYoullLearn) : string.Empty,
-                    WhatYoullNeed = course.WhatYoullNeed != null ? _CSVHelper.SanitiseTextForCSVOutput(course.WhatYoullNeed) : string.Empty,
-                    HowYoullBeAssessed = course.HowYoullBeAssessed != null ? _CSVHelper.SanitiseTextForCSVOutput(course.HowYoullBeAssessed) : string.Empty,
-                    WhereNext = course.WhereNext != null ? _CSVHelper.SanitiseTextForCSVOutput(course.WhereNext) : string.Empty,
+                    CourseDescription = !string.IsNullOrWhiteSpace(course.CourseDescription) ? _CSVHelper.SanitiseTextForCSVOutput(course.CourseDescription) : string.Empty,
+                    EntryRequirements = !string.IsNullOrWhiteSpace(course.EntryRequirements) ? _CSVHelper.SanitiseTextForCSVOutput(course.EntryRequirements) : string.Empty,
+                    WhatYoullLearn = !string.IsNullOrWhiteSpace(course.WhatYoullLearn) ? _CSVHelper.SanitiseTextForCSVOutput(course.WhatYoullLearn) : string.Empty,
+                    HowYoullLearn = !string.IsNullOrWhiteSpace(course.HowYoullLearn) ? _CSVHelper.SanitiseTextForCSVOutput(course.HowYoullLearn) : string.Empty,
+                    WhatYoullNeed = !string.IsNullOrWhiteSpace(course.WhatYoullNeed) ? _CSVHelper.SanitiseTextForCSVOutput(course.WhatYoullNeed) : string.Empty,
+                    HowYoullBeAssessed = !string.IsNullOrWhiteSpace(course.HowYoullBeAssessed) ? _CSVHelper.SanitiseTextForCSVOutput(course.HowYoullBeAssessed) : string.Empty,
+                    WhereNext = !string.IsNullOrWhiteSpace(course.WhereNext) ? _CSVHelper.SanitiseTextForCSVOutput(course.WhereNext) : string.Empty,
                     AdvancedLearnerLoan = course.AdvancedLearnerLoan ? "Yes" : "No",
                     AdultEducationBudget = course.AdultEducationBudget ? "Yes" : "No",
                     CourseName = firstCourseRun.CourseName != null ? _CSVHelper.SanitiseTextForCSVOutput(firstCourseRun.CourseName) : string.Empty,
@@ -113,14 +112,13 @@ namespace Dfc.CourseDirectory.Web.Helpers
                     DeliveryMode = firstCourseRun.DeliveryMode.ToDescription(),
                     StartDate = firstCourseRun.StartDate.HasValue ? firstCourseRun.StartDate.Value.ToString("dd/MM/yyyy") : string.Empty,
                     FlexibleStartDate = firstCourseRun.FlexibleStartDate ? "Yes" : string.Empty,
-                    VenueName = firstCourseRun.VenueId.HasValue ? _venueService.GetVenueByIdAsync(new GetVenueByIdCriteria(firstCourseRun.VenueId.Value.ToString())).Result.Value.VenueName : string.Empty,
                     National = firstCourseRun.National.HasValue ? (firstCourseRun.National.Value ? "Yes" : "No") : string.Empty,
                     Regions = firstCourseRun.Regions != null ? _CSVHelper.SemiColonSplit(
                                                                 selectRegionModel.RegionItems
                                                                 .Where(x => firstCourseRun.Regions.Contains(x.Id))
                                                                 .Select(y => _CSVHelper.SanitiseTextForCSVOutput(y.RegionName).Replace(",","")).ToList())
                                                                 : string.Empty,
-                    SubRegions = firstCourseRun.SubRegions != null ? _CSVHelper.SemiColonSplit(
+                    SubRegions = firstCourseRun.Regions != null ? _CSVHelper.SemiColonSplit(
                                                                     selectRegionModel.RegionItems.SelectMany(
                                                                         x => x.SubRegion.Where(
                                                                             y => firstCourseRun.Regions.Contains(y.Id)).Select(
@@ -133,6 +131,15 @@ namespace Dfc.CourseDirectory.Web.Helpers
                     StudyMode = firstCourseRun.StudyMode.ToDescription(),
                     AttendancePattern = firstCourseRun.AttendancePattern.ToDescription()
                 };
+                if(firstCourseRun.VenueId.HasValue)
+                {
+                    var result = _venueService.GetVenueByIdAsync(new GetVenueByIdCriteria
+                        (firstCourseRun.VenueId.Value.ToString())).Result;
+                    if(result.HasValue && !string.IsNullOrWhiteSpace(result.Value.VenueName))
+                    {
+                        csvCourse.VenueName = result.Value.VenueName;
+                    }
+                }
                 csvCourses.Add(csvCourse);
                 foreach (var courseRun in course.CourseRuns)
                 {
@@ -154,14 +161,13 @@ namespace Dfc.CourseDirectory.Web.Helpers
                         DeliveryMode = courseRun.DeliveryMode.ToDescription(),
                         StartDate = courseRun.StartDate.HasValue ? courseRun.StartDate.Value.ToString("dd/MM/yyyy") : string.Empty,
                         FlexibleStartDate = courseRun.FlexibleStartDate ? "Yes" : string.Empty,
-                        VenueName = courseRun.VenueId.HasValue ? _venueService.GetVenueByIdAsync(new GetVenueByIdCriteria(courseRun.VenueId.Value.ToString())).Result.Value.VenueName : string.Empty,
                         National = courseRun.National.HasValue ? (courseRun.National.Value ? "Yes" : "No") : string.Empty,
                         Regions = courseRun.Regions != null ? _CSVHelper.SemiColonSplit(
                                                                 selectRegionModel.RegionItems
                                                                 .Where(x => courseRun.Regions.Contains(x.Id))
                                                                 .Select(y => _CSVHelper.SanitiseTextForCSVOutput(y.RegionName).Replace(",","")).ToList())
                                                                 : string.Empty,
-                        SubRegions = courseRun.SubRegions != null ? _CSVHelper.SemiColonSplit(
+                        SubRegions = courseRun.Regions != null ? _CSVHelper.SemiColonSplit(
                                                                     selectRegionModel.RegionItems.SelectMany(
                                                                         x => x.SubRegion.Where(
                                                                             y => courseRun.Regions.Contains(y.Id)).Select(
@@ -174,6 +180,17 @@ namespace Dfc.CourseDirectory.Web.Helpers
                         StudyMode = courseRun.StudyMode.ToDescription(),
                         AttendancePattern = courseRun.AttendancePattern.ToDescription()
                     };
+
+                    if (courseRun.VenueId.HasValue)
+                    {
+                        var result = _venueService.GetVenueByIdAsync(new GetVenueByIdCriteria
+                        (courseRun.VenueId.Value.ToString())).Result;
+
+                        if (result.HasValue && !string.IsNullOrWhiteSpace(result.Value.VenueName))
+                        {
+                            csvCourseRun.VenueName = result.Value.VenueName;
+                        }
+                    }
                     csvCourses.Add(csvCourseRun);
                 }
             }

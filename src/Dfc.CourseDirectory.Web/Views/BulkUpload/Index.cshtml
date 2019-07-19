@@ -119,7 +119,15 @@
                                     @Html.ActionLink("Download a blank template", "GetBulkUploadTemplateFile", "BlobStorage")
                                 </li>
                                 <li class="govuk-!-padding-bottom-4">
-                                    @Html.ActionLink("Download a template containing your current courses", "GetCurrentCoursesTemplateFile", "BlobStorage")
+                                    @if (Model.HasMigrationErrors)
+                                    {
+                                        <p>Fix all migration errors in order to download a template containing your current courses</p>
+                                    }
+                                    else
+                                    {
+                                        @Html.ActionLink("Download a template containing your current courses", "GetCurrentCoursesTemplateFile", "BlobStorage")
+                                    }
+
                                 </li>
                             </ul>
 

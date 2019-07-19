@@ -45,20 +45,20 @@ else
             {
                 <div>
                     <div class="cd-apprenticeships-search-result__container">
-                        <h3 class="govuk-heading-m" style="display:inline-flex">
+                        <h2 class="govuk-heading-m">
                             @apprenticeship.ApprenticeshipTitle
-
                             @if (apprenticeship.ApprenticeshipType == ApprenticeshipType.FrameworkCode)
                             {
-                                <span style="background-color: darkgray;color: white;padding: 5px;margin-left:10px">@apprenticeship.ApprenticeshipType.ToDescription()</span>
+                                <span class="govuk-!-margin-left-3 govuk-tag">Framework</span>
                             }
-                        </h3>
+                        </h2>
+                        
                         @if (apprenticeship.OtherBodyApprovalRequired == "Y")
                         {
-                    <span class="govuk-hint">
-                        You may need approval from the regulator of this occupation before you can deliver this training.<br />
-                        The <a href="https://www.instituteforapprenticeships.org/developing-new-apprenticeships/resources/regulated-occupations/" target="_blank">Institute for Apprenticeships</a> can tell you more
-                    </span>
+                            <span class="govuk-hint">
+                                You may need approval from the regulator of this occupation before you can deliver this training.<br />
+                                The <a href="https://www.instituteforapprenticeships.org/developing-new-apprenticeships/resources/regulated-occupations/" target="_blank">Institute for Apprenticeships</a> can tell you more
+                            </span>
 
 
                         }
