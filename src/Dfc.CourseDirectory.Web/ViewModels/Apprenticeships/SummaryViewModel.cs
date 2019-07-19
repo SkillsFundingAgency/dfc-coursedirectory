@@ -27,7 +27,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels.Apprenticeships
 
         public DeliveryOptionsCombinedViewModel DeliveryOptionsCombinedViewModel { get; set; }
 
-        public string[] Regions { get; set; }
+        public Dictionary<string, List<string>> Regions { get; set; }
 
         public ApprenticeshipMode  Mode { get; set; }
 

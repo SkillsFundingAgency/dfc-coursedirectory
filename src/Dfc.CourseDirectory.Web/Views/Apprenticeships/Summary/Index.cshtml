@@ -26,157 +26,183 @@
 
 
 
-                            @Html.HiddenFor(x => x.Cancelled)
-                            @Html.HiddenFor(x => x.Mode)
-                            @if (Model.Mode == ApprenticeshipMode.EditYourApprenticeships)
-                            {
+                @Html.HiddenFor(x => x.Cancelled)
+                @Html.HiddenFor(x => x.Mode)
+                @if (Model.Mode == ApprenticeshipMode.EditYourApprenticeships)
+                {
                     <h1 class="govuk-heading-xl">View and edit this apprenticeship</h1>
-                            }
-                            else
+                }
+                else
+                {
+                    <h1 class="govuk-heading-xl">Check and publish to the course directory</h1>
+                }
+
+
+
+                <h2 class="govuk-heading-m">@Model?.DetailViewModel?.ApprenticeshipTitle</h2>
+
+                <dl class="govuk-summary-list ">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Apprenticeship information for employers
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Html.Raw(Model.DetailViewModel.Information)
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a class="govuk-link float-right" asp-controller="Apprenticeships" asp-action="Details" asp-route-Mode=@theMode asp-fragment="InformationContainer" asp-route-showcancelled=true>Change</a>
+
+                        </dd>
+                    </div>
+                </dl>
+                <dl class="govuk-summary-list ">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Apprenticeship webpage
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.DetailViewModel.Website
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a class="govuk-link float-right" asp-controller="Apprenticeships" asp-action="Details" asp-route-Mode=@theMode asp-fragment="WebsiteContainer" asp-route-showcancelled=true>Change</a>
+
+                        </dd>
+                    </div>
+                </dl>
+                <dl class="govuk-summary-list ">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Email
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.DetailViewModel.Email
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a class="govuk-link float-right" asp-controller="Apprenticeships" asp-action="Details" asp-route-Mode=@theMode asp-fragment="EmailContainer" asp-route-showcancelled=true>Change</a>
+
+                        </dd>
+                    </div>
+                </dl>
+                <dl class="govuk-summary-list ">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Telephone
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.DetailViewModel.Telephone
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a class="govuk-link float-right" asp-controller="Apprenticeships" asp-action="Details" asp-route-Mode=@theMode asp-fragment="TelephoneContainer" asp-route-showcancelled=true>Change</a>
+
+                        </dd>
+                    </div>
+                </dl>
+                <dl class="govuk-summary-list ">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Contact URL
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.DetailViewModel.ContactUsIUrl
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a class="govuk-link float-right" asp-controller="Apprenticeships" asp-action="Details" asp-route-Mode=@theMode asp-fragment="ContactUsContainer" asp-route-showcancelled=true>Change</a>
+
+                        </dd>
+                    </div>
+                </dl>
+
+                <div class="summary--linked-title">
+                    <h2 class="govuk-heading-s">Delivery options </h2>
+
+                    @if (Model.DeliveryViewModel.ApprenticeshipDelivery == ApprenticeshipDelivery.Both)
+                    {
+                        <a class="govuk-link float-right" asp-controller="Apprenticeships" asp-action="DeliveryOptionsCombined" asp-route-mode=@theMode>
+                            Change
+                        </a>
+                    }
+                    else
+                    {
+                        <a class="govuk-link float-right " asp-controller="Apprenticeships" asp-action="DeliveryOptions" asp-route-mode=@theMode>
+                            Change
+                        </a>
+                    }
+
+                </div>
+                @if (Model.Regions.Count > 0)
+                {
+
+                <table class="govuk-table">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th class="govuk-table__header govuk-!-width-one-third" scope="col">Location</th>
+                            <th class="govuk-table__header govuk-!-width-two-thirds" scope="col">Sub region</th>
+                        </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                        @{
+                            foreach (var item in Model.Regions)
                             {
-                                <h1 class="govuk-heading-xl">Check and publish to the course directory</h1>
-                            }
-
-
-
-                            <h2 class="govuk-heading-m">@Model?.DetailViewModel?.ApprenticeshipTitle</h2>
-
-                            <dl class="govuk-summary-list ">
-                                <div class="govuk-summary-list__row">
-                                    <dt class="govuk-summary-list__key">
-                                        Apprenticeship information for employers
-                                    </dt>
-                                    <dd class="govuk-summary-list__value">
-                                        @Html.Raw(Model.DetailViewModel.Information)
-                                    </dd>
-                                    <dd class="govuk-summary-list__actions">
-                                        <a class="govuk-link float-right" asp-controller="Apprenticeships" asp-action="Details" asp-route-Mode=@theMode asp-fragment="InformationContainer" asp-route-showcancelled=true>Change</a>
-
-                                    </dd>
-                                </div>
-                            </dl>
-                            <dl class="govuk-summary-list ">
-                                <div class="govuk-summary-list__row">
-                                    <dt class="govuk-summary-list__key">
-                                        Apprenticeship webpage
-                                    </dt>
-                                    <dd class="govuk-summary-list__value">
-                                        @Model.DetailViewModel.Website
-                                    </dd>
-                                    <dd class="govuk-summary-list__actions">
-                                        <a class="govuk-link float-right" asp-controller="Apprenticeships" asp-action="Details" asp-route-Mode=@theMode asp-fragment="WebsiteContainer" asp-route-showcancelled=true>Change</a>
-
-                                    </dd>
-                                </div>
-                            </dl>
-                            <dl class="govuk-summary-list ">
-                                <div class="govuk-summary-list__row">
-                                    <dt class="govuk-summary-list__key">
-                                        Email
-                                    </dt>
-                                    <dd class="govuk-summary-list__value">
-                                        @Model.DetailViewModel.Email
-                                    </dd>
-                                    <dd class="govuk-summary-list__actions">
-                                        <a class="govuk-link float-right" asp-controller="Apprenticeships" asp-action="Details" asp-route-Mode=@theMode asp-fragment="EmailContainer" asp-route-showcancelled=true>Change</a>
-
-                                    </dd>
-                                </div>
-                            </dl>
-                            <dl class="govuk-summary-list ">
-                                <div class="govuk-summary-list__row">
-                                    <dt class="govuk-summary-list__key">
-                                        Telephone
-                                    </dt>
-                                    <dd class="govuk-summary-list__value">
-                                        @Model.DetailViewModel.Telephone
-                                    </dd>
-                                    <dd class="govuk-summary-list__actions">
-                                        <a class="govuk-link float-right" asp-controller="Apprenticeships" asp-action="Details" asp-route-Mode=@theMode asp-fragment="TelephoneContainer" asp-route-showcancelled=true>Change</a>
-
-                                    </dd>
-                                </div>
-                            </dl>
-                            <dl class="govuk-summary-list ">
-                                <div class="govuk-summary-list__row">
-                                    <dt class="govuk-summary-list__key">
-                                        Contact URL
-                                    </dt>
-                                    <dd class="govuk-summary-list__value">
-                                        @Model.DetailViewModel.ContactUsIUrl
-                                    </dd>
-                                    <dd class="govuk-summary-list__actions">
-                                        <a class="govuk-link float-right" asp-controller="Apprenticeships" asp-action="Details" asp-route-Mode=@theMode asp-fragment="ContactUsContainer" asp-route-showcancelled=true>Change</a>
-
-                                    </dd>
-                                </div>
-                            </dl>
-
-                            <div class="summary--linked-title">
-                                <h2 class="govuk-heading-s">Delivery options </h2>
-
-                                @if (Model.DeliveryViewModel.ApprenticeshipDelivery == ApprenticeshipDelivery.Both)
-                                {
-                                    <a class="govuk-link float-right" asp-controller="Apprenticeships" asp-action="DeliveryOptionsCombined" asp-route-mode=@theMode>
-                                        Change
-                                    </a>
-                                }
-                                else
-                                {
-                                    <a class="govuk-link float-right " asp-controller="Apprenticeships" asp-action="DeliveryOptions" asp-route-mode=@theMode>
-                                        Change
-                                    </a>
-                                }
-
-                            </div>
-
-                            @if (Model.DeliveryOptionsViewModel != null)
-                            {
-                                @if (Model.DeliveryOptionsViewModel.DeliveryOptionsListItemModel != null)
-                                {
-                                    @await Component.InvokeAsync(nameof(DeliveryOptionsList), Model.DeliveryOptionsViewModel.DeliveryOptionsListItemModel)
-                                }
-                            }
-
-                            @if (Model.DeliveryOptionsCombinedViewModel != null)
-                            {
-                                @if (Model.DeliveryOptionsCombinedViewModel.DeliveryOptionsListItemModel != null)
-                                {
-                                    @await Component.InvokeAsync(nameof(DeliveryOptionsList), Model.DeliveryOptionsCombinedViewModel.DeliveryOptionsListItemModel)
-                                }
-                            }
-
-
-                            @if (Model.Mode == ApprenticeshipMode.Add || Model.Mode == ApprenticeshipMode.EditApprenticeship)
-                            {
-                                <button type="submit" class="govuk-button" id="next">Publish</button>
-                            }
-                            else
-                            {
-                                @if (Model.Mode == ApprenticeshipMode.EditYourApprenticeships)
-                                {
-
-
-                                    @if (Model.Cancelled == null || Model.Cancelled.Value == true)
-                                    {
-                                        <button type="submit" class="govuk-button" id="next">Close</button>
-                                    }
-                                    else
-                                    {
-
-                                        <button type="submit" class="govuk-button" id="next">Publish</button>
-
-
-                                    }
-
-
-                                }
-
+                                <tr class="govuk-table__row">
+                                    <th class="govuk-table__header" scope="row">@item.Key</th>
+                                    <td class="govuk-table__cell">@string.Join(", ", item.Value)</td>
+                                </tr>
 
                             }
+                        }
+                    </tbody>
+
+                </table>
+                }
 
 
-    
+                @if (Model.DeliveryOptionsViewModel != null)
+                {
+                    @if (Model.DeliveryOptionsViewModel.DeliveryOptionsListItemModel != null)
+                    {
+                        @await Component.InvokeAsync(nameof(DeliveryOptionsList), Model.DeliveryOptionsViewModel.DeliveryOptionsListItemModel)
+                    }
+                }
+
+                @if (Model.DeliveryOptionsCombinedViewModel != null)
+                {
+                    @if (Model.DeliveryOptionsCombinedViewModel.DeliveryOptionsListItemModel != null)
+                    {
+                        @await Component.InvokeAsync(nameof(DeliveryOptionsList), Model.DeliveryOptionsCombinedViewModel.DeliveryOptionsListItemModel)
+                    }
+                }
+
+
+                @if (Model.Mode == ApprenticeshipMode.Add || Model.Mode == ApprenticeshipMode.EditApprenticeship)
+                {
+                    <button type="submit" class="govuk-button" id="next">Publish</button>
+                }
+                else
+                {
+                    @if (Model.Mode == ApprenticeshipMode.EditYourApprenticeships)
+                    {
+
+
+                        @if (Model.Cancelled == null || Model.Cancelled.Value == true)
+                        {
+                            <button type="submit" class="govuk-button" id="next">Close</button>
+                        }
+                        else
+                        {
+
+                            <button type="submit" class="govuk-button" id="next">Publish</button>
+
+
+                        }
+
+
+                    }
+
+
+                }
+
+
+
 
             </div>
 
