@@ -21,24 +21,24 @@
                     <table class="govuk-table">
                         <thead class="govuk-table__head">
                             <tr class="govuk-table__row">
-                                <th class="govuk-table__header" scope="row">Lars/QAN:</th>
+                                <td class="govuk-table__header">Lars/QAN:</td>
                                 <td class="govuk-table__cell">@Model.LearnAimRef</td>
                             </tr>
                         </thead>
                         <tbody class="govuk-table__body">
                             <tr class="govuk-table__row">
-                                <th class="govuk-table__header" scope="row">Level:</th>
+                                <td class="govuk-table__header">Level:</td>
                                 <td class="govuk-table__cell">@Model.NotionalNVQLevelv2</td>
                             </tr>
                             <tr class="govuk-table__row">
-                                <th class="govuk-table__header" scope="row">Awarding organisation:</th>
+                                <td class="govuk-table__header">Awarding organisation:</td>
                                 <td class="govuk-table__cell">@Model.AwardOrgCode</td>
                             </tr>
                         </tbody>
                     </table>
 
 
-                    <h3 class="govuk-heading-m govuk-!-margin-top-0">
+                    <h2 class="govuk-heading-m govuk-!-margin-top-0">
                         <a class="govuk-link" style="padding-right:1em"
                            asp-controller="EditCourseRun"
                            asp-action="Index"
@@ -50,7 +50,7 @@
                            asp-route-courseId="@Model.CourseId"
                            asp-route-courseRunId="@Model.CourseInstanceId"
                            asp-route-mode="@PublishMode.Summary">Edit course information</a>
-                    </h3>
+                    </h2>
 
                     <table class="govuk-table">
                         <thead class="govuk-table__head">
@@ -58,19 +58,19 @@
                         </thead>
                         <tbody class="govuk-table__body">
                             <tr class="govuk-table__row">
-                                <th class="govuk-table__header" scope="col">Course Name:</th>
-                                <td class="govuk-table__cell" scope="col">@Model.CourseName</td>
+                                <td class="govuk-table__header">Course Name:</td>
+                                <td class="govuk-table__cell">@Model.CourseName</td>
                             </tr>
                             <tr class="govuk-table__row">
-                                <th class="govuk-table__header" scope="row">ID:</th>
+                                <td class="govuk-table__header">ID:</td>
                                 <td class="govuk-table__cell">@Model.ProviderCourseID</td>
                             </tr>
                             <tr class="govuk-table__row">
-                                <th class="govuk-table__header" scope="row">Delivery:</th>
+                                <td class="govuk-table__header">Delivery:</td>
                                 <td class="govuk-table__cell">@deliveryModeAttribute.Name</td>
                             </tr>
                             <tr class="govuk-table__row">
-                                <th class="govuk-table__header" scope="row">Start date:</th>
+                                <td class="govuk-table__header">Start date:</td>
                                 @{
                                     if (Model.FlexibleStartDate == true)
                                     {
@@ -86,7 +86,7 @@
                                 if (Model.DeliveryMode == DeliveryMode.WorkBased)
                                 {
                                     <tr class="govuk-table__row">
-                                        <th class="govuk-table__header" scope="col" style="vertical-align: text-top;">Region(s):</th>
+                                        <td class="govuk-table__header" style="vertical-align: text-top;">Region(s):</td>
                                         @{
                                             if (Model.National)
                                             {
@@ -112,23 +112,23 @@
                                 if (Model.DeliveryMode == DeliveryMode.ClassroomBased)
                                 {
                                     <tr class="govuk-table__row">
-                                        <th class="govuk-table__header" scope="col">Venue:</th>
-                                        <td class="govuk-table__cell" scope="col">@Model.VenueName</td>
+                                        <td class="govuk-table__header">Venue:</td>
+                                        <td class="govuk-table__cell">@Model.VenueName</td>
                                     </tr>
                                 }
                             }
                             <tr class="govuk-table__row">
-                                <th class="govuk-table__header" scope="row">Url:</th>
+                                <td class="govuk-table__header">Url:</td>
                                 <td class="govuk-table__cell"><a href="@Model.CourseURL" target="_blank" style="word-break: break-all">@Model.CourseURL</a></td>
                             </tr>
                             <tr class="govuk-table__row">
-                                <th class="govuk-table__header" scope="row">Cost:</th>
+                                <td class="govuk-table__header">Cost:</td>
                                 <td class="govuk-table__cell">£@Model.Cost</td>
                             </tr>
                             <tr class="govuk-table__row">
-                                <th class="govuk-table__header" scope="row">Cost description:</th>
+                                <td class="govuk-table__header">Cost description:</td>
                                 <td class="govuk-table__cell">
-                                    <details class="govuk-details" role="group">
+                                    <details class="govuk-details">
                                         <summary class="govuk-details__summary" role="button" aria-controls="details-content-4386f8be-5919-4bb4-89d7-41219af78831" aria-expanded="false">
                                             <span class="govuk-details__summary-text">
                                                 View
@@ -141,18 +141,18 @@
                                 </td>
                             </tr>
                             <tr class="govuk-table__row">
-                                <th class="govuk-table__header" scope="row">Duration:</th>
+                                <td class="govuk-table__header">Duration:</td>
                                 <td class="govuk-table__cell">@Model.DurationValue @Model.DurationUnit</td>
                             </tr>
                             @{
                                 if (Model.DeliveryMode == DeliveryMode.ClassroomBased)
                                 {
                                     <tr class="govuk-table__row">
-                                        <th class="govuk-table__header" scope="row">Full time or part time:</th>
+                                        <td class="govuk-table__header">Full time or part time:</td>
                                         <td class="govuk-table__cell">@studyModeAttribute.Name</td>
                                     </tr>
                                     <tr class="govuk-table__row">
-                                        <th class="govuk-table__header" scope="row">Attendance:</th>
+                                        <td class="govuk-table__header">Attendance:</td>
                                         <td class="govuk-table__cell">@attendanceAttribute.Name</td>
                                     </tr>
                                 }
@@ -168,7 +168,7 @@
                     <table class="govuk-table">
                         <tbody>
                             <tr class="govuk-table__row">
-                                <th class="govuk-table__header" scope="row">Who is this course for </th>
+                                <td class="govuk-table__header">Who is this course for </>
                                 <td class="govuk-table__cell">
                                     <details class="govuk-details" role="group">
                                         <summary class="govuk-details__summary" role="button" aria-controls="details-content-78ad1d3d-97e3-4aab-844f-fc7d331d17be" aria-expanded="false">
@@ -184,7 +184,7 @@
                             </tr>
 
                             <tr class="govuk-table__row">
-                                <th class="govuk-table__header" scope="row">Entry requirements </th>
+                                <td class="govuk-table__header">Entry requirements </td>
                                 <td class="govuk-table__cell">
                                     <details class="govuk-details" role="group">
                                         <summary class="govuk-details__summary" role="button" aria-controls="details-content-4aa86daa-5204-432a-9fe6-338b1a7219f9" aria-expanded="false">
@@ -200,7 +200,7 @@
                             </tr>
 
                             <tr class="govuk-table__row">
-                                <th class="govuk-table__header" scope="row">What you’ll learn </th>
+                                <td class="govuk-table__header">What you’ll learn </td>
                                 <td class="govuk-table__cell">
                                     <details class="govuk-details" role="group">
                                         <summary class="govuk-details__summary" role="button" aria-controls="details-content-88c1b9d8-0154-4e23-bde2-ef56a0e2081c" aria-expanded="false">
@@ -216,7 +216,7 @@
                             </tr>
 
                             <tr class="govuk-table__row">
-                                <th class="govuk-table__header" scope="row">How you’ll learn</th>
+                                <td class="govuk-table__header">How you’ll learn</td>
                                 <td class="govuk-table__cell">
                                     <details class="govuk-details" role="group">
                                         <summary class="govuk-details__summary" role="button" aria-controls="details-content-46d25118-62ca-4030-8b35-d357230fb6ce" aria-expanded="false">
@@ -233,9 +233,9 @@
 
 
                             <tr class="govuk-table__row">
-                                <th class="govuk-table__header" scope="row">What you’ll need to bring </th>
+                                <td class="govuk-table__header">What you’ll need to bring </td>
                                 <td class="govuk-table__cell">
-                                    <details class="govuk-details" role="group">
+                                    <details class="govuk-details">
                                         <summary class="govuk-details__summary" role="button" aria-controls="details-content-d795fa03-609e-466e-86bb-8cbf07563317" aria-expanded="false">
                                             <span class="govuk-details__summary-text">
                                                 View
@@ -249,7 +249,7 @@
                             </tr>
 
                             <tr class="govuk-table__row">
-                                <th class="govuk-table__header" scope="row">How you'll be assessed</th>
+                                <td class="govuk-table__header">How you'll be assessed</td>
                                 <td class="govuk-table__cell">
                                     <details class="govuk-details" role="group">
                                         <summary class="govuk-details__summary" role="button" aria-controls="details-content-9ce35a38-e076-49c6-a756-65e3e5a2fc41" aria-expanded="false">
@@ -265,7 +265,7 @@
                             </tr>
 
                             <tr class="govuk-table__row">
-                                <th class="govuk-table__header" scope="row">Where next</th>
+                                <td class="govuk-table__header">Where next</td>
                                 <td class="govuk-table__cell">
                                     <details class="govuk-details" role="group">
                                         <summary class="govuk-details__summary" role="button" aria-controls="details-content-70078d78-3005-4f4d-9e7c-6e6f7814c802" aria-expanded="false">

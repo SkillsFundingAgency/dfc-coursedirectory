@@ -8,50 +8,63 @@
 
 
 
-<form class="govuk-!-margin-bottom-9" id="ApprenticeshipDeliveryForm" asp-controller="Apprenticeships" asp-action="Delivery" method="post">
-    <a asp-controller="Apprenticeships" asp-action="Details" class="govuk-back-link">Back</a><br />
-    @Html.HiddenFor(x => x.Mode)
-    @*<h1 class="govuk-heading-xl">Where will this apprenticeship training be delivered?</h1>
-    <br /*@
+    <form class="govuk-!-margin-bottom-9" id="ApprenticeshipDeliveryForm" asp-controller="Apprenticeships" asp-action="Delivery" method="post">
+        <a asp-controller="Apprenticeships" asp-action="Details" class="govuk-back-link">Back</a><br />
+        @Html.HiddenFor(x => x.Mode)
+        @*<h1 class="govuk-heading-l">Where will this apprenticeship training be delivered?</h1>*@
 
-
-    <div class="govuk-form-group">
-        <fieldset class="govuk-fieldset">
-            <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
-                <h1 class="govuk-fieldset__heading">
-                    Where will this apprenticeship training be delivered?
-                </h1>
-            </legend>
-            <div class="govuk-radios" val-required-message="Select Where will this apprenticeship training be delivered?" id="ApprenticeshipDelivery">
-
-                <div class="govuk-radios__item">
-                    @Html.RadioButtonFor(m => m.ApprenticeshipDelivery, ApprenticeshipDelivery.YourLocation, new { @class = "govuk-radios__input", id = ApprenticeshipDelivery.YourLocation })
-                    <label class="govuk-label govuk-radios__label" for="@ApprenticeshipDelivery.YourLocation">@WebHelper.GetEnumDescription(ApprenticeshipDelivery.YourLocation)</label>
-                </div>
-                <div class="govuk-radios__item">
-                    @Html.RadioButtonFor(m => m.ApprenticeshipDelivery, ApprenticeshipDelivery.EmployersAddress, new { @class = "govuk-radios__input", id = ApprenticeshipDelivery.EmployersAddress })
-                    <label class="govuk-label govuk-radios__label" for="@ApprenticeshipDelivery.EmployersAddress">@WebHelper.GetEnumDescription(ApprenticeshipDelivery.EmployersAddress)</label>
-                </div>
-                <div class="govuk-radios__item">
-                    @Html.RadioButtonFor(m => m.ApprenticeshipDelivery, ApprenticeshipDelivery.Both, new { @class = "govuk-radios__input", id = ApprenticeshipDelivery.Both })
-                    <label class="govuk-label govuk-radios__label" for="@ApprenticeshipDelivery.Both">@WebHelper.GetEnumDescription(ApprenticeshipDelivery.Both)</label>
-                </div>
+       
+        <div id="errorsummary" class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary" style="display: none;">
+            <h2 class="govuk-error-summary__title" id="error-summary-title">
+                There is an issue with this apprenticeship
+            </h2>
+            <div class="govuk-error-summary__body">
+                <ul class="govuk-list govuk-error-summary__list"></ul>
             </div>
-        </fieldset>
-    </div>
+        </div>
+
+        <div class="govuk-form-group">
+            
+
+            <fieldset class="govuk-fieldset">
+                <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+                    <h1 class="govuk-fieldset__heading">
+                        Where will this apprenticeship training be delivered?
+                    </h1>
+                </legend>
 
 
-    <br />
 
-    <button type="submit" class="govuk-button" id="next">Continue</button>
-</form>
+                <div class="govuk-radios" val-required-message="Select Where will this apprenticeship training be delivered?" id="ApprenticeshipDelivery">
+
+                    <div class="govuk-radios__item">
+                        @Html.RadioButtonFor(m => m.ApprenticeshipDelivery, ApprenticeshipDelivery.YourLocation, new {@class = "govuk-radios__input", id = ApprenticeshipDelivery.YourLocation})
+                        <label class="govuk-label govuk-radios__label" for="@ApprenticeshipDelivery.YourLocation">@WebHelper.GetEnumDescription(ApprenticeshipDelivery.YourLocation)</label>
+                    </div>
+                    <div class="govuk-radios__item">
+                        @Html.RadioButtonFor(m => m.ApprenticeshipDelivery, ApprenticeshipDelivery.EmployersAddress, new {@class = "govuk-radios__input", id = ApprenticeshipDelivery.EmployersAddress})
+                        <label class="govuk-label govuk-radios__label" for="@ApprenticeshipDelivery.EmployersAddress">@WebHelper.GetEnumDescription(ApprenticeshipDelivery.EmployersAddress)</label>
+                    </div>
+                    <div class="govuk-radios__item">
+                        @Html.RadioButtonFor(m => m.ApprenticeshipDelivery, ApprenticeshipDelivery.Both, new {@class = "govuk-radios__input", id = ApprenticeshipDelivery.Both})
+                        <label class="govuk-label govuk-radios__label" for="@ApprenticeshipDelivery.Both">@WebHelper.GetEnumDescription(ApprenticeshipDelivery.Both)</label>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+
+
+        <br />
+
+        <button type="submit" class="govuk-button" id="next">Continue</button>
+    </form>
 
 <script>
     (function ($) {
         $(function () {
             var validStates = [];
             var $button = $("#next");
-
+            var $errorSummary = $("#errorsummary").govUkErrorSummary();
             var $apprenticeshipDelivery = $("#ApprenticeshipDelivery").govUkRadios();
 
             function isAllValid(currentValue) {
@@ -61,14 +74,19 @@
             function validate() {
 
                 validStates = [];
-
+                $errorSummary.govUkErrorSummary("removeAll");
                 $apprenticeshipDelivery.govUkRadios("validState");
 
                 if ($.requiredValidate($apprenticeshipDelivery.find("input[type='radio']:checked").val())) {
                     $apprenticeshipDelivery.govUkRadios("validState");
+                    $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $apprenticeshipDelivery[0].id);
+                    $errorSummary.govUkErrorSummary("hideIfEmpty");
                     validStates.push(true);
                 } else {
                     $apprenticeshipDelivery.govUkRadios("invalidState", $apprenticeshipDelivery.attr("val-required-message"));
+                    var radioDeliveryErrorHashLinks = $apprenticeshipDelivery.govUkRadios("getErrorHashLinks");
+                    $errorSummary.govUkErrorSummary("add", radioDeliveryErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
                     validStates.push(false);
                 }
             }

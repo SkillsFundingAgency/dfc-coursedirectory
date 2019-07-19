@@ -6,28 +6,33 @@
 }
 <form asp-controller="RegulatedQualification" asp-action="RegulatedTypeSelected" method="post" id="QualificationType">
 
-    <div class="govuk-form-group">
-        <fieldset class="govuk-fieldset">
-            <h1 class="govuk-heading-l">What are you awarding with this course?</h1>
-            <br />
-            <div class="govuk-radios" val-required-message="Choose 1 option to continue" id="SelectQualificationType">
-                <div class="govuk-radios__item">
-                    @Html.RadioButtonFor(m => m.RegulatedType, RegulatedType.Regulated, new { @class = "govuk-radios__input", id = RegulatedType.Regulated })
-                    <label class="govuk-label govuk-radios__label" for="@RegulatedType.Regulated">@WebHelper.GetEnumDescription(RegulatedType.Regulated)</label>
-                </div>
-                <div class="govuk-radios__item">
-                    @Html.RadioButtonFor(m => m.RegulatedType, RegulatedType.NonRegulated, new { @class = "govuk-radios__input", id = RegulatedType.NonRegulated })
-                    <label class="govuk-label govuk-radios__label" for="@RegulatedType.NonRegulated">
-                        @WebHelper.GetEnumDescription(RegulatedType.NonRegulated)
-                    <span class="govuk-hint">
-                        Not overseen by Ofqual or the QAA for Higher Education
-                    </span>
-                </label>
+        <div class="govuk-form-group">
+            <fieldset class="govuk-fieldset">
+                <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+                    <h1 class="govuk-fieldset__heading">
+                        What are you awarding with this course?
+                    </h1>
+                </legend>
+                <div class="govuk-radios" val-required-message="Choose 1 option to continue" id="SelectQualificationType">
 
-            </div>
-        </div>
-    </fieldset>
-</div>
+                    <div class="govuk-radios__item">
+                        @Html.RadioButtonFor(m => m.RegulatedType, RegulatedType.Regulated, new { @class = "govuk-radios__input", id = RegulatedType.Regulated })
+                        <label class="govuk-label govuk-radios__label" for="@RegulatedType.Regulated">@WebHelper.GetEnumDescription(RegulatedType.Regulated)</label>
+                    </div>
+                    <div class="govuk-radios__item">
+                        @Html.RadioButtonFor(m => m.RegulatedType, RegulatedType.NonRegulated, new { @class = "govuk-radios__input", id = RegulatedType.NonRegulated })
+                        <label class="govuk-label govuk-radios__label" for="@RegulatedType.NonRegulated">
+                            @WebHelper.GetEnumDescription(RegulatedType.NonRegulated) <span class="govuk-hint">
+                                                    Not overseen by Ofqual or the QAA for Higher Education
+                                                </span>
+                                            </label>
+                    </div>
+                    
+                </div>
+            </fieldset>
+  
+
+    </div>
 <br />
 <button type="submit" class="govuk-button" id="next">Continue</button>
 </form>
