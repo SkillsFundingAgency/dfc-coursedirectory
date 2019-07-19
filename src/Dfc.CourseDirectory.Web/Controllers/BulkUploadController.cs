@@ -73,7 +73,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
 
             var courseCounts = _courseService.GetCourseCountsByStatusForUKPRN(new CourseSearchCriteria(UKPRN)).Result;
-            var courseErrors = courseCounts.Value.Where(x => (int)x.Status == (int)RecordStatus.MigrationPending || (int)x.Status == (int)RecordStatus.MigrationReadyToGoLive).Count();
+            var courseErrors = courseCounts.HasValue && courseCounts.IsSuccess ? courseCounts.Value.Where(x => (int)x.Status == (int)RecordStatus.MigrationPending || (int)x.Status == (int)RecordStatus.MigrationReadyToGoLive).Count() : 500;
 
             var model = new BulkUploadViewModel
             {
