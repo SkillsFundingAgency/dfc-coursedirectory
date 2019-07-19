@@ -39,6 +39,12 @@ steps:
   parameters:
     ArmTemplateRoot: '$(System.DefaultWorkingDirectory)\Resources\Azure\ArmTemplates'
 
+- task: CopyFiles@2
+  displayName: 'Copy Files: AzureSearch'
+  inputs:
+    Contents: 'Resources/AzureSearch/*'
+    TargetFolder: '$(build.artifactstagingdirectory)'
+
 - task: Npm@1
   displayName: 'npm install'
   inputs:
