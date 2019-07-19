@@ -39,7 +39,7 @@ else
         <div class="govuk-form-group govuk-!-font-size-14">
             <div class="accordion govuk-heading-s">Filter by level</div>
             <div class="panel">
-                <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
+                <fieldset class="govuk-fieldset">
                     <div class="govuk-checkboxes">
 
 
@@ -63,7 +63,7 @@ else
             <div class="govuk-form-group govuk-!-font-size-14">
                 <div class="accordion govuk-heading-s active">Filter by delivery mode</div>
                 <div class="panel" style="display: none">
-                    <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
+                    <fieldset class="govuk-fieldset" >
                         <div class="govuk-checkboxes">
 
 
@@ -89,7 +89,7 @@ else
             <div class="govuk-form-group govuk-!-font-size-14">
                 <div class="accordion govuk-heading-s active">Filter by venue</div>
                 <div class="panel" style="display: none">
-                    <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
+                    <fieldset class="govuk-fieldset" >
                         <div class="govuk-checkboxes">
 
 
@@ -115,7 +115,7 @@ else
             <div class="govuk-form-group govuk-!-font-size-14">
                 <div class="accordion govuk-heading-s active">Filter by attendance mode</div>
                 <div class="panel" style="display: none">
-                    <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
+                    <fieldset class="govuk-fieldset" >
                         <div class="govuk-checkboxes">
 
 
@@ -140,7 +140,7 @@ else
             <div class="govuk-form-group govuk-!-font-size-14">
                 <div class="accordion govuk-heading-s active">Filter by region</div>
                 <div class="panel" style="display: none">
-                    <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
+                    <fieldset class="govuk-fieldset">
                         <div class="govuk-checkboxes">
 
 
@@ -167,13 +167,13 @@ else
 
         @foreach (var courseRun in Model.ProviderCourseRuns.OrderBy(x=>x.CourseName))
         {
-        <div class="courserun border">
-            <div class="courserun__row1" id="@courseRun.CourseRunId">
+        <div class="courserun border" id="@courseRun.CourseRunId">
+            <div class="courserun__row1" >
                 @if (!string.IsNullOrEmpty(courseRun.CourseName))
                 {
-                    <h3 class="coursename">@courseRun.CourseName</h3>
+                    <h2 class="coursename">@courseRun.CourseName</h2>
                 }
-                <h4 class="coursename smaller ">
+                <h3 class="coursename smaller ">
 
                     @if (!string.IsNullOrEmpty(courseRun.QualificationCourseTitle))
                     {
@@ -186,7 +186,7 @@ else
                         </small>
                     }
 
-                </h4>
+                </h3>
             </div>
 
             @if (courseRun.DeliveryMode == "Classroom based")
@@ -228,7 +228,7 @@ else
                 {
                     if (!string.IsNullOrEmpty(courseRun.AttendancePattern))
                     {
-                        <span id="attendance">@courseRun.AttendancePattern</span>
+                        <span>@courseRun.AttendancePattern</span>
                     }
                 }
                 @if (!string.IsNullOrEmpty(courseRun.NotionalNVQLevelv2))
@@ -239,13 +239,13 @@ else
 
                 @if (!string.IsNullOrEmpty(courseRun.DeliveryMode))
                 {
-                    <span id="deliverymode">@courseRun.DeliveryMode</span>
+                    <span>@courseRun.DeliveryMode</span>
                 }
                 @if (courseRun.DeliveryMode == "Classroom based")
                 {
                     @if (!string.IsNullOrEmpty(courseRun.StudyMode))
                     {
-                        <span id="studymode">@courseRun.StudyMode</span>
+                        <span>@courseRun.StudyMode</span>
                     }
                 }
                 @if (!string.IsNullOrEmpty(courseRun.StartDate))

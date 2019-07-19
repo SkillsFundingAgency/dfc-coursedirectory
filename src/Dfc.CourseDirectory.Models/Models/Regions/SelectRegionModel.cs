@@ -312,7 +312,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         {
                             Id = "E08000013",
                             ApiLocationId = 41,
-                            SubRegionName = "St. Helens",
+                            SubRegionName = "St Helens",
                             Checked = false,
                             Latitude = 53.45388,
                             Longitude = -2.73689
@@ -369,7 +369,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         {
                             Id = "E06000010",
                             ApiLocationId = 46,
-                            SubRegionName = "Kingston upon Hull, City of",
+                            SubRegionName = "Kingston upon Hull",
                             Checked = false,
                             Latitude = 53.74434,
                             Longitude = -0.33244
@@ -609,7 +609,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         {
                             Id = "E06000019",
                             ApiLocationId = 70,
-                            SubRegionName = "Herefordshire, County of",
+                            SubRegionName = "Herefordshire",
                             Checked = false,
                             Latitude = 38.77813,
                             Longitude = -90.19985
@@ -1359,7 +1359,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         {
                             Id = "E06000023",
                             ApiLocationId = 144,
-                            SubRegionName = "Bristol, City of",
+                            SubRegionName = "Bristol",
                             Checked = false,
                             Latitude = 33.72628,
                             Longitude = -117.8714

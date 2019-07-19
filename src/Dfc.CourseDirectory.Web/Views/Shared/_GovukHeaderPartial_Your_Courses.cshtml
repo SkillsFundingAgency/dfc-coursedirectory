@@ -40,7 +40,7 @@
 
         </div>
     </div>
-</header>
+
 
 
 
@@ -95,36 +95,38 @@
 
     </div>
 </div>
+</header>
 
-<div class="govuk-phase-banner cd-fullwidth-container">
-    <p class="govuk-phase-banner__content">
-        <strong class="govuk-tag govuk-phase-banner__content__tag ">
-            @bannerSettings.Tag
-        </strong>
-        <span class="govuk-phase-banner__text">
-            This is a new service – your
-            <a class="govuk-link" target="_blank" href="@bannerSettings.LinkUrl">@bannerSettings.LinkText</a> will help us to improve it.
-        </span>
-    </p>
-</div>
 <div class="navigation-container cd-fullwidth-container govuk-body">
+    <div class="govuk-phase-banner">
+        <p class="govuk-phase-banner__content">
+            <strong class="govuk-tag govuk-phase-banner__content__tag ">
+                @bannerSettings.Tag
+            </strong>
+            <span class="govuk-phase-banner__text">
+                This is a new service – your
+                <a class="govuk-link" target="_blank" href="@bannerSettings.LinkUrl">@bannerSettings.LinkText</a> will help us to improve it.
+            </span>
+        </p>
+    </div>
     <nav class="cd-secondary-nav">
         @{
             if (User.Identity.IsAuthenticated)
             {
                 var authorised = await Authorization.AuthorizeAsync(User, "ElevatedUserRole");
                 var superUser = await Authorization.AuthorizeAsync(User, "SuperUser");
-                var feUser = await Authorization.AuthorizeAsync(User,"Fe");
-                var apprenticeshipUser = await Authorization.AuthorizeAsync(User,"apprenticeship");
+                var feUser = await Authorization.AuthorizeAsync(User, "Fe");
+                var apprenticeshipUser = await Authorization.AuthorizeAsync(User, "apprenticeship");
 
                 <a class="cd-secondary-nav--item" href="/">
                     Home
                 </a>
 
-                if (feUser.Succeeded) { 
-                <a class="cd-secondary-nav--item" href="/RegulatedQualification">
-                    Qualifications
-                </a>
+                if (feUser.Succeeded)
+                {
+                    <a class="cd-secondary-nav--item" href="/RegulatedQualification">
+                        Qualifications
+                    </a>
 
                 }
 

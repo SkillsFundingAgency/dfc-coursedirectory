@@ -17,7 +17,7 @@
             <div>
                 <a asp-controller="Home" asp-action="Index" class="govuk-back-link">Back</a><br />
                 <h1 class="govuk-heading-l govuk-!-margin-top-4">Find apprenticeship</h1>
-                <p class="column-two-thirds govuk-body">Search by name or keyword for the apprenticeship this training is for.</p>
+                <label class="govuk-label" id="searchLabel">Search by name or keyword for the apprenticeship this training is for.</label>
 
 
                 @*<p class="govuk-body-l">Search by apprenticeship name or keyword</p>*@
@@ -28,7 +28,7 @@
                     <div class="search-input-wrapper">
 
 
-                        <input class="govuk-input search-input js-search-focus" id="ApprenticeshipSearchTerm" asp-for="@Model.Search" type="text">
+                        <input class="govuk-input search-input js-search-focus" id="ApprenticeshipSearchTerm" asp-for="@Model.Search" type="text" aria-labelledby="searchLabel">
                         <div class="cd-c-search__item cd-search__submit-wrapper">
                             <button type="button" class=" submit" id="searchApprenticeships">Search</button>
                         </div>
