@@ -534,7 +534,17 @@ namespace Dfc.CourseDirectory.Web.Controllers
             model.DeliveryViewModel = DeliveryViewModel;
             model.DeliveryOptionsViewModel = DeliveryOptionsViewModel;
             model.DeliveryOptionsCombinedViewModel = DeliveryOptionsCombinedViewModel;
-            model.Regions = SubRegionCodesToDictionary(Regions);
+            if(LocationChoiceSelectionViewModel.NationalApprenticeship == NationalApprenticeship.Yes)
+            {
+                model.Regions = new Dictionary<string, List<string>>
+                {
+                    {"National", new List<string>(){"All"} }
+                };
+            }
+            else if(LocationChoiceSelectionViewModel.NationalApprenticeship == NationalApprenticeship.No)
+            {
+                model.Regions = SubRegionCodesToDictionary(Regions);
+            }
             model.LocationChoiceSelectionViewModel = LocationChoiceSelectionViewModel;
             model.Cancelled = requestModel.cancelled;
             model.Mode = requestModel.Mode;
