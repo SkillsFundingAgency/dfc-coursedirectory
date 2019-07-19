@@ -238,14 +238,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
         public IActionResult LocationChoiceSelection(ApprenticeshipMode Mode)
         {
             var model = new LocationChoiceSelectionViewModel();
-            model.Mode = Mode;
+            
 
             var LocationChoiceSelectionViewModel = _session.GetObject<LocationChoiceSelectionViewModel>("LocationChoiceSelectionViewModel");
             if (LocationChoiceSelectionViewModel != null)
             {
                 model = LocationChoiceSelectionViewModel;
             }
-
+            model.Mode = Mode;
             return View("../Apprenticeships/LocationChoiceSelection/Index", model);
         }
 
@@ -257,10 +257,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
             switch (model.NationalApprenticeship)
             {
                 case NationalApprenticeship.Yes:
-                    return RedirectToAction("Summary", "Apprenticeships", new { ApprenticeshipMode = model.Mode });
+                    return RedirectToAction("Summary", "Apprenticeships", new { Mode = model.Mode });
 
                 case NationalApprenticeship.No:
-                    return RedirectToAction("Regions", "Apprenticeships", new { ApprenticeshipMode = model.Mode });
+                    return RedirectToAction("Regions", "Apprenticeships", new { Mode = model.Mode });
 
                 default:
                     return View("../ApprenticeShips/Search/Index");
