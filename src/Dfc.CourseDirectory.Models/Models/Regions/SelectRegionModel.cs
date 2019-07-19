@@ -1495,7 +1495,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
             }; 
         }
 
-        public SubRegionItemModel GetRegionFromName(string regionCode)
+        public SubRegionItemModel GetSubRegionItemByRegionCode(string regionCode)
         {
             foreach (var regionItemModel in RegionItems)
             {
@@ -1554,7 +1554,11 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
 
             return revisedSubRegions.Distinct().ToArray();
         }
-
+        public string GetRegionNameForSubRegion(string subRegionCode)
+        {
+            var regionItem = RegionItems.Where(x => x.SubRegion.Any(y => y.Id == subRegionCode)).FirstOrDefault();
+            return regionItem != null ? regionItem.RegionName : string.Empty;
+        }
 
     }
 }

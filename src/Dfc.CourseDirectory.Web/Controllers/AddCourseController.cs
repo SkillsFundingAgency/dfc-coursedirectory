@@ -763,7 +763,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         courseRun.Regions = addCourseSection2.SelectedRegions;
                         string[] selectedRegions = availableRegions.SubRegionsDataCleanse(addCourseSection2.SelectedRegions.ToList());
 
-                        courseRun.SubRegions = selectedRegions.Select(selectedRegion => availableRegions.GetRegionFromName(selectedRegion)).ToList();
+                        courseRun.SubRegions = selectedRegions.Select(selectedRegion => availableRegions.GetSubRegionItemByRegionCode(selectedRegion)).ToList();
                     }
                 }
                 else

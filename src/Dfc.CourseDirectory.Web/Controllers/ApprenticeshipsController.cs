@@ -534,7 +534,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             model.DeliveryViewModel = DeliveryViewModel;
             model.DeliveryOptionsViewModel = DeliveryOptionsViewModel;
             model.DeliveryOptionsCombinedViewModel = DeliveryOptionsCombinedViewModel;
-            model.Regions = Regions;
+            model.Regions = SubRegionCodesToDictionary(Regions);
             model.LocationChoiceSelectionViewModel = LocationChoiceSelectionViewModel;
             model.Cancelled = requestModel.cancelled;
             model.Mode = requestModel.Mode;
@@ -632,8 +632,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             model.DeliveryOptionsViewModel = DeliveryOptionsViewModel;
 
             model.DeliveryOptionsCombinedViewModel = DeliveryOptionsCombinedViewModel;
-
-            model.Regions = Regions ?? new string[0];
 
             model.LocationChoiceSelectionViewModel = LocationChoiceSelectionViewModel;
 
@@ -1228,14 +1226,23 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return RedirectToAction(model.Combined ? "DeliveryOptionsCombined" : "DeliveryOptions", "Apprenticeships", new { message = "Location " + model.LocationName + " deleted", mode = model.Mode });
         }
 
-        internal Dictionary<string, string> SubRegionCodesToDictionary(string[] subRegions)
+        internal Dictionary<string, List<string>> SubRegionCodesToDictionary(string[] subRegions)
         {
             SelectRegionModel selectRegionModel = new SelectRegionModel();
-            Dictionary<string, string> regionsAndSubregions = new Dictionary<string, string>();
+            Dictionary<string, List<string>> regionsAndSubregions = new Dictionary<string, List<string>>();
 
             foreach(var subRegionCode in subRegions)
             {
-                var regionItem = selectRegionModel.GetRegionFromName(subRegionCode);
+                var regionName = selectRegionModel.GetRegionNameForSubRegion(subRegionCode);
+                if(!string.IsNullOrWhiteSpace(regionName))
+                {
+                    if(!regionsAndSubregions.ContainsKey(regionName))
+                    {
+                        regionsAndSubregions.Add(regionName, new List<string>());
+                    }
+                    var subRegionItem = selectRegionModel.GetSubRegionItemByRegionCode(subRegionCode);
+                    regionsAndSubregions[regionName].Add(subRegionItem.SubRegionName);
+                }
 
             }
             return regionsAndSubregions;
