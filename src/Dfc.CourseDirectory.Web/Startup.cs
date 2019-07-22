@@ -190,6 +190,7 @@ namespace Dfc.CourseDirectory.Web
             {
                 options.IdleTimeout = TimeSpan.FromMinutes(30); //.FromSeconds(18);
                 options.Cookie.HttpOnly = true;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
             });
 
             //TODO
