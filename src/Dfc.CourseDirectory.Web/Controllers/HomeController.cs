@@ -75,6 +75,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                 if (authorised.Succeeded)
                 {
+                    // Making sure this change goes through...
                     return RedirectToAction("Index", "SearchProvider");
                 }
 
@@ -92,6 +93,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     return RedirectToAction("Report", "Migration");
                 }
 
+                // Making sure this change goes through...
                 return Redirect("/");
             }
             else
@@ -128,6 +130,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                 if (authorised.Succeeded)
                 {
+                    // Making sure this change goes through...
                     return RedirectToAction("Index", "SearchProvider");
                 }
 
