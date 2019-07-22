@@ -216,8 +216,9 @@ namespace Dfc.CourseDirectory.Web
 
             }).AddCookie(options =>
             {
-                options.ExpireTimeSpan = TimeSpan.FromHours(1); //.FromSeconds(18); 
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
                 options.SlidingExpiration = true;
+                options.LogoutPath = "/Auth/Logout";
                 options.Events = new CookieAuthenticationEvents
                 {
 
@@ -237,7 +238,7 @@ namespace Dfc.CourseDirectory.Web
                         // assume a timeout of 20 minutes.
                         var timeElapsed = DateTimeOffset.UtcNow.Subtract(x.Properties.IssuedUtc.Value);
 
-                        if (timeElapsed > TimeSpan.FromMinutes(59.5)) //.FromSeconds(18)) ;
+                        if (timeElapsed > TimeSpan.FromMinutes(59.5))
                         {
                             var identity = (ClaimsIdentity)x.Principal.Identity;
                             var accessTokenClaim = identity.FindFirst("access_token");
@@ -327,7 +328,7 @@ namespace Dfc.CourseDirectory.Web
                 {
                     RequireSub = true,
                     RequireStateValidation = false,
-                    NonceLifetime = TimeSpan.FromMinutes(60) //.FromSeconds(18)
+                    NonceLifetime = TimeSpan.FromMinutes(60)
                 };
 
                 options.DisableTelemetry = true;
@@ -353,7 +354,7 @@ namespace Dfc.CourseDirectory.Web
                             context.Response.StatusCode = 302;
                             context.Response.Headers["Location"] = "/";
                         }
-
+                        
                         return Task.CompletedTask;
                     },
 
