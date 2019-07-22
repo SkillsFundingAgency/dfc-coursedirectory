@@ -114,23 +114,43 @@
 
                 <div class="summary--linked-title">
                     <h2 class="govuk-heading-s">Delivery options </h2>
+                    
+                    @{
+                        switch (Model.DeliveryViewModel.ApprenticeshipDelivery)
+                        {
+                            case ApprenticeshipDelivery.YourLocation:
+                                <a class="govuk-link float-right " asp-controller="Apprenticeships" asp-action="DeliveryOptions" asp-route-mode=@theMode>
+                                    Change
+                                </a>
+                                break;
+                            case ApprenticeshipDelivery.Both: 
+                                <a class="govuk-link float-right" asp-controller="Apprenticeships" asp-action="DeliveryOptionsCombined" asp-route-mode=@theMode>
+                                    Change
+                                </a>
+                                break;
 
-                    @if (Model.DeliveryViewModel.ApprenticeshipDelivery == ApprenticeshipDelivery.Both)
-                    {
-                        <a class="govuk-link float-right" asp-controller="Apprenticeships" asp-action="DeliveryOptionsCombined" asp-route-mode=@theMode>
-                            Change
-                        </a>
-                    }
-                    else
-                    {
-                        <a class="govuk-link float-right " asp-controller="Apprenticeships" asp-action="DeliveryOptions" asp-route-mode=@theMode>
-                            Change
-                        </a>
+                            case ApprenticeshipDelivery.EmployersAddress:
+
+                                if (Model.LocationChoiceSelectionViewModel.NationalApprenticeship == NationalApprenticeship.Yes)
+                                {
+                                    <a class="govuk-link float-right " asp-controller="Apprenticeships" asp-action="LocationChoiceSelection" asp-route-mode=@theMode>
+                                        Change
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a class="govuk-link float-right " asp-controller="Apprenticeships" asp-action="Regions" asp-route-mode=@theMode>
+                                        Change
+                                    </a>
+                                }
+                             
+                                break;
+                        }
                     }
 
                 </div>
-                @if (Model.Regions.Count > 0)
-                {
+                @if (Model.Regions != null && Model.Regions.Count > 0)
+                    {
 
                 <table class="govuk-table">
                     <thead class="govuk-table__head">
@@ -157,24 +177,24 @@
 
 
                 @if (Model.DeliveryOptionsViewModel != null)
-                {
-                    @if (Model.DeliveryOptionsViewModel.DeliveryOptionsListItemModel != null)
                     {
-                        @await Component.InvokeAsync(nameof(DeliveryOptionsList), Model.DeliveryOptionsViewModel.DeliveryOptionsListItemModel)
-                    }
-                }
-
-                @if (Model.DeliveryOptionsCombinedViewModel != null)
-                {
-                    @if (Model.DeliveryOptionsCombinedViewModel.DeliveryOptionsListItemModel != null)
+                        @if (Model.DeliveryOptionsViewModel.DeliveryOptionsListItemModel != null)
                     {
-                        @await Component.InvokeAsync(nameof(DeliveryOptionsList), Model.DeliveryOptionsCombinedViewModel.DeliveryOptionsListItemModel)
+                            @await Component.InvokeAsync(nameof(DeliveryOptionsList), Model.DeliveryOptionsViewModel.DeliveryOptionsListItemModel)
                     }
-                }
+                    }
+
+                    @if (Model.DeliveryOptionsCombinedViewModel != null)
+                    {
+                        @if (Model.DeliveryOptionsCombinedViewModel.DeliveryOptionsListItemModel != null)
+                        {
+                            @await Component.InvokeAsync(nameof(DeliveryOptionsList), Model.DeliveryOptionsCombinedViewModel.DeliveryOptionsListItemModel)
+                    }
+                    }
 
 
-                @if (Model.Mode == ApprenticeshipMode.Add || Model.Mode == ApprenticeshipMode.EditApprenticeship)
-                {
+                    @if (Model.Mode == ApprenticeshipMode.Add || Model.Mode == ApprenticeshipMode.EditApprenticeship)
+                    {
                     <button type="submit" class="govuk-button" id="next">Publish</button>
                 }
                 else
