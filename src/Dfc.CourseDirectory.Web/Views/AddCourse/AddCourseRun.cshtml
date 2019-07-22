@@ -611,7 +611,7 @@
                     validStates.push(false);
                 }
                 else if ($duration.find("input").val().indexOf(".") >= 0) {
-                    alert($duration.find("input").val().indexOf("."));
+                    
                     $duration.govUkDurationInput("invalidState", $duration.attr("val-decimal-message"));
                     var durationErrorHashLinks = $duration.govUkDurationInput("getErrorHashLinks");
                     $errorSummary.govUkErrorSummary("add", durationErrorHashLinks);
