@@ -39,6 +39,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
         private readonly Uri _archiveLiveCoursesUri;
         private readonly Uri _deleteBulkUploadCoursesUri;
         private readonly Uri _getCourseMigrationReportByUKPRN;
+        private readonly Uri _getAllDfcReports;
 
         private readonly int _courseForTextFieldMaxChars;
         private readonly int _entryRequirementsTextFieldMaxChars;
@@ -91,6 +92,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             _changeCourseRunStatusesForUKPRNSelectionUri = settings.Value.ToChangeCourseRunStatusesForUKPRNSelectionUri();
             _deleteBulkUploadCoursesUri = settings.Value.ToDeleteBulkUploadCoursesUri();
             _getCourseMigrationReportByUKPRN = settings.Value.ToGetCourseMigrationReportByUKPRN();
+            _getAllDfcReports = settings.Value.ToGetAllDfcReports();
 
             _courseForTextFieldMaxChars = courseForComponentSettings.Value.TextFieldMaxChars;
             _entryRequirementsTextFieldMaxChars = entryRequirementsComponentSettings.Value.TextFieldMaxChars;
@@ -986,6 +988,47 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 _logger.LogMethodExit();
             }
         }
+
+        public async Task<IResult<IList<DfcMigrationReport>>> GetAllDfcReports()
+        {
+            _logger.LogMethodEnter();
+
+            try
+            {
+                _logger.LogInformationObject("Get all dfc reports URI", _getAllDfcReports);
+
+                _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
+                var response = await _httpClient.GetAsync(new Uri(_getAllDfcReports.AbsoluteUri));
+                _logger.LogHttpResponseMessage("Get course migration report service http response", response);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+
+                    _logger.LogInformationObject("Get All Dfc migration reports service json response", json);
+                    IList<DfcMigrationReport> dfcReports = JsonConvert.DeserializeObject<IList<DfcMigrationReport>>(json);
+                    return Result.Ok<IList<DfcMigrationReport>>(dfcReports);
+                }
+                else
+                {
+                    return Result.Fail<IList<DfcMigrationReport>>("Get All Dfc migration report service unsuccessful http response");
+                }
+            }
+            catch (HttpRequestException hre)
+            {
+                _logger.LogException("Get course migration report service http request error", hre);
+                return Result.Fail<IList<DfcMigrationReport>>("Get All Dfc migration report service http request error.");
+            }
+            catch (Exception e)
+            {
+                _logger.LogException("Get course migration report service unknown error.", e);
+                return Result.Fail<IList<DfcMigrationReport>>("Get All Dfc migration report service unknown error.");
+            }
+            finally
+            {
+                _logger.LogMethodExit();
+            }
+        }
     }
 
     internal static class IGetCourseByIdCriteriaExtensions
@@ -1084,6 +1127,13 @@ namespace Dfc.CourseDirectory.Services.CourseService
             var uri = new Uri(extendee.ApiUrl);
             var trimmed = uri.AbsoluteUri.TrimEnd('/');
             return new Uri($"{trimmed}/GetCourseMigrationReportByUKPRN");
+        }
+
+        internal static Uri ToGetAllDfcReports(this ICourseServiceSettings extendee)
+        {
+            var uri = new Uri(extendee.ApiUrl);
+            var trimmed = uri.AbsoluteUri.TrimEnd('/');
+            return new Uri($"{trimmed}/GetAllDfcReports");
         }
     }
 
