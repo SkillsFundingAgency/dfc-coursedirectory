@@ -6,13 +6,13 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Apprenticeships
 {
     public interface ILocationRef
     {
-        int ID { get; set; }
+        int? ID { get; set; }
 
         List<string> DeliveryModes { get; set; }
 
         string MarketingInfo { get; set; }
 
-        int Radius { get; set; }
+        int? Radius { get; set; }
 
         string StandardInfoUrl { get; set; }
 

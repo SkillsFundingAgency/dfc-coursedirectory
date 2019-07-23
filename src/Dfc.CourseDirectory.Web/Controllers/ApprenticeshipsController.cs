@@ -752,13 +752,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         CreatedBy = User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
                         Contact = new Contact
                         {
-                            ContactUsUrl = model.DetailViewModel.ContactUsIUrl,
+                            ContactUsUrl = model.DetailViewModel.Website,
                             Email = model.DetailViewModel.Email,
                             Phone = model.DetailViewModel.Telephone,
                         },
                         RecordStatus = RecordStatus.Live,
                         NotionalNVQLevelv2 = model.DetailViewModel.NotionalNVQLevelv2,
-                        Version = model.DetailViewModel.Version.Value,
+                        //Version = model.DetailViewModel.Version.Value,
                         UpdatedDate = DateTime.UtcNow,
                         UpdatedBy = User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
                     }

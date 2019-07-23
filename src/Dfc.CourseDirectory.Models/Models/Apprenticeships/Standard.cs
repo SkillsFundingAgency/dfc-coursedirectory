@@ -8,7 +8,7 @@ namespace Dfc.CourseDirectory.Models.Models.Apprenticeships
 {
     public class Standard : IStandard
     {
-        public Guid id { get; set; } // Cosmos DB id
+        public Guid? id { get; set; } // Cosmos DB id
 
         public Contact Contact { get; set; }
         public List<LocationRef> Locations { get; set; }
@@ -16,12 +16,12 @@ namespace Dfc.CourseDirectory.Models.Models.Apprenticeships
         public string StandardInfoUrl { get; set; }
 
         // Standard specific properties. First two form composite primary key
-        public int StandardCode { get; set; }
-        public int Version { get; set; }
+        public int? StandardCode { get; set; }
+        public int? Version { get; set; }
 
         public string StandardName { get; set; }
         public string StandardSectorCode { get; set; } // FK - For backwards compatibility with Tribal
-        public Guid StandardSectorCodeId { get; set; } // FK - CD  Cosmos DB ID
+        public Guid? StandardSectorCodeId { get; set; } // FK - CD  Cosmos DB ID
         public DateTime? EffectiveFrom { get; set; }
         public DateTime? EffectiveTo { get; set; }
         public string URLLink { get; set; }
