@@ -603,7 +603,7 @@
                     $errorSummary.govUkErrorSummary("add", durationErrorHashLinks);
                     $errorSummary.govUkErrorSummary("show");
                     validStates.push(false);
-                } else if (!$.requiredValidate($duration.find("select").val())) {
+                }    else if (!$.requiredValidate($("#durationDropDown").val())) {
                     $duration.govUkDurationInput("invalidState", $duration.attr("val-duration-message"));
                     var durationErrorHashLinks = $duration.govUkDurationInput("getErrorHashLinks");
                     $errorSummary.govUkErrorSummary("add", durationErrorHashLinks);

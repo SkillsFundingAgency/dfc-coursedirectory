@@ -603,37 +603,42 @@
                     $errorSummary.govUkErrorSummary("add", durationErrorHashLinks);
                     $errorSummary.govUkErrorSummary("show");
                     validStates.push(false);
-                } else if (!$.rangeValidate({
-                    min: $duration.attr("val-range-min"),
-                    max: $duration.attr("val-range-max")
-                },
-                    $duration.find("input").val())) {
+                } else if (!$.rangeValidate({ min: $duration.attr("val-range-min"), max: $duration.attr("val-range-max")}, $duration.find("input").val())) {
                     $duration.govUkDurationInput("invalidState", $duration.attr("val-duration-message"));
                     var durationErrorHashLinks = $duration.govUkDurationInput("getErrorHashLinks");
                     $errorSummary.govUkErrorSummary("add", durationErrorHashLinks);
                     $errorSummary.govUkErrorSummary("show");
                     validStates.push(false);
-                } else if (!$.requiredValidate($duration.find("select").val())) {
-                    $duration.govUkDurationInput("invalidState", $duration.attr("val-duration-message"));
-                    var durationErrorHashLinks = $duration.govUkDurationInput("getErrorHashLinks");
-                    $errorSummary.govUkErrorSummary("add", durationErrorHashLinks);
-                    $errorSummary.govUkErrorSummary("show");
-                    validStates.push(false);
-
                 } else if ($duration.find("input").val().indexOf(".") >= 0) {
-                    
                     $duration.govUkDurationInput("invalidState", $duration.attr("val-decimal-message"));
                     var durationErrorHashLinks = $duration.govUkDurationInput("getErrorHashLinks");
                     $errorSummary.govUkErrorSummary("add", durationErrorHashLinks);
                     $errorSummary.govUkErrorSummary("show");
                     validStates.push(false);
-                }
-                else {
+                  }  else if (!$.requiredValidate($("#durationDropDown").val())) {
+                            $duration.govUkDurationInput("invalidState", $duration.attr("val-duration-message"));
+                            var durationErrorHashLinks = $duration.govUkDurationInput("getErrorHashLinks");
+                            $errorSummary.govUkErrorSummary("add", durationErrorHashLinks);
+                            $errorSummary.govUkErrorSummary("show");
+                            validStates.push(false);
+                } else {
                     $duration.govUkDurationInput("validState");
                     $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $duration[0].id);
-                    $errorSummary.govUkErrorSummary("hideIfEmpty")
+                    $errorSummary.govUkErrorSummary("hideIfEmpty");
                     validStates.push(true);
                 }
+
+
+
+            //} else if (!$.requiredValidate($duration.find("select").val())) {
+            //        $duration.govUkDurationInput("invalidState", $duration.attr("val-duration-message"));
+            //        var durationErrorHashLinks = $duration.govUkDurationInput("getErrorHashLinks");
+            //        $errorSummary.govUkErrorSummary("add", durationErrorHashLinks);
+            //        $errorSummary.govUkErrorSummary("show");
+            //        validStates.push(false);
+
+               
+               
 
                 // attendance
                 $attendance.govUkRadios("validState");
