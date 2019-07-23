@@ -1,4 +1,5 @@
 ﻿using Dfc.CourseDirectory.Models.Enums;
+using Dfc.CourseDirectory.Models.Models.Apprenticeships;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,6 +9,11 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Apprenticeships
     public interface IStandard
     {
         Guid id { get; set; } // Cosmos DB id
+        Contact Contact { get; set; }
+        List<LocationRef> Locations { get; set; }
+        string MarketingInfo { get; set; }
+        string StandardInfoUrl { get; set; }
+
 
         // Standard specific properties. First two form composite primary key
         int StandardCode { get; set; }

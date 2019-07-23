@@ -8,7 +8,33 @@ namespace Dfc.CourseDirectory.Models.Models.Apprenticeships
 {
     public class Framework : IFramework
     {
+        
+
+        public Framework()
+        {
+            Locations = new List<LocationRef>();
+        }
+
+        public Framework(int frameworkCode, int pathwayCode, int level)
+            : this()
+        {
+            FrameworkCode = frameworkCode;
+            PathwayCode = pathwayCode;
+            ProgType = level;
+        }
+
+        public Contact Contact { get; set; }
+
+
+        public int? Level { get; set; }
+
+        public IList<LocationRef> Locations { get; set; }
+
         public Guid id { get; set; } // Cosmos DB id
+
+        public string FrameworkInfoUrl { get; set; }
+
+        public string MarketingInfo { get; set; }
 
         // Framework specific properties. First three form composite primary key
         public int FrameworkCode { get; set; } 

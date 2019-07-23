@@ -1,4 +1,5 @@
 ﻿using Dfc.CourseDirectory.Models.Enums;
+using Dfc.CourseDirectory.Models.Models.Apprenticeships;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,22 +10,19 @@ namespace Dfc.CourseDirectory.Models.Interface.Apprenticeships
     {
         Guid id { get; set; } // Cosmos DB id
 
+        Address Address { get; set; }
+
+        int? ID { get; set; }
+
+        string Name { get; set; }
+
+        string Phone { get; set; }
+
         LocationType LocationType { get; set; }
         int ProviderUKPRN { get; set; } // As we are trying to inforce unique UKPRN per Provider
 
         int LocationId { get; set; }
         int ProviderId { get; set; }
-        string LocationName { get; set; }
-        string AddressLine1 { get; set; }
-        string AddressLine2 { get; set; }
-        string Town { get; set; }
-        string County { get; set; }
-        string Postcode { get; set; }
-        decimal Latitude { get; set; }
-        decimal Longitude { get; set; }
-        string Telephone { get; set; }
-        string Email { get; set; }
-        string Website { get; set; }
 
         // Standard auditing properties 
         RecordStatus RecordStatus { get; set; }

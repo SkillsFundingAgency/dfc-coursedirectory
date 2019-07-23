@@ -1,4 +1,5 @@
 ﻿using Dfc.CourseDirectory.Models.Enums;
+using Dfc.CourseDirectory.Models.Models.Apprenticeships;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,7 +9,10 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Apprenticeships
     public interface IFramework
     {
         Guid id { get; set; } // Cosmos DB id
+        Contact Contact { get; set; }
+        int? Level { get; set; }
 
+        IList<LocationRef> Locations { get; set; }
         // Framework specific properties. First three form composite primary key
         int FrameworkCode { get; set; } 
         int ProgType { get; set; } // FK

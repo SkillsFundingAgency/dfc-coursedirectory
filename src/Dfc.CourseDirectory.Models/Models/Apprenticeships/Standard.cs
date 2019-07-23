@@ -10,6 +10,11 @@ namespace Dfc.CourseDirectory.Models.Models.Apprenticeships
     {
         public Guid id { get; set; } // Cosmos DB id
 
+        public Contact Contact { get; set; }
+        public List<LocationRef> Locations { get; set; }
+        public string MarketingInfo { get; set; }
+        public string StandardInfoUrl { get; set; }
+
         // Standard specific properties. First two form composite primary key
         public int StandardCode { get; set; }
         public int Version { get; set; }
