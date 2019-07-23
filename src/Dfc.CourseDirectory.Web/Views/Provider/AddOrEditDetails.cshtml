@@ -4,6 +4,7 @@
 
 @{
     var apprenticeshipUser = await Authorization.AuthorizeAsync(User, "Apprenticeship");
+    var adminLogin = await Authorization.AuthorizeAsync(User, "Admin");
 }
 
 @model Dfc.CourseDirectory.Web.ViewModels.ProviderDetailsAddOrEditViewModel
@@ -41,17 +42,24 @@
                        val-regex="@regex"
                        val-regex-message="Provider Alias Name contains invalid characters">
             </div>
-            <div id="CourseDirectoryNameContainer" class="govuk-form-group">
-                <label id="govuk-label-CourseDirectoryNameName" class="govuk-label" for="course-directory-name">
-                    Course directory name
-                </label>
+            @if (adminLogin.Succeeded)
+            {
+                <div id="CourseDirectoryNameContainer" class="govuk-form-group">
+                    <label id="govuk-label-CourseDirectoryNameName" class="govuk-label" for="course-directory-name">
+                        Course directory name
+                    </label>
 
-                <input class="govuk-input" style="display:inline;" asp-for="@Model.CourseDirectoryName" type="text" aria-label="govuk-label-CourseDirectoryName" aria-describedby="" name="courseDirectoryName"
-                       val-max-length="100"
-                       val-max-length-message="Course Directory Name must be 100 characters or less"
-                       val-regex="@regex"
-                       val-regex-message="Course directory Name contains invalid characters">
-            </div>
+                    <input class="govuk-input" style="display: inline;" asp-for="@Model.CourseDirectoryName" type="text" aria-label="govuk-label-CourseDirectoryName" aria-describedby="" name="courseDirectoryName"
+                           val-max-length="100"
+                           val-max-length-message="Course Directory Name must be 100 characters or less"
+                           val-regex="@regex"
+                           val-regex-message="Course directory Name contains invalid characters">
+                </div>
+            }
+            else
+            {
+                @Html.HiddenFor(x => x.CourseDirectoryName)
+            }
             @if (apprenticeshipUser.Succeeded)
             {
                 <div class="govuk-character-count">
