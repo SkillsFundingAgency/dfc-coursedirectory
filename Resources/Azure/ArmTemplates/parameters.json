@@ -92,6 +92,9 @@
     "findCourseApiKey": {
       "value": "__apimKey__"
     },
+    "findCourseApiPassword": {
+      "value": "__findCourseApiPassword__"
+    },
     "appHostName": {
       "value": "__appHostName__"
     },
