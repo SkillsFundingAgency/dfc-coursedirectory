@@ -604,7 +604,7 @@
               },
               {
                 "name": "FindACourseServiceSettings__ApiKey",
-                "value": "not yet in use"
+                "value": "[parameters('findCourseApiKey')]"
               },
               {
                 "name": "FindACourseServiceSettings__UserName",
@@ -612,7 +612,7 @@
               },
               {
                 "name": "FindACourseServiceSettings__Password",
-                "value": "[parameters('findCourseApiKey')]"
+                "value": "[parameters('searchQueryKey')]"
               },
               {
                 "name": "BlobStorageSettings__AccountName",
