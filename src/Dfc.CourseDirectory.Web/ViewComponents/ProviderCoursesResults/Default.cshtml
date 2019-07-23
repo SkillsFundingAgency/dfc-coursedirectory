@@ -1,4 +1,5 @@
-﻿@using Dfc.CourseDirectory.Web.ViewComponents.Extensions
+﻿@using System.Net
+@using Dfc.CourseDirectory.Web.ViewComponents.Extensions
 @using Dfc.CourseDirectory.Web.ViewComponents.Pagination;
 @using Microsoft.AspNetCore.Http
 @using Microsoft.AspNetCore.Identity
@@ -39,7 +40,7 @@ else
         <div class="govuk-form-group govuk-!-font-size-14">
             <div class="accordion govuk-heading-s">Filter by level</div>
             <div class="panel">
-                <fieldset class="govuk-fieldset">
+                <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
                     <div class="govuk-checkboxes">
 
 
@@ -63,7 +64,7 @@ else
             <div class="govuk-form-group govuk-!-font-size-14">
                 <div class="accordion govuk-heading-s active">Filter by delivery mode</div>
                 <div class="panel" style="display: none">
-                    <fieldset class="govuk-fieldset" >
+                    <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
                         <div class="govuk-checkboxes">
 
 
@@ -89,7 +90,7 @@ else
             <div class="govuk-form-group govuk-!-font-size-14">
                 <div class="accordion govuk-heading-s active">Filter by venue</div>
                 <div class="panel" style="display: none">
-                    <fieldset class="govuk-fieldset" >
+                    <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
                         <div class="govuk-checkboxes">
 
 
@@ -115,7 +116,7 @@ else
             <div class="govuk-form-group govuk-!-font-size-14">
                 <div class="accordion govuk-heading-s active">Filter by attendance mode</div>
                 <div class="panel" style="display: none">
-                    <fieldset class="govuk-fieldset" >
+                    <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
                         <div class="govuk-checkboxes">
 
 
@@ -140,7 +141,7 @@ else
             <div class="govuk-form-group govuk-!-font-size-14">
                 <div class="accordion govuk-heading-s active">Filter by region</div>
                 <div class="panel" style="display: none">
-                    <fieldset class="govuk-fieldset">
+                    <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
                         <div class="govuk-checkboxes">
 
 
@@ -167,17 +168,22 @@ else
 
         @foreach (var courseRun in Model.ProviderCourseRuns.OrderBy(x=>x.CourseName))
         {
-        <div class="courserun border" id="@courseRun.CourseRunId">
-            <div class="courserun__row1" >
+        <div class="courserun border">
+            <div class="courserun__row1" id="@courseRun.CourseRunId">
                 @if (!string.IsNullOrEmpty(courseRun.CourseName))
                 {
-                    <h2 class="coursename">@courseRun.CourseName</h2>
+                <h3 class="coursename">
+                    @WebUtility.HtmlDecode(@courseRun.CourseName)
+
+                </h3>
                 }
-                <h3 class="coursename smaller ">
+                <h4 class="coursename smaller ">
 
                     @if (!string.IsNullOrEmpty(courseRun.QualificationCourseTitle))
                     {
-                        <small>@courseRun.QualificationCourseTitle </small>
+                        <small>
+                        @WebUtility.HtmlDecode(@courseRun.QualificationCourseTitle)
+                        </small>
                     }
                     @if (!string.IsNullOrEmpty(courseRun.LearnAimRef))
                     {
@@ -186,7 +192,7 @@ else
                         </small>
                     }
 
-                </h3>
+                </h4>
             </div>
 
             @if (courseRun.DeliveryMode == "Classroom based")
@@ -194,7 +200,9 @@ else
                 if (!string.IsNullOrEmpty(courseRun.Venue))
                 {
                     <div class="courserun__row2">
-                        <span class="">@courseRun.Venue</span>
+                        <span class="">
+                        @WebUtility.HtmlDecode(@courseRun.Venue)
+                        </span>
                     </div>
                 }
             }
@@ -221,14 +229,16 @@ else
             <div class="courserun__row3">
                 @if (!string.IsNullOrEmpty(courseRun.CourseTextId))
                 {
-                    <span>@courseRun.CourseTextId</span>
+                    <span>
+                    @WebUtility.HtmlDecode(@courseRun.CourseTextId)
+                    </span>
                 }
 
                 @if (courseRun.DeliveryMode == "Classroom based")
                 {
                     if (!string.IsNullOrEmpty(courseRun.AttendancePattern))
                     {
-                        <span>@courseRun.AttendancePattern</span>
+                        <span id="attendance">@courseRun.AttendancePattern</span>
                     }
                 }
                 @if (!string.IsNullOrEmpty(courseRun.NotionalNVQLevelv2))
@@ -239,13 +249,13 @@ else
 
                 @if (!string.IsNullOrEmpty(courseRun.DeliveryMode))
                 {
-                    <span>@courseRun.DeliveryMode</span>
+                    <span id="deliverymode">@courseRun.DeliveryMode</span>
                 }
                 @if (courseRun.DeliveryMode == "Classroom based")
                 {
                     @if (!string.IsNullOrEmpty(courseRun.StudyMode))
                     {
-                        <span>@courseRun.StudyMode</span>
+                        <span id="studymode">@courseRun.StudyMode</span>
                     }
                 }
                 @if (!string.IsNullOrEmpty(courseRun.StartDate))
