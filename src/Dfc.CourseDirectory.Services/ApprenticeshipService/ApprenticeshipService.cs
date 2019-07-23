@@ -85,53 +85,53 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             }
         }
 
-        public async Task<IResult<IApprenticeship>> AddApprenticeship(IApprenticeship apprenticeship)
+        public async Task<IResult<IApprenticeshipProvider>> AddApprenticeship(IApprenticeshipProvider apprenticeshipProvider)
         {
             _logger.LogMethodEnter();
-            Throw.IfNull(apprenticeship, nameof(apprenticeship));
+            Throw.IfNull(apprenticeshipProvider, nameof(apprenticeshipProvider));
 
             try
             {
-                _logger.LogInformationObject("Apprenticeship add object.", apprenticeship);
-                _logger.LogInformationObject("Apprenticeship add URI", _addApprenticeshipUri);
+                _logger.LogInformationObject("Apprenticeship provider add object.", apprenticeshipProvider);
+                _logger.LogInformationObject("Apprenticeship provider  add URI", _addApprenticeshipUri);
 
-                var apprenticeshipJson = JsonConvert.SerializeObject(apprenticeship);
+                var apprenticeshipJson = JsonConvert.SerializeObject(apprenticeshipProvider);
 
                 var content = new StringContent(apprenticeshipJson, Encoding.UTF8, "application/json");
                 _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
                 var response = await _httpClient.PostAsync(_addApprenticeshipUri, content);
 
-                _logger.LogHttpResponseMessage("Apprenticeship add service http response", response);
+                _logger.LogHttpResponseMessage("Apprenticeship provider  add service http response", response);
 
                 if (response.IsSuccessStatusCode)
                 {
                     var json = await response.Content.ReadAsStringAsync();
 
-                    _logger.LogInformationObject("Apprenticeship add service json response", json);
+                    _logger.LogInformationObject("Apprenticeship provider  add service json response", json);
 
-                    var apprenticeshipResult = JsonConvert.DeserializeObject<Apprenticeship>(json);
+                    var apprenticeshipResult = JsonConvert.DeserializeObject<ApprenticeshipProvider>(json);
 
-                    return Result.Ok<IApprenticeship>(apprenticeshipResult);
+                    return Result.Ok<IApprenticeshipProvider>(apprenticeshipResult);
                 }
                 else if (response.StatusCode == HttpStatusCode.TooManyRequests)
                 {
-                    return Result.Fail<IApprenticeship>("Apprenticeship add service unsuccessful http response - TooManyRequests");
+                    return Result.Fail<IApprenticeshipProvider>("Apprenticeship provider  add service unsuccessful http response - TooManyRequests");
                 }
                 else
                 {
-                    return Result.Fail<IApprenticeship>("Apprenticeship add service unsuccessful http response - ResponseStatusCode: " + response.StatusCode);
+                    return Result.Fail<IApprenticeshipProvider>("Apprenticeship provider  add service unsuccessful http response - ResponseStatusCode: " + response.StatusCode);
                 }
             }
             catch (HttpRequestException hre)
             {
-                _logger.LogException("Apprenticeship add service http request error", hre);
-                return Result.Fail<IApprenticeship>("Apprenticeship add service http request error.");
+                _logger.LogException("Apprenticeship provider  add service http request error", hre);
+                return Result.Fail<IApprenticeshipProvider>("Apprenticeship provider  add service http request error.");
             }
             catch (Exception e)
             {
-                _logger.LogException("Apprenticeship add service unknown error.", e);
+                _logger.LogException("Apprenticeship provider  add service unknown error.", e);
 
-                return Result.Fail<IApprenticeship>("Apprenticeship add service unknown error.");
+                return Result.Fail<IApprenticeshipProvider>("Apprenticeship provider  add service unknown error.");
             }
             finally
             {

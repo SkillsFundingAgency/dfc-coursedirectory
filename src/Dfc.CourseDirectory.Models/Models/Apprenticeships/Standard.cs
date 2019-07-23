@@ -29,7 +29,7 @@ namespace Dfc.CourseDirectory.Models.Models.Apprenticeships
         public Guid? SectorSubjectAreaTier1Id { get; set; } // ??
         public decimal? SectorSubjectAreaTier2 { get; set; }
         public Guid? SectorSubjectAreaTier2Id { get; set; } // ??
-        public string NotionalEndLevel { get; set; }
+        public string NotionalNVQLevelv2 { get; set; }
         public string OtherBodyApprovalRequired { get; set; }
 
         // Standard auditing properties 

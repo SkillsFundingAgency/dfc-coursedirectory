@@ -5,7 +5,9 @@ using Dfc.CourseDirectory.Models.Models.Regions;
 using Dfc.CourseDirectory.Models.Models.Venues;
 using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
+using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
+using Dfc.CourseDirectory.Services.ProviderService;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Extensions;
 using Dfc.CourseDirectory.Web.Helpers;
@@ -18,6 +20,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,23 +37,27 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly ICourseService _courseService;
         private readonly IVenueService _venueService;
         private readonly IApprenticeshipService _apprenticeshipService;
+        private readonly IProviderService _providerService;
 
         public ApprenticeshipsController(
             ILogger<ApprenticeshipsController> logger,
             IHttpContextAccessor contextAccessor, ICourseService courseService, IVenueService venueService
-            , IApprenticeshipService apprenticeshipService)
+            , IApprenticeshipService apprenticeshipService,
+            IProviderService providerService)
         {
             Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(contextAccessor, nameof(contextAccessor));
             Throw.IfNull(courseService, nameof(courseService));
             Throw.IfNull(venueService, nameof(venueService));
             Throw.IfNull(apprenticeshipService, nameof(apprenticeshipService));
+            Throw.IfNull(providerService, nameof(providerService));
 
             _logger = logger;
             _contextAccessor = contextAccessor;
             _courseService = courseService;
             _venueService = venueService;
             _apprenticeshipService = apprenticeshipService;
+            _providerService = providerService;
         }
 
         [Authorize]
@@ -707,21 +714,65 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 }
             }
 
+            //Check for existing provider
 
+            var providerSearchResult = _providerService.GetProviderByPRNAsync(new ProviderSearchCriteria(UKPRN.ToString())).Result;
+            string providerName = string.Empty;
+            if(providerSearchResult.IsSuccess && providerSearchResult.HasValue)
+            {
+                providerName = providerSearchResult.Value.Value.FirstOrDefault().ProviderName;
+            }
+            ApprenticeshipProvider apprenticeshipProvider = new ApprenticeshipProvider
+            {
+                Id = Guid.NewGuid(),
+                UKPRN = UKPRN,
+                //TribalId = 1234,
+                Name = providerName,
+                Email = model.DetailViewModel.Email,
+                EmployerSatisfaction = null,
+                LearnerSatisfaction = null,
+                Website = model.DetailViewModel.ContactUsIUrl,
+                Locations =  locations
+            };
+            if(model.DetailViewModel.StandardCode.HasValue)
+            {
+                apprenticeshipProvider.Standards = new List<Standard>
+                {
+                    new Standard
+                    {
+                        StandardName = model.DetailViewModel.ApprenticeshipTitle,
+                        StandardCode = model.DetailViewModel.StandardCode.Value,
+                        MarketingInfo = model.DetailViewModel.Information,
+                        CreatedDate = DateTime.Now,
+                        CreatedBy = User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
+                        Contact = new Contact
+                        {
+                            ContactUsUrl = model.DetailViewModel.ContactUsIUrl,
+                            Email = model.DetailViewModel.Email,
+                            Phone = model.DetailViewModel.Telephone,
+                        },
+                        RecordStatus = RecordStatus.Live,
+                        NotionalNVQLevelv2 = model.DetailViewModel.NotionalNVQLevelv2,
+                        Version = model.DetailViewModel.Version.Value,
+                        UpdatedDate = DateTime.UtcNow,
+                        UpdatedBy = User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
+                    }
+                };
+            }
             Apprenticeship apprenticeship = new Apprenticeship
             {
                 //ApprenticeshipId // For backwards compatibility with Tribal (Where does this come from?)
                 //TribalProviderId // For backwards compatibility with Tribal (Where does this come from?)#
                 //ProviderId // Is this from our Provider collection?
                 //id = Guid.NewGuid(),
-                ProviderUKPRN = UKPRN,
-                ApprenticeshipTitle = model.DetailViewModel.ApprenticeshipTitle,
-                ApprenticeshipType = model.DetailViewModel.ApprenticeshipType,
+                ProviderUKPRN = UKPRN, //got
+                ApprenticeshipTitle = model.DetailViewModel.ApprenticeshipTitle, // got
+                ApprenticeshipType = model.DetailViewModel.ApprenticeshipType, // dont need
                 StandardCode = model.DetailViewModel.StandardCode,
                 FrameworkCode = model.DetailViewModel.FrameworkCode,
                 ProgType = model.DetailViewModel.ProgType,
-                MarketingInformation = model.DetailViewModel.Information,
-                Url = model.DetailViewModel.Website,
+                MarketingInformation = model.DetailViewModel.Information, // got
+                Url = model.DetailViewModel.Website, // got
                 ContactTelephone = model.DetailViewModel.Telephone,
                 ContactEmail = model.DetailViewModel.Email,
                 ContactWebsite = model.DetailViewModel.ContactUsIUrl,
@@ -763,8 +814,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
             else
             {
-                apprenticeship.id = Guid.NewGuid();
-                var result = await _apprenticeshipService.AddApprenticeship(apprenticeship);
+                apprenticeshipProvider.Id = Guid.NewGuid();
+                var json = JsonConvert.SerializeObject(apprenticeshipProvider);
+                var old = JsonConvert.SerializeObject(apprenticeship);
+                var result = await _apprenticeshipService.AddApprenticeship(apprenticeshipProvider);
 
                 if (result.IsSuccess)
                 {
