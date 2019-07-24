@@ -21,6 +21,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Web.Helpers.Attributes;
 
@@ -479,6 +480,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 notificationMessage = string.Empty;
             }
 
+            notificationCourseName = Regex.Replace(notificationCourseName, "<.*?>", String.Empty);
             notificationAnchorTag = courseRunId.HasValue
                 ? $"<a id=\"courseeditlink\" class=\"govuk-link\" href=\"#\" data-courseid=\"{courseId}\" data-courserunid=\"{courseRunId}\" >{notificationMessage} {notificationCourseName}</a>"
                 : $"<a id=\"courseeditlink\" class=\"govuk-link\" href=\"#\" data-courseid=\"{courseId}\">{notificationMessage} {notificationCourseName}</a>";
