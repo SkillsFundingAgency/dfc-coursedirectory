@@ -23,7 +23,6 @@
                     <th class="govuk-table__header" scope="col">Name</th>
                     <th class="govuk-table__header" scope="col">Town/City</th>
                     <th class="govuk-table__header" scope="col">Postcode</th>
-                    <th class="govuk-table__header" scope="col">UKPRN Status</th>
                     <th class="govuk-table__header" scope="col"></th>
                 </tr>
             </thead>
@@ -35,9 +34,8 @@
                         <td class="govuk-table__cell">@p.Name</td>
                         <td class="govuk-table__cell">@p.Town</td>
                         <td class="govuk-table__cell">@p.Postcode</td>
-                        @*<td class="govuk-table__cell">(status)</td>*@
                         <td class="govuk-table__cell">
-                            @Html.ActionLink("View", "SelectProvider", "ProviderAzureSearch", new { UKPRN = p.UKPRN })
+                            @Html.ActionLink("View Dashboard", "SearchProvider", "ProviderSearch", new { UKPRN = p.UKPRN })
                         </td>
                     </tr>
                 }
