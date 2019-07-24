@@ -18,9 +18,9 @@
 
         <span style="color:black">
 
-            @* Opens the site to XSS attacks.
-                @Html.Raw(@Model.NotificationMessage) *@
-            @Model.NotificationMessage
+            @* Opens the site to XSS attacks.*@
+                @Html.Raw(@Model.NotificationMessage) 
+          
         </span>
         <span>@Html.Raw(@Model.Link)</span>
     </div>
