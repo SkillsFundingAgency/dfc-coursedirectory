@@ -557,7 +557,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             var LocationChoiceSelectionViewModel = _session.GetObject<LocationChoiceSelectionViewModel>("LocationChoiceSelectionViewModel");
             var DeliveryOptionsViewModel = _session.GetObject<DeliveryOptionsViewModel>("DeliveryOptionsViewModel");
             var DeliveryOptionsCombinedViewModel = _session.GetObject<DeliveryOptionsCombinedViewModel>("DeliveryOptionsCombinedViewModel");
-            var Regions = _session.GetObject<String[]>("SelectedRegions");
+            var Regions = _session.GetObject<string[]>("SelectedRegions");
 
             model.DetailViewModel = DetailViewModel;
             model.DeliveryViewModel = DeliveryViewModel;
@@ -713,14 +713,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 foreach (var loc in model.DeliveryOptionsCombinedViewModel.DeliveryOptionsListItemModel
                     .DeliveryOptionsListItemModel)
                 {
-
-
                     locations.Add(CreateDeliveryLocation(loc, apprenticeshipLocationType));
                 }
             }
 
-            //Check for existing provider
-
+            
             var providerSearchResult = _providerService.GetProviderByPRNAsync(new ProviderSearchCriteria(UKPRN.ToString())).Result;
             string providerName = string.Empty;
             if(providerSearchResult.IsSuccess && providerSearchResult.HasValue)
@@ -1316,6 +1313,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return RedirectToAction(model.Combined ? "DeliveryOptionsCombined" : "DeliveryOptions", "Apprenticeships", new { message = "Location " + model.LocationName + " deleted", mode = model.Mode });
         }
 
+        internal ApprenticeshipProvider CreateNewApprenticeshipProvider(SummaryViewModel model)
+        {
+
+        }
         internal Dictionary<string, List<string>> SubRegionCodesToDictionary(string[] subRegions)
         {
             SelectRegionModel selectRegionModel = new SelectRegionModel();
