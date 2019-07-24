@@ -2,6 +2,7 @@
 @using Dfc.CourseDirectory.Models.Models.Courses
 @using Dfc.CourseDirectory.Web.Helpers
 @using System.ComponentModel.DataAnnotations
+@using System.Net
 @model Dfc.CourseDirectory.Web.ViewModels.CourseSummary.CourseSummaryViewModel
 @{
     Layout = "_Layout_Your_Courses";
@@ -16,8 +17,8 @@
         <div class="govuk-main-wrapper">
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-two-thirds">
-                    <span class="govuk-caption-xl">@Model.QualificationCourseTitle</span>
-                    <h1 class="govuk-heading-xl">@Model.CourseName</h1>
+                    <span class="govuk-caption-xl"> @WebUtility.HtmlDecode(@Model.QualificationCourseTitle)</span>
+                    <h1 class="govuk-heading-xl"> @WebUtility.HtmlDecode(@Model.CourseName)</h1>
                     <table class="govuk-table">
                         <thead class="govuk-table__head">
                             <tr class="govuk-table__row">
@@ -57,13 +58,14 @@
 
                         </thead>
                         <tbody class="govuk-table__body">
-                            <tr class="govuk-table__row">
-                                <td class="govuk-table__header">Course Name:</td>
-                                <td class="govuk-table__cell">@Model.CourseName</td>
-                            </tr>
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__header">Course Name:</td>
+                            <td class="govuk-table__cell"> @WebUtility.HtmlDecode(@Model.CourseName)</td>
+                        </tr>
+                        
                             <tr class="govuk-table__row">
                                 <td class="govuk-table__header">ID:</td>
-                                <td class="govuk-table__cell">@Model.ProviderCourseID</td>
+                                <td class="govuk-table__cell"> @WebUtility.HtmlDecode(@Model.ProviderCourseID)</td>
                             </tr>
                             <tr class="govuk-table__row">
                                 <td class="govuk-table__header">Delivery:</td>
@@ -113,7 +115,7 @@
                                 {
                                     <tr class="govuk-table__row">
                                         <td class="govuk-table__header">Venue:</td>
-                                        <td class="govuk-table__cell">@Model.VenueName</td>
+                                        <td class="govuk-table__cell"> @WebUtility.HtmlDecode(@Model.VenueName)</td>
                                     </tr>
                                 }
                             }
@@ -135,7 +137,7 @@
                                             </span>
                                         </summary>
                                         <div class="govuk-details__text" id="details-content-4386f8be-5919-4bb4-89d7-41219af78831" aria-hidden="true">
-                                            @Model.CostDescription
+                                        @WebUtility.HtmlDecode(@Model.CostDescription)
                                         </div>
                                     </details>
                                 </td>
@@ -177,7 +179,7 @@
                                             </span>
                                         </summary>
                                         <div class="govuk-details__text" id="details-content-78ad1d3d-97e3-4aab-844f-fc7d331d17be" aria-hidden="true">
-                                            @Model.CourseDescription
+                                        @WebUtility.HtmlDecode(@Model.CourseDescription)
                                         </div>
                                     </details>
                                 </td>
@@ -193,7 +195,7 @@
                                             </span>
                                         </summary>
                                         <div class="govuk-details__text" id="details-content-4aa86daa-5204-432a-9fe6-338b1a7219f9" aria-hidden="true">
-                                            @Model.EntryRequirements
+                                        @WebUtility.HtmlDecode(@Model.EntryRequirements)
                                         </div>
                                     </details>
                                 </td>
@@ -209,7 +211,7 @@
                                             </span>
                                         </summary>
                                         <div class="govuk-details__text" id="details-content-88c1b9d8-0154-4e23-bde2-ef56a0e2081c" aria-hidden="true">
-                                            @Model.WhatYoullLearn
+                                        @WebUtility.HtmlDecode(@Model.WhatYoullLearn)
                                         </div>
                                     </details>
                                 </td>
@@ -225,7 +227,7 @@
                                             </span>
                                         </summary>
                                         <div class="govuk-details__text" id="details-content-46d25118-62ca-4030-8b35-d357230fb6ce" aria-hidden="true">
-                                            @Model.HowYoullLearn
+                                        @WebUtility.HtmlDecode(@Model.HowYoullLearn)
                                         </div>
                                     </details>
                                 </td>
@@ -242,7 +244,7 @@
                                             </span>
                                         </summary>
                                         <div class="govuk-details__text" id="details-content-d795fa03-609e-466e-86bb-8cbf07563317" aria-hidden="true">
-                                            @Model.WhatYoullNeed
+                                        @WebUtility.HtmlDecode(@Model.WhatYoullNeed)
                                         </div>
                                     </details>
                                 </td>
@@ -258,7 +260,7 @@
                                             </span>
                                         </summary>
                                         <div class="govuk-details__text" id="details-content-9ce35a38-e076-49c6-a756-65e3e5a2fc41" aria-hidden="true">
-                                            @Model.HowYoullBeAssessed
+                                        @WebUtility.HtmlDecode(@Model.HowYoullBeAssessed)
                                         </div>
                                     </details>
                                 </td>
@@ -274,7 +276,7 @@
                                             </span>
                                         </summary>
                                         <div class="govuk-details__text" id="details-content-70078d78-3005-4f4d-9e7c-6e6f7814c802" aria-hidden="true">
-                                            @Model.WhereNext
+                                        @WebUtility.HtmlDecode(@Model.WhereNext)
                                         </div>
                                     </details>
                                 </td>

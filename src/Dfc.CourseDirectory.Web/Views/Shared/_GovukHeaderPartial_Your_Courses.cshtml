@@ -55,16 +55,19 @@
             var providerLogin = await Authorization.AuthorizeAsync(User, "Provider");
 
             var providerName = "";
+            var courseDirectoryName = "";
             var ukPRN = HttpContextAccessor.HttpContext.Session.GetInt32("UKPRN");
             if (ukPRN != null)
             {
                 var providerSearchResult = await providerService.GetProviderByPRNAsync(new ProviderSearchCriteria(ukPRN.ToString()));
+
                 providerName = providerSearchResult.Value.Value.FirstOrDefault()?.ProviderName;
+                courseDirectoryName = providerSearchResult.Value.Value.FirstOrDefault()?.CourseDirectoryName;
             }
             @if (superUser.Succeeded)
             {
                 <a asp-controller="Provider" asp-action="Details" class="cd-subHead--item" style="color: #fff!important">
-                    @providerName
+                    @(string.IsNullOrEmpty(courseDirectoryName) ? providerName : courseDirectoryName)
                 </a>
             }
             else
