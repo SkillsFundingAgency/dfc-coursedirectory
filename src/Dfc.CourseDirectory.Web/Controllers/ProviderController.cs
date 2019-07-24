@@ -216,7 +216,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                 provider.Alias = model.AliasName;
 
-                provider.CourseDirectoryName = model.CourseDirectoryName;
+                var adminLogin = await _authorizationService.AuthorizeAsync(User, "Admin");
+                if (adminLogin.Succeeded)
+                {
+                    provider.CourseDirectoryName = model.CourseDirectoryName;
+                }
 
                 try
                 {

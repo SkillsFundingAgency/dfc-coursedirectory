@@ -112,7 +112,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
 
             actualModel.ValidationMessages = messages;
             actualModel.VenueCount = 0;
-            if (allVenues != null)
+            if (allVenues.Value != null)
             {
                 actualModel.VenueCount = allVenues.Value.Value.Where(x => x.Status == VenueStatus.Live).Count();
             }

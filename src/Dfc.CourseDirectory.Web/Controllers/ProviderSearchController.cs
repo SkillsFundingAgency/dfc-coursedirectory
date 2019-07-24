@@ -238,5 +238,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _session.SetInt32("UKPRN", Convert.ToInt32(ajaxRequest.UKPRN));
             return Json(new { success = Success, resultText = ResultText });
         }
+
+
+        [Authorize(Policy = "ElevatedUserRole")]
+        public async Task<IActionResult> SearchProvider(string UKPRN)
+        {
+            _session.SetInt32("UKPRN", Convert.ToInt32(UKPRN));
+            return View("../Provider/Dashboard");
+        }
     }
 }

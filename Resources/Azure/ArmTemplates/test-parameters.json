@@ -92,6 +92,9 @@
     "findCourseApiKey": {
       "value": "not-a-real-key"
     },
+    "findCourseApiPassword": {
+      "value": "not-a-real-password"
+    },
     "appHostName": {
       "value": "some.host.name"
     },

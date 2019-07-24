@@ -1,15 +1,13 @@
 ﻿
+using Dfc.CourseDirectory.Common.Interfaces;
+using Dfc.CourseDirectory.Models.Interfaces.Courses;
+using Dfc.CourseDirectory.Models.Models.Courses;
+using Dfc.CourseDirectory.Models.Models.Providers;
+using Dfc.CourseDirectory.Models.Models.Regions;
+using Dfc.CourseDirectory.Services.CourseService;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Common.Interfaces;
-using Dfc.CourseDirectory.Models.Enums;
-using Dfc.CourseDirectory.Models.Interfaces.Courses;
-using Dfc.CourseDirectory.Models.Models;
-using Dfc.CourseDirectory.Models.Models.Courses;
-using Dfc.CourseDirectory.Models.Models.Regions;
-using Dfc.CourseDirectory.Models.Models.Providers;
-using Dfc.CourseDirectory.Services.CourseService;
 
 
 namespace Dfc.CourseDirectory.Services.Interfaces.CourseService
@@ -33,6 +31,6 @@ namespace Dfc.CourseDirectory.Services.Interfaces.CourseService
         Task<IResult<IEnumerable<ICourse>>> GetRecentCourseChangesByUKPRN(ICourseSearchCriteria criteria);
         Task<IResult> DeleteBulkUploadCourses(int UKPRN);
         Task<IResult<CourseMigrationReport>> GetCourseMigrationReport(int UKPRN);
-
+        Task<IResult<IList<DfcMigrationReport>>> GetAllDfcReports();
     }
 }
