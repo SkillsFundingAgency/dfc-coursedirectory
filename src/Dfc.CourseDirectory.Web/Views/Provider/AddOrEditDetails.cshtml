@@ -314,6 +314,8 @@
             validStates.push(true);
         }
 
+        if (!$courseDirectoryName.is(':hidden')) {
+
         $courseDirectoryName.val($courseDirectoryName.val().trim());
 
         if (!$.regexValidate({ regex: $courseDirectoryName.attr("val-regex") }, $courseDirectoryName.val())) {
@@ -334,6 +336,7 @@
             $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $courseDirectoryName[0].id);
             $errorSummary.govUkErrorSummary("hideIfEmpty");
             validStates.push(true);
+            }
         }
 
         if (tinymce.get("brief") !== null) {
