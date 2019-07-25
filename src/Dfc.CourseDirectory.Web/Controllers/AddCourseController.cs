@@ -714,15 +714,16 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     {
                         id = Guid.NewGuid(),
                         VenueId = venue,
-
-                        CourseName = _htmlEncoder.Encode(addCourseSection2.CourseName),
-                        ProviderCourseID = _htmlEncoder.Encode(addCourseSection2.CourseProviderReference),
+                        
+                        
+                        CourseName = !string.IsNullOrEmpty(addCourseSection2.CourseName)? _htmlEncoder.Encode(addCourseSection2.CourseName):string.Empty,
+                        ProviderCourseID = !string.IsNullOrEmpty(addCourseSection2.CourseProviderReference) ? _htmlEncoder.Encode(addCourseSection2.CourseProviderReference):string.Empty,
                         DeliveryMode = addCourseSection2.DeliveryMode,
                         FlexibleStartDate = flexibleStartDate,
                         StartDate = specifiedStartDate,
                         CourseURL = addCourseSection2.Url?.ToLower(),
                         Cost = addCourseSection2.Cost,
-                        CostDescription = _htmlEncoder.Encode(addCourseSection2.CostDescription),
+                        CostDescription = !string.IsNullOrEmpty(addCourseSection2.CostDescription) ? _htmlEncoder.Encode(addCourseSection2.CostDescription):string.Empty,
                         DurationUnit = addCourseSection2.DurationUnit,
                         DurationValue = addCourseSection2.DurationLength,
                         StudyMode = addCourseSection2.StudyMode,
