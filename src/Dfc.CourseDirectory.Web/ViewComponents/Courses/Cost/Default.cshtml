@@ -1,4 +1,6 @@
-﻿@model Dfc.CourseDirectory.Web.ViewComponents.Courses.Cost.CostModel
+﻿@using System.Net
+@using Dfc.CourseDirectory.Common
+@model Dfc.CourseDirectory.Web.ViewComponents.Courses.Cost.CostModel
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
@@ -13,7 +15,11 @@
         </span>
     }
 
-    @{ var regex = @"^[a-zA-Z0-9 /\n/\r/\\u/\¬\!\£\$\%\^\&\*\\é\\è\\ﬁ\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\•\·\●\\’\‘\“\”\—\-\–\‐\‐\…\:/\°\®\\â\\ç\\ñ\\ü\\ø\♦\™\\t/\s\¼\¾\½\" + "\"" + "\\\\]+$"; }
+    @{
+       @* var regex = @"^[a-zA-Z0-9 /\n/\r/\\u/\¬\!\£\$\%\^\&\*\\é\\è\\ﬁ\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\•\·\●\\’\‘\“\”\—\-\–\‐\‐\…\:/\°\®\\â\\ç\\ñ\\ü\\ø\♦\™\\t/\s\¼\¾\½\" + "\"" + "\\\\]+$";*@
+        var regex = RegexPattern.AllowEverything;
+
+    }
 
     <span class="govuk-body">£</span>
     <input class="govuk-input govuk-input--width-10" style="display:inline;" asp-for="@Model.Cost" type="text" aria-describedby="Cost"
@@ -30,17 +36,21 @@
         @if (!string.IsNullOrWhiteSpace(Model.CostDescriptionHintText))
         {
             <span class="govuk-hint">
-                @Model.CostDescriptionHintText
+                @Model.CostDescriptionHintText = 
             </span>
         }
-        <textarea class="govuk-textarea js-character-count " asp-for="@Model.CostDescription" rows="5" aria-label="CostDescription"
+        @{
+            Model.CostDescription=@WebUtility.HtmlDecode(@Model.CostDescription);
+        }
+
+        <textarea class="govuk-textarea js-character-count " asp-for="@Model.CostDescription" rows="5" aria-label="CostDescription" 
                   val-required-message="Enter cost or cost description"
                   val-max-length="255"
                   val-max-length-message="Cost description must be 255 characters or less"
                   val-regex="@regex"
                   val-regex-message="Cost Description contains invalid characters">
-
-        </textarea>
+            
+    </textarea>
     </div>
 </div>
 

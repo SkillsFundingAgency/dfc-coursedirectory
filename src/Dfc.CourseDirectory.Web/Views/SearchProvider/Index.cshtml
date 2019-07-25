@@ -2,7 +2,9 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.ProviderAzureSearchResult
 @using Dfc.CourseDirectory.Web.ViewModels.ProviderSearch
 @model ProviderSearchViewModel
-
+@{
+    Layout = "_Layout_Your_Courses";
+}
 
 @{
     ViewData["Title"] = "Search Providers";
@@ -55,48 +57,48 @@
 
 <script>
     (function ($) {
-        $(function() {
-            var debounce = function(cb, delay) {
+        $(function () {
+            var debounce = function (cb, delay) {
                 var inDebounce;
-                return function() {
+                return function () {
                     var context = this;
                     var args = arguments;
                     clearTimeout(inDebounce);
-                    inDebounce = setTimeout(function() {
-                            cb.apply(context, args);
-                        },
+                    inDebounce = setTimeout(function () {
+                        cb.apply(context, args);
+                    },
                         delay);
                 };
             };
 
-            var isNullOrWhitespace = function(input) {
+            var isNullOrWhitespace = function (input) {
                 if (typeof input === 'undefined' || input == null) return true;
                 return input //.replace(/\s/g, '')
-                            .length < 3;
+                    .length < 3;
             }
 
-            var replaceAll = function(search, find, replace) {
+            var replaceAll = function (search, find, replace) {
                 return search.split(find).join(replace);
             };
 
-            var makeRequestWithPayload = function(payload, success) {
+            var makeRequestWithPayload = function (payload, success) {
                 console.log(payload);
                 //var qs = $.param(payload);
                 //qs = replaceAll(qs, "%5B%5D", "");
                 $.get("/ProviderAzureSearch/?Keyword=" + payload, success); // qs, success);
             };
 
-            var makeRequestWithUrl = function(url, success) {
+            var makeRequestWithUrl = function (url, success) {
                 console.log(url);
                 $.get(url, success);
             };
 
-            var removeSearchResults = function() {
+            var removeSearchResults = function () {
                 var $searchResultContainer = $("#ProviderSearchResultContainer");
                 $searchResultContainer.html("");
             };
 
-            var replaceSearchResult = function(searchResults) {
+            var replaceSearchResult = function (searchResults) {
                 var $searchResultContainer = $("#ProviderSearchResultContainer");
                 $searchResultContainer.html("");
                 $searchResultContainer.html(searchResults);
@@ -105,7 +107,7 @@
             var $searchTerm = $("#providerSearchTerm");
             var $buttonSearch = $("#searchProvider");
 
-            var doSearch = function() {
+            var doSearch = function () {
                 if (isNullOrWhitespace($searchTerm.val())) {
                     removeSearchResults();
                 } else {
@@ -119,20 +121,20 @@
                     //    $("input[name='SectorSubjectAreaTier2Filter']:checkbox:checked");
 
                     makeRequestWithPayload( //{
-                            $searchTerm.val(),
-                            //SearchTerm: $searchTerm.val(),
-                            //NotionalNVQLevelv2Filter: $allCheckedNotionalNvqLevelV2FilterCheckboxes.map(function() {
-                            //    return $(this).val();
-                            //}).get(),
-                            //AwardOrgCodeFilter: $allCheckedAwardOrgCodeFilterCheckboxes.map(function() {
-                            //    return $(this).val();
-                            //}).get(),
-                            //SectorSubjectAreaTier1Filter: $allSectorSubjectAreaTier1FilterCheckboxes.map(function() {
-                            //    return $(this).val();
-                            //}).get(),
-                            //SectorSubjectAreaTier2Filter: $allSectorSubjectAreaTier2FilterCheckboxes.map(function() {
-                            //    return $(this).val();
-                            //}).get()
+                        $searchTerm.val(),
+                        //SearchTerm: $searchTerm.val(),
+                        //NotionalNVQLevelv2Filter: $allCheckedNotionalNvqLevelV2FilterCheckboxes.map(function() {
+                        //    return $(this).val();
+                        //}).get(),
+                        //AwardOrgCodeFilter: $allCheckedAwardOrgCodeFilterCheckboxes.map(function() {
+                        //    return $(this).val();
+                        //}).get(),
+                        //SectorSubjectAreaTier1Filter: $allSectorSubjectAreaTier1FilterCheckboxes.map(function() {
+                        //    return $(this).val();
+                        //}).get(),
+                        //SectorSubjectAreaTier2Filter: $allSectorSubjectAreaTier2FilterCheckboxes.map(function() {
+                        //    return $(this).val();
+                        //}).get()
                         //},
                         onSuccess);
                 }
@@ -180,7 +182,7 @@
             //        });
             //};
 
-            var onSuccess = function(data) {
+            var onSuccess = function (data) {
                 replaceSearchResult(data);
                 //assignEventsToAllCheckboxes();
                 //assignEventToClearAllFiltersLink();
