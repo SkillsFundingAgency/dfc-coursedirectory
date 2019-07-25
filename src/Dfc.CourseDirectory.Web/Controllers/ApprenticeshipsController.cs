@@ -598,7 +598,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 CreatedBy =
                     User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
                 ApprenticeshipLocationType = apprenticeshipLocationType,
-                id = Guid.NewGuid(),
+                Id = Guid.NewGuid(),
                 LocationType = LocationType.Venue,
                 RecordStatus = RecordStatus.Live,
                 National = null,
@@ -717,50 +717,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 }
             }
 
-            
-            var providerSearchResult = _providerService.GetProviderByPRNAsync(new ProviderSearchCriteria(UKPRN.ToString())).Result;
-            string providerName = string.Empty;
-            if(providerSearchResult.IsSuccess && providerSearchResult.HasValue)
-            {
-                providerName = providerSearchResult.Value.Value.FirstOrDefault().ProviderName;
-            }
-            ApprenticeshipProvider apprenticeshipProvider = new ApprenticeshipProvider
-            {
-                Id = Guid.NewGuid(),
-                UKPRN = UKPRN,
-                //TribalId = 1234,
-                Name = providerName,
-                Email = model.DetailViewModel.Email,
-                EmployerSatisfaction = null,
-                LearnerSatisfaction = null,
-                Website = model.DetailViewModel.ContactUsIUrl,
-                Locations =  locations
-            };
-            if(model.DetailViewModel.StandardCode.HasValue)
-            {
-                apprenticeshipProvider.Standards = new List<Standard>
-                {
-                    new Standard
-                    {
-                        StandardName = model.DetailViewModel.ApprenticeshipTitle,
-                        StandardCode = model.DetailViewModel.StandardCode.Value,
-                        MarketingInfo = model.DetailViewModel.Information,
-                        CreatedDate = DateTime.Now,
-                        CreatedBy = User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
-                        Contact = new Contact
-                        {
-                            ContactUsUrl = model.DetailViewModel.Website,
-                            Email = model.DetailViewModel.Email,
-                            Phone = model.DetailViewModel.Telephone,
-                        },
-                        RecordStatus = RecordStatus.Live,
-                        NotionalNVQLevelv2 = model.DetailViewModel.NotionalNVQLevelv2,
-                        //Version = model.DetailViewModel.Version.Value,
-                        UpdatedDate = DateTime.UtcNow,
-                        UpdatedBy = User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
-                    }
-                };
-            }
             Apprenticeship apprenticeship = new Apprenticeship
             {
                 //ApprenticeshipId // For backwards compatibility with Tribal (Where does this come from?)
@@ -816,10 +772,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
             else
             {
-                apprenticeshipProvider.Id = Guid.NewGuid();
-                var json = JsonConvert.SerializeObject(apprenticeshipProvider);
-                var old = JsonConvert.SerializeObject(apprenticeship);
-                var result = await _apprenticeshipService.AddApprenticeship(apprenticeshipProvider);
+                var result = await _apprenticeshipService.AddApprenticeship(apprenticeship);
 
                 if (result.IsSuccess)
                 {
@@ -1313,10 +1266,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return RedirectToAction(model.Combined ? "DeliveryOptionsCombined" : "DeliveryOptions", "Apprenticeships", new { message = "Location " + model.LocationName + " deleted", mode = model.Mode });
         }
 
-        internal ApprenticeshipProvider CreateNewApprenticeshipProvider(SummaryViewModel model)
-        {
-
-        }
         internal Dictionary<string, List<string>> SubRegionCodesToDictionary(string[] subRegions)
         {
             SelectRegionModel selectRegionModel = new SelectRegionModel();
