@@ -51,7 +51,7 @@
 
                     <input class="govuk-input" style="display: inline;" asp-for="@Model.CourseDirectoryName" type="text" aria-label="govuk-label-CourseDirectoryName" aria-describedby="" name="courseDirectoryName"
                            val-max-length="100"
-                           val-max-length-message="Course Directory Name must be 100 characters or less"
+                           val-max-length-message="Course directory name must be 100 characters or less"
                            val-regex="@regex"
                            val-regex-message="Course directory name contains invalid characters">
                 </div>
@@ -420,7 +420,7 @@
 
                 if (tinymce.get("brief") !== null) {
                     $(tinymce.get("brief").getBody()).find('a').attr('target', '_blank');
-                    tinymce.get("brief").getBody().textContent.trimEnd();
+                    tinymce.get("brief").getBody().textContent.trim();
                 }
                 $("#editProviderDetails").submit();
             }

@@ -101,7 +101,7 @@
 </header>
 
 <div class="navigation-container cd-fullwidth-container govuk-body">
-    <div class="govuk-phase-banner">
+    <div class="govuk-phase-banner" role="region" >
         <p class="govuk-phase-banner__content">
             <strong class="govuk-tag govuk-phase-banner__content__tag ">
                 @bannerSettings.Tag
@@ -136,6 +136,17 @@
                 <a class="cd-secondary-nav--item" href="/Venues">
                     Venues
                 </a>
+
+                if (authorised.Succeeded)
+                {
+                    <a class="cd-secondary-nav--item" href="/SearchProvider">
+                        Search Provider
+                    </a>
+
+
+
+
+                }
 
                 if (authorised.Succeeded)
                 {
