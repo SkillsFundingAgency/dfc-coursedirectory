@@ -724,13 +724,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 //ProviderId // Is this from our Provider collection?
                 //id = Guid.NewGuid(),
                 ProviderUKPRN = UKPRN, //got
-                ApprenticeshipTitle = model.DetailViewModel.ApprenticeshipTitle, // got
-                ApprenticeshipType = model.DetailViewModel.ApprenticeshipType, // dont need
+                ApprenticeshipTitle = model.DetailViewModel.ApprenticeshipTitle,
+                ApprenticeshipType = model.DetailViewModel.ApprenticeshipType, 
                 StandardCode = model.DetailViewModel.StandardCode,
                 FrameworkCode = model.DetailViewModel.FrameworkCode,
                 ProgType = model.DetailViewModel.ProgType,
-                MarketingInformation = model.DetailViewModel.Information, // got
-                Url = model.DetailViewModel.Website, // got
+                MarketingInformation = model.DetailViewModel.Information,
+                Url = model.DetailViewModel.Website,
                 ContactTelephone = model.DetailViewModel.Telephone,
                 ContactEmail = model.DetailViewModel.Email,
                 ContactWebsite = model.DetailViewModel.ContactUsIUrl,
