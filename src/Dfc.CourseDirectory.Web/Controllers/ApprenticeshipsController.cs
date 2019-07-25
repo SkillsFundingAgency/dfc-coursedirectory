@@ -723,9 +723,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 //TribalProviderId // For backwards compatibility with Tribal (Where does this come from?)#
                 //ProviderId // Is this from our Provider collection?
                 //id = Guid.NewGuid(),
-                ProviderUKPRN = UKPRN, //got
+                ProviderUKPRN = UKPRN,
                 ApprenticeshipTitle = model.DetailViewModel.ApprenticeshipTitle,
-                ApprenticeshipType = model.DetailViewModel.ApprenticeshipType, 
+                ApprenticeshipType = model.DetailViewModel.ApprenticeshipType,
                 StandardCode = model.DetailViewModel.StandardCode,
                 FrameworkCode = model.DetailViewModel.FrameworkCode,
                 ProgType = model.DetailViewModel.ProgType,
@@ -772,6 +772,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
             else
             {
+                apprenticeship.id = Guid.NewGuid();
                 var result = await _apprenticeshipService.AddApprenticeship(apprenticeship);
 
                 if (result.IsSuccess)
