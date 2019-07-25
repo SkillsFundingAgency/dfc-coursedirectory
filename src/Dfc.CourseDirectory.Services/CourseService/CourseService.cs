@@ -58,9 +58,9 @@ namespace Dfc.CourseDirectory.Services.CourseService
             IOptions<FindACourseServiceSettings> facSettings,
             IOptions<CourseForComponentSettings> courseForComponentSettings,
             IOptions<EntryRequirementsComponentSettings> entryRequirementsComponentSettings,
-            IOptions<WhatWillLearnComponentSettings> whatWillLearnComponentSettings,rnComponentSettings,
-            IOptions<WhatYouNeedComponentSettings> whatYouNeedCompo
-            IOptions<HowYouWillLearnComponentSettings> howYouWillLeanentSettings,
+            IOptions<WhatWillLearnComponentSettings> whatWillLearnComponentSettings,
+            IOptions<WhatYouNeedComponentSettings> whatYouNeedComponentSettings,
+            IOptions<HowYouWillLearnComponentSettings> howYouWillLearnComponentSettings,
             IOptions<HowAssessedComponentSettings> howAssessedComponentSettings,
             IOptions<WhereNextComponentSettings> whereNextComponentSettings)
         {

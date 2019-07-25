@@ -12,8 +12,7 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Apprenticeships
         Contact Contact { get; set; }
         int? Level { get; set; }
 
-        IList<LocationRef> Locations { get; set; }
-        // Framework specific properties. First three form composite primary key
+        List<LocationRef> Locations { get; set; }
         int FrameworkCode { get; set; } 
         int ProgType { get; set; } // FK
         Guid ProgTypeId { get; set; } // ???

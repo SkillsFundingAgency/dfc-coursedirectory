@@ -6,7 +6,7 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Apprenticeships
 {
     public interface ILocationRef
     {
-        int? ID { get; set; }
+        int ID { get; set; }
 
         List<string> DeliveryModes { get; set; }
 

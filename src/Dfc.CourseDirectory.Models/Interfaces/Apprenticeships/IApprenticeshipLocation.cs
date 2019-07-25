@@ -8,7 +8,8 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Apprenticeships
 {
     public interface IApprenticeshipLocation
     {
-        Guid id { get; set; } // Cosmos DB id
+        Guid Id { get; set; } // Cosmos DB id
+        Guid VenueId { get; set; }
         int? TribalId { get; set; }
         int ApprenticeshipLocationId { get; set; }
         Guid? LocationGuidId { get; set; }

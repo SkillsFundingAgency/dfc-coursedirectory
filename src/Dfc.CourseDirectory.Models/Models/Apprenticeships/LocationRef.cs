@@ -7,7 +7,7 @@ namespace Dfc.CourseDirectory.Models.Models.Apprenticeships
 {
     public class LocationRef : ILocationRef
     {
-        public int? ID { get; set; }
+        public int ID { get; set; }
         public List<string> DeliveryModes { get; set; }
 
         public string MarketingInfo { get; set; }
