@@ -112,7 +112,7 @@
             </span>
         </p>
     </div>
-    <nav class="cd-secondary-nav">
+
         @{
             if (User.Identity.IsAuthenticated)
             {
@@ -121,24 +121,25 @@
                 var feUser = await Authorization.AuthorizeAsync(User, "Fe");
                 var apprenticeshipUser = await Authorization.AuthorizeAsync(User, "apprenticeship");
 
-                <a class="cd-secondary-nav--item" href="/">
-                    Home
-                </a>
+                <nav class="cd-secondary-nav">
+                    <a class="cd-secondary-nav--item" href="/">
+                        Home
+                    </a>
 
-                if (feUser.Succeeded)
-                {
+                   @if (feUser.Succeeded)
+                    {
                     <a class="cd-secondary-nav--item" href="/RegulatedQualification">
                         Qualifications
                     </a>
 
-                }
+                    }
 
-                <a class="cd-secondary-nav--item" href="/Venues">
-                    Venues
-                </a>
+                    <a class="cd-secondary-nav--item" href="/Venues">
+                        Venues
+                    </a>
 
-                if (authorised.Succeeded)
-                {
+                    @if (authorised.Succeeded)
+                    {
                     <a class="cd-secondary-nav--item" href="/SearchProvider">
                         Search Provider
                     </a>
@@ -146,10 +147,10 @@
 
 
 
-                }
+                    }
 
-                if (authorised.Succeeded)
-                {
+                    @if (authorised.Succeeded)
+                    {
                     <a class="cd-secondary-nav--item" href="/Provider">
                         Add Provider
                     </a>
@@ -157,15 +158,15 @@
 
 
 
-                }
-                if (feUser.Succeeded)
-                {
+                    }
+                    @if (feUser.Succeeded)
+                    {
                     <a class="cd-secondary-nav--item" href="/ProviderCourses/Index">
                         Courses
                     </a>
-                }
-                if (apprenticeshipUser.Succeeded)
-                {
+                    }
+                    @if (apprenticeshipUser.Succeeded)
+                    {
                     <a class="cd-secondary-nav--item" href="/Apprenticeships/Index">
                         Search Apprenticeships
                     </a>
@@ -173,32 +174,27 @@
                     <a class="cd-secondary-nav--item" href="/ProviderApprenticeships/Index">
                         Your Apprenticeships
                     </a>
-                }
-
-                @*if (authorised.Succeeded || superUser.Succeeded)
-                {
-
-                    <a class="cd-secondary-nav--item" href="/BulkUpload">
-                        Bulk Upload
-                    </a>
-
-                }*@
-                var pendingCourses = HttpContextAccessor.HttpContext.Session.GetString("PendingCourses");
-
-                if (pendingCourses == "true")
-                {
-                    if (authorised.Succeeded || superUser.Succeeded)
-                    {
-                        <a class="cd-secondary-nav--item" href="/Migration">
-                            Migration
-                        </a>
-
                     }
-                }
+
+                    @{
+                        var pendingCourses = HttpContextAccessor.HttpContext.Session.GetString("PendingCourses");
+
+                        @if (pendingCourses == "true")
+                         {
+                             if (authorised.Succeeded || superUser.Succeeded)
+                             {
+                                 <a class="cd-secondary-nav--item" href="/Migration">
+                                     Migration
+                                 </a>
+
+                             }
+                         }
+                    }
+                </nav>
 
             }
         }
-    </nav>
+  
 </div>
 
 

@@ -51,9 +51,10 @@
                                     {
                                         toggleStatus = "Clear all";
                                     }
+                                    var selectAllId = "SelectAll_" + item.Id;
 
                                 }
-                                <h3><a class="govuk-link" id="SelectAll" region-id="@item.Id" href="#">@toggleStatus</a></h3>
+                                <h3><a class="govuk-link" id=@selectAllId region-id="@item.Id" href="#">@toggleStatus</a></h3>
                                 <div class="flex-container govuk-grid-row region-checkboxes" id="details-content-@item.Id" aria-hidden="true">
 
                                     @{
@@ -65,7 +66,7 @@
                                         x++;
 
                                         <div class="govuk-checkboxes__item">
-                                            <input class="govuk-checkboxes__input" id="RegionName-@x" region-id="@item.Id" name="SelectedRegions" type="checkbox" value="@subregion.Id" @subregion.Checked.ThenNullableCheck() />
+                                            <input class="govuk-checkboxes__input" id="RegionName-@item.Id-@x" region-id="@item.Id" name="SelectedRegions" type="checkbox" value="@subregion.Id" @subregion.Checked.ThenNullableCheck() />
                                             <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@subregion.SubRegionName</label>
                                         </div>
 

@@ -145,47 +145,57 @@
             ValPastDateMessage = "Start Date cannot be earlier than today’s date"
         })
     </div>
-
-    @*No view component here in order to get checkbox list validation to work without it's own form*@
-    <div class="govuk-form-group" id="VenueItemsCheckboxList" style="@Model.DeliveryMode.IfNotClassroomBasedDisplayNone()">
-        <label id="govuk-label-SelectVenueCheckBoxes" class="govuk-label" for="select-venue">
-            @Model.SelectVenue.LabelText
-        </label>
-        <span id="select-venue-hint" class="govuk-hint">
+<div class="govuk-form-group" id="VenueItemsCheckboxList" style="@Model.DeliveryMode.IfNotClassroomBasedDisplayNone()"> 
+<div class="govuk-form-group">
+    <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
+        <legend class="govuk-fieldset__legend govuk-fieldset__legend--s" style="font-weight: 100;">
+            <h1 class="govuk-fieldset__heading">
+                @Model.SelectVenue.LabelText
+            </h1>
+        </legend>
+        <span id="waste-hint" class="govuk-hint">
             @Model.SelectVenue.HintText
         </span>
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-full" id ="Venue_CheckBoxes">
-                <div class="govuk-checkboxes" id="SelectVenueCheckBoxes" aria-labelledby="Venue_CheckBoxes" val-required-message="Select a venue">
-                    @{ var i = 0; }
-                    @if (Model.SelectVenue.VenueItems.Count() == 1)
-                    {
-                        <div class="govuk-checkboxes__item">
-                            <input class="govuk-checkboxes__input" id="VenueName-@i" for="VenueName-@i" name="SelectedVenues" type="checkbox" aria-labelledby="VenueName-@i"  value="@Model.SelectVenue.VenueItems.First().Id" checked="checked" onclick="return false;" />
-                            <label id="VenueNameLabel-@i" class="govuk-label govuk-checkboxes__label" for="SelectedVenues" aria-label="VenueName-@i">@Model.SelectVenue.VenueItems.First().VenueName</label>
-                        </div>
-                    }
-                    else
-                    {
-                        foreach (var item in Model.SelectVenue.VenueItems)
-                        {
-                            i++;
-                            <div class="govuk-checkboxes__item">
-                                <input class="govuk-checkboxes__input" id="VenueName-@i" for="VenueName-@i" name="SelectedVenues" type="checkbox" aria-labelledby="VenueName-@i" value="@item.Id" @item.Checked.ThenNullableCheck() />
-                                <label id="VenueNameLabel-@i" class="govuk-label govuk-checkboxes__label" for="SelectedVenues" aria-label="VenueName-@i">@item.VenueName</label>
-                            </div>
+        <div class="govuk-checkboxes" id="SelectVenueCheckBoxes" val-required-message="Select a venue">
+            
 
+            
 
-                        }
-                    }
-
-                    <a href="#" class="govuk-link" id="addNewVenue">Add a new venue</a>
+            @{ var i = 0; }
+            @if (Model.SelectVenue.VenueItems.Count() == 1)
+            {
+                <div class="govuk-checkboxes__item">
+                    <input class="govuk-checkboxes__input" id="VenueName-@i" for="VenueName-@i" name="SelectedVenues" type="checkbox" aria-labelledby="VenueNameLabel-@i" value="@Model.SelectVenue.VenueItems.First().Id" checked="checked" onclick="return false;"/>
+                    <label id="VenueNameLabel-@i" class="govuk-label govuk-checkboxes__label" for="VenueName-@i"  aria-label="VenueName-@i">@Model.SelectVenue.VenueItems.First().VenueName</label>
                 </div>
-            </div>
-        </div>
-    </div>
+            }
+            else
+            {
+                foreach (var item in Model.SelectVenue.VenueItems)
+                {
+                    i++;
+                    <div class="govuk-checkboxes__item">
+                        <input class="govuk-checkboxes__input" id="VenueName-@i" for="VenueName-@i" name="SelectedVenues" type="checkbox" aria-labelledby="VenueNameLabel-@i" value="@item.Id" @item.Checked.ThenNullableCheck()/>
+                        <label id="VenueNameLabel-@i" class="govuk-label govuk-checkboxes__label" for="SelectedVenues" aria-label="VenueName-@i">@item.VenueName</label>
+                    </div>
 
-    <div class="govuk-form-group" id="RegionItemsCheckboxList" style="@Model.DeliveryMode.IfNotWorkBasedDisplayNone()">
+
+                }
+            }
+
+            <a href="#" class="govuk-link" id="addNewVenue">Add a new venue</a>
+        </div>
+    </fieldset>
+</div>
+</div>
+
+
+
+
+
+
+
+<div class="govuk-form-group" id="RegionItemsCheckboxList" style="@Model.DeliveryMode.IfNotWorkBasedDisplayNone()">
         <div id="sectionRegions">
             @await Component.InvokeAsync(nameof(ChooseRegion), Model.ChooseRegion)
         </div>
