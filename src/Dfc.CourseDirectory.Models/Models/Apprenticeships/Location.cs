@@ -9,6 +9,14 @@ namespace Dfc.CourseDirectory.Models.Models.Apprenticeships
     {
         public Guid id { get; set; } // Cosmos DB id
 
+        public Address Address { get; set; }
+
+        public int? ID { get; set; }
+
+        public string Name { get; set; }
+
+        public string Phone { get; set; }
+
         public LocationType LocationType { get; set; }
         public int ProviderUKPRN { get; set; } // As we are trying to inforce unique UKPRN per Provider
 
@@ -25,6 +33,7 @@ namespace Dfc.CourseDirectory.Models.Models.Apprenticeships
         public string Telephone { get; set; }
         public string Email { get; set; }
         public string Website { get; set; }
+
 
         // Standard auditing properties 
         public RecordStatus RecordStatus { get; set; }

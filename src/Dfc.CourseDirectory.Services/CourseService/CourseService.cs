@@ -59,8 +59,8 @@ namespace Dfc.CourseDirectory.Services.CourseService
             IOptions<CourseForComponentSettings> courseForComponentSettings,
             IOptions<EntryRequirementsComponentSettings> entryRequirementsComponentSettings,
             IOptions<WhatWillLearnComponentSettings> whatWillLearnComponentSettings,
-            IOptions<HowYouWillLearnComponentSettings> howYouWillLearnComponentSettings,
             IOptions<WhatYouNeedComponentSettings> whatYouNeedComponentSettings,
+            IOptions<HowYouWillLearnComponentSettings> howYouWillLearnComponentSettings,
             IOptions<HowAssessedComponentSettings> howAssessedComponentSettings,
             IOptions<WhereNextComponentSettings> whereNextComponentSettings)
         {
@@ -913,7 +913,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
 
             _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
             var response = await _httpClient.GetAsync(new Uri(_updateStatusUri.AbsoluteUri
-                + "&CourseId=" + courseId
+                + "?CourseId=" + courseId
                 + "&CourseRunId=" + courseRunId
                 + "&Status=" + statusToUpdateTo));
             _logger.LogHttpResponseMessage("Update Status http response", response);
