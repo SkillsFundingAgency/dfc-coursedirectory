@@ -6,7 +6,7 @@
 
 
 <div class="govuk-form-group">
-    <label id="govuk-label-choosevenue" class="govuk-label" for="choosevenue">
+    <label id="govuk-label-choosevenue" class="govuk-label" for="VenueId">
         @Model.LabelText
     </label>
 
@@ -20,7 +20,9 @@
 
 
     <div class="">
-        <select asp-for="@Model.VenueId" asp-items="@Model.Venues" class="govuk-select" val-required-message="Select venue" name="ChooseVenue" aria-labelledby="govuk-label-choosevenue"></select>
+        <select asp-for="@Model.VenueId" asp-items="@Model.Venues" class="govuk-select" val-required-message="Select venue"></select>
+
+@*        <select asp-for="@Model.VenueId" asp-items="@Model.Venues" class="govuk-select" val-required-message="Select venue" name="ChooseVenue" aria-labelledby="govuk-label-choosevenue"></select>*@
         @if (Model.DisplayLink)
         {
             <a href="#" class="govuk-link" id="addNewVenue">Add a new venue</a>

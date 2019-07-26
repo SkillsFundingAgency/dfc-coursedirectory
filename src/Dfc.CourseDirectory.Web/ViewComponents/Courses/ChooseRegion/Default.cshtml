@@ -9,7 +9,32 @@
         <div class="govuk-grid-column-full">
             @if (Model.UseNationalComponent)
             {
+
                 <fieldset class="govuk-fieldset">
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--s" style="font-weight: 100">
+                        <h1 class="govuk-fieldset__heading" id="govuk-label-nationalRadioButtons">
+                            Can you deliver this course anywhere in England?
+                        </h1>
+                        <span class="govuk-hint">Answering yes will show you are a national provider</span>
+                    </legend>
+                    <div class="govuk-radios govuk-radios--inline" id="nationalRadioButtons" val-required-message="Choose if you can deliver this course anywhere in England">
+
+                        <div class="govuk-radios__item">
+                            @Html.RadioButtonFor(m => m.National, true, new {@class = "govuk-radios__input", id = "nationalTrue"})
+                            <label class="govuk-label govuk-radios__label" for="nationalTrue">Yes</label>
+                        </div>
+                        <div class="govuk-radios__item">
+                            @Html.RadioButtonFor(m => m.National, false, new {@class = "govuk-radios__input", id = "nationalFalse"})
+                            <label class="govuk-label govuk-radios__label" for="nationalFalse">No</label>
+                        </div>
+                      
+           
+                    </div>
+                </fieldset>
+
+
+
+                @*<fieldset class="govuk-fieldset">
                     <label id="govuk-label-nationalRadioButtons" class="govuk-label">Can you deliver this course anywhere in England?</label>
                     <div id="nationalRadioButtons" class="govuk-radios govuk-radios--inline"
                          val-required-message="Choose if you can deliver this course anywhere in England">
@@ -23,14 +48,18 @@
                             <label class="govuk-label govuk-radios__label" for="nationalFalse">No</label>
                         </div>
                     </div>
-                </fieldset>
+                </fieldset>*@
             }
 
-            <div id="regions-section">
-                <label class="govuk-label" id="govuk-label-SelectRegionCheckBoxes" for="select-region">
-                    @Model.Regions.LabelText
-                </label>
-                <span id="select-region-hint" class="govuk-hint">
+        <div id="regions-section">
+
+            <fieldset class="govuk-fieldset"  id="govuk-label-SelectRegionCheckBoxes">
+                <legend class="govuk-fieldset__legend govuk-fieldset__legend--s" style="font-weight: 100;">
+                    <h1 class="govuk-fieldset__heading">
+                        @Model.Regions.LabelText
+                    </h1>
+                </legend>
+                <span id="waste-hint" class="govuk-hint">
                     @Model.Regions.HintText
                 </span>
                 <div class="govuk-checkboxes" id="SelectRegionCheckBoxes" val-required-message="Select at least one region or sub-region">
@@ -42,7 +71,7 @@
                                     @item.RegionName
                                 </span>
                             </summary>
-                            <div class="govuk-form-group">
+                            <div class="govuk-form-group" tabindex="-1">
                                 @{
                                     var toggleStatus = "Select all";
                                     var regionsSelected = item.SubRegion.Where(y => y.Checked.Value == true).Count();
@@ -54,8 +83,8 @@
                                     var selectAllId = "SelectAll_" + item.Id;
 
                                 }
-                                <h3><a class="govuk-link" id=@selectAllId region-id="@item.Id" href="#">@toggleStatus</a></h3>
-                                <div class="flex-container govuk-grid-row region-checkboxes" id="details-content-@item.Id" aria-hidden="true">
+                                <span class="govuk-heading-s"><a class="govuk-link" tabindex="-1" id=@selectAllId region-id="@item.Id" href="#">@toggleStatus</a></span>
+                                <div class="flex-container govuk-grid-row region-checkboxes" id="details-content-@item.Id">
 
                                     @{
                                         var x = 0;
@@ -66,8 +95,8 @@
                                         x++;
 
                                         <div class="govuk-checkboxes__item">
-                                            <input class="govuk-checkboxes__input" id="RegionName-@item.Id-@x" region-id="@item.Id" name="SelectedRegions" type="checkbox" value="@subregion.Id" @subregion.Checked.ThenNullableCheck() />
-                                            <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@subregion.SubRegionName</label>
+                                            <input tabindex="-1" class="govuk-checkboxes__input" id="RegionName-@item.Id-@x" region-id="@item.Id" name="SelectedRegions-@subregion.Id-@x" type="checkbox" value="@subregion.Id" @subregion.Checked.ThenNullableCheck() />
+                                            <label class="govuk-label govuk-checkboxes__label" for="RegionName-@item.Id-@x">@subregion.SubRegionName</label>
                                         </div>
 
                                     }
@@ -75,9 +104,60 @@
                             </div>
                         </details>
                     }
-
                 </div>
-            </div>
+            </fieldset>
+
+            @*<label class="govuk-label" id="govuk-label-SelectRegionCheckBoxes" for="select-region">
+            @Model.Regions.LabelText
+        </label>
+        <span id="select-region-hint" class="govuk-hint">
+            @Model.Regions.HintText
+        </span>
+        <div class="govuk-checkboxes" id="SelectRegionCheckBoxes" val-required-message="Select at least one region or sub-region">
+            @foreach (var item in Model.Regions.RegionItems)
+            {
+                <details class="govuk-details">
+                    <summary class="govuk-details__summary">
+                        <span id="regionLabel+@item.Id" class="govuk-details__summary-text">
+                            @item.RegionName
+                        </span>
+                    </summary>
+                    <div class="govuk-form-group">
+                        @{
+                            var toggleStatus = "Select all";
+                            var regionsSelected = item.SubRegion.Where(y => y.Checked.Value == true).Count();
+
+                            if (regionsSelected > 0)
+                            {
+                                toggleStatus = "Clear all";
+                            }
+                            var selectAllId = "SelectAll_" + item.Id;
+
+                        }
+                        <h3><a class="govuk-link" id=@selectAllId region-id="@item.Id" href="#">@toggleStatus</a></h3>
+                        <div class="flex-container govuk-grid-row region-checkboxes" id="details-content-@item.Id">
+
+                            @{
+                                var x = 0;
+
+                            }
+                            @foreach (var subregion in item.SubRegion)
+                            {
+                                x++;
+
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="RegionName-@item.Id-@x" region-id="@item.Id" name="SelectedRegions" type="checkbox" value="@subregion.Id" @subregion.Checked.ThenNullableCheck() />
+                                    <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@subregion.SubRegionName</label>
+                                </div>
+
+                            }
+                        </div>
+                    </div>
+                </details>
+            }
+
+        </div>*@
+        </div>
         </div>
     </div>
 </div>
