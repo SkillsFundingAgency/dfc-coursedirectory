@@ -27,7 +27,7 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Apprenticeships
         int? PathwayCode { get; set; }
         int? StandardCode { get; set; }
         int? Version { get; set; }
-
+        IEnumerable<string> Regions { get; set; }
         // Common properties for Standard & Framework
         string MarketingInformation { get; set; }
         string Url { get; set; }
