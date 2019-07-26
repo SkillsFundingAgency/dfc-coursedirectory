@@ -9,7 +9,7 @@
 <div class="govuk-form-group">
 
     <fieldset class="govuk-fieldset">
-        <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+        <legend class="govuk-fieldset__legend govuk-fieldset__legend--s" style="font-weight: 100">
             <h1 class="govuk-fieldset__heading">
                 @Model.LabelText
             </h1>
@@ -33,30 +33,3 @@
         </div>
     </fieldset>
 </div>
-
-
-@*<div class="govuk-form-group" id="mode">
-    <fieldset class="govuk-fieldset">
-        <label id="govuk-label-AttendanceRadioButtons" class="govuk-label">@Model.LabelText</label>
-        <span  class="govuk-hint">@Model.HintText</span>
-        <div id="AttendanceRadioButtons" class="govuk-radios govuk-radios--inline"
-            val-required-message="Select Attendance Mode">
-            <div class="govuk-radios__item">
-                @Html.RadioButtonFor(m => m.AttendanceMode, AttendancePattern.Daytime, new { @class = "govuk-radios__input daynight", id = @AttendancePattern.Daytime })
-                <label class="govuk-label govuk-radios__label" for="@AttendancePattern.Daytime">@AttendancePattern.Daytime</label>
-            </div>
-            <div class="govuk-radios__item">
-                @Html.RadioButtonFor(m => m.AttendanceMode, AttendancePattern.Evening, new { @class = "govuk-radios__input daynight", id = @AttendancePattern.Evening })
-                <label class="govuk-label govuk-radios__label" for="@AttendancePattern.Evening">@AttendancePattern.Evening</label>
-            </div>
-            <div class="govuk-radios__item">
-                @Html.RadioButtonFor(m => m.AttendanceMode, AttendancePattern.Weekend, new { @class = "govuk-radios__input daynight", id = @AttendancePattern.Weekend })
-                <label class="govuk-label govuk-radios__label" for="@AttendancePattern.Weekend">@AttendancePattern.Weekend</label>
-            </div>
-            <div class="govuk-radios__item">
-                @Html.RadioButtonFor(m => m.AttendanceMode, AttendancePattern.DayOrBlockRelease, new { @class = "govuk-radios__input daynight", id = @AttendancePattern.DayOrBlockRelease })
-                <label class="govuk-label govuk-radios__label" for="@AttendancePattern.DayOrBlockRelease">@WebHelper.GetEnumDescription(AttendancePattern.DayOrBlockRelease)</label>
-            </div>
-        </div>
-    </fieldset>
-</div>*@
