@@ -510,6 +510,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     model.LocationChoiceSelectionViewModel = LocationChoiceSelectionViewModel;
                 }
 
+                model.Regions = getApprenticehipByIdResult.Value.Regions != null ? SubRegionCodesToDictionary(getApprenticehipByIdResult.Value.Regions.ToArray()) : null;
+
                 model.Mode = requestModel.Mode;
 
                 model.Cancelled = null;
@@ -519,8 +521,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 _session.SetObject("LocationChoiceSelectionViewModel", model.LocationChoiceSelectionViewModel);
                 _session.SetObject("DeliveryOptionsViewModel", model.DeliveryViewModel);
                 _session.SetObject("DeliveryOptionsCombinedViewModel", model.DeliveryOptionsCombinedViewModel);
-                //_session.SetObject<String[]>("SelectedRegions");
-                //_session.SetObject("SelectedRegions", model.SelectedRegions);
+                _session.SetObject("SelectedRegions", model.Regions);
 
             }
 
@@ -738,6 +739,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 CreatedBy = User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
                 RecordStatus = RecordStatus.Live,
                 PathwayCode = model.DetailViewModel.PathwayCode,
+                Regions = Regions,
                 Version = model.DetailViewModel.Version,
                 NotionalNVQLevelv2 = model.DetailViewModel.NotionalNVQLevelv2,
                 ApprenticeshipLocations = locations,
