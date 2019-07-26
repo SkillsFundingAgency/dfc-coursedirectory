@@ -5,66 +5,178 @@
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
-<fieldset class="govuk-fieldset">
 
-    <div class="govuk-form-group" id="date">
 
-        <label id="govuk-label-start_date" class="govuk-label" for="sub" style="margin-bottom: 15px" name="Start-Date">
-            @Model.LabelText
+    <fieldset class="govuk-fieldset">
+        <legend class="govuk-fieldset__legend govuk-fieldset__legend--s" style="font-weight: 100">
+            <h1 class="govuk-fieldset__heading">
+                @Model.LabelText
+            </h1>
+            <span class="govuk-hint">@Model.SpecifiedDateHintText</span>
+        </legend>
+        <div class="govuk-radios govuk-radios--inline" id="StartDateOptions">
 
-        </label>
-        <span  class="govuk-hint">@Model.SpecifiedDateHintText</span>
+            <div class="govuk-radios__item">
+                @Html.RadioButtonFor(m => m.StartDateType, StartDateType.SpecifiedStartDate, new { @class = "govuk-radios__input specified", id = @StartDateType.SpecifiedStartDate })
+                <label class="govuk-label govuk-radios__label" for="@StartDateType.SpecifiedStartDate">Defined Start Date</label>
+            </div>
+            <div class="govuk-radios__item">
+                @Html.RadioButtonFor(m => m.StartDateType, StartDateType.FlexibleStartDate, new { @class = "govuk-radios__input flexible", id = @StartDateType.FlexibleStartDate })
+                <label class="govuk-label govuk-radios__label" for="@StartDateType.FlexibleStartDate">Flexible Start Date</label>
+            </div>
 
-        <div class="govuk-form-group" id="startDateFormGroup">
-            <div class="govuk-date-input" id="start_date" aria-label ="Start-Date"
-                 val-required-message="Enter start date"
-                 val-past-date-ref=@Model.ValPastDateRef.ToString("yyyy-MM-dd")
-                 val-past-date-message="@Model.ValPastDateMessage"
-                 val-future-date-ref=@DateTime.Now.AddYears(2).ToString("yyyy-MM-dd")
-                 val-future-date-message="Start Date cannot be later than 2 years from today’s date"
-                 val-date-message="Invalid date">
-                <div class="govuk-radios__item">
-                    @Html.RadioButtonFor(m => m.StartDateType, StartDateType.SpecifiedStartDate, new { @class = "govuk-radios__input specified", id = @StartDateType.SpecifiedStartDate })
-                    <label class="govuk-label govuk-radios__label" for="@StartDateType.SpecifiedStartDate">Defined Start Date</label>
+        </div>
+    </fieldset>
+
+
+
+<div class="govuk-form-group">
+    <fieldset class="govuk-fieldset" aria-describedby="passport-issued-hint" role="group" id="govuk-label-start_date">
+        <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+
+        </legend>
+        <span id="passport-issued-hint" class="govuk-hint">
+            @*For example, 12 11 2007, Past date validation { ref: "2019-02-14" }*@
+        </span>
+        <div class="govuk-date-input" id="start_date"
+             val-required-message="Enter start date"
+             val-past-date-ref=@Model.ValPastDateRef.ToString("yyyy-MM-dd")
+             val-past-date-message="@Model.ValPastDateMessage"
+             val-future-date-ref=@DateTime.Now.AddYears(2).ToString("yyyy-MM-dd")
+             val-future-date-message="Start Date cannot be later than 2 years from today’s date"
+             val-date-message="Invalid date">
+            <div class="govuk-date-input__item">
+                <div class="govuk-form-group">
+                    <label class="govuk-label govuk-date-input__label" asp-for="@Model.Day">
+                        @Model.DayLabelText
+                    </label>
+                    <input class="govuk-input govuk-date-input__input govuk-input--width-2" aria-label="@Model.Day" asp-for="@Model.Day" type="number" pattern="[0-9]*" onpaste="return false">
                 </div>
-                <div class="govuk-date-input__item">
-                    <div class="govuk-form-group">
-                        <label class="govuk-label govuk-date-input__label" asp-for="@Model.Day">
-                            @Model.DayLabelText
-                        </label>
-                        <input class="govuk-input govuk-date-input__input govuk-input--width-2" aria-label="@Model.Day" asp-for="@Model.Day"  type="number" pattern="[0-9]*" onpaste="return false">
-                    </div>
+            </div>
+            <div class="govuk-date-input__item">
+                <div class="govuk-form-group">
+                    <label class="govuk-label govuk-date-input__label" asp-for="@Model.Month">
+                        @Model.MonthLabelText
+                    </label>
+                    <input class="govuk-input govuk-date-input__input govuk-input--width-2" aria-label="@Model.Month" asp-for="@Model.Month" type="number" pattern="[0-9]*" onpaste="return false">
                 </div>
-                <div class="govuk-date-input__item">
-                    <div class="govuk-form-group">
-                        <label class="govuk-label govuk-date-input__label" asp-for="@Model.Month">
-                            @Model.MonthLabelText
-                        </label>
-                        <input class="govuk-input govuk-date-input__input govuk-input--width-2" aria-label="@Model.Month" asp-for="@Model.Month" type="number" pattern="[0-9]*" onpaste="return false">
-                    </div>
-                </div>
-                <div class="govuk-date-input__item">
-                    <div class="govuk-form-group">
-                        <label class="govuk-label govuk-date-input__label" asp-for="@Model.Year">
-                            @Model.YearLabelText
-                        </label>
-                        <input class="govuk-input govuk-date-input__input govuk-input--width-4" aria-label="@Model.Year" asp-for="@Model.Year"  type="number" pattern="[0-9]*" onpaste="return false">
-                    </div>
+            </div>
+            <div class="govuk-date-input__item">
+                <div class="govuk-form-group">
+                    <label class="govuk-label govuk-date-input__label" asp-for="@Model.Year">
+                        @Model.YearLabelText
+                    </label>
+                    <input class="govuk-input govuk-date-input__input govuk-input--width-4" aria-label="@Model.Year" asp-for="@Model.Year" type="number" pattern="[0-9]*" onpaste="return false">
                 </div>
             </div>
         </div>
-
-        <div class="govuk-radios__item" style="margin-top: 15px;">
-            @Html.RadioButtonFor(m => m.StartDateType, StartDateType.FlexibleStartDate, new { @class = "govuk-radios__input flexible", id = @StartDateType.FlexibleStartDate })
-            <label class="govuk-label govuk-radios__label" for="@StartDateType.FlexibleStartDate">Flexible Start Date</label>
-        </div>
-
-
+    </fieldset>
     </div>
 
-</fieldset>
 
-<script>
+
+    @*<div class="govuk-form-group">
+        <div class="govuk-date-input__item">
+            <div class="govuk-form-group">
+                <label class="govuk-label govuk-date-input__label" asp-for="@Model.Day">
+                    @Model.DayLabelText
+                </label>
+                <input class="govuk-input govuk-date-input__input govuk-input--width-2" aria-label="@Model.Day" asp-for="@Model.Day" type="number" pattern="[0-9]*" onpaste="return false">
+            </div>
+        </div>
+        <div class="govuk-date-input__item">
+            <div class="govuk-form-group">
+                <label class="govuk-label govuk-date-input__label" asp-for="@Model.Month">
+                    @Model.MonthLabelText
+                </label>
+                <input class="govuk-input govuk-date-input__input govuk-input--width-2" aria-label="@Model.Month" asp-for="@Model.Month" type="number" pattern="[0-9]*" onpaste="return false">
+            </div>
+        </div>
+        <div class="govuk-date-input__item">
+            <div class="govuk-form-group">
+                <label class="govuk-label govuk-date-input__label" asp-for="@Model.Year">
+                    @Model.YearLabelText
+                </label>
+                <input class="govuk-input govuk-date-input__input govuk-input--width-4" aria-label="@Model.Year" asp-for="@Model.Year" type="number" pattern="[0-9]*" onpaste="return false">
+            </div>
+        </div>
+        </div>*@
+
+
+
+
+
+
+
+
+
+
+
+
+    @*<fieldset class="govuk-fieldset">
+
+            <div class="govuk-form-group" id="date">
+
+                <label id="govuk-label-start_date" class="govuk-label" for="sub" style="margin-bottom: 15px" name="Start-Date">
+                    @Model.LabelText
+
+                </label>
+                <span class="govuk-hint">@Model.SpecifiedDateHintText</span>
+
+                <div class="govuk-form-group" id="startDateFormGroup">
+                    <div class="govuk-date-input" id="start_date" aria-label="Start-Date"
+                         val-required-message="Enter start date"
+                         val-past-date-ref=@Model.ValPastDateRef.ToString("yyyy-MM-dd")
+                         val-past-date-message="@Model.ValPastDateMessage"
+                         val-future-date-ref=@DateTime.Now.AddYears(2).ToString("yyyy-MM-dd")
+                         val-future-date-message="Start Date cannot be later than 2 years from today’s date"
+                         val-date-message="Invalid date">
+                        <div class="govuk-radios__item">
+                            @Html.RadioButtonFor(m => m.StartDateType, StartDateType.SpecifiedStartDate, new { @class = "govuk-radios__input specified", id = @StartDateType.SpecifiedStartDate })
+                            <label class="govuk-label govuk-radios__label" for="@StartDateType.SpecifiedStartDate">Defined Start Date</label>
+                        </div>
+                        <div class="govuk-radios__item" style="margin-top: 15px;">
+                            @Html.RadioButtonFor(m => m.StartDateType, StartDateType.FlexibleStartDate, new { @class = "govuk-radios__input flexible", id = @StartDateType.FlexibleStartDate })
+                            <label class="govuk-label govuk-radios__label" for="@StartDateType.FlexibleStartDate">Flexible Start Date</label>
+                        </div>
+
+                    </div>
+                </div>
+
+
+
+
+            </div>
+
+
+            <div class="govuk-date-input__item">
+                <div class="govuk-form-group">
+                    <label class="govuk-label govuk-date-input__label" asp-for="@Model.Day">
+                        @Model.DayLabelText
+                    </label>
+                    <input class="govuk-input govuk-date-input__input govuk-input--width-2" aria-label="@Model.Day" asp-for="@Model.Day" type="number" pattern="[0-9]*" onpaste="return false">
+                </div>
+            </div>
+            <div class="govuk-date-input__item">
+                <div class="govuk-form-group">
+                    <label class="govuk-label govuk-date-input__label" asp-for="@Model.Month">
+                        @Model.MonthLabelText
+                    </label>
+                    <input class="govuk-input govuk-date-input__input govuk-input--width-2" aria-label="@Model.Month" asp-for="@Model.Month" type="number" pattern="[0-9]*" onpaste="return false">
+                </div>
+            </div>
+            <div class="govuk-date-input__item">
+                <div class="govuk-form-group">
+                    <label class="govuk-label govuk-date-input__label" asp-for="@Model.Year">
+                        @Model.YearLabelText
+                    </label>
+                    <input class="govuk-input govuk-date-input__input govuk-input--width-4" aria-label="@Model.Year" asp-for="@Model.Year" type="number" pattern="[0-9]*" onpaste="return false">
+                </div>
+            </div>
+
+        </fieldset>*@
+
+    <script>
     (function($) {
         $(function() {
 
@@ -118,5 +230,5 @@
                 });
         });
     })(jQuery);
-</script>
+    </script>
 
