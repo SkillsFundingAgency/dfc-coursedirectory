@@ -5,7 +5,9 @@ using Dfc.CourseDirectory.Models.Models.Regions;
 using Dfc.CourseDirectory.Models.Models.Venues;
 using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
+using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
+using Dfc.CourseDirectory.Services.ProviderService;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Extensions;
 using Dfc.CourseDirectory.Web.Helpers;
@@ -18,6 +20,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,23 +37,27 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly ICourseService _courseService;
         private readonly IVenueService _venueService;
         private readonly IApprenticeshipService _apprenticeshipService;
+        private readonly IProviderService _providerService;
 
         public ApprenticeshipsController(
             ILogger<ApprenticeshipsController> logger,
             IHttpContextAccessor contextAccessor, ICourseService courseService, IVenueService venueService
-            , IApprenticeshipService apprenticeshipService)
+            , IApprenticeshipService apprenticeshipService,
+            IProviderService providerService)
         {
             Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(contextAccessor, nameof(contextAccessor));
             Throw.IfNull(courseService, nameof(courseService));
             Throw.IfNull(venueService, nameof(venueService));
             Throw.IfNull(apprenticeshipService, nameof(apprenticeshipService));
+            Throw.IfNull(providerService, nameof(providerService));
 
             _logger = logger;
             _contextAccessor = contextAccessor;
             _courseService = courseService;
             _venueService = venueService;
             _apprenticeshipService = apprenticeshipService;
+            _providerService = providerService;
         }
 
         [Authorize]
@@ -550,7 +557,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             var LocationChoiceSelectionViewModel = _session.GetObject<LocationChoiceSelectionViewModel>("LocationChoiceSelectionViewModel");
             var DeliveryOptionsViewModel = _session.GetObject<DeliveryOptionsViewModel>("DeliveryOptionsViewModel");
             var DeliveryOptionsCombinedViewModel = _session.GetObject<DeliveryOptionsCombinedViewModel>("DeliveryOptionsCombinedViewModel");
-            var Regions = _session.GetObject<String[]>("SelectedRegions");
+            var Regions = _session.GetObject<string[]>("SelectedRegions");
 
             model.DetailViewModel = DetailViewModel;
             model.DeliveryViewModel = DeliveryViewModel;
@@ -591,7 +598,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 CreatedBy =
                     User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
                 ApprenticeshipLocationType = apprenticeshipLocationType,
-                id = Guid.NewGuid(),
+                Id = Guid.NewGuid(),
                 LocationType = LocationType.Venue,
                 RecordStatus = RecordStatus.Live,
                 National = null,
@@ -706,12 +713,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 foreach (var loc in model.DeliveryOptionsCombinedViewModel.DeliveryOptionsListItemModel
                     .DeliveryOptionsListItemModel)
                 {
-
-
                     locations.Add(CreateDeliveryLocation(loc, apprenticeshipLocationType));
                 }
             }
-
 
             Apprenticeship apprenticeship = new Apprenticeship
             {
