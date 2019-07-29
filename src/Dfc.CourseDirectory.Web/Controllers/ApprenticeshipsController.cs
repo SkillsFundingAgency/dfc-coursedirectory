@@ -514,8 +514,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     // model.Regions = Regions;
                     model.LocationChoiceSelectionViewModel = LocationChoiceSelectionViewModel;
                 }
+                else
+                {
+                    DeliveryViewModel.ApprenticeshipDelivery = ApprenticeshipDelivery.EmployersAddress;
+                    DeliveryViewModel.Mode = requestModel.Mode;
 
-                model.Regions = getApprenticehipByIdResult.Value.Regions != null ? SubRegionCodesToDictionary(getApprenticehipByIdResult.Value.Regions.ToArray()) : null;
+                }
+
+                model.Regions = getApprenticehipByIdResult.Value.ApprenticeshipLocations != null ? SubRegionCodesToDictionary(getApprenticehipByIdResult.Value.ApprenticeshipLocations.Select(x => x.Regions.ToArray()).FirstOrDefault()) : null;
 
                 model.Mode = requestModel.Mode;
 
@@ -578,9 +584,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         {"National", new List<string>() {"All"}}
                     };
                 }
-                else if (LocationChoiceSelectionViewModel.NationalApprenticeship == NationalApprenticeship.No)
+                else if(LocationChoiceSelectionViewModel.NationalApprenticeship == NationalApprenticeship.No)
                 {
                     model.Regions = SubRegionCodesToDictionary(Regions);
+                }
+                else
+                {
+                    LocationChoiceSelectionViewModel.NationalApprenticeship = NationalApprenticeship.Undefined;
                 }
             }
            
@@ -608,6 +618,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 Id = Guid.NewGuid(),
                 LocationType = LocationType.Venue,
                 RecordStatus = RecordStatus.Live,
+                Regions = loc.Regions,
                 National = null,
                 UpdatedDate = DateTime.Now,
                 UpdatedBy =
@@ -626,21 +637,25 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 apprenticeshipLocation.Radius = Convert.ToInt32(loc.Radius);
             }
 
-            var delModes = loc.Delivery.Split(",");
-           
-            foreach (var delMode in delModes)
+            if(!string.IsNullOrEmpty(loc.Delivery))
             {
-                if (delMode.ToLower().Trim() ==
-                    @WebHelper.GetEnumDescription(ApprenticeShipDeliveryLocation.DayRelease).ToLower())
+                var delModes = loc.Delivery.Split(",");
+
+                foreach (var delMode in delModes)
                 {
-                    deliveryModes.Add((int)ApprenticeShipDeliveryLocation.DayRelease);
+                    if (delMode.ToLower().Trim() ==
+                        @WebHelper.GetEnumDescription(ApprenticeShipDeliveryLocation.DayRelease).ToLower())
+                    {
+                        deliveryModes.Add((int)ApprenticeShipDeliveryLocation.DayRelease);
+                    }
+
+                    if (delMode.ToLower().Trim() == @WebHelper
+                            .GetEnumDescription(ApprenticeShipDeliveryLocation.BlockRelease).ToLower())
+                    {
+                        deliveryModes.Add((int)ApprenticeShipDeliveryLocation.BlockRelease);
+                    }
                 }
 
-                if (delMode.ToLower().Trim() == @WebHelper
-                        .GetEnumDescription(ApprenticeShipDeliveryLocation.BlockRelease).ToLower())
-                {
-                    deliveryModes.Add((int)ApprenticeShipDeliveryLocation.BlockRelease);
-                }
             }
 
             if (apprenticeshipLocationType == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased)
@@ -725,6 +740,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 }
             }
 
+            if(model.DeliveryViewModel.ApprenticeshipDelivery == ApprenticeshipDelivery.EmployersAddress)
+            {
+                DeliveryOptionsListItemModel loc = new DeliveryOptionsListItemModel
+                {
+                    Regions = Regions != null ? Regions : null,
+                    National = model.LocationChoiceSelectionViewModel.NationalApprenticeship == NationalApprenticeship.Yes ? true : false
+                };
+                locations.Add(CreateDeliveryLocation(loc, apprenticeshipLocationType));
+            }
             Apprenticeship apprenticeship = new Apprenticeship
             {
                 //ApprenticeshipId // For backwards compatibility with Tribal (Where does this come from?)
@@ -746,7 +770,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 CreatedBy = User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
                 RecordStatus = RecordStatus.Live,
                 PathwayCode = model.DetailViewModel.PathwayCode,
-                Regions = Regions,
                 Version = model.DetailViewModel.Version,
                 NotionalNVQLevelv2 = model.DetailViewModel.NotionalNVQLevelv2,
                 ApprenticeshipLocations = locations,
