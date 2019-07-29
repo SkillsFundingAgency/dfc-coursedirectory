@@ -40,18 +40,25 @@ else
         <div class="govuk-form-group govuk-!-font-size-14">
             <div class="accordion govuk-heading-s">Filter by level</div>
             <div class="panel">
-                <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
-                    <div class="govuk-checkboxes">
+                <fieldset class="govuk-fieldset">
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--s" style="font-weight: 100">
+                    </legend>
+                    <div class="govuk-checkboxes" id="LevelFilters">
 
 
                         @foreach (var level in Model.Levels)
                         {
                             <div class="govuk-checkboxes__item">
                                 <input class="govuk-checkboxes__input" id="@level.Id" name="@level.Name" type="checkbox" value="@level.Value" @level.IsSelected.ThenCheck()>
-                                <label class="govuk-label govuk-checkboxes__label govuk-!-font-size-14" for="@level.Id">
+                                <label  id="levellabel_@level.Id" class="govuk-label govuk-checkboxes__label govuk-!-font-size-14" for="@level.Id">
                                     @level.Text
                                 </label>
                             </div>
+
+                            @*<div class="govuk-checkboxes__item">
+                                <input class="govuk-checkboxes__input" id="VenueName-@i" for="VenueName-@i" name="SelectedVenues-@i" type="checkbox" aria-labelledby="VenueNameLabel-@i" value="@Model.SelectVenue.VenueItems.First().Id" checked="checked" onclick="return false;"/>
+                                <label id="VenueNameLabel-@i" class="govuk-label govuk-checkboxes__label" for="SelectedVenues-@i" aria-label="VenueName-@i">@Model.SelectVenue.VenueItems.First().VenueName</label>
+                            </div>*@
                         }
 
 
@@ -59,6 +66,13 @@ else
                 </fieldset>
             </div>
         </div>
+        
+        
+        
+        
+       
+        
+
         @if (Model.DeliveryModes.Any())
         {
             <div class="govuk-form-group govuk-!-font-size-14">
@@ -172,12 +186,12 @@ else
             <div class="courserun__row1" id="@courseRun.CourseRunId">
                 @if (!string.IsNullOrEmpty(courseRun.CourseName))
                 {
-                <h3 class="coursename">
+                <span class="coursename">
                     @WebUtility.HtmlDecode(@courseRun.CourseName)
 
-                </h3>
+                </span>
                 }
-                <h4 class="coursename smaller ">
+                <span class="coursename smaller ">
 
                     @if (!string.IsNullOrEmpty(courseRun.QualificationCourseTitle))
                     {
@@ -192,7 +206,7 @@ else
                         </small>
                     }
 
-                </h4>
+                </span>
             </div>
 
             @if (courseRun.DeliveryMode == "Classroom based")
@@ -238,7 +252,7 @@ else
                 {
                     if (!string.IsNullOrEmpty(courseRun.AttendancePattern))
                     {
-                        <span id="attendance">@courseRun.AttendancePattern</span>
+                        <span>@courseRun.AttendancePattern</span>
                     }
                 }
                 @if (!string.IsNullOrEmpty(courseRun.NotionalNVQLevelv2))
@@ -249,13 +263,13 @@ else
 
                 @if (!string.IsNullOrEmpty(courseRun.DeliveryMode))
                 {
-                    <span id="deliverymode">@courseRun.DeliveryMode</span>
+                    <span>@courseRun.DeliveryMode</span>
                 }
                 @if (courseRun.DeliveryMode == "Classroom based")
                 {
                     @if (!string.IsNullOrEmpty(courseRun.StudyMode))
                     {
-                        <span id="studymode">@courseRun.StudyMode</span>
+                        <span>@courseRun.StudyMode</span>
                     }
                 }
                 @if (!string.IsNullOrEmpty(courseRun.StartDate))
@@ -266,8 +280,6 @@ else
             </div>
             <div class="courserun__row4">
                 @Html.ActionLink("Select", "Index", "CourseSummary", new { courseRun.CourseId, courseRun.CourseRunId }, null)
-                @*<a class="govuk-link" asp-controller="CourseSummary"  asp-action="Index" asp-route-id="@courseRun.c">Select</a>*@
-
             </div>
         </div>
         }
