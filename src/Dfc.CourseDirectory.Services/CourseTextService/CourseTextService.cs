@@ -49,7 +49,7 @@ namespace Dfc.CourseDirectory.Services.CourseTextService
                     return Result.Fail<ICourseText>("Blank LARS Ref");
 
                 _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
-                var response = await _httpClient.GetAsync(new Uri(_getYourCourseTextUri.AbsoluteUri + "&LARS=" + criteria.LARSRef));
+                var response = await _httpClient.GetAsync(new Uri(_getYourCourseTextUri.AbsoluteUri + "?LARS=" + criteria.LARSRef));
                 _logger.LogHttpResponseMessage("Get your courses service http response", response);
 
                 if (response.IsSuccessStatusCode)
