@@ -106,7 +106,8 @@
                 var $checked = $("#nationalRadioButtons input[type=radio]:checked").val();
                 switch ($checked) {
                     case "True":
-                    case undefined: {
+                    case undefined:
+                    case null:    {
                         $regionSection.hide();
                         break;
                     }
