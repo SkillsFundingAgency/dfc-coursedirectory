@@ -466,7 +466,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         foreach (int deliveryMode in loc.DeliveryModes)
                         {
                             switch (deliveryMode)
-                            {
+                            { 
                                 case 0:
 
                                     delModes.Add(@WebHelper.GetEnumDescription(ApprenticeShipDeliveryLocation.Undefined));
