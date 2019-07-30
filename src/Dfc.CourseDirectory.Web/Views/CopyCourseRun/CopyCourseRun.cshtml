@@ -303,7 +303,11 @@
 
             var $fullPartTimeRadioButtons = $("#FullPartTimeRadioButtons");
             var $attendancePatternRadioButtons = $("#AttendancePatternRadioButtons");
+            var $startDateRadios = $("#StartDateOptions input[type=radio]");
+            var $radioStartDate = $("#StartDateOptions").govUkRadios();
 
+
+          
 
             switch ($radioDeliveryMode.find("input[type='radio']:checked").val()) {
                 case "ClassroomBased":
@@ -346,6 +350,22 @@
 
             var $button = $("#save");
 
+            switch ($radioStartDate.find("input[type='radio']:checked").val()) {
+            case "SpecifiedStartDate":
+            {
+               
+                break;
+            }
+            case "FlexibleStartDate":
+            {
+                $("#govuk-label-start_date").hide();
+                $("#Day").val("");
+                $("#Month").val("");
+                $("#Year").val("");
+                break;
+            }
+           
+            }
 
             validate();
 
@@ -617,6 +637,20 @@
 
                 });
 
+            $startDateRadios.change(function () {
+                if ($("#SpecifiedStartDate").prop("checked") === true) {
+                    $("#govuk-label-start_date").show();
+                }
+
+                if ($("#FlexibleStartDate").prop("checked") === true) {
+                    $("#govuk-label-start_date").hide();
+                    $("#Day").val("");
+                    $("#Month").val("");
+                    $("#Year").val("");
+
+                }
+            });
+
             $deliveryRadios.change(function () {
             var $venueChoice = $("#sectionVenue");
             var $fullPartTimeRadioButtons = $("#FullPartTimeRadioButtons");
@@ -640,6 +674,8 @@
                         isWorkBased = false;
                         $dayTimeAttendance.prop("checked", true);
                         $studyMode.prop("checked", true);
+
+                        $("#govuk-label-start_date").show();
                         break;
                     }
                 case "Online":
@@ -655,6 +691,8 @@
                         isWorkBased = false;
                         $dayTimeAttendance.prop("checked", false);
                         $studyMode.prop("checked", false);
+
+                        $("#govuk-label-start_date").hide();
                         break;
                     }
                 case "WorkBased":
@@ -670,6 +708,8 @@
                         isWorkBased = true;
                         $dayTimeAttendance.prop("checked", false);
                         $studyMode.prop("checked", false);
+
+                        $("#govuk-label-start_date").hide();
                         break;
                     }
             }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Models.Enums;
@@ -32,7 +33,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
     {
         private readonly ILogger<CopyCourseRunController> _logger;
         private readonly IHttpContextAccessor _contextAccessor;
-
+        private readonly HtmlEncoder _htmlEncoder;
         private readonly ICourseService _courseService;
 
         private ISession _session => _contextAccessor.HttpContext.Session;
@@ -43,6 +44,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
             ILogger<CopyCourseRunController> logger,
             IOptions<CourseServiceSettings> courseSearchSettings,
             IHttpContextAccessor contextAccessor,
+            HtmlEncoder htmlEncoder,
             ICourseService courseService,
             IVenueService venueService,
             IVenueSearchHelper venueSearchHelper)
@@ -55,6 +57,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
 
             _logger = logger;
             _contextAccessor = contextAccessor;
+            _htmlEncoder = htmlEncoder;
             _courseService = courseService;
             _venueService = venueService;
             _venueSearchHelper = venueSearchHelper;
@@ -396,11 +399,11 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                         DeliveryMode = model.DeliveryMode,
                         FlexibleStartDate = model.FlexibleStartDate,
                         StudyMode = model.StudyMode,
-                        CostDescription = model.CostDescription,
-                        CourseName = model.CourseName,
+                        CostDescription = _htmlEncoder.Encode(model.CostDescription??""),
+                        CourseName = _htmlEncoder.Encode(model.CourseName??""),
                         CourseURL = model.Url,
                         DurationValue = Convert.ToInt32(model.DurationLength),
-                        ProviderCourseID = model.CourseProviderReference,
+                        ProviderCourseID = _htmlEncoder.Encode(model.CourseProviderReference??""),
                         RecordStatus = RecordStatus.Live
                     };
 

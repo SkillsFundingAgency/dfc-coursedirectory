@@ -70,7 +70,6 @@ namespace Dfc.CourseDirectory.Models.Models.Apprenticeships
         public string ContactTelephone { get; set; }
         public string ContactEmail { get; set; }
         public string ContactWebsite { get; set; }
-
         public IEnumerable<ApprenticeshipLocation> ApprenticeshipLocations { get; set; }
 
         // Standard auditing properties 

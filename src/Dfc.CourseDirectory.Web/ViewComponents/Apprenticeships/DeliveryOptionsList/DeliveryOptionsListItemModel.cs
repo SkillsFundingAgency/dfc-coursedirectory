@@ -21,7 +21,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships
         public string Radius { get; set; }
 
         public bool? National { get; set; }
-
+        public string[] Regions { get; set; }
 
     }
 }

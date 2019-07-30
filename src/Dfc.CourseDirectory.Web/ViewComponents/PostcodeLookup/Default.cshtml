@@ -6,13 +6,13 @@
 
 @Html.HiddenFor(x => x.Id)
 
-<input type="hidden" value="@Model.VenueName" id="HiddenVenueName" />
+<input type="hidden" value="@Model.VenueName" id="VenueName" name="VenueName" />
 
 <div class="postcode-lookup__component">
     @if (Model.HasItems)
     {
         <div class="govuk-form-group">
-            <label class="govuk-label" asp-for="@Model.Postcode">
+            <label class="govuk-label" asp-for="@Model.PostcodeId">
                 @Model.PostcodeLabelText
             </label>
             <label class="govuk-body govuk-!-font-size-24 govuk-!-font-weight-bold">
