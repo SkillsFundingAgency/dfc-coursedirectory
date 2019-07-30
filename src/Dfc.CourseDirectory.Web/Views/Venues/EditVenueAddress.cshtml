@@ -10,7 +10,7 @@
             <h1 class="govuk-heading-l">Edit venue address</h1>
             <form method="post" id="edit-venue-form" asp-controller="Venues" asp-action="VenueAddressSelectionConfirmation">
 
-                <input type="hidden" id="ModelVenueName" value="@Model.VenueName" />
+                @*<input type="hidden" id="VenueName" value="@Model.VenueName" />*@
                 <input type="hidden" id="ModelId" value="@Model.Id" />
                 @await Component.InvokeAsync(nameof(PostcodeLookup), new PostcodeLookupModel
                        {
