@@ -314,7 +314,7 @@
             var $attendancePatternRadioButtons = $("#AttendancePatternRadioButtons");
             var $startDateRadios = $("#StartDateOptions input[type=radio]");
             var $radioStartDate = $("#StartDateOptions").govUkRadios();
-
+            var $regionSection = $("#regions-section");
             var isClassroomBased = true;
             var isOnline = false;
             var isWorkBased = false;
@@ -332,7 +332,7 @@
                         isClassroomBased = true;
                         isOnline = false;
                         isWorkBased = false;
-
+                        $regionSection.hide();
 
                         $("#govuk-label-start_date").show();
 
@@ -343,7 +343,7 @@
                     {
                         $fullPartTimeRadioButtons.hide();
                         $attendancePatternRadioButtons.hide();
-
+                        $regionSection.hide();
 
                         
                         $("#govuk-label-start_date").hide();
@@ -357,7 +357,7 @@
                         isClassroomBased = false;
                         isOnline = false;
                         isWorkBased = true;
-                        var $regionSection = $("#regions-section");
+                        
                         $regionSection.show();
 
 
@@ -375,7 +375,6 @@
                 $nationalTrue.prop("checked", false);
                 var $nationalFalse = $("#National_false");
                 $nationalFalse.prop("checked", false);
-                var $regionSection = $("#regions-section");
                 $regionSection.hide();
             }
 
@@ -812,7 +811,7 @@
                             isWorkBased = false;
                             $attendancePattern.prop("checked", true);
                             $studyMode.prop("checked", true);
-
+                            $regionSection.hide();
                             
                             $("#govuk-label-start_date").show();
 
@@ -832,7 +831,7 @@
                             $attendancePattern.prop("checked", false);
                             $studyMode.prop("checked", false);
                             $("#govuk-label-start_date").hide();
-
+                            $regionSection.hide();
 
                             break;
                         }
@@ -849,8 +848,6 @@
                             isWorkBased = true;
                             $attendancePattern.prop("checked", false);
                             $studyMode.prop("checked", false);
-                              var $regionSection = $("#regions-section");
-                            $regionSection.show();
 
                             
                             $("#govuk-label-start_date").hide();
