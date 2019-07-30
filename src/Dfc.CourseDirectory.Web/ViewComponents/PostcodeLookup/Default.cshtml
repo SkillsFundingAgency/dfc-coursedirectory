@@ -6,7 +6,7 @@
 
 @Html.HiddenFor(x => x.Id)
 
-<input type="hidden" value="@Model.VenueName" id="HiddenVenueName" />
+<input type="hidden" value="@Model.VenueName" id="VenueName" name="VenueName" />
 
 <div class="postcode-lookup__component">
     @if (Model.HasItems)
