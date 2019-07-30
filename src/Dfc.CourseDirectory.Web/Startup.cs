@@ -507,6 +507,22 @@ namespace Dfc.CourseDirectory.Web
                 context.Response.Headers.Add("X-Frame-Options", "SAMEORIGIN");
                 context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
                 context.Response.Headers.Add("X-Xss-Protection", "1; mode=block");
+                //CSP
+                context.Response.Headers.Add("Content-Security-Policy", 
+                                                "default-src    'self';" +
+                                                "style-src      'self' 'unsafe-inline';" +
+                                                "font-src       'self' data:;" +
+                                                "img-src        'self' * data:;" +
+                                                "script-src     'self' 'unsafe-eval' 'unsafe-inline'  " +
+                                                    " https://cloud.tinymce.com/" +
+                                                    " https://cdnjs.cloudflare.com/" +
+                                                    " https://www.googletagmanager.com/" +
+                                                    " https://www.google-analytics.com" +
+                                                    ";" +
+                                                "report-uri     /WebResource.axd?cspReport=true;"
+
+                                                );
+
 
                 context.Response.GetTypedHeaders().CacheControl =
                   new Microsoft.Net.Http.Headers.CacheControlHeaderValue()
