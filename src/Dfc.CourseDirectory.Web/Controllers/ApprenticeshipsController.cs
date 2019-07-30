@@ -520,8 +520,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     DeliveryViewModel.Mode = requestModel.Mode;
 
                 }
-
-                model.Regions = getApprenticehipByIdResult.Value.ApprenticeshipLocations != null ? SubRegionCodesToDictionary(getApprenticehipByIdResult.Value.ApprenticeshipLocations.Select(x => x.Regions.ToArray()).FirstOrDefault()) : null;
+                var regions = getApprenticehipByIdResult.Value.ApprenticeshipLocations.Select(x => x.Regions.ToArray()).FirstOrDefault();
+                model.Regions = regions != null ? SubRegionCodesToDictionary(regions) : null;
 
                 model.Mode = requestModel.Mode;
 
@@ -532,7 +532,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 _session.SetObject("LocationChoiceSelectionViewModel", model.LocationChoiceSelectionViewModel);
                 _session.SetObject("DeliveryOptionsViewModel", model.DeliveryOptionsViewModel);
                 _session.SetObject("DeliveryOptionsCombinedViewModel", model.DeliveryOptionsCombinedViewModel);
-                _session.SetObject("SelectedRegions", model.Regions);
+                _session.SetObject("SelectedRegions", regions);
 
             }
 
@@ -832,13 +832,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 UseNationalComponent = false
             };
 
-
             var SelectedRegions = _session.GetObject<string[]>("SelectedRegions");
             if (SelectedRegions != null)
             {
-
-
-
                 foreach (var selectRegionRegionItem in model.ChooseRegion.Regions.RegionItems.OrderBy(x => x.RegionName))
                 {
                     foreach (var subRegionItemModel in selectRegionRegionItem.SubRegion)
