@@ -165,8 +165,8 @@
             @if (Model.SelectVenue.VenueItems.Count() == 1)
             {
                 <div class="govuk-checkboxes__item">
-                    <input class="govuk-checkboxes__input" id="VenueName-@i" for="VenueName-@i" name="SelectedVenues-@i" type="checkbox" aria-labelledby="VenueNameLabel-@i" value="@Model.SelectVenue.VenueItems.First().Id" checked="checked" onclick="return false;"/>
-                    <label id="VenueNameLabel-@i" class="govuk-label govuk-checkboxes__label" for="SelectedVenues-@i" aria-label="VenueName-@i">@Model.SelectVenue.VenueItems.First().VenueName</label>
+                    <input class="govuk-checkboxes__input" id="VenueName-@i" for="VenueName-@i" name="SelectedVenues" type="checkbox" aria-labelledby="VenueNameLabel-@i" value="@Model.SelectVenue.VenueItems.First().Id" checked="checked" onclick="return false;"/>
+                    <label id="VenueNameLabel-@i" class="govuk-label govuk-checkboxes__label" for="VenueName-@i" aria-label="VenueName-@i">@Model.SelectVenue.VenueItems.First().VenueName</label>
                 </div>
             }
             else
@@ -175,7 +175,7 @@
                 {
                     i++;
                     <div class="govuk-checkboxes__item">
-                        <input class="govuk-checkboxes__input" id="VenueName-@i" for="VenueName-@i" name="SelectedVenues-@i" type="checkbox" aria-labelledby="VenueNameLabel-@i" value="@item.Id" @item.Checked.ThenNullableCheck()/>
+                        <input class="govuk-checkboxes__input" id="VenueName-@i" for="VenueName-@i" name="SelectedVenues" type="checkbox" aria-labelledby="VenueNameLabel-@i" value="@item.Id" @item.Checked.ThenNullableCheck()/>
                         <label id="VenueNameLabel-@i" class="govuk-label govuk-checkboxes__label" for="SelectedVenues-@i" aria-label="VenueName-@i">@item.VenueName</label>
                     </div>
 
