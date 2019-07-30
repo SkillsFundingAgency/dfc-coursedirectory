@@ -143,8 +143,6 @@ else
                 <div class="panel" style="display: none">
                     <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
                         <div class="govuk-checkboxes">
-
-
                             @foreach (var region in Model.Regions)
                             {
                                 <div class="govuk-checkboxes__item">
@@ -154,8 +152,6 @@ else
                                     </label>
                                 </div>
                             }
-
-
                         </div>
                     </fieldset>
                 </div>
@@ -172,12 +168,12 @@ else
             <div class="courserun__row1" id="@courseRun.CourseRunId">
                 @if (!string.IsNullOrEmpty(courseRun.CourseName))
                 {
-                <h3 class="coursename">
+                <h2 class="coursename">
                     @WebUtility.HtmlDecode(@courseRun.CourseName)
 
-                </h3>
+                </h2>
                 }
-                <h4 class="coursename smaller ">
+                <h3 class="coursename smaller ">
 
                     @if (!string.IsNullOrEmpty(courseRun.QualificationCourseTitle))
                     {
@@ -192,7 +188,7 @@ else
                         </small>
                     }
 
-                </h4>
+                </h3>
             </div>
 
             @if (courseRun.DeliveryMode == "Classroom based")
