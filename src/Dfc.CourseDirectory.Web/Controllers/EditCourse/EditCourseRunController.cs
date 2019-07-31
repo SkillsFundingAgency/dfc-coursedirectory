@@ -346,7 +346,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                         VenueId = courseRun.VenueId ?? (Guid?)null,
                         ChooseRegion = new ChooseRegionModel
                         {
-                            National = courseRun.National,
+                            National = courseRun.DeliveryMode != DeliveryMode.WorkBased ? null : courseRun.National,
                             Regions = regions
                         },
                         DeliveryMode = courseRun.DeliveryMode,
@@ -514,12 +514,12 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                     courseRunForEdit.StartDate = specifiedStartDate;
                     courseRunForEdit.UpdatedDate = DateTime.Now;
                     courseRunForEdit.UpdatedBy = User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault();
-                    //Set to false by default
-                    courseRunForEdit.National = false;
+                    //Set to null by default
+                    courseRunForEdit.National = null;
                     switch (model.DeliveryMode)
                     {
                         case DeliveryMode.ClassroomBased:
-
+                            courseRunForEdit.National = null;
                             courseRunForEdit.Regions = null;
                             courseRunForEdit.VenueId = model.VenueId;
 
@@ -550,7 +550,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 
                             courseRunForEdit.Regions = null;
                             courseRunForEdit.VenueId = null;
-
+                            courseRunForEdit.National = null;
                             courseRunForEdit.AttendancePattern = AttendancePattern.Undefined;
                             courseRunForEdit.StudyMode = StudyMode.Undefined;
 
@@ -583,13 +583,13 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                         {
                             case PublishMode.BulkUpload:
                                 return RedirectToAction("Index", "PublishCourses",
-    new
-    {
-        publishMode = model.Mode,
-        courseId = model.CourseId,
-        courseRunId = model.CourseRunId,
-        notificationTitle = ""
-    });
+                                new
+                                {
+                                    publishMode = model.Mode,
+                                    courseId = model.CourseId,
+                                    courseRunId = model.CourseRunId,
+                                    notificationTitle = ""
+                                });
                             case PublishMode.Migration:
                                 var message =
                                     updatedCourse.Value.CourseRuns.Any(x => x.id == model.CourseRunId && x.RecordStatus == RecordStatus.MigrationPending)
