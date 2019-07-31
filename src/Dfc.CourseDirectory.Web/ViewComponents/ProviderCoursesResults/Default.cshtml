@@ -41,8 +41,10 @@ else
             <div class="accordion govuk-heading-s">Filter by level</div>
             <div class="panel">
                 <fieldset class="govuk-fieldset">
-                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--s" style="font-weight: 100">
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--s govuk-visually-hidden" style="font-weight: 100">
+                        Select Level
                     </legend>
+                   
                     <div class="govuk-checkboxes" id="LevelFilters">
 
 
@@ -55,10 +57,7 @@ else
                                 </label>
                             </div>
 
-                            @*<div class="govuk-checkboxes__item">
-                                <input class="govuk-checkboxes__input" id="VenueName-@i" for="VenueName-@i" name="SelectedVenues-@i" type="checkbox" aria-labelledby="VenueNameLabel-@i" value="@Model.SelectVenue.VenueItems.First().Id" checked="checked" onclick="return false;"/>
-                                <label id="VenueNameLabel-@i" class="govuk-label govuk-checkboxes__label" for="SelectedVenues-@i" aria-label="VenueName-@i">@Model.SelectVenue.VenueItems.First().VenueName</label>
-                            </div>*@
+
                         }
 
 
@@ -79,6 +78,9 @@ else
                 <div class="accordion govuk-heading-s active">Filter by delivery mode</div>
                 <div class="panel" style="display: none">
                     <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
+                        <legend class="govuk-visually-hidden">
+                            Select Delivery mode
+                        </legend>
                         <div class="govuk-checkboxes">
 
 
@@ -105,6 +107,9 @@ else
                 <div class="accordion govuk-heading-s active">Filter by venue</div>
                 <div class="panel" style="display: none">
                     <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
+                        <legend class="govuk-visually-hidden">
+                            Select Venue
+                        </legend>
                         <div class="govuk-checkboxes">
 
 
@@ -131,6 +136,9 @@ else
                 <div class="accordion govuk-heading-s active">Filter by attendance mode</div>
                 <div class="panel" style="display: none">
                     <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
+                        <legend class="govuk-visually-hidden">
+                            Select Attendance Mode
+                        </legend>
                         <div class="govuk-checkboxes">
 
 
@@ -156,6 +164,9 @@ else
                 <div class="accordion govuk-heading-s active">Filter by region</div>
                 <div class="panel" style="display: none">
                     <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
+                        <legend class="govuk-visually-hidden">
+                            Select Region
+                        </legend>
                         <div class="govuk-checkboxes">
                             @foreach (var region in Model.Regions)
                             {

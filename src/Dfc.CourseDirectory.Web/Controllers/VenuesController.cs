@@ -246,7 +246,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return View("VenueAddressSelectionConfirmation", viewModel);
         }
         [Authorize]
-        public async Task<IActionResult> VenueAddressSelectionConfirmation(VenueAddressSelectionConfirmationRequestModel requestModel)
+        public async Task<IActionResult> VenueAddressSelectionConfirmation(VenueAddressSelectionConfirmationRequestModel requestModel, string VenueName)
         {
 
             var viewModel = new VenueAddressSelectionConfirmationViewModel();
