@@ -509,19 +509,17 @@ namespace Dfc.CourseDirectory.Web
                 context.Response.Headers.Add("X-Xss-Protection", "1; mode=block");
                 //CSP
                 context.Response.Headers.Add("Content-Security-Policy", 
-                                                "default-src    'self';" +
-                                                "style-src      'self' 'unsafe-inline';" +
-                                                "font-src       'self' data:;" +
-                                                "img-src        'self' * data:;" +
+                                                "default-src    'self'  https://rainmaker.tiny.cloud/;" +
+                                                "style-src      'self' 'unsafe-inline' https://cloud.tinymce.com/;" +
+                                                "font-src       'self' data: https://cloud.tinymce.com/;" +
+                                                "img-src        'self' * data: https://cloud.tinymce.com/;" +
                                                 "script-src     'self' 'unsafe-eval' 'unsafe-inline'  " +
                                                     " https://cloud.tinymce.com/" +
                                                     " https://cdnjs.cloudflare.com/" +
                                                     " https://www.googletagmanager.com/" +
-                                                    " https://www.google-analytics.com" +
-                                                    ";" +
-                                                "report-uri     /WebResource.axd?cspReport=true;"
-
-                                                );
+                                                    " https://www.google-analytics.com/" +
+                                                    ";"
+                );
 
 
                 context.Response.GetTypedHeaders().CacheControl =
