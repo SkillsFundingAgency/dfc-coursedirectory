@@ -7,7 +7,6 @@ using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
-using Dfc.CourseDirectory.Services.ProviderService;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Extensions;
 using Dfc.CourseDirectory.Web.Helpers;
@@ -20,7 +19,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -427,6 +425,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                     if (type.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased)
                     {
+                        var national = getApprenticehipByIdResult.Value.ApprenticeshipLocations.Select(x => x.National).FirstOrDefault();
+                        if(national.HasValue)
+                        {
+                            LocationChoiceSelectionViewModel.NationalApprenticeship = national.Value == true ? NationalApprenticeship.Yes : NationalApprenticeship.No;
+                        }
+                        LocationChoiceSelectionViewModel.Mode = requestModel.Mode;
                         DeliveryViewModel.ApprenticeshipDelivery = ApprenticeshipDelivery.EmployersAddress;
                         DeliveryViewModel.Mode = requestModel.Mode;
 
@@ -584,13 +588,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         {"National", new List<string>() {"All"}}
                     };
                 }
-                else if(LocationChoiceSelectionViewModel.NationalApprenticeship == NationalApprenticeship.No)
+                else if(LocationChoiceSelectionViewModel.NationalApprenticeship == NationalApprenticeship.No || 
+                        LocationChoiceSelectionViewModel.NationalApprenticeship == NationalApprenticeship.Undefined)
                 {
-                    model.Regions = SubRegionCodesToDictionary(Regions);
-                }
-                else
-                {
-                    LocationChoiceSelectionViewModel.NationalApprenticeship = NationalApprenticeship.Undefined;
+                    if(Regions != null)
+                    {
+                        model.Regions = SubRegionCodesToDictionary(Regions);
+                    }
+                    
                 }
             }
            
@@ -619,7 +624,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 LocationType = LocationType.Venue,
                 RecordStatus = RecordStatus.Live,
                 Regions = loc.Regions,
-                National = null,
+                National = false,
                 UpdatedDate = DateTime.Now,
                 UpdatedBy =
                     User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
