@@ -210,6 +210,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
             var model = new DeliveryViewModel();
             model.Mode = requestModel.Mode;
 
+           
+
             var DeliveryViewModel = _session.GetObject<DeliveryViewModel>("DeliveryViewModel");
             if (DeliveryViewModel != null)
             {
@@ -223,6 +225,18 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpPost]
         public IActionResult Delivery(DeliveryViewModel model)
         {
+
+            if (model.Mode == ApprenticeshipMode.EditYourApprenticeships)
+            {
+                var DeliveryViewModel = _session.GetObject<DeliveryViewModel>("DeliveryViewModel");
+                if (DeliveryViewModel.ApprenticeshipDelivery != model.ApprenticeshipDelivery)
+                {
+                    _session.Remove("LocationChoiceSelectionViewModel");
+                    _session.Remove("DeliveryOptionsViewModel");
+                    _session.Remove("DeliveryOptionsCombinedViewModel");
+                }
+            }
+
             _session.SetObject("DeliveryViewModel", model);
 
             switch (model.ApprenticeshipDelivery)
@@ -430,6 +444,35 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         DeliveryViewModel.ApprenticeshipDelivery = ApprenticeshipDelivery.EmployersAddress;
                         DeliveryViewModel.Mode = requestModel.Mode;
 
+
+
+
+
+
+                    switch (type.National)
+                        {
+                            case true:
+                                LocationChoiceSelectionViewModel.NationalApprenticeship =
+                                    NationalApprenticeship.Yes;
+                                model.Regions = new Dictionary<string, List<string>>
+                                {
+                                    {"National", new List<string>() {"All"}}
+                                };
+                            break;
+                            case false:
+                                LocationChoiceSelectionViewModel.NationalApprenticeship =
+                                    NationalApprenticeship.No;
+
+                                var regions = getApprenticehipByIdResult.Value.ApprenticeshipLocations.Select(x => x.Regions.ToArray()).FirstOrDefault();
+                                model.Regions = regions != null ? SubRegionCodesToDictionary(regions) : null;
+                                _session.SetObject("SelectedRegions", regions);
+                                break;
+                        }
+
+                        LocationChoiceSelectionViewModel.Mode = requestModel.Mode;
+
+                        model.LocationChoiceSelectionViewModel = LocationChoiceSelectionViewModel;
+                       
                     }
 
                     if (type.ApprenticeshipLocationType == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased)
@@ -520,8 +563,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     DeliveryViewModel.Mode = requestModel.Mode;
 
                 }
-                var regions = getApprenticehipByIdResult.Value.ApprenticeshipLocations.Select(x => x.Regions.ToArray()).FirstOrDefault();
-                model.Regions = regions != null ? SubRegionCodesToDictionary(regions) : null;
+                //var regions = getApprenticehipByIdResult.Value.ApprenticeshipLocations.Select(x => x.Regions.ToArray()).FirstOrDefault();
+                //model.Regions = regions != null ? SubRegionCodesToDictionary(regions) : null;
 
                 model.Mode = requestModel.Mode;
 
@@ -532,7 +575,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 _session.SetObject("LocationChoiceSelectionViewModel", model.LocationChoiceSelectionViewModel);
                 _session.SetObject("DeliveryOptionsViewModel", model.DeliveryOptionsViewModel);
                 _session.SetObject("DeliveryOptionsCombinedViewModel", model.DeliveryOptionsCombinedViewModel);
-                _session.SetObject("SelectedRegions", regions);
+                //_session.SetObject("SelectedRegions", regions);
 
             }
 
@@ -619,7 +662,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 LocationType = LocationType.Venue,
                 RecordStatus = RecordStatus.Live,
                 Regions = loc.Regions,
-                National = null,
+                National = loc.National,
                 UpdatedDate = DateTime.Now,
                 UpdatedBy =
                     User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
