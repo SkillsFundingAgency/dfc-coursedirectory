@@ -2,17 +2,17 @@
 <html lang="en" class="govuk-template app-html-class">
 
 @*<head>
-    <meta charset="utf-8" />
-    <title>GOV.UK - Course Directory Provider Portal</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="blue" />
+        <meta charset="utf-8" />
+        <title>GOV.UK - Course Directory Provider Portal</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="blue" />
 
-    <link href="~/dist/site.min.css" rel="stylesheet" />
-    <meta property="og:image" content="~/assets/images/govuk-opengraph-image.png">
-    <partial name="_ScriptsPartial" />
+        <link href="~/dist/site.min.css" rel="stylesheet" />
+        <meta property="og:image" content="~/assets/images/govuk-opengraph-image.png">
+        <partial name="_ScriptsPartial" />
 
-   
-</head>*@
+
+    </head>*@
 
 <head>
     <meta charset="utf-8" />
@@ -43,20 +43,13 @@
 
     <partial name="_GovukHeaderPartial_Your_Courses" />
 
-    <main id="main-content" class="cd-fullwidth-container" style="display:block">
 
 
-
+    <div class=" cd-fullwidth-container  ">
         @RenderBody()
+    </div>
 
-    </main>
-    @*<div class=" cd-fullwidth-container" id="main-content">
-            @await Component.InvokeAsync(nameof(GovukPhaseBanner))
 
-            <main class="govuk-main-wrapper app-main-class" id="main-content" role="main">
-                @RenderBody()
-            </main>
-        </div>*@
 
     <script>
         document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');
@@ -70,8 +63,10 @@
             window.GOVUKFrontend.initAll();
         });
     </script>
+<partial name="_GovukFooterPartial" />
+
     @RenderSection("Scripts", required: false)
 </body>
 
-<partial name="_GovukFooterPartial" />
+
 </html>

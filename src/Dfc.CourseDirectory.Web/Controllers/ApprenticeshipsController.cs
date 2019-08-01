@@ -224,18 +224,21 @@ namespace Dfc.CourseDirectory.Web.Controllers
         public IActionResult Delivery(DeliveryViewModel model)
         {
 
-            if (model.Mode == ApprenticeshipMode.EditYourApprenticeships)
-            {
+  
                 var DeliveryViewModel = _session.GetObject<DeliveryViewModel>("DeliveryViewModel");
-                if (DeliveryViewModel.ApprenticeshipDelivery != model.ApprenticeshipDelivery)
-                {
-                    _session.Remove("LocationChoiceSelectionViewModel");
-                    _session.Remove("DeliveryOptionsViewModel");
-                    _session.Remove("DeliveryOptionsCombinedViewModel");
-                }
-            }
 
-            _session.SetObject("DeliveryViewModel", model);
+                if (DeliveryViewModel != null)
+                {
+                    if (DeliveryViewModel.ApprenticeshipDelivery != model.ApprenticeshipDelivery)
+                    {
+                        _session.Remove("LocationChoiceSelectionViewModel");
+                        _session.Remove("DeliveryOptionsViewModel");
+                        _session.Remove("DeliveryOptionsCombinedViewModel");
+                    }
+                }
+
+
+                _session.SetObject("DeliveryViewModel", model);
 
             switch (model.ApprenticeshipDelivery)
             {
