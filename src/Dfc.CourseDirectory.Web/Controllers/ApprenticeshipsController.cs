@@ -58,6 +58,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _providerService = providerService;
         }
 
+
+      
+
         [Authorize]
         public IActionResult Index()
         {
@@ -1222,7 +1225,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 case ApprenticeshipWhatWouldYouLikeToDo.Add:
                     return RedirectToAction("Index", "Apprenticeships");
                 case ApprenticeshipWhatWouldYouLikeToDo.Upload:
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("ApprenticeshipIndex", "BulkUpload");
                 case ApprenticeshipWhatWouldYouLikeToDo.View:
                     return RedirectToAction("Index", "ProviderApprenticeships");
                 default:

@@ -379,7 +379,7 @@
             }
 
 
-            switch ($radioStartDate.find("input[type='radio']:checked").val()) {
+            switch ($radioStartDate.find("input[type='radio']:checked").val()===true) {
             case "SpecifiedStartDate":
             {
                 $("#govuk-label-start_date").show();
@@ -395,6 +395,14 @@
             }
            
             }
+
+            if ($national.find("input[type='radio']:checked").val()!==true) {
+                $("#regions-section").hide();
+            }
+            else {
+               $("#regions-section").show();
+            }
+
 
             setTimeout(validate, 500);
 

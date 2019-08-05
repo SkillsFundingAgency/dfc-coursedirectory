@@ -46,7 +46,9 @@
 
 
     <div class=" cd-fullwidth-container  ">
-        @RenderBody()
+        <main class="govuk-main-wrapper" id="main-content" role="main">
+            @RenderBody()
+            </main>
     </div>
 
 
@@ -63,7 +65,7 @@
             window.GOVUKFrontend.initAll();
         });
     </script>
-<partial name="_GovukFooterPartial" />
+    <partial name="_GovukFooterPartial" />
 
     @RenderSection("Scripts", required: false)
 </body>
