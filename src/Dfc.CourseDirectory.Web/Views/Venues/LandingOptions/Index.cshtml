@@ -1,0 +1,88 @@
+﻿@using Dfc.CourseDirectory.Models.Enums
+@using Dfc.CourseDirectory.Web.Helpers
+@{
+    Layout = "_Layout_Your_Courses";
+}
+
+@model Dfc.CourseDirectory.Web.ViewModels.LocationsLandingViewModel
+
+
+<form class="govuk-!-margin-bottom-9" id="VenuesWhatWouldYouLikeToDoForm" asp-controller="Venues" asp-action="LandingOptions" method="post">
+    <div class="cd-dashboard provider govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <div class="govuk-form-group">
+                <fieldset class="govuk-fieldset">
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+                        <h1 class="govuk-fieldset__heading">
+                            What would you like to do?
+                        </h1>
+                    </legend>
+                    <span id="how-contacted-conditional-hint" class="govuk-hint">
+                        Select one option.
+                    </span>
+
+
+
+
+                    <div class="govuk-radios" val-required-message="Select what would you like to do?" id="VenuesWhatWouldYouLikeToDo">
+                        <div class="govuk-radios__item">
+                            @Html.RadioButtonFor(m => m.LocationsLandingOptions, LocationsLandingOptions.Add, new { @class = "govuk-radios__input", id = LocationsLandingOptions.Add })
+                            <label class="govuk-label govuk-radios__label" for="@LocationsLandingOptions.Add">@WebHelper.GetEnumDescription(LocationsLandingOptions.Add)</label>
+                        </div>
+                        <div class="govuk-radios__item">
+                            @Html.RadioButtonFor(m => m.LocationsLandingOptions, LocationsLandingOptions.Manage, new { @class = "govuk-radios__input", id = LocationsLandingOptions.Manage })
+                            <label class="govuk-label govuk-radios__label" for="@LocationsLandingOptions.Manage">@WebHelper.GetEnumDescription(LocationsLandingOptions.Manage)</label>
+                        </div>
+
+
+                    </div>
+
+                </fieldset>
+
+            </div>
+            <a class="govuk-button" asp-controller="Venues" asp-action="LandingOptions" id="continue">Continue</a>
+        </div>
+    </div>
+</form>
+
+
+<script>
+    (function ($) {
+        $(function () {
+            var validStates = [];
+            var $button = $("#continue");
+
+            var $venuesWhatWouldYouLikeToDo = $("#VenuesWhatWouldYouLikeToDo").govUkRadios();
+
+            function isAllValid(currentValue) {
+                return currentValue === true;
+            }
+
+            function validate() {
+
+                validStates = [];
+
+                $venuesWhatWouldYouLikeToDo.govUkRadios("validState");
+
+                if ($.requiredValidate($venuesWhatWouldYouLikeToDo.find("input[type='radio']:checked").val())) {
+                    $venuesWhatWouldYouLikeToDo.govUkRadios("validState");
+                    validStates.push(true);
+                } else {
+                    $venuesWhatWouldYouLikeToDo.govUkRadios("invalidState", $venuesWhatWouldYouLikeToDo.attr("val-required-message"));
+                    validStates.push(false);
+                }
+            }
+
+            $button.on("click", function (event) {
+                event.preventDefault();
+                validate();
+                if (validStates.every(isAllValid)) {
+                    $("#VenuesWhatWouldYouLikeToDoForm").submit();
+                }
+            });
+
+        });
+    })(jQuery);
+</script>
+
+

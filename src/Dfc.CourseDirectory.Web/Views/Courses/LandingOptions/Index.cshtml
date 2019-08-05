@@ -1,0 +1,91 @@
+﻿@using Dfc.CourseDirectory.Models.Enums
+@using Dfc.CourseDirectory.Web.Helpers
+@{
+    Layout = "_Layout_Your_Courses";
+}
+
+@model Dfc.CourseDirectory.Web.ViewModels.CoursesLandingViewModel
+
+
+<form class="govuk-!-margin-bottom-9" id="CoursesWhatWouldYouLikeToDoForm" asp-controller="Courses" asp-action="LandingOptions" method="post">
+    <div class="cd-dashboard provider govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <div class="govuk-form-group">
+                <fieldset class="govuk-fieldset">
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+                        <h1 class="govuk-fieldset__heading">
+                            What would you like to do?
+                        </h1>
+                    </legend>
+                    <span id="how-contacted-conditional-hint" class="govuk-hint">
+                        Select one option.
+                    </span>
+
+
+
+
+                    <div class="govuk-radios" val-required-message="Select what would you like to do?" id="CoursesWhatWouldYouLikeToDoRadioOptions">
+                        <div class="govuk-radios__item">
+                            @Html.RadioButtonFor(m => m.CoursesLandingOptions, CoursesLandingOptions.Add, new { @class = "govuk-radios__input", id = CoursesLandingOptions.Add })
+                            <label class="govuk-label govuk-radios__label" for="@CoursesLandingOptions.Add">@WebHelper.GetEnumDescription(CoursesLandingOptions.Add)</label>
+                        </div>
+                        <div class="govuk-radios__item">
+                            @Html.RadioButtonFor(m => m.CoursesLandingOptions, CoursesLandingOptions.Upload, new { @class = "govuk-radios__input", id = CoursesLandingOptions.Upload })
+                            <label class="govuk-label govuk-radios__label" for="@CoursesLandingOptions.Upload">@WebHelper.GetEnumDescription(CoursesLandingOptions.Upload)</label>
+                        </div>
+                        <div class="govuk-radios__item">
+                            @Html.RadioButtonFor(m => m.CoursesLandingOptions, CoursesLandingOptions.View, new { @class = "govuk-radios__input", id = CoursesLandingOptions.View })
+                            <label class="govuk-label govuk-radios__label" for="@CoursesLandingOptions.View">@WebHelper.GetEnumDescription(CoursesLandingOptions.View)</label>
+                        </div>
+
+                    </div>
+
+                </fieldset>
+
+            </div>
+            <a class="govuk-button" asp-controller="Courses" asp-action="LandingOptions" id="continue">Continue</a>
+        </div>
+    </div>
+</form>
+
+
+<script>
+    (function ($) {
+        $(function () {
+            var validStates = [];
+            var $button = $("#continue");
+
+            var $coursesWhatWouldYouLikeToDo = $("#CoursesWhatWouldYouLikeToDoRadioOptions").govUkRadios();
+
+            function isAllValid(currentValue) {
+                return currentValue === true;
+            }
+
+            function validate() {
+
+                validStates = [];
+
+                $coursesWhatWouldYouLikeToDo.govUkRadios("validState");
+
+                if ($.requiredValidate($coursesWhatWouldYouLikeToDo.find("input[type='radio']:checked").val())) {
+                    $coursesWhatWouldYouLikeToDo.govUkRadios("validState");
+                    validStates.push(true);
+                } else {
+                    $coursesWhatWouldYouLikeToDo.govUkRadios("invalidState", $coursesWhatWouldYouLikeToDo.attr("val-required-message"));
+                    validStates.push(false);
+                }
+            }
+
+            $button.on("click", function (event) {
+                event.preventDefault();
+                validate();
+                if (validStates.every(isAllValid)) {
+                    $("#CoursesWhatWouldYouLikeToDoForm").submit();
+                }
+            });
+
+        });
+    })(jQuery);
+</script>
+
+
