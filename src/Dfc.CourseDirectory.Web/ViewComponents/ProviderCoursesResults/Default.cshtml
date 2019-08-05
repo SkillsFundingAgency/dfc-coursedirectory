@@ -1,4 +1,5 @@
-﻿@using Dfc.CourseDirectory.Web.ViewComponents.Extensions
+﻿@using System.Net
+@using Dfc.CourseDirectory.Web.ViewComponents.Extensions
 @using Dfc.CourseDirectory.Web.ViewComponents.Pagination;
 @using Microsoft.AspNetCore.Http
 @using Microsoft.AspNetCore.Identity
@@ -40,17 +41,24 @@ else
             <div class="accordion govuk-heading-s">Filter by level</div>
             <div class="panel">
                 <fieldset class="govuk-fieldset">
-                    <div class="govuk-checkboxes">
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--s" style="font-weight: 100">
+                    </legend>
+                    <div class="govuk-checkboxes" id="LevelFilters">
 
 
                         @foreach (var level in Model.Levels)
                         {
                             <div class="govuk-checkboxes__item">
                                 <input class="govuk-checkboxes__input" id="@level.Id" name="@level.Name" type="checkbox" value="@level.Value" @level.IsSelected.ThenCheck()>
-                                <label class="govuk-label govuk-checkboxes__label govuk-!-font-size-14" for="@level.Id">
+                                <label  id="levellabel_@level.Id" class="govuk-label govuk-checkboxes__label govuk-!-font-size-14" for="@level.Id">
                                     @level.Text
                                 </label>
                             </div>
+
+                            @*<div class="govuk-checkboxes__item">
+                                <input class="govuk-checkboxes__input" id="VenueName-@i" for="VenueName-@i" name="SelectedVenues-@i" type="checkbox" aria-labelledby="VenueNameLabel-@i" value="@Model.SelectVenue.VenueItems.First().Id" checked="checked" onclick="return false;"/>
+                                <label id="VenueNameLabel-@i" class="govuk-label govuk-checkboxes__label" for="SelectedVenues-@i" aria-label="VenueName-@i">@Model.SelectVenue.VenueItems.First().VenueName</label>
+                            </div>*@
                         }
 
 
@@ -58,12 +66,19 @@ else
                 </fieldset>
             </div>
         </div>
+        
+        
+        
+        
+       
+        
+
         @if (Model.DeliveryModes.Any())
         {
             <div class="govuk-form-group govuk-!-font-size-14">
                 <div class="accordion govuk-heading-s active">Filter by delivery mode</div>
                 <div class="panel" style="display: none">
-                    <fieldset class="govuk-fieldset" >
+                    <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
                         <div class="govuk-checkboxes">
 
 
@@ -89,7 +104,7 @@ else
             <div class="govuk-form-group govuk-!-font-size-14">
                 <div class="accordion govuk-heading-s active">Filter by venue</div>
                 <div class="panel" style="display: none">
-                    <fieldset class="govuk-fieldset" >
+                    <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
                         <div class="govuk-checkboxes">
 
 
@@ -115,7 +130,7 @@ else
             <div class="govuk-form-group govuk-!-font-size-14">
                 <div class="accordion govuk-heading-s active">Filter by attendance mode</div>
                 <div class="panel" style="display: none">
-                    <fieldset class="govuk-fieldset" >
+                    <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
                         <div class="govuk-checkboxes">
 
 
@@ -140,10 +155,8 @@ else
             <div class="govuk-form-group govuk-!-font-size-14">
                 <div class="accordion govuk-heading-s active">Filter by region</div>
                 <div class="panel" style="display: none">
-                    <fieldset class="govuk-fieldset">
+                    <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
                         <div class="govuk-checkboxes">
-
-
                             @foreach (var region in Model.Regions)
                             {
                                 <div class="govuk-checkboxes__item">
@@ -153,8 +166,6 @@ else
                                     </label>
                                 </div>
                             }
-
-
                         </div>
                     </fieldset>
                 </div>
@@ -167,17 +178,22 @@ else
 
         @foreach (var courseRun in Model.ProviderCourseRuns.OrderBy(x=>x.CourseName))
         {
-        <div class="courserun border" id="@courseRun.CourseRunId">
-            <div class="courserun__row1" >
+        <div class="courserun border">
+            <div class="courserun__row1" id="@courseRun.CourseRunId">
                 @if (!string.IsNullOrEmpty(courseRun.CourseName))
                 {
-                    <h2 class="coursename">@courseRun.CourseName</h2>
+                <h2 class="coursename">
+                    @WebUtility.HtmlDecode(@courseRun.CourseName)
+
+                </h2>
                 }
                 <h3 class="coursename smaller ">
 
                     @if (!string.IsNullOrEmpty(courseRun.QualificationCourseTitle))
                     {
-                        <small>@courseRun.QualificationCourseTitle </small>
+                        <small>
+                        @WebUtility.HtmlDecode(@courseRun.QualificationCourseTitle)
+                        </small>
                     }
                     @if (!string.IsNullOrEmpty(courseRun.LearnAimRef))
                     {
@@ -194,7 +210,9 @@ else
                 if (!string.IsNullOrEmpty(courseRun.Venue))
                 {
                     <div class="courserun__row2">
-                        <span class="">@courseRun.Venue</span>
+                        <span class="">
+                        @WebUtility.HtmlDecode(@courseRun.Venue)
+                        </span>
                     </div>
                 }
             }
@@ -221,7 +239,9 @@ else
             <div class="courserun__row3">
                 @if (!string.IsNullOrEmpty(courseRun.CourseTextId))
                 {
-                    <span>@courseRun.CourseTextId</span>
+                    <span>
+                    @WebUtility.HtmlDecode(@courseRun.CourseTextId)
+                    </span>
                 }
 
                 @if (courseRun.DeliveryMode == "Classroom based")
@@ -256,8 +276,6 @@ else
             </div>
             <div class="courserun__row4">
                 @Html.ActionLink("Select", "Index", "CourseSummary", new { courseRun.CourseId, courseRun.CourseRunId }, null)
-                @*<a class="govuk-link" asp-controller="CourseSummary"  asp-action="Index" asp-route-id="@courseRun.c">Select</a>*@
-
             </div>
         </div>
         }

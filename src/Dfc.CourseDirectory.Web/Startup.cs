@@ -190,6 +190,7 @@ namespace Dfc.CourseDirectory.Web
             {
                 options.IdleTimeout = TimeSpan.FromMinutes(30); //.FromSeconds(18);
                 options.Cookie.HttpOnly = true;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
             });
 
             //TODO
@@ -215,8 +216,9 @@ namespace Dfc.CourseDirectory.Web
 
             }).AddCookie(options =>
             {
-                options.ExpireTimeSpan = TimeSpan.FromHours(1); //.FromSeconds(18); 
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
                 options.SlidingExpiration = true;
+                options.LogoutPath = "/Auth/Logout";
                 options.Events = new CookieAuthenticationEvents
                 {
 
@@ -236,7 +238,7 @@ namespace Dfc.CourseDirectory.Web
                         // assume a timeout of 20 minutes.
                         var timeElapsed = DateTimeOffset.UtcNow.Subtract(x.Properties.IssuedUtc.Value);
 
-                        if (timeElapsed > TimeSpan.FromMinutes(59.5)) //.FromSeconds(18)) ;
+                        if (timeElapsed > TimeSpan.FromMinutes(59.5))
                         {
                             var identity = (ClaimsIdentity)x.Principal.Identity;
                             var accessTokenClaim = identity.FindFirst("access_token");
@@ -326,7 +328,7 @@ namespace Dfc.CourseDirectory.Web
                 {
                     RequireSub = true,
                     RequireStateValidation = false,
-                    NonceLifetime = TimeSpan.FromMinutes(60) //.FromSeconds(18)
+                    NonceLifetime = TimeSpan.FromMinutes(60)
                 };
 
                 options.DisableTelemetry = true;
@@ -352,7 +354,7 @@ namespace Dfc.CourseDirectory.Web
                             context.Response.StatusCode = 302;
                             context.Response.Headers["Location"] = "/";
                         }
-
+                        
                         return Task.CompletedTask;
                     },
 
@@ -505,6 +507,20 @@ namespace Dfc.CourseDirectory.Web
                 context.Response.Headers.Add("X-Frame-Options", "SAMEORIGIN");
                 context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
                 context.Response.Headers.Add("X-Xss-Protection", "1; mode=block");
+                //CSP
+                context.Response.Headers.Add("Content-Security-Policy", 
+                                                "default-src    'self'  https://rainmaker.tiny.cloud/;" +
+                                                "style-src      'self' 'unsafe-inline' https://cloud.tinymce.com/;" +
+                                                "font-src       'self' data: https://cloud.tinymce.com/;" +
+                                                "img-src        'self' * data: https://cloud.tinymce.com/;" +
+                                                "script-src     'self' 'unsafe-eval' 'unsafe-inline'  " +
+                                                    " https://cloud.tinymce.com/" +
+                                                    " https://cdnjs.cloudflare.com/" +
+                                                    " https://www.googletagmanager.com/" +
+                                                    " https://www.google-analytics.com/" +
+                                                    ";"
+                );
+
 
                 context.Response.GetTypedHeaders().CacheControl =
                   new Microsoft.Net.Http.Headers.CacheControlHeaderValue()

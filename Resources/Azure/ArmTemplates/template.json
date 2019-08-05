@@ -182,6 +182,12 @@
         "description": "API host key for above"
       }
     },
+    "findCourseApiPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Password for accessing the findacourse backend api"
+      }
+    },
     "appServicePlanSize": {
       "type": "string",
       "defaultValue": "1",
@@ -516,7 +522,7 @@
               },
               {
                 "name": "AppUISettings__WhatWillLearnComponentSettings__TextFieldMaxChars",
-                "value": "1000"
+                "value": "1500"
               },
               {
                 "name": "AppUISettings__HowYouWillLearnComponentSettings__TextFieldMaxChars",
@@ -604,7 +610,7 @@
               },
               {
                 "name": "FindACourseServiceSettings__ApiKey",
-                "value": "not yet in use"
+                "value": "[parameters('findCourseApiKey')]"
               },
               {
                 "name": "FindACourseServiceSettings__UserName",
@@ -612,7 +618,7 @@
               },
               {
                 "name": "FindACourseServiceSettings__Password",
-                "value": "[parameters('findCourseApiKey')]"
+                "value": "[parameters('findCourseApiPassword')]"
               },
               {
                 "name": "BlobStorageSettings__AccountName",

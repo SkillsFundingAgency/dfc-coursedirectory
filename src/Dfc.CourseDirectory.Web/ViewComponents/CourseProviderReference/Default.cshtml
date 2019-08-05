@@ -1,4 +1,6 @@
-﻿@model Dfc.CourseDirectory.Web.ViewComponents.CourseProviderReference.CourseProviderReferenceModel
+﻿@using System.Net
+@using Dfc.CourseDirectory.Common
+@model Dfc.CourseDirectory.Web.ViewComponents.CourseProviderReference.CourseProviderReferenceModel
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
@@ -7,7 +9,11 @@
         @Model.LabelText
     </label>
     
-    @{ var regex = @"^[a-zA-Z0-9 /\n/\r/\¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\•\’\‘\-\–\:/\t/\s" + "\"" + "\\\\]+$"; }
+@{ 
+    @* var regex = @"^[a-zA-Z0-9 /\n/\r/\¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\•\’\‘\-\–\:/\t/\s" + "\"" + "\\\\]+$"; *@
+    var regex = RegexPattern.AllowValidCharactersRelaxed;    
+        }
+    
 
     @if (!string.IsNullOrWhiteSpace(Model.HintText))
     {
@@ -15,7 +21,7 @@
             @Model.HintText
         </span>
     }
-    <input class="govuk-input" asp-for="@Model.CourseProviderReference" type="text" aria-describedby="@Model.CourseProviderReference"
+    <input class="govuk-input" asp-for="@Model.CourseProviderReference" type="text" aria-describedby="@Model.CourseProviderReference" value="@WebUtility.HtmlDecode(@Model.CourseProviderReference)"
            val-max-length="255"
            val-max-length-message="The maximum length of 'ID' is 255 characters"
            val-regex="@regex"

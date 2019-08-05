@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Globalization;
 using System.Linq;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Models.Enums;
@@ -42,7 +43,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
     {
         private readonly ILogger<CoursesController> _logger;
         private readonly IHttpContextAccessor _contextAccessor;
+        private readonly HtmlEncoder _htmlEncoder;
         private readonly ICourseService _courseService;
+        
         private ISession Session => _contextAccessor.HttpContext.Session;
         private readonly IVenueSearchHelper _venueSearchHelper;
         private readonly IVenueService _venueService;
@@ -60,6 +63,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             ILogger<CoursesController> logger,
             IOptions<CourseServiceSettings> courseSearchSettings,
             IHttpContextAccessor contextAccessor,
+            HtmlEncoder htmlEncoder,
             ICourseService courseService, IVenueSearchHelper venueSearchHelper, IVenueService venueService, ICourseTextService courseTextService)
         {
             Throw.IfNull(logger, nameof(logger));
@@ -71,6 +75,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             _logger = logger;
             _contextAccessor = contextAccessor;
+            _htmlEncoder = htmlEncoder;
             _courseService = courseService;
             _venueService = venueService;
             _venueSearchHelper = venueSearchHelper;
@@ -617,6 +622,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         // hitting the accept and publish button on summary page - ends in a save
         [Authorize]
         [HttpPost]
+        [ValidateAntiForgeryToken] //Harden for CSRF
         public async Task<IActionResult> AcceptAndPublish()
         {
             var learnAimRef = Session.GetString("LearnAimRef");
@@ -709,14 +715,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         id = Guid.NewGuid(),
                         VenueId = venue,
 
-                        CourseName = addCourseSection2.CourseName,
-                        ProviderCourseID = addCourseSection2.CourseProviderReference,
+                        CourseName = _htmlEncoder.Encode(addCourseSection2.CourseName),
+                        ProviderCourseID = _htmlEncoder.Encode(addCourseSection2.CourseProviderReference??""),
                         DeliveryMode = addCourseSection2.DeliveryMode,
                         FlexibleStartDate = flexibleStartDate,
                         StartDate = specifiedStartDate,
                         CourseURL = addCourseSection2.Url?.ToLower(),
                         Cost = addCourseSection2.Cost,
-                        CostDescription = addCourseSection2.CostDescription,
+                        CostDescription = _htmlEncoder.Encode(addCourseSection2.CostDescription??""),
                         DurationUnit = addCourseSection2.DurationUnit,
                         DurationValue = addCourseSection2.DurationLength,
                         StudyMode = addCourseSection2.StudyMode,
@@ -737,14 +743,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 {
                     id = Guid.NewGuid(),
 
-                    CourseName = addCourseSection2.CourseName,
-                    ProviderCourseID = addCourseSection2.CourseProviderReference,
+                    CourseName = _htmlEncoder.Encode(addCourseSection2.CourseName),
+                    ProviderCourseID = _htmlEncoder.Encode(addCourseSection2.CourseProviderReference??""),
                     DeliveryMode = addCourseSection2.DeliveryMode,
                     FlexibleStartDate = flexibleStartDate,
                     StartDate = specifiedStartDate,
                     CourseURL = addCourseSection2.Url,
                     Cost = addCourseSection2.Cost,
-                    CostDescription = addCourseSection2.CostDescription,
+                    CostDescription = _htmlEncoder.Encode(addCourseSection2.CostDescription??""),
                     DurationUnit = addCourseSection2.DurationUnit,
                     DurationValue = addCourseSection2.DurationLength,
                     StudyMode = StudyMode.Undefined,
@@ -783,14 +789,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 {
                     id = Guid.NewGuid(),
 
-                    CourseName = addCourseSection2.CourseName,
-                    ProviderCourseID = addCourseSection2.CourseProviderReference,
+                    CourseName = _htmlEncoder.Encode(addCourseSection2.CourseName),
+                    ProviderCourseID = _htmlEncoder.Encode(addCourseSection2.CourseProviderReference??""),
                     DeliveryMode = addCourseSection2.DeliveryMode,
                     FlexibleStartDate = flexibleStartDate,
                     StartDate = specifiedStartDate,
                     CourseURL = addCourseSection2.Url,
                     Cost = addCourseSection2.Cost,
-                    CostDescription = addCourseSection2.CostDescription,
+                    CostDescription = _htmlEncoder.Encode(addCourseSection2.CostDescription??""),
                     DurationUnit = addCourseSection2.DurationUnit,
                     DurationValue = addCourseSection2.DurationLength,
                     StudyMode = StudyMode.Undefined,
@@ -825,13 +831,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 AwardOrgCode = awardOrgCode,
                 QualificationType = learnAimRefTypeDesc,
                 ProviderUKPRN = UKPRN, // TODO: ToBeChanged
-                CourseDescription = courseFor,
-                EntryRequirements = entryRequirements,
-                WhatYoullLearn = whatWillLearn,
-                HowYoullLearn = howYouWillLearn,
-                WhatYoullNeed = whatYouNeed,
-                HowYoullBeAssessed = howAssessed,
-                WhereNext = whereNext,
+                CourseDescription = _htmlEncoder.Encode(courseFor??""),
+                EntryRequirements = _htmlEncoder.Encode(entryRequirements??""),
+                WhatYoullLearn = _htmlEncoder.Encode(whatWillLearn??""),
+                HowYoullLearn = _htmlEncoder.Encode(howYouWillLearn??""),
+                WhatYoullNeed = _htmlEncoder.Encode(whatYouNeed??""),
+                HowYoullBeAssessed = _htmlEncoder.Encode(howAssessed??""),
+                WhereNext = _htmlEncoder.Encode(whereNext??""),
                 AdvancedLearnerLoan = advancedLearnerLoan,
                 AdultEducationBudget = adultEducationBudget,
                 IsValid = true,

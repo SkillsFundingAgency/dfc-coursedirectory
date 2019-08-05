@@ -4,22 +4,24 @@
 
 @{ var regex = @"^([Gg][Ii][Rr] 0[Aa]{2})|((([A-Za-z][0-9]{1,2})|(([A-Za-z][A-Ha-hJ-Yj-y][0-9]{1,2})|(([A-Za-z][0-9][A-Za-z])|([A-Za-z][A-Ha-hJ-Yj-y][0-9][A-Za-z]?))))\s?[0-9][A-Za-z]{2})+$"; }
 
-@Html.HiddenFor(x => x.VenueName)
 @Html.HiddenFor(x => x.Id)
+
+<input type="hidden" value="@Model.VenueName" id="VenueName" name="VenueName" />
+
 <div class="postcode-lookup__component">
     @if (Model.HasItems)
     {
         <div class="govuk-form-group">
-            <label class="govuk-label" asp-for="@Model.Postcode">
+            <label class="govuk-label" asp-for="@Model.PostcodeId">
                 @Model.PostcodeLabelText
             </label>
-            <label class="govuk-body govuk-!-font-size-24 govuk-!-font-weight-bold" id="postcodelabel" for="postcodelabel">
+            <label class="govuk-body govuk-!-font-size-24 govuk-!-font-weight-bold">
                 @Model.Postcode
             </label>
             <a href="#" class="govuk-link" id="Change">Change</a>
         </div>
         <div class="govuk-form-group">
-            <select asp-items="@Model.Items" asp-for="@Model.PostcodeId" class="govuk-select govuk-!-width-one-half" val-required-message="Select an address" aria-labelledby="postcodelabel" aria-describedby="postcodelabel" name="postcodelabel">
+            <select asp-items="@Model.Items" asp-for="@Model.PostcodeId" class="govuk-select govuk-!-width-one-half" val-required-message="Select an address">
                 <option value="">@Model.NoneSelectedText</option>
             </select>
         </div>

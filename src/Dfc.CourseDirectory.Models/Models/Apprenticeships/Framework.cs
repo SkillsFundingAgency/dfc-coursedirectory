@@ -8,14 +8,22 @@ namespace Dfc.CourseDirectory.Models.Models.Apprenticeships
 {
     public class Framework : IFramework
     {
+        public Contact Contact { get; set; }
+
+        public int? Level { get; set; }
+
+        public List<LocationRef> Locations { get; set; }
+
         public Guid id { get; set; } // Cosmos DB id
 
-        // Framework specific properties. First three form composite primary key
+        public string FrameworkInfoUrl { get; set; }
+
+        public string MarketingInfo { get; set; }
+
         public int FrameworkCode { get; set; } 
         public int ProgType { get; set; } // FK
         public Guid ProgTypeId { get; set; } // ???
         public int PathwayCode { get; set; }
-
         public string PathwayName { get; set; }
         public string NasTitle { get; set; }
         public DateTime? EffectiveFrom { get; set; }
