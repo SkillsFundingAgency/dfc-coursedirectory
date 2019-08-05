@@ -6,6 +6,7 @@
 @using Microsoft.AspNetCore.Http
 @using Dfc.CourseDirectory.Services.Interfaces.ProviderService
 @using Dfc.CourseDirectory.Services.ProviderService
+@using Dfc.CourseDirectory.Web.ViewComponents.BackLink
 
 @inject IHttpContextAccessor HttpContextAccessor
 @inject IAuthorizationService Authorization
@@ -145,7 +146,7 @@
                                 </li>
 
                             }
-                            
+
 
 
 
@@ -170,24 +171,11 @@
         </span>
     </p>
 
-
-
 </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+@if (!(ViewBag.HideHeaderBackLink ?? false))
+{
+    <div class="cd-fullwidth-container">
+        @await Component.InvokeAsync(nameof(BackLink))
+    </div>
+}

@@ -18,7 +18,6 @@
 
 
                     <div>
-                        <a asp-controller="Home" asp-action="Index" class="govuk-back-link">Back</a><br />
                         <span class="govuk-caption-xl">Course directory</span>
                         @Html.HiddenFor(x => x.ApprenticeshipId)
                         @if (!string.IsNullOrEmpty(@ViewBag.Message))

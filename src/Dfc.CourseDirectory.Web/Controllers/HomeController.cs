@@ -115,6 +115,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _session.SetString("Option", "Home");
             ViewBag.StatusMessage = errmsg;
 
+            ViewBag.HideHeaderBackLink = true;
+
             if (User.Identity.IsAuthenticated)
             {
                 if (_session.GetInt32("UKPRN") == null)
