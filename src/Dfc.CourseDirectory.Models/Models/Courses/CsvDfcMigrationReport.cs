@@ -1,6 +1,7 @@
 ﻿using Dfc.CourseDirectory.Models.Models.Providers;
 using Newtonsoft.Json;
 using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace Dfc.CourseDirectory.Models.Models.Courses
 {
@@ -13,7 +14,7 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         public ProviderType ProviderType { get; set; }
 
         [JsonProperty(PropertyName = "Migration_Date")]
-        public DateTime? MigrationDate { get; set; }
+        public string MigrationDate { get; set; }
 
         [JsonProperty(PropertyName = "Migrated")]
         public int? MigratedCount { get; set; }
