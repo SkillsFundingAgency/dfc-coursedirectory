@@ -21,6 +21,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
+using System.Text.Encodings.Web;
 using Dfc.CourseDirectory.Models.Models.Regions;
 using Dfc.CourseDirectory.Web.Extensions;
 using Dfc.CourseDirectory.Web.RequestModels;
@@ -34,7 +35,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
     {
         private readonly ILogger<EditCourseRunController> _logger;
         private readonly IHttpContextAccessor _contextAccessor;
-
+        private readonly HtmlEncoder _htmlEncoder;
         private readonly ICourseService _courseService;
 
         private ISession _session => _contextAccessor.HttpContext.Session;
@@ -52,6 +53,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             ILogger<EditCourseRunController> logger,
             IOptions<CourseServiceSettings> courseSearchSettings,
             IHttpContextAccessor contextAccessor,
+            HtmlEncoder htmlEncoder,
             ICourseService courseService,
             IVenueService venueService,
             IVenueSearchHelper venueSearchHelper)
@@ -65,6 +67,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             _logger = logger;
             _contextAccessor = contextAccessor;
             _courseService = courseService;
+            _htmlEncoder = htmlEncoder;
             _venueService = venueService;
             _venueSearchHelper = venueSearchHelper;
         }
@@ -343,7 +346,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                         VenueId = courseRun.VenueId ?? (Guid?)null,
                         ChooseRegion = new ChooseRegionModel
                         {
-                            National = courseRun.National,
+                            National = courseRun.DeliveryMode != DeliveryMode.WorkBased ? null : courseRun.National,
                             Regions = regions
                         },
                         DeliveryMode = courseRun.DeliveryMode,
@@ -486,11 +489,11 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                         courseRunForEdit.Cost = null;
                     }
 
-                    courseRunForEdit.CostDescription = model.CostDescription;
-                    courseRunForEdit.CourseName = model.CourseName;
+                    courseRunForEdit.CostDescription = _htmlEncoder.Encode(model.CostDescription ?? "");
+                    courseRunForEdit.CourseName = _htmlEncoder.Encode(model.CourseName);
                     courseRunForEdit.CourseURL = model.Url;
                     courseRunForEdit.DurationValue = Convert.ToInt32(model.DurationLength);
-                    courseRunForEdit.ProviderCourseID = model.CourseProviderReference;
+                    courseRunForEdit.ProviderCourseID = _htmlEncoder.Encode(model.CourseProviderReference??"");
 
                     bool flexibleStartDate = true;
                     DateTime? specifiedStartDate = null;
@@ -511,12 +514,12 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                     courseRunForEdit.StartDate = specifiedStartDate;
                     courseRunForEdit.UpdatedDate = DateTime.Now;
                     courseRunForEdit.UpdatedBy = User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault();
-                    //Set to false by default
-                    courseRunForEdit.National = false;
+                    //Set to null by default
+                    courseRunForEdit.National = null;
                     switch (model.DeliveryMode)
                     {
                         case DeliveryMode.ClassroomBased:
-
+                            courseRunForEdit.National = null;
                             courseRunForEdit.Regions = null;
                             courseRunForEdit.VenueId = model.VenueId;
 
@@ -535,7 +538,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                             else
                             {
                                 courseRunForEdit.National = false;
-                                courseRunForEdit.Regions = model.SelectedRegions;                           
+                                courseRunForEdit.Regions = model.SelectedRegions;
                                 string[] selectedRegions = availableRegions.SubRegionsDataCleanse(courseRunForEdit.Regions.ToList());
                                 var subRegions = selectedRegions.Select(selectedRegion => availableRegions.GetSubRegionItemByRegionCode(selectedRegion)).ToList();
                                 courseRunForEdit.SubRegions = subRegions;
@@ -547,7 +550,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 
                             courseRunForEdit.Regions = null;
                             courseRunForEdit.VenueId = null;
-
+                            courseRunForEdit.National = null;
                             courseRunForEdit.AttendancePattern = AttendancePattern.Undefined;
                             courseRunForEdit.StudyMode = StudyMode.Undefined;
 
@@ -579,24 +582,24 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                         switch (model.Mode)
                         {
                             case PublishMode.BulkUpload:
-                                                                return RedirectToAction("Index", "PublishCourses",
-                                    new
-                                    {
-                                        publishMode = model.Mode,
-                                        courseId = model.CourseId,
-                                        courseRunId = model.CourseRunId,
-                                        notificationTitle = ""
-                                    });
+                                return RedirectToAction("Index", "PublishCourses",
+                                new
+                                {
+                                    publishMode = model.Mode,
+                                    courseId = model.CourseId,
+                                    courseRunId = model.CourseRunId,
+                                    notificationTitle = ""
+                                });
                             case PublishMode.Migration:
                                 var message =
-                                    updatedCourse.Value.CourseRuns.Any(x=>x.id == model.CourseRunId && x.RecordStatus == RecordStatus.MigrationPending)
+                                    updatedCourse.Value.CourseRuns.Any(x => x.id == model.CourseRunId && x.RecordStatus == RecordStatus.MigrationPending)
                                         ? $"'{updatedCourse.Value.QualificationCourseTitle}' was successfully fixed" : $"'{updatedCourse.Value.QualificationCourseTitle}' was successfully fixed and published";
                                 return RedirectToAction("Index", "PublishCourses",
                                     new
                                     {
                                         publishMode = model.Mode,
                                         courseId = model.CourseId,
-                                        courseRunId= model.CourseRunId,
+                                        courseRunId = model.CourseRunId,
                                         notificationTitle = message
                                     });
                             case PublishMode.DataQualityIndicator:

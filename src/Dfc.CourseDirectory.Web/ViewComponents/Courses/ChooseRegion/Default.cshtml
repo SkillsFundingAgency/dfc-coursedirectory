@@ -10,18 +10,24 @@
             @if (Model.UseNationalComponent)
             {
                 <fieldset class="govuk-fieldset">
-                    <label id="govuk-label-nationalRadioButtons" class="govuk-label">Can you deliver this course anywhere in England?</label>
-                    <div id="nationalRadioButtons" class="govuk-radios govuk-radios--inline"
-                         val-required-message="Choose if you can deliver this course anywhere in England">
-                        <span  class="govuk-hint">Answering yes will show you are a national provider</span>
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--s" style="font-weight: 100">
+                        <h1 class="govuk-fieldset__heading" id="govuk-label-nationalRadioButtons">
+                            Can you deliver this course anywhere in England?
+                        </h1>
+                        <span class="govuk-hint">Answering yes will show you are a national provider</span>
+                    </legend>
+                    <div class="govuk-radios govuk-radios--inline" id="nationalRadioButtons" val-required-message="Choose if you can deliver this course anywhere in England">
+
                         <div class="govuk-radios__item">
-                            @Html.RadioButtonFor(m => m.National, true, new { @class = "govuk-radios__input", @id = "nationalTrue" })
+                            @Html.RadioButtonFor(m => m.National, true, new { @class = "govuk-radios__input", id = "nationalTrue" })
                             <label class="govuk-label govuk-radios__label" for="nationalTrue">Yes</label>
                         </div>
                         <div class="govuk-radios__item">
-                            @Html.RadioButtonFor(m => m.National, false, new { @class = "govuk-radios__input", @id = "nationalFalse" })
+                            @Html.RadioButtonFor(m => m.National, false, new { @class = "govuk-radios__input", id = "nationalFalse" })
                             <label class="govuk-label govuk-radios__label" for="nationalFalse">No</label>
                         </div>
+
+
                     </div>
                 </fieldset>
             }
@@ -42,7 +48,7 @@
                                     @item.RegionName
                                 </span>
                             </summary>
-                            <div class="govuk-form-group">
+                            <div class="govuk-form-group" tabindex="-1">
                                 @{
                                     var toggleStatus = "Select all";
                                     var regionsSelected = item.SubRegion.Where(y => y.Checked.Value == true).Count();
@@ -51,10 +57,11 @@
                                     {
                                         toggleStatus = "Clear all";
                                     }
+                                    var selectAllId = "SelectAll_" + item.Id;
 
                                 }
-                                <h3><a class="govuk-link" id="SelectAll" region-id="@item.Id" href="#">@toggleStatus</a></h3>
-                                <div class="flex-container govuk-grid-row region-checkboxes" id="details-content-@item.Id" aria-hidden="true">
+                                <span class="govuk-heading-s"><a tabindex="-1" class="govuk-link" id=@selectAllId region-id="@item.Id" href="#">@toggleStatus</a></span>
+                                <div tabindex="-1" class="flex-container govuk-grid-row region-checkboxes" id="details-content-@item.Id" aria-hidden="true">
 
                                     @{
                                         var x = 0;
@@ -65,7 +72,7 @@
                                         x++;
 
                                         <div class="govuk-checkboxes__item">
-                                            <input class="govuk-checkboxes__input" id="RegionName-@x" region-id="@item.Id" name="SelectedRegions" type="checkbox" value="@subregion.Id" @subregion.Checked.ThenNullableCheck() />
+                                            <input tabindex="-1" class="govuk-checkboxes__input" id="RegionName-@item.Id-@x" region-id="@item.Id" name="SelectedRegions" type="checkbox" value="@subregion.Id" @subregion.Checked.ThenNullableCheck() />
                                             <label class="govuk-label govuk-checkboxes__label" for="SelectedRegions">@subregion.SubRegionName</label>
                                         </div>
 
@@ -80,7 +87,7 @@
         </div>
     </div>
 </div>
-        
+
 
 <script>
     (function ($) {
@@ -91,7 +98,7 @@
             //----------------------------------------
             //National code (May/May not be required)
             //----------------------------------------
-        
+
             var $useNationalComponent = '@Model.UseNationalComponent';
 
             if ($useNationalComponent == 'True') {
@@ -99,7 +106,8 @@
                 var $checked = $("#nationalRadioButtons input[type=radio]:checked").val();
                 switch ($checked) {
                     case "True":
-                    case undefined: {
+                    case undefined:
+                    case null:    {
                         $regionSection.hide();
                         break;
                     }
@@ -125,11 +133,11 @@
                     }
                 });
             }
-            
+
             //-----------------------------
             //Regions Code
             //-----------------------------
-            
+
             $("a").on("click",
                 function (e) {
 

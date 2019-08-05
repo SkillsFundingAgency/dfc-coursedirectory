@@ -2,7 +2,9 @@
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using System.Text.Encodings.Web;
 using Dfc.CourseDirectory.Models.Enums;
+using Microsoft.Extensions.WebEncoders.Testing;
 
 
 namespace Dfc.CourseDirectory.Web.Helpers
@@ -51,6 +53,18 @@ namespace Dfc.CourseDirectory.Web.Helpers
                     .FirstOrDefault()
                     ?.GetCustomAttribute<HintAttribute>()
                     ?.Hint;
+        }
+
+        public static string Encode(string value)
+        {
+            HtmlEncoder htmlEncoder = new HtmlTestEncoder();
+
+            if (!string.IsNullOrEmpty(value))
+            {
+                return htmlEncoder.Encode(value);
+            }
+
+            return null;
         }
     }
 }

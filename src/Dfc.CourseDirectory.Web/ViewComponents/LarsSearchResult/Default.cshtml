@@ -19,7 +19,8 @@
 
 <div class="govuk-grid-row">
 
-    @if (Model.HasErrors) {
+    @if (Model.HasErrors)
+    {
 
         <div class="govuk-grid-column-full">
             <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
@@ -39,7 +40,9 @@
             </div>
         </div>
 
-    } else if (Model.Items.Any()) {
+    }
+    else if (Model.Items.Any())
+    {
 
         <div class="govuk-heading-s lars-search-results govuk-!-font-weight-regular">
             Found <span class="govuk-!-font-weight-bold">@Model.TotalCount</span> results for <span class="govuk-!-font-weight-bold">@Model.SearchTerm</span>
@@ -49,68 +52,83 @@
             @*<h3>filter controls here</h3>*@
             @if (Model.Filters != null)
             {
-                if (Model.HasSelectedFilters)
+                @if (Model.HasSelectedFilters)
                 {
                     <div class="govuk-form-group">
                         <h3><a class="govuk-link" id="ClearAllFilters" href="">reset</a></h3>
                     </div>
                 }
+
+
+
+
+                var i = 0;
                 foreach (var filter in Model.Filters)
                 {
                     <div class="govuk-form-group govuk-!-font-size-14">
                         <div class="accordion govuk-heading-s">@filter.Title</div>
                         <div class="panel">
-                            <fieldset class="govuk-fieldset">
-                                <div class="govuk-checkboxes">
+                            <fieldset class="govuk-fieldset" id="FilterCheckBoxes_@i">
+                                <legend class="govuk-visually-hidden">
+                                    Select @filter.Title Level
+                                </legend>
+                                <div class="govuk-checkboxes" id="Filter_@i">
+                                    @{ var j = 0; }
                                     @foreach (var item in filter.Items)
                                     {
                                         <div class="govuk-checkboxes__item">
-                                            <input class="govuk-checkboxes__input" id="@item.Id" name="@item.Name" type="checkbox" value="@item.Value" @item.IsSelected.ThenCheck()>
-                                            <label class="govuk-label govuk-checkboxes__label govuk-!-font-size-14" for="@item.Id">
+                                            <input class="govuk-checkboxes__input" id="@item.Id" name="@item.Name" type="checkbox" aria-labelledby="Filter_@i" value="@item.Value" @item.IsSelected.ThenCheck()>
+                                            <label class="govuk-label govuk-checkboxes__label govuk-!-font-size-14" id="FilterLabel_@item.Id">
                                                 @item.Text (@item.Count)
                                             </label>
                                         </div>
+
+                                        j++;
                                     }
                                 </div>
                             </fieldset>
                         </div>
                     </div>
+                    i++;
+
                 }
+
+
             }
         </div>
 
         <div class="govuk-grid-column-three-quarters">
 
             @*@await Component.InvokeAsync(nameof(Pagination),
-                     new
-                     {
-                         url = Model.Url,
-                         pageParamName = Model.PageParamName,
-                         totalNoOfItems = Model.TotalCount,
-                         itemsPerPage = Model.ItemsPerPage,
-                         noOfPagesToDisplay = 10,
-                         isSliding = true
-                     })*@
+                new
+                {
+                    url = Model.Url,
+                    pageParamName = Model.PageParamName,
+                    totalNoOfItems = Model.TotalCount,
+                    itemsPerPage = Model.ItemsPerPage,
+                    noOfPagesToDisplay = 10,
+                    isSliding = true
+                })*@
             <div class="govuk-table govuk-!-font-size-14">
 
 
                 @foreach (var item in Model.Items)
                 {
-                <div class="cd-lars-search-result__container">
-                    <h3 class="govuk-heading-m">@item.LearnAimRefTitle</h3>
-                    <p class="govuk-body">LARS/QAN:<span class="govuk-!-font-weight-bold"> @item.LearnAimRef</span></p>
-                    <p class="govuk-body">Level: <span class="govuk-!-font-weight-bold"> @item.NotionalNVQLevelv2</span></p>
-                    <p class="govuk-body">Awarding body:<span class="govuk-!-font-weight-bold"> @item.AwardOrgCode</span></p>
-                    @*<p class="govuk-body"><a class="govuk-link" href="#">Add this qualification</a></p>*@
+                    <div class="cd-lars-search-result__container">
+                        <h2 class="govuk-heading-m">@item.LearnAimRefTitle</h2>
+                        <p class="govuk-body">LARS/QAN:<span class="govuk-!-font-weight-bold"> @item.LearnAimRef</span></p>
+                        <p class="govuk-body">Level: <span class="govuk-!-font-weight-bold"> @item.NotionalNVQLevelv2</span></p>
+                        <p class="govuk-body">Awarding body:<span class="govuk-!-font-weight-bold"> @item.AwardOrgCode</span></p>
+                        @*<p class="govuk-body"><a class="govuk-link" href="#">Add this qualification</a></p>*@
 
-                    @{
-                        if (adminLogin.Succeeded || providerLogin.Succeeded)
-                        {
-                            <a asp-controller="AddCourse" asp-action="AddCourse" asp-route-learnAimRef=@item.LearnAimRef asp-route-notionalNVQLevelv2=@item.NotionalNVQLevelv2 asp-route-awardOrgCode=@item.AwardOrgCode asp-route-learnAimRefTitle=@item.LearnAimRefTitle asp-route-learnAimRefTypeDesc=@item.LearnAimRefTypeDesc class="link--button" id="">Choose this qualification</a>
+                        @{
+                            if (adminLogin.Succeeded || providerLogin.Succeeded)
+                            {
+                                <a asp-controller="AddCourse" asp-action="AddCourse" asp-route-learnAimRef=@item.LearnAimRef asp-route-notionalNVQLevelv2=@item.NotionalNVQLevelv2 asp-route-awardOrgCode=@item.AwardOrgCode asp-route-learnAimRefTitle=@item.LearnAimRefTitle asp-route-learnAimRefTypeDesc=@item.LearnAimRefTypeDesc class="link--button" id="">Choose this qualification</a>
+                            }
                         }
-                    }
 
-                </div>
+                    </div>
                 }
 
             </div>
@@ -126,7 +144,9 @@
                      })
         </div>
 
-    } else if (!string.IsNullOrWhiteSpace(Model.SearchTerm)) { // && !Model.Items.Any())
+    }
+    else if (!string.IsNullOrWhiteSpace(Model.SearchTerm))
+    { // && !Model.Items.Any())
 
         <div class="govuk-grid-column-full">
             <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">

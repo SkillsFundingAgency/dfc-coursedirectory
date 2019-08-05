@@ -93,7 +93,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             try
             {
                 _logger.LogInformationObject("Apprenticeship add object.", apprenticeship);
-                _logger.LogInformationObject("Apprenticeship add URI", _addApprenticeshipUri);
+                _logger.LogInformationObject("Apprenticeship  add URI", _addApprenticeshipUri);
 
                 var apprenticeshipJson = JsonConvert.SerializeObject(apprenticeship);
 

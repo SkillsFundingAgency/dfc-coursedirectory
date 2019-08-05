@@ -95,10 +95,17 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 vm.UpdatedBy = courseRun.UpdatedBy;
             }
 
-            if(vm.VenueId != null)
+            if (vm.VenueId != null)
             {
-                vm.VenueName = _venueService.GetVenueByIdAsync(new GetVenueByIdCriteria(courseRun.VenueId.Value.ToString())).Result.Value.VenueName;
+                if (vm.VenueId != Guid.Empty)
+                {
+                    vm.VenueName = _venueService
+                        .GetVenueByIdAsync(new GetVenueByIdCriteria(courseRun.VenueId.Value.ToString())).Result.Value
+                        .VenueName;
+
+                }
             }
+
             if(!string.IsNullOrEmpty(courseRun.CourseURL))
             {
                 if (courseRun.CourseURL.Contains("http") || courseRun.CourseURL.Contains("https"))

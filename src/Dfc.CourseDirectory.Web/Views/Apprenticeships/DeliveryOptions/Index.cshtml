@@ -9,7 +9,7 @@
 @model Dfc.CourseDirectory.Web.ViewModels.Apprenticeships.DeliveryOptionsViewModel
 
 <form class="govuk-!-margin-bottom-9" id="ApprenticeshipDeliveryOptionsForm" asp-controller="Apprenticeships" asp-action="Add" method="post">
-    <a asp-controller="Apprenticeships" asp-action="Delivery" class="govuk-back-link">Back</a><br />
+    <a asp-controller="Apprenticeships" asp-action="Delivery" asp-route-Mode =@Model.Mode class="govuk-back-link">Back</a><br />
 
     <div class="cd-dashboard govuk-body ">
 

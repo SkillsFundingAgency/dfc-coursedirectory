@@ -8,23 +8,14 @@
 
 @model Dfc.CourseDirectory.Web.ViewModels.Apprenticeships.SummaryViewModel
 
-
 <form class="govuk-!-margin-bottom-9" id="ApprenticeshipSummaryForm" asp-controller="Apprenticeships" asp-action="Summary" method="post">
     <div class="content-container">
         <div class="" data-sf-element="Row">
             <div class="govuk-grid-column">
-
-
-
-
-
-
                 @{
                     var theMode = Model.Mode;
 
                 }
-
-
 
                 @Html.HiddenFor(x => x.Cancelled)
                 @Html.HiddenFor(x => x.Mode)
@@ -150,87 +141,67 @@
 
                 </div>
                 @if (Model.Regions != null && Model.Regions.Count > 0)
-                    {
+                {
+                    <table class="govuk-table">
+                        <thead class="govuk-table__head">
+                            <tr class="govuk-table__row">
+                                <th class="govuk-table__header govuk-!-width-one-third">Location</th>
+                                <th class="govuk-table__header govuk-!-width-two-thirds">Sub region</th>
+                            </tr>
+                        </thead>
+                        <tbody class="govuk-table__body">
+                            @{
+                                foreach (var item in Model.Regions)
+                                {
+                                    <tr class="govuk-table__row">
+                                        <th class="govuk-table__header">@item.Key</th>
+                                        <td class="govuk-table__cell">@string.Join(", ", item.Value)</td>
+                                    </tr>
 
-                <table class="govuk-table">
-                    <thead class="govuk-table__head">
-                        <tr class="govuk-table__row">
-                            <th class="govuk-table__header govuk-!-width-one-third" scope="col">Location</th>
-                            <th class="govuk-table__header govuk-!-width-two-thirds" scope="col">Sub region</th>
-                        </tr>
-                    </thead>
-                    <tbody class="govuk-table__body">
-                        @{
-                            foreach (var item in Model.Regions)
-                            {
-                                <tr class="govuk-table__row">
-                                    <th class="govuk-table__header" scope="row">@item.Key</th>
-                                    <td class="govuk-table__cell">@string.Join(", ", item.Value)</td>
-                                </tr>
-
+                                }
                             }
-                        }
-                    </tbody>
-
-                </table>
+                        </tbody>
+                    </table>
                 }
 
 
                 @if (Model.DeliveryOptionsViewModel != null)
+                {
+                    @if (Model.DeliveryOptionsViewModel.DeliveryOptionsListItemModel != null)
                     {
-                        @if (Model.DeliveryOptionsViewModel.DeliveryOptionsListItemModel != null)
-                    {
-                            @await Component.InvokeAsync(nameof(DeliveryOptionsList), Model.DeliveryOptionsViewModel.DeliveryOptionsListItemModel)
+                        @await Component.InvokeAsync(nameof(DeliveryOptionsList), Model.DeliveryOptionsViewModel.DeliveryOptionsListItemModel)
                     }
-                    }
+                }
 
-                    @if (Model.DeliveryOptionsCombinedViewModel != null)
+                @if (Model.DeliveryOptionsCombinedViewModel != null)
+                {
+                    @if (Model.DeliveryOptionsCombinedViewModel.DeliveryOptionsListItemModel != null)
                     {
-                        @if (Model.DeliveryOptionsCombinedViewModel.DeliveryOptionsListItemModel != null)
-                        {
-                            @await Component.InvokeAsync(nameof(DeliveryOptionsList), Model.DeliveryOptionsCombinedViewModel.DeliveryOptionsListItemModel)
+                        @await Component.InvokeAsync(nameof(DeliveryOptionsList), Model.DeliveryOptionsCombinedViewModel.DeliveryOptionsListItemModel)
                     }
-                    }
+                }
 
 
-                    @if (Model.Mode == ApprenticeshipMode.Add || Model.Mode == ApprenticeshipMode.EditApprenticeship)
-                    {
+                @if (Model.Mode == ApprenticeshipMode.Add || Model.Mode == ApprenticeshipMode.EditApprenticeship)
+                {
                     <button type="submit" class="govuk-button" id="next">Publish</button>
                 }
                 else
                 {
                     @if (Model.Mode == ApprenticeshipMode.EditYourApprenticeships)
                     {
-
-
                         @if (Model.Cancelled == null || Model.Cancelled.Value == true)
                         {
                             <button type="submit" class="govuk-button" id="next">Close</button>
                         }
                         else
                         {
-
                             <button type="submit" class="govuk-button" id="next">Publish</button>
-
-
                         }
-
-
                     }
-
-
                 }
 
-
-
-
             </div>
-
-
-
-
-
         </div>
     </div>
-
 </form>

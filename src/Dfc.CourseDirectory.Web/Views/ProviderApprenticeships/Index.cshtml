@@ -10,12 +10,10 @@
     var hasApprenticeships = Model.Apprenticeships != null && Model.Apprenticeships.Any();
 }
 
-<div class="cd-hero-grey">
 
-    <header class="cd-hero-search">
         <div class="content-container">
-            <div class="grid-row" data-sf-element="Row">
-                <div class="column-two-thirds">
+            <div class="" data-sf-element="Row">
+                <div class="govuk-grid-column">
 
 
 
@@ -35,7 +33,7 @@
                         <h1 class="govuk-heading-xl">Your published apprenticeship training courses</h1>
 
 
-                        <p class="govuk-body-l">Search by apprenticeship name or keyword</p>
+                        <p id="SearchLabel" class="govuk-body-l">Search by apprenticeship name or keyword</p>
                     </div>
                     <form class="govuk-!-margin-bottom-9" id="ProviderApprenticeshipSearchForm" asp-controller="" asp-action="" method="post">
                         <div class="header-search-content">
@@ -43,7 +41,7 @@
                             <div class="search-input-wrapper">
 
 
-                                <input class="govuk-input search-input js-search-focus" id="ProviderApprenticeshipSearchTerm" asp-for="@Model.Search" type="text">
+                                <input class="govuk-input search-input js-search-focus" id="ProviderApprenticeshipSearchTerm" asp-for="@Model.Search" type="text" aria-labelledby="SearchLabel">
                                 <div class="cd-c-search__item cd-search__submit-wrapper">
                                     <button type="button" class=" submit" id="searchProviderApprenticeships">Search</button>
                                 </div>
@@ -67,8 +65,7 @@
                 </div>
             </div>
         </div>
-    </header>
-</div>
+
 <script>
     (function ($) {
         $(function () {

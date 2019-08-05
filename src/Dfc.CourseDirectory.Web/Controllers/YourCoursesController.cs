@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Models.Models.Regions;
@@ -187,7 +188,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 if (courseRunId.HasValue && courseRunId.Value != Guid.Empty)
                 {
                     var courseRuns = courseViewModels.Find(x => x.Id == courseId.Value.ToString())?.CourseRuns;
-                    notificationCourseName = CourseNameByCourseRunId(courseRuns, courseRunId.ToString());
+                    notificationCourseName = Regex.Replace(CourseNameByCourseRunId(courseRuns, courseRunId.ToString()), "<.*?>", String.Empty);
                 }
             }
 

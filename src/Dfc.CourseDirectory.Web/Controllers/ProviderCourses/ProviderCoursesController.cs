@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Models.Enums;
@@ -311,7 +312,9 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
                 }
                 else
                 {
-                    notificationCourseName = model.ProviderCourseRuns.Where(x => x.CourseRunId == courseRunId.Value.ToString()).Select(x => x.CourseName).FirstOrDefault().ToString();
+                    notificationCourseName = Regex.Replace(
+                                                model.ProviderCourseRuns.Where(x => x.CourseRunId == courseRunId.Value.ToString()).Select(x => x.CourseName).FirstOrDefault().ToString(), "<.*?>"
+                                                , String.Empty);
 
                     notificationAnchorTag = courseRunId.HasValue
                   ? $"<a id=\"courseeditlink\" class=\"govuk-link\" href=\"#\" data-courserunid=\"{courseRunId}\" >{notificationMessage} {notificationCourseName}</a>"
