@@ -39,7 +39,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 FailedMigrationCount = x.FailedMigrationCount,
                 LiveCount = x.LiveCount,
                 MigratedCount = x.MigratedCount,
-                MigrationDate = x.MigrationDate,
+                MigrationDate = x.MigrationDate.HasValue? x.MigrationDate.Value.ToString("dd/MM/yyyy") : string.Empty,
                 MigrationPendingCount = x.MigrationPendingCount,
                 MigrationRate = x.MigrationRate,
                 ProviderName = x.ProviderName,
@@ -60,7 +60,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             };
             FileStreamResult result = new FileStreamResult(ms, MediaTypeNames.Text.Plain);
             DateTime d = DateTime.Now;
-            result.FileDownloadName = $"DFc_Migration_Report_{d.Day.TwoChars()}_{d.Month.TwoChars()}_{d.Year}_{d.Hour.TwoChars()}_{d.Minute.TwoChars()}.csv";
+            result.FileDownloadName = $"Helpdesk_Migration _Report_{d.Day.TwoChars()}_{d.Month.TwoChars()}_{d.Year}_{d.Hour.TwoChars()}_{d.Minute.TwoChars()}.csv";
             return result;
 
         }
