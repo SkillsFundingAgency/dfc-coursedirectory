@@ -33,6 +33,16 @@ namespace Dfc.CourseDirectory.Web.Helpers
             
         }
 
+        public static string GetLocationsTextToUse(int val)
+        {
+            if (val.Equals(1))
+            {
+                return " Location";
+            }
+            return " Locations";
+
+        }
+
         public static string GetEnumDescription(Enum value)
         {
             return
