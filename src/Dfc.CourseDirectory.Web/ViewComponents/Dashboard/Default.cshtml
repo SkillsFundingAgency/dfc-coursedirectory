@@ -1,11 +1,13 @@
 ﻿@using Dfc.CourseDirectory.Common.Settings
+@using Dfc.CourseDirectory.Web.Helpers
 @using Microsoft.Extensions.Options
 @using Dfc.CourseDirectory.Web.ViewComponents.Notification
+@using Microsoft.AspNetCore.Authorization
 @model Dfc.CourseDirectory.Web.ViewComponents.Dashboard.DashboardModel
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
-
+@inject IAuthorizationService Authorization
 
 @if (Model.ValidationMessages != null && Model.ValidationMessages.Any())
 {
@@ -24,14 +26,14 @@
 @if (Model.BulkUploadReadyToGoLiveCount > 0 || Model.BulkUploadPendingCount > 0)
 {
     var link = "";
-    @if (Model.BulkUpLoadHasErrors==true)
+    @if (Model.BulkUpLoadHasErrors == true)
     {
 
         link = $"<a class='govuk-link' href='/Bulkupload/WhatDoYouWantToDoNext'>{Model.BulkUploadMessage}</a>";
     }
     else
     {
-                link = $"<a class='govuk-link' href='/PublishCourses/Index?publishMode=Bulkupload'>{Model.BulkUploadMessage}</a>";
+        link = $"<a class='govuk-link' href='/PublishCourses/Index?publishMode=Bulkupload'>{Model.BulkUploadMessage}</a>";
     }
 
     @await Component.InvokeAsync(nameof(Notification), new NotificationModel
@@ -42,79 +44,195 @@
     })
 }
 
-<div class="cd-dashboard provider">
-    <span class="govuk-caption-xl">Course directory</span>
-    <h1 class="govuk-heading-xl cd-dashboard-title">Course management dashboard</h1>
-    <hr class="spacer" />
-    <div class="govuk-grid-row govuk-!-margin-bottom-9">
-        <div class="govuk-grid-row govuk-!-margin-bottom-6">
-            <div class="govuk-grid-column-full ">
+@if (Model.DisplayMigrationButton == true)
+{
+    <div class=" homepage-item govuk-body ">
+        <div class="cd-status-panel slim blue">
+            Migration
+            <a asp-controller="Migration" asp-action="Report" class="govuk-link">View details about the information we have transferred about your courses.</a>
+        </div>
+    </div>
+}
+
+@if (User.Identity.IsAuthenticated)
+{
+    var authorised = await Authorization.AuthorizeAsync(User, "ElevatedUserRole");
+    var superUser = await Authorization.AuthorizeAsync(User, "SuperUser");
 
 
-                <a asp-controller="ProviderCourses" asp-action="Index">
-                    <div class="govuk-grid-column-one-quarter">
-                        <div role="link" class="cd-status-panel grey div--link">
-                            <h2 class="govuk-heading-s">Your published courses</h2>
-                            <h3 class="govuk-heading-l">@Model.PublishedCourseCount</h3>
-                        </div>
+    <h1 class="govuk-heading-xl cd-dashboard-title">Publish to the course directory</h1>
+    <hr class="spacer"/>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <div class="govuk-grid-row govuk-!-margin-bottom-6 homepage-item--container">
+                <div class="govuk-grid-column-one-half homepage-item ">
+                    <div class="cd-migration-panel">
+                        <h2 class="cd-migration-panel__title">Manage your courses</h2>
+                        <span class="cd-migration-panel__number">
+                            @if (Model.PublishedCourseCount == 0)
+                            {
+                                @Model.PublishedCourseCount
+                            }
+                            else
+                            {
+                                <a asp-controller="providercourses" asp-action="index" class="govuk-link">@Model.PublishedCourseCount</a>
+                            }
 
+                        </span>
+                        <span> @WebHelper.GetCourseTextToUse(Model.PublishedCourseCount)</span><br/>
+                        <br/>
                     </div>
-                </a>
-
-                <div class="govuk-grid-column-one-half">
-
-                    <ul class="govuk-list">
-
-                        <li>
-
+                    <ul class="govuk-list cd-homepage__list">
+                        <li class="cd-homepage__list--item">
                             <a asp-controller="RegulatedQualification" asp-action="Index" class="govuk-link">Add a new course</a>
                         </li>
-                        <li>
-
-                            <a asp-controller="BulkUpload" asp-action="Index" class="govuk-link">File upload all your courses</a>
+                        @if (Model.PublishedCourseCount > 0)
+                        {
+                            <li class="cd-homepage__list--item">
+                                <a asp-controller="Providercourses" asp-action="index" class="govuk-link">View, edit, copy or delete a course</a>
+                            </li>
+                        }
+                        <li class="cd-homepage__list--item">
+                            <a asp-controller="Bulkupload" asp-action="index" class="govuk-link">Bulk upload course information</a>
                         </li>
                     </ul>
                 </div>
+
+                <div class="govuk-grid-column-one-half homepage-item ">
+                    <div class="cd-migration-panel">
+                        <h2 class="cd-migration-panel__title">Manage your locations</h2>
+                        <span class="cd-migration-panel__number">
+                            @if (Model.VenueCount == 0)
+                            {
+                                @Model.VenueCount
+                            }
+                            else
+                            {
+                                <a asp-controller="venues" asp-action="index" class="govuk-link">@Model.VenueCount</a>
+                            }
+
+                        </span>
+                        <span> @WebHelper.GetLocationsTextToUse(Model.VenueCount)</span><br/>
+                        <br/>
+                    </div>
+                    <ul class="govuk-list cd-homepage__list">
+                        <li class="cd-homepage__list--item">
+                            <a asp-controller="Venues" asp-action="AddVenue" class="govuk-link">Add a new location</a>
+                        </li>
+                        @if (Model.VenueCount > 0)
+                        {
+                            <li class="cd-homepage__list--item">
+                                <a asp-controller="Venues" asp-action="Index" class="govuk-link">View, edit or delete a location</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
             </div>
-
-
         </div>
 
-        <div class="govuk-grid-row">
+        <div class="govuk-grid-column-one-third">
+            <aside class="sidebar">
+                <div class="widget white ">
+                    <h3>Other actions</h3>
+
+                    <ul class="govuk-list cd-homepage__lis">
+                        <li class="cd-homepage__list--item">
+                            <a asp-controller="Provider" asp-action="Details" class="govuk-link">View and edit your organisation details in the course directory</a>
+                        </li>
+                        @if (superUser.Succeeded)
+                        {
+                            <li class="cd-homepage__list--item">
+                                <a href="https://signin-test-svc-as.azurewebsites.net/approvals/FD039496-0B39-4F75-994A-20B03E060255/users" target="_blank" class="govuk-link">Add a new user</a>
+                            </li>
+                        }
+                        <li class="cd-homepage__list--item">
+
+                            <a href="https://signin-test-pfl-as.azurewebsites.net/" target="_blank" class="govuk-link">Edit my user account</a>
+                        </li>
+                    </ul>
+                </div>
+            </aside>
+
+        </div>
+    </div>
+}
 
 
-            <div class="govuk-grid-column-full govuk-body homepage-item--container ">
-                <hr class="spacer" />
-                @if (Model.DisplayMigrationButton == true)
-                {
-                    <div class=" homepage-item govuk-grid-column-one-third">
-                        <div class="cd-status-panel blue">
-                            <a asp-controller="Migration" asp-action="Report" class="govuk-link">Migration</a>
-                            <p>View details of the data we migrated.</p>
+
+
+@*<div class="cd-dashboard provider">
+        <span class="govuk-caption-xl">Course directory</span>
+        <h1 class="govuk-heading-xl cd-dashboard-title">Course management dashboard</h1>
+        <hr class="spacer" />
+        <div class="govuk-grid-row govuk-!-margin-bottom-9">
+            <div class="govuk-grid-row govuk-!-margin-bottom-6">
+                <div class="govuk-grid-column-full ">
+
+
+                    <a asp-controller="ProviderCourses" asp-action="Index">
+                        <div class="govuk-grid-column-one-quarter">
+                            <div role="link" class="cd-status-panel grey div--link">
+                                <h2 class="govuk-heading-s">Your published courses</h2>
+                                <h3 class="govuk-heading-l">@Model.PublishedCourseCount</h3>
+                            </div>
+
+                        </div>
+                    </a>
+
+                    <div class="govuk-grid-column-one-half">
+
+                        <ul class="govuk-list">
+
+                            <li>
+
+                                <a asp-controller="RegulatedQualification" asp-action="Index" class="govuk-link">Add a new course</a>
+                            </li>
+                            <li>
+
+                                <a asp-controller="BulkUpload" asp-action="Index" class="govuk-link">File upload all your courses</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div class="govuk-grid-row">
+
+
+                <div class="govuk-grid-column-full govuk-body homepage-item--container ">
+                    <hr class="spacer" />
+                    @if (Model.DisplayMigrationButton == true)
+                    {
+                        <div class=" homepage-item govuk-grid-column-one-third">
+                            <div class="cd-status-panel blue">
+                                <a asp-controller="Migration" asp-action="Report" class="govuk-link">Migration</a>
+                                <p>View details of the data we migrated.</p>
+                            </div>
+                        </div>
+                    }
+                    <div class="homepage-item govuk-grid-column-one-third">
+                        <div class="cd-status-panel grey">
+                            <a asp-controller="Venues" asp-action="Index" class="govuk-link">Venues</a>
+
+                            <span class="govuk-heading-s">@Model.VenueCount</span>
+                            <p>View, edit and add venues.</p>
                         </div>
                     </div>
-                }
-                <div class="homepage-item govuk-grid-column-one-third">
-                    <div class="cd-status-panel grey">
-                        <a asp-controller="Venues" asp-action="Index" class="govuk-link">Venues</a>
-
-                        <span class="govuk-heading-s">@Model.VenueCount</span>
-                        <p>View, edit and add venues.</p>
-                    </div>
-                </div>
-                <div class="homepage-item govuk-grid-column-one-third">
-                    <div class="cd-status-panel grey">
-                        <a asp-controller="Provider" asp-action="Details" class="govuk-link">Your details</a>
-                        <p>Manage the details we hold about your organisation.</p>
+                    <div class="homepage-item govuk-grid-column-one-third">
+                        <div class="cd-status-panel grey">
+                            <a asp-controller="Provider" asp-action="Details" class="govuk-link">Your details</a>
+                            <p>Manage the details we hold about your organisation.</p>
+                        </div>
                     </div>
                 </div>
             </div>
+
         </div>
 
-    </div>
 
-
-</div>
+    </div>*@
 
 <script>
     (function ($) {

@@ -183,13 +183,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         public IActionResult Privacy()
         {
-            return View();
+            return View("../Home/Privacy");
         }
 
         public IActionResult Help()
         {
-            return View();
+            return View("../Home/Help");
         }
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
