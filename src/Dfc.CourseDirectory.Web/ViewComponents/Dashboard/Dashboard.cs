@@ -95,7 +95,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
 
            actualModel.BulkUpLoadHasErrors = bulkUploadCoursesPending?.SelectMany(c => c.BulkUploadErrors).Count() + bulkUploadRunsPending?.SelectMany(r => r.BulkUploadErrors).Count() > 0;
 
-            string BulkUpLoadErrorMessage = actualModel.BulkUploadPendingCount.ToString() + WebHelper.GetCourseTextToUse(actualModel.BulkUploadTotalCount) + " upload in a file on "
+            string BulkUpLoadErrorMessage = actualModel.BulkUploadTotalCount.ToString() + WebHelper.GetCourseTextToUse(actualModel.BulkUploadTotalCount) + " uploaded in a file on "
                                                     + actualModel.FileUploadDate?.ToString("dd/MM/yyyy") + " have "
                                                     + (bulkUploadCoursesPending?.SelectMany(c => c.BulkUploadErrors).Count() + bulkUploadRunsPending?.SelectMany(r => r.BulkUploadErrors).Count()).ToString()
                                                     + " errors. Fix these to publish all of your courses.";
