@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Dfc.CourseDirectory.Models.Models.Courses;
+using Dfc.CourseDirectory.Models.Models.Venues;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships
@@ -22,6 +23,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships
 
         public bool? National { get; set; }
         public string[] Regions { get; set; }
+        public Venue Venue { get; set; }
 
     }
 }

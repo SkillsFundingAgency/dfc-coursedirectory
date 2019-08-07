@@ -78,7 +78,7 @@
 
                                 idValue = @baseId + @i.ToString() + @radiusFieldId;
                                 nameValue = @baseName + @i.ToString() + @radiusFieldName;
-
+                                Html.HiddenFor(x => x.DeliveryOptionsListItemModel[i].Venue);
                                 if (displayRadius)
                                  {
                                      <input id="@idValue" name="@nameValue" type="hidden" value="@Model.DeliveryOptionsListItemModel[i].Radius">
