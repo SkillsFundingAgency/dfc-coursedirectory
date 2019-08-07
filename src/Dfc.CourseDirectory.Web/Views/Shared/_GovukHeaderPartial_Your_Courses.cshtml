@@ -1,4 +1,3 @@
-﻿
 @using Dfc.CourseDirectory.Models.Models.Providers
 @using Dfc.CourseDirectory.Services.Interfaces
 @using Microsoft.AspNetCore.Identity
@@ -7,6 +6,7 @@
 @using Microsoft.AspNetCore.Http
 @using Dfc.CourseDirectory.Services.Interfaces.ProviderService
 @using Dfc.CourseDirectory.Services.ProviderService
+@using Dfc.CourseDirectory.Web.ViewComponents.BackLink
 
 @inject IHttpContextAccessor HttpContextAccessor
 @inject IAuthorizationService Authorization
@@ -143,9 +143,6 @@
                                 }
 
                             }
-
-
-
                         </ul>
                     </nav>
                 }
@@ -277,21 +274,9 @@
     }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+@if (!(ViewBag.HideHeaderBackLink ?? false))
+{
+    <div class="cd-fullwidth-container">
+        @await Component.InvokeAsync(nameof(BackLink))
+    </div>
+}
