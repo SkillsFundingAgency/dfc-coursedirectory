@@ -53,7 +53,7 @@
         }
         else
         {
-            @if (Model.PublishMode != Dfc.CourseDirectory.Models.Enums.PublishMode.Migration)
+            @if (Model.PublishMode == Dfc.CourseDirectory.Models.Enums.PublishMode.Migration)
              {
                  <div> @Html.ActionLink("Delete All", "Delete", "Migration", new { }, new { @class = "govuk-button" })</div>
              }
