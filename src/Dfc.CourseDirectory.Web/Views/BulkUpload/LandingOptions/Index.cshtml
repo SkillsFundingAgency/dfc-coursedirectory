@@ -1,0 +1,88 @@
+﻿@using Dfc.CourseDirectory.Models.Enums
+@using Dfc.CourseDirectory.Web.Helpers
+@{
+    Layout = "_Layout_Your_Courses";
+}
+
+@model Dfc.CourseDirectory.Web.ViewModels.BulkuploadLandingViewModel
+
+
+<form class="govuk-!-margin-bottom-9" id="BulkUploadWhatWouldYouLikeToDoForm" asp-controller="Bulkupload" asp-action="LandingOptions" method="post">
+    <div class="cd-dashboard provider govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <div class="govuk-form-group">
+                <fieldset class="govuk-fieldset">
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+                        <h1 class="govuk-fieldset__heading">
+                            Which type of courses would you like to upload?
+                        </h1>
+                    </legend>
+                    <span id="how-contacted-conditional-hint" class="govuk-hint">
+                        Select one option.
+                    </span>
+
+
+
+
+                    <div class="govuk-radios" val-required-message="Select what would you like to do?" id="BulkUploadWhatWouldYouLikeToDo">
+                        <div class="govuk-radios__item">
+                            @Html.RadioButtonFor(m => m.BulkUploadLandingOptions, BulkUploadLandingOptions.FE, new { @class = "govuk-radios__input", id = BulkUploadLandingOptions.FE })
+                            <label class="govuk-label govuk-radios__label" for="@BulkUploadLandingOptions.FE">@WebHelper.GetEnumDescription(BulkUploadLandingOptions.FE)</label>
+                        </div>
+                        <div class="govuk-radios__item">
+                            @Html.RadioButtonFor(m => m.BulkUploadLandingOptions, BulkUploadLandingOptions.Apprenticeship, new { @class = "govuk-radios__input", id = BulkUploadLandingOptions.Apprenticeship })
+                            <label class="govuk-label govuk-radios__label" for="@BulkUploadLandingOptions.Apprenticeship">@WebHelper.GetEnumDescription(BulkUploadLandingOptions.Apprenticeship)</label>
+                        </div>
+
+
+                    </div>
+
+                </fieldset>
+
+            </div>
+            <a class="govuk-button" asp-controller="Bulkupload" asp-action="LandingOptions" id="continue">Continue</a>
+        </div>
+    </div>
+</form>
+
+
+<script>
+    (function ($) {
+        $(function () {
+            var validStates = [];
+            var $button = $("#continue");
+
+            var $bulkUploadWhatWouldYouLikeToDo = $("#BulkUploadWhatWouldYouLikeToDo").govUkRadios();
+
+            function isAllValid(currentValue) {
+                return currentValue === true;
+            }
+
+            function validate() {
+
+                validStates = [];
+
+                $bulkUploadWhatWouldYouLikeToDo.govUkRadios("validState");
+
+                if ($.requiredValidate($bulkUploadWhatWouldYouLikeToDo.find("input[type='radio']:checked").val())) {
+                    $bulkUploadWhatWouldYouLikeToDo.govUkRadios("validState");
+                    validStates.push(true);
+                } else {
+                    $bulkUploadWhatWouldYouLikeToDo.govUkRadios("invalidState", $bulkUploadWhatWouldYouLikeToDo.attr("val-required-message"));
+                    validStates.push(false);
+                }
+            }
+
+            $button.on("click", function (event) {
+                event.preventDefault();
+                validate();
+                if (validStates.every(isAllValid)) {
+                    $("#BulkUploadWhatWouldYouLikeToDoForm").submit();
+                }
+            });
+
+        });
+    })(jQuery);
+</script>
+
+

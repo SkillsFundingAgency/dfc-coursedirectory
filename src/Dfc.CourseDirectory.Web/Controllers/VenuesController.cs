@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using Dfc.CourseDirectory.Common;
+using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Interfaces.Venues;
 using Dfc.CourseDirectory.Models.Models.Courses;
 using Dfc.CourseDirectory.Models.Models.Onspd;
@@ -76,6 +77,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _onspdSearchHelper = onspdSearchHelper;
             _courseService = courseService;
         }
+
+
+       
         /// <summary>
         /// Need to return a VenueSearchResultModel within the VenueSearchResultModel
         /// </summary>
@@ -559,6 +563,28 @@ namespace Dfc.CourseDirectory.Web.Controllers
             VenueSearchResultItemModel deletedVenue = new VenueSearchResultItemModel(HttpUtility.HtmlEncode(updatedVenue.VenueName), updatedVenue.Address1, updatedVenue.Address2, updatedVenue.Town, updatedVenue.County, updatedVenue.PostCode, updatedVenue.ID);
 
             return View("VenueSearchResults", await GetVenues(deletedVenue));
+        }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult LandingOptions()
+        {
+            return View("../Venues/LandingOptions/Index", new LocationsLandingViewModel());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> LandingOptions(LocationsLandingViewModel model)
+        {
+            switch (model.LocationsLandingOptions)
+            {
+                case LocationsLandingOptions.Add:
+                    return RedirectToAction("AddVenue", "Venues");
+                case LocationsLandingOptions.Manage:
+                    return RedirectToAction("Index", "Venues");
+                default:
+                    return RedirectToAction("LandingOptions", "Venues");
+            }
+
         }
     }
 }

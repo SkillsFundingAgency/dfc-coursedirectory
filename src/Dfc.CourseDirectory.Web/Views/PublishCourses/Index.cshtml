@@ -42,16 +42,23 @@
             </button>
         }
 
-        @{ if (adminLogin.Succeeded)
+        @if (adminLogin.Succeeded)
+        {
+            if (Model.PublishMode != Dfc.CourseDirectory.Models.Enums.PublishMode.DataQualityIndicator)
             {
-                if (Model.PublishMode != Dfc.CourseDirectory.Models.Enums.PublishMode.DataQualityIndicator)
-                {
-                    <div> @Html.ActionLink("Exit without publishing", "Index", "Home", new { }, new { @class = "govuk-link" })</div>
-                }
-                
-                <div> @Html.ActionLink("Delete All", "Delete", "Migration", new { }, new { @class = "govuk-button" })</div>
+                <div> @Html.ActionLink("Exit without publishing", "Index", "Home", new {}, new {@class = "govuk-link"})</div>
             }
+
         }
+        else
+        {
+            @if (Model.PublishMode == Dfc.CourseDirectory.Models.Enums.PublishMode.Migration)
+             {
+                 <div> @Html.ActionLink("Delete All", "Delete", "Migration", new { }, new { @class = "govuk-button" })</div>
+             }
+        }
+
+
 
     </div>
 

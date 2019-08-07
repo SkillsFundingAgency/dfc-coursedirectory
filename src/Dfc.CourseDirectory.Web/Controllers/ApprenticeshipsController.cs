@@ -58,6 +58,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _providerService = providerService;
         }
 
+
+      
+
         [Authorize]
         public IActionResult Index()
         {
@@ -261,9 +264,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
         public IActionResult LocationChoiceSelection(ApprenticeshipMode Mode)
         {
 
-
-
-            
             var model = new LocationChoiceSelectionViewModel();
             
             var LocationChoiceSelectionViewModel = _session.GetObject<LocationChoiceSelectionViewModel>("LocationChoiceSelectionViewModel");
@@ -510,6 +510,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                             {
                                 deliveryOptionsListItemModel.LocationName = venue.VenueName;
                                 deliveryOptionsListItemModel.PostCode = venue.PostCode;
+                                deliveryOptionsListItemModel.Venue = venue;
+                                
                             }
                         }
                         List<string> delModes = new List<string>();
@@ -518,7 +520,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
                             switch (deliveryMode)
                             { 
                                 case 0:
-
                                     delModes.Add(@WebHelper.GetEnumDescription(ApprenticeShipDeliveryLocation.Undefined));
                                     break;
                                 case 1:
@@ -551,6 +552,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                                 deliveryOptionsListItemModel.PostCode = cachedLocations
                                     .Where(x => x.ID == loc.LocationGuidId.ToString()).Select(x => x.PostCode)
                                     .FirstOrDefault();
+                                deliveryOptionsListItemModel.Venue = (Venue)cachedLocations
+                                    .Where(x => x.ID == loc.LocationGuidId.ToString());
                                 model.DeliveryOptionsCombinedViewModel.DeliveryOptionsListItemModel
                                     .DeliveryOptionsListItemModel
                                     .Add(deliveryOptionsListItemModel);
@@ -570,8 +573,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     DeliveryViewModel.Mode = requestModel.Mode;
 
                 }
-                //var regions = getApprenticehipByIdResult.Value.ApprenticeshipLocations.Select(x => x.Regions.ToArray()).FirstOrDefault();
-                //model.Regions = regions != null ? SubRegionCodesToDictionary(regions) : null;
 
                 model.Mode = requestModel.Mode;
 
@@ -582,7 +583,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 _session.SetObject("LocationChoiceSelectionViewModel", model.LocationChoiceSelectionViewModel);
                 _session.SetObject("DeliveryOptionsViewModel", model.DeliveryOptionsViewModel);
                 _session.SetObject("DeliveryOptionsCombinedViewModel", model.DeliveryOptionsCombinedViewModel);
-                //_session.SetObject("SelectedRegions", regions);
 
             }
 
@@ -677,7 +677,22 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
 
             };
-
+            if(loc.Venue != null)
+            {
+                apprenticeshipLocation.Address = new Address
+                {
+                    Address1 = loc.Venue.Address1,
+                    Address2 = loc.Venue.Address2,
+                    Town = loc.Venue.Town,
+                    County = loc.Venue.County,
+                    Postcode = loc.Venue.PostCode,
+                    Email = loc.Venue.Email,
+                    Phone = loc.Venue.Telephone,
+                    Website = loc.Venue.Website,
+                    Latitude = (double)loc.Venue.Latitude,
+                    Longitude = (double)loc.Venue.Longitude
+                };
+            }
             if (!string.IsNullOrEmpty(loc.LocationId))
             {
                 apprenticeshipLocation.LocationGuidId = new Guid(loc.LocationId);
@@ -775,8 +790,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 foreach (var loc in model.DeliveryOptionsViewModel.DeliveryOptionsListItemModel
                     .DeliveryOptionsListItemModel)
                 {
-
-
                     locations.Add(CreateDeliveryLocation(loc, apprenticeshipLocationType));
                 }
             }
@@ -956,7 +969,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         LocationName = venue.Result.Value.VenueName,
                         PostCode = venue.Result.Value.PostCode,
                         Radius = model.Radius,
-                        National = model.National
+                        National = model.National,
+                        Venue = (Venue)venue.Result.Value
 
                     });
 
@@ -1060,7 +1074,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         Delivery = deliveryMethod,
                         LocationId = venue.Result.Value.ID.ToString(),
                         LocationName = venue.Result.Value.VenueName,
-                        PostCode = venue.Result.Value.PostCode
+                        PostCode = venue.Result.Value.PostCode,
+                        Venue = (Venue)venue.Result.Value
 
                     });
 
@@ -1114,7 +1129,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 LocationId = venue.Result.Value.ID.ToString(),
                 LocationName = venue.Result.Value.VenueName,
                 PostCode = venue.Result.Value.PostCode,
-                Radius = null
+                Radius = null,
+                Venue = (Venue)venue.Result.Value
 
             });
 
@@ -1163,7 +1179,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 LocationName = venue.Result.Value.VenueName,
                 PostCode = venue.Result.Value.PostCode,
                 National = National,
-                Radius = RadiusValue.ToString()
+                Radius = RadiusValue.ToString(),
+                Venue = (Venue)venue.Result.Value
 
             });
 
@@ -1222,7 +1239,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 case ApprenticeshipWhatWouldYouLikeToDo.Add:
                     return RedirectToAction("Index", "Apprenticeships");
                 case ApprenticeshipWhatWouldYouLikeToDo.Upload:
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("ApprenticeshipIndex", "BulkUpload");
                 case ApprenticeshipWhatWouldYouLikeToDo.View:
                     return RedirectToAction("Index", "ProviderApprenticeships");
                 default:

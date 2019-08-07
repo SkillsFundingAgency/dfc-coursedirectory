@@ -95,7 +95,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
 
            actualModel.BulkUpLoadHasErrors = bulkUploadCoursesPending?.SelectMany(c => c.BulkUploadErrors).Count() + bulkUploadRunsPending?.SelectMany(r => r.BulkUploadErrors).Count() > 0;
 
-            string BulkUpLoadErrorMessage = actualModel.BulkUploadPendingCount.ToString() + WebHelper.GetCourseTextToUse(actualModel.BulkUploadTotalCount) + " upload in a file on "
+            string BulkUpLoadErrorMessage = actualModel.BulkUploadTotalCount.ToString() + WebHelper.GetCourseTextToUse(actualModel.BulkUploadTotalCount) + " uploaded in a file on "
                                                     + actualModel.FileUploadDate?.ToString("dd/MM/yyyy") + " have "
                                                     + (bulkUploadCoursesPending?.SelectMany(c => c.BulkUploadErrors).Count() + bulkUploadRunsPending?.SelectMany(r => r.BulkUploadErrors).Count()).ToString()
                                                     + " errors. Fix these to publish all of your courses.";
@@ -105,8 +105,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
 
             int MigrationLiveCount = courses.Where(x => x.CourseStatus == RecordStatus.Live && x.CreatedBy == "DFC – Course Migration Tool")
                                             .SelectMany(c => c.CourseRuns)
-                                            .Where(x => x.RecordStatus == RecordStatus.Live && x.CreatedBy == "DFC – Course Migration Tool")
-                                            .Count();
+                                            .Count(x => x.RecordStatus == RecordStatus.Live && x.CreatedBy == "DFC – Course Migration Tool");
 
             actualModel.BulkUploadMessage = (actualModel.BulkUploadTotalCount > 0 & actualModel.BulkUploadPendingCount == 0) ? BulkUpLoadNoErrorMessage : BulkUpLoadErrorMessage;
 
@@ -114,17 +113,12 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
             actualModel.VenueCount = 0;
             if (allVenues.Value != null)
             {
-                actualModel.VenueCount = allVenues.Value.Value.Where(x => x.Status == VenueStatus.Live).Count();
+                actualModel.VenueCount = allVenues.Value.Value.Count(x => x.Status == VenueStatus.Live);
             }
 
-            //actualModel.PublishedCourseCount = courses.Where(x => x.CourseStatus == RecordStatus.Live)
-            //                                     .SelectMany(c => c.CourseRuns)
-            //                                     .Where(x => x.RecordStatus == RecordStatus.Live)
-            //                                     .Count();
-
-            actualModel.PublishedCourseCount = courses.SelectMany(c => c.CourseRuns)
-                                              .Where(x => x.RecordStatus == RecordStatus.Live)
-                                              .Count();
+            actualModel.PublishedCourseCount = courses
+                                              .SelectMany(c => c.CourseRuns)
+                                              .Count(x => x.RecordStatus == RecordStatus.Live);
 
             return View("~/ViewComponents/Dashboard/Default.cshtml", actualModel);
         }
