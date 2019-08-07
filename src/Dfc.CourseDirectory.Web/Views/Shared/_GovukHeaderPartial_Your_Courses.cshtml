@@ -28,7 +28,6 @@
             {
 
                 <a asp-action="Logout" asp-controller="Auth" id="submit-link" class="cd-right cd-header--link">Sign out</a>
-
             }
             @{
                 //Handles lack of controller error
@@ -55,7 +54,7 @@
                             @if (adminUser.Succeeded)
                             {
                                 <li class="govuk-header__navigation-item">
-                                    <a class="govuk-header__link" href="#">
+                                    <a class="govuk-header__link" href="~/ProviderSearch/Index">
                                         Search
                                     </a>
                                 </li>
@@ -142,18 +141,6 @@
                                     }
                                 }
 
-
-
-
-                                @*@if (adminUser.Succeeded)
-                                    {
-                                        <li class="govuk-header__navigation-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Report" ? "govuk-header__navigation-item--active" : "")">
-                                            <a class="govuk-header__link" href="/Report/Index">
-                                                Reports
-                                            </a>
-                                        </li>
-
-                                    }*@
                             }
 
 
@@ -179,9 +166,116 @@
         </span>
     </p>
 
-
-
 </div>
+
+@if (User.Identity.IsAuthenticated)
+{
+    var feUser = await Authorization.AuthorizeAsync(User, "Fe");
+    var apprenticeshipUser = await Authorization.AuthorizeAsync(User, "apprenticeship");
+    var adminUser = await Authorization.AuthorizeAsync(User, "admin");
+
+    if (adminUser.Succeeded)
+    {
+        var providerName = "";
+        var ukPRN = HttpContextAccessor.HttpContext.Session.GetInt32("UKPRN");
+        if (ukPRN != null)
+        {
+            var providerSearchResult = await providerService.GetProviderByPRNAsync(new ProviderSearchCriteria(ukPRN.ToString()));
+            providerName = providerSearchResult.Value.Value.FirstOrDefault()?.CourseDirectoryName;
+
+            <div class=" cd-fullwidth-container  ">
+                <div class="cd-dashboard provider govuk-body">
+
+                    <div class=" homepage-item govuk-body">
+                        <div class="cd-status-panel slim teal--border">
+                            <nav>
+                                <ul id="navigation" class="govuk-header__navigation " aria-label="Top Level Navigation">
+                                    <li class="govuk-header__navigation-item ">
+                                        @providerName
+                                    </li>
+                                    <li class="govuk-header__navigation-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Home" ? "govuk-header__navigation-item--active" : "")">
+                                        <a class="helpdesk__link govuk-header__link" asp-controller="home" asp-action="index">Home</a>
+                                    </li>
+
+                                    @if (feUser.Succeeded)
+                                    {
+
+                                        <li class="govuk-header__navigation-item @(ViewContext.RouteData.Values["Controller"].ToString() == "RegulatedQualification" || ViewContext.RouteData.Values["Controller"].ToString() == "Qualifications" || ViewContext.RouteData.Values["Controller"].ToString() == "UnregulatedCourses" ? "govuk-header__navigation-item--active" : "")">
+                                            <a class="helpdesk__link govuk-header__link" href="~/Qualifications/LandingOptions">
+                                                My courses
+                                            </a>
+                                        </li>
+
+                                    }
+
+                                    @if (apprenticeshipUser.Succeeded)
+                                    {
+
+                                        <li class="govuk-header__navigation-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Apprenticeships" || ViewContext.RouteData.Values["Controller"].ToString() == "ProviderApprenticeships" ? "govuk-header__navigation-item--active" : "")">
+                                            <a class="helpdesk__link govuk-header__link" href="~/Apprenticeships/WhatWouldYouLIkeToDo">
+                                                My apprenticeships training
+                                            </a>
+                                        </li>
+
+                                    }
+
+
+                                    <li class="govuk-header__navigation-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Venues" || ViewContext.RouteData.Values["Controller"].ToString() == "VenueSearch" ? "govuk-header__navigation-item--active" : "")">
+                                        <a class="helpdesk__link govuk-header__link" href="~/Venues/LandingOptions">
+                                            My locations
+                                        </a>
+                                    </li>
+
+
+                                    @if (feUser.Succeeded && apprenticeshipUser.Succeeded)
+                                    {
+
+                                        <li class="govuk-header__navigation-item @(ViewContext.RouteData.Values["Controller"].ToString() == "BulkUpload" ? "govuk-header__navigation-item--active" : "")">
+                                            <a class="helpdesk__link govuk-header__link" href="~/BulkUpload/LandingOptions">
+                                                Bulk upload
+                                            </a>
+                                        </li>
+
+                                    }
+                                    else
+                                    {
+                                        @if (feUser.Succeeded)
+                                        {
+
+                                            <li class="govuk-header__navigation-item @(ViewContext.RouteData.Values["Controller"].ToString() == "BulkUpload" ? "govuk-header__navigation-item--active" : "")">
+                                                <a class="helpdesk__link govuk-header__link" href="~/BulkUpload/index">
+                                                    Bulk upload
+                                                </a>
+                                            </li>
+
+                                        }
+
+                                        @if (apprenticeshipUser.Succeeded)
+                                        {
+
+                                            <li class="govuk-header__navigation-item @(ViewContext.RouteData.Values["Controller"].ToString() == "BulkUpload" ? "govuk-header__navigation-item--active" : "")">
+                                                <a class="helpdesk__link govuk-header__link" href="~/Bulkupload/apprenticeshipindex">
+                                                    Bulk upload
+                                                </a>
+                                            </li>
+
+                                        }
+                                    }
+
+
+
+
+
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+}
+
 
 
 
