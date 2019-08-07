@@ -1,18 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@using Dfc.CourseDirectory.Services.Interfaces.ProviderService
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Http
+<!DOCTYPE html>
 <html lang="en" class="govuk-template app-html-class">
-
-@*<head>
-        <meta charset="utf-8" />
-        <title>GOV.UK - Course Directory Provider Portal</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="theme-color" content="blue" />
-
-        <link href="~/dist/site.min.css" rel="stylesheet" />
-        <meta property="og:image" content="~/assets/images/govuk-opengraph-image.png">
-        <partial name="_ScriptsPartial" />
-
-
-    </head>*@
 
 <head>
     <meta charset="utf-8" />
@@ -43,12 +33,11 @@
 
     <partial name="_GovukHeaderPartial_Your_Courses" />
 
-
-
     <div class=" cd-fullwidth-container  ">
         <main class="cd-dashboard provider govuk-body" id="main-content" role="main">
+
             @RenderBody()
-            </main>
+        </main>
     </div>
 
 
