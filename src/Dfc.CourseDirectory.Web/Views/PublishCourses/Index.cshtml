@@ -15,7 +15,6 @@
 
 <form asp-controller="PublishCourses" asp-action="Index" id="PublishCourses">
 
-    <a asp-controller="Bulkupload" asp-action="WhatDoYouWantToDoNext" class="govuk-back-link">Back</a>
     @if (!string.IsNullOrWhiteSpace(Model.NotificationTitle))
     {
         @await Component.InvokeAsync(nameof(Notification), new NotificationModel
