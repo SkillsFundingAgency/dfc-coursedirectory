@@ -1,4 +1,5 @@
 ﻿
+@using Dfc.CourseDirectory.Models.Models.Providers
 @using Dfc.CourseDirectory.Services.Interfaces
 @using Microsoft.AspNetCore.Identity
 @using Dfc.CourseDirectory.Web.Areas.Identity.Data;
@@ -194,10 +195,10 @@
                                         @providerName
                                     </li>
                                     <li class="govuk-header__navigation-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Home" ? "govuk-header__navigation-item--active" : "")">
-                                        <a class="helpdesk__link govuk-header__link" asp-controller="home" asp-action="index">Home</a>
+                                        <a class="helpdesk__link govuk-header__link" asp-controller="Provider" asp-action="Dashboard">Home</a>
                                     </li>
 
-                                    @if (feUser.Succeeded)
+                                    @if (providerSearchResult?.Value.Value.FirstOrDefault()?.ProviderType == ProviderType.Fe)
                                     {
 
                                         <li class="govuk-header__navigation-item @(ViewContext.RouteData.Values["Controller"].ToString() == "RegulatedQualification" || ViewContext.RouteData.Values["Controller"].ToString() == "Qualifications" || ViewContext.RouteData.Values["Controller"].ToString() == "UnregulatedCourses" ? "govuk-header__navigation-item--active" : "")">
@@ -208,7 +209,7 @@
 
                                     }
 
-                                    @if (apprenticeshipUser.Succeeded)
+                                    @if (providerSearchResult?.Value.Value.FirstOrDefault()?.ProviderType == ProviderType.Apprenticeship)
                                     {
 
                                         <li class="govuk-header__navigation-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Apprenticeships" || ViewContext.RouteData.Values["Controller"].ToString() == "ProviderApprenticeships" ? "govuk-header__navigation-item--active" : "")">
@@ -227,7 +228,7 @@
                                     </li>
 
 
-                                    @if (feUser.Succeeded && apprenticeshipUser.Succeeded)
+                                    @if (providerSearchResult?.Value.Value.FirstOrDefault()?.ProviderType == ProviderType.Both)
                                     {
 
                                         <li class="govuk-header__navigation-item @(ViewContext.RouteData.Values["Controller"].ToString() == "BulkUpload" ? "govuk-header__navigation-item--active" : "")">
@@ -239,7 +240,7 @@
                                     }
                                     else
                                     {
-                                        @if (feUser.Succeeded)
+                                        @if (providerSearchResult?.Value.Value.FirstOrDefault()?.ProviderType==ProviderType.Fe)
                                         {
 
                                             <li class="govuk-header__navigation-item @(ViewContext.RouteData.Values["Controller"].ToString() == "BulkUpload" ? "govuk-header__navigation-item--active" : "")">
@@ -250,7 +251,7 @@
 
                                         }
 
-                                        @if (apprenticeshipUser.Succeeded)
+                                        @if (providerSearchResult?.Value.Value.FirstOrDefault()?.ProviderType==ProviderType.Apprenticeship)
                                         {
 
                                             <li class="govuk-header__navigation-item @(ViewContext.RouteData.Values["Controller"].ToString() == "BulkUpload" ? "govuk-header__navigation-item--active" : "")">
