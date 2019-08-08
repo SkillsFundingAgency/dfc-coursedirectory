@@ -7,7 +7,6 @@
 @model Dfc.CourseDirectory.Web.ViewModels.Apprenticeships.ConfirmationDeleteViewModel
 
 <form class="govuk-!-margin-bottom-9" id="ApprenticeshipConfirmDeleteForm" asp-controller="Apprenticeships" asp-action="ConfirmationDelete" method="post">
-    <a asp-controller="ProviderApprenticeships" asp-action="Index" class="govuk-back-link">Back</a>
     @Html.HiddenFor(x=>x.ApprenticeshipId)
     @Html.HiddenFor(x=>x.ApprenticeshipTitle)
     @Html.HiddenFor(x=>x.Level)
