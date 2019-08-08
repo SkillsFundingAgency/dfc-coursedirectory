@@ -79,7 +79,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
             IEnumerable<Course> inValidCourses = courses.Where(c => c.IsValid == false);
 
             actualModel.DisplayMigrationButton = false;
-            if (inValidCourses.Count() > 0 || migrationPendingCourses.Count() > 0)
+            if (migrationPendingCourses.Count() > 0)
             {
                 actualModel.DisplayMigrationButton = true;
             }
