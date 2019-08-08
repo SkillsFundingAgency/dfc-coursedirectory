@@ -150,7 +150,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 model.ApprenticeshipType = request.ApprenticeshipType;
                 model.ProgType = request.ProgType;
                 model.PathwayCode = request.PathwayCode;
-                model.Version = request.Version;
+                model.Version = request.Version.HasValue? request.Version.Value : (int?) null;
                 model.NotionalNVQLevelv2 = request.NotionalNVQLevelv2;
                 model.Mode = request.Mode;
 
@@ -834,7 +834,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 CreatedBy = User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
                 RecordStatus = RecordStatus.Live,
                 PathwayCode = model.DetailViewModel.PathwayCode,
-                Version = model.DetailViewModel.Version,
+                Version = model.DetailViewModel.Version.HasValue ? model.DetailViewModel.Version.Value : (int?) null,
                 NotionalNVQLevelv2 = model.DetailViewModel.NotionalNVQLevelv2,
                 ApprenticeshipLocations = locations,
                 UpdatedDate = DateTime.UtcNow,

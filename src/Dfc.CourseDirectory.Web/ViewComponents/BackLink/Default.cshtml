@@ -1,0 +1,14 @@
+﻿<a id="backLink" href="#" class="govuk-back-link" onclick="javascript: window.history.go(-1); return false;">Back</a>
+
+<script>
+    (function ($) {
+        $(function () {
+            
+            // If there's no browser page history then there's no point showing the back link.
+            if (history.length <= 1) {
+                $("#backLink").hide();
+            }
+            
+        });
+    })(jQuery);
+</script>

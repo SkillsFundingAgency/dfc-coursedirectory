@@ -8,24 +8,23 @@
 @model Dfc.CourseDirectory.Web.ViewModels.Apprenticeships.DetailViewModel
 
 <form class="govuk-!-margin-bottom-9" id="ApprenticeshipDetailsForm" asp-controller="Apprenticeships" asp-action="Details" method="post">
-    <a asp-controller="Apprenticeships" asp-action="Index" class="govuk-back-link">Back</a>
     <div class="cd-dashboard govuk-body ">
 
         <div>
             <span class="govuk-caption-xl">@Model.ApprenticeshipTitle</span>
 
-                @if (Model.Mode == ApprenticeshipMode.EditYourApprenticeships)
-                {
-                    <h1 class="govuk-heading-xl">
-                        Edit apprenticeship training details
-                    </h1>
-                }
-                else
-                {
-                    <h1 class="govuk-heading-xl">
-                        Add apprenticeship training details
-                    </h1>
-                }
+            @if (Model.Mode == ApprenticeshipMode.EditYourApprenticeships)
+            {
+                <h1 class="govuk-heading-xl">
+                    Edit apprenticeship training details
+                </h1>
+            }
+            else
+            {
+                <h1 class="govuk-heading-xl">
+                    Add apprenticeship training details
+                </h1>
+            }
 
 
 
@@ -47,12 +46,14 @@
             @Html.HiddenFor(x => x.Cancelled)
             @Html.HiddenFor(x => x.NotionalNVQLevelv2)
             @Html.HiddenFor(x => x.ShowCancelled)
+            @Html.HiddenFor(x => x.Version)
+            @Html.HiddenFor(x => x.PathwayCode)
+            @Html.HiddenFor(x => x.ProgType)
 
 
 
 
             @{
-                @*var regex = @"^[a-zA-Z0-9 /\n/\r/\¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`" + "\"" + "\\\\]+$";*@
                 var regex = RegexPattern.AllowEverything;
             }
             @{ var emailRegEx = @"^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$"; }
@@ -96,7 +97,7 @@
             <h2 class="">Contact details</h2>
 
             <div id="EmailContainer" class="govuk-form-group">
-                <span  class="govuk-hint">Who can employers contact about this apprenticeship training?</span>
+                <span class="govuk-hint">Who can employers contact about this apprenticeship training?</span>
 
                 <label id="govuk-label-Email" class="govuk-label">
                     Email
@@ -128,7 +129,7 @@
                 <label id="govuk-label-ContactUsIUrl" class="govuk-label">
                     Contact us page
                 </label>
-                <span  class="govuk-hint">You can also add the url of any 'Contact us' page you have on your website</span>
+                <span class="govuk-hint">You can also add the url of any 'Contact us' page you have on your website</span>
 
                 <input class="govuk-input" asp-for="@Model.ContactUsIUrl" type="text" aria-describedby=""
                        val-max-length="255"
@@ -148,28 +149,28 @@
                     <button type="submit" class="govuk-button" id="continue" value="continue">
                         Save
                     </button>
-                    
-                    @if (Model.ShowCancelled.HasValue && Model.ShowCancelled.Value==true)
+
+                    @if (Model.ShowCancelled.HasValue && Model.ShowCancelled.Value == true)
                     {
                         <a class="govuk-link govuk-!-margin-left-3" asp-controller="Apprenticeships" asp-action="Summary" asp-route-Id=@Model.Id asp-route-Mode=@Model.Mode asp-route-Cancelled=true>Cancel</a>
                     }
                 </div>
             }
-                
-                @if (Model.Mode == ApprenticeshipMode.EditYourApprenticeships)
-                {
-                    <div class="cta-container">
-                        <button type="submit" class="govuk-button" id="continue" value="continue">
-                            Save
-                        </button>
-                    
-                        @if (Model.ShowCancelled.HasValue && Model.ShowCancelled.Value==true)
-                        {
-                            <a class="govuk-link govuk-!-margin-left-3" asp-controller="Apprenticeships" asp-action="Summary" asp-route-Id=@Model.Id asp-route-Mode=@Model.Mode asp-route-Cancelled=true>Cancel</a>
-                        }
-                    </div>
-                }
-           
+
+            @if (Model.Mode == ApprenticeshipMode.EditYourApprenticeships)
+            {
+                <div class="cta-container">
+                    <button type="submit" class="govuk-button" id="continue" value="continue">
+                        Save
+                    </button>
+
+                    @if (Model.ShowCancelled.HasValue && Model.ShowCancelled.Value == true)
+                    {
+                        <a class="govuk-link govuk-!-margin-left-3" asp-controller="Apprenticeships" asp-action="Summary" asp-route-Id=@Model.Id asp-route-Mode=@Model.Mode asp-route-Cancelled=true>Cancel</a>
+                    }
+                </div>
+            }
+
 
 
 
@@ -364,7 +365,6 @@
                                 });
                         }, 0);
 
-                    //validate();
 
                 });
 
