@@ -78,11 +78,19 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [Authorize]
         public async Task<IActionResult> Search([FromQuery] SearchRequestModel requestModel)
         {
+
+            int? UKPRN = _session.GetInt32("UKPRN");
+
+            if (!UKPRN.HasValue)
+            {
+                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
+            }
+
             ApprenticeshipsSearchResultModel model = new ApprenticeshipsSearchResultModel();
 
             if (!string.IsNullOrEmpty(requestModel.SearchTerm))
             {
-                var result = await _apprenticeshipService.StandardsAndFrameworksSearch(requestModel.SearchTerm);
+                var result = await _apprenticeshipService.StandardsAndFrameworksSearch(requestModel.SearchTerm, UKPRN.Value);
 
 
 
@@ -117,6 +125,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                             NotionalNVQLevelv2 = item.NotionalEndLevel,
                             ProgTypeDesc = item.ProgTypeDesc,
                             ProgTypeDesc2 = item.ProgTypeDesc2,
+                            AlreadyCreated = item.AlreadyCreated
 
                         });
                     }
