@@ -34,17 +34,6 @@ else
     }
     else
     {
-
-        <div id="errorsummary" class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary" style="display: none;">
-            <h2 class="govuk-error-summary__title" id="error-summary-title">
-                There is a problem
-            </h2>
-            <div class="govuk-error-summary__body">
-                <span class="govuk-error-message">
-                    <span class="govuk-visually-hidden">Error:</span> This framework or standard name already exists
-                </span>
-            </div>
-        </div>
         <div class="cd-apprenticeships-results hide govuk-body visible">
             <div class="govuk-!-margin-bottom-4">
                 <span>Found <strong>@Model.Items.Count()</strong> results for <strong> @Model.SearchTerm</strong></span>
@@ -113,7 +102,6 @@ else
     }
 
 }
-
 <script>
     (function ($) {
         $(function () {
