@@ -11,6 +11,9 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Models.Models.Courses;
 using Dfc.CourseDirectory.Web.Helpers;
 using Microsoft.AspNetCore.Authorization;
+using Dfc.CourseDirectory.Web.ViewModels.Report;
+using Dfc.CourseDirectory.Web.ViewComponents.MigrationReportResults;
+using Dfc.CourseDirectory.Web.ViewComponents.MigrationReportDashboardPanel;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -27,8 +30,29 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _CSVHelper = csvHelper;
         }
 
-        
         public async Task<IActionResult> Index()
+        {
+            var reportResults = await _courseService.GetAllDfcReports();
+            if (reportResults.IsFailure) throw new Exception("Unable to generate migration reports");
+
+            // @ToDo: refactor this business logic away from the presentation layer
+            int feProvidersMigrated = reportResults.Value.Count;
+            int feCoursesMigrated = (reportResults.Value.Sum(r => r.MigratedCount) ?? 0);
+            int feCoursesMigratedWithErrors = reportResults.Value.Sum(r => r.MigrationPendingCount);
+
+            MigrationReportViewModel model = new MigrationReportViewModel()
+            {
+                FEProvidersMigrated = new MigrationReportDashboardPanelModel("FE providers migrated", value: feProvidersMigrated),
+                FECoursesMigrated = new MigrationReportDashboardPanelModel("FE courses migrated", value: feCoursesMigrated),
+                FECoursesMigratedWithErrors = new MigrationReportDashboardPanelModel("FE courses with errors", value: feCoursesMigratedWithErrors),
+
+                ReportResults = new MigrationReportResultsModel(reportResults.Value)
+            };
+
+            return View(model);
+        }
+
+        public async Task<IActionResult> ReportCSV()
         {
             var reportResults = await _courseService.GetAllDfcReports();
 
