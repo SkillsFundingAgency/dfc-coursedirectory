@@ -14,23 +14,28 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Models.Models.Apprenticeships;
+using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
 
 namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
 {
     public class Dashboard : ViewComponent
     {
         private readonly ICourseService _courseService;
+        private readonly IApprenticeshipService _apprenticeshipService;
         private readonly IVenueService _venueService;
         private readonly IBlobStorageService _blobStorageService;
         private readonly IHttpContextAccessor _contextAccessor;
         private ISession _session => _contextAccessor.HttpContext.Session;
 
-        public Dashboard(ICourseService courseService, IVenueService venueService, IHttpContextAccessor contextAccessor, IBlobStorageService blobStorageService)
+        public Dashboard(ICourseService courseService, IVenueService venueService, IHttpContextAccessor contextAccessor, IBlobStorageService blobStorageService, IApprenticeshipService apprenticeshipService)
         {
             Throw.IfNull(courseService, nameof(courseService));
+            Throw.IfNull(apprenticeshipService, nameof(apprenticeshipService));
             Throw.IfNull(venueService, nameof(venueService));
             Throw.IfNull(blobStorageService, nameof(blobStorageService));
 
+            _apprenticeshipService = apprenticeshipService;
             _courseService = courseService;
             _venueService = venueService;
             _contextAccessor = contextAccessor;
@@ -119,6 +124,11 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
             actualModel.PublishedCourseCount = courses
                                               .SelectMany(c => c.CourseRuns)
                                               .Count(x => x.RecordStatus == RecordStatus.Live);
+
+            var result = await _apprenticeshipService.GetApprenticeshipByUKPRN(UKPRN.ToString());
+
+
+            actualModel.PublishedApprenticeshipsCount = result.Value.Count(x => x.RecordStatus==RecordStatus.Live);
 
             return View("~/ViewComponents/Dashboard/Default.cshtml", actualModel);
         }
