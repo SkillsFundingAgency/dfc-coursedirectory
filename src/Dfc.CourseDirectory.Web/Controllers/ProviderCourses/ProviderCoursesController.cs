@@ -94,6 +94,13 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
         }
 
         [Authorize]
+        public IActionResult MigratedCourses(string UKPRN)
+        {
+            _session.SetInt32("UKPRN", Convert.ToInt32(UKPRN));
+            return RedirectToAction("Index");
+        }
+
+        [Authorize]
         public async Task<IActionResult> Index(
             Guid? courseRunId,
             string notificationTitle,
