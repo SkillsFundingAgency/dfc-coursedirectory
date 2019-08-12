@@ -50,6 +50,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.SearchProvider
         [Authorize]
         public async Task<IActionResult> Index(string Keyword)
         {
+            ViewBag.HideHeaderBackLink = true;
             if (string.IsNullOrWhiteSpace(Keyword))
                 return View(new ProviderSearchViewModel() { Search = Keyword, Providers = new List<ProviderAzureSearchResultItem>() });
             else {
