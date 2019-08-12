@@ -78,11 +78,19 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [Authorize]
         public async Task<IActionResult> Search([FromQuery] SearchRequestModel requestModel)
         {
+
+            int? UKPRN = _session.GetInt32("UKPRN");
+
+            if (!UKPRN.HasValue)
+            {
+                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
+            }
+
             ApprenticeshipsSearchResultModel model = new ApprenticeshipsSearchResultModel();
 
             if (!string.IsNullOrEmpty(requestModel.SearchTerm))
             {
-                var result = await _apprenticeshipService.StandardsAndFrameworksSearch(requestModel.SearchTerm);
+                var result = await _apprenticeshipService.StandardsAndFrameworksSearch(requestModel.SearchTerm, UKPRN.Value);
 
 
 
@@ -117,6 +125,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                             NotionalNVQLevelv2 = item.NotionalEndLevel,
                             ProgTypeDesc = item.ProgTypeDesc,
                             ProgTypeDesc2 = item.ProgTypeDesc2,
+                            AlreadyCreated = item.AlreadyCreated
 
                         });
                     }
@@ -150,7 +159,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 model.ApprenticeshipType = request.ApprenticeshipType;
                 model.ProgType = request.ProgType;
                 model.PathwayCode = request.PathwayCode;
-                model.Version = request.Version;
+                model.Version = request.Version.HasValue? request.Version.Value : (int?) null;
                 model.NotionalNVQLevelv2 = request.NotionalNVQLevelv2;
                 model.Mode = request.Mode;
 
@@ -834,7 +843,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 CreatedBy = User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
                 RecordStatus = RecordStatus.Live,
                 PathwayCode = model.DetailViewModel.PathwayCode,
-                Version = model.DetailViewModel.Version,
+                Version = model.DetailViewModel.Version.HasValue ? model.DetailViewModel.Version.Value : (int?) null,
                 NotionalNVQLevelv2 = model.DetailViewModel.NotionalNVQLevelv2,
                 ApprenticeshipLocations = locations,
                 UpdatedDate = DateTime.UtcNow,
