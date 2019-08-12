@@ -42,7 +42,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             _updateApprenticshipUri = settings.Value.UpdateAprrenticeshipUri();
         }
 
-        public async Task<IResult<IEnumerable<IStandardsAndFrameworks>>> StandardsAndFrameworksSearch(string criteria)
+        public async Task<IResult<IEnumerable<IStandardsAndFrameworks>>> StandardsAndFrameworksSearch(string criteria, int UKPRN)
         {
             Throw.IfNullOrWhiteSpace(criteria, nameof(criteria));
             _logger.LogMethodEnter();
@@ -52,7 +52,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
                 _logger.LogInformationObject("Standards and Frameworks Criteria", criteria);
 
                 _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
-                var response = await _httpClient.GetAsync(new Uri(_getStandardsAndFrameworksUri.AbsoluteUri + "?search=" + criteria));
+                var response = await _httpClient.GetAsync(new Uri(_getStandardsAndFrameworksUri.AbsoluteUri + "?search=" + criteria + "&UKPRN=" + UKPRN));
                 _logger.LogHttpResponseMessage("Standards and Frameworks service http response", response);
 
                 if (response.IsSuccessStatusCode)
