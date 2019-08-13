@@ -470,7 +470,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             switch (model.CoursesLandingOptions)
             {
                 case CoursesLandingOptions.Add:
-                    return RedirectToAction("Index","Qualifications");
+                    return RedirectToAction("Index", "RegulatedQualification");
                 case CoursesLandingOptions.Upload:
                     return RedirectToAction("Index","BulkUpload");
                 case CoursesLandingOptions.View:
@@ -481,7 +481,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         }
 
-
+        
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> AddCourse()

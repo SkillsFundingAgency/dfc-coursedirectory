@@ -6665,7 +6665,7 @@ ul.sort-list {
 }
 
 .sidebar .widget {
-  border-top: 5px solid #005ea5;
+  border-top: 5px solid #28a197;
   background-color: #f8f8f8;
   padding-left: 1rem;
 }
@@ -6983,7 +6983,7 @@ select:disabled {
 }
 
 .govuk-related-items {
-  border-top: 10px solid #005ea5;
+  border-top: 10px solid #28a197;
   padding: 20px;
   background-color: #f8f8f8;
 }
@@ -7135,7 +7135,7 @@ select:disabled {
 }
 
 .cd-subHead {
-  background-color: #005ea5;
+  background-color: #28a197;
   margin-top: -10px;
   color: white;
   font-family: nta,Arial,sans-serif;
@@ -7458,7 +7458,7 @@ select:disabled {
 }*/
 .govuk-header__container.cd-fullwidth-container {
   margin-bottom: -10px;
-  border-bottom: 10px solid #005ea5;
+  border-bottom: 10px solid #28a197;
 }
 
 .cd-header--content {
@@ -7683,7 +7683,7 @@ select:disabled {
 
 .cd-migration-panel {
   background-color: #f8f8f8;
-  border-left: 5px solid #005ea5;
+  border-left: 5px solid #28a197;
   padding: .5rem 1rem;
 }
 
@@ -7726,7 +7726,7 @@ select:disabled {
 
 .cd-status-panel.blue {
   text-align: left;
-  background-color: #005ea5;
+  background-color: #28a197;
   color: white;
 }
 
@@ -7864,7 +7864,7 @@ select:disabled {
 }
 
 .sidebar .widget.blue {
-  border-top: 5px solid #005ea5;
+  border-top: 5px solid #28a197;
 }
 
 .sidebar .widget div {
