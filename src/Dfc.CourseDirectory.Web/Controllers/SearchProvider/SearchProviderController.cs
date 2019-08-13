@@ -50,6 +50,11 @@ namespace Dfc.CourseDirectory.Web.Controllers.SearchProvider
         [Authorize]
         public async Task<IActionResult> Index(string Keyword)
         {
+            var ukPRN = _session.GetInt32("UKPRN");
+            if (ukPRN != null)
+            {
+                _session.Remove("UKPRN");
+            }
             ViewBag.HideHeaderBackLink = true;
             if (string.IsNullOrWhiteSpace(Keyword))
                 return View(new ProviderSearchViewModel() { Search = Keyword, Providers = new List<ProviderAzureSearchResultItem>() });
