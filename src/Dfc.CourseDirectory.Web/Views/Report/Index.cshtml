@@ -1,0 +1,47 @@
+﻿@using Dfc.CourseDirectory.Web.ViewComponents.MigrationReportResults
+@using Dfc.CourseDirectory.Web.ViewComponents.MigrationReportDashboardPanel
+@model Dfc.CourseDirectory.Web.ViewModels.Report.MigrationReportViewModel
+
+@{
+    Layout = "_Layout_Your_Courses";
+}
+
+<div class=" cd-fullwidth-container  ">
+
+    <div class="govuk-grid-row">
+        <main class="govuk-grid-column-full govuk-body ">
+            <h1 class="govuk-heading-xl">Migration status report</h1>
+            <div class="govuk-grid-row govuk-!-margin-bottom-6 homepage-item--container">
+                <div class="govuk-grid-column-one-third homepage-item ">
+
+                    @await Component.InvokeAsync(nameof(MigrationReportDashboardPanel), Model.FEProvidersMigrated)
+
+                </div>
+                <div class="govuk-grid-column-one-third homepage-item ">
+
+                    @await Component.InvokeAsync(nameof(MigrationReportDashboardPanel), Model.FECoursesMigrated)
+
+                </div>
+                <div class="govuk-grid-column-one-third homepage-item ">
+
+                    @await Component.InvokeAsync(nameof(MigrationReportDashboardPanel), Model.FECoursesMigratedWithErrors)
+
+                </div>
+            </div>
+            <div class="govuk-grid-row govuk-!-margin-bottom-6 ">
+                <div class="govuk-grid-column-one-third">
+                </div>
+            </div>
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-full">
+                    <h2>Migration data by provider</h2>
+                    <p><a asp-controller="Report" asp-action="ReportCSV" class="govuk-link">Download as csv</a></p>
+                    @await Component.InvokeAsync(nameof(MigrationReportResults), Model.ReportResults)
+                </div>
+            </div>
+        </main>
+    </div>
+
+</div>
+
+
