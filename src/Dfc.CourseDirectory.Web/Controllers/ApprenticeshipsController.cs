@@ -616,14 +616,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
 
             var model = new SummaryViewModel();
-
-            var cachedLocations = new List<Venue>();
-            var locationsResult = await _venueService.SearchAsync(new VenueSearchCriteria(UKPRN.ToString(), ""));
-            if (locationsResult.IsSuccess && locationsResult.HasValue)
-            {
-                cachedLocations = locationsResult.Value.Value.ToList();
-            }
-
             var DetailViewModel = _session.GetObject<DetailViewModel>("DetailViewModel");
             var DeliveryViewModel = _session.GetObject<DeliveryViewModel>("DeliveryViewModel");
             var LocationChoiceSelectionViewModel = _session.GetObject<LocationChoiceSelectionViewModel>("LocationChoiceSelectionViewModel");
@@ -680,7 +672,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 LocationType = LocationType.Venue,
                 RecordStatus = RecordStatus.Live,
                 Regions = loc.Regions,
-                National = loc.National,
+                National = loc.National ?? false,
                 UpdatedDate = DateTime.Now,
                 UpdatedBy =
                     User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
@@ -688,8 +680,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
             };
             if (loc.Venue != null)
             {
-                apprenticeshipLocation.TribalId = loc.Venue.VenueID;
+                apprenticeshipLocation.TribalId = loc.Venue.TribalLocationId ?? null;
                 apprenticeshipLocation.ProviderId = loc.Venue.ProviderID;
+                apprenticeshipLocation.LocationId = loc.Venue.LocationId ?? null;
+                apprenticeshipLocation.VenueId = Guid.Parse(loc.Venue.ID);
                 apprenticeshipLocation.Address = new Address
                 {
                     Address1 = loc.Venue.Address1,
@@ -798,9 +792,17 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             if (model.DeliveryOptionsViewModel?.DeliveryOptionsListItemModel != null)
             {
+                var cachedLocations = new List<Venue>();
+                var locationsResult = await _venueService.SearchAsync(new VenueSearchCriteria(UKPRN.ToString(), ""));
+                if (locationsResult.IsSuccess && locationsResult.HasValue)
+                {
+                    cachedLocations = locationsResult.Value.Value.ToList();
+                }
+
                 foreach (var loc in model.DeliveryOptionsViewModel.DeliveryOptionsListItemModel
                     .DeliveryOptionsListItemModel)
                 {
+                    loc.Venue = cachedLocations.Where(x => x.ID == loc.Venue.ID).FirstOrDefault();
                     locations.Add(CreateDeliveryLocation(loc, apprenticeshipLocationType));
                 }
             }
