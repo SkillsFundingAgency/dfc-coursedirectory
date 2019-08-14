@@ -688,7 +688,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             };
             if (loc.Venue != null)
             {
-                apprenticeshipLocation.VenueId = Guid.Parse(loc.Venue.ID) != Guid.Empty ? Guid.Parse(loc.Venue.ID) : Guid.Empty;
+                apprenticeshipLocation.TribalId = loc.Venue.VenueID;
                 apprenticeshipLocation.ProviderId = loc.Venue.ProviderID;
                 apprenticeshipLocation.Address = new Address
                 {
@@ -840,7 +840,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             Apprenticeship apprenticeship = new Apprenticeship
             {
                 //ApprenticeshipId // For backwards compatibility with Tribal (Where does this come from?)
-                //TribalProviderId // For backwards compatibility with Tribal (Where does this come from?)#
+                //TribalProviderId
                 ProviderId  = _providerService.GetProviderByPRNAsync(new ProviderSearchCriteria(UKPRN.ToString())).Result.Value.Value.FirstOrDefault().id,
                 ProviderUKPRN = UKPRN,
                 ApprenticeshipTitle = model.DetailViewModel.ApprenticeshipTitle,
