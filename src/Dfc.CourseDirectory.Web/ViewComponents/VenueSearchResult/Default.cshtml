@@ -265,6 +265,18 @@
 
             };
 
+            var doDelete = function (venueId) {
+
+                makeDeleteRequestWithPayload({
+                    VenueId: venueId
+                },ConfirmDeleteSuccess);
+
+
+            };
+
+            var ConfirmDeleteSuccess = function (data) {
+                window.location.href = data;
+            };
 
 
             var onSucess = function (data) {
@@ -297,17 +309,21 @@
 
 
 
-                    var editOption = $("#edit-" + $venueId);
-                    editOption.hide();
+                    //var editOption = $("#edit-" + $venueId);
+                    //editOption.hide();
 
-                    var deleteOption = $("#delete-" + $venueId);
-                    deleteOption.hide();
+                    //var deleteOption = $("#delete-" + $venueId);
+                    //deleteOption.hide();
 
-                    var confirmDelete = $("#venue-delete-" + $venueId);
-                    confirmDelete.show();
+                    //var confirmDelete = $("#venue-delete-" + $venueId);
+                    //confirmDelete.show();
 
-                    var cancelDelete = $("#venue-cancel-delete-" + $venueId);
-                    cancelDelete.show().css("display", "block");
+                    //var cancelDelete = $("#venue-cancel-delete-" + $venueId);
+                    //cancelDelete.show().css("display", "block");
+
+                    //debounce(doDelete($venueId), 400);
+
+                    window.location.href = "locations/deletelocation/?VenueId=" + $venueId;
                 }
 
             };
@@ -323,6 +339,13 @@
                 var qs = $.param(payload);
                 qs = replaceAll(qs, "%5B%5D", "");
                 $.get("/Venues/CheckForCourses?" + qs, success);
+            };
+
+            var makeDeleteRequestWithPayload = function (payload, success) {
+                console.log(payload);
+                var qs = $.param(payload);
+                qs = replaceAll(qs, "%5B%5D", "");
+                $.get("/Locations/DeleteLocation?" + qs, success);
             };
 
 
