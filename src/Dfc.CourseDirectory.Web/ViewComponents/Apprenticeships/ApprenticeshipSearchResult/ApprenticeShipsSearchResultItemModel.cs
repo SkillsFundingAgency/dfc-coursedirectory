@@ -26,7 +26,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships.ApprenticeshipS
         public DateTime? CreatedDateTimeUtc { get; set; }
         public DateTime? ModifiedDateTimeUtc { get; set; }
         public int? RecordStatusId { get; set; }
-
+        public bool AlreadyCreated { get; set; }
         //Framework Model
         public int? FrameworkCode { get; set; }
         public int? ProgType { get; set; }

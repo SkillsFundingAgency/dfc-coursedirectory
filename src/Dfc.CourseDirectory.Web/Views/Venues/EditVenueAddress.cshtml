@@ -9,18 +9,21 @@
         <div class="govuk-grid-column-two-thirds">
             <h1 class="govuk-heading-l">Edit venue address</h1>
             <form method="post" id="edit-venue-form" asp-controller="Venues" asp-action="VenueAddressSelectionConfirmation">
-
-                <input type="hidden" id="ModelVenueName" value="@Model.VenueName" />
-                <input type="hidden" id="ModelId" value="@Model.Id" />
-                @await Component.InvokeAsync(nameof(PostcodeLookup), new PostcodeLookupModel
-                       {
-                           Id = Model.Id,
-                           VenueName = Model.VenueName,
-                           Postcode = Model.Address.Postcode,
-                           PostcodeLabelText = "Venue postcode",
-                           PostcodeAriaDescribedBy = "Please enter the postcode.",
-                           ButtonText = "Find address"
-                       })
+                
+                @Html.HiddenFor(x=>x.VenueName)
+                @*<input type="hidden" id="VenueName" value="@Model.VenueName" />*@
+                @*<input type="hidden" id="ModelId" value="@Model.Id" />*@
+                <div id="postcodelookupparent">
+                    @await Component.InvokeAsync(nameof(PostcodeLookup), new PostcodeLookupModel
+                           {
+                               Id = Model.Id,
+                               VenueName = Model.VenueName,
+                               Postcode = Model.Address.Postcode,
+                               PostcodeLabelText = "Venue postcode",
+                               PostcodeAriaDescribedBy = "Please enter the postcode.",
+                               ButtonText = "Find address"
+                           })
+                </div>
 
                 <div class="govuk-form-group">
                     <a id="manualLink" class="govuk-link" asp-controller="Venues" asp-action="AddVenueManualAddress" asp-route-Id=@Model.Id>Enter address manually</a>
@@ -40,6 +43,9 @@
            var $selectedAddress = $("#PostcodeId").govUkSelect();
             var $postcode = $("#@nameof(Model.Address.Postcode)").govUkInput();
             var $container = $postcode.closest(".postcode-lookup__component").parent();
+
+            //var $container = $(".postcode-lookup__component");
+
             var $continueButton = $("#venueAddressConfirmationSelection");
             var $manualLink = $("#manualLink");
 

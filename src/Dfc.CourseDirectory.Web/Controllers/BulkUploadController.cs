@@ -21,6 +21,7 @@ using Dfc.CourseDirectory.Services.BlobStorageService;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Models.Models.Courses;
 using Dfc.CourseDirectory.Web.Helpers;
+using Dfc.CourseDirectory.Web.ViewModels;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -140,6 +141,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
             return View(vm);
         }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult ProcessMigrationReportErrors(string UKPRN)
+        {
+            _session.SetInt32("UKPRN", Convert.ToInt32(UKPRN));
+            return RedirectToAction("WhatDoYouWantToDoNext");
+        }
+
 
         [Authorize]
         [HttpGet]
@@ -307,6 +317,35 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
             //to publish stuff
             return View("../Bulkupload/Complete/Index", new PublishCompleteViewModel() { NumberOfCoursesPublished = model.NumberOfCourses, Mode = PublishMode.BulkUpload });
+        }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult LandingOptions()
+        {
+            return View("../BulkUpload/LandingOptions/Index", new BulkuploadLandingViewModel());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> LandingOptions(BulkuploadLandingViewModel model)
+        {
+            switch (model.BulkUploadLandingOptions)
+            { 
+                case BulkUploadLandingOptions.Apprenticeship:
+                    return RedirectToAction("ApprenticeshipIndex", "BulkUpload");
+                case BulkUploadLandingOptions.FE:
+                    return RedirectToAction("Index", "BulkUpload");
+                default:
+                    return RedirectToAction("LandingOptions", "BulkUpload");
+            }
+
+        }
+
+        [Authorize]
+        public IActionResult ApprenticeshipIndex()
+        {
+
+            return View("ApprenticeshipIndex");
         }
 
         /// <summary>

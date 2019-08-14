@@ -24,6 +24,7 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Apprenticeships
         DateTime? CreatedDateTimeUtc { get; }
         DateTime? ModifiedDateTimeUtc { get; }
         int? RecordStatusId { get; }
+        bool AlreadyCreated { get; set; }
 
         //Framework Model
         int? FrameworkCode { get; }

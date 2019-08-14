@@ -212,6 +212,40 @@ namespace Dfc.CourseDirectory.Models.Enums
         Cancel = 2
     }
 
+    public enum CoursesLandingOptions
+    {
+        [Description("Undefined")]
+        Undefined = 0,
+        [Description("Add a new course")]
+        Add = 1,
+        [Description("Add multiple courses via a bulk upload")]
+        Upload = 2,
+        [Description("View or make changes to existing course(s)")]
+        View = 3
+    }
+
+    public enum LocationsLandingOptions
+    {
+        [Description("Undefined")]
+        Undefined = 0,
+        [Description("Add a new location")]
+        Add = 1,
+        [Description("Manage your existing locations")]
+        Manage = 2,
+    
+    }
+
+    public enum BulkUploadLandingOptions
+    {
+        [Description("Undefined")]
+        Undefined = 0,
+        [Description("Further education courses")]
+        FE = 1,
+        [Description("Apprenticeship training")]
+        Apprenticeship = 2,
+
+    }
+
     public enum ApprenticeshipWhatWouldYouLikeToDo
     {
         [Description("Undefined")]

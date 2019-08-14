@@ -29,7 +29,7 @@ else
 
     if (!Model.Items.Any())
     {
-        <div class="cd-grid-coloumn-20 govuk-body" style="width: 100%;padding-left: 0.75em;">
+        <div class="">
             @await Component.InvokeAsync(nameof(Notification), new NotificationModel
        {
            NotificationTitle = "",

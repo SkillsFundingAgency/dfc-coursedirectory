@@ -37,10 +37,12 @@
                                         </span>
                                     }
 
-                                    <input class="govuk-input" style="width:95%; float:left" asp-for="@Model.SearchTerm" type="text" aria-label="search-label" aria-describedby="search-label" name="search-box"
+                                    <input class="govuk-input" style="width:95%; float:left" asp-for="@Model.SearchTerm" type="text" 
+                                    aria-label="search-label" aria-labelledby="search-label" name="search-box"
                                            placeholder="@ViewBag.Placeholder"
                                            val-required-message="UKPRN required"
                                            val-regex="@regex"
+
                                            val-regex-message="UKPRN is 8 digit number starting with a 1 e.g. 10000364"/>
                                     <div class="cd-c-search__item cd-search__submit-wrapper">
                                         <button type="button" class=" submit" id="searchProvider">Search</button>

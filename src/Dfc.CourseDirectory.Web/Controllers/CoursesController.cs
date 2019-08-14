@@ -465,24 +465,23 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
 
-        //public async Task<IActionResult> EditCourseRun(Guid? CourseId, Guid? CourseRunId)
-        //{
+        public async Task<IActionResult> LandingOptions(CoursesLandingViewModel model)
+        {
+            switch (model.CoursesLandingOptions)
+            {
+                case CoursesLandingOptions.Add:
+                    return RedirectToAction("Index", "RegulatedQualification");
+                case CoursesLandingOptions.Upload:
+                    return RedirectToAction("Index","BulkUpload");
+                case CoursesLandingOptions.View:
+                    return RedirectToAction("Index","ProviderCourses");
+                default:
+                    return RedirectToAction("LandingOptions", "Qualifications");
+            }
 
-        //    return View();
-        //}
+        }
 
-        //public async Task<IActionResult> EditCourse(Guid? CourseId)
-        //{
-        //    if (CourseId.HasValue)
-        //    {
-        //        var course = await _courseService.GetCourseByIdAsync(new GetCourseByIdCriteria(CourseId.Value));
-
-        //        return RedirectToAction("AddCourseSection1", new { learnAimRef = course.Value.LearnAimRef, notionalNVQLevelv2 = course.Value.NotionalNVQLevelv2, awardOrgCode = course.Value.AwardOrgCode, learnAimRefTitle = course.Value.QualificationCourseTitle, learnAimRefTypeDesc = course.Value.QualificationType});
-        //    }
-
-        //    return View("../Qualifications/Courses");
-
-        //}
+        
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> AddCourse()

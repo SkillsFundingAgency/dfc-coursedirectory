@@ -339,6 +339,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         [Authorize]
+        public IActionResult Dashboard()
+        {
+            return View();
+        }
+
+        [Authorize]
         [SelectedProviderNeeded]
         public async Task<IActionResult> Courses(
             string level,
