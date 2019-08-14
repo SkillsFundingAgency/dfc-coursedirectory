@@ -86,8 +86,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
 
+            IVenue venueResult = _venueService
+                .GetVenueByIdAsync(new GetVenueByIdCriteria(VenueId.ToString())).Result
+                .Value;
+
             LocationDeleteViewModel locationDeleteViewModel = new LocationDeleteViewModel();
             locationDeleteViewModel.VenueId = VenueId;
+            locationDeleteViewModel.VenueName = venueResult.VenueName;
+            locationDeleteViewModel.PostCode = venueResult.PostCode;
+            locationDeleteViewModel.AddressLine1 = venueResult.Address1;
 
             return View("../Venues/locationdelete/index", locationDeleteViewModel);
         }
@@ -97,19 +104,28 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteLocation(LocationDeleteViewModel locationDeleteViewModel)
         {
-            int? UKPRN = _session.GetInt32("UKPRN");
-
-            if (!UKPRN.HasValue)
+            if (locationDeleteViewModel.LocationDelete == LocationDelete.Delete)
             {
-                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
+                int? UKPRN = _session.GetInt32("UKPRN");
+
+                if (!UKPRN.HasValue)
+                {
+                    return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
+                }
+
+                IVenue updatedVenue = _venueService
+                    .GetVenueByIdAsync(new GetVenueByIdCriteria(locationDeleteViewModel.VenueId.ToString())).Result
+                    .Value;
+                updatedVenue.Status = VenueStatus.Deleted;
+
+                updatedVenue = _venueService.UpdateAsync(updatedVenue).Result.Value;
+
+                VenueSearchResultItemModel deletedVenue = new VenueSearchResultItemModel(
+                    HttpUtility.HtmlEncode(updatedVenue.VenueName), updatedVenue.Address1, updatedVenue.Address2,
+                    updatedVenue.Town, updatedVenue.County, updatedVenue.PostCode, updatedVenue.ID);
+
+                return RedirectToAction("LocationConfirmationDelete", "Locations",new{VenueId = updatedVenue.ID });
             }
-
-            IVenue updatedVenue = _venueService.GetVenueByIdAsync(new GetVenueByIdCriteria(locationDeleteViewModel.VenueId.ToString())).Result.Value;
-            updatedVenue.Status = VenueStatus.Deleted;
-
-            updatedVenue = _venueService.UpdateAsync(updatedVenue).Result.Value;
-
-            VenueSearchResultItemModel deletedVenue = new VenueSearchResultItemModel(HttpUtility.HtmlEncode(updatedVenue.VenueName), updatedVenue.Address1, updatedVenue.Address2, updatedVenue.Town, updatedVenue.County, updatedVenue.PostCode, updatedVenue.ID);
 
             return RedirectToAction("Index", "Venues");
         }
@@ -149,9 +165,29 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return viewModel;
         }
 
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> LocationConfirmationDelete(Guid VenueId)
+        {
+            IVenue venueResult = _venueService
+                .GetVenueByIdAsync(new GetVenueByIdCriteria(VenueId.ToString())).Result
+                .Value;
+
+            LocationDeleteConfirmViewModel locationDeleteConfirmViewModel = new LocationDeleteConfirmViewModel();
+            locationDeleteConfirmViewModel.VenueId = VenueId;
+            locationDeleteConfirmViewModel.VenueName = venueResult.VenueName;
+            locationDeleteConfirmViewModel.PostCode = venueResult.PostCode;
+            locationDeleteConfirmViewModel.AddressLine1 = venueResult.Address1;
+
+            return View("../Venues/LocationDeleteConfirmation/index", locationDeleteConfirmViewModel);
+        }
 
 
-
-
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> LocationConfirmationDelete()
+        {
+            return RedirectToAction("Index", "Venues");
+        }
     }
 }

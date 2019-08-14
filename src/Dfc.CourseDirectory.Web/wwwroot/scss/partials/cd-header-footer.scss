@@ -81,9 +81,11 @@
     }
 }*/
 
+$ExploreCareersGreen: #207E77;
+
 .govuk-header__container.cd-fullwidth-container {
     margin-bottom: -10px;
-    border-bottom: 10px solid #28a197;
+    border-bottom: 10px solid $ExploreCareersGreen;
 }
 
 .cd-header {

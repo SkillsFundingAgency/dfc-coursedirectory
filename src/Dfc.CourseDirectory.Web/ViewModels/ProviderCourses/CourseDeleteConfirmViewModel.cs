@@ -10,20 +10,14 @@ using Dfc.CourseDirectory.Web.ViewModels.YourCourses;
 using System.ComponentModel.DataAnnotations;
 using Dfc.CourseDirectory.Models.Enums;
 
-namespace Dfc.CourseDirectory.Web.ViewModels.Locations
+namespace Dfc.CourseDirectory.Web.ViewModels.ProviderCourses
 {
-    public class LocationDeleteViewModel
+    public class CourseDeleteConfirmViewModel
     {
 
+        public Guid CourseId { get; set; }
 
-        public Guid VenueId { get; set; }
-        public string VenueName { get; set; }
-
-        public string PostCode { get; set; }
-
-        public string AddressLine1 { get; set; }
-        public LocationDelete LocationDelete { get; set; }
-
-
+        public Guid CourseRunId { get; set; }
+        public string CourseName { get; set; }
     }
 }

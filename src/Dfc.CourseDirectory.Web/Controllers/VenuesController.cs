@@ -33,6 +33,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using static Dfc.CourseDirectory.Models.Models.Venues.VenueStatus;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -345,7 +346,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     requestModel.Postcode,
                     latitude,
                     longitude,
-                    VenueStatus.Live,
+                    Live,
                     "TestUser",
                     DateTime.Now
                 );
@@ -369,7 +370,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     requestModel.Postcode,
                     latitude,
                     longitude,
-                    VenueStatus.Live,
+                    Live,
                     "TestUser",
                     DateTime.Now,
                     DateTime.Now
@@ -505,7 +506,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             var result = _venueService.GetVenuesByPRNAndNameAsync(new GetVenuesByPRNAndNameCriteria(UKPRN.ToString(), VenueName)).Result;
 
-            if (result.IsSuccess && result.Value.Value.Any() && result.Value.Value.FirstOrDefault()?.Status == VenueStatus.Live)
+            if (result.IsSuccess && result.Value.Value.Any(x => x.Status==Live))// && result.Value.Value.FirstOrDefault()?.Status == VenueStatus.Live)
                 return Ok(true);
             return Ok(false);
         }
@@ -556,7 +557,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
 
             IVenue updatedVenue = _venueService.GetVenueByIdAsync(new GetVenueByIdCriteria(VenueId.ToString())).Result.Value;
-            updatedVenue.Status = VenueStatus.Deleted;
+            updatedVenue.Status = Deleted;
 
             updatedVenue = _venueService.UpdateAsync(updatedVenue).Result.Value;
 

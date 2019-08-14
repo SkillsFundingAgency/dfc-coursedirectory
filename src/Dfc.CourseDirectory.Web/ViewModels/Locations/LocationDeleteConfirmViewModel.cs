@@ -12,18 +12,14 @@ using Dfc.CourseDirectory.Models.Enums;
 
 namespace Dfc.CourseDirectory.Web.ViewModels.Locations
 {
-    public class LocationDeleteViewModel
+    public class LocationDeleteConfirmViewModel
     {
 
+       // public ApprenticeshipWhatWouldYouLikeToDo ApprenticeshipWhatWouldYouLikeToDo { get; set; }
+       public Guid VenueId { get; set; }
+       public string VenueName { get; set; }
 
-        public Guid VenueId { get; set; }
-        public string VenueName { get; set; }
-
-        public string PostCode { get; set; }
-
-        public string AddressLine1 { get; set; }
-        public LocationDelete LocationDelete { get; set; }
-
-
+       public string PostCode { get; set; }
+       public string AddressLine1 { get; set; }
     }
 }

@@ -281,6 +281,17 @@ namespace Dfc.CourseDirectory.Models.Enums
 
     }
 
+    public enum CourseDelete
+    {
+        [Description("Undefined")]
+        Undefined = 0,
+        [Description("Yes, Delete")]
+        Delete = 1,
+        [Description("No, go back")]
+        Back = 2,
+
+    }
+
     public enum ApprenticeshipDelivery
     {
         [Description("Undefined")]
