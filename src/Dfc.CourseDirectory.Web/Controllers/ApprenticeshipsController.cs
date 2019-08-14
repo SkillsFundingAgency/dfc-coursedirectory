@@ -7,6 +7,7 @@ using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
+using Dfc.CourseDirectory.Services.ProviderService;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Extensions;
 using Dfc.CourseDirectory.Web.Helpers;
@@ -683,11 +684,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 UpdatedDate = DateTime.Now,
                 UpdatedBy =
                     User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
-                VenueId = Guid.Parse(loc.Venue.ID),
-                ProviderId = loc.Venue.ProviderID
+
             };
             if (loc.Venue != null)
             {
+                apprenticeshipLocation.VenueId = Guid.Parse(loc.Venue.ID) != Guid.Empty ? Guid.Parse(loc.Venue.ID) : Guid.Empty;
+                apprenticeshipLocation.ProviderId = loc.Venue.ProviderID;
                 apprenticeshipLocation.Address = new Address
                 {
                     Address1 = loc.Venue.Address1,
@@ -815,51 +817,22 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             if (model.DeliveryViewModel.ApprenticeshipDelivery == ApprenticeshipDelivery.EmployersAddress)
             {
-                if (model.LocationChoiceSelectionViewModel.NationalApprenticeship == NationalApprenticeship.Yes)
-                {
-                    List<int> deliveryModes = new List<int>();
-
-                    ApprenticeshipLocation al = new ApprenticeshipLocation();
-                    al.National =
-                        model.LocationChoiceSelectionViewModel.NationalApprenticeship == NationalApprenticeship.Yes
-                            ? true
-                            : false;
-                    al.Radius = 200;
-                    deliveryModes.Add((int)ApprenticeShipDeliveryLocation.EmployerAddress);
-
-                    al.CreatedDate = DateTime.Now;
-                    al.CreatedBy =
-                        User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault();
-                    al.ApprenticeshipLocationType = ApprenticeshipLocationType.EmployerBased;
-                    al.Id = Guid.NewGuid();
-                    al.RecordStatus = RecordStatus.Live;
-                    al.UpdatedDate = DateTime.Now;
-                    al.UpdatedBy =
-                        User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault();
-
-                    al.DeliveryModes = deliveryModes;
-                    locations.Add(al);
-                }
-                else
+                DeliveryOptionsListItemModel loc = new DeliveryOptionsListItemModel
                 {
 
-
-                    DeliveryOptionsListItemModel loc = new DeliveryOptionsListItemModel
-                    {
-
-                        Regions = Regions != null ? Regions : null,
-                        National = model.LocationChoiceSelectionViewModel.NationalApprenticeship ==
-                                   NationalApprenticeship.Yes
-                            ? true
-                            : false,
-                        Radius = model.LocationChoiceSelectionViewModel.NationalApprenticeship ==
-                                 NationalApprenticeship.Yes
-                            ? "200"
-                            : "10",
-                        Delivery = "Employer address"
-                    };
-                    locations.Add(CreateDeliveryLocation(loc, apprenticeshipLocationType));
-                }
+                    Regions = Regions != null ? Regions : null,
+                    National = model.LocationChoiceSelectionViewModel.NationalApprenticeship ==
+                                NationalApprenticeship.Yes
+                        ? true
+                        : false,
+                    Radius = model.LocationChoiceSelectionViewModel.NationalApprenticeship ==
+                                NationalApprenticeship.Yes
+                        ? "200"
+                        : "10",
+                    Delivery = "Employer address"
+                    
+                };
+                locations.Add(CreateDeliveryLocation(loc, apprenticeshipLocationType));
             }
 
 
@@ -868,8 +841,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 //ApprenticeshipId // For backwards compatibility with Tribal (Where does this come from?)
                 //TribalProviderId // For backwards compatibility with Tribal (Where does this come from?)#
-                //ProviderId // Is this from our Provider collection?
-                //id = Guid.NewGuid(),
+                ProviderId  = _providerService.GetProviderByPRNAsync(new ProviderSearchCriteria(UKPRN.ToString())).Result.Value.Value.FirstOrDefault().id,
                 ProviderUKPRN = UKPRN,
                 ApprenticeshipTitle = model.DetailViewModel.ApprenticeshipTitle,
                 ApprenticeshipType = model.DetailViewModel.ApprenticeshipType,
@@ -885,7 +857,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 CreatedBy = User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
                 RecordStatus = RecordStatus.Live,
                 PathwayCode = model.DetailViewModel.PathwayCode,
-                Version = model.DetailViewModel.Version.HasValue ? model.DetailViewModel.Version.Value : (int?)null,
+                Version = model.DetailViewModel.Version ?? (int?)null,
                 NotionalNVQLevelv2 = model.DetailViewModel.NotionalNVQLevelv2,
                 ApprenticeshipLocations = locations,
                 UpdatedDate = DateTime.UtcNow,
