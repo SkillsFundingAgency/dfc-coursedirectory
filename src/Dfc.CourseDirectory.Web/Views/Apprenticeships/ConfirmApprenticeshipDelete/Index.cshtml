@@ -63,19 +63,7 @@
                     </div>
                 </fieldset>
             </div>
-            @*<div class="govuk-form-group">
-                <div class="govuk-radios govuk-!-margin-bottom-6" val-required-message="Select yes to delete?" id="ApprenticeshipConfirmDelete">
-                    <div class="govuk-radios__item">
-                        @Html.RadioButtonFor(m => m.ApprenticeshipDelete, ApprenticeshipDelete.Delete, new { @class = "govuk-radios__input", id = ApprenticeshipDelete.Delete })
-                        <label class="govuk-label govuk-radios__label" for="@ApprenticeshipDelete.Delete">@WebHelper.GetEnumDescription(ApprenticeshipDelete.Delete)</label>
-                    </div>
-                    <div class="govuk-radios__item">
-                        @Html.RadioButtonFor(m => m.ApprenticeshipDelete, ApprenticeshipDelete.Back, new { @class = "govuk-radios__input", id = ApprenticeshipDelete.Back })
-                        <label class="govuk-label govuk-radios__label" for="@ApprenticeshipDelete.Back">@WebHelper.GetEnumDescription(ApprenticeshipDelete.Back)</label>
-                    </div>
 
-                </div>
-            </div>*@
             <div class="cta-container">
                 <a class="govuk-button govuk-!-margin-right-3" asp-controller="Apprenticeships" asp-action="ConfirmationDelete" id="Confirm">Confirm</a>
             </div>
