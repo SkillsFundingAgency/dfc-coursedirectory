@@ -775,7 +775,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 else
                 {
                     courseRun.National = true;
-                    courseRun.Regions = availableRegions.RegionItems.Select(x => (string)x.Id).ToList();
+                    //removed due to COUR-1552
+                    //courseRun.Regions = availableRegions.RegionItems.Select(x => (string)x.Id).ToList();
 
                 }
                 

@@ -19,7 +19,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                 new RegionItemModel
                 {
                     Id = "E12000001",
-                    ApiLocationId = 1,
+                    ApiLocationId = 200000001,
                     Checked = false,
                     RegionName = "North East",
                     Latitude = 54.770012,
@@ -29,7 +29,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000001",
-                            ApiLocationId = 11,
+                            ApiLocationId = 200000011,
                             SubRegionName = "County Durham",
                             Checked = false,
                             Latitude = 54.77869,
@@ -38,7 +38,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000002",
-                            ApiLocationId = 12,
+                            ApiLocationId = 200000012,
                             SubRegionName = "Darlington",
                             Checked = false,
                             Latitude = 54.52873,
@@ -47,7 +47,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000003",
-                            ApiLocationId = 13,
+                            ApiLocationId = 200000013,
                             SubRegionName = "Gateshead",
                             Checked = false,
                             Latitude = 54.95937,
@@ -56,7 +56,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000004",
-                            ApiLocationId = 14,
+                            ApiLocationId = 200000014,
                             SubRegionName = "Hartlepool",
                             Checked = false,
                             Latitude = 54.68249,
@@ -65,7 +65,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000005",
-                            ApiLocationId = 15,
+                            ApiLocationId = 200000015,
                             SubRegionName = "Middlesbrough",
                             Checked = false,
                             Latitude = 54.57301,
@@ -74,7 +74,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000047",
-                            ApiLocationId = 16,
+                            ApiLocationId = 200000016,
                             SubRegionName = "Newcastle upon Tyne",
                             Checked = false,
                             Latitude = 54.97784,
@@ -83,7 +83,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000057",
-                            ApiLocationId = 17,
+                            ApiLocationId = 200000017,
                             SubRegionName = "North Tyneside",
                             Checked = false,
                             Latitude = 50.78061,
@@ -92,7 +92,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E08000021",
-                            ApiLocationId = 18,
+                            ApiLocationId = 200000018,
                             SubRegionName = "Northumberland",
                             Checked = false,
                             Latitude = 40.88925,
@@ -101,7 +101,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E08000022",
-                            ApiLocationId = 19,
+                            ApiLocationId = 200000019,
                             SubRegionName = "Redcar and Cleveland",
                             Checked = false,
                             Latitude = 54.60301,
@@ -110,7 +110,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E08000023",
-                            ApiLocationId = 20,
+                            ApiLocationId = 200000020,
                             SubRegionName = "South Tyneside",
                             Checked = false,
                             Latitude = 51.27034,
@@ -119,7 +119,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E08000024",
-                            ApiLocationId = 21,
+                            ApiLocationId = 200000021,
                             SubRegionName = "Stockton-on-Tees",
                             Checked = false,
                             Latitude = 54.56823,
@@ -128,7 +128,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E08000037",
-                            ApiLocationId = 22,
+                            ApiLocationId = 200000022,
                             SubRegionName = "Sunderland",
                             Checked = false,
                             Latitude = 54.90445,
@@ -139,7 +139,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                 new RegionItemModel
                 {
                     Id = "E12000002",
-                    ApiLocationId = 2,
+                    ApiLocationId = 200000002,
                     Checked = false,
                     RegionName = "North West",
                     Latitude = 53.789707,
@@ -149,7 +149,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000006",
-                            ApiLocationId = 23,
+                            ApiLocationId = 200000023,
                             SubRegionName = "Halton",
                             Checked = false,
                             Latitude = -32.31548,
@@ -158,7 +158,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000007",
-                            ApiLocationId = 24,
+                            ApiLocationId = 200000024,
                             SubRegionName = "Warrington",
                             Checked = false,
                             Latitude = 53.39266,
@@ -167,7 +167,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000008",
-                            ApiLocationId = 25,
+                            ApiLocationId = 200000025,
                             SubRegionName = "Blackburn with Darwen",
                             Checked = false,
                             Latitude = 53.7501,
@@ -176,7 +176,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000009",
-                            ApiLocationId = 26,
+                            ApiLocationId = 200000026,
                             SubRegionName = "Blackpool",
                             Checked = false,
                             Latitude = 53.81418,
@@ -185,7 +185,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000049",
-                            ApiLocationId = 27,
+                            ApiLocationId = 200000027,
                             SubRegionName = "Cheshire East",
                             Checked = false,
                             Latitude = 41.45423,
@@ -194,7 +194,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000050",
-                            ApiLocationId = 28,
+                            ApiLocationId = 200000028,
                             SubRegionName = "Cheshire West and Chester",
                             Checked = false,
                             Latitude = 53.21744,
@@ -203,7 +203,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E08000001",
-                            ApiLocationId = 29,
+                            ApiLocationId = 200000029,
                             SubRegionName = "Bolton",
                             Checked = false,
                             Latitude = 53.57846,
@@ -212,7 +212,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E08000002",
-                            ApiLocationId = 30,
+                            ApiLocationId = 200000030,
                             SubRegionName = "Bury",
                             Checked = false,
                             Latitude = 53.59346,
@@ -221,7 +221,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E08000003",
-                            ApiLocationId = 31,
+                            ApiLocationId = 200000031,
                             SubRegionName = "Manchester",
                             Checked = false,
                             Latitude = 53.48071,
@@ -230,7 +230,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E08000004",
-                            ApiLocationId = 32,
+                            ApiLocationId = 200000032,
                             SubRegionName = "Oldham",
                             Checked = false,
                             Latitude = 53.54125,
@@ -239,7 +239,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E08000005",
-                            ApiLocationId = 33,
+                            ApiLocationId = 200000033,
                             SubRegionName = "Rochdale",
                             Checked = false,
                             Latitude = 53.61635,
@@ -248,7 +248,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E08000006",
-                            ApiLocationId = 34,
+                            ApiLocationId = 200000034,
                             SubRegionName = "Salford",
                             Checked = false,
                             Latitude = 42.99748,
@@ -257,7 +257,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E08000007",
-                            ApiLocationId = 35,
+                            ApiLocationId = 200000035,
                             SubRegionName = "Stockport",
                             Checked = false,
                             Latitude = 53.40849,
@@ -266,7 +266,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E08000008",
-                            ApiLocationId = 36,
+                            ApiLocationId = 200000036,
                             SubRegionName = "Tameside",
                             Checked = false,
                             Latitude = 54.47409,
@@ -275,7 +275,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E08000009",
-                            ApiLocationId = 37,
+                            ApiLocationId = 200000037,
                             SubRegionName = "Trafford",
                             Checked = false,
                             Latitude = 33.82052,
@@ -284,7 +284,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E08000010",
-                            ApiLocationId = 38,
+                            ApiLocationId = 200000038,
                             SubRegionName = "Wigan",
                             Checked = false,
                             Latitude = 53.54427,
@@ -293,7 +293,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E08000011",
-                            ApiLocationId = 39,
+                            ApiLocationId = 200000039,
                             SubRegionName = "Knowsley",
                             Checked = false,
                             Latitude = -36.82613,
@@ -302,7 +302,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E08000012",
-                            ApiLocationId = 40,
+                            ApiLocationId = 200000040,
                             SubRegionName = "Liverpool",
                             Checked = false,
                             Latitude = 53.41078,
@@ -311,7 +311,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E08000013",
-                            ApiLocationId = 41,
+                            ApiLocationId = 200000041,
                             SubRegionName = "St Helens",
                             Checked = false,
                             Latitude = 53.45388,
@@ -320,7 +320,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E08000014",
-                            ApiLocationId = 42,
+                            ApiLocationId = 200000042,
                             SubRegionName = "Sefton",
                             Checked = false,
                             Latitude = -43.2486,
@@ -329,7 +329,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E08000015",
-                            ApiLocationId = 43,
+                            ApiLocationId = 200000043,
                             SubRegionName = "Wirral",
                             Checked = false,
                             Latitude = 53.39199,
@@ -338,7 +338,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E10000006",
-                            ApiLocationId = 44,
+                            ApiLocationId = 200000044,
                             SubRegionName = "Cumbria",
                             Checked = false,
                             Latitude = 19.64903,
@@ -347,7 +347,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E10000017",
-                            ApiLocationId = 45,
+                            ApiLocationId = 200000045,
                             SubRegionName = "Lancashire",
                             Checked = false,
                             Latitude = 53.54125,
@@ -358,7 +358,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                 new RegionItemModel
                 {
                     Id = "E12000003",
-                    ApiLocationId = 3,
+                    ApiLocationId = 200000003,
                     Checked = false,
                     RegionName = "Yorkshire and The Humber",
                     Latitude = 53.676289,
@@ -368,7 +368,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000010",
-                            ApiLocationId = 46,
+                            ApiLocationId = 200000046,
                             SubRegionName = "Kingston upon Hull",
                             Checked = false,
                             Latitude = 53.74434,
@@ -377,7 +377,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000011",
-                            ApiLocationId = 47,
+                            ApiLocationId = 200000047,
                             SubRegionName = "East Riding of Yorkshire",
                             Checked = false,
                             Latitude = 53.84292,
@@ -386,7 +386,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000012",
-                            ApiLocationId = 48,
+                            ApiLocationId = 200000048,
                             SubRegionName = "North East Lincolnshire",
                             Checked = false,
                             Latitude = 42.22473,
@@ -395,7 +395,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000013",
-                            ApiLocationId = 49,
+                            ApiLocationId = 200000049,
                             SubRegionName = "North Lincolnshire",
                             Checked = false,
                             Latitude = 40.57776,
@@ -404,7 +404,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000014",
-                            ApiLocationId = 50,
+                            ApiLocationId = 200000050,
                             SubRegionName = "York",
                             Checked = false,
                             Latitude = 40.71305,
@@ -413,7 +413,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E08000016",
-                            ApiLocationId = 51,
+                            ApiLocationId = 200000051,
                             SubRegionName = "Barnsley",
                             Checked = false,
                             Latitude = 53.55293,
@@ -422,7 +422,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E08000017",
-                            ApiLocationId = 52,
+                            ApiLocationId = 200000052,
                             SubRegionName = "Doncaster",
                             Checked = false,
                             Latitude = 53.52304,
@@ -431,7 +431,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E08000018",
-                            ApiLocationId = 53,
+                            ApiLocationId = 200000053,
                             SubRegionName = "Rotherham",
                             Checked = false,
                             Latitude = 53.4302,
@@ -440,7 +440,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E08000019",
-                            ApiLocationId = 54,
+                            ApiLocationId = 200000054,
                             SubRegionName = "Sheffield",
                             Checked = false,
                             Latitude = 53.38306,
@@ -449,7 +449,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E08000032",
-                            ApiLocationId = 55,
+                            ApiLocationId = 200000055,
                             SubRegionName = "Bradford",
                             Checked = false,
                             Latitude = 53.79385,
@@ -458,7 +458,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E08000033",
-                            ApiLocationId = 56,
+                            ApiLocationId = 200000056,
                             SubRegionName = "Calderdale",
                             Checked = false,
                             Latitude = 54.56555,
@@ -467,7 +467,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E08000034",
-                            ApiLocationId = 57,
+                            ApiLocationId = 200000057,
                             SubRegionName = "Kirklees",
                             Checked = false,
                             Latitude = 52.60206,
@@ -476,7 +476,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E08000035",
-                            ApiLocationId = 58,
+                            ApiLocationId = 200000058,
                             SubRegionName = "Leeds",
                             Checked = false,
                             Latitude = 53.79969,
@@ -485,7 +485,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E08000036",
-                            ApiLocationId = 59,
+                            ApiLocationId = 200000059,
                             SubRegionName = "Wakefield",
                             Checked = false,
                             Latitude = 53.68297,
@@ -494,7 +494,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E10000023",
-                            ApiLocationId = 60,
+                            ApiLocationId = 200000060,
                             SubRegionName = "North Yorkshire",
                             Checked = false,
                             Latitude = 53.95774,
@@ -505,7 +505,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                 new RegionItemModel
                 {
                     Id = "E12000004",
-                    ApiLocationId = 4,
+                    ApiLocationId = 200000004,
                     Checked = false,
                     RegionName = "East Midlands",
                     Latitude = 52.829372,
@@ -515,7 +515,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000015",
-                            ApiLocationId = 61,
+                            ApiLocationId = 200000061,
                             SubRegionName = "Derby",
                             Checked = false,
                             Latitude = 52.9219,
@@ -524,7 +524,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E10000007",
-                            ApiLocationId = 62,
+                            ApiLocationId = 200000062,
                             SubRegionName = "Derbyshire",
                             Checked = false,
                             Latitude = 52.9219,
@@ -533,7 +533,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000016",
-                            ApiLocationId = 63,
+                            ApiLocationId = 200000063,
                             SubRegionName = "Leicester",
                             Checked = false,
                             Latitude = 52.63486,
@@ -542,7 +542,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E10000018",
-                            ApiLocationId = 64,
+                            ApiLocationId = 200000064,
                             SubRegionName = "Leicestershire",
                             Checked = false,
                             Latitude = 52.63486,
@@ -551,7 +551,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E10000019",
-                            ApiLocationId = 65,
+                            ApiLocationId = 200000065,
                             SubRegionName = "Lincolnshire",
                             Checked = false,
                             Latitude = 42.19589,
@@ -560,7 +560,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E10000021",
-                            ApiLocationId = 66,
+                            ApiLocationId = 200000066,
                             SubRegionName = "Northamptonshire",
                             Checked = false,
                             Latitude = 52.23484,
@@ -569,7 +569,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000018",
-                            ApiLocationId = 67,
+                            ApiLocationId = 200000067,
                             SubRegionName = "Nottingham",
                             Checked = false,
                             Latitude = 52.95512,
@@ -578,7 +578,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E10000024",
-                            ApiLocationId = 68,
+                            ApiLocationId = 200000068,
                             SubRegionName = "Nottinghamshire",
                             Checked = false,
                             Latitude = 52.95512,
@@ -587,7 +587,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000017",
-                            ApiLocationId = 69,
+                            ApiLocationId = 200000069,
                             SubRegionName = "Rutland",
                             Checked = false,
                             Latitude = 43.61063,
@@ -598,7 +598,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                 new RegionItemModel
                 {
                     Id = "E12000005",
-                    ApiLocationId = 5,
+                    ApiLocationId = 200000005,
                     Checked = false,
                     RegionName = "West Midlands",
                     Latitude = 52.475075,
@@ -608,7 +608,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000019",
-                            ApiLocationId = 70,
+                            ApiLocationId = 200000070,
                             SubRegionName = "Herefordshire",
                             Checked = false,
                             Latitude = 38.77813,
@@ -617,7 +617,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000020",
-                            ApiLocationId = 71,
+                            ApiLocationId = 200000071,
                             SubRegionName = "Telford and Wrekin",
                             Checked = false,
                             Latitude = 52.67677,
@@ -626,7 +626,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000021",
-                            ApiLocationId = 72,
+                            ApiLocationId = 200000072,
                             SubRegionName = "Stoke-on-Trent",
                             Checked = false,
                             Latitude = 53.02578,
@@ -635,7 +635,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000051",
-                            ApiLocationId = 73,
+                            ApiLocationId = 200000073,
                             SubRegionName = "Shropshire",
                             Checked = false,
                             Latitude = 52.67587,
@@ -644,7 +644,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E08000025",
-                            ApiLocationId = 74,
+                            ApiLocationId = 200000074,
                             SubRegionName = "Birmingham",
                             Checked = false,
                             Latitude = 52.4829,
@@ -653,7 +653,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E08000026",
-                            ApiLocationId = 75,
+                            ApiLocationId = 200000075,
                             SubRegionName = "Coventry",
                             Checked = false,
                             Latitude = 52.40631,
@@ -662,7 +662,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E08000027",
-                            ApiLocationId = 76,
+                            ApiLocationId = 200000076,
                             SubRegionName = "Dudley",
                             Checked = false,
                             Latitude = 52.50867,
@@ -671,7 +671,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E08000028",
-                            ApiLocationId = 77,
+                            ApiLocationId = 200000077,
                             SubRegionName = "Sandwell",
                             Checked = false,
                             Latitude = 52.50636,
@@ -680,7 +680,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E08000029",
-                            ApiLocationId = 78,
+                            ApiLocationId = 200000078,
                             SubRegionName = "Solihull",
                             Checked = false,
                             Latitude = 52.41471,
@@ -689,7 +689,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E08000030",
-                            ApiLocationId = 79,
+                            ApiLocationId = 200000079,
                             SubRegionName = "Walsall",
                             Checked = false,
                             Latitude = 52.58595,
@@ -698,7 +698,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E08000031",
-                            ApiLocationId = 80,
+                            ApiLocationId = 200000080,
                             SubRegionName = "Wolverhampton",
                             Checked = false,
                             Latitude = 52.58533,
@@ -707,7 +707,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E10000028",
-                            ApiLocationId = 81,
+                            ApiLocationId = 200000081,
                             SubRegionName = "Staffordshire",
                             Checked = false,
                             Latitude = -37.74601,
@@ -716,7 +716,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E10000031",
-                            ApiLocationId = 82,
+                            ApiLocationId = 200000082,
                             SubRegionName = "Warwickshire",
                             Checked = false,
                             Latitude = 52.28194,
@@ -725,7 +725,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E10000034",
-                            ApiLocationId = 83,
+                            ApiLocationId = 200000083,
                             SubRegionName = "Worcestershire",
                             Checked = false,
                             Latitude = 52.19204,
@@ -736,7 +736,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                 new RegionItemModel
                 {
                     Id = "E12000006",
-                    ApiLocationId = 6,
+                    ApiLocationId = 200000006,
                     Checked = false,
                     RegionName = "East of England",
                     Latitude = 52.543724,
@@ -746,7 +746,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000055",
-                            ApiLocationId = 84,
+                            ApiLocationId = 200000084,
                             SubRegionName = "Bedford",
                             Checked = false,
                             Latitude = 52.13571,
@@ -755,7 +755,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E10000003",
-                            ApiLocationId = 85,
+                            ApiLocationId = 200000085,
                             SubRegionName = "Cambridgeshire",
                             Checked = false,
                             Latitude = 52.57339,
@@ -764,7 +764,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000056",
-                            ApiLocationId = 86,
+                            ApiLocationId = 200000086,
                             SubRegionName = "Central Bedfordshire",
                             Checked = false,
                             Latitude = 52.00268,
@@ -773,7 +773,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E10000012",
-                            ApiLocationId = 87,
+                            ApiLocationId = 200000087,
                             SubRegionName = "Essex",
                             Checked = false,
                             Latitude = 42.17247,
@@ -782,7 +782,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E10000015",
-                            ApiLocationId = 88,
+                            ApiLocationId = 200000088,
                             SubRegionName = "Hertfordshire",
                             Checked = false,
                             Latitude = 41.30676,
@@ -791,7 +791,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000032",
-                            ApiLocationId = 89,
+                            ApiLocationId = 200000089,
                             SubRegionName = "Luton",
                             Checked = false,
                             Latitude = 51.87965,
@@ -800,7 +800,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E10000020",
-                            ApiLocationId = 90,
+                            ApiLocationId = 200000090,
                             SubRegionName = "Norfolk",
                             Checked = false,
                             Latitude = -29.04393,
@@ -809,7 +809,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000031",
-                            ApiLocationId = 91,
+                            ApiLocationId = 200000091,
                             SubRegionName = "Peterborough",
                             Checked = false,
                             Latitude = 52.57339,
@@ -818,7 +818,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000033",
-                            ApiLocationId = 92,
+                            ApiLocationId = 200000092,
                             SubRegionName = "Southend-on-Sea",
                             Checked = false,
                             Latitude = 51.54041,
@@ -827,7 +827,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E10000029",
-                            ApiLocationId = 93,
+                            ApiLocationId = 200000093,
                             SubRegionName = "Suffolk",
                             Checked = false,
                             Latitude = 36.72819,
@@ -836,7 +836,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000034",
-                            ApiLocationId = 90,
+                            ApiLocationId = 200000090,
                             SubRegionName = "Thurrock",
                             Checked = false,
                             Latitude = 51.48201,
@@ -847,7 +847,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                 new RegionItemModel
                 {
                     Id = "E12000007",
-                    ApiLocationId = 7,
+                    ApiLocationId = 200000007,
                     Checked = false,
                     RegionName = "London",
                     Latitude = 51.507351,
@@ -857,7 +857,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E09000001",
-                            ApiLocationId = 91,
+                            ApiLocationId = 200000091,
                             SubRegionName = "City of London",
                             Checked = false,
                             Latitude = 51.51333,
@@ -866,7 +866,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E09000002",
-                            ApiLocationId = 92,
+                            ApiLocationId = 200000092,
                             SubRegionName = "Barking and Dagenham",
                             Checked = false,
                             Latitude = 51.53628,
@@ -875,7 +875,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E09000003",
-                            ApiLocationId = 93,
+                            ApiLocationId = 200000093,
                             SubRegionName = "Barnet",
                             Checked = false,
                             Latitude = 51.65293,
@@ -884,7 +884,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E09000004",
-                            ApiLocationId = 94,
+                            ApiLocationId = 200000094,
                             SubRegionName = "Bexley",
                             Checked = false,
                             Latitude = 51.44135,
@@ -893,7 +893,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E09000005",
-                            ApiLocationId = 95,
+                            ApiLocationId = 200000095,
                             SubRegionName = "Brent",
                             Checked = false,
                             Latitude = 30.46826,
@@ -902,7 +902,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E09000006",
-                            ApiLocationId = 96,
+                            ApiLocationId = 200000096,
                             SubRegionName = "Bromley",
                             Checked = false,
                             Latitude = 51.40568,
@@ -911,7 +911,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E09000007",
-                            ApiLocationId = 97,
+                            ApiLocationId = 200000097,
                             SubRegionName = "Camden",
                             Checked = false,
                             Latitude = 39.94521,
@@ -920,7 +920,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E09000008",
-                            ApiLocationId = 98,
+                            ApiLocationId = 200000098,
                             SubRegionName = "Croydon",
                             Checked = false,
                             Latitude = 51.37236,
@@ -929,7 +929,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E09000009",
-                            ApiLocationId = 99,
+                            ApiLocationId = 200000099,
                             SubRegionName = "Ealing",
                             Checked = false,
                             Latitude = -44.0452,
@@ -938,7 +938,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E09000010",
-                            ApiLocationId = 100,
+                            ApiLocationId = 200000100,
                             SubRegionName = "Enfield",
                             Checked = false,
                             Latitude = 51.6521,
@@ -947,7 +947,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E09000011",
-                            ApiLocationId = 101,
+                            ApiLocationId = 200000101,
                             SubRegionName = "Greenwich",
                             Checked = false,
                             Latitude = 41.02653,
@@ -956,7 +956,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E09000012",
-                            ApiLocationId = 102,
+                            ApiLocationId = 200000102,
                             SubRegionName = "Hackney",
                             Checked = false,
                             Latitude = -34.91217,
@@ -965,7 +965,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E09000013",
-                            ApiLocationId = 103,
+                            ApiLocationId = 200000103,
                             SubRegionName = "Hammersmith and Fulham",
                             Checked = false,
                             Latitude = 51.47736,
@@ -974,7 +974,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E09000014",
-                            ApiLocationId = 104,
+                            ApiLocationId = 200000104,
                             SubRegionName = "Haringey",
                             Checked = false,
                             Latitude = 48.91493,
@@ -983,7 +983,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E09000015",
-                            ApiLocationId = 105,
+                            ApiLocationId = 200000105,
                             SubRegionName = "Harrow",
                             Checked = false,
                             Latitude = 51.57881,
@@ -992,7 +992,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E09000016",
-                            ApiLocationId = 106,
+                            ApiLocationId = 200000106,
                             SubRegionName = "Havering",
                             Checked = false,
                             Latitude = 51.61583,
@@ -1001,7 +1001,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E09000017",
-                            ApiLocationId = 107,
+                            ApiLocationId = 200000107,
                             SubRegionName = "Hillingdon",
                             Checked = false,
                             Latitude = 51.53358,
@@ -1010,7 +1010,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E09000018",
-                            ApiLocationId = 108,
+                            ApiLocationId = 200000108,
                             SubRegionName = "Hounslow",
                             Checked = false,
                             Latitude = 51.46759,
@@ -1019,7 +1019,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E09000019",
-                            ApiLocationId = 109,
+                            ApiLocationId = 200000109,
                             SubRegionName = "Islington",
                             Checked = false,
                             Latitude = -41.50998,
@@ -1028,7 +1028,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E09000020",
-                            ApiLocationId = 110,
+                            ApiLocationId = 200000110,
                             SubRegionName = "Kensington and Chelsea",
                             Checked = false,
                             Latitude = 40.69744,
@@ -1037,7 +1037,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E09000021",
-                            ApiLocationId = 111,
+                            ApiLocationId = 200000111,
                             SubRegionName = "Kingston upon Thames",
                             Checked = false,
                             Latitude = 51.41232,
@@ -1046,7 +1046,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E09000022",
-                            ApiLocationId = 112,
+                            ApiLocationId = 200000112,
                             SubRegionName = "Lambeth",
                             Checked = false,
                             Latitude = 42.90688,
@@ -1055,7 +1055,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E09000023",
-                            ApiLocationId = 113,
+                            ApiLocationId = 200000113,
                             SubRegionName = "Lewisham",
                             Checked = false,
                             Latitude = -42.83335,
@@ -1064,7 +1064,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E09000024",
-                            ApiLocationId = 114,
+                            ApiLocationId = 200000114,
                             SubRegionName = "Merton",
                             Checked = false,
                             Latitude = 43.14135,
@@ -1073,7 +1073,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E09000025",
-                            ApiLocationId = 115,
+                            ApiLocationId = 200000115,
                             SubRegionName = "Newham",
                             Checked = false,
                             Latitude = -37.31047,
@@ -1082,7 +1082,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E09000026",
-                            ApiLocationId = 116,
+                            ApiLocationId = 200000116,
                             SubRegionName = "Redbridge",
                             Checked = false,
                             Latitude = 46.40087,
@@ -1091,7 +1091,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E09000027",
-                            ApiLocationId = 117,
+                            ApiLocationId = 200000117,
                             SubRegionName = "Richmond upon Thames",
                             Checked = false,
                             Latitude = 51.41232,
@@ -1100,7 +1100,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E09000028",
-                            ApiLocationId = 118,
+                            ApiLocationId = 200000118,
                             SubRegionName = "Southwark",
                             Checked = false,
                             Latitude = 51.50172,
@@ -1109,7 +1109,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E09000029",
-                            ApiLocationId = 119,
+                            ApiLocationId = 200000119,
                             SubRegionName = "Sutton",
                             Checked = false,
                             Latitude = 51.36045,
@@ -1118,7 +1118,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E09000030",
-                            ApiLocationId = 120,
+                            ApiLocationId = 200000120,
                             SubRegionName = "Tower Hamlets",
                             Checked = false,
                             Latitude = 51.12929,
@@ -1127,7 +1127,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E09000031",
-                            ApiLocationId = 121,
+                            ApiLocationId = 200000121,
                             SubRegionName = "Waltham Forest",
                             Checked = false,
                             Latitude = -34.77444,
@@ -1136,7 +1136,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E09000032",
-                            ApiLocationId = 122,
+                            ApiLocationId = 200000122,
                             SubRegionName = "Wandsworth",
                             Checked = false,
                             Latitude = -30.06261,
@@ -1145,7 +1145,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E09000033",
-                            ApiLocationId = 123,
+                            ApiLocationId = 200000123,
                             SubRegionName = "Westminster",
                             Checked = false,
                             Latitude = 34.66488,
@@ -1156,7 +1156,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                 new RegionItemModel
                 {
                     Id = "E12000008",
-                    ApiLocationId = 8,
+                    ApiLocationId = 200000008,
                     Checked = false,
                     RegionName = "South East",
                     Latitude = 52.355518,
@@ -1166,7 +1166,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000035",
-                            ApiLocationId = 124,
+                            ApiLocationId = 200000124,
                             SubRegionName = "Medway",
                             Checked = false,
                             Latitude = 42.14028,
@@ -1175,7 +1175,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000036",
-                            ApiLocationId = 125,
+                            ApiLocationId = 200000125,
                             SubRegionName = "Bracknell Forest",
                             Checked = false,
                             Latitude = 28.80676,
@@ -1184,7 +1184,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000037",
-                            ApiLocationId = 126,
+                            ApiLocationId = 200000126,
                             SubRegionName = "West Berkshire",
                             Checked = false,
                             Latitude = 44.98942,
@@ -1193,7 +1193,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000038",
-                            ApiLocationId = 127,
+                            ApiLocationId = 200000127,
                             SubRegionName = "Reading",
                             Checked = false,
                             Latitude = 51.45504,
@@ -1202,7 +1202,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000039",
-                            ApiLocationId = 128,
+                            ApiLocationId = 200000128,
                             SubRegionName = "Slough",
                             Checked = false,
                             Latitude = 51.50935,
@@ -1211,7 +1211,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000040",
-                            ApiLocationId = 129,
+                            ApiLocationId = 200000129,
                             SubRegionName = "Windsor and Maidenhead",
                             Checked = false,
                             Latitude = 51.48467,
@@ -1220,7 +1220,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000041",
-                            ApiLocationId = 130,
+                            ApiLocationId = 200000130,
                             SubRegionName = "Wokingham",
                             Checked = false,
                             Latitude = 51.41097,
@@ -1229,7 +1229,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000042",
-                            ApiLocationId = 131,
+                            ApiLocationId = 200000131,
                             SubRegionName = "Milton Keynes",
                             Checked = false,
                             Latitude = 52.04144,
@@ -1238,7 +1238,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000043",
-                            ApiLocationId = 132,
+                            ApiLocationId = 200000132,
                             SubRegionName = "Brighton and Hove",
                             Checked = false,
                             Latitude = 50.83022,
@@ -1247,7 +1247,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000044",
-                            ApiLocationId = 133,
+                            ApiLocationId = 200000133,
                             SubRegionName = "Portsmouth",
                             Checked = false,
                             Latitude = 50.79891,
@@ -1256,7 +1256,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000045",
-                            ApiLocationId = 134,
+                            ApiLocationId = 200000134,
                             SubRegionName = "Southampton",
                             Checked = false,
                             Latitude = 50.90497,
@@ -1265,7 +1265,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000046",
-                            ApiLocationId = 135,
+                            ApiLocationId = 200000135,
                             SubRegionName = "Isle of Wight",
                             Checked = false,
                             Latitude = 37.00561,
@@ -1274,7 +1274,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E10000002",
-                            ApiLocationId = 136,
+                            ApiLocationId = 200000136,
                             SubRegionName = "Buckinghamshire",
                             Checked = false,
                             Latitude = 52.04144,
@@ -1283,7 +1283,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E10000011",
-                            ApiLocationId = 137,
+                            ApiLocationId = 200000137,
                             SubRegionName = "East Sussex",
                             Checked = false,
                             Latitude = 50.81952,
@@ -1292,7 +1292,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E10000014",
-                            ApiLocationId = 138,
+                            ApiLocationId = 200000138,
                             SubRegionName = "Hampshire",
                             Checked = false,
                             Latitude = 42.09691,
@@ -1301,7 +1301,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E10000016",
-                            ApiLocationId = 139,
+                            ApiLocationId = 200000139,
                             SubRegionName = "Kent",
                             Checked = false,
                             Latitude = 42.40135,
@@ -1310,7 +1310,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E10000025",
-                            ApiLocationId = 140,
+                            ApiLocationId = 200000140,
                             SubRegionName = "Oxfordshire",
                             Checked = false,
                             Latitude = 51.75374,
@@ -1319,7 +1319,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E10000030",
-                            ApiLocationId = 141,
+                            ApiLocationId = 200000141,
                             SubRegionName = "Surrey",
                             Checked = false,
                             Latitude = 49.1046,
@@ -1328,7 +1328,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E10000032",
-                            ApiLocationId = 142,
+                            ApiLocationId = 200000142,
                             SubRegionName = "West Sussex",
                             Checked = false,
                             Latitude = 50.83664,
@@ -1339,7 +1339,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                 new RegionItemModel
                 {
                     Id = "E12000009",
-                    ApiLocationId = 9,
+                    ApiLocationId = 200000009,
                     Checked = false,
                     RegionName = "South West",
                     Latitude = 50.777214,
@@ -1349,7 +1349,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000022",
-                            ApiLocationId = 143,
+                            ApiLocationId = 200000143,
                             SubRegionName = "Bath and North East Somerset",
                             Checked = false,
                             Latitude = 51.34762,
@@ -1358,7 +1358,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000023",
-                            ApiLocationId = 144,
+                            ApiLocationId = 200000144,
                             SubRegionName = "Bristol",
                             Checked = false,
                             Latitude = 33.72628,
@@ -1367,7 +1367,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000024",
-                            ApiLocationId = 145,
+                            ApiLocationId = 200000145,
                             SubRegionName = "North Somerset",
                             Checked = false,
                             Latitude = 33.44696,
@@ -1376,7 +1376,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000025",
-                            ApiLocationId = 146,
+                            ApiLocationId = 200000146,
                             SubRegionName = "South Gloucestershire",
                             Checked = false,
                             Latitude = 51.34762,
@@ -1385,7 +1385,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000026",
-                            ApiLocationId = 147,
+                            ApiLocationId = 200000147,
                             SubRegionName = "Plymouth",
                             Checked = false,
                             Latitude = 50.37038,
@@ -1394,7 +1394,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000027",
-                            ApiLocationId = 148,
+                            ApiLocationId = 200000148,
                             SubRegionName = "Torbay",
                             Checked = false,
                             Latitude = 47.65778,
@@ -1403,7 +1403,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000028",
-                            ApiLocationId = 148,
+                            ApiLocationId = 200000148,
                             SubRegionName = "Bournemouth",
                             Checked = false,
                             Latitude = 50.72168,
@@ -1412,7 +1412,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000029",
-                            ApiLocationId = 149,
+                            ApiLocationId = 200000149,
                             SubRegionName = "Poole",
                             Checked = false,
                             Latitude = 50.71939,
@@ -1421,7 +1421,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000030",
-                            ApiLocationId = 150,
+                            ApiLocationId = 200000150,
                             SubRegionName = "Swindon",
                             Checked = false,
                             Latitude = 51.55842,
@@ -1430,7 +1430,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000052",
-                            ApiLocationId = 151,
+                            ApiLocationId = 200000151,
                             SubRegionName = "Cornwall",
                             Checked = false,
                             Latitude = 45.01826,
@@ -1439,7 +1439,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000053",
-                            ApiLocationId = 152,
+                            ApiLocationId = 200000152,
                             SubRegionName = "Isles of Scilly",
                             Checked = false,
                             Latitude = 49.9146,
@@ -1448,7 +1448,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E06000054",
-                            ApiLocationId = 153,
+                            ApiLocationId = 200000153,
                             SubRegionName = "Wiltshire",
                             Checked = false,
                             Latitude = -40.83647,
@@ -1457,7 +1457,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E10000008",
-                            ApiLocationId = 154,
+                            ApiLocationId = 200000154,
                             SubRegionName = "Devon",
                             Checked = false,
                             Latitude = 53.36011,
@@ -1466,7 +1466,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E10000009",
-                            ApiLocationId = 155,
+                            ApiLocationId = 200000155,
                             SubRegionName = "Dorset",
                             Checked = false,
                             Latitude = 43.25522,
@@ -1475,7 +1475,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E10000013",
-                            ApiLocationId = 156,
+                            ApiLocationId = 200000156,
                             SubRegionName = "Gloucestershire",
                             Checked = false,
                             Latitude = 51.86674,
@@ -1484,7 +1484,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                         new SubRegionItemModel
                         {
                             Id = "E10000027",
-                            ApiLocationId = 157,
+                            ApiLocationId = 200000157,
                             SubRegionName = "Somerset",
                             Checked = false,
                             Latitude = 37.09208,
@@ -1494,7 +1494,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
                 }
             }; 
         }
-
+        
         public SubRegionItemModel GetSubRegionItemByRegionCode(string regionCode)
         {
             foreach (var regionItemModel in RegionItems)
