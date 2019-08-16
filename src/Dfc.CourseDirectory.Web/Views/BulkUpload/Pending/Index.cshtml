@@ -1,0 +1,32 @@
+﻿@using Microsoft.AspNetCore.Authorization;
+@using Microsoft.AspNetCore.Identity
+@using Dfc.CourseDirectory.Web.Areas.Identity.Data;
+@using Dfc.CourseDirectory.Models.Enums
+@model Dfc.CourseDirectory.Web.ViewModels.BulkUpload.PublishCompleteViewModel
+
+@{
+    Layout = "_Layout_Your_Courses";
+}
+
+
+<div class="cd-info-summary" role="alert" tabindex="-1" data-module="info-summary">
+    <h2 class="cd-info-summary__title">
+        Bulk upload processing
+    </h2>
+    <div class="cd-info-summary__body">
+
+        <span style="color:black">
+            Your file has been uploaded but processing is still in progress.<br>Please check your dashboard for the latest status.
+
+
+        </span>
+    </div>
+</div>
+
+
+
+<div class="govuk-form-group">
+    @Html.ActionLink("Back to the dashboard", "Index", "Home", new { }, new { @class = "govuk-link" })
+</div>
+
+
