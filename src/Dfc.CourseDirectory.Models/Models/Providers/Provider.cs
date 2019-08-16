@@ -51,10 +51,10 @@ namespace Dfc.CourseDirectory.Models.Models.Providers
     {
         Undefined = 0,
         [Description("F.E.")]
-        Fe = 1,
+        FE = 1,
         [Description("Apprenticeships")]
         Apprenticeship = 2,
         [Description("Both")]
-        Both = Fe | Apprenticeship
+        Both = FE | Apprenticeship
     }
 }
