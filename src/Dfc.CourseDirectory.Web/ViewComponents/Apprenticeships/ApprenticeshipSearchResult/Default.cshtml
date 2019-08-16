@@ -34,8 +34,6 @@ else
     }
     else
     {
-
-
         <div class="cd-apprenticeships-results hide govuk-body visible">
             <div class="govuk-!-margin-bottom-4">
                 <span>Found <strong>@Model.Items.Count()</strong> results for <strong> @Model.SearchTerm</strong></span>
@@ -52,7 +50,7 @@ else
                                 <span class="govuk-!-margin-left-3 govuk-tag">Framework</span>
                             }
                         </h2>
-                        
+
                         @if (apprenticeship.OtherBodyApprovalRequired == "Y")
                         {
                             <span class="govuk-hint">
@@ -67,21 +65,33 @@ else
                         {
                             <p class="govuk-body">Level: <span class="govuk-!-font-weight-bold">@apprenticeship.NotionalNVQLevelv2</span></p>
                         }
-                        <p class="govuk-body">
-                            <a class="govuk-link" style="display:inline-flex"
-                               asp-controller="Apprenticeships"
-                               asp-action="Details"
-                               asp-route-apprenticeshiptitle="@apprenticeship.ApprenticeshipTitle"
-                               asp-route-id="@apprenticeship.id"
-                               asp-route-progtype="@apprenticeship.ProgType"
-                               asp-route-standardcode="@apprenticeship.StandardCode"
-                               asp-route-frameworkcode="@apprenticeship.FrameworkCode"
-                               asp-route-pathwaycode="@apprenticeship.PathwayCode"
-                               asp-route-version="@apprenticeship.Version"
-                               asp-route-NotionalNVQLevelv2="@apprenticeship.NotionalNVQLevelv2"
-                               asp-route-Mode="@ApprenticeshipMode.Add"
-                               asp-route-ApprenticeshipType="@apprenticeship.ApprenticeshipType">Choose this apprenticeship</a>
-                        </p>
+                        @{
+                            if (apprenticeship.AlreadyCreated)
+                            {
+                                <p class="govuk-body">
+                                    <a class="govuk-link already-added" href="#" style="display:inline-flex">Choose this apprenticeship</a>
+                                </p>
+                            }
+                            else
+                            {
+                                <p class="govuk-body">
+                                    <a class="govuk-link" style="display:inline-flex"
+                                       asp-controller="Apprenticeships"
+                                       asp-action="Details"
+                                       asp-route-apprenticeshiptitle="@apprenticeship.ApprenticeshipTitle"
+                                       asp-route-id="@apprenticeship.id"
+                                       asp-route-progtype="@apprenticeship.ProgType"
+                                       asp-route-standardcode="@apprenticeship.StandardCode"
+                                       asp-route-frameworkcode="@apprenticeship.FrameworkCode"
+                                       asp-route-pathwaycode="@apprenticeship.PathwayCode"
+                                       asp-route-version="@apprenticeship.Version"
+                                       asp-route-NotionalNVQLevelv2="@apprenticeship.NotionalNVQLevelv2"
+                                       asp-route-Mode="@ApprenticeshipMode.Add"
+                                       asp-route-ApprenticeshipType="@apprenticeship.ApprenticeshipType">Choose this apprenticeship</a>
+                                </p>
+                            }
+                        }
+
                     </div>
                 </div>
 
@@ -92,11 +102,25 @@ else
     }
 
 }
-
 <script>
     (function ($) {
         $(function () {
+            var $links = $(".govuk-link");
+            var $errorSummary = $("#errorsummary").govUkErrorSummary();
 
+            $links.on("click", function (event) {
+                if (this.classList.contains("already-added")) {
+                    $errorSummary.govUkErrorSummary("show");
+                    $("html, body").animate({
+                        scrollTop: $errorSummary.offset().top
+                    }, 600);
+                    $errorSummary.focus();
+                }
+                else {
+                    $errorSummary.govUkErrorSummary("hide");
+                }
+
+            });
 
         });
     })(jQuery);

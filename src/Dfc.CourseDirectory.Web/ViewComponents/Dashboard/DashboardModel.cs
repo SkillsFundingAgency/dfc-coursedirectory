@@ -9,6 +9,9 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
     public class DashboardModel
     {
         public int PublishedCourseCount { get; set; }
+
+        public int PublishedApprenticeshipsCount { get; set; }
+
         public int VenueCount { get; set; }
 
         public IEnumerable<string> ValidationMessages { get; set; }

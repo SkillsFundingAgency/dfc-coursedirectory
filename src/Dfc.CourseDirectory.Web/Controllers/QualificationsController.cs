@@ -77,32 +77,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     .Select(c => new CoursesForQualificationAndCountViewModel
                     {
                         QualificationType = c.QualType,
-                        //Course = c.Value.FirstOrDefault(),
-                        // Courses = c.Value,
+
                         CourseRunCount = c.Value.SelectMany(d => d.Value.SelectMany(g => g.CourseRuns)).Count(),
-                        //CourseRuns = c.Value.FirstOrDefault()?.CourseRuns
-                        //CourseRuns =  c.Value.SelectMany(d => d.CourseRuns)
+
                     }).ToList();
 
-                //var courseRunTotal = 0;
-                //foreach (var a in coursesByUKPRN.Value)
-                //{
-                //    foreach (var b in a.Value)
-                //    {
-                //        foreach (var c in b.Value)
-                //        {
-                //            courseRunTotal += c.CourseRuns.Count();
-                //            qualificationTypes.Add(c.QualificationType);
-
-                //            qualification.CourseRunCount = courseRunTotal.ToString();
-                //            qualification.QualificationTitle = c.QualificationType;
-
-                //            qualificationsList.Add(qualification);
-                //        }
-                //    }
-                //}
-
-                //qualificationTypes = qualificationTypes.Distinct().ToList();
 
                 return View(coursesForQualifcationsWithCourseRunsCount);
             }
@@ -111,39 +90,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         }
 
-        //public async Task<IActionResult> Courses(string qualificationType, Guid? courseId, Guid? courseRunId, CourseMode courseMode)
-        //{
-        //    IActionResult view = await GetCoursesViewModelAsync("", "", "", "", null);
-        //    CoursesViewModel vm = (CoursesViewModel)(((ViewResult)view).Model);
+        [Authorize]
+        public IActionResult LandingOptions()
+        {
+            return View("../Courses/LandingOptions/Index",new CoursesLandingViewModel());
+        }
 
-        //    if (courseId.HasValue)
-        //    {
-        //        ViewBag.CourseId = courseId.Value;
-        //    }
-
-        //    if (courseRunId.HasValue)
-        //    {
-        //        ViewBag.CourseRunId = courseRunId.Value;
-        //    }
-
-        //    ViewBag.CourseMode = courseMode;
-
-
-        //    IEnumerable<CoursesForQualificationAndCountViewModel> coursesForQualifcationsWithCourseRunsCount = vm.Courses.Value.FirstOrDefault(o => String.Equals(o.QualType, qualificationType, StringComparison.CurrentCultureIgnoreCase))
-        //       ?.Value
-        //        .Select(c => new CoursesForQualificationAndCountViewModel
-        //        {
-        //            QualificationType = qualificationType,
-        //            //Course = c.Value.FirstOrDefault(),
-        //            Courses = c.Value,
-        //            //CourseRunCount = c.Value.SelectMany(d => d.CourseRuns).Count(),
-        //            //CourseRuns = c.Value.FirstOrDefault()?.CourseRuns
-        //            //CourseRuns =  c.Value.SelectMany(d => d.CourseRuns)
-        //        }).ToList();
-
-
-        //    return View("Courses", coursesForQualifcationsWithCourseRunsCount);
-        //}
 
         [Authorize]
         private async Task<IActionResult> GetCoursesViewModelAsync(string status, string learnAimRef,

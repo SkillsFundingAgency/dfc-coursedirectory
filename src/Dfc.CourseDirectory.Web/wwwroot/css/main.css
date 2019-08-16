@@ -6551,6 +6551,10 @@ ul.sort-list {
   transition: max-height 0.2s ease-out;
 }
 
+.cd-right {
+  float: right;
+}
+
 .link--button {
   border: none;
   color: #005ea5;
@@ -6661,7 +6665,7 @@ ul.sort-list {
 }
 
 .sidebar .widget {
-  border-top: 5px solid #005ea5;
+  border-top: 5px solid #28a197;
   background-color: #f8f8f8;
   padding-left: 1rem;
 }
@@ -6979,7 +6983,7 @@ select:disabled {
 }
 
 .govuk-related-items {
-  border-top: 10px solid #005ea5;
+  border-top: 10px solid #28a197;
   padding: 20px;
   background-color: #f8f8f8;
 }
@@ -7131,7 +7135,7 @@ select:disabled {
 }
 
 .cd-subHead {
-  background-color: #005ea5;
+  background-color: #28a197;
   margin-top: -10px;
   color: white;
   font-family: nta,Arial,sans-serif;
@@ -7370,12 +7374,100 @@ select:disabled {
   font-weight: 900;
 }
 
-.govuk-header__container {
-  border-bottom: none !important;
+/*.govuk-header__container {
+    border-bottom: none !important;
 }
 
 .govuk-header__content {
-  margin-bottom: 10px;
+    margin-bottom: 10px;
+}
+
+.cd-header-blue {
+    background-color: #fff;
+    width: 100%;
+    height: auto;
+
+    .row {
+        height: auto;
+        padding: 0 10px 10px 10px;
+        font-size: 20px;
+        background-color: #005ea5;
+
+        div {
+            padding-top: 10px;
+        }
+
+        .right {
+            text-align: right;
+        }
+
+        a {
+            color: #fff !important;
+            margin-left: 20px;
+        }
+    }
+}
+
+.cd-header-menu {
+    background-color: #fff;
+    width: 100%;
+    height: auto;
+
+    .row {
+        height: auto;
+        padding: 0 10px 10px 10px;
+        font-size: 20px;
+        text-align: right;
+        border-bottom: solid 1px #4A4A4A;
+
+        a {
+            color: #4A4A4A !important;
+            text-decoration: none;
+            margin-left: 20px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    }
+}
+
+@media only screen and (max-width: 640px) {
+
+    .cd-header-blue {
+        .row {
+            .right {
+                text-align: left;
+            }
+        }
+    }
+
+    .cd-header-menu {
+
+        .row {
+            text-align: left;
+
+            a {
+                margin-right: 20px;
+                margin-left: 0;
+            }
+        }
+    }
+}*/
+.govuk-header__container.cd-fullwidth-container {
+  margin-bottom: -10px;
+  border-bottom: 10px solid #28a197;
+}
+
+.cd-header--content {
+  width: 100%;
+  padding-left: 0;
+}
+
+.cd-header--link {
+  color: #fff;
 }
 
 .cd-header-blue {
@@ -7583,6 +7675,35 @@ select:disabled {
   font-weight: 600;
 }
 
+.sortable th {
+  color: #005ea5;
+  cursor: pointer;
+  position: relative;
+}
+
+.cd-migration-panel {
+  background-color: #f8f8f8;
+  border-left: 5px solid #28a197;
+  padding: .5rem 1rem;
+}
+
+.cd-migration-panel__full {
+  background-color: #005ea5;
+  color: white;
+  padding: 10px;
+}
+
+.cd-migration-panel__title {
+  font-size: 1.1em;
+  font-weight: 400;
+  margin: 0;
+}
+
+.cd-migration-panel__number {
+  font-size: 1.4em;
+  font-weight: 600;
+}
+
 .cd-status-panel {
   background-color: #dee0e2;
   display: flex;
@@ -7594,14 +7715,55 @@ select:disabled {
   flex-direction: column;
 }
 
+.cd-status-panel.slim a {
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+.cd-status-panel.border-left-red {
+  border-left: 4px solid red;
+}
+
 .cd-status-panel.blue {
   text-align: left;
-  background-color: #005ea5;
+  background-color: #28a197;
   color: white;
 }
 
 .cd-status-panel.blue h2, .cd-status-panel.blue a, .cd-status-panel.blue span {
   color: white;
+}
+
+.cd-status-panel.teal {
+  text-align: left;
+  background-color: #28a197;
+  color: white;
+  padding: 1em 1em 0 1em;
+}
+
+.cd-status-panel.teal h2, .cd-status-panel.teal a, .cd-status-panel.teal span {
+  color: white;
+}
+
+.cd-status-panel.teal--border {
+  text-align: left;
+  background-color: #f8f8f8;
+  border-left: 5px solid #005ea5;
+  color: black;
+  padding: 1em 1em 0 1em;
+}
+
+.cd-status-panel.teal--border .helpdesk__link {
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+.cd-status-panel.teal--border .helpdesk__link:hover {
+  color: blue;
+}
+
+.cd-status-panel.teal--border h2, .cd-status-panel.teal--border a, .cd-status-panel.teal--border span {
+  color: black;
 }
 
 .cd-status-panel.green {
@@ -7635,8 +7797,30 @@ select:disabled {
   margin-bottom: 2em;
 }
 
+.wrapper {
+  display: flex;
+}
+
+.wrapper .one, .wrapper .two {
+  flex-direction: row;
+}
+
+.wrapper .one {
+  width: 80%;
+}
+
 .div--link {
   display: block;
+}
+
+.cd-homepage__list {
+  padding-top: 1.5em;
+  margin-bottom: 1.5em;
+}
+
+.cd-homepage__list--item a {
+  font-size: 1em;
+  font-weight: 400;
 }
 
 .cd-activity-item {
@@ -7676,14 +7860,19 @@ select:disabled {
 .sidebar .widget.white {
   background-color: white;
   padding: 1em;
+  color: black;
 }
 
 .sidebar .widget.blue {
-  border-top: 5px solid #005ea5;
+  border-top: 5px solid #28a197;
 }
 
 .sidebar .widget div {
   margin-bottom: .5em;
+}
+
+.sidebar .widget a {
+  font-size: .8em;
 }
 
 @media screen and (min-width: 640px) and (max-width: 1024px) {
@@ -7696,5 +7885,140 @@ select:disabled {
   .homepage-item a {
     font-size: 1.5rem;
     font-weight: 600;
+  }
+}
+
+.autocomplete__wrapper {
+  position: relative;
+}
+
+.autocomplete__hint, .autocomplete__input {
+  -webkit-appearance: none;
+  border: 2px solid;
+  border-radius: 0;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  margin-bottom: 0;
+  width: 100%;
+}
+
+.autocomplete__input {
+  background-color: transparent;
+  position: relative;
+}
+
+.autocomplete__hint {
+  color: #bfc1c3;
+  position: absolute;
+}
+
+.autocomplete__input--default {
+  padding: 6px;
+}
+
+.autocomplete__input--focused {
+  outline-offset: 0;
+  outline: 3px solid #ffbf47;
+}
+
+.autocomplete__input--show-all-values {
+  padding: 4px 34px 4px 4px;
+  cursor: pointer;
+}
+
+.autocomplete__dropdown-arrow-down {
+  z-index: -1;
+  display: inline-block;
+  position: absolute;
+  right: 8px;
+  width: 24px;
+  height: 24px;
+  top: 10px;
+}
+
+.autocomplete__menu {
+  background-color: #fff;
+  border: 2px solid #0b0c0c;
+  border-top: 0;
+  color: #34384b;
+  margin: 0;
+  max-height: 342px;
+  overflow-x: hidden;
+  padding: 0;
+  width: 100%;
+  width: calc(100% - 4px);
+}
+
+.autocomplete__menu--visible {
+  display: block;
+}
+
+.autocomplete__menu--hidden {
+  display: none;
+}
+
+.autocomplete__menu--overlay {
+  box-shadow: rgba(0, 0, 0, 0.256863) 0 2px 6px;
+  left: 0;
+  position: absolute;
+  top: 100%;
+  z-index: 100;
+}
+
+.autocomplete__menu--inline {
+  position: relative;
+}
+
+.autocomplete__option {
+  border-bottom: solid #bfc1c3;
+  border-width: 1px 0;
+  cursor: pointer;
+  display: block;
+  position: relative;
+}
+
+.autocomplete__option > * {
+  pointer-events: none;
+}
+
+.autocomplete__option:first-of-type {
+  border-top-width: 0;
+}
+
+.autocomplete__option:last-of-type {
+  border-bottom-width: 0;
+}
+
+.autocomplete__option--odd {
+  background-color: #fafafa;
+}
+
+.autocomplete__option--focused, .autocomplete__option:hover {
+  background-color: #005ea5;
+  border-color: #005ea5;
+  color: #fff;
+  outline: 0;
+}
+
+.autocomplete__option--no-results {
+  background-color: #fafafa;
+  color: #646b6f;
+  cursor: not-allowed;
+}
+
+.autocomplete__hint, .autocomplete__input, .autocomplete__option {
+  font-size: 16px;
+  line-height: 1.25;
+}
+
+.autocomplete__hint, .autocomplete__option {
+  padding: 4px;
+}
+
+@media (min-width: 641px) {
+  .autocomplete__hint, .autocomplete__input, .autocomplete__option {
+    font-size: 19px;
+    line-height: 1.31579;
   }
 }

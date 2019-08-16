@@ -9,19 +9,28 @@
 
 
 
-        <a asp-controller="RegulatedQualification" asp-action="Index" class="govuk-back-link">Back</a>
         <div class="grid-row" data-sf-element="Row">
             <div class="column-two-thirds govuk-body">
                 <div>
 
                     <h1 class="govuk-heading-l govuk-!-margin-top-4">Search for a course provision</h1>
 
-                    <label class="column-two-thirds" name="unregulated-search">Search by Z code for the provision you are awarding with this course</label>
+                   
                 </div>
                 <form class="" id="zCodeSearch" asp-controller="UnregulatedCourses" asp-action="Index" method="post">
+                    
+                    
+                    <div id="errorsummary" class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary" style="display: none;">
+                        <h2 class="govuk-error-summary__title" id="error-summary-title">
+                            There is a problem
+                        </h2>
+                        <div class="govuk-error-summary__body">
+                            <ul class="govuk-list govuk-error-summary__list"></ul>
+                        </div>
+                    </div>
 
                     <div class="govuk-form-group">
-
+                        <label class="column-two-thirds" name="unregulated-search">Search by Z code for the provision you are awarding with this course</label>
                         <input class="govuk-input" style="width:95%; float:left" asp-for="@Model.Search" type="text" placeholder="Enter a Z code" aria-label="unregulated-search"
                                val-required-message="Enter a z code to search"
                                val-regex="@regex"
@@ -52,6 +61,7 @@
             var $code = $("#@nameof(Model.Search)").govUkInput();
             var validStates = [];
             var $search = $("#searchZCode");
+            var $errorSummary = $("#errorsummary").govUkErrorSummary();
 
             var doSearch = function () {
 
@@ -83,10 +93,19 @@
             };
 
             function validate() {
+                validStates = [];
 
+                $errorSummary.govUkErrorSummary("removeAll");
                 if (!$.requiredValidate($code.val())) {
                     $code.govUkInput("invalidState", $code.attr("val-required-message"));
                     validStates.push(false);
+                    var $anchor = document.createElement("a");
+                    $anchor.href = "#Search";
+                    $anchor.innerHTML = $code.attr("val-required-message");
+                    $anchor.id = "error-hash-link-" + "a" + "-" + 1;
+                    $errorSummary.govUkErrorSummary("add", $anchor);
+                    $errorSummary.govUkErrorSummary("show");
+
                 } else if (
                     !$.regexValidate({ regex: $code.attr("val-regex") }, $code.val())) {
                     $code.govUkInput("invalidState", $code.attr("val-regex-message"));

@@ -314,27 +314,15 @@
             var $attendancePatternRadioButtons = $("#AttendancePatternRadioButtons");
             var $startDateRadios = $("#StartDateOptions input[type=radio]");
             var $radioStartDate = $("#StartDateOptions").govUkRadios();
-
+            var $regionSection = $("#regions-section");
             var isClassroomBased = true;
             var isOnline = false;
             var isWorkBased = false;
 
-            switch ($radioStartDate.find("input[type='radio']:checked").val()) {
-            case "SpecifiedStartDate":
-            {
-               
-                break;
-            }
-            case "FlexibleStartDate":
-            {
-                $("#govuk-label-start_date").hide();
-                $("#Day").val("");
-                $("#Month").val("");
-                $("#Year").val("");
-                break;
-            }
            
-            }
+
+            var $specifiedStartDate = $("#SpecifiedStartDate");
+            var $flexibleStartDate = $("#FlexibleStartDate");
 
             switch ($radioDeliveryMode.find("input[type='radio']:checked").val()) {
                 case "ClassroomBased":
@@ -344,15 +332,22 @@
                         isClassroomBased = true;
                         isOnline = false;
                         isWorkBased = false;
+                        $regionSection.hide();
+
+                        $("#govuk-label-start_date").show();
+
+
                         break;
                     }
                 case "Online":
                     {
                         $fullPartTimeRadioButtons.hide();
                         $attendancePatternRadioButtons.hide();
-                        isClassroomBased = false;
-                        isOnline = true;
-                        isWorkBased = false;
+                        $regionSection.hide();
+
+                        
+                        $("#govuk-label-start_date").hide();
+
                         break;
                     }
                 case "WorkBased":
@@ -362,8 +357,15 @@
                         isClassroomBased = false;
                         isOnline = false;
                         isWorkBased = true;
-                        var $regionSection = $("#regions-section");
-                $regionSection.show();
+                        
+                        $regionSection.show();
+
+
+
+                        $("#govuk-label-start_date").hide();
+                        $("#Day").val("");
+                        $("#Month").val("");
+                        $("#Year").val("");
                         break;
                     }
             }
@@ -373,9 +375,34 @@
                 $nationalTrue.prop("checked", false);
                 var $nationalFalse = $("#National_false");
                 $nationalFalse.prop("checked", false);
-                var $regionSection = $("#regions-section");
                 $regionSection.hide();
             }
+
+
+            switch ($radioStartDate.find("input[type='radio']:checked").val()) {
+            case "SpecifiedStartDate":
+            {
+                $("#govuk-label-start_date").show();
+                break;
+            }
+            case "FlexibleStartDate":
+            {
+                $("#govuk-label-start_date").hide();
+                //$("#Day").val("");
+                //$("#Month").val("");
+                //$("#Year").val("");
+                break;
+            }
+           
+            }
+
+            if ($national.find("input[type='radio']:checked").val()==="True") {
+                $("#regions-section").hide();
+            }
+            else {
+               $("#regions-section").show();
+            }
+
 
             setTimeout(validate, 500);
 
@@ -792,6 +819,10 @@
                             isWorkBased = false;
                             $attendancePattern.prop("checked", true);
                             $studyMode.prop("checked", true);
+                            $regionSection.hide();
+                            
+                            $("#govuk-label-start_date").show();
+
                             break;
                         }
                     case "Online":
@@ -807,6 +838,9 @@
                             isWorkBased = false;
                             $attendancePattern.prop("checked", false);
                             $studyMode.prop("checked", false);
+                            $("#govuk-label-start_date").hide();
+                            $regionSection.hide();
+
                             break;
                         }
                     case "WorkBased":
@@ -822,8 +856,10 @@
                             isWorkBased = true;
                             $attendancePattern.prop("checked", false);
                             $studyMode.prop("checked", false);
-                              var $regionSection = $("#regions-section");
-                $regionSection.show();
+
+                            
+                            $("#govuk-label-start_date").hide();
+
                             break;
                         }
                 }
