@@ -38,6 +38,10 @@ namespace Dfc.CourseDirectory.Services.BlobStorageService
         //private readonly CloudBlobClient _blobClient;
         private readonly CloudBlobContainer _container;
 
+        private readonly int _inlineProcessingThreshold;
+
+        public int InlineProcessingThreshold { get { return _inlineProcessingThreshold; } }
+
         public BlobStorageService(
             ILogger<BlobStorageService> logger,
             HttpClient httpClient,
@@ -62,6 +66,8 @@ namespace Dfc.CourseDirectory.Services.BlobStorageService
             //_blobClient = _account.CreateCloudBlobClient();
             _container = _account.CreateCloudBlobClient()
                                  .GetContainerReference(settings.Value.Container);
+
+            _inlineProcessingThreshold = settings.Value.InlineProcessingThreshold;
         }
 
         public Task DownloadFileAsync(string filePath, Stream stream)
@@ -90,7 +96,8 @@ namespace Dfc.CourseDirectory.Services.BlobStorageService
         {
             try {
                 CloudBlockBlob blockBlob = _container.GetBlockBlobReference(filePath);
-                ArchiveFiles(string.Join("/", filePath.Split("/").Reverse().Skip(1).Reverse()));
+                var p = string.Join("/", filePath.Split("/").Reverse().Skip(1).Reverse());
+                ArchiveFiles(p);
 
                 stream.Position = 0;
                 return blockBlob.UploadFromStreamAsync(stream);
