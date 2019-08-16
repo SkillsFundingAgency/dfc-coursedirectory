@@ -23,14 +23,15 @@ else
 
     @if (!Model.Items.Any())
     {
-        <div class="">
-            @await Component.InvokeAsync(nameof(Notification), new NotificationModel
-       {
-           NotificationTitle = "",
-           NotificationMessage = "No results found. Enter a different apprenticeship name or keyword",
-           ClassType = "error-summary"
-       })
-        </div>
+    <div class="">
+        <span class="govuk-visually-hidden">Data Unavailable</span>
+        @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+        {
+            NotificationTitle = "",
+            NotificationMessage = "No results found. Enter a different apprenticeship name or keyword",
+            ClassType = "error-summary"
+        })
+    </div>
     }
     else
     {

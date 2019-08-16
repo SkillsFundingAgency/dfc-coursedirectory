@@ -29,14 +29,15 @@ else
 
     if (!Model.Items.Any())
     {
-        <div class="">
-            @await Component.InvokeAsync(nameof(Notification), new NotificationModel
-       {
-           NotificationTitle = "",
-           NotificationMessage = "No apprenticeships found that match your search criteria",
-           ClassType = "error-summary"
-       })
-        </div>
+    <div class="">
+        <span class="govuk-visually-hidden">Data Unavailable</span>
+        @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+        {
+            NotificationTitle = "",
+            NotificationMessage = "No apprenticeships found that match your search criteria",
+            ClassType = "error-summary"
+        })
+    </div>
     }
     else
     {
