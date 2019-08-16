@@ -66,10 +66,10 @@
                 foreach (var filter in Model.Filters)
                 {
                     <div class="govuk-form-group govuk-!-font-size-14">
-                        <div class="accordion govuk-heading-s">@filter.Title</div>
+                        <div class="accordion govuk-heading-s" role="button" tabindex="0">@filter.Title</div>
                         <div class="panel">
                             <fieldset class="govuk-fieldset" id="FilterCheckBoxes_@i">
-                                <legend class="govuk-visually-hidden">
+                                <legend  class="govuk-visually-hidden">
                                     Select @filter.Title Level
                                 </legend>
                                 <div class="govuk-checkboxes" id="Filter_@i">
