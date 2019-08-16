@@ -8,6 +8,6 @@ namespace Dfc.CourseDirectory.Services.Interfaces.BlobStorageService
         string Container { get; }
         //string BulkUploadPathFormat { get; }
         string TemplatePath { get; }
-
+        int InlineProcessingThreshold { get; }
     }
 }

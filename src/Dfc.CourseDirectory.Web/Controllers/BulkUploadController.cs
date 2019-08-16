@@ -85,6 +85,19 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         [Authorize]
+        public IActionResult Pending()
+        {
+            _session.SetString("Option", "BulkUpload");
+            int? UKPRN;
+            if (_session.GetInt32("UKPRN") != null)
+                UKPRN = _session.GetInt32("UKPRN").Value;
+            else
+                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
+
+            return View("./Pending/Index");
+        }
+
+        [Authorize]
         [HttpPost("BulkUpload")]
         public async Task<IActionResult> Index(IFormFile bulkUploadFile)
         {
@@ -98,47 +111,55 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
 
 
-            var deleteResult = await _courseService.DeleteBulkUploadCourses(UKPRN.Value);
+            string errorMessage;
 
-            if (deleteResult.IsSuccess)
+            if (ValidateFile(bulkUploadFile, out errorMessage))
             {
-                string errorMessage;
+                int providerUKPRN = UKPRN.Value;
+                string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                string bulkUploadFileNewName = string.Format(@"{0}-{1}", DateTime.Now.ToString("yyMMdd-HHmmss"), bulkUploadFile.FileName);
 
-                if (ValidateFile(bulkUploadFile, out errorMessage))
+                MemoryStream ms = new MemoryStream();
+                bulkUploadFile.CopyTo(ms);
+
+                int csvLineCount = _bulkUploadService.CountCsvLines(ms);
+                bool processInline = (csvLineCount <= _blobService.InlineProcessingThreshold);
+                _logger.LogInformation($"Csv line count = {csvLineCount} threshold = {_blobService.InlineProcessingThreshold} processInline = {processInline}");
+
+                if (processInline)
                 {
-                    int providerUKPRN = UKPRN.Value;
-                    string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                    string bulkUploadFileNewName = string.Format(@"{0}-{1}", DateTime.Now.ToString("yyMMdd-HHmmss"), bulkUploadFile.FileName);
+                    bulkUploadFileNewName += "." + DateTime.UtcNow.ToString("yyyyMMddHHmmss") + ".processed"; // stops the Azure trigger from processing the file
+                }
 
-                    MemoryStream ms = new MemoryStream();
-                    bulkUploadFile.CopyTo(ms);
-                    Task task = _blobService.UploadFileAsync($"{UKPRN.ToString()}/Bulk Upload/Files/{bulkUploadFileNewName}", ms);
-                    task.Wait();
-                    var errors = _bulkUploadService.ProcessBulkUpload(ms, providerUKPRN, userId);
+                Task task = _blobService.UploadFileAsync($"{UKPRN.ToString()}/Bulk Upload/Files/{bulkUploadFileNewName}", ms);
+                task.Wait();
 
-                    if (errors.Any())
-                    {
-                        vm.errors = errors;
-                        return View(vm);
-                     
+                var errors = _bulkUploadService.ProcessBulkUpload(ms, providerUKPRN, userId, processInline);
 
-                    }
-                    else
+                if (errors.Any())
+                {
+                    vm.errors = errors;
+                    return View(vm);                   
+                }
+                else
+                {
+                    if(processInline)
                     {
                         // All good => redirect to BulkCourses action
                         return RedirectToAction("Index", "PublishCourses", new { publishMode = PublishMode.BulkUpload, fromBulkUpload = true });
                     }
+                    else
+                    {
+                        return RedirectToAction("Pending");
+                    }
+                }
 
-                }
-                else
-                {
-                    vm.errors = new string[] { errorMessage };
-                }
             }
             else
             {
-                vm.errors = new string[] { "Delete failed" };
+                vm.errors = new string[] { errorMessage };
             }
+
             return View(vm);
         }
 
