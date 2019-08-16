@@ -107,12 +107,13 @@
 
             };
 
-                 $apprenticeshipSearchTerm.on("keyup", debounce(doSearch, 400));
+                 //$apprenticeshipSearchTerm.on("keyup", debounce(doSearch, 400));
             $buttonSearch.on("click", doSearch);
 
             $(document).keypress(function (e) {
                 if (e.which === 13) {
                     e.preventDefault();
+                    $buttonSearch.trigger("click");
                     //ValidateAndSearchForProvider();
                 }
             });

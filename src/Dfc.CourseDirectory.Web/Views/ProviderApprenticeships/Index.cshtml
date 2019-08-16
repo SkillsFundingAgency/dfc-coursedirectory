@@ -18,7 +18,7 @@
 
 
                     <div>
-                        <span class="govuk-caption-xl">Course directory</span>
+                        <span class="govuk-caption-l">Course directory</span>
                         @Html.HiddenFor(x => x.ApprenticeshipId)
                         @if (!string.IsNullOrEmpty(@ViewBag.Message))
                         {
@@ -120,7 +120,7 @@
             };
 
             $buttonSearch.on("click", doSearch);
-            $elementSearchTerm.on("keyup", debounce(doSearch, 400));
+           // $elementSearchTerm.on("keyup", debounce(doSearch, 400));
 
             var $apprenticeshipUpdatedlink = $("#apprenticeshiplink");
 

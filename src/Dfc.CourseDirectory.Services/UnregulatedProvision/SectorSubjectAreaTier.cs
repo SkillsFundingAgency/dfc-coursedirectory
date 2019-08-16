@@ -25,7 +25,7 @@ namespace Dfc.CourseDirectory.Services.UnregulatedProvision
                     {
                         {"1.10", "Medicine and dentistry"},
                         {"1.20", "Nursing and medicine"},
-                        {"1.30", "Health and social Care"},
+                        {"1.30", "Health and social care"},
                         {"1.40", "Public services"},
                         {"1.50", "Child development and wellbeing"}
                     }

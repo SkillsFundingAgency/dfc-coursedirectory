@@ -43,11 +43,11 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         [Display(Name = "Undefined")]
         [Description("Undefined")]
         Undefined = 0,
-        [Display(Name = "Full-time")]
-        [Description("Full-time")]
+        [Display(Name = "Full time")]
+        [Description("Full time")]
         FullTime = 1,
-        [Display(Name = "Part-time")]
-        [Description("Part-time")]
+        [Display(Name = "Part time")]
+        [Description("Part time")]
         PartTime = 2,
         [Display(Name = "Flexible")]
         [Description("Flexible")]
