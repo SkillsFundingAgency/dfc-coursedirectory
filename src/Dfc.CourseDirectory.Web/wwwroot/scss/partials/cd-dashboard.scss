@@ -1,4 +1,4 @@
-﻿
+﻿$ExploreCareersGreen: #207E77;
 $grey: #6f777b;
 
 .cd-dashboard.provider {
@@ -34,7 +34,7 @@ $grey: #6f777b;
 
 .cd-migration-panel {
     background-color: #f8f8f8;
-    border-left: 5px solid #005ea5;
+    border-left: 5px solid $ExploreCareersGreen;
     padding: .5rem 1rem;
 
     &__full {
@@ -79,7 +79,7 @@ $grey: #6f777b;
 
     &.blue {
         text-align: left;
-        background-color: #005ea5;
+        background-color: $ExploreCareersGreen;
         color: white;
 
 
@@ -90,7 +90,7 @@ $grey: #6f777b;
 
     &.teal {
         text-align: left;
-        background-color: #28a197;
+        background-color: $ExploreCareersGreen;
         color: white;
         padding: 1em 1em 0 1em;
 
@@ -211,7 +211,7 @@ $grey: #6f777b;
 
 .sidebar {
     .widget {
-        border-top: 5px solid #28a197;
+        border-top: 5px solid $ExploreCareersGreen;
         background-color: #f8f8f8;
         padding-left: 1rem;
 
@@ -222,7 +222,7 @@ $grey: #6f777b;
         }
 
         &.blue {
-            border-top: 5px solid #005ea5;
+            border-top: 5px solid $ExploreCareersGreen;
         }
 
         div {

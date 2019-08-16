@@ -38,7 +38,7 @@ else
             </div>
         }
         <div class="govuk-form-group govuk-!-font-size-14">
-            <div class="accordion govuk-heading-s">Filter by level</div>
+            <div class="accordion govuk-heading-s" role="button" tabindex="0">Filter by level</div>
             <div class="panel">
                 <fieldset class="govuk-fieldset">
                     <legend class="govuk-fieldset__legend govuk-fieldset__legend--s govuk-visually-hidden" style="font-weight: 100">
@@ -65,19 +65,13 @@ else
                 </fieldset>
             </div>
         </div>
-        
-        
-        
-        
-       
-        
 
         @if (Model.DeliveryModes.Any())
         {
             <div class="govuk-form-group govuk-!-font-size-14">
-                <div class="accordion govuk-heading-s active">Filter by delivery mode</div>
+                <div class="accordion govuk-heading-s active" role="button" tabindex="0">Filter by delivery mode</div>
                 <div class="panel" style="display: none">
-                    <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
+                    <fieldset class="govuk-fieldset">
                         <legend class="govuk-visually-hidden">
                             Select Delivery mode
                         </legend>
@@ -104,9 +98,9 @@ else
         @if (Model.Venues.Any())
         {
             <div class="govuk-form-group govuk-!-font-size-14">
-                <div class="accordion govuk-heading-s active">Filter by venue</div>
+                <div class="accordion govuk-heading-s active" role="button" tabindex="0">Filter by venue</div>
                 <div class="panel" style="display: none">
-                    <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
+                    <fieldset class="govuk-fieldset">
                         <legend class="govuk-visually-hidden">
                             Select Venue
                         </legend>
@@ -133,9 +127,9 @@ else
         @if (Model.AttendancePattern.Any())
         {
             <div class="govuk-form-group govuk-!-font-size-14">
-                <div class="accordion govuk-heading-s active">Filter by attendance mode</div>
+                <div class="accordion govuk-heading-s active" role="button" tabindex="0">Filter by attendance mode</div>
                 <div class="panel" style="display: none">
-                    <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
+                    <fieldset class="govuk-fieldset" >
                         <legend class="govuk-visually-hidden">
                             Select Attendance Mode
                         </legend>
@@ -161,9 +155,9 @@ else
         @if (Model.Regions.Any())
         {
             <div class="govuk-form-group govuk-!-font-size-14">
-                <div class="accordion govuk-heading-s active">Filter by region</div>
+                <div class="accordion govuk-heading-s active" role="button" tabindex="0">Filter by region</div>
                 <div class="panel" style="display: none">
-                    <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
+                    <fieldset class="govuk-fieldset" >
                         <legend class="govuk-visually-hidden">
                             Select Region
                         </legend>
@@ -184,6 +178,11 @@ else
 
 
         }
+        
+        <div class="govuk-form-group govuk-!-font-size-14">
+            <a class="govuk-button" id="ApplyFilter">Apply</a>
+        </div>
+
     </div>
     <div class="cd-grid-coloumn-80 ">
 
@@ -286,7 +285,10 @@ else
 
             </div>
             <div class="courserun__row4">
+                @*can we put this span inside tha a tag??*@
+
                 @Html.ActionLink("Select", "Index", "CourseSummary", new { courseRun.CourseId, courseRun.CourseRunId }, null)
+                <span class="govuk-visually-hidden">@courseRun.QualificationCourseTitle</span>
             </div>
         </div>
         }

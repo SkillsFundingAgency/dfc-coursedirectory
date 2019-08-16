@@ -11,17 +11,17 @@
     <div class="cd-dashboard govuk-body ">
 
         <div>
-            <span class="govuk-caption-xl">@Model.ApprenticeshipTitle</span>
+            <span class="govuk-caption-l">@Model.ApprenticeshipTitle</span>
 
             @if (Model.Mode == ApprenticeshipMode.EditYourApprenticeships)
             {
-                <h1 class="govuk-heading-xl">
+                <h1 class="govuk-heading-l">
                     Edit apprenticeship training details
                 </h1>
             }
             else
             {
-                <h1 class="govuk-heading-xl">
+                <h1 class="govuk-heading-l">
                     Add apprenticeship training details
                 </h1>
             }
@@ -71,13 +71,13 @@
                     <span id="infoInvalid" class="" style="display: none"
                           val-regex="@regex"
                           val-regex-message="Apprenticeship information for employers should only have letters, numbers, spaces and commonly-used punctuation">Apprenticeship information for employers should only have letters, numbers, spaces and commonly-used punctuation</span>
-                    <label class="govuk-label" for="word-count">
+                    <label id ="govuk-label-Information"class="govuk-label" for="word-count">
                         Apprenticeship information for employers
                     </label>
                     <span class="govuk-hint">
                         Give information for employers about how you deliver this specific apprenticeship training. For useful advice on how to fill out this section go to the <a href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/746087/course_directory_provider_portal_user_guide_v7.pdf" target="_blank">guidance</a>
                     </span>
-                    <textarea class="govuk-textarea" asp-for="@Model.Information" rows="5" id="info"></textarea>
+                    <textarea class="govuk-textarea" asp-for="@Model.Information" rows="5" id="info" aria-labelledby="govuk-label-Information"></textarea>
                 </div>
             </div>
 
@@ -88,7 +88,7 @@
                 <span class="govuk-hint">
                     Your web page for this apprenticeship. Include http://
                 </span>
-                <input class="govuk-input" asp-for="@Model.Website" type="text" aria-describedby=""
+                <input class="govuk-input" asp-for="@Model.Website" type="text" aria-labelledby="govuk-label-Website"
                        val-max-length="255"
                        val-max-length-message="Apprenticeship web page should be no more than 255 characters"
                        val-regex="@websiteRegEx"
@@ -102,7 +102,7 @@
                 <label id="govuk-label-Email" class="govuk-label">
                     Email
                 </label>
-                <input class="govuk-input" asp-for="@Model.Email" type="text" aria-describedby=""
+                <input class="govuk-input" asp-for="@Model.Email" type="text" aria-labelledby="govuk-label-Email"
                        val-required-message="Enter email"
                        val-max-length="255"
                        val-max-length-message="Email should be no more than 255 characters"
@@ -116,7 +116,7 @@
                     Telephone
                 </label>
 
-                <input class="govuk-input govuk-!-width-one-half" asp-for="@Model.Telephone" type="text" aria-describedby=""
+                <input class="govuk-input govuk-!-width-one-half" asp-for="@Model.Telephone" type="text" aria-labelledby="govuk-label-Telephone"
                        val-required-message="Enter telephone"
                        val-min-length="11"
                        val-min-length-message="Telephone should be minimum 11 characters"
@@ -131,7 +131,7 @@
                 </label>
                 <span class="govuk-hint">You can also add the url of any 'Contact us' page you have on your website</span>
 
-                <input class="govuk-input" asp-for="@Model.ContactUsIUrl" type="text" aria-describedby=""
+                <input class="govuk-input" asp-for="@Model.ContactUsIUrl" type="text" aria-labelledby="govuk-label-ContactUsIUrl"
                        val-max-length="255"
                        val-max-length-message="Contact us page should be no more than 255 characters"
                        val-regex="@websiteRegEx"
@@ -249,6 +249,14 @@
                 toolbar: 'formatselect | bold | numlist bullist | removeformat ',
             }).then(function(editors) {
                 $(".mce-branding").hide();
+                $('i[class^=mce-ico]').each(function (index) {
+                    $(this)[0].parentElement.removeAttribute("role");
+                    $(this)[0].parentElement.setAttribute('aria-label', 'tinytext');
+                });
+                $('i[class^=mce-caret]').each(function (index) {
+                    $(this)[0].parentElement.removeAttribute("role");
+                    $(this)[0].parentElement.setAttribute('aria-label', 'tinytext');
+                });
             });
 
             tinymce.PluginManager.add('test',

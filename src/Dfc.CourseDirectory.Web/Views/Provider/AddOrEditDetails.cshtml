@@ -15,8 +15,8 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <span class="govuk-caption-xl">Course Directory</span>
-            <h1 class="govuk-heading-xl">Edit your details</h1>
+            <span class="govuk-caption-l">Course Directory</span>
+            <h1 class="govuk-heading-l">Edit your details</h1>
 
             <div id="errorsummary" class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary" style="display: none;">
                 <h2 class="govuk-error-summary__title" id="error-summary-title">
@@ -132,7 +132,7 @@
 
     tinymce.init({
         selector: '#brief',
-        plugins: "advlist lists autoresize test",
+        plugins: "advlist lists autoresize test paste",
         menubar: false,
         statusbar: false,
         resize: false,
@@ -140,10 +140,18 @@
         height: '75%',
         autoresize_min_height: 600,
         autoresize_max_height: 800,
-        toolbar: 'formatselect | bold | numlist bullist | removeformat paste',
+        toolbar: 'formatselect | bold | numlist bullist | removeformat',
         paste_as_text: true
     }).then(function(editors) {
         $(".mce-branding").hide();
+        $('i[class^=mce-ico]').each(function (index) {
+            $(this)[0].parentElement.removeAttribute("role");
+            $(this)[0].parentElement.setAttribute('aria-label', 'tinytext');
+        });
+        $('i[class^=mce-caret]').each(function (index) {
+            $(this)[0].parentElement.removeAttribute("role");
+            $(this)[0].parentElement.setAttribute('aria-label', 'tinytext');
+        });
     });
 
     tinymce.PluginManager.add('test',

@@ -6185,6 +6185,137 @@
   }
 }
 
+.cd-right {
+  float: right;
+}
+
+.link--button {
+  border: none;
+  color: #005ea5;
+  font-size: 1.1875rem;
+  text-decoration: underline;
+  background-color: transparent;
+}
+
+.login-options {
+  float: right;
+  display: inline-block;
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding-right: 10px;
+}
+
+#logout-btn {
+  display: inline-flex;
+}
+
+.cd-status-panel {
+  background-color: #dee0e2;
+  display: flex;
+  padding: 1em;
+  margin-bottom: 1.5em;
+  text-align: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.cd-status-panel.blue {
+  text-align: left;
+  background-color: #005ea5;
+  color: white;
+}
+
+.cd-status-panel.blue h2, .cd-status-panel.blue a {
+  color: white;
+}
+
+.cd-status-panel.green {
+  background-color: green;
+}
+
+.cd-status-panel.red {
+  background-color: red;
+}
+
+.cd-status-panel.white {
+  background-color: white;
+  text-align: left;
+}
+
+.cd-status-panel.grey {
+  background-color: #f8f8f8;
+  border: 1px solid #bfc1c3;
+  display: block;
+  text-align: left;
+  flex-direction: row;
+  margin-bottom: 0em;
+}
+
+.cd-cancel-link {
+  margin: 9px 0 6px 13px;
+  position: absolute;
+}
+
+.tox-editor-container {
+  border-style: solid !important;
+  border-top-width: 2px !important;
+  border-left-width: 2px !important;
+  border-right-width: 2px !important;
+  border-color: black !important;
+}
+
+.tox-statusbar {
+  border-style: solid !important;
+  border-top-width: 2px !important;
+  border-left-width: 2px !important;
+  border-right-width: 2px !important;
+  border-bottom-width: 2px !important;
+  border-color: black !important;
+}
+
+.text-error {
+  border-width: 2px !important;
+  /*border-left-width: 4px !important;
+    border-right-width: 4px !important;*/
+  border-color: #b10e1e !important;
+}
+
+.status-error {
+  border-style: solid !important;
+  border-top-width: 4px !important;
+  border-left-width: 4px !important;
+  border-right-width: 4px !important;
+  border-bottom-width: 4px !important;
+  border-color: #b10e1e !important;
+}
+
+.tox-statusbar {
+  height: 75px !important;
+}
+
+.tox-statusbar__wordcount {
+  font-size: 20px !important;
+}
+
+.sidebar .widget {
+  border-top: 5px solid #207E77;
+  background-color: #f8f8f8;
+  padding-left: 1rem;
+}
+
+.sidebar .widget div {
+  margin-bottom: .5em;
+}
+
+.flat-list * {
+  padding-right: 1em;
+}
+
+.word-wrap-break {
+  word-wrap: break-word;
+}
+
 p {
   font-family: “nta”, Arial, sans-serif;
 }
@@ -6551,137 +6682,6 @@ ul.sort-list {
   transition: max-height 0.2s ease-out;
 }
 
-.cd-right {
-  float: right;
-}
-
-.link--button {
-  border: none;
-  color: #005ea5;
-  font-size: 1.1875rem;
-  text-decoration: underline;
-  background-color: transparent;
-}
-
-.login-options {
-  float: right;
-  display: inline-block;
-  position: absolute;
-  top: 0;
-  right: 0;
-  padding-right: 10px;
-}
-
-#logout-btn {
-  display: inline-flex;
-}
-
-.cd-status-panel {
-  background-color: #dee0e2;
-  display: flex;
-  padding: 1em;
-  margin-bottom: 1.5em;
-  text-align: center;
-  justify-content: center;
-  flex-direction: column;
-}
-
-.cd-status-panel.blue {
-  text-align: left;
-  background-color: #005ea5;
-  color: white;
-}
-
-.cd-status-panel.blue h2, .cd-status-panel.blue a {
-  color: white;
-}
-
-.cd-status-panel.green {
-  background-color: green;
-}
-
-.cd-status-panel.red {
-  background-color: red;
-}
-
-.cd-status-panel.white {
-  background-color: white;
-  text-align: left;
-}
-
-.cd-status-panel.grey {
-  background-color: #f8f8f8;
-  border: 1px solid #bfc1c3;
-  display: block;
-  text-align: left;
-  flex-direction: row;
-  margin-bottom: 0em;
-}
-
-.cd-cancel-link {
-  margin: 9px 0 6px 13px;
-  position: absolute;
-}
-
-.tox-editor-container {
-  border-style: solid !important;
-  border-top-width: 2px !important;
-  border-left-width: 2px !important;
-  border-right-width: 2px !important;
-  border-color: black !important;
-}
-
-.tox-statusbar {
-  border-style: solid !important;
-  border-top-width: 2px !important;
-  border-left-width: 2px !important;
-  border-right-width: 2px !important;
-  border-bottom-width: 2px !important;
-  border-color: black !important;
-}
-
-.text-error {
-  border-width: 2px !important;
-  /*border-left-width: 4px !important;
-    border-right-width: 4px !important;*/
-  border-color: #b10e1e !important;
-}
-
-.status-error {
-  border-style: solid !important;
-  border-top-width: 4px !important;
-  border-left-width: 4px !important;
-  border-right-width: 4px !important;
-  border-bottom-width: 4px !important;
-  border-color: #b10e1e !important;
-}
-
-.tox-statusbar {
-  height: 75px !important;
-}
-
-.tox-statusbar__wordcount {
-  font-size: 20px !important;
-}
-
-.sidebar .widget {
-  border-top: 5px solid #005ea5;
-  background-color: #f8f8f8;
-  padding-left: 1rem;
-}
-
-.sidebar .widget div {
-  margin-bottom: .5em;
-}
-
-.flat-list * {
-  padding-right: 1em;
-}
-
-.word-wrap-break {
-  word-wrap: break-word;
-}
-
 #cd-add-qual-button {
   float: right;
 }
@@ -6983,7 +6983,7 @@ select:disabled {
 }
 
 .govuk-related-items {
-  border-top: 10px solid #005ea5;
+  border-top: 10px solid #28a197;
   padding: 20px;
   background-color: #f8f8f8;
 }
@@ -7135,7 +7135,7 @@ select:disabled {
 }
 
 .cd-subHead {
-  background-color: #005ea5;
+  background-color: #207E77;
   margin-top: -10px;
   color: white;
   font-family: nta,Arial,sans-serif;
@@ -7458,7 +7458,7 @@ select:disabled {
 }*/
 .govuk-header__container.cd-fullwidth-container {
   margin-bottom: -10px;
-  border-bottom: 10px solid #005ea5;
+  border-bottom: 10px solid #207E77;
 }
 
 .cd-header--content {
@@ -7683,7 +7683,7 @@ select:disabled {
 
 .cd-migration-panel {
   background-color: #f8f8f8;
-  border-left: 5px solid #005ea5;
+  border-left: 5px solid #207E77;
   padding: .5rem 1rem;
 }
 
@@ -7726,7 +7726,7 @@ select:disabled {
 
 .cd-status-panel.blue {
   text-align: left;
-  background-color: #005ea5;
+  background-color: #207E77;
   color: white;
 }
 
@@ -7736,7 +7736,7 @@ select:disabled {
 
 .cd-status-panel.teal {
   text-align: left;
-  background-color: #28a197;
+  background-color: #207E77;
   color: white;
   padding: 1em 1em 0 1em;
 }
@@ -7852,7 +7852,7 @@ select:disabled {
 }
 
 .sidebar .widget {
-  border-top: 5px solid #28a197;
+  border-top: 5px solid #207E77;
   background-color: #f8f8f8;
   padding-left: 1rem;
 }
@@ -7864,7 +7864,7 @@ select:disabled {
 }
 
 .sidebar .widget.blue {
-  border-top: 5px solid #005ea5;
+  border-top: 5px solid #207E77;
 }
 
 .sidebar .widget div {

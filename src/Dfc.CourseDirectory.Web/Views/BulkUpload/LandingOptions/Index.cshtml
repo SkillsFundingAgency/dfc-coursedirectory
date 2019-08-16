@@ -74,6 +74,9 @@
                 $errorSummary.govUkErrorSummary("removeAll");
                 $bulkUploadWhatWouldYouLikeToDo.govUkRadios("validState");
 
+                if ($("#errorsummary").is(":visible")) {
+                    $("#errorsummary").hide();
+                }
                 if ($.requiredValidate($bulkUploadWhatWouldYouLikeToDo.find("input[type='radio']:checked").val())) {
                     $bulkUploadWhatWouldYouLikeToDo.govUkRadios("validState");
                     validStates.push(true);
