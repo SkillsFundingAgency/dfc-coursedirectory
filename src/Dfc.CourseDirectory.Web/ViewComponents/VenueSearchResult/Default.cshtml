@@ -106,128 +106,121 @@
 
 
             <h1 class="govuk-heading-l">Your venues</h1>
-            <div class="venue-list">
+            <div class="govuk-grid-row">
+                <div class="venue-list govuk-grid-column-full">
 
 
-                        @if (adminLogin.Succeeded || providerLogin.Succeeded)
-                        {
-                            <div class="govuk-form-group" style="margin-top: 30px;">
-                                <button type="submit" class="govuk-button">
-                                    Add new venue
-                                </button>
-                                @Html.ActionLink("Cancel", "Index", "Home", null, new { @class = "govuk-link cd-cancel-link" })
-                            </div>
-                        }
+                    @if (adminLogin.Succeeded || providerLogin.Succeeded)
+        {
+            <div class="govuk-form-group" style="margin-top: 30px;">
+                <button type="submit" class="govuk-button">
+                    Add new venue
+                </button>
+                @Html.ActionLink("Cancel", "Index", "Home", null, new { @class = "govuk-link cd-cancel-link" })
+            </div>
+}
 
-                        @if (Model.Items.Any())
-                        {
-                            <div class="govuk-tabs" data-module="tabs">
-                                <h2 class="govuk-tabs__title">
-                                    Contents
-                                </h2>
-                                <ul class="govuk-tabs__list" role="tablist">
-                                    <li class="govuk-tabs__list-item" role="presentation">
-                                        <a class="govuk-tabs__tab" href="#live" id="tab_live" role="tab" aria-controls="live" aria-selected="true">
-                                            Live
-                                        </a>
-                                    </li>
-
-
-                                </ul>
-
-                                <section class="govuk-tabs__panel" id="live" role="tabpanel" aria-labelledby="tab_live">
-                                    <table class="govuk-table">
-                                        <thead class="govuk-table__head">
-                                            <tr class="govuk-table__row">
-                                                <th class="govuk-table__header" scope="col">Venue</th>
-                                                <th class="govuk-table__header" scope="col">Address</th>
-                                                <th class="govuk-table__header" scope="col">Postcode</th>
-                                                <th class="govuk-table__header" scope="col"></th>
-                                                <th class="govuk-table__header" scope="col"></th>
-                                                <th class="govuk-table__header" scope="col"></th>
-                                            </tr>
-                                        </thead>
-
-                                        <tbody class="govuk-table__body">
-                                            @foreach (var venue in Model.Items)
-                                            {
-                                                <tr class="govuk-table__row">
-                                                    <td class="govuk-table__cell">
-                                                        @venue.VenueName
-                                                    </td>
-                                                    <td class="govuk-table__cell">
-                                                        @if (!string.IsNullOrWhiteSpace(venue.AddressLine1))
-                                                        {
-                                                            @venue.AddressLine1
-                                                            <br />
-                                                        }
-                                                        @if (!string.IsNullOrWhiteSpace(venue.AddressLine2))
-                                                        {
-                                                            @venue.AddressLine2
-                                                            <br />
-                                                        }
-                                                        @if (!string.IsNullOrWhiteSpace(venue.Town))
-                                                        {
-                                                            @venue.Town
-                                                            <br />
-                                                        }
-                                                        @if (!string.IsNullOrWhiteSpace(venue.County))
-                                                        {
-                                                            @venue.County
-                                                        }
-                                                    </td>
-                                                    <td class="govuk-table__cell">
-                                                        @if (!string.IsNullOrWhiteSpace(venue.PostCode))
-                                                        {
-                                                            @venue.PostCode
-                                                        }
-                                                    </td>
-                                                    @{
-                                                        if (adminLogin.Succeeded || providerLogin.Succeeded)
-                                                        {
-                                                            <td class="govuk-table__cell">
-                                                                <a id="edit-@venue.Id" asp-controller="venues" asp-action="EditVenue" asp-route-id=@venue.Id class="govuk-link edit-venue-link">Edit</a>
-                                                                <a id="venue-delete-@venue.Id" class="govuk-button delete-button" asp-controller="Venues" asp-action="DeleteVenue"
-                                                                   asp-route-venueId="@venue.Id"
-                                                                   style="display: none;padding-right:1em;margin-bottom: 0px;">Confirm delete</a>
-                                                            </td>
-
-                                                            <td class="govuk-table__cell">
-                                                                <a href="#" class="govuk-link delete" data-venue-id="@venue.Id" style="padding-right:1em">Delete</a>
-                                                                <a href="#" class="govuk-link cancel-delete" data-venue-id="@venue.Id" hidden="hidden">Cancel</a>
-                                                            </td>
-                                                            <td>
-                                                                <a href="#" class="govuk-link cancel-delete" data-venue-id="@venue.Id" hidden="hidden">Cancel</a>
-                                                            </td>
+                    @if (Model.Items.Any())
+        {
 
 
 
-                                                        }
-                                                    }
-                                                </tr>
-                                            }
-
-                                        </tbody>
-                                    </table>
-                                </section>
-
-                            </div>
 
 
+            <section id="live">
+                <table class="govuk-table">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th class="govuk-table__header" scope="col">Venue</th>
+                            <th class="govuk-table__header" scope="col">Address</th>
+                            <th class="govuk-table__header" scope="col">Postcode</th>
+                            <th class="govuk-table__header" scope="col"></th>
+                            <th class="govuk-table__header" scope="col"></th>
+                            <th class="govuk-table__header" scope="col"></th>
+                        </tr>
+                    </thead>
 
-                        }
+                    <tbody class="govuk-table__body">
+                        @foreach (var venue in Model.Items)
+            {
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">
+                        @venue.VenueName
+                    </td>
+                    <td class="govuk-table__cell">
+                        @if (!string.IsNullOrWhiteSpace(venue.AddressLine1))
+            {
+                @venue.AddressLine1
+                <br />
+}
+                        @if (!string.IsNullOrWhiteSpace(venue.AddressLine2))
+            {
+                @venue.AddressLine2
+                <br />
+}
+                        @if (!string.IsNullOrWhiteSpace(venue.Town))
+            {
+                @venue.Town
+                <br />
+}
+                        @if (!string.IsNullOrWhiteSpace(venue.County))
+            {
+                @venue.County
+}
+                    </td>
+                    <td class="govuk-table__cell">
+                        @if (!string.IsNullOrWhiteSpace(venue.PostCode))
+            {
+                @venue.PostCode
+}
+                    </td>
+                    @{
+            if (adminLogin.Succeeded || providerLogin.Succeeded)
+            {
+                <td class="govuk-table__cell">
+                    <a id="edit-@venue.Id" asp-controller="venues" asp-action="EditVenue" asp-route-id=@venue.Id class="govuk-link edit-venue-link">Edit</a>
+                    <a id="venue-delete-@venue.Id" class="govuk-button delete-button" asp-controller="Venues" asp-action="DeleteVenue"
+                       asp-route-venueId="@venue.Id"
+                       style="display: none;padding-right:1em;margin-bottom: 0px;">Confirm delete</a>
+                </td>
 
-                        @if ((adminLogin.Succeeded || providerLogin.Succeeded) && Model.Items.Any() & Model.Items.Count() > 5)
-                        {
-                            <div class="govuk-form-group" style="margin-top: 30px;">
-                                <button type="submit" class="govuk-button">
-                                    Add new venue
-                                </button>
-                                @Html.ActionLink("Cancel", "Index", "Home", null, new { @class = "govuk-link cd-cancel-link" })
-                            </div>
-                        }
-                    </div>
-  
+                <td class="govuk-table__cell">
+                    <a href="#" class="govuk-link delete" data-venue-id="@venue.Id" style="padding-right:1em">Delete</a>
+                    <a href="#" class="govuk-link cancel-delete" data-venue-id="@venue.Id" hidden="hidden">Cancel</a>
+                </td>
+                <td>
+                    <a href="#" class="govuk-link cancel-delete" data-venue-id="@venue.Id" hidden="hidden">Cancel</a>
+                </td>
+
+
+
+}
+                    }
+                </tr>
+}
+
+                    </tbody>
+                </table>
+            </section>
+
+
+
+
+
+}
+
+                    @if ((adminLogin.Succeeded || providerLogin.Succeeded) && Model.Items.Any() & Model.Items.Count() > 5)
+        {
+            <div class="govuk-form-group" style="margin-top: 30px;">
+                <button type="submit" class="govuk-button">
+                    Add new venue
+                </button>
+                @Html.ActionLink("Cancel", "Index", "Home", null, new { @class = "govuk-link cd-cancel-link" })
+            </div>
+}
+                </div>
+            </div>
+
 </form>
 
 <script>
@@ -265,6 +258,18 @@
 
             };
 
+            var doDelete = function (venueId) {
+
+                makeDeleteRequestWithPayload({
+                    VenueId: venueId
+                },ConfirmDeleteSuccess);
+
+
+            };
+
+            var ConfirmDeleteSuccess = function (data) {
+                window.location.href = data;
+            };
 
 
             var onSucess = function (data) {
@@ -297,17 +302,21 @@
 
 
 
-                    var editOption = $("#edit-" + $venueId);
-                    editOption.hide();
+                    //var editOption = $("#edit-" + $venueId);
+                    //editOption.hide();
 
-                    var deleteOption = $("#delete-" + $venueId);
-                    deleteOption.hide();
+                    //var deleteOption = $("#delete-" + $venueId);
+                    //deleteOption.hide();
 
-                    var confirmDelete = $("#venue-delete-" + $venueId);
-                    confirmDelete.show();
+                    //var confirmDelete = $("#venue-delete-" + $venueId);
+                    //confirmDelete.show();
 
-                    var cancelDelete = $("#venue-cancel-delete-" + $venueId);
-                    cancelDelete.show().css("display", "block");
+                    //var cancelDelete = $("#venue-cancel-delete-" + $venueId);
+                    //cancelDelete.show().css("display", "block");
+
+                    //debounce(doDelete($venueId), 400);
+
+                    window.location.href = "locations/deletelocation/?VenueId=" + $venueId;
                 }
 
             };
@@ -323,6 +332,13 @@
                 var qs = $.param(payload);
                 qs = replaceAll(qs, "%5B%5D", "");
                 $.get("/Venues/CheckForCourses?" + qs, success);
+            };
+
+            var makeDeleteRequestWithPayload = function (payload, success) {
+                console.log(payload);
+                var qs = $.param(payload);
+                qs = replaceAll(qs, "%5B%5D", "");
+                $.get("/Locations/DeleteLocation?" + qs, success);
             };
 
 

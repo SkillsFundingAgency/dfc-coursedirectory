@@ -63,7 +63,21 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             _courseService = courseService;
         }
 
-        public List<string> ProcessBulkUpload(Stream stream, int providerUKPRN, string userId)
+        public int CountCsvLines(Stream stream)
+        {
+            int count = 0;
+
+            stream.Position = 0;
+            StreamReader sr = new StreamReader(stream);  // don't dispose the stream we'll need it later.
+            while (sr.ReadLine() != null)
+            {
+                ++count;
+            }
+
+            return count;
+        }
+
+        public List<string> ProcessBulkUpload(Stream stream, int providerUKPRN, string userId, bool uploadCourses)
         {
             var errors = new List<string>();
             var bulkUploadcourses = new List<BulkUploadCourse>();
@@ -308,16 +322,25 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                     return errors;
                 }
 
-                // Populate LARS data
-                bulkUploadcourses = PolulateLARSData(bulkUploadcourses, out errors);
-                if (errors != null && errors.Count > 0)
+                if(uploadCourses)
                 {
-                    // If we have invalid LARS we stop processing
-                    return errors;
+                    // Populate LARS data
+                    bulkUploadcourses = PolulateLARSData(bulkUploadcourses, out errors);
+                    if (errors != null && errors.Count > 0)
+                    {
+                        // If we have invalid LARS we stop processing
+                        return errors;
 
-                } else {
-                    // Mapping BulkUploadCourse to Course
-                    var courses = MappingBulkUploadCourseToCourse(bulkUploadcourses, userId, out errors);
+                    }
+                    else
+                    {
+                        // Mapping BulkUploadCourse to Course
+                        var courses = MappingBulkUploadCourseToCourse(bulkUploadcourses, userId, out errors);
+                        return errors;
+                    }
+                }
+                else
+                {
                     return errors;
                 }
             }
