@@ -19,6 +19,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
         public bool? Checked { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
+        public string Postcode { get; set; }
         public SearchResultWeightings Weighting { get { return CalcWeighting(); } }
 
         // Subregions also used to store regions for azure search index, so calculate search weighting based on whether it's a region or subregion
