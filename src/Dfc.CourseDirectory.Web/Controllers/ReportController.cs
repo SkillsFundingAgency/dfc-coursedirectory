@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Authorization;
 using Dfc.CourseDirectory.Web.ViewModels.Report;
 using Dfc.CourseDirectory.Web.ViewComponents.MigrationReportResults;
 using Dfc.CourseDirectory.Web.ViewComponents.MigrationReportDashboardPanel;
+using Microsoft.AspNetCore.Http;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -21,17 +22,26 @@ namespace Dfc.CourseDirectory.Web.Controllers
     public class ReportController : Controller
     {
         private readonly ILogger<ReportController> _logger;
+        private readonly IHttpContextAccessor _contextAccessor;
         private readonly ICourseService _courseService;
         private ICSVHelper _CSVHelper;
-        public ReportController(ILogger<ReportController> logger, ICourseService courseService, ICSVHelper csvHelper)
+        private ISession _session => _contextAccessor.HttpContext.Session;
+        public ReportController(ILogger<ReportController> logger, ICourseService courseService, ICSVHelper csvHelper, IHttpContextAccessor contextAccessor)
         {
             _logger = logger;
             _courseService = courseService;
             _CSVHelper = csvHelper;
+            _contextAccessor = contextAccessor;
         }
 
         public async Task<IActionResult> Index()
         {
+            var ukPRN = _session.GetInt32("UKPRN");
+            if (ukPRN != null)
+            {
+                _session.Remove("UKPRN");
+            }
+
             var reportResults = await _courseService.GetAllDfcReports();
             if (reportResults.IsFailure) throw new Exception("Unable to generate migration reports");
 

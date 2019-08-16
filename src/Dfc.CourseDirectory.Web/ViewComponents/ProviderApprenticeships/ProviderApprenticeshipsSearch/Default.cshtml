@@ -32,58 +32,7 @@
             var validator = $form.validate();
 
 
-
-             //$buttonSearch.on("click", function () {
-
-             //   var result = validator.element($apprenticeshipSearchTerm);
-             //   if (result) {
-             //       HideValidationErrorMessage();
-             //       doSearch();
-             //   } else {
-             //       ShowValidationErrorMessage();
-             //   }
-             //});
-
-             // $apprenticeshipSearchTerm.on("blur", function () {
-
-             //   var result = validator.element($apprenticeshipSearchTerm);
-             //   if (result) {
-             //       HideValidationErrorMessage();
-             //       doSearch();
-             //   } else {
-             //       ShowValidationErrorMessage();
-             //   }
-             // });
-
-             //   $apprenticeshipSearchTerm.on("keyup", function () {
-
-             //   var result = validator.element($apprenticeshipSearchTerm);
-             //   if (result) {
-             //       HideValidationErrorMessage();
-             //      doSearch();
-             //   } else {
-             //       ShowValidationErrorMessage();
-             //   }
-             // });
-
-      //function ValidateAndSearchForProvider() {
-      //          var trimmed = $apprenticeshipSearchTerm.val().trim();
-      //          $apprenticeshipSearchTerm.val(trimmed);
-      //          $apprenticeshipSearchTerm.trigger("blur");
-      //          var result = validator.element($apprenticeshipSearchTerm);
-      //          if (result) {
-
-      //              HideValidationErrorMessage();
-      //              doSearch();
-      //          }
-      //          else {
-      //              ShowValidationErrorMessage();
-      //          }
-      //      }
-
-
-
-            var debounce = function (cb, delay) {
+              var debounce = function (cb, delay) {
                 var inDebounce;
                 return function () {
                     var context = this;
@@ -157,15 +106,15 @@
 
             };
 
-              $providerApprenticeshipSearchTerm.on("keyup", debounce(doSearch, 400));
+              //$providerApprenticeshipSearchTerm.on("keyup", debounce(doSearch, 400));
             $buttonSearch.on("click", doSearch);
 
-            //$(document).keypress(function (e) {
-            //    if (e.which === 13) {
-            //        e.preventDefault();
-            //        ValidateAndSearchForProvider();
-            //    }
-            //});
+            $(document).keypress(function (e) {
+                if (e.which === 13) {
+                    e.preventDefault();
+                    $buttonSearch.trigger("click");
+                }
+            });
 
              function ShowValidationErrorMessage() {
                     $providerApprenticeshipSearchTerm.addClass(elementErrorClass);
