@@ -195,7 +195,7 @@
                                         <a class="helpdesk__link govuk-header__link" asp-controller="Provider" asp-action="Dashboard">Home</a>
                                     </li>
 
-                                    @if (providerSearchResult?.Value.Value.FirstOrDefault()?.ProviderType == ProviderType.Fe)
+                                    @if (providerSearchResult?.Value.Value.FirstOrDefault()?.ProviderType == ProviderType.FE)
                                     {
 
                                         <li class="govuk-header__navigation-item @(ViewContext.RouteData.Values["Controller"].ToString() == "RegulatedQualification" || ViewContext.RouteData.Values["Controller"].ToString() == "Qualifications" || ViewContext.RouteData.Values["Controller"].ToString() == "UnregulatedCourses" ? "govuk-header__navigation-item--active" : "")">
@@ -251,7 +251,7 @@
                                     }
                                     else
                                     {
-                                        @if (providerSearchResult?.Value.Value.FirstOrDefault()?.ProviderType == ProviderType.Fe)
+                                        @if (providerSearchResult?.Value.Value.FirstOrDefault()?.ProviderType == ProviderType.FE)
                                         {
 
                                             <li class="govuk-header__navigation-item @(ViewContext.RouteData.Values["Controller"].ToString() == "BulkUpload" ? "govuk-header__navigation-item--active" : "")">
