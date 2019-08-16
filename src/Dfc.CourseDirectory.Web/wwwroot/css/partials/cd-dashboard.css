@@ -24,7 +24,7 @@
 
 .cd-migration-panel {
   background-color: #f8f8f8;
-  border-left: 5px solid #28a197;
+  border-left: 5px solid #207E77;
   padding: .5rem 1rem;
 }
 
@@ -67,7 +67,7 @@
 
 .cd-status-panel.blue {
   text-align: left;
-  background-color: #28a197;
+  background-color: #207E77;
   color: white;
 }
 
@@ -77,7 +77,7 @@
 
 .cd-status-panel.teal {
   text-align: left;
-  background-color: #28a197;
+  background-color: #207E77;
   color: white;
   padding: 1em 1em 0 1em;
 }
@@ -193,7 +193,7 @@
 }
 
 .sidebar .widget {
-  border-top: 5px solid #28a197;
+  border-top: 5px solid #207E77;
   background-color: #f8f8f8;
   padding-left: 1rem;
 }
@@ -205,7 +205,7 @@
 }
 
 .sidebar .widget.blue {
-  border-top: 5px solid #28a197;
+  border-top: 5px solid #207E77;
 }
 
 .sidebar .widget div {
