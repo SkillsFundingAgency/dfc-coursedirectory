@@ -562,8 +562,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                                 deliveryOptionsListItemModel.PostCode = cachedLocations
                                     .Where(x => x.ID == loc.LocationGuidId.ToString()).Select(x => x.PostCode)
                                     .FirstOrDefault();
-                                deliveryOptionsListItemModel.Venue = (Venue)cachedLocations
-                                    .Where(x => x.ID == loc.LocationGuidId.ToString());
+                                deliveryOptionsListItemModel.Venue = cachedLocations
+                                    .Where(x => x.ID == loc.LocationGuidId.ToString()).FirstOrDefault();
+
                                 model.DeliveryOptionsCombinedViewModel.DeliveryOptionsListItemModel
                                     .DeliveryOptionsListItemModel
                                     .Add(deliveryOptionsListItemModel);
