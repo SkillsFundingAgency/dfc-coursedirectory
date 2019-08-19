@@ -725,11 +725,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     {
                         deliveryModes.Add((int)ApprenticeShipDeliveryLocation.BlockRelease);
                     }
+
+
                 }
 
             }
 
-            if (apprenticeshipLocationType == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased)
+            if (apprenticeshipLocationType == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased || apprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased)
             {
                 deliveryModes.Add((int)ApprenticeShipDeliveryLocation.EmployerAddress);
             }
@@ -832,7 +834,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         ? "200"
                         : "10",
                     Delivery = "Employer address"
-                    
+
                 };
                 locations.Add(CreateDeliveryLocation(loc, apprenticeshipLocationType));
             }
@@ -843,7 +845,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 //ApprenticeshipId // For backwards compatibility with Tribal (Where does this come from?)
                 //TribalProviderId
-                ProviderId  = _providerService.GetProviderByPRNAsync(new ProviderSearchCriteria(UKPRN.ToString())).Result.Value.Value.FirstOrDefault().id,
+                ProviderId = _providerService.GetProviderByPRNAsync(new ProviderSearchCriteria(UKPRN.ToString())).Result.Value.Value.FirstOrDefault().id,
                 ProviderUKPRN = UKPRN,
                 ApprenticeshipTitle = model.DetailViewModel.ApprenticeshipTitle,
                 ApprenticeshipType = model.DetailViewModel.ApprenticeshipType,
