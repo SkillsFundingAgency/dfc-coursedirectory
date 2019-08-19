@@ -15,13 +15,14 @@
 
 @if (!Model.ProviderCourseRuns.Any())
 {
-    <div class="cd-grid-coloumn-20 govuk-body" style="width: 100%;padding-left: 0.75em;">
+    <div class="cd-grid-coloumn-20 govuk-body" style="width: 100%; padding-left: 0.75em;">
+        <span class="govuk-visually-hidden">Data Unavailable</span>
         @await Component.InvokeAsync(nameof(Notification), new NotificationModel
-                 {
-                     NotificationTitle = "",
-                     NotificationMessage = "No courses found that match your search criteria",
-                     ClassType = "error-summary"
-                 })
+        {
+            NotificationTitle = "",
+            NotificationMessage = "No courses found that match your search criteria",
+            ClassType = "error-summary"
+        })
     </div>
 
 }

@@ -174,8 +174,10 @@
                 var $notionalNvqLevelV2FilterCheckboxes = $("input[name='NotionalNVQLevelv2Filter']:checkbox");
                 var $awardAimRefFilterCheckboxes = $("input[name='AwardOrgAimRefFilter']:checkbox");
 
-                $notionalNvqLevelV2FilterCheckboxes.on("click", debounce(doSearch, 1500));
-                $awardAimRefFilterCheckboxes.on("click", debounce(doSearch, 1500));
+                //$notionalNvqLevelV2FilterCheckboxes.on("click", debounce(doSearch, 1500));
+                //$awardAimRefFilterCheckboxes.on("click", debounce(doSearch, 1500));
+
+                $("#ApplyFilter").on("click", debounce(doSearch,0));
             };
 
             var assignEventToClearAllFiltersLink = function () {
@@ -195,6 +197,7 @@
                                 $($allCheckedFilterCheckboxes[i]).prop('checked', false);
                             }
                         }
+                        doSearch();
                     });
             };
 
