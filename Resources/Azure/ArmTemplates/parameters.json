@@ -118,6 +118,9 @@
     },
     "appServicePlanSize": {
       "value": "__aspPricingTierSize__"
+    },
+    "BlobStorageSettingsInlineProcessingThreshhold": {
+      "value": "__BulkUploadInlineProcessingThreshhold__"
     }
   }
 }

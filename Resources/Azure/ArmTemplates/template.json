@@ -248,6 +248,12 @@
       "metadata": {
         "description": "Resource group the App Service Environment belongs to - only required if aseHostingEnvironmentName specified"
       }
+    },
+    "BlobStorageSettingsInlineProcessingThreshhold": {
+      "type": "string",
+      "metadata": {
+        "description": "The limit of the number of items to process online.  If broached, offline processing of the bulk upload will occurr"
+      }
     }
   },
   "variables": {
@@ -635,6 +641,11 @@
               {
                 "name": "BlobStorageSettings__TemplatePath",
                 "value": "bulkuploadtemplate.csv"
+              },
+              {
+                "name": "BlobStorageSettings__InlineProcessingThreshold",
+                "value": "[parameters('BlobStorageSettingsInlineProcessingThreshhold')]"
+
               }
             ]
           },
