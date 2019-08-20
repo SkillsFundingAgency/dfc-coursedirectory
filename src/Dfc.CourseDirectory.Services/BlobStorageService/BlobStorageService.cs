@@ -68,6 +68,10 @@ namespace Dfc.CourseDirectory.Services.BlobStorageService
                                  .GetContainerReference(settings.Value.Container);
 
             _inlineProcessingThreshold = settings.Value.InlineProcessingThreshold;
+            if(default(int) == _inlineProcessingThreshold)
+            {
+                _inlineProcessingThreshold = 10000; // if no setting then set the threshold really high so that all processing is inline
+            }
         }
 
         public Task DownloadFileAsync(string filePath, Stream stream)
