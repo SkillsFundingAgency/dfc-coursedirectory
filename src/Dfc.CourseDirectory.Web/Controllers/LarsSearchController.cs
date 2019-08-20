@@ -1,18 +1,20 @@
-﻿using Dfc.CourseDirectory.Common;
+﻿
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.Enums;
 using Dfc.CourseDirectory.Services.Interfaces;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.RequestModels;
 using Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.Extensions;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
+
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -54,6 +56,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
             else
             {
+                LarsSearchRequestModel requestModelAll = new LarsSearchRequestModel() { SearchTerm = requestModel.SearchTerm };
+                var criteriaAll = _larsSearchHelper.GetLarsSearchCriteria(
+                    requestModelAll, 1, 
+                    _larsSearchSettings.ItemsPerPage,
+                    (LarsSearchFacet[])Enum.GetValues(typeof(LarsSearchFacet)));
+                var resultAll = await _larsSearchService.SearchAsync(criteriaAll);
+
                 var criteria = _larsSearchHelper.GetLarsSearchCriteria(
                     requestModel,
                     _paginationHelper.GetCurrentPageNo(Request.GetDisplayUrl(), _larsSearchSettings.PageParamName),
@@ -61,9 +70,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     (LarsSearchFacet[])Enum.GetValues(typeof(LarsSearchFacet)));
 
                 var result = await _larsSearchService.SearchAsync(criteria);
-                if (result.IsSuccess && result.HasValue) // && result.Value.Value.Count() > 0)
+                if (resultAll.IsSuccess && resultAll.HasValue && result.IsSuccess && result.HasValue)
                 {
-                    var filters = _larsSearchHelper.GetLarsSearchFilterModels(result.Value.SearchFacets, requestModel);
+                    //foreach (var z in requestModel.NotionalNVQLevelv2Filter)
+                    requestModelAll.NotionalNVQLevelv2Filter = requestModel.NotionalNVQLevelv2Filter; //.ToArray();
+                    requestModelAll.AwardOrgCodeFilter = requestModel.AwardOrgCodeFilter; //.ToArray();
+
+                    var filters = _larsSearchHelper.GetLarsSearchFilterModels(resultAll.Value.SearchFacets, requestModelAll);
                     var items = _larsSearchHelper.GetLarsSearchResultItemModels(result.Value.Value);
 
                     model = new LarsSearchResultModel(
