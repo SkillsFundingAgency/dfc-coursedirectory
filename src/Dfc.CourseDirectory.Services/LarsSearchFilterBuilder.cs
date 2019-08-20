@@ -18,7 +18,7 @@ namespace Dfc.CourseDirectory.Services
 
         public ILarsSearchFilterBuilder And()
         {
-            _sb.Append(" and");
+            _sb.Append(" and ");
             return this;
         }
 
@@ -105,7 +105,7 @@ namespace Dfc.CourseDirectory.Services
 
         public ILarsSearchFilterBuilder Or()
         {
-            _sb.Append($" or");
+            _sb.Append($" or ");
             return this;
         }
 
