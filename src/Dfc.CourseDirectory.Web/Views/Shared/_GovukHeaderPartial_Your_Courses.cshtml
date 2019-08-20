@@ -295,7 +295,9 @@
 
 @if (!(ViewBag.HideHeaderBackLink ?? false))
 {
+    string controller = ViewBag.BackLinkController ?? string.Empty;
+    string action = ViewBag.BackLinkAction ?? string.Empty;
     <div class="cd-fullwidth-container">
-        @await Component.InvokeAsync(nameof(BackLink))
+        @await Component.InvokeAsync(nameof(BackLink), new { Controller = controller, Action = action })
     </div>
 }
