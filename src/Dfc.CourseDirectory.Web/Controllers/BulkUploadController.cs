@@ -22,6 +22,8 @@ using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Models.Models.Courses;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.ViewModels;
+using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
+using Dfc.CourseDirectory.Models.Models.Providers;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -33,7 +35,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly IBulkUploadService _bulkUploadService;
         private readonly IBlobStorageService _blobService;
         private readonly ICourseService _courseService;
-
+        private readonly IProviderService _providerService;
         private IHostingEnvironment _env;
         private ISession _session => _contextAccessor.HttpContext.Session;
 
@@ -43,7 +45,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 IBulkUploadService bulkUploadService,
                 IBlobStorageService blobService,
                 ICourseService courseService,
-                IHostingEnvironment env)
+                IHostingEnvironment env,
+                IProviderService providerService)
         {
             Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(contextAccessor, nameof(contextAccessor));
@@ -52,6 +55,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             Throw.IfNull(courseService, nameof(courseService));
             Throw.IfNull(env, nameof(env));
             Throw.IfNull(courseService, nameof(courseService));
+            Throw.IfNull(providerService, nameof(providerService));
 
             _logger = logger;
             _contextAccessor = contextAccessor;
@@ -60,6 +64,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _courseService = courseService;
             _env = env;
             _courseService = courseService;
+            _providerService = providerService;
         }
 
 
@@ -73,13 +78,26 @@ namespace Dfc.CourseDirectory.Web.Controllers
             else
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
 
+            Provider provider = FindProvider(UKPRN.Value);
+            if(null == provider)
+            {
+                return RedirectToAction("Index", "Home", new { errmsg = "Failed to look up Provider details." });
+            }
+
             var courseCounts = _courseService.GetCourseCountsByStatusForUKPRN(new CourseSearchCriteria(UKPRN)).Result;
             var courseErrors = courseCounts.HasValue && courseCounts.IsSuccess ? courseCounts.Value.Where(x => (int)x.Status == (int)RecordStatus.MigrationPending  && x.Count > 0|| (int)x.Status == (int)RecordStatus.MigrationReadyToGoLive && x.Count > 0).Count() : 500;
 
             var model = new BulkUploadViewModel
             {
-                HasMigrationErrors = courseErrors > 0 ? true : false
+                HasMigrationErrors = courseErrors > 0 ? true : false,
             };
+
+            if(null != provider.BulkUploadStatus)
+            {
+                model.BulkUploadBackgroundInProgress = provider.BulkUploadStatus.InProgress;
+                model.BulkUploadBackgroundRowCount = provider.BulkUploadStatus.TotalRowCount;
+                model.BulkUploadBackgroundStartTimestamp = provider.BulkUploadStatus.StartedTimestamp;
+            }
 
             return View("Index", model);
         }
@@ -402,5 +420,23 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return true;
         }
 
+
+        private Provider FindProvider(int prn)
+        {
+            Provider provider = null;
+            try
+            {
+                var providerSearchResult = Task.Run(async () => await _providerService.GetProviderByPRNAsync(new Services.ProviderService.ProviderSearchCriteria(prn.ToString()))).Result;
+                if (providerSearchResult.IsSuccess)
+                {
+                    provider = providerSearchResult.Value.Value.FirstOrDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+                // @ToDo: decide how to handle this
+            }
+            return provider;
+        }
     }
 }

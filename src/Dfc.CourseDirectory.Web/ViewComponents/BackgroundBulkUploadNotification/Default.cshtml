@@ -1,0 +1,67 @@
+﻿@using Dfc.CourseDirectory.Common.Settings
+@using Dfc.CourseDirectory.Services.Interfaces.ProviderService
+@using Dfc.CourseDirectory.Services.ProviderService
+@using Dfc.CourseDirectory.Web.Helpers
+@using Microsoft.Extensions.Options
+@using Dfc.CourseDirectory.Web.ViewComponents.Notification
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Http
+@model Dfc.CourseDirectory.Web.ViewComponents.BackgroundBulkUploadNotification.BackgroundBulkUploadNotificationModel
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@inject IAuthorizationService Authorization
+@inject IHttpContextAccessor HttpContextAccessor
+@inject IProviderService providerService
+
+
+
+@{
+    string datestamp = string.Empty;
+    string timestamp = string.Empty;
+    if (Model.BulkUploadBackgroundStartTimestamp.HasValue)
+    {
+        datestamp = Model.BulkUploadBackgroundStartTimestamp.Value.ToString("dd MMM yyyy");
+        timestamp = Model.BulkUploadBackgroundStartTimestamp.Value.ToString("HH:mm");
+    }
+
+    System.Text.StringBuilder message = new System.Text.StringBuilder($"Your file of ");
+    string uploadTimeMessage = string.Empty;
+    if (Model.BulkUploadBackgroundRowCount > 0)
+    {
+        if (Model.BulkUploadBackgroundRowCount == 1)
+        {
+            message.Append($"{Model.BulkUploadBackgroundRowCount} course ");
+        }
+        else
+        {
+            message.Append($"{Model.BulkUploadBackgroundRowCount} courses ");
+        }
+
+        double uploadTime = Math.Round((Model.BulkUploadBackgroundRowCount.Value * 1.2) / 60, 0, MidpointRounding.AwayFromZero);  // cos averaged 1.2 seconds per row in test
+        if (uploadTime > 0)
+        {
+            uploadTimeMessage = $"{uploadTime} minute";
+            if (uploadTime > 1)
+            {
+                uploadTimeMessage += "s";
+            }
+        }
+
+        if (!string.IsNullOrWhiteSpace(datestamp) && !string.IsNullOrWhiteSpace(timestamp))
+        {
+            message.Append($" uploaded on {datestamp} at {timestamp}");
+        }
+        message.Append(" is still being processed");
+        if (!string.IsNullOrWhiteSpace(uploadTimeMessage))
+        {
+            message.Append($" and should complete in the next {uploadTimeMessage}.");
+        }
+    }
+    @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+    {
+        NotificationTitle = "Bulk upload processing",
+        ClassType = "info-summary",
+        NotificationMessage = message.ToString()
+    })
+}
