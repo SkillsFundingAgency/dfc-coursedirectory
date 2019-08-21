@@ -48,6 +48,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
             _contextAccessor = contextAccessor;
             _courseService = courseService;
             _venueService = venueService;
+           
         }
 
 
@@ -347,6 +348,10 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
             model.Venues = venueFilterItems;
             model.AttendancePattern = attendanceModeFilterItems;
             model.Regions = regionFilterItems;
+            
+            //Setup backlink to go to the dashboard
+            ViewBag.BackLinkController = "Home";
+            ViewBag.BackLinkAction = "Index";
 
             return View(model);
         }
