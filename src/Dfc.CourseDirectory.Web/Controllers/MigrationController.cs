@@ -199,7 +199,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             var courses = await _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(ukprn));
             
-
             if (courses.IsFailure)
             {
                 throw new Exception($"Unable to find courses for UKPRN: {ukprn}");
