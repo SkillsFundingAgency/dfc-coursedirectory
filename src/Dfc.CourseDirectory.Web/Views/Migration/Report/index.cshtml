@@ -61,7 +61,7 @@
                         null, new { @class = "govuk-link govuk-!-margin-top-3" })
                 </div>
                 <div class="govuk-grid-column-one-third">
-                    <aside class="sidebar">
+                    <div class="sidebar">
                         <div class="widget">
                             <h3>Data transfer details</h3>
                             @if (Model.CourseCount.HasValue)
@@ -83,7 +83,7 @@
                                 <span>Courses successfully published:</span><span><strong> @Model.PublishedCount</strong></span>
                             </div>
                         </div>
-                    </aside>
+                    </div>
                 </div>
             </div>
         </div>
