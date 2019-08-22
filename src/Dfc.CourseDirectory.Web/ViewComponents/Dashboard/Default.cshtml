@@ -91,7 +91,7 @@
                         @await Html.PartialAsync("/ViewComponents/Dashboard/_CoursesCardPartial.cshtml")
                     </div>
                     <div class="govuk-grid-column-one-half homepage-item ">
-                        @if (ProviderType.FE == Model.ProviderType)  // COUR-1713. Urgh!
+                        @if (ProviderType.FE == Model.ProviderType)  // COUR-1713. Urgh!!
                         {
                             @await Html.PartialAsync("/ViewComponents/Dashboard/_VenuesCardPartial.cshtml")
                         }
@@ -101,7 +101,7 @@
                         }
                     </div>
                 </div>
-                @if (ProviderType.FE != Model.ProviderType)  // COUR-1713. Urgh!
+                @if (ProviderType.FE != Model.ProviderType)  // COUR-1713. Urgh!!
                 {
                     <div class="govuk-grid-row govuk-!-margin-bottom-6 homepage-item--container">
                         <div class="govuk-grid-column-one-half homepage-item ">
