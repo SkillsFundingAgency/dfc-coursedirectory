@@ -14,8 +14,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Models.Models.Apprenticeships;
 using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
+using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 
 namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
 {
@@ -26,20 +26,23 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
         private readonly IVenueService _venueService;
         private readonly IBlobStorageService _blobStorageService;
         private readonly IHttpContextAccessor _contextAccessor;
+        private readonly IProviderService _providerService;
         private ISession _session => _contextAccessor.HttpContext.Session;
 
-        public Dashboard(ICourseService courseService, IVenueService venueService, IHttpContextAccessor contextAccessor, IBlobStorageService blobStorageService, IApprenticeshipService apprenticeshipService)
+        public Dashboard(ICourseService courseService, IVenueService venueService, IHttpContextAccessor contextAccessor, IBlobStorageService blobStorageService, IApprenticeshipService apprenticeshipService, IProviderService providerService)
         {
             Throw.IfNull(courseService, nameof(courseService));
             Throw.IfNull(apprenticeshipService, nameof(apprenticeshipService));
             Throw.IfNull(venueService, nameof(venueService));
             Throw.IfNull(blobStorageService, nameof(blobStorageService));
+            Throw.IfNull(providerService, nameof(providerService));
 
             _apprenticeshipService = apprenticeshipService;
             _courseService = courseService;
             _venueService = venueService;
             _contextAccessor = contextAccessor;
             _blobStorageService = blobStorageService;
+            _providerService = providerService;
         }
 
         public async Task<IViewComponentResult> InvokeAsync(DashboardModel model)
@@ -130,7 +133,39 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
 
             actualModel.PublishedApprenticeshipsCount = result.Value.Count(x => x.RecordStatus==RecordStatus.Live);
 
+            Dfc.CourseDirectory.Models.Models.Providers.Provider provider = FindProvider(UKPRN);
+            if (null != provider)
+            {
+                if(null != provider.BulkUploadStatus)
+                {
+                    actualModel.BulkUploadBackgroundInProgress = provider.BulkUploadStatus.InProgress;
+                    actualModel.BulkUploadBackgroundRowCount = provider.BulkUploadStatus.TotalRowCount;
+                    actualModel.BulkUploadBackgroundStartTimestamp = provider.BulkUploadStatus.StartedTimestamp;
+                }
+                actualModel.ProviderType = provider.ProviderType;
+            }
+
             return View("~/ViewComponents/Dashboard/Default.cshtml", actualModel);
         }
+
+        private Dfc.CourseDirectory.Models.Models.Providers.Provider FindProvider(int prn)
+        {
+            Dfc.CourseDirectory.Models.Models.Providers.Provider provider = null;
+            try
+            {
+                var providerSearchResult = Task.Run(async () => await _providerService.GetProviderByPRNAsync(new Services.ProviderService.ProviderSearchCriteria(prn.ToString()))).Result;
+                if (providerSearchResult.IsSuccess)
+                {
+                    provider = providerSearchResult.Value.Value.FirstOrDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+                // @ToDo: decide how to handle this
+            }
+            return provider;
+        }
+
+
     }
 }

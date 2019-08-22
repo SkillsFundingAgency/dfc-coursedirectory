@@ -4,9 +4,10 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.BackLink
 {
     public class BackLink : ViewComponent
     {
-        public IViewComponentResult Invoke()
+        public IViewComponentResult Invoke(string controller = null, string action = null)
         {
-            return View("~/ViewComponents/BackLink/Default.cshtml");
+            BackLinkModel model = new BackLinkModel(controller, action);
+            return View("~/ViewComponents/BackLink/Default.cshtml", model);
         }
     }
 }

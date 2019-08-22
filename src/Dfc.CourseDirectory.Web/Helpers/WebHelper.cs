@@ -27,9 +27,9 @@ namespace Dfc.CourseDirectory.Web.Helpers
         {
             if (val.Equals(1))
             {
-                return " Course";
+                return " course";
             }
-            return " Courses";
+            return " courses";
             
         }
 
@@ -37,9 +37,9 @@ namespace Dfc.CourseDirectory.Web.Helpers
         {
             if (val.Equals(1))
             {
-                return " Location";
+                return " location";
             }
-            return " Locations";
+            return " locations";
 
         }
 
@@ -47,9 +47,9 @@ namespace Dfc.CourseDirectory.Web.Helpers
         {
             if (val.Equals(1))
             {
-                return " Apprenticeship";
+                return " apprenticeship";
             }
-            return " Apprenticeships";
+            return " apprenticeships";
 
         }
 

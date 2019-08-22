@@ -4,8 +4,11 @@
 @using Dfc.CourseDirectory.Web.Helpers
 @using Microsoft.Extensions.Options
 @using Dfc.CourseDirectory.Web.ViewComponents.Notification
+@using Dfc.CourseDirectory.Web.ViewComponents.BackgroundBulkUploadNotification
+@using Dfc.CourseDirectory.Web.ViewComponents.DashboardCard
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Http
+@using Dfc.CourseDirectory.Models.Models.Providers
 @model Dfc.CourseDirectory.Web.ViewComponents.Dashboard.DashboardModel
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
@@ -14,9 +17,6 @@
 @inject IHttpContextAccessor HttpContextAccessor
 @inject IProviderService providerService
 
-
-
-
 @if (Model.ValidationMessages != null && Model.ValidationMessages.Any())
 {
     <div class="cd-info-summary" aria-labelledby="info-summary-title" role="alert" tabindex="-1" data-module="info-summary">
@@ -24,11 +24,22 @@
             <div class="cd-info-summary__list">
                 @foreach (string msg in Model?.ValidationMessages)
                 {
-                    <a href="/DQI"> @msg </a>
+                    <a href="/DQI"> @msg</a>
                 }
             </div>
         </div>
     </div>
+}
+
+@if (Model.BulkUploadBackgroundInProgress)
+{
+    @await Component.InvokeAsync(nameof(BackgroundBulkUploadNotification),
+        new BackgroundBulkUploadNotificationModel()
+        {
+            BulkUploadBackgroundInProgress = true,
+            BulkUploadBackgroundRowCount = Model.BulkUploadBackgroundRowCount,
+            BulkUploadBackgroundStartTimestamp = Model.BulkUploadBackgroundStartTimestamp
+        } );
 }
 
 @if (Model.BulkUploadReadyToGoLiveCount > 0 || Model.BulkUploadPendingCount > 0)
@@ -77,105 +88,27 @@
             {
                 <div class="govuk-grid-row govuk-!-margin-bottom-6 homepage-item--container">
                     <div class="govuk-grid-column-one-half homepage-item ">
-                        <div class="cd-migration-panel">
-                            <h2 class="cd-migration-panel__title">Manage your courses</h2>
-                            <span class="cd-migration-panel__number">
-                                @if (Model.PublishedCourseCount == 0)
-                                {
-                                    @Model.PublishedCourseCount
-                                }
-                                else
-                                {
-                                    <a asp-controller="providercourses" asp-action="index" class="govuk-link">@Model.PublishedCourseCount</a>
-                                }
-
-                            </span>
-                            <span> @WebHelper.GetCourseTextToUse(Model.PublishedCourseCount)</span><br />
-                            <br />
-                        </div>
-                        <ul class="govuk-list cd-homepage__list">
-                            <li class="cd-homepage__list--item">
-                                <a asp-controller="RegulatedQualification" asp-action="Index" class="govuk-link">Add a new course</a>
-                            </li>
-                            @if (Model.PublishedCourseCount > 0)
-                            {
-                                <li class="cd-homepage__list--item">
-                                    <a asp-controller="Providercourses" asp-action="index" class="govuk-link">View, edit, copy or delete a course</a>
-                                </li>
-                            }
-                            <li class="cd-homepage__list--item">
-                                <a asp-controller="Bulkupload" asp-action="index" class="govuk-link">Bulk upload course information</a>
-                            </li>
-                        </ul>
+                        @await Html.PartialAsync("/ViewComponents/Dashboard/_CoursesCardPartial.cshtml")
                     </div>
                     <div class="govuk-grid-column-one-half homepage-item ">
-                        <div class="cd-migration-panel">
-                            <h2 class="cd-migration-panel__title">Manage your apprenticeships</h2>
-                            <span class="cd-migration-panel__number">
-                                @if (Model.PublishedApprenticeshipsCount == 0)
-                                {
-                                    @Model.PublishedApprenticeshipsCount
-                                }
-                                else
-                                {
-                                    <a asp-controller="ProviderApprenticeships" asp-action="index" class="govuk-link">@Model.PublishedApprenticeshipsCount</a>
-                                }
-
-                            </span>
-                            <span> @WebHelper.GetApprenticeshipsTextToUse(Model.PublishedApprenticeshipsCount)</span><br />
-                            <br />
-                        </div>
-                        <ul class="govuk-list cd-homepage__list">
-                            <li class="cd-homepage__list--item">
-                                <a asp-controller="Apprenticeships" asp-action="Index" class="govuk-link">Add a new apprenticeship</a>
-                            </li>
-                            @if (Model.PublishedApprenticeshipsCount > 0)
-                            {
-                                <li class="cd-homepage__list--item">
-                                    <a asp-controller="ProviderApprenticeships" asp-action="index" class="govuk-link">View, edit or delete a apprenticeship</a>
-                                </li>
-                            }
-                            <li class="cd-homepage__list--item">
-                                <a asp-controller="Bulkupload" asp-action="ApprenticeshipIndex" class="govuk-link">Bulk upload apprenticeship information</a>
-                            </li>
-
-                        </ul>
+                        @if (ProviderType.FE == Model.ProviderType)  // COUR-1713. Urgh!!
+                        {
+                            @await Html.PartialAsync("/ViewComponents/Dashboard/_VenuesCardPartial.cshtml")
+                        }
+                        else
+                        {
+                            @await Html.PartialAsync("/ViewComponents/Dashboard/_ApprenticeshipsCardPartial.cshtml")
+                        }
                     </div>
-
                 </div>
-                <div class="govuk-grid-row govuk-!-margin-bottom-6 homepage-item--container">
-                    <div class="govuk-grid-column-one-half homepage-item ">
-                        <div class="cd-migration-panel">
-                            <h2 class="cd-migration-panel__title">Manage your locations</h2>
-                            <span class="cd-migration-panel__number">
-                                @if (Model.VenueCount == 0)
-                                {
-                                    @Model.VenueCount
-                                }
-                                else
-                                {
-                                    <a asp-controller="venues" asp-action="index" class="govuk-link">@Model.VenueCount</a>
-                                }
-
-                            </span>
-                            <span> @WebHelper.GetLocationsTextToUse(Model.VenueCount)</span><br />
-                            <br />
+                @if (ProviderType.FE != Model.ProviderType)  // COUR-1713. Urgh!!
+                {
+                    <div class="govuk-grid-row govuk-!-margin-bottom-6 homepage-item--container">
+                        <div class="govuk-grid-column-one-half homepage-item ">
+                            @await Html.PartialAsync("/ViewComponents/Dashboard/_VenuesCardPartial.cshtml")
                         </div>
-                        <ul class="govuk-list cd-homepage__list">
-                            <li class="cd-homepage__list--item">
-                                <a asp-controller="Venues" asp-action="AddVenue" class="govuk-link">Add a new location</a>
-                            </li>
-                            @if (Model.VenueCount > 0)
-                            {
-                                <li class="cd-homepage__list--item">
-                                    <a asp-controller="Venues" asp-action="Index" class="govuk-link">View, edit or delete a location</a>
-                                </li>
-                            }
-                        </ul>
                     </div>
-
-                </div>
-
+                }
             }
             else
             {
@@ -183,145 +116,26 @@
                 {
                     <div class="govuk-grid-row govuk-!-margin-bottom-6 homepage-item--container">
                         <div class="govuk-grid-column-one-half homepage-item ">
-                            <div class="cd-migration-panel">
-                                <h2 class="cd-migration-panel__title">Manage your courses</h2>
-                                <span class="cd-migration-panel__number">
-                                    @if (Model.PublishedCourseCount == 0)
-                                    {
-                                        @Model.PublishedCourseCount
-                                    }
-                                    else
-                                    {
-                                        <a asp-controller="providercourses" asp-action="index" class="govuk-link">@Model.PublishedCourseCount</a>
-                                    }
-
-                                </span>
-                                <span> @WebHelper.GetCourseTextToUse(Model.PublishedCourseCount)</span><br />
-                                <br />
-                            </div>
-                            <ul class="govuk-list cd-homepage__list">
-                                <li class="cd-homepage__list--item">
-                                    <a asp-controller="RegulatedQualification" asp-action="Index" class="govuk-link">Add a new course</a>
-                                </li>
-                                @if (Model.PublishedCourseCount > 0)
-                                {
-                                    <li class="cd-homepage__list--item">
-                                        <a asp-controller="Providercourses" asp-action="index" class="govuk-link">View, edit, copy or delete a course</a>
-                                    </li>
-                                }
-                                <li class="cd-homepage__list--item">
-                                    <a asp-controller="Bulkupload" asp-action="index" class="govuk-link">Bulk upload course information</a>
-                                </li>
-                            </ul>
+                            @await Html.PartialAsync("/ViewComponents/Dashboard/_CourseCardPartial.cshtml")
                         </div>
                         <div class="govuk-grid-column-one-half homepage-item ">
-                            <div class="cd-migration-panel">
-                                <h2 class="cd-migration-panel__title">Manage your locations</h2>
-                                <span class="cd-migration-panel__number">
-                                    @if (Model.VenueCount == 0)
-                                    {
-                                        @Model.VenueCount
-                                    }
-                                    else
-                                    {
-                                        <a asp-controller="venues" asp-action="index" class="govuk-link">@Model.VenueCount</a>
-                                    }
-
-                                </span>
-                                <span> @WebHelper.GetLocationsTextToUse(Model.VenueCount)</span><br />
-                                <br />
-                            </div>
-                            <ul class="govuk-list cd-homepage__list">
-                                <li class="cd-homepage__list--item">
-                                    <a asp-controller="Venues" asp-action="AddVenue" class="govuk-link">Add a new location</a>
-                                </li>
-                                @if (Model.VenueCount > 0)
-                                {
-                                    <li class="cd-homepage__list--item">
-                                        <a asp-controller="Venues" asp-action="Index" class="govuk-link">View, edit or delete a location</a>
-                                    </li>
-                                }
-                            </ul>
+                            @await Html.PartialAsync("/ViewComponents/Dashboard/_VenuesCardPartial.cshtml")
                         </div>
-
                     </div>
-
                 }
 
                 @if (apprenticeshipUser.Succeeded)
                 {
                     <div class="govuk-grid-row govuk-!-margin-bottom-6 homepage-item--container">
                         <div class="govuk-grid-column-one-half homepage-item ">
-                            <div class="cd-migration-panel">
-                                <h2 class="cd-migration-panel__title">Manage your apprenticeships</h2>
-                                <span class="cd-migration-panel__number">
-                                    @if (Model.PublishedApprenticeshipsCount == 0)
-                                    {
-                                        @Model.PublishedApprenticeshipsCount
-                                    }
-                                    else
-                                    {
-                                        <a asp-controller="ProviderApprenticeships" asp-action="index" class="govuk-link">@Model.PublishedApprenticeshipsCount</a>
-                                    }
-
-                                </span>
-                                <span> @WebHelper.GetApprenticeshipsTextToUse(Model.PublishedApprenticeshipsCount)</span><br />
-                                <br />
-                            </div>
-                            <ul class="govuk-list cd-homepage__list">
-                                <li class="cd-homepage__list--item">
-                                    <a asp-controller="Apprenticeships" asp-action="Index" class="govuk-link">Add a new apprenticeship</a>
-                                </li>
-                                @if (Model.PublishedCourseCount > 0)
-                                {
-                                    <li class="cd-homepage__list--item">
-                                        <a asp-controller="ProviderApprenticeships" asp-action="index" class="govuk-link">View, edit or delete a apprenticeship</a>
-                                    </li>
-                                }
-                                <li class="cd-homepage__list--item">
-                                    <a asp-controller="Bulkupload" asp-action="ApprenticeshipIndex" class="govuk-link">Bulk upload apprenticeship information</a>
-                                </li>
-
-                            </ul>
+                            @await Html.PartialAsync("/ViewComponents/Dashboard/_ApprenticeshipsCardPartial.cshtml")
                         </div>
                         <div class="govuk-grid-column-one-half homepage-item ">
-                            <div class="cd-migration-panel">
-                                <h2 class="cd-migration-panel__title">Manage your locations</h2>
-                                <span class="cd-migration-panel__number">
-                                    @if (Model.VenueCount == 0)
-                                    {
-                                        @Model.VenueCount
-                                    }
-                                    else
-                                    {
-                                        <a asp-controller="venues" asp-action="index" class="govuk-link">@Model.VenueCount</a>
-                                    }
-
-                                </span>
-                                <span> @WebHelper.GetLocationsTextToUse(Model.VenueCount)</span><br />
-                                <br />
-                            </div>
-                            <ul class="govuk-list cd-homepage__list">
-                                <li class="cd-homepage__list--item">
-                                    <a asp-controller="Venues" asp-action="AddVenue" class="govuk-link">Add a new location</a>
-                                </li>
-                                @if (Model.VenueCount > 0)
-                                {
-                                    <li class="cd-homepage__list--item">
-                                        <a asp-controller="Venues" asp-action="Index" class="govuk-link">View, edit or delete a location</a>
-                                    </li>
-                                }
-                            </ul>
+                            @await Html.PartialAsync("/ViewComponents/Dashboard/_VenuesCardPartial.cshtml")
                         </div>
-
                     </div>
-
-
                 }
             }
-
-
-
         </div>
         <div class="govuk-grid-column-one-third">
             <aside class="sidebar">
