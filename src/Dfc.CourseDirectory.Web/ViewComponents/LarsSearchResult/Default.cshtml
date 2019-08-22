@@ -19,9 +19,8 @@
 
 <div class="govuk-grid-row">
 
-    @if (Model.HasErrors)
+    @if (Model.HasErrors && !Model.Items.Any())
     {
-
         <div class="govuk-grid-column-full">
             <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
                 <h2 class="govuk-error-summary__title" id="error-summary-title">
@@ -41,7 +40,7 @@
         </div>
 
     }
-    else if (Model.Items.Any())
+    else if (!Model.HasErrors) // Model.Items.Any())
     {
 
         <div class="govuk-heading-s lars-search-results govuk-!-font-weight-regular">
@@ -93,17 +92,15 @@
 
                 }
                 <div class="govuk-form-group govuk-!-font-size-14">
-                <a class="govuk-button" id="ApplyFilter">Apply</a>
-</div>
+                    @*<a class="govuk-button" id="ApplyFilter">Apply</a>*@
+                </div>
 
             }
         </div>
 
         <div class="govuk-grid-column-three-quarters">
 
-
             <div class="govuk-table govuk-!-font-size-14">
-
 
                 @foreach (var item in Model.Items)
                 {
@@ -119,12 +116,13 @@
                                 <a asp-controller="AddCourse" asp-action="AddCourse" asp-route-learnAimRef=@item.LearnAimRef asp-route-notionalNVQLevelv2=@item.NotionalNVQLevelv2 asp-route-awardOrgCode=@item.AwardOrgCode asp-route-learnAimRefTitle=@item.LearnAimRefTitle asp-route-learnAimRefTypeDesc=@item.LearnAimRefTypeDesc class="link--button" id="">Choose this qualification</a>
                             }
                         }
-
                     </div>
                 }
 
             </div>
-            @await Component.InvokeAsync(nameof(Pagination),
+            @if (Model.Items.Any())
+            {
+                await Component.InvokeAsync(nameof(Pagination),
                      new
                      {
                          url = Model.Url,
@@ -133,7 +131,8 @@
                          itemsPerPage = Model.ItemsPerPage,
                          noOfPagesToDisplay = 10,
                          isSliding = true
-                     })
+                     });
+            }
         </div>
 
     }
