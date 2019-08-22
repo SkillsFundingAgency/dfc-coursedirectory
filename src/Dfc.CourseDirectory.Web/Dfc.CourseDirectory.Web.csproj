@@ -42,6 +42,7 @@
 
   <ItemGroup>
     <Content Remove="appsettings.Development.json" />
+    <Content Remove="ViewComponents\Dashboard\_CoursesCardPartial.cshtml" />
     <Content Remove="Views\Qualifications\Courses.cshtml" />
     <Content Remove="wwwroot\scss\partials\view-components.pagination" />
   </ItemGroup>
@@ -67,6 +68,7 @@
 
   <ItemGroup>
     <None Include="appsettings.Development.json" />
+    <None Include="ViewComponents\Dashboard\_CoursesCardPartial.cshtml" />
     <None Include="ViewComponents\EditVenueName\Default.cshtml" />
   </ItemGroup>
 
