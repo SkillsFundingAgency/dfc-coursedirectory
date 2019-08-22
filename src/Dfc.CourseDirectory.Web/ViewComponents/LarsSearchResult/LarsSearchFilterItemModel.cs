@@ -9,7 +9,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult
         public string Name { get; }
         public string Text { get; set; }
         public string Value { get; }
-        public int Count { get; }
+        public int Count { get; set; }
         public bool IsSelected { get; }
 
         public LarsSearchFilterItemModel(
