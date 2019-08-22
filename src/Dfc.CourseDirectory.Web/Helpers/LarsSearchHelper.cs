@@ -213,7 +213,7 @@ namespace Dfc.CourseDirectory.Web.Helpers
             bool openingBracketAppended = false;
             if (stringBuilder.Length > 0 && filters.Length > 0)
             {
-                new LarsSearchFilterBuilder(stringBuilder).Or() //.And()
+                new LarsSearchFilterBuilder(stringBuilder).And()
                                                           .AppendOpeningBracket();
                 openingBracketAppended = true;
             }
