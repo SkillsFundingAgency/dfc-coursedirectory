@@ -14,7 +14,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Models.Models.Apprenticeships;
 using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 
@@ -143,6 +142,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
                     actualModel.BulkUploadBackgroundRowCount = provider.BulkUploadStatus.TotalRowCount;
                     actualModel.BulkUploadBackgroundStartTimestamp = provider.BulkUploadStatus.StartedTimestamp;
                 }
+                actualModel.ProviderType = provider.ProviderType;
             }
 
             return View("~/ViewComponents/Dashboard/Default.cshtml", actualModel);

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Dfc.CourseDirectory.Models.Models.Providers;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -8,6 +9,8 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
 {
     public class DashboardModel
     {
+        public ProviderType ProviderType { get; set; }
+
         public int PublishedCourseCount { get; set; }
 
         public int PublishedApprenticeshipsCount { get; set; }
