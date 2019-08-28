@@ -131,55 +131,70 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             string errorMessage;
 
-            if (ValidateFile(bulkUploadFile, out errorMessage))
+            if (Validate.ValidateFile(bulkUploadFile, out errorMessage))
             {
                 int providerUKPRN = UKPRN.Value;
                 string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                string bulkUploadFileNewName = string.Format(@"{0}-{1}", DateTime.Now.ToString("yyMMdd-HHmmss"), bulkUploadFile.FileName);
+                string bulkUploadFileNewName = string.Format(@"{0}-{1}", DateTime.Now.ToString("yyMMdd-HHmmss"),
+                    bulkUploadFile.FileName);
 
                 MemoryStream ms = new MemoryStream();
                 bulkUploadFile.CopyTo(ms);
 
-                int csvLineCount = _bulkUploadService.CountCsvLines(ms);
-                bool processInline = (csvLineCount <= _blobService.InlineProcessingThreshold);
-                _logger.LogInformation($"Csv line count = {csvLineCount} threshold = {_blobService.InlineProcessingThreshold} processInline = {processInline}");
-
-                if (processInline)
+                if (!Validate.isBinaryStream(ms))
                 {
-                    bulkUploadFileNewName += "." + DateTime.UtcNow.ToString("yyyyMMddHHmmss") + ".processed"; // stops the Azure trigger from processing the file
-                }
+                    int csvLineCount = _bulkUploadService.CountCsvLines(ms);
+                    bool processInline = (csvLineCount <= _blobService.InlineProcessingThreshold);
+                    _logger.LogInformation(
+                        $"Csv line count = {csvLineCount} threshold = {_blobService.InlineProcessingThreshold} processInline = {processInline}");
 
-                Task task = _blobService.UploadFileAsync($"{UKPRN.ToString()}/Bulk Upload/Files/{bulkUploadFileNewName}", ms);
-                task.Wait();
-
-                var errors = _bulkUploadService.ProcessBulkUpload(ms, providerUKPRN, userId, processInline);
-
-                if (errors.Any())
-                {
-                    vm.errors = errors;
-                    return View(vm);                   
-                }
-                else
-                {
-                    if(processInline)
+                    if (processInline)
                     {
-                        // All good => redirect to BulkCourses action
-                        return RedirectToAction("Index", "PublishCourses", new { publishMode = PublishMode.BulkUpload, fromBulkUpload = true });
+                        bulkUploadFileNewName +=
+                            "." + DateTime.UtcNow.ToString("yyyyMMddHHmmss") +
+                            ".processed"; // stops the Azure trigger from processing the file
+                    }
+
+                    Task task = _blobService.UploadFileAsync(
+                        $"{UKPRN.ToString()}/Bulk Upload/Files/{bulkUploadFileNewName}", ms);
+                    task.Wait();
+
+                    var errors = _bulkUploadService.ProcessBulkUpload(ms, providerUKPRN, userId, processInline);
+
+                    if (errors.Any())
+                    {
+                        vm.errors = errors;
+                        return View(vm);
                     }
                     else
                     {
-                        return RedirectToAction("Pending");
+                        if (processInline)
+                        {
+                            // All good => redirect to BulkCourses action
+                            return RedirectToAction("Index", "PublishCourses",
+                                new {publishMode = PublishMode.BulkUpload, fromBulkUpload = true});
+                        }
+                        else
+                        {
+                            return RedirectToAction("Pending");
+                        }
                     }
-                }
 
+                }
+                else
+                {
+                    vm.errors = new string[] {"Invalid file content."};
+                }
             }
+
             else
             {
-                vm.errors = new string[] { errorMessage };
+                vm.errors = new string[] {errorMessage};
             }
 
             return View(vm);
         }
+        
 
         [Authorize]
         [HttpGet]
@@ -387,39 +402,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return View("ApprenticeshipIndex");
         }
 
-        /// <summary>
-        /// Server side validation to match and extend the client-side validation
-        /// </summary>
-        /// <param name="bulkUploadFile"></param>
-        /// <returns></returns>
-        private bool ValidateFile(IFormFile bulkUploadFile, out string errorMessage)
-        {
-            if (bulkUploadFile.Length == 0)
-            {
-                errorMessage = "No file uploaded";
-                return false;
-            }
-
-            if (!bulkUploadFile.FileName.EndsWith(".csv") || bulkUploadFile.FileName.Replace(".csv", string.Empty).Contains(".") || bulkUploadFile.Name != "bulkUploadFile")
-            {
-                errorMessage = "Invalid file name";
-                return false;
-            }
-            if (!bulkUploadFile.ContentDisposition.Contains("filename"))
-            {
-                errorMessage = "Invalid upload";
-                return false;
-            }
-            if (bulkUploadFile.Length > 209715200)
-            {
-                errorMessage = "File too large";
-                return false;
-            }
-
-            errorMessage = string.Empty;
-            return true;
-        }
-
+        
 
         private Provider FindProvider(int prn)
         {
