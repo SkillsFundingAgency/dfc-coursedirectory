@@ -286,3 +286,4 @@ c/source/repos/dfc-coursedirectory3/src/Dfc.CourseDirectory.Web/appsettings.Deve
 /src/Dfc.CourseDirectory.Web/wwwroot/BulkUploads
 /src/Dfc.CourseDirectory.Web/Helpers/IFileHelper.cs
 /src/Dfc.CourseDirectory.Web/Properties/launchSettings.json
+**/appsettings*.json
