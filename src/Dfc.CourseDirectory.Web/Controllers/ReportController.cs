@@ -70,10 +70,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             var csvReports = reportResults.Value.Select(x => new CsvDfcMigrationReport
             {
+                Errors = x.MigrationPendingCount,
                 FailedMigrationCount = x.FailedMigrationCount,
                 LiveCount = x.LiveCount,
                 MigratedCount = x.MigratedCount,
-                MigrationDate = x.MigrationDate.HasValue? x.MigrationDate.Value.ToString("dd/MM/yyyy") : string.Empty,
+                MigrationDate = x.MigrationDate.HasValue ? x.MigrationDate.Value.ToString("dd/MM/yyyy") : string.Empty,
                 MigrationPendingCount = x.MigrationPendingCount,
                 MigrationRate = x.MigrationRate,
                 ProviderName = x.ProviderName,
