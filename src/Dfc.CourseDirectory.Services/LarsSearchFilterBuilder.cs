@@ -24,7 +24,8 @@ namespace Dfc.CourseDirectory.Services
 
         public string Build()
         {
-            return _sb.ToString().Trim();
+            string result = System.Text.RegularExpressions.Regex.Replace(_sb.ToString(), @"\s+", " ");
+            return result.Trim();
         }
 
         public ILarsSearchFilterBuilder EqualTo(string value)
