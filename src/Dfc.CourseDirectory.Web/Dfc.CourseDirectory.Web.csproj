@@ -42,6 +42,7 @@
 
   <ItemGroup>
     <Content Remove="appsettings.Development.json" />
+    <Content Remove="appsettings.Development.Karl.json" />
     <Content Remove="Views\Qualifications\Courses.cshtml" />
     <Content Remove="wwwroot\scss\partials\view-components.pagination" />
   </ItemGroup>
