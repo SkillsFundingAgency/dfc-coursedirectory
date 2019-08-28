@@ -25,8 +25,8 @@
                     row.MigratedCount = row.MigratedCount ?? 0;
                 }
                 <td class="govuk-table__cell govuk-table__cell--numeric">@row.MigratedCount</td>
-                <td class="govuk-table__cell govuk-table__cell--numeric"><a class="govuk-link" href="#">@row.PendingCount</a></td>
-                <td class="govuk-table__cell govuk-table__cell--numeric"><a class="govuk-link" asp-controller="BulkUpload" asp-action="ProcessMigrationReportErrors" asp-route-UKPRN="@row.ProviderUKPRN">@row.FailedMigrationCount</a></td>
+                <td class="govuk-table__cell govuk-table__cell--numeric"><a class="govuk-link" href="#">@row.FailedMigrationCount</a></td>
+                <td class="govuk-table__cell govuk-table__cell--numeric"><a class="govuk-link" asp-controller="BulkUpload" asp-action="ProcessMigrationReportErrors" asp-route-UKPRN="@row.ProviderUKPRN">@row.MigrationPendingCount</a></td>
                 <td class="govuk-table__cell govuk-table__cell--numeric"><a class="govuk-link" asp-controller="ProviderCourses" asp-action="MigratedCourses" asp-route-UKPRN="@row.ProviderUKPRN">@row.LiveCount</a></td>
                 <td class="govuk-table__cell govuk-table__cell--numeric">@row.MigrationRate%</td>
             </tr>
