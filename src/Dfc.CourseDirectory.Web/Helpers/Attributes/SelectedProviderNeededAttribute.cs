@@ -18,7 +18,16 @@ namespace Dfc.CourseDirectory.Web.Helpers.Attributes
                     var enumerable = ukprnClaim.ToArray();
                     if (enumerable.Any() && enumerable.FirstOrDefault()?.Value != null)
                     {
-                        context.HttpContext.Session.SetInt32("UKPRN", int.Parse(enumerable.FirstOrDefault()?.Value));
+                        if(context.ActionArguments.TryGetValue("UKPRN", out object value))
+                        {
+                            var ukprn = value.ToString();
+                            context.HttpContext.Session.SetInt32("UKPRN", int.Parse(ukprn));
+                        }
+                        else
+                        {
+                            context.HttpContext.Session.SetInt32("UKPRN", int.Parse(enumerable.FirstOrDefault()?.Value));
+                        }
+                        
                     }
                     else
                     {
