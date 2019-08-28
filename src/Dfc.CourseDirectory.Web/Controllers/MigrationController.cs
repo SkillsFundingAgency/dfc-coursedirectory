@@ -55,7 +55,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
 
         [Authorize]
-        public IActionResult Index(string UKPRN)
+        public IActionResult Index()
         {
             _session.SetString("Option", "Migration");
             return RedirectToAction("Index", "PublishCourses", new { publishMode = PublishMode.Migration });
