@@ -13,12 +13,12 @@
 
 @model Dfc.CourseDirectory.Web.ViewModels.DashboardViewModel;
 @{
+    ViewData["Title"] = "Find a Provider";
     Layout = "_Layout_Your_Courses";
 }
 
 @{
-    // var provSearch = HttpContextAccessor.HttpContext.Session.GetInt32("ProviderSearch");
-    ViewData["Title"] = "Find a Provider";
+   
     var isSignedIn = User.Identity.IsAuthenticated;
 }
 
