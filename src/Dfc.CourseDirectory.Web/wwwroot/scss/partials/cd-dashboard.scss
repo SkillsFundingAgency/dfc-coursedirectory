@@ -19,8 +19,8 @@ $grey: #6f777b;
 
 .homepage-item {
     a {
-        font-size: 1.5rem;
-        font-weight: 600;
+        //font-size: 1.5rem;
+        //font-weight: 600;
     }
 }
 
@@ -50,7 +50,7 @@ $grey: #6f777b;
     }
 
     &__number {
-        font-size: 1.4em;
+        font-size: 19px;
         font-weight: 600;
     }
 }
@@ -213,11 +213,11 @@ $grey: #6f777b;
     .widget {
         border-top: 5px solid $ExploreCareersGreen;
         background-color: #f8f8f8;
-        padding-left: 1rem;
+
 
         &.white {
             background-color: white;
-            padding: 1em;
+            padding-top: 1rem;
             color: black;
         }
 
@@ -229,9 +229,7 @@ $grey: #6f777b;
             margin-bottom: .5em;
         }
 
-        a {
-            font-size: .8em;
-        }
+
     }
 }
 
@@ -240,14 +238,6 @@ $grey: #6f777b;
         display: flex;
     }
 
-    .homepage-item {
-        flex: 1;
-
-        a {
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
-    }
 }
 
 
