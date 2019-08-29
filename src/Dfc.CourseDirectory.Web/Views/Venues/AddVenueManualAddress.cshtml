@@ -3,6 +3,14 @@
 @model Dfc.CourseDirectory.Web.ViewModels.VenueAddressSelectionConfirmationViewModel
 
 @{
+    if (Model.Id != null)
+    {
+        ViewData["Title"] = "Edit venue";
+    }
+    else
+    {
+        ViewData["Title"] = "Add venue";
+    }
     Layout = "_Layout_Your_Courses";
 }
 

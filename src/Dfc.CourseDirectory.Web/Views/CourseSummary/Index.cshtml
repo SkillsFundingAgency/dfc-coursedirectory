@@ -5,6 +5,7 @@
 @using System.Net
 @model Dfc.CourseDirectory.Web.ViewModels.CourseSummary.CourseSummaryViewModel
 @{
+    ViewData["Title"] = WebUtility.HtmlDecode(@Model.CourseName); 
     Layout = "_Layout_Your_Courses";
 }
 @{
