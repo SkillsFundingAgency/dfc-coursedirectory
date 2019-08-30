@@ -290,6 +290,176 @@ namespace Dfc.CourseDirectory.Services.Tests
                 errors.Should().HaveCount(1);
                 errors[0].Should().Be("Validation error on row 2. Field APPRENTICESHIP_INFORMATION maximum length is 750 characters.");
             }
+            [Fact]
+            public void When_Field_APPRENTICESHIP_WEBPAGE_Fails_Regex_InvalidCharacter_Then_ReturnError()
+            {
+                // Arrange
+
+                var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger);
+                Stream stream = CsvStreams.InvalidField_APPRENTICESHIP_WEBPAGE_Regex_Error_Invalid_Character();
+
+                // Act
+
+                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+
+                // Assert
+
+                errors.Should().NotBeNull();
+                errors.Should().HaveCount(1);
+                errors[0].Should().Be("Validation error on row 2. Field APPRENTICESHIP_WEBPAGE format of URL is incorrect.");
+            }
+            [Fact]
+            public void When_Field_APPRENTICESHIP_WEBPAGE_Is_LongerThan255Chars_Then_ReturnError()
+            {
+                // Arrange
+
+                var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger);
+                Stream stream = CsvStreams.InvalidField_APPRENTICESHIP_WEBPAGE_256Chars();
+
+                // Act
+
+                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+
+                // Assert
+
+                errors.Should().NotBeNull();
+                errors.Should().HaveCount(1);
+                errors[0].Should().Be("Validation error on row 2. Field APPRENTICESHIP_WEBPAGE maximum length is 255 characters.");
+            }
+            [Fact]
+            public void When_Field_APPRENTICESHIP_WEBPAGE_Is_Empty_Then_ReturnNoErrors()
+            {
+                // Arrange
+
+                var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger);
+                Stream stream = CsvStreams.Valid_Row_Empty_APPRENTICESHIP_WEBPAGE();
+
+                // Act
+
+                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+
+                // Assert
+
+                errors.Should().BeNullOrEmpty();
+                errors.Should().HaveCount(0);
+            }
+            [Fact]
+            public void When_Field_CONTACT_EMAIL_Is_Missing_Then_ReturnError()
+            {
+                // Arrange
+
+                var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger);
+                Stream stream = CsvStreams.InvalidField_CONTACT_EMAIL_Missing();
+
+                // Act
+
+                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+
+                // Assert
+
+                errors.Should().NotBeNull();
+                errors.Should().HaveCount(1);
+                errors[0].Should().Be("Validation error on row 2. Field CONTACT_EMAIL is required.");
+            }
+            [Fact]
+            public void When_Field_CONTACT_EMAIL_Is_LongerThan255Chars_Then_ReturnError()
+            {
+                // Arrange
+
+                var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger);
+                Stream stream = CsvStreams.InvalidField_CONTACT_EMAIL_256_Chars();
+
+                // Act
+
+                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+
+                // Assert
+
+                errors.Should().NotBeNull();
+                errors.Should().HaveCount(1);
+                errors[0].Should().Be("Validation error on row 2. Field CONTACT_EMAIL maximum length is 255 characters.");
+            }
+            [Fact]
+            public void When_Field_CONTACT_EMAIL_Is_Fails_Regex_Then_ReturnError()
+            {
+                // Arrange
+
+                var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger);
+                Stream stream = CsvStreams.InvalidField_CONTACT_EMAIL_Regex_Invalid_character();
+
+                // Act
+
+                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+
+                // Assert
+
+                errors.Should().NotBeNull();
+                errors.Should().HaveCount(1);
+                errors[0].Should().Be("Validation error on row 2. Field CONTACT_EMAIL needs a valid email.");
+            }
+            [Fact]
+            public void When_Field_CONTACT_PHONE_Is_Missing_Then_ReturnError()
+            {
+                // Arrange
+
+                var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger);
+                Stream stream = CsvStreams.InvalidField_CONTACT_PHONE_Missing();
+
+                // Act
+
+                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+
+                // Assert
+
+                errors.Should().NotBeNull();
+                errors.Should().HaveCount(1);
+                errors[0].Should().Be("Validation error on row 2. Field CONTACT_PHONE is required.");
+            }
+            [Fact]
+            public void When_Field_CONTACT_PHONE_Is_LongerThan30Chars_Then_ReturnError()
+            {
+                // Arrange
+
+                var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger);
+                Stream stream = CsvStreams.InvalidField_CONTACT_PHONE_Longer_Than_30_Chars();
+
+                // Act
+
+                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+
+                // Assert
+
+                errors.Should().NotBeNull();
+                errors.Should().HaveCount(1);
+                errors[0].Should().Be("Validation error on row 2. Field CONTACT_PHONE maximum length is 30 characters.");
+            }
+            [Fact]
+            public void When_Field_CONTACT_PHONE_Is_NonNumerical_Then_ReturnError()
+            {
+                // Arrange
+
+                var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger);
+                Stream stream = CsvStreams.InvalidField_CONTACT_PHONE_NonNumeric();
+
+                // Act
+
+                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+
+                // Assert
+
+                errors.Should().NotBeNull();
+                errors.Should().HaveCount(1);
+                errors[0].Should().Be("Validation error on row 2. Field CONTACT_PHONE must be numeric if present.");
+            }
         }
     }
 }
