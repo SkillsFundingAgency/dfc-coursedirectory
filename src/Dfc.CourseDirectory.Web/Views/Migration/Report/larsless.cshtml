@@ -9,6 +9,7 @@
 @inject IAuthorizationService Authorization
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
+    ViewData["Title"] = "Courses not transferred to the new directory"; 
     Layout = "_Layout_Your_Courses";
 }
 @Html.ActionLink("Back","Report","Migration", null ,new { @class = "govuk-back-link" })

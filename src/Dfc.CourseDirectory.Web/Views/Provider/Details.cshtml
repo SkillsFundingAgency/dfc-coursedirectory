@@ -3,6 +3,7 @@
 @using Microsoft.AspNetCore.Authorization
 @model Dfc.CourseDirectory.Web.ViewModels.ProviderDetailsViewModel
 @{
+    ViewData["Title"] = Model.ProviderName??"Provider"; 
     Layout = "_Layout_Your_Courses";
 }
 
