@@ -75,7 +75,8 @@ else
                                asp-action="ViewAndEdit"
                                asp-route-Id="@apprenticeship.id"
                                asp-route-Cancelled=null
-                               asp-route-Mode="@ApprenticeshipMode.EditYourApprenticeships">View and edit</a>
+                               asp-route-Mode="@ApprenticeshipMode.EditYourApprenticeships">View and edit<span class="govuk-visually-hidden">@apprenticeship.ApprenticeshipTitle</span>
+                            </a>
                             <a class="govuk-link"
                                asp-controller="Apprenticeships"
                                asp-action="ConfirmationDelete"

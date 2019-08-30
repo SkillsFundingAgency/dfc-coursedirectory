@@ -2,15 +2,12 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult
 @model Dfc.CourseDirectory.Web.ViewModels.VenueSearchResultsViewModel
 @{
+    ViewData["Title"] = "Your venues";
     Layout = "_Layout_Your_Courses";
 }
 @using Microsoft.Extensions.Options
-@{
-    ViewData["Title"] = "Your venues";
-}
 
-
-    @await Component.InvokeAsync(nameof(VenueSearchResult), Model.Result)
+@await Component.InvokeAsync(nameof(VenueSearchResult), Model.Result)
 
 
 <script>

@@ -9,6 +9,7 @@
 
 @model Dfc.CourseDirectory.Web.ViewModels.ProviderDetailsAddOrEditViewModel
 @{
+    ViewData["Title"] = "Edit your details";                                                                  
     Layout = "_Layout_Your_Courses";
 }
 <form asp-controller="Provider" asp-action="AddOrEditDetails" id="editProviderDetails" onkeypress="return event.keyCode != 13;">

@@ -3,6 +3,14 @@
 @using Dfc.CourseDirectory.Web.Helpers
 @using Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships
 @{
+    if (Model.Mode == ApprenticeshipMode.EditYourApprenticeships)
+    {
+        ViewData["Title"] = "View and edit this apprenticeship";
+    }
+    else
+    {
+        ViewData["Title"] = "Check and publish to the course directory";
+    }
     Layout = "_Layout_Your_Courses";
 }
 
