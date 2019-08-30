@@ -251,7 +251,7 @@ else
                 @if (!string.IsNullOrEmpty(courseRun.CourseTextId))
                 {
                     <span>
-                    @WebUtility.HtmlDecode(@courseRun.CourseTextId)
+                        @WebUtility.HtmlDecode(@courseRun.CourseTextId)
                     </span>
                 }
 
@@ -283,13 +283,10 @@ else
                 {
                     <span>@courseRun.StartDate</span>
                 }
-
             </div>
-            <div class="courserun__row4">
-                @*can we put this span inside tha a tag??*@
 
-                @Html.ActionLink("Select", "Index", "CourseSummary", new { courseRun.CourseId, courseRun.CourseRunId }, null)
-                <span class="govuk-visually-hidden">@courseRun.QualificationCourseTitle</span>
+            <div class="courserun__row4">
+                <a href="@Url.Action("Index", "CourseSummary",new { courseRun.CourseId, courseRun.CourseRunId})">Select <span class="govuk-visually-hidden">@courseRun.CourseName</span></a>
             </div>
         </div>
         }
