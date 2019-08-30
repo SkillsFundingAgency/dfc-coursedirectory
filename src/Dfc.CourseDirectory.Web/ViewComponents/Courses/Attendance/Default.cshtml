@@ -18,18 +18,22 @@
         <div class="govuk-radios govuk-radios--inline" val-required-message="Select Attendance Mode" id="AttendanceRadioButtons">
 
             <div class="govuk-radios__item">
-                @Html.RadioButtonFor(m => m.AttendanceMode, AttendancePattern.Daytime, new {@class = "govuk-radios__input", id = AttendancePattern.Daytime})
+                @Html.RadioButtonFor(m => m.AttendanceMode, AttendancePattern.Daytime, new { @class = "govuk-radios__input", id = AttendancePattern.Daytime })
                 <label class="govuk-label govuk-radios__label" for="@AttendancePattern.Daytime">@WebHelper.GetEnumDescription(AttendancePattern.Daytime)</label>
             </div>
             <div class="govuk-radios__item">
-                @Html.RadioButtonFor(m => m.AttendanceMode, AttendancePattern.Evening, new {@class = "govuk-radios__input", id = AttendancePattern.Evening})
+                @Html.RadioButtonFor(m => m.AttendanceMode, AttendancePattern.Evening, new { @class = "govuk-radios__input", id = AttendancePattern.Evening })
                 <label class="govuk-label govuk-radios__label" for="@AttendancePattern.Evening">@WebHelper.GetEnumDescription(AttendancePattern.Evening)</label>
             </div>
             <div class="govuk-radios__item">
-                @Html.RadioButtonFor(m => m.AttendanceMode, AttendancePattern.Weekend, new {@class = "govuk-radios__input", id = AttendancePattern.Weekend})
+                @Html.RadioButtonFor(m => m.AttendanceMode, AttendancePattern.Weekend, new { @class = "govuk-radios__input", id = AttendancePattern.Weekend })
                 <label class="govuk-label govuk-radios__label" for="@AttendancePattern.Weekend">@WebHelper.GetEnumDescription(AttendancePattern.Weekend)</label>
             </div>
-           
+            <div class="govuk-radios__item">
+                @Html.RadioButtonFor(m => m.AttendanceMode, AttendancePattern.DayOrBlockRelease, new { @class = "govuk-radios__input daynight" })
+                <label class="govuk-label govuk-radios__label" for="@AttendancePattern.DayOrBlockRelease">@WebHelper.GetEnumDescription(AttendancePattern.DayOrBlockRelease)</label>
+            </div>
+
         </div>
     </fieldset>
 </div>
