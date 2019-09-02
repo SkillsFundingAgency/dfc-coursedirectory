@@ -15,7 +15,6 @@
 @inject IAuthorizationService Authorization
 
 @{
-    ViewData["Title"] = "Bulk Upload";
     var authorised = await Authorization.AuthorizeAsync(User, "Admin");
 }
 
