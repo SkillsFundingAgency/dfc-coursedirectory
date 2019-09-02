@@ -179,7 +179,7 @@ namespace Dfc.CourseDirectory.Web
                 options.AddPolicy("Fe", policy =>
                     policy.RequireAssertion(x => (!x.User.IsInRole("Provider Superuser") && !x.User.IsInRole("Provider User")) ||
                                                                              x.User.Claims.Any(c => c.Type == "ProviderType" && 
-                                                                                                    _feClaims.Contains(c.Value))));
+                                                                                                    _feClaims.Contains(c.Value, StringComparer.OrdinalIgnoreCase))));
             });
             services.AddDistributedMemoryCache();
 
