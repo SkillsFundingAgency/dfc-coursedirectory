@@ -19,12 +19,12 @@
 
 <div class="govuk-character-count" data-module="character-count" data-maxlength=@whereNextTextFieldMaxChars>
     <div class="govuk-form-group">
-        <label id="govuk-label-@nameof(Model.WhereNext)" class="govuk-label" for="word-count" name="WhereNext">
+        <label id="govuk-label-@nameof(Model.WhereNext)" class="govuk-label--m" for="word-count" name="WhereNext">
             @Model.LabelText
         </label>
         @if (!string.IsNullOrWhiteSpace(Model.HintText))
         {
-            <span class="govuk-hint">
+            <span class="govuk-hint govuk-!-margin-top-3">
                 @Model.HintText
             </span>
         }
