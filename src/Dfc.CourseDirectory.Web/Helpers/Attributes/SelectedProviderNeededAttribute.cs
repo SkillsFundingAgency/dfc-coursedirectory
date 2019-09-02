@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -11,9 +12,16 @@ namespace Dfc.CourseDirectory.Web.Helpers.Attributes
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             Controller controller = context.Controller as Controller;
+            int qsUKPRN;
+            Int32.TryParse(context.HttpContext.Request.Query["UKPRN"].ToString(), out qsUKPRN);
             var session = context.HttpContext.Session.GetInt32("UKPRN");
+            if (qsUKPRN != null && session == null)
+            {
+                context.HttpContext.Session.SetInt32("UKPRN", qsUKPRN);
+            }
+
             var ukprnClaim = context.HttpContext.User.Claims.Where(x => x.Type == "UKPRN");
-                if (controller != null && session == null)
+            if (controller != null && session == null && qsUKPRN == 0)
                 {
                     var enumerable = ukprnClaim.ToArray();
                     if (enumerable.Any() && enumerable.FirstOrDefault()?.Value != null)
