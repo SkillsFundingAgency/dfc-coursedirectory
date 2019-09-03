@@ -5,9 +5,11 @@ using System.ComponentModel.DataAnnotations;
 using System.Collections.Generic;
 using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Models.Regions;
+using static Dfc.CourseDirectory.Models.Helpers.Attributes.AlternativeName;
 
 namespace Dfc.CourseDirectory.Models.Models.Courses
 {
+
     public enum DeliveryMode
     {
         [Display(Name = "Undefined")]
@@ -44,9 +46,11 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         [Description("Undefined")]
         Undefined = 0,
         [Display(Name = "Full time")]
+        [AlternativeName("Full-time")]
         [Description("Full time")]
         FullTime = 1,
         [Display(Name = "Part time")]
+        [AlternativeName("Part-time")]
         [Description("Part time")]
         PartTime = 2,
         [Display(Name = "Flexible")]

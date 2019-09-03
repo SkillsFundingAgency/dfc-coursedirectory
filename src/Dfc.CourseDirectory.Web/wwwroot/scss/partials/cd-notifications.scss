@@ -9,10 +9,14 @@ $error: #b10e1e;
 .cd-warning-summary,
 .cd-info-summary {
     font-family: nta,Arial,sans-serif;
-    padding: .5em 1.5em;
+    padding: .5rem 1rem;
     margin-bottom: 2em;
     font-weight: 700;
     font-size: 19px;
+
+    &__title {
+        margin:0 0.25rem;
+    }
 
     &:focus {
         outline: $focus solid 3px;

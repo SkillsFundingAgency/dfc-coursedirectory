@@ -56,17 +56,17 @@
                             {
                                 <li class="govuk-header__navigation-item">
                                     <a class="govuk-header__link" href="~/searchprovider/">
-                                        Search
+                                        Search providers
                                     </a>
                                 </li>
                                 <li class="govuk-header__navigation-item">
                                     <a class="govuk-header__link" href="#">
-                                        Manage Users
+                                        Manage users
                                     </a>
                                 </li>
                                 <li class="govuk-header__navigation-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Report" ? "govuk-header__navigation-item--active" : "")">
                                     <a class="govuk-header__link" href="/Report/Index">
-                                        Reports
+                                        Your reports
                                     </a>
                                 </li>
                             }
@@ -82,7 +82,7 @@
 
                                     <li class="govuk-header__navigation-item @(ViewContext.RouteData.Values["Controller"].ToString() == "RegulatedQualification" || ViewContext.RouteData.Values["Controller"].ToString() == "Qualifications" || ViewContext.RouteData.Values["Controller"].ToString() == "UnregulatedCourses" ? "govuk-header__navigation-item--active" : "")">
                                         <a class="govuk-header__link" href="~/Qualifications/LandingOptions">
-                                            My courses
+                                            Your courses
                                         </a>
                                     </li>
 
@@ -93,7 +93,7 @@
 
                                     <li class="govuk-header__navigation-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Apprenticeships" || ViewContext.RouteData.Values["Controller"].ToString() == "ProviderApprenticeships" ? "govuk-header__navigation-item--active" : "")">
                                         <a class="govuk-header__link" href="~/Apprenticeships/WhatWouldYouLIkeToDo">
-                                            My apprenticeships training
+                                            Your apprenticeships training
                                         </a>
                                     </li>
 
@@ -102,7 +102,7 @@
 
                                 <li class="govuk-header__navigation-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Venues" || ViewContext.RouteData.Values["Controller"].ToString() == "VenueSearch" ? "govuk-header__navigation-item--active" : "")">
                                     <a class="govuk-header__link" href="~/Venues/LandingOptions">
-                                        My locations
+                                        Your locations
                                     </a>
                                 </li>
 
