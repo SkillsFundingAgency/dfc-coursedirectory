@@ -25,10 +25,16 @@
             <a href="/" class="govuk-header__link govuk-header__link--service-name">
                 Publish to the course directory
             </a>
+
+
             @if (User.Identity.IsAuthenticated)
             {
 
                 <a asp-action="Logout" asp-controller="Auth" id="submit-link" class="cd-right cd-header--link">Sign out</a>
+
+
+                <button style="float: right;margin-top:15px" id="menu" type="button" role="button" class="govuk-header__menu-button js-header-toggle" aria-label="Show or hide Top Level Navigation">Menu</button>
+
             }
             @{
                 //Handles lack of controller error
@@ -41,7 +47,6 @@
             }
 
 
-
             @{
                 if (User.Identity.IsAuthenticated)
                 {
@@ -51,7 +56,7 @@
                     var apprenticeshipUser = await Authorization.AuthorizeAsync(User, "apprenticeship");
                     var adminUser = await Authorization.AuthorizeAsync(User, "admin");
                     <nav>
-                        <ul id="navigation" class="govuk-header__navigation " aria-label="Top Level Navigation">
+                        <ul id="navigation" class="govuk-header__navigation" aria-label="Top Level Navigation">
                             @if (adminUser.Succeeded)
                             {
                                 <li class="govuk-header__navigation-item">
@@ -148,6 +153,7 @@
                 }
             }
         </div>
+       
     </div>
 
 </header>

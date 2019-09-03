@@ -25,14 +25,32 @@
                     <thead class="govuk-table__head">
                         <tr class="govuk-table__row">
                             <td class="govuk-table__header">Course directory status</td>
-                            <td class="govuk-table__cell">@Model.Status</td>
+                            <td class="govuk-table__cell">
+                                @if (string.IsNullOrEmpty(Model.Status))
+                                {
+                                    <span class="govuk-visually-hidden">Data Unavailable</span>
+                                }
+                                else
+                                {
+                                    @Model.Status
+                                }
+                            </td>
                             <td class="govuk-table__cell"></td>
                         </tr>
                     </thead>
                     <tbody class="govuk-table__body">
                     <tr class="govuk-table__row">
                         <th class="govuk-table__header" scope="row">Course directory name</th>
-                        <td class="govuk-table__cell">@Model.ProviderName</td>
+                        <td class="govuk-table__cell">
+                            @if (string.IsNullOrEmpty(Model.ProviderName))
+                            {
+                                <span class="govuk-visually-hidden">Data Unavailable</span>
+                            }
+                            else
+                            {
+                                @Model.ProviderName
+                            }
+                        </td>
                         <td class="govuk-table__cell">
                             @if (adminLogin.Succeeded)
                             {
@@ -45,22 +63,62 @@
                     </tr>
                     <tr class="govuk-table__row">
                         <td class="govuk-table__header">UKPRN</td>
-                        <td class="govuk-table__cell">@Model.UKPRN</td>
+                        <td class="govuk-table__cell">
+   
+                            @if (string.IsNullOrEmpty(Model.UKPRN))
+                            {
+                                <span class="govuk-visually-hidden">Data Unavailable</span>
+                            }
+                            else
+                            {
+                                @Model.UKPRN
+                            }
+                        </td>
                         <td class="govuk-table__cell"></td>
                     </tr>
                     <tr class="govuk-table__row">
                         <td class="govuk-table__header">Legal name</td>
-                        <td class="govuk-table__cell">@Model.LegalName</td>
+                        <td class="govuk-table__cell">
+        
+                            @if (string.IsNullOrEmpty(Model.LegalName))
+                            {
+                                <span class="govuk-visually-hidden">Data Unavailable</span>
+                            }
+                            else
+                            {
+                                @Model.LegalName
+                            }
+                        </td>
                         <td class="govuk-table__cell"></td>
                     </tr>
                     <tr class="govuk-table__row">
                         <td class="govuk-table__header">Trading name</td>
-                        <td class="govuk-table__cell">@Model.TradingName</td>
+                        <td class="govuk-table__cell">
+               
+                            @if (string.IsNullOrEmpty(Model.TradingName))
+                            {
+                                <span class="govuk-visually-hidden">Data Unavailable</span>
+                            }
+                            else
+                            {
+                                @Model.TradingName
+                            }
+                        </td>
                         <td class="govuk-table__cell"></td>
                     </tr>
                     <tr class="govuk-table__row">
                         <td class="govuk-table__header">Your alias</td>
-                        <td class="govuk-table__cell">@Model.Alias</td>
+                        <td class="govuk-table__cell">
+                           
+                            @if (string.IsNullOrEmpty(Model.Alias))
+                            {
+                                <span class="govuk-visually-hidden">Data Unavailable</span>
+                            }
+                            else
+                            {
+                                @Model.Alias
+                            }
+                        </td>
                         <td class="govuk-table__cell">
                             @if (string.IsNullOrEmpty(Model.Alias))
                             {
@@ -78,7 +136,17 @@
                     </tr>
                     <tr class="govuk-table__row">
                         <td class="govuk-table__header">Provider Type</td>
-                        <td class="govuk-table__cell">@WebHelper.GetEnumDescription(Model.ProviderType)</td>
+                        <td class="govuk-table__cell">
+  
+                            @if (Model.ProviderType == ProviderType.Undefined)
+                            {
+                                <span class="govuk-visually-hidden">Data Unavailable</span>
+                            }
+                            else
+                            {
+                                @WebHelper.GetEnumDescription(Model.ProviderType)
+                            }
+                        </td>
                         <td class="govuk-table__cell">
                             @if (adminLogin.Succeeded)
                             {
@@ -120,7 +188,18 @@
                             </td>
                         </tr>
                         <tr class="govuk-table__row">
-                            <td colspan="6" class="govuk-table__cell">@Html.Raw(Model.BriefOverview)</td>
+                            <td colspan="6" class="govuk-table__cell">
+
+
+                                @if (string.IsNullOrEmpty(Model.BriefOverview))
+                                {
+                                    <span class="govuk-visually-hidden">Data Unavailable</span>
+                                }
+                                else
+                                {
+                                    @Html.Raw(Model.BriefOverview)
+                                }
+                            </td>
                         </tr>
                     }
                     </tbody>
