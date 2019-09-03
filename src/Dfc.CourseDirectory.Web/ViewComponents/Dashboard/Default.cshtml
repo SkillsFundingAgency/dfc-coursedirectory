@@ -84,7 +84,7 @@
     <hr class="spacer" />
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            @if (feUser.Succeeded && apprenticeshipUser.Succeeded)
+            @if (superUser.Succeeded || (feUser.Succeeded && apprenticeshipUser.Succeeded))
             {
                 <div class="govuk-grid-row govuk-!-margin-bottom-6 homepage-item--container">
                     <div class="govuk-grid-column-one-half homepage-item ">
@@ -144,17 +144,19 @@
 
                     <ul class="govuk-list cd-homepage__lis">
                         <li class="cd-homepage__list--item">
-                            <a asp-controller="Provider" asp-action="Details" class="govuk-link">View and edit your organisation details in the course directory</a>
+                            <a asp-controller="Provider" asp-action="Details" class="govuk-link">Manage your organisation details</a>
                         </li>
                         @if (superUser.Succeeded)
                         {
                             <li class="cd-homepage__list--item">
-                                <a href="https://signin-test-svc-as.azurewebsites.net/approvals/FD039496-0B39-4F75-994A-20B03E060255/users" target="_blank" class="govuk-link">Add a new user</a>
+                                <a href="https://signin-test-svc-as.azurewebsites.net/approvals/FD039496-0B39-4F75-994A-20B03E060255/users" target="_blank" class="govuk-link">
+                                    Create a new DfE Sign-in account
+                                </a>
                             </li>
                         }
                         <li class="cd-homepage__list--item">
 
-                            <a href="https://signin-test-pfl-as.azurewebsites.net/" target="_blank" class="govuk-link">Edit my user account</a>
+                            <a href="https://signin-test-pfl-as.azurewebsites.net/" target="_blank" class="govuk-link">Manage your DfE Sign-in account</a>
                         </li>
                     </ul>
                 </div>

@@ -18,12 +18,12 @@
 
 <div class="govuk-character-count" data-module="character-count" data-maxlength=@whatWillLearnTextFieldMaxChars>
     <div class="govuk-form-group">
-        <label id="govuk-label-@nameof(Model.WhatWillLearn)" class="govuk-label" for="word-count" name="WhatYouWillLearn">
+        <label id="govuk-label-@nameof(Model.WhatWillLearn)" class="govuk-label--m" for="word-count" name="WhatYouWillLearn">
             @Model.LabelText
         </label>
         @if (!string.IsNullOrWhiteSpace(Model.HintText))
         {
-            <span class="govuk-hint">
+            <span class="govuk-hint govuk-!-margin-top-3">
                 @Model.HintText
             </span>
         }
