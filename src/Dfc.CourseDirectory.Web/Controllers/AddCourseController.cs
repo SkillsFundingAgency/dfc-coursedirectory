@@ -114,7 +114,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 {
                     LabelText = "Who is the course for?",
                     HintText =
-                        "Please provide useful information that helps a learner to make a decision about the suitability of this course. For example learners new to the subject / sector or those with some experience? Any age restrictions?",
+                        "Provide useful information that helps learners decide whether this course is suitable. For example, is this for learners new to the subject or for those with some experience? ",
                     AriaDescribedBy = "Please enter who this course is for.",
                     CourseFor = course?.CourseDescription ?? defaultCourseText?.CourseDescription
                 },
@@ -123,46 +123,45 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 {
                     LabelText = "Entry requirements",
                     HintText =
-                        "Please provide details of specific academic or vocational entry qualification requirements. Also do learners need specific skills, attributes or evidence? e.g. DBS clearance, driving licence",
+                        "Provide information about specific requirements like skills, qualifications and licenses.",
                     AriaDescribedBy = "Please list entry requirements.",
                     EntryRequirements = course?.EntryRequirements ?? defaultCourseText?.EntryRequirements
                 },
                 WhatWillLearn = new WhatWillLearnModel()
                 {
-                    LabelText = "What you’ll learn",
-                    HintText = "Give learners a taste of this course. What are the main topics covered?",
+                    LabelText = "What learners will learn",
+                    HintText = "For example, the main topics covered in the course.",
                     AriaDescribedBy = "Please enter what will be learned",
                     WhatWillLearn = course?.WhatYoullLearn ?? defaultCourseText?.WhatYoullLearn
                 },
                 HowYouWillLearn = new HowYouWillLearnModel()
                 {
-                    LabelText = "How you’ll learn",
-                    HintText =
-                        "Will it be classroom based exercises, practical on the job, practical but in a simulated work environment, online or a mixture of methods?",
+                    LabelText = "How learners will learn",
+                    HintText = "For example, classroom-based exercises, on the job, in a simulated work environment, online, or a mixture.",
                     AriaDescribedBy = "Please enter how you’ll learn",
                     HowYouWillLearn = course?.HowYoullLearn ?? defaultCourseText?.HowYoullLearn
                 },
                 WhatYouNeed = new WhatYouNeedModel()
                 {
-                    LabelText = "What you’ll need to bring",
+                    LabelText = "What learners will need",
                     HintText =
-                        "Please detail anything your learners will need to provide or pay for themselves such as uniform, personal protective clothing, tools or kit",
+                        "List anything learners will need to provide or pay for themselves like a uniform, personal protective clothing, tools, trips away or devices.",
                     AriaDescribedBy = "Please enter what you need",
                     WhatYouNeed = course?.WhatYoullNeed ?? defaultCourseText?.WhatYoullNeed
                 },
                 HowAssessed = new HowAssessedModel()
                 {
-                    LabelText = "How you’ll be assessed",
+                    LabelText = "How learners will be assessed",
                     HintText =
-                        "Please provide details of all the ways your learners will be assessed for this course. E.g. assessment in the workplace, written assignments, group or individual project work, exam, portfolio of evidence, multiple choice tests.",
+                        "For example, assessments at the learner's workplace, written assignments, group or individual project work, or exams.",
                     AriaDescribedBy = "Please enter 'How you’ll be assessed'",
                     HowAssessed = course?.HowYoullBeAssessed ?? defaultCourseText?.HowYoullBeAssessed
                 },
                 WhereNext = new WhereNextModel()
                 {
-                    LabelText = "Where next?",
+                    LabelText = "Where next for learners ? ",
                     HintText =
-                        "What are the opportunities beyond this course? Progression to a higher level course, apprenticeship or direct entry to employment?",
+                        "Describe the opportunities beyond this course. For example, a higher level course, apprenticeship or direct entry to employment.",
                     AriaDescribedBy = "Please enter 'Where next?'",
                     WhereNext = course?.WhereNext ?? defaultCourseText?.WhereNext
                 },

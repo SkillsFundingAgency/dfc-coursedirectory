@@ -218,9 +218,9 @@ namespace Dfc.CourseDirectory.Models.Enums
         Undefined = 0,
         [Description("Add a new course")]
         Add = 1,
-        [Description("Add multiple courses via a bulk upload")]
+        [Description("Upload a file to update your courses (bulk upload)")]
         Upload = 2,
-        [Description("View or make changes to existing course(s)")]
+        [Description("View or make changes to your published courses")]
         View = 3
     }
 
