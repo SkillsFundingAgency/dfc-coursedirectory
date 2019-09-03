@@ -1,8 +1,14 @@
 ﻿$ExploreCareersGreen: #207E77;
+$grey: 6f777b;
+
 .zcodesearch {
     display: flex;
     flex-direction: column;
-    margin-bottom:0;
+    margin-bottom: 0;
+
+    span.hint {
+        color: $grey;
+    }
 }
 .zcodesearch--container {
     display: flex;
@@ -16,6 +22,8 @@
     .submit {
         //left:auto;
     }
+
+
 }
 
 #zCodeSearch {

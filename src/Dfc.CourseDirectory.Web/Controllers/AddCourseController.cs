@@ -114,7 +114,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 {
                     LabelText = "Who is the course for?",
                     HintText =
-                        "Provide useful information that helps learners decide whether this course is suitable.For example, is this for learners new to the subject or for those with some experience ? ",
+                        "Provide useful information that helps learners decide whether this course is suitable. For example, is this for learners new to the subject or for those with some experience? ",
                     AriaDescribedBy = "Please enter who this course is for.",
                     CourseFor = course?.CourseDescription ?? defaultCourseText?.CourseDescription
                 },
@@ -137,7 +137,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 HowYouWillLearn = new HowYouWillLearnModel()
                 {
                     LabelText = "How learners will learn",
-                    HintText = "For example, classroom - based exercises, on the job, in a simulated work environment,online, or a mixture.",
+                    HintText = "For example, classroom-based exercises, on the job, in a simulated work environment, online, or a mixture.",
                     AriaDescribedBy = "Please enter how you’ll learn",
                     HowYouWillLearn = course?.HowYoullLearn ?? defaultCourseText?.HowYoullLearn
                 },

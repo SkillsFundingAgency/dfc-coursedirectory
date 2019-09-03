@@ -13,7 +13,7 @@
             <div class="column-two-thirds govuk-body">
                 <div>
 
-                    <h1 class="govuk-heading-l govuk-!-margin-top-4">Search for a course provision</h1>
+                    <h1 class="govuk-heading-l govuk-!-margin-top-4">Find non-regulated award</h1>
 
                    
                 </div>
@@ -30,10 +30,11 @@
                     </div>
 
                     <div class="govuk-form-group zcodesearch">
-                        <label class="govuk-grid-column-full" name="unregulated-search">Search by Z code for the provision you are awarding with this course</label>
+                        <label class="govuk-grid-column-full" name="unregulated-search"> Learning Aims Reference Service (LARS) code </label>
+                        <span class=" govuk-grid-column-full hint"> This is sometimes called the ‘Z code’ </span>
                         <div class="zcodesearch--container">
                             <input class=" zcodesearch--container-input govuk-input govuk-!-padding-bottom-4 govuk-input--width-10" asp-for="@Model.Search" type="text" placeholder="Enter a Z code" aria-label="unregulated-search"
-                                   val-required-message="Enter a z code to search"
+
                                    val-regex="@regex"
                                    val-regex-message="Code must start with Z followed by 7 numbers or letters" />
 
@@ -48,7 +49,7 @@
         </div>
         <div class="grid-row" data-sf-element="Row">
             <div class="govuk-form-group ">
-                <a class="govuk-link" id="unKnownLink" asp-controller="UnregulatedCourses" asp-action="UnknownZCode" style="padding-left:0.2em">  I don't know the Z code  </a>
+                <a class="govuk-link govuk-!-margin-left-7" id="unKnownLink" asp-controller="UnregulatedCourses" asp-action="UnknownZCode" style="padding-left:0.2em">I don’t know the LARS code</a>
 
  <br />
                 <br />
