@@ -5,6 +5,7 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.Notification
 @using Dfc.CourseDirectory.Web.ViewComponents.BackgroundBulkUploadNotification
 @{
+    ViewData["Title"] = "Bulk upload course information"; 
     Layout = "_Layout_Your_Courses";
 }
 
@@ -14,7 +15,6 @@
 @inject IAuthorizationService Authorization
 
 @{
-    ViewData["Title"] = "Bulk Upload";
     var authorised = await Authorization.AuthorizeAsync(User, "Admin");
 }
 

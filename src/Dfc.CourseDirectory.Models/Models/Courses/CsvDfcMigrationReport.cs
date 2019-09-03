@@ -19,10 +19,13 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         [JsonProperty(PropertyName = "Migrated")]
         public int? MigratedCount { get; set; }
 
+        [JsonProperty(PropertyName = "Errors")]
+        public int? Errors { get; set; }
+
         [JsonProperty(PropertyName = "Not_Migrated")]
         public int? FailedMigrationCount { get; set; }
 
-        [JsonProperty(PropertyName = "Errors")]
+        [JsonProperty(PropertyName = "Migration_Pending")]
         public int MigrationPendingCount { get; set; }
 
         [JsonProperty(PropertyName = "Live")]
