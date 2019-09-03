@@ -84,7 +84,7 @@
     <hr class="spacer" />
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            @if (feUser.Succeeded && apprenticeshipUser.Succeeded)
+            @if (superUser.Succeeded || (feUser.Succeeded && apprenticeshipUser.Succeeded))
             {
                 <div class="govuk-grid-row govuk-!-margin-bottom-6 homepage-item--container">
                     <div class="govuk-grid-column-one-half homepage-item ">
