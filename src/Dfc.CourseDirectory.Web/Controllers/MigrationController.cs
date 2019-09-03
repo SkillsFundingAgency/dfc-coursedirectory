@@ -176,7 +176,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             if (result.IsFailure) throw new Exception($"Unable to delete Course run with id {courseRunId}");
 
-            if (course.Value.CourseRuns.Any(x => x.id != courseRunId && x.RecordStatus == RecordStatus.Pending))
+            if (course.Value.CourseRuns.Any(x => x.id != courseRunId && x.RecordStatus == RecordStatus.MigrationPending))
             {
                 return RedirectToAction("Index", "PublishCourses", new
                 {
