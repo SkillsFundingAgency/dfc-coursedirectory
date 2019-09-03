@@ -42,10 +42,12 @@
     }
     else if (!Model.HasErrors) // Model.Items.Any())
     {
-
-        <div class="govuk-heading-s lars-search-results govuk-!-font-weight-regular">
-            Found <span class="govuk-!-font-weight-bold">@Model.TotalCount</span> results for <span class="govuk-!-font-weight-bold">@Model.SearchTerm</span>
-        </div>
+        @if (!string.IsNullOrEmpty(@Model.SearchTerm))
+         {
+             <div class="govuk-heading-s lars-search-results govuk-!-font-weight-regular">
+                 Found <span class="govuk-!-font-weight-bold">@Model.TotalCount</span> results for <span class="govuk-!-font-weight-bold">@Model.SearchTerm</span>
+             </div>
+        }
 
         <div class="govuk-grid-column-one-quarter">
             @*<h3>filter controls here</h3>*@
@@ -78,7 +80,7 @@
                                         <div class="govuk-checkboxes__item">
                                             <input class="govuk-checkboxes__input" id="@item.Id" name="@item.Name" type="checkbox" aria-labelledby="Filter_@i" value="@item.Value" @item.IsSelected.ThenCheck()>
                                             <label class="govuk-label govuk-checkboxes__label govuk-!-font-size-14" id="FilterLabel_@item.Id">
-                                                @item.Text (@item.Count)
+                                                @item.Text 
                                             </label>
                                         </div>
 
