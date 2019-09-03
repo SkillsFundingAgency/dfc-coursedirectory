@@ -6252,6 +6252,17 @@ p {
   color: red;
 }
 
+.regulatedsearch {
+  background-color: #f8f8f8;
+  padding: 1em;
+  border-left: 5px solid #207E77;
+  margin-bottom: 2em;
+}
+
+.regulatedsearch .cd-level-select {
+  padding-right: 1em;
+}
+
 .cd-lars-search-result__container {
   border: 1px solid #bfc1c3;
   margin-bottom: 1rem;
