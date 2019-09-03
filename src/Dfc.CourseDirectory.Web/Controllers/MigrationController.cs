@@ -228,7 +228,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             var model = new LarslessViewModel
             {
-                LarslessCourses = courseMigrationReport.Value.LarslessCourses,
+                LarslessCourses = courseMigrationReport.Value
+                                                       .LarslessCourses
+                                                       .OrderBy(x => x.QualificationCourseTitle),
                 Venues = venues
             };
 
