@@ -18,7 +18,7 @@
         @foreach (var row in Model.Rows)
         {
             <tr class="govuk-table__row">
-                <th class="govuk-table__header underline" scope="row"><a asp-controller="ProviderSearch" asp-action="SearchProvider" asp-route-UKPRN="@row.ProviderUKPRN" class="govuk-link">@row.ProviderName</a></th>
+                <th class="govuk-table__header underline" scope="row"><a asp-controller="Migration" asp-action="MigrationReportFoProvider" asp-route-UKPRN="@row.ProviderUKPRN" class="govuk-link">@row.ProviderName</a></th>
                 <td class="govuk-table__cell">@row.ProviderType</td>
                 <td class="govuk-table__cell">@row.MigrationDate?.ToString("dd/MMM/yyyy")</td>
                 @{
