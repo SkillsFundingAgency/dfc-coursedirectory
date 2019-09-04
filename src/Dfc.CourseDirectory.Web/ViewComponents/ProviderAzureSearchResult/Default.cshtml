@@ -46,7 +46,7 @@
                             }
                             else if (p.Status == Status.Registered && p.ProviderStatus.Equals("Active", StringComparison.InvariantCultureIgnoreCase))
                             {
-                                <a id="btnOnboardProvider" style="margin: auto;" onclick="OnBoardProvider('@p.UKPRN','@p.id'); return false;" href="#" class="govuk-button"><span id="btnOnboardProviderText">Add provider</span></a>
+                            <a id="btnOnboardProvider" style="margin: auto;" onclick="OnBoardProvider('@p.UKPRN','@p.id'); return false;" href="#" class="govuk-link"><span id="btnOnboardProviderText">Add provider</span> <span class="govuk-visually-hidden">@p.CourseDirectoryName</span></a>
                             }                           
                         </td>
                     </tr>
