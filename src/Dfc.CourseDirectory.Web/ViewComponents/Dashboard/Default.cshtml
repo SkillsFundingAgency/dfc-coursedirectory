@@ -42,7 +42,7 @@
         } );
 }
 
-@if (Model.BulkUploadReadyToGoLiveCount > 0 || Model.BulkUploadPendingCount > 0)
+@if ((Model.BulkUploadReadyToGoLiveCount > 0 || Model.BulkUploadPendingCount > 0) && !Model.BulkUploadBackgroundInProgress)
 {
     var link = "";
     @if (Model.BulkUpLoadHasErrors == true)
