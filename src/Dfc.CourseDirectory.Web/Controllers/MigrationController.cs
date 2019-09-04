@@ -236,5 +236,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             return View("Report/larsless", model);
         }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult MigrationReportFoProvider(string UKPRN)
+        {
+            _session.SetInt32("UKPRN", Convert.ToInt32(UKPRN));
+            return RedirectToAction("Report","Migration");
+        }
     }
 }
