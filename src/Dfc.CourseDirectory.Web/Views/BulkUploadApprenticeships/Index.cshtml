@@ -27,8 +27,8 @@
 
 <h1 class="govuk-heading-xl">Bulk upload apprenticeship training information</h1>
 <form method="post" id="bulkUploadForm" enctype="multipart/form-data"
-      asp-controller="BulkUpload"
-      asp-action="ApprenticeshipIndex">
+      asp-controller="BulkUploadApprenticeships"
+      asp-action="Index">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <div class="govuk-body">
@@ -85,7 +85,7 @@
                         <li class="govuk-!-padding-bottom-4">
                             @if (Model.HasMigrationErrors)
                             {
-                            <p>Fix all migration errors in order to download a template containing your current courses</p>
+                            <p>Fix all migration errors in order to download a template containing your current apprenticeships</p>
                             }
                             else
                             {

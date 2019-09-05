@@ -83,11 +83,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
 
 
-            /*GB:TODO For Apprenticeship
             var courseCounts = _courseService.GetCourseCountsByStatusForUKPRN(new CourseSearchCriteria(UKPRN)).Result;
             var courseErrors = courseCounts.HasValue && courseCounts.IsSuccess ? courseCounts.Value.Where(x => (int)x.Status == (int)RecordStatus.MigrationPending  && x.Count > 0|| (int)x.Status == (int)RecordStatus.MigrationReadyToGoLive && x.Count > 0).Count() : 500;
-            */
-            var courseErrors = 0;
+            
             var model = new BulkUploadViewModel
             {
                 HasMigrationErrors = courseErrors > 0 ? true : false,
@@ -116,6 +114,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
       
         [Authorize]
+        [HttpPost("BulkUpload")]
         public async Task<IActionResult> Index(IFormFile bulkUploadFile)
         {
             int? UKPRN;
@@ -155,7 +154,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     }
 
                     Task task = _blobService.UploadFileAsync(
-                        $"{UKPRN.ToString()}/Bulk Upload/Files/{bulkUploadFileNewName}", ms);
+                        $"{UKPRN.ToString()}/Bulk Upload Apprenticeships/Files/{bulkUploadFileNewName}", ms);
                     task.Wait();
 
                     var errors = _bulkUploadService.ProcessApprenticeshipBulkUpload(ms, providerUKPRN, userId, processInline);
@@ -413,6 +412,5 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
             return provider;
         }
-    }
     }
 }
