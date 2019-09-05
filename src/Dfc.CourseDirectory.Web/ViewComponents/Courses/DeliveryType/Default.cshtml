@@ -13,7 +13,7 @@
             </h1>
             <span class="govuk-hint">@Model.HintText</span>
         </legend>
-        <div class="govuk-radios govuk-radios--inline" val-required-message="Select Delivery Mode" id="DeliveryModeRadioButtons">
+        <div class="govuk-radios govuk-radios" val-required-message="Select Delivery Mode" id="DeliveryModeRadioButtons">
 
             <div class="govuk-radios__item">
                 @Html.RadioButtonFor(m => m.DeliveryMode, DeliveryMode.ClassroomBased, new { @class = "govuk-radios__input", id = DeliveryMode.ClassroomBased })
