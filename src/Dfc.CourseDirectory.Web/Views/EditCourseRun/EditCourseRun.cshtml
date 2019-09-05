@@ -20,6 +20,7 @@
 @model Dfc.CourseDirectory.Web.ViewModels.EditCourse.EditCourseRunViewModel
 
 @{
+    ViewData["Title"] = "Edit course details"; 
     Layout = "_Layout_Your_Courses";
 }
 
@@ -395,6 +396,14 @@
             }
            
             }
+
+            if ($national.find("input[type='radio']:checked").val()==="True") {
+                $("#regions-section").hide();
+            }
+            else {
+               $("#regions-section").show();
+            }
+
 
             setTimeout(validate, 500);
 

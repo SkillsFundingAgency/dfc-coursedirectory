@@ -5,19 +5,11 @@
 @using Dfc.CourseDirectory.Web.Helpers
 @model Dfc.CourseDirectory.Web.ViewModels.Apprenticeships.DeleteDeliveryOptionViewModel
 @{
+    ViewData["Title"] = "Delete your delivery location"; 
     Layout = "_Layout_Your_Courses";
 }
 
 <form class="govuk-!-margin-bottom-9" id="ApprenticeshipWhatWouldYouLikeToDoForm" asp-controller="Apprenticeships" asp-action="DeleteDeliveryOption" method="post">
-    @if (Model.Combined)
-    {
-        <a asp-controller="Apprenticeships" asp-action="DeliveryOptionsCombined" class="govuk-back-link">Back</a>
-    }
-    else
-    {
-        <a asp-controller="Apprenticeships" asp-action="DeliveryOptions" class="govuk-back-link">Back</a>
-    }
-
     <div class="cd-dashboard">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
@@ -27,7 +19,7 @@
                 <span class="govuk-caption-xl">@Model.ApprenticeshipTitle</span>
 
 
-                <h1 class="govuk-heading-xl">
+                <h1 class="govuk-heading-l">
                     Delete your delivery location
                 </h1>
 

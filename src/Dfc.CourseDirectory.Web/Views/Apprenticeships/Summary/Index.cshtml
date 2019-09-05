@@ -3,6 +3,14 @@
 @using Dfc.CourseDirectory.Web.Helpers
 @using Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships
 @{
+    if (Model.Mode == ApprenticeshipMode.EditYourApprenticeships)
+    {
+        ViewData["Title"] = "View and edit this apprenticeship";
+    }
+    else
+    {
+        ViewData["Title"] = "Check and publish to the course directory";
+    }
     Layout = "_Layout_Your_Courses";
 }
 
@@ -21,11 +29,11 @@
                 @Html.HiddenFor(x => x.Mode)
                 @if (Model.Mode == ApprenticeshipMode.EditYourApprenticeships)
                 {
-                    <h1 class="govuk-heading-xl">View and edit this apprenticeship</h1>
+                    <h1 class="govuk-heading-l">View and edit this apprenticeship</h1>
                 }
                 else
                 {
-                    <h1 class="govuk-heading-xl">Check and publish to the course directory</h1>
+                    <h1 class="govuk-heading-l">Check and publish to the course directory</h1>
                 }
 
 

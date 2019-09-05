@@ -176,7 +176,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             if (result.IsFailure) throw new Exception($"Unable to delete Course run with id {courseRunId}");
 
-            if (course.Value.CourseRuns.Any(x => x.id != courseRunId && x.RecordStatus == RecordStatus.Pending))
+            if (course.Value.CourseRuns.Any(x => x.id != courseRunId && x.RecordStatus == RecordStatus.MigrationPending))
             {
                 return RedirectToAction("Index", "PublishCourses", new
                 {
@@ -199,7 +199,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             var courses = await _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(ukprn));
             
-
             if (courses.IsFailure)
             {
                 throw new Exception($"Unable to find courses for UKPRN: {ukprn}");
@@ -229,11 +228,21 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             var model = new LarslessViewModel
             {
-                LarslessCourses = courseMigrationReport.Value.LarslessCourses,
+                LarslessCourses = courseMigrationReport.Value
+                                                       .LarslessCourses
+                                                       .OrderBy(x => x.QualificationCourseTitle),
                 Venues = venues
             };
 
             return View("Report/larsless", model);
+        }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult MigrationReportFoProvider(string UKPRN)
+        {
+            _session.SetInt32("UKPRN", Convert.ToInt32(UKPRN));
+            return RedirectToAction("Report","Migration");
         }
     }
 }

@@ -9,7 +9,6 @@
 @inject IAuthorizationService Authorization
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
-@Html.HiddenFor(x => x.PublishMode)
 
 @{
     var adminLogin = await Authorization.AuthorizeAsync(User, "Admin");
@@ -56,7 +55,7 @@
                        asp-route-awardOrgCode="@course.AwardOrgCode"
                        asp-route-learnAimRefTitle="@course.QualificationCourseTitle"
                        asp-route-learnAimRefTypeDesc="@course.QualificationType"
-                       asp-route-mode=@Model.PublishMode>Fix</a>
+                       asp-route-mode=@Model.PublishMode>Fix<span class="govuk-visually-hidden">@course.QualificationCourseTitle</span></a>
                 </div>
             </div>
         </div>
@@ -68,7 +67,11 @@
         @if ((Model.PublishMode.Equals(PublishMode.BulkUpload) && courseRun.RecordStatus == RecordStatus.BulkUploadPending) ||
 (Model.PublishMode.Equals(PublishMode.Migration) && courseRun.RecordStatus == RecordStatus.MigrationPending))
         {
-            <div id="courserunid" style="display:none">@courseRun.id</div>
+
+            @*
+                //Duplicate Id's causing issues with accessibility. Might be redundant, Re-instate if causes problem.
+                <div id="courserunid" style="display:none">@courseRun.id</div>
+            *@
 
             <div class="error-line" id="CourseRunId_@courseRun.id">
 
@@ -76,46 +79,46 @@
                     <div class="govuk-form-group--error">
                         <strong>@courseRun.CourseName</strong>
                         <br />
-                            <div class="govuk-grid-column-one-quarter word-wrap-break">
-                                <span>@courseRun.ProviderCourseID</span>
-                            </div>
-                            <div class="govuk-grid-column-one-quarter">
-                                @if (courseRun.VenueId != null && Model.Venues.ContainsKey((Guid)courseRun.VenueId))
-                                {
-                                    <span>@Model.Venues[(Guid)courseRun.VenueId]</span>
-                                }
-                                else
-                                {
-                                    <span>&nbsp;</span>
-                                }
+                        <div class="govuk-grid-column-one-quarter word-wrap-break">
+                            <span>@courseRun.ProviderCourseID</span>
+                        </div>
+                        <div class="govuk-grid-column-one-quarter">
+                            @if (courseRun.VenueId != null && Model.Venues.ContainsKey((Guid)courseRun.VenueId))
+                            {
+                                <span>@Model.Venues[(Guid)courseRun.VenueId]</span>
+                            }
+                            else
+                            {
+                                <span>&nbsp;</span>
+                            }
 
-                            </div>
-                            <div class="govuk-grid-column-one-quarter">
-                                @if (courseRun.StudyMode == StudyMode.Undefined)
-                                {
-                                    <span>&nbsp;</span>
-                                }
-                                else
-                                {
-                                    <span>@courseRun.StudyMode.ToDescription()</span>
-                                }
+                        </div>
+                        <div class="govuk-grid-column-one-quarter">
+                            @if (courseRun.StudyMode == StudyMode.Undefined)
+                            {
+                                <span>&nbsp;</span>
+                            }
+                            else
+                            {
+                                <span>@courseRun.StudyMode.ToDescription()</span>
+                            }
 
-                            </div>
-                            <div class="govuk-grid-column-one-quarter">
-                                @if (courseRun.StartDate.HasValue)
-                                {
-                                    <span>@courseRun.StartDate.Value.ToString("dd'/'MM'/'yyyy")</span>
-                                }
-                                else if (courseRun.FlexibleStartDate)
-                                {
-                                    <span>Flexible Start Date</span>
-                                }
-                                else
-                                {
-                                    <span>&nbsp;</span>
-                                }
+                        </div>
+                        <div class="govuk-grid-column-one-quarter">
+                            @if (courseRun.StartDate.HasValue)
+                            {
+                                <span>@courseRun.StartDate.Value.ToString("dd'/'MM'/'yyyy")</span>
+                            }
+                            else if (courseRun.FlexibleStartDate)
+                            {
+                                <span>Flexible Start Date</span>
+                            }
+                            else
+                            {
+                                <span>&nbsp;</span>
+                            }
 
-                            </div>
+                        </div>
 
                         @{
                             if (courseRun.ValidationErrors.Any())
@@ -142,7 +145,7 @@
                         @if (adminLogin.Succeeded)
                         {
                             <a asp-action="DeleteCourseRun" asp-controller="Migration"
-                               asp-route-courseId="@course.id" asp-route-courseRunId="@courseRun.id">Delete</a>
+                               asp-route-courseId="@course.id" asp-route-courseRunId="@courseRun.id">Delete<span class="govuk-visually-hidden">@courseRun.CourseName</span></a>
                         }
 
                         <a id="course-run-fix-@courseRun.id" class="error-link fix" asp-controller="EditCourseRun" asp-action="Index"
@@ -152,7 +155,7 @@
                            asp-route-awardOrgCode="@course.AwardOrgCode"
                            asp-route-learnAimRefTitle="@course.QualificationCourseTitle"
                            asp-route-learnAimRefTypeDesc="@course.QualificationType"
-                           asp-route-mode=@Model.PublishMode>Fix</a>
+                           asp-route-mode=@Model.PublishMode>Fix<span class="govuk-visually-hidden">@courseRun.CourseName</span></a>
                     </div>
                 </div>
             </div>
@@ -161,9 +164,12 @@
         {
             if (Model.PublishMode == PublishMode.DataQualityIndicator)
             {
-                <div id="courserunid" style="display:none">@courseRun.id</div>
 
-                <div class="error-line" style="flex-wrap: wrap" id="CourseRunId_@courseRun.id">
+                @*
+                    //Duplicate Id's causing issues with accessibility. Might be redundant, Re-instate if causes problem.
+                    <div id="courserunid" style="display:none">@courseRun.id</div>
+                *@
+                <div class="error-line" style="flex-wrap: wrap" id="DQICourseRunId_@courseRun.id">
                     <div class="govuk-grid-column-two-thirds col"><strong>@courseRun.CourseName</strong></div>
 
                     <div class="govuk-grid-column-one-third">
@@ -175,7 +181,10 @@
                                asp-route-awardOrgCode="@course.AwardOrgCode"
                                asp-route-learnAimRefTitle="@course.QualificationCourseTitle"
                                asp-route-learnAimRefTypeDesc="@course.QualificationType"
-                               asp-route-mode=@Model.PublishMode>Fix</a>
+                               asp-route-mode=@Model.PublishMode>
+                                Fix
+                                <span class="govuk-visually-hidden">@courseRun.CourseName</span>
+                            </a>
                         </div>
                     </div>
                     <div class="govuk-grid-column-full flat-list">
@@ -203,8 +212,10 @@
                             {
                                 if (courseRun.Regions.Any())
                                 {
-                                    List<string> regions = (from regionItemModel in Model.Regions where 
-                                        regionItemModel.SubRegion.Any(x => courseRun.Regions.Contains(x.Id)) select regionItemModel.RegionName).ToList();
+                                    List<string> regions = (from regionItemModel in Model.Regions
+                                                            where
+  regionItemModel.SubRegion.Any(x => courseRun.Regions.Contains(x.Id))
+                                                            select regionItemModel.RegionName).ToList();
 
                                     <span class="">@regions.ToCommaSeparatedString()</span>
 
@@ -214,13 +225,13 @@
 
                         @if (courseRun.DeliveryMode != DeliveryMode.Undefined)
                         {
-                            <span id="deliverymode">@WebHelper.GetEnumDescription(courseRun.DeliveryMode)</span>
+                            <span id="deliverymode-@courseRun.id">@WebHelper.GetEnumDescription(courseRun.DeliveryMode)</span>
                         }
                         @if (courseRun.DeliveryMode == DeliveryMode.ClassroomBased)
                         {
                             @if (courseRun.StudyMode != StudyMode.Undefined)
                             {
-                                <span id="studymode">@WebHelper.GetEnumDescription(courseRun.StudyMode)</span>
+                                <span id="studymode-@courseRun.id">@WebHelper.GetEnumDescription(courseRun.StudyMode)</span>
                             }
                         }
 

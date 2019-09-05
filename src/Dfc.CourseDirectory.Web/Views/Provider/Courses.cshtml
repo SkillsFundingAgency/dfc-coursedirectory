@@ -1,6 +1,7 @@
 ﻿@using Dfc.CourseDirectory.Models.Enums
 @using Dfc.CourseDirectory.Web.ViewComponents.Notification
 @{
+    ViewData["Title"] = "Your published courses"; 
     Layout = "_Layout_Your_Courses";
 }
 @model Dfc.CourseDirectory.Web.ViewModels.YourCourses.YourCoursesViewModel
@@ -11,8 +12,8 @@
     {
         <div class="govuk-body">
             <main id="Cd-course-list" class="govuk-main-wrapper">
-                <span class="govuk-caption-xl">Course directory</span>
-                <h1 class="govuk-heading-xl">Your published courses</h1>
+                <span class="govuk-caption-l">Course directory</span>
+                <h1 class="govuk-heading-l">Your published courses</h1>
                 <p class="govuk-body-l">
                     You have no courses listed on the course directory.
                 </p>
@@ -72,7 +73,7 @@
                         ClassType = "info-summary"
                     })
                 }
-                <h1 class="govuk-heading-xl">Your published courses</h1>
+                <h1 class="govuk-heading-l">Your published courses</h1>
                 <p class="govuk-body-l">These courses are listed on the course directory.</p>
                 <div class="govuk-grid-row govuk-!-margin-top-9 ">
                     <div class="cd-grid-coloumn-20 govuk-body">

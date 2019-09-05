@@ -1,6 +1,7 @@
 ﻿@using Dfc.CourseDirectory.Web.ViewComponents.ZCodeSearchResult
 @model UnRegulatedNotFoundViewModel
 @{
+    ViewData["Title"] = "Choose a non-regulated provision"; 
     Layout = "_Layout_Your_Courses";
 }
 
@@ -10,11 +11,10 @@
 @Html.HiddenFor(x => x.CategoryId)
 <div class="grid-row" data-sf-element="Row">
     <div class="column-two-thirds">
-        <a asp-controller="UnregulatedCourses" asp-action="Index" class="govuk-back-link">Back</a>
         <div class="grid-row govuk-body" data-sf-element="Row">
             <div class="">
                 <div>
-                    <h1 class="govuk-heading-l govuk-!-margin-top-4">Choose a non-regulated provision</h1>
+                    <h1 class="govuk-heading-l govuk-!-margin-top-4">Choose a sector subject area (SSA)</h1>
                 </div>
                 <div class="govuk-form-group">
                     <div class="govuk--row cd-nonregulated-provision">
@@ -22,7 +22,7 @@
                             <div class="">
                                 <div class="cd-level-select govuk-form-group">
                                     <label class="govuk-label" for="level1" name="level1">
-                                        Level 1
+                                        SSA level 1
                                     </label>
 
                                     <select asp-for="@Model.Level1Id" asp-items="@Model.Level1" class="govuk-select" id="LevelOneSelect" style="width: 400px" aria-label="level1"></select>
@@ -31,7 +31,7 @@
                             <div id="LevelTwo" class="">
                                 <div class="cd-level-select govuk-form-group">
                                     <label class="govuk-label" for="level2" name="level2">
-                                        Level 2
+                                        SSA level 2
                                     </label>
 
                                     <select asp-for="@Model.Level2Id" asp-items="@Model.Level2" class="govuk-select" id="LevelTwoSelect" disabled style="width: 400px" aria-label="level2"></select>
@@ -175,8 +175,10 @@
                 var $notionalNvqLevelV2FilterCheckboxes = $("input[name='NotionalNVQLevelv2Filter']:checkbox");
                 var $awardAimRefFilterCheckboxes = $("input[name='AwardOrgAimRefFilter']:checkbox");
 
-                $notionalNvqLevelV2FilterCheckboxes.on("click", debounce(doSearch, 1500));
-                $awardAimRefFilterCheckboxes.on("click", debounce(doSearch, 1500));
+                //$notionalNvqLevelV2FilterCheckboxes.on("click", debounce(doSearch, 1500));
+                //$awardAimRefFilterCheckboxes.on("click", debounce(doSearch, 1500));
+
+                $("#ApplyFilter").on("click", debounce(doSearch,0));
             };
 
             var assignEventToClearAllFiltersLink = function () {
@@ -196,6 +198,7 @@
                                 $($allCheckedFilterCheckboxes[i]).prop('checked', false);
                             }
                         }
+                        doSearch();
                     });
             };
 

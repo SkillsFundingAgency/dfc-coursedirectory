@@ -118,6 +118,9 @@
     },
     "appServicePlanSize": {
       "value": "1"
+    },
+    "BlobStorageSettingsInlineProcessingThreshhold": {
+      "value": "10000"
     }
   }
 }

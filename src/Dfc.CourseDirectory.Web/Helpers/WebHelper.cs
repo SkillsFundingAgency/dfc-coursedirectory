@@ -27,10 +27,30 @@ namespace Dfc.CourseDirectory.Web.Helpers
         {
             if (val.Equals(1))
             {
-                return " Course";
+                return " course";
             }
-            return " Courses";
+            return " courses";
             
+        }
+
+        public static string GetLocationsTextToUse(int val)
+        {
+            if (val.Equals(1))
+            {
+                return " location";
+            }
+            return " locations";
+
+        }
+
+        public static string GetApprenticeshipsTextToUse(int val)
+        {
+            if (val.Equals(1))
+            {
+                return " apprenticeship";
+            }
+            return " apprenticeships";
+
         }
 
         public static string GetEnumDescription(Enum value)

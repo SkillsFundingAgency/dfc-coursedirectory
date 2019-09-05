@@ -14,5 +14,12 @@ namespace Dfc.CourseDirectory.Models.Models.Providers
         public string Region { get; set; }
         public string ProviderId { get; set; }
         public string UKPRN { get; set; }
+        public Status? Status { get; set; }
+        public string ProviderStatus { get; set; }
+        public string CourseDirectoryName { get; set; }
+        public string TradingName { get; set; }
+        public string ProviderAlias { get; set; }
+
+
     }
 }

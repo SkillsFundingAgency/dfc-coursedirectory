@@ -2,6 +2,7 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.ProviderApprenticeships.ProviderApprenticeshipSearch
 @using Dfc.CourseDirectory.Web.ViewComponents.ProviderApprenticeships.ProviderApprenticeshipSearchResult
 @{
+    ViewData["Title"] = "Your published apprenticeship training courses"; 
     Layout = "_Layout_Your_Courses";
 }
 
@@ -18,8 +19,7 @@
 
 
                     <div>
-                        <a asp-controller="Home" asp-action="Index" class="govuk-back-link">Back</a><br />
-                        <span class="govuk-caption-xl">Course directory</span>
+                        <span class="govuk-caption-l">Course directory</span>
                         @Html.HiddenFor(x => x.ApprenticeshipId)
                         @if (!string.IsNullOrEmpty(@ViewBag.Message))
                         {
@@ -33,7 +33,7 @@
                         <h1 class="govuk-heading-xl">Your published apprenticeship training courses</h1>
 
 
-                        <p class="govuk-body-l">Search by apprenticeship name or keyword</p>
+                        <p id="SearchLabel" class="govuk-body-l">Search by apprenticeship name or keyword</p>
                     </div>
                     <form class="govuk-!-margin-bottom-9" id="ProviderApprenticeshipSearchForm" asp-controller="" asp-action="" method="post">
                         <div class="header-search-content">
@@ -41,7 +41,7 @@
                             <div class="search-input-wrapper">
 
 
-                                <input class="govuk-input search-input js-search-focus" id="ProviderApprenticeshipSearchTerm" asp-for="@Model.Search" type="text">
+                                <input class="govuk-input search-input js-search-focus" id="ProviderApprenticeshipSearchTerm" asp-for="@Model.Search" type="text" aria-labelledby="SearchLabel">
                                 <div class="cd-c-search__item cd-search__submit-wrapper">
                                     <button type="button" class=" submit" id="searchProviderApprenticeships">Search</button>
                                 </div>
@@ -121,7 +121,7 @@
             };
 
             $buttonSearch.on("click", doSearch);
-            $elementSearchTerm.on("keyup", debounce(doSearch, 400));
+           // $elementSearchTerm.on("keyup", debounce(doSearch, 400));
 
             var $apprenticeshipUpdatedlink = $("#apprenticeshiplink");
 

@@ -11,6 +11,7 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         public string ProviderName { get; set; }
         public ProviderType ProviderType { get; set; }
         public DateTime? MigrationDate { get; set; }
+        public int? Errors { get; set; }
         public int? MigratedCount { get; set; }
         public int? FailedMigrationCount { get; set; }
         public int LiveCount { get; set; }

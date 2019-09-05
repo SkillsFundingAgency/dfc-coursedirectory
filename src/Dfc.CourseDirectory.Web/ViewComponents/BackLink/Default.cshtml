@@ -1,0 +1,23 @@
+﻿@model Dfc.CourseDirectory.Web.ViewComponents.BackLink.BackLinkModel
+
+@if (null != Model && !string.IsNullOrWhiteSpace(Model.Controller) && !string.IsNullOrWhiteSpace(Model.Action))
+{
+    <a id="backLink" href="@Url.Action(Model.Action, Model.Controller)" class="govuk-back-link">Back</a>
+}
+else
+{
+    <a id="backLink" href="#" class="govuk-back-link" onclick="javascript: window.history.go(-1); return false;">Back</a>
+}
+
+<script>
+    (function ($) {
+        $(function () {
+
+            // If there's no browser page history then there's no point showing the back link.
+            if (history.length <= 1) {
+                $("#backLink").hide();
+            }
+
+        });
+    })(jQuery);
+</script>

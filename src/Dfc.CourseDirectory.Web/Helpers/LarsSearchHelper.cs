@@ -1,14 +1,17 @@
-﻿using Dfc.CourseDirectory.Common;
+﻿
+using System;
+using System.Linq;
+using System.Text;
+using System.Collections.Generic;
+using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.Enums;
 using Dfc.CourseDirectory.Services.Interfaces;
+using Dfc.CourseDirectory.Services.UnregulatedProvision;
 using Dfc.CourseDirectory.Web.RequestModels;
 using Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Dfc.CourseDirectory.Services.UnregulatedProvision;
+
+
 namespace Dfc.CourseDirectory.Web.Helpers
 {
     public class LarsSearchHelper : ILarsSearchHelper
@@ -24,20 +27,22 @@ namespace Dfc.CourseDirectory.Web.Helpers
             Throw.IfLessThan(1, itemsPerPage, nameof(itemsPerPage));
 
             var sb = new StringBuilder();
-
             sb = BuildUpFilterStringBuilder(sb, "NotionalNVQLevelv2", larsSearchRequestModel.NotionalNVQLevelv2Filter);
             sb = BuildUpFilterStringBuilder(sb, "AwardOrgCode", larsSearchRequestModel.AwardOrgCodeFilter);
             sb = BuildUpFilterStringBuilder(sb, "AwardOrgAimRef", larsSearchRequestModel.AwardOrgAimRefFilter);
 
 
-            if (sb.Length != 0)
-            {
-                new LarsSearchFilterBuilder(sb).And().AppendOpeningBracket().Field("CertificationEndDate")
+            if (sb.Length != 0) {
+                StringBuilder sbTemp = new StringBuilder();
+                new LarsSearchFilterBuilder(sbTemp).AppendOpeningBracket().Field("CertificationEndDate")
                     .GreaterThanOrEqualTo(DateTimeOffset.UtcNow.ToString("yyyy-MM-dd")).Or()
-                    .Field("CertificationEndDate eq null").AppendClosingBracket();
+                    .Field("CertificationEndDate eq null").AppendClosingBracket()
+                    .And().AppendOpeningBracket();
+                sbTemp.Append(sb);
+                new LarsSearchFilterBuilder(sbTemp).AppendClosingBracket();
+                sb = sbTemp;
             }
-            else
-            {
+            else {
                 new LarsSearchFilterBuilder(sb).Field("CertificationEndDate")
                     .GreaterThanOrEqualTo(DateTimeOffset.UtcNow.ToString("yyyy-MM-dd")).Or()
                     .Field("CertificationEndDate eq null");
@@ -67,8 +72,6 @@ namespace Dfc.CourseDirectory.Web.Helpers
             Throw.IfLessThan(1, itemsPerPage, nameof(itemsPerPage));
 
             var sb = new StringBuilder();
-
-
             sb = BuildUpFilterStringBuilder(sb, "NotionalNVQLevelv2", larsSearchRequestModel.NotionalNVQLevelv2Filter);
             sb = BuildUpFilterStringBuilder(sb, "AwardOrgCode", larsSearchRequestModel.AwardOrgCodeFilter);
             sb = BuildUpFilterStringBuilder(sb, "AwardOrgAimRef", larsSearchRequestModel.AwardOrgAimRefFilter);
@@ -76,15 +79,11 @@ namespace Dfc.CourseDirectory.Web.Helpers
             sb = BuildUpFilterStringBuilder(sb, "SectorSubjectAreaTier2", larsSearchRequestModel.SectorSubjectAreaTier2Filter);
 
 
-            if (sb.Length != 0)
-            {
+            if (sb.Length != 0) {
                 new LarsSearchFilterBuilder(sb).And().AppendOpeningBracket().Field("CertificationEndDate")
                     .GreaterThanOrEqualTo(DateTimeOffset.UtcNow.ToString("yyyy-MM-dd")).Or()
                     .Field("CertificationEndDate eq null").AppendClosingBracket();
-
-            }
-            else
-            {
+            } else {
                 new LarsSearchFilterBuilder(sb).Field("CertificationEndDate")
                     .GreaterThanOrEqualTo(DateTimeOffset.UtcNow.ToString("yyyy-MM-dd")).Or()
                     .Field("CertificationEndDate eq null");
@@ -104,11 +103,9 @@ namespace Dfc.CourseDirectory.Web.Helpers
         }
 
 
-
-
         public IEnumerable<LarsSearchFilterModel> GetUnRegulatedSearchFilterModels(
-    LarsSearchFacets larsSearchFacets,
-    LarsSearchRequestModel larsSearchRequestModel)
+            LarsSearchFacets larsSearchFacets,
+            LarsSearchRequestModel larsSearchRequestModel)
         {
             Throw.IfNull(larsSearchFacets, nameof(larsSearchFacets));
             Throw.IfNull(larsSearchRequestModel, nameof(larsSearchRequestModel));
@@ -121,7 +118,6 @@ namespace Dfc.CourseDirectory.Web.Helpers
                 (value) => $"Level {value}",
                 larsSearchFacets.NotionalNVQLevelv2,
                 larsSearchRequestModel.NotionalNVQLevelv2Filter);
-
 
             var awardOrgAimRefFilter = GetLarsSearchFilterModel(
                 "Category",
@@ -136,22 +132,17 @@ namespace Dfc.CourseDirectory.Web.Helpers
 
             foreach (var award in awardOrgAimRefFilter.Items)
             {
-                if (award.Value == "APP H CAT C" || award.Value == "APP H CAT D" || award.Value == "APP H CAT H" || award.Value == "APP H CAT N")
-                {
+                if (award.Value == "APP H CAT C" || award.Value == "APP H CAT D" || award.Value == "APP H CAT H" || award.Value == "APP H CAT N") {
                     r.Remove(award);
-                }
-                else
-                {
+                } else {
                     award.Text = Categories.AllCategories.Where(x => x.Id == award.Text).Select(x => x.Category).SingleOrDefault();
                 }
-
             }
 
             awardOrgAimRefFilter.Items = r;
             filters.Add(awardOrgAimRefFilter);
             return filters;
         }
-
 
 
         public IEnumerable<LarsSearchFilterModel> GetLarsSearchFilterModels(
@@ -180,7 +171,6 @@ namespace Dfc.CourseDirectory.Web.Helpers
 
             filters.Add(notionalNVQLevelv2Filter);
             filters.Add(awardOrgCodeFilter);
-
             return filters;
         }
 
@@ -223,7 +213,8 @@ namespace Dfc.CourseDirectory.Web.Helpers
             bool openingBracketAppended = false;
             if (stringBuilder.Length > 0 && filters.Length > 0)
             {
-                new LarsSearchFilterBuilder(stringBuilder).And().AppendOpeningBracket();
+                new LarsSearchFilterBuilder(stringBuilder).And()
+                                                          .AppendOpeningBracket();
                 openingBracketAppended = true;
             }
 

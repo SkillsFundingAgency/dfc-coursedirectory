@@ -14,27 +14,35 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
+using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 
 namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
 {
     public class Dashboard : ViewComponent
     {
         private readonly ICourseService _courseService;
+        private readonly IApprenticeshipService _apprenticeshipService;
         private readonly IVenueService _venueService;
         private readonly IBlobStorageService _blobStorageService;
         private readonly IHttpContextAccessor _contextAccessor;
+        private readonly IProviderService _providerService;
         private ISession _session => _contextAccessor.HttpContext.Session;
 
-        public Dashboard(ICourseService courseService, IVenueService venueService, IHttpContextAccessor contextAccessor, IBlobStorageService blobStorageService)
+        public Dashboard(ICourseService courseService, IVenueService venueService, IHttpContextAccessor contextAccessor, IBlobStorageService blobStorageService, IApprenticeshipService apprenticeshipService, IProviderService providerService)
         {
             Throw.IfNull(courseService, nameof(courseService));
+            Throw.IfNull(apprenticeshipService, nameof(apprenticeshipService));
             Throw.IfNull(venueService, nameof(venueService));
             Throw.IfNull(blobStorageService, nameof(blobStorageService));
+            Throw.IfNull(providerService, nameof(providerService));
 
+            _apprenticeshipService = apprenticeshipService;
             _courseService = courseService;
             _venueService = venueService;
             _contextAccessor = contextAccessor;
             _blobStorageService = blobStorageService;
+            _providerService = providerService;
         }
 
         public async Task<IViewComponentResult> InvokeAsync(DashboardModel model)
@@ -79,7 +87,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
             IEnumerable<Course> inValidCourses = courses.Where(c => c.IsValid == false);
 
             actualModel.DisplayMigrationButton = false;
-            if (inValidCourses.Count() > 0 || migrationPendingCourses.Count() > 0)
+            if (migrationPendingCourses.Count() > 0)
             {
                 actualModel.DisplayMigrationButton = true;
             }
@@ -95,18 +103,17 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
 
            actualModel.BulkUpLoadHasErrors = bulkUploadCoursesPending?.SelectMany(c => c.BulkUploadErrors).Count() + bulkUploadRunsPending?.SelectMany(r => r.BulkUploadErrors).Count() > 0;
 
-            string BulkUpLoadErrorMessage = actualModel.BulkUploadPendingCount.ToString() + WebHelper.GetCourseTextToUse(actualModel.BulkUploadTotalCount) + " upload in a file on "
+            string BulkUpLoadErrorMessage = actualModel.BulkUploadTotalCount.ToString() + WebHelper.GetCourseTextToUse(actualModel.BulkUploadTotalCount) + " uploaded in a file on "
                                                     + actualModel.FileUploadDate?.ToString("dd/MM/yyyy") + " have "
                                                     + (bulkUploadCoursesPending?.SelectMany(c => c.BulkUploadErrors).Count() + bulkUploadRunsPending?.SelectMany(r => r.BulkUploadErrors).Count()).ToString()
                                                     + " errors. Fix these to publish all of your courses.";
 
-            string BulkUpLoadNoErrorMessage = actualModel.BulkUploadTotalCount.ToString() + WebHelper.GetCourseTextToUse(actualModel.BulkUploadPendingCount) + " uploaded on " + actualModel.FileUploadDate?.ToString("dd/MM/yyyy") + " have no errors, but are not listed on the Course directory becuase you have not published them.";
+            string BulkUpLoadNoErrorMessage = actualModel.BulkUploadTotalCount.ToString() + WebHelper.GetCourseTextToUse(actualModel.BulkUploadPendingCount) + " uploaded on " + actualModel.FileUploadDate?.ToString("dd/MM/yyyy") + " have no errors, but are not listed on the Course directory because you have not published them.";
             actualModel.FileCount = list.Count();
 
             int MigrationLiveCount = courses.Where(x => x.CourseStatus == RecordStatus.Live && x.CreatedBy == "DFC – Course Migration Tool")
                                             .SelectMany(c => c.CourseRuns)
-                                            .Where(x => x.RecordStatus == RecordStatus.Live && x.CreatedBy == "DFC – Course Migration Tool")
-                                            .Count();
+                                            .Count(x => x.RecordStatus == RecordStatus.Live && x.CreatedBy == "DFC – Course Migration Tool");
 
             actualModel.BulkUploadMessage = (actualModel.BulkUploadTotalCount > 0 & actualModel.BulkUploadPendingCount == 0) ? BulkUpLoadNoErrorMessage : BulkUpLoadErrorMessage;
 
@@ -114,19 +121,51 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
             actualModel.VenueCount = 0;
             if (allVenues.Value != null)
             {
-                actualModel.VenueCount = allVenues.Value.Value.Where(x => x.Status == VenueStatus.Live).Count();
+                actualModel.VenueCount = allVenues.Value.Value.Count(x => x.Status == VenueStatus.Live);
             }
 
-            //actualModel.PublishedCourseCount = courses.Where(x => x.CourseStatus == RecordStatus.Live)
-            //                                     .SelectMany(c => c.CourseRuns)
-            //                                     .Where(x => x.RecordStatus == RecordStatus.Live)
-            //                                     .Count();
+            actualModel.PublishedCourseCount = courses
+                                              .SelectMany(c => c.CourseRuns)
+                                              .Count(x => x.RecordStatus == RecordStatus.Live);
 
-            actualModel.PublishedCourseCount = courses.SelectMany(c => c.CourseRuns)
-                                              .Where(x => x.RecordStatus == RecordStatus.Live)
-                                              .Count();
+            var result = await _apprenticeshipService.GetApprenticeshipByUKPRN(UKPRN.ToString());
+
+
+            actualModel.PublishedApprenticeshipsCount = result.Value.Count(x => x.RecordStatus==RecordStatus.Live);
+
+            Dfc.CourseDirectory.Models.Models.Providers.Provider provider = FindProvider(UKPRN);
+            if (null != provider)
+            {
+                if(null != provider.BulkUploadStatus)
+                {
+                    actualModel.BulkUploadBackgroundInProgress = provider.BulkUploadStatus.InProgress;
+                    actualModel.BulkUploadBackgroundRowCount = provider.BulkUploadStatus.TotalRowCount;
+                    actualModel.BulkUploadBackgroundStartTimestamp = provider.BulkUploadStatus.StartedTimestamp;
+                }
+                actualModel.ProviderType = provider.ProviderType;
+            }
 
             return View("~/ViewComponents/Dashboard/Default.cshtml", actualModel);
         }
+
+        private Dfc.CourseDirectory.Models.Models.Providers.Provider FindProvider(int prn)
+        {
+            Dfc.CourseDirectory.Models.Models.Providers.Provider provider = null;
+            try
+            {
+                var providerSearchResult = Task.Run(async () => await _providerService.GetProviderByPRNAsync(new Services.ProviderService.ProviderSearchCriteria(prn.ToString()))).Result;
+                if (providerSearchResult.IsSuccess)
+                {
+                    provider = providerSearchResult.Value.Value.FirstOrDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+                // @ToDo: decide how to handle this
+            }
+            return provider;
+        }
+
+
     }
 }

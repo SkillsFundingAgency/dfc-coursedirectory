@@ -1,4 +1,6 @@
-﻿.govuk-header__container.cd-fullwidth-container {
+﻿$ExploreCareersGreen: #207E77;
+
+.govuk-header__container.cd-fullwidth-container {
     margin-bottom: -10px;
 }
 
@@ -7,7 +9,7 @@
 }
 
 .cd-subHead {
-    background-color: #005ea5;
+    background-color: $ExploreCareersGreen;
     margin-top: -10px;
     color: white;
     font-family: nta,Arial,sans-serif;

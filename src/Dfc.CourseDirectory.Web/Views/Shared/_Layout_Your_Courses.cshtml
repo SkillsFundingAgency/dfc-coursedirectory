@@ -1,22 +1,12 @@
-﻿<!DOCTYPE html>
+﻿@using Dfc.CourseDirectory.Services.Interfaces.ProviderService
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Http
+<!DOCTYPE html>
 <html lang="en" class="govuk-template app-html-class">
-
-@*<head>
-    <meta charset="utf-8" />
-    <title>GOV.UK - Course Directory Provider Portal</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="blue" />
-
-    <link href="~/dist/site.min.css" rel="stylesheet" />
-    <meta property="og:image" content="~/assets/images/govuk-opengraph-image.png">
-    <partial name="_ScriptsPartial" />
-
-   
-</head>*@
 
 <head>
     <meta charset="utf-8" />
-    <title>GOV.UK - Course Directory Provider Portal</title>
+    <title>@ViewData["Title"]</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="blue" />
 
@@ -43,20 +33,14 @@
 
     <partial name="_GovukHeaderPartial_Your_Courses" />
 
-    <main id="main-content" class="cd-fullwidth-container" style="display:block">
+    <div class=" cd-fullwidth-container  ">
+        <main class="cd-dashboard provider govuk-body" id="main-content" role="main">
+
+            @RenderBody()
+        </main>
+    </div>
 
 
-
-        @RenderBody()
-
-    </main>
-    @*<div class=" cd-fullwidth-container" id="main-content">
-            @await Component.InvokeAsync(nameof(GovukPhaseBanner))
-
-            <main class="govuk-main-wrapper app-main-class" id="main-content" role="main">
-                @RenderBody()
-            </main>
-        </div>*@
 
     <script>
         document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');
@@ -69,9 +53,26 @@
         $(document).ready(function () {
             window.GOVUKFrontend.initAll();
         });
+
+        $(".govuk-header__menu-button").on("click",
+            function () {
+                //alert("Clicked");
+                if ($(".govuk-header__navigation").is(":visible")) {
+                    $("#menu").removeClass("govuk-header__menu-button--open");
+                    $(".govuk-header__navigation").hide();
+                } else {
+
+                    $("#menu").addClass("govuk-header__menu-button--open");
+                    $(".govuk-header__navigation").show();
+                }
+
+               
+            });
     </script>
+    <partial name="_GovukFooterPartial" />
+
     @RenderSection("Scripts", required: false)
 </body>
 
-<partial name="_GovukFooterPartial" />
+
 </html>

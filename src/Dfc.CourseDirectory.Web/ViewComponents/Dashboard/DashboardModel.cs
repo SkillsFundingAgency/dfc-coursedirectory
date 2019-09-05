@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Dfc.CourseDirectory.Models.Models.Providers;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -8,7 +9,12 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
 {
     public class DashboardModel
     {
+        public ProviderType ProviderType { get; set; }
+
         public int PublishedCourseCount { get; set; }
+
+        public int PublishedApprenticeshipsCount { get; set; }
+
         public int VenueCount { get; set; }
 
         public IEnumerable<string> ValidationMessages { get; set; }
@@ -28,5 +34,10 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
         public bool DisplayMigrationButton { get; set; }
 
         public bool BulkUpLoadHasErrors { get; set; }
+
+        // Correspond with the new model changes on provider to track status of background bulk upload process
+        public bool BulkUploadBackgroundInProgress { get; set; }
+        public DateTime? BulkUploadBackgroundStartTimestamp { get; set; }
+        public int? BulkUploadBackgroundRowCount { get; set; }
     }
 }

@@ -3,6 +3,7 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseRegion
 @using Dfc.CourseDirectory.Web.ViewComponents.Extensions
 @{
+    ViewData["Title"] = "Select the regions where you provide this training"; 
     Layout = "_Layout_Your_Courses";
 }
 
@@ -23,8 +24,7 @@
 
         <div class="govuk-form-group">
             <fieldset class="govuk-fieldset">
-                <a asp-controller="Apprenticeships" asp-action="LocationChoiceSelection" class="govuk-back-link">Back</a><br />
-                <h1 class="govuk-heading-xl">Select the regions where you provide this training</h1>
+                <h1 class="govuk-heading-l">Select the regions where you provide this training</h1>
 
                 <div class="govuk-form-group" id="RegionItemsCheckboxList">
                     <div id="sectionRegions">

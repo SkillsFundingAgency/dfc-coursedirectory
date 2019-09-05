@@ -21,6 +21,7 @@
 @using Dfc.CourseDirectory.Models.Models.Courses
 @using Dfc.CourseDirectory.Models.Models.Venues
 @{
+    ViewData["Title"] = "Add course details"; 
     Layout = "_Layout_Your_Courses";
 }
 @inject IHttpContextAccessor HttpContextAccessor
@@ -372,6 +373,22 @@
                         break;
                     }
             }
+
+            switch ($radioStartDate.find("input[type='radio']:checked").val()===true) {
+            case "SpecifiedStartDate":
+            {
+                $("#govuk-label-start_date").show();
+                break;
+            }
+            case "FlexibleStartDate":
+            {
+                $("#govuk-label-start_date").hide();
+                break;
+            }
+           
+            }
+
+
 
             function isAllValid(currentValue) {
                 return currentValue === true;
@@ -800,6 +817,7 @@
                             isWorkBased = false;
                             $attendancePattern.prop("checked", true);
                             $studyMode.prop("checked", true);
+                            $("#govuk-label-start_date").show();
                             break;
                         }
                     case "Online":
@@ -815,6 +833,7 @@
                             isWorkBased = false;
                             $attendancePattern.prop("checked", false);
                             $studyMode.prop("checked", false);
+                            $("#govuk-label-start_date").hide();
                             break;
                         }
                     case "WorkBased":
@@ -830,6 +849,7 @@
                             isWorkBased = true;
                             $attendancePattern.prop("checked", false);
                             $studyMode.prop("checked", false);
+                            $("#govuk-label-start_date").hide();
                             break;
                         }
                 }

@@ -1,4 +1,11 @@
-﻿.link--button {
+﻿
+$ExploreCareersGreen: #207E77;
+
+.cd-right {
+    float: right;
+}
+
+.link--button {
     border: none;
     color: #005ea5;
     font-size: 1.1875rem;
@@ -110,12 +117,16 @@
 
 .sidebar {
     .widget {
-        border-top: 5px solid #005ea5;
+        border-top: 5px solid $ExploreCareersGreen;
         background-color: #f8f8f8;
-        padding-left: 1rem;
+        //padding-left: 1rem;
 
         div {
             margin-bottom: .5em;
+        }
+
+        h3 {
+            margin-top:0;
         }
     }
 }

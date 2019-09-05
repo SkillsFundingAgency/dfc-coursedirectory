@@ -179,7 +179,7 @@ namespace Dfc.CourseDirectory.Web
                 options.AddPolicy("Fe", policy =>
                     policy.RequireAssertion(x => (!x.User.IsInRole("Provider Superuser") && !x.User.IsInRole("Provider User")) ||
                                                                              x.User.Claims.Any(c => c.Type == "ProviderType" && 
-                                                                                                    _feClaims.Contains(c.Value))));
+                                                                                                    _feClaims.Contains(c.Value, StringComparer.OrdinalIgnoreCase))));
             });
             services.AddDistributedMemoryCache();
 
@@ -507,6 +507,9 @@ namespace Dfc.CourseDirectory.Web
                 context.Response.Headers.Add("X-Frame-Options", "SAMEORIGIN");
                 context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
                 context.Response.Headers.Add("X-Xss-Protection", "1; mode=block");
+                context.Response.Headers.Add("Referrer-Policy", "strict-origin-when-cross-origin");
+                context.Response.Headers.Add("Feature-Policy", "accelerometer 'none'; camera 'none'; geolocation 'none'; gyroscope 'none'; magnetometer 'none'; microphone 'none'; payment 'none'; usb 'none'");
+                    
                 //CSP
                 context.Response.Headers.Add("Content-Security-Policy", 
                                                 "default-src    'self'  https://rainmaker.tiny.cloud/;" +

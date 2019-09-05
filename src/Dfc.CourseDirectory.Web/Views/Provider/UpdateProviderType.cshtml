@@ -2,10 +2,11 @@
 @using Dfc.CourseDirectory.Models.Models.Providers
 @model Dfc.CourseDirectory.Web.ViewModels.Provider.ProviderTypeAddOrEditViewModel;
 @{
+    ViewData["Title"] = "Provider type settings"; 
     Layout = "_Layout_Your_Courses";
 }
 
-<a asp-controller="Provider" asp-action="Details" class="govuk-back-link">Back</a>
+
 <form asp-controller="Provider" asp-action="AddOrEditProviderType" id="editProviderDetails" onkeypress="return event.keyCode != 13;">
     <main class="govuk-main-wrapper">
         <div class="govuk-grid-row">
@@ -19,7 +20,7 @@
                         <ul class="govuk-list govuk-error-summary__list"></ul>
                     </div>
                 </div>
-                <h1 class="govuk-heading-xl">Provider type settings</h1>
+                <h1 class="govuk-heading-l">Provider type settings</h1>
                 
                 <div class="govuk-form-group">
                     <fieldset class="govuk-fieldset">
@@ -32,9 +33,9 @@
                                 </label>
                             </div>
                             <div class="govuk-radios__item">
-                                @Html.RadioButtonFor(m => m.ProviderType, ProviderType.Fe, new { @class = "govuk-radios__input", id = ProviderType.Fe })
-                                <label class="govuk-label govuk-radios__label" for="@ProviderType.Fe">
-                                    @WebHelper.GetEnumDescription(ProviderType.Fe)
+                                @Html.RadioButtonFor(m => m.ProviderType, ProviderType.FE, new { @class = "govuk-radios__input", id = ProviderType.FE })
+                                <label class="govuk-label govuk-radios__label" for="@ProviderType.FE">
+                                    @WebHelper.GetEnumDescription(ProviderType.FE)
                                 </label>
                             </div>
                             <div class="govuk-radios__item">
