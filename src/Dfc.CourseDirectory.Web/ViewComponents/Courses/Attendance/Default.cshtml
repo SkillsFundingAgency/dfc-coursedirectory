@@ -9,13 +9,13 @@
 <div class="govuk-form-group">
 
     <fieldset class="govuk-fieldset">
-        <legend class="govuk-fieldset__legend govuk-fieldset__legend--s" style="font-weight: 100">
-            <h1 class="govuk-fieldset__heading">
+        <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+            <h2 class="govuk-fieldset__heading govuk-heading-m">
                 @Model.LabelText
-            </h1>
+            </h2>
             <span class="govuk-hint">@Model.HintText</span>
         </legend>
-        <div class="govuk-radios govuk-radios--inline" val-required-message="Select Attendance Mode" id="AttendanceRadioButtons">
+        <div class="govuk-radios govuk-radios" val-required-message="Select Attendance Mode" id="AttendanceRadioButtons">
 
             <div class="govuk-radios__item">
                 @Html.RadioButtonFor(m => m.AttendanceMode, AttendancePattern.Daytime, new { @class = "govuk-radios__input", id = AttendancePattern.Daytime })
