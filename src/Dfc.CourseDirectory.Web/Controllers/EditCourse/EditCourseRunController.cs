@@ -561,7 +561,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                     switch (model.Mode)
                     {
                         case PublishMode.BulkUpload:
-                            courseRunForEdit.RecordStatus = RecordStatus.Live;
+                            courseRunForEdit.RecordStatus = RecordStatus.BulkUploadReadyToGoLive;
                             break;
                         case PublishMode.Migration:
                             courseRunForEdit.RecordStatus = courseForEdit.Value.IsValid ? RecordStatus.Live : RecordStatus.MigrationReadyToGoLive;
