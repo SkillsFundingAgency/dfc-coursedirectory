@@ -1,12 +1,13 @@
 ﻿@{
+    ViewData["Title"] = "Data transfer"; 
     Layout = "_Layout_Your_Courses";
 }
 @model Dfc.CourseDirectory.Web.ViewModels.Migration.ReportViewModel
-<div class=" cd-fullwidth-container  govuk-!-padding-top-6">
+<div class="">
 
     <div class="cd-dashboard provider">
-        <span class="govuk-caption-xl">Course Directory</span>
-        <h1 class="govuk-heading-xl cd-dashboard-title">Data transfer</h1>
+        <span class="govuk-caption-l">Course Directory</span>
+        <h1 class="govuk-heading-l cd-dashboard-title">Data transfer</h1>
         <div class="govuk-body">
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-two-thirds">
@@ -30,7 +31,7 @@
                                 , null, new { @class = "govuk-button" })
                         </div>
                     </div>
-                    @if (Model.NoLarsCount.HasValue)
+                    @if (Model.NoLarsCount>0)
                     {
                         <div class="">
                             <div class="govuk-grid-column-one-full">
@@ -61,7 +62,7 @@
                         null, new { @class = "govuk-link govuk-!-margin-top-3" })
                 </div>
                 <div class="govuk-grid-column-one-third">
-                    <aside class="sidebar">
+                    <div class="sidebar">
                         <div class="widget">
                             <h3>Data transfer details</h3>
                             @if (Model.CourseCount.HasValue)
@@ -83,7 +84,7 @@
                                 <span>Courses successfully published:</span><span><strong> @Model.PublishedCount</strong></span>
                             </div>
                         </div>
-                    </aside>
+                    </div>
                 </div>
             </div>
         </div>

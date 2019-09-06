@@ -48,6 +48,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
             _contextAccessor = contextAccessor;
             _courseService = courseService;
             _venueService = venueService;
+           
         }
 
 
@@ -91,6 +92,13 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
                                select regionItemModel.Id).Distinct().OrderBy(x => x).ToList();
 
             return string.Join(", ", regionNames);
+        }
+
+        [Authorize]
+        public IActionResult MigratedCourses(string UKPRN)
+        {
+            _session.SetInt32("UKPRN", Convert.ToInt32(UKPRN));
+            return RedirectToAction("Index");
         }
 
         [Authorize]
@@ -174,9 +182,9 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
 
                     };
                     //If National
-                    if(national)
+                    if (national)
                     {
-                        courseRunModel.Region = string.Join(", ", allRegions.Select(x => x.RegionName).ToList()); 
+                        courseRunModel.Region = string.Join(", ", allRegions.Select(x => x.RegionName).ToList());
                         courseRunModel.RegionIdList = string.Join(", ", allRegions.Select(x => x.Id).ToList());
                     }
                     else
@@ -196,7 +204,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
             int s = 0;
             var textValue = string.Empty;
             var levelFilter = model.ProviderCourseRuns.GroupBy(x => x.NotionalNVQLevelv2).OrderBy(x => x.Key).ToList();
-            foreach(var level in levelFilter)
+            foreach (var level in levelFilter)
             {
                 textValue = string.Empty;
 
@@ -305,7 +313,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
                 model.CourseRunId = courseRunId.Value.ToString();
                 bool courseRunExists = model.ProviderCourseRuns.Any(x => x.CourseRunId == courseRunId.ToString());
 
-                if(courseRunExists == false)
+                if (courseRunExists == false)
                 {
                     model.NotificationTitle = notificationTitle;
                     model.NotificationMessage = notificationMessage;
@@ -330,7 +338,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
                 notificationAnchorTag = string.Empty;
             }
 
-          
+
 
 
 
@@ -340,6 +348,10 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
             model.Venues = venueFilterItems;
             model.AttendancePattern = attendanceModeFilterItems;
             model.Regions = regionFilterItems;
+            
+            //Setup backlink to go to the dashboard
+            ViewBag.BackLinkController = "Home";
+            ViewBag.BackLinkAction = "Index";
 
             return View(model);
         }
@@ -429,7 +441,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
 
             model.ProviderCourseRuns = model.ProviderCourseRuns.OrderBy(x => x.CourseName).ToList();
 
-           // _session.SetObject("ProviderCourses", model.ProviderCourseRuns.OrderBy(x=>x.CourseName));
+            // _session.SetObject("ProviderCourses", model.ProviderCourseRuns.OrderBy(x=>x.CourseName));
 
 
             int s = 0;
@@ -514,6 +526,69 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
 
             return ViewComponent(nameof(ViewComponents.ProviderCoursesResults.ProviderCoursesResults), model);
         }
+
+
+
+
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> DeleteCourse(Guid CourseId, Guid CourseRunId, string CourseName)
+        {
+            int? UKPRN = _session.GetInt32("UKPRN");
+
+            if (!UKPRN.HasValue)
+            {
+                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
+            }
+
+            CourseDeleteViewModel courseDeleteViewModel = new CourseDeleteViewModel();
+            courseDeleteViewModel.CourseId = CourseId;
+            courseDeleteViewModel.CourseRunId = CourseRunId;
+            courseDeleteViewModel.CourseName = CourseName;
+
+            return View("../ProviderCourses/coursedelete/index", courseDeleteViewModel);
+        }
+
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> DeleteCourse(CourseDeleteViewModel courseDeleteViewModel)
+        {
+            if (courseDeleteViewModel.CourseDelete == CourseDelete.Delete)
+            {
+                int? UKPRN = _session.GetInt32("UKPRN");
+
+                if (!UKPRN.HasValue)
+                {
+                    return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
+                }
+                //archive call
+                var result = await _courseService.UpdateStatus(courseDeleteViewModel.CourseId, courseDeleteViewModel.CourseRunId, (int)RecordStatus.Archived);
+
+                if (result.IsSuccess)
+                {
+                    return RedirectToAction("CourseConfirmationDelete", "ProviderCourses", new { CourseRunId = courseDeleteViewModel.CourseId,CourseName = courseDeleteViewModel.CourseName });
+
+                }
+            }
+
+            return RedirectToAction("Index", "ProviderCourses");
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> CourseConfirmationDelete(Guid CourseRunId, string CourseName)
+        {
+            CourseDeleteConfirmViewModel courseDeleteConfirmViewModel = new CourseDeleteConfirmViewModel();
+            courseDeleteConfirmViewModel.CourseRunId = CourseRunId;
+            courseDeleteConfirmViewModel.CourseName = CourseName;
+
+
+            return View("../ProviderCourses/CourseDeleteConfirmation/index", courseDeleteConfirmViewModel);
+        }
+
+
 
     }
 }

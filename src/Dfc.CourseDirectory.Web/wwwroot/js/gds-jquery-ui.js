@@ -1,5 +1,8 @@
 ﻿(function ($) {
 
+
+    
+    
     // Create the defaults once
     var pluginName = "govUkFormGroup",
         defaults = {
@@ -1233,11 +1236,11 @@
                 var li = document.createElement("li");
                 if (error instanceof HTMLElement) {
                     $("#" + error.id).remove();
-                    li.append(error);
+                    li.appendChild(error);
                 } else {
                     li.innerHTML = error;
                 }
-                this._summaryList.append(li);
+                this._summaryList.appendChild(li);
             }, this);
         }
     }

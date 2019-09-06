@@ -18,13 +18,14 @@ namespace Dfc.CourseDirectory.Services
 
         public ILarsSearchFilterBuilder And()
         {
-            _sb.Append(" and");
+            _sb.Append(" and ");
             return this;
         }
 
         public string Build()
         {
-            return _sb.ToString().Trim();
+            string result = System.Text.RegularExpressions.Regex.Replace(_sb.ToString(), @"\s+", " ");
+            return result.Trim();
         }
 
         public ILarsSearchFilterBuilder EqualTo(string value)
@@ -105,7 +106,7 @@ namespace Dfc.CourseDirectory.Services
 
         public ILarsSearchFilterBuilder Or()
         {
-            _sb.Append($" or");
+            _sb.Append($" or ");
             return this;
         }
 

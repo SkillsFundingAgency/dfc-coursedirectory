@@ -1,11 +1,21 @@
 ﻿@using Dfc.CourseDirectory.Common.Settings
+@using Dfc.CourseDirectory.Services.Interfaces.ProviderService
+@using Dfc.CourseDirectory.Services.ProviderService
+@using Dfc.CourseDirectory.Web.Helpers
 @using Microsoft.Extensions.Options
 @using Dfc.CourseDirectory.Web.ViewComponents.Notification
+@using Dfc.CourseDirectory.Web.ViewComponents.BackgroundBulkUploadNotification
+@using Dfc.CourseDirectory.Web.ViewComponents.DashboardCard
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Http
+@using Dfc.CourseDirectory.Models.Models.Providers
 @model Dfc.CourseDirectory.Web.ViewComponents.Dashboard.DashboardModel
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
-
+@inject IAuthorizationService Authorization
+@inject IHttpContextAccessor HttpContextAccessor
+@inject IProviderService providerService
 
 @if (Model.ValidationMessages != null && Model.ValidationMessages.Any())
 {
@@ -14,24 +24,35 @@
             <div class="cd-info-summary__list">
                 @foreach (string msg in Model?.ValidationMessages)
                 {
-                    <a href="/DQI"> @msg </a>
+                    <a href="/DQI"> @msg</a>
                 }
             </div>
         </div>
     </div>
 }
 
-@if (Model.BulkUploadReadyToGoLiveCount > 0 || Model.BulkUploadPendingCount > 0)
+@if (Model.BulkUploadBackgroundInProgress)
+{
+    @await Component.InvokeAsync(nameof(BackgroundBulkUploadNotification),
+        new BackgroundBulkUploadNotificationModel()
+        {
+            BulkUploadBackgroundInProgress = true,
+            BulkUploadBackgroundRowCount = Model.BulkUploadBackgroundRowCount,
+            BulkUploadBackgroundStartTimestamp = Model.BulkUploadBackgroundStartTimestamp
+        } );
+}
+
+@if ((Model.BulkUploadReadyToGoLiveCount > 0 || Model.BulkUploadPendingCount > 0) && !Model.BulkUploadBackgroundInProgress)
 {
     var link = "";
-    @if (Model.BulkUpLoadHasErrors==true)
+    @if (Model.BulkUpLoadHasErrors == true)
     {
 
         link = $"<a class='govuk-link' href='/Bulkupload/WhatDoYouWantToDoNext'>{Model.BulkUploadMessage}</a>";
     }
     else
     {
-                link = $"<a class='govuk-link' href='/PublishCourses/Index?publishMode=Bulkupload'>{Model.BulkUploadMessage}</a>";
+        link = $"<a class='govuk-link' href='/PublishCourses/Index?publishMode=Bulkupload'>{Model.BulkUploadMessage}</a>";
     }
 
     @await Component.InvokeAsync(nameof(Notification), new NotificationModel
@@ -42,79 +63,110 @@
     })
 }
 
-<div class="cd-dashboard provider">
-    <span class="govuk-caption-xl">Course directory</span>
-    <h1 class="govuk-heading-xl cd-dashboard-title">Course management dashboard</h1>
-    <hr class="spacer" />
-    <div class="govuk-grid-row govuk-!-margin-bottom-9">
-        <div class="govuk-grid-row govuk-!-margin-bottom-6">
-            <div class="govuk-grid-column-full ">
-
-
-                <a asp-controller="ProviderCourses" asp-action="Index">
-                    <div class="govuk-grid-column-one-quarter">
-                        <div role="link" class="cd-status-panel grey div--link">
-                            <h2 class="govuk-heading-s">Your published courses</h2>
-                            <h3 class="govuk-heading-l">@Model.PublishedCourseCount</h3>
-                        </div>
-
-                    </div>
-                </a>
-
-                <div class="govuk-grid-column-one-half">
-
-                    <ul class="govuk-list">
-
-                        <li>
-
-                            <a asp-controller="RegulatedQualification" asp-action="Index" class="govuk-link">Add a new course</a>
-                        </li>
-                        <li>
-
-                            <a asp-controller="BulkUpload" asp-action="Index" class="govuk-link">File upload all your courses</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
-
+@if (Model.DisplayMigrationButton == true)
+{
+    <div class=" homepage-item govuk-body ">
+        <div class="cd-status-panel slim blue">
+            Migration
+            <a asp-controller="Migration" asp-action="Report" class="govuk-link">View details about the information we have transferred about your courses.</a>
         </div>
+    </div>
+}
 
-        <div class="govuk-grid-row">
+@if (User.Identity.IsAuthenticated)
+{
+    var authorised = await Authorization.AuthorizeAsync(User, "ElevatedUserRole");
+    var superUser = await Authorization.AuthorizeAsync(User, "SuperUser");
+    var feUser = await Authorization.AuthorizeAsync(User, "Fe");
+    var apprenticeshipUser = await Authorization.AuthorizeAsync(User, "apprenticeship");
 
-
-            <div class="govuk-grid-column-full govuk-body homepage-item--container ">
-                <hr class="spacer" />
-                @if (Model.DisplayMigrationButton == true)
+    <h1 class="govuk-heading-xl cd-dashboard-title">Publish to the course directory</h1>
+    <hr class="spacer" />
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            @if (superUser.Succeeded || (feUser.Succeeded && apprenticeshipUser.Succeeded))
+            {
+                <div class="govuk-grid-row govuk-!-margin-bottom-6 homepage-item--container">
+                    <div class="govuk-grid-column-one-half homepage-item ">
+                        @await Html.PartialAsync("/ViewComponents/Dashboard/_CoursesCardPartial.cshtml")
+                    </div>
+                    <div class="govuk-grid-column-one-half homepage-item ">
+                        @if (ProviderType.FE == Model.ProviderType)  // COUR-1713. Urgh!!
+                        {
+                            @await Html.PartialAsync("/ViewComponents/Dashboard/_VenuesCardPartial.cshtml")
+                        }
+                        else
+                        {
+                            @await Html.PartialAsync("/ViewComponents/Dashboard/_ApprenticeshipsCardPartial.cshtml")
+                        }
+                    </div>
+                </div>
+                @if (ProviderType.FE != Model.ProviderType)  // COUR-1713. Urgh!!
                 {
-                    <div class=" homepage-item govuk-grid-column-one-third">
-                        <div class="cd-status-panel blue">
-                            <a asp-controller="Migration" asp-action="Report" class="govuk-link">Migration</a>
-                            <p>View details of the data we migrated.</p>
+                    <div class="govuk-grid-row govuk-!-margin-bottom-6 homepage-item--container">
+                        <div class="govuk-grid-column-one-half homepage-item ">
+                            @await Html.PartialAsync("/ViewComponents/Dashboard/_VenuesCardPartial.cshtml")
                         </div>
                     </div>
                 }
-                <div class="homepage-item govuk-grid-column-one-third">
-                    <div class="cd-status-panel grey">
-                        <a asp-controller="Venues" asp-action="Index" class="govuk-link">Venues</a>
+            }
+            else
+            {
+                @if (feUser.Succeeded)
+                {
+                    <div class="govuk-grid-row govuk-!-margin-bottom-6 homepage-item--container">
+                        <div class="govuk-grid-column-one-half homepage-item ">
+                            @await Html.PartialAsync("/ViewComponents/Dashboard/_CoursesCardPartial.cshtml")
+                        </div>
+                        <div class="govuk-grid-column-one-half homepage-item ">
+                            @await Html.PartialAsync("/ViewComponents/Dashboard/_VenuesCardPartial.cshtml")
+                        </div>
+                    </div>
+                }
 
-                        <span class="govuk-heading-s">@Model.VenueCount</span>
-                        <p>View, edit and add venues.</p>
+                @if (apprenticeshipUser.Succeeded)
+                {
+                    <div class="govuk-grid-row govuk-!-margin-bottom-6 homepage-item--container">
+                        <div class="govuk-grid-column-one-half homepage-item ">
+                            @await Html.PartialAsync("/ViewComponents/Dashboard/_ApprenticeshipsCardPartial.cshtml")
+                        </div>
+                        <div class="govuk-grid-column-one-half homepage-item ">
+                            @await Html.PartialAsync("/ViewComponents/Dashboard/_VenuesCardPartial.cshtml")
+                        </div>
                     </div>
-                </div>
-                <div class="homepage-item govuk-grid-column-one-third">
-                    <div class="cd-status-panel grey">
-                        <a asp-controller="Provider" asp-action="Details" class="govuk-link">Your details</a>
-                        <p>Manage the details we hold about your organisation.</p>
-                    </div>
-                </div>
-            </div>
+                }
+            }
         </div>
+        <div class="govuk-grid-column-one-third">
+            <aside class="sidebar">
+                <div class="widget white ">
+                    <h3>Other actions</h3>
 
+                    <ul class="govuk-list cd-homepage__lis">
+                        <li class="cd-homepage__list--item">
+                            <a asp-controller="Provider" asp-action="Details" class="govuk-link">Manage your organisation details</a>
+                        </li>
+                        @if (superUser.Succeeded)
+                        {
+                            <li class="cd-homepage__list--item">
+                                <a href="https://signin-test-svc-as.azurewebsites.net/approvals/FD039496-0B39-4F75-994A-20B03E060255/users" target="_blank" class="govuk-link">
+                                    Create a new DfE Sign-in account
+                                </a>
+                            </li>
+                        }
+                        <li class="cd-homepage__list--item">
+
+                            <a href="https://signin-test-pfl-as.azurewebsites.net/" target="_blank" class="govuk-link">Manage your DfE Sign-in account</a>
+                        </li>
+                    </ul>
+                </div>
+            </aside>
+
+        </div>
     </div>
+}
 
 
-</div>
 
 <script>
     (function ($) {

@@ -1,12 +1,14 @@
 ﻿// main
 // ====
 
+
 // dependencies
 // ============
 @import "../../node_modules/govuk-frontend/all.scss";
 
 // partials
 // ========
+@import "partials/general.scss";
 @import "partials/_typography.scss";
 @import "partials/validation.scss";
 @import "partials/cd-notifications.scss";
@@ -14,7 +16,6 @@
 @import "partials/cd-search-header.scss";
 @import "partials/cd-confirmation-message.scss";
 @import "partials/cd-lars-search.scss";
-@import "partials/general.scss";
 @import "partials/cd-my-courses.scss";
 @import "partials/cd-add-course.scss";
 @import "partials/CourseList.scss";

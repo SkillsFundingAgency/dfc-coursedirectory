@@ -212,6 +212,40 @@ namespace Dfc.CourseDirectory.Models.Enums
         Cancel = 2
     }
 
+    public enum CoursesLandingOptions
+    {
+        [Description("Undefined")]
+        Undefined = 0,
+        [Description("Add a new course")]
+        Add = 1,
+        [Description("Upload a file to update your courses (bulk upload)")]
+        Upload = 2,
+        [Description("View or make changes to your published courses")]
+        View = 3
+    }
+
+    public enum LocationsLandingOptions
+    {
+        [Description("Undefined")]
+        Undefined = 0,
+        [Description("Add a new location")]
+        Add = 1,
+        [Description("Manage your existing locations")]
+        Manage = 2,
+    
+    }
+
+    public enum BulkUploadLandingOptions
+    {
+        [Description("Undefined")]
+        Undefined = 0,
+        [Description("Further education courses")]
+        FE = 1,
+        [Description("Apprenticeship training")]
+        Apprenticeship = 2,
+
+    }
+
     public enum ApprenticeshipWhatWouldYouLikeToDo
     {
         [Description("Undefined")]
@@ -226,6 +260,28 @@ namespace Dfc.CourseDirectory.Models.Enums
 
 
     public enum ApprenticeshipDelete
+    {
+        [Description("Undefined")]
+        Undefined = 0,
+        [Description("Yes, Delete")]
+        Delete = 1,
+        [Description("No, go back")]
+        Back = 2,
+
+    }
+
+    public enum LocationDelete
+    {
+        [Description("Undefined")]
+        Undefined = 0,
+        [Description("Yes, Delete")]
+        Delete = 1,
+        [Description("No, go back")]
+        Back = 2,
+
+    }
+
+    public enum CourseDelete
     {
         [Description("Undefined")]
         Undefined = 0,

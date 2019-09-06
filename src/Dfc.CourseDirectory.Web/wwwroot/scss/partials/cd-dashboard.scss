@@ -1,4 +1,4 @@
-﻿
+﻿$ExploreCareersGreen: #207E77;
 $grey: #6f777b;
 
 .cd-dashboard.provider {
@@ -19,7 +19,38 @@ $grey: #6f777b;
 
 .homepage-item {
     a {
-        font-size: 1.5rem;
+        //font-size: 1.5rem;
+        //font-weight: 600;
+    }
+}
+
+.sortable {
+    th {
+        color: #005ea5;
+        cursor: pointer;
+        position: relative;
+    }
+}
+
+.cd-migration-panel {
+    background-color: #f8f8f8;
+    border-left: 5px solid $ExploreCareersGreen;
+    padding: .5rem 1rem;
+
+    &__full {
+        background-color: #005ea5;
+        color: white;
+        padding: 10px;
+    }
+
+    &__title {
+        font-size: 1.1em;
+        font-weight: 400;
+        margin: 0;
+    }
+
+    &__number {
+        font-size: 19px;
         font-weight: 600;
     }
 }
@@ -34,14 +65,59 @@ $grey: #6f777b;
     height: 100%;
     flex-direction: column;
 
+    &.slim {
+        //padding:0 1em;
+        a {
+            font-size: 1rem;
+            font-weight: 400;
+        }
+    }
+
+    &.border-left-red {
+        border-left: 4px solid red;
+    }
+
     &.blue {
         text-align: left;
-        background-color: #005ea5;
+        background-color: $ExploreCareersGreen;
         color: white;
 
 
         h2, a, span {
             color: white;
+        }
+    }
+
+    &.teal {
+        text-align: left;
+        background-color: $ExploreCareersGreen;
+        color: white;
+        padding: 1em 1em 0 1em;
+
+
+        h2, a, span {
+            color: white;
+        }
+    }
+
+    &.teal--border {
+        text-align: left;
+        background-color: #f8f8f8;
+        border-left: 5px solid $ExploreCareersGreen;
+        color: black;
+        padding: 1em 1em 0 1em;
+
+        .helpdesk__link {
+            text-decoration: underline;
+            font-weight: 600;
+
+            &:hover {
+                color: blue;
+            }
+        }
+
+        h2, a, span {
+            color: black;
         }
     }
 
@@ -61,6 +137,7 @@ $grey: #6f777b;
     &.grey {
         background-color: #f8f8f8;
         border: 1px solid #bfc1c3;
+        //border-left: 5px solid #28a197;
         display: block;
         text-align: left;
         flex-direction: row;
@@ -77,9 +154,30 @@ $grey: #6f777b;
     margin-bottom: 2em;
 }
 
+.wrapper {
+    display: flex;
+
+    .one, .two {
+        flex-direction: row;
+    }
+
+    .one {
+        width: 80%;
+    }
+}
 
 .div--link {
     display: block;
+}
+
+.cd-homepage__list {
+    padding-top: 1.5em;
+    margin-bottom: 1.5em;
+
+    &--item a {
+        font-size: 1em;
+        font-weight: 400;
+    }
 }
 
 .cd-activity-item {
@@ -113,37 +211,167 @@ $grey: #6f777b;
 
 .sidebar {
     .widget {
-        border-top: 5px solid #28a197;
+        border-top: 5px solid $ExploreCareersGreen;
         background-color: #f8f8f8;
-        padding-left: 1rem;
+
 
         &.white {
             background-color: white;
-            padding: 1em 0em;
+            padding-top: 1rem;
+            color: black;
         }
 
         &.blue {
-            border-top: 5px solid #005ea5;
+            border-top: 5px solid $ExploreCareersGreen;
         }
 
         div {
             margin-bottom: .5em;
         }
+
+
     }
 }
-
 
 @media screen and (min-width:640px) and (max-width:1024px) {
     .homepage-item--container {
         display: flex;
     }
 
-    .homepage-item {
-        flex: 1;
+}
 
-        a {
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
+
+.autocomplete__wrapper {
+    position: relative
+}
+
+.autocomplete__hint, .autocomplete__input {
+    -webkit-appearance: none;
+    border: 2px solid;
+    border-radius: 0;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    margin-bottom: 0;
+    width: 100%
+}
+
+.autocomplete__input {
+    background-color: transparent;
+    position: relative
+}
+
+.autocomplete__hint {
+    color: #bfc1c3;
+    position: absolute
+}
+
+.autocomplete__input--default {
+    padding: 6px
+}
+
+.autocomplete__input--focused {
+    outline-offset: 0;
+    outline: 3px solid #ffbf47
+}
+
+.autocomplete__input--show-all-values {
+    padding: 4px 34px 4px 4px;
+    cursor: pointer
+}
+
+.autocomplete__dropdown-arrow-down {
+    z-index: -1;
+    display: inline-block;
+    position: absolute;
+    right: 8px;
+    width: 24px;
+    height: 24px;
+    top: 10px
+}
+
+.autocomplete__menu {
+    background-color: #fff;
+    border: 2px solid #0b0c0c;
+    border-top: 0;
+    color: #34384b;
+    margin: 0;
+    max-height: 342px;
+    overflow-x: hidden;
+    padding: 0;
+    width: 100%;
+    width: calc(100% - 4px)
+}
+
+.autocomplete__menu--visible {
+    display: block
+}
+
+.autocomplete__menu--hidden {
+    display: none
+}
+
+.autocomplete__menu--overlay {
+    box-shadow: rgba(0,0,0,.256863) 0 2px 6px;
+    left: 0;
+    position: absolute;
+    top: 100%;
+    z-index: 100
+}
+
+.autocomplete__menu--inline {
+    position: relative
+}
+
+.autocomplete__option {
+    border-bottom: solid #bfc1c3;
+    border-width: 1px 0;
+    cursor: pointer;
+    display: block;
+    position: relative
+}
+
+.autocomplete__option > * {
+    pointer-events: none
+}
+
+.autocomplete__option:first-of-type {
+    border-top-width: 0
+}
+
+.autocomplete__option:last-of-type {
+    border-bottom-width: 0
+}
+
+.autocomplete__option--odd {
+    background-color: #fafafa
+}
+
+.autocomplete__option--focused, .autocomplete__option:hover {
+    background-color: #005ea5;
+    border-color: #005ea5;
+    color: #fff;
+    outline: 0
+}
+
+.autocomplete__option--no-results {
+    background-color: #fafafa;
+    color: #646b6f;
+    cursor: not-allowed
+}
+
+.autocomplete__hint, .autocomplete__input, .autocomplete__option {
+    font-size: 16px;
+    line-height: 1.25
+}
+
+.autocomplete__hint, .autocomplete__option {
+    padding: 4px
+}
+
+@media (min-width:641px) {
+    .autocomplete__hint, .autocomplete__input, .autocomplete__option {
+        font-size: 19px;
+        line-height: 1.31579
     }
 }

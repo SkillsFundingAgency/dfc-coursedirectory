@@ -2,6 +2,7 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.Notification
 @using Dfc.CourseDirectory.Web.ViewComponents.ProviderCoursesResults
 @{
+    ViewData["Title"] = "Your published courses"; 
     Layout = "_Layout_Your_Courses";
 }
 
@@ -23,7 +24,7 @@
                 <h3 class="govukbody govuk-heading-m">What next?</h3>
 
                 <p>
-                    <span class="govuk-caption-xl">You can</span>
+                    <span class="govuk-caption-l">You can</span>
                 </p>
 
                 <ul>
@@ -74,7 +75,7 @@
                                         ClassType = "info-summary"
                                     })
                                 }
-                                <h1 class="govuk-heading-xl">Your published courses</h1>
+                                <h1 class="govuk-heading-l">Your published courses</h1>
                                 <p class="govuk-body-l">These are the courses you have listed on the course directory.</p>
                                 <label class="govuk-label" id="courseSearch">These are the courses you have listed on the course directory.</label>
                             </div>
@@ -137,20 +138,21 @@
 
             var $buttonSearch = $("#searchButton");
 
-
-            var assignEventsToAllCheckboxes = function () {
-                var $levelFilterCheckboxes = $("input[name='level']:checkbox");
-                var $deliverymodeFilterCheckboxes = $("input[name='deliverymode']:checkbox");
-                var $venueFilterCheckboxes = $("input[name='venue']:checkbox");
-                var $attendancePatternFilterCheckboxes = $("input[name='attendancepattern']:checkbox");
-                var $regionFilterCheckboxes = $("input[name='region']:checkbox");
-
-                $levelFilterCheckboxes.on("click", debounce(doSearch, 1500));
-                $deliverymodeFilterCheckboxes.on("click", debounce(doSearch, 1500));
-                $venueFilterCheckboxes.on("click", debounce(doSearch, 1500));
-                $attendancePatternFilterCheckboxes.on("click", debounce(doSearch, 1500));
-                $regionFilterCheckboxes.on("click", debounce(doSearch, 1500));
+             var debounce = function (cb, delay) {
+                 var inDebounce;
+                 return function () {
+                     var context = this;
+                     var args = arguments;
+                     clearTimeout(inDebounce);
+                     inDebounce = setTimeout(function () {
+                             cb.apply(context, args);
+                         },
+                         delay);
+                 };
             };
+
+
+           
 
             $(document).ready(function () {
                 assignEventsToAllCheckboxes();
@@ -166,18 +168,7 @@
                 }
             });
 
-            var debounce = function (cb, delay) {
-                var inDebounce;
-                return function () {
-                    var context = this;
-                    var args = arguments;
-                    clearTimeout(inDebounce);
-                    inDebounce = setTimeout(function () {
-                        cb.apply(context, args);
-                    },
-                        delay);
-                };
-            };
+          
 
             var isNullOrWhitespace = function (input) {
                 if (typeof input === 'undefined' || input == null) return true;
@@ -279,6 +270,21 @@
                     });
             };
 
+             var assignEventsToAllCheckboxes = function () {
+                 var $levelFilterCheckboxes = $("input[name='level']:checkbox");
+                 var $deliverymodeFilterCheckboxes = $("input[name='deliverymode']:checkbox");
+                 var $venueFilterCheckboxes = $("input[name='venue']:checkbox");
+                 var $attendancePatternFilterCheckboxes = $("input[name='attendancepattern']:checkbox");
+                 var $regionFilterCheckboxes = $("input[name='region']:checkbox");
+
+                 //$levelFilterCheckboxes.on("click", debounce(doSearch, 1500));
+                 //$deliverymodeFilterCheckboxes.on("click", debounce(doSearch, 1500));
+                 //$venueFilterCheckboxes.on("click", debounce(doSearch, 1500));
+                 //$attendancePatternFilterCheckboxes.on("click", debounce(doSearch, 1500));
+                 //$regionFilterCheckboxes.on("click", debounce(doSearch, 1500));
+
+                 $("#ApplyFilter").on("click", debounce(doSearch,0));
+             };
 
             var onSucess = function (data) {
 
@@ -316,41 +322,10 @@
                     $validationMessageSearchTerm.css("margin-bottom", "0");
             }
 
-              $elementSearchTerm.on("keyup", debounce(doSearch, 400));
+             // $elementSearchTerm.on("keyup", debounce(doSearch, 400));
             $buttonSearch.on("click", doSearch);
 
-             //$buttonSearch.on("click", function () {
-             //    debounce(doSearch, 400);
-             //   var result = validator.element($elementSearchTerm);
-             //   if (result) {
-             //       HideValidationErrorMessage();
-             //       doSearch();
-             //   } else {
-             //       ShowValidationErrorMessage();
-             //   }
-             //});
 
-             // $elementSearchTerm.on("blur", function () {
-             //     debounce(doSearch, 400);
-             //   var result = validator.element($elementSearchTerm);
-             //   if (result) {
-             //       HideValidationErrorMessage();
-             //       doSearch();
-             //   } else {
-             //       ShowValidationErrorMessage();
-             //   }
-             // });
-
-              //  $elementSearchTerm.on("keyup", function () {
-              //      debounce(doSearch, 400);
-              //  var result = validator.element($elementSearchTerm);
-              //  if (result) {
-              //      HideValidationErrorMessage();
-              //      doSearch();
-              //  } else {
-              //      ShowValidationErrorMessage();
-              //  }
-              //});
 
       function ValidateAndSearchForProvider() {
                 var trimmed = $elementSearchTerm.val().trim();
@@ -370,7 +345,7 @@
             $(document).keypress(function (e) {
                 if (e.which == 13) {
                     e.preventDefault();
-                 // ValidateAndSearchForProvider();
+                    $buttonSearch.trigger("click");
                 }
             });
 

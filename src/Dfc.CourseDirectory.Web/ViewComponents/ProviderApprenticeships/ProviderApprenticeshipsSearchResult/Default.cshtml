@@ -29,14 +29,15 @@ else
 
     if (!Model.Items.Any())
     {
-        <div class="">
-            @await Component.InvokeAsync(nameof(Notification), new NotificationModel
-       {
-           NotificationTitle = "",
-           NotificationMessage = "No apprenticeships found that match your search criteria",
-           ClassType = "error-summary"
-       })
-        </div>
+    <div class="">
+        <span class="govuk-visually-hidden">Data Unavailable</span>
+        @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+        {
+            NotificationTitle = "",
+            NotificationMessage = "No apprenticeships found that match your search criteria",
+            ClassType = "error-summary"
+        })
+    </div>
     }
     else
     {
@@ -74,13 +75,14 @@ else
                                asp-action="ViewAndEdit"
                                asp-route-Id="@apprenticeship.id"
                                asp-route-Cancelled=null
-                               asp-route-Mode="@ApprenticeshipMode.EditYourApprenticeships">View and edit</a>
+                               asp-route-Mode="@ApprenticeshipMode.EditYourApprenticeships">View and edit<span class="govuk-visually-hidden">@apprenticeship.ApprenticeshipTitle</span>
+                            </a>
                             <a class="govuk-link"
                                asp-controller="Apprenticeships"
                                asp-action="ConfirmationDelete"
                                asp-route-apprenticeshipId="@apprenticeship.id"
                                asp-route-level="@apprenticeship.NotionalNVQLevelv2"
-                               asp-route-apprenticeshiptitle="@apprenticeship.ApprenticeshipTitle">Delete</a>
+                               asp-route-apprenticeshiptitle="@apprenticeship.ApprenticeshipTitle">Delete<span class="govuk-visually-hidden">@apprenticeship.ApprenticeshipTitle</span></a>
                         </div>
                     }
 

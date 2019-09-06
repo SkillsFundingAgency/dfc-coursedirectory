@@ -4,22 +4,6 @@
 
 <div class="lars-search cd-hero-search">
 
-    @*<div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
-            <div class="govuk-form-group">
-                <label class="govuk-label" for="name">
-                    Enter a search term or LARS/QAN number to begin
-                </label>
-                @*<span class="govuk-hint">
-                    Just start typing and we will find all the matching LARS courses.
-                </span>
-                <input class="govuk-input govuk-!-width-three-quarters search-input" id="LarsSearchTerm" name="LarsSearchTerm" type="text">
-                <button type="button" class="govuk-button" id="searchQualification">
-                    Search
-                </button>
-            </div>
-        </div>
-    </div>*@
 
     <div id="LarsSearchResultContainer" class="">
         @await Component.InvokeAsync(nameof(LarsSearchResult))
@@ -119,7 +103,11 @@
                 $awardOrgCodeFilterCheckboxes.on("click", debounce(doSearch, 1500));
                 $sectorSubjectAreaTier1FilterCheckboxes.on("click", doSearch);
                 $sectorSubjectAreaTier2FilterCheckboxes.on("click", doSearch);
+
+                //$("#ApplyFilter").on("click", debounce(doSearch,0));
             };
+
+            
 
             var assignEventToClearAllFiltersLink = function() {
                 var $clearAllFiltersLink = $("#ClearAllFilters");
@@ -138,6 +126,7 @@
                                 $($allCheckedFilterCheckboxes[i]).prop('checked', false);
                             }
                         }
+                        doSearch();
                     });
             };
 
@@ -158,12 +147,13 @@
                 assignEventsToLarsSearchPagination();
             };
 
-            $larsSearchTerm.on("keyup", debounce(doSearch, 400));
-            $buttonSearch.on("click", doSearch);
+            //$larsSearchTerm.on("keyup", debounce(doSearch, 100));
+            $buttonSearch.on("click", debounce(doSearch, 100));
 
             $(document).keypress(function (e) {
                 if (e.which === 13) {
                     e.preventDefault();
+                    $buttonSearch.trigger( "click" );
                 }
             });
         });

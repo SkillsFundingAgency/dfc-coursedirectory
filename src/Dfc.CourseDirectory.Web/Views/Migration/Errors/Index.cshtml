@@ -1,6 +1,7 @@
 ﻿@using Dfc.CourseDirectory.Models.Enums
 @using Dfc.CourseDirectory.Web.Helpers
 @{
+    ViewData["Title"] = "What do you want to do next?"; 
     Layout = "_Layout_Your_Courses";
 }
 
@@ -21,7 +22,7 @@
                         <ul class="govuk-list govuk-error-summary__list"></ul>
                     </div>
                 </div>
-                <h1 class="govuk-heading-xl">What do you want to do next?</h1>
+                <h1 class="govuk-heading-l">What do you want to do next?</h1>
                 @if (Model.Errors.HasValue && Model.LiveCourses.HasValue)
                 {
                     <p>You have @Model.LiveCourses published course@(@Model.LiveCourses > 1 ? "s" : "") and @Model.Errors course@(Model.Errors > 1 ? "s" : "") with errors that must be fixed. <br /> Any courses with a missing LARS have been deleted.</p>

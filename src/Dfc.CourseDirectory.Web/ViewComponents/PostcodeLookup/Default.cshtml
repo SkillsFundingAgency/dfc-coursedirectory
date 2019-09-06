@@ -4,9 +4,9 @@
 
 @{ var regex = @"^([Gg][Ii][Rr] 0[Aa]{2})|((([A-Za-z][0-9]{1,2})|(([A-Za-z][A-Ha-hJ-Yj-y][0-9]{1,2})|(([A-Za-z][0-9][A-Za-z])|([A-Za-z][A-Ha-hJ-Yj-y][0-9][A-Za-z]?))))\s?[0-9][A-Za-z]{2})+$"; }
 
-@Html.HiddenFor(x => x.Id)
+@*@Html.HiddenFor(x => x.Id)
 
-<input type="hidden" value="@Model.VenueName" id="VenueName" name="VenueName" />
+<input type="hidden" value="@Model.VenueName" id="VenueName" name="VenueName" />*@
 
 <div class="postcode-lookup__component">
     @if (Model.HasItems)

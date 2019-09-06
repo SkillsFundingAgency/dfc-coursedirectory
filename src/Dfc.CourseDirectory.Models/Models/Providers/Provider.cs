@@ -30,6 +30,9 @@ namespace Dfc.CourseDirectory.Models.Models.Providers
         public string MarketingInformation { get; set; }
         public string Alias { get; set; }
 
+        // Bulk course upload
+        public BulkUploadStatus BulkUploadStatus { get; set; }
+
         public Provider(Providercontact[] providercontact, Provideralias[] provideraliases, Verificationdetail[] verificationdetails)
         {
             ProviderContact = providercontact;
@@ -51,10 +54,10 @@ namespace Dfc.CourseDirectory.Models.Models.Providers
     {
         Undefined = 0,
         [Description("F.E.")]
-        Fe = 1,
+        FE = 1,
         [Description("Apprenticeships")]
         Apprenticeship = 2,
         [Description("Both")]
-        Both = Fe | Apprenticeship
+        Both = FE | Apprenticeship
     }
 }

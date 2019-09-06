@@ -15,13 +15,14 @@
 
 @if (!Model.ProviderCourseRuns.Any())
 {
-    <div class="cd-grid-coloumn-20 govuk-body" style="width: 100%;padding-left: 0.75em;">
+    <div class="cd-grid-coloumn-20 govuk-body" style="width: 100%; padding-left: 0.75em;">
+        <span class="govuk-visually-hidden">Data Unavailable</span>
         @await Component.InvokeAsync(nameof(Notification), new NotificationModel
-                 {
-                     NotificationTitle = "",
-                     NotificationMessage = "No courses found that match your search criteria",
-                     ClassType = "error-summary"
-                 })
+        {
+            NotificationTitle = "",
+            NotificationMessage = "No courses found that match your search criteria",
+            ClassType = "error-summary"
+        })
     </div>
 
 }
@@ -38,11 +39,13 @@ else
             </div>
         }
         <div class="govuk-form-group govuk-!-font-size-14">
-            <div class="accordion govuk-heading-s">Filter by level</div>
+            <div class="accordion govuk-heading-s" role="button" tabindex="0">Filter by level</div>
             <div class="panel">
                 <fieldset class="govuk-fieldset">
-                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--s" style="font-weight: 100">
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--s govuk-visually-hidden" style="font-weight: 100">
+                        Select Level
                     </legend>
+                   
                     <div class="govuk-checkboxes" id="LevelFilters">
 
 
@@ -55,10 +58,7 @@ else
                                 </label>
                             </div>
 
-                            @*<div class="govuk-checkboxes__item">
-                                <input class="govuk-checkboxes__input" id="VenueName-@i" for="VenueName-@i" name="SelectedVenues-@i" type="checkbox" aria-labelledby="VenueNameLabel-@i" value="@Model.SelectVenue.VenueItems.First().Id" checked="checked" onclick="return false;"/>
-                                <label id="VenueNameLabel-@i" class="govuk-label govuk-checkboxes__label" for="SelectedVenues-@i" aria-label="VenueName-@i">@Model.SelectVenue.VenueItems.First().VenueName</label>
-                            </div>*@
+
                         }
 
 
@@ -66,19 +66,16 @@ else
                 </fieldset>
             </div>
         </div>
-        
-        
-        
-        
-       
-        
 
         @if (Model.DeliveryModes.Any())
         {
             <div class="govuk-form-group govuk-!-font-size-14">
-                <div class="accordion govuk-heading-s active">Filter by delivery mode</div>
+                <div class="accordion govuk-heading-s active" role="button" tabindex="0">Filter by delivery mode</div>
                 <div class="panel" style="display: none">
-                    <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
+                    <fieldset class="govuk-fieldset">
+                        <legend class="govuk-visually-hidden">
+                            Select Delivery mode
+                        </legend>
                         <div class="govuk-checkboxes">
 
 
@@ -102,9 +99,12 @@ else
         @if (Model.Venues.Any())
         {
             <div class="govuk-form-group govuk-!-font-size-14">
-                <div class="accordion govuk-heading-s active">Filter by venue</div>
+                <div class="accordion govuk-heading-s active" role="button" tabindex="0">Filter by venue</div>
                 <div class="panel" style="display: none">
-                    <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
+                    <fieldset class="govuk-fieldset">
+                        <legend class="govuk-visually-hidden">
+                            Select Venue
+                        </legend>
                         <div class="govuk-checkboxes">
 
 
@@ -128,9 +128,12 @@ else
         @if (Model.AttendancePattern.Any())
         {
             <div class="govuk-form-group govuk-!-font-size-14">
-                <div class="accordion govuk-heading-s active">Filter by attendance mode</div>
+                <div class="accordion govuk-heading-s active" role="button" tabindex="0">Filter by attendance mode</div>
                 <div class="panel" style="display: none">
-                    <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
+                    <fieldset class="govuk-fieldset" >
+                        <legend class="govuk-visually-hidden">
+                            Select Attendance Mode
+                        </legend>
                         <div class="govuk-checkboxes">
 
 
@@ -153,9 +156,12 @@ else
         @if (Model.Regions.Any())
         {
             <div class="govuk-form-group govuk-!-font-size-14">
-                <div class="accordion govuk-heading-s active">Filter by region</div>
+                <div class="accordion govuk-heading-s active" role="button" tabindex="0">Filter by region</div>
                 <div class="panel" style="display: none">
-                    <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
+                    <fieldset class="govuk-fieldset" >
+                        <legend class="govuk-visually-hidden">
+                            Select Region
+                        </legend>
                         <div class="govuk-checkboxes">
                             @foreach (var region in Model.Regions)
                             {
@@ -173,6 +179,11 @@ else
 
 
         }
+        
+        <div class="govuk-form-group govuk-!-font-size-14">
+            <a class="govuk-button" id="ApplyFilter">Apply</a>
+        </div>
+
     </div>
     <div class="cd-grid-coloumn-80 ">
 
@@ -240,7 +251,7 @@ else
                 @if (!string.IsNullOrEmpty(courseRun.CourseTextId))
                 {
                     <span>
-                    @WebUtility.HtmlDecode(@courseRun.CourseTextId)
+                        @WebUtility.HtmlDecode(@courseRun.CourseTextId)
                     </span>
                 }
 
@@ -272,10 +283,10 @@ else
                 {
                     <span>@courseRun.StartDate</span>
                 }
-
             </div>
+
             <div class="courserun__row4">
-                @Html.ActionLink("Select", "Index", "CourseSummary", new { courseRun.CourseId, courseRun.CourseRunId }, null)
+                <a href="@Url.Action("Index", "CourseSummary",new { courseRun.CourseId, courseRun.CourseRunId})">Select <span class="govuk-visually-hidden">@courseRun.CourseName</span></a>
             </div>
         </div>
         }

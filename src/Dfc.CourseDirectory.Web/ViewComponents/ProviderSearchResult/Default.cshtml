@@ -15,7 +15,7 @@
     <span class="govuk-caption-xl"> Course provider</span>
     @if (provSearch == 0)
     {
-        <h1 class="govuk-heading-xl">Provider Details</h1>
+        <h1 class="govuk-heading-l">Provider Details</h1>
     }
 
     @foreach (var provider in Model.Items)
@@ -109,7 +109,7 @@
                     && provSearch == 0
             )
         {
-            <a id="btnOnboardProvider" onclick="OnBoardProvider(); return false;" href="#" class="govuk-button"><span id="btnOnboardProviderText">Add provider</span></a>
+            <a id="btnOnboardProvider" onclick="OnBoardProvider(); return false;" href="#" class="govuk-link"><span id="btnOnboardProviderText">Add provider</span></a>
         }
         else if (provSearch == 1 && provider.Status.Equals(Status.Onboarded))
         {

@@ -21,6 +21,9 @@ using Dfc.CourseDirectory.Services.BlobStorageService;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Models.Models.Courses;
 using Dfc.CourseDirectory.Web.Helpers;
+using Dfc.CourseDirectory.Web.ViewModels;
+using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
+using Dfc.CourseDirectory.Models.Models.Providers;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -32,7 +35,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly IBulkUploadService _bulkUploadService;
         private readonly IBlobStorageService _blobService;
         private readonly ICourseService _courseService;
-
+        private readonly IProviderService _providerService;
         private IHostingEnvironment _env;
         private ISession _session => _contextAccessor.HttpContext.Session;
 
@@ -42,7 +45,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 IBulkUploadService bulkUploadService,
                 IBlobStorageService blobService,
                 ICourseService courseService,
-                IHostingEnvironment env)
+                IHostingEnvironment env,
+                IProviderService providerService)
         {
             Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(contextAccessor, nameof(contextAccessor));
@@ -51,6 +55,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             Throw.IfNull(courseService, nameof(courseService));
             Throw.IfNull(env, nameof(env));
             Throw.IfNull(courseService, nameof(courseService));
+            Throw.IfNull(providerService, nameof(providerService));
 
             _logger = logger;
             _contextAccessor = contextAccessor;
@@ -59,6 +64,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _courseService = courseService;
             _env = env;
             _courseService = courseService;
+            _providerService = providerService;
         }
 
 
@@ -72,15 +78,41 @@ namespace Dfc.CourseDirectory.Web.Controllers
             else
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
 
+            Provider provider = FindProvider(UKPRN.Value);
+            if(null == provider)
+            {
+                return RedirectToAction("Index", "Home", new { errmsg = "Failed to look up Provider details." });
+            }
+
             var courseCounts = _courseService.GetCourseCountsByStatusForUKPRN(new CourseSearchCriteria(UKPRN)).Result;
             var courseErrors = courseCounts.HasValue && courseCounts.IsSuccess ? courseCounts.Value.Where(x => (int)x.Status == (int)RecordStatus.MigrationPending  && x.Count > 0|| (int)x.Status == (int)RecordStatus.MigrationReadyToGoLive && x.Count > 0).Count() : 500;
 
             var model = new BulkUploadViewModel
             {
-                HasMigrationErrors = courseErrors > 0 ? true : false
+                HasMigrationErrors = courseErrors > 0 ? true : false,
             };
 
+            if(null != provider.BulkUploadStatus)
+            {
+                model.BulkUploadBackgroundInProgress = provider.BulkUploadStatus.InProgress;
+                model.BulkUploadBackgroundRowCount = provider.BulkUploadStatus.TotalRowCount;
+                model.BulkUploadBackgroundStartTimestamp = provider.BulkUploadStatus.StartedTimestamp;
+            }
+
             return View("Index", model);
+        }
+
+        [Authorize]
+        public IActionResult Pending()
+        {
+            _session.SetString("Option", "BulkUpload");
+            int? UKPRN;
+            if (_session.GetInt32("UKPRN") != null)
+                UKPRN = _session.GetInt32("UKPRN").Value;
+            else
+                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
+
+            return View("./Pending/Index");
         }
 
         [Authorize]
@@ -97,49 +129,81 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
 
 
-            var deleteResult = await _courseService.DeleteBulkUploadCourses(UKPRN.Value);
+            string errorMessage;
 
-            if (deleteResult.IsSuccess)
+            if (Validate.ValidateFile(bulkUploadFile, out errorMessage))
             {
-                string errorMessage;
+                int providerUKPRN = UKPRN.Value;
+                string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                string bulkUploadFileNewName = string.Format(@"{0}-{1}", DateTime.Now.ToString("yyMMdd-HHmmss"),
+                    bulkUploadFile.FileName);
 
-                if (ValidateFile(bulkUploadFile, out errorMessage))
+                MemoryStream ms = new MemoryStream();
+                bulkUploadFile.CopyTo(ms);
+
+                if (!Validate.isBinaryStream(ms))
                 {
-                    int providerUKPRN = UKPRN.Value;
-                    string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                    string bulkUploadFileNewName = string.Format(@"{0}-{1}", DateTime.Now.ToString("yyMMdd-HHmmss"), bulkUploadFile.FileName);
+                    int csvLineCount = _bulkUploadService.CountCsvLines(ms);
+                    bool processInline = (csvLineCount <= _blobService.InlineProcessingThreshold);
+                    _logger.LogInformation(
+                        $"Csv line count = {csvLineCount} threshold = {_blobService.InlineProcessingThreshold} processInline = {processInline}");
 
-                    MemoryStream ms = new MemoryStream();
-                    bulkUploadFile.CopyTo(ms);
-                    Task task = _blobService.UploadFileAsync($"{UKPRN.ToString()}/Bulk Upload/Files/{bulkUploadFileNewName}", ms);
+                    if (processInline)
+                    {
+                        bulkUploadFileNewName +=
+                            "." + DateTime.UtcNow.ToString("yyyyMMddHHmmss") +
+                            ".processed"; // stops the Azure trigger from processing the file
+                    }
+
+                    Task task = _blobService.UploadFileAsync(
+                        $"{UKPRN.ToString()}/Bulk Upload/Files/{bulkUploadFileNewName}", ms);
                     task.Wait();
-                    var errors = _bulkUploadService.ProcessBulkUpload(ms, providerUKPRN, userId);
+
+                    var errors = _bulkUploadService.ProcessBulkUpload(ms, providerUKPRN, userId, processInline);
 
                     if (errors.Any())
                     {
                         vm.errors = errors;
                         return View(vm);
-                     
-
                     }
                     else
                     {
-                        // All good => redirect to BulkCourses action
-                        return RedirectToAction("Index", "PublishCourses", new { publishMode = PublishMode.BulkUpload, fromBulkUpload = true });
+                        if (processInline)
+                        {
+                            // All good => redirect to BulkCourses action
+                            return RedirectToAction("Index", "PublishCourses",
+                                new {publishMode = PublishMode.BulkUpload, fromBulkUpload = true});
+                        }
+                        else
+                        {
+                            return RedirectToAction("Pending");
+                        }
                     }
 
                 }
                 else
                 {
-                    vm.errors = new string[] { errorMessage };
+                    vm.errors = new string[] {"Invalid file content."};
                 }
             }
+
             else
             {
-                vm.errors = new string[] { "Delete failed" };
+                vm.errors = new string[] {errorMessage};
             }
+
             return View(vm);
         }
+        
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult ProcessMigrationReportErrors(string UKPRN)
+        {
+            _session.SetInt32("UKPRN", Convert.ToInt32(UKPRN));
+            return RedirectToAction("WhatDoYouWantToDoNext");
+        }
+
 
         [Authorize]
         [HttpGet]
@@ -309,38 +373,53 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return View("../Bulkupload/Complete/Index", new PublishCompleteViewModel() { NumberOfCoursesPublished = model.NumberOfCourses, Mode = PublishMode.BulkUpload });
         }
 
-        /// <summary>
-        /// Server side validation to match and extend the client-side validation
-        /// </summary>
-        /// <param name="bulkUploadFile"></param>
-        /// <returns></returns>
-        private bool ValidateFile(IFormFile bulkUploadFile, out string errorMessage)
+        [Authorize]
+        [HttpGet]
+        public IActionResult LandingOptions()
         {
-            if (bulkUploadFile.Length == 0)
-            {
-                errorMessage = "No file uploaded";
-                return false;
-            }
-
-            if (!bulkUploadFile.FileName.EndsWith(".csv") || bulkUploadFile.FileName.Replace(".csv", string.Empty).Contains(".") || bulkUploadFile.Name != "bulkUploadFile")
-            {
-                errorMessage = "Invalid file name";
-                return false;
-            }
-            if (!bulkUploadFile.ContentDisposition.Contains("filename"))
-            {
-                errorMessage = "Invalid upload";
-                return false;
-            }
-            if (bulkUploadFile.Length > 209715200)
-            {
-                errorMessage = "File too large";
-                return false;
-            }
-
-            errorMessage = string.Empty;
-            return true;
+            return View("../BulkUpload/LandingOptions/Index", new BulkuploadLandingViewModel());
         }
 
+        [HttpPost]
+        public async Task<IActionResult> LandingOptions(BulkuploadLandingViewModel model)
+        {
+            switch (model.BulkUploadLandingOptions)
+            { 
+                case BulkUploadLandingOptions.Apprenticeship:
+                    return RedirectToAction("ApprenticeshipIndex", "BulkUpload");
+                case BulkUploadLandingOptions.FE:
+                    return RedirectToAction("Index", "BulkUpload");
+                default:
+                    return RedirectToAction("LandingOptions", "BulkUpload");
+            }
+
+        }
+
+        [Authorize]
+        public IActionResult ApprenticeshipIndex()
+        {
+
+            return View("ApprenticeshipIndex");
+        }
+
+        
+
+        private Provider FindProvider(int prn)
+        {
+            Provider provider = null;
+            try
+            {
+                var providerSearchResult = Task.Run(async () => await _providerService.GetProviderByPRNAsync(new Services.ProviderService.ProviderSearchCriteria(prn.ToString()))).Result;
+                if (providerSearchResult.IsSuccess)
+                {
+                    provider = providerSearchResult.Value.Value.FirstOrDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+                // @ToDo: decide how to handle this
+            }
+            return provider;
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿@using Dfc.CourseDirectory.Models.Enums
 @using Dfc.CourseDirectory.Web.Helpers
 @{
+    ViewData["Title"] = "Delete Courses with migration errors"; 
     Layout = "_Layout_Your_Courses";
 }
 
@@ -21,7 +22,7 @@
                         <ul class="govuk-list govuk-error-summary__list"></ul>
                     </div>
                 </div>
-                <h1 class="govuk-heading-xl">Delete Courses with migration errors</h1>
+                <h1 class="govuk-heading-l">Delete Courses with migration errors</h1>
                 @if (Model.CourseErrors.HasValue)
                 {
                     <p>This will cause @Model.CourseErrors.Value course@(Model.CourseErrors.Value > 1 ? "s" : "") to be deleted.</p>

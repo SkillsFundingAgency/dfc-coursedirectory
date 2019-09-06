@@ -11,7 +11,6 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @model ZCodeFoundResultModel;
-@*<a asp-controller="UnregulatedCourses" asp-action="Index" class="govuk-back-link">Back</a>*@
 
 
 @if (!string.IsNullOrEmpty(Model?.LearnAimRefTitle))
@@ -33,14 +32,15 @@
     </div>
 
 } else {
-    <div class=" govuk-!-margin-top-4 ">
-        @*<h1>Z code does not exist</h1>
-            <h2>Check the code you have entered and try again</h2>*@
-        @await Component.InvokeAsync(nameof(Notification), new NotificationModel
-                  {
-                      NotificationTitle = "Z code does not exist",
-                      NotificationMessage = "Check the code you have entered and try again",
-                      ClassType = "error-summary"
-                  })
-    </div>
+<div class=" govuk-!-margin-top-4 ">
+    @*<h1>Z code does not exist</h1>
+        <h2>Check the code you have entered and try again</h2>*@
+    <span class="govuk-visually-hidden">Data Unavailable</span>
+    @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+              {
+                  NotificationTitle = "Z code does not exist",
+                  NotificationMessage = "Check the code you have entered and try again",
+                  ClassType = "error-summary"
+              })
+</div>
 }

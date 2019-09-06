@@ -2,6 +2,13 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.VenueAddressSelectionConfirmation
 
 @{
+    var pageTitle="";
+    if (Model.Id != null) {
+        pageTitle = "Edit venue details";
+    } else {
+        pageTitle = "Add a venue";
+    }
+    ViewData["Title"] = pageTitle;
     Layout = "_Layout_Your_Courses";
 }
 @model Dfc.CourseDirectory.Web.ViewModels.VenueAddressSelectionConfirmationViewModel
@@ -12,13 +19,8 @@
     
     <input type="hidden" id="ModelPostCodeId" value="@Model.PostCodeId" />
     <div class="govuk-grid-column-two-thirds">
-        @{
-            if (Model.Id != null) {
-                <h1 class="govuk-heading-l">Edit venue details</h1>
-            } else {
-                <h1 class="govuk-heading-l">Add a venue</h1>
-            }
-        }
+        
+        <h1 class="govuk-heading-l">@pageTitle</h1>
 
         @await Component.InvokeAsync(nameof(VenueAddressSelectionConfirmation), new VenueAddressSelectionConfirmationModel
         {

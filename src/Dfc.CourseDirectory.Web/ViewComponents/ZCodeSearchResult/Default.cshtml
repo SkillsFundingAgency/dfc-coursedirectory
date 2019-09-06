@@ -24,7 +24,7 @@
                 if (Model.HasSelectedFilters)
                 {
                     <div class="govuk-form-group">
-                        <h5><a class="govuk-link" id="ClearAllFilters" href="">reset</a></h5>
+                        <a class="govuk-link" id="ClearAllFilters" href="">Clear filters</a>
                     </div>
                 }
                 foreach (var filter in Model.Filters)
@@ -34,10 +34,8 @@
                         <div class="panel">
 
                             <fieldset class="govuk-fieldset">
-                                <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
-                                    @*<h1 class="govuk-fieldset__heading">
-                                            Which types of waste do you transport?
-                                        </h1>*@
+                                <legend  class="govuk-visually-hidden">
+                                    Select @filter.Title
                                 </legend>
                             
                                 <div class="govuk-checkboxes">
@@ -45,7 +43,7 @@
                                     @foreach (var item in filter.Items)
                                     {
                                         <div class="govuk-checkboxes__item">
-                                            <input class="govuk-checkboxes__input" id="@item.Id" type="checkbox" value="@item.Value" @item.IsSelected.ThenCheck()>
+                                            <input class="govuk-checkboxes__input" id="@item.Id" name="@item.Name" type="checkbox" value="@item.Value" @item.IsSelected.ThenCheck()>
                                             <label class="govuk-label govuk-checkboxes__label" for="@item.Id">
                                                 @item.Text (@item.Count)
                                             </label>
@@ -55,30 +53,13 @@
                                 </div>
                             </fieldset>
 
-
-
-
-
-                            @*<fieldset class="govuk-fieldset" aria-describedby="">
-                                    <div class="govuk-checkboxes">
-
-
-
-                                        @foreach (var item in filter.Items)
-                                        {
-                                            <div class="govuk-checkboxes__item">
-                                                <input class="govuk-checkboxes__input" id="@item.Id" name="@item.Name" type="checkbox" value="@item.Value" @item.IsSelected.ThenCheck()>
-                                                <label class="govuk-label govuk-checkboxes__label govuk-!-font-size-14" for="@item.Id">
-
-                                                    @item.Text (@item.Count)
-                                                </label>
-                                            </div>
-                                       }
-                                    </div>
-                                </fieldset>*@
                         </div>
                     </div>
                 }
+
+                <div class="govuk-form-group govuk-!-font-size-14">
+                    <a class="govuk-button" id="ApplyFilter">Apply</a>
+                </div>
             }
         </div>
 

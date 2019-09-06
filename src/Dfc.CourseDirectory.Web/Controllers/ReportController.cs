@@ -11,6 +11,10 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Models.Models.Courses;
 using Dfc.CourseDirectory.Web.Helpers;
 using Microsoft.AspNetCore.Authorization;
+using Dfc.CourseDirectory.Web.ViewModels.Report;
+using Dfc.CourseDirectory.Web.ViewComponents.MigrationReportResults;
+using Dfc.CourseDirectory.Web.ViewComponents.MigrationReportDashboardPanel;
+using Microsoft.AspNetCore.Http;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -18,17 +22,47 @@ namespace Dfc.CourseDirectory.Web.Controllers
     public class ReportController : Controller
     {
         private readonly ILogger<ReportController> _logger;
+        private readonly IHttpContextAccessor _contextAccessor;
         private readonly ICourseService _courseService;
         private ICSVHelper _CSVHelper;
-        public ReportController(ILogger<ReportController> logger, ICourseService courseService, ICSVHelper csvHelper)
+        private ISession _session => _contextAccessor.HttpContext.Session;
+        public ReportController(ILogger<ReportController> logger, ICourseService courseService, ICSVHelper csvHelper, IHttpContextAccessor contextAccessor)
         {
             _logger = logger;
             _courseService = courseService;
             _CSVHelper = csvHelper;
+            _contextAccessor = contextAccessor;
         }
 
-        
         public async Task<IActionResult> Index()
+        {
+            var ukPRN = _session.GetInt32("UKPRN");
+            if (ukPRN != null)
+            {
+                _session.Remove("UKPRN");
+            }
+
+            var reportResults = await _courseService.GetAllDfcReports();
+            if (reportResults.IsFailure) throw new Exception("Unable to generate migration reports");
+
+            // @ToDo: refactor this business logic away from the presentation layer
+            int feProvidersMigrated = reportResults.Value.Count;
+            int feCoursesMigrated = (reportResults.Value.Sum(r => r.MigratedCount) ?? 0);
+            int feCoursesMigratedWithErrors = reportResults.Value.Sum(r => r.MigrationPendingCount);
+
+            MigrationReportViewModel model = new MigrationReportViewModel()
+            {
+                FEProvidersMigrated = new MigrationReportDashboardPanelModel("FE providers migrated", value: feProvidersMigrated),
+                FECoursesMigrated = new MigrationReportDashboardPanelModel("FE courses migrated", value: feCoursesMigrated),
+                FECoursesMigratedWithErrors = new MigrationReportDashboardPanelModel("FE courses with errors", value: feCoursesMigratedWithErrors),
+
+                ReportResults = new MigrationReportResultsModel(reportResults.Value)
+            };
+
+            return View(model);
+        }
+
+        public async Task<IActionResult> ReportCSV()
         {
             var reportResults = await _courseService.GetAllDfcReports();
 
@@ -36,10 +70,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             var csvReports = reportResults.Value.Select(x => new CsvDfcMigrationReport
             {
+                Errors = x.MigrationPendingCount,
                 FailedMigrationCount = x.FailedMigrationCount,
                 LiveCount = x.LiveCount,
                 MigratedCount = x.MigratedCount,
-                MigrationDate = x.MigrationDate,
+                MigrationDate = x.MigrationDate.HasValue ? x.MigrationDate.Value.ToString("dd/MM/yyyy") : string.Empty,
                 MigrationPendingCount = x.MigrationPendingCount,
                 MigrationRate = x.MigrationRate,
                 ProviderName = x.ProviderName,
@@ -60,7 +95,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             };
             FileStreamResult result = new FileStreamResult(ms, MediaTypeNames.Text.Plain);
             DateTime d = DateTime.Now;
-            result.FileDownloadName = $"DFc_Migration_Report_{d.Day.TwoChars()}_{d.Month.TwoChars()}_{d.Year}_{d.Hour.TwoChars()}_{d.Minute.TwoChars()}.csv";
+            result.FileDownloadName = $"Helpdesk_Migration _Report_{d.Day.TwoChars()}_{d.Month.TwoChars()}_{d.Year}_{d.Hour.TwoChars()}_{d.Minute.TwoChars()}.csv";
             return result;
 
         }

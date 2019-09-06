@@ -115,6 +115,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _session.SetString("Option", "Home");
             ViewBag.StatusMessage = errmsg;
 
+            ViewBag.HideHeaderBackLink = true;
+
             if (User.Identity.IsAuthenticated)
             {
                 if (_session.GetInt32("UKPRN") == null)
@@ -183,8 +185,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         public IActionResult Privacy()
         {
-            return View();
+            return View("../Home/Privacy");
         }
+
+        public IActionResult Help()
+        {
+            return View("../Home/Help");
+        }
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
