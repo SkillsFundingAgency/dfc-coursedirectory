@@ -97,33 +97,33 @@
     @Html.HiddenFor(x => x.CourseRunId)
     <div id="sectionCourseName">
         @await Component.InvokeAsync(nameof(CourseName), new CourseNameModel
-        {
+    {
         CourseName = Model.CourseName,
         LabelText = "Course name",
         HintText = "Enter the name of the course you want people to see in the course directory (you can use or overwrite the default name we have created).",
         AriaDescribedBy = "Please enter the course name."
-        })
+    })
     </div>
 
     <div id="sectionCourseProviderReference">
         @await Component.InvokeAsync(nameof(CourseProviderReference), new CourseProviderReferenceModel
-        {
+    {
         CourseProviderReference = Model.CourseProviderReference,
         LabelText = "Your reference",
         HintText = "Enter a reference that will help you identify this course in your internal systems.",
         AriaDescribedBy = "Please enter the ID for this course"
-        })
+    })
     </div>
 
     <div id="sectionDeliveryType">
         @await Component.InvokeAsync(nameof(DeliveryType), new DeliveryTypeModel
-        {
+    {
         DeliveryMode = Model.DeliveryMode,
         LabelText = "Delivery mode",
         HintText = "Select one option.",
         SecondHintText = "Select how you will deliver this course",
         AriaDescribedBy = "Select how you will deliver this course"
-        })
+    })
     </div>
 
     <div id="sectionStartDate">
@@ -151,9 +151,9 @@
 <div class="govuk-form-group">
     <fieldset class="govuk-fieldset" id="govuk-label-SelectVenueCheckBoxes">
         <legend class="govuk-fieldset__legend govuk-fieldset__legend--s" style="font-weight: 100;">
-            <h1 class="govuk-fieldset__heading">
+            <h2 class="govuk-fieldset__heading">
                 @Model.SelectVenue.LabelText
-            </h1>
+            </h2>
         </legend>
         <span  class="govuk-hint">
             @Model.SelectVenue.HintText
@@ -271,14 +271,14 @@
                     <button name="submitButton" type="submit" class="govuk-button" id="publish" value="publish">
                         Summary
                     </button>
-                    <a class="govuk-link" href="#" id="goToSection1Link">Page 1</a>
+                    @*<a class="govuk-link" href="#" id="goToSection1Link">Page 1</a>*@
                 }
                 else
                 {
                     <button name="submitButton" type="submit" class="govuk-button" id="publish" value="publish">
                         Review your changes
                     </button>
-                    <a class="govuk-link" href="#" id="goToSection1Link">Page 1</a>
+                    @*<a class="govuk-link" href="#" id="goToSection1Link">Page 1</a>*@
                 }
                 break;
             case AddCoursePage.Summary:
