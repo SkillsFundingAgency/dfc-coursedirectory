@@ -8,21 +8,21 @@
 
 
     <fieldset class="govuk-fieldset">
-        <legend class="govuk-fieldset__legend govuk-fieldset__legend--s" style="font-weight: 100">
-            <h1 class="govuk-fieldset__heading">
+        <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+            <h2 class="govuk-fieldset__heading govuk-heading-m">
                 @Model.LabelText
-            </h1>
-            <span class="govuk-hint">@Model.SpecifiedDateHintText</span>
+            </h2>
+            @*<span class="govuk-hint">@Model.SpecifiedDateHintText</span>*@
         </legend>
-        <div class="govuk-radios govuk-radios--inline" id="StartDateOptions">
+        <div class="govuk-radios govuk-radios" id="StartDateOptions">
 
             <div class="govuk-radios__item">
                 @Html.RadioButtonFor(m => m.StartDateType, StartDateType.SpecifiedStartDate, new { @class = "govuk-radios__input specified", id = @StartDateType.SpecifiedStartDate })
-                <label class="govuk-label govuk-radios__label" for="@StartDateType.SpecifiedStartDate">Defined Start Date</label>
+                <label class="govuk-label govuk-radios__label" for="@StartDateType.SpecifiedStartDate">Defined start date</label>
             </div>
             <div class="govuk-radios__item">
                 @Html.RadioButtonFor(m => m.StartDateType, StartDateType.FlexibleStartDate, new { @class = "govuk-radios__input flexible", id = @StartDateType.FlexibleStartDate })
-                <label class="govuk-label govuk-radios__label" for="@StartDateType.FlexibleStartDate">Flexible Start Date</label>
+                <label class="govuk-label govuk-radios__label" for="@StartDateType.FlexibleStartDate">Flexible start date</label>
             </div>
 
         </div>

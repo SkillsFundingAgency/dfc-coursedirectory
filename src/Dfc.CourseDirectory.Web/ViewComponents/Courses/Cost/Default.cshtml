@@ -4,33 +4,40 @@
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
-<div id="costContainer" class="govuk-form-group">
-    <label id="govuk-label-Cost" class="govuk-label" asp-for="Cost">
-        @Model.CostLabelText
-    </label>
-    @if (!string.IsNullOrWhiteSpace(Model.CostHintText))
-    {
-        <span class="govuk-hint">
-            @Model.CostHintText
-        </span>
-    }
+    <div id="costContainer" class="govuk-form-group">
+        <label id="govuk-label-Cost" class="govuk-label--m" asp-for="Cost">
+            @Model.CostLabelText
+        </label>
+        @if (!string.IsNullOrWhiteSpace(Model.CostHintText))
+        {
+            <span class="govuk-hint">
+                @Model.CostHintText
+            </span>
+        }
 
-    @{
-       @* var regex = @"^[a-zA-Z0-9 /\n/\r/\\u/\¬\!\£\$\%\^\&\*\\é\\è\\ﬁ\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\•\·\●\\’\‘\“\”\—\-\–\‐\‐\…\:/\°\®\\â\\ç\\ñ\\ü\\ø\♦\™\\t/\s\¼\¾\½\" + "\"" + "\\\\]+$";*@
-        var regex = RegexPattern.AllowEverything;
+        @{
+            @* var regex = @"^[a-zA-Z0-9 /\n/\r/\\u/\¬\!\£\$\%\^\&\*\\é\\è\\ﬁ\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\•\·\●\\’\‘\“\”\—\-\–\‐\‐\…\:/\°\®\\â\\ç\\ñ\\ü\\ø\♦\™\\t/\s\¼\¾\½\" + "\"" + "\\\\]+$";*@
+            var regex = RegexPattern.AllowEverything;
 
-    }
+        }
 
-    <span class="govuk-body">£</span>
-    <input class="govuk-input govuk-input--width-10" style="display:inline;" asp-for="@Model.Cost" type="text" aria-describedby="Cost"
-           val-required-message="Enter cost or cost description"
-           val-max-length="8"
-           val-max-length-message="Maximum allowed cost value is 999,999.99">
-</div>
+    <span class="input-symbol-pound">
+        <input class="govuk-input govuk-input--width-10" style="display:inline;" asp-for="@Model.Cost" type="text" aria-describedby="Cost"
+               val-required-message="Enter cost or cost description"
+               val-max-length="8"
+               val-max-length-message="Maximum allowed cost value is 999,999.99">
+    </span>
+
+        @*<span class="govuk-body">£</span>
+        <input class="govuk-input govuk-input--width-10" style="display:inline;" asp-for="@Model.Cost" type="text" aria-describedby="Cost"
+               val-required-message="Enter cost or cost description"
+               val-max-length="8"
+               val-max-length-message="Maximum allowed cost value is 999,999.99">*@
+    </div>
 
 <div class="govuk-character-count" data-module="character-count" data-maxlength="255">
     <div class="govuk-form-group">
-        <label class="govuk-label" for="word-count" name="CostDescription">
+        <label class="govuk-label--m" for="word-count" name="CostDescription">
             @Model.CostDescriptionLabelText
         </label>
         @if (!string.IsNullOrWhiteSpace(Model.CostDescriptionHintText))
