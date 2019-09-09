@@ -24,6 +24,7 @@ using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 using Dfc.CourseDirectory.Models.Models.Providers;
+using Dfc.CourseDirectory.Web.BackgroundWorkers;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -38,6 +39,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly IProviderService _providerService;
         private IHostingEnvironment _env;
         private ISession _session => _contextAccessor.HttpContext.Session;
+        private IBackgroundTaskQueue _queue;
 
         public BulkUploadController(
                 ILogger<BulkUploadController> logger,
@@ -46,7 +48,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 IBlobStorageService blobService,
                 ICourseService courseService,
                 IHostingEnvironment env,
-                IProviderService providerService)
+                IProviderService providerService,
+                IBackgroundTaskQueue queue)
         {
             Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(contextAccessor, nameof(contextAccessor));
@@ -56,6 +59,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             Throw.IfNull(env, nameof(env));
             Throw.IfNull(courseService, nameof(courseService));
             Throw.IfNull(providerService, nameof(providerService));
+            Throw.IfNull(queue, nameof(queue));
 
             _logger = logger;
             _contextAccessor = contextAccessor;
@@ -65,6 +69,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _env = env;
             _courseService = courseService;
             _providerService = providerService;
+            _queue = queue;
         }
 
 
@@ -364,12 +369,42 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 UKPRN = sUKPRN ?? 0;
             }
 
-            var resultArchivingCourses = await _courseService.ChangeCourseRunStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.Live, (int)RecordStatus.Archived);
-            if (resultArchivingCourses.IsSuccess)
+            // COUR-1864
+            // Offload this long running activity to a background task.
+            // @See:  https://docs.microsoft.com/en-us/aspnet/core/fundamentals/host/hosted-services?view=aspnetcore-2.2&tabs=visual-studio
+            _queue.QueueBackgroundWorkItem(async token =>
             {
-                await _courseService.ChangeCourseRunStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.BulkUploadReadyToGoLive, (int)RecordStatus.Live);
-            }
-            //to publish stuff
+                var guid = Guid.NewGuid().ToString();
+                var tag = $"bulk upload publish for provider {UKPRN} for {model.NumberOfCourses} courses.";
+                var startTimestamp = DateTime.UtcNow;
+
+                try
+                {
+                    _logger.LogInformation($"{startTimestamp.ToString("yyyyMMddHHmmss")} Starting background worker {guid} for {tag}");
+                    var resultArchivingCourses = await _courseService.ChangeCourseRunStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.Live, (int)RecordStatus.Archived);
+                    if (resultArchivingCourses.IsSuccess)
+                    {
+                        var resultGoingLive = await _courseService.ChangeCourseRunStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.BulkUploadReadyToGoLive, (int)RecordStatus.Live);
+                        if(resultGoingLive.IsSuccess)
+                        {
+
+                        }
+                    }
+
+                    var finishTimestamp = DateTime.UtcNow;
+                    _logger.LogInformation($"{finishTimestamp.ToString("yyyyMMddHHmmss")} background worker {guid} finished successfully for {tag}");
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError($"Failed to publish courses from the background worker {guid} for {tag}", ex);
+                }
+
+                _logger.LogInformation($"Queued Background Task {guid} is complete.");
+
+
+            });
+            
+            // @ToDo: we'll reach here before the above background task has completed, so need some UI work
             return View("../Bulkupload/Complete/Index", new PublishCompleteViewModel() { NumberOfCoursesPublished = model.NumberOfCourses, Mode = PublishMode.BulkUpload });
         }
 
