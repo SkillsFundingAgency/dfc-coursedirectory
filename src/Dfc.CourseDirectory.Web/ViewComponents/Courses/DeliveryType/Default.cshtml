@@ -7,13 +7,13 @@
 <div class="govuk-form-group">
 
     <fieldset class="govuk-fieldset">
-        <legend class="govuk-fieldset__legend govuk-fieldset__legend--s" style="font-weight: 100">
-            <h1 class="govuk-fieldset__heading">
+        <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+            <h2 class="govuk-fieldset__heading govuk-heading-m">
                 @Model.LabelText
-            </h1>
+            </h2>
             <span class="govuk-hint">@Model.HintText</span>
         </legend>
-        <div class="govuk-radios govuk-radios--inline" val-required-message="Select Delivery Mode" id="DeliveryModeRadioButtons">
+        <div class="govuk-radios govuk-radios" val-required-message="Select Delivery Mode" id="DeliveryModeRadioButtons">
 
             <div class="govuk-radios__item">
                 @Html.RadioButtonFor(m => m.DeliveryMode, DeliveryMode.ClassroomBased, new { @class = "govuk-radios__input", id = DeliveryMode.ClassroomBased })
@@ -32,25 +32,3 @@
     </fieldset>
 </div>
 
-@*<div class="govuk-form-group">
-    <fieldset class="govuk-fieldset">
-        <label id="govuk-label-DeliveryModeRadioButtons" class="govuk-label">@Model.LabelText</label>
-        <span class="govuk-hint">@Model.HintText</span>
-        <span id="second-detail-hint" class="govuk-hint">@Model.SecondHintText</span>
-        <div id="DeliveryModeRadioButtons" class="govuk-radios govuk-radios--inline"
-             val-required-message="Select Delivery Mode">
-            <div class="govuk-radios__item">
-                @Html.RadioButtonFor(m => m.DeliveryMode, DeliveryMode.ClassroomBased, new { @class = "govuk-radios__input", id = @DeliveryMode.ClassroomBased })
-                <label class="govuk-label govuk-radios__label" for="@DeliveryMode.ClassroomBased">@WebHelper.GetEnumDescription(DeliveryMode.ClassroomBased)</label>
-            </div>
-            <div class="govuk-radios__item">
-                @Html.RadioButtonFor(m => m.DeliveryMode, DeliveryMode.Online, new { @class = "govuk-radios__input", id = @DeliveryMode.Online })
-                <label class="govuk-label govuk-radios__label" for="@DeliveryMode.Online">@WebHelper.GetEnumDescription(DeliveryMode.Online)</label>
-            </div>
-            <div class="govuk-radios__item">
-                @Html.RadioButtonFor(m => m.DeliveryMode, DeliveryMode.WorkBased, new { @class = "govuk-radios__input", id = @DeliveryMode.WorkBased })
-                <label class="govuk-label govuk-radios__label" for="@DeliveryMode.WorkBased">@WebHelper.GetEnumDescription(DeliveryMode.WorkBased)</label>
-            </div>
-        </div>
-    </fieldset>
-</div>*@

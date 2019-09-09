@@ -11,11 +11,6 @@
   display: block;
 }
 
-.homepage-item a {
-  font-size: 1.5rem;
-  font-weight: 600;
-}
-
 .sortable th {
   color: #005ea5;
   cursor: pointer;
@@ -41,7 +36,7 @@
 }
 
 .cd-migration-panel__number {
-  font-size: 1.4em;
+  font-size: 19px;
   font-weight: 600;
 }
 
@@ -89,7 +84,7 @@
 .cd-status-panel.teal--border {
   text-align: left;
   background-color: #f8f8f8;
-  border-left: 5px solid #005ea5;
+  border-left: 5px solid #207E77;
   color: black;
   padding: 1em 1em 0 1em;
 }
@@ -195,12 +190,11 @@
 .sidebar .widget {
   border-top: 5px solid #207E77;
   background-color: #f8f8f8;
-  padding-left: 1rem;
 }
 
 .sidebar .widget.white {
   background-color: white;
-  padding: 1em;
+  padding-top: 1rem;
   color: black;
 }
 
@@ -212,20 +206,9 @@
   margin-bottom: .5em;
 }
 
-.sidebar .widget a {
-  font-size: .8em;
-}
-
 @media screen and (min-width: 640px) and (max-width: 1024px) {
   .homepage-item--container {
     display: flex;
-  }
-  .homepage-item {
-    flex: 1;
-  }
-  .homepage-item a {
-    font-size: 1.5rem;
-    font-weight: 600;
   }
 }
 

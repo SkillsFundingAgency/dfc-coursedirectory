@@ -16,14 +16,14 @@
                     <div class="column-two-thirds">
                         <div>
                             <h1 class="govuk-heading-l govuk-!-margin-top-4">@ViewBag.Title</h1>
-                            <label class="column-two-thirds govuk-heading-m" name="qualification-search">@ViewBag.Subtext</label>
+
                         </div>
-                        <form class="site-search ui-front" id="header-search">
+                        <form class="site-search ui-front regulatedsearch " id="header-search">
+                            <label class="column-two-thirds govuk-label-m " name="qualification-search">@ViewBag.Subtext</label>
+                            <div class="search-input-wrapper govuk-!-margin-top-4">
 
-                            <div class="search-input-wrapper">
 
-
-                                <input class="govuk-input search-input js-search-focus" placeholder="@ViewBag.Placeholder" id="LarsSearchTerm" name="LarsSearchTerm" type="text" autofocus aria-label="qualification-search">
+                                <input class="govuk-input search-input js-search-focus govuk-!-width-three-quarters" placeholder="@ViewBag.Placeholder" id="LarsSearchTerm" name="LarsSearchTerm" type="text" autofocus aria-label="qualification-search">
                                 <div class="cd-c-search__item cd-search__submit-wrapper">
                                     <button type="button" class=" submit" id="searchQualification">Search</button>
                                 </div>
