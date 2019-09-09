@@ -142,3 +142,18 @@
 .cd__your-courses__filters-list__link--selected {
     font-weight: 900;
 }
+
+.input-symbol-pound {
+    position: relative;
+}
+
+.input-symbol-pound input {
+    padding-left: 18px;
+}
+
+.input-symbol-pound:before {
+    position: absolute;
+    top: 0;
+    content: "£";
+    left: 5px;
+}
