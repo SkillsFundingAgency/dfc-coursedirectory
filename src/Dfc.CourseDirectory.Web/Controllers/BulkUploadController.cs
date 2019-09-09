@@ -375,21 +375,33 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _queue.QueueBackgroundWorkItem(async token =>
             {
                 var guid = Guid.NewGuid().ToString();
+                var tag = $"bulk upload publish for provider {UKPRN} for {model.NumberOfCourses} courses.";
+                var startTimestamp = DateTime.UtcNow;
 
                 try
                 {
+                    _logger.LogInformation($"{startTimestamp.ToString("yyyyMMddHHmmss")} Starting background worker {guid} for {tag}");
                     var resultArchivingCourses = await _courseService.ChangeCourseRunStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.Live, (int)RecordStatus.Archived);
                     if (resultArchivingCourses.IsSuccess)
                     {
-                        await _courseService.ChangeCourseRunStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.BulkUploadReadyToGoLive, (int)RecordStatus.Live);
+                        var resultGoingLive = await _courseService.ChangeCourseRunStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.BulkUploadReadyToGoLive, (int)RecordStatus.Live);
+                        if(resultGoingLive.IsSuccess)
+                        {
+
+                        }
                     }
+
+                    var finishTimestamp = DateTime.UtcNow;
+                    _logger.LogInformation($"{finishTimestamp.ToString("yyyyMMddHHmmss")} background worker {guid} finished successfully for {tag}");
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError("Failed to publish courses from the background worker item.", ex);
+                    _logger.LogError($"Failed to publish courses from the background worker {guid} for {tag}", ex);
                 }
 
                 _logger.LogInformation($"Queued Background Task {guid} is complete.");
+
+
             });
             
             // @ToDo: we'll reach here before the above background task has completed, so need some UI work
