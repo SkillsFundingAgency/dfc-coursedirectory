@@ -1,40 +1,42 @@
 ﻿@using Dfc.CourseDirectory.Web.ViewComponents.PostcodeLookup
 @model Dfc.CourseDirectory.Web.ViewComponents.EditVenueAddress.EditVenueAddressModel
 @{
-    ViewData["Title"] = "Edit venue address"; 
+    ViewData["Title"] = "Edit venue address";
     Layout = "_Layout_Your_Courses";
 }
 
-    <div class="govuk-grid-row">
+<div class="govuk-grid-row">
 
-        <div class="govuk-grid-column-two-thirds">
-            <h1 class="govuk-heading-l">Edit venue address</h1>
-            <form method="post" id="edit-venue-form" asp-controller="Venues" asp-action="VenueAddressSelectionConfirmation">
-                
-                @Html.HiddenFor(x=>x.VenueName)
-                @*<input type="hidden" id="VenueName" value="@Model.VenueName" />*@
-                @*<input type="hidden" id="ModelId" value="@Model.Id" />*@
-                <div id="postcodelookupparent">
-                    @await Component.InvokeAsync(nameof(PostcodeLookup), new PostcodeLookupModel
-                           {
-                               Id = Model.Id,
-                               VenueName = Model.VenueName,
-                               Postcode = Model.Address.Postcode,
-                               PostcodeLabelText = "Venue postcode",
-                               PostcodeAriaDescribedBy = "Please enter the postcode.",
-                               ButtonText = "Find address"
-                           })
-                </div>
+    <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-l">Edit venue address</h1>
+        <form method="post" id="edit-venue-form" asp-controller="Venues" asp-action="VenueAddressSelectionConfirmation">
 
-                <div class="govuk-form-group">
-                    <a id="manualLink" class="govuk-link" asp-controller="Venues" asp-action="AddVenueManualAddress" asp-route-Id=@Model.Id>Enter address manually</a>
-                </div>
-                <div class="govuk-form-group">
-                    @Html.ActionLink("Cancel", "EditVenue", "Venues", new { Model.Id }, new { @class = "govuk-link" })
-                </div>
-            </form>
+            @Html.HiddenFor(x => x.VenueName)
+            @Html.HiddenFor(x => x.PostcodeId)
+            @Html.HiddenFor(x => x.Id)
 
-        </div>
+            <div id="postcodelookupparent">
+                @await Component.InvokeAsync(nameof(PostcodeLookup), new PostcodeLookupModel
+                       {
+                           Id = Model.Id,
+                           VenueName = Model.VenueName,
+                           Postcode = Model.Address.Postcode,
+                           PostcodeLabelText = "Venue postcode",
+                           PostcodeAriaDescribedBy = "Please enter the postcode.",
+                           ButtonText = "Find address"
+                       })
+            </div>
+
+            <div class="govuk-form-group">
+                <a id="manualLink" class="govuk-link" asp-controller="Venues" asp-action="AddVenueManualAddress" asp-route-Id=@Model.Id>Enter address manually</a>
+            </div>
+            <div class="govuk-form-group">
+                <a id="cancelLink" class="govuk-link" asp-controller="Venues" asp-action="VenueAddressSelectionConfirmation" asp-route-VenueName=@Model.VenueName asp-route-PostcodeId=@Model.PostcodeId>Cancel</a>
+
+            </div>
+        </form>
+
+    </div>
 </div>
 <script>
     (function ($) {
@@ -122,7 +124,7 @@
                 }
 
                 if (!validStates.every(isAllValid)) {
-                    
+
                 }
             }
 
@@ -138,7 +140,7 @@
                                 venuename: $("#VenueName").val(),
                                 id: $("#Id").val(),
                             }, onPostCodeSearchSucess);
-                    }    
+                    }
               });
 
               $(document).on('click','#venueAddressConfirmationSelection',function(e){
@@ -147,8 +149,8 @@
                     validateSelectedAddress();
                     if (validStates.every(isAllValid)) {
                         $("#edit-venue-form").submit();
-                    }    
-                       
+                    }
+
             });
 
               $(document).on('click','#Change',function(e){

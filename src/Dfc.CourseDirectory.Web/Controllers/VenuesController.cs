@@ -488,7 +488,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 Id = requestModel.Id,
                 VenueName = requestModel.VenueName,
-                PostcodeId = requestModel.Address.Id,
+                PostcodeId = requestModel.PostcodeId,
                 Address = requestModel.Address
             };
             return View(model);
