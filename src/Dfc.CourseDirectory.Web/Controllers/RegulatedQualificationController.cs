@@ -17,7 +17,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [Authorize]
         public IActionResult RegulatedTypeSelected(RegulatedViewModel regulatedViewModel)
         {
-            if (regulatedViewModel.RegulatedType == RegulatedType.Regulated)
+            if (regulatedViewModel.WhatAreYouAwarding == WhatAreYouAwarding.Yes)
             {
                 return RedirectToAction("Index", "Qualifications");
             }
