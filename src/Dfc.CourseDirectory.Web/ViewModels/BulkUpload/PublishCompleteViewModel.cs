@@ -8,5 +8,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels.BulkUpload
         public int NumberOfCoursesPublished { get; set; }
 
         public PublishMode Mode { get; set; }
+
+        public bool BackgroundPublishInProgress { get; set; }
     }
 }

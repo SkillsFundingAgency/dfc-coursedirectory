@@ -56,13 +56,26 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
             }
 
             var allVenues = await _venueService.SearchAsync(new VenueSearchCriteria(UKPRN.ToString(), ""));
-            
-            IEnumerable<Course> courses = _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(UKPRN))
-                                               .Result
-                                               .Value
-                                               .Value
-                                               .SelectMany(o => o.Value)
-                                               .SelectMany(i => i.Value);
+
+            var getCoursesResult = _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(UKPRN)).Result;
+
+
+            // @ToDo: sort out logging and the unhappy path 
+            IEnumerable<Course> courses = null;
+            if (getCoursesResult.IsSuccess)
+            {
+                if(getCoursesResult.HasValue)
+                {
+                    var courseSearchResult = getCoursesResult.Value;
+                    if(null != courseSearchResult.Value)
+                    {
+                        var outerGroupings = courseSearchResult.Value.SelectMany(o => o.Value);
+                        courses = outerGroupings.SelectMany(i => i.Value);
+                    }
+                }
+            }
+
+
 
             IEnumerable<CourseRun> bulkUploadReadyToGoLive = courses.SelectMany(c => c.CourseRuns)
                                                                        .Where(x => x.RecordStatus == RecordStatus.BulkUploadReadyToGoLive);
@@ -141,6 +154,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
                     actualModel.BulkUploadBackgroundInProgress = provider.BulkUploadStatus.InProgress;
                     actualModel.BulkUploadBackgroundRowCount = provider.BulkUploadStatus.TotalRowCount;
                     actualModel.BulkUploadBackgroundStartTimestamp = provider.BulkUploadStatus.StartedTimestamp;
+                    actualModel.BulkUploadPublishInProgress = provider.BulkUploadStatus.PublishInProgress;
                 }
                 actualModel.ProviderType = provider.ProviderType;
             }

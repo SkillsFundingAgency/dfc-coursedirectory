@@ -7,7 +7,7 @@
     <span class="cd-migration-panel__number">
         @if (Model.Value == 0)
         {
-            @Model.Value
+            @Model.Value 
         }
         else
         {
@@ -20,13 +20,16 @@
 </div>
 
 <ul class="govuk-list cd-homepage__list">
-    @foreach (var item in Model.Links)
+    @if (null != Model.Links)
     {
-        if (!string.IsNullOrWhiteSpace(item.Href))
+        @foreach (var item in Model.Links)
         {
-            <li class="cd-homepage__list--item">
-                <a href="@item.Href" class="govuk-link">@item.Description</a>
-            </li>
+            if (!string.IsNullOrWhiteSpace(item.Href))
+            {
+                <li class="cd-homepage__list--item">
+                    <a href="@item.Href" class="govuk-link">@item.Description</a>
+                </li>
+            }
         }
     }
 </ul>

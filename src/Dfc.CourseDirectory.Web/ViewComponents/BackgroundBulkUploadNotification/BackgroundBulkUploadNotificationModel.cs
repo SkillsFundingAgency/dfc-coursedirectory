@@ -8,5 +8,6 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.BackgroundBulkUploadNotificatio
         public bool BulkUploadBackgroundInProgress { get; set; }
         public DateTime? BulkUploadBackgroundStartTimestamp { get; set; }
         public int? BulkUploadBackgroundRowCount { get; set; }
+        public bool BulkUploadPublishInProgress { get; set; }
     }
 }
