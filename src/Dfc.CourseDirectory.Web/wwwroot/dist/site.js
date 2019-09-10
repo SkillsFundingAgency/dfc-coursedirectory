@@ -170,8 +170,7 @@
             }
         }
 
-        if ($(this.element).parent().hasClass("zcodesearch--container"))
-        {
+        if ($(this.element).parent().hasClass("zcodesearch--container")) {
             //var $t = $(this.element).closest(".govuk-form-group")
             $errorElement = $(this.element).parent()
         }

@@ -4,6 +4,10 @@
   margin-bottom: 0;
 }
 
+.zcodesearch span.hint {
+  color: 6f777b;
+}
+
 .zcodesearch--container {
   display: flex;
   flex-direction: row;

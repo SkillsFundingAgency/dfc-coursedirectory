@@ -7576,6 +7576,25 @@ select:disabled {
   margin-bottom: 0;
 }
 
+.zcodesearch span.hint {
+  color: 6f777b;
+}
+
+.zcodesearch--container {
+  display: flex;
+  flex-direction: row;
+}
+
+.zcodesearch--container-input {
+  padding: 10px !important;
+}
+
+.zcodesearch {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0;
+}
+
 .zcodesearch--container {
   display: flex;
   flex-direction: row;
