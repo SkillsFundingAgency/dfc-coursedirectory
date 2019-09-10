@@ -79,14 +79,14 @@
         <div class="govuk-grid-column-two-thirds">
             <div class="govuk-body">
                 <p>
-                    You can use a file to replace information about all of your published courses. To create the file you can:
+ You can use a file to replace information about all of your published courses. To create the file you can:
                     <ul>
-                        <li>enter your course information in a blank file</li>
-                        <li>update a template containing your current course information</li>
+                        <li>enter your course information in an empty template</li>
+                        <li>update a template containing your published course information</li>
                     </ul>
                 </p>
                 <p>
-                    Your updated course information will be published after you have uploaded your file and fixed any errors.
+   Your updated course information will be published after you have uploaded your file and fixed any errors.
                 </p>
 
                 <div id="groupServerSideError" class="govuk-form-group">
@@ -105,23 +105,46 @@
                     <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
                     <strong class="govuk-warning-text__text">
                         <span class="govuk-warning-text__assistive">Warning</span>
-                        You'll replace all information about your courses if you continue.
+   This will replace all of your course information in the course directory.
                     </strong>
                 </div>
+                <div class="govuk-form-group">
+  <fieldset class="govuk-fieldset">
+    <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+      <h1 class="govuk-fieldset__heading">
+        Are you sure?
+      </h1>
+    </legend>
+    <div class="govuk-radios">
+      <div class="govuk-radios__item">
+        <input class="govuk-radios__input" id="where-do-you-live" name="where-do-you-live" type="radio" value="Replace my existing course information">
+        <label class="govuk-label govuk-radios__label" for="where-do-you-live">
+                Replace my existing course information
+        </label>
+      </div>
+      <div class="govuk-radios__item">
+        <input class="govuk-radios__input" id="where-do-you-live-2" name="where-do-you-live" type="radio" value="Do not replace my existing course information and go back to my home page">
+        <label class="govuk-label govuk-radios__label" for="where-do-you-live-2">
+   Do not replace my existing course information and go back to my home page
+        </label>
+      </div>
 
+    </div>
+  </fieldset>
+</div>
 
                 <div class="cta-container">
                     <button type="submit" id="uploadButton" class="govuk-button govuk-!-margin-right-3">
                         Continue
                     </button>
-                    <a class="govuk-link " asp-controller="Home" asp-action="Index">Cancel</a>
+
                 </div>
             </div>
         </div>
         <div class="govuk-grid-column-one-third">
             <div class="sidebar">
 
-                <div class="widget white blue">
+                <div class="widget white">
                     <h2 class="govuk-heading-m">Find templates</h2>
 
                     <ul class="govuk-list">
