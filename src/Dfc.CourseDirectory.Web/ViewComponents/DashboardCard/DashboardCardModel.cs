@@ -18,6 +18,8 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.DashboardCard
         }
 
         public string Title { get; set; }
+
+        public string Title2 { get; set; }
         public int Value { get; set; }
         public string Description { get; set; }
         public string ValueHref { get; set; }
