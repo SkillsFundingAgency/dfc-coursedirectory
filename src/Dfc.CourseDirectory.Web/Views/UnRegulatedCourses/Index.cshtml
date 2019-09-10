@@ -35,8 +35,8 @@
                         <br />
                         <span class=""> This is sometimes called the ‘Z code’ </span>
                         <div class="zcodesearch--container">
-                            <input class=" zcodesearch--container-input govuk-input govuk-!-padding-bottom-4 govuk-input--width-10" asp-for="@Model.Search" type="text" placeholder="Enter a Z code" aria-label="unregulated-search"
-
+                            <input class=" zcodesearch--container-input govuk-input govuk-!-padding-bottom-4 govuk-input--width-10" asp-for="@Model.Search" type="text" aria-label="unregulated-search"
+                                   val-required-message="Enter a z code to search"
                                    val-regex="@regex"
                                    val-regex-message="Code must start with Z followed by 7 numbers or letters" />
 
