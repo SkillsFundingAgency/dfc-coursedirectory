@@ -6301,11 +6301,14 @@
 .sidebar .widget {
   border-top: 5px solid #207E77;
   background-color: #f8f8f8;
-  padding-left: 1rem;
 }
 
 .sidebar .widget div {
   margin-bottom: .5em;
+}
+
+.sidebar .widget h3 {
+  margin-top: 0;
 }
 
 .flat-list * {
@@ -6342,10 +6345,17 @@ p {
 .cd-warning-summary,
 .cd-info-summary {
   font-family: nta,Arial,sans-serif;
-  padding: .5em 1.5em;
+  padding: .5rem 1rem;
   margin-bottom: 2em;
   font-weight: 700;
   font-size: 19px;
+}
+
+.cd-success-summary__title,
+.cd-error-summary__title,
+.cd-warning-summary__title,
+.cd-info-summary__title {
+  margin: 0 0.25rem;
 }
 
 .cd-success-summary:focus,
@@ -7535,10 +7545,29 @@ select:disabled {
   }
 }
 
+.zcodesearch {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0;
+}
+
+.zcodesearch span.hint {
+  color: 6f777b;
+}
+
+.zcodesearch--container {
+  display: flex;
+  flex-direction: row;
+}
+
+.zcodesearch--container-input {
+  padding: 10px !important;
+}
+
 .cd-nonregulated-provision {
   background-color: #f8f8f8;
   padding: 1em;
-  border: 1px solid #bfc1c3;
+  border-left: 5px solid #207E77;
   margin-bottom: 2em;
 }
 
@@ -7670,11 +7699,6 @@ select:disabled {
   display: block;
 }
 
-.homepage-item a {
-  font-size: 1.5rem;
-  font-weight: 600;
-}
-
 .sortable th {
   color: #005ea5;
   cursor: pointer;
@@ -7700,7 +7724,7 @@ select:disabled {
 }
 
 .cd-migration-panel__number {
-  font-size: 1.4em;
+  font-size: 19px;
   font-weight: 600;
 }
 
@@ -7748,7 +7772,7 @@ select:disabled {
 .cd-status-panel.teal--border {
   text-align: left;
   background-color: #f8f8f8;
-  border-left: 5px solid #005ea5;
+  border-left: 5px solid #207E77;
   color: black;
   padding: 1em 1em 0 1em;
 }
@@ -7854,12 +7878,11 @@ select:disabled {
 .sidebar .widget {
   border-top: 5px solid #207E77;
   background-color: #f8f8f8;
-  padding-left: 1rem;
 }
 
 .sidebar .widget.white {
   background-color: white;
-  padding: 1em;
+  padding-top: 1rem;
   color: black;
 }
 
@@ -7871,20 +7894,9 @@ select:disabled {
   margin-bottom: .5em;
 }
 
-.sidebar .widget a {
-  font-size: .8em;
-}
-
 @media screen and (min-width: 640px) and (max-width: 1024px) {
   .homepage-item--container {
     display: flex;
-  }
-  .homepage-item {
-    flex: 1;
-  }
-  .homepage-item a {
-    font-size: 1.5rem;
-    font-weight: 600;
   }
 }
 

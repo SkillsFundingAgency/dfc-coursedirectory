@@ -50,6 +50,20 @@
                             </summary>
                             <div class="govuk-form-group" tabindex="-1">
                                 @{
+
+                                    @foreach (var subregion in item.SubRegion)
+                                    {
+
+
+                                        if (@Model.National == true)
+                                        {
+                                            subregion.Checked = false;
+                                        }
+
+
+                                    }
+
+
                                     var toggleStatus = "Select all";
                                     var regionsSelected = item.SubRegion.Where(y => y.Checked.Value == true).Count();
 
