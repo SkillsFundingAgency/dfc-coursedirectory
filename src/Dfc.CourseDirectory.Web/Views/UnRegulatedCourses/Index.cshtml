@@ -18,7 +18,7 @@
 
                    
                 </div>
-                <form class="cd-status-panel teal--border " id="zCodeSearch" asp-controller="UnregulatedCourses" asp-action="Index" method="post">
+                <form class="cd-migration-panel" id="zCodeSearch" asp-controller="UnregulatedCourses" asp-action="Index" method="post">
                     
 
                     <div id="errorsummary" class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary" style="display: none;">
@@ -31,8 +31,9 @@
                     </div>
 
                     <div class="govuk-form-group zcodesearch">
-                        <label class="govuk-grid-column-full" name="unregulated-search"> Learning Aims Reference Service (LARS) code </label>
-                        <span class=" govuk-grid-column-full hint"> This is sometimes called the ‘Z code’ </span>
+                        <label class="" name="unregulated-search"> Learning Aims Reference Service (LARS) code </label>
+                        <br />
+                        <span class=""> This is sometimes called the ‘Z code’ </span>
                         <div class="zcodesearch--container">
                             <input class=" zcodesearch--container-input govuk-input govuk-!-padding-bottom-4 govuk-input--width-10" asp-for="@Model.Search" type="text" placeholder="Enter a Z code" aria-label="unregulated-search"
 
