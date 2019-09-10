@@ -17,29 +17,39 @@
     <tbody class="govuk-table__body">
         @foreach (var row in Model.Rows)
         {
-            <tr class="govuk-table__row">
-                <th class="govuk-table__header underline" scope="row"><a asp-controller="Migration" asp-action="MigrationReportFoProvider" asp-route-UKPRN="@row.ProviderUKPRN" class="govuk-link">@row.ProviderName</a></th>
-                <td class="govuk-table__cell">@row.ProviderType</td>
-                <td class="govuk-table__cell">@row.MigrationDate?.ToString("dd/MMM/yyyy")</td>
-                @{
-                    row.MigratedCount = row.MigratedCount ?? 0;
+        <tr class="govuk-table__row">
+            <th class="govuk-table__header underline" scope="row"><a asp-controller="Migration" asp-action="MigrationReportFoProvider" asp-route-UKPRN="@row.ProviderUKPRN" class="govuk-link">@row.ProviderName</a></th>
+            <td class="govuk-table__cell">@row.ProviderType</td>
+            <td class="govuk-table__cell">@row.MigrationDate?.ToString("dd/MMM/yyyy")</td>
+            @{
+            row.MigratedCount = row.MigratedCount ?? 0;
+            }
+            <td class="govuk-table__cell govuk-table__cell--numeric">@row.MigratedCount</td>
+            
+            <td class="govuk-table__cell govuk-table__cell--numeric">
+                @if (row.FailedMigrationCount > 0)
+                {
+                <a class="govuk-link" asp-controller="Migration" asp-action="Larsless" asp-route-UKPRN="@row.ProviderUKPRN">@row.FailedMigrationCount</a>
                 }
-                <td class="govuk-table__cell govuk-table__cell--numeric">@row.MigratedCount</td>
-                <td class="govuk-table__cell govuk-table__cell--numeric"><a class="govuk-link" href="#">@row.FailedMigrationCount</a></td>
-                <td class="govuk-table__cell govuk-table__cell--numeric">
-                    
-                        @if (row.MigrationPendingCount > 0)
-                        {
-                            <a class="govuk-link" asp-controller="Migration" asp-action="Index" asp-route-UKPRN="@row.ProviderUKPRN">@row.MigrationPendingCount</a>
-                        }
-                        else
-                        {
-                            @row.MigrationPendingCount;
-                        }
-                </td>
-                <td class="govuk-table__cell govuk-table__cell--numeric"><a class="govuk-link" asp-controller="ProviderCourses" asp-action="MigratedCourses" asp-route-UKPRN="@row.ProviderUKPRN">@row.LiveCount</a></td>
-                <td class="govuk-table__cell govuk-table__cell--numeric">@row.MigrationRate%</td>
-            </tr>
+                else
+                {
+                @row.FailedMigrationCount;
+                }                        
+            </td>
+            <td class="govuk-table__cell govuk-table__cell--numeric">
+
+                @if (row.MigrationPendingCount > 0)
+                {
+                <a class="govuk-link" asp-controller="Migration" asp-action="Index" asp-route-UKPRN="@row.ProviderUKPRN">@row.MigrationPendingCount</a>
+                }
+                else
+                {
+                @row.MigrationPendingCount;
+                }
+            </td>
+            <td class="govuk-table__cell govuk-table__cell--numeric"><a class="govuk-link" asp-controller="ProviderCourses" asp-action="MigratedCourses" asp-route-UKPRN="@row.ProviderUKPRN">@row.LiveCount</a></td>
+            <td class="govuk-table__cell govuk-table__cell--numeric">@row.MigrationRate%</td>
+        </tr>
         }
     </tbody>
 </table>
