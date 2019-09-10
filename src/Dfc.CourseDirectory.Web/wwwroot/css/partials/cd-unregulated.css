@@ -7,7 +7,6 @@
 .zcodesearch--container {
   display: flex;
   flex-direction: row;
-  margin: 1rem;
 }
 
 .zcodesearch--container-input {

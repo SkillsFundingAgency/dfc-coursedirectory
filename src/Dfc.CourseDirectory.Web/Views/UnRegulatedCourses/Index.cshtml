@@ -19,7 +19,7 @@
                    
                 </div>
                 <form class="cd-migration-panel" id="zCodeSearch" asp-controller="UnregulatedCourses" asp-action="Index" method="post">
-                    
+
 
                     <div id="errorsummary" class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary" style="display: none;">
                         <h2 class="govuk-error-summary__title" id="error-summary-title">
@@ -31,9 +31,8 @@
                     </div>
 
                     <div class="govuk-form-group zcodesearch">
-                        <label class="" name="unregulated-search"> Learning Aims Reference Service (LARS) code </label>
-                        <br />
-                        <span class=""> This is sometimes called the ‘Z code’ </span>
+                        <label class="" name="unregulated-search">Learning Aims Reference Service (LARS) code (this is sometimes called the ‘Z code’).</label>
+
                         <div class="zcodesearch--container">
                             <input class=" zcodesearch--container-input govuk-input govuk-!-padding-bottom-4 govuk-input--width-10" asp-for="@Model.Search" type="text" aria-label="unregulated-search"
                                    val-required-message="Enter a z code to search"
@@ -51,7 +50,7 @@
         </div>
         <div class="grid-row" data-sf-element="Row">
             <div class="govuk-form-group ">
-                <a class="govuk-link govuk-!-margin-left-7" id="unKnownLink" asp-controller="UnregulatedCourses" asp-action="UnknownZCode" style="padding-left:0.2em">I don’t know the LARS code</a>
+                <a class="govuk-link" id="unKnownLink" asp-controller="UnregulatedCourses" asp-action="UnknownZCode">I don’t know the LARS code</a>
 
  <br />
                 <br />

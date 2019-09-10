@@ -169,6 +169,12 @@
                 $errorElement = $(this.element)
             }
         }
+
+        if ($(this.element).parent().hasClass("zcodesearch--container"))
+        {
+            //var $t = $(this.element).closest(".govuk-form-group")
+            $errorElement = $(this.element).parent()
+        }
        
 
         $(this.element).addClass(this.options.errorCssClass);
