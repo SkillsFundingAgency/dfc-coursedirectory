@@ -6,7 +6,7 @@
 @await Component.InvokeAsync(nameof(DashboardCard), new DashboardCardModel()
 {
     Title = "Manage",
-    Title2="your apprenticship training",
+    Title2="your apprenticeship training",
     Value = Model.PublishedApprenticeshipsCount,
     Description = @WebHelper.GetApprenticeshipsTextToUse(Model.PublishedApprenticeshipsCount),
     ValueHref = Url.Action("index", "ProviderApprenticeships"),
