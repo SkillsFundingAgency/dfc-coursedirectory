@@ -213,7 +213,7 @@
                         else
                         {
                             <td class="govuk-table__cell">
-                                £@Model.Cost
+                                £@Model.Cost.Value.ToString("F")
                             </td>
                         }
 
@@ -242,7 +242,7 @@
                             }
                             else
                             {
-                                @Model.DurationValue @Model.DurationUnit
+                                <span> @Model.DurationValue.ToString() @Model.DurationUnit.ToString()</span>
                             }
                            
                         </td>
