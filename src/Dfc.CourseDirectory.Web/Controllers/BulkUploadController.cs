@@ -24,6 +24,7 @@ using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 using Dfc.CourseDirectory.Models.Models.Providers;
+using Dfc.CourseDirectory.Web.BackgroundWorkers;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -38,6 +39,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly IProviderService _providerService;
         private IHostingEnvironment _env;
         private ISession _session => _contextAccessor.HttpContext.Session;
+        private IBackgroundTaskQueue _queue;
 
         public BulkUploadController(
                 ILogger<BulkUploadController> logger,
@@ -46,7 +48,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 IBlobStorageService blobService,
                 ICourseService courseService,
                 IHostingEnvironment env,
-                IProviderService providerService)
+                IProviderService providerService,
+                IBackgroundTaskQueue queue)
         {
             Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(contextAccessor, nameof(contextAccessor));
@@ -56,6 +59,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             Throw.IfNull(env, nameof(env));
             Throw.IfNull(courseService, nameof(courseService));
             Throw.IfNull(providerService, nameof(providerService));
+            Throw.IfNull(queue, nameof(queue));
 
             _logger = logger;
             _contextAccessor = contextAccessor;
@@ -65,6 +69,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _env = env;
             _courseService = courseService;
             _providerService = providerService;
+            _queue = queue;
         }
 
 
@@ -364,13 +369,63 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 UKPRN = sUKPRN ?? 0;
             }
 
-            var resultArchivingCourses = await _courseService.ChangeCourseRunStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.Live, (int)RecordStatus.Archived);
-            if (resultArchivingCourses.IsSuccess)
+            // COUR-1864
+            // Offload this long running activity to a background task.
+            // @See:  https://docs.microsoft.com/en-us/aspnet/core/fundamentals/host/hosted-services?view=aspnetcore-2.2&tabs=visual-studio
+
+            // Find the provider and flag it as "publish in progress" outside of the queue otherwise the time lag is too great and 
+            // the UI displays incorrect info
+
+            // Flag the provider as "publish in progress".
+            var provider = FindProvider(UKPRN);
+            if (null == provider) throw new Exception($"Failed to find provider with UK PRN {UKPRN}");
+            if (null == provider.BulkUploadStatus) provider.BulkUploadStatus = new BulkUploadStatus();
+            provider.BulkUploadStatus.PublishInProgress = true;
+            var flagProviderResult = _providerService.UpdateProviderDetails(provider).Result;
+            if (flagProviderResult.IsFailure) throw new Exception($"Failed to set the 'publish in progress' flag for provider with UK PRN {UKPRN}.");
+
+            // Now queue the background work to publish the courses.
+            _queue.QueueBackgroundWorkItem(async token =>
             {
-                await _courseService.ChangeCourseRunStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.BulkUploadReadyToGoLive, (int)RecordStatus.Live);
-            }
-            //to publish stuff
-            return View("../Bulkupload/Complete/Index", new PublishCompleteViewModel() { NumberOfCoursesPublished = model.NumberOfCourses, Mode = PublishMode.BulkUpload });
+                var guid = Guid.NewGuid().ToString();
+                var tag = $"bulk upload publish for provider {UKPRN} for {model.NumberOfCourses} courses.";
+                var startTimestamp = DateTime.UtcNow;
+
+                try
+                {
+                    _logger.LogInformation($"{startTimestamp.ToString("yyyyMMddHHmmss")} Starting background worker {guid} for {tag}");
+                    
+                    // Publish the bulk-uploaded courses.
+                    var resultArchivingCourses = await _courseService.ChangeCourseRunStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.Live, (int)RecordStatus.Archived);
+                    if (resultArchivingCourses.IsSuccess)
+                    {
+                        var resultGoingLive = await _courseService.ChangeCourseRunStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.BulkUploadReadyToGoLive, (int)RecordStatus.Live);
+                        if(resultGoingLive.IsSuccess)
+                        {
+                            // Clear the provider "publish in progress" flag.
+                            provider.BulkUploadStatus.PublishInProgress = false;
+                            var unflagProviderResult = await _providerService.UpdateProviderDetails(provider);
+                            if (unflagProviderResult.IsFailure) throw new Exception($"Failed to clear the 'publish in progress' flag for provider with UK PRN {UKPRN}.");
+                        }
+                        // @ToDo: ELSE failure here means we need a manual way to clear the flag
+                    }
+                    // @ToDo: ELSE failure here means we need a manual way to clear the flag
+
+                    var finishTimestamp = DateTime.UtcNow;
+                    _logger.LogInformation($"{finishTimestamp.ToString("yyyyMMddHHmmss")} background worker {guid} finished successfully for {tag}");
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError($"Failed to publish courses from the background worker {guid} for {tag}", ex);
+                }
+
+                _logger.LogInformation($"Queued Background Task {guid} is complete.");
+
+
+            });
+
+            // @ToDo: we'll reach here before the above background task has completed, so need some UI work
+            return View("../PublishCourses/InProgress", new PublishCompleteViewModel() { NumberOfCoursesPublished = model.NumberOfCourses, Mode = PublishMode.BulkUpload, BackgroundPublishInProgress = provider.BulkUploadStatus.PublishInProgress });
         }
 
         [Authorize]
