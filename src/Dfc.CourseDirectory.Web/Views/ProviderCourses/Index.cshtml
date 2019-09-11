@@ -77,33 +77,36 @@
                                 }
                                 <h1 class="govuk-heading-l">Your published courses</h1>
                                 <p class="govuk-body-l">These are the courses you have listed on the course directory.</p>
-                                <label class="govuk-label" id="courseSearch">These are the courses you have listed on the course directory.</label>
+
                             </div>
+                            <div id="LarsSearch" class="cd-status-panel teal--border">
+                                <form id="zCodeSearch" asp-controller="ProviderCourses" asp-action="FilterCourses" method="post">
+                                    <div class="header-search-content">
+                                        <span asp-validation-for="@Model.Search" class="govuk-error-message"></span>
+                                        <div class="search-input-wrapper">
 
-                            <form class="govuk-!-margin-bottom-9" id="zCodeSearch" asp-controller="ProviderCourses" asp-action="FilterCourses" method="post">
-                                <div class="header-search-content">
-                                    <span asp-validation-for="@Model.Search" class="govuk-error-message"></span>
-                                    <div class="search-input-wrapper">
-
-
-                                        <input class="govuk-input search-input js-search-focus" asp-for="@Model.Search" type="text" aria-labelledby="courseSearch">
-                                        <div class="cd-c-search__item cd-search__submit-wrapper">
-                                            <button type="button" class=" submit" id="searchButton">Search</button>
-                                        </div>
+                                            <label class="govuk-label" id="courseSearch">These are the courses you have listed on the course directory.</label>
+                                            <div class="search--container">
+                                                <input class="govuk-input search-input js-search-focus" asp-for="@Model.Search" type="text" aria-labelledby="courseSearch">
+                                                <div class="cd-c-search__item cd-search__submit-wrapper">
+                                                    <button type="button" class=" submit" id="searchButton">Search</button>
+                                                </div>
+                                            </div>
+                                            </div>
                                     </div>
+                                </form>
                                 </div>
-                            </form>
 
-                            <div class="govuk-grid-row  ">
+                                <div class="govuk-grid-row  ">
 
-                                <div id="results">
+                                    <div id="results">
 
-                                    @await Component.InvokeAsync(nameof(ProviderCoursesResults), Model)
+                                        @await Component.InvokeAsync(nameof(ProviderCoursesResults), Model)
+                                    </div>
+
                                 </div>
 
                             </div>
-
-                        </div>
                     </div>
                 </div>
             </header>
