@@ -57,108 +57,104 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
 
             var allVenues = await _venueService.SearchAsync(new VenueSearchCriteria(UKPRN.ToString(), ""));
 
-            var getCoursesResult = _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(UKPRN)).Result;
-
-
-            // @ToDo: sort out logging and the unhappy path 
-            IEnumerable<Course> courses = null;
-            if (getCoursesResult.IsSuccess)
+            try
             {
-                if(getCoursesResult.HasValue)
+                IEnumerable<Course> courses = _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(UKPRN))
+                                                   .Result
+                                                   .Value
+                                                   .Value
+                                                   .SelectMany(o => o.Value)
+                                                   .SelectMany(i => i.Value);
+
+                IEnumerable<CourseRun> bulkUploadReadyToGoLive = courses.SelectMany(c => c.CourseRuns)
+                                                                           .Where(x => x.RecordStatus == RecordStatus.BulkUploadReadyToGoLive);
+
+                IEnumerable<Course> validCourses = courses.Where(c => c.IsValid);
+
+                IEnumerable<CourseValidationResult> results = _courseService.CourseValidationMessages(validCourses.Where(x => ((int)x.CourseStatus & (int)RecordStatus.Live) > 0), ValidationMode.DataQualityIndicator).Value;
+
+                IEnumerable<string> courseMessages = results.SelectMany(c => c.Issues);
+                IEnumerable<string> runMessages = results.SelectMany(c => c.RunValidationResults).SelectMany(r => r.Issues);
+                IEnumerable<string> messages = courseMessages.Concat(runMessages)
+                                                                     .GroupBy(i => i)
+                                                                     .Select(g => $"{ g.LongCount() } { g.Key }");
+
+                IEnumerable<Course> bulkUploadCoursesPending = courses.Where(x => ((int)x.CourseStatus & (int)RecordStatus.BulkUploadPending) > 0);
+                IEnumerable<CourseRun> bulkUploadRunsPending = courses.SelectMany(c => c.CourseRuns)
+                                                                        .Where(x => x.RecordStatus == RecordStatus.BulkUploadPending);
+
+
+                IEnumerable<CourseRun> migrationPendingCourses = courses.SelectMany(c => c.CourseRuns).Where(x => x.RecordStatus == RecordStatus.MigrationPending);
+
+                IEnumerable<Course> inValidCourses = courses.Where(c => c.IsValid == false);
+
+                actualModel.DisplayMigrationButton = false;
+                if (migrationPendingCourses.Count() > 0)
                 {
-                    var courseSearchResult = getCoursesResult.Value;
-                    if(null != courseSearchResult.Value)
+                    actualModel.DisplayMigrationButton = true;
+                }
+
+                actualModel.BulkUploadPendingCount = bulkUploadRunsPending.Count();
+                actualModel.BulkUploadReadyToGoLiveCount = bulkUploadReadyToGoLive.Count();
+                actualModel.BulkUploadTotalCount = bulkUploadCoursesPending.Count() + bulkUploadReadyToGoLive.Count();
+
+                IEnumerable<Services.BlobStorageService.BlobFileInfo> list = _blobStorageService.GetFileList(UKPRN + "/Bulk Upload/Files/").OrderByDescending(x => x.DateUploaded).ToList();
+                if (list.Any())
+                    actualModel.FileUploadDate = list.FirstOrDefault().DateUploaded.Value;
+
+
+                actualModel.BulkUpLoadHasErrors = bulkUploadCoursesPending?.SelectMany(c => c.BulkUploadErrors).Count() + bulkUploadRunsPending?.SelectMany(r => r.BulkUploadErrors).Count() > 0;
+
+                string BulkUpLoadErrorMessage = actualModel.BulkUploadTotalCount.ToString() + WebHelper.GetCourseTextToUse(actualModel.BulkUploadTotalCount) + " uploaded in a file on "
+                                                        + actualModel.FileUploadDate?.ToString("dd/MM/yyyy") + " have "
+                                                        + (bulkUploadCoursesPending?.SelectMany(c => c.BulkUploadErrors).Count() + bulkUploadRunsPending?.SelectMany(r => r.BulkUploadErrors).Count()).ToString()
+                                                        + " errors. Fix these to publish all of your courses.";
+
+                string BulkUpLoadNoErrorMessage = actualModel.BulkUploadTotalCount.ToString() + WebHelper.GetCourseTextToUse(actualModel.BulkUploadPendingCount) + " uploaded on " + actualModel.FileUploadDate?.ToString("dd/MM/yyyy") + " have no errors, but are not listed on the Course directory because you have not published them.";
+                actualModel.FileCount = list.Count();
+
+                int MigrationLiveCount = courses.Where(x => x.CourseStatus == RecordStatus.Live && x.CreatedBy == "DFC – Course Migration Tool")
+                                                .SelectMany(c => c.CourseRuns)
+                                                .Count(x => x.RecordStatus == RecordStatus.Live && x.CreatedBy == "DFC – Course Migration Tool");
+
+                actualModel.BulkUploadMessage = (actualModel.BulkUploadTotalCount > 0 & actualModel.BulkUploadPendingCount == 0) ? BulkUpLoadNoErrorMessage : BulkUpLoadErrorMessage;
+
+                actualModel.ValidationMessages = messages;
+                actualModel.VenueCount = 0;
+                if (allVenues.Value != null)
+                {
+                    actualModel.VenueCount = allVenues.Value.Value.Count(x => x.Status == VenueStatus.Live);
+                }
+
+                actualModel.PublishedCourseCount = courses
+                                                  .SelectMany(c => c.CourseRuns)
+                                                  .Count(x => x.RecordStatus == RecordStatus.Live);
+
+                var result = await _apprenticeshipService.GetApprenticeshipByUKPRN(UKPRN.ToString());
+
+
+                actualModel.PublishedApprenticeshipsCount = result.Value.Count(x => x.RecordStatus == RecordStatus.Live);
+
+                Dfc.CourseDirectory.Models.Models.Providers.Provider provider = FindProvider(UKPRN);
+                if (null != provider)
+                {
+                    if (null != provider.BulkUploadStatus)
                     {
-                        var outerGroupings = courseSearchResult.Value.SelectMany(o => o.Value);
-                        courses = outerGroupings.SelectMany(i => i.Value);
+                        actualModel.BulkUploadBackgroundInProgress = provider.BulkUploadStatus.InProgress;
+                        actualModel.BulkUploadBackgroundRowCount = provider.BulkUploadStatus.TotalRowCount;
+                        actualModel.BulkUploadBackgroundStartTimestamp = provider.BulkUploadStatus.StartedTimestamp;
+                        actualModel.BulkUploadPublishInProgress = provider.BulkUploadStatus.PublishInProgress;
                     }
+                    actualModel.ProviderType = provider.ProviderType;
                 }
+
             }
-
-
-
-            IEnumerable<CourseRun> bulkUploadReadyToGoLive = courses.SelectMany(c => c.CourseRuns)
-                                                                       .Where(x => x.RecordStatus == RecordStatus.BulkUploadReadyToGoLive);
-
-            IEnumerable<Course> validCourses = courses.Where(c => c.IsValid);
-
-            IEnumerable<CourseValidationResult> results = _courseService.CourseValidationMessages(validCourses.Where(x => ((int)x.CourseStatus & (int)RecordStatus.Live) > 0),ValidationMode.DataQualityIndicator).Value;
-
-            IEnumerable<string> courseMessages = results.SelectMany(c => c.Issues);
-            IEnumerable<string> runMessages = results.SelectMany(c => c.RunValidationResults).SelectMany(r => r.Issues);
-            IEnumerable<string> messages = courseMessages.Concat(runMessages)
-                                                                 .GroupBy(i => i)
-                                                                 .Select(g => $"{ g.LongCount() } { g.Key }");
-
-            IEnumerable<Course> bulkUploadCoursesPending = courses.Where(x => ((int)x.CourseStatus & (int)RecordStatus.BulkUploadPending) > 0);
-            IEnumerable<CourseRun> bulkUploadRunsPending = courses.SelectMany(c => c.CourseRuns)
-                                                                    .Where(x => x.RecordStatus == RecordStatus.BulkUploadPending);
-
-
-            IEnumerable<CourseRun> migrationPendingCourses = courses.SelectMany(c => c.CourseRuns).Where(x => x.RecordStatus == RecordStatus.MigrationPending);
-
-            IEnumerable<Course> inValidCourses = courses.Where(c => c.IsValid == false);
-
-            actualModel.DisplayMigrationButton = false;
-            if (migrationPendingCourses.Count() > 0)
+            catch (Exception ex)
             {
-                actualModel.DisplayMigrationButton = true;
+                //@ToDo: decide how to handle this - should at least be logged. Caused by NPE during call to course service
+                List<string> errors = new List<string>() { "There was a system problem whilst obtaining course data from the course directory. Please wait a few moments and refresh your browser page." };
+                actualModel.ValidationMessages = errors;
             }
-
-            actualModel.BulkUploadPendingCount = bulkUploadRunsPending.Count();
-            actualModel.BulkUploadReadyToGoLiveCount = bulkUploadReadyToGoLive.Count();
-            actualModel.BulkUploadTotalCount = bulkUploadCoursesPending.Count() + bulkUploadReadyToGoLive.Count();
-
-            IEnumerable<Services.BlobStorageService.BlobFileInfo> list = _blobStorageService.GetFileList(UKPRN + "/Bulk Upload/Files/").OrderByDescending(x => x.DateUploaded).ToList();
-            if (list.Any())
-                actualModel.FileUploadDate = list.FirstOrDefault().DateUploaded.Value;
-
-
-           actualModel.BulkUpLoadHasErrors = bulkUploadCoursesPending?.SelectMany(c => c.BulkUploadErrors).Count() + bulkUploadRunsPending?.SelectMany(r => r.BulkUploadErrors).Count() > 0;
-
-            string BulkUpLoadErrorMessage = actualModel.BulkUploadTotalCount.ToString() + WebHelper.GetCourseTextToUse(actualModel.BulkUploadTotalCount) + " uploaded in a file on "
-                                                    + actualModel.FileUploadDate?.ToString("dd/MM/yyyy") + " have "
-                                                    + (bulkUploadCoursesPending?.SelectMany(c => c.BulkUploadErrors).Count() + bulkUploadRunsPending?.SelectMany(r => r.BulkUploadErrors).Count()).ToString()
-                                                    + " errors. Fix these to publish all of your courses.";
-
-            string BulkUpLoadNoErrorMessage = actualModel.BulkUploadTotalCount.ToString() + WebHelper.GetCourseTextToUse(actualModel.BulkUploadPendingCount) + " uploaded on " + actualModel.FileUploadDate?.ToString("dd/MM/yyyy") + " have no errors, but are not listed on the Course directory because you have not published them.";
-            actualModel.FileCount = list.Count();
-
-            int MigrationLiveCount = courses.Where(x => x.CourseStatus == RecordStatus.Live && x.CreatedBy == "DFC – Course Migration Tool")
-                                            .SelectMany(c => c.CourseRuns)
-                                            .Count(x => x.RecordStatus == RecordStatus.Live && x.CreatedBy == "DFC – Course Migration Tool");
-
-            actualModel.BulkUploadMessage = (actualModel.BulkUploadTotalCount > 0 & actualModel.BulkUploadPendingCount == 0) ? BulkUpLoadNoErrorMessage : BulkUpLoadErrorMessage;
-
-            actualModel.ValidationMessages = messages;
-            actualModel.VenueCount = 0;
-            if (allVenues.Value != null)
-            {
-                actualModel.VenueCount = allVenues.Value.Value.Count(x => x.Status == VenueStatus.Live);
-            }
-
-            actualModel.PublishedCourseCount = courses
-                                              .SelectMany(c => c.CourseRuns)
-                                              .Count(x => x.RecordStatus == RecordStatus.Live);
-
-            var result = await _apprenticeshipService.GetApprenticeshipByUKPRN(UKPRN.ToString());
-
-
-            actualModel.PublishedApprenticeshipsCount = result.Value.Count(x => x.RecordStatus==RecordStatus.Live);
-
-            Dfc.CourseDirectory.Models.Models.Providers.Provider provider = FindProvider(UKPRN);
-            if (null != provider)
-            {
-                if(null != provider.BulkUploadStatus)
-                {
-                    actualModel.BulkUploadBackgroundInProgress = provider.BulkUploadStatus.InProgress;
-                    actualModel.BulkUploadBackgroundRowCount = provider.BulkUploadStatus.TotalRowCount;
-                    actualModel.BulkUploadBackgroundStartTimestamp = provider.BulkUploadStatus.StartedTimestamp;
-                    actualModel.BulkUploadPublishInProgress = provider.BulkUploadStatus.PublishInProgress;
-                }
-                actualModel.ProviderType = provider.ProviderType;
-            }
-
             return View("~/ViewComponents/Dashboard/Default.cshtml", actualModel);
         }
 

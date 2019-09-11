@@ -31,18 +31,6 @@
     </div>
 }
 
-@if (Model.BulkUploadBackgroundInProgress)
-{
-    @await Component.InvokeAsync(nameof(BackgroundBulkUploadNotification),
-        new BackgroundBulkUploadNotificationModel()
-        {
-            BulkUploadBackgroundInProgress = true,
-            BulkUploadBackgroundRowCount = Model.BulkUploadBackgroundRowCount,
-            BulkUploadBackgroundStartTimestamp = Model.BulkUploadBackgroundStartTimestamp,
-            BulkUploadPublishInProgress = Model.BulkUploadPublishInProgress,
-        } );
-}
-
 @if ((Model.BulkUploadReadyToGoLiveCount > 0 || Model.BulkUploadPendingCount > 0) && !Model.BulkUploadBackgroundInProgress)
 {
     var link = "";
@@ -70,6 +58,24 @@
         ClassType = "info-summary",
         Link = link
     })
+}
+else
+{
+
+    @if (Model.BulkUploadBackgroundInProgress)
+    {
+        @await Component.InvokeAsync(nameof(BackgroundBulkUploadNotification),
+            new BackgroundBulkUploadNotificationModel()
+            {
+                BulkUploadBackgroundInProgress = true,
+                BulkUploadBackgroundRowCount = Model.BulkUploadBackgroundRowCount,
+                BulkUploadBackgroundStartTimestamp = Model.BulkUploadBackgroundStartTimestamp,
+                BulkUploadPublishInProgress = Model.BulkUploadPublishInProgress,
+            } );
+    }
+
+
+
 }
 
 @if (Model.DisplayMigrationButton == true)

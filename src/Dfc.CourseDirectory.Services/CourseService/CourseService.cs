@@ -238,6 +238,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             Throw.IfNull(criteria, nameof(criteria));
             Throw.IfLessThan(0, criteria.UKPRN.Value, nameof(criteria.UKPRN.Value));
             _logger.LogMethodEnter();
+            HttpResponseMessage response = null;
 
             try
             {
@@ -250,7 +251,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 // use local version of httpclient as when we are called from the background worker thread we get socket exceptions
                 HttpClient httpClient = new HttpClient();
                 httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
-                var response = await httpClient.GetAsync(new Uri(_getYourCoursesUri.AbsoluteUri + "?UKPRN=" + criteria.UKPRN));
+                response = await httpClient.GetAsync(new Uri(_getYourCoursesUri.AbsoluteUri + "?UKPRN=" + criteria.UKPRN));
 
                 _logger.LogHttpResponseMessage("Get your courses service http response", response);
 
@@ -280,7 +281,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             catch (Exception e)
             {
                 _logger.LogException("Get your courses service unknown error.", e);
-                return Result.Fail<ICourseSearchResult>("Get your courses service unknown error.");
+                return Result.Fail<ICourseSearchResult>($"Get your courses service unknown error. {e.Message}");
             }
             finally
             {

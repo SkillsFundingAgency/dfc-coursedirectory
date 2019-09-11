@@ -18,7 +18,8 @@ else
 {
     @await Component.InvokeAsync(nameof(DashboardCard), new DashboardCardModel()
     {
-        Title = "Manage your courses",
+        Title = "Manage",
+        Title2 = "your courses",
         Value = Model.PublishedCourseCount,
         Description = @WebHelper.GetCourseTextToUse(Model.PublishedCourseCount),
         ValueHref = Url.Action("index", "providercourses"),
