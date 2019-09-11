@@ -31,28 +31,25 @@
     </div>
 }
 
-@if (Model.BulkUploadBackgroundInProgress)
-{
-    @await Component.InvokeAsync(nameof(BackgroundBulkUploadNotification),
-        new BackgroundBulkUploadNotificationModel()
-        {
-            BulkUploadBackgroundInProgress = true,
-            BulkUploadBackgroundRowCount = Model.BulkUploadBackgroundRowCount,
-            BulkUploadBackgroundStartTimestamp = Model.BulkUploadBackgroundStartTimestamp
-        } );
-}
-
 @if ((Model.BulkUploadReadyToGoLiveCount > 0 || Model.BulkUploadPendingCount > 0) && !Model.BulkUploadBackgroundInProgress)
 {
     var link = "";
-    @if (Model.BulkUpLoadHasErrors == true)
-    {
 
-        link = $"<a class='govuk-link' href='/Bulkupload/WhatDoYouWantToDoNext'>{Model.BulkUploadMessage}</a>";
+    if (Model.BulkUploadPublishInProgress)
+    {
+        link = $"{Model.BulkUploadReadyToGoLiveCount} courses being published";
     }
     else
     {
-        link = $"<a class='govuk-link' href='/PublishCourses/Index?publishMode=Bulkupload'>{Model.BulkUploadMessage}</a>";
+        @if (Model.BulkUpLoadHasErrors == true)
+        {
+
+            link = $"<a class='govuk-link' href='/Bulkupload/WhatDoYouWantToDoNext'>{Model.BulkUploadMessage}</a>";
+        }
+        else
+        {
+            link = $"<a class='govuk-link' href='/PublishCourses/Index?publishMode=Bulkupload'>{Model.BulkUploadMessage}</a>";
+        }
     }
 
     @await Component.InvokeAsync(nameof(Notification), new NotificationModel
@@ -61,6 +58,24 @@
         ClassType = "info-summary",
         Link = link
     })
+}
+else
+{
+
+    @if (Model.BulkUploadBackgroundInProgress)
+    {
+        @await Component.InvokeAsync(nameof(BackgroundBulkUploadNotification),
+            new BackgroundBulkUploadNotificationModel()
+            {
+                BulkUploadBackgroundInProgress = true,
+                BulkUploadBackgroundRowCount = Model.BulkUploadBackgroundRowCount,
+                BulkUploadBackgroundStartTimestamp = Model.BulkUploadBackgroundStartTimestamp,
+                BulkUploadPublishInProgress = Model.BulkUploadPublishInProgress,
+            } );
+    }
+
+
+
 }
 
 @if (Model.DisplayMigrationButton == true)

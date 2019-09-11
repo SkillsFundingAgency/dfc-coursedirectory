@@ -39,5 +39,6 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
         public bool BulkUploadBackgroundInProgress { get; set; }
         public DateTime? BulkUploadBackgroundStartTimestamp { get; set; }
         public int? BulkUploadBackgroundRowCount { get; set; }
+        public bool BulkUploadPublishInProgress { get; set; }
     }
 }
