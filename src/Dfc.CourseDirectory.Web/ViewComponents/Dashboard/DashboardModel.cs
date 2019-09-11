@@ -1,4 +1,5 @@
-﻿using Dfc.CourseDirectory.Models.Models.Providers;
+﻿using Dfc.CourseDirectory.Models.Enums;
+using Dfc.CourseDirectory.Models.Models.Providers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -40,5 +41,6 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
         public DateTime? BulkUploadBackgroundStartTimestamp { get; set; }
         public int? BulkUploadBackgroundRowCount { get; set; }
         public bool BulkUploadPublishInProgress { get; set; }
+        public EnvironmentType EnvironmentType { get; set; }
     }
 }

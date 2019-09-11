@@ -115,7 +115,20 @@ namespace Dfc.CourseDirectory.Models.Enums
         [Description("Migration Ready To Go Live")]
         MigrationReadyToGoLive = 512,
     }
+    public enum EnvironmentType
+    {
+        [Description("Undefined")]
+        Undefined = 0,
+        [Description("Development")]
+        Development = 1,
+        [Description("SIT")]
+        SIT = 2,
+        [Description("PreProduction")]
+        PreProduction = 3,
+        [Description("Production")]
+        Production = 4
 
+    }
     public enum TransferMethod
     {
         [Description("Undefined")]
