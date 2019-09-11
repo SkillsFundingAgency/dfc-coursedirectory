@@ -1174,7 +1174,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             var RadiusValue = 0;
 
-            RadiusValue = National ? 200 : Convert.ToInt32(Radius);
+            RadiusValue = National ? 600 : Convert.ToInt32(Radius);
 
 
             var DeliveryOptionsCombinedViewModel = _session.GetObject<DeliveryOptionsCombinedViewModel>("DeliveryOptionsCombinedViewModel") ??
