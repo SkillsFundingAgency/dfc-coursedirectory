@@ -11,9 +11,24 @@ namespace Dfc.CourseDirectory.Web.Tests
     public class EnvironmentHelperTests
     {
         [Fact]
+        public void When_Value_Is_Null_Return_Undefined()
+        {
+            var options = new OptionsWrapper<EnvironmentSettings>(new EnvironmentSettings());
+
+            // Arrange
+            var helperUnderTest = new EnvironmentHelper(options);
+
+            // Act
+            var environmentType = helperUnderTest.GetEnvironmentType();
+
+            // Assert
+
+            environmentType.Should().Be(EnvironmentType.Undefined);
+        }
+        [Fact]
         public void When_Value_Is_Invalid_Return_Undefined()
         {
-            var options = new OptionsWrapper<EnviromentSettings>(new EnviromentSettings
+            var options = new OptionsWrapper<EnvironmentSettings>(new EnvironmentSettings
             {
                 EnvironmentName = "2sdsfdsf"
             });
@@ -31,7 +46,7 @@ namespace Dfc.CourseDirectory.Web.Tests
         [Fact]
         public void When_Value_Is_Development_Return_Development()
         {
-            var options = new OptionsWrapper<EnviromentSettings>(new EnviromentSettings
+            var options = new OptionsWrapper<EnvironmentSettings>(new EnvironmentSettings
             {
                 EnvironmentName = "Development"
             });
@@ -48,7 +63,7 @@ namespace Dfc.CourseDirectory.Web.Tests
         [Fact]
         public void When_Value_Is_Development_With_Incorrect_Case_Return_Development()
         {
-            var options = new OptionsWrapper<EnviromentSettings>(new EnviromentSettings
+            var options = new OptionsWrapper<EnvironmentSettings>(new EnvironmentSettings
             {
                 EnvironmentName = "DeVeloPment"
             });
@@ -65,7 +80,7 @@ namespace Dfc.CourseDirectory.Web.Tests
         [Fact]
         public void When_Value_Is_SIT_Return_SIT()
         {
-            var options = new OptionsWrapper<EnviromentSettings>(new EnviromentSettings
+            var options = new OptionsWrapper<EnvironmentSettings>(new EnvironmentSettings
             {
                 EnvironmentName = "SIT"
             });
@@ -82,7 +97,7 @@ namespace Dfc.CourseDirectory.Web.Tests
         [Fact]
         public void When_Value_Is_PreProduction_Return_PreProduction()
         {
-            var options = new OptionsWrapper<EnviromentSettings>(new EnviromentSettings
+            var options = new OptionsWrapper<EnvironmentSettings>(new EnvironmentSettings
             {
                 EnvironmentName = "PreProduction"
             });
@@ -99,7 +114,7 @@ namespace Dfc.CourseDirectory.Web.Tests
         [Fact]
         public void When_Value_Is_Production_Return_Production()
         {
-            var options = new OptionsWrapper<EnviromentSettings>(new EnviromentSettings
+            var options = new OptionsWrapper<EnvironmentSettings>(new EnvironmentSettings
             {
                 EnvironmentName = "Production"
             });

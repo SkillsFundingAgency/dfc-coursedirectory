@@ -14,7 +14,7 @@ namespace Dfc.CourseDirectory.Web.Helpers
     public class EnvironmentHelper : IEnvironmentHelper
     {
         private readonly IEnvironmentSettings _environmentSettings;
-        public EnvironmentHelper(IOptions<EnviromentSettings> environmentSettings)
+        public EnvironmentHelper(IOptions<EnvironmentSettings> environmentSettings)
         {
             Throw.IfNull(environmentSettings, nameof(environmentSettings));
             _environmentSettings = environmentSettings.Value;

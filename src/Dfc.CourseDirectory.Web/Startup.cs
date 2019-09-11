@@ -156,7 +156,7 @@ namespace Dfc.CourseDirectory.Web
             services.AddScoped<IBulkUploadService, BulkUploadService>();
             services.Configure<BlobStorageSettings>(Configuration.GetSection(nameof(BlobStorageSettings)));
             services.AddScoped<IBlobStorageService, BlobStorageService>();
-            services.Configure<EnviromentSettings>(Configuration.GetSection(nameof(EnviromentSettings)));
+            services.Configure<EnvironmentSettings>(Configuration.GetSection(nameof(EnvironmentSettings)));
             services.AddScoped<IEnvironmentHelper, EnvironmentHelper>();
             services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
@@ -452,7 +452,7 @@ namespace Dfc.CourseDirectory.Web
                                 new Claim("user_id", userClaims.UserId.ToString()),
                                 new Claim(ClaimTypes.Role, userClaims.RoleName),
                                 new Claim("ProviderType", providerType),
-                                new Claim("OrganisationId", organisation.Id.ToString())
+                                new Claim("OrganisationId", organisation.Id.ToString().ToUpper())
                             });
 
                             _logger.LogWarning("User " + userClaims.UserName + " has been authorised");

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Dfc.CourseDirectory.Models.Models.Environment
 {
-    public class EnviromentSettings : IEnvironmentSettings
+    public class EnvironmentSettings : IEnvironmentSettings
     {
         public string EnvironmentName { get; set; }
     }
