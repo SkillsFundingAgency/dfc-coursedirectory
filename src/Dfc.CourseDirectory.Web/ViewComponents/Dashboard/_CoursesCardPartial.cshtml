@@ -8,8 +8,8 @@
     @await Component.InvokeAsync(nameof(DashboardCard), new DashboardCardModel()
     {
         Title = "Manage your courses",
-        Value = 0,
-        Description = $"{Model.BulkUploadReadyToGoLiveCount} courses being published",
+        Value = Model.BulkUploadReadyToGoLiveCount,
+        Description = $"courses being published",
         ValueHref = "",
         Links = null
     })
