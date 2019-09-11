@@ -55,6 +55,8 @@
                     var feUser = await Authorization.AuthorizeAsync(User, "Fe");
                     var apprenticeshipUser = await Authorization.AuthorizeAsync(User, "apprenticeship");
                     var adminUser = await Authorization.AuthorizeAsync(User, "admin");
+                    var helpdeskUser = await Authorization.AuthorizeAsync(User, "Helpdesk");
+                    
                     <nav>
                         <ul id="navigation" class="govuk-header__navigation" aria-label="Top Level Navigation">
                             @if (adminUser.Succeeded)

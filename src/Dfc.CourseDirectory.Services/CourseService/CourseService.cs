@@ -252,7 +252,6 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 HttpClient httpClient = new HttpClient();
                 httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
                 response = await httpClient.GetAsync(new Uri(_getYourCoursesUri.AbsoluteUri + "?UKPRN=" + criteria.UKPRN));
-
                 _logger.LogHttpResponseMessage("Get your courses service http response", response);
 
                 if (response.IsSuccessStatusCode)

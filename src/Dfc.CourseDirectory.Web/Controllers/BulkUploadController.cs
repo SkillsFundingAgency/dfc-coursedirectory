@@ -1,4 +1,3 @@
-﻿
 using System;
 using System.IO;
 using System.Linq;
@@ -410,6 +409,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         // @ToDo: ELSE failure here means we need a manual way to clear the flag
                     }
                     // @ToDo: ELSE failure here means we need a manual way to clear the flag
+                        }
+                    }
 
                     var finishTimestamp = DateTime.UtcNow;
                     _logger.LogInformation($"{finishTimestamp.ToString("yyyyMMddHHmmss")} background worker {guid} finished successfully for {tag}");
