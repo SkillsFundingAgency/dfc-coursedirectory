@@ -9,6 +9,7 @@
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Http
 @using Dfc.CourseDirectory.Models.Models.Providers
+@using Microsoft.AspNetCore.Hosting
 @model Dfc.CourseDirectory.Web.ViewComponents.Dashboard.DashboardModel
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
@@ -16,6 +17,7 @@
 @inject IAuthorizationService Authorization
 @inject IHttpContextAccessor HttpContextAccessor
 @inject IProviderService providerService
+@inject IHostingEnvironment env
 
 @if (Model.ValidationMessages != null && Model.ValidationMessages.Any())
 {
@@ -39,7 +41,7 @@
             BulkUploadBackgroundInProgress = true,
             BulkUploadBackgroundRowCount = Model.BulkUploadBackgroundRowCount,
             BulkUploadBackgroundStartTimestamp = Model.BulkUploadBackgroundStartTimestamp
-        } );
+        });
 }
 
 @if ((Model.BulkUploadReadyToGoLiveCount > 0 || Model.BulkUploadPendingCount > 0) && !Model.BulkUploadBackgroundInProgress)
@@ -79,6 +81,7 @@
     var superUser = await Authorization.AuthorizeAsync(User, "SuperUser");
     var feUser = await Authorization.AuthorizeAsync(User, "Fe");
     var apprenticeshipUser = await Authorization.AuthorizeAsync(User, "apprenticeship");
+    var providerSuperUser = await Authorization.AuthorizeAsync(User, "ProviderSuperUser");
 
     <h1 class="govuk-heading-xl cd-dashboard-title">Publish to the course directory</h1>
     <hr class="spacer" />
@@ -146,10 +149,15 @@
                         <li class="cd-homepage__list--item">
                             <a asp-controller="Provider" asp-action="Details" class="govuk-link">Manage your organisation details</a>
                         </li>
-                        @if (superUser.Succeeded)
+                        @if (providerSuperUser.Succeeded)
                         {
+
+
+                            string orgId = User.Claims.Where(c => c.Type == "OrganisationId")
+                                        .Select(c => c.Value).SingleOrDefault();
+
                             <li class="cd-homepage__list--item">
-                                <a href="https://signin-test-svc-as.azurewebsites.net/approvals/FD039496-0B39-4F75-994A-20B03E060255/users" target="_blank" class="govuk-link">
+                                <a href="https://signin-test-svc-as.azurewebsites.net/approvals/@orgId/users" target="_blank" class="govuk-link">
                                     Create a new DfE Sign-in account
                                 </a>
                             </li>
