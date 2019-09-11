@@ -26,7 +26,9 @@ using Dfc.CourseDirectory.Services.OnspdService;
 using Dfc.CourseDirectory.Services.ProviderService;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.Areas.Identity.Data;
+using Dfc.CourseDirectory.Web.BackgroundWorkers;
 using Dfc.CourseDirectory.Web.Helpers;
+using Dfc.CourseDirectory.Web.HostedServices;
 using Dfc.CourseDirectory.Web.ViewComponents;
 using IdentityModel.Client;
 using JWT.Algorithms;
@@ -201,6 +203,11 @@ namespace Dfc.CourseDirectory.Web
 
 
             services.AddTransient<ITagHelperComponent, GoogleAnalyticsTagHelperComponent>();
+
+
+            // Register the background worker helper
+            services.AddHostedService<QueuedHostedService>();
+            services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
 
             #region DFE Sign-in code
 
