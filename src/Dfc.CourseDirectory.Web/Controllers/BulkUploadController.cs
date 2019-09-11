@@ -1,4 +1,3 @@
-﻿
 using System;
 using System.IO;
 using System.Linq;
@@ -372,6 +371,19 @@ namespace Dfc.CourseDirectory.Web.Controllers
             // COUR-1864
             // Offload this long running activity to a background task.
             // @See:  https://docs.microsoft.com/en-us/aspnet/core/fundamentals/host/hosted-services?view=aspnetcore-2.2&tabs=visual-studio
+
+            // Find the provider and flag it as "publish in progress" outside of the queue otherwise the time lag is too great and 
+            // the UI displays incorrect info
+
+            // Flag the provider as "publish in progress".
+            var provider = FindProvider(UKPRN);
+            if (null == provider) throw new Exception($"Failed to find provider with UK PRN {UKPRN}");
+            if (null == provider.BulkUploadStatus) provider.BulkUploadStatus = new BulkUploadStatus();
+            provider.BulkUploadStatus.PublishInProgress = true;
+            var flagProviderResult = _providerService.UpdateProviderDetails(provider).Result;
+            if (flagProviderResult.IsFailure) throw new Exception($"Failed to set the 'publish in progress' flag for provider with UK PRN {UKPRN}.");
+
+            // Now queue the background work to publish the courses.
             _queue.QueueBackgroundWorkItem(async token =>
             {
                 var guid = Guid.NewGuid().ToString();
@@ -381,15 +393,22 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 try
                 {
                     _logger.LogInformation($"{startTimestamp.ToString("yyyyMMddHHmmss")} Starting background worker {guid} for {tag}");
+                    
+                    // Publish the bulk-uploaded courses.
                     var resultArchivingCourses = await _courseService.ChangeCourseRunStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.Live, (int)RecordStatus.Archived);
                     if (resultArchivingCourses.IsSuccess)
                     {
                         var resultGoingLive = await _courseService.ChangeCourseRunStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.BulkUploadReadyToGoLive, (int)RecordStatus.Live);
                         if(resultGoingLive.IsSuccess)
                         {
-
+                            // Clear the provider "publish in progress" flag.
+                            provider.BulkUploadStatus.PublishInProgress = false;
+                            var unflagProviderResult = await _providerService.UpdateProviderDetails(provider);
+                            if (unflagProviderResult.IsFailure) throw new Exception($"Failed to clear the 'publish in progress' flag for provider with UK PRN {UKPRN}.");
                         }
+                        // @ToDo: ELSE failure here means we need a manual way to clear the flag
                     }
+                    // @ToDo: ELSE failure here means we need a manual way to clear the flag
 
                     var finishTimestamp = DateTime.UtcNow;
                     _logger.LogInformation($"{finishTimestamp.ToString("yyyyMMddHHmmss")} background worker {guid} finished successfully for {tag}");
@@ -403,9 +422,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
 
             });
-            
+
             // @ToDo: we'll reach here before the above background task has completed, so need some UI work
-            return View("../Bulkupload/Complete/Index", new PublishCompleteViewModel() { NumberOfCoursesPublished = model.NumberOfCourses, Mode = PublishMode.BulkUpload });
+            return View("../PublishCourses/InProgress", new PublishCompleteViewModel() { NumberOfCoursesPublished = model.NumberOfCourses, Mode = PublishMode.BulkUpload, BackgroundPublishInProgress = provider.BulkUploadStatus.PublishInProgress });
         }
 
         [Authorize]

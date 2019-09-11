@@ -326,6 +326,16 @@ namespace Dfc.CourseDirectory.Models.Enums
         No = 2
     }
 
+    public enum WhatAreYouAwarding
+    {
+        [Description("Undefined")]
+        Undefined = 0,
+        [Description("Yes")]
+        Yes = 1,
+        [Description("No")]
+        No = 2
+    }
+
     public class Enums
     {
     }
