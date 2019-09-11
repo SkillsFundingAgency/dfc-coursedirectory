@@ -4,6 +4,6 @@ namespace Dfc.CourseDirectory.Web.ViewModels
 {
     public class RegulatedViewModel
     {
-        public RegulatedType RegulatedType { get; set; }
+        public WhatAreYouAwarding WhatAreYouAwarding { get; set; }
     }
 }
