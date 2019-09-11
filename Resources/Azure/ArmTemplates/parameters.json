@@ -121,6 +121,9 @@
     },
     "BlobStorageSettingsInlineProcessingThreshhold": {
       "value": "__BulkUploadInlineProcessingThreshhold__"
+    },
+    "EnvironmentName": {
+      "value": "__EnvironmentNameAppSetting__"
     }
   }
 }
