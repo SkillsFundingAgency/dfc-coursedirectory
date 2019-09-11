@@ -469,7 +469,7 @@ namespace Dfc.CourseDirectory.Web
                             _logger.LogWarning("Error authorising user", ex);
                             throw new SystemException("Unable to authorise user");
                         }
-
+                         
                         // so that we don't issue a session cookie but one with a fixed expiration
                         x.Properties.IsPersistent = true;
                         return Task.CompletedTask;
