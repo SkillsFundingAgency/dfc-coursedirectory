@@ -14,8 +14,8 @@
     {
         <div class="govuk-body">
             <main id="Cd-course-list" class="govuk-main-wrapper">
-                <span class="govuk-caption-xl">Course directory</span>
-                <h2 class="govuk-heading-xl">Your published courses</h2>
+                <span class="govuk-caption-l">Course directory</span>
+                <h2 class="govuk-heading-l">Your published courses</h2>
 
 
                 <p class="govuk-body-l">
@@ -79,6 +79,7 @@
                                 <p class="govuk-body-l">These are the courses you have listed on the course directory.</p>
                                 <label class="govuk-label" id="courseSearch">These are the courses you have listed on the course directory.</label>
                             </div>
+
                             <form class="govuk-!-margin-bottom-9" id="zCodeSearch" asp-controller="ProviderCourses" asp-action="FilterCourses" method="post">
                                 <div class="header-search-content">
                                     <span asp-validation-for="@Model.Search" class="govuk-error-message"></span>
