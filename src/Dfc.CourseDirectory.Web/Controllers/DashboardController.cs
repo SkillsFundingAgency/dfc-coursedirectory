@@ -27,7 +27,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly ICourseService _courseService;
         private readonly IBlobStorageService _blobStorageService;
-
+        private readonly IEnvironmentHelper _environmentHelper;
         private IHostingEnvironment _env;
         private ISession _session => _contextAccessor.HttpContext.Session;
 
@@ -36,19 +36,22 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 IHttpContextAccessor contextAccessor,
                 ICourseService courseService,
                 IBlobStorageService blobStorageService,
-                IHostingEnvironment env)
+                IHostingEnvironment env,
+                IEnvironmentHelper environmentHelper)
         {
             Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(contextAccessor, nameof(contextAccessor));
             Throw.IfNull(courseService, nameof(courseService));
             Throw.IfNull(blobStorageService, nameof(blobStorageService));
             Throw.IfNull(env, nameof(env));
+            Throw.IfNull(environmentHelper, nameof(environmentHelper));
 
             _logger = logger;
             _contextAccessor = contextAccessor;
             _courseService = courseService;
             _blobStorageService = blobStorageService;
             _env = env;
+            _environmentHelper = environmentHelper;
         }
 
         public static DashboardViewModel GetDashboardViewModel(ICourseService service, IBlobStorageService blobStorageService, int? UKPRN, string successHeader)
@@ -136,6 +139,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             vm.BulkUploadMessage = (vm.BulkUploadTotalCount > 0 & vm.BulkUploadPendingCount == 0) ? BulkUpLoadNoErrorMessage : BulkUpLoadErrorMessage;
             vm.MigrationErrorMessage = totalCourses.ToString() + WebHelper.GetCourseTextToUse(totalCourses) + " have been migrated to the new Course directory. You have " + vm.MigrationPendingCount.ToString() + WebHelper.GetCourseTextToUse(vm.MigrationPendingCount) + " with errors and these must be fixed before they can be published.";
             vm.MigrationOKMessage = MigrationLiveCount.ToString() + WebHelper.GetCourseTextToUse(MigrationLiveCount) + " have been migrated to the new Course directory. Any courses with a missing LARS have been deleted.";
+            
             return vm;
         }
 
@@ -144,7 +148,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             //_session.SetString("Option", "Dashboard");
             //return RedirectToAction("Index", "PublishCourses", new { publishMode = PublishMode.Migration });
-
             int? UKPRN = _session.GetInt32("UKPRN");
             if (!UKPRN.HasValue)
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
@@ -154,6 +157,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 _session.SetString("PendingCourses", "true");
             else
                 _session.SetString("PendingCourses", "false");
+            vm.EnvironmentType = _environmentHelper.GetEnvironmentType();
+
             return View(vm);
         }
     }

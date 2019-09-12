@@ -2,6 +2,7 @@
 using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Common.Settings;
 using Dfc.CourseDirectory.Models.Models.Auth;
+using Dfc.CourseDirectory.Models.Models.Environment;
 using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.AuthService;
@@ -157,7 +158,8 @@ namespace Dfc.CourseDirectory.Web
             services.AddScoped<IBulkUploadService, BulkUploadService>();
             services.Configure<BlobStorageSettings>(Configuration.GetSection(nameof(BlobStorageSettings)));
             services.AddScoped<IBlobStorageService, BlobStorageService>();
-            
+            services.Configure<EnvironmentSettings>(Configuration.GetSection(nameof(EnvironmentSettings)));
+            services.AddScoped<IEnvironmentHelper, EnvironmentHelper>();
             services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
@@ -173,6 +175,7 @@ namespace Dfc.CourseDirectory.Web
                 options.AddPolicy("ElevatedUserRole", policy => policy.RequireRole("Developer", "Helpdesk"));
                 options.AddPolicy("SuperUser", policy => policy.RequireRole("Developer", "Helpdesk", "Provider Superuser"));
                 options.AddPolicy("Helpdesk", policy => policy.RequireRole("Helpdesk"));
+                options.AddPolicy("ProviderSuperUser", policy => policy.RequireRole("Provider Superuser"));
                 options.AddPolicy("Provider", policy => policy.RequireRole("Provider User", "Provider Superuser"));
                 options.AddPolicy("Apprenticeship", policy =>
                     policy.RequireAssertion(x => (!x.User.IsInRole("Provider Superuser") && !x.User.IsInRole("Provider User")) ||
@@ -455,7 +458,8 @@ namespace Dfc.CourseDirectory.Web
                                 new Claim("UKPRN", userClaims.UKPRN),
                                 new Claim("user_id", userClaims.UserId.ToString()),
                                 new Claim(ClaimTypes.Role, userClaims.RoleName),
-                                new Claim("ProviderType", providerType)
+                                new Claim("ProviderType", providerType),
+                                new Claim("OrganisationId", organisation.Id.ToString().ToUpper())
                             });
 
                             _logger.LogWarning("User " + userClaims.UserName + " has been authorised");
@@ -465,7 +469,7 @@ namespace Dfc.CourseDirectory.Web
                             _logger.LogWarning("Error authorising user", ex);
                             throw new SystemException("Unable to authorise user");
                         }
-
+                         
                         // so that we don't issue a session cookie but one with a fixed expiration
                         x.Properties.IsPersistent = true;
                         return Task.CompletedTask;

@@ -254,6 +254,12 @@
       "metadata": {
         "description": "The limit of the number of items to process online.  If broached, offline processing of the bulk upload will occurr"
       }
+    },
+    "EnvironmentName": {
+      "type": "string",
+      "metadata": {
+        "description": "EnvironmentName to be used in the EnvironmentSetting__EnvironmentName config setting.  This may be different to the Azure DevOps environment"
+      }
     }
   },
   "variables": {
@@ -645,7 +651,10 @@
               {
                 "name": "BlobStorageSettings__InlineProcessingThreshold",
                 "value": "[parameters('BlobStorageSettingsInlineProcessingThreshhold')]"
-
+              },
+              {
+                "name": "EnvironmentSettings__EnvironmentName",
+                "value": "[parameters('environmentName')]"
               }
             ]
           },

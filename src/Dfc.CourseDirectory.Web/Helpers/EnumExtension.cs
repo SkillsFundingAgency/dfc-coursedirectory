@@ -37,6 +37,16 @@ namespace Dfc.CourseDirectory.Web.Helpers
                             .First()
                             .GetCustomAttribute<TAttribute>();
         }
-    
+        public static T ToEnum<T>(this string value, T defaultValue) where T : struct
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                return defaultValue;
+            }
+
+            T result;
+            return Enum.TryParse<T>(value, true, out result) ? result : defaultValue;
+        }
+
     }
 }
