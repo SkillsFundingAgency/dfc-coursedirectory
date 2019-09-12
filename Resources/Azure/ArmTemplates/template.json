@@ -655,6 +655,14 @@
               {
                 "name": "EnvironmentSettings__EnvironmentName",
                 "value": "[parameters('environmentName')]"
+              },
+              {
+                "name": "ApprenticeshipSettings__NationalRadius",
+                "value": "600"
+              },
+              {
+                "name": "ApprenticeshipSettings__SubRegionRadius",
+                "value": "10"
               }
             ]
           },
