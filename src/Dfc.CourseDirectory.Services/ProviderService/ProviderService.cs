@@ -53,8 +53,11 @@ namespace Dfc.CourseDirectory.Services.ProviderService
                 _logger.LogInformationObject("Provider search URI", _getProviderByPRNUri);
 
                 //var content = new StringContent(criteria.ToJson(), Encoding.UTF8, "application/json");
-                _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
-                var response = await _httpClient.GetAsync(_getProviderByPRNUri + $"?PRN={criteria.Search}");
+
+                // dependency injection not working for _httpClient when this is called from async code so use our own local version
+                HttpClient httpClient = new HttpClient();
+                httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
+                var response = await httpClient.GetAsync(_getProviderByPRNUri + $"?PRN={criteria.Search}");
 
                 _logger.LogHttpResponseMessage("Provider search service http response", response);
 
@@ -163,8 +166,10 @@ namespace Dfc.CourseDirectory.Services.ProviderService
                 var providerJson = JsonConvert.SerializeObject(provider);
 
                 var content = new StringContent(providerJson, Encoding.UTF8, "application/json");
-                _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
-                var response = await _httpClient.PostAsync(_updateProviderDetailsUri, content);
+                // threading vs DI issues
+                HttpClient httpClient = new HttpClient();
+                httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
+                var response = await httpClient.PostAsync(_updateProviderDetailsUri, content);
 
                 _logger.LogHttpResponseMessage("Provider update service http response", response);
 

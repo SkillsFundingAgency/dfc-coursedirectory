@@ -3,6 +3,7 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships
 @using Dfc.CourseDirectory.Web.ViewComponents.Notification
 @{
+    ViewData["Title"] = "Select delivery options"; 
     Layout = "_Layout_Your_Courses";
 }
 
@@ -90,33 +91,36 @@
 
                     })
                     <br/>
-                    <fieldset class="govuk-fieldset" >
+                    <fieldset class="govuk-fieldset">
                         <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
-                            @*<h3 class="govuk-fieldset__heading" id="govuk-label-@nameof(@Model.Radius)">
-                                    How is the training delivered at this location?
 
-                                </h3>*@
                         </legend>
-                        <span id="govuk-label-Radius" class="govuk-hint">
-                            How far are you willing to travel from the selected location?
+                        <div id="hiderange">
+                            <span id="govuk-label-Radius" class="govuk-hint">
+                                How far are you willing to travel from the selected location?
 
-                        </span>
-                        <div class="govuk-form-group">
+                            </span>
+                            <div class="govuk-form-group">
 
-                            <input class="govuk-input govuk-input--width-4 govuk-!-margin-right-3" asp-for="@Model.Radius" type="text"
-                                   val-required-message="Select How far you are willing to travel from selected location"
-                                   val-range-min="1"
-                                   val-range-max="999"
-                                   val-range-message="Miles must be  between 1 and 999"/>
-                            <span>miles</span>
+                                <input class="govuk-input govuk-input--width-4 govuk-!-margin-right-3" asp-for="@Model.Radius" type="text"
+                                       val-required-message="Select How far you are willing to travel from selected location"
+                                       val-range-min="1"
+                                       val-range-max="999"
+                                       val-range-message="Miles must be  between 1 and 999" />
+                                <span>miles</span>
+                            </div>
+                            <p>Or</p>
                         </div>
-                        <p>Or</p>
                         <div class="govuk-checkboxes__item">
                             <input class="govuk-checkboxes__input" type="checkbox" asp-for="@Model.National">
                             <label class="govuk-label govuk-checkboxes__label">
                                 Across England
                             </label>
+
                         </div>
+                        <label class="govuk-hint">
+                            Your apprenticeship will be advertised across the whole of England.
+                        </label>
                     </fieldset>
                 </div>
 
@@ -296,14 +300,15 @@
             }
 
             $("#National").change(function () {
+                  $("#Radius").val("");
                 if ($("#National")[0].checked) {
 
-                    //$("#Radius").text(200);
-                    $("#@nameof(Model.Radius)").val("200");
-                    $("#Radius").attr('readonly', true);
+                    $("#Radius").text("");
+                    $("#hiderange").hide();
                 } else {
                     $("#Radius").text("");
-                    $('#Radius').prop("readonly", false);
+                    $("#hiderange").show();
+
                 }
 
             });
@@ -327,6 +332,15 @@
                         validate();
                         if (validStates.every(isAllValid)) {
 
+                            var $radiusValue = 600;
+                            if ($("#National")[0].checked) {
+                                $radiusValue = 600;
+                            }
+                            else {
+                                 $radiusValue = $Radius.val();
+                            }
+                            
+
                             $.ajax({
                                 url: '/Apprenticeships/ContinueCombined',
                                 type: "GET",
@@ -336,7 +350,7 @@
                                     DayRelease: $("#DayRelease")[0].checked,
                                     BlockRelease: $("#BlockRelease")[0].checked,
                                     National: $("#National")[0].checked,
-                                    Radius: $Radius.val(),
+                                    Radius: $radiusValue,
                                     RowCount: rowCount,
                                     Mode:$("#Mode").val()
                                 },

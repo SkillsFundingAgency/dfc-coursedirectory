@@ -1,6 +1,7 @@
 ﻿@using Dfc.CourseDirectory.Models.Enums
 @using Dfc.CourseDirectory.Web.Helpers
 @{
+    ViewData["Title"] = "What do you want to do next?"; 
     Layout = "_Layout_Your_Courses";
 }
 
@@ -31,7 +32,6 @@
             <h2 class="govuk-heading-s">@Model.Message</h2>
         }
 
-        <br />
         <div class="govuk-form-group">
             <fieldset class="govuk-fieldset">
                 @if (!string.IsNullOrEmpty(Model.Message))

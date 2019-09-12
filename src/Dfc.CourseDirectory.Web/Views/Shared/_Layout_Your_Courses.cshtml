@@ -6,7 +6,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>GOV.UK - Course Directory Provider Portal</title>
+    <title>@ViewData["Title"]</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="blue" />
 
@@ -53,6 +53,21 @@
         $(document).ready(function () {
             window.GOVUKFrontend.initAll();
         });
+
+        $(".govuk-header__menu-button").on("click",
+            function () {
+                //alert("Clicked");
+                if ($(".govuk-header__navigation").is(":visible")) {
+                    $("#menu").removeClass("govuk-header__menu-button--open");
+                    $(".govuk-header__navigation").hide();
+                } else {
+
+                    $("#menu").addClass("govuk-header__menu-button--open");
+                    $(".govuk-header__navigation").show();
+                }
+
+               
+            });
     </script>
     <partial name="_GovukFooterPartial" />
 

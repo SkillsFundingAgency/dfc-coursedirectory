@@ -1,6 +1,7 @@
 ﻿@using Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships.ApprenticeshipSearch
 
 @{
+    ViewData["Title"] = "Find apprenticeship"; 
     Layout = "_Layout_Your_Courses";
 }
 
@@ -27,7 +28,8 @@
             <div>
                 <h1 class="govuk-heading-l govuk-!-margin-top-4">Find apprenticeship</h1>
                 <label class="govuk-label" id="searchLabel">Search by name or keyword for the apprenticeship this training is for.</label>
-
+                <label class="govuk-hint" id="hintlabel">Enter a minimum of 3 characters</label>
+               
 
                 @*<p class="govuk-body-l">Search by apprenticeship name or keyword</p>*@
             </div>

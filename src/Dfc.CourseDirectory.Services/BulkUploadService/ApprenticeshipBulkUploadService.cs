@@ -192,6 +192,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 {
                     throw new FieldValidationException(row.Context, fieldName, $"Validation error on row {row.Context.Row}. Field {fieldName} maximum length is 255 characters.");
                 }
+
                 var emailRegEx = @"^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$";
                 if (!Regex.IsMatch(value, emailRegEx))
                 {
@@ -207,17 +208,18 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                     throw new FieldValidationException(row.Context, fieldName, $"Validation error on row {row.Context.Row}. Field {fieldName} is required.");
                 }
                 value = RemoveWhiteSpace(value);
-                int? isNumeric = ValueMustBeNumericIfPresent(row, fieldName);
 
                 if (string.IsNullOrWhiteSpace(value))
                 {
                     throw new FieldValidationException(row.Context, fieldName, $"Validation error on row {row.Context.Row}. Field {fieldName} is required.");
                 }
-               
-
-                if(value.Length > 30)
+                if (value.Length > 30)
                 {
                     throw new FieldValidationException(row.Context, fieldName, $"Validation error on row {row.Context.Row}. Field {fieldName} maximum length is 30 characters.");
+                }
+                if (!int.TryParse(value, out int numericalValue))
+                {
+                    throw new FieldValidationException(row.Context, fieldName, $"Validation error on row {row.Context.Row}. Field {fieldName} must be numeric if present.");
                 }
                 return value;
             }

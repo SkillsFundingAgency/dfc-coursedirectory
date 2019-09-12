@@ -114,7 +114,7 @@
       "value": "__AseHostingEnvironmentName__"
     },
     "aseResourceGroup": {
-      "value": "__SharedResourceGroupName__"
+      "value": "__aseResourceGroup__"
     },
     "appServicePlanSize": {
       "value": "__aspPricingTierSize__"

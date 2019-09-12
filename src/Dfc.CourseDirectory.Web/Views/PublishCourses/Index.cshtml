@@ -1,4 +1,5 @@
 ﻿@{
+    ViewData["Title"] = "Publish Courses"; 
     Layout = "_Layout_Your_Courses";
 }
 
@@ -11,6 +12,7 @@
 
 @{
     var adminLogin = await Authorization.AuthorizeAsync(User, "Admin");
+    var helpdeskLogin = await Authorization.AuthorizeAsync(User, "Helpdesk");
 }
 
 <form asp-controller="PublishCourses" asp-action="Index" id="PublishCourses">
@@ -42,25 +44,21 @@
             </button>
         }
 
-        @if (adminLogin.Succeeded)
+        @if (adminLogin.Succeeded || helpdeskLogin.Succeeded)
+
         {
-            if (Model.PublishMode != Dfc.CourseDirectory.Models.Enums.PublishMode.DataQualityIndicator)
-            {
-                <div> @Html.ActionLink("Exit without publishing", "Index", "Home", new {}, new {@class = "govuk-link"})</div>
-            }
-
+            <div class="cta-container">
+                @if (Model.PublishMode == Dfc.CourseDirectory.Models.Enums.PublishMode.Migration)
+                {
+                    @Html.ActionLink("Delete All", "Delete", "Migration", new { }, new { @class = "govuk-button govuk-!-margin-right-3" })
+                }
+                @if (Model.PublishMode != Dfc.CourseDirectory.Models.Enums.PublishMode.DataQualityIndicator)
+                {
+                 @Html.ActionLink("Cancel", "Index", "Home", new { }, new { @class = "govuk-link" })
+                }
+            </div>
         }
-        else
-        {
-            @if (Model.PublishMode == Dfc.CourseDirectory.Models.Enums.PublishMode.Migration)
-             {
-                 <div> @Html.ActionLink("Delete All", "Delete", "Migration", new { }, new { @class = "govuk-button" })</div>
-             }
-        }
-
-
-
-    </div>
+        </div>
 
 </form>
 

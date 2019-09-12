@@ -2,6 +2,7 @@
 @using Dfc.CourseDirectory.Web.Helpers
 @model RegulatedViewModel
 @{
+    ViewData["Title"] = "What are you awarding with this course?"; 
     Layout = "_Layout_Your_Courses";
 }
 <form asp-controller="RegulatedQualification" asp-action="RegulatedTypeSelected" method="post" id="QualificationType">
@@ -17,23 +18,28 @@
 
         <div class="govuk-form-group">
             <fieldset class="govuk-fieldset">
-                <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+                <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
                     <h1 class="govuk-fieldset__heading">
-                        What are you awarding with this course?
+                        Are you awarding a regulated qualification with this course?
                     </h1>
+
                 </legend>
+                <span class="govuk-hint">Select one option</span>
                 <div class="govuk-radios" val-required-message="Choose 1 option to continue" id="SelectQualificationType">
 
                     <div class="govuk-radios__item">
-                        @Html.RadioButtonFor(m => m.RegulatedType, RegulatedType.Regulated, new { @class = "govuk-radios__input", id = RegulatedType.Regulated })
-                        <label class="govuk-label govuk-radios__label" for="@RegulatedType.Regulated">@WebHelper.GetEnumDescription(RegulatedType.Regulated)</label>
+                        @Html.RadioButtonFor(m => m.WhatAreYouAwarding, WhatAreYouAwarding.Yes, new { @class = "govuk-radios__input", id = WhatAreYouAwarding.Yes })
+                        <label class="govuk-label govuk-radios__label" for="@WhatAreYouAwarding.Yes">
+                            @WebHelper.GetEnumDescription(WhatAreYouAwarding.Yes)
+                        <span class="govuk-hint">The course leads to a qualification overseen by Ofqual or the QAA for Higher Education</span>
+                        </label>
                     </div>
                     <div class="govuk-radios__item">
-                        @Html.RadioButtonFor(m => m.RegulatedType, RegulatedType.NonRegulated, new { @class = "govuk-radios__input", id = RegulatedType.NonRegulated })
-                        <label class="govuk-label govuk-radios__label" for="@RegulatedType.NonRegulated">
-                            @WebHelper.GetEnumDescription(RegulatedType.NonRegulated) <span class="govuk-hint">
-                                                    Not overseen by Ofqual or the QAA for Higher Education
-                                                </span>
+                        @Html.RadioButtonFor(m => m.WhatAreYouAwarding, WhatAreYouAwarding.No, new { @class = "govuk-radios__input", id = WhatAreYouAwarding.No })
+                        <label class="govuk-label govuk-radios__label" for="@WhatAreYouAwarding.No">
+                            @WebHelper.GetEnumDescription(WhatAreYouAwarding.No) <span class="govuk-hint">
+    The course does not lead to a qualification overseen by Ofqual or the QAA for Higher Education
+</span>
                                             </label>
                     </div>
                     
@@ -42,7 +48,6 @@
   
 
     </div>
-<br />
 <button type="submit" class="govuk-button" id="next">Continue</button>
 </form>
 

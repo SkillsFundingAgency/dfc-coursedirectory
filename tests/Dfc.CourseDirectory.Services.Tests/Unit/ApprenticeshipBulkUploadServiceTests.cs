@@ -441,6 +441,25 @@ namespace Dfc.CourseDirectory.Services.Tests
                 errors.Should().HaveCount(1);
                 errors[0].Should().Be("Validation error on row 2. Field CONTACT_PHONE maximum length is 30 characters.");
             }
+            [Fact]
+            public void When_Field_CONTACT_PHONE_Is_NonNumerical_Then_ReturnError()
+            {
+                // Arrange
+
+                var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger);
+                Stream stream = CsvStreams.InvalidField_CONTACT_PHONE_NonNumeric();
+
+                // Act
+
+                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+
+                // Assert
+
+                errors.Should().NotBeNull();
+                errors.Should().HaveCount(1);
+                errors[0].Should().Be("Validation error on row 2. Field CONTACT_PHONE must be numeric if present.");
+            }
         }
     }
 }

@@ -21,6 +21,7 @@
 @using Dfc.CourseDirectory.Models.Models.Courses
 @using Dfc.CourseDirectory.Models.Models.Venues
 @{
+    ViewData["Title"] = "Add course details";
     Layout = "_Layout_Your_Courses";
 }
 @inject IHttpContextAccessor HttpContextAccessor
@@ -72,13 +73,14 @@
 
 @await Component.InvokeAsync(nameof(Notification), new NotificationModel
 {
-    NotificationTitle = "Qualification details",
+    NotificationTitle = "",
     NotificationMessage = @Model.LearnAimRefTitle + "<br>" + "Level: " + @Model.NotionalNVQLevelv2 + "<br> Awarding organisation: " + @Model.AwardOrgCode + "<br> LARS / QAN: " + @Model.LearnAimRef,
     ClassType = "info-summary"
 })
 <h1 class="govuk-heading-l" style="padding-top: 20px;">
-    Add course details
+    Course details
 </h1>
+<p class="govuk-body-l">Use these sections to provide details about this course.</p>
 <form asp-controller="AddCourse" asp-action="AddCourseRun" id="addCourseSection2">
 
     <div id="errorsummary" class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary" style="display: none;">
@@ -95,33 +97,33 @@
     @Html.HiddenFor(x => x.CourseRunId)
     <div id="sectionCourseName">
         @await Component.InvokeAsync(nameof(CourseName), new CourseNameModel
-        {
+    {
         CourseName = Model.CourseName,
         LabelText = "Course name",
-        HintText = "This is the name people will see when they search for your course.",
+        HintText = "Enter the name of the course you want people to see in the course directory (you can use or overwrite the default name we have created).",
         AriaDescribedBy = "Please enter the course name."
-        })
+    })
     </div>
 
     <div id="sectionCourseProviderReference">
         @await Component.InvokeAsync(nameof(CourseProviderReference), new CourseProviderReferenceModel
-        {
+    {
         CourseProviderReference = Model.CourseProviderReference,
-        LabelText = "ID",
-        HintText = "This is how you identify a course in your internal system.",
+        LabelText = "Your reference",
+        HintText = "Enter a reference that will help you identify this course in your internal systems.",
         AriaDescribedBy = "Please enter the ID for this course"
-        })
+    })
     </div>
 
     <div id="sectionDeliveryType">
         @await Component.InvokeAsync(nameof(DeliveryType), new DeliveryTypeModel
-        {
+    {
         DeliveryMode = Model.DeliveryMode,
-        LabelText = "Delivery Mode",
-        HintText = "How will this course be delivered",
+        LabelText = "Delivery mode",
+        HintText = "Select one option.",
         SecondHintText = "Select how you will deliver this course",
         AriaDescribedBy = "Select how you will deliver this course"
-        })
+    })
     </div>
 
     <div id="sectionStartDate">
@@ -138,56 +140,56 @@
             YearAriaDescribedBy = "",
             YearLabelText = "Year",
             AriaDescribedBy = "",
-            SpecifiedDateHintText = "e.g. 'For example, 30 9 2019",
+            SpecifiedDateHintText = "",
             FlexibleDateHintText = "Or select a flexible start date:",
             LabelText = "Start date",
             ValPastDateRef = DateTime.Now,
             ValPastDateMessage = "Start Date cannot be earlier than today’s date"
         })
     </div>
-<div class="govuk-form-group" id="VenueItemsCheckboxList" style="@Model.DeliveryMode.IfNotClassroomBasedDisplayNone()"> 
-<div class="govuk-form-group">
-    <fieldset class="govuk-fieldset" id="govuk-label-SelectVenueCheckBoxes">
-        <legend class="govuk-fieldset__legend govuk-fieldset__legend--s" style="font-weight: 100;">
-            <h1 class="govuk-fieldset__heading">
-                @Model.SelectVenue.LabelText
-            </h1>
-        </legend>
-        <span  class="govuk-hint">
-            @Model.SelectVenue.HintText
-        </span>
-        <div class="govuk-checkboxes" id="SelectVenueCheckBoxes" val-required-message="Select a venue">
-            
+    <div class="govuk-form-group" id="VenueItemsCheckboxList" style="@Model.DeliveryMode.IfNotClassroomBasedDisplayNone()">
+        <div class="govuk-form-group">
+            <fieldset class="govuk-fieldset" id="govuk-label-SelectVenueCheckBoxes">
+                <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+                    <h2 class="govuk-fieldset__heading govuk-heading-m">
+                        @Model.SelectVenue.LabelText
+                    </h2>
+                </legend>
+                <span class="govuk-hint">
+                    @Model.SelectVenue.HintText
+                </span>
+                <div class="govuk-checkboxes" id="SelectVenueCheckBoxes" val-required-message="Select a venue">
 
-            
 
-            @{ var i = 0; }
-            @if (Model.SelectVenue.VenueItems.Count() == 1)
-            {
-                <div class="govuk-checkboxes__item">
-                    <input class="govuk-checkboxes__input" id="VenueName-@i" for="VenueName-@i" name="SelectedVenues" type="checkbox" aria-labelledby="VenueNameLabel-@i" value="@Model.SelectVenue.VenueItems.First().Id" checked="checked" onclick="return false;"/>
-                    <label id="VenueNameLabel-@i" class="govuk-label govuk-checkboxes__label" for="VenueName-@i" aria-label="VenueName-@i">@Model.SelectVenue.VenueItems.First().VenueName</label>
+
+
+                    @{ var i = 0; }
+                    @if (Model.SelectVenue.VenueItems.Count() == 1)
+                    {
+                        <div class="govuk-checkboxes__item">
+                            <input class="govuk-checkboxes__input" id="VenueName-@i" for="VenueName-@i" name="SelectedVenues" type="checkbox" aria-labelledby="VenueNameLabel-@i" value="@Model.SelectVenue.VenueItems.First().Id" checked="checked" onclick="return false;" />
+                            <label id="VenueNameLabel-@i" class="govuk-label govuk-checkboxes__label" for="VenueName-@i" aria-label="VenueName-@i">@Model.SelectVenue.VenueItems.First().VenueName</label>
+                        </div>
+                    }
+                    else
+                    {
+                        foreach (var item in Model.SelectVenue.VenueItems)
+                        {
+                            i++;
+                            <div class="govuk-checkboxes__item">
+                                <input class="govuk-checkboxes__input" id="VenueName-@i" for="VenueName-@i" name="SelectedVenues" type="checkbox" aria-labelledby="VenueNameLabel-@i" value="@item.Id" @item.Checked.ThenNullableCheck() />
+                                <label id="VenueNameLabel-@i" class="govuk-label govuk-checkboxes__label" for="SelectedVenues-@i" aria-label="VenueName-@i">@item.VenueName</label>
+                            </div>
+
+
+                        }
+                    }
+
+                    <a href="#" class="govuk-link--no-visited-state" id="addNewVenue">The course location isn’t shown here</a>
                 </div>
-            }
-            else
-            {
-                foreach (var item in Model.SelectVenue.VenueItems)
-                {
-                    i++;
-                    <div class="govuk-checkboxes__item">
-                        <input class="govuk-checkboxes__input" id="VenueName-@i" for="VenueName-@i" name="SelectedVenues" type="checkbox" aria-labelledby="VenueNameLabel-@i" value="@item.Id" @item.Checked.ThenNullableCheck()/>
-                        <label id="VenueNameLabel-@i" class="govuk-label govuk-checkboxes__label" for="SelectedVenues-@i" aria-label="VenueName-@i">@item.VenueName</label>
-                    </div>
-
-
-                }
-            }
-
-            <a href="#" class="govuk-link" id="addNewVenue">Add a new venue</a>
+            </fieldset>
         </div>
-    </fieldset>
-</div>
-</div>
+    </div>
 
 
 
@@ -195,7 +197,7 @@
 
 
 
-<div class="govuk-form-group" id="RegionItemsCheckboxList" style="@Model.DeliveryMode.IfNotWorkBasedDisplayNone()">
+    <div class="govuk-form-group" id="RegionItemsCheckboxList" style="@Model.DeliveryMode.IfNotWorkBasedDisplayNone()">
         <div id="sectionRegions">
             @await Component.InvokeAsync(nameof(ChooseRegion), Model.ChooseRegion)
         </div>
@@ -205,8 +207,8 @@
         @await Component.InvokeAsync(nameof(UrlInput), new UrlInputModel
         {
         Url = Model.Url,
-        LabelText = "URL",
-        HintText = "Enter the URL for this course e.g. http://www.google.com",
+        LabelText = "External URL",
+        HintText = "Enter the URL for this course on your website. For example, http://www.provider.com/course.",
         AriaDescribedBy = "Enter the URL for this course"
         })
     </div>
@@ -217,7 +219,7 @@
         Cost = Model.Cost,
         CostDescription = Model.CostDescription,
         CostLabelText = "Cost",
-        CostHintText = "Enter the cost for the course in pounds and pence e.g. 125.00",
+        CostHintText = "Enter the cost of the course to the learner",
         CostAriaDescribedBy = "Enter the cost in pounds and pence",
         CostDescriptionLabelText = "Cost description",
         CostDescriptionHintText = "Enter details related to the cost of this course",
@@ -231,7 +233,7 @@
         DurationLength = Model.DurationLength,
         DurationUnit = Model.DurationUnit,
         LabelText = "Duration",
-        HintText = "Select the duration of the course",
+        HintText = "",
         AriaDescribedBy = "Select course duration"
         })
     </div>
@@ -240,8 +242,8 @@
         @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode.StudyMode), new StudyModeModel
         {
         StudyMode = Model.StudyMode,
-        LabelText = "Full time or part time",
-        HintText = "Select the attendance pattern"
+        LabelText = "Study pattern",
+        HintText = "Choose one option."
         })
     </div>
 
@@ -250,7 +252,7 @@
         {
         AttendanceMode = Model.AttendanceMode,
         LabelText = "Attendance",
-        HintText = "Select the time of day the course takes place"
+        HintText = "Choose one option."
         })
     </div>
 
@@ -269,14 +271,14 @@
                     <button name="submitButton" type="submit" class="govuk-button" id="publish" value="publish">
                         Summary
                     </button>
-                    <a class="govuk-link" href="#" id="goToSection1Link">Page 1</a>
+                    @*<a class="govuk-link" href="#" id="goToSection1Link">Page 1</a>*@
                 }
                 else
                 {
                     <button name="submitButton" type="submit" class="govuk-button" id="publish" value="publish">
                         Review your changes
                     </button>
-                    <a class="govuk-link" href="#" id="goToSection1Link">Page 1</a>
+                    @*<a class="govuk-link" href="#" id="goToSection1Link">Page 1</a>*@
                 }
                 break;
             case AddCoursePage.Summary:
@@ -329,7 +331,7 @@
             switch ($radioStartDate.find("input[type='radio']:checked").val()) {
             case "SpecifiedStartDate":
             {
-               
+
                 break;
             }
             case "FlexibleStartDate":
@@ -340,7 +342,7 @@
                 $("#Year").val("");
                 break;
             }
-           
+
             }
 
             switch ($radioDeliveryMode.find("input[type='radio']:checked").val()) {
@@ -384,7 +386,7 @@
                 $("#govuk-label-start_date").hide();
                 break;
             }
-           
+
             }
 
 
@@ -653,7 +655,7 @@
                     validStates.push(false);
                 }
                 else if ($duration.find("input").val().indexOf(".") >= 0) {
-                    
+
                     $duration.govUkDurationInput("invalidState", $duration.attr("val-decimal-message"));
                     var durationErrorHashLinks = $duration.govUkDurationInput("getErrorHashLinks");
                     $errorSummary.govUkErrorSummary("add", durationErrorHashLinks);
@@ -774,7 +776,7 @@
                 validate();
                 if (validStates.every(isAllValid)) {
                     //$("#addCourseSection2").submit();
-                    $("#addCourseSection2").trigger('submit'); 
+                    $("#addCourseSection2").trigger('submit');
                 }
             });
 

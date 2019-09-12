@@ -25,10 +25,16 @@
             <a href="/" class="govuk-header__link govuk-header__link--service-name">
                 Publish to the course directory
             </a>
+
+
             @if (User.Identity.IsAuthenticated)
             {
 
                 <a asp-action="Logout" asp-controller="Auth" id="submit-link" class="cd-right cd-header--link">Sign out</a>
+
+
+                <button style="float: right;margin-top:15px" id="menu" type="button" role="button" class="govuk-header__menu-button js-header-toggle" aria-label="Show or hide Top Level Navigation">Menu</button>
+
             }
             @{
                 //Handles lack of controller error
@@ -41,7 +47,6 @@
             }
 
 
-
             @{
                 if (User.Identity.IsAuthenticated)
                 {
@@ -50,23 +55,25 @@
                     var feUser = await Authorization.AuthorizeAsync(User, "Fe");
                     var apprenticeshipUser = await Authorization.AuthorizeAsync(User, "apprenticeship");
                     var adminUser = await Authorization.AuthorizeAsync(User, "admin");
+                    var helpdeskUser = await Authorization.AuthorizeAsync(User, "Helpdesk");
+                    
                     <nav>
-                        <ul id="navigation" class="govuk-header__navigation " aria-label="Top Level Navigation">
+                        <ul id="navigation" class="govuk-header__navigation" aria-label="Top Level Navigation">
                             @if (adminUser.Succeeded)
                             {
                                 <li class="govuk-header__navigation-item">
                                     <a class="govuk-header__link" href="~/searchprovider/">
-                                        Search
+                                        Search providers
                                     </a>
                                 </li>
                                 <li class="govuk-header__navigation-item">
                                     <a class="govuk-header__link" href="#">
-                                        Manage Users
+                                        Manage users
                                     </a>
                                 </li>
                                 <li class="govuk-header__navigation-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Report" ? "govuk-header__navigation-item--active" : "")">
                                     <a class="govuk-header__link" href="/Report/Index">
-                                        Reports
+                                        Your reports
                                     </a>
                                 </li>
                             }
@@ -82,7 +89,7 @@
 
                                     <li class="govuk-header__navigation-item @(ViewContext.RouteData.Values["Controller"].ToString() == "RegulatedQualification" || ViewContext.RouteData.Values["Controller"].ToString() == "Qualifications" || ViewContext.RouteData.Values["Controller"].ToString() == "UnregulatedCourses" ? "govuk-header__navigation-item--active" : "")">
                                         <a class="govuk-header__link" href="~/Qualifications/LandingOptions">
-                                            My courses
+                                            Your courses
                                         </a>
                                     </li>
 
@@ -93,7 +100,7 @@
 
                                     <li class="govuk-header__navigation-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Apprenticeships" || ViewContext.RouteData.Values["Controller"].ToString() == "ProviderApprenticeships" ? "govuk-header__navigation-item--active" : "")">
                                         <a class="govuk-header__link" href="~/Apprenticeships/WhatWouldYouLIkeToDo">
-                                            My apprenticeships training
+                                            Your apprenticeships training
                                         </a>
                                     </li>
 
@@ -102,7 +109,7 @@
 
                                 <li class="govuk-header__navigation-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Venues" || ViewContext.RouteData.Values["Controller"].ToString() == "VenueSearch" ? "govuk-header__navigation-item--active" : "")">
                                     <a class="govuk-header__link" href="~/Venues/LandingOptions">
-                                        My locations
+                                        Your locations
                                     </a>
                                 </li>
 
@@ -148,6 +155,7 @@
                 }
             }
         </div>
+       
     </div>
 
 </header>

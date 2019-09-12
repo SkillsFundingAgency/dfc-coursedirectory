@@ -86,28 +86,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
 
 
-            //var criteria = new LarsSearchCriteria(
-            //    "",
-            //    1,
-            //    1,
-            //    null,
-            //    (LarsSearchFacet[])Enum.GetValues(typeof(LarsSearchFacet)));
-
             var result = await _larsSearchService.SearchAsync(criteria);
 
             if (result.IsSuccess && result.HasValue)
             {
-                //var filters = _larsSearchHelper.GetLarsSearchFilterModels(result.Value.SearchFacets, requestModel);
-                //var items = _larsSearchHelper.GetLarsSearchResultItemModels(result.Value.Value);
-
-                //model = new LarsSearchResultModel(
-                //    requestModel.SearchTerm,
-                //    items,
-                //    Request.GetDisplayUrl(),
-                //    _larsSearchSettings.PageParamName,
-                //    _larsSearchSettings.ItemsPerPage,
-                //    result.Value.ODataCount ?? 0,
-                //    filters);
+                
                 if (result.Value.Value.Any())
                 {
                     model = result.Value.Value.Select(x => new ZCodeFoundResultModel()
@@ -143,7 +126,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 SectorSubjectAreaTier s = new SectorSubjectAreaTier();
                 var ssaLevel2 = s.SectorSubjectAreaTierAll.Where(t => t.Id == Level1Id).Select(y => y.SectorSubjectAreaTier2);
 
-                var defaultItem = new SelectListItem { Text = "Choose a sector area", Value = "" };
+                var defaultItem = new SelectListItem { Text = "Choose SSA level 2", Value = "" };
 
 
                 foreach (var level2 in ssaLevel2)
@@ -183,7 +166,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             if (ssaLevel1 != null && ssaLevel1.Count > 0)
             {
-                var defaultItem = new SelectListItem { Text = "Choose a sector area", Value = "" };
+                var defaultItem = new SelectListItem { Text = "Choose SSA level 1", Value = "" };
 
                 foreach (var level1 in ssaLevel1)
                 {
@@ -191,46 +174,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     levelOnes.Add(item);
                 };
 
-                levelOnes.Insert(0, defaultItem);
-                levelTwos.Insert(0, defaultItem);
+                levelOnes.Insert(0, new SelectListItem { Text = "Choose SSA level 1", Value = "" });
+                levelTwos.Insert(0, new SelectListItem { Text = "Choose SSA level 2", Value = "" });
             }
 
             model.Level1 = levelOnes;
             model.Level2 = levelTwos;
 
-            //Levels l = new Levels();
-            //var allLevels = l.AllLevels;
-
-            //if (allLevels != null && allLevels.Count > 0)
-            //{
-            //    var defaultItem = new SelectListItem { Text = "Select a level", Value = "" };
-            //    foreach (var level in allLevels)
-            //    {
-            //        var item = new SelectListItem { Text = level.Level, Value = level.Id };
-            //        levels.Add(item);
-            //    };
-
-            //    levels.Insert(0, defaultItem);
-            //}
-
-            //model.Levels = levels;
-
-            //Categories c = new Categories();
-            //var allCategogies = c.AllCategogies;
-
-            //if (allCategogies != null && allCategogies.Count > 0)
-            //{
-            //    var defaultItem = new SelectListItem { Text = "Select a category", Value = "" };
-            //    foreach (var category in allCategogies)
-            //    {
-            //        var item = new SelectListItem { Text = category.Category, Value = category.Id };
-            //        categories.Add(item);
-            //    };
-
-            //    categories.Insert(0, defaultItem);
-            //}
-
-            //model.Categories = categories;
 
             return View(model);
         }

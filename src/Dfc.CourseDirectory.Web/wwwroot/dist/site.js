@@ -1,5 +1,8 @@
 (function ($) {
 
+
+    
+    
     // Create the defaults once
     var pluginName = "govUkFormGroup",
         defaults = {
@@ -165,6 +168,11 @@
             else {
                 $errorElement = $(this.element)
             }
+        }
+
+        if ($(this.element).parent().hasClass("zcodesearch--container")) {
+            //var $t = $(this.element).closest(".govuk-form-group")
+            $errorElement = $(this.element).parent()
         }
        
 
@@ -1920,6 +1928,9 @@
     };
 
     $larsSearchTerm.on("keyup", debounce(doSearch, 400));
+
+   
+
 })(jQuery);
 /* eslint-disable no-console */
 

@@ -295,10 +295,10 @@ namespace Dfc.CourseDirectory.Web.Helpers
                     switch (item.Value.ToLower())
                     {
                         case "e":
-                            textValue = "Entry Level";
+                            textValue = "Entry level";
                             break;
                         case "x":
-                            textValue = "X - Not applicable/unknown";
+                            textValue = "Unknown or not applicable";
                             break;
                         case "h":
                             textValue = "Higher";

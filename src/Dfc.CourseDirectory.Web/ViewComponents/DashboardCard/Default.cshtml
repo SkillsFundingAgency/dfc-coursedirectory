@@ -4,29 +4,33 @@
 
 <div class="cd-migration-panel">
     <h2 class="cd-migration-panel__title">@Model.Title</h2>
+    <h2 class="cd-migration-panel__title">@Model.Title2</h2>
     <span class="cd-migration-panel__number">
         @if (Model.Value == 0)
         {
-            @Model.Value
+            @Model.Value <span>@Model.Description</span>
         }
         else
         {
-            <a href="@Model.ValueHref" class="govuk-link">@Model.Value</a>
+            <a href="@Model.ValueHref" class="govuk-link">@Model.Value <span> @Model.Description</span></a>
         }
-
     </span>
-    <span> @Model.Description</span><br />
+    @*<span> @Model.Description</span>*@
+    <br />
     <br />
 </div>
 
 <ul class="govuk-list cd-homepage__list">
-    @foreach (var item in Model.Links)
+    @if (null != Model.Links)
     {
-        if (!string.IsNullOrWhiteSpace(item.Href))
+        @foreach (var item in Model.Links)
         {
-            <li class="cd-homepage__list--item">
-                <a href="@item.Href" class="govuk-link">@item.Description</a>
-            </li>
+            if (!string.IsNullOrWhiteSpace(item.Href))
+            {
+                <li class="cd-homepage__list--item">
+                    <a href="@item.Href" class="govuk-link">@item.Description</a>
+                </li>
+            }
         }
     }
 </ul>

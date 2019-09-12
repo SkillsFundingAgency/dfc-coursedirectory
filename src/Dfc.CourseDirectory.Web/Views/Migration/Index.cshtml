@@ -8,7 +8,7 @@
 @inject IAuthorizationService Authorization
 
 @{
-    ViewData["Title"] = "Migration";
+    ViewData["Title"] = "Pending courses";
     var authorised = await Authorization.AuthorizeAsync(User, "Admin");
 }
 
