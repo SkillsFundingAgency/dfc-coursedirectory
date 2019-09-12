@@ -37,10 +37,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             public string VENUE { get; set; }
             public string RADIUS { get; set; }
             public string DELIVERY_MODE { get; set; }
-
-            [Name("ACROSS ENGLAND")]  // Is this genuine or just a mistake in the test file?
             public string ACROSS_ENGLAND { get; set; }
-
             public string NATIONAL_DELIVERY { get; set; }
             public string REGION { get; set; }
             public string SUB_REGION { get; set; }
@@ -61,7 +58,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 Map(m => m.CONTACT_PHONE).ConvertUsing((IReaderRow row) => { return Validate_CONTACT_PHONE(row); });
                 Map(m => m.CONTACT_URL).ConvertUsing((IReaderRow row) => { return Validate_CONTACT_URL(row); });
                 Map(m => m.DELIVERY_METHOD).ConvertUsing((IReaderRow row) => { return Validate_DELIVERY_METHOD(row); });
-                Map(m => m.VENUE);
+                Map(m => m.VENUE).ConvertUsing((IReaderRow row) => { return Validate_VENUE(row); });
                 Map(m => m.RADIUS);
                 Map(m => m.DELIVERY_MODE);
                 Map(m => m.ACROSS_ENGLAND).Optional();
@@ -262,14 +259,27 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                     throw new FieldValidationException(row.Context, fieldName, $"Validation error on row {row.Context.Row}. Field {fieldName} is required.");
                 }
 
-                var deliveryMode = value.ToEnum(DeliveryMode.Undefined);
-                if(deliveryMode == DeliveryMode.Undefined)
+                var deliveryMethod= value.ToEnum(DeliveryMode.Undefined);
+                if(deliveryMethod == DeliveryMode.Undefined)
                 {
                     throw new FieldValidationException(row.Context, fieldName, $"Validation error on row {row.Context.Row}. Field {fieldName} is invalid.");
                 }
                 return value;
             }
+            private string Validate_VENUE(IReaderRow row)
+            {
+                string dependentFieldName = "DELIVERY_METHOD";
+                string fieldName = "VENUE";
+                row.TryGetField(fieldName, out string value);
+                row.TryGetField(dependentFieldName, out string dependentValue);
 
+                var deliveryMethod = dependentFieldName.ToEnum(DeliveryMode.Undefined);
+                if (deliveryMethod == DeliveryMode.Undefined && !string.IsNullOrEmpty(value))
+                {
+                    throw new FieldValidationException(row.Context, fieldName, $"Validation error on row {row.Context.Row}. Field {dependentFieldName} is required for {fieldName} .");
+                }
+                return value;
+            }
         }
 
         private readonly ILogger<ApprenticeshipBulkUploadService> _logger;
@@ -320,6 +330,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                         while (csv.Read())
                         {
                             var record = csv.GetRecord<ApprenticeshipCsvRecord>();
+                            
                             processedRowCount++;
                         }
                     }
@@ -359,7 +370,6 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
             return errors;
         }
-
         private void ValidateHeader(CsvReader csv)
         {
             // Ignore whitespace in the headers.

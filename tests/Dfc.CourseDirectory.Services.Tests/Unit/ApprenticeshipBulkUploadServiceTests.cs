@@ -131,6 +131,11 @@ namespace Dfc.CourseDirectory.Services.Tests
                 errors[0].Should().Be("No apprenticeship data present in the file.");
             }
 
+           
+        }
+
+        public class ValidateCSVContents
+        {
             [Fact]
             public void When_Field_STANDARD_CODE_Is_PresentAndNonNumeric_Then_ReturnError()
             {
@@ -582,6 +587,24 @@ namespace Dfc.CourseDirectory.Services.Tests
 
                 errors.Should().BeNullOrEmpty();
                 errors.Should().HaveCount(0);
+            }
+            [Fact]
+            public void When_Field_DELIVERY_METHOD_Is_Invalid_Then_VENUE_Should_Return_Error()
+            {
+                // Arrange
+                var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger);
+                Stream stream = CsvStreams.Missing_DELIVERY_METHOD_For_VENUE();
+
+                // Act
+
+                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+
+                // Assert
+
+                errors.Should().NotBeNull();
+                errors.Should().HaveCount(1);
+                errors[0].Should().Be("Validation error on row 2. Field DELIVERY_METHOD is required for VENUE.");
             }
         }
     }
