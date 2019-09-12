@@ -121,6 +121,9 @@
     },
     "BlobStorageSettingsInlineProcessingThreshhold": {
       "value": "10000"
+    },
+    "EnvironmentName": {
+      "value": "Development"
     }
   }
 }
