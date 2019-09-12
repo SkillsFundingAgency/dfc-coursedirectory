@@ -15,6 +15,8 @@ namespace Dfc.CourseDirectory.Services.Interfaces.BulkUploadService
 
         List<Course> MappingBulkUploadCourseToCourse(List<BulkUploadCourse> bulkUploadcourses, string userId, out List<string> errors);
 
-        int CountCsvLines(Stream stream);        
+        int CountCsvLines(Stream stream);
+
+        int BulkUploadSecondsPerRecord { get; }
     }
 }
