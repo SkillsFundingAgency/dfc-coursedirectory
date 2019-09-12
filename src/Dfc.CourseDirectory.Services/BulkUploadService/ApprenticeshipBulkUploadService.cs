@@ -8,11 +8,19 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
+using Dfc.CourseDirectory.Models.Helpers;
 
 namespace Dfc.CourseDirectory.Services.BulkUploadService
 {
     public class ApprenticeshipBulkUploadService : IApprenticeshipBulkUploadService
     {
+        private enum DeliveryMode
+        {
+            Undefined = 0,
+            Classroom = 1,
+            Employer = 2,
+            Both = 3
+        }
         private class ApprenticeshipCsvRecord
         {
             public int? STANDARD_CODE { get; set; }
@@ -52,7 +60,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 Map(m => m.CONTACT_EMAIL).ConvertUsing((IReaderRow row) => { return Validate_CONTACT_EMAIL(row); }) ;
                 Map(m => m.CONTACT_PHONE).ConvertUsing((IReaderRow row) => { return Validate_CONTACT_PHONE(row); });
                 Map(m => m.CONTACT_URL).ConvertUsing((IReaderRow row) => { return Validate_CONTACT_URL(row); });
-                Map(m => m.DELIVERY_METHOD);
+                Map(m => m.DELIVERY_METHOD).ConvertUsing((IReaderRow row) => { return Validate_DELIVERY_METHOD(row); });
                 Map(m => m.VENUE);
                 Map(m => m.RADIUS);
                 Map(m => m.DELIVERY_MODE);
@@ -239,6 +247,25 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 if (Regex.IsMatch(value, urlRegex))
                 {
                     throw new FieldValidationException(row.Context, fieldName, $"Validation error on row {row.Context.Row}. Field {fieldName} format of URL is incorrect.");
+                }
+                return value;
+            }
+            private string Validate_DELIVERY_METHOD(IReaderRow row)
+            {
+                string fieldName = "DELIVERY_METHOD";
+                if (!row.TryGetField<string>(fieldName, out string value))
+                {
+                    throw new FieldValidationException(row.Context, fieldName, $"Validation error on row {row.Context.Row}. Field {fieldName} is required.");
+                }
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    throw new FieldValidationException(row.Context, fieldName, $"Validation error on row {row.Context.Row}. Field {fieldName} is required.");
+                }
+
+                var deliveryMode = value.ToEnum(DeliveryMode.Undefined);
+                if(deliveryMode == DeliveryMode.Undefined)
+                {
+                    throw new FieldValidationException(row.Context, fieldName, $"Validation error on row {row.Context.Row}. Field {fieldName} is invalid.");
                 }
                 return value;
             }

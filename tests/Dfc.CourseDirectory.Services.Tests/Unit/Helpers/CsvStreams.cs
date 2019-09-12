@@ -62,6 +62,21 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit.Helpers
             TextWriter sw = new StreamWriter(ms);
             sw.WriteLine("STANDARD_CODE,STANDARD_VERSION,FRAMEWORK_CODE,FRAMEWORK_PROG_TYPE,FRAMEWORK_PATHWAY_CODE,APPRENTICESHIP_INFORMATION,APPRENTICESHIP_WEBPAGE,CONTACT_EMAIL,CONTACT_PHONE,CONTACT_URL,DELIVERY_METHOD,VENUE,RADIUS,DELIVERY_MODE,ACROSS ENGLAND, NATIONAL_DELIVERY, REGION, SUB_REGION");
             sw.WriteLine("157,1,,,,some text some text some text,,service@college.org.uk,0121 345 6789,,CLASSROOM,Main College,,Day;Block,,,,");
+
+            sw.Flush();
+
+            return ms;
+        }
+        // File with Empty APPRENTICESHIP URL
+        public static Stream Valid_Row_DELIVERY_METHOD_Case_Insensitive_Correct_Values()
+        {
+            MemoryStream ms = new MemoryStream();
+
+            TextWriter sw = new StreamWriter(ms);
+            sw.WriteLine("STANDARD_CODE,STANDARD_VERSION,FRAMEWORK_CODE,FRAMEWORK_PROG_TYPE,FRAMEWORK_PATHWAY_CODE,APPRENTICESHIP_INFORMATION,APPRENTICESHIP_WEBPAGE,CONTACT_EMAIL,CONTACT_PHONE,CONTACT_URL,DELIVERY_METHOD,VENUE,RADIUS,DELIVERY_MODE,ACROSS ENGLAND, NATIONAL_DELIVERY, REGION, SUB_REGION");
+            sw.WriteLine("157,1,,,,some text some text some text,,service@college.org.uk,0121 345 6789,,CLASsRooM,Main College,,Day;Block,,,,");
+            sw.WriteLine("157,1,,,,some text some text some text,,service@college.org.uk,0121 345 6789,,EmPloYeR,Main College,,Day;Block,,,,");
+            sw.WriteLine("157,1,,,,some text some text some text,,service@college.org.uk,0121 345 6789,,BoTh,Main College,,Day;Block,,,,");
             sw.Flush();
 
             return ms;
@@ -323,6 +338,28 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit.Helpers
             sw.WriteLine("157,1,,,,some text some text some text, http://www.bbc.com,service@college.org.uk,0121 345 6789,www.te@stemaulcd.org,CLASSROOM,Main College,,Day;Block,,,,");
             sw.Flush();
 
+
+            return ms;
+        }
+        public static Stream InvalidField_DELIVERY_METHOD_Missing()
+        {
+            MemoryStream ms = new MemoryStream();
+
+            TextWriter sw = new StreamWriter(ms);
+            sw.WriteLine("STANDARD_CODE,STANDARD_VERSION,FRAMEWORK_CODE,FRAMEWORK_PROG_TYPE,FRAMEWORK_PATHWAY_CODE,APPRENTICESHIP_INFORMATION,APPRENTICESHIP_WEBPAGE,CONTACT_EMAIL,CONTACT_PHONE,CONTACT_URL,DELIVERY_METHOD,VENUE,RADIUS,DELIVERY_MODE,ACROSS ENGLAND, NATIONAL_DELIVERY, REGION, SUB_REGION");
+            sw.WriteLine("157,1,,,,some text some text some text, http://www.bbc.com,service@college.org.uk,0121 345 6789,http://www.bbc.com/contactus,,Main College,,Day;Block,,,,");
+            sw.Flush();
+
+            return ms;
+        }
+        public static Stream InvalidField_DELIVERY_METHOD_Invalid()
+        {
+            MemoryStream ms = new MemoryStream();
+
+            TextWriter sw = new StreamWriter(ms);
+            sw.WriteLine("STANDARD_CODE,STANDARD_VERSION,FRAMEWORK_CODE,FRAMEWORK_PROG_TYPE,FRAMEWORK_PATHWAY_CODE,APPRENTICESHIP_INFORMATION,APPRENTICESHIP_WEBPAGE,CONTACT_EMAIL,CONTACT_PHONE,CONTACT_URL,DELIVERY_METHOD,VENUE,RADIUS,DELIVERY_MODE,ACROSS ENGLAND, NATIONAL_DELIVERY, REGION, SUB_REGION");
+            sw.WriteLine("157,1,,,,some text some text some text, http://www.bbc.com,service@college.org.uk,0121 345 6789,http://www.bbc.com/contactus,invalidDeliveryMethod,Main College,,Day;Block,,,,");
+            sw.Flush();
 
             return ms;
         }

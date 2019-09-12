@@ -529,6 +529,60 @@ namespace Dfc.CourseDirectory.Services.Tests
                 errors.Should().HaveCount(1);
                 errors[0].Should().Be("Validation error on row 2. Field CONTACT_URL format of URL is incorrect.");
             }
+            [Fact]
+            public void When_Field_DELIVERY_METHOD_Is_Missing_Then_ReturnError()
+            {
+                // Arrange
+
+                var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger);
+                Stream stream = CsvStreams.InvalidField_DELIVERY_METHOD_Missing();
+
+                // Act
+
+                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+
+                // Assert
+
+                errors.Should().NotBeNull();
+                errors.Should().HaveCount(1);
+                errors[0].Should().Be("Validation error on row 2. Field DELIVERY_METHOD is required.");
+            }
+            [Fact]
+            public void When_Field_DELIVERY_METHOD_Is_Invalid_Then_ReturnError()
+            {
+                // Arrange
+                var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger);
+                Stream stream = CsvStreams.InvalidField_DELIVERY_METHOD_Invalid();
+
+                // Act
+
+                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+
+                // Assert
+
+                errors.Should().NotBeNull();
+                errors.Should().HaveCount(1);
+                errors[0].Should().Be("Validation error on row 2. Field DELIVERY_METHOD is invalid.");
+            }
+            [Fact]
+            public void When_Field_DELIVERY_METHOD_Is_valid_Then_Return_No_Error()
+            {
+                // Arrange
+                var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger);
+                Stream stream = CsvStreams.Valid_Row_DELIVERY_METHOD_Case_Insensitive_Correct_Values();
+
+                // Act
+
+                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+
+                // Assert
+
+                errors.Should().BeNullOrEmpty();
+                errors.Should().HaveCount(0);
+            }
         }
     }
 }
