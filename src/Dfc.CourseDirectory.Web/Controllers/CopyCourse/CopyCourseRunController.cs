@@ -368,7 +368,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> Index([FromBody] CopyCourseRunSaveViewModel model)
+        public async Task<IActionResult> Index( CopyCourseRunSaveViewModel model)
         {
             int? UKPRN;
 
