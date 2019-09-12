@@ -460,6 +460,75 @@ namespace Dfc.CourseDirectory.Services.Tests
                 errors.Should().HaveCount(1);
                 errors[0].Should().Be("Validation error on row 2. Field CONTACT_PHONE must be numeric if present.");
             }
+            [Fact]
+            public void When_Field_CONTACT_URL_Is_Empty_Then_ReturnSuccess()
+            {
+                // Arrange
+
+                var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger);
+                Stream stream = CsvStreams.Valid_Row_Empty_CONTRACT_URL();
+
+                // Act
+
+                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+
+                // Assert
+
+                errors.Should().BeNullOrEmpty();
+                errors.Should().HaveCount(0);
+            }
+            [Fact]
+            public void When_Field_CONTACT_URL_Is_Over_255Characters_Then_Return_Error()
+            {
+                // Arrange
+
+                var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger);
+                Stream stream = CsvStreams.InvalidField_CONTACT_URL_256_Chars();
+
+                // Act
+
+                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+
+                // Assert
+
+                errors.Should().NotBeNull();
+                errors.Should().HaveCount(1);
+                errors[0].Should().Be("Validation error on row 2. Field CONTACT_URL maximum length is 255 characters.");
+            }
+            [Fact]
+            public void When_Field_CONTACT_URL_Is_Contains_Space_Then_Return_Error()
+            {
+                // Arrange
+                var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger);
+                Stream stream = CsvStreams.InvalidField_CONTACT_URL_Invalid_URL_Space();
+
+                // Act
+                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+
+                // Assert
+                errors.Should().NotBeNull();
+                errors.Should().HaveCount(1);
+                errors[0].Should().Be("Validation error on row 2. Field CONTACT_URL format of URL is incorrect.");
+            }
+            [Fact]
+            public void When_Field_CONTACT_URL_Invalid_Format_Then_Return_Error()
+            {
+                // Arrange
+                var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger);
+                Stream stream = CsvStreams.InvalidField_CONTACT_URL_Invalid_URL_Format();
+
+                // Act
+                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+
+                // Assert
+                errors.Should().NotBeNull();
+                errors.Should().HaveCount(1);
+                errors[0].Should().Be("Validation error on row 2. Field CONTACT_URL format of URL is incorrect.");
+            }
         }
     }
 }

@@ -54,7 +54,18 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit.Helpers
 
             return ms;
         }
+        // File with Empty APPRENTICESHIP URL
+        public static Stream Valid_Row_Empty_CONTRACT_URL()
+        {
+            MemoryStream ms = new MemoryStream();
 
+            TextWriter sw = new StreamWriter(ms);
+            sw.WriteLine("STANDARD_CODE,STANDARD_VERSION,FRAMEWORK_CODE,FRAMEWORK_PROG_TYPE,FRAMEWORK_PATHWAY_CODE,APPRENTICESHIP_INFORMATION,APPRENTICESHIP_WEBPAGE,CONTACT_EMAIL,CONTACT_PHONE,CONTACT_URL,DELIVERY_METHOD,VENUE,RADIUS,DELIVERY_MODE,ACROSS ENGLAND, NATIONAL_DELIVERY, REGION, SUB_REGION");
+            sw.WriteLine("157,1,,,,some text some text some text,,service@college.org.uk,0121 345 6789,,CLASSROOM,Main College,,Day;Block,,,,");
+            sw.Flush();
+
+            return ms;
+        }
         #endregion Happy Files
 
         #region Unhappy Files
@@ -276,6 +287,42 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit.Helpers
             sw.WriteLine("STANDARD_CODE,STANDARD_VERSION,FRAMEWORK_CODE,FRAMEWORK_PROG_TYPE,FRAMEWORK_PATHWAY_CODE,APPRENTICESHIP_INFORMATION,APPRENTICESHIP_WEBPAGE,CONTACT_EMAIL,CONTACT_PHONE,CONTACT_URL,DELIVERY_METHOD,VENUE,RADIUS,DELIVERY_MODE,ACROSS ENGLAND, NATIONAL_DELIVERY, REGION, SUB_REGION");
             sw.WriteLine("157,1,,,,some text some text some text, http://www.bbc.com,service@college.org.uk,thisisnotanumber,http://www.bbc.com/contactus,CLASSROOM,Main College,,Day;Block,,,,");
             sw.Flush();
+
+            return ms;
+        }
+        public static Stream InvalidField_CONTACT_URL_256_Chars()
+        {
+            MemoryStream ms = new MemoryStream();
+
+            TextWriter sw = new StreamWriter(ms);
+            sw.WriteLine("STANDARD_CODE,STANDARD_VERSION,FRAMEWORK_CODE,FRAMEWORK_PROG_TYPE,FRAMEWORK_PATHWAY_CODE,APPRENTICESHIP_INFORMATION,APPRENTICESHIP_WEBPAGE,CONTACT_EMAIL,CONTACT_PHONE,CONTACT_URL,DELIVERY_METHOD,VENUE,RADIUS,DELIVERY_MODE,ACROSS ENGLAND, NATIONAL_DELIVERY, REGION, SUB_REGION");
+            sw.WriteLine("157,1,,,,some text some text some text, http://www.bbc.com,service@college.org.uk,0121 345 6789,Here is an example sentence that is 100 characters long if you don't put a space after the fullstop.Here is an example sentence that is 100 characters long if you don't put a space after the fullstop.Here is an example sentence that is 100 characters if yo,CLASSROOM,Main College,,Day;Block,,,,");
+            sw.Flush();
+
+
+            return ms;
+        }
+        public static Stream InvalidField_CONTACT_URL_Invalid_URL_Space()
+        {
+            MemoryStream ms = new MemoryStream();
+
+            TextWriter sw = new StreamWriter(ms);
+            sw.WriteLine("STANDARD_CODE,STANDARD_VERSION,FRAMEWORK_CODE,FRAMEWORK_PROG_TYPE,FRAMEWORK_PATHWAY_CODE,APPRENTICESHIP_INFORMATION,APPRENTICESHIP_WEBPAGE,CONTACT_EMAIL,CONTACT_PHONE,CONTACT_URL,DELIVERY_METHOD,VENUE,RADIUS,DELIVERY_MODE,ACROSS ENGLAND, NATIONAL_DELIVERY, REGION, SUB_REGION");
+            sw.WriteLine("157,1,,,,some text some text some text, http://www.bbc.com,service@college.org.uk,0121 345 6789,www.testemaul cd.org,CLASSROOM,Main College,,Day;Block,,,,");
+            sw.Flush();
+
+
+            return ms;
+        }
+        public static Stream InvalidField_CONTACT_URL_Invalid_URL_Format()
+        {
+            MemoryStream ms = new MemoryStream();
+
+            TextWriter sw = new StreamWriter(ms);
+            sw.WriteLine("STANDARD_CODE,STANDARD_VERSION,FRAMEWORK_CODE,FRAMEWORK_PROG_TYPE,FRAMEWORK_PATHWAY_CODE,APPRENTICESHIP_INFORMATION,APPRENTICESHIP_WEBPAGE,CONTACT_EMAIL,CONTACT_PHONE,CONTACT_URL,DELIVERY_METHOD,VENUE,RADIUS,DELIVERY_MODE,ACROSS ENGLAND, NATIONAL_DELIVERY, REGION, SUB_REGION");
+            sw.WriteLine("157,1,,,,some text some text some text, http://www.bbc.com,service@college.org.uk,0121 345 6789,www.te@stemaulcd.org,CLASSROOM,Main College,,Day;Block,,,,");
+            sw.Flush();
+
 
             return ms;
         }

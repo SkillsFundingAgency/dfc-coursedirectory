@@ -51,7 +51,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 Map(m => m.APPRENTICESHIP_WEBPAGE).ConvertUsing((IReaderRow row) => { return Validate_APPRENTICESHIP_WEBPAGE(row); }) ;
                 Map(m => m.CONTACT_EMAIL).ConvertUsing((IReaderRow row) => { return Validate_CONTACT_EMAIL(row); }) ;
                 Map(m => m.CONTACT_PHONE).ConvertUsing((IReaderRow row) => { return Validate_CONTACT_PHONE(row); });
-                Map(m => m.CONTACT_URL);
+                Map(m => m.CONTACT_URL).ConvertUsing((IReaderRow row) => { return Validate_CONTACT_URL(row); });
                 Map(m => m.DELIVERY_METHOD);
                 Map(m => m.VENUE);
                 Map(m => m.RADIUS);
@@ -223,6 +223,26 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 }
                 return value;
             }
+            private string Validate_CONTACT_URL(IReaderRow row)
+            {
+                string fieldName = "CONTACT_URL";
+                row.TryGetField(fieldName, out string value);
+                if(string.IsNullOrEmpty(value))
+                {
+                    return value;
+                }
+                if (value.Length > 255)
+                {
+                    throw new FieldValidationException(row.Context, fieldName, $"Validation error on row {row.Context.Row}. Field {fieldName} maximum length is 255 characters.");
+                }
+                var urlRegex = @"^([-a-zA-Z0-9]{2,256}\.)+[a-z]{2,10}(\/.*)?";
+                if (Regex.IsMatch(value, urlRegex))
+                {
+                    throw new FieldValidationException(row.Context, fieldName, $"Validation error on row {row.Context.Row}. Field {fieldName} format of URL is incorrect.");
+                }
+                return value;
+            }
+
         }
 
         private readonly ILogger<ApprenticeshipBulkUploadService> _logger;
