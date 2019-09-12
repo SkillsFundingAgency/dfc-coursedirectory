@@ -27,15 +27,18 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
         private readonly IBlobStorageService _blobStorageService;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IProviderService _providerService;
+        private readonly IEnvironmentHelper _environmentHelper;
         private ISession _session => _contextAccessor.HttpContext.Session;
 
-        public Dashboard(ICourseService courseService, IVenueService venueService, IHttpContextAccessor contextAccessor, IBlobStorageService blobStorageService, IApprenticeshipService apprenticeshipService, IProviderService providerService)
+        public Dashboard(ICourseService courseService, IVenueService venueService, IHttpContextAccessor contextAccessor, IBlobStorageService blobStorageService, IApprenticeshipService apprenticeshipService, IProviderService providerService,
+            IEnvironmentHelper environmentHelper)
         {
             Throw.IfNull(courseService, nameof(courseService));
             Throw.IfNull(apprenticeshipService, nameof(apprenticeshipService));
             Throw.IfNull(venueService, nameof(venueService));
             Throw.IfNull(blobStorageService, nameof(blobStorageService));
             Throw.IfNull(providerService, nameof(providerService));
+            Throw.IfNull(environmentHelper, nameof(environmentHelper));
 
             _apprenticeshipService = apprenticeshipService;
             _courseService = courseService;
@@ -43,6 +46,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
             _contextAccessor = contextAccessor;
             _blobStorageService = blobStorageService;
             _providerService = providerService;
+            _environmentHelper = environmentHelper;
         }
 
         public async Task<IViewComponentResult> InvokeAsync(DashboardModel model)
@@ -59,8 +63,8 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
 
             try
             {
-                IEnumerable<Course> courses = _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(UKPRN))
-                                                   .Result
+                var getCoursesResult = _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(UKPRN)).Result;
+                IEnumerable<Course> courses = getCoursesResult
                                                    .Value
                                                    .Value
                                                    .SelectMany(o => o.Value)
@@ -135,18 +139,19 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
 
                 actualModel.PublishedApprenticeshipsCount = result.Value.Count(x => x.RecordStatus == RecordStatus.Live);
 
-                Dfc.CourseDirectory.Models.Models.Providers.Provider provider = FindProvider(UKPRN);
-                if (null != provider)
+            Dfc.CourseDirectory.Models.Models.Providers.Provider provider = FindProvider(UKPRN);
+            if (null != provider)
+            {
+                if(null != provider.BulkUploadStatus)
                 {
-                    if (null != provider.BulkUploadStatus)
-                    {
-                        actualModel.BulkUploadBackgroundInProgress = provider.BulkUploadStatus.InProgress;
-                        actualModel.BulkUploadBackgroundRowCount = provider.BulkUploadStatus.TotalRowCount;
-                        actualModel.BulkUploadBackgroundStartTimestamp = provider.BulkUploadStatus.StartedTimestamp;
+                    actualModel.BulkUploadBackgroundInProgress = provider.BulkUploadStatus.InProgress;
+                    actualModel.BulkUploadBackgroundRowCount = provider.BulkUploadStatus.TotalRowCount;
+                    actualModel.BulkUploadBackgroundStartTimestamp = provider.BulkUploadStatus.StartedTimestamp;
                         actualModel.BulkUploadPublishInProgress = provider.BulkUploadStatus.PublishInProgress;
                     }
-                    actualModel.ProviderType = provider.ProviderType;
-                }
+                actualModel.ProviderType = provider.ProviderType;
+            }
+            actualModel.EnvironmentType = _environmentHelper.GetEnvironmentType();
 
             }
             catch (Exception ex)

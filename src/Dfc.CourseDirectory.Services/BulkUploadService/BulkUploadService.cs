@@ -64,6 +64,15 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             _courseService = courseService;
         }
 
+        public int BulkUploadSecondsPerRecord
+        {
+            get
+            {
+                int spr = Math.Max(1, _courseServiceSettings.BulkUploadSecondsPerRecord);
+                return spr;
+            }
+        }
+
         public int CountCsvLines(Stream stream)
         {
             int count = 0;

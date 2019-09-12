@@ -10,5 +10,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels.BulkUpload
         public PublishMode Mode { get; set; }
 
         public bool BackgroundPublishInProgress { get; set; }
+
+        public int BackgroundPublishMinutes { get; set; }
     }
 }
