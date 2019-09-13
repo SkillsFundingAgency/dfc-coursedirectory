@@ -208,7 +208,7 @@ namespace Dfc.CourseDirectory.Web
             // Register the background worker helper
             services.AddHostedService<QueuedHostedService>();
             services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
-
+            services.Configure<FormOptions>(x => x.ValueCountLimit = 10000);
             #region DFE Sign-in code
 
             //Auth Code
