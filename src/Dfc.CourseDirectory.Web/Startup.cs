@@ -123,6 +123,7 @@ namespace Dfc.CourseDirectory.Web
             var authSp = services.BuildServiceProvider();
             AuthService = authSp.GetService<IAuthService>();
             services.Configure<GovukPhaseBannerSettings>(Configuration.GetSection(nameof(GovukPhaseBannerSettings)));
+            services.Configure<ApprenticeshipSettings>(Configuration.GetSection(nameof(ApprenticeshipSettings)));
             services.AddScoped<IGovukPhaseBannerService, GovukPhaseBannerService>();
 
 
