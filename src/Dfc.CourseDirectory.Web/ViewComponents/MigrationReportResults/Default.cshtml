@@ -5,6 +5,7 @@
     <thead class="govuk-table__head">
         <tr class="govuk-table__row">
             <th data-sort="name" class="govuk-table__header app-custom-class main" scope="col">Provider </th>
+            <th data-sort="name" class="govuk-table__header app-custom-class main" scope="col">UKPRN </th>
             <th data-sort="name" class="govuk-table__header app-custom-class main" scope="col">Provider type</th>
             <th data-sort="number" class="govuk-table__header app-custom-class main" scope="col">Migration date  </th>
             <th data-sort="number" class="govuk-table__header app-custom-class main" scope="col">Migrated </th>
@@ -19,6 +20,7 @@
         {
         <tr class="govuk-table__row">
             <th class="govuk-table__header underline" scope="row"><a asp-controller="Migration" asp-action="MigrationReportFoProvider" asp-route-UKPRN="@row.ProviderUKPRN" class="govuk-link">@row.ProviderName</a></th>
+            <td class="govuk-table__cell">@row.ProviderUKPRN</td>
             <td class="govuk-table__cell">@row.ProviderType</td>
             <td class="govuk-table__cell">@row.MigrationDate?.ToString("dd/MMM/yyyy")</td>
             @{

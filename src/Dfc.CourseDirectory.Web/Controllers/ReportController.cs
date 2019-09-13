@@ -78,7 +78,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 MigrationPendingCount = x.MigrationPendingCount,
                 MigrationRate = x.MigrationRate,
                 ProviderName = x.ProviderName,
-                ProviderType = x.ProviderType
+                ProviderType = x.ProviderType,
+                ProviderUKPRN = x.ProviderUKPRN
             });
 
             List<string> csvLines = new List<string>();
