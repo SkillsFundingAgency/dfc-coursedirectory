@@ -6,9 +6,9 @@
     <h2 class="cd-migration-panel__title">@Model.Title</h2>
     <h2 class="cd-migration-panel__title">@Model.Title2</h2>
     <span class="cd-migration-panel__number">
-        @if (Model.Value == 0)
+        @if (Model.Value == 0 || string.IsNullOrWhiteSpace(Model.ValueHref))
         {
-            @Model.Value<br/> <span>@Model.Description</span>
+            @Model.Value <span>@Model.Description</span>
         }
         else
         {
