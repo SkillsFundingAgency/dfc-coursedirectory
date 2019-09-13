@@ -336,11 +336,25 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             var model = new DeleteFileConfirmationViewModel();
 
+
+
             DateTime localDateTime = DateTime.Parse(fileUploadDate.ToString());
+
+            localDateTime = DateTime.SpecifyKind(localDateTime, DateTimeKind.Unspecified);
+
             DateTime utcDateTime = localDateTime.ToUniversalTime();
             TimeSpan offset = TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time").GetUtcOffset(localDateTime);
             sourceTime = new DateTimeOffset(localDateTime, offset);
             targetTime = sourceTime.DateTime;
+
+
+
+
+            //var fromTimeOffset = new TimeSpan(0, -int.Parse("1"), 0);
+            //var to = TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time");
+            //var offset = new DateTimeOffset(localDateTime, fileUploadDate);
+            //var destination = TimeZoneInfo.ConvertTime(offset, to);
+
 
             model.FileUploadedDate = targetTime.ToString("dd MMM yyyy HH:mm");
 
