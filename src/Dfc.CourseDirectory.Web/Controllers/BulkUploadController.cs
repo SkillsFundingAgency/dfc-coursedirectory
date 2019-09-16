@@ -24,6 +24,7 @@ using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 using Dfc.CourseDirectory.Models.Models.Providers;
 using Dfc.CourseDirectory.Web.BackgroundWorkers;
+using System.Globalization;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -331,32 +332,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> DeleteFileConfirmation(DateTimeOffset fileUploadDate)
         {
-            DateTimeOffset sourceTime;
-            DateTime targetTime;
 
             var model = new DeleteFileConfirmationViewModel();
 
+            TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time");
+            DateTime dt1 = DateTime.Parse(fileUploadDate.DateTime.ToString()) ;
+            DateTime dt2 = TimeZoneInfo.ConvertTimeFromUtc(dt1, tzi);
 
-
-            DateTime localDateTime = DateTime.Parse(fileUploadDate.ToString());
-
-            localDateTime = DateTime.SpecifyKind(localDateTime, DateTimeKind.Unspecified);
-
-            DateTime utcDateTime = localDateTime.ToUniversalTime();
-            TimeSpan offset = TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time").GetUtcOffset(localDateTime);
-            sourceTime = new DateTimeOffset(localDateTime, offset);
-            targetTime = sourceTime.DateTime;
-
-
-
-
-            //var fromTimeOffset = new TimeSpan(0, -int.Parse("1"), 0);
-            //var to = TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time");
-            //var offset = new DateTimeOffset(localDateTime, fileUploadDate);
-            //var destination = TimeZoneInfo.ConvertTime(offset, to);
-
-
-            model.FileUploadedDate = targetTime.ToString("dd MMM yyyy HH:mm");
+            model.FileUploadedDate = dt2.ToString("dd MMM yyyy HH:mm");
 
             return View("../Bulkupload/DeleteFileConfirmation/Index", model);
         }
