@@ -10,11 +10,15 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Dfc.CourseDirectory.Models.Helpers;
+using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
+
 
 namespace Dfc.CourseDirectory.Services.BulkUploadService
 {
+    
     public class ApprenticeshipBulkUploadService : IApprenticeshipBulkUploadService
     {
+
         private enum DeliveryMode
         {
             Undefined = 0,
@@ -49,11 +53,11 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
         {
             public ApprenticeshipCsvRecordMap()
             {
-                Map(m => m.STANDARD_CODE).ConvertUsing((row) => { return Basic_Checks_STANDARD_CODE(row); });
-                Map(m => m.STANDARD_VERSION).ConvertUsing((row) => { return Basic_Checks_STANDARD_VERSION(row); });
-                Map(m => m.FRAMEWORK_CODE).ConvertUsing((row) => { return Basic_Checks_FRAMEWORK_CODE(row); });
-                Map(m => m.FRAMEWORK_PROG_TYPE).ConvertUsing((row) => { return Basic_Checks_FRAMEWORK_PROG_TYPE(row); });
-                Map(m => m.FRAMEWORK_PATHWAY_CODE).ConvertUsing((row) => { return Basic_Checks_FRAMEWORK_PATHWAY_CODE(row); });
+                Map(m => m.STANDARD_CODE).ConvertUsing((row) => { return Mandatory_Checks_STANDARD_CODE(row); });
+                Map(m => m.STANDARD_VERSION).ConvertUsing((row) => { return Mandatory_Checks_STANDARD_VERSION(row); });
+                Map(m => m.FRAMEWORK_CODE).ConvertUsing((row) => { return Mandatory_Checks_FRAMEWORK_CODE(row); });
+                Map(m => m.FRAMEWORK_PROG_TYPE).ConvertUsing((row) => { return Mandatory_Checks_FRAMEWORK_PROG_TYPE(row); });
+                Map(m => m.FRAMEWORK_PATHWAY_CODE).ConvertUsing((row) => { return Mandatory_Checks_FRAMEWORK_PATHWAY_CODE(row); });
                 Map(m => m.APPRENTICESHIP_INFORMATION);
                 Map(m => m.APPRENTICESHIP_WEBPAGE);
                 Map(m => m.CONTACT_EMAIL);
@@ -71,7 +75,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             }
 
             #region Basic Checks
-            private int? Basic_Checks_STANDARD_CODE(IReaderRow row)
+            private int? Mandatory_Checks_STANDARD_CODE(IReaderRow row)
             {
                 int? value = ValueMustBeNumericIfPresent(row, "STANDARD_CODE");
                 if (value.HasValue)
@@ -81,17 +85,19 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 return value;
             }
 
-            private int? Basic_Checks_STANDARD_VERSION(IReaderRow row)
+            private int? Mandatory_Checks_STANDARD_VERSION(IReaderRow row)
             {
                 int? value = ValueMustBeNumericIfPresent(row, "STANDARD_VERSION");
                 if (value.HasValue)
                 {
                     ValuesForBothStandardAndFrameworkCannotBePresent(row);
+                    row.TryGetField<int?>("STANDARD_CODE", out int? STANDARD_CODE);
+                    DoesStandardExist(STANDARD_CODE, value);
                 }
                 return value;
             }
 
-            private int? Basic_Checks_FRAMEWORK_CODE(IReaderRow row)
+            private int? Mandatory_Checks_FRAMEWORK_CODE(IReaderRow row)
             {
                 int? value = ValueMustBeNumericIfPresent(row, "FRAMEWORK_CODE");
                 if (value.HasValue)
@@ -101,7 +107,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 return value;
             }
 
-            private int? Basic_Checks_FRAMEWORK_PROG_TYPE(IReaderRow row)
+            private int? Mandatory_Checks_FRAMEWORK_PROG_TYPE(IReaderRow row)
             {
                 int? value = ValueMustBeNumericIfPresent(row, "FRAMEWORK_PROG_TYPE");
                 if (value.HasValue)
@@ -111,7 +117,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 return value;
             }
 
-            private int? Basic_Checks_FRAMEWORK_PATHWAY_CODE(IReaderRow row)
+            private int? Mandatory_Checks_FRAMEWORK_PATHWAY_CODE(IReaderRow row)
             {
                 int? value = ValueMustBeNumericIfPresent(row, "FRAMEWORK_PATHWAY_CODE");
                 if (value.HasValue)
@@ -121,6 +127,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 return value;
             }
             #endregion
+
             #region Field Validation
 
             private List<string> ValidateData(IReaderRow row)
@@ -141,10 +148,8 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             {
                 List<string> errors = new List<string>();
                 string fieldName = "APPRENTICESHIP_INFORMATION";
-                if (!row.TryGetField<string>(fieldName, out string value))
-                {
-                    errors.Add($"Validation error on row { row.Context.Row}. Field { fieldName} is required.");
-                }
+                row.TryGetField<string>(fieldName, out string value);
+
                 if (string.IsNullOrWhiteSpace(value))
                 {
                     errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} is required.");
@@ -159,10 +164,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             {
                 List<string> errors = new List<string>();
                 string fieldName = "APPRENTICESHIP_WEBPAGE";
-                if (!row.TryGetField<string>(fieldName, out string value))
-                {
-                    errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} is required.");
-                }
+                row.TryGetField<string>(fieldName, out string value);
                 if (!string.IsNullOrWhiteSpace(value))
                 {
                     var regex = @"^([-a-zA-Z0-9]{2,256}\.)+[a-z]{2,10}(\/.*)?";
@@ -182,11 +184,8 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             {
                 List<string> errors = new List<string>();
                 string fieldName = "CONTACT_EMAIL";
-                if (!row.TryGetField<string>(fieldName, out string value))
-                {
-                    errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} is required.");
-                    return errors;
-                }
+                row.TryGetField<string>(fieldName, out string value);
+
                 if (string.IsNullOrWhiteSpace(value))
                 {
                     errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} is required.");
@@ -211,11 +210,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 List<string> errors = new List<string>();
 
                 string fieldName = "CONTACT_PHONE";
-                if (!row.TryGetField<string>(fieldName, out string value))
-                {
-                    errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} is required.");
-                    return errors;
-                }
+                row.TryGetField<string>(fieldName, out string value); 
                 value = RemoveWhiteSpace(value);
 
                 if (string.IsNullOrWhiteSpace(value))
@@ -260,10 +255,8 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             {
                 List<string> errors = new List<string>();
                 string fieldName = "DELIVERY_METHOD";
-                if (!row.TryGetField<string>(fieldName, out string value))
-                {
-                    errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} is required.");
-                }
+                row.TryGetField<string>(fieldName, out string value);
+
                 if (string.IsNullOrWhiteSpace(value))
                 {
                     errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} is required.");
@@ -322,14 +315,16 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
         }
 
         private readonly ILogger<ApprenticeshipBulkUploadService> _logger;
-
+        private readonly IApprenticeshipService _apprenticeshipService;
         public ApprenticeshipBulkUploadService(
-            ILogger<ApprenticeshipBulkUploadService> logger
+            ILogger<ApprenticeshipBulkUploadService> logger,
+            IApprenticeshipService apprenticeshipService
             )
         {
             Throw.IfNull(logger, nameof(logger));
-
+            Throw.IfNull(apprenticeshipService, nameof(apprenticeshipService));
             _logger = logger;
+            _apprenticeshipService = apprenticeshipService;
         }
 
         public int CountCsvLines(Stream stream)

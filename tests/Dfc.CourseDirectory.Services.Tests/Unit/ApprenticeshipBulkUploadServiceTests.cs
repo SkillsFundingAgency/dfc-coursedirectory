@@ -1,11 +1,12 @@
 ﻿using Dfc.CourseDirectory.Services.BulkUploadService;
 using Dfc.CourseDirectory.Services.Tests.Unit.Helpers;
 using FluentAssertions;
+using Moq;
 using System;
 using System.IO;
-using Microsoft.EntityFrameworkCore.Internal;
+using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
+using Dfc.CourseDirectory.Services.Tests.Unit.Mocks;
 using Xunit;
-
 namespace Dfc.CourseDirectory.Services.Tests.Unit
 {
     /// <summary>
@@ -21,7 +22,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 // Arrange
                 
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
-                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger);
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService();
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock);
                 Stream stream = new MemoryStream();
 
                 // Act
@@ -39,7 +41,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 // Arrange
 
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
-                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger);
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService();
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock);
                 Stream stream = CsvStreams.Two_Rows();
 
                 // Act
@@ -60,7 +63,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 // Arrange
 
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
-                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger);
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService();
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock);
                 Stream stream = null;
 
                 // Act
@@ -78,7 +82,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 // Arrange
 
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
-                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger);
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService();
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock);
                 Stream stream = new MemoryStream();
 
                 // Act
@@ -98,7 +103,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 // Arrange
 
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
-                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger);
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService();
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock);
                 Stream stream = CsvStreams.No_Header_Row();
 
                 // Act
@@ -118,7 +124,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 // Arrange
 
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
-                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger);
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService();
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock);
                 Stream stream = CsvStreams.Only_Header_Row();
 
                 // Act
@@ -142,7 +149,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
             {
                 // Arrange
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
-                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger);
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService();
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock);
                 
                 Stream stream = CsvStreams.InvalidField_STANDARD_CODE_MustBeNumericIfPresent();
 
@@ -163,7 +171,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 // Arrange
 
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
-                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger);
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService();
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock);
                 Stream stream = CsvStreams.InvalidField_STANDARD_VERSION_MustBeNumericIfPresent();
 
                 // Act
@@ -183,7 +192,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 // Arrange
 
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
-                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger);
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService();
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock);
                 Stream stream = CsvStreams.InvalidField_FRAMEWORK_CODE_MustBeNumericIfPresent();
 
                 // Act
@@ -203,7 +213,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 // Arrange
 
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
-                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger);
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService();
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock);
                 Stream stream = CsvStreams.InvalidField_FRAMEWORK_PROG_TYPE_MustBeNumericIfPresent();
 
                 // Act
@@ -223,7 +234,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 // Arrange
 
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
-                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger);
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService();
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock);
                 Stream stream = CsvStreams.InvalidField_FRAMEWORK_PATHWAY_CODE_MustBeNumericIfPresent();
 
                 // Act
@@ -243,7 +255,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 // Arrange
 
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
-                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger);
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService();
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock);
                 Stream stream = CsvStreams.InvalidRow_StandardAndFrameworkValuesMissing();
 
                 // Act
@@ -263,7 +276,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 // Arrange
 
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
-                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger);
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService();
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock);
                 Stream stream = CsvStreams.InvalidField_APPRENTICESHIP_INFORMATION_Missing();
 
                 // Act
@@ -283,7 +297,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 // Arrange
 
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
-                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger);
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService();
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock);
                 Stream stream = CsvStreams.InvalidField_APPRENTICESHIP_INFORMATION_751Chars();
 
                 // Act
@@ -302,7 +317,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 // Arrange
 
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
-                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger);
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService();
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock);
                 Stream stream = CsvStreams.InvalidField_APPRENTICESHIP_WEBPAGE_Regex_Error_Invalid_Character();
 
                 // Act
@@ -321,7 +337,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 // Arrange
 
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
-                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger);
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService();
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock);
                 Stream stream = CsvStreams.InvalidField_APPRENTICESHIP_WEBPAGE_256Chars();
 
                 // Act
@@ -340,7 +357,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 // Arrange
 
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
-                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger);
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService();
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock);
                 Stream stream = CsvStreams.Valid_Row_Empty_APPRENTICESHIP_WEBPAGE();
 
                 // Act
@@ -358,7 +376,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 // Arrange
 
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
-                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger);
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService();
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock);
                 Stream stream = CsvStreams.InvalidField_CONTACT_EMAIL_Missing();
 
                 // Act
@@ -377,7 +396,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 // Arrange
 
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
-                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger);
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService();
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock);
                 Stream stream = CsvStreams.InvalidField_CONTACT_EMAIL_256_Chars();
 
                 // Act
@@ -396,7 +416,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 // Arrange
 
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
-                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger);
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService();
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock);
                 Stream stream = CsvStreams.InvalidField_CONTACT_EMAIL_Regex_Invalid_character();
 
                 // Act
@@ -415,7 +436,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 // Arrange
 
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
-                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger);
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService();
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock);
                 Stream stream = CsvStreams.InvalidField_CONTACT_PHONE_Missing();
 
                 // Act
@@ -434,7 +456,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 // Arrange
 
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
-                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger);
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService();
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock);
                 Stream stream = CsvStreams.InvalidField_CONTACT_PHONE_Longer_Than_30_Chars();
 
                 // Act
@@ -453,7 +476,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 // Arrange
 
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
-                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger);
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService();
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock);
                 Stream stream = CsvStreams.InvalidField_CONTACT_PHONE_NonNumeric();
 
                 // Act
@@ -472,7 +496,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 // Arrange
 
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
-                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger);
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService();
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock);
                 Stream stream = CsvStreams.Valid_Row_Empty_CONTRACT_URL();
 
                 // Act
@@ -490,7 +515,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 // Arrange
 
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
-                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger);
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService();
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock);
                 Stream stream = CsvStreams.InvalidField_CONTACT_URL_256_Chars();
 
                 // Act
@@ -508,7 +534,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
             {
                 // Arrange
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
-                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger);
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService();
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock);
                 Stream stream = CsvStreams.InvalidField_CONTACT_URL_Invalid_URL_Space();
 
                 // Act
@@ -524,7 +551,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
             {
                 // Arrange
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
-                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger);
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService();
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock);
                 Stream stream = CsvStreams.InvalidField_CONTACT_URL_Invalid_URL_Format();
 
                 // Act
@@ -541,7 +569,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 // Arrange
 
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
-                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger);
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService();
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock);
                 Stream stream = CsvStreams.InvalidField_DELIVERY_METHOD_Missing();
 
                 // Act
@@ -559,7 +588,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
             {
                 // Arrange
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
-                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger);
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService();
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock);
                 Stream stream = CsvStreams.InvalidField_DELIVERY_METHOD_Invalid();
 
                 // Act
@@ -577,7 +607,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
             {
                 // Arrange
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
-                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger);
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService();
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock);
                 Stream stream = CsvStreams.Valid_Row_DELIVERY_METHOD_Case_Insensitive_Correct_Values();
 
                 // Act
@@ -594,7 +625,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
             {
                 // Arrange
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
-                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger);
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService();
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock);
                 Stream stream = CsvStreams.Valid_Row_No_VENUE_Correct_Values();
 
                 // Act
@@ -611,7 +643,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
             {
                 // Arrange
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
-                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger);
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService();
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock);
                 Stream stream = CsvStreams.Valid_Row_DELIVERY_METHOD_Case_Insensitive_Correct_Values();
 
                 // Act
