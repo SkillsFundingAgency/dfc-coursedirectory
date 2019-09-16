@@ -124,6 +124,9 @@
     },
     "EnvironmentName": {
       "value": "__EnvironmentNameAppSetting__"
+    },
+    "BulkUploadSecondsPerRecord": {
+      "value": "__BulkUploadSecondsPerRecord__"
     }
   }
 }
