@@ -3,9 +3,10 @@ using Dfc.CourseDirectory.Services.Tests.Unit.Helpers;
 using FluentAssertions;
 using System;
 using System.IO;
+using Microsoft.EntityFrameworkCore.Internal;
 using Xunit;
 
-namespace Dfc.CourseDirectory.Services.Tests
+namespace Dfc.CourseDirectory.Services.Tests.Unit
 {
     /// <summary>
     /// Unit tests for the ApprenticeshipBulkUploadService
@@ -18,7 +19,7 @@ namespace Dfc.CourseDirectory.Services.Tests
             public void When_File_Is_Empty_Then_Return0()
             {
                 // Arrange
-
+                
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger);
                 Stream stream = new MemoryStream();
@@ -140,9 +141,9 @@ namespace Dfc.CourseDirectory.Services.Tests
             public void When_Field_STANDARD_CODE_Is_PresentAndNonNumeric_Then_ReturnError()
             {
                 // Arrange
-
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger);
+                
                 Stream stream = CsvStreams.InvalidField_STANDARD_CODE_MustBeNumericIfPresent();
 
                 // Act
@@ -368,7 +369,7 @@ namespace Dfc.CourseDirectory.Services.Tests
 
                 errors.Should().NotBeNull();
                 errors.Should().HaveCount(1);
-                errors[0].Should().Be("Validation error on row 2. Field CONTACT_EMAIL is required.");
+                errors.Should().Contain("Validation error on row 2. Field CONTACT_EMAIL is required.");
             }
             [Fact]
             public void When_Field_CONTACT_EMAIL_Is_LongerThan255Chars_Then_ReturnError()
@@ -387,7 +388,7 @@ namespace Dfc.CourseDirectory.Services.Tests
 
                 errors.Should().NotBeNull();
                 errors.Should().HaveCount(1);
-                errors[0].Should().Be("Validation error on row 2. Field CONTACT_EMAIL maximum length is 255 characters.");
+                errors.Should().Contain("Validation error on row 2. Field CONTACT_EMAIL maximum length is 255 characters.");
             }
             [Fact]
             public void When_Field_CONTACT_EMAIL_Is_Fails_Regex_Then_ReturnError()
@@ -425,7 +426,7 @@ namespace Dfc.CourseDirectory.Services.Tests
 
                 errors.Should().NotBeNull();
                 errors.Should().HaveCount(1);
-                errors[0].Should().Be("Validation error on row 2. Field CONTACT_PHONE is required.");
+                errors.Should().Contain("Validation error on row 2. Field CONTACT_PHONE is required.");
             }
             [Fact]
             public void When_Field_CONTACT_PHONE_Is_LongerThan30Chars_Then_ReturnError()
@@ -444,7 +445,7 @@ namespace Dfc.CourseDirectory.Services.Tests
 
                 errors.Should().NotBeNull();
                 errors.Should().HaveCount(1);
-                errors[0].Should().Be("Validation error on row 2. Field CONTACT_PHONE maximum length is 30 characters.");
+                errors.Should().Contain("Validation error on row 2. Field CONTACT_PHONE maximum length is 30 characters.");
             }
             [Fact]
             public void When_Field_CONTACT_PHONE_Is_NonNumerical_Then_ReturnError()
@@ -589,12 +590,12 @@ namespace Dfc.CourseDirectory.Services.Tests
                 errors.Should().HaveCount(0);
             }
             [Fact]
-            public void When_Field_DELIVERY_METHOD_Is_Invalid_Then_VENUE_Should_Return_Error()
+            public void When_Field_VENUE_Is_Empty_Return_Success()
             {
                 // Arrange
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger);
-                Stream stream = CsvStreams.Missing_DELIVERY_METHOD_For_VENUE();
+                Stream stream = CsvStreams.Valid_Row_No_VENUE_Correct_Values();
 
                 // Act
 
@@ -602,10 +603,31 @@ namespace Dfc.CourseDirectory.Services.Tests
 
                 // Assert
 
-                errors.Should().NotBeNull();
-                errors.Should().HaveCount(1);
-                errors[0].Should().Be("Validation error on row 2. Field DELIVERY_METHOD is required for VENUE.");
+                errors.Should().BeNullOrEmpty();
+                errors.Should().HaveCount(0);
             }
+            [Fact]
+            public void When_Field_VENUE_Is_Over_255Characters_Then_Return_Error()
+            {
+                // Arrange
+                var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger);
+                Stream stream = CsvStreams.Valid_Row_DELIVERY_METHOD_Case_Insensitive_Correct_Values();
+
+                // Act
+
+                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+
+                // Assert
+
+                errors.Should().BeNullOrEmpty();
+                errors.Should().HaveCount(0);
+            }
+        }
+
+        public class StandardsAndFrameworksTests
+        {
+
         }
     }
 }

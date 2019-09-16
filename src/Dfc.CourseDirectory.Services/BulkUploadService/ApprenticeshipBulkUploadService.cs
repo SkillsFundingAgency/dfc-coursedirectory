@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Dfc.CourseDirectory.Models.Helpers;
 
@@ -41,43 +42,46 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             public string NATIONAL_DELIVERY { get; set; }
             public string REGION { get; set; }
             public string SUB_REGION { get; set; }
+            public List<string> ErrorsList { get; set; }
         }
 
         private class ApprenticeshipCsvRecordMap : ClassMap<ApprenticeshipCsvRecord>
         {
             public ApprenticeshipCsvRecordMap()
             {
-                Map(m => m.STANDARD_CODE).ConvertUsing((IReaderRow row) => { return Validate_STANDARD_CODE(row); });
-                Map(m => m.STANDARD_VERSION).ConvertUsing((IReaderRow row) => { return Validate_STANDARD_VERSION(row); });
-                Map(m => m.FRAMEWORK_CODE).ConvertUsing((IReaderRow row) => { return Validate_FRAMEWORK_CODE(row); });
-                Map(m => m.FRAMEWORK_PROG_TYPE).ConvertUsing((IReaderRow row) => { return Validate_FRAMEWORK_PROG_TYPE(row); });
-                Map(m => m.FRAMEWORK_PATHWAY_CODE).ConvertUsing((IReaderRow row) => { return Validate_FRAMEWORK_PATHWAY_CODE(row); });
-                Map(m => m.APPRENTICESHIP_INFORMATION).ConvertUsing((IReaderRow row) => { return Validate_APPRENTICESHIP_INFORMATION(row); });
-                Map(m => m.APPRENTICESHIP_WEBPAGE).ConvertUsing((IReaderRow row) => { return Validate_APPRENTICESHIP_WEBPAGE(row); }) ;
-                Map(m => m.CONTACT_EMAIL).ConvertUsing((IReaderRow row) => { return Validate_CONTACT_EMAIL(row); }) ;
-                Map(m => m.CONTACT_PHONE).ConvertUsing((IReaderRow row) => { return Validate_CONTACT_PHONE(row); });
-                Map(m => m.CONTACT_URL).ConvertUsing((IReaderRow row) => { return Validate_CONTACT_URL(row); });
-                Map(m => m.DELIVERY_METHOD).ConvertUsing((IReaderRow row) => { return Validate_DELIVERY_METHOD(row); });
-                Map(m => m.VENUE).ConvertUsing((IReaderRow row) => { return Validate_VENUE(row); });
+                Map(m => m.STANDARD_CODE).ConvertUsing((row) => { return Basic_Checks_STANDARD_CODE(row); });
+                Map(m => m.STANDARD_VERSION).ConvertUsing((row) => { return Basic_Checks_STANDARD_VERSION(row); });
+                Map(m => m.FRAMEWORK_CODE).ConvertUsing((row) => { return Basic_Checks_FRAMEWORK_CODE(row); });
+                Map(m => m.FRAMEWORK_PROG_TYPE).ConvertUsing((row) => { return Basic_Checks_FRAMEWORK_PROG_TYPE(row); });
+                Map(m => m.FRAMEWORK_PATHWAY_CODE).ConvertUsing((row) => { return Basic_Checks_FRAMEWORK_PATHWAY_CODE(row); });
+                Map(m => m.APPRENTICESHIP_INFORMATION);
+                Map(m => m.APPRENTICESHIP_WEBPAGE);
+                Map(m => m.CONTACT_EMAIL);
+                Map(m => m.CONTACT_PHONE);
+                Map(m => m.CONTACT_URL);
+                Map(m => m.DELIVERY_METHOD);
+                Map(m => m.VENUE);
                 Map(m => m.RADIUS);
                 Map(m => m.DELIVERY_MODE);
-                Map(m => m.ACROSS_ENGLAND).Optional();
+                Map(m => m.ACROSS_ENGLAND);
                 Map(m => m.NATIONAL_DELIVERY);
                 Map(m => m.REGION);
                 Map(m => m.SUB_REGION);
+                Map(m => m.ErrorsList).ConvertUsing((row) => { return ValidateData(row); });
             }
 
-            private int? Validate_STANDARD_CODE(IReaderRow row)
+            #region Basic Checks
+            private int? Basic_Checks_STANDARD_CODE(IReaderRow row)
             {
                 int? value = ValueMustBeNumericIfPresent(row, "STANDARD_CODE");
-                if(value.HasValue)
+                if (value.HasValue)
                 {
                     ValuesForBothStandardAndFrameworkCannotBePresent(row);
                 }
                 return value;
             }
 
-            private int? Validate_STANDARD_VERSION(IReaderRow row)
+            private int? Basic_Checks_STANDARD_VERSION(IReaderRow row)
             {
                 int? value = ValueMustBeNumericIfPresent(row, "STANDARD_VERSION");
                 if (value.HasValue)
@@ -87,7 +91,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 return value;
             }
 
-            private int? Validate_FRAMEWORK_CODE(IReaderRow row)
+            private int? Basic_Checks_FRAMEWORK_CODE(IReaderRow row)
             {
                 int? value = ValueMustBeNumericIfPresent(row, "FRAMEWORK_CODE");
                 if (value.HasValue)
@@ -97,7 +101,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 return value;
             }
 
-            private int? Validate_FRAMEWORK_PROG_TYPE(IReaderRow row)
+            private int? Basic_Checks_FRAMEWORK_PROG_TYPE(IReaderRow row)
             {
                 int? value = ValueMustBeNumericIfPresent(row, "FRAMEWORK_PROG_TYPE");
                 if (value.HasValue)
@@ -107,7 +111,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 return value;
             }
 
-            private int? Validate_FRAMEWORK_PATHWAY_CODE(IReaderRow row)
+            private int? Basic_Checks_FRAMEWORK_PATHWAY_CODE(IReaderRow row)
             {
                 int? value = ValueMustBeNumericIfPresent(row, "FRAMEWORK_PATHWAY_CODE");
                 if (value.HasValue)
@@ -116,6 +120,173 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 }
                 return value;
             }
+            #endregion
+            #region Field Validation
+
+            private List<string> ValidateData(IReaderRow row)
+            {
+                List<string> errors = new List<string>();
+                errors.AddRange(Validate_APPRENTICESHIP_INFORMATION(row));
+                errors.AddRange(Validate_APPRENTICESHIP_WEBPAGE(row));
+                errors.AddRange(Validate_CONTACT_EMAIL(row));
+                errors.AddRange(Validate_CONTACT_PHONE(row));
+                errors.AddRange(Validate_CONTACT_URL(row));
+                errors.AddRange(Validate_DELIVERY_METHOD(row));
+                errors.AddRange(Validate_VENUE(row));
+
+                return errors;
+            }
+
+            private List<string> Validate_APPRENTICESHIP_INFORMATION(IReaderRow row)
+            {
+                List<string> errors = new List<string>();
+                string fieldName = "APPRENTICESHIP_INFORMATION";
+                if (!row.TryGetField<string>(fieldName, out string value))
+                {
+                    errors.Add($"Validation error on row { row.Context.Row}. Field { fieldName} is required.");
+                }
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} is required.");
+                }
+                if (!string.IsNullOrEmpty(value) && value.Length > 750)
+                {
+                    errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} maximum length is 750 characters.");
+                }
+                return errors;
+            }
+            private List<string> Validate_APPRENTICESHIP_WEBPAGE(IReaderRow row)
+            {
+                List<string> errors = new List<string>();
+                string fieldName = "APPRENTICESHIP_WEBPAGE";
+                if (!row.TryGetField<string>(fieldName, out string value))
+                {
+                    errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} is required.");
+                }
+                if (!string.IsNullOrWhiteSpace(value))
+                {
+                    var regex = @"^([-a-zA-Z0-9]{2,256}\.)+[a-z]{2,10}(\/.*)?";
+                    if (Regex.IsMatch(value, regex))
+                    {
+                        errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} format of URL is incorrect.");
+                    }
+                    if (value.Length > 255)
+                    {
+                        errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} maximum length is 255 characters.");
+                    }
+                }
+
+                return errors;
+            }
+            private List<string> Validate_CONTACT_EMAIL(IReaderRow row)
+            {
+                List<string> errors = new List<string>();
+                string fieldName = "CONTACT_EMAIL";
+                if (!row.TryGetField<string>(fieldName, out string value))
+                {
+                    errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} is required.");
+                    return errors;
+                }
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} is required.");
+                    return errors;
+                }
+                if (!string.IsNullOrEmpty(value) && value.Length > 255)
+                {
+                    errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} maximum length is 255 characters.");
+                    return errors;
+                }
+
+                var emailRegEx = @"^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$";
+                if (!Regex.IsMatch(value, emailRegEx))
+                {
+                    errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} needs a valid email.");
+                    
+                }
+                return errors;
+            }
+            private List<string> Validate_CONTACT_PHONE(IReaderRow row)
+            {
+                List<string> errors = new List<string>();
+
+                string fieldName = "CONTACT_PHONE";
+                if (!row.TryGetField<string>(fieldName, out string value))
+                {
+                    errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} is required.");
+                    return errors;
+                }
+                value = RemoveWhiteSpace(value);
+
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} is required.");
+                    return errors;
+                }
+                if (!string.IsNullOrEmpty(value) && value.Length > 30)
+                {
+                    errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} maximum length is 30 characters.");
+                    return errors;
+                }
+                if (!int.TryParse(value, out int numericalValue))
+                {
+                    errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} must be numeric if present.");
+                    return errors;
+                }
+                return errors;
+            }
+            private List<string> Validate_CONTACT_URL(IReaderRow row)
+            {
+                
+                List<string> errors = new List<string>();
+                string fieldName = "CONTACT_URL";
+                row.TryGetField(fieldName, out string value);
+                if (string.IsNullOrEmpty(value))
+                {
+                    return errors;
+                }
+                if (value.Length > 255)
+                {
+                    errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} maximum length is 255 characters.");
+                }
+                var urlRegex = @"^([-a-zA-Z0-9]{2,256}\.)+[a-z]{2,10}(\/.*)?";
+                if (Regex.IsMatch(value, urlRegex))
+                {
+                    errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} format of URL is incorrect.");
+                }
+                return errors;
+            }
+            private List<string> Validate_DELIVERY_METHOD(IReaderRow row)
+            {
+                List<string> errors = new List<string>();
+                string fieldName = "DELIVERY_METHOD";
+                if (!row.TryGetField<string>(fieldName, out string value))
+                {
+                    errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} is required.");
+                }
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} is required.");
+                    return errors;
+                }
+
+                var deliveryMethod = value.ToEnum(DeliveryMode.Undefined);
+                if (deliveryMethod == DeliveryMode.Undefined)
+                {
+                    errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} is invalid.");
+                }
+                return errors;
+            }
+            private List<string> Validate_VENUE(IReaderRow row)
+            {
+                List<string> errors = new List<string>();
+                string fieldName = "VENUE";
+                
+
+                return errors;
+            }
+            #endregion
+
 
             private int? ValueMustBeNumericIfPresent(IReaderRow row, string fieldName)
             {
@@ -143,143 +314,11 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 }
             }
 
-            private string Validate_APPRENTICESHIP_INFORMATION(IReaderRow row)
+            private bool DoesStandardExist(int? standardCode, int? version)
             {
-                string fieldName = "APPRENTICESHIP_INFORMATION";
-                if (!row.TryGetField<string>(fieldName, out string value))
-                {
-                    throw new FieldValidationException(row.Context, fieldName, $"Validation error on row {row.Context.Row}. Field {fieldName} is required.");
-                }
-                if(string.IsNullOrWhiteSpace(value))
-                {
-                    throw new FieldValidationException(row.Context, fieldName, $"Validation error on row {row.Context.Row}. Field {fieldName} is required.");
-                }
-                if(value.Length > 750)
-                {
-                    throw new FieldValidationException(row.Context, fieldName, $"Validation error on row {row.Context.Row}. Field {fieldName} maximum length is 750 characters.");
-                }
-                return value;
+                return true;
             }
-            private string Validate_APPRENTICESHIP_WEBPAGE(IReaderRow row)
-            {
-                string fieldName = "APPRENTICESHIP_WEBPAGE";
-                if (!row.TryGetField<string>(fieldName, out string value))
-                {
-                    throw new FieldValidationException(row.Context, fieldName, $"Validation error on row {row.Context.Row}. Field {fieldName} is required.");
-                }
-                if(!string.IsNullOrWhiteSpace(value))
-                {
-                    var regex = @"^([-a-zA-Z0-9]{2,256}\.)+[a-z]{2,10}(\/.*)?";
-                    if (Regex.IsMatch(value, regex))
-                    {
-                        throw new FieldValidationException(row.Context, fieldName, $"Validation error on row {row.Context.Row}. Field {fieldName} format of URL is incorrect.");
-                    }
-                    if (value.Length > 255)
-                    {
-                        throw new FieldValidationException(row.Context, fieldName, $"Validation error on row {row.Context.Row}. Field {fieldName} maximum length is 255 characters.");
-                    }
-                }
-
-                return value;
-            }
-            private string Validate_CONTACT_EMAIL(IReaderRow row)
-            {
-                string fieldName = "CONTACT_EMAIL";
-                if (!row.TryGetField<string>(fieldName, out string value))
-                {
-                    throw new FieldValidationException(row.Context, fieldName, $"Validation error on row {row.Context.Row}. Field {fieldName} is required.");
-                }
-                if(string.IsNullOrWhiteSpace(value))
-                {
-                    throw new FieldValidationException(row.Context, fieldName, $"Validation error on row {row.Context.Row}. Field {fieldName} is required.");
-                }
-                if (value.Length > 255)
-                {
-                    throw new FieldValidationException(row.Context, fieldName, $"Validation error on row {row.Context.Row}. Field {fieldName} maximum length is 255 characters.");
-                }
-
-                var emailRegEx = @"^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$";
-                if (!Regex.IsMatch(value, emailRegEx))
-                {
-                    throw new FieldValidationException(row.Context, fieldName, $"Validation error on row {row.Context.Row}. Field {fieldName} needs a valid email.");
-                }
-                return value;
-            }
-            private string Validate_CONTACT_PHONE(IReaderRow row)
-            {
-                string fieldName = "CONTACT_PHONE";
-                if (!row.TryGetField<string>(fieldName, out string value))
-                {
-                    throw new FieldValidationException(row.Context, fieldName, $"Validation error on row {row.Context.Row}. Field {fieldName} is required.");
-                }
-                value = RemoveWhiteSpace(value);
-
-                if (string.IsNullOrWhiteSpace(value))
-                {
-                    throw new FieldValidationException(row.Context, fieldName, $"Validation error on row {row.Context.Row}. Field {fieldName} is required.");
-                }
-                if (value.Length > 30)
-                {
-                    throw new FieldValidationException(row.Context, fieldName, $"Validation error on row {row.Context.Row}. Field {fieldName} maximum length is 30 characters.");
-                }
-                if (!int.TryParse(value, out int numericalValue))
-                {
-                    throw new FieldValidationException(row.Context, fieldName, $"Validation error on row {row.Context.Row}. Field {fieldName} must be numeric if present.");
-                }
-                return value;
-            }
-            private string Validate_CONTACT_URL(IReaderRow row)
-            {
-                string fieldName = "CONTACT_URL";
-                row.TryGetField(fieldName, out string value);
-                if(string.IsNullOrEmpty(value))
-                {
-                    return value;
-                }
-                if (value.Length > 255)
-                {
-                    throw new FieldValidationException(row.Context, fieldName, $"Validation error on row {row.Context.Row}. Field {fieldName} maximum length is 255 characters.");
-                }
-                var urlRegex = @"^([-a-zA-Z0-9]{2,256}\.)+[a-z]{2,10}(\/.*)?";
-                if (Regex.IsMatch(value, urlRegex))
-                {
-                    throw new FieldValidationException(row.Context, fieldName, $"Validation error on row {row.Context.Row}. Field {fieldName} format of URL is incorrect.");
-                }
-                return value;
-            }
-            private string Validate_DELIVERY_METHOD(IReaderRow row)
-            {
-                string fieldName = "DELIVERY_METHOD";
-                if (!row.TryGetField<string>(fieldName, out string value))
-                {
-                    throw new FieldValidationException(row.Context, fieldName, $"Validation error on row {row.Context.Row}. Field {fieldName} is required.");
-                }
-                if (string.IsNullOrWhiteSpace(value))
-                {
-                    throw new FieldValidationException(row.Context, fieldName, $"Validation error on row {row.Context.Row}. Field {fieldName} is required.");
-                }
-
-                var deliveryMethod= value.ToEnum(DeliveryMode.Undefined);
-                if(deliveryMethod == DeliveryMode.Undefined)
-                {
-                    throw new FieldValidationException(row.Context, fieldName, $"Validation error on row {row.Context.Row}. Field {fieldName} is invalid.");
-                }
-                return value;
-            }
-            private string Validate_VENUE(IReaderRow row)
-            {
-                string dependentFieldName = "DELIVERY_METHOD";
-                string fieldName = "VENUE";
-                row.TryGetField(fieldName, out string value);
-                row.TryGetField(dependentFieldName, out string dependentValue);
-
-                var deliveryMethod = dependentFieldName.ToEnum(DeliveryMode.Undefined);
-                if (deliveryMethod == DeliveryMode.Undefined && !string.IsNullOrEmpty(value))
-                {
-                    throw new FieldValidationException(row.Context, fieldName, $"Validation error on row {row.Context.Row}. Field {dependentFieldName} is required for {fieldName} .");
-                }
-                return value;
-            }
+           
         }
 
         private readonly ILogger<ApprenticeshipBulkUploadService> _logger;
@@ -330,7 +369,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                         while (csv.Read())
                         {
                             var record = csv.GetRecord<ApprenticeshipCsvRecord>();
-                            
+                            errors.AddRange(record.ErrorsList);
                             processedRowCount++;
                         }
                     }
