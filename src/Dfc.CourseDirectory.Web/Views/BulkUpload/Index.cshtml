@@ -81,8 +81,8 @@
                 <p>
                     You can use a file to replace information about all of your published courses. To create the file you can:
                     <ul>
-                        <li>enter your course information in a blank file</li>
-                        <li>update a template containing your current course information</li>
+                        <li>enter your course information in an empty template</li>
+                        <li>update a template containing your published course information</li>
                     </ul>
                 </p>
                 <p>
@@ -101,27 +101,43 @@
                            val-file-size-max="209715200"
                            val-file-size-max-message="The selected file must be smaller than 200MB" />
                 </div>
-                <div class="govuk-warning-text">
-                    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-                    <strong class="govuk-warning-text__text">
-                        <span class="govuk-warning-text__assistive">Warning</span>
-                        You'll replace all information about your courses if you continue.
-                    </strong>
-                </div>
 
+                <div class="govuk-form-group">
+                  <fieldset class="govuk-fieldset">
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+                      <h2 class="govuk-fieldset__heading">
+                        This will replace all of your course information in the course directory
+                      </h2>
+                    </legend>
+                    <div class="govuk-radios">
+                      <div class="govuk-radios__item">
+                        <input class="govuk-radios__input" id="where-do-you-live" name="where-do-you-live" type="radio" value="Replace my existing course information">
+                        <label class="govuk-label govuk-radios__label" for="where-do-you-live">
+                                Replace my existing course information
+                        </label>
+                      </div>
+                      <div class="govuk-radios__item">
+                        <input class="govuk-radios__input" id="where-do-you-live-2" name="where-do-you-live" type="radio" value="Do not replace my existing course information and go back to my home page">
+                        <label class="govuk-label govuk-radios__label" for="where-do-you-live-2">
+                            Do not replace my existing course information and go back to my homepage
+                        </label>
+                      </div>
+                    </div>
+                  </fieldset>
+                </div>
 
                 <div class="cta-container">
                     <button type="submit" id="uploadButton" class="govuk-button govuk-!-margin-right-3">
                         Continue
                     </button>
-                    @*<a class="govuk-link " asp-controller="Home" asp-action="Index">Cancel</a>*@
+
                 </div>
             </div>
         </div>
         <div class="govuk-grid-column-one-third">
             <div class="sidebar">
 
-                <div class="widget white blue">
+                <div class="widget white">
                     <h2 class="govuk-heading-m">Find templates</h2>
 
                     <ul class="govuk-list">

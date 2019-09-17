@@ -332,11 +332,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> DeleteFileConfirmation(DateTimeOffset fileUploadDate)
         {
-
             var model = new DeleteFileConfirmationViewModel();
 
             TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time");
-            DateTime dt1 = DateTime.Parse(fileUploadDate.DateTime.ToString()) ;
+            DateTime dt1 = DateTime.Parse(fileUploadDate.DateTime.ToString());
             DateTime dt2 = TimeZoneInfo.ConvertTimeFromUtc(dt1, tzi);
 
             model.FileUploadedDate = dt2.ToString("dd MMM yyyy HH:mm");
