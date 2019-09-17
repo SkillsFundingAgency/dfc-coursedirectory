@@ -333,10 +333,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             var model = new DeleteFileConfirmationViewModel();
 
-            DateTime localDateTime = DateTime.Parse(fileUploadDate.ToString());
-            DateTime utcDateTime = localDateTime.ToUniversalTime();
+            TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time");
+            DateTime dt1 = DateTime.Parse(fileUploadDate.DateTime.ToString());
+            DateTime dt2 = TimeZoneInfo.ConvertTimeFromUtc(dt1, tzi);
 
-            model.FileUploadedDate = TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, TimeZoneInfo.Local).ToString("dd MMM yyyy HH:mm");
+            model.FileUploadedDate = dt2.ToString("dd MMM yyyy HH:mm");
 
             return View("../Bulkupload/DeleteFileConfirmation/Index", model);
         }

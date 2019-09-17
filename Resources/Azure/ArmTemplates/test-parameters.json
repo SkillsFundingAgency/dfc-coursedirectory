@@ -124,6 +124,9 @@
     },
     "EnvironmentName": {
       "value": "Development"
+    },
+    "BulkUploadSecondsPerRecord": {
+      "value": "1"
     }
   }
 }
