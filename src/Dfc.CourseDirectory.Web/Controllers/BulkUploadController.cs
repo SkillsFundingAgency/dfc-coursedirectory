@@ -24,6 +24,7 @@ using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 using Dfc.CourseDirectory.Models.Models.Providers;
 using Dfc.CourseDirectory.Web.BackgroundWorkers;
+using System.Globalization;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
