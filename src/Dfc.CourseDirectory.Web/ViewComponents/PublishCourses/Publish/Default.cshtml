@@ -17,13 +17,12 @@
             else
             {
                 <div class="govuk-form-group">
-                    <span class="govuk-caption-l">Course Directory</span>
-                    <h1 class="govuk-govuk-grid-column-one-half-l govuk-heading-l">Fix errors</h1>
+                    <h1 class="govuk-govuk-grid-column-one-half-l govuk-heading-l">Resolve issues</h1>
                 </div>
 
-                <p>You must fix these errors before any of your courses can be published.</p>
+                <p>You must resolve all of the issues in your file before you can update your published courses.</p>
 
-                <p>Or you can <a asp-controller="BulkUpload" asp-action="DownloadErrorFile" class="govuk-link" target="_blank">download an error file </a>, fix them at source and upload a new file.</p>
+                @*<p>Or you can <a asp-controller="BulkUpload" asp-action="DownloadErrorFile" class="govuk-link" target="_blank">download an error file </a>, fix them at source and upload a new file.</p>*@
 
             }
         }
@@ -55,6 +54,7 @@
             var courseRunCount = Model.Courses.SelectMany(x => x.CourseRuns).Count();
             <h1 class="govuk-govuk-grid-column-one-half-l">@courseRunCount courses need their start date updating</h1>
         }
-        <div class="err-top-line"></div>
+        @*<div class="err-top-line"></div>*@
+    <hr class="govuk-section-break govuk-section-break--visible">
         @await Component.InvokeAsync(nameof(PublishCourse), new { model = Model })
     </div>
