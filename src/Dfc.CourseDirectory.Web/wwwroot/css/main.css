@@ -7576,25 +7576,6 @@ select:disabled {
   margin-bottom: 0;
 }
 
-.zcodesearch span.hint {
-  color: 6f777b;
-}
-
-.zcodesearch--container {
-  display: flex;
-  flex-direction: row;
-}
-
-.zcodesearch--container-input {
-  padding: 10px !important;
-}
-
-.zcodesearch {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 0;
-}
-
 .zcodesearch--container {
   display: flex;
   flex-direction: row;
@@ -7724,6 +7705,38 @@ select:disabled {
 .cta-container {
   display: flex;
   align-items: baseline;
+}
+
+.helpdesk__nav-list {
+  margin-top: 0;
+  display: flex;
+  flex-direction: row;
+  list-style-type: none;
+  margin-left: 0px;
+  padding-left: 0px;
+}
+
+.helpdesk__nav-list .provider-name {
+  width: 30%;
+  max-width: 30%;
+}
+
+.helpdesk__nav-list-item {
+  padding: 0 .5rem;
+}
+
+.helpdesk__nav-list.helpdesk__link {
+  list-style-type: none;
+  text-decoration: none;
+}
+
+.helpdesk__nav-list.helpdesk__link:hover {
+  color: #003078;
+  text-decoration: underline;
+}
+
+.helpdesk__nav-list.helpdesk__link:focus {
+  background-color: #ffdd00;
 }
 
 .cd-dashboard.provider .cd-dashboard-title {
