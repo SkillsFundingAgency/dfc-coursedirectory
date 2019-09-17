@@ -107,7 +107,7 @@
                         <div class="govuk-grid-column-one-quarter">
                             @if (courseRun.StartDate.HasValue)
                             {
-                                <span>@courseRun.StartDate.Value.ToString("dd'/'MM'/'yyyy")</span>
+                                <span>@courseRun.StartDate.Value.ToString("dd MMM yyyy")</span>
                             }
                             else if (courseRun.FlexibleStartDate)
                             {
@@ -144,8 +144,11 @@
                     <div class="align-right col right center">
                         @if (adminLogin.Succeeded)
                         {
-                            <a asp-action="DeleteCourseRun" asp-controller="Migration"
-                               asp-route-courseId="@course.id" asp-route-courseRunId="@courseRun.id">Delete<span class="govuk-visually-hidden">@courseRun.CourseName</span></a>
+                            @if (Model.PublishMode == Dfc.CourseDirectory.Models.Enums.PublishMode.Migration)
+                            {
+                                <a asp-action="DeleteCourseRun" asp-controller="Migration"
+                                   asp-route-courseId="@course.id" asp-route-courseRunId="@courseRun.id">Delete<span class="govuk-visually-hidden">@courseRun.CourseName</span></a>
+                            }
                         }
 
                         <a id="course-run-fix-@courseRun.id" class="error-link fix" asp-controller="EditCourseRun" asp-action="Index"
@@ -155,7 +158,7 @@
                            asp-route-awardOrgCode="@course.AwardOrgCode"
                            asp-route-learnAimRefTitle="@course.QualificationCourseTitle"
                            asp-route-learnAimRefTypeDesc="@course.QualificationType"
-                           asp-route-mode=@Model.PublishMode>Fix<span class="govuk-visually-hidden">@courseRun.CourseName</span></a>
+                           asp-route-mode=@Model.PublishMode>Resolve<span class="govuk-visually-hidden">@courseRun.CourseName</span></a>
                     </div>
                 </div>
             </div>
