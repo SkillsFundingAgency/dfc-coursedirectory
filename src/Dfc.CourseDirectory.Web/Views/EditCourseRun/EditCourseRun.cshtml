@@ -76,7 +76,7 @@
 <h1 class="govuk-heading-l" style="padding-top: 20px;">
     Edit course details
 </h1>
-<form asp-controller="EditCourseRun" asp-action="Index" id="editCourseRun" onkeypress="return event.keyCode != 13;">
+<form asp-controller="EditCourseRun" asp-action="Index" id="editCourseRun">
 
     <div id="errorsummary" class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary" style="display: none;">
         <h2 class="govuk-error-summary__title" id="error-summary-title">
@@ -277,6 +277,9 @@
 
 <script>
     (function($) {
+        $(document).on("keydown", ":input:not(textarea)", function(event) {
+            return event.key != "Enter";
+        });
         $(function () {
 
             var $addNewVenueButton = $("#addNewVenue");
