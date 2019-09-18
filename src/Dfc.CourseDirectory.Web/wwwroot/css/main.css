@@ -6319,6 +6319,65 @@
   word-wrap: break-word;
 }
 
+.govuk-currency-input__inner {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.govuk-currency-input__inner__unit {
+  position: absolute;
+  bottom: 8px;
+  left: 10px;
+}
+
+.govuk-currency-input__inner__input {
+  padding-left: 25px;
+}
+
+.govuk-currency-input__inner .form-control {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  font-family: "nta", Arial, sans-serif;
+  font-weight: 400;
+  text-transform: none;
+  width: 100%;
+  padding: 5px 5px 5px 25px;
+  border: 2px solid #0b0c0c;
+  font-size: 1.1875rem;
+  line-height: 1.31579;
+}
+
+.input-icon {
+  position: relative;
+}
+
+.input-icon > i {
+  position: absolute;
+  display: block;
+  transform: translate(0, -50%);
+  top: 50%;
+  pointer-events: none;
+  width: 25px;
+  text-align: center;
+  font-style: normal;
+}
+
+.input-icon > input {
+  padding-left: 25px;
+  padding-right: 0;
+}
+
+.input-icon-right > i {
+  right: 0;
+}
+
+.input-icon-right > input {
+  padding-left: 0;
+  padding-right: 25px;
+  text-align: right;
+}
+
 p {
   font-family: “nta”, Arial, sans-serif;
 }
@@ -6548,6 +6607,20 @@ p {
 
 .regulatedsearch .cd-level-select {
   padding-right: 1em;
+}
+
+#LarsSearch {
+  display: flex;
+}
+
+#LarsSearch .search-input-wrapper {
+  flex-direction: column;
+}
+
+#LarsSearch .search--container {
+  display: flex;
+  flex-direction: row;
+  margin: 1rem 0 2rem 0;
 }
 
 .cd-lars-search-result__container {
@@ -7568,25 +7641,6 @@ select:disabled {
     margin-right: 20px;
     margin-left: 0;
   }
-}
-
-.zcodesearch {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 0;
-}
-
-.zcodesearch span.hint {
-  color: 6f777b;
-}
-
-.zcodesearch--container {
-  display: flex;
-  flex-direction: row;
-}
-
-.zcodesearch--container-input {
-  padding: 10px !important;
 }
 
 .zcodesearch {

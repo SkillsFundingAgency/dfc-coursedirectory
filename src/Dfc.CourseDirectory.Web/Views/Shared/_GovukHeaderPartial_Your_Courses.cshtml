@@ -179,8 +179,10 @@
     var feUser = await Authorization.AuthorizeAsync(User, "Fe");
     var apprenticeshipUser = await Authorization.AuthorizeAsync(User, "apprenticeship");
     var adminUser = await Authorization.AuthorizeAsync(User, "admin");
+    var helpdeskUser = await Authorization.AuthorizeAsync(User, "Helpdesk");
 
-    if (adminUser.Succeeded)
+
+    if (adminUser.Succeeded || helpdeskUser.Succeeded)
     {
         var providerName = "";
         var ukPRN = HttpContextAccessor.HttpContext.Session.GetInt32("UKPRN");
