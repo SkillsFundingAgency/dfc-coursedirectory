@@ -332,7 +332,7 @@ namespace Dfc.CourseDirectory.Services.VenueService
 
                 _logger.LogHttpResponseMessage("Venue search service http response", response);
 
-                if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                if (response.StatusCode == System.Net.HttpStatusCode.NotFound || response.StatusCode == System.Net.HttpStatusCode.NoContent)
                     return Result.Ok<IVenueSearchResult>(new VenueSearchResult(new List<Venue>()));
 
                 if (response.IsSuccessStatusCode)
