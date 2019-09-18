@@ -327,7 +327,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 if(provider.BulkUploadStatus.StartedTimestamp.HasValue)
                 {
-                    fileUploadDate = provider.BulkUploadStatus.StartedTimestamp.Value;
+                    fileUploadDate = provider.BulkUploadStatus.StartedTimestamp.Value.ToLocalTime();
                 }
             }
 
