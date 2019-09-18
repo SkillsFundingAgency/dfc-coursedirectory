@@ -11,6 +11,21 @@ $ExploreCareersGreen: #207E77;
         padding-right: 1em;
     }
 }
+
+
+#LarsSearch {
+    display: flex;
+
+    .search-input-wrapper {
+        flex-direction: column;
+    }
+
+    .search--container {
+        display: flex;
+        flex-direction: row;
+        margin:1rem 0 2rem 0 ;
+    }
+}
 .cd-lars-search-result__container {
     border: 1px solid $govuk-border-colour;
     margin-bottom: 1rem;
