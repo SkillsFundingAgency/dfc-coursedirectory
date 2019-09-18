@@ -10,6 +10,8 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Dfc.CourseDirectory.Models.Helpers;
+using Dfc.CourseDirectory.Models.Models.Apprenticeships;
+using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
 
 
@@ -51,8 +53,11 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
         private class ApprenticeshipCsvRecordMap : ClassMap<ApprenticeshipCsvRecord>
         {
-            public ApprenticeshipCsvRecordMap()
+            private readonly IApprenticeshipService _apprenticeshipService;
+            public ApprenticeshipCsvRecordMap(IApprenticeshipService apprenticeshipService)
             {
+                Throw.IfNull(apprenticeshipService, nameof(apprenticeshipService));
+                _apprenticeshipService = apprenticeshipService;
                 Map(m => m.STANDARD_CODE).ConvertUsing((row) => { return Mandatory_Checks_STANDARD_CODE(row); });
                 Map(m => m.STANDARD_VERSION).ConvertUsing((row) => { return Mandatory_Checks_STANDARD_VERSION(row); });
                 Map(m => m.FRAMEWORK_CODE).ConvertUsing((row) => { return Mandatory_Checks_FRAMEWORK_CODE(row); });
@@ -92,7 +97,11 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 {
                     ValuesForBothStandardAndFrameworkCannotBePresent(row);
                     row.TryGetField<int?>("STANDARD_CODE", out int? STANDARD_CODE);
-                    DoesStandardExist(STANDARD_CODE, value);
+                    var result = DoesStandardExist(STANDARD_CODE, value);
+                    if (result == false)
+                    {
+                        throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Invalid Standard Code or Version Number. Standard not found.");
+                    }
                 }
                 return value;
             }
@@ -123,6 +132,13 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 if (value.HasValue)
                 {
                     ValuesForBothStandardAndFrameworkCannotBePresent(row);
+                    row.TryGetField<int?>("FRAMEWORK_CODE", out int? FRAMEWORK_CODE);
+                    row.TryGetField<int?>("FRAMEWORK_PROG_TYPE", out int? FRAMEWORK_PROG_TYPE);
+                    var result = DoesFrameworkExist(FRAMEWORK_CODE, FRAMEWORK_PROG_TYPE, value);
+                    if (result == false)
+                    {
+                        throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Invalid Framework Code, Prog Type, or Pathway Code. Framework not found.");
+                    }
                 }
                 return value;
             }
@@ -309,7 +325,32 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
             private bool DoesStandardExist(int? standardCode, int? version)
             {
-                return true;
+                var result = _apprenticeshipService.GetStandardByCode(new StandardSearchCriteria
+                    {StandardCode = standardCode, Version = version}).Result;
+
+                if (result.IsSuccess && result.HasValue && result.Value.Any())
+                {
+                    var standard = result.Value.FirstOrDefault();
+                    if(standard != null && 
+                       (standard.StandardCode == standardCode && standard.Version == version))
+                        return true;
+                }
+
+                return false;
+            }
+            private bool DoesFrameworkExist(int? frameworkCode, int? progType, int? pathwayCode)
+            {
+                var result = _apprenticeshipService.GetFrameworkByCode(new FrameworkSearchCriteria
+                    {FrameworkCode = frameworkCode, ProgType = progType, PathwayCode = pathwayCode}).Result;
+                if (result.IsSuccess && result.HasValue && result.Value.Any())
+                {
+                    var framework = result.Value.FirstOrDefault();
+                    if(framework != null &&(framework.FrameworkCode == frameworkCode 
+                                            && framework.ProgType == progType
+                                            && framework.PathwayCode == pathwayCode))
+                        return true;
+                }
+                return false;
             }
            
         }
@@ -347,6 +388,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             Throw.IfNull(stream, nameof(stream));
 
             List<string> errors = new List<string>();
+            List<ApprenticeshipCsvRecord> records = new List<ApprenticeshipCsvRecord>();
             int processedRowCount = 0;
             try
             {
@@ -360,11 +402,15 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                         ValidateHeader(csv);
 
                         // Now parse the data in the remaining rows. 
-                        csv.Configuration.RegisterClassMap<ApprenticeshipCsvRecordMap>();
+                        var classMap = new ApprenticeshipCsvRecordMap(_apprenticeshipService);
+                        csv.Configuration.RegisterClassMap(classMap);
                         while (csv.Read())
                         {
                             var record = csv.GetRecord<ApprenticeshipCsvRecord>();
+                            records.Add(record);
+                            CheckForDuplicates(records);
                             errors.AddRange(record.ErrorsList);
+
                             processedRowCount++;
                         }
                     }
@@ -417,6 +463,16 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
         private static string RemoveWhiteSpace(string value)
         {
             return Regex.Replace(value, @"\s+", "");
+        }
+
+        private void CheckForDuplicates(List<ApprenticeshipCsvRecord> records)
+        {
+            CheckForStandardDuplicates(records);
+        }
+
+        private void CheckForStandardDuplicates(List<ApprenticeshipCsvRecord> records)
+        {
+            var duplicates = records.GroupBy(x => x.STANDARD_CODE.HasValue).Any(y => y.Count( ) > 1);
         }
     }
 }
