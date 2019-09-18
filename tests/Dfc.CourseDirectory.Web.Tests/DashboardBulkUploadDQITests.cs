@@ -96,7 +96,7 @@ namespace Dfc.CourseDirectory.Web.Tests
         }
 
         // Seeing if we can integration test the dashboard Bulk Upload DQIs
-        [Fact]
+        //[Fact]
         public void tdd()
         {
             // Arrange
