@@ -1,6 +1,39 @@
 ﻿$ExploreCareersGreen: #207E77;
 $grey: #6f777b;
 
+
+    .helpdesk__nav-list {
+        margin-top: 0;
+        display: flex;
+        flex-direction: row;
+        list-style-type: none;
+        margin-left: 0px;
+        padding-left: 0px;
+
+        .provider-name {
+            width: 30%;
+            max-width: 30%;
+        }
+
+        &-item {
+            padding: 0 .5rem;
+        }
+
+        &.helpdesk__link {
+            list-style-type: none;
+            text-decoration: none;
+
+            &:hover {
+                color: #003078;
+                text-decoration: underline;
+            }
+
+            &:focus {
+                background-color: #ffdd00;
+            }
+        }
+    }
+
 .cd-dashboard.provider {
     .cd-dashboard-title {
         margin-bottom: 0.23em;
