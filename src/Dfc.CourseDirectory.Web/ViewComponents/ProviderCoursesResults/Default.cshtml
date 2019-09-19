@@ -8,6 +8,8 @@
 @using Dfc.CourseDirectory.Services.UnregulatedProvision
 @using Dfc.CourseDirectory.Web.ViewModels
 @using Dfc.CourseDirectory.Web.ViewComponents.Notification
+@using Dfc.CourseDirectory.Models.Enums
+@using System.Globalization;
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
@@ -39,21 +41,24 @@ else
             </div>
         }
         <div class="govuk-form-group govuk-!-font-size-14">
-            <div class="accordion govuk-heading-s" role="button" tabindex="0">Filter by level</div>
+            @*<div class="accordion govuk-heading-s" role="button" tabindex="0">Level</div>*@
             <div class="panel">
                 <fieldset class="govuk-fieldset">
-                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--s govuk-visually-hidden" style="font-weight: 100">
-                        Select Level
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--s" style="font-weight: 100">
+                        <h2 class="govuk-fieldset__heading">
+                            Select Level
+                        </h2>
+
                     </legend>
-                   
-                    <div class="govuk-checkboxes" id="LevelFilters">
+
+                    <div class="govuk-checkboxes govuk-checkboxes--small" id="LevelFilters">
 
 
                         @foreach (var level in Model.Levels)
                         {
                             <div class="govuk-checkboxes__item">
                                 <input class="govuk-checkboxes__input" id="@level.Id" name="@level.Name" type="checkbox" value="@level.Value" @level.IsSelected.ThenCheck()>
-                                <label  id="levellabel_@level.Id" class="govuk-label govuk-checkboxes__label govuk-!-font-size-14" for="@level.Id">
+                                <label id="levellabel_@level.Id" class="govuk-label govuk-checkboxes__label govuk-!-font-size-14" for="@level.Id">
                                     @level.Text
                                 </label>
                             </div>
@@ -70,13 +75,13 @@ else
         @if (Model.DeliveryModes.Any())
         {
             <div class="govuk-form-group govuk-!-font-size-14">
-                <div class="accordion govuk-heading-s active" role="button" tabindex="0">Filter by delivery mode</div>
+                <div class="accordion govuk-heading-s active" role="button" tabindex="0">Delivery mode</div>
                 <div class="panel" style="display: none">
                     <fieldset class="govuk-fieldset">
                         <legend class="govuk-visually-hidden">
                             Select Delivery mode
                         </legend>
-                        <div class="govuk-checkboxes">
+                        <div class="govuk-checkboxes govuk-checkboxes--small">
 
 
                             @foreach (var deliveryMode in Model.DeliveryModes)
@@ -99,13 +104,13 @@ else
         @if (Model.Venues.Any())
         {
             <div class="govuk-form-group govuk-!-font-size-14">
-                <div class="accordion govuk-heading-s active" role="button" tabindex="0">Filter by venue</div>
+                <div class="accordion govuk-heading-s active" role="button" tabindex="0">Course location</div>
                 <div class="panel" style="display: none">
                     <fieldset class="govuk-fieldset">
                         <legend class="govuk-visually-hidden">
                             Select Venue
                         </legend>
-                        <div class="govuk-checkboxes">
+                        <div class="govuk-checkboxes govuk-checkboxes--small">
 
 
                             @foreach (var venue in Model.Venues)
@@ -128,13 +133,13 @@ else
         @if (Model.AttendancePattern.Any())
         {
             <div class="govuk-form-group govuk-!-font-size-14">
-                <div class="accordion govuk-heading-s active" role="button" tabindex="0">Filter by attendance mode</div>
+                <div class="accordion govuk-heading-s active" role="button" tabindex="0">Attendance pattern</div>
                 <div class="panel" style="display: none">
-                    <fieldset class="govuk-fieldset" >
+                    <fieldset class="govuk-fieldset">
                         <legend class="govuk-visually-hidden">
                             Select Attendance Mode
                         </legend>
-                        <div class="govuk-checkboxes">
+                        <div class="govuk-checkboxes govuk-checkboxes--small">
 
 
                             @foreach (var attendancePattern in Model.AttendancePattern)
@@ -156,13 +161,13 @@ else
         @if (Model.Regions.Any())
         {
             <div class="govuk-form-group govuk-!-font-size-14">
-                <div class="accordion govuk-heading-s active" role="button" tabindex="0">Filter by region</div>
+                <div class="accordion govuk-heading-s active" role="button" tabindex="0">Region</div>
                 <div class="panel" style="display: none">
-                    <fieldset class="govuk-fieldset" >
+                    <fieldset class="govuk-fieldset">
                         <legend class="govuk-visually-hidden">
                             Select Region
                         </legend>
-                        <div class="govuk-checkboxes">
+                        <div class="govuk-checkboxes govuk-checkboxes--small">
                             @foreach (var region in Model.Regions)
                             {
                                 <div class="govuk-checkboxes__item">
@@ -179,7 +184,7 @@ else
 
 
         }
-        
+
         <div class="govuk-form-group govuk-!-font-size-14">
             <a class="govuk-button" id="ApplyFilter">Apply</a>
         </div>
@@ -187,108 +192,132 @@ else
     </div>
     <div class="cd-grid-coloumn-80 ">
 
-        @foreach (var courseRun in Model.ProviderCourseRuns.OrderBy(x=>x.CourseName))
+        @foreach (var courseRun in Model.ProviderCourseRuns.OrderBy(x => x.CourseName))
         {
-        <div class="courserun border">
-            <div class="courserun__row1" id="@courseRun.CourseRunId">
-                @if (!string.IsNullOrEmpty(courseRun.CourseName))
-                {
-                <h2 class="coursename">
-                    @WebUtility.HtmlDecode(@courseRun.CourseName)
-
-                </h2>
-                }
-                <h3 class="coursename smaller ">
-
-                    @if (!string.IsNullOrEmpty(courseRun.QualificationCourseTitle))
+            <div class="courserun border">
+                <div class="courserun__row1" id="@courseRun.CourseRunId">
+                    @if (!string.IsNullOrEmpty(courseRun.CourseName))
                     {
-                        <small>
-                        @WebUtility.HtmlDecode(@courseRun.QualificationCourseTitle)
-                        </small>
-                    }
-                    @if (!string.IsNullOrEmpty(courseRun.LearnAimRef))
-                    {
-                        <small>
-                            <span>LARS/QAN:@courseRun.LearnAimRef</span>
-                        </small>
-                    }
+                        <h2 class="coursename">
+                            @WebUtility.HtmlDecode(@courseRun.CourseName)
 
-                </h3>
-            </div>
+                        </h2>
+                    }
+                    <h3 class="coursename smaller ">
 
-            @if (courseRun.DeliveryMode == "Classroom based")
-            {
-                if (!string.IsNullOrEmpty(courseRun.Venue))
+                        @if (!string.IsNullOrEmpty(courseRun.QualificationCourseTitle))
+                        {
+                            <small>
+                                @WebUtility.HtmlDecode(@courseRun.QualificationCourseTitle)
+                            </small>
+                        }
+                        @if (!string.IsNullOrEmpty(courseRun.LearnAimRef))
+                        {
+                            <small>
+                                <span>LARS/QAN:@courseRun.LearnAimRef</span>
+                            </small>
+                        }
+
+                    </h3>
+                </div>
+
+                @if (courseRun.DeliveryMode == "Classroom based")
                 {
-                    <div class="courserun__row2">
-                        <span class="">
-                        @WebUtility.HtmlDecode(@courseRun.Venue)
-                        </span>
-                    </div>
-                }
-            }
-            @if (courseRun.DeliveryMode == "Work based")
-            {
-                if (courseRun.National)
-                {
-                    <div class="courserun__row2">
-                        <span class="">National</span>
-                    </div>
-                }
-                else
-                {
-                    if (!string.IsNullOrEmpty(courseRun.Region))
+                    if (!string.IsNullOrEmpty(courseRun.Venue))
                     {
                         <div class="courserun__row2">
-                            <span class="">@courseRun.Region</span>
+                            <span class="">
+                                @WebUtility.HtmlDecode(@courseRun.Venue)
+                            </span>
                         </div>
                     }
                 }
-            }
-
-
-            <div class="courserun__row3">
-                @if (!string.IsNullOrEmpty(courseRun.CourseTextId))
+                @if (courseRun.DeliveryMode == "Work based")
                 {
-                    <span>
-                        @WebUtility.HtmlDecode(@courseRun.CourseTextId)
-                    </span>
-                }
-
-                @if (courseRun.DeliveryMode == "Classroom based")
-                {
-                    if (!string.IsNullOrEmpty(courseRun.AttendancePattern))
+                    if (courseRun.National)
                     {
-                        <span>@courseRun.AttendancePattern</span>
+                        <div class="courserun__row2">
+                            <span class="">National</span>
+                        </div>
+                    }
+                    else
+                    {
+                        if (!string.IsNullOrEmpty(courseRun.Region))
+                        {
+                            <div class="courserun__row2">
+                                <span class="">@courseRun.Region</span>
+                            </div>
+                        }
                     }
                 }
-                @if (!string.IsNullOrEmpty(courseRun.NotionalNVQLevelv2))
-                {
-                    <span>Level @courseRun.NotionalNVQLevelv2</span>
-                }
 
 
-                @if (!string.IsNullOrEmpty(courseRun.DeliveryMode))
-                {
-                    <span>@courseRun.DeliveryMode</span>
-                }
-                @if (courseRun.DeliveryMode == "Classroom based")
-                {
-                    @if (!string.IsNullOrEmpty(courseRun.StudyMode))
+                <div class="courserun__row3">
+                    @if (!string.IsNullOrEmpty(courseRun.CourseTextId))
                     {
-                        <span>@courseRun.StudyMode</span>
+                        <span>
+                            @WebUtility.HtmlDecode(@courseRun.CourseTextId)
+                        </span>
                     }
-                }
-                @if (!string.IsNullOrEmpty(courseRun.StartDate))
-                {
-                    <span>@courseRun.StartDate</span>
-                }
-            </div>
 
-            <div class="courserun__row4">
-                <a href="@Url.Action("Index", "CourseSummary",new { courseRun.CourseId, courseRun.CourseRunId})">Select <span class="govuk-visually-hidden">@courseRun.CourseName</span></a>
+                    @if (courseRun.DeliveryMode == "Classroom based")
+                    {
+                        if (!string.IsNullOrEmpty(courseRun.AttendancePattern))
+                        {
+                            <span>@courseRun.AttendancePattern</span>
+                        }
+                    }
+                    @if (!string.IsNullOrEmpty(courseRun.NotionalNVQLevelv2))
+                    {
+                        <span>Level @courseRun.NotionalNVQLevelv2</span>
+                    }
+
+
+                    @if (!string.IsNullOrEmpty(courseRun.DeliveryMode))
+                    {
+                        <span>@courseRun.DeliveryMode</span>
+                    }
+                    @if (courseRun.DeliveryMode == "Classroom based")
+                    {
+                        @if (!string.IsNullOrEmpty(courseRun.StudyMode))
+                        {
+                            <span>@courseRun.StudyMode</span>
+                        }
+                    }
+                    @if (!string.IsNullOrEmpty(courseRun.StartDate))
+                    {
+                        <span>
+
+                            @courseRun.StartDate
+
+
+                        </span>
+                    }
+                </div>
+
+                <div class="courserun__row4">
+                    <a href="@Url.Action("Index", "CourseSummary",new { courseRun.CourseId, courseRun.CourseRunId})">View or edit course <span class="govuk-visually-hidden">@courseRun.CourseName</span></a>
+                    <a class="govuk-link"
+                       asp-controller="CopyCourseRun"
+                       asp-action="Index"
+                       asp-route-learnAimRef="@courseRun.LearnAimRef"
+                       asp-route-notionalNVQLevelv2="@courseRun.NotionalNVQLevelv2"
+                       asp-route-awardOrgCode="@courseRun.AwardOrgCode"
+                       asp-route-learnAimRefTitle="@courseRun.QualificationCourseTitle"
+                       asp-route-learnAimRefTypeDesc="@courseRun.QualificationType"
+                       asp-route-courseId="@courseRun.CourseId"
+                       asp-route-courseRunId="@courseRun.CourseRunId"
+                       asp-route-publishMode="@PublishMode.Summary">Copy course</a>
+
+
+                    <a id="course-delete" class="govuk-link" asp-controller="ProviderCourses" asp-action="DeleteCourse"
+                       asp-route-courseId="@courseRun.CourseId"
+                       asp-route-courseRunId="@courseRun.CourseRunId"
+                       asp-route-courseName="@courseRun.CourseName">Delete course</a>
+
+
+                </div>
             </div>
-        </div>
         }
 
     </div>

@@ -86,6 +86,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpGet]
         public IActionResult AddCourse(string learnAimRef, string notionalNVQLevelv2, string awardOrgCode, string learnAimRefTitle, string learnAimRefTypeDesc, Guid? courseId)
         {
+            RemoveSessionVariables();
+
             Session.SetString("LearnAimRef", learnAimRef);
             Session.SetString("NotionalNVQLevelv2", notionalNVQLevelv2);
             Session.SetString("AwardOrgCode", awardOrgCode);
