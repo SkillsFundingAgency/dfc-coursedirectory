@@ -533,10 +533,11 @@ namespace Dfc.CourseDirectory.Web
                                                     " https://cdnjs.cloudflare.com/" +
                                                     " https://www.googletagmanager.com/" +
                                                     " https://www.google-analytics.com/" +
+                                                    " https://cdn.tiny.cloud/" +
                                                     ";"
                 );
 
-
+            
                 context.Response.GetTypedHeaders().CacheControl =
                   new Microsoft.Net.Http.Headers.CacheControlHeaderValue()
                   {
