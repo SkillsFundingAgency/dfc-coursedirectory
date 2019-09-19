@@ -22,4 +22,5 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         public int MigrationReadyToGoLive { get; set; }
         public decimal MigrationRate { get; set; }
     }
+
 }
