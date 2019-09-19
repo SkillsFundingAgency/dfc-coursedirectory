@@ -1,23 +1,23 @@
 ﻿using CsvHelper;
 using CsvHelper.Configuration;
-using CsvHelper.Configuration.Attributes;
 using Dfc.CourseDirectory.Common;
+using Dfc.CourseDirectory.Models.Helpers;
+using Dfc.CourseDirectory.Models.Models.Apprenticeships;
+using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.Interfaces.BulkUploadService;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
-using Dfc.CourseDirectory.Models.Helpers;
-using Dfc.CourseDirectory.Models.Models.Apprenticeships;
-using Dfc.CourseDirectory.Services.CourseService;
-using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
+using CsvHelper.Configuration.Attributes;
 
 
 namespace Dfc.CourseDirectory.Services.BulkUploadService
 {
-    
+
     public class ApprenticeshipBulkUploadService : IApprenticeshipBulkUploadService
     {
 
@@ -49,6 +49,9 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             public string REGION { get; set; }
             public string SUB_REGION { get; set; }
             public List<string> ErrorsList { get; set; }
+            [Ignore]
+            public int RowNumber  { get; set; }
+
         }
 
         private class ApprenticeshipCsvRecordMap : ClassMap<ApprenticeshipCsvRecord>
@@ -58,6 +61,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             {
                 Throw.IfNull(apprenticeshipService, nameof(apprenticeshipService));
                 _apprenticeshipService = apprenticeshipService;
+
                 Map(m => m.STANDARD_CODE).ConvertUsing((row) => { return Mandatory_Checks_STANDARD_CODE(row); });
                 Map(m => m.STANDARD_VERSION).ConvertUsing((row) => { return Mandatory_Checks_STANDARD_VERSION(row); });
                 Map(m => m.FRAMEWORK_CODE).ConvertUsing((row) => { return Mandatory_Checks_FRAMEWORK_CODE(row); });
@@ -77,6 +81,9 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 Map(m => m.REGION);
                 Map(m => m.SUB_REGION);
                 Map(m => m.ErrorsList).ConvertUsing((row) => { return ValidateData(row); });
+                Map(m => m.RowNumber).Optional().ConvertUsing(row => row.Context.RawRow);
+
+
             }
 
             #region Basic Checks
@@ -166,11 +173,11 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 string fieldName = "APPRENTICESHIP_INFORMATION";
                 row.TryGetField<string>(fieldName, out string value);
 
-                if (string.IsNullOrWhiteSpace(value))
+                if (String.IsNullOrWhiteSpace(value))
                 {
                     errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} is required.");
                 }
-                if (!string.IsNullOrEmpty(value) && value.Length > 750)
+                if (!String.IsNullOrEmpty(value) && value.Length > 750)
                 {
                     errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} maximum length is 750 characters.");
                 }
@@ -181,7 +188,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 List<string> errors = new List<string>();
                 string fieldName = "APPRENTICESHIP_WEBPAGE";
                 row.TryGetField<string>(fieldName, out string value);
-                if (!string.IsNullOrWhiteSpace(value))
+                if (!String.IsNullOrWhiteSpace(value))
                 {
                     var regex = @"^([-a-zA-Z0-9]{2,256}\.)+[a-z]{2,10}(\/.*)?";
                     if (Regex.IsMatch(value, regex))
@@ -202,12 +209,12 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 string fieldName = "CONTACT_EMAIL";
                 row.TryGetField<string>(fieldName, out string value);
 
-                if (string.IsNullOrWhiteSpace(value))
+                if (String.IsNullOrWhiteSpace(value))
                 {
                     errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} is required.");
                     return errors;
                 }
-                if (!string.IsNullOrEmpty(value) && value.Length > 255)
+                if (!String.IsNullOrEmpty(value) && value.Length > 255)
                 {
                     errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} maximum length is 255 characters.");
                     return errors;
@@ -229,17 +236,17 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 row.TryGetField<string>(fieldName, out string value); 
                 value = RemoveWhiteSpace(value);
 
-                if (string.IsNullOrWhiteSpace(value))
+                if (String.IsNullOrWhiteSpace(value))
                 {
                     errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} is required.");
                     return errors;
                 }
-                if (!string.IsNullOrEmpty(value) && value.Length > 30)
+                if (!String.IsNullOrEmpty(value) && value.Length > 30)
                 {
                     errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} maximum length is 30 characters.");
                     return errors;
                 }
-                if (!int.TryParse(value, out int numericalValue))
+                if (!Int32.TryParse(value, out int numericalValue))
                 {
                     errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} must be numeric if present.");
                     return errors;
@@ -252,7 +259,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 List<string> errors = new List<string>();
                 string fieldName = "CONTACT_URL";
                 row.TryGetField(fieldName, out string value);
-                if (string.IsNullOrEmpty(value))
+                if (String.IsNullOrEmpty(value))
                 {
                     return errors;
                 }
@@ -273,7 +280,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 string fieldName = "DELIVERY_METHOD";
                 row.TryGetField<string>(fieldName, out string value);
 
-                if (string.IsNullOrWhiteSpace(value))
+                if (String.IsNullOrWhiteSpace(value))
                 {
                     errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} is required.");
                     return errors;
@@ -352,7 +359,6 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 }
                 return false;
             }
-           
         }
 
         private readonly ILogger<ApprenticeshipBulkUploadService> _logger;
@@ -389,6 +395,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
             List<string> errors = new List<string>();
             List<ApprenticeshipCsvRecord> records = new List<ApprenticeshipCsvRecord>();
+            Dictionary<string, string> duplicateCheck = new Dictionary<string, string>();
             int processedRowCount = 0;
             try
             {
@@ -398,17 +405,26 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                     stream.Seek(0,SeekOrigin.Begin);
                     using (var csv = new CsvReader(reader))
                     {
+
                         // Validate the header row.
                         ValidateHeader(csv);
 
-                        // Now parse the data in the remaining rows. 
                         var classMap = new ApprenticeshipCsvRecordMap(_apprenticeshipService);
                         csv.Configuration.RegisterClassMap(classMap);
+
+
+
                         while (csv.Read())
                         {
                             var record = csv.GetRecord<ApprenticeshipCsvRecord>();
                             records.Add(record);
-                            CheckForDuplicates(records);
+                            var base64Value = Base64Encode(record);
+                            if (!duplicateCheck.TryAdd(base64Value, record.RowNumber.ToString()))
+                            {
+                                var duplicateRow = duplicateCheck[base64Value];
+                                throw new BadDataException(csv.Context,
+                                    $"Duplicate entries detected on rows {duplicateRow}, and {record.RowNumber}.");
+                            }
                             errors.AddRange(record.ErrorsList);
 
                             processedRowCount++;
@@ -450,11 +466,11 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
             return errors;
         }
+
         private void ValidateHeader(CsvReader csv)
         {
             // Ignore whitespace in the headers.
-            csv.Configuration.PrepareHeaderForMatch = (string header, int index) => Regex.Replace(header, @"\s", string.Empty);
-            
+            csv.Configuration.PrepareHeaderForMatch = (string header, int index) => Regex.Replace(header, @"\s", String.Empty);
             // Validate the header.
             csv.Read();
             csv.ReadHeader();
@@ -465,14 +481,20 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             return Regex.Replace(value, @"\s+", "");
         }
 
-        private void CheckForDuplicates(List<ApprenticeshipCsvRecord> records)
+        private static string Base64Encode(ApprenticeshipCsvRecord record)
         {
-            CheckForStandardDuplicates(records);
-        }
-
-        private void CheckForStandardDuplicates(List<ApprenticeshipCsvRecord> records)
-        {
-            var duplicates = records.GroupBy(x => x.STANDARD_CODE.HasValue).Any(y => y.Count( ) > 1);
+            string[] line = new string[]
+            {
+                record.STANDARD_CODE.ToString().ToUpper() ?? String.Empty,
+                record.STANDARD_VERSION.ToString().ToUpper() ?? String.Empty,
+                record.FRAMEWORK_CODE.ToString().ToUpper() ?? String.Empty,
+                record.FRAMEWORK_PROG_TYPE.ToString().ToUpper() ?? String.Empty,
+                record.FRAMEWORK_PATHWAY_CODE.ToString().ToUpper() ?? String.Empty,
+                record.DELIVERY_METHOD.ToString().ToUpper() ?? String.Empty,
+                record.VENUE.ToString().ToUpper() ?? String.Empty,
+            };
+            var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(String.Join(",",line));
+            return System.Convert.ToBase64String(plainTextBytes);
         }
     }
 }

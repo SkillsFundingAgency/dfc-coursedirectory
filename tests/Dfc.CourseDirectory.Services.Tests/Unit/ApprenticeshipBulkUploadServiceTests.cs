@@ -659,6 +659,47 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
             }
         }
 
+        public class CheckForDuplicatesTest
+        {
+            [Fact]
+            public void When_Duplicate_StandardCodes_Exist_Return_Error()
+            {
+                // Arrange
+                var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
+                var httpClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulStandardFile(), HttpStatusCode.OK);
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(httpClient);
+                
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock);
+                Stream stream = CsvStreams.InvalidFile_Duplicate_STANDARD_CODES_SameDeliveryMethod_Same_Venue();
+
+                // Act
+                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+
+                // Assert
+                errors.Should().NotBeNull();
+                errors.Should().HaveCount(1);
+                errors[0].Should().Be("Duplicate entries detected on rows 2, and 4.");
+            }
+            [Fact]
+            public void When_Duplicate_FrameworkCodes_Exist_Return_Error()
+            {
+                // Arrange
+                var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
+                var httpClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulFrameworkFile(), HttpStatusCode.OK);
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(httpClient);
+                
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock);
+                Stream stream = CsvStreams.InvalidRow_FrameworkCodes_DuplicateRows();
+
+                // Act
+                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+
+                // Assert
+                errors.Should().NotBeNull();
+                errors.Should().HaveCount(1);
+                errors[0].Should().Be("Duplicate entries detected on rows 2, and 4.");
+            }
+        }
         public class StandardsAndFrameworksTests
         {
             [Fact]
@@ -681,26 +722,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 errors.Should().HaveCount(1);
                 errors[0].Should().Be("Validation error on row 2. Invalid Standard Code or Version Number. Standard not found.");
             }
-            [Fact]
-            public void When_Duplicate_StandardCodes_Exist_Return_Error()
-            {
-                // Arrange
-                var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
-                var httpClient = HttpClientMockFactory.GetClient(SampleJsons.EmptyFile(), HttpStatusCode.NoContent);
-                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(httpClient);
-                
-                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock);
-                Stream stream = CsvStreams.InvalidFile_Duplicate_STANDARD_CODES();
 
-                // Act
-
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
-
-                // Assert
-                errors.Should().NotBeNull();
-                errors.Should().HaveCount(1);
-                errors[0].Should().Be("Validation error on row 2. Invalid Standard Code or Version Number. Standard not found.");
-            }
             [Fact]
             public void When_StandardCode_Is_Valid_Return_Success()
             {
