@@ -189,7 +189,7 @@
         if (ukPRN != null)
         {
             var providerSearchResult = await providerService.GetProviderByPRNAsync(new ProviderSearchCriteria(ukPRN.ToString()));
-            providerName = providerSearchResult.Value.Value.FirstOrDefault()?.CourseDirectoryName;
+            providerName = providerSearchResult.Value.Value.FirstOrDefault()?.CourseDirectoryName??providerSearchResult.Value.Value.FirstOrDefault()?.ProviderName;
 
             <div class=" cd-fullwidth-container  ">
                 <div class="cd-dashboard provider govuk-body">
