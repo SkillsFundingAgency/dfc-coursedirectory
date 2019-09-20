@@ -19,10 +19,17 @@
 @{
     string datestamp = string.Empty;
     string timestamp = string.Empty;
+    string dateCombined = string.Empty;
     if (Model.BulkUploadBackgroundStartTimestamp.HasValue)
     {
         datestamp = Model.BulkUploadBackgroundStartTimestamp.Value.ToString("dd MMM yyyy");
         timestamp = Model.BulkUploadBackgroundStartTimestamp.Value.ToString("HH:mm");
+
+        TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time");
+        //DateTime dt1 = DateTime.Parse(fileUploadDate.DateTime.ToString());
+        DateTime dt2 = TimeZoneInfo.ConvertTimeFromUtc(Model.BulkUploadBackgroundStartTimestamp.Value, tzi);
+        dateCombined= dt2.ToString("dd MMM yyyy HH:mm");
+        //model.FileUploadedDate = dt2.ToString("dd MMM yyyy HH:mm");
     }
 
     System.Text.StringBuilder message = new System.Text.StringBuilder($"Your file of ");
@@ -50,7 +57,9 @@
 
         if (!string.IsNullOrWhiteSpace(datestamp) && !string.IsNullOrWhiteSpace(timestamp))
         {
-            message.Append($" uploaded on {datestamp} at {timestamp}");
+            //message.Append($" uploaded on {datestamp} at {timestamp}");
+            message.Append($" uploaded on {dateCombined}");
+
         }
         message.Append(" is still being processed");
         if (!string.IsNullOrWhiteSpace(uploadTimeMessage))
