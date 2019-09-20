@@ -27,7 +27,7 @@
             <table class="govuk-table">
                 <tbody>
                     <tr>
-                        <td class="govuk-table__header">Venue name</td>
+                        <td class="govuk-table__header">Location name</td>
                         <td class="govuk-table__cell">
                             <input asp-for="@Model.VenueName" type="hidden" />
 
@@ -43,7 +43,7 @@
 
                     </tr>
                     <tr>
-                        <td class="govuk-table__header">Venue address</td>
+                        <td class="govuk-table__header">Address</td>
                         <td class="govuk-table__cell">
                             <input asp-for="@Model.Address.AddressLine1" name="@nameof(Model.Address.AddressLine1)" type="hidden" />
                             <label>@Model.Address.AddressLine1</label><br>
@@ -77,7 +77,7 @@
             <div class="govuk-form-group">
 
                 <button type="submit" asp-action="AddVenueSelectionConfirmation" class="govuk-button" id="">
-                    Save and continue
+                    Update location
                 </button>
 
                 @{

@@ -306,6 +306,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 UKPRN = sUKPRN ?? 0;
             }
 
+            var provider = FindProvider(UKPRN);
+            if(null == provider)
+            {
+                return RedirectToAction("Index", "Home", new { errmsg = "Failed to find Provider data to delete bulk upload." });
+            }
+
             IEnumerable<Services.BlobStorageService.BlobFileInfo> list = _blobService.GetFileList(UKPRN + "/Bulk Upload/Files/").OrderByDescending(x => x.DateUploaded).ToList();
             if (list.Any())
             {
@@ -315,6 +321,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
 
             var deleteBulkuploadResults = await _courseService.DeleteBulkUploadCourses(UKPRN);
+
+            // COUR-1972 make sure we get a date on the Delete Confirmation page even if the physical delete above didn't find any files to delete.
+            if(null != provider.BulkUploadStatus)
+            {
+                if(provider.BulkUploadStatus.StartedTimestamp.HasValue)
+                {
+                    fileUploadDate = provider.BulkUploadStatus.StartedTimestamp.Value.ToLocalTime();
+                }
+            }
 
             if (deleteBulkuploadResults.IsSuccess)
             {
@@ -332,11 +347,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> DeleteFileConfirmation(DateTimeOffset fileUploadDate)
         {
-
             var model = new DeleteFileConfirmationViewModel();
 
             TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time");
-            DateTime dt1 = DateTime.Parse(fileUploadDate.DateTime.ToString()) ;
+            DateTime dt1 = DateTime.Parse(fileUploadDate.DateTime.ToString());
             DateTime dt2 = TimeZoneInfo.ConvertTimeFromUtc(dt1, tzi);
 
             model.FileUploadedDate = dt2.ToString("dd MMM yyyy HH:mm");

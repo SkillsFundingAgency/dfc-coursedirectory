@@ -86,6 +86,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpGet]
         public IActionResult AddCourse(string learnAimRef, string notionalNVQLevelv2, string awardOrgCode, string learnAimRefTitle, string learnAimRefTypeDesc, Guid? courseId)
         {
+            RemoveSessionVariables();
+
             Session.SetString("LearnAimRef", learnAimRef);
             Session.SetString("NotionalNVQLevelv2", notionalNVQLevelv2);
             Session.SetString("AwardOrgCode", awardOrgCode);
@@ -159,7 +161,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 },
                 WhereNext = new WhereNextModel()
                 {
-                    LabelText = "Where next for learners ? ",
+                    LabelText = "Where next for learners?",
                     HintText =
                         "Describe the opportunities beyond this course. For example, a higher level course, apprenticeship or direct entry to employment.",
                     AriaDescribedBy = "Please enter 'Where next?'",
