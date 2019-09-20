@@ -13,6 +13,8 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using CsvHelper.Configuration.Attributes;
+using Dfc.CourseDirectory.Models.Models.Venues;
+using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 
 
 namespace Dfc.CourseDirectory.Services.BulkUploadService
@@ -40,39 +42,45 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             public string CONTACT_EMAIL { get; set; }
             public string CONTACT_PHONE { get; set; }
             public string CONTACT_URL { get; set; }
-            public string DELIVERY_METHOD { get; set; }
+            public DeliveryMode DELIVERY_METHOD { get; set; }
             public string VENUE { get; set; }
             public string RADIUS { get; set; }
             public string DELIVERY_MODE { get; set; }
-            public string ACROSS_ENGLAND { get; set; }
-            public string NATIONAL_DELIVERY { get; set; }
+            public bool? ACROSS_ENGLAND { get; set; }
+            public bool? NATIONAL_DELIVERY { get; set; }
             public string REGION { get; set; }
             public string SUB_REGION { get; set; }
             public List<string> ErrorsList { get; set; }
             [Ignore]
             public int RowNumber  { get; set; }
+            [Ignore]
+            public string Base64Row  { get; set; }
+            [Ignore]
+            public Guid VenueId  { get; set; }
 
         }
 
         private class ApprenticeshipCsvRecordMap : ClassMap<ApprenticeshipCsvRecord>
         {
             private readonly IApprenticeshipService _apprenticeshipService;
-            public ApprenticeshipCsvRecordMap(IApprenticeshipService apprenticeshipService)
+            private readonly IVenueService _venueService;
+            public ApprenticeshipCsvRecordMap(IApprenticeshipService apprenticeshipService,
+                IVenueService venueService)
             {
                 Throw.IfNull(apprenticeshipService, nameof(apprenticeshipService));
                 _apprenticeshipService = apprenticeshipService;
 
-                Map(m => m.STANDARD_CODE).ConvertUsing((row) => { return Mandatory_Checks_STANDARD_CODE(row); });
-                Map(m => m.STANDARD_VERSION).ConvertUsing((row) => { return Mandatory_Checks_STANDARD_VERSION(row); });
-                Map(m => m.FRAMEWORK_CODE).ConvertUsing((row) => { return Mandatory_Checks_FRAMEWORK_CODE(row); });
-                Map(m => m.FRAMEWORK_PROG_TYPE).ConvertUsing((row) => { return Mandatory_Checks_FRAMEWORK_PROG_TYPE(row); });
-                Map(m => m.FRAMEWORK_PATHWAY_CODE).ConvertUsing((row) => { return Mandatory_Checks_FRAMEWORK_PATHWAY_CODE(row); });
+                Map(m => m.STANDARD_CODE).ConvertUsing(Mandatory_Checks_STANDARD_CODE);
+                Map(m => m.STANDARD_VERSION).ConvertUsing(Mandatory_Checks_STANDARD_VERSION);
+                Map(m => m.FRAMEWORK_CODE).ConvertUsing(Mandatory_Checks_FRAMEWORK_CODE);
+                Map(m => m.FRAMEWORK_PROG_TYPE).ConvertUsing(Mandatory_Checks_FRAMEWORK_PROG_TYPE);
+                Map(m => m.FRAMEWORK_PATHWAY_CODE).ConvertUsing(Mandatory_Checks_FRAMEWORK_PATHWAY_CODE);
                 Map(m => m.APPRENTICESHIP_INFORMATION);
                 Map(m => m.APPRENTICESHIP_WEBPAGE);
                 Map(m => m.CONTACT_EMAIL);
                 Map(m => m.CONTACT_PHONE);
                 Map(m => m.CONTACT_URL);
-                Map(m => m.DELIVERY_METHOD);
+                Map(m => m.DELIVERY_METHOD).ConvertUsing(Mandatory_Checks_DELIVERY_METHOD);
                 Map(m => m.VENUE);
                 Map(m => m.RADIUS);
                 Map(m => m.DELIVERY_MODE);
@@ -80,8 +88,9 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 Map(m => m.NATIONAL_DELIVERY);
                 Map(m => m.REGION);
                 Map(m => m.SUB_REGION);
-                Map(m => m.ErrorsList).ConvertUsing((row) => { return ValidateData(row); });
-                Map(m => m.RowNumber).Optional().ConvertUsing(row => row.Context.RawRow);
+                Map(m => m.ErrorsList).ConvertUsing(ValidateData);
+                Map(m => m.RowNumber).ConvertUsing(row => row.Context.RawRow);
+                Map(m => m.Base64Row).ConvertUsing(Base64Encode);
 
 
             }
@@ -149,6 +158,41 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 }
                 return value;
             }
+
+            private DeliveryMode Mandatory_Checks_DELIVERY_METHOD(IReaderRow row)
+            {
+                string fieldName = "DELIVERY_METHOD";
+                row.TryGetField<string>(fieldName, out string value);
+
+                if (String.IsNullOrWhiteSpace(value))
+                {
+                    return DeliveryMode.Undefined;
+                }
+                var deliveryMethod = value.ToEnum(DeliveryMode.Undefined);
+                if (deliveryMethod == DeliveryMode.Undefined)
+                {
+                    return DeliveryMode.Undefined;
+                }
+                return deliveryMethod;
+            }
+            //private Guid Mandatory_Checks_VENUE(IReaderRow row)
+            //{
+            //    //var deliveryMethod = Mandatory_Checks_DELIVERY_METHOD(row);
+
+            //    //if (deliveryMethod == DeliveryMode.Undefined || deliveryMethod == DeliveryMode.Employer)
+            //    //{
+                    
+            //    //}
+            //    //string fieldName = "VENUE";
+            //    //row.TryGetField<string>(fieldName, out string value);
+            //    //if (String.IsNullOrWhiteSpace(value))
+            //    //{
+            //    //    errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} is required.");
+            //    //    return errors;
+            //    //}
+
+            //    //return errors;
+            //}
             #endregion
 
             #region Field Validation
@@ -296,8 +340,20 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             private List<string> Validate_VENUE(IReaderRow row)
             {
                 List<string> errors = new List<string>();
+
+                var deliveryMethod = Mandatory_Checks_DELIVERY_METHOD(row);
+
+                if (deliveryMethod == DeliveryMode.Undefined || deliveryMethod == DeliveryMode.Employer)
+                {
+                    return errors;
+                }
                 string fieldName = "VENUE";
-                
+                row.TryGetField(fieldName, out string value);
+                if (String.IsNullOrWhiteSpace(value))
+                {
+                    errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} is required.");
+                    return errors;
+                }
 
                 return errors;
             }
@@ -363,15 +419,18 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
         private readonly ILogger<ApprenticeshipBulkUploadService> _logger;
         private readonly IApprenticeshipService _apprenticeshipService;
+        private readonly IVenueService _venueService;
         public ApprenticeshipBulkUploadService(
             ILogger<ApprenticeshipBulkUploadService> logger,
-            IApprenticeshipService apprenticeshipService
+            IApprenticeshipService apprenticeshipService,
+            IVenueService venueService
             )
         {
             Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(apprenticeshipService, nameof(apprenticeshipService));
             _logger = logger;
             _apprenticeshipService = apprenticeshipService;
+            _venueService = venueService;
         }
 
         public int CountCsvLines(Stream stream)
@@ -409,7 +468,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                         // Validate the header row.
                         ValidateHeader(csv);
 
-                        var classMap = new ApprenticeshipCsvRecordMap(_apprenticeshipService);
+                        var classMap = new ApprenticeshipCsvRecordMap(_apprenticeshipService, _venueService);
                         csv.Configuration.RegisterClassMap(classMap);
 
 
@@ -418,10 +477,9 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                         {
                             var record = csv.GetRecord<ApprenticeshipCsvRecord>();
                             records.Add(record);
-                            var base64Value = Base64Encode(record);
-                            if (!duplicateCheck.TryAdd(base64Value, record.RowNumber.ToString()))
+                            if (!duplicateCheck.TryAdd(record.Base64Row, record.RowNumber.ToString()))
                             {
-                                var duplicateRow = duplicateCheck[base64Value];
+                                var duplicateRow = duplicateCheck[record.Base64Row];
                                 throw new BadDataException(csv.Context,
                                     $"Duplicate entries detected on rows {duplicateRow}, and {record.RowNumber}.");
                             }
@@ -481,19 +539,27 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             return Regex.Replace(value, @"\s+", "");
         }
 
-        private static string Base64Encode(ApprenticeshipCsvRecord record)
+        private static string Base64Encode(IReaderRow row)
         {
+            row.TryGetField<string>("STANDARD_CODE", out string STANDARD_CODE);
+            row.TryGetField<string>("STANDARD_VERSION", out string STANDARD_VERSION);
+            row.TryGetField<string>("FRAMEWORK_CODE", out string FRAMEWORK_CODE);
+            row.TryGetField<string>("FRAMEWORK_PROG_TYPE", out string FRAMEWORK_PROG_TYPE);
+            row.TryGetField<string>("FRAMEWORK_PATHWAY_CODE", out string FRAMEWORK_PATHWAY_CODE);
+            row.TryGetField<string>("DELIVERY_METHOD", out string DELIVERY_METHOD);
+            row.TryGetField<string>("VENUE", out string VENUE);
+
             string[] line = new string[]
             {
-                record.STANDARD_CODE.ToString().ToUpper() ?? String.Empty,
-                record.STANDARD_VERSION.ToString().ToUpper() ?? String.Empty,
-                record.FRAMEWORK_CODE.ToString().ToUpper() ?? String.Empty,
-                record.FRAMEWORK_PROG_TYPE.ToString().ToUpper() ?? String.Empty,
-                record.FRAMEWORK_PATHWAY_CODE.ToString().ToUpper() ?? String.Empty,
-                record.DELIVERY_METHOD.ToString().ToUpper() ?? String.Empty,
-                record.VENUE.ToString().ToUpper() ?? String.Empty,
+                STANDARD_CODE,
+                STANDARD_VERSION,
+                FRAMEWORK_CODE,
+                FRAMEWORK_PROG_TYPE,
+                FRAMEWORK_PATHWAY_CODE,
+                DELIVERY_METHOD,
+                VENUE
             };
-            var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(String.Join(",",line));
+            var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(String.Join(",", line));
             return System.Convert.ToBase64String(plainTextBytes);
         }
     }
