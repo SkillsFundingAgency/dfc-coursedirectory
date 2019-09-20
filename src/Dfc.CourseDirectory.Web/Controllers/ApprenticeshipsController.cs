@@ -458,38 +458,29 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     if (type.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased)
                     {
                         var national = getApprenticehipByIdResult.Value.ApprenticeshipLocations.Select(x => x.National).FirstOrDefault();
-                        if (national.HasValue)
+                        if (type.National.HasValue && type.National.Value)
                         {
-                            LocationChoiceSelectionViewModel.NationalApprenticeship = national.Value == true ? NationalApprenticeship.Yes : NationalApprenticeship.No;
+                            LocationChoiceSelectionViewModel.NationalApprenticeship =
+                                NationalApprenticeship.Yes;
+                            model.Regions = new Dictionary<string, List<string>>
+                            {
+                                {"National", new List<string>() {"All"}}
+                            };
                         }
+                        else
+                        {
+                            LocationChoiceSelectionViewModel.NationalApprenticeship =
+                                NationalApprenticeship.No;
+
+                            var regions = getApprenticehipByIdResult.Value.ApprenticeshipLocations.Select(x => x.Regions).FirstOrDefault();
+                            model.Regions = regions != null ? SubRegionCodesToDictionary(regions) : null;
+                            _session.SetObject("SelectedRegions", regions);
+
+                        }
+
                         LocationChoiceSelectionViewModel.Mode = requestModel.Mode;
                         DeliveryViewModel.ApprenticeshipDelivery = ApprenticeshipDelivery.EmployersAddress;
                         DeliveryViewModel.Mode = requestModel.Mode;
-
-
-
-
-
-
-                        switch (type.National)
-                        {
-                            case true:
-                                LocationChoiceSelectionViewModel.NationalApprenticeship =
-                                    NationalApprenticeship.Yes;
-                                model.Regions = new Dictionary<string, List<string>>
-                                {
-                                    {"National", new List<string>() {"All"}}
-                                };
-                                break;
-                            case false:
-                                LocationChoiceSelectionViewModel.NationalApprenticeship =
-                                    NationalApprenticeship.No;
-
-                                var regions = getApprenticehipByIdResult.Value.ApprenticeshipLocations.Select(x => x.Regions.ToArray()).FirstOrDefault();
-                                model.Regions = regions != null ? SubRegionCodesToDictionary(regions) : null;
-                                _session.SetObject("SelectedRegions", regions);
-                                break;
-                        }
 
                         LocationChoiceSelectionViewModel.Mode = requestModel.Mode;
 
