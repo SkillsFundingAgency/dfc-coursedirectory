@@ -708,6 +708,69 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 errors.Should().BeNullOrEmpty();
                 errors.Should().HaveCount(0);
             }
+            [Fact]
+            public void When_Field_RADIUS_Contains_Invalid_Characters_Return_Error()
+            {
+                // Arrange
+                var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(null);
+                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
+                Stream stream = CsvStreams.InvalidField_RADIUS_MustBeNumericIfPresent();
+
+                // Act
+
+                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+
+                // Assert
+
+
+                errors.Should().NotBeNull();
+                errors.Should().HaveCount(1);
+                errors[0].Should().Be("Validation error on row 2. Field RADIUS must be numeric if present.");
+            }
+            [Fact]
+            public void When_Field_RADIUS_Is_Negative_Number_Return_Error()
+            {
+                // Arrange
+                var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(null);
+                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
+                Stream stream = CsvStreams.InvalidField_RADIUS_NegativeNumber();
+
+                // Act
+
+                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+
+                // Assert
+
+
+                errors.Should().NotBeNull();
+                errors.Should().HaveCount(1);
+                errors[0].Should().Be("Validation error on row 2. Field RADIUS must be a valid number");
+            }
+            [Fact]
+            public void When_Field_RADIUS_Is_Greater_Than_874_Return_Error()
+            {
+                // Arrange
+                var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(null);
+                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
+                Stream stream = CsvStreams.InvalidField_RADIUS_875();
+
+                // Act
+
+                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+
+                // Assert
+
+
+                errors.Should().NotBeNull();
+                errors.Should().HaveCount(1);
+                errors[0].Should().Be("Validation error on row 2. Field RADIUS must be between 1 and 874");
+            }
         }
 
         public class CheckForDuplicatesTest

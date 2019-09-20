@@ -207,6 +207,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 errors.AddRange(Validate_CONTACT_URL(row));
                 errors.AddRange(Validate_DELIVERY_METHOD(row));
                 errors.AddRange(Validate_VENUE(row));
+                errors.AddRange(Validate_RADIUS(row));
 
                 return errors;
             }
@@ -355,6 +356,34 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                     return errors;
                 }
 
+                return errors;
+            }
+            private List<string> Validate_RADIUS(IReaderRow row)
+            {
+                List<string> errors = new List<string>();
+
+                var deliveryMethod = Mandatory_Checks_DELIVERY_METHOD(row);
+                if (deliveryMethod != DeliveryMode.Both)
+                {
+                    return errors;
+                }
+
+                string fieldName = "RADIUS";
+                int? value = ValueMustBeNumericIfPresent(row, fieldName);
+                if (value.HasValue)
+                {
+                    if (value <= 0)
+                    {
+                        errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} must be a valid number");
+                        return errors;
+                    }
+
+                    if (value > 874)
+                    {
+                        errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} must be between 1 and 874");
+                        return errors;
+                    }
+                }
                 return errors;
             }
             #endregion
