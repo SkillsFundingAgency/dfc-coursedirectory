@@ -6,22 +6,21 @@
 
 
 <div class="govuk-form-group">
-    <label id="govuk-label-duration" class="govuk-label--m" asp-for="DurationLength">
+    <label id="govuk-label-duration" class="govuk-label--m" asp-for="DurationLength" >
         @Model.LabelText
     </label>
     @if (!string.IsNullOrWhiteSpace(Model.HintText))
     {
-        <span class="govuk-hint">
+        <span class="govuk-hint govuk-!-margin-top-3">
             @Model.HintText
         </span>
     }
    
-    <div id="duration" class="duration-container"
+    <div id="duration" class="duration-container" style="margin-top:15px"
          val-range-min="1" 
          val-range-max="999" 
          val-duration-message="Enter duration"
-         val-decimal-message="Invalid duration entered"> 
-        <div class="govuk-date-input__item"> 
+         val-decimal-message="Invalid duration entered"> <div class="govuk-date-input__item"> 
             <div class="govuk-form-group"> 
                 <input pattern="^[0-9]*$" class="govuk-input govuk-input--width-2" style="display: inline;" asp-for="@Model.DurationLength" type="number" maxlength="3" aria-labelledby="govuk-label-duration">
 
