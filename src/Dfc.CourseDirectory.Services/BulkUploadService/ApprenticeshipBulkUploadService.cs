@@ -52,8 +52,8 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             public string CONTACT_URL { get; set; }
             public DeliveryMethod DELIVERY_METHOD { get; set; }
             public string VENUE { get; set; }
-            public string RADIUS { get; set; }
-            public List<DeliveryMethod> DELIVERY_MODE { get; set; }
+            public int? RADIUS { get; set; }
+            public string DELIVERY_MODE { get; set; }
             public bool? ACROSS_ENGLAND { get; set; }
             public bool? NATIONAL_DELIVERY { get; set; }
             public string REGION { get; set; }
@@ -90,9 +90,9 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 Map(m => m.CONTACT_URL);
                 Map(m => m.DELIVERY_METHOD).ConvertUsing(Mandatory_Checks_DELIVERY_METHOD);
                 Map(m => m.VENUE);
-                Map(m => m.RADIUS);
+                Map(m => m.RADIUS).ConvertUsing(Mandatory_Checks_RADIUS);
                 Map(m => m.DELIVERY_MODE);
-                Map(m => m.ACROSS_ENGLAND);
+                Map(m => m.ACROSS_ENGLAND).ConvertUsing(Mandatory_Checks_ACROSS_ENGLAND);
                 Map(m => m.NATIONAL_DELIVERY);
                 Map(m => m.REGION);
                 Map(m => m.SUB_REGION);
@@ -184,6 +184,41 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 return deliveryMethod;
             }
 
+            private int? Mandatory_Checks_RADIUS(IReaderRow row)
+            {
+
+                var deliveryMethod = Mandatory_Checks_DELIVERY_METHOD(row);
+                if (deliveryMethod != DeliveryMethod.Both)
+                {
+                    return null;
+                }
+
+                var isAcrossEngland = Mandatory_Checks_ACROSS_ENGLAND(row);
+
+                if (isAcrossEngland == true)
+                {
+                    return 600;
+                }
+
+                string fieldName = "RADIUS";
+                return ValueMustBeNumericIfPresent(row, fieldName);
+            }
+
+            private bool? Mandatory_Checks_ACROSS_ENGLAND(IReaderRow row)
+            {
+                string fieldName = "ACROSS_ENGLAND";
+                row.TryGetField<string>(fieldName, out string value);
+
+                switch (value.ToUpper())
+                {
+                    case "YES" :
+                        return true;
+                    case "NO":
+                        return false;
+                }
+
+                return null;
+            }
             //private Guid Mandatory_Checks_VENUE(IReaderRow row)
             //{
             //    //var deliveryMethod = Mandatory_Checks_DELIVERY_METHOD(row);
@@ -218,6 +253,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 errors.AddRange(Validate_VENUE(row));
                 errors.AddRange(Validate_RADIUS(row));
                 errors.AddRange(Validate_DELIVERY_MODE(row));
+                errors.AddRange(Validate_ACROSS_ENGLAND(row));
                 
 
                 return errors;
@@ -380,7 +416,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 }
 
                 string fieldName = "RADIUS";
-                int? value = ValueMustBeNumericIfPresent(row, fieldName);
+                var value = Mandatory_Checks_RADIUS(row);
                 if (value.HasValue)
                 {
                     if (value <= 0)
@@ -429,6 +465,24 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                         return errors;
                     }
                 }
+                return errors;
+            }
+            private List<string> Validate_ACROSS_ENGLAND(IReaderRow row)
+            {
+                List<string> errors = new List<string>();
+                string fieldName = "ACROSS_ENGLAND";
+                var deliveryMethod = Mandatory_Checks_DELIVERY_METHOD(row);
+                var isAcrossEngland = Mandatory_Checks_ACROSS_ENGLAND(row);
+                if (deliveryMethod == DeliveryMethod.Both)
+                {
+                    if (!isAcrossEngland.HasValue)
+                    {
+                        errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} must contain a value when Delivery Mode is 'Both'");
+                        return errors;
+                    }
+                }
+
+
                 return errors;
             }
             #endregion
@@ -489,6 +543,8 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 }
                 return false;
             }
+
+
         }
 
         private readonly ILogger<ApprenticeshipBulkUploadService> _logger;
