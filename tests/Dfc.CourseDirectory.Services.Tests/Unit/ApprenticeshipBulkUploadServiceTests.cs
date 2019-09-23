@@ -771,6 +771,50 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 errors.Should().HaveCount(1);
                 errors[0].Should().Be("Validation error on row 2. Field RADIUS must be between 1 and 874");
             }
+            [Fact]
+            public void When_DELIVERY_MODE_Is_Invalid_Return_Error()
+            {
+                // Arrange
+                var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
+                var httpClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulStandardFile(), HttpStatusCode.OK);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(httpClient);
+
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
+                Stream stream = CsvStreams.InvalidField_DELIVERY_MODE_Invalid_Option();
+
+                // Act
+
+                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+
+                // Assert
+                errors.Should().NotBeNull();
+                errors.Should().HaveCount(1);
+                errors[0].Should().Be("Validation error on row 2. Field DELIVERY_MODE must be a valid Delivery Mode");
+            }
+            [Fact]
+            public void When_DELIVERY_MODE_Has_Duplicates_Return_Error()
+            {
+                // Arrange
+                var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
+                var httpClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulStandardFile(), HttpStatusCode.OK);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(httpClient);
+
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
+                Stream stream = CsvStreams.InvalidField_DELIVERY_MODE_Duplicate_Option();
+
+                // Act
+
+                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+
+                // Assert
+                errors.Should().NotBeNull();
+                errors.Should().HaveCount(1);
+                errors[0].Should().Be("Validation error on row 2. Field DELIVERY_MODE must contain unique Delivery Modes");
+            }
         }
 
         public class CheckForDuplicatesTest
@@ -923,6 +967,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 errors.Should().BeNullOrEmpty();
                 errors.Should().HaveCount(0);
             }
+
         }
     }
 }

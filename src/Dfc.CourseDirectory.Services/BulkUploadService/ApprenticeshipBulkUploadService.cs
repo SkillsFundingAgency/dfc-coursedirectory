@@ -23,12 +23,20 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
     public class ApprenticeshipBulkUploadService : IApprenticeshipBulkUploadService
     {
 
-        private enum DeliveryMode
+        private enum DeliveryMethod
         {
             Undefined = 0,
             Classroom = 1,
             Employer = 2,
             Both = 3
+        }
+
+        private enum DeliveryMode
+        {
+            Undefined = 0,
+            Day = 1,
+            Block = 2,
+            Employer = 3
         }
         private class ApprenticeshipCsvRecord
         {
@@ -42,10 +50,10 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             public string CONTACT_EMAIL { get; set; }
             public string CONTACT_PHONE { get; set; }
             public string CONTACT_URL { get; set; }
-            public DeliveryMode DELIVERY_METHOD { get; set; }
+            public DeliveryMethod DELIVERY_METHOD { get; set; }
             public string VENUE { get; set; }
             public string RADIUS { get; set; }
-            public string DELIVERY_MODE { get; set; }
+            public List<DeliveryMethod> DELIVERY_MODE { get; set; }
             public bool? ACROSS_ENGLAND { get; set; }
             public bool? NATIONAL_DELIVERY { get; set; }
             public string REGION { get; set; }
@@ -159,27 +167,28 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 return value;
             }
 
-            private DeliveryMode Mandatory_Checks_DELIVERY_METHOD(IReaderRow row)
+            private DeliveryMethod Mandatory_Checks_DELIVERY_METHOD(IReaderRow row)
             {
                 string fieldName = "DELIVERY_METHOD";
                 row.TryGetField<string>(fieldName, out string value);
 
                 if (String.IsNullOrWhiteSpace(value))
                 {
-                    return DeliveryMode.Undefined;
+                    return DeliveryMethod.Undefined;
                 }
-                var deliveryMethod = value.ToEnum(DeliveryMode.Undefined);
-                if (deliveryMethod == DeliveryMode.Undefined)
+                var deliveryMethod = value.ToEnum(DeliveryMethod.Undefined);
+                if (deliveryMethod == DeliveryMethod.Undefined)
                 {
-                    return DeliveryMode.Undefined;
+                    return DeliveryMethod.Undefined;
                 }
                 return deliveryMethod;
             }
+
             //private Guid Mandatory_Checks_VENUE(IReaderRow row)
             //{
             //    //var deliveryMethod = Mandatory_Checks_DELIVERY_METHOD(row);
 
-            //    //if (deliveryMethod == DeliveryMode.Undefined || deliveryMethod == DeliveryMode.Employer)
+            //    //if (deliveryMethod == DeliveryMethod.Undefined || deliveryMethod == DeliveryMethod.Employer)
             //    //{
                     
             //    //}
@@ -208,6 +217,8 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 errors.AddRange(Validate_DELIVERY_METHOD(row));
                 errors.AddRange(Validate_VENUE(row));
                 errors.AddRange(Validate_RADIUS(row));
+                errors.AddRange(Validate_DELIVERY_MODE(row));
+                
 
                 return errors;
             }
@@ -331,8 +342,8 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                     return errors;
                 }
 
-                var deliveryMethod = value.ToEnum(DeliveryMode.Undefined);
-                if (deliveryMethod == DeliveryMode.Undefined)
+                var deliveryMethod = value.ToEnum(DeliveryMethod.Undefined);
+                if (deliveryMethod == DeliveryMethod.Undefined)
                 {
                     errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} is invalid.");
                 }
@@ -344,7 +355,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
                 var deliveryMethod = Mandatory_Checks_DELIVERY_METHOD(row);
 
-                if (deliveryMethod == DeliveryMode.Undefined || deliveryMethod == DeliveryMode.Employer)
+                if (deliveryMethod == DeliveryMethod.Undefined || deliveryMethod == DeliveryMethod.Employer)
                 {
                     return errors;
                 }
@@ -363,7 +374,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 List<string> errors = new List<string>();
 
                 var deliveryMethod = Mandatory_Checks_DELIVERY_METHOD(row);
-                if (deliveryMethod != DeliveryMode.Both)
+                if (deliveryMethod != DeliveryMethod.Both)
                 {
                     return errors;
                 }
@@ -381,6 +392,40 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                     if (value > 874)
                     {
                         errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} must be between 1 and 874");
+                        return errors;
+                    }
+                }
+                return errors;
+            }
+            private List<string> Validate_DELIVERY_MODE(IReaderRow row)
+            {
+                List<string> errors = new List<string>();
+
+                var deliveryMethod = Mandatory_Checks_DELIVERY_METHOD(row);
+                if (deliveryMethod == DeliveryMethod.Undefined || deliveryMethod == DeliveryMethod.Employer)
+                {
+                    return errors;
+                }
+                string fieldName = "DELIVERY_MODE";
+                row.TryGetField(fieldName, out string value);
+
+                
+                Dictionary<DeliveryMode, string> modes = new Dictionary<DeliveryMode, string>();
+
+                var modeArray = value.Split(";");
+
+                foreach (var mode in modeArray)
+                {
+                    var deliveryMode = mode.ToEnum(DeliveryMode.Undefined);
+                    if (deliveryMode == DeliveryMode.Undefined)
+                    {
+                        errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} must be a valid Delivery Mode");
+                        return errors;
+                    }
+
+                    if (!modes.TryAdd(deliveryMode, deliveryMode.ToString()))
+                    {
+                        errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} must contain unique Delivery Modes");
                         return errors;
                     }
                 }
