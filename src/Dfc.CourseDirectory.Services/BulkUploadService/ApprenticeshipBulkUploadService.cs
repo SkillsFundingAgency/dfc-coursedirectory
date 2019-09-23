@@ -92,8 +92,8 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 Map(m => m.VENUE);
                 Map(m => m.RADIUS).ConvertUsing(Mandatory_Checks_RADIUS);
                 Map(m => m.DELIVERY_MODE);
-                Map(m => m.ACROSS_ENGLAND).ConvertUsing(Mandatory_Checks_ACROSS_ENGLAND);
-                Map(m => m.NATIONAL_DELIVERY);
+                Map(m => m.ACROSS_ENGLAND).ConvertUsing(row => Mandatory_Checks_Bool(row, "ACROSS_ENGLAND"));
+                Map(m => m.NATIONAL_DELIVERY).ConvertUsing(row => Mandatory_Checks_Bool(row, "NATIONAL_DELIVERY"));
                 Map(m => m.REGION);
                 Map(m => m.SUB_REGION);
                 Map(m => m.ErrorsList).ConvertUsing(ValidateData);
@@ -193,7 +193,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                     return null;
                 }
 
-                var isAcrossEngland = Mandatory_Checks_ACROSS_ENGLAND(row);
+                var isAcrossEngland = Mandatory_Checks_Bool(row, "ACROSS_ENGLAND");
 
                 if (isAcrossEngland == true)
                 {
@@ -204,9 +204,9 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 return ValueMustBeNumericIfPresent(row, fieldName);
             }
 
-            private bool? Mandatory_Checks_ACROSS_ENGLAND(IReaderRow row)
+            private bool? Mandatory_Checks_Bool(IReaderRow row, string fieldName)
             {
-                string fieldName = "ACROSS_ENGLAND";
+                
                 row.TryGetField<string>(fieldName, out string value);
 
                 switch (value.ToUpper())
@@ -254,6 +254,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 errors.AddRange(Validate_RADIUS(row));
                 errors.AddRange(Validate_DELIVERY_MODE(row));
                 errors.AddRange(Validate_ACROSS_ENGLAND(row));
+                errors.AddRange(Validate_NATIONAL_DELIVERY(row));
                 
 
                 return errors;
@@ -472,12 +473,30 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 List<string> errors = new List<string>();
                 string fieldName = "ACROSS_ENGLAND";
                 var deliveryMethod = Mandatory_Checks_DELIVERY_METHOD(row);
-                var isAcrossEngland = Mandatory_Checks_ACROSS_ENGLAND(row);
+                var isAcrossEngland = Mandatory_Checks_Bool(row, fieldName);
                 if (deliveryMethod == DeliveryMethod.Both)
                 {
                     if (!isAcrossEngland.HasValue)
                     {
-                        errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} must contain a value when Delivery Mode is 'Both'");
+                        errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} must contain a value when Delivery Method is 'Both'");
+                        return errors;
+                    }
+                }
+
+
+                return errors;
+            }
+            private List<string> Validate_NATIONAL_DELIVERY(IReaderRow row)
+            {
+                List<string> errors = new List<string>();
+                string fieldName = "NATIONAL_DELIVERY";
+                var deliveryMethod = Mandatory_Checks_DELIVERY_METHOD(row);
+                var isNational = Mandatory_Checks_Bool(row, fieldName);
+                if (deliveryMethod == DeliveryMethod.Employer)
+                {
+                    if (!isNational.HasValue)
+                    {
+                        errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} must contain a value when Delivery Method is 'Employer'");
                         return errors;
                     }
                 }

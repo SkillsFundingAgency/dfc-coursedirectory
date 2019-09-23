@@ -808,7 +808,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 // Assert
                 errors.Should().NotBeNull();
                 errors.Should().HaveCount(1);
-                errors[0].Should().Be("Validation error on row 2. Field ACROSS_ENGLAND must contain a value when Delivery Mode is 'Both'");
+                errors[0].Should().Be("Validation error on row 2. Field ACROSS_ENGLAND must contain a value when Delivery Method is 'Both'");
             }
             [Fact]
             public void When_ACROSS_ENGLAND_Is_True_Return_Radius_600()
@@ -828,6 +828,25 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 // Assert
                 errors.Should().BeNullOrEmpty();
                 errors.Should().HaveCount(0);
+            }
+            [Fact]
+            public void When_NATIONAL_DELIVERY_Is_Invalid_Return_Error()
+            {
+                // Arrange
+                var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(null);
+                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
+                Stream stream = CsvStreams.InvalidRow_NATIONAL_DELIVERY_Invalid();
+
+                // Act
+
+                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+
+                // Assert
+                errors.Should().NotBeNull();
+                errors.Should().HaveCount(1);
+                errors[0].Should().Be("Validation error on row 2. Field NATIONAL_DELIVERY must contain a value when Delivery Method is 'Employer'");
             }
             [Fact]
             public void When_DELIVERY_MODE_Is_Invalid_Return_Error()
