@@ -93,24 +93,27 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
 
                 IEnumerable<Course> inValidCourses = courses.Where(c => c.IsValid == false);
 
-               var courseMigrationReportResult = await _courseService.GetCourseMigrationReport(UKPRN);
-
-               var larslessCoursesCount = courseMigrationReportResult?.Value==null?0:courseMigrationReportResult?.Value.LarslessCourses.Count();
-             
-                actualModel.DisplayMigrationButton = false;
-                if (migrationPendingCourses.Count() > 0 || larslessCoursesCount>0)
-                {
-                    actualModel.DisplayMigrationButton = true;
-                }
+              
 
                 actualModel.BulkUploadPendingCount = bulkUploadRunsPending.Count();
                 actualModel.BulkUploadReadyToGoLiveCount = bulkUploadReadyToGoLive.Count();
                 actualModel.BulkUploadTotalCount = bulkUploadCoursesPending.Count() + bulkUploadReadyToGoLive.Count();
 
+
                 IEnumerable<Services.BlobStorageService.BlobFileInfo> list = _blobStorageService.GetFileList(UKPRN + "/Bulk Upload/Files/").OrderByDescending(x => x.DateUploaded).ToList();
                 if (list.Any())
                     actualModel.FileUploadDate = list.FirstOrDefault().DateUploaded.Value;
 
+               var courseMigrationReportResult = await _courseService.GetCourseMigrationReport(UKPRN);
+
+               var larslessCoursesCount = courseMigrationReportResult?.Value==null?0:courseMigrationReportResult?.Value.LarslessCourses.Count();
+                
+                actualModel.DisplayMigrationButton = false;
+                //list.Any() to see if any bulkupload files exist. If they do we don't want to show migration error.
+                if ((migrationPendingCourses.Count() > 0 || larslessCoursesCount>0) && !list.Any()) 
+                {
+                    actualModel.DisplayMigrationButton = true;
+                }
 
                 actualModel.BulkUpLoadHasErrors = bulkUploadCoursesPending?.SelectMany(c => c.BulkUploadErrors).Count() + bulkUploadRunsPending?.SelectMany(r => r.BulkUploadErrors).Count() > 0;
 
