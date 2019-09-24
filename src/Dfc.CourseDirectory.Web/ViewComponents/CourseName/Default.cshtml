@@ -4,33 +4,31 @@
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
-<div id="courseNameContainer" class="govuk-form-group">
-    <label id="govuk-label-CourseName" class="govuk-label--m" asp-for="@Model.CourseName">
-        @Model.LabelText
-    </label>
+@{
+    var regex = RegexPattern.AllowValidCharactersRelaxed;
+}
 
-    @{ 
-        
-        //var regex = @"^[a-zA-Z0-9 /\n/\r/\\u/\¬\!\£\$\%\^\&\*\\é\\è\\ﬁ\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\•\·\●\’\‘\“\”\—\-\–\‐\‐\…\:/\°\®\\â\\ç\\ñ\\ü\\ø\♦\™\\t/\s\¼\¾\½\" + "\"" + "\\\\]+$";
+    <div class="govuk-form-group">
+        <label id="govuk-label-CourseName" class="govuk-label--m"  asp-for="@Model.CourseName">
+            @Model.LabelText
+        </label>
+        @if (!string.IsNullOrWhiteSpace(Model.HintText))
+        {
+            <span class="govuk-hint govuk-!-margin-top-3">
+                @Model.HintText
+            </span>
+        }
 
-        var regex = RegexPattern.AllowValidCharactersRelaxed;
-       
-       }
+        <input class="govuk-input" asp-for="@Model.CourseName" type="text" autofocus aria-label="@Model.CourseName" value="@WebUtility.HtmlDecode(@Model.CourseName)"
+               val-required-message="Enter course name"
+               val-max-length="255"
+               val-max-length-message="The maximum length of Course Name is 255 characters"
+               val-regex="@regex" 
+               val-regex-message="Course Name contains invalid characters" />
 
-    @if (!string.IsNullOrWhiteSpace(Model.HintText))
-    {
-        <span class="govuk-hint">
-            @Model.HintText
-        </span>
-    }
-    
-    <input class="govuk-input" asp-for="@Model.CourseName" type="text" autofocus aria-label="@Model.CourseName" value="@WebUtility.HtmlDecode(@Model.CourseName)"
-           val-required-message="Enter course name"
-           val-max-length="255"
-           val-max-length-message="The maximum length of Course Name is 255 characters"
-           val-regex="@regex" 
-           val-regex-message="Course Name contains invalid characters" />
-</div>
+    </div>
+
+
 
 <script>
     (function ($) {

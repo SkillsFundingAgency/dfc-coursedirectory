@@ -16,6 +16,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
+using Dfc.CourseDirectory.Web.ViewModels.Migration;
 
 namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
 {
@@ -92,8 +93,12 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
 
                 IEnumerable<Course> inValidCourses = courses.Where(c => c.IsValid == false);
 
+               var courseMigrationReportResult = await _courseService.GetCourseMigrationReport(UKPRN);
+
+               var larslessCoursesCount = courseMigrationReportResult?.Value==null?0:courseMigrationReportResult?.Value.LarslessCourses.Count();
+             
                 actualModel.DisplayMigrationButton = false;
-                if (migrationPendingCourses.Count() > 0)
+                if (migrationPendingCourses.Count() > 0 || larslessCoursesCount>0)
                 {
                     actualModel.DisplayMigrationButton = true;
                 }

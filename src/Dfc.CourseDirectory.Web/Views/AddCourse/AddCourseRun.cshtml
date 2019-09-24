@@ -71,12 +71,12 @@
 }
 
 
-@await Component.InvokeAsync(nameof(Notification), new NotificationModel
+@*@await Component.InvokeAsync(nameof(Notification), new NotificationModel
 {
     NotificationTitle = "",
     NotificationMessage = @Model.LearnAimRefTitle + "<br>" + "Level: " + @Model.NotionalNVQLevelv2 + "<br> Awarding organisation: " + @Model.AwardOrgCode + "<br> LARS / QAN: " + @Model.LearnAimRef,
     ClassType = "info-summary"
-})
+})*@
 <h1 class="govuk-heading-l" style="padding-top: 20px;">
     Course details
 </h1>
@@ -155,10 +155,10 @@
                         @Model.SelectVenue.LabelText
                     </h2>
                 </legend>
-                <span class="govuk-hint">
+                <span class="govuk-hint govuk-!-margin-top-3">
                     @Model.SelectVenue.HintText
                 </span>
-                <div class="govuk-checkboxes" id="SelectVenueCheckBoxes" val-required-message="Select a venue">
+                <div class="govuk-checkboxes govuk-checkboxes--small" id="SelectVenueCheckBoxes" val-required-message="Select a venue">
 
 
 
@@ -184,11 +184,14 @@
 
                         }
                     }
-
-                    <a href="#" class="govuk-link--no-visited-state" id="addNewVenue">The course location isn’t shown here</a>
+                    
                 </div>
+              
             </fieldset>
         </div>
+        <span class="">
+            <a href="#" class="govuk-link--no-visited-state" id="addNewVenue">The course location isn’t shown here</a>
+        </span>
     </div>
 
 
@@ -219,10 +222,10 @@
         Cost = Model.Cost,
         CostDescription = Model.CostDescription,
         CostLabelText = "Cost",
-        CostHintText = "Enter the cost of the course to the learner",
+        CostHintText = "Enter the cost of the course to the learner.",
         CostAriaDescribedBy = "Enter the cost in pounds and pence",
         CostDescriptionLabelText = "Cost description",
-        CostDescriptionHintText = "Enter details related to the cost of this course",
+        CostDescriptionHintText = "Enter details related to the cost of this course.",
         CostDescriptionAriaDescribedBy = "Enter details of related to the cost of this course"
         })
     </div>

@@ -4,33 +4,35 @@
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
+@{
+    var regex = RegexPattern.AllowValidCharactersRelaxed;
+}
+
 <div class="govuk-form-group">
-    <label class="govuk-label--m" asp-for="@Model.CourseProviderReference">
+    <label id="govuk-label--m" class="govuk-label--m" asp-for="@Model.CourseProviderReference">
         @Model.LabelText
     </label>
-    
-@{ 
-    @* var regex = @"^[a-zA-Z0-9 /\n/\r/\¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\•\’\‘\-\–\:/\t/\s" + "\"" + "\\\\]+$"; *@
-    var regex = RegexPattern.AllowValidCharactersRelaxed;    
-        }
-    
-
     @if (!string.IsNullOrWhiteSpace(Model.HintText))
     {
-        <span class="govuk-hint">
+        <span class="govuk-hint govuk-!-margin-top-3">
             @Model.HintText
         </span>
     }
+
     <input class="govuk-input" asp-for="@Model.CourseProviderReference" type="text" aria-describedby="@Model.CourseProviderReference" value="@WebUtility.HtmlDecode(@Model.CourseProviderReference)"
            val-max-length="255"
            val-max-length-message="The maximum length of 'ID' is 255 characters"
            val-regex="@regex"
            val-regex-message="ID contains invalid characters" />
 
-
 </div>
 
-<script>
+
+
+
+
+
+    <script>
     (function ($) {
         $(function () {
             var $elementCourseProviderReference = $("#@nameof(Model.CourseProviderReference)");
@@ -41,4 +43,4 @@
             });
         });
     })(jQuery);
-</script>
+    </script>

@@ -1,6 +1,6 @@
 ﻿@{
-    ViewData["Title"] = "Find a qualification";
-    ViewData["Subtext"] = "Search by LARS/QAN or keyword for the qualification you are awarding with this course";
+    ViewData["Title"] = "Which qualification are you awarding with this course?";
+    ViewData["Subtext"] = "Search by Learning Aims Reference Service (LARS) code or a keyword";
     ViewData["Placeholder"] = "Search";
 }
 @{
@@ -11,25 +11,31 @@
         <header class="cd-hero-search">
             <div class="content-container">
 
-               
+
                 <div class="grid-row" data-sf-element="Row">
                     <div class="column-two-thirds">
+
+
                         <div>
                             <h1 class="govuk-heading-l govuk-!-margin-top-4">@ViewBag.Title</h1>
 
                         </div>
-                        <form class="site-search ui-front regulatedsearch " id="header-search">
-                            <label class="column-two-thirds govuk-label-m " name="qualification-search">@ViewBag.Subtext</label>
-                            <div class="search-input-wrapper govuk-!-margin-top-4">
+                        <div id="LarsSearch" class="cd-status-panel teal--border">
+                            <form class="site-search ui-front" id="header-search">
 
+                                <div class="search-input-wrapper">
 
-                                <input class="govuk-input search-input js-search-focus govuk-!-width-three-quarters" placeholder="@ViewBag.Placeholder" id="LarsSearchTerm" name="LarsSearchTerm" type="text" autofocus aria-label="qualification-search">
-                                <div class="cd-c-search__item cd-search__submit-wrapper">
-                                    <button type="button" class=" submit" id="searchQualification">Search</button>
+                                    <label class="column-two-thirds" name="qualification-search" for="LarsSearchTerm">@ViewBag.Subtext</label>
+                                    <div class="search--container">
+                                        <input class="govuk-input search-input js-search-focus govuk-input--width-20" id="LarsSearchTerm" name="LarsSearchTerm" type="text" autofocus aria-label="qualification-search">
+                                        <div class="cd-c-search__item cd-search__submit-wrapper">
+                                            <button type="button" class=" submit" id="searchQualification">Search</button>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
 
-                        </form>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>

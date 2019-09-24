@@ -9,7 +9,10 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
     {
         [JsonProperty(PropertyName ="Provider")]
         public string ProviderName { get; set; }
-
+         
+        [JsonProperty(PropertyName = "UKPRN")]
+        public string UKPRN { get; set; }
+        
         [JsonProperty(PropertyName = "Provider_Type")]
         public ProviderType ProviderType { get; set; }
 
@@ -33,5 +36,7 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
 
         [JsonProperty(PropertyName = "Migration_Rate")]
         public decimal MigrationRate { get; set; }
+
+       
     }
 }

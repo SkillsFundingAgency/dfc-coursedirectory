@@ -33,4 +33,10 @@
     </Reference>
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="IntegrationHelpers\appsettings.Test.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

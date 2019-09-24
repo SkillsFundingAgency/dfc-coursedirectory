@@ -171,7 +171,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
                                                         : string.Empty,
                         StartDate = cr.FlexibleStartDate
                                                         ? "Flexible start date"
-                                                        : cr.StartDate?.ToString("dd/MM/yyyy"),
+                                                        : cr.StartDate?.ToString("dd MMM yyyy"),
                         StudyMode = cr.StudyMode == Models.Models.Courses.StudyMode.Undefined
                                                         ? string.Empty
                                                         : cr.StudyMode.ToDescription(),

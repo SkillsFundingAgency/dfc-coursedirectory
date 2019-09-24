@@ -4,7 +4,7 @@
 @{
     var pageTitle="";
     if (Model.Id != null) {
-        pageTitle = "Edit venue details";
+        pageTitle = "Check location details before saving";
     } else {
         pageTitle = "Add a venue";
     }
@@ -16,10 +16,10 @@
 
 <div class="govuk-grid-row">
     @*@Html.HiddenFor(x => x.PostCodeId)*@
-    
+
     <input type="hidden" id="ModelPostCodeId" value="@Model.PostCodeId" />
     <div class="govuk-grid-column-two-thirds">
-        
+
         <h1 class="govuk-heading-l">@pageTitle</h1>
 
         @await Component.InvokeAsync(nameof(VenueAddressSelectionConfirmation), new VenueAddressSelectionConfirmationModel

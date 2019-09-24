@@ -525,17 +525,19 @@ namespace Dfc.CourseDirectory.Web
                 //CSP
                 context.Response.Headers.Add("Content-Security-Policy", 
                                                 "default-src    'self'  https://rainmaker.tiny.cloud/;" +
-                                                "style-src      'self' 'unsafe-inline' https://cloud.tinymce.com/;" +
-                                                "font-src       'self' data: https://cloud.tinymce.com/;" +
-                                                "img-src        'self' * data: https://cloud.tinymce.com/;" +
+                                                "style-src      'self' 'unsafe-inline' "+
+                                                    " https://cdn.tiny.cloud/" +
+                                                    " https://cloud.tinymce.com/;" +
+                                                "font-src       'self' data: https://cdn.tiny.cloud/;" +
+                                                "img-src        'self' * data: https://cdn.tiny.cloud/;" +
                                                 "script-src     'self' 'unsafe-eval' 'unsafe-inline'  " +
                                                     " https://cloud.tinymce.com/" +
                                                     " https://cdnjs.cloudflare.com/" +
                                                     " https://www.googletagmanager.com/" +
                                                     " https://www.google-analytics.com/" +
+                                                    " https://cdn.tiny.cloud/" +
                                                     ";"
                 );
-
 
                 context.Response.GetTypedHeaders().CacheControl =
                   new Microsoft.Net.Http.Headers.CacheControlHeaderValue()
