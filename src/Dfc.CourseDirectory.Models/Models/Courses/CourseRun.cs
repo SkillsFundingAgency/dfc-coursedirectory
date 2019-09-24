@@ -59,7 +59,16 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
 
     }
 
+    public enum AttendancePatternMonToFri
+    {
+        [Display(Name = "Undefined")]
+        [Description("Undefined")]
+        Undefined = 0,
+        [Display(Name = "Monday to Friday")]
+        [Description("Monday To Friday")]
+        MondayToFriday = 1
 
+    }
 
     public enum AttendancePattern
     {
