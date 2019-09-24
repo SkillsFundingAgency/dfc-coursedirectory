@@ -250,6 +250,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
 
                 // use local version of httpclient as when we are called from the background worker thread we get socket exceptions
                 HttpClient httpClient = new HttpClient();
+                httpClient.Timeout = new TimeSpan(0, 10, 0);
                 httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
                 response = await httpClient.GetAsync(new Uri(_getYourCoursesUri.AbsoluteUri + "?UKPRN=" + criteria.UKPRN));
                 _logger.LogHttpResponseMessage("Get your courses service http response", response);
@@ -938,16 +939,24 @@ namespace Dfc.CourseDirectory.Services.CourseService
         {
             Throw.IfLessThan(0, UKPRN, nameof(UKPRN));
 
-            _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
-            var response = await _httpClient.GetAsync(new Uri(_deleteBulkUploadCoursesUri.AbsoluteUri
-                + "?UKPRN=" + UKPRN));
-            _logger.LogHttpResponseMessage("Delete Bulk Upload Course Status http response", response);
-
-            if (response.IsSuccessStatusCode)
+            try
             {
-                return Result.Ok();
+                HttpClient httpClient = new HttpClient();
+                httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
+                var response = await httpClient.GetAsync(new Uri(_deleteBulkUploadCoursesUri.AbsoluteUri
+                    + "?UKPRN=" + UKPRN));
+                _logger.LogHttpResponseMessage("Delete Bulk Upload Course Status http response", response);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return Result.Ok();
+                }
+                else
+                {
+                    return Result.Fail("Delete Bulk Upload Course unsuccessful: " + response.ReasonPhrase);
+                }
             }
-            else
+            catch (Exception ex)
             {
                 return Result.Fail("Update course unsuccessful http response");
             }
