@@ -429,7 +429,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 DetailViewModel.NotionalNVQLevelv2 = getApprenticehipByIdResult.Value.NotionalNVQLevelv2;
                 DetailViewModel.StandardCode = getApprenticehipByIdResult.Value.StandardCode;
                 DetailViewModel.Telephone = getApprenticehipByIdResult.Value.ContactTelephone;
-                DetailViewModel.Website = getApprenticehipByIdResult.Value.ContactWebsite;
+                DetailViewModel.Website = getApprenticehipByIdResult.Value.Url;
                 DetailViewModel.Mode = requestModel.Mode;
                 model.DetailViewModel = DetailViewModel;
 
