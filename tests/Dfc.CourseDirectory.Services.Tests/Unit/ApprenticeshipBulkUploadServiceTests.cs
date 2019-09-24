@@ -892,6 +892,71 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 errors.Should().HaveCount(1);
                 errors[0].Should().Be("Validation error on row 2. Field DELIVERY_MODE must contain unique Delivery Modes");
             }
+            [Fact]
+            public void When_REGION_Is_Invalid_Return_Error()
+            {
+                // Arrange
+                var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
+                var httpClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulStandardFile(), HttpStatusCode.OK);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(httpClient);
+
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
+                Stream stream = CsvStreams.InvalidRow_Invalid_REGION();
+
+                // Act
+
+                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+
+                // Assert
+                errors.Should().NotBeNull();
+                errors.Should().HaveCount(1);
+                errors[0].Should().Be("Validation error on row 2. Field REGION contains invalid Region names");
+            }
+            [Fact]
+            public void When_SUB_REGION_Is_Invalid_Return_Error()
+            {
+                // Arrange
+                var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
+                var httpClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulStandardFile(), HttpStatusCode.OK);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(httpClient);
+
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
+                Stream stream = CsvStreams.InvalidRow_Invalid_SUBREGION();
+
+                // Act
+
+                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+
+                // Assert
+                errors.Should().NotBeNull();
+                errors.Should().HaveCount(1);
+                errors[0].Should().Be("Validation error on row 2. Field SUB_REGION contains invalid SubRegion names");
+            }
+            [Fact]
+            public void When_REGION_AND_SUBREGION_Are_Valid_Return_Success()
+            {
+                // Arrange
+                var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
+                var httpClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulStandardFile(), HttpStatusCode.OK);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(httpClient);
+
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
+                Stream stream = CsvStreams.ValidRow_REGION_And_SUBREGION();
+
+                // Act
+
+                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+
+                // Assert
+                errors.Should().BeNullOrEmpty();
+                errors.Should().HaveCount(0);
+            }
         }
 
         public class CheckForDuplicatesTest

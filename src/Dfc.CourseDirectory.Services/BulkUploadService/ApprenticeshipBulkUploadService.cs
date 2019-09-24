@@ -7,12 +7,14 @@ using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.Interfaces.BulkUploadService;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using CsvHelper.Configuration.Attributes;
+using Dfc.CourseDirectory.Models.Models.Regions;
 using Dfc.CourseDirectory.Models.Models.Venues;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 
@@ -23,7 +25,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
     public class ApprenticeshipBulkUploadService : IApprenticeshipBulkUploadService
     {
 
-        private enum DeliveryMethod
+        internal enum DeliveryMethod
         {
             Undefined = 0,
             Classroom = 1,
@@ -31,15 +33,17 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             Both = 3
         }
 
-        private enum DeliveryMode
+        internal enum DeliveryMode
         {
             Undefined = 0,
             Day = 1,
             Block = 2,
             Employer = 3
         }
-        private class ApprenticeshipCsvRecord
+
+        internal class ApprenticeshipCsvRecord
         {
+            
             public int? STANDARD_CODE { get; set; }
             public int? STANDARD_VERSION { get; set; }
             public int? FRAMEWORK_CODE { get; set; }
@@ -58,6 +62,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             public bool? NATIONAL_DELIVERY { get; set; }
             public string REGION { get; set; }
             public string SUB_REGION { get; set; }
+            public List<string> RegionsList { get; set; }
             public List<string> ErrorsList { get; set; }
             [Ignore]
             public int RowNumber  { get; set; }
@@ -91,11 +96,12 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 Map(m => m.DELIVERY_METHOD).ConvertUsing(Mandatory_Checks_DELIVERY_METHOD);
                 Map(m => m.VENUE);
                 Map(m => m.RADIUS).ConvertUsing(Mandatory_Checks_RADIUS);
-                Map(m => m.DELIVERY_MODE);
-                Map(m => m.ACROSS_ENGLAND).ConvertUsing(row => Mandatory_Checks_Bool(row, "ACROSS_ENGLAND"));
-                Map(m => m.NATIONAL_DELIVERY).ConvertUsing(row => Mandatory_Checks_Bool(row, "NATIONAL_DELIVERY"));
+                Map(m => m.DELIVERY_MODE).ConvertUsing(Mandatory_Checks_DELIVERY_MODE);
+                Map(m => m.ACROSS_ENGLAND).ConvertUsing(Mandatory_Checks_ACROSS_ENGLAND);
+                Map(m => m.NATIONAL_DELIVERY).ConvertUsing(Mandatory_Checks_NATIONAL_DELIVERY);
                 Map(m => m.REGION);
                 Map(m => m.SUB_REGION);
+                Map(m => m.RegionsList).ConvertUsing(GetRegionList);
                 Map(m => m.ErrorsList).ConvertUsing(ValidateData);
                 Map(m => m.RowNumber).ConvertUsing(row => row.Context.RawRow);
                 Map(m => m.Base64Row).ConvertUsing(Base64Encode);
@@ -103,7 +109,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
             }
 
-            #region Basic Checks
+            #region Mandatory Checks
             private int? Mandatory_Checks_STANDARD_CODE(IReaderRow row)
             {
                 int? value = ValueMustBeNumericIfPresent(row, "STANDARD_CODE");
@@ -113,7 +119,6 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 }
                 return value;
             }
-
             private int? Mandatory_Checks_STANDARD_VERSION(IReaderRow row)
             {
                 int? value = ValueMustBeNumericIfPresent(row, "STANDARD_VERSION");
@@ -129,7 +134,6 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 }
                 return value;
             }
-
             private int? Mandatory_Checks_FRAMEWORK_CODE(IReaderRow row)
             {
                 int? value = ValueMustBeNumericIfPresent(row, "FRAMEWORK_CODE");
@@ -139,7 +143,6 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 }
                 return value;
             }
-
             private int? Mandatory_Checks_FRAMEWORK_PROG_TYPE(IReaderRow row)
             {
                 int? value = ValueMustBeNumericIfPresent(row, "FRAMEWORK_PROG_TYPE");
@@ -149,7 +152,6 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 }
                 return value;
             }
-
             private int? Mandatory_Checks_FRAMEWORK_PATHWAY_CODE(IReaderRow row)
             {
                 int? value = ValueMustBeNumericIfPresent(row, "FRAMEWORK_PATHWAY_CODE");
@@ -166,7 +168,6 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 }
                 return value;
             }
-
             private DeliveryMethod Mandatory_Checks_DELIVERY_METHOD(IReaderRow row)
             {
                 string fieldName = "DELIVERY_METHOD";
@@ -183,7 +184,6 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 }
                 return deliveryMethod;
             }
-
             private int? Mandatory_Checks_RADIUS(IReaderRow row)
             {
 
@@ -202,6 +202,78 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
                 string fieldName = "RADIUS";
                 return ValueMustBeNumericIfPresent(row, fieldName);
+            }
+            private string Mandatory_Checks_DELIVERY_MODE(IReaderRow row)
+            {
+                var deliveryMethod = Mandatory_Checks_DELIVERY_METHOD(row);
+
+                if (deliveryMethod == DeliveryMethod.Classroom || deliveryMethod == DeliveryMethod.Both)
+                {
+                    string fieldName = "APPRENTICESHIP_INFORMATION";
+                    row.TryGetField<string>(fieldName, out string value);
+                    return value;
+                }
+
+                return string.Empty;
+            }
+            private bool? Mandatory_Checks_ACROSS_ENGLAND(IReaderRow row)
+            {
+                var deliveryMethod = Mandatory_Checks_DELIVERY_METHOD(row);
+
+                if (deliveryMethod == DeliveryMethod.Both)
+                {
+                    string fieldName = "ACROSS_ENGLAND";
+                    row.TryGetField<string>(fieldName, out string value);
+                    return Mandatory_Checks_Bool(row, fieldName);
+                }
+
+                return null;
+            }
+            private bool? Mandatory_Checks_NATIONAL_DELIVERY(IReaderRow row)
+            {
+                var deliveryMethod = Mandatory_Checks_DELIVERY_METHOD(row);
+
+                if (deliveryMethod == DeliveryMethod.Employer)
+                {
+                    string fieldName = "NATIONAL_DELIVERY";
+                    row.TryGetField<string>(fieldName, out string value);
+                    return Mandatory_Checks_Bool(row, fieldName);
+                }
+
+                return null;
+            }
+            private List<string> GetRegionList(IReaderRow row)
+            {
+                var deliveryMethod = Mandatory_Checks_DELIVERY_METHOD(row);
+                var isNational = Mandatory_Checks_NATIONAL_DELIVERY(row);
+
+                List<string> regions = new List<string>();
+                if (deliveryMethod == DeliveryMethod.Employer)
+                {
+                    string regionFieldName = "REGION";
+                    string subRegionFieldName = "SUB_REGION";
+                    row.TryGetField(regionFieldName, out string regionList);
+                    row.TryGetField(subRegionFieldName, out string subRegionList);
+
+                    if (isNational == null)
+                        return new List<string>();
+
+                    if (string.IsNullOrEmpty(regionList) && string.IsNullOrEmpty(subRegionList))
+                    {
+                        return new List<string>();
+                    }
+
+                    if(isNational == false)
+                    {
+                        var regionCodes = ParseRegionData(regionList);
+                        var subregionCodes = ParseSubRegionData(subRegionList);
+                        regions.AddRange(regionCodes.Distinct());
+                        regions.AddRange(subregionCodes.Distinct());
+                    }
+
+                }
+
+                return new List<string>(regions.Distinct());
             }
 
             private bool? Mandatory_Checks_Bool(IReaderRow row, string fieldName)
@@ -250,13 +322,31 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 errors.AddRange(Validate_CONTACT_PHONE(row));
                 errors.AddRange(Validate_CONTACT_URL(row));
                 errors.AddRange(Validate_DELIVERY_METHOD(row));
-                errors.AddRange(Validate_VENUE(row));
-                errors.AddRange(Validate_RADIUS(row));
-                errors.AddRange(Validate_DELIVERY_MODE(row));
-                errors.AddRange(Validate_ACROSS_ENGLAND(row));
-                errors.AddRange(Validate_NATIONAL_DELIVERY(row));
-                
 
+                switch (Mandatory_Checks_DELIVERY_METHOD(row))
+                {
+                    case DeliveryMethod.Classroom:
+                    {
+                        errors.AddRange(Validate_VENUE(row));
+                        errors.AddRange(Validate_DELIVERY_MODE(row));
+                        break;
+                    }
+                    case DeliveryMethod.Employer:
+                    {
+                        errors.AddRange(Validate_NATIONAL_DELIVERY(row));
+                        errors.AddRange(Validate_REGION(row));
+                        errors.AddRange(Validate_SUB_REGION(row));
+                        break;
+                    }
+                    case DeliveryMethod.Both:
+                    {
+                        errors.AddRange(Validate_VENUE(row));
+                        errors.AddRange(Validate_RADIUS(row));
+                        errors.AddRange(Validate_DELIVERY_MODE(row));
+                        errors.AddRange(Validate_ACROSS_ENGLAND(row));
+                        break;
+                    }
+                }
                 return errors;
             }
 
@@ -390,12 +480,6 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             {
                 List<string> errors = new List<string>();
 
-                var deliveryMethod = Mandatory_Checks_DELIVERY_METHOD(row);
-
-                if (deliveryMethod == DeliveryMethod.Undefined || deliveryMethod == DeliveryMethod.Employer)
-                {
-                    return errors;
-                }
                 string fieldName = "VENUE";
                 row.TryGetField(fieldName, out string value);
                 if (String.IsNullOrWhiteSpace(value))
@@ -409,12 +493,6 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             private List<string> Validate_RADIUS(IReaderRow row)
             {
                 List<string> errors = new List<string>();
-
-                var deliveryMethod = Mandatory_Checks_DELIVERY_METHOD(row);
-                if (deliveryMethod != DeliveryMethod.Both)
-                {
-                    return errors;
-                }
 
                 string fieldName = "RADIUS";
                 var value = Mandatory_Checks_RADIUS(row);
@@ -438,11 +516,6 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             {
                 List<string> errors = new List<string>();
 
-                var deliveryMethod = Mandatory_Checks_DELIVERY_METHOD(row);
-                if (deliveryMethod == DeliveryMethod.Undefined || deliveryMethod == DeliveryMethod.Employer)
-                {
-                    return errors;
-                }
                 string fieldName = "DELIVERY_MODE";
                 row.TryGetField(fieldName, out string value);
 
@@ -504,6 +577,58 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
                 return errors;
             }
+            private List<string> Validate_REGION(IReaderRow row)
+            {
+                List<string> errors = new List<string>();
+                string fieldName = "REGION";
+                row.TryGetField(fieldName, out string value);
+                var deliveryMethod = Mandatory_Checks_DELIVERY_METHOD(row);
+                var isNational = Mandatory_Checks_NATIONAL_DELIVERY(row);
+                if (deliveryMethod == DeliveryMethod.Employer)
+                {
+                    if (isNational == false)
+                    {
+                        if(!string.IsNullOrEmpty(value))
+                        {
+                            var results = ParseRegionData(value);
+                            if(!results.Any())
+                            {
+                                errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} contains invalid Region names");
+                                return errors;
+                            }
+                        }
+                    }
+                }
+
+
+                return errors;
+            }
+            private List<string> Validate_SUB_REGION(IReaderRow row)
+            {
+                List<string> errors = new List<string>();
+                string fieldName = "SUB_REGION";
+                row.TryGetField(fieldName, out string value);
+                var deliveryMethod = Mandatory_Checks_DELIVERY_METHOD(row);
+                var isNational = Mandatory_Checks_NATIONAL_DELIVERY(row);
+                if (deliveryMethod == DeliveryMethod.Employer)
+                {
+                    if (isNational == false)
+                    {
+                        if(!string.IsNullOrEmpty(value))
+                        {
+                            var results = ParseSubRegionData(value);
+                            if(!results.Any())
+                            {
+                                errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} contains invalid SubRegion names");
+                                return errors;
+                            }
+                        }
+                    }
+                }
+
+
+                return errors;
+            }
             #endregion
 
 
@@ -535,6 +660,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
             private bool DoesStandardExist(int? standardCode, int? version)
             {
+                bool isExist = false;
                 var result = _apprenticeshipService.GetStandardByCode(new StandardSearchCriteria
                     {StandardCode = standardCode, Version = version}).Result;
 
@@ -543,29 +669,92 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                     var standard = result.Value.FirstOrDefault();
                     if(standard != null && 
                        (standard.StandardCode == standardCode && standard.Version == version))
-                        return true;
+                        isExist = true;
                 }
 
-                return false;
+                return isExist;
             }
             private bool DoesFrameworkExist(int? frameworkCode, int? progType, int? pathwayCode)
             {
+                bool isExist = false;
                 var result = _apprenticeshipService.GetFrameworkByCode(new FrameworkSearchCriteria
                     {FrameworkCode = frameworkCode, ProgType = progType, PathwayCode = pathwayCode}).Result;
                 if (result.IsSuccess && result.HasValue && result.Value.Any())
                 {
                     var framework = result.Value.FirstOrDefault();
-                    if(framework != null &&(framework.FrameworkCode == frameworkCode 
-                                            && framework.ProgType == progType
-                                            && framework.PathwayCode == pathwayCode))
-                        return true;
+                    if (framework != null && (framework.FrameworkCode == frameworkCode
+                                              && framework.ProgType == progType
+                                              && framework.PathwayCode == pathwayCode))
+                    {
+                        isExist = true;
+                    }
                 }
-                return false;
+                return isExist;
             }
 
+            private IEnumerable<string> ParseRegionData(string regions)
+            {
+                var availableRegions = new SelectRegionModel();
+                var subRegionList = new List<string>();
 
+                if (!string.IsNullOrEmpty(regions))
+                {
+                    foreach (var region in regions.Trim().Split(";"))
+
+                    {
+                        var subregionsForRegion =
+                            availableRegions.RegionItems.Where(x =>
+                                string.Equals(x.RegionName, region, StringComparison.CurrentCultureIgnoreCase))
+                                .Select(y => y .SubRegion).FirstOrDefault();
+
+                        if (subregionsForRegion == null)
+                        {
+                            return new List<string>();
+                        }
+
+                        var listOfSubRegionCodes = subregionsForRegion.Select(x => x.Id).ToList();
+                        if (listOfSubRegionCodes.Any())
+                        {
+                            subRegionList.AddRange(listOfSubRegionCodes);
+                        }
+                    
+                    }
+                }
+
+                return subRegionList.Distinct();
+            }
+            private IEnumerable<string> ParseSubRegionData(string subRegionList)
+            {
+                var availableSubRegions = new SelectRegionModel().RegionItems.SelectMany(x => x.SubRegion);
+                var subRegionCodeList = new List<string>();
+
+                if (!string.IsNullOrEmpty(subRegionList))
+                {
+                    foreach (var subRegion in subRegionList.Trim().Split(";"))
+
+                    {
+                        var subRegions =
+                            availableSubRegions.Where(x => x.SubRegionName == subRegion);
+
+                        if (!subRegions.Any())
+                        {
+                            return new List<string>();
+                        }
+
+                        var listOfSubRegionCodes = subRegions.Select(x => x.Id).ToList();
+                        if (listOfSubRegionCodes.Any())
+                        {
+                            subRegionCodeList.AddRange(listOfSubRegionCodes);
+                        }
+                    
+                    }
+                }
+
+                return subRegionCodeList.Distinct();
+            }
         }
-
+        
+    
         private readonly ILogger<ApprenticeshipBulkUploadService> _logger;
         private readonly IApprenticeshipService _apprenticeshipService;
         private readonly IVenueService _venueService;
@@ -624,7 +813,9 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
                         while (csv.Read())
                         {
+                           
                             var record = csv.GetRecord<ApprenticeshipCsvRecord>();
+                            
                             records.Add(record);
                             if (!duplicateCheck.TryAdd(record.Base64Row, record.RowNumber.ToString()))
                             {
@@ -644,15 +835,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                     }
                 }
             }
-            catch (ReaderException ex)
-            {
-                Exception rootex = ex;
-                while (null != rootex.InnerException)
-                {
-                    rootex = rootex.InnerException;
-                }
-                errors.Add($"Invalid file format. {rootex.Message}");
-            }
+
             catch (HeaderValidationException ex)
             {
                 string errmsg = $"Invalid header row. {ex.Message.FirstSentence()}";
