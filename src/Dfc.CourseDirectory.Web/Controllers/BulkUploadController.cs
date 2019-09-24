@@ -326,7 +326,31 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
 
 
-            var deleteBulkuploadResults = await _courseService.DeleteBulkUploadCourses(UKPRN);
+            // COUR-1927 move the delete to a background worker because it's timing out for large files.
+            bool deleteSuccess = false;
+            _queue.QueueBackgroundWorkItem(async token =>
+            {
+                var guid = Guid.NewGuid().ToString();
+                var tag = $"delete bulk upload for provider {UKPRN}.";
+                var startTimestamp = DateTime.UtcNow;
+
+                try
+                {
+                    _logger.LogInformation($"{startTimestamp.ToString("yyyyMMddHHmmss")} Starting background worker {guid} for {tag}");
+
+                    var deleteBulkuploadResults = await _courseService.DeleteBulkUploadCourses(UKPRN);
+                    deleteSuccess = deleteBulkuploadResults.IsSuccess;
+
+                    var finishTimestamp = DateTime.UtcNow;
+                    _logger.LogInformation($"{finishTimestamp.ToString("yyyyMMddHHmmss")} background worker {guid} finished successfully for {tag}");
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError($"Error whilst deleting bulk upload file on background worker {guid} for {tag}", ex);
+                }
+
+                _logger.LogInformation($"Queued Background Task {guid} is complete.");
+            });
 
             // COUR-1972 make sure we get a date on the Delete Confirmation page even if the physical delete above didn't find any files to delete.
             if(null != provider.BulkUploadStatus)
@@ -337,7 +361,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 }
             }
 
-            if (deleteBulkuploadResults.IsSuccess)
+            if (deleteSuccess)
             {
                 return RedirectToAction("DeleteFileConfirmation", "Bulkupload", new { fileUploadDate = fileUploadDate });
             }
