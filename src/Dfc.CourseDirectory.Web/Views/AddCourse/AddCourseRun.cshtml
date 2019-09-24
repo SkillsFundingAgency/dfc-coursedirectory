@@ -71,12 +71,12 @@
 }
 
 
-@await Component.InvokeAsync(nameof(Notification), new NotificationModel
+@*@await Component.InvokeAsync(nameof(Notification), new NotificationModel
 {
     NotificationTitle = "",
     NotificationMessage = @Model.LearnAimRefTitle + "<br>" + "Level: " + @Model.NotionalNVQLevelv2 + "<br> Awarding organisation: " + @Model.AwardOrgCode + "<br> LARS / QAN: " + @Model.LearnAimRef,
     ClassType = "info-summary"
-})
+})*@
 <h1 class="govuk-heading-l" style="padding-top: 20px;">
     Course details
 </h1>
@@ -184,12 +184,14 @@
 
                         }
                     }
-                    <span class="govuk-hint govuk-!-margin-top-3">
-                        <a href="#" class="govuk-link--no-visited-state" id="addNewVenue">The course location isn’t shown here</a>
-                    </span>
+                    
                 </div>
+              
             </fieldset>
         </div>
+        <span class="">
+            <a href="#" class="govuk-link--no-visited-state" id="addNewVenue">The course location isn’t shown here</a>
+        </span>
     </div>
 
 
