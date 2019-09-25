@@ -72,7 +72,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             [Ignore]
             public string Base64Row  { get; set; }
             [Ignore]
-            public Guid VenueId  { get; set; }
+            public Guid? VenueId  { get; set; }
 
         }
 
@@ -304,12 +304,12 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
                 return null;
             }
-            private Guid Mandatory_Checks_VENUE(IReaderRow row)
+            private Guid? Mandatory_Checks_VENUE(IReaderRow row)
             {
                 var deliveryMethod = Mandatory_Checks_DELIVERY_METHOD(row);
                 if (deliveryMethod == DeliveryMethod.Classroom || deliveryMethod == DeliveryMethod.Both)
                 {
-                    if(!_cachedVenues.Any())
+                    if(_cachedVenues == null)
                     {
                         _cachedVenues = Task.Run(async () => await _venueService.SearchAsync(new VenueSearchCriteria(_UKPRN.ToString(), string.Empty)))
                             .Result
@@ -318,7 +318,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                             .ToList();
                         if(!_cachedVenues.Any())
                         {
-                            return Guid.Empty;
+                            return null;
                         }
                             
                     }
@@ -326,22 +326,29 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                     row.TryGetField<string>(fieldName, out string value);
                     if (string.IsNullOrWhiteSpace(value))
                     {
-                        return Guid.Empty;
+                        return null;
                     }
 
                     var venues = _cachedVenues
-                        .Where(x => x.VenueName.ToUpper() == value && x.Status == VenueStatus.Live).ToList();
-                    if (venues.Any())
+                        .Where(x => x.VenueName.ToUpper() == value.ToUpper() && x.Status == VenueStatus.Live).ToList();
+                    if(venues.Count == 1)
                     {
-                        if(venues.Count == 1)
+                        var validId = Guid.TryParse(venues.FirstOrDefault()?.ID, out Guid venueId);
+                        if (validId)
                         {
-
+                            return venueId;
                         }
+
+                    }
+
+                    if (venues.Count > 1)
+                    {
+                        return Guid.Empty;
                     }
                 }
 
 
-                return Guid.Empty;
+                return null;
             }
             #endregion
 
@@ -522,6 +529,19 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                     return errors;
                 }
 
+                var venueId = Mandatory_Checks_VENUE(row);
+
+                if (venueId == null)
+                {
+                    errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} is invalid.");
+                    return errors;
+                }
+
+                if (venueId == Guid.Empty)
+                {
+                    errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} is invalid. Multiple venues identified with value entered.");
+                    return errors;
+                }
                 return errors;
             }
             private List<string> Validate_RADIUS(IReaderRow row)

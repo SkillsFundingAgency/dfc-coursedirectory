@@ -290,7 +290,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(null);
-                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.InvalidField_APPRENTICESHIP_INFORMATION_Missing();
 
@@ -312,7 +313,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(null);
-                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.InvalidField_APPRENTICESHIP_INFORMATION_751Chars();
 
@@ -333,7 +335,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService( null);
-                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.InvalidField_APPRENTICESHIP_WEBPAGE_Regex_Error_Invalid_Character();
 
@@ -354,7 +357,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(null);
-                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.InvalidField_APPRENTICESHIP_WEBPAGE_256Chars();
 
@@ -375,7 +379,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(null);
-                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.Valid_Row_Empty_APPRENTICESHIP_WEBPAGE();
 
@@ -395,7 +400,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(null);
-                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.InvalidField_CONTACT_EMAIL_Missing();
 
@@ -416,7 +422,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(null);
-                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.InvalidField_CONTACT_EMAIL_256_Chars();
 
@@ -437,7 +444,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(null);
-                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.InvalidField_CONTACT_EMAIL_Regex_Invalid_character();
 
@@ -458,7 +466,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(null);
-                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.InvalidField_CONTACT_PHONE_Missing();
 
@@ -479,7 +488,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(null);
-                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.InvalidField_CONTACT_PHONE_Longer_Than_30_Chars();
 
@@ -500,7 +510,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(null);
-                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.InvalidField_CONTACT_PHONE_NonNumeric();
 
@@ -521,7 +532,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(null);
-                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.Valid_Row_Empty_CONTRACT_URL();
 
@@ -541,7 +553,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(null);
-                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.InvalidField_CONTACT_URL_256_Chars();
 
@@ -561,7 +574,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 // Arrange
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(null);
-                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.InvalidField_CONTACT_URL_Invalid_URL_Space();
 
@@ -579,7 +593,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 // Arrange
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(null);
-                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.InvalidField_CONTACT_URL_Invalid_URL_Format();
 
@@ -638,7 +653,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 // Arrange
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(null);
-                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.Valid_Row_DELIVERY_METHOD_Case_Insensitive_Correct_Values();
 
@@ -695,7 +711,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 // Arrange
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(null);
-                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.Valid_Row_DELIVERY_METHOD_Case_Insensitive_Correct_Values();
 
@@ -735,7 +752,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 // Arrange
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(null);
-                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.InvalidField_RADIUS_NegativeNumber();
 
@@ -756,7 +774,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 // Arrange
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(null);
-                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.InvalidField_RADIUS_875();
 
@@ -777,7 +796,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 // Arrange
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(null);
-                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.ValidRow_ACROSS_ENGLAND_FALSE();
 
@@ -796,7 +816,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 // Arrange
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(null);
-                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.InvalidRow_ACROSS_ENGLAND_Invalid();
 
@@ -816,7 +837,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 // Arrange
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(null);
-                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.ValidRow_ACROSS_ENGLAND_TRUE();
 
@@ -963,21 +985,45 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 // Arrange
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
                 var httpClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulStandardFile(), HttpStatusCode.OK);
-                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
-                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(httpClient);
-
-                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
                 
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(httpClient);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
+
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
-                Stream stream = CsvStreams.ValidRow_REGION_And_SUBREGION();
+                Stream stream = CsvStreams.InvalidRow_Invalid_VENUE();
 
                 // Act
 
                 var errors = serviceUnderTest.ValidateCSVFormat(stream, 12345678);
 
                 // Assert
-                errors.Should().BeNullOrEmpty();
-                errors.Should().HaveCount(0);
+                errors.Should().NotBeNull();
+                errors.Should().HaveCount(1);
+                errors[0].Should().Be("Validation error on row 2. Field VENUE is invalid.");
+            }
+            [Fact]
+            public void When_Multiple_VENUE_Returned_Return_Error()
+            {
+                // Arrange
+                var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
+                var httpClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulStandardFile(), HttpStatusCode.OK);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.MultipleVenueFile(), HttpStatusCode.OK);
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(httpClient);
+
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
+
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
+                Stream stream = CsvStreams.InvalidRow_Multiple_VENUE();
+
+                // Act
+
+                var errors = serviceUnderTest.ValidateCSVFormat(stream, 12345678);
+
+                // Assert
+                errors.Should().NotBeNull();
+                errors.Should().HaveCount(1);
+                errors[0].Should().Be("Validation error on row 2. Field VENUE is invalid. Multiple venues identified with value entered.");
             }
         }
 
@@ -990,7 +1036,9 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
                 var httpClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulStandardFile(), HttpStatusCode.OK);
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(httpClient);
-                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
+
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.InvalidFile_Duplicate_STANDARD_CODES_SameDeliveryMethod_Same_Venue();
 
@@ -1010,7 +1058,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 var httpClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulFrameworkFile(), HttpStatusCode.OK);
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(httpClient);
 
-                var venueMock = VenueServiceMockFactory.GetVenueService(httpClient);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.InvalidRow_FrameworkCodes_DuplicateRows();
 
@@ -1055,7 +1104,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 var httpClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulStandardFile(), HttpStatusCode.OK);
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(httpClient);
 
-                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.ValidField_STANDARD_CODES();
 
@@ -1076,7 +1126,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 var httpClient = HttpClientMockFactory.GetClient(SampleJsons.EmptyFile(), code);
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(httpClient);
 
-                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.InvalidField_STANDARD_CODE_InvalidNumber();
 

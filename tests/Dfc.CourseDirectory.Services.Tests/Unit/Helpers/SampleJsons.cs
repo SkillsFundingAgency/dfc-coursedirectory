@@ -32,7 +32,11 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit.Helpers
         {
             return "[]";
         }
-        
+        public static string MultipleVenueFile()
+        {
+            return "[{\r\n  \"id\": \"ff60d867-76a5-429e-9285-65af0789192d\",\r\n  \"UKPRN\": 12345678,\r\n  \"PROVIDER_ID\": 123456,\r\n  \"VENUE_ID\": 1234567,\r\n  \"VENUE_NAME\": \"Venue 1\",\r\n  \"PROV_VENUE_ID\": \"ABC\",\r\n  \"PHONE\": \"\",\r\n  \"ADDRESS_1\": \"Address 1\",\r\n  \"ADDRESS_2\": \"Address 2\",\r\n  \"TOWN\": \"Town Name\",\r\n  \"COUNTY\": \"\",\r\n  \"POSTCODE\": \"ABC 123\",\r\n  \"EMAIL\": \"\",\r\n  \"WEBSITE\": \"\",\r\n  \"Status\": 1,\r\n  \"DateUpdated\": \"2019-07-15T14:36:50.4983406+00:00\",\r\n  \"UpdatedBy\": \"TestUser\",\r\n  \"Latitude\": \"1\",\r\n  \"Longitude\": 1,\r\n  \"LocationId\": 123435,\r\n  \"TribalLocationId\": null,\r\n  \"Telephone\": \"\",\r\n  \"Email\": \"\",\r\n  \"Website\": \"\"\r\n}, {\r\n  \"id\": \"ff60d867-76a5-429e-9285-65af0789192d\",\r\n  \"UKPRN\": 12345678,\r\n  \"PROVIDER_ID\": 123456,\r\n  \"VENUE_ID\": 1234567,\r\n  \"VENUE_NAME\": \"Venue 3\",\r\n  \"PROV_VENUE_ID\": \"ABC\",\r\n  \"PHONE\": \"\",\r\n  \"ADDRESS_1\": \"Address 1\",\r\n  \"ADDRESS_2\": \"Address 2\",\r\n  \"TOWN\": \"Town Name\",\r\n  \"COUNTY\": \"\",\r\n  \"POSTCODE\": \"ABC 123\",\r\n  \"EMAIL\": \"\",\r\n  \"WEBSITE\": \"\",\r\n  \"Status\": 1,\r\n  \"DateUpdated\": \"2019-07-15T14:36:50.4983406+00:00\",\r\n  \"UpdatedBy\": \"TestUser\",\r\n  \"Latitude\": \"1\",\r\n  \"Longitude\": 1,\r\n  \"LocationId\": 123456,\r\n  \"TribalLocationId\": null,\r\n  \"Telephone\": \"\",\r\n  \"Email\": \"\",\r\n  \"Website\": \"\"\r\n}, {\r\n  \"id\": \"ff60d867-76a5-429e-9285-65af0789192d\",\r\n  \"UKPRN\": 12345678,\r\n  \"PROVIDER_ID\": 123456,\r\n  \"VENUE_ID\": 1234567,\r\n  \"VENUE_NAME\": \"Venue 3\",\r\n  \"PROV_VENUE_ID\": \"ABC\",\r\n  \"PHONE\": \"\",\r\n  \"ADDRESS_1\": \"Address 1\",\r\n  \"ADDRESS_2\": \"Address 2\",\r\n  \"TOWN\": \"Town Name\",\r\n  \"COUNTY\": \"\",\r\n  \"POSTCODE\": \"ABC 123\",\r\n  \"EMAIL\": \"\",\r\n  \"WEBSITE\": \"\",\r\n  \"Status\": 1,\r\n  \"DateUpdated\": \"2019-07-15T14:36:50.4983406+00:00\",\r\n  \"UpdatedBy\": \"TestUser\",\r\n  \"Latitude\": \"1\",\r\n  \"Longitude\": 1,\r\n  \"LocationId\": 112345,\r\n  \"TribalLocationId\": null,\r\n  \"Telephone\": \"\",\r\n  \"Email\": \"\",\r\n  \"Website\": \"\"\r\n}]";
+
+        }
 
         #endregion
     }
