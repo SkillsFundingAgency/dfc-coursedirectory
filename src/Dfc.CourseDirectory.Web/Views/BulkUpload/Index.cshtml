@@ -15,7 +15,6 @@
 @inject IAuthorizationService Authorization
 
 @{
-    ViewData["Title"] = "Bulk Upload";
     var authorised = await Authorization.AuthorizeAsync(User, "Admin");
 }
 
@@ -115,7 +114,7 @@
                     <button type="submit" id="uploadButton" class="govuk-button govuk-!-margin-right-3">
                         Continue
                     </button>
-                    <a class="govuk-link " asp-controller="Home" asp-action="Index">Cancel</a>
+                    @*<a class="govuk-link " asp-controller="Home" asp-action="Index">Cancel</a>*@
                 </div>
             </div>
         </div>
@@ -123,11 +122,11 @@
             <div class="sidebar">
 
                 <div class="widget white blue">
-                    <h2 class="govuk-heading-s">Templates</h2>
+                    <h2 class="govuk-heading-m">Find templates</h2>
 
                     <ul class="govuk-list">
                         <li>
-                            @Html.ActionLink("Download a blank template", "GetBulkUploadTemplateFile", "BlobStorage")
+                            @Html.ActionLink("Download an empty file (CSV)", "GetBulkUploadTemplateFile", "BlobStorage")
                         </li>
                         <li class="govuk-!-padding-bottom-4">
                             @if (Model.HasMigrationErrors)
@@ -136,7 +135,7 @@
                             }
                             else
                             {
-                                @Html.ActionLink("Download a template containing your current courses", "GetCurrentCoursesTemplateFile", "BlobStorage")
+                                @Html.ActionLink("Download a file containing your published courses (CSV)", "GetCurrentCoursesTemplateFile", "BlobStorage")
                             }
 
                         </li>

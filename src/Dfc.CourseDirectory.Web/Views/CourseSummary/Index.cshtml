@@ -5,7 +5,7 @@
 @using System.Net
 @model Dfc.CourseDirectory.Web.ViewModels.CourseSummary.CourseSummaryViewModel
 @{
-    ViewData["Title"] = WebUtility.HtmlDecode(@Model.CourseName); 
+    ViewData["Title"] = WebUtility.HtmlDecode(@Model.CourseName);
     Layout = "_Layout_Your_Courses";
 }
 @{
@@ -14,361 +14,482 @@
     var studyModeAttribute = Model.StudyMode.GetAttribute<DisplayAttribute>();
 }
 
-        <div class="govuk-main-wrapper">
-            <div class="govuk-grid-row">
-                <div class="govuk-grid-column-two-thirds">
-                    <span class="govuk-caption-l"> @WebUtility.HtmlDecode(@Model.QualificationCourseTitle)</span>
-                    <h1 class="govuk-heading-l"> @WebUtility.HtmlDecode(@Model.CourseName)</h1>
-                    <table class="govuk-table">
-                        <thead class="govuk-table__head">
-                            <tr class="govuk-table__row">
-                                <td class="govuk-table__header">Lars/QAN:</td>
-                                <td class="govuk-table__cell">@Model.LearnAimRef</td>
-                            </tr>
-                        </thead>
-                        <tbody class="govuk-table__body">
-                            <tr class="govuk-table__row">
-                                <td class="govuk-table__header">Level:</td>
-                                <td class="govuk-table__cell">@Model.NotionalNVQLevelv2</td>
-                            </tr>
-                            <tr class="govuk-table__row">
-                                <td class="govuk-table__header">Awarding organisation:</td>
-                                <td class="govuk-table__cell">@Model.AwardOrgCode</td>
-                            </tr>
-                        </tbody>
-                    </table>
+<div class="govuk-main-wrapper">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-l"> @WebUtility.HtmlDecode(@Model.QualificationCourseTitle)</span>
+            <h1 class="govuk-heading-l"> @WebUtility.HtmlDecode(@Model.CourseName)</h1>
+            <table class="govuk-table">
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__header">Lars/QAN:</td>
+                        <td class="govuk-table__cell">
+                            @if (string.IsNullOrEmpty(Model.LearnAimRef))
+                            {
+                                <span class="govuk-visually-hidden">Data Unavailable</span>
+                            }
+                            else
+                            {
+                                @Model.LearnAimRef
+                            }
+                        </td>
+                    </tr>
+                </thead>
+                <tbody class="govuk-table__body">
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__header">Level:</td>
+                        <td class="govuk-table__cell">
+                            @if (string.IsNullOrEmpty(Model.NotionalNVQLevelv2))
+                            {
+                                <span class="govuk-visually-hidden">Data Unavailable</span>
+                            }
+                            else
+                            {
+                                @Model.NotionalNVQLevelv2
+                            }
+                        </td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__header">Awarding organisation:</td>
+                        <td class="govuk-table__cell">
+
+                            @if (string.IsNullOrEmpty(Model.AwardOrgCode))
+                            {
+                                <span class="govuk-visually-hidden">Data Unavailable</span>
+                            }
+                            else
+                            {
+                                @Model.AwardOrgCode
+                            }
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
 
 
-                    <h2 class="govuk-heading-m govuk-!-margin-top-0">
-                        <a class="govuk-link" style="padding-right:1em"
-                           asp-controller="EditCourseRun"
-                           asp-action="Index"
-                           asp-route-learnAimRef="@Model.LearnAimRef"
-                           asp-route-notionalNVQLevelv2="@Model.NotionalNVQLevelv2"
-                           asp-route-awardOrgCode="@Model.AwardOrgCode"
-                           asp-route-learnAimRefTitle="@Model.QualificationCourseTitle"
-                           asp-route-learnAimRefTypeDesc="@Model.QualificationType"
-                           asp-route-courseId="@Model.CourseId"
-                           asp-route-courseRunId="@Model.CourseInstanceId"
-                           asp-route-mode="@PublishMode.Summary">Edit course information</a>
-                    </h2>
+            <h2 class="govuk-heading-m govuk-!-margin-top-0">
+                <a class="govuk-link" style="padding-right:1em"
+                   asp-controller="EditCourseRun"
+                   asp-action="Index"
+                   asp-route-learnAimRef="@Model.LearnAimRef"
+                   asp-route-notionalNVQLevelv2="@Model.NotionalNVQLevelv2"
+                   asp-route-awardOrgCode="@Model.AwardOrgCode"
+                   asp-route-learnAimRefTitle="@Model.QualificationCourseTitle"
+                   asp-route-learnAimRefTypeDesc="@Model.QualificationType"
+                   asp-route-courseId="@Model.CourseId"
+                   asp-route-courseRunId="@Model.CourseInstanceId"
+                   asp-route-mode="@PublishMode.Summary">Edit course information</a>
+            </h2>
 
-                    <table class="govuk-table">
-                        <thead class="govuk-table__head">
+            <table class="govuk-table">
+                <thead class="govuk-table__head">
 
-                        </thead>
-                        <tbody class="govuk-table__body">
-                        <tr class="govuk-table__row">
-                            <td class="govuk-table__header">Course Name:</td>
-                            <td class="govuk-table__cell"> @WebUtility.HtmlDecode(@Model.CourseName)</td>
-                        </tr>
-                        
+                </thead>
+                <tbody class="govuk-table__body">
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__header">Course Name:</td>
+                        <td class="govuk-table__cell">
+                            @if (string.IsNullOrEmpty(Model.CourseName))
+                            {
+                                <span class="govuk-visually-hidden">Data Unavailable</span>
+                            }
+                            else
+                            {
+                                @WebUtility.HtmlDecode(@Model.CourseName)
+                            }
+
+                        </td>
+                    </tr>
+
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__header">ID:</td>
+                        <td class="govuk-table__cell">
+                            @if (string.IsNullOrEmpty(Model.ProviderCourseID))
+                            {
+                                <span class="govuk-visually-hidden">Data Unavailable</span>
+                            }
+                            else
+                            {
+                                @WebUtility.HtmlDecode(@Model.ProviderCourseID)
+                            }
+
+
+                        </td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__header">Delivery:</td>
+                        <td class="govuk-table__cell">
+
+                            @if (string.IsNullOrEmpty(deliveryModeAttribute.Name))
+                            {
+                                <span class="govuk-visually-hidden">Data Unavailable</span>
+                            }
+                            else
+                            {
+                                @deliveryModeAttribute.Name
+                            }
+                        </td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__header">Start date:</td>
+                        @{
+                            if (Model.FlexibleStartDate == true)
+                            {
+                                <td class="govuk-table__cell">Flexible start date</td>
+                            }
+                            else
+                            {
+                                <td class="govuk-table__cell">@Model.StartDate.Value.ToString("dd/MM/yyyy")</td>
+                            }
+                        }
+                    </tr>
+                    @{
+                        if (Model.DeliveryMode == DeliveryMode.WorkBased)
+                        {
                             <tr class="govuk-table__row">
-                                <td class="govuk-table__header">ID:</td>
-                                <td class="govuk-table__cell"> @WebUtility.HtmlDecode(@Model.ProviderCourseID)</td>
-                            </tr>
-                            <tr class="govuk-table__row">
-                                <td class="govuk-table__header">Delivery:</td>
-                                <td class="govuk-table__cell">@deliveryModeAttribute.Name</td>
-                            </tr>
-                            <tr class="govuk-table__row">
-                                <td class="govuk-table__header">Start date:</td>
+                                <td class="govuk-table__header" style="vertical-align: text-top;">Region(s):</td>
                                 @{
-                                    if (Model.FlexibleStartDate == true)
+                                    if (Model.National)
                                     {
-                                        <td class="govuk-table__cell">Flexible start date</td>
+                                        <td class="govuk-table__cell">National</td>
                                     }
                                     else
                                     {
-                                        <td class="govuk-table__cell">@Model.StartDate.Value.ToString("dd/MM/yyyy")</td>
+                                        <td class="govuk-table__cell">
+                                            @foreach (var region in Model.Regions)
+                                            {
+                                                @region
+                                                <br />
+                                            }
+                                        </td>
                                     }
+
                                 }
+
                             </tr>
-                            @{
-                                if (Model.DeliveryMode == DeliveryMode.WorkBased)
-                                {
-                                    <tr class="govuk-table__row">
-                                        <td class="govuk-table__header" style="vertical-align: text-top;">Region(s):</td>
-                                        @{
-                                            if (Model.National)
-                                            {
-                                                <td class="govuk-table__cell">National</td>
-                                            }
-                                            else
-                                            {
-                                                <td class="govuk-table__cell">
-                                                    @foreach (var region in Model.Regions)
-                                                    {
-                                                        @region
-                                                        <br />
-                                                    }
-                                                </td>
-                                            }
-
-                                        }
-
-                                    </tr>
-                                }
-                            }
-                            @{
-                                if (Model.DeliveryMode == DeliveryMode.ClassroomBased)
-                                {
-                                    <tr class="govuk-table__row">
-                                        <td class="govuk-table__header">Venue:</td>
-                                        <td class="govuk-table__cell"> @WebUtility.HtmlDecode(@Model.VenueName)</td>
-                                    </tr>
-                                }
-                            }
-                            <tr class="govuk-table__row">
-                                <td class="govuk-table__header">Url:</td>
-                                <td class="govuk-table__cell"><a href="@Model.CourseURL" target="_blank" style="word-break: break-all">@Model.CourseURL</a></td>
-                            </tr>
-                            <tr class="govuk-table__row">
-                                <td class="govuk-table__header">Cost:</td>
-                                <td class="govuk-table__cell">£@Model.Cost</td>
-                            </tr>
-                            <tr class="govuk-table__row">
-                                <td class="govuk-table__header">Cost description:</td>
-                                <td class="govuk-table__cell">
-                                    <details class="govuk-details">
-                                        <summary class="govuk-details__summary" role="button" aria-controls="details-content-4386f8be-5919-4bb4-89d7-41219af78831" aria-expanded="false">
-                                            <span class="govuk-details__summary-text">
-                                                View
-                                            </span>
-                                        </summary>
-                                        <div class="govuk-details__text" id="details-content-4386f8be-5919-4bb4-89d7-41219af78831" aria-hidden="true">
-                                        @WebUtility.HtmlDecode(@Model.CostDescription)
-                                        </div>
-                                    </details>
-                                </td>
-                            </tr>
-                            <tr class="govuk-table__row">
-                                <td class="govuk-table__header">Duration:</td>
-                                <td class="govuk-table__cell">@Model.DurationValue @Model.DurationUnit</td>
-                            </tr>
-                            @{
-                                if (Model.DeliveryMode == DeliveryMode.ClassroomBased)
-                                {
-                                    <tr class="govuk-table__row">
-                                        <td class="govuk-table__header">Full time or part time:</td>
-                                        <td class="govuk-table__cell">@studyModeAttribute.Name</td>
-                                    </tr>
-                                    <tr class="govuk-table__row">
-                                        <td class="govuk-table__header">Attendance:</td>
-                                        <td class="govuk-table__cell">@attendanceAttribute.Name</td>
-                                    </tr>
-                                }
-                            }
-
-                        </tbody>
-                    </table>
-
-
-                    <h3 class="govuk-heading-m govuk-!-margin-top-0">
-                        What your learners need to know
-                    </h3>
-                    <table class="govuk-table">
-                        <tbody>
-                            <tr class="govuk-table__row">
-                                <td class="govuk-table__header">Who is this course for </>
-                                <td class="govuk-table__cell">
-                                    <details class="govuk-details" role="group">
-                                        <summary class="govuk-details__summary" role="button" aria-controls="details-content-78ad1d3d-97e3-4aab-844f-fc7d331d17be" aria-expanded="false">
-                                            <span class="govuk-details__summary-text">
-                                                View
-                                            </span>
-                                        </summary>
-                                        <div class="govuk-details__text" id="details-content-78ad1d3d-97e3-4aab-844f-fc7d331d17be" aria-hidden="true">
-                                        @WebUtility.HtmlDecode(@Model.CourseDescription)
-                                        </div>
-                                    </details>
-                                </td>
-                            </tr>
-
-                            <tr class="govuk-table__row">
-                                <td class="govuk-table__header">Entry requirements </td>
-                                <td class="govuk-table__cell">
-                                    <details class="govuk-details" role="group">
-                                        <summary class="govuk-details__summary" role="button" aria-controls="details-content-4aa86daa-5204-432a-9fe6-338b1a7219f9" aria-expanded="false">
-                                            <span class="govuk-details__summary-text">
-                                                View
-                                            </span>
-                                        </summary>
-                                        <div class="govuk-details__text" id="details-content-4aa86daa-5204-432a-9fe6-338b1a7219f9" aria-hidden="true">
-                                        @WebUtility.HtmlDecode(@Model.EntryRequirements)
-                                        </div>
-                                    </details>
-                                </td>
-                            </tr>
-
-                            <tr class="govuk-table__row">
-                                <td class="govuk-table__header">What you’ll learn </td>
-                                <td class="govuk-table__cell">
-                                    <details class="govuk-details" role="group">
-                                        <summary class="govuk-details__summary" role="button" aria-controls="details-content-88c1b9d8-0154-4e23-bde2-ef56a0e2081c" aria-expanded="false">
-                                            <span class="govuk-details__summary-text">
-                                                View
-                                            </span>
-                                        </summary>
-                                        <div class="govuk-details__text" id="details-content-88c1b9d8-0154-4e23-bde2-ef56a0e2081c" aria-hidden="true">
-                                        @WebUtility.HtmlDecode(@Model.WhatYoullLearn)
-                                        </div>
-                                    </details>
-                                </td>
-                            </tr>
-
-                            <tr class="govuk-table__row">
-                                <td class="govuk-table__header">How you’ll learn</td>
-                                <td class="govuk-table__cell">
-                                    <details class="govuk-details" role="group">
-                                        <summary class="govuk-details__summary" role="button" aria-controls="details-content-46d25118-62ca-4030-8b35-d357230fb6ce" aria-expanded="false">
-                                            <span class="govuk-details__summary-text">
-                                                View
-                                            </span>
-                                        </summary>
-                                        <div class="govuk-details__text" id="details-content-46d25118-62ca-4030-8b35-d357230fb6ce" aria-hidden="true">
-                                        @WebUtility.HtmlDecode(@Model.HowYoullLearn)
-                                        </div>
-                                    </details>
-                                </td>
-                            </tr>
-
-
-                            <tr class="govuk-table__row">
-                                <td class="govuk-table__header">What you’ll need to bring </td>
-                                <td class="govuk-table__cell">
-                                    <details class="govuk-details">
-                                        <summary class="govuk-details__summary" role="button" aria-controls="details-content-d795fa03-609e-466e-86bb-8cbf07563317" aria-expanded="false">
-                                            <span class="govuk-details__summary-text">
-                                                View
-                                            </span>
-                                        </summary>
-                                        <div class="govuk-details__text" id="details-content-d795fa03-609e-466e-86bb-8cbf07563317" aria-hidden="true">
-                                        @WebUtility.HtmlDecode(@Model.WhatYoullNeed)
-                                        </div>
-                                    </details>
-                                </td>
-                            </tr>
-
-                            <tr class="govuk-table__row">
-                                <td class="govuk-table__header">How you'll be assessed</td>
-                                <td class="govuk-table__cell">
-                                    <details class="govuk-details" role="group">
-                                        <summary class="govuk-details__summary" role="button" aria-controls="details-content-9ce35a38-e076-49c6-a756-65e3e5a2fc41" aria-expanded="false">
-                                            <span class="govuk-details__summary-text">
-                                                View
-                                            </span>
-                                        </summary>
-                                        <div class="govuk-details__text" id="details-content-9ce35a38-e076-49c6-a756-65e3e5a2fc41" aria-hidden="true">
-                                        @WebUtility.HtmlDecode(@Model.HowYoullBeAssessed)
-                                        </div>
-                                    </details>
-                                </td>
-                            </tr>
-
-                            <tr class="govuk-table__row">
-                                <td class="govuk-table__header">Where next</td>
-                                <td class="govuk-table__cell">
-                                    <details class="govuk-details" role="group">
-                                        <summary class="govuk-details__summary" role="button" aria-controls="details-content-70078d78-3005-4f4d-9e7c-6e6f7814c802" aria-expanded="false">
-                                            <span class="govuk-details__summary-text">
-                                                View
-                                            </span>
-                                        </summary>
-                                        <div class="govuk-details__text" id="details-content-70078d78-3005-4f4d-9e7c-6e6f7814c802" aria-hidden="true">
-                                        @WebUtility.HtmlDecode(@Model.WhereNext)
-                                        </div>
-                                    </details>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="govuk-grid-column-one-third govuk-related-items">
-                    <h3 class="govuk-heading-m">Status</h3>
-                    <span class="govuk-tag phase-tag-published govuk-!-margin-bottom-4">Published</span>
-                    <hr>
+                        }
+                    }
                     @{
-                        if (Model.UpdatedDate.HasValue)
+                        if (Model.DeliveryMode == DeliveryMode.ClassroomBased)
                         {
-                            <p>Last updated: <br>@Model.UpdatedDate.Value.ToString("dd MMMM yyyy")</p>
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__header">Venue:</td>
+                                <td class="govuk-table__cell">
+                                    @if (string.IsNullOrEmpty(Model.VenueName))
+                                    {
+                                        <span class="govuk-visually-hidden">Data Unavailable</span>
+                                    }
+                                    else
+                                    {
+                                        @WebUtility.HtmlDecode(@Model.VenueName)
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__header">Url:</td>
+                        <td class="govuk-table__cell">
+                            @if (string.IsNullOrEmpty(Model.CourseURL))
+                            {
+                                <span class="govuk-visually-hidden">Data Unavailable</span>
+                            }
+                            else
+                            {
+                                <a href="@Model.CourseURL" target="_blank" style="word-break: break-all">@Model.CourseURL</a>
+                            }
+                           
+                        </td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__header">Cost:</td>
+
+                        @if ((!Model.Cost.HasValue))
+                        {
+                            <td class="govuk-table__cell">
+                                <span class="govuk-visually-hidden">Data Unavailable</span>
+                            </td>
                         }
                         else
                         {
-                            <p>Created: <br>@Model.CreatedDate.ToString("dd MMMM yyyy")</p>
+                            <td class="govuk-table__cell">
+                                £@Model.Cost.Value.ToString("F")
+                            </td>
+                        }
+
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__header">Cost description:</td>
+                        <td class="govuk-table__cell">
+                            <details class="govuk-details">
+                                <summary class="govuk-details__summary" role="button" aria-controls="details-content-4386f8be-5919-4bb4-89d7-41219af78831" aria-expanded="false">
+                                    <span class="govuk-details__summary-text">
+                                        View
+                                    </span>
+                                </summary>
+                                <div class="govuk-details__text" id="details-content-4386f8be-5919-4bb4-89d7-41219af78831" aria-hidden="true">
+                                    @WebUtility.HtmlDecode(@Model.CostDescription)
+                                </div>
+                            </details>
+                        </td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__header">Duration:</td>
+                        <td class="govuk-table__cell">
+                            @if (!Model.DurationValue.HasValue)
+                            {
+                                <span class="govuk-visually-hidden">Data Unavailable</span>
+                            }
+                            else
+                            {
+                                <span> @Model.DurationValue.ToString() @Model.DurationUnit.ToString()</span>
+                            }
+                           
+                        </td>
+                    </tr>
+                    @{
+                        if (Model.DeliveryMode == DeliveryMode.ClassroomBased)
+                        {
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__header">Full time or part time:</td>
+                                <td class="govuk-table__cell">
+                                    @if (string.IsNullOrEmpty( @studyModeAttribute.Name))
+                                    {
+                                        <span class="govuk-visually-hidden">Data Unavailable</span>
+                                    }
+                                    else
+                                    {
+                                        @studyModeAttribute.Name
+                                    }
+                                    
+                                </td>
+                            </tr>
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__header">Attendance:</td>
+                                <td class="govuk-table__cell">
+                                    @if (string.IsNullOrEmpty( @attendanceAttribute.Name))
+                                    {
+                                        <span class="govuk-visually-hidden">Data Unavailable</span>
+                                    }
+                                    else
+                                    {
+                                        @attendanceAttribute.Name
+                                    }
+                                    
+                                </td>
+                            </tr>
                         }
                     }
 
-                    <hr>
+                </tbody>
+            </table>
 
-                    <h3 class="govuk-heading-m m20">Copy</h3>
-                    <p>
-                        If you run another course that
-                        offers this qualification, you
-                        can copy this course,
-                        edit the details and save it
-                        as a new course.
-                    </p>
-                    <a class="govuk-link" style="padding-right:1em"
-                       asp-controller="CopyCourseRun"
-                       asp-action="Index"
-                       asp-route-learnAimRef="@Model.LearnAimRef"
-                       asp-route-notionalNVQLevelv2="@Model.NotionalNVQLevelv2"
-                       asp-route-awardOrgCode="@Model.AwardOrgCode"
-                       asp-route-learnAimRefTitle="@Model.QualificationCourseTitle"
-                       asp-route-learnAimRefTypeDesc="@Model.QualificationType"
-                       asp-route-courseId="@Model.CourseId"
-                       asp-route-courseRunId="@Model.CourseInstanceId"
-                       asp-route-publishMode="@PublishMode.Summary">Copy this course</a>
-                    <hr>
 
-                    <h3 class="govuk-heading-m m20">Delete</h3>
-                    <p>
-                        If you no longer run this course,
-                        remove it from the course
-                        directory
-                    </p>
-                    
-                    <a id="course-delete" class="govuk-button" asp-controller="ProviderCourses" asp-action="DeleteCourse"
-                       asp-route-courseId="@Model.CourseId"
-                       asp-route-courseRunId="@Model.CourseInstanceId"
-                       asp-route-courseName="@Model.CourseName"
-                       style="padding-right:1em">Delete this course</a>
+            <h3 class="govuk-heading-m govuk-!-margin-top-0">
+                What your learners need to know
+            </h3>
+            <table class="govuk-table">
+                <tbody>
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__header">Who is this course for </>
+                        <td class="govuk-table__cell">
+                            <details class="govuk-details" role="group">
+                                <summary class="govuk-details__summary" role="button" aria-controls="details-content-78ad1d3d-97e3-4aab-844f-fc7d331d17be" aria-expanded="false">
+                                    <span class="govuk-details__summary-text">
+                                        View
+                                    </span>
+                                </summary>
+                                <div class="govuk-details__text" id="details-content-78ad1d3d-97e3-4aab-844f-fc7d331d17be" aria-hidden="true">
+                                    @WebUtility.HtmlDecode(@Model.CourseDescription)
+                                </div>
+                            </details>
+                        </td>
+                    </tr>
 
-                    @*<a href="#" class="govuk-link archive" id="archive-@Model.CourseInstanceId" data-course-run-id="@Model.CourseInstanceId" style="padding-right:1em">Delete this course</a>
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__header">Entry requirements </td>
+                        <td class="govuk-table__cell">
+                            <details class="govuk-details" role="group">
+                                <summary class="govuk-details__summary" role="button" aria-controls="details-content-4aa86daa-5204-432a-9fe6-338b1a7219f9" aria-expanded="false">
+                                    <span class="govuk-details__summary-text">
+                                        View
+                                    </span>
+                                </summary>
+                                <div class="govuk-details__text" id="details-content-4aa86daa-5204-432a-9fe6-338b1a7219f9" aria-hidden="true">
+                                    @WebUtility.HtmlDecode(@Model.EntryRequirements)
+                                </div>
+                            </details>
+                        </td>
+                    </tr>
 
-                    <a id="course-confirm-archive-@Model.CourseInstanceId" class="govuk-button" asp-controller="Courses" asp-action="Archive"
-                       asp-route-courseId="@Model.CourseId"
-                       asp-route-courseRunId="@Model.CourseInstanceId"
-                       asp-route-level="@Model.NotionalNVQLevelv2"
-                       asp-route-qualificationType="@Model.QualificationType"
-                       asp-route-courseName="@Model.CourseName"
-                       style="display: none;padding-right:1em">Confirm delete</a>
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__header">What you’ll learn </td>
+                        <td class="govuk-table__cell">
+                            <details class="govuk-details" role="group">
+                                <summary class="govuk-details__summary" role="button" aria-controls="details-content-88c1b9d8-0154-4e23-bde2-ef56a0e2081c" aria-expanded="false">
+                                    <span class="govuk-details__summary-text">
+                                        View
+                                    </span>
+                                </summary>
+                                <div class="govuk-details__text" id="details-content-88c1b9d8-0154-4e23-bde2-ef56a0e2081c" aria-hidden="true">
+                                    @WebUtility.HtmlDecode(@Model.WhatYoullLearn)
+                                </div>
+                            </details>
+                        </td>
+                    </tr>
 
-                    <a href="#" class="govuk-link cancel-archive" id="course-cancel-archive-@Model.CourseInstanceId" data-course-run-id="@Model.CourseInstanceId" hidden="hidden">Cancel</a>*@
-                    <hr>
-                    <h3 class="govuk-heading-m m20">Edit What your learners need to know</h3>
-                    <p>
-                        Making any changes will update
-                        all of the courses that share this
-                        qualification
-                    </p>
-                    <a class="govuk-link"
-                       asp-controller="EditCourse"
-                       asp-action="Index"
-                       asp-route-courseId="@Model.CourseId"
-                       asp-route-courseRunId="@Model.CourseInstanceId"
-                       asp-route-learnAimRef="@Model.LearnAimRef"
-                       asp-route-notionalNVQLevelv2="course.NotionalNVQLevelv2"
-                       asp-route-awardOrgCode="@Model.AwardOrgCode"
-                       asp-route-learnAimRefTitle="@Model.QualificationCourseTitle"
-                       asp-route-learnAimRefTypeDesc="@Model.QualificationType"
-                       asp-route-mode="@PublishMode.Summary">Make changes</a>
-                </div>
-            </div>
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__header">How you’ll learn</td>
+                        <td class="govuk-table__cell">
+                            <details class="govuk-details" role="group">
+                                <summary class="govuk-details__summary" role="button" aria-controls="details-content-46d25118-62ca-4030-8b35-d357230fb6ce" aria-expanded="false">
+                                    <span class="govuk-details__summary-text">
+                                        View
+                                    </span>
+                                </summary>
+                                <div class="govuk-details__text" id="details-content-46d25118-62ca-4030-8b35-d357230fb6ce" aria-hidden="true">
+                                    @WebUtility.HtmlDecode(@Model.HowYoullLearn)
+                                </div>
+                            </details>
+                        </td>
+                    </tr>
 
+
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__header">What you’ll need to bring </td>
+                        <td class="govuk-table__cell">
+                            <details class="govuk-details">
+                                <summary class="govuk-details__summary" role="button" aria-controls="details-content-d795fa03-609e-466e-86bb-8cbf07563317" aria-expanded="false">
+                                    <span class="govuk-details__summary-text">
+                                        View
+                                    </span>
+                                </summary>
+                                <div class="govuk-details__text" id="details-content-d795fa03-609e-466e-86bb-8cbf07563317" aria-hidden="true">
+                                    @WebUtility.HtmlDecode(@Model.WhatYoullNeed)
+                                </div>
+                            </details>
+                        </td>
+                    </tr>
+
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__header">How you'll be assessed</td>
+                        <td class="govuk-table__cell">
+                            <details class="govuk-details" role="group">
+                                <summary class="govuk-details__summary" role="button" aria-controls="details-content-9ce35a38-e076-49c6-a756-65e3e5a2fc41" aria-expanded="false">
+                                    <span class="govuk-details__summary-text">
+                                        View
+                                    </span>
+                                </summary>
+                                <div class="govuk-details__text" id="details-content-9ce35a38-e076-49c6-a756-65e3e5a2fc41" aria-hidden="true">
+                                    @WebUtility.HtmlDecode(@Model.HowYoullBeAssessed)
+                                </div>
+                            </details>
+                        </td>
+                    </tr>
+
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__header">Where next</td>
+                        <td class="govuk-table__cell">
+                            <details class="govuk-details" role="group">
+                                <summary class="govuk-details__summary" role="button" aria-controls="details-content-70078d78-3005-4f4d-9e7c-6e6f7814c802" aria-expanded="false">
+                                    <span class="govuk-details__summary-text">
+                                        View
+                                    </span>
+                                </summary>
+                                <div class="govuk-details__text" id="details-content-70078d78-3005-4f4d-9e7c-6e6f7814c802" aria-hidden="true">
+                                    @WebUtility.HtmlDecode(@Model.WhereNext)
+                                </div>
+                            </details>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
+
+        <div class="govuk-grid-column-one-third govuk-related-items">
+            <h3 class="govuk-heading-m">Status</h3>
+            <span class="govuk-tag phase-tag-published govuk-!-margin-bottom-4">Published</span>
+            <hr>
+            @{
+                if (Model.UpdatedDate.HasValue)
+                {
+                    <p>Last updated: <br>@Model.UpdatedDate.Value.ToString("dd MMMM yyyy")</p>
+                }
+                else
+                {
+                    <p>Created: <br>@Model.CreatedDate.ToString("dd MMMM yyyy")</p>
+                }
+            }
+
+            <hr>
+
+            <h3 class="govuk-heading-m m20">Copy</h3>
+            <p>
+                If you run another course that
+                offers this qualification, you
+                can copy this course,
+                edit the details and save it
+                as a new course.
+            </p>
+            <a class="govuk-link" style="padding-right:1em"
+               asp-controller="CopyCourseRun"
+               asp-action="Index"
+               asp-route-learnAimRef="@Model.LearnAimRef"
+               asp-route-notionalNVQLevelv2="@Model.NotionalNVQLevelv2"
+               asp-route-awardOrgCode="@Model.AwardOrgCode"
+               asp-route-learnAimRefTitle="@Model.QualificationCourseTitle"
+               asp-route-learnAimRefTypeDesc="@Model.QualificationType"
+               asp-route-courseId="@Model.CourseId"
+               asp-route-courseRunId="@Model.CourseInstanceId"
+               asp-route-publishMode="@PublishMode.Summary">Copy this course</a>
+            <hr>
+
+            <h3 class="govuk-heading-m m20">Delete</h3>
+            <p>
+                If you no longer run this course,
+                remove it from the course
+                directory
+            </p>
+
+            <a id="course-delete" class="govuk-button" asp-controller="ProviderCourses" asp-action="DeleteCourse"
+               asp-route-courseId="@Model.CourseId"
+               asp-route-courseRunId="@Model.CourseInstanceId"
+               asp-route-courseName="@Model.CourseName"
+               style="padding-right:1em">Delete this course</a>
+
+            @*<a href="#" class="govuk-link archive" id="archive-@Model.CourseInstanceId" data-course-run-id="@Model.CourseInstanceId" style="padding-right:1em">Delete this course</a>
+
+                <a id="course-confirm-archive-@Model.CourseInstanceId" class="govuk-button" asp-controller="Courses" asp-action="Archive"
+                   asp-route-courseId="@Model.CourseId"
+                   asp-route-courseRunId="@Model.CourseInstanceId"
+                   asp-route-level="@Model.NotionalNVQLevelv2"
+                   asp-route-qualificationType="@Model.QualificationType"
+                   asp-route-courseName="@Model.CourseName"
+                   style="display: none;padding-right:1em">Confirm delete</a>
+
+                <a href="#" class="govuk-link cancel-archive" id="course-cancel-archive-@Model.CourseInstanceId" data-course-run-id="@Model.CourseInstanceId" hidden="hidden">Cancel</a>*@
+            <hr>
+            <h3 class="govuk-heading-m m20">Edit What your learners need to know</h3>
+            <p>
+                Making any changes will update
+                all of the courses that share this
+                qualification
+            </p>
+            <a class="govuk-link"
+               asp-controller="EditCourse"
+               asp-action="Index"
+               asp-route-courseId="@Model.CourseId"
+               asp-route-courseRunId="@Model.CourseInstanceId"
+               asp-route-learnAimRef="@Model.LearnAimRef"
+               asp-route-notionalNVQLevelv2="course.NotionalNVQLevelv2"
+               asp-route-awardOrgCode="@Model.AwardOrgCode"
+               asp-route-learnAimRefTitle="@Model.QualificationCourseTitle"
+               asp-route-learnAimRefTypeDesc="@Model.QualificationType"
+               asp-route-mode="@PublishMode.Summary">Make changes</a>
+        </div>
+    </div>
+
+</div>
 
 <script>
     (function ($) {

@@ -14,7 +14,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships.ApprenticeshipS
         public string NotionalNVQLevelv2 { get; set; }
         public Guid id { get; set; }
         public int? StandardCode { get; set; }
-        public string Version { get; set; }
+        public int? Version { get; set; }
         public string StandardName { get; set; }
         public string StandardSectorCode { get; set; }
         public string URLLink { get; set; }

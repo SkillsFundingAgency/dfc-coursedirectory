@@ -5,7 +5,8 @@
 
 @await Component.InvokeAsync(nameof(DashboardCard), new DashboardCardModel()
 {
-    Title = "Manage your locations",
+    Title = "Manage",
+    Title2="your locations",
     Value = Model.VenueCount,
     Description = @WebHelper.GetLocationsTextToUse(Model.VenueCount),
     ValueHref = Url.Action("index", "venues"),

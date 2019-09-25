@@ -55,7 +55,7 @@
                        asp-route-awardOrgCode="@course.AwardOrgCode"
                        asp-route-learnAimRefTitle="@course.QualificationCourseTitle"
                        asp-route-learnAimRefTypeDesc="@course.QualificationType"
-                       asp-route-mode=@Model.PublishMode>Fix</a>
+                       asp-route-mode=@Model.PublishMode>Fix<span class="govuk-visually-hidden">@course.QualificationCourseTitle</span></a>
                 </div>
             </div>
         </div>
@@ -145,7 +145,7 @@
                         @if (adminLogin.Succeeded)
                         {
                             <a asp-action="DeleteCourseRun" asp-controller="Migration"
-                               asp-route-courseId="@course.id" asp-route-courseRunId="@courseRun.id">Delete</a>
+                               asp-route-courseId="@course.id" asp-route-courseRunId="@courseRun.id">Delete<span class="govuk-visually-hidden">@courseRun.CourseName</span></a>
                         }
 
                         <a id="course-run-fix-@courseRun.id" class="error-link fix" asp-controller="EditCourseRun" asp-action="Index"
@@ -155,7 +155,7 @@
                            asp-route-awardOrgCode="@course.AwardOrgCode"
                            asp-route-learnAimRefTitle="@course.QualificationCourseTitle"
                            asp-route-learnAimRefTypeDesc="@course.QualificationType"
-                           asp-route-mode=@Model.PublishMode>Fix</a>
+                           asp-route-mode=@Model.PublishMode>Fix<span class="govuk-visually-hidden">@courseRun.CourseName</span></a>
                     </div>
                 </div>
             </div>
@@ -169,74 +169,77 @@
                     //Duplicate Id's causing issues with accessibility. Might be redundant, Re-instate if causes problem.
                     <div id="courserunid" style="display:none">@courseRun.id</div>
                 *@
-                                    <div class="error-line" style="flex-wrap: wrap" id="DQICourseRunId_@courseRun.id">
-                                        <div class="govuk-grid-column-two-thirds col"><strong>@courseRun.CourseName</strong></div>
+                <div class="error-line" style="flex-wrap: wrap" id="DQICourseRunId_@courseRun.id">
+                    <div class="govuk-grid-column-two-thirds col"><strong>@courseRun.CourseName</strong></div>
 
-                                        <div class="govuk-grid-column-one-third">
-                                            <div class="govuk-grid-column-two-thirds align-right col right center">
-                                                <a id="course-run-fix-@courseRun.id" class="error-link fix" asp-controller="EditCourseRun" asp-action="Index"
-                                                   asp-route-courseId="@course.id" asp-route-courseRunId="@courseRun.id"
-                                                   asp-route-learnAimRef="@course.LearnAimRef"
-                                                   asp-route-notionalNVQLevelv2="course.NotionalNVQLevelv2"
-                                                   asp-route-awardOrgCode="@course.AwardOrgCode"
-                                                   asp-route-learnAimRefTitle="@course.QualificationCourseTitle"
-                                                   asp-route-learnAimRefTypeDesc="@course.QualificationType"
-                                                   asp-route-mode=@Model.PublishMode>Fix</a>
-                                            </div>
-                                        </div>
-                                        <div class="govuk-grid-column-full flat-list">
-                                            <span>@courseRun.ProviderCourseID</span>
+                    <div class="govuk-grid-column-one-third">
+                        <div class="govuk-grid-column-two-thirds align-right col right center">
+                            <a id="course-run-fix-@courseRun.id" class="error-link fix" asp-controller="EditCourseRun" asp-action="Index"
+                               asp-route-courseId="@course.id" asp-route-courseRunId="@courseRun.id"
+                               asp-route-learnAimRef="@course.LearnAimRef"
+                               asp-route-notionalNVQLevelv2="course.NotionalNVQLevelv2"
+                               asp-route-awardOrgCode="@course.AwardOrgCode"
+                               asp-route-learnAimRefTitle="@course.QualificationCourseTitle"
+                               asp-route-learnAimRefTypeDesc="@course.QualificationType"
+                               asp-route-mode=@Model.PublishMode>
+                                Fix
+                                <span class="govuk-visually-hidden">@courseRun.CourseName</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="govuk-grid-column-full flat-list">
+                        <span>@courseRun.ProviderCourseID</span>
 
 
-                                            @if (courseRun.DeliveryMode == DeliveryMode.ClassroomBased)
-                                            {
-                                                if (courseRun.VenueId != Guid.Empty)
-                                                {
+                        @if (courseRun.DeliveryMode == DeliveryMode.ClassroomBased)
+                        {
+                            if (courseRun.VenueId != Guid.Empty)
+                            {
 
-                                                    <span class="">@Model.Venues.FirstOrDefault(x => x.Key == courseRun.VenueId).Value</span>
-
-                                                }
-                                            }
-                                            @if (courseRun.DeliveryMode == DeliveryMode.WorkBased)
-                                            {
-                                                if (courseRun.National.HasValue && courseRun.National.Value == true)
-                                                {
-
-                                                    <span class="">National</span>
-
-                                                }
-                                                else
-                                                {
-                                                    if (courseRun.Regions.Any())
-                                                    {
-                                                        List<string> regions = (from regionItemModel in Model.Regions
-                                                                                where
-                      regionItemModel.SubRegion.Any(x => courseRun.Regions.Contains(x.Id))
-                                                                                select regionItemModel.RegionName).ToList();
-
-                                                        <span class="">@regions.ToCommaSeparatedString()</span>
-
-                                                    }
-                                                }
-                                            }
-
-                                            @if (courseRun.DeliveryMode != DeliveryMode.Undefined)
-                                            {
-                                                <span id="deliverymode-@courseRun.id">@WebHelper.GetEnumDescription(courseRun.DeliveryMode)</span>
-                                            }
-                                            @if (courseRun.DeliveryMode == DeliveryMode.ClassroomBased)
-                                            {
-                                                @if (courseRun.StudyMode != StudyMode.Undefined)
-                                                {
-                                                    <span id="studymode-@courseRun.id">@WebHelper.GetEnumDescription(courseRun.StudyMode)</span>
-                                                }
-                                            }
-
-                                            <span>@courseRun.StartDate?.ToString("dd/MM/yyyy")</span>
-                                        </div>
-                                    </div>
-                                }
+                                <span class="">@Model.Venues.FirstOrDefault(x => x.Key == courseRun.VenueId).Value</span>
 
                             }
                         }
-                    }
+                        @if (courseRun.DeliveryMode == DeliveryMode.WorkBased)
+                        {
+                            if (courseRun.National.HasValue && courseRun.National.Value == true)
+                            {
+
+                                <span class="">National</span>
+
+                            }
+                            else
+                            {
+                                if (courseRun.Regions.Any())
+                                {
+                                    List<string> regions = (from regionItemModel in Model.Regions
+                                                            where
+  regionItemModel.SubRegion.Any(x => courseRun.Regions.Contains(x.Id))
+                                                            select regionItemModel.RegionName).ToList();
+
+                                    <span class="">@regions.ToCommaSeparatedString()</span>
+
+                                }
+                            }
+                        }
+
+                        @if (courseRun.DeliveryMode != DeliveryMode.Undefined)
+                        {
+                            <span id="deliverymode-@courseRun.id">@WebHelper.GetEnumDescription(courseRun.DeliveryMode)</span>
+                        }
+                        @if (courseRun.DeliveryMode == DeliveryMode.ClassroomBased)
+                        {
+                            @if (courseRun.StudyMode != StudyMode.Undefined)
+                            {
+                                <span id="studymode-@courseRun.id">@WebHelper.GetEnumDescription(courseRun.StudyMode)</span>
+                            }
+                        }
+
+                        <span>@courseRun.StartDate?.ToString("dd/MM/yyyy")</span>
+                    </div>
+                </div>
+            }
+
+        }
+    }
+}

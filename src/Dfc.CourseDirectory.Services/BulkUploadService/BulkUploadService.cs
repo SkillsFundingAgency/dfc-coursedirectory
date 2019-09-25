@@ -22,6 +22,7 @@ using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Models.Models.Venues;
 using Dfc.CourseDirectory.Common.Interfaces;
 using Dfc.CourseDirectory.Models.Models.Regions;
+using static Dfc.CourseDirectory.Models.Helpers.Attributes.AlternativeName;
 
 namespace Dfc.CourseDirectory.Services.BulkUploadService
 {
@@ -741,9 +742,17 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             {
                 var attribute = Attribute.GetCustomAttribute(field,
                     typeof(DescriptionAttribute)) as DescriptionAttribute;
+
+                var alternativeName = Attribute.GetCustomAttribute(field, typeof(AlternativeNameAttribute)) as AlternativeNameAttribute;
+
                 if (attribute != null)
                 {
                     if (attribute.Description.Equals(description, StringComparison.InvariantCultureIgnoreCase))
+                        return (T)field.GetValue(null);
+                }
+                if (alternativeName != null)
+                {
+                    if (alternativeName.Value.Equals(description, StringComparison.InvariantCultureIgnoreCase))
                         return (T)field.GetValue(null);
                 }
                 else

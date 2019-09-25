@@ -82,7 +82,7 @@ else
                                asp-action="ConfirmationDelete"
                                asp-route-apprenticeshipId="@apprenticeship.id"
                                asp-route-level="@apprenticeship.NotionalNVQLevelv2"
-                               asp-route-apprenticeshiptitle="@apprenticeship.ApprenticeshipTitle">Delete</a>
+                               asp-route-apprenticeshiptitle="@apprenticeship.ApprenticeshipTitle">Delete<span class="govuk-visually-hidden">@apprenticeship.ApprenticeshipTitle</span></a>
                         </div>
                     }
 
