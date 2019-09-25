@@ -17,5 +17,6 @@ namespace Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService
         Task<IResult<IEnumerable<IStandardsAndFrameworks>>> GetStandardByCode(StandardSearchCriteria criteria);
         Task<IResult<IEnumerable<IStandardsAndFrameworks>>> GetFrameworkByCode(FrameworkSearchCriteria criteria);
         Task<IResult<IApprenticeship>> UpdateApprenticeshipAsync(IApprenticeship apprenticeship);
+        Task<IResult> DeleteBulkUploadApprenticeships(int UKPRN);
     }
 }

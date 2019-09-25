@@ -15,6 +15,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using CsvHelper.Configuration.Attributes;
+using Dfc.CourseDirectory.Models.Interfaces.Apprenticeships;
 using Dfc.CourseDirectory.Models.Models.Regions;
 using Dfc.CourseDirectory.Models.Models.Venues;
 using Dfc.CourseDirectory.Services.Interfaces;
@@ -46,7 +47,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
         internal class ApprenticeshipCsvRecord
         {
-            
+
             public int? STANDARD_CODE { get; set; }
             public int? STANDARD_VERSION { get; set; }
             public int? FRAMEWORK_CODE { get; set; }
@@ -67,6 +68,11 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             public string SUB_REGION { get; set; }
             public List<string> RegionsList { get; set; }
             public List<string> ErrorsList { get; set; }
+
+            [Ignore]
+            public IStandardsAndFrameworks Standard { get; set; }
+            [Ignore]
+            public IStandardsAndFrameworks Framework { get; set; }
             [Ignore]
             public int RowNumber  { get; set; }
             [Ignore]
@@ -95,11 +101,13 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 _UKPRN = ukprn;
                 
          
-                Map(m => m.STANDARD_CODE).ConvertUsing(Mandatory_Checks_STANDARD_CODE);
-                Map(m => m.STANDARD_VERSION).ConvertUsing(Mandatory_Checks_STANDARD_VERSION);
-                Map(m => m.FRAMEWORK_CODE).ConvertUsing(Mandatory_Checks_FRAMEWORK_CODE);
-                Map(m => m.FRAMEWORK_PROG_TYPE).ConvertUsing(Mandatory_Checks_FRAMEWORK_PROG_TYPE);
-                Map(m => m.FRAMEWORK_PATHWAY_CODE).ConvertUsing(Mandatory_Checks_FRAMEWORK_PATHWAY_CODE);
+                Map(m => m.STANDARD_CODE);
+                Map(m => m.STANDARD_VERSION);
+                Map(m => m.Standard).ConvertUsing(Mandatory_Checks_GetStandard);
+                Map(m => m.FRAMEWORK_CODE);
+                Map(m => m.FRAMEWORK_PROG_TYPE);
+                Map(m => m.FRAMEWORK_PATHWAY_CODE);
+                Map(m => m.Framework).ConvertUsing(Mandatory_Checks_GetFramework); ;
                 Map(m => m.APPRENTICESHIP_INFORMATION);
                 Map(m => m.APPRENTICESHIP_WEBPAGE);
                 Map(m => m.CONTACT_EMAIL);
@@ -122,7 +130,28 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
             }
 
+
             #region Mandatory Checks
+            private IStandardsAndFrameworks Mandatory_Checks_GetStandard(IReaderRow row)
+            {
+                var standardCode = Mandatory_Checks_STANDARD_CODE(row);
+                if (standardCode.HasValue)
+                {
+                    var standardVersion = Mandatory_Checks_STANDARD_VERSION(row);
+                    if (standardVersion.HasValue)
+                    {
+                        var result = GetStandard(standardCode, standardVersion);
+                        if (result == null)
+                        {
+                            throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Invalid Standard Code or Version Number. Standard not found.");
+                        }
+
+                        return result;
+                    }
+                }
+                
+                return null;
+            }
             private int? Mandatory_Checks_STANDARD_CODE(IReaderRow row)
             {
                 int? value = ValueMustBeNumericIfPresent(row, "STANDARD_CODE");
@@ -139,13 +168,34 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 {
                     ValuesForBothStandardAndFrameworkCannotBePresent(row);
                     row.TryGetField<int?>("STANDARD_CODE", out int? STANDARD_CODE);
-                    var result = DoesStandardExist(STANDARD_CODE, value);
-                    if (result == false)
-                    {
-                        throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Invalid Standard Code or Version Number. Standard not found.");
-                    }
+
                 }
                 return value;
+            }
+            private IStandardsAndFrameworks Mandatory_Checks_GetFramework(IReaderRow row)
+            {
+                var frameworkCode = Mandatory_Checks_FRAMEWORK_CODE(row);
+                if (frameworkCode.HasValue)
+                {
+                    var progType = Mandatory_Checks_FRAMEWORK_PROG_TYPE(row);
+                    if (progType.HasValue)
+                    {
+                        var pathwayCode = Mandatory_Checks_FRAMEWORK_PATHWAY_CODE(row);
+                        if (pathwayCode.HasValue)
+                        {
+                            var result = GetFramework(frameworkCode, progType, pathwayCode);
+                            if (result == null)
+                            {
+                                throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Invalid Framework Code, Prog Type, or Pathway Code. Framework not found.");
+                            }
+
+                            return result;
+                        }
+
+                    }
+                }
+
+                return null;
             }
             private int? Mandatory_Checks_FRAMEWORK_CODE(IReaderRow row)
             {
@@ -171,13 +221,6 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 if (value.HasValue)
                 {
                     ValuesForBothStandardAndFrameworkCannotBePresent(row);
-                    row.TryGetField<int?>("FRAMEWORK_CODE", out int? FRAMEWORK_CODE);
-                    row.TryGetField<int?>("FRAMEWORK_PROG_TYPE", out int? FRAMEWORK_PROG_TYPE);
-                    var result = DoesFrameworkExist(FRAMEWORK_CODE, FRAMEWORK_PROG_TYPE, value);
-                    if (result == false)
-                    {
-                        throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Invalid Framework Code, Prog Type, or Pathway Code. Framework not found.");
-                    }
                 }
                 return value;
             }
@@ -712,25 +755,24 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 }
             }
 
-            private bool DoesStandardExist(int? standardCode, int? version)
+            private IStandardsAndFrameworks GetStandard(int? standardCode, int? version)
             {
-                bool isExist = false;
                 var result = _apprenticeshipService.GetStandardByCode(new StandardSearchCriteria
                     {StandardCode = standardCode, Version = version}).Result;
 
                 if (result.IsSuccess && result.HasValue && result.Value.Any())
                 {
                     var standard = result.Value.FirstOrDefault();
-                    if(standard != null && 
-                       (standard.StandardCode == standardCode && standard.Version == version))
-                        isExist = true;
+                    if (standard != null &&
+                        (standard.StandardCode == standardCode && standard.Version == version))
+                        return standard;
                 }
 
-                return isExist;
+                return null;
             }
-            private bool DoesFrameworkExist(int? frameworkCode, int? progType, int? pathwayCode)
+            private IStandardsAndFrameworks GetFramework(int? frameworkCode, int? progType, int? pathwayCode)
             {
-                bool isExist = false;
+                
                 var result = _apprenticeshipService.GetFrameworkByCode(new FrameworkSearchCriteria
                     {FrameworkCode = frameworkCode, ProgType = progType, PathwayCode = pathwayCode}).Result;
                 if (result.IsSuccess && result.HasValue && result.Value.Any())
@@ -740,10 +782,10 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                                               && framework.ProgType == progType
                                               && framework.PathwayCode == pathwayCode))
                     {
-                        isExist = true;
+                        return framework;
                     }
                 }
-                return isExist;
+                return null;
             }
 
             private IEnumerable<string> ParseRegionData(string regions)
@@ -840,7 +882,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             return count;
         }
 
-        public List<string> ValidateCSVFormat(Stream stream, int UKPRN)
+        public List<string> ValidateAndUploadCSV(Stream stream, int UKPRN)
         {
             Throw.IfNull(stream, nameof(stream));
             Throw.IfLessThan(0, UKPRN, nameof(UKPRN));
@@ -887,6 +929,24 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                     {
                         throw new Exception("No apprenticeship data present in the file.");
                     }
+
+                    //var result = _apprenticeshipService.DeleteBulkUploadApprenticeships(UKPRN);
+                    //if (result.IsCompletedSuccessfully)
+                    //{
+                    //    var apprenticeships = ApprenticeshipCsvRecordToApprenticeship(records, UKPRN);
+                    //    if (!apprenticeships.Any())
+                    //    {
+
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    throw new Exception($"Unable to delete bulk upload apprenticeships for {UKPRN}");
+                    //}
+                    
+
+
+                    
                 }
             }
 
@@ -947,6 +1007,27 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             };
             var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(String.Join(",", line));
             return System.Convert.ToBase64String(plainTextBytes);
+        }
+
+        private List<Apprenticeship> ApprenticeshipCsvRecordToApprenticeship(
+            List<ApprenticeshipCsvRecord> records, int UKPRN)
+        {
+            List<Apprenticeship> apprenticeships = new List<Apprenticeship>();
+            foreach (var record in records)
+            {
+                apprenticeships.Add(
+                    new Apprenticeship
+                    {
+                        id = new Guid(),
+                        //ApprenticeshipTitle = record //From Standard or Framework
+                        //ProviderId // From Provider
+                        ProviderUKPRN = UKPRN,
+                        ApprenticeshipType = record.STANDARD_CODE.HasValue ? ApprenticeshipType.StandardCode : ApprenticeshipType.FrameworkCode
+                    
+
+                    });
+            }
+            return apprenticeships;
         }
     }
 }
