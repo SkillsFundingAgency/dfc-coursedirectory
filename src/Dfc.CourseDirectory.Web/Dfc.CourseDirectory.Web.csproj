@@ -64,7 +64,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Views\BulkUploadApprenticeships\NewFolder\" />
     <Folder Include="wwwroot\vendor\" />
   </ItemGroup>
 

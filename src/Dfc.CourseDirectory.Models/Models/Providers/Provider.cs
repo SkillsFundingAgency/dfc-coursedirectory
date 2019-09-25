@@ -33,6 +33,9 @@ namespace Dfc.CourseDirectory.Models.Models.Providers
         // Bulk course upload
         public BulkUploadStatus BulkUploadStatus { get; set; }
 
+        // Bulk course Apprenticeship BulkUpload Status
+       public BulkUploadStatus ApprenticeshipBulkUploadStatus { get; set; }
+
         public Provider(Providercontact[] providercontact, Provideralias[] provideraliases, Verificationdetail[] verificationdetails)
         {
             ProviderContact = providercontact;
