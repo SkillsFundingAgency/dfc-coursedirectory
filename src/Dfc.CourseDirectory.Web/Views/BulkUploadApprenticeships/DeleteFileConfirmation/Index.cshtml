@@ -1,0 +1,38 @@
+﻿@using Dfc.CourseDirectory.Models.Enums
+@using Dfc.CourseDirectory.Web.Helpers
+@{
+    ViewData["Title"] = "File deleted"; 
+    Layout = "_Layout_Your_Courses";
+}
+
+@model Dfc.CourseDirectory.Web.ViewModels.BulkUpload.DeleteFileConfirmationViewModel
+
+
+
+<div class="govuk-panel govuk-panel--confirmation">
+    <div class="govuk-grid-row" data-sf-element="Row">
+            <div class="govuk-panel__body">
+                    <h1 class="govuk-panel__title">
+                        File deleted
+                    </h1>
+                    <br />
+                    Your file uploaded on @Model.FileUploadedDate has been deleted. No changes have been made to the Course directory
+                </div>
+    </div>
+</div>
+
+<div class="govuk-form-group">
+    @Html.ActionLink("Back to the dashboard", "Index", "Home", new { }, new { @class = "govuk-link" })
+</div>
+
+<script>
+    (function ($) {
+        $(function () {
+
+
+        });
+    })(jQuery);
+</script>
+
+
+
