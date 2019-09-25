@@ -115,7 +115,7 @@
                                 {
                                     <td class="govuk-table__cell">
 
-                                        <a class="" asp-controller="Apprenticeships" asp-action="DeleteDeliveryOption" asp-route-LocationName=@Model.DeliveryOptionsListItemModel[i].LocationName asp-route-Mode=@ViewBag.Mode>Delete</a>
+                                        <a class="" asp-controller="Apprenticeships" asp-action="DeleteDeliveryOption" asp-route-LocationName=@Model.DeliveryOptionsListItemModel[i].LocationName asp-route-Mode=@ViewBag.Mode>Delete<span class="govuk-visually-hidden">@Model.DeliveryOptionsListItemModel[i].LocationName</span></a>
 
 
 
