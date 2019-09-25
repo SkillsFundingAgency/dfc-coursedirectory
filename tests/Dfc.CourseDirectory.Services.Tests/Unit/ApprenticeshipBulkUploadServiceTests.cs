@@ -73,7 +73,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                Action act = () => serviceUnderTest.ValidateCSVFormat(stream);
+                Action act = () => serviceUnderTest.ValidateCSVFormat(stream, 12345678);
 
                 // Assert
 
@@ -93,7 +93,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateCSVFormat(stream, 12345678);
 
                 // Assert
 
@@ -115,7 +115,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateCSVFormat(stream, 12345678);
 
                 // Assert
 
@@ -137,7 +137,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateCSVFormat(stream, 12345678);
 
                 // Assert
 
@@ -164,7 +164,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateCSVFormat(stream, 12345678);
 
                 // Assert
 
@@ -186,7 +186,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateCSVFormat(stream, 12345678);
 
                 // Assert
 
@@ -208,7 +208,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateCSVFormat(stream, 12345678);
 
                 // Assert
 
@@ -230,7 +230,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateCSVFormat(stream, 12345678);
 
                 // Assert
 
@@ -252,7 +252,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateCSVFormat(stream, 12345678);
 
                 // Assert
 
@@ -274,7 +274,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateCSVFormat(stream, 12345678);
 
                 // Assert
 
@@ -296,7 +296,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateCSVFormat(stream, 12345678);
 
                 // Assert
 
@@ -318,7 +318,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateCSVFormat(stream, 12345678);
 
                 // Assert
 
@@ -339,7 +339,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateCSVFormat(stream, 12345678);
 
                 // Assert
 
@@ -360,7 +360,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateCSVFormat(stream, 12345678);
 
                 // Assert
 
@@ -381,7 +381,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateCSVFormat(stream, 12345678);
 
                 // Assert
 
@@ -401,7 +401,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateCSVFormat(stream, 12345678);
 
                 // Assert
 
@@ -422,7 +422,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateCSVFormat(stream, 12345678);
 
                 // Assert
 
@@ -443,7 +443,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateCSVFormat(stream, 12345678);
 
                 // Assert
 
@@ -464,7 +464,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateCSVFormat(stream, 12345678);
 
                 // Assert
 
@@ -485,7 +485,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateCSVFormat(stream, 12345678);
 
                 // Assert
 
@@ -506,7 +506,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateCSVFormat(stream, 12345678);
 
                 // Assert
 
@@ -527,7 +527,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateCSVFormat(stream, 12345678);
 
                 // Assert
 
@@ -547,7 +547,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateCSVFormat(stream, 12345678);
 
                 // Assert
 
@@ -566,7 +566,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 Stream stream = CsvStreams.InvalidField_CONTACT_URL_Invalid_URL_Space();
 
                 // Act
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateCSVFormat(stream, 12345678);
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -584,7 +584,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 Stream stream = CsvStreams.InvalidField_CONTACT_URL_Invalid_URL_Format();
 
                 // Act
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateCSVFormat(stream, 12345678);
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -604,7 +604,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateCSVFormat(stream, 12345678);
 
                 // Assert
 
@@ -624,7 +624,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateCSVFormat(stream, 12345678);
 
                 // Assert
 
@@ -644,7 +644,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateCSVFormat(stream, 12345678);
 
                 // Assert
 
@@ -663,7 +663,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateCSVFormat(stream, 12345678);
 
                 // Assert
 
@@ -682,7 +682,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateCSVFormat(stream, 12345678);
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -701,7 +701,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateCSVFormat(stream, 12345678);
 
                 // Assert
 
@@ -720,7 +720,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateCSVFormat(stream, 12345678);
 
                 // Assert
 
@@ -741,7 +741,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateCSVFormat(stream, 12345678);
 
                 // Assert
 
@@ -762,7 +762,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateCSVFormat(stream, 12345678);
 
                 // Assert
 
@@ -783,7 +783,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateCSVFormat(stream, 12345678);
 
 
                 // Assert
@@ -802,7 +802,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateCSVFormat(stream, 12345678);
 
 
                 // Assert
@@ -822,7 +822,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateCSVFormat(stream, 12345678);
 
 
                 // Assert
@@ -841,7 +841,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateCSVFormat(stream, 12345678);
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -863,7 +863,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateCSVFormat(stream, 12345678);
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -885,7 +885,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateCSVFormat(stream, 12345678);
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -907,7 +907,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateCSVFormat(stream, 12345678);
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -929,7 +929,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateCSVFormat(stream, 12345678);
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -951,7 +951,29 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateCSVFormat(stream, 12345678);
+
+                // Assert
+                errors.Should().BeNullOrEmpty();
+                errors.Should().HaveCount(0);
+            }
+            [Fact]
+            public void When_VENUE_Is_Invalid_Return_Error()
+            {
+                // Arrange
+                var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
+                var httpClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulStandardFile(), HttpStatusCode.OK);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(httpClient);
+
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
+                
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
+                Stream stream = CsvStreams.ValidRow_REGION_And_SUBREGION();
+
+                // Act
+
+                var errors = serviceUnderTest.ValidateCSVFormat(stream, 12345678);
 
                 // Assert
                 errors.Should().BeNullOrEmpty();
@@ -973,7 +995,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 Stream stream = CsvStreams.InvalidFile_Duplicate_STANDARD_CODES_SameDeliveryMethod_Same_Venue();
 
                 // Act
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateCSVFormat(stream, 12345678);
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -993,7 +1015,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 Stream stream = CsvStreams.InvalidRow_FrameworkCodes_DuplicateRows();
 
                 // Act
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateCSVFormat(stream, 12345678);
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -1017,7 +1039,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateCSVFormat(stream, 12345678);
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -1039,7 +1061,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateCSVFormat(stream, 12345678);
 
                 // Assert
                 errors.Should().BeNullOrEmpty();
@@ -1060,7 +1082,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateCSVFormat(stream, 12345678);
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -1081,7 +1103,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateCSVFormat(stream, 12345678);
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -1103,7 +1125,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateCSVFormat(stream, 12345678);
 
                 // Assert
                 errors.Should().BeNullOrEmpty();

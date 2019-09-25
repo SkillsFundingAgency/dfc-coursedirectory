@@ -13,10 +13,13 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using CsvHelper.Configuration.Attributes;
 using Dfc.CourseDirectory.Models.Models.Regions;
 using Dfc.CourseDirectory.Models.Models.Venues;
+using Dfc.CourseDirectory.Services.Interfaces;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
+using Dfc.CourseDirectory.Services.VenueService;
 
 
 namespace Dfc.CourseDirectory.Services.BulkUploadService
@@ -77,12 +80,21 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
         {
             private readonly IApprenticeshipService _apprenticeshipService;
             private readonly IVenueService _venueService;
+            private readonly int _UKPRN;
+            private List<Venue> _cachedVenues;
+
             public ApprenticeshipCsvRecordMap(IApprenticeshipService apprenticeshipService,
-                IVenueService venueService)
+                IVenueService venueService,
+                int ukprn)
             {
                 Throw.IfNull(apprenticeshipService, nameof(apprenticeshipService));
+                Throw.IfNull(venueService, nameof(venueService));
+                Throw.IfLessThan(0, ukprn, nameof(ukprn));
                 _apprenticeshipService = apprenticeshipService;
-
+                _venueService = venueService;
+                _UKPRN = ukprn;
+                
+         
                 Map(m => m.STANDARD_CODE).ConvertUsing(Mandatory_Checks_STANDARD_CODE);
                 Map(m => m.STANDARD_VERSION).ConvertUsing(Mandatory_Checks_STANDARD_VERSION);
                 Map(m => m.FRAMEWORK_CODE).ConvertUsing(Mandatory_Checks_FRAMEWORK_CODE);
@@ -101,6 +113,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 Map(m => m.NATIONAL_DELIVERY).ConvertUsing(Mandatory_Checks_NATIONAL_DELIVERY);
                 Map(m => m.REGION);
                 Map(m => m.SUB_REGION);
+                Map(m => m.VenueId).ConvertUsing(Mandatory_Checks_VENUE);
                 Map(m => m.RegionsList).ConvertUsing(GetRegionList);
                 Map(m => m.ErrorsList).ConvertUsing(ValidateData);
                 Map(m => m.RowNumber).ConvertUsing(row => row.Context.RawRow);
@@ -291,24 +304,45 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
                 return null;
             }
-            //private Guid Mandatory_Checks_VENUE(IReaderRow row)
-            //{
-            //    //var deliveryMethod = Mandatory_Checks_DELIVERY_METHOD(row);
+            private Guid Mandatory_Checks_VENUE(IReaderRow row)
+            {
+                var deliveryMethod = Mandatory_Checks_DELIVERY_METHOD(row);
+                if (deliveryMethod == DeliveryMethod.Classroom || deliveryMethod == DeliveryMethod.Both)
+                {
+                    if(!_cachedVenues.Any())
+                    {
+                        _cachedVenues = Task.Run(async () => await _venueService.SearchAsync(new VenueSearchCriteria(_UKPRN.ToString(), string.Empty)))
+                            .Result
+                            .Value
+                            .Value
+                            .ToList();
+                        if(!_cachedVenues.Any())
+                        {
+                            return Guid.Empty;
+                        }
+                            
+                    }
+                    string fieldName = "VENUE";
+                    row.TryGetField<string>(fieldName, out string value);
+                    if (string.IsNullOrWhiteSpace(value))
+                    {
+                        return Guid.Empty;
+                    }
 
-            //    //if (deliveryMethod == DeliveryMethod.Undefined || deliveryMethod == DeliveryMethod.Employer)
-            //    //{
-                    
-            //    //}
-            //    //string fieldName = "VENUE";
-            //    //row.TryGetField<string>(fieldName, out string value);
-            //    //if (String.IsNullOrWhiteSpace(value))
-            //    //{
-            //    //    errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} is required.");
-            //    //    return errors;
-            //    //}
+                    var venues = _cachedVenues
+                        .Where(x => x.VenueName.ToUpper() == value && x.Status == VenueStatus.Live).ToList();
+                    if (venues.Any())
+                    {
+                        if(venues.Count == 1)
+                        {
 
-            //    //return errors;
-            //}
+                        }
+                    }
+                }
+
+
+                return Guid.Empty;
+            }
             #endregion
 
             #region Field Validation
@@ -786,10 +820,10 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             return count;
         }
 
-        public List<string> ValidateCSVFormat(Stream stream)
+        public List<string> ValidateCSVFormat(Stream stream, int UKPRN)
         {
             Throw.IfNull(stream, nameof(stream));
-
+            Throw.IfLessThan(0, UKPRN, nameof(UKPRN));
             List<string> errors = new List<string>();
             List<ApprenticeshipCsvRecord> records = new List<ApprenticeshipCsvRecord>();
             Dictionary<string, string> duplicateCheck = new Dictionary<string, string>();
@@ -806,7 +840,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                         // Validate the header row.
                         ValidateHeader(csv);
 
-                        var classMap = new ApprenticeshipCsvRecordMap(_apprenticeshipService, _venueService);
+                        var classMap = new ApprenticeshipCsvRecordMap(_apprenticeshipService, _venueService, UKPRN);
                         csv.Configuration.RegisterClassMap(classMap);
 
 
