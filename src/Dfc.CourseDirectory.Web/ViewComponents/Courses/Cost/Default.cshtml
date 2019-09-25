@@ -10,7 +10,7 @@
         </label>
         @if (!string.IsNullOrWhiteSpace(Model.CostHintText))
         {
-            <span class="govuk-hint">
+            <span class="govuk-hint govuk-!-margin-top-3">
                 @Model.CostHintText
             </span>
         }
@@ -21,18 +21,15 @@
 
         }
 
-    <span class="input-symbol-pound">
-        <input class="govuk-input govuk-input--width-10" style="display:inline;" asp-for="@Model.Cost" type="text" aria-describedby="Cost"
-               val-required-message="Enter cost or cost description"
-               val-max-length="8"
-               val-max-length-message="Maximum allowed cost value is 999,999.99">
-    </span>
+        <div class="govuk-currency-input">
+            <div class="govuk-currency-input__inner">
+                <span class="govuk-currency-input__inner__unit">£</span>
+                <input class="govuk-input govuk-input--width-10" aria-label="Enter amount in pounds" type="text" asp-for="@Model.Cost" val-required-message="Enter cost or cost description" style="padding-left:25px"
+                       val-max-length="8"
+                       val-max-length-message="Maximum allowed cost value is 999,999.99">
+            </div>
+        </div>
 
-        @*<span class="govuk-body">£</span>
-        <input class="govuk-input govuk-input--width-10" style="display:inline;" asp-for="@Model.Cost" type="text" aria-describedby="Cost"
-               val-required-message="Enter cost or cost description"
-               val-max-length="8"
-               val-max-length-message="Maximum allowed cost value is 999,999.99">*@
     </div>
 
 <div class="govuk-character-count" data-module="character-count" data-maxlength="255">
@@ -42,7 +39,7 @@
         </label>
         @if (!string.IsNullOrWhiteSpace(Model.CostDescriptionHintText))
         {
-            <span class="govuk-hint">
+            <span class="govuk-hint govuk-!-margin-top-3">
                 @Model.CostDescriptionHintText
             </span>
         }

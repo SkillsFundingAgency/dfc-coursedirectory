@@ -24,6 +24,7 @@ using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 using Dfc.CourseDirectory.Models.Models.Providers;
 using Dfc.CourseDirectory.Web.BackgroundWorkers;
+using System.Globalization;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -263,7 +264,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
             IEnumerable<BlobFileInfo> list = _blobService.GetFileList(UKPRN + "/Bulk Upload/Files/").OrderByDescending(x => x.DateUploaded).ToList();
             if (list.Any())
             {
-                model.ErrorFileCreatedDate = list.FirstOrDefault().DateUploaded.Value.DateTime;
+                
+                TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time");
+                DateTime dt1 = DateTime.Parse(list.FirstOrDefault().DateUploaded.Value.DateTime.ToString());
+                DateTime dt2 = TimeZoneInfo.ConvertTimeFromUtc(dt1, tzi);
+
+                model.ErrorFileCreatedDate = Convert.ToDateTime(dt2.ToString("dd MMM yyyy HH:mm"));
+
             }
 
             return View("../Bulkupload/DownloadErrorFile/Index", model);
@@ -305,6 +312,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 UKPRN = sUKPRN ?? 0;
             }
 
+            var provider = FindProvider(UKPRN);
+            if(null == provider)
+            {
+                return RedirectToAction("Index", "Home", new { errmsg = "Failed to find Provider data to delete bulk upload." });
+            }
+
             IEnumerable<Services.BlobStorageService.BlobFileInfo> list = _blobService.GetFileList(UKPRN + "/Bulk Upload/Files/").OrderByDescending(x => x.DateUploaded).ToList();
             if (list.Any())
             {
@@ -313,9 +326,42 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
 
 
-            var deleteBulkuploadResults = await _courseService.DeleteBulkUploadCourses(UKPRN);
+            // COUR-1927 move the delete to a background worker because it's timing out for large files.
+            bool deleteSuccess = false;
+            _queue.QueueBackgroundWorkItem(async token =>
+            {
+                var guid = Guid.NewGuid().ToString();
+                var tag = $"delete bulk upload for provider {UKPRN}.";
+                var startTimestamp = DateTime.UtcNow;
 
-            if (deleteBulkuploadResults.IsSuccess)
+                try
+                {
+                    _logger.LogInformation($"{startTimestamp.ToString("yyyyMMddHHmmss")} Starting background worker {guid} for {tag}");
+
+                    var deleteBulkuploadResults = await _courseService.DeleteBulkUploadCourses(UKPRN);
+                    deleteSuccess = deleteBulkuploadResults.IsSuccess;
+
+                    var finishTimestamp = DateTime.UtcNow;
+                    _logger.LogInformation($"{finishTimestamp.ToString("yyyyMMddHHmmss")} background worker {guid} finished successfully for {tag}");
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError($"Error whilst deleting bulk upload file on background worker {guid} for {tag}", ex);
+                }
+
+                _logger.LogInformation($"Queued Background Task {guid} is complete.");
+            });
+
+            // COUR-1972 make sure we get a date on the Delete Confirmation page even if the physical delete above didn't find any files to delete.
+            if(null != provider.BulkUploadStatus)
+            {
+                if(provider.BulkUploadStatus.StartedTimestamp.HasValue)
+                {
+                    fileUploadDate = provider.BulkUploadStatus.StartedTimestamp.Value.ToLocalTime();
+                }
+            }
+
+            if (deleteSuccess)
             {
                 return RedirectToAction("DeleteFileConfirmation", "Bulkupload", new { fileUploadDate = fileUploadDate });
             }
@@ -333,10 +379,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             var model = new DeleteFileConfirmationViewModel();
 
-            DateTime localDateTime = DateTime.Parse(fileUploadDate.ToString());
-            DateTime utcDateTime = localDateTime.ToUniversalTime();
+            TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time");
+            DateTime dt1 = DateTime.Parse(fileUploadDate.DateTime.ToString());
+            DateTime dt2 = TimeZoneInfo.ConvertTimeFromUtc(dt1, tzi);
 
-            model.FileUploadedDate = TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, TimeZoneInfo.Local).ToString("dd MMM yyyy HH:mm");
+            model.FileUploadedDate = dt2.ToString("dd MMM yyyy HH:mm");
 
             return View("../Bulkupload/DeleteFileConfirmation/Index", model);
         }
@@ -424,7 +471,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
             });
 
             // @ToDo: we'll reach here before the above background task has completed, so need some UI work
-            return View("../PublishCourses/InProgress", new PublishCompleteViewModel() { NumberOfCoursesPublished = model.NumberOfCourses, Mode = PublishMode.BulkUpload, BackgroundPublishInProgress = provider.BulkUploadStatus.PublishInProgress });
+            var vm = new PublishCompleteViewModel()
+            {
+                NumberOfCoursesPublished = model.NumberOfCourses,
+                Mode = PublishMode.BulkUpload,
+                BackgroundPublishInProgress = provider.BulkUploadStatus.PublishInProgress
+            };
+            double totalmins = Math.Max(2, (model.NumberOfCourses * _bulkUploadService.BulkUploadSecondsPerRecord / 60));
+            vm.BackgroundPublishMinutes = (int)Math.Round(totalmins, 0, MidpointRounding.AwayFromZero);
+            return View("../PublishCourses/InProgress", vm);
         }
 
         [Authorize]

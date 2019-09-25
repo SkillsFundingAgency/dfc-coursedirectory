@@ -3,27 +3,27 @@
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
-<div class="govuk-form-group">
-    <label id="govuk-label-@nameof(Model.Url)" class="govuk-label--m" asp-for="@Model.Url">
-        @Model.LabelText
-    </label>
+    <div class="govuk-form-group">
+        <label id="govuk-label-@nameof(Model.Url)" class="govuk-label--m" asp-for="@Model.Url">
+            @Model.LabelText
+        </label>
 
 
-    @{ var regex = @"^([-a-zA-Z0-9]{2,256}\.)+[a-z]{2,10}(\/.*)?";}
+        @{ var regex = @"^([-a-zA-Z0-9]{2,256}\.)+[a-z]{2,10}(\/.*)?";}
 
 
-    @if (!string.IsNullOrWhiteSpace(Model.HintText))
-    {
-        <span class="govuk-hint">
-            @Model.HintText
-        </span>
-    }
-    <input class="govuk-input" asp-for="@Model.Url" type="text" aria-describedby="@Model.Url"
-           val-max-length="255"
-           val-max-length-message="The maximum length of URL is 255 characters"
-           val-regex="@regex"
-           val-regex-message="The format of URL is incorrect" />
-</div>
+        @if (!string.IsNullOrWhiteSpace(Model.HintText))
+        {
+            <span class="govuk-hint govuk-!-margin-top-3">
+                @Model.HintText
+            </span>
+        }
+        <input class="govuk-input" asp-for="@Model.Url" type="text" aria-describedby="@Model.Url"
+               val-max-length="255"
+               val-max-length-message="The maximum length of URL is 255 characters"
+               val-regex="@regex"
+               val-regex-message="The format of URL is incorrect" />
+    </div>
 
 <script>
     (function ($) {

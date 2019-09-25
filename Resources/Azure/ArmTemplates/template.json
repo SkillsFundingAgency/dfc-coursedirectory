@@ -254,6 +254,18 @@
       "metadata": {
         "description": "The limit of the number of items to process online.  If broached, offline processing of the bulk upload will occurr"
       }
+    },
+    "EnvironmentName": {
+      "type": "string",
+      "metadata": {
+        "description": "EnvironmentName to be used in the EnvironmentSetting__EnvironmentName config setting.  This may be different to the Azure DevOps environment"
+      }
+    },
+    "BulkUploadSecondsPerRecord": {
+      "type": "string",
+      "metadata": {
+        "description": "The CourseServiceSettings__BulkUploadSecondsPerRecord app setting"
+      }
     }
   },
   "variables": {
@@ -645,7 +657,22 @@
               {
                 "name": "BlobStorageSettings__InlineProcessingThreshold",
                 "value": "[parameters('BlobStorageSettingsInlineProcessingThreshhold')]"
-
+              },
+              {
+                "name": "EnvironmentSettings__EnvironmentName",
+                "value": "[parameters('environmentName')]"
+              },
+              {
+                "name": "ApprenticeshipSettings__NationalRadius",
+                "value": "600"
+              },
+              {
+                "name": "ApprenticeshipSettings__SubRegionRadius",
+                "value": "10"
+              },
+              {
+                "name": "CourseServiceSettings__BulkUploadSecondsPerRecord",
+                "value": "[parameters('BulkUploadSecondsPerRecord')]"
               }
             ]
           },

@@ -1,14 +1,11 @@
-﻿@using Dfc.CourseDirectory.Common.Settings
-@using Dfc.CourseDirectory.Services.Interfaces.ProviderService
-@using Dfc.CourseDirectory.Services.ProviderService
-@using Dfc.CourseDirectory.Web.Helpers
-@using Microsoft.Extensions.Options
+﻿@using Dfc.CourseDirectory.Services.Interfaces.ProviderService
 @using Dfc.CourseDirectory.Web.ViewComponents.Notification
 @using Dfc.CourseDirectory.Web.ViewComponents.BackgroundBulkUploadNotification
-@using Dfc.CourseDirectory.Web.ViewComponents.DashboardCard
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Http
 @using Dfc.CourseDirectory.Models.Models.Providers
+@using Microsoft.AspNetCore.Hosting
+@using Dfc.CourseDirectory.Models.Enums
 @model Dfc.CourseDirectory.Web.ViewComponents.Dashboard.DashboardModel
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
@@ -16,6 +13,7 @@
 @inject IAuthorizationService Authorization
 @inject IHttpContextAccessor HttpContextAccessor
 @inject IProviderService providerService
+@inject IHostingEnvironment env
 
 @if (Model.ValidationMessages != null && Model.ValidationMessages.Any())
 {
@@ -94,6 +92,7 @@ else
     var superUser = await Authorization.AuthorizeAsync(User, "SuperUser");
     var feUser = await Authorization.AuthorizeAsync(User, "Fe");
     var apprenticeshipUser = await Authorization.AuthorizeAsync(User, "apprenticeship");
+    var providerSuperUser = await Authorization.AuthorizeAsync(User, "ProviderSuperUser");
 
     <h1 class="govuk-heading-xl cd-dashboard-title">Publish to the course directory</h1>
     <hr class="spacer" />
@@ -161,18 +160,62 @@ else
                         <li class="cd-homepage__list--item">
                             <a asp-controller="Provider" asp-action="Details" class="govuk-link">Manage your organisation details</a>
                         </li>
-                        @if (superUser.Succeeded)
-                        {
-                            <li class="cd-homepage__list--item">
-                                <a href="https://signin-test-svc-as.azurewebsites.net/approvals/FD039496-0B39-4F75-994A-20B03E060255/users" target="_blank" class="govuk-link">
-                                    Create a new DfE Sign-in account
-                                </a>
-                            </li>
-                        }
-                        <li class="cd-homepage__list--item">
+                        @{
+                            string orgId = User.Claims.Where(c => c.Type == "OrganisationId")
+                                        .Select(c => c.Value).SingleOrDefault();
+                            switch (Model.EnvironmentType)
+                            {
+                                case EnvironmentType.Development:
+                                case EnvironmentType.SIT:
+                                    {
+                                        if (providerSuperUser.Succeeded)
+                                        {
+                                            <li class="cd-homepage__list--item">
+                                                <a href="https://signin-test-svc-as.azurewebsites.net/approvals/@orgId/users" target="_blank" class="govuk-link">
+                                                    Create a new DfE Sign-in account
+                                                </a>
+                                            </li>
+                                        }
+                                        <li class="cd-homepage__list--item">
+                                            <a href="https://signin-test-pfl-as.azurewebsites.net/" target="_blank" class="govuk-link">Manage your DfE Sign-in account</a>
+                                        </li>
+                                        break;
+                                    }
+                                case EnvironmentType.PreProduction:
+                                    {
+                                        if (providerSuperUser.Succeeded)
+                                        {
+                                            <li class="cd-homepage__list--item">
+                                                <a href="https://pp-services.signin.education.gov.uk/approvals/@orgId/users" target="_blank" class="govuk-link">
+                                                    Create a new DfE Sign-in account
+                                                </a>
+                                            </li>
+                                        }
+                                        <li class="cd-homepage__list--item">
+                                            <a href="https://pp-profile.signin.education.gov.uk/" target="_blank" class="govuk-link">Manage your DfE Sign-in account</a>
+                                        </li>
+                                        break;
+                                    }
+                                case EnvironmentType.Production:
+                                    {
+                                        if (providerSuperUser.Succeeded)
+                                        {
+                                            <li class="cd-homepage__list--item">
+                                                <a href="https://services.signin.education.gov.uk/approvals/@orgId/users" target="_blank" class="govuk-link">
+                                                    Create a new DfE Sign-in account
+                                                </a>
+                                            </li>
+                                        }
 
-                            <a href="https://signin-test-pfl-as.azurewebsites.net/" target="_blank" class="govuk-link">Manage your DfE Sign-in account</a>
-                        </li>
+                                        <li class="cd-homepage__list--item">
+                                            <a href="https://profile.signin.education.gov.uk" target="_blank" class="govuk-link">Manage your DfE Sign-in account</a>
+                                        </li>
+                                        break;
+                                    }
+                            };
+
+                        }
+
                     </ul>
                 </div>
             </aside>
