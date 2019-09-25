@@ -78,7 +78,7 @@
                    asp-route-learnAimRefTypeDesc="@Model.QualificationType"
                    asp-route-courseId="@Model.CourseId"
                    asp-route-courseRunId="@Model.CourseInstanceId"
-                   asp-route-mode="@PublishMode.Summary">Edit course information</a>
+                   asp-route-mode="@PublishMode.Summary">Edit course information<span class="govuk-visually-hidden">@Model.QualificationCourseTitle</span></a>
             </h2>
 
             <table class="govuk-table">
@@ -441,7 +441,7 @@
                asp-route-learnAimRefTypeDesc="@Model.QualificationType"
                asp-route-courseId="@Model.CourseId"
                asp-route-courseRunId="@Model.CourseInstanceId"
-               asp-route-publishMode="@PublishMode.Summary">Copy this course</a>
+               asp-route-publishMode="@PublishMode.Summary">Copy this course<span class="govuk-visually-hidden">@Model.QualificationCourseTitle</span></a>
             <hr>
 
             <h3 class="govuk-heading-m m20">Delete</h3>
@@ -455,7 +455,7 @@
                asp-route-courseId="@Model.CourseId"
                asp-route-courseRunId="@Model.CourseInstanceId"
                asp-route-courseName="@Model.CourseName"
-               style="padding-right:1em">Delete this course</a>
+               style="padding-right:1em">Delete this course<span class="govuk-visually-hidden">@Model.QualificationCourseTitle</span></a>
 
                       <hr>
             <h3 class="govuk-heading-m m20">Edit What your learners need to know</h3>
@@ -474,7 +474,7 @@
                asp-route-awardOrgCode="@Model.AwardOrgCode"
                asp-route-learnAimRefTitle="@Model.QualificationCourseTitle"
                asp-route-learnAimRefTypeDesc="@Model.QualificationType"
-               asp-route-mode="@PublishMode.Summary">Make changes</a>
+               asp-route-mode="@PublishMode.Summary">Make changes<span class="govuk-visually-hidden">@Model.QualificationCourseTitle</span></a>
         </div>
     </div>
 
