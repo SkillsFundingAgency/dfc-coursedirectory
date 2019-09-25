@@ -58,6 +58,7 @@
     <PackageReference Include="Microsoft.Extensions.Caching.Redis" Version="2.1.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.ApplicationInsights" Version="2.9.1" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.9" />
+    <PackageReference Include="routedebugger" Version="2.1.5" />
     <PackageReference Include="Sendgrid" Version="9.10.0" />
   </ItemGroup>
 
