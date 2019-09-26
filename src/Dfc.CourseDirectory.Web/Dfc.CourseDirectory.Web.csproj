@@ -266,6 +266,9 @@
     <Content Update="Views\Provider\Search.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\PublishApprenticeships\Index.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\SearchProvider\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
