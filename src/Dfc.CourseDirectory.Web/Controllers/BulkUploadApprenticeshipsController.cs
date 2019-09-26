@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Models.Enums;
+using Dfc.CourseDirectory.Models.Models.Auth;
 using Dfc.CourseDirectory.Services.Interfaces.BlobStorageService;
 using Dfc.CourseDirectory.Services.Interfaces.BulkUploadService;
 using Dfc.CourseDirectory.Web.ViewModels.BulkUpload;
@@ -35,6 +36,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly IBlobStorageService _blobService;
         private readonly ICourseService _courseService;
         private readonly IProviderService _providerService;
+        private readonly IUserHelper _userHelper;
         private IHostingEnvironment _env;
         private const string _blobContainerPath = "/Apprenticeships Bulk Upload/Files/";
         private ISession _session => _contextAccessor.HttpContext.Session;
@@ -159,7 +161,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         $"{UKPRN.ToString()}/Apprenticeship Bulk Upload/Files/{bulkUploadFileNewName}", ms);
                     task.Wait();
 
-                    var errors = _apprenticeshipBulkUploadService.ValidateAndUploadCSV(ms,UKPRN.GetValueOrDefault());
+
+                    var errors = _apprenticeshipBulkUploadService.ValidateAndUploadCSV(ms, _userHelper.GetUserDetailsFromClaims(this.HttpContext.User.Claims, UKPRN));
 
                     if (errors.Any())
                     {

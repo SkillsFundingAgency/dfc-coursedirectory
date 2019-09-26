@@ -20,6 +20,8 @@ using CsvHelper.Configuration.Attributes;
 using CsvHelper.Expressions;
 using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Interfaces.Apprenticeships;
+using Dfc.CourseDirectory.Models.Interfaces.Auth;
+using Dfc.CourseDirectory.Models.Models.Auth;
 using Dfc.CourseDirectory.Models.Models.Courses;
 using Dfc.CourseDirectory.Models.Models.Regions;
 using Dfc.CourseDirectory.Models.Models.Venues;
@@ -27,6 +29,7 @@ using Dfc.CourseDirectory.Services.Interfaces;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 using Dfc.CourseDirectory.Services.VenueService;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore.SqlServer.Query.ExpressionTranslators.Internal;
 
 
@@ -73,7 +76,6 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             public bool? NATIONAL_DELIVERY { get; set; }
             public string REGION { get; set; }
             public string SUB_REGION { get; set; }
-            public List<string> RegionsList { get; set; }
             [Ignore]
             public List<BulkUploadError> ErrorsList { get; set; }
 
@@ -86,8 +88,6 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             [Ignore]
             public string Base64Row  { get; set; }
             [Ignore]
-            public Guid? VenueId  { get; set; }
-            [Ignore]
             public IApprenticeshipLocation ApprenticeshipLocation { get; set; }
 
         }
@@ -96,19 +96,19 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
         {
             private readonly IApprenticeshipService _apprenticeshipService;
             private readonly IVenueService _venueService;
-            private readonly int _UKPRN;
+            private readonly IAuthUserDetails _authUserDetails;
             private List<Venue> _cachedVenues;
 
             public ApprenticeshipCsvRecordMap(IApprenticeshipService apprenticeshipService,
-                IVenueService venueService,
-                int ukprn)
+                IVenueService venueService, 
+                IAuthUserDetails authUserDetails)
             {
                 Throw.IfNull(apprenticeshipService, nameof(apprenticeshipService));
                 Throw.IfNull(venueService, nameof(venueService));
-                Throw.IfLessThan(0, ukprn, nameof(ukprn));
+                Throw.IfNull(authUserDetails, nameof(authUserDetails));
                 _apprenticeshipService = apprenticeshipService;
                 _venueService = venueService;
-                _UKPRN = ukprn;
+                _authUserDetails = authUserDetails;
 
 
                 Map(m => m.STANDARD_CODE).ConvertUsing(Mandatory_Checks_STANDARD_CODE);
@@ -131,9 +131,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 Map(m => m.NATIONAL_DELIVERY).ConvertUsing(Mandatory_Checks_NATIONAL_DELIVERY);
                 Map(m => m.REGION);
                 Map(m => m.SUB_REGION);
-                Map(m => m.VenueId).ConvertUsing(Mandatory_Checks_VENUE);
                 Map(m => m.ApprenticeshipLocation).ConvertUsing(CreateApprenticeshipLocation);
-                Map(m => m.RegionsList).ConvertUsing(GetRegionList);
                 Map(m => m.ErrorsList).ConvertUsing(ValidateData);
                 Map(m => m.RowNumber).ConvertUsing(row => row.Context.RawRow);
                 Map(m => m.Base64Row).ConvertUsing(Base64Encode);
@@ -365,7 +363,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 {
                     if(_cachedVenues == null)
                     {
-                        _cachedVenues = Task.Run(async () => await _venueService.SearchAsync(new VenueSearchCriteria(_UKPRN.ToString(), string.Empty)))
+                        _cachedVenues = Task.Run(async () => await _venueService.SearchAsync(new VenueSearchCriteria(_authUserDetails.UKPRN, string.Empty)))
                             .Result
                             .Value
                             .Value
@@ -1009,15 +1007,8 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 var regions = GetRegionList(row);
                 var venueId = Mandatory_Checks_VENUE(row);
                 var deliveryMethod = Mandatory_Checks_DELIVERY_METHOD(row);
+                var isNational = Mandatory_Checks_NATIONAL_DELIVERY(row);
 
-
-                var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
-
-                // Get the claims values
-                var name = identity.Claims.Where(c => c.Type == ClaimTypes.Name)
-                    .Select(c => c.Value).SingleOrDefault();
-                var sid = identity.Claims.Where(c => c.Type == ClaimTypes.Sid)
-                    .Select(c => c.Value).SingleOrDefault();
 
                 Venue venue = null;
                 if (venueId != null)
@@ -1030,8 +1021,33 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                     Id = new Guid(),
                     Name = venue?.VenueName,
                     CreatedDate = DateTime.Now,
-
+                    CreatedBy = _authUserDetails.Email,
+                    ApprenticeshipLocationType = (ApprenticeshipLocationType) deliveryMethod,
+                    LocationType = LocationType.Venue,
+                    //Set record status before post
+                    Regions = regions.ToArray(),
+                    National = isNational,
+                    TribalId = venue?.TribalLocationId,
+                    ProviderId = venue?.ProviderID,
+                    LocationId = venue?.LocationId,
+                    VenueId =  venueId,
+                    Address = venue != null ? new Address
+                        {
+                            Address1 = venue.Address1,
+                            Address2 = venue.Address2,
+                            Town =  venue.Town,
+                            County = venue.County,
+                            Postcode = venue.PostCode,
+                            Email = venue.Email,
+                            Phone = venue.Telephone,
+                            Website = venue.Website,
+                            Latitude = (double)venue.Latitude,
+                            Longitude = (double)venue.Longitude
+                        }
+                        : null
                 };
+
+                //TODO: LocationId, Radius, Delivery
                 return null;
             }
         }
@@ -1068,10 +1084,10 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             return count;
         }
 
-        public List<string> ValidateAndUploadCSV(Stream stream, int UKPRN, string userId)
+        public List<string> ValidateAndUploadCSV(Stream stream, AuthUserDetails userDetails)
         {
             Throw.IfNull(stream, nameof(stream));
-            Throw.IfLessThan(0, UKPRN, nameof(UKPRN));
+            Throw.IfNull(userDetails, nameof(userDetails));
             List<string> errors = new List<string>();
             List<ApprenticeshipCsvRecord> records = new List<ApprenticeshipCsvRecord>();
             Dictionary<string, string> duplicateCheck = new Dictionary<string, string>();
@@ -1088,10 +1104,8 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                         // Validate the header row.
                         ValidateHeader(csv);
 
-                        var classMap = new ApprenticeshipCsvRecordMap(_apprenticeshipService, _venueService, UKPRN);
+                        var classMap = new ApprenticeshipCsvRecordMap(_apprenticeshipService, _venueService, userDetails);
                         csv.Configuration.RegisterClassMap(classMap);
-
-
 
                         while (csv.Read())
                         {
@@ -1116,7 +1130,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                         throw new Exception("No apprenticeship data present in the file.");
                     }
 
-                    var result = _apprenticeshipService.DeleteBulkUploadApprenticeships(UKPRN);
+                    var result = _apprenticeshipService.DeleteBulkUploadApprenticeships(int.Parse(userDetails.UKPRN));
                     if (result.IsCompletedSuccessfully)
                     {
                         //var apprenticeships = ApprenticeshipCsvRecordToApprenticeship(records, UKPRN);
@@ -1127,7 +1141,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                     }
                     else
                     {
-                        throw new Exception($"Unable to delete bulk upload apprenticeships for {UKPRN}");
+                        throw new Exception($"Unable to delete bulk upload apprenticeships for {int.Parse(userDetails.UKPRN)}");
                     }
 
 

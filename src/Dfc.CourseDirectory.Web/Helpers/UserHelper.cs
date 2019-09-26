@@ -1,12 +1,17 @@
-﻿using Dfc.CourseDirectory.Common;
+﻿using System;
+using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Web.Areas.Identity.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
+using System.Linq;
 using System.Net;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Models.Models.Auth;
 
 namespace Dfc.CourseDirectory.Web.Helpers
 {
@@ -52,6 +57,24 @@ namespace Dfc.CourseDirectory.Web.Helpers
             }
         }
 
+        public AuthUserDetails GetUserDetailsFromClaims(IEnumerable<Claim> claims, int? UKPRN)
+        {
+            return new AuthUserDetails(
+            
+                userId: Guid.TryParse(GetClaim(claims, "userId"), out Guid userId) ? userId : Guid.Empty,
+                email : GetClaim(claims, "email"),
+                nameOfUser : $"{GetClaim(claims, "firstName")} {GetClaim(claims, "familyName")}",
+                providerType : GetClaim(claims, "ProviderType"),
+                roleId : Guid.TryParse(GetClaim(claims, "role_id"), out Guid roleId) ? roleId : Guid.Empty,
+                roleName : GetClaim(claims, "rolename"),
+                ukPrn : UKPRN.HasValue ? UKPRN.ToString() : GetClaim(claims, "UKPRN"),
+                userName : GetClaim(claims, "email")
+            );
+        }
 
+        internal string GetClaim(IEnumerable<Claim> claims, string type)
+        {
+            return claims.FirstOrDefault(x => string.Equals(x.Type, type, StringComparison.CurrentCultureIgnoreCase))?.Value ?? String.Empty;
+        }
     }
 }

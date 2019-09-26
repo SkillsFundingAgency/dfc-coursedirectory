@@ -8,21 +8,21 @@ namespace Dfc.CourseDirectory.Models.Models.Auth
 {
     public class AuthUserDetails : ValueObject<AuthUserDetails>, IAuthUserDetails
     {
-        public Guid UserId { get; set; }
+        public Guid? UserId { get; set; }
         public string Email { get; set; }
         public string UserName { get; set; }
         public string NameOfUser { get; set; }
-        public Guid RoleId { get; set; }
+        public Guid? RoleId { get; set; }
         public string RoleName { get; set; }
         public string UKPRN { get; set; }
         public string ProviderType { get; set; }
 
         public AuthUserDetails(
-            Guid userId,
+            Guid? userId,
             string email,
             string userName,
             string nameOfUser,
-            Guid roleId,
+            Guid? roleId,
             string roleName,
             string ukPrn,
             string providerType)
