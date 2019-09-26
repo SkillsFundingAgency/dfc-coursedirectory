@@ -1,8 +1,8 @@
 (function ($) {
 
 
-    
-    
+
+
     // Create the defaults once
     var pluginName = "govUkFormGroup",
         defaults = {
@@ -156,7 +156,7 @@
     Plugin.prototype.invalidState = function (messages) {
         this.validState();
 
-        var $errorElement="";
+        var $errorElement = "";
 
         if ($(this.element).prevAll(".govuk-hint").length) {
             $errorElement = $(this.element).prevAll(".govuk-hint");
@@ -166,15 +166,20 @@
                 $errorElement = $(this.element).prevAll(".govuk-label");
             }
             else {
-                $errorElement = $(this.element)
+                if ($(this.element).parent().hasClass("zcodesearch--container")) {
+                   
+                    $errorElement = $('.zcodesearch--container');
+                } else {
+                    $errorElement = $(this.element)
+                }
             }
         }
 
-        if ($(this.element).parent().hasClass("zcodesearch--container")) {
-            //var $t = $(this.element).closest(".govuk-form-group")
-            $errorElement = $(this.element).parent()
-        }
-       
+        //if ($(this.element).parent().hasClass("zcodesearch--container")) {
+        //    //var $t = $(this.element).closest(".govuk-form-group")
+        //    $errorElement = $(this.element).parent()
+        //}
+
 
         $(this.element).addClass(this.options.errorCssClass);
         this._formGroup.govUkFormGroup("invalidState");
@@ -193,7 +198,7 @@
 
                 span.appendChild(hiddenErrorSpan);
                 span.appendChild(document.createTextNode(message));
-                
+
 
                 $(span).insertBefore($errorElement);
             }, this);

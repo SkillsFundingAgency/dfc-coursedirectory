@@ -6,43 +6,115 @@
 @{
     Layout = "_Layout_Your_Courses";
 }
-<div class="cd-hero-green">
-    <div class="">
-        <header class="cd-hero-search">
-            <div class="content-container">
+@*<div class="cd-hero-green">
+        <div class="">
+            <header class="cd-hero-search">
+                <div class="content-container">
 
 
-                <div class="grid-row" data-sf-element="Row">
-                    <div class="column-two-thirds">
+                    <div class="grid-row" data-sf-element="Row">
+                        <div class="column-two-thirds">
 
 
-                        <div>
-                            <h1 class="govuk-heading-l govuk-!-margin-top-4">@ViewBag.Title</h1>
+                            <div>
+                                <h1 class="govuk-heading-l govuk-!-margin-top-4">@ViewBag.Title</h1>
 
-                        </div>
-                        <div id="LarsSearch" class="cd-status-panel teal--border">
-                            <form class="site-search ui-front" id="header-search">
+                            </div>
+                            <div id="errorsummary" class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary" style="display: none;">
+                                <h2 class="govuk-error-summary__title" id="error-summary-title">
+                                    There is a problem
+                                </h2>
+                                <div class="govuk-error-summary__body">
+                                    <ul class="govuk-list govuk-error-summary__list"></ul>
+                                </div>
+                            </div>
 
-                                <div class="search-input-wrapper">
+                            <div class="govuk-form-group zcodesearch">
+                                <label class="" name="unregulated-search">Learning Aims Reference Service (LARS) code (this is sometimes called the ‘Z code’).</label>
 
-                                    <label class="column-two-thirds" name="qualification-search" for="LarsSearchTerm">@ViewBag.Subtext</label>
-                                    <div class="search--container">
-                                        <input class="govuk-input search-input js-search-focus govuk-input--width-20" id="LarsSearchTerm" name="LarsSearchTerm" type="text" autofocus aria-label="qualification-search">
-                                        <div class="cd-c-search__item cd-search__submit-wrapper">
-                                            <button type="button" class=" submit" id="searchQualification">Search</button>
-                                        </div>
-                                    </div>
+                                <div class="zcodesearch--container">
+                                    <input class=" zcodesearch--container-input govuk-input govuk-!-padding-bottom-4 govuk-input--width-10" asp-for="@Model.Search" type="text" aria-label="unregulated-search"
+                                           val-required-message="Enter a z code to search"
+                                           val-regex="@regex"
+                                           val-regex-message="Code must start with Z followed by 7 numbers or letters" />
+
+                                    <button id="searchZCode" type="submit" class="submit">Search</button>
                                 </div>
 
-                            </form>
+                            </div>
+
+
+                            <div id="LarsSearch" class="cd-status-panel teal--border">
+                                <form class="site-search ui-front" id="header-search">
+
+                                    <div class="search-input-wrapper">
+
+                                        <label class="column-two-thirds" name="qualification-search" for="LarsSearchTerm">@ViewBag.Subtext</label>
+                                        <label class="govuk-hint" id="hintlabel">Enter a minimum of 3 characters</label>
+                                        <div class="search--container">
+                                            <input class="govuk-input search-input js-search-focus govuk-input--width-20" id="LarsSearchTerm" name="LarsSearchTerm" type="text" autofocus aria-label="unregulated-search"
+                                                   val-required-message="Enter LARS reference to search"
+                                                   val-min-length="3"
+                                                   val-min-length-message="LARS should be minimum 3 characters" />
+
+                                            <input class="govuk-input search-input js-search-focus govuk-input--width-20" id="LarsSearchTerm" name="LarsSearchTerm" type="text" autofocus aria-label="qualification-search">
+                                            <div class="cd-c-search__item cd-search__submit-wrapper">
+                                                <button type="button" class=" submit" id="searchQualification">Search</button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
+
+            </header>
+        </div>
+    </div>*@
+
+<div class="grid-row " data-sf-element="Row">
+    <div class="column-two-thirds govuk-body">
+        <div>
+
+            <h1 class="govuk-heading-l govuk-!-margin-top-4">@ViewBag.Title</h1>
+
+                   
+        </div>
+
+
+        <div id="larscontainer" class="cd-migration-panel">
+            <div id="errorsummary" class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary" style="display: none;">
+                <h2 class="govuk-error-summary__title" id="error-summary-title">
+                    There is a problem
+                </h2>
+                <div class="govuk-error-summary__body">
+                    <ul class="govuk-list govuk-error-summary__list"></ul>
+                </div>
             </div>
 
-        </header>
+            <div class="govuk-form-group zcodesearch">
+                <label id="larslabel" class="column-two-thirds" name="qualification-search" for="LarsSearchTerm">@ViewBag.Subtext</label>
+                <label class="govuk-hint" id="hintlabel">Enter a minimum of 3 characters</label>
+
+                <div class="zcodesearch--container">
+                    
+              
+                    <input class="govuk-input search-input js-search-focus govuk-input--width-20" id="LarsSearchTerm" name="LarsSearchTerm" type="text" autofocus aria-label="qualification-search"
+                           val-required-message="Enter search criteria"
+                           val-min-length="3"
+                           val-min-length-message="Enter minimum 3 characters"/>
+                    <div class="cd-c-search__item cd-search__submit-wrapper">
+                        <button type="button" class=" submit" id="searchQualification">Search</button>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+   
     </div>
 </div>
-
 
 @await Component.InvokeAsync(nameof(LarsSearch))

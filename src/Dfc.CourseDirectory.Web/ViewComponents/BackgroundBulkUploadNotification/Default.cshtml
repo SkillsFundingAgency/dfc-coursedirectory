@@ -26,8 +26,10 @@
         timestamp = Model.BulkUploadBackgroundStartTimestamp.Value.ToString("HH:mm");
 
         TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time");
-        //DateTime dt1 = DateTime.Parse(fileUploadDate.DateTime.ToString());
-        DateTime dt2 = TimeZoneInfo.ConvertTimeFromUtc(Model.BulkUploadBackgroundStartTimestamp.Value, tzi);
+
+        DateTime gmt =Model.BulkUploadBackgroundStartTimestamp.Value.ToUniversalTime();
+
+        DateTime dt2 = TimeZoneInfo.ConvertTimeFromUtc(gmt, tzi);
         dateCombined= dt2.ToString("dd MMM yyyy HH:mm");
         //model.FileUploadedDate = dt2.ToString("dd MMM yyyy HH:mm");
     }

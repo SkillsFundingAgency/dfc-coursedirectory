@@ -142,8 +142,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             var selectRegion = new SelectRegionModel
             {
-                LabelText = "Select course region",
-                HintText = "For example, South West",
+                LabelText = "Where do you deliver this course?",
+                HintText = "Choose all of the areas in as many regions as you deliver this course",
                 AriaDescribedBy = "Select all that apply."
             };
 
