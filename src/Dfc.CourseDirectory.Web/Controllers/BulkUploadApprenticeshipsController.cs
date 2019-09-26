@@ -159,7 +159,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         $"{UKPRN.ToString()}/Apprenticeship Bulk Upload/Files/{bulkUploadFileNewName}", ms);
                     task.Wait();
 
-                    var errors = _apprenticeshipBulkUploadService.ValidateCSVFormat(ms);
+                    var errors = _apprenticeshipBulkUploadService.ValidateAndUploadCSV(ms,UKPRN.GetValueOrDefault());
 
                     if (errors.Any())
                     {
