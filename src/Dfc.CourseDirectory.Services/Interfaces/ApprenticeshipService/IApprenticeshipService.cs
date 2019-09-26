@@ -3,6 +3,7 @@ using Dfc.CourseDirectory.Common.Interfaces;
 using Dfc.CourseDirectory.Models.Interfaces.Apprenticeships;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Models.Models.Apprenticeships;
 
 namespace Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService
 {
@@ -13,7 +14,9 @@ namespace Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService
         Task<IResult<IEnumerable<IApprenticeship>>> GetApprenticeshipByUKPRN(string criteria);
 
         Task<IResult<IApprenticeship>> GetApprenticeshipByIdAsync(string Id);
-
+        Task<IResult<IEnumerable<IStandardsAndFrameworks>>> GetStandardByCode(StandardSearchCriteria criteria);
+        Task<IResult<IEnumerable<IStandardsAndFrameworks>>> GetFrameworkByCode(FrameworkSearchCriteria criteria);
         Task<IResult<IApprenticeship>> UpdateApprenticeshipAsync(IApprenticeship apprenticeship);
+        Task<IResult> DeleteBulkUploadApprenticeships(int UKPRN);
     }
 }
