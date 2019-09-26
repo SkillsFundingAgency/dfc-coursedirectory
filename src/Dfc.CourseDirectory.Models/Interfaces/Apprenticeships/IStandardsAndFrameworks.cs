@@ -10,7 +10,7 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Apprenticeships
     {
         //Standard Model
         int? StandardCode { get; }
-        string Version { get; }
+        int? Version { get; }
         string StandardName { get; }
         string StandardSectorCode { get; }
         string URLLink { get; }
