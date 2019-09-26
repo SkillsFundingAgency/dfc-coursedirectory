@@ -1,0 +1,41 @@
+﻿@{
+    ViewData["Title"] = "Publish Apprenticeships"; 
+    Layout = "_Layout_Your_Courses";
+}
+
+@using System.Net
+@using Dfc.CourseDirectory.Web.ViewComponents.Notification
+@using Dfc.CourseDirectory.Web.ViewComponents.PublishCourses.Publish
+@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService Authorization
+@model Dfc.CourseDirectory.Web.ViewModels.PublishCourses.PublishViewModel
+
+@{
+    var adminLogin = await Authorization.AuthorizeAsync(User, "Admin");
+    var helpdeskLogin = await Authorization.AuthorizeAsync(User, "Helpdesk");
+}
+
+    <form asp-controller="PublishApprenticeships" asp-action="Index" id="PublishApprenticeships">
+
+        @if (!string.IsNullOrWhiteSpace(Model.NotificationTitle))
+        {
+            @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+            {
+                NotificationTitle = Model.NotificationTitle,
+                NotificationMessage = Model.NotificationMessage,
+                ClassType = "success-summary"
+            })
+        }
+
+        @await Component.InvokeAsync(nameof(Publish), new { model = Model })
+
+        <div class="govuk-panel__body">
+            <h1 class="govuk-panel__title">
+                Publish Apprenticeships
+            </h1>
+
+        </div>
+        
+
+    </form>
+

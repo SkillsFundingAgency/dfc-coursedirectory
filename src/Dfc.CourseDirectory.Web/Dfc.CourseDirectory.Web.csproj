@@ -64,7 +64,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Views\BulkUploadApprenticeships\NewFolder\" />
     <Folder Include="wwwroot\vendor\" />
   </ItemGroup>
 
@@ -265,6 +264,9 @@
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\Provider\Search.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\PublishApprenticeships\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\SearchProvider\Index.cshtml">

@@ -118,9 +118,16 @@
                                 {
 
                                     <li class="govuk-header__navigation-item @(ViewContext.RouteData.Values["Controller"].ToString() == "BulkUpload" ? "govuk-header__navigation-item--active" : "")">
-                                        <a class="govuk-header__link" href="~/BulkUpload/LandingOptions">
-                                            Bulk upload
-                                        </a>
+                                        
+                                        @if  (apprenticeshipUser.Succeeded && !feUser.Succeeded)
+                                        { 
+                                        <a class="govuk-header__link" href="~/BulkUploadApprenticeships/">Bulk upload</a>
+                                        }
+                                        else
+                                        { 
+                                        <a class="govuk-header__link" href="~/BulkUpload/Landingoptions">Bulk upload</a>   
+                                        }
+
                                     </li>
 
                                 }
@@ -130,7 +137,7 @@
                                     {
 
                                         <li class="govuk-header__navigation-item @(ViewContext.RouteData.Values["Controller"].ToString() == "BulkUpload" ? "govuk-header__navigation-item--active" : "")">
-                                            <a class="govuk-header__link" href="~/BulkUpload/index">
+                                            <a class="govuk-header__link" href="~/BulkUpload/Landingoptions">
                                                 Bulk upload
                                             </a>
                                         </li>
