@@ -196,13 +196,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         
-        [Authorize]
-        [HttpGet]
-        public IActionResult ProcessMigrationReportErrors(string UKPRN)
-        {
-            _session.SetInt32("UKPRN", Convert.ToInt32(UKPRN));
-            return RedirectToAction("WhatDoYouWantToDoNext");
-        }
+       
 
         [Authorize]
         [HttpGet]
