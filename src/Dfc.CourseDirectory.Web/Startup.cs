@@ -155,6 +155,7 @@ namespace Dfc.CourseDirectory.Web
             services.AddScoped<IApprenticeshipService, ApprenticeshipService>();
 
             services.AddScoped<IBulkUploadService, BulkUploadService>();
+            services.AddScoped<IApprenticeshipBulkUploadService, ApprenticeshipBulkUploadService>();
             services.Configure<BlobStorageSettings>(Configuration.GetSection(nameof(BlobStorageSettings)));
             services.AddScoped<IBlobStorageService, BlobStorageService>();
             

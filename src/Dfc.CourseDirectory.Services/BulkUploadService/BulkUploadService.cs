@@ -347,12 +347,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             }
         }
 
-        public List<string> ProcessApprenticeshipBulkUpload(Stream stream, int providerUKPRN, string userId, bool uploadApprenticeships)
-        {
-
-            //TODO: GB write method
-            return null;
-        }
+      
 
         public List<BulkUploadCourse> PolulateLARSData(List<BulkUploadCourse> bulkUploadcourses, out List<string> errors)
         {

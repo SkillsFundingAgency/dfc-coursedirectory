@@ -31,7 +31,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
     {
         private readonly ILogger<BulkUploadApprenticeshipsController> _logger;
         private readonly IHttpContextAccessor _contextAccessor;
-        private readonly IBulkUploadService _bulkUploadService;
+        private readonly IApprenticeshipBulkUploadService _apprenticeshipBulkUploadService;
         private readonly IBlobStorageService _blobService;
         private readonly ICourseService _courseService;
         private readonly IProviderService _providerService;
@@ -42,7 +42,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         public BulkUploadApprenticeshipsController(
             ILogger<BulkUploadApprenticeshipsController> logger,
             IHttpContextAccessor contextAccessor,
-            IBulkUploadService bulkUploadService,
+            IApprenticeshipBulkUploadService apprenticeshipBulkUploadService,
             IBlobStorageService blobService,
             ICourseService courseService,
             IHostingEnvironment env,
@@ -50,7 +50,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(contextAccessor, nameof(contextAccessor));
-            Throw.IfNull(bulkUploadService, nameof(bulkUploadService));
+            Throw.IfNull(apprenticeshipBulkUploadService, nameof(apprenticeshipBulkUploadService));
             Throw.IfNull(blobService, nameof(blobService));
             Throw.IfNull(courseService, nameof(courseService));
             Throw.IfNull(env, nameof(env));
@@ -59,7 +59,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             _logger = logger;
             _contextAccessor = contextAccessor;
-            _bulkUploadService = bulkUploadService;
+            _apprenticeshipBulkUploadService = apprenticeshipBulkUploadService;
             _blobService = blobService;
             _courseService = courseService;
             _env = env;
@@ -136,14 +136,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 int providerUKPRN = UKPRN.Value;
                 string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 string bulkUploadFileNewName = string.Format(@"{0}-{1}", DateTime.Now.ToString("yyMMdd-HHmmss"),
-                    bulkUploadFile.FileName);
+                     Path.GetFileName(bulkUploadFile.FileName));
 
                 MemoryStream ms = new MemoryStream();
                 bulkUploadFile.CopyTo(ms);
 
                 if (!Validate.isBinaryStream(ms))
                 {
-                    int csvLineCount = _bulkUploadService.CountCsvLines(ms);
+                    int csvLineCount = _apprenticeshipBulkUploadService.CountCsvLines(ms);
                     bool processInline = (csvLineCount <= _blobService.InlineProcessingThreshold);
                     _logger.LogInformation(
                         $"Csv line count = {csvLineCount} threshold = {_blobService.InlineProcessingThreshold} processInline = {processInline}");
@@ -159,7 +159,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         $"{UKPRN.ToString()}/Apprenticeship Bulk Upload/Files/{bulkUploadFileNewName}", ms);
                     task.Wait();
 
-                    var errors = _bulkUploadService.ProcessApprenticeshipBulkUpload(ms, providerUKPRN, userId, processInline);
+                    var errors = _apprenticeshipBulkUploadService.ValidateCSVFormat(ms);
 
                     if (errors.Any())
                     {
@@ -195,7 +195,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return View(vm);
         }
 
-        /*
+        
         [Authorize]
         [HttpGet]
         public IActionResult ProcessMigrationReportErrors(string UKPRN)
@@ -315,8 +315,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             return View("../ApprenticeshipsBulkupload/PublishYourFile/Index", model);
         }
-
-    */
+    
         private Provider FindProvider(int prn)
         {
             Provider provider = null;
