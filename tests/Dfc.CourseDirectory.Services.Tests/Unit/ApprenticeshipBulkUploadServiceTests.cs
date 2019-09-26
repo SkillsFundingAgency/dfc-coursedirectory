@@ -5,8 +5,10 @@ using Moq;
 using System;
 using System.IO;
 using System.Net;
+using System.Security.Claims;
 using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.Tests.Unit.Mocks;
+using Microsoft.AspNetCore.Http;
 using Xunit;
 namespace Dfc.CourseDirectory.Services.Tests.Unit
 {
@@ -15,6 +17,18 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
     /// </summary>
     public class ApprenticeshipBulkUploadServiceTests
     {
+        private readonly HttpContext _httpContext;
+        public ApprenticeshipBulkUploadServiceTests()
+        {
+            _httpContext = new DefaultHttpContext
+            {
+                User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+                {
+                    new Claim(ClaimTypes.Name, "TestName"), 
+                }))
+
+            };
+        }
         public class CountCSVLines
         {
             [Fact]
@@ -73,7 +87,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                Action act = () => serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                Action act = () => serviceUnderTest.ValidateAndUploadCSV(stream, 12345678, "d2dbc05d-a3e6-41fd-88ac-21853c49e7e8");
 
                 // Assert
 
@@ -93,7 +107,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678, "d2dbc05d-a3e6-41fd-88ac-21853c49e7e8");
 
                 // Assert
 
@@ -115,7 +129,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678, "d2dbc05d-a3e6-41fd-88ac-21853c49e7e8");
 
                 // Assert
 
@@ -137,7 +151,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678, "d2dbc05d-a3e6-41fd-88ac-21853c49e7e8");
 
                 // Assert
 
@@ -164,7 +178,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678, "d2dbc05d-a3e6-41fd-88ac-21853c49e7e8");
 
                 // Assert
 
@@ -186,7 +200,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678, "d2dbc05d-a3e6-41fd-88ac-21853c49e7e8");
 
                 // Assert
 
@@ -208,7 +222,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678, "d2dbc05d-a3e6-41fd-88ac-21853c49e7e8");
 
                 // Assert
 
@@ -230,7 +244,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678, "d2dbc05d-a3e6-41fd-88ac-21853c49e7e8");
 
                 // Assert
 
@@ -252,7 +266,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678, "d2dbc05d-a3e6-41fd-88ac-21853c49e7e8");
 
                 // Assert
 
@@ -274,7 +288,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678, "d2dbc05d-a3e6-41fd-88ac-21853c49e7e8");
 
                 // Assert
 
@@ -297,7 +311,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678, "d2dbc05d-a3e6-41fd-88ac-21853c49e7e8");
 
                 // Assert
 
@@ -320,7 +334,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678, "d2dbc05d-a3e6-41fd-88ac-21853c49e7e8");
 
                 // Assert
 
@@ -342,7 +356,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678, "d2dbc05d-a3e6-41fd-88ac-21853c49e7e8");
 
                 // Assert
 
@@ -364,7 +378,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678, "d2dbc05d-a3e6-41fd-88ac-21853c49e7e8");
 
                 // Assert
 
@@ -386,7 +400,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678, "d2dbc05d-a3e6-41fd-88ac-21853c49e7e8");
 
                 // Assert
 
@@ -407,7 +421,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678, "d2dbc05d-a3e6-41fd-88ac-21853c49e7e8");
 
                 // Assert
 
@@ -429,7 +443,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678, "d2dbc05d-a3e6-41fd-88ac-21853c49e7e8");
 
                 // Assert
 
@@ -451,7 +465,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678, "d2dbc05d-a3e6-41fd-88ac-21853c49e7e8");
 
                 // Assert
 
@@ -473,7 +487,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678, "d2dbc05d-a3e6-41fd-88ac-21853c49e7e8");
 
                 // Assert
 
@@ -495,7 +509,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678, "d2dbc05d-a3e6-41fd-88ac-21853c49e7e8");
 
                 // Assert
 
@@ -517,7 +531,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678, "d2dbc05d-a3e6-41fd-88ac-21853c49e7e8");
 
                 // Assert
 
@@ -539,7 +553,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678, "d2dbc05d-a3e6-41fd-88ac-21853c49e7e8");
 
                 // Assert
 
@@ -560,7 +574,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678, "d2dbc05d-a3e6-41fd-88ac-21853c49e7e8");
 
                 // Assert
 
@@ -580,7 +594,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 Stream stream = CsvStreams.InvalidField_CONTACT_URL_Invalid_URL_Space();
 
                 // Act
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678, "d2dbc05d-a3e6-41fd-88ac-21853c49e7e8");
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -599,7 +613,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 Stream stream = CsvStreams.InvalidField_CONTACT_URL_Invalid_URL_Format();
 
                 // Act
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678, "d2dbc05d-a3e6-41fd-88ac-21853c49e7e8");
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -619,7 +633,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678, "d2dbc05d-a3e6-41fd-88ac-21853c49e7e8");
 
                 // Assert
 
@@ -639,7 +653,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678, "d2dbc05d-a3e6-41fd-88ac-21853c49e7e8");
 
                 // Assert
 
@@ -660,7 +674,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678, "d2dbc05d-a3e6-41fd-88ac-21853c49e7e8");
 
                 // Assert
 
@@ -679,7 +693,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678, "d2dbc05d-a3e6-41fd-88ac-21853c49e7e8");
 
                 // Assert
 
@@ -698,7 +712,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678, "d2dbc05d-a3e6-41fd-88ac-21853c49e7e8");
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -718,7 +732,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678, "d2dbc05d-a3e6-41fd-88ac-21853c49e7e8");
 
                 // Assert
 
@@ -737,7 +751,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678, "d2dbc05d-a3e6-41fd-88ac-21853c49e7e8");
 
                 // Assert
 
@@ -759,7 +773,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678, "d2dbc05d-a3e6-41fd-88ac-21853c49e7e8");
 
                 // Assert
 
@@ -781,7 +795,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678, "d2dbc05d-a3e6-41fd-88ac-21853c49e7e8");
 
                 // Assert
 
@@ -803,7 +817,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678, "d2dbc05d-a3e6-41fd-88ac-21853c49e7e8");
 
 
                 // Assert
@@ -823,7 +837,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678, "d2dbc05d-a3e6-41fd-88ac-21853c49e7e8");
 
 
                 // Assert
@@ -834,17 +848,18 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
             [Fact]
             public void When_ACROSS_ENGLAND_Is_True_Return_Radius_600()
             {
-                // Arrange
+
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(null);
                 var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
                 var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
+           
                 Stream stream = CsvStreams.ValidRow_ACROSS_ENGLAND_TRUE();
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678, "d2dbc05d-a3e6-41fd-88ac-21853c49e7e8");
 
 
                 // Assert
@@ -863,7 +878,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678, "d2dbc05d-a3e6-41fd-88ac-21853c49e7e8");
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -885,7 +900,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678, "d2dbc05d-a3e6-41fd-88ac-21853c49e7e8");
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -907,7 +922,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678, "d2dbc05d-a3e6-41fd-88ac-21853c49e7e8");
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -929,7 +944,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678, "d2dbc05d-a3e6-41fd-88ac-21853c49e7e8");
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -951,7 +966,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678, "d2dbc05d-a3e6-41fd-88ac-21853c49e7e8");
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -973,7 +988,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678, "d2dbc05d-a3e6-41fd-88ac-21853c49e7e8");;
 
                 // Assert
                 errors.Should().BeNullOrEmpty();
@@ -995,7 +1010,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678, "d2dbc05d-a3e6-41fd-88ac-21853c49e7e8");
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -1018,7 +1033,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678, "d2dbc05d-a3e6-41fd-88ac-21853c49e7e8");
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -1043,7 +1058,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 Stream stream = CsvStreams.InvalidFile_Duplicate_STANDARD_CODES_SameDeliveryMethod_Same_Venue();
 
                 // Act
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678, "d2dbc05d-a3e6-41fd-88ac-21853c49e7e8");
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -1064,7 +1079,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 Stream stream = CsvStreams.InvalidRow_FrameworkCodes_DuplicateRows();
 
                 // Act
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678, "d2dbc05d-a3e6-41fd-88ac-21853c49e7e8");
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -1088,7 +1103,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678, "d2dbc05d-a3e6-41fd-88ac-21853c49e7e8");
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -1111,7 +1126,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678, "d2dbc05d-a3e6-41fd-88ac-21853c49e7e8");
 
                 // Assert
                 errors.Should().BeNullOrEmpty();
@@ -1133,7 +1148,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678, "d2dbc05d-a3e6-41fd-88ac-21853c49e7e8");
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -1154,7 +1169,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678, "d2dbc05d-a3e6-41fd-88ac-21853c49e7e8");
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -1176,7 +1191,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678, "d2dbc05d-a3e6-41fd-88ac-21853c49e7e8");
 
                 // Assert
                 errors.Should().BeNullOrEmpty();

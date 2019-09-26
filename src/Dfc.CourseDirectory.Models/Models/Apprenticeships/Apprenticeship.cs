@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
+using Dfc.CourseDirectory.Models.Models.Courses;
 
 namespace Dfc.CourseDirectory.Models.Models.Apprenticeships
 {
@@ -78,7 +79,8 @@ namespace Dfc.CourseDirectory.Models.Models.Apprenticeships
         public string CreatedBy { get; set; }
         public DateTime? UpdatedDate { get; set; }
         public string UpdatedBy { get; set; }
-
+        
+        public List<BulkUploadError> BulkUploadErrors { get; set; }
         public string NotionalNVQLevelv2 { get; set; }
     }
 }

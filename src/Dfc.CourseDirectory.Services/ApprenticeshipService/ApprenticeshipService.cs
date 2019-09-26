@@ -369,9 +369,9 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
 
             try
             {
-                HttpClient httpClient = new HttpClient();
-                httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
-                var response = await httpClient.GetAsync(new Uri(_deleteBulkUploadApprenticeshipsUri.AbsoluteUri
+               
+                _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
+                var response = await _httpClient.GetAsync(new Uri(_deleteBulkUploadApprenticeshipsUri.AbsoluteUri
                                                                  + "?UKPRN=" + UKPRN));
                 _logger.LogHttpResponseMessage("Delete Bulk Upload Apprenticeship Status http response", response);
 
