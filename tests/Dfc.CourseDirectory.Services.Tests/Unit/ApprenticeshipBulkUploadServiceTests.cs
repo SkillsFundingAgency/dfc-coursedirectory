@@ -73,7 +73,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                Action act = () => serviceUnderTest.ValidateCSVFormat(stream);
+                Action act = () => serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
 
                 // Assert
 
@@ -93,7 +93,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
 
                 // Assert
 
@@ -115,7 +115,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
 
                 // Assert
 
@@ -137,7 +137,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
 
                 // Assert
 
@@ -164,7 +164,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
 
                 // Assert
 
@@ -186,7 +186,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
 
                 // Assert
 
@@ -208,7 +208,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
 
                 // Assert
 
@@ -230,7 +230,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
 
                 // Assert
 
@@ -252,7 +252,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
 
                 // Assert
 
@@ -274,7 +274,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
 
                 // Assert
 
@@ -290,13 +290,14 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(null);
-                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.InvalidField_APPRENTICESHIP_INFORMATION_Missing();
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
 
                 // Assert
 
@@ -312,13 +313,14 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(null);
-                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.InvalidField_APPRENTICESHIP_INFORMATION_751Chars();
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
 
                 // Assert
 
@@ -333,13 +335,14 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService( null);
-                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.InvalidField_APPRENTICESHIP_WEBPAGE_Regex_Error_Invalid_Character();
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
 
                 // Assert
 
@@ -354,13 +357,14 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(null);
-                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.InvalidField_APPRENTICESHIP_WEBPAGE_256Chars();
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
 
                 // Assert
 
@@ -375,13 +379,14 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(null);
-                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.Valid_Row_Empty_APPRENTICESHIP_WEBPAGE();
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
 
                 // Assert
 
@@ -395,13 +400,14 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(null);
-                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.InvalidField_CONTACT_EMAIL_Missing();
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
 
                 // Assert
 
@@ -416,13 +422,14 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(null);
-                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.InvalidField_CONTACT_EMAIL_256_Chars();
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
 
                 // Assert
 
@@ -437,13 +444,14 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(null);
-                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.InvalidField_CONTACT_EMAIL_Regex_Invalid_character();
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
 
                 // Assert
 
@@ -458,13 +466,14 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(null);
-                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.InvalidField_CONTACT_PHONE_Missing();
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
 
                 // Assert
 
@@ -479,13 +488,14 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(null);
-                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.InvalidField_CONTACT_PHONE_Longer_Than_30_Chars();
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
 
                 // Assert
 
@@ -500,13 +510,14 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(null);
-                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.InvalidField_CONTACT_PHONE_NonNumeric();
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
 
                 // Assert
 
@@ -521,13 +532,14 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(null);
-                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.Valid_Row_Empty_CONTRACT_URL();
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
 
                 // Assert
 
@@ -541,13 +553,14 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(null);
-                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.InvalidField_CONTACT_URL_256_Chars();
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
 
                 // Assert
 
@@ -561,12 +574,13 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 // Arrange
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(null);
-                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.InvalidField_CONTACT_URL_Invalid_URL_Space();
 
                 // Act
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -579,12 +593,13 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 // Arrange
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(null);
-                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.InvalidField_CONTACT_URL_Invalid_URL_Format();
 
                 // Act
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -604,7 +619,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
 
                 // Assert
 
@@ -624,7 +639,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
 
                 // Assert
 
@@ -638,13 +653,14 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 // Arrange
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(null);
-                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.Valid_Row_DELIVERY_METHOD_Case_Insensitive_Correct_Values();
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
 
                 // Assert
 
@@ -663,7 +679,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
 
                 // Assert
 
@@ -682,7 +698,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -695,13 +711,14 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 // Arrange
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(null);
-                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.Valid_Row_DELIVERY_METHOD_Case_Insensitive_Correct_Values();
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
 
                 // Assert
 
@@ -720,7 +737,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
 
                 // Assert
 
@@ -735,13 +752,14 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 // Arrange
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(null);
-                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.InvalidField_RADIUS_NegativeNumber();
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
 
                 // Assert
 
@@ -756,13 +774,14 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 // Arrange
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(null);
-                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.InvalidField_RADIUS_875();
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
 
                 // Assert
 
@@ -777,13 +796,14 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 // Arrange
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(null);
-                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.ValidRow_ACROSS_ENGLAND_FALSE();
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
 
 
                 // Assert
@@ -796,13 +816,14 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 // Arrange
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(null);
-                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.InvalidRow_ACROSS_ENGLAND_Invalid();
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
 
 
                 // Assert
@@ -816,13 +837,14 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 // Arrange
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(null);
-                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.ValidRow_ACROSS_ENGLAND_TRUE();
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
 
 
                 // Assert
@@ -841,7 +863,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -863,7 +885,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -885,7 +907,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -907,7 +929,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -929,7 +951,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -951,11 +973,57 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
 
                 // Assert
                 errors.Should().BeNullOrEmpty();
                 errors.Should().HaveCount(0);
+            }
+            [Fact]
+            public void When_VENUE_Is_Invalid_Return_Error()
+            {
+                // Arrange
+                var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
+                var httpClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulStandardFile(), HttpStatusCode.OK);
+                
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(httpClient);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
+
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
+                Stream stream = CsvStreams.InvalidRow_Invalid_VENUE();
+
+                // Act
+
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+
+                // Assert
+                errors.Should().NotBeNull();
+                errors.Should().HaveCount(1);
+                errors[0].Should().Be("Validation error on row 2. Field VENUE is invalid.");
+            }
+            [Fact]
+            public void When_Multiple_VENUE_Returned_Return_Error()
+            {
+                // Arrange
+                var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
+                var httpClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulStandardFile(), HttpStatusCode.OK);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.MultipleVenueFile(), HttpStatusCode.OK);
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(httpClient);
+
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
+
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
+                Stream stream = CsvStreams.InvalidRow_Multiple_VENUE();
+
+                // Act
+
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+
+                // Assert
+                errors.Should().NotBeNull();
+                errors.Should().HaveCount(1);
+                errors[0].Should().Be("Validation error on row 2. Field VENUE is invalid. Multiple venues identified with value entered.");
             }
         }
 
@@ -968,12 +1036,14 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
                 var httpClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulStandardFile(), HttpStatusCode.OK);
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(httpClient);
-                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
+
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.InvalidFile_Duplicate_STANDARD_CODES_SameDeliveryMethod_Same_Venue();
 
                 // Act
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -988,12 +1058,13 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 var httpClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulFrameworkFile(), HttpStatusCode.OK);
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(httpClient);
 
-                var venueMock = VenueServiceMockFactory.GetVenueService(httpClient);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.InvalidRow_FrameworkCodes_DuplicateRows();
 
                 // Act
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -1017,7 +1088,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -1033,13 +1104,14 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 var httpClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulStandardFile(), HttpStatusCode.OK);
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(httpClient);
 
-                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.ValidField_STANDARD_CODES();
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
 
                 // Assert
                 errors.Should().BeNullOrEmpty();
@@ -1054,13 +1126,14 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 var httpClient = HttpClientMockFactory.GetClient(SampleJsons.EmptyFile(), code);
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(httpClient);
 
-                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.InvalidField_STANDARD_CODE_InvalidNumber();
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -1081,7 +1154,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -1103,7 +1176,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateCSVFormat(stream);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
 
                 // Assert
                 errors.Should().BeNullOrEmpty();

@@ -20,7 +20,8 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
         private readonly ILogger<ApprenticeshipService> _logger;
         private readonly ApprenticeshipServiceSettings _settings;
         private readonly HttpClient _httpClient;
-        private readonly Uri _getStandardsAndFrameworksUri, _addApprenticeshipUri, _getApprenticeshipByUKPRNUri, _getApprenticeshipByIdUri, _updateApprenticshipUri, _getStandardByCodeUri;
+        private readonly Uri _getStandardsAndFrameworksUri, _addApprenticeshipUri, _getApprenticeshipByUKPRNUri, 
+            _getApprenticeshipByIdUri, _updateApprenticshipUri, _getStandardByCodeUri, _getFrameworkByCodeUri, _deleteBulkUploadApprenticeshipsUri;
 
         public ApprenticeshipService(
             ILogger<ApprenticeshipService> logger,
@@ -41,6 +42,8 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             _getApprenticeshipByIdUri = settings.Value.GetApprenticeshipByIdUri();
             _updateApprenticshipUri = settings.Value.UpdateAprrenticeshipUri();
             _getStandardByCodeUri = settings.Value.GetStandardByCodeUri();
+            _getFrameworkByCodeUri = settings.Value.GetFrameworkByCodeUri();
+            _deleteBulkUploadApprenticeshipsUri = settings.Value.DeleteBulkUploadApprenticeshipsUri();
         }
 
         public async Task<IResult<IEnumerable<IStandardsAndFrameworks>>> StandardsAndFrameworksSearch(string criteria, int UKPRN)
@@ -236,7 +239,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
                 _logger.LogInformationObject("StandardSearchCriteria Criteria", criteria);
 
                 _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
-                var response = await _httpClient.GetAsync(new Uri(_getStandardsAndFrameworksUri.AbsoluteUri + "?StandardCode=" + criteria.StandardCode + "&Version=" + criteria.Version));
+                var response = await _httpClient.GetAsync(new Uri(_getStandardByCodeUri.AbsoluteUri + "?StandardCode=" + criteria.StandardCode + "&Version=" + criteria.Version));
                 _logger.LogHttpResponseMessage("GetStandardByCode service http response", response);
 
                 if (response.IsSuccessStatusCode)
@@ -279,7 +282,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
                 _logger.LogInformationObject("FrameworkSearchCriteria Criteria", criteria);
 
                 _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
-                var response = await _httpClient.GetAsync(new Uri(_getStandardsAndFrameworksUri.AbsoluteUri + "?FrameworkCode=" + criteria.FrameworkCode + "&ProgType=" + criteria.ProgType + "&PathwayCode=" + criteria.PathwayCode));
+                var response = await _httpClient.GetAsync(new Uri(_getFrameworkByCodeUri.AbsoluteUri + "?FrameworkCode=" + criteria.FrameworkCode + "&ProgType=" + criteria.ProgType + "&PathwayCode=" + criteria.PathwayCode));
                 _logger.LogHttpResponseMessage("GetFrameworkByCode service http response", response);
 
                 if (response.IsSuccessStatusCode)
@@ -360,6 +363,32 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
                 _logger.LogMethodExit();
             }
         }
+        public async Task<IResult> DeleteBulkUploadApprenticeships(int UKPRN)
+        {
+            Throw.IfLessThan(0, UKPRN, nameof(UKPRN));
+
+            try
+            {
+                HttpClient httpClient = new HttpClient();
+                httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
+                var response = await httpClient.GetAsync(new Uri(_deleteBulkUploadApprenticeshipsUri.AbsoluteUri
+                                                                 + "?UKPRN=" + UKPRN));
+                _logger.LogHttpResponseMessage("Delete Bulk Upload Apprenticeship Status http response", response);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return Result.Ok();
+                }
+                else
+                {
+                    return Result.Fail("Delete Bulk Upload Apprenticeship unsuccessful: " + response.ReasonPhrase);
+                }
+            }
+            catch (Exception ex)
+            {
+                return Result.Fail("Update course Apprenticeship http response");
+            }
+        }
     }
 
     internal static class ApprenticeshipServiceSettingsExtensions
@@ -376,6 +405,12 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             var uri = new Uri(extendee.ApiUrl);
             var trimmed = uri.AbsoluteUri.TrimEnd('/');
             return new Uri($"{trimmed}/AddApprenticeship");
+        }
+        internal static Uri DeleteBulkUploadApprenticeshipsUri(this IApprenticeshipServiceSettings extendee)
+        {
+            var uri = new Uri(extendee.ApiUrl);
+            var trimmed = uri.AbsoluteUri.TrimEnd('/');
+            return new Uri($"{trimmed}/DeleteBulkUploadApprenticeships");
         }
 
         internal static Uri GetApprenticeshipByUKPRNUri(this IApprenticeshipServiceSettings extendee)
@@ -397,7 +432,12 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             var trimmed = uri.AbsoluteUri.TrimEnd('/');
             return new Uri($"{trimmed}/GetStandardByCode");
         }
-
+        internal static Uri GetFrameworkByCodeUri(this IApprenticeshipServiceSettings extendee)
+        {
+            var uri = new Uri(extendee.ApiUrl);
+            var trimmed = uri.AbsoluteUri.TrimEnd('/');
+            return new Uri($"{trimmed}/GetFrameworkByCodeUri");
+        }
         internal static Uri UpdateAprrenticeshipUri(this IApprenticeshipServiceSettings extendee)
         {
             var uri = new Uri(extendee.ApiUrl);
