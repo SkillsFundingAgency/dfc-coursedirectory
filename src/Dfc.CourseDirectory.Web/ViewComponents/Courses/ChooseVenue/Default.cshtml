@@ -6,14 +6,14 @@
 
 
 <div class="govuk-form-group">
-    <label id="govuk-label-choosevenue" class="govuk-label--m" for="VenueId">
+    <label id="govuk-label-VenueId" class="govuk-label--m" for="VenueId">
         @Model.LabelText
     </label>
 
 
     @if (!string.IsNullOrWhiteSpace(Model.HintText))
     {
-        <span class="govuk-hint">
+        <span class="govuk-hint govuk-!-margin-top-3">
             @Model.HintText
         </span>
     }
@@ -24,7 +24,7 @@
 
         @if (Model.DisplayLink)
         {
-    <a href="#" class="govuk-link--no-visited-state" id="addNewVenue">The course location isn’t shown here</a>
+            <a href="#" class="govuk-link--no-visited-state-!-margin-top-3" id="addNewVenue">The course location isn’t shown here</a>
         }
     </div>
 </div>

@@ -11,19 +11,33 @@
 
 <div class="govuk-panel govuk-panel--confirmation">
     <div class="govuk-grid-row" data-sf-element="Row">
-            <div class="govuk-panel__body">
-                    <h1 class="govuk-panel__title">
-                        File deleted
-                    </h1>
-                    <br />
-                    Your file uploaded on @Model.FileUploadedDate has been deleted. No changes have been made to the Course directory
-                </div>
+        <div class="govuk-panel__body">
+            <h1 class="govuk-panel__title">
+                File deleted
+            </h1>
+            <br />
+            You have deleted the file you uploaded on @Model.FileUploadedDate. You have not updated your published courses.
+        </div>
     </div>
 </div>
 
-<div class="govuk-form-group">
+<h2 class="govuk-heading-m">
+    What do you want to do next?
+</h2>
+<li>
+        <a class="govuk-link" asp-controller="BulkUpload" asp-action="Index">Upload a different file</a>
+    </li>
+    <li>
+        <a class="govuk-link" asp-controller="ProviderCourses" asp-action="Index">View your published courses</a>
+    </li>
+    <li>
+        @Html.ActionLink("Go to your homepage", "Index", "Home", new { }, new { @class = "govuk-link" })
+    </li>
+</ul>
+
+@*<div class="govuk-form-group">
     @Html.ActionLink("Back to the dashboard", "Index", "Home", new { }, new { @class = "govuk-link" })
-</div>
+</div>*@
 
 <script>
     (function ($) {

@@ -13,30 +13,30 @@
 
     <div class="govuk-grid-column-two-thirds">
         <h1 class="govuk-heading-l" style="padding-top: 20px;">
-            Add venue
+            Add location
         </h1>
 
         <form id="AddVenue" asp-controller="Venues" asp-action="VenueAddressSelectionConfirmation" method="post">
 
             @await Component.InvokeAsync(nameof(VenueName), new VenueNameModel
             {
-                LabelText = "Venue name",
-                AriaDescribedBy = "Please enter the venue name.",
+                LabelText = "Location name",
+                AriaDescribedBy = "Please enter the location name.",
             })
 
             <div>
                 @await Component.InvokeAsync(nameof(PostcodeLookup), new PostcodeLookupModel
                 {
-                    PostcodeLabelText = "Venue postcode",
+                    PostcodeLabelText = "Postcode",
                     PostcodeAriaDescribedBy = "Please enter the postcode.",
                     ButtonText = "Find address"
                 })
             </div>
-            <div class="govuk-form-group">
+            @*<div class="govuk-form-group">
                 <a id="manualLink" class="govuk-link" asp-controller="Venues" asp-action="AddVenueManualAddress" asp-route-edit="false">Enter address manually</a>
-            </div>
+            </div>*@
 
-            @{
+            @*@{
                 var option = HttpContextAccessor.HttpContext.Session.GetString("Option");
 
 
@@ -56,7 +56,7 @@
                         @Html.ActionLink("Cancel", "Index", "Venues", null, new { @class = "govuk-link" })
                         break;
                 }
-            }
+            }*@
 
 
 

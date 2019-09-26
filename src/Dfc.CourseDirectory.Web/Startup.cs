@@ -2,6 +2,7 @@
 using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Common.Settings;
 using Dfc.CourseDirectory.Models.Models.Auth;
+using Dfc.CourseDirectory.Models.Models.Environment;
 using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.AuthService;
@@ -122,6 +123,7 @@ namespace Dfc.CourseDirectory.Web
             var authSp = services.BuildServiceProvider();
             AuthService = authSp.GetService<IAuthService>();
             services.Configure<GovukPhaseBannerSettings>(Configuration.GetSection(nameof(GovukPhaseBannerSettings)));
+            services.Configure<ApprenticeshipSettings>(Configuration.GetSection(nameof(ApprenticeshipSettings)));
             services.AddScoped<IGovukPhaseBannerService, GovukPhaseBannerService>();
 
 
@@ -158,7 +160,8 @@ namespace Dfc.CourseDirectory.Web
             services.AddScoped<IApprenticeshipBulkUploadService, ApprenticeshipBulkUploadService>();
             services.Configure<BlobStorageSettings>(Configuration.GetSection(nameof(BlobStorageSettings)));
             services.AddScoped<IBlobStorageService, BlobStorageService>();
-            
+            services.Configure<EnvironmentSettings>(Configuration.GetSection(nameof(EnvironmentSettings)));
+            services.AddScoped<IEnvironmentHelper, EnvironmentHelper>();
             services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
@@ -174,6 +177,7 @@ namespace Dfc.CourseDirectory.Web
                 options.AddPolicy("ElevatedUserRole", policy => policy.RequireRole("Developer", "Helpdesk"));
                 options.AddPolicy("SuperUser", policy => policy.RequireRole("Developer", "Helpdesk", "Provider Superuser"));
                 options.AddPolicy("Helpdesk", policy => policy.RequireRole("Helpdesk"));
+                options.AddPolicy("ProviderSuperUser", policy => policy.RequireRole("Provider Superuser"));
                 options.AddPolicy("Provider", policy => policy.RequireRole("Provider User", "Provider Superuser"));
                 options.AddPolicy("Apprenticeship", policy =>
                     policy.RequireAssertion(x => (!x.User.IsInRole("Provider Superuser") && !x.User.IsInRole("Provider User")) ||
@@ -206,7 +210,7 @@ namespace Dfc.CourseDirectory.Web
             // Register the background worker helper
             services.AddHostedService<QueuedHostedService>();
             services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
-
+            services.Configure<FormOptions>(x => x.ValueCountLimit = 10000);
             #region DFE Sign-in code
 
             //Auth Code
@@ -456,7 +460,8 @@ namespace Dfc.CourseDirectory.Web
                                 new Claim("UKPRN", userClaims.UKPRN),
                                 new Claim("user_id", userClaims.UserId.ToString()),
                                 new Claim(ClaimTypes.Role, userClaims.RoleName),
-                                new Claim("ProviderType", providerType)
+                                new Claim("ProviderType", providerType),
+                                new Claim("OrganisationId", organisation.Id.ToString().ToUpper())
                             });
 
                             _logger.LogWarning("User " + userClaims.UserName + " has been authorised");
@@ -466,7 +471,7 @@ namespace Dfc.CourseDirectory.Web
                             _logger.LogWarning("Error authorising user", ex);
                             throw new SystemException("Unable to authorise user");
                         }
-
+                         
                         // so that we don't issue a session cookie but one with a fixed expiration
                         x.Properties.IsPersistent = true;
                         return Task.CompletedTask;
@@ -521,17 +526,19 @@ namespace Dfc.CourseDirectory.Web
                 //CSP
                 context.Response.Headers.Add("Content-Security-Policy", 
                                                 "default-src    'self'  https://rainmaker.tiny.cloud/;" +
-                                                "style-src      'self' 'unsafe-inline' https://cloud.tinymce.com/;" +
-                                                "font-src       'self' data: https://cloud.tinymce.com/;" +
-                                                "img-src        'self' * data: https://cloud.tinymce.com/;" +
+                                                "style-src      'self' 'unsafe-inline' "+
+                                                    " https://cdn.tiny.cloud/" +
+                                                    " https://cloud.tinymce.com/;" +
+                                                "font-src       'self' data: https://cdn.tiny.cloud/;" +
+                                                "img-src        'self' * data: https://cdn.tiny.cloud/;" +
                                                 "script-src     'self' 'unsafe-eval' 'unsafe-inline'  " +
                                                     " https://cloud.tinymce.com/" +
                                                     " https://cdnjs.cloudflare.com/" +
                                                     " https://www.googletagmanager.com/" +
                                                     " https://www.google-analytics.com/" +
+                                                    " https://cdn.tiny.cloud/" +
                                                     ";"
                 );
-
 
                 context.Response.GetTypedHeaders().CacheControl =
                   new Microsoft.Net.Http.Headers.CacheControlHeaderValue()

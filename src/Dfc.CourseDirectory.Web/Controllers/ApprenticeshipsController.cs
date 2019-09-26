@@ -3,6 +3,7 @@ using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Models.Apprenticeships;
 using Dfc.CourseDirectory.Models.Models.Regions;
 using Dfc.CourseDirectory.Models.Models.Venues;
+using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
@@ -20,6 +21,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,12 +39,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly IVenueService _venueService;
         private readonly IApprenticeshipService _apprenticeshipService;
         private readonly IProviderService _providerService;
+        private readonly IOptions<ApprenticeshipSettings> _apprenticeshipSettings;
 
         public ApprenticeshipsController(
             ILogger<ApprenticeshipsController> logger,
             IHttpContextAccessor contextAccessor, ICourseService courseService, IVenueService venueService
             , IApprenticeshipService apprenticeshipService,
-            IProviderService providerService)
+            IProviderService providerService, IOptions<ApprenticeshipSettings> apprenticeshipSettings)
         {
             Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(contextAccessor, nameof(contextAccessor));
@@ -50,7 +53,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
             Throw.IfNull(venueService, nameof(venueService));
             Throw.IfNull(apprenticeshipService, nameof(apprenticeshipService));
             Throw.IfNull(providerService, nameof(providerService));
+            Throw.IfNull(apprenticeshipSettings, nameof(apprenticeshipSettings));
 
+            _apprenticeshipSettings = apprenticeshipSettings;
             _logger = logger;
             _contextAccessor = contextAccessor;
             _courseService = courseService;
@@ -424,7 +429,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 DetailViewModel.NotionalNVQLevelv2 = getApprenticehipByIdResult.Value.NotionalNVQLevelv2;
                 DetailViewModel.StandardCode = getApprenticehipByIdResult.Value.StandardCode;
                 DetailViewModel.Telephone = getApprenticehipByIdResult.Value.ContactTelephone;
-                DetailViewModel.Website = getApprenticehipByIdResult.Value.ContactWebsite;
+                DetailViewModel.Website = getApprenticehipByIdResult.Value.Url;
                 DetailViewModel.Mode = requestModel.Mode;
                 model.DetailViewModel = DetailViewModel;
 
@@ -453,38 +458,29 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     if (type.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased)
                     {
                         var national = getApprenticehipByIdResult.Value.ApprenticeshipLocations.Select(x => x.National).FirstOrDefault();
-                        if (national.HasValue)
+                        if (type.National.HasValue && type.National.Value)
                         {
-                            LocationChoiceSelectionViewModel.NationalApprenticeship = national.Value == true ? NationalApprenticeship.Yes : NationalApprenticeship.No;
+                            LocationChoiceSelectionViewModel.NationalApprenticeship =
+                                NationalApprenticeship.Yes;
+                            model.Regions = new Dictionary<string, List<string>>
+                            {
+                                {"National", new List<string>() {"All"}}
+                            };
                         }
+                        else
+                        {
+                            LocationChoiceSelectionViewModel.NationalApprenticeship =
+                                NationalApprenticeship.No;
+
+                            var regions = getApprenticehipByIdResult.Value.ApprenticeshipLocations.Select(x => x.Regions).FirstOrDefault();
+                            model.Regions = regions != null ? SubRegionCodesToDictionary(regions) : null;
+                            _session.SetObject("SelectedRegions", regions);
+
+                        }
+
                         LocationChoiceSelectionViewModel.Mode = requestModel.Mode;
                         DeliveryViewModel.ApprenticeshipDelivery = ApprenticeshipDelivery.EmployersAddress;
                         DeliveryViewModel.Mode = requestModel.Mode;
-
-
-
-
-
-
-                        switch (type.National)
-                        {
-                            case true:
-                                LocationChoiceSelectionViewModel.NationalApprenticeship =
-                                    NationalApprenticeship.Yes;
-                                model.Regions = new Dictionary<string, List<string>>
-                                {
-                                    {"National", new List<string>() {"All"}}
-                                };
-                                break;
-                            case false:
-                                LocationChoiceSelectionViewModel.NationalApprenticeship =
-                                    NationalApprenticeship.No;
-
-                                var regions = getApprenticehipByIdResult.Value.ApprenticeshipLocations.Select(x => x.Regions.ToArray()).FirstOrDefault();
-                                model.Regions = regions != null ? SubRegionCodesToDictionary(regions) : null;
-                                _session.SetObject("SelectedRegions", regions);
-                                break;
-                        }
 
                         LocationChoiceSelectionViewModel.Mode = requestModel.Mode;
 
@@ -822,6 +818,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             if (model.DeliveryViewModel.ApprenticeshipDelivery == ApprenticeshipDelivery.EmployersAddress)
             {
+                var nationalRadiusValue = _apprenticeshipSettings.Value.NationalRadius;
+                var subRegionRadiusValue = _apprenticeshipSettings.Value.SubRegionRadius;
+
                 DeliveryOptionsListItemModel loc = new DeliveryOptionsListItemModel
                 {
 
@@ -832,8 +831,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         : false,
                     Radius = model.LocationChoiceSelectionViewModel.NationalApprenticeship ==
                                 NationalApprenticeship.Yes
-                        ? "200"
-                        : "10",
+                        ? nationalRadiusValue.ToString()
+                        : subRegionRadiusValue.ToString(),
                     Delivery = "Employer address"
 
                 };
@@ -1174,8 +1173,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             var RadiusValue = 0;
 
-            RadiusValue = National ? 600 : Convert.ToInt32(Radius);
-
+            var nationalRadiusValue = _apprenticeshipSettings.Value.NationalRadius;
+ 
+            RadiusValue = National ? nationalRadiusValue : Convert.ToInt32(Radius);
 
             var DeliveryOptionsCombinedViewModel = _session.GetObject<DeliveryOptionsCombinedViewModel>("DeliveryOptionsCombinedViewModel") ??
                                                                  new DeliveryOptionsCombinedViewModel();
