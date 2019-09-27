@@ -61,12 +61,12 @@ namespace Dfc.CourseDirectory.Web.Helpers
         {
             return new AuthUserDetails(
             
-                userId: Guid.TryParse(GetClaim(claims, "userId"), out Guid userId) ? userId : Guid.Empty,
+                userId: Guid.TryParse(GetClaim(claims, "user_id"), out Guid userId) ? userId : Guid.Empty,
                 email : GetClaim(claims, "email"),
-                nameOfUser : $"{GetClaim(claims, "firstName")} {GetClaim(claims, "familyName")}",
+                nameOfUser : $"{GetClaim(claims, "given_name")} {GetClaim(claims, "family_Name")}",
                 providerType : GetClaim(claims, "ProviderType"),
-                roleId : Guid.TryParse(GetClaim(claims, "role_id"), out Guid roleId) ? roleId : Guid.Empty,
-                roleName : GetClaim(claims, "rolename"),
+                roleId : Guid.Empty,
+                roleName : string.Empty,
                 ukPrn : UKPRN.HasValue ? UKPRN.ToString() : GetClaim(claims, "UKPRN"),
                 userName : GetClaim(claims, "email")
             );

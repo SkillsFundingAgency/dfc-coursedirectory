@@ -1106,11 +1106,11 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                     var result = _apprenticeshipService.DeleteBulkUploadApprenticeships(int.Parse(userDetails.UKPRN));
                     if (result.IsCompletedSuccessfully)
                     {
-                        //var apprenticeships = ApprenticeshipCsvRecordToApprenticeship(records, UKPRN);
-                        //if (!apprenticeships.Any())
-                        //{
+                        var apprenticeships = ApprenticeshipCsvRecordToApprenticeship(records, userDetails);
+                        if (!apprenticeships.Any())
+                        {
 
-                        //}
+                        }
                     }
                     else
                     {
@@ -1184,7 +1184,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
         }
 
         private List<Apprenticeship> ApprenticeshipCsvRecordToApprenticeship(
-            List<ApprenticeshipCsvRecord> records, int UKPRN, string userId)
+            List<ApprenticeshipCsvRecord> records, AuthUserDetails userDetails)
         {
             List<Apprenticeship> apprenticeships = new List<Apprenticeship>();
             foreach (var record in records)
@@ -1198,7 +1198,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                                 ? record.Standard.StandardName
                                 : record.Framework.NasTitle,
                             //ProviderId // From Provider
-                            ProviderUKPRN = UKPRN,
+                            ProviderUKPRN = int.Parse(userDetails.UKPRN),
                             ApprenticeshipType = record.Framework == null
                                 ? ApprenticeshipType.StandardCode
                                 : ApprenticeshipType.FrameworkCode,
@@ -1220,7 +1220,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                             //Apprenticeships Location
                             RecordStatus = record.ErrorsList.Any() ? RecordStatus.BulkUploadPending : RecordStatus.BulkUploadReadyToGoLive,
                             CreatedDate = DateTime.Now,
-                            CreatedBy = userId,
+                            CreatedBy = userDetails.UserId.ToString(),
                             BulkUploadErrors = record.ErrorsList
                         });
             }
