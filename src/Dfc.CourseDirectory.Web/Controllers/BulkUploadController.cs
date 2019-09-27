@@ -502,7 +502,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
             switch (model.BulkUploadLandingOptions)
             { 
                 case BulkUploadLandingOptions.Apprenticeship:
-                    return RedirectToAction("ApprenticeshipIndex", "BulkUpload");
+                   return RedirectToAction("Index", "BulkUploadApprenticeships");
+                   
                 case BulkUploadLandingOptions.FE:
                     return RedirectToAction("Index", "BulkUpload");
                 default:
@@ -510,15 +511,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
 
         }
-
-        [Authorize]
-        public IActionResult ApprenticeshipIndex()
-        {
-
-            return View("ApprenticeshipIndex");
-        }
-
-        
 
         private Provider FindProvider(int prn)
         {

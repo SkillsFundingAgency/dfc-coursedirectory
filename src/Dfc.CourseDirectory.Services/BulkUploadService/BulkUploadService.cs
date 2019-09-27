@@ -356,6 +356,8 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             }
         }
 
+      
+
         public List<BulkUploadCourse> PolulateLARSData(List<BulkUploadCourse> bulkUploadcourses, out List<string> errors)
         {
             errors = new List<string>();
