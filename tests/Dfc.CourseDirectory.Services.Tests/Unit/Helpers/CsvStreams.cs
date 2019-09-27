@@ -149,6 +149,19 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit.Helpers
 
             return ms;
         }
+        public static Stream ValidRow_StandardCode_Different_Venues()
+        {
+            MemoryStream ms = new MemoryStream();
+
+            TextWriter sw = new StreamWriter(ms);
+            sw.WriteLine("STANDARD_CODE,STANDARD_VERSION,FRAMEWORK_CODE,FRAMEWORK_PROG_TYPE,FRAMEWORK_PATHWAY_CODE,APPRENTICESHIP_INFORMATION,APPRENTICESHIP_WEBPAGE,CONTACT_EMAIL,CONTACT_PHONE,CONTACT_URL,DELIVERY_METHOD,VENUE,RADIUS,DELIVERY_MODE,ACROSS_ENGLAND, NATIONAL_DELIVERY, REGION, SUB_REGION");
+            sw.WriteLine("157,1,,,,some text some text some text, http://www.bbc.com,service@college.org.uk,0121 345 6789,http://www.bbc.com/contactus,Employer,Venue 1,333,Day;Block,nO,No,East Midlands;London;East of England;North East;North West;South East;South West;West Midlands;Yorkshire and The Humber,Camden");
+            sw.WriteLine("157,1,,,,some text some text some text, http://www.bbc.com,service@college.org.uk,0121 345 6789,http://www.bbc.com/contactus,Employer,Venue 2,333,Day;Block,nO,No,East Midlands;London;East of England;North East;North West;South East;South West;West Midlands;Yorkshire and The Humber,Camden");
+            sw.WriteLine("157,1,,,,some text some text some text, http://www.bbc.com,service@college.org.uk,0121 345 6789,http://www.bbc.com/contactus,Both,Venue 2,333,Day;Block,nO,No,East Midlands;London;East of England;North East;North West;South East;South West;West Midlands;Yorkshire and The Humber,Camden");
+            sw.Flush();
+
+            return ms;
+        }
         #endregion Happy Files
 
         #region Unhappy Files

@@ -59,7 +59,10 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
         internal class ApprenticeshipCsvRecord
         {
-
+            public ApprenticeshipCsvRecord()
+            {
+                this.ApprenticeshipLocations = new List<ApprenticeshipLocation>();
+            }
             public int? STANDARD_CODE { get; set; }
             public int? STANDARD_VERSION { get; set; }
             public int? FRAMEWORK_CODE { get; set; }
@@ -79,6 +82,8 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             public string REGION { get; set; }
             public string SUB_REGION { get; set; }
             [Ignore]
+            public ApprenticeshipType ApprenticeshipType { get; set; }
+            [Ignore]
             public List<BulkUploadError> ErrorsList { get; set; }
             [Ignore]
             public List<string> RegionsList { get; set; }
@@ -86,7 +91,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             public IStandardsAndFrameworks Standard { get; set; }
             [Ignore]
             public IStandardsAndFrameworks Framework { get; set; }
-            public List<IApprenticeshipLocation> ApprenticeshipLocations { get; set; }
+            public List<ApprenticeshipLocation> ApprenticeshipLocations { get; set; }
             [Ignore]
             public int RowNumber  { get; set; }
             [Ignore]
@@ -112,6 +117,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 _apprenticeshipService = apprenticeshipService;
                 _venueService = venueService;
                 _authUserDetails = userDetails;
+                
 
                 Map(m => m.STANDARD_CODE).ConvertUsing(Mandatory_Checks_STANDARD_CODE);
                 Map(m => m.STANDARD_VERSION).ConvertUsing(Mandatory_Checks_STANDARD_VERSION);
@@ -133,6 +139,19 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 Map(m => m.NATIONAL_DELIVERY).ConvertUsing(Mandatory_Checks_NATIONAL_DELIVERY);
                 Map(m => m.REGION);
                 Map(m => m.SUB_REGION);
+                Map(m => m.ApprenticeshipType).ConvertUsing((row) =>
+                {
+                    if (row.TryGetField("STANDARD_CODE", out string standardCode))
+                    {
+                        return ApprenticeshipType.StandardCode;
+                    }
+                    else
+                    {
+                        return ApprenticeshipType.FrameworkCode;
+                    }
+                    
+
+                });
                 Map(m => m.RegionsList).ConvertUsing(GetRegionList);
                 Map(m => m.ErrorsList).ConvertUsing(ValidateData);
                 Map(m => m.RowNumber).ConvertUsing(row => row.Context.RawRow);
@@ -1079,13 +1098,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                         {
                            
                             var record = csv.GetRecord<ApprenticeshipCsvRecord>();
-                            record.ApprenticeshipLocations = new List<IApprenticeshipLocation>()
-                            {
-                            
-                                CreateApprenticeshipLocation(record, userDetails)
-                                
-                            };
-                            records.Add(record);
+                            record.ApprenticeshipLocations.Add(CreateApprenticeshipLocation(record, userDetails));
                             if (!duplicateCheck.TryAdd(record.Base64Row, record.RowNumber.ToString()))
                             {
                                 var duplicateRow = duplicateCheck[record.Base64Row];
@@ -1094,6 +1107,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                             }
                             errors.AddRange(record.ErrorsList.Select(x => x.Error));
 
+                            records.Add(record);
                             processedRowCount++;
                         }
                     }
@@ -1189,44 +1203,62 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             List<Apprenticeship> apprenticeships = new List<Apprenticeship>();
             foreach (var record in records)
             {
-                if (record.Standard != null)
-                    apprenticeships.Add(
-                        new Apprenticeship
-                        {
-                            id = new Guid(),
-                            ApprenticeshipTitle = record.Framework == null
-                                ? record.Standard.StandardName
-                                : record.Framework.NasTitle,
-                            //ProviderId // From Provider
-                            ProviderUKPRN = int.Parse(userDetails.UKPRN),
-                            ApprenticeshipType = record.Framework == null
-                                ? ApprenticeshipType.StandardCode
-                                : ApprenticeshipType.FrameworkCode,
-                            FrameworkId = record.Framework?.id,
-                            StandardId = record.Standard?.id,
-                            FrameworkCode = record.Framework?.FrameworkCode,
-                            ProgType = record.Framework?.ProgType,
-                            PathwayCode = record.Framework?.PathwayCode,
-                            StandardCode = record.Standard?.StandardCode,
-                            Version = record.Standard?.Version,
-                            NotionalNVQLevelv2 = record.Framework == null
-                                ? record.Standard.NotionalEndLevel
-                                : record.Framework.NotionalEndLevel,
-                            MarketingInformation = record.APPRENTICESHIP_INFORMATION,
-                            Url = record.APPRENTICESHIP_WEBPAGE,
-                            ContactTelephone = record.CONTACT_PHONE,
-                            ContactEmail = record.CONTACT_EMAIL,
-                            ContactWebsite = record.CONTACT_URL,
-                            //Apprenticeships Location
-                            RecordStatus = record.ErrorsList.Any() ? RecordStatus.BulkUploadPending : RecordStatus.BulkUploadReadyToGoLive,
-                            CreatedDate = DateTime.Now,
-                            CreatedBy = userDetails.UserId.ToString(),
-                            BulkUploadErrors = record.ErrorsList
-                        });
+                var alreadyExists = DoesApprenticeshipExist(apprenticeships, record);
+
+                apprenticeships.Add(
+                    new Apprenticeship
+                    {
+                        id = new Guid(),
+                        ApprenticeshipTitle = record.Framework == null
+                            ? record.Standard.StandardName
+                            : record.Framework.NasTitle,
+                        //ProviderId // From Provider
+                        ProviderUKPRN = int.Parse(userDetails.UKPRN),
+                        ApprenticeshipLocations =  record.ApprenticeshipLocations,
+                        ApprenticeshipType = record.ApprenticeshipType,
+                        FrameworkId = record.Framework?.id,
+                        StandardId = record.Standard?.id,
+                        FrameworkCode = record.Framework?.FrameworkCode,
+                        ProgType = record.Framework?.ProgType,
+                        PathwayCode = record.Framework?.PathwayCode,
+                        StandardCode = record.Standard?.StandardCode,
+                        Version = record.Standard?.Version,
+                        NotionalNVQLevelv2 = record.Framework == null
+                            ? record.Standard.NotionalEndLevel
+                            : record.Framework.NotionalEndLevel,
+                        MarketingInformation = record.APPRENTICESHIP_INFORMATION,
+                        Url = record.APPRENTICESHIP_WEBPAGE,
+                        ContactTelephone = record.CONTACT_PHONE,
+                        ContactEmail = record.CONTACT_EMAIL,
+                        ContactWebsite = record.CONTACT_URL,
+                        //Apprenticeships Location
+                        RecordStatus = record.ErrorsList.Any() ? RecordStatus.BulkUploadPending : RecordStatus.BulkUploadReadyToGoLive,
+                        CreatedDate = DateTime.Now,
+                        CreatedBy = userDetails.UserId.ToString(),
+                        BulkUploadErrors = record.ErrorsList
+                    });
             }
             return apprenticeships;
         }
 
+        private Apprenticeship DoesApprenticeshipExist(List<Apprenticeship> apprenticeships, ApprenticeshipCsvRecord record)
+        {
+            if (record.ApprenticeshipType == ApprenticeshipType.StandardCode)
+            {
+                var existingApprenticeships = apprenticeships.Where(x =>
+                    x.StandardCode == record.STANDARD_CODE && x.Version == record.STANDARD_VERSION);
+                return existingApprenticeships.FirstOrDefault(x => x.ApprenticeshipLocations.Any(y => y.ApprenticeshipLocationType == (ApprenticeshipLocationType)record.DELIVERY_METHOD));
+            }
+            else
+            {
+                var existingApprenticeships = apprenticeships.Where(x =>
+                    x.FrameworkCode == record.FRAMEWORK_CODE && 
+                    x.ProgType == record.FRAMEWORK_PROG_TYPE && 
+                    x.PathwayCode ==  record.FRAMEWORK_PATHWAY_CODE);
+
+                return existingApprenticeships.FirstOrDefault(x => x.ApprenticeshipLocations.Any(y => y.ApprenticeshipLocationType == (ApprenticeshipLocationType)record.DELIVERY_METHOD));
+            }
+        }
         private ApprenticeshipLocation CreateApprenticeshipLocation(ApprenticeshipCsvRecord record, AuthUserDetails authUserDetails)
         {
             Venue venue = null;

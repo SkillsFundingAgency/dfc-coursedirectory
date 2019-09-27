@@ -35,7 +35,7 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Apprenticeships
         string ContactEmail { get; set; }
         string ContactWebsite { get; set; }
 
-        IEnumerable<ApprenticeshipLocation> ApprenticeshipLocations { get; set; }
+        List<ApprenticeshipLocation> ApprenticeshipLocations { get; set; }
 
         // Standard auditing properties 
         RecordStatus RecordStatus { get; set; }

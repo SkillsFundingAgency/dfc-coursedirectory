@@ -1265,7 +1265,27 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 errors.Should().BeNullOrEmpty();
                 errors.Should().HaveCount(0);
             }
+            [Fact]
+            public void When_StandardCode_Version_DeliveryMethod_Are_Same_Are_Valid_Return_Success()
+            {
+                // Arrange
+                var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
+                var httpClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulStandardFile(), HttpStatusCode.OK);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(httpClient);
 
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
+                Stream stream = CsvStreams.ValidRow_StandardCode_Different_Venues();
+
+                // Act
+
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails); ;
+
+                // Assert
+                errors.Should().BeNullOrEmpty();
+                errors.Should().HaveCount(0);
+            }
         }
     }
 }
