@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -31,6 +32,7 @@ using Dfc.CourseDirectory.Services.VenueService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore.SqlServer.Query.ExpressionTranslators.Internal;
+using Remotion.Linq.Parsing.Structure.IntermediateModel;
 
 
 namespace Dfc.CourseDirectory.Services.BulkUploadService
@@ -69,26 +71,26 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             public string CONTACT_PHONE { get; set; }
             public string CONTACT_URL { get; set; }
             public DeliveryMethod DELIVERY_METHOD { get; set; }
-            public string VENUE { get; set; }
+            public List<Venue> VENUE { get; set; }
             public int? RADIUS { get; set; }
-            public string DELIVERY_MODE { get; set; }
+            public List<int> DELIVERY_MODE { get; set; }
             public bool? ACROSS_ENGLAND { get; set; }
             public bool? NATIONAL_DELIVERY { get; set; }
             public string REGION { get; set; }
             public string SUB_REGION { get; set; }
             [Ignore]
             public List<BulkUploadError> ErrorsList { get; set; }
-
+            [Ignore]
+            public List<string> RegionsList { get; set; }
             [Ignore]
             public IStandardsAndFrameworks Standard { get; set; }
             [Ignore]
             public IStandardsAndFrameworks Framework { get; set; }
+            public List<IApprenticeshipLocation> ApprenticeshipLocations { get; set; }
             [Ignore]
             public int RowNumber  { get; set; }
             [Ignore]
             public string Base64Row  { get; set; }
-            [Ignore]
-            public IApprenticeshipLocation ApprenticeshipLocation { get; set; }
 
         }
 
@@ -100,16 +102,16 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             private List<Venue> _cachedVenues;
 
             public ApprenticeshipCsvRecordMap(IApprenticeshipService apprenticeshipService,
-                IVenueService venueService, 
-                IAuthUserDetails authUserDetails)
+                IVenueService venueService,
+                IAuthUserDetails userDetails
+               )
             {
                 Throw.IfNull(apprenticeshipService, nameof(apprenticeshipService));
                 Throw.IfNull(venueService, nameof(venueService));
-                Throw.IfNull(authUserDetails, nameof(authUserDetails));
+                Throw.IfNull(userDetails, nameof(userDetails));
                 _apprenticeshipService = apprenticeshipService;
                 _venueService = venueService;
-                _authUserDetails = authUserDetails;
-
+                _authUserDetails = userDetails;
 
                 Map(m => m.STANDARD_CODE).ConvertUsing(Mandatory_Checks_STANDARD_CODE);
                 Map(m => m.STANDARD_VERSION).ConvertUsing(Mandatory_Checks_STANDARD_VERSION);
@@ -124,17 +126,18 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 Map(m => m.CONTACT_PHONE);
                 Map(m => m.CONTACT_URL);
                 Map(m => m.DELIVERY_METHOD).ConvertUsing(Mandatory_Checks_DELIVERY_METHOD);
-                Map(m => m.VENUE);
+                Map(m => m.VENUE).ConvertUsing(Mandatory_Checks_VENUE); ;
                 Map(m => m.RADIUS).ConvertUsing(Mandatory_Checks_RADIUS);
                 Map(m => m.DELIVERY_MODE).ConvertUsing(Mandatory_Checks_DELIVERY_MODE);
                 Map(m => m.ACROSS_ENGLAND).ConvertUsing(Mandatory_Checks_ACROSS_ENGLAND);
                 Map(m => m.NATIONAL_DELIVERY).ConvertUsing(Mandatory_Checks_NATIONAL_DELIVERY);
                 Map(m => m.REGION);
                 Map(m => m.SUB_REGION);
-                Map(m => m.ApprenticeshipLocation).ConvertUsing(CreateApprenticeshipLocation);
+                Map(m => m.RegionsList).ConvertUsing(GetRegionList);
                 Map(m => m.ErrorsList).ConvertUsing(ValidateData);
                 Map(m => m.RowNumber).ConvertUsing(row => row.Context.RawRow);
                 Map(m => m.Base64Row).ConvertUsing(Base64Encode);
+                
 
 
             }
@@ -268,18 +271,37 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 string fieldName = "RADIUS";
                 return ValueMustBeNumericIfPresent(row, fieldName);
             }
-            private string Mandatory_Checks_DELIVERY_MODE(IReaderRow row)
+            private List<int> Mandatory_Checks_DELIVERY_MODE(IReaderRow row)
             {
                 var deliveryMethod = Mandatory_Checks_DELIVERY_METHOD(row);
 
                 if (deliveryMethod == DeliveryMethod.Classroom || deliveryMethod == DeliveryMethod.Both)
                 {
-                    string fieldName = "APPRENTICESHIP_INFORMATION";
+                    string fieldName = "DELIVERY_MODE";
                     row.TryGetField<string>(fieldName, out string value);
-                    return value;
+
+                    var modes = value.Split(";");
+                    Dictionary<DeliveryMode, int> deliveryModes = new Dictionary<DeliveryMode, int>();
+                    foreach (var mode in modes)
+                    {
+                        var deliveryMode = mode.ToEnum(DeliveryMode.Undefined);
+                        if (deliveryMode == DeliveryMode.Undefined)
+                        {
+                            return new List<int>();
+                        }
+
+                        if (!deliveryModes.TryAdd(deliveryMode, (int) deliveryMode))
+                        {
+                            return new List<int>();
+                        }
+
+                    }
+
+                    return deliveryModes.Values.ToList();
+
                 }
 
-                return string.Empty;
+                return new List<int>();
             }
             private bool? Mandatory_Checks_ACROSS_ENGLAND(IReaderRow row)
             {
@@ -356,7 +378,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
                 return null;
             }
-            private Guid? Mandatory_Checks_VENUE(IReaderRow row)
+            private List<Venue> Mandatory_Checks_VENUE(IReaderRow row)
             {
                 var deliveryMethod = Mandatory_Checks_DELIVERY_METHOD(row);
                 if (deliveryMethod == DeliveryMethod.Classroom || deliveryMethod == DeliveryMethod.Both)
@@ -381,22 +403,15 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                         return null;
                     }
 
-                    var venues = _cachedVenues
+                    var venues =_cachedVenues
                         .Where(x => x.VenueName.ToUpper() == value.ToUpper() && x.Status == VenueStatus.Live).ToList();
-                    if(venues.Count == 1)
-                    {
-                        var validId = Guid.TryParse(venues.FirstOrDefault()?.ID, out Guid venueId);
-                        if (validId)
-                        {
-                            return venueId;
-                        }
 
-                    }
-
-                    if (venues.Count > 1)
+                    if (venues.Any())
                     {
-                        return Guid.Empty;
+                        return venues;
                     }
+                  
+                    
                 }
 
 
@@ -667,9 +682,9 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                     return errors;
                 }
 
-                var venueId = Mandatory_Checks_VENUE(row);
+                var venues = Mandatory_Checks_VENUE(row);
 
-                if (venueId == null)
+                if (venues == null)
                 {
                     errors.Add(new BulkUploadError
                     {
@@ -680,7 +695,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                     return errors;
                 }
 
-                if (venueId == Guid.Empty)
+                if (venues.Count > 1)
                 {
                     errors.Add(new BulkUploadError
                     {
@@ -1002,54 +1017,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
                 return subRegionCodeList.Distinct();
             }
-            private ApprenticeshipLocation CreateApprenticeshipLocation(IReaderRow row)
-            {
-                var regions = GetRegionList(row);
-                var venueId = Mandatory_Checks_VENUE(row);
-                var deliveryMethod = Mandatory_Checks_DELIVERY_METHOD(row);
-                var isNational = Mandatory_Checks_NATIONAL_DELIVERY(row);
-
-
-                Venue venue = null;
-                if (venueId != null)
-                {
-                    venue = _cachedVenues.FirstOrDefault(x => x.ID == venueId.ToString());
-                }
-
-                ApprenticeshipLocation apprenticeshipLocation = new ApprenticeshipLocation()
-                {
-                    Id = new Guid(),
-                    Name = venue?.VenueName,
-                    CreatedDate = DateTime.Now,
-                    CreatedBy = _authUserDetails.Email,
-                    ApprenticeshipLocationType = (ApprenticeshipLocationType) deliveryMethod,
-                    LocationType = LocationType.Venue,
-                    //Set record status before post
-                    Regions = regions.ToArray(),
-                    National = isNational,
-                    TribalId = venue?.TribalLocationId,
-                    ProviderId = venue?.ProviderID,
-                    LocationId = venue?.LocationId,
-                    VenueId =  venueId,
-                    Address = venue != null ? new Address
-                        {
-                            Address1 = venue.Address1,
-                            Address2 = venue.Address2,
-                            Town =  venue.Town,
-                            County = venue.County,
-                            Postcode = venue.PostCode,
-                            Email = venue.Email,
-                            Phone = venue.Telephone,
-                            Website = venue.Website,
-                            Latitude = (double)venue.Latitude,
-                            Longitude = (double)venue.Longitude
-                        }
-                        : null
-                };
-
-                //TODO: LocationId, Radius, Delivery
-                return null;
-            }
+            
         }
         
     
@@ -1111,7 +1079,12 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                         {
                            
                             var record = csv.GetRecord<ApprenticeshipCsvRecord>();
+                            record.ApprenticeshipLocations = new List<IApprenticeshipLocation>()
+                            {
                             
+                                CreateApprenticeshipLocation(record, userDetails)
+                                
+                            };
                             records.Add(record);
                             if (!duplicateCheck.TryAdd(record.Base64Row, record.RowNumber.ToString()))
                             {
@@ -1254,6 +1227,49 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             return apprenticeships;
         }
 
+        private ApprenticeshipLocation CreateApprenticeshipLocation(ApprenticeshipCsvRecord record, AuthUserDetails authUserDetails)
+        {
+            Venue venue = null;
+            if (record.VENUE?.Count == 1)
+            {
+                venue = record.VENUE.FirstOrDefault();
+            }
+            return new ApprenticeshipLocation
+            {
+                Id = new Guid(),
+                Name = venue?.VenueName,
+                CreatedDate = DateTime.Now,
+                CreatedBy = authUserDetails.Email,
+                ApprenticeshipLocationType = (ApprenticeshipLocationType) record.DELIVERY_METHOD,
+                LocationType = LocationType.Venue,
+                RecordStatus = record.ErrorsList.Any() ? RecordStatus.BulkUploadPending : RecordStatus.BulkUploadReadyToGoLive,
+                Regions = record.RegionsList.ToArray(),
+                National = record.NATIONAL_DELIVERY,
+                TribalId = venue?.TribalLocationId,
+                ProviderId = venue?.ProviderID,
+                LocationId = venue?.LocationId,
+                VenueId = Guid.TryParse(venue?.ID, out var venueId) ? venueId : Guid.Empty,
+                Address = venue != null
+                    ? new Address
+                    {
+                        Address1 = venue.Address1,
+                        Address2 = venue.Address2,
+                        Town = venue.Town,
+                        County = venue.County,
+                        Postcode = venue.PostCode,
+                        Email = venue.Email,
+                        Phone = venue.Telephone,
+                        Website = venue.Website,
+                        Latitude = (double) venue.Latitude,
+                        Longitude = (double) venue.Longitude
+                    }
+                    : null,
+                LocationGuidId = Guid.TryParse(venue?.ID, out var locationGuid) ? locationGuid : Guid.Empty,
+                Radius = record.RADIUS,
+                DeliveryModes = record.DELIVERY_MODE
+            };
+          
+        }
 
     }
 }
