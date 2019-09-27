@@ -117,17 +117,13 @@
 
                     <ul class="govuk-list">
                         <li>
-                            @Html.ActionLink("Download a blank template", "GetBulkUploadTemplateFile", "BlobStorage")
+                            @Html.ActionLink("Download a blank template", "GetApprenticeshipBulkUploadTemplateFile", "BlobStorage")
                         </li>
                         <li class="govuk-!-padding-bottom-4">
-                            @if (Model.HasMigrationErrors)
-                            {
-                                <p>Fix all migration errors in order to download a template containing your current apprenticeships</p>
-                            }
-                            else
-                            {
-                                @Html.ActionLink("Download a template containing your current courses", "GetCurrentCoursesTemplateFile", "BlobStorage")
-                            }
+                          
+                            
+                                @Html.ActionLink("Download a template containing your current apprenticeships", "GetCurrentApprenticeshipsTemplateFile", "BlobStorage")
+                            
 
                         </li>
                     </ul>
