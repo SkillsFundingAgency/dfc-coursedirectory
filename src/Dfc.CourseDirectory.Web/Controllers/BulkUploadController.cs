@@ -271,7 +271,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
             IEnumerable<BlobFileInfo> list = _blobService.GetFileList(UKPRN + "/Bulk Upload/Files/").OrderByDescending(x => x.DateUploaded).ToList();
             if (list.Any())
             {
-                model.ErrorFileCreatedDate = list.FirstOrDefault().DateUploaded.Value.DateTime;
+                
+                TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time");
+                DateTime dt1 = DateTime.Parse(list.FirstOrDefault().DateUploaded.Value.DateTime.ToString());
+                DateTime dt2 = TimeZoneInfo.ConvertTimeFromUtc(dt1, tzi);
+
+                model.ErrorFileCreatedDate = Convert.ToDateTime(dt2.ToString("dd MMM yyyy HH:mm"));
+
             }
 
             return View("../Bulkupload/DownloadErrorFile/Index", model);
