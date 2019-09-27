@@ -117,19 +117,9 @@
                                 @if (feUser.Succeeded && apprenticeshipUser.Succeeded)
                                 {
 
-                                    <li class="govuk-header__navigation-item @(ViewContext.RouteData.Values["Controller"].ToString() == "BulkUpload" ? "govuk-header__navigation-item--active" : "")">
-                                        
-                                        @if  (apprenticeshipUser.Succeeded && !feUser.Succeeded)
-                                        { 
-                                        <a class="govuk-header__link" href="~/BulkUploadApprenticeships/">Bulk upload</a>
-                                        }
-                                        else
-                                        { 
-                                        <a class="govuk-header__link" href="~/BulkUpload/Landingoptions">Bulk upload</a>   
-                                        }
-
+                                    <li class="govuk-header__navigation-item @(ViewContext.RouteData.Values["Controller"].ToString() == "BulkUpload" ? "govuk-header__navigation-item--active" : "")">                                        
+                                        <a class="govuk-header__link" href="~/BulkUpload/Landingoptions">Bulk upload</a>                                          
                                     </li>
-
                                 }
                                 else
                                 {
@@ -137,7 +127,7 @@
                                     {
 
                                         <li class="govuk-header__navigation-item @(ViewContext.RouteData.Values["Controller"].ToString() == "BulkUpload" ? "govuk-header__navigation-item--active" : "")">
-                                            <a class="govuk-header__link" href="~/BulkUpload/Landingoptions">
+                                            <a class="govuk-header__link" href="~/BulkUpload/">
                                                 Bulk upload
                                             </a>
                                         </li>
