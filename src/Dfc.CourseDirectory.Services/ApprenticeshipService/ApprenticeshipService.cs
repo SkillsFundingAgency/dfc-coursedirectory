@@ -89,7 +89,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             }
         }
 
-        public async Task<IResult<IApprenticeship>> AddApprenticeship(IApprenticeship apprenticeship)
+        public async Task<IResult> AddApprenticeship(IApprenticeship apprenticeship)
         {
             _logger.LogMethodEnter();
             Throw.IfNull(apprenticeship, nameof(apprenticeship));
@@ -113,17 +113,16 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
 
                     _logger.LogInformationObject("Apprenticeship add service json response", json);
 
-                    var apprenticeshipResult = JsonConvert.DeserializeObject<Apprenticeship>(json);
 
-                    return Result.Ok<IApprenticeship>(apprenticeshipResult);
+                    return Result.Ok();
                 }
                 else if (response.StatusCode == HttpStatusCode.TooManyRequests)
                 {
-                    return Result.Fail<IApprenticeship>("Apprenticeship add service unsuccessful http response - TooManyRequests");
+                    return Result.Fail("Apprenticeship add service unsuccessful http response - TooManyRequests");
                 }
                 else
                 {
-                    return Result.Fail<IApprenticeship>("Apprenticeship add service unsuccessful http response - ResponseStatusCode: " + response.StatusCode);
+                    return Result.Fail("Apprenticeship add service unsuccessful http response - ResponseStatusCode: " + response.StatusCode);
                 }
             }
             catch (HttpRequestException hre)
@@ -371,8 +370,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             {
                
                 _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
-                var response = await _httpClient.GetAsync(new Uri(_deleteBulkUploadApprenticeshipsUri.AbsoluteUri
-                                                                 + "?UKPRN=" + UKPRN));
+                var response = await _httpClient.GetAsync(new Uri(_deleteBulkUploadApprenticeshipsUri.AbsoluteUri + "?UKPRN=" + UKPRN));
                 _logger.LogHttpResponseMessage("Delete Bulk Upload Apprenticeship Status http response", response);
 
                 if (response.IsSuccessStatusCode)
@@ -386,7 +384,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             }
             catch (Exception ex)
             {
-                return Result.Fail("Update course Apprenticeship http response");
+                return Result.Fail("Delete Bulk Upload Apprenticeship http response");
             }
         }
     }

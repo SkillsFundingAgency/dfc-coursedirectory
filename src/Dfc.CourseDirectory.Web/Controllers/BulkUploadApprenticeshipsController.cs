@@ -48,7 +48,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
             IBlobStorageService blobService,
             ICourseService courseService,
             IHostingEnvironment env,
-            IProviderService providerService)
+            IProviderService providerService,
+            IUserHelper userHelper)
         {
             Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(contextAccessor, nameof(contextAccessor));
@@ -58,6 +59,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             Throw.IfNull(env, nameof(env));
             Throw.IfNull(courseService, nameof(courseService));
             Throw.IfNull(providerService, nameof(providerService));
+            Throw.IfNull(userHelper, nameof(userHelper));
 
             _logger = logger;
             _contextAccessor = contextAccessor;
@@ -67,6 +69,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _env = env;
             _courseService = courseService;
             _providerService = providerService;
+            _userHelper = userHelper;
         }
 
         
@@ -161,27 +164,39 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         $"{UKPRN.ToString()}/Apprenticeship Bulk Upload/Files/{bulkUploadFileNewName}", ms);
                     task.Wait();
 
-
-                    var errors = _apprenticeshipBulkUploadService.ValidateAndUploadCSV(ms, _userHelper.GetUserDetailsFromClaims(this.HttpContext.User.Claims, UKPRN));
-
-                    if (errors.Any())
+                    List<string> errors = new List<string>();
+                    try
                     {
+                        errors = _apprenticeshipBulkUploadService.ValidateAndUploadCSV(ms, _userHelper.GetUserDetailsFromClaims(this.HttpContext.User.Claims, UKPRN));
+                    }
+                    catch (Exception e)
+                    {
+                        errors.Add(e.Message.FirstSentence());
                         vm.errors = errors;
                         return View(vm);
                     }
-                    else
+
+                    
+                    if (processInline)
                     {
-                        if (processInline)
+                        
+                        if (errors.Any())
                         {
-                            // All good => redirect to BulkApprenticeship action
-                            return RedirectToAction("Index", "PublishApprenticeship",
-                                new {publishMode = PublishMode.BulkUpload, fromBulkUpload = true});
+                            return RedirectToAction("WhatDoYouWantToDoNext", "BulkUploadApprenticeships",
+                                new { publishMode = PublishMode.BulkUpload, fromBulkUpload = true });
                         }
-                        else
-                        {
-                            return RedirectToAction("Pending");
-                        }
+                        // All good => redirect to BulkApprenticeship action
+                        return RedirectToAction("Index", "PublishApprenticeships",
+                            new PublishViewModel
+                            {
+                                NumberOfCoursesInFiles = csvLineCount - 1
+                            });
+
                     }
+
+                    return RedirectToAction("Pending");
+                    
+                    
 
                 }
                 else
@@ -212,7 +227,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 model.Message = message;
             }
            
-            return View("../ApprenticeshipsBulkUpload/WhatDoYouWantToDoNext/Index", model);
+            return View("../BulkUploadApprenticeships/WhatDoYouWantToDoNext/Index", model);
         }
 
           [Authorize]
@@ -232,14 +247,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 model.ErrorFileCreatedDate = list.FirstOrDefault().DateUploaded.Value.DateTime;
             }
 
-            return View("../ApprenticeshipsBulkupload/DownloadErrorFile/Index", model);
+            return View("../BulkUploadApprenticeships/DownloadErrorFile/Index", model);
         }
 
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> DownloadErrorFile(DownloadErrorFileViewModel model)
         {            
-            return View("../ApprenticeshipsBulkupload/WhatDoYouWantToDoNext/Index", new WhatDoYouWantToDoNextViewModel());
+            return View("../BulkUploadApprenticeships/WhatDoYouWantToDoNext/Index", new WhatDoYouWantToDoNextViewModel());
         }
 
          [Authorize]
@@ -249,7 +264,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             var model = new DeleteFileViewModel();
 
 
-            return View("../ApprenticeshipsBulkupload/DeleteFile/Index", model);
+            return View("../BulkUploadApprenticeships/DeleteFile/Index", model);
         }
 
         [Authorize]
@@ -280,7 +295,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             if (deleteBulkuploadResults.IsSuccess)
             {
-                return RedirectToAction("DeleteFileConfirmation", "ApprenticeshipsBulkupload", new { fileUploadDate = fileUploadDate });
+                return RedirectToAction("DeleteFileConfirmation", "BulkUploadApprenticeships", new { fileUploadDate = fileUploadDate });
             }
             else
             {
@@ -299,18 +314,18 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             model.FileUploadedDate = TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, TimeZoneInfo.Local).ToString("dd MMM yyyy HH:mm");
 
-            return View("../ApprenticeshipsBulkupload/DeleteFileConfirmation/Index", model);
+            return View("../BulkUploadApprenticeships/DeleteFileConfirmation/Index", model);
         }
 
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> PublishYourFile(int NumberOfApprenticships)
         {
-            var model = new PublishYourFileViewModel();
+            var model = new ApprenticeshipsPublishYourFileViewModel();
 
-            model.NumberOfCourses = NumberOfApprenticships;
+            model.NumberOfApprenticeships = NumberOfApprenticships;
 
-            return View("../ApprenticeshipsBulkupload/PublishYourFile/Index", model);
+            return View("../BulkUploadApprenticeships/PublishYourFile/Index", model);
         }
     
         private Provider FindProvider(int prn)

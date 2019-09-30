@@ -1118,11 +1118,12 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                         throw new Exception("No apprenticeship data present in the file.");
                     }
 
-                    var result = _apprenticeshipService.DeleteBulkUploadApprenticeships(int.Parse(userDetails.UKPRN));
-                    if (result.IsCompletedSuccessfully)
+                    var result = _apprenticeshipService.DeleteBulkUploadApprenticeships(int.Parse(userDetails.UKPRN)).Result;
+
+                    if (result.IsSuccess)
                     {
                         var apprenticeships = ApprenticeshipCsvRecordToApprenticeship(records, userDetails);
-                        if (!apprenticeships.Any())
+                        if (apprenticeships.Any())
                         {
                             errors.AddRange(UploadApprenticeships(apprenticeships));
                         }
@@ -1140,18 +1141,23 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 string errmsg = $"Invalid header row. {ex.Message.FirstSentence()}";
 
                 errors.Add(errmsg);
+                throw;
             }
             catch (FieldValidationException ex)
             {
                 errors.Add($"{ex.Message}");
+                throw;
             }
             catch (BadDataException ex)
             {
                 errors.Add($"{ex.Message}");
+                throw;
             }
             catch (Exception ex)
             {
                 errors.Add($"{ex.Message}");
+                throw;
+                
             }
 
             return errors;
@@ -1176,9 +1182,9 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             List<string> errors = new List<string>();
             foreach (var apprenticeship in apprenticeships)
             {
-               var result = _apprenticeshipService.AddApprenticeship(apprenticeship);
+               var result = _apprenticeshipService.AddApprenticeship(apprenticeship).Result;
 
-               if (result.IsFaulted)
+               if (result.IsFailure)
                {
                    errors.Add($"Unable to add Apprenticeship {apprenticeship.ApprenticeshipTitle}");
                }

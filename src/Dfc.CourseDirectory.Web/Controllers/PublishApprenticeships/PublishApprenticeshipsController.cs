@@ -48,21 +48,14 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishApprenticeships
 
     [Authorize]
     [HttpGet]
-    public IActionResult Index(PublishMode publishMode, string notificationTitle, Guid? courseId, Guid? courseRunId, bool fromBulkUpload)
+    public IActionResult Index(PublishViewModel vm)
     {
         int? UKPRN = _session.GetInt32("UKPRN");
         if (!UKPRN.HasValue)
             return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
 
-        List<Course> Courses = new List<Course>();
-        ICourseSearchResult coursesByUKPRN = (!UKPRN.HasValue
-                ? null
-                : _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(UKPRN))
-                    .Result.Value);
         
-        
-
-        return View("Index");
+        return View("Index", vm);
     }
 
 
