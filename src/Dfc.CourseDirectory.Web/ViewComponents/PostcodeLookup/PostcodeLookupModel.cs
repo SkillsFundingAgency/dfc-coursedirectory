@@ -25,7 +25,9 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.PostcodeLookup
 
         public bool Searched { get; set; }
 
-        public string NoneSelectedText => HasItems ? $"{Items.Count()} addresses found" : string.Empty;
+        public string AddressText => Items.Count() ==1 ? " address " : " addresses ";
+
+        public string NoneSelectedText => HasItems ? $"{Items.Count()}" + AddressText + "found" : string.Empty;
 
         //[Required(AllowEmptyStrings = false, ErrorMessage = "Select an address")]
         public string PostcodeId { get; set; }

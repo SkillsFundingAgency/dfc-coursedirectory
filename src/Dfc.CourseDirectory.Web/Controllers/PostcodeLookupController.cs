@@ -35,7 +35,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _session = contextAccessor.HttpContext.Session;
         }
         [Authorize]
-        public async Task<IActionResult> Index(string postcode,string venuename, string id)
+        public async Task<IActionResult> Index(string postcode, string venuename, string id)
         {
             var result = await _postCodeSearchService.SearchAsync(new PostCodeSearchCriteria(postcode));
 
@@ -43,23 +43,18 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             if (result.IsSuccess)
             {
-                if (result.Value.Value.Count()==0)
+                if (result.Value.Value.Count() == 0)
                 {
                     listItems = null;
                 }
                 else
                 {
-                    if (result.Value.Value.Count() == 1)
-                        {
-                        listItems = null;
-                    }
-                    else
+
+                    foreach (var item in result.Value.Value)
                     {
-                        foreach (var item in result.Value.Value)
-                        {
-                            listItems.Add(new SelectListItem(item.StreetAddress, item.Id));
-                        }
+                        listItems.Add(new SelectListItem(item.StreetAddress, item.Id));
                     }
+
                 }
             }
 
