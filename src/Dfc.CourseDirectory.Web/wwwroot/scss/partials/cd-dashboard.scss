@@ -241,12 +241,36 @@ $grey: #6f777b;
     padding-right: 1em;
     //font-weight:800;
 }
+.teal-top-border {
+    border-top: 5px solid $ExploreCareersGreen;
 
+    &.bg-grey {
+        background-color:#f8f8f8;
+    }
+}
+
+.container {
+    max-width:1024px;
+}
+
+.no-margin {
+    margin:0;
+}
+
+.no-padding-left {
+    padding-left: 0;
+}
+.no-padding {
+    padding: 0;
+}
 .sidebar {
     .widget {
-        border-top: 5px solid $ExploreCareersGreen;
         background-color: #f8f8f8;
 
+        &__heading {
+            margin-top: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
 
         &.white {
             background-color: white;
@@ -261,8 +285,6 @@ $grey: #6f777b;
         div {
             margin-bottom: .5em;
         }
-
-
     }
 }
 

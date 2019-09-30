@@ -8,9 +8,9 @@
     <div class="cd-dashboard provider">
         <span class="govuk-caption-l">Course Directory</span>
         <h1 class="govuk-heading-l cd-dashboard-title">Data transfer</h1>
-        <div class="govuk-body">
-            <div class="govuk-grid-row">
-                <div class="govuk-grid-column-two-thirds">
+        <div class="container">
+            <div class="govuk-grid-row no-margin ">
+                <div class="govuk-grid-column-two-thirds no-padding-left">
                     <p>
                         We have transferred your data to the new course directory.
                     </p>
@@ -61,10 +61,10 @@
                     @Html.ActionLink("Continue to course directory", "Index", "Home",
                         null, new { @class = "govuk-link govuk-!-margin-top-3" })
                 </div>
-                <div class="govuk-grid-column-one-third">
-                    <div class="sidebar">
-                        <div class="widget">
-                            <h3>Data transfer details</h3>
+                <div class="govuk-grid-column-one-third teal-top-border bg-grey">
+                    <div class="app-related-items sidebar" >                        
+                            <div class="widget">
+                            <h3 class="widget__heading">Data transfer details</h3>
                             @if (Model.CourseCount.HasValue)
                             {
                                 <div>
@@ -85,11 +85,9 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div>               
             </div>
         </div>
     </div>
-
-
 
 </div>

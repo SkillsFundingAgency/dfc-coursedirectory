@@ -527,14 +527,23 @@ namespace Dfc.CourseDirectory.Web
                 context.Response.Headers.Add("Content-Security-Policy", 
                                                 "default-src    'self'  https://rainmaker.tiny.cloud/;" +
                                                 "style-src      'self' 'unsafe-inline' "+
-                                                    " https://cdn.tiny.cloud/" +
-                                                    " https://cloud.tinymce.com/;" +
-                                                "font-src       'self' data: https://cdn.tiny.cloud/;" +
+                                                    " https://cdn.tiny.cloud/" +                                                    
+                                                    " https://www.googletagmanager.com/" +
+                                                    " https://tagmanager.google.com/" +
+                                                    " https://fonts.googleapis.com/" +
+                                                    " https://cloud.tinymce.com/" +
+                                                    ";" +
+                                                "font-src       'self' data:" +
+                                                   " https://fonts.googleapis.com/" +
+                                                   " https://fonts.gstatic.com/" +
+                                                   " https://cdn.tiny.cloud/" +
+                                                   ";" +
                                                 "img-src        'self' * data: https://cdn.tiny.cloud/;" +
                                                 "script-src     'self' 'unsafe-eval' 'unsafe-inline'  " +
                                                     " https://cloud.tinymce.com/" +
                                                     " https://cdnjs.cloudflare.com/" +
                                                     " https://www.googletagmanager.com/" +
+                                                    " https://tagmanager.google.com/" +                                                    
                                                     " https://www.google-analytics.com/" +
                                                     " https://cdn.tiny.cloud/" +
                                                     ";"
