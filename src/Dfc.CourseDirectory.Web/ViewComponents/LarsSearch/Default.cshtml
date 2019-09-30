@@ -12,47 +12,52 @@
 
 <script>
     (function ($) {
-        $(function() {
-            var debounce = function(cb, delay) {
+        $(function () {
+
+            var validStates = [];
+            var $errorSummary = $("#errorsummary").govUkErrorSummary();
+            var $lars = $("#LarsSearchTerm").govUkInput();
+
+            var debounce = function (cb, delay) {
                 var inDebounce;
-                return function() {
+                return function () {
                     var context = this;
                     var args = arguments;
                     clearTimeout(inDebounce);
-                    inDebounce = setTimeout(function() {
-                            cb.apply(context, args);
-                        },
+                    inDebounce = setTimeout(function () {
+                        cb.apply(context, args);
+                    },
                         delay);
                 };
             };
 
-            var isNullOrWhitespace = function(input) {
+            var isNullOrWhitespace = function (input) {
                 if (typeof input === 'undefined' || input == null) return true;
                 return input.replace(/\s/g, '').length < 3;
             }
 
-            var replaceAll = function(search, find, replace) {
+            var replaceAll = function (search, find, replace) {
                 return search.split(find).join(replace);
             };
 
-            var makeRequestWithPayload = function(payload, success) {
+            var makeRequestWithPayload = function (payload, success) {
                 console.log(payload);
                 var qs = $.param(payload);
                 qs = replaceAll(qs, "%5B%5D", "");
                 $.get("/LarsSearch?" + qs, success);
             };
 
-            var makeRequestWithUrl = function(url, success) {
+            var makeRequestWithUrl = function (url, success) {
                 console.log(url);
                 $.get(url, success);
             };
 
-            var removeSearchResults = function() {
+            var removeSearchResults = function () {
                 var $larsSearchResultContainer = $("#LarsSearchResultContainer");
                 $larsSearchResultContainer.html("");
             };
 
-            var replaceSearchResult = function(searchResults) {
+            var replaceSearchResult = function (searchResults) {
                 var $larsSearchResultContainer = $("#LarsSearchResultContainer");
                 $larsSearchResultContainer.html("");
                 $larsSearchResultContainer.html(searchResults);
@@ -61,7 +66,9 @@
             var $larsSearchTerm = $("#LarsSearchTerm");
             var $buttonSearch = $("#searchQualification");
 
-            var doSearch = function() {
+            var doSearch = function () {
+
+
                 if (isNullOrWhitespace($larsSearchTerm.val())) {
                     removeSearchResults();
                 } else {
@@ -75,25 +82,26 @@
                         $("input[name='SectorSubjectAreaTier2Filter']:checkbox:checked");
 
                     makeRequestWithPayload({
-                            SearchTerm: $larsSearchTerm.val(),
-                            NotionalNVQLevelv2Filter: $allCheckedNotionalNvqLevelV2FilterCheckboxes.map(function() {
-                                return $(this).val();
-                            }).get(),
-                            AwardOrgCodeFilter: $allCheckedAwardOrgCodeFilterCheckboxes.map(function() {
-                                return $(this).val();
-                            }).get(),
-                            SectorSubjectAreaTier1Filter: $allSectorSubjectAreaTier1FilterCheckboxes.map(function() {
-                                return $(this).val();
-                            }).get(),
-                            SectorSubjectAreaTier2Filter: $allSectorSubjectAreaTier2FilterCheckboxes.map(function() {
-                                return $(this).val();
-                            }).get()
-                        },
+                        SearchTerm: $larsSearchTerm.val(),
+                        NotionalNVQLevelv2Filter: $allCheckedNotionalNvqLevelV2FilterCheckboxes.map(function () {
+                            return $(this).val();
+                        }).get(),
+                        AwardOrgCodeFilter: $allCheckedAwardOrgCodeFilterCheckboxes.map(function () {
+                            return $(this).val();
+                        }).get(),
+                        SectorSubjectAreaTier1Filter: $allSectorSubjectAreaTier1FilterCheckboxes.map(function () {
+                            return $(this).val();
+                        }).get(),
+                        SectorSubjectAreaTier2Filter: $allSectorSubjectAreaTier2FilterCheckboxes.map(function () {
+                            return $(this).val();
+                        }).get()
+                    },
                         onSucess);
                 }
+
             };
 
-            var assignEventsToAllCheckboxes = function() {
+            var assignEventsToAllCheckboxes = function () {
                 var $notionalNvqLevelV2FilterCheckboxes = $("input[name='NotionalNVQLevelv2Filter']:checkbox");
                 var $awardOrgCodeFilterCheckboxes = $("input[name='AwardOrgCodeFilter']:checkbox");
                 var $sectorSubjectAreaTier1FilterCheckboxes = $("input[name='SectorSubjectAreaTier1Filter']:checkbox");
@@ -107,13 +115,13 @@
                 //$("#ApplyFilter").on("click", debounce(doSearch,0));
             };
 
-            
 
-            var assignEventToClearAllFiltersLink = function() {
+
+            var assignEventToClearAllFiltersLink = function () {
                 var $clearAllFiltersLink = $("#ClearAllFilters");
 
                 $clearAllFiltersLink.on("click",
-                    function(e) {
+                    function (e) {
                         e.preventDefault();
                         var $allCheckedFilterCheckboxes = $(
                             "input[name='NotionalNVQLevelv2Filter']:checkbox:checked, input[name='AwardOrgCodeFilter']:checkbox:checked, input[name='SectorSubjectAreaTier1Filter']:checkbox, input[name='SectorSubjectAreaTier2Filter']:checkbox");
@@ -130,17 +138,17 @@
                     });
             };
 
-            var assignEventsToLarsSearchPagination = function() {
+            var assignEventsToLarsSearchPagination = function () {
                 var $larsSearchResultPaginationItems = $("#LarsSearchResultContainer .pagination .pagination__item");
                 $larsSearchResultPaginationItems.on("click",
-                    function(e) {
+                    function (e) {
                         e.preventDefault();
                         var url = $(e.target).attr("href");
                         makeRequestWithUrl(url, onSucess);
                     });
             };
 
-            var onSucess = function(data) {
+            var onSucess = function (data) {
                 replaceSearchResult(data);
                 assignEventsToAllCheckboxes();
                 assignEventToClearAllFiltersLink();
@@ -148,14 +156,76 @@
             };
 
             //$larsSearchTerm.on("keyup", debounce(doSearch, 100));
-            $buttonSearch.on("click", debounce(doSearch, 100));
+            //$buttonSearch.on("click", debounce(doSearch, 100));
 
-            $(document).keypress(function (e) {
-                if (e.which === 13) {
-                    e.preventDefault();
-                    $buttonSearch.trigger( "click" );
+            //$(document).keypress(function (e) {
+            //    if (e.which === 13) {
+            //        e.preventDefault();
+            //        $buttonSearch.trigger("click");
+            //    }
+            //});
+
+
+
+            $(document).on('click','#searchQualification',function(e){
+                e.preventDefault();
+                validStates = [];
+                validate();
+                if (validStates.every(isAllValid)) {
+                    doSearch();
                 }
+
             });
+
+
+            function isAllValid(currentValue) {
+                return currentValue === true;
+            }
+
+            function validate() {
+                $(".govuk-error-message").remove();
+                validStates = [];
+                $lars.govUkInput("validState");
+                $errorSummary.govUkErrorSummary("removeAll");
+                if (!$.requiredValidate($lars.val())) {
+                    $lars.govUkInput("invalidState", $lars.attr("val-required-message"));
+                    validStates.push(false);
+                    var $anchor = document.createElement("a");
+                    $anchor.href = "#LarsSearchTerm";
+                    $anchor.innerHTML = $lars.attr("val-required-message");
+                    $anchor.id = "error-hash-link-" + "a" + "-" + 1;
+                    $errorSummary.govUkErrorSummary("add", $anchor);
+                    $errorSummary.govUkErrorSummary("show");
+
+                }
+                else if (
+                    !$.minLengthValidate({ min: $lars.attr("val-min-length") }, $lars.val())) {
+                    $lars.govUkInput("invalidState", $lars.attr("val-min-length-message"));
+                    validStates.push(false);
+                    var $anchor = document.createElement("a");
+                    $anchor.href = "#LarsSearchTerm";
+                    $anchor.innerHTML = $lars.attr("val-min-length-message");
+                    $anchor.id = "error-hash-link-" + "a" + "-" + 1;
+                    $errorSummary.govUkErrorSummary("add", $anchor);
+                    $errorSummary.govUkErrorSummary("show");
+
+                } else {
+                    $lars.govUkInput("validState");
+                    $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $lars[0].id);
+                    $errorSummary.govUkErrorSummary("hideIfEmpty")
+                    validStates.push(true);
+                }
+
+            }
+
+
         });
+
+
+
+
+
     })(jQuery);
 </script>
+
+
