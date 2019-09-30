@@ -13,5 +13,6 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Auth
         Guid? RoleId { get; set; }
         string RoleName { get; set; }
         string UKPRN { get; set; }
+        Guid? ProviderID { get; set; }
     }
 }

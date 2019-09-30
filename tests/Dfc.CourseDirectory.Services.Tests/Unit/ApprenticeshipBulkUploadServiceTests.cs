@@ -30,7 +30,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 roleId : Guid.NewGuid(),
                 roleName : "Developer",
                 ukPrn : "12345678",
-                userName : "email@testEmail.com"
+                userName: "email@testEmail.com",
+                providerId: Guid.NewGuid()
             );
         }
         public class CountCSVLines
@@ -91,7 +92,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                     roleId : Guid.NewGuid(),
                     roleName : "Developer",
                     ukPrn : "12345678",
-                    userName : "email@testEmail.com"
+                    userName: "email@testEmail.com",
+                    providerId: Guid.NewGuid()
                 );
             }
             [Fact]
@@ -198,7 +200,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                     roleId : Guid.NewGuid(),
                     roleName : "Developer",
                     ukPrn : "12345678",
-                    userName : "email@testEmail.com"
+                    userName : "email@testEmail.com",
+                    providerId : Guid.NewGuid()
                 );
                 
             }
@@ -1094,7 +1097,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                     roleId : Guid.NewGuid(),
                     roleName : "Developer",
                     ukPrn : "12345678",
-                    userName : "email@testEmail.com"
+                    userName: "email@testEmail.com",
+                    providerId: Guid.NewGuid()
                 );
             }
             [Fact]
@@ -1154,7 +1158,8 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                     roleId : Guid.NewGuid(),
                     roleName : "Developer",
                     ukPrn : "12345678",
-                    userName : "email@testEmail.com"
+                    userName: "email@testEmail.com",
+                    providerId: Guid.NewGuid()
                 );
             }
             [Fact]
@@ -1271,7 +1276,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 // Arrange
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
                 var httpClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulStandardFile(), HttpStatusCode.OK);
-                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile_Individual_Venues(), HttpStatusCode.OK);
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(httpClient);
 
                 var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);

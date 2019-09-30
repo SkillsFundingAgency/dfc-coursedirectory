@@ -19,6 +19,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CsvHelper.Configuration.Attributes;
 using CsvHelper.Expressions;
+using Dfc.CourseDirectory.Common.Interfaces;
 using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Interfaces.Apprenticeships;
 using Dfc.CourseDirectory.Models.Interfaces.Auth;
@@ -1123,16 +1124,13 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                         var apprenticeships = ApprenticeshipCsvRecordToApprenticeship(records, userDetails);
                         if (!apprenticeships.Any())
                         {
-
+                            errors.AddRange(UploadApprenticeships(apprenticeships));
                         }
                     }
                     else
                     {
                         throw new Exception($"Unable to delete bulk upload apprenticeships for {int.Parse(userDetails.UKPRN)}");
                     }
-
-
-
 
                 }
             }
@@ -1173,6 +1171,20 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             return Regex.Replace(value, @"\s+", "");
         }
 
+        private List<string> UploadApprenticeships(List<Apprenticeship> apprenticeships)
+        {
+            List<string> errors = new List<string>();
+            foreach (var apprenticeship in apprenticeships)
+            {
+               var result = _apprenticeshipService.AddApprenticeship(apprenticeship);
+
+               if (result.IsFaulted)
+               {
+                   errors.Add($"Unable to add Apprenticeship {apprenticeship.ApprenticeshipTitle}");
+               }
+            }
+            return errors;
+        }
         private static string Base64Encode(IReaderRow row)
         {
             row.TryGetField<string>("STANDARD_CODE", out string STANDARD_CODE);
@@ -1205,38 +1217,46 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             {
                 var alreadyExists = DoesApprenticeshipExist(apprenticeships, record);
 
-                apprenticeships.Add(
-                    new Apprenticeship
-                    {
-                        id = new Guid(),
-                        ApprenticeshipTitle = record.Framework == null
-                            ? record.Standard.StandardName
-                            : record.Framework.NasTitle,
-                        //ProviderId // From Provider
-                        ProviderUKPRN = int.Parse(userDetails.UKPRN),
-                        ApprenticeshipLocations =  record.ApprenticeshipLocations,
-                        ApprenticeshipType = record.ApprenticeshipType,
-                        FrameworkId = record.Framework?.id,
-                        StandardId = record.Standard?.id,
-                        FrameworkCode = record.Framework?.FrameworkCode,
-                        ProgType = record.Framework?.ProgType,
-                        PathwayCode = record.Framework?.PathwayCode,
-                        StandardCode = record.Standard?.StandardCode,
-                        Version = record.Standard?.Version,
-                        NotionalNVQLevelv2 = record.Framework == null
-                            ? record.Standard.NotionalEndLevel
-                            : record.Framework.NotionalEndLevel,
-                        MarketingInformation = record.APPRENTICESHIP_INFORMATION,
-                        Url = record.APPRENTICESHIP_WEBPAGE,
-                        ContactTelephone = record.CONTACT_PHONE,
-                        ContactEmail = record.CONTACT_EMAIL,
-                        ContactWebsite = record.CONTACT_URL,
-                        //Apprenticeships Location
-                        RecordStatus = record.ErrorsList.Any() ? RecordStatus.BulkUploadPending : RecordStatus.BulkUploadReadyToGoLive,
-                        CreatedDate = DateTime.Now,
-                        CreatedBy = userDetails.UserId.ToString(),
-                        BulkUploadErrors = record.ErrorsList
-                    });
+                if (alreadyExists != null)
+                {
+                    var apprenticeship = apprenticeships.FirstOrDefault(x => x == alreadyExists);
+                    apprenticeship?.ApprenticeshipLocations.AddRange(record.ApprenticeshipLocations);
+                }
+                else
+                {
+                    apprenticeships.Add(
+                        new Apprenticeship
+                        {
+                            id = new Guid(),
+                            ApprenticeshipTitle = record.Framework == null
+                                ? record.Standard.StandardName
+                                : record.Framework.NasTitle,
+                            ProviderId = userDetails.ProviderID ?? Guid.Empty,
+                            ProviderUKPRN = int.Parse(userDetails.UKPRN),
+                            ApprenticeshipLocations = record.ApprenticeshipLocations,
+                            ApprenticeshipType = record.ApprenticeshipType,
+                            FrameworkId = record.Framework?.id,
+                            StandardId = record.Standard?.id,
+                            FrameworkCode = record.Framework?.FrameworkCode,
+                            ProgType = record.Framework?.ProgType,
+                            PathwayCode = record.Framework?.PathwayCode,
+                            StandardCode = record.Standard?.StandardCode,
+                            Version = record.Standard?.Version,
+                            NotionalNVQLevelv2 = record.Framework == null
+                                ? record.Standard.NotionalEndLevel
+                                : record.Framework.NotionalEndLevel,
+                            MarketingInformation = record.APPRENTICESHIP_INFORMATION,
+                            Url = record.APPRENTICESHIP_WEBPAGE,
+                            ContactTelephone = record.CONTACT_PHONE,
+                            ContactEmail = record.CONTACT_EMAIL,
+                            ContactWebsite = record.CONTACT_URL,
+                            RecordStatus = record.ErrorsList.Any() ? RecordStatus.BulkUploadPending : RecordStatus.BulkUploadReadyToGoLive,
+                            CreatedDate = DateTime.Now,
+                            CreatedBy = userDetails.UserId.ToString(),
+                            BulkUploadErrors = record.ErrorsList
+                        });
+                }
+                
             }
             return apprenticeships;
         }
