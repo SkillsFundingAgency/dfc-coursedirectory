@@ -675,7 +675,7 @@
                 "value": "[parameters('BulkUploadSecondsPerRecord')]"
               },
               {
-                "name": "BlobStorageSettings_ApprenticeshipsTemplatePath",
+                "name": "BlobStorageSettings__ApprenticeshipsTemplatePath",
                 "value": "apprenticeshipsbulkuploadtemplate.csv"
               }
             ]
