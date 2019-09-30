@@ -296,7 +296,7 @@ else
                 </div>
 
                 <div class="courserun__row4">
-                    <a href="@Url.Action("Index", "CourseSummary",new { courseRun.CourseId, courseRun.CourseRunId})">View or edit course <span class="govuk-visually-hidden">@courseRun.CourseName</span></a>
+                    <a class="govuk-link" href="@Url.Action("Index", "CourseSummary",new { courseRun.CourseId, courseRun.CourseRunId})">View or edit course <span class="govuk-visually-hidden">@courseRun.CourseName</span></a>
                     <a class="govuk-link"
                        asp-controller="CopyCourseRun"
                        asp-action="Index"
