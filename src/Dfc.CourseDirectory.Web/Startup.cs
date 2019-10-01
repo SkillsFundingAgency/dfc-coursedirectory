@@ -525,7 +525,10 @@ namespace Dfc.CourseDirectory.Web
                     
                 //CSP
                 context.Response.Headers.Add("Content-Security-Policy", 
-                                                "default-src    'self'  https://rainmaker.tiny.cloud/;" +
+                                                "default-src    'self' " + 
+                                                    " https://rainmaker.tiny.cloud/" +
+                                                    " https://www.google-analytics.com/" +
+                                                    ";" +
                                                 "style-src      'self' 'unsafe-inline' "+
                                                     " https://cdn.tiny.cloud/" +                                                    
                                                     " https://www.googletagmanager.com/" +
