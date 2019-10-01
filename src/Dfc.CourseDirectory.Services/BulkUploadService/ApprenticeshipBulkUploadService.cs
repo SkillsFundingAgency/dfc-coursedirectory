@@ -11,16 +11,29 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Claims;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using CsvHelper.Configuration.Attributes;
+using CsvHelper.Expressions;
+using Dfc.CourseDirectory.Common.Interfaces;
+using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Interfaces.Apprenticeships;
+using Dfc.CourseDirectory.Models.Interfaces.Auth;
+using Dfc.CourseDirectory.Models.Models.Auth;
+using Dfc.CourseDirectory.Models.Models.Courses;
 using Dfc.CourseDirectory.Models.Models.Regions;
 using Dfc.CourseDirectory.Models.Models.Venues;
 using Dfc.CourseDirectory.Services.Interfaces;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 using Dfc.CourseDirectory.Services.VenueService;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore.SqlServer.Query.ExpressionTranslators.Internal;
+using Remotion.Linq.Parsing.Structure.IntermediateModel;
 
 
 namespace Dfc.CourseDirectory.Services.BulkUploadService
@@ -47,7 +60,10 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
         internal class ApprenticeshipCsvRecord
         {
-
+            public ApprenticeshipCsvRecord()
+            {
+                this.ApprenticeshipLocations = new List<ApprenticeshipLocation>();
+            }
             public int? STANDARD_CODE { get; set; }
             public int? STANDARD_VERSION { get; set; }
             public int? FRAMEWORK_CODE { get; set; }
@@ -59,26 +75,28 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             public string CONTACT_PHONE { get; set; }
             public string CONTACT_URL { get; set; }
             public DeliveryMethod DELIVERY_METHOD { get; set; }
-            public string VENUE { get; set; }
+            public List<Venue> VENUE { get; set; }
             public int? RADIUS { get; set; }
-            public string DELIVERY_MODE { get; set; }
+            public List<int> DELIVERY_MODE { get; set; }
             public bool? ACROSS_ENGLAND { get; set; }
             public bool? NATIONAL_DELIVERY { get; set; }
             public string REGION { get; set; }
             public string SUB_REGION { get; set; }
+            [Ignore]
+            public ApprenticeshipType ApprenticeshipType { get; set; }
+            [Ignore]
+            public List<BulkUploadError> ErrorsList { get; set; }
+            [Ignore]
             public List<string> RegionsList { get; set; }
-            public List<string> ErrorsList { get; set; }
-
             [Ignore]
             public IStandardsAndFrameworks Standard { get; set; }
             [Ignore]
             public IStandardsAndFrameworks Framework { get; set; }
+            public List<ApprenticeshipLocation> ApprenticeshipLocations { get; set; }
             [Ignore]
             public int RowNumber  { get; set; }
             [Ignore]
             public string Base64Row  { get; set; }
-            [Ignore]
-            public Guid? VenueId  { get; set; }
 
         }
 
@@ -86,46 +104,60 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
         {
             private readonly IApprenticeshipService _apprenticeshipService;
             private readonly IVenueService _venueService;
-            private readonly int _UKPRN;
+            private readonly IAuthUserDetails _authUserDetails;
             private List<Venue> _cachedVenues;
 
             public ApprenticeshipCsvRecordMap(IApprenticeshipService apprenticeshipService,
                 IVenueService venueService,
-                int ukprn)
+                IAuthUserDetails userDetails
+               )
             {
                 Throw.IfNull(apprenticeshipService, nameof(apprenticeshipService));
                 Throw.IfNull(venueService, nameof(venueService));
-                Throw.IfLessThan(0, ukprn, nameof(ukprn));
+                Throw.IfNull(userDetails, nameof(userDetails));
                 _apprenticeshipService = apprenticeshipService;
                 _venueService = venueService;
-                _UKPRN = ukprn;
+                _authUserDetails = userDetails;
                 
-         
-                Map(m => m.STANDARD_CODE);
-                Map(m => m.STANDARD_VERSION);
+
+                Map(m => m.STANDARD_CODE).ConvertUsing(Mandatory_Checks_STANDARD_CODE);
+                Map(m => m.STANDARD_VERSION).ConvertUsing(Mandatory_Checks_STANDARD_VERSION);
                 Map(m => m.Standard).ConvertUsing(Mandatory_Checks_GetStandard);
-                Map(m => m.FRAMEWORK_CODE);
-                Map(m => m.FRAMEWORK_PROG_TYPE);
-                Map(m => m.FRAMEWORK_PATHWAY_CODE);
-                Map(m => m.Framework).ConvertUsing(Mandatory_Checks_GetFramework); ;
+                Map(m => m.FRAMEWORK_CODE).ConvertUsing(Mandatory_Checks_FRAMEWORK_CODE);
+                Map(m => m.FRAMEWORK_PROG_TYPE).ConvertUsing(Mandatory_Checks_FRAMEWORK_PROG_TYPE);
+                Map(m => m.FRAMEWORK_PATHWAY_CODE).ConvertUsing(Mandatory_Checks_FRAMEWORK_PATHWAY_CODE);
+                Map(m => m.Framework).ConvertUsing(Mandatory_Checks_GetFramework);
                 Map(m => m.APPRENTICESHIP_INFORMATION);
                 Map(m => m.APPRENTICESHIP_WEBPAGE);
                 Map(m => m.CONTACT_EMAIL);
                 Map(m => m.CONTACT_PHONE);
                 Map(m => m.CONTACT_URL);
                 Map(m => m.DELIVERY_METHOD).ConvertUsing(Mandatory_Checks_DELIVERY_METHOD);
-                Map(m => m.VENUE);
+                Map(m => m.VENUE).ConvertUsing(Mandatory_Checks_VENUE); ;
                 Map(m => m.RADIUS).ConvertUsing(Mandatory_Checks_RADIUS);
                 Map(m => m.DELIVERY_MODE).ConvertUsing(Mandatory_Checks_DELIVERY_MODE);
                 Map(m => m.ACROSS_ENGLAND).ConvertUsing(Mandatory_Checks_ACROSS_ENGLAND);
                 Map(m => m.NATIONAL_DELIVERY).ConvertUsing(Mandatory_Checks_NATIONAL_DELIVERY);
                 Map(m => m.REGION);
                 Map(m => m.SUB_REGION);
-                Map(m => m.VenueId).ConvertUsing(Mandatory_Checks_VENUE);
+                Map(m => m.ApprenticeshipType).ConvertUsing((row) =>
+                {
+                    if (row.TryGetField("STANDARD_CODE", out string standardCode))
+                    {
+                        return ApprenticeshipType.StandardCode;
+                    }
+                    else
+                    {
+                        return ApprenticeshipType.FrameworkCode;
+                    }
+                    
+
+                });
                 Map(m => m.RegionsList).ConvertUsing(GetRegionList);
                 Map(m => m.ErrorsList).ConvertUsing(ValidateData);
                 Map(m => m.RowNumber).ConvertUsing(row => row.Context.RawRow);
                 Map(m => m.Base64Row).ConvertUsing(Base64Encode);
+                
 
 
             }
@@ -259,18 +291,37 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 string fieldName = "RADIUS";
                 return ValueMustBeNumericIfPresent(row, fieldName);
             }
-            private string Mandatory_Checks_DELIVERY_MODE(IReaderRow row)
+            private List<int> Mandatory_Checks_DELIVERY_MODE(IReaderRow row)
             {
                 var deliveryMethod = Mandatory_Checks_DELIVERY_METHOD(row);
 
                 if (deliveryMethod == DeliveryMethod.Classroom || deliveryMethod == DeliveryMethod.Both)
                 {
-                    string fieldName = "APPRENTICESHIP_INFORMATION";
+                    string fieldName = "DELIVERY_MODE";
                     row.TryGetField<string>(fieldName, out string value);
-                    return value;
+
+                    var modes = value.Split(";");
+                    Dictionary<DeliveryMode, int> deliveryModes = new Dictionary<DeliveryMode, int>();
+                    foreach (var mode in modes)
+                    {
+                        var deliveryMode = mode.ToEnum(DeliveryMode.Undefined);
+                        if (deliveryMode == DeliveryMode.Undefined)
+                        {
+                            return new List<int>();
+                        }
+
+                        if (!deliveryModes.TryAdd(deliveryMode, (int) deliveryMode))
+                        {
+                            return new List<int>();
+                        }
+
+                    }
+
+                    return deliveryModes.Values.ToList();
+
                 }
 
-                return string.Empty;
+                return new List<int>();
             }
             private bool? Mandatory_Checks_ACROSS_ENGLAND(IReaderRow row)
             {
@@ -347,14 +398,14 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
                 return null;
             }
-            private Guid? Mandatory_Checks_VENUE(IReaderRow row)
+            private List<Venue> Mandatory_Checks_VENUE(IReaderRow row)
             {
                 var deliveryMethod = Mandatory_Checks_DELIVERY_METHOD(row);
                 if (deliveryMethod == DeliveryMethod.Classroom || deliveryMethod == DeliveryMethod.Both)
                 {
                     if(_cachedVenues == null)
                     {
-                        _cachedVenues = Task.Run(async () => await _venueService.SearchAsync(new VenueSearchCriteria(_UKPRN.ToString(), string.Empty)))
+                        _cachedVenues = Task.Run(async () => await _venueService.SearchAsync(new VenueSearchCriteria(_authUserDetails.UKPRN, string.Empty)))
                             .Result
                             .Value
                             .Value
@@ -372,34 +423,28 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                         return null;
                     }
 
-                    var venues = _cachedVenues
+                    var venues =_cachedVenues
                         .Where(x => x.VenueName.ToUpper() == value.ToUpper() && x.Status == VenueStatus.Live).ToList();
-                    if(venues.Count == 1)
-                    {
-                        var validId = Guid.TryParse(venues.FirstOrDefault()?.ID, out Guid venueId);
-                        if (validId)
-                        {
-                            return venueId;
-                        }
 
-                    }
-
-                    if (venues.Count > 1)
+                    if (venues.Any())
                     {
-                        return Guid.Empty;
+                        return venues;
                     }
+                  
+                    
                 }
 
 
                 return null;
             }
+
             #endregion
 
             #region Field Validation
 
-            private List<string> ValidateData(IReaderRow row)
+            private List<BulkUploadError> ValidateData(IReaderRow row)
             {
-                List<string> errors = new List<string>();
+                List<BulkUploadError> errors = new List<BulkUploadError>();
                 errors.AddRange(Validate_APPRENTICESHIP_INFORMATION(row));
                 errors.AddRange(Validate_APPRENTICESHIP_WEBPAGE(row));
                 errors.AddRange(Validate_CONTACT_EMAIL(row));
@@ -434,25 +479,36 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 return errors;
             }
 
-            private List<string> Validate_APPRENTICESHIP_INFORMATION(IReaderRow row)
+            private List<BulkUploadError> Validate_APPRENTICESHIP_INFORMATION(IReaderRow row)
             {
-                List<string> errors = new List<string>();
+                List<BulkUploadError> errors = new List<BulkUploadError>();
                 string fieldName = "APPRENTICESHIP_INFORMATION";
                 row.TryGetField<string>(fieldName, out string value);
 
                 if (String.IsNullOrWhiteSpace(value))
                 {
-                    errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} is required.");
+                    errors.Add(new BulkUploadError
+                    {
+                        LineNumber = row.Context.Row,
+                        Header = fieldName,
+                        Error = $"Validation error on row {row.Context.Row}. Field {fieldName} is required."
+
+                    }); 
                 }
                 if (!String.IsNullOrEmpty(value) && value.Length > 750)
                 {
-                    errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} maximum length is 750 characters.");
+                    errors.Add(new BulkUploadError
+                    {
+                        LineNumber = row.Context.Row,
+                        Header = fieldName,
+                        Error = $"Validation error on row {row.Context.Row}. Field {fieldName} maximum length is 750 characters."
+                    });
                 }
                 return errors;
             }
-            private List<string> Validate_APPRENTICESHIP_WEBPAGE(IReaderRow row)
+            private List<BulkUploadError> Validate_APPRENTICESHIP_WEBPAGE(IReaderRow row)
             {
-                List<string> errors = new List<string>();
+                List<BulkUploadError> errors = new List<BulkUploadError>();
                 string fieldName = "APPRENTICESHIP_WEBPAGE";
                 row.TryGetField<string>(fieldName, out string value);
                 if (!String.IsNullOrWhiteSpace(value))
@@ -460,44 +516,78 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                     var regex = @"^([-a-zA-Z0-9]{2,256}\.)+[a-z]{2,10}(\/.*)?";
                     if (Regex.IsMatch(value, regex))
                     {
-                        errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} format of URL is incorrect.");
+
+                        errors.Add(new BulkUploadError
+                        {
+                            LineNumber = row.Context.Row,
+                            Header = fieldName,
+                            Error =
+                                $"Validation error on row {row.Context.Row}. Field {fieldName} format of URL is incorrect."
+                        });
+                        
                     }
+
                     if (value.Length > 255)
                     {
-                        errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} maximum length is 255 characters.");
+
+                        errors.Add(new BulkUploadError
+                        {
+                            LineNumber = row.Context.Row,
+                            Header = fieldName,
+                            Error =
+                                $"Validation error on row {row.Context.Row}. Field {fieldName} maximum length is 255 characters."
+                        });
+                        
                     }
                 }
 
                 return errors;
             }
-            private List<string> Validate_CONTACT_EMAIL(IReaderRow row)
+            private List<BulkUploadError> Validate_CONTACT_EMAIL(IReaderRow row)
             {
-                List<string> errors = new List<string>();
+                List<BulkUploadError> errors = new List<BulkUploadError>();
                 string fieldName = "CONTACT_EMAIL";
                 row.TryGetField<string>(fieldName, out string value);
 
                 if (String.IsNullOrWhiteSpace(value))
                 {
-                    errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} is required.");
+                    errors.Add(new BulkUploadError
+                    {
+                        LineNumber = row.Context.Row,
+                        Header = fieldName,
+                        Error =
+                            $"Validation error on row {row.Context.Row}. Field {fieldName} is required."
+                    });
                     return errors;
                 }
                 if (!String.IsNullOrEmpty(value) && value.Length > 255)
                 {
-                    errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} maximum length is 255 characters.");
+                    errors.Add(new BulkUploadError
+                    {
+                        LineNumber = row.Context.Row,
+                        Header = fieldName,
+                        Error =
+                            $"Validation error on row {row.Context.Row}. Field {fieldName} maximum length is 255 characters."
+                    });
                     return errors;
                 }
 
                 var emailRegEx = @"^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$";
                 if (!Regex.IsMatch(value, emailRegEx))
                 {
-                    errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} needs a valid email.");
-                    
+                    errors.Add(new BulkUploadError
+                    {
+                        LineNumber = row.Context.Row,
+                        Header = fieldName,
+                        Error =
+                            $"Validation error on row {row.Context.Row}. Field {fieldName} needs a valid email."
+                    });
                 }
                 return errors;
             }
-            private List<string> Validate_CONTACT_PHONE(IReaderRow row)
+            private List<BulkUploadError> Validate_CONTACT_PHONE(IReaderRow row)
             {
-                List<string> errors = new List<string>();
+                List<BulkUploadError> errors = new List<BulkUploadError>();
 
                 string fieldName = "CONTACT_PHONE";
                 row.TryGetField<string>(fieldName, out string value); 
@@ -505,25 +595,40 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
                 if (String.IsNullOrWhiteSpace(value))
                 {
-                    errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} is required.");
+                    errors.Add(new BulkUploadError
+                    {
+                        LineNumber = row.Context.Row,
+                        Header = fieldName,
+                        Error = $"Validation error on row {row.Context.Row}. Field {fieldName} is required."
+                    });
                     return errors;
                 }
                 if (!String.IsNullOrEmpty(value) && value.Length > 30)
                 {
-                    errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} maximum length is 30 characters.");
+                    errors.Add(new BulkUploadError
+                    {
+                        LineNumber = row.Context.Row,
+                        Header = fieldName,
+                        Error = $"Validation error on row {row.Context.Row}. Field {fieldName} maximum length is 30 characters."
+                    });
                     return errors;
                 }
                 if (!Int32.TryParse(value, out int numericalValue))
                 {
-                    errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} must be numeric if present.");
+                    errors.Add(new BulkUploadError
+                    {
+                        LineNumber = row.Context.Row,
+                        Header = fieldName,
+                        Error = $"Validation error on row {row.Context.Row}. Field {fieldName} must be numeric if present."
+                    });
                     return errors;
                 }
                 return errors;
             }
-            private List<string> Validate_CONTACT_URL(IReaderRow row)
+            private List<BulkUploadError> Validate_CONTACT_URL(IReaderRow row)
             {
                 
-                List<string> errors = new List<string>();
+                List<BulkUploadError> errors = new List<BulkUploadError>();
                 string fieldName = "CONTACT_URL";
                 row.TryGetField(fieldName, out string value);
                 if (String.IsNullOrEmpty(value))
@@ -532,64 +637,99 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 }
                 if (value.Length > 255)
                 {
-                    errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} maximum length is 255 characters.");
+                    errors.Add(new BulkUploadError
+                    {
+                        LineNumber = row.Context.Row,
+                        Header = fieldName,
+                        Error = $"Validation error on row {row.Context.Row}. Field {fieldName} maximum length is 255 characters."
+                    });
                 }
                 var urlRegex = @"^([-a-zA-Z0-9]{2,256}\.)+[a-z]{2,10}(\/.*)?";
                 if (Regex.IsMatch(value, urlRegex))
                 {
-                    errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} format of URL is incorrect.");
+                    errors.Add(new BulkUploadError
+                    {
+                        LineNumber = row.Context.Row,
+                        Header = fieldName,
+                        Error = $"Validation error on row {row.Context.Row}. Field {fieldName} format of URL is incorrect."
+                    });
                 }
                 return errors;
             }
-            private List<string> Validate_DELIVERY_METHOD(IReaderRow row)
+            private List<BulkUploadError> Validate_DELIVERY_METHOD(IReaderRow row)
             {
-                List<string> errors = new List<string>();
+                List<BulkUploadError> errors = new List<BulkUploadError>();
                 string fieldName = "DELIVERY_METHOD";
                 row.TryGetField<string>(fieldName, out string value);
 
                 if (String.IsNullOrWhiteSpace(value))
                 {
-                    errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} is required.");
+                    errors.Add(new BulkUploadError
+                    {
+                        LineNumber = row.Context.Row,
+                        Header = fieldName,
+                        Error = $"Validation error on row {row.Context.Row}. Field {fieldName} is required."
+                    });
                     return errors;
                 }
 
                 var deliveryMethod = value.ToEnum(DeliveryMethod.Undefined);
                 if (deliveryMethod == DeliveryMethod.Undefined)
                 {
-                    errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} is invalid.");
+                    errors.Add(new BulkUploadError
+                    {
+                        LineNumber = row.Context.Row,
+                        Header = fieldName,
+                        Error = $"Validation error on row {row.Context.Row}. Field {fieldName} is invalid."
+                    });
                 }
                 return errors;
             }
-            private List<string> Validate_VENUE(IReaderRow row)
+            private List<BulkUploadError> Validate_VENUE(IReaderRow row)
             {
-                List<string> errors = new List<string>();
+                List<BulkUploadError> errors = new List<BulkUploadError>();
 
                 string fieldName = "VENUE";
                 row.TryGetField(fieldName, out string value);
                 if (String.IsNullOrWhiteSpace(value))
                 {
-                    errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} is required.");
+                    errors.Add(new BulkUploadError
+                    {
+                        LineNumber = row.Context.Row,
+                        Header = fieldName,
+                        Error = $"Validation error on row {row.Context.Row}. Field {fieldName} is required."
+                    });
                     return errors;
                 }
 
-                var venueId = Mandatory_Checks_VENUE(row);
+                var venues = Mandatory_Checks_VENUE(row);
 
-                if (venueId == null)
+                if (venues == null)
                 {
-                    errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} is invalid.");
+                    errors.Add(new BulkUploadError
+                    {
+                        LineNumber = row.Context.Row,
+                        Header = fieldName,
+                        Error = $"Validation error on row {row.Context.Row}. Field {fieldName} is invalid."
+                    });
                     return errors;
                 }
 
-                if (venueId == Guid.Empty)
+                if (venues.Count > 1)
                 {
-                    errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} is invalid. Multiple venues identified with value entered.");
+                    errors.Add(new BulkUploadError
+                    {
+                        LineNumber = row.Context.Row,
+                        Header = fieldName,
+                        Error = $"Validation error on row {row.Context.Row}. Field {fieldName} is invalid. Multiple venues identified with value entered."
+                    }); 
                     return errors;
                 }
                 return errors;
             }
-            private List<string> Validate_RADIUS(IReaderRow row)
+            private List<BulkUploadError> Validate_RADIUS(IReaderRow row)
             {
-                List<string> errors = new List<string>();
+                List<BulkUploadError> errors = new List<BulkUploadError>();
 
                 string fieldName = "RADIUS";
                 var value = Mandatory_Checks_RADIUS(row);
@@ -597,21 +737,33 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 {
                     if (value <= 0)
                     {
-                        errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} must be a valid number");
+                        errors.Add(new BulkUploadError
+                        {
+                            LineNumber = row.Context.Row,
+                            Header = fieldName,
+                            Error = $"Validation error on row {row.Context.Row}. Field {fieldName} must be a valid number"
+
+                        });
                         return errors;
                     }
 
                     if (value > 874)
                     {
-                        errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} must be between 1 and 874");
+                        errors.Add(new BulkUploadError
+                        {
+                            LineNumber = row.Context.Row,
+                            Header = fieldName,
+                            Error = $"Validation error on row {row.Context.Row}. Field {fieldName} must be between 1 and 874"
+
+                        });
                         return errors;
                     }
                 }
                 return errors;
             }
-            private List<string> Validate_DELIVERY_MODE(IReaderRow row)
+            private List<BulkUploadError> Validate_DELIVERY_MODE(IReaderRow row)
             {
-                List<string> errors = new List<string>();
+                List<BulkUploadError> errors = new List<BulkUploadError>();
 
                 string fieldName = "DELIVERY_MODE";
                 row.TryGetField(fieldName, out string value);
@@ -626,21 +778,33 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                     var deliveryMode = mode.ToEnum(DeliveryMode.Undefined);
                     if (deliveryMode == DeliveryMode.Undefined)
                     {
-                        errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} must be a valid Delivery Mode");
+                        errors.Add(new BulkUploadError
+                        {
+                            LineNumber = row.Context.Row,
+                            Header = fieldName,
+                            Error = $"Validation error on row {row.Context.Row}. Field {fieldName} must be a valid Delivery Mode"
+
+                        });
                         return errors;
                     }
 
                     if (!modes.TryAdd(deliveryMode, deliveryMode.ToString()))
                     {
-                        errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} must contain unique Delivery Modes");
+                        errors.Add(new BulkUploadError
+                        {
+                            LineNumber = row.Context.Row,
+                            Header = fieldName,
+                            Error = $"Validation error on row {row.Context.Row}. Field {fieldName} must contain unique Delivery Modes"
+
+                        });
                         return errors;
                     }
                 }
                 return errors;
             }
-            private List<string> Validate_ACROSS_ENGLAND(IReaderRow row)
+            private List<BulkUploadError> Validate_ACROSS_ENGLAND(IReaderRow row)
             {
-                List<string> errors = new List<string>();
+                List<BulkUploadError> errors = new List<BulkUploadError>();
                 string fieldName = "ACROSS_ENGLAND";
                 var deliveryMethod = Mandatory_Checks_DELIVERY_METHOD(row);
                 var isAcrossEngland = Mandatory_Checks_Bool(row, fieldName);
@@ -648,7 +812,14 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 {
                     if (!isAcrossEngland.HasValue)
                     {
-                        errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} must contain a value when Delivery Method is 'Both'");
+                        errors.Add(new BulkUploadError
+                        {
+                            LineNumber = row.Context.Row,
+                            Header = fieldName,
+                            Error = $"Validation error on row {row.Context.Row}. Field {fieldName} must contain a value when Delivery Method is 'Both'"
+
+                        });
+                       
                         return errors;
                     }
                 }
@@ -656,9 +827,9 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
                 return errors;
             }
-            private List<string> Validate_NATIONAL_DELIVERY(IReaderRow row)
+            private List<BulkUploadError> Validate_NATIONAL_DELIVERY(IReaderRow row)
             {
-                List<string> errors = new List<string>();
+                List<BulkUploadError> errors = new List<BulkUploadError>();
                 string fieldName = "NATIONAL_DELIVERY";
                 var deliveryMethod = Mandatory_Checks_DELIVERY_METHOD(row);
                 var isNational = Mandatory_Checks_Bool(row, fieldName);
@@ -666,7 +837,14 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 {
                     if (!isNational.HasValue)
                     {
-                        errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} must contain a value when Delivery Method is 'Employer'");
+                        errors.Add(new BulkUploadError
+                        {
+                            LineNumber = row.Context.Row,
+                            Header = fieldName,
+                            Error = $"Validation error on row {row.Context.Row}. Field {fieldName} must contain a value when Delivery Method is 'Employer'"
+
+                        });
+                        
                         return errors;
                     }
                 }
@@ -674,9 +852,9 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
                 return errors;
             }
-            private List<string> Validate_REGION(IReaderRow row)
+            private List<BulkUploadError> Validate_REGION(IReaderRow row)
             {
-                List<string> errors = new List<string>();
+                List<BulkUploadError> errors = new List<BulkUploadError>();
                 string fieldName = "REGION";
                 row.TryGetField(fieldName, out string value);
                 var deliveryMethod = Mandatory_Checks_DELIVERY_METHOD(row);
@@ -690,7 +868,13 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                             var results = ParseRegionData(value);
                             if(!results.Any())
                             {
-                                errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} contains invalid Region names");
+                                errors.Add(new BulkUploadError
+                                {
+                                    LineNumber = row.Context.Row,
+                                    Header = fieldName,
+                                    Error = $"Validation error on row {row.Context.Row}. Field {fieldName} contains invalid Region names"
+
+                                });
                                 return errors;
                             }
                         }
@@ -700,9 +884,9 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
                 return errors;
             }
-            private List<string> Validate_SUB_REGION(IReaderRow row)
+            private List<BulkUploadError> Validate_SUB_REGION(IReaderRow row)
             {
-                List<string> errors = new List<string>();
+                List<BulkUploadError> errors = new List<BulkUploadError>();
                 string fieldName = "SUB_REGION";
                 row.TryGetField(fieldName, out string value);
                 var deliveryMethod = Mandatory_Checks_DELIVERY_METHOD(row);
@@ -716,13 +900,18 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                             var results = ParseSubRegionData(value);
                             if(!results.Any())
                             {
-                                errors.Add($"Validation error on row {row.Context.Row}. Field {fieldName} contains invalid SubRegion names");
+                                errors.Add(new BulkUploadError
+                                {
+                                    LineNumber = row.Context.Row,
+                                    Header = fieldName,
+                                    Error = $"Validation error on row {row.Context.Row}. Field {fieldName} contains invalid SubRegion names"
+
+                                });
                                 return errors;
                             }
                         }
                     }
                 }
-
 
                 return errors;
             }
@@ -848,6 +1037,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
                 return subRegionCodeList.Distinct();
             }
+            
         }
         
     
@@ -882,10 +1072,10 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             return count;
         }
 
-        public List<string> ValidateAndUploadCSV(Stream stream, int UKPRN)
+        public List<string> ValidateAndUploadCSV(Stream stream, AuthUserDetails userDetails)
         {
             Throw.IfNull(stream, nameof(stream));
-            Throw.IfLessThan(0, UKPRN, nameof(UKPRN));
+            Throw.IfNull(userDetails, nameof(userDetails));
             List<string> errors = new List<string>();
             List<ApprenticeshipCsvRecord> records = new List<ApprenticeshipCsvRecord>();
             Dictionary<string, string> duplicateCheck = new Dictionary<string, string>();
@@ -902,25 +1092,23 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                         // Validate the header row.
                         ValidateHeader(csv);
 
-                        var classMap = new ApprenticeshipCsvRecordMap(_apprenticeshipService, _venueService, UKPRN);
+                        var classMap = new ApprenticeshipCsvRecordMap(_apprenticeshipService, _venueService, userDetails);
                         csv.Configuration.RegisterClassMap(classMap);
-
-
 
                         while (csv.Read())
                         {
                            
                             var record = csv.GetRecord<ApprenticeshipCsvRecord>();
-                            
-                            records.Add(record);
+                            record.ApprenticeshipLocations.Add(CreateApprenticeshipLocation(record, userDetails));
                             if (!duplicateCheck.TryAdd(record.Base64Row, record.RowNumber.ToString()))
                             {
                                 var duplicateRow = duplicateCheck[record.Base64Row];
                                 throw new BadDataException(csv.Context,
                                     $"Duplicate entries detected on rows {duplicateRow}, and {record.RowNumber}.");
                             }
-                            errors.AddRange(record.ErrorsList);
+                            errors.AddRange(record.ErrorsList.Select(x => x.Error));
 
+                            records.Add(record);
                             processedRowCount++;
                         }
                     }
@@ -930,42 +1118,46 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                         throw new Exception("No apprenticeship data present in the file.");
                     }
 
-                    //var result = _apprenticeshipService.DeleteBulkUploadApprenticeships(UKPRN);
-                    //if (result.IsCompletedSuccessfully)
-                    //{
-                    //    var apprenticeships = ApprenticeshipCsvRecordToApprenticeship(records, UKPRN);
-                    //    if (!apprenticeships.Any())
-                    //    {
+                    var result = _apprenticeshipService.DeleteBulkUploadApprenticeships(int.Parse(userDetails.UKPRN)).Result;
 
-                    //    }
-                    //}
-                    //else
-                    //{
-                    //    throw new Exception($"Unable to delete bulk upload apprenticeships for {UKPRN}");
-                    //}
-                    
+                    if (result.IsSuccess)
+                    {
+                        var apprenticeships = ApprenticeshipCsvRecordToApprenticeship(records, userDetails);
+                        if (apprenticeships.Any())
+                        {
+                            errors.AddRange(UploadApprenticeships(apprenticeships));
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception($"Unable to delete bulk upload apprenticeships for {int.Parse(userDetails.UKPRN)}");
+                    }
 
-
-                    
                 }
             }
 
             catch (HeaderValidationException ex)
             {
                 string errmsg = $"Invalid header row. {ex.Message.FirstSentence()}";
+
                 errors.Add(errmsg);
+                throw;
             }
             catch (FieldValidationException ex)
             {
                 errors.Add($"{ex.Message}");
+                throw;
             }
             catch (BadDataException ex)
             {
                 errors.Add($"{ex.Message}");
+                throw;
             }
             catch (Exception ex)
             {
                 errors.Add($"{ex.Message}");
+                throw;
+                
             }
 
             return errors;
@@ -985,6 +1177,20 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             return Regex.Replace(value, @"\s+", "");
         }
 
+        private List<string> UploadApprenticeships(List<Apprenticeship> apprenticeships)
+        {
+            List<string> errors = new List<string>();
+            foreach (var apprenticeship in apprenticeships)
+            {
+               var result = _apprenticeshipService.AddApprenticeship(apprenticeship).Result;
+
+               if (result.IsFailure)
+               {
+                   errors.Add($"Unable to add Apprenticeship {apprenticeship.ApprenticeshipTitle}");
+               }
+            }
+            return errors;
+        }
         private static string Base64Encode(IReaderRow row)
         {
             row.TryGetField<string>("STANDARD_CODE", out string STANDARD_CODE);
@@ -1010,24 +1216,118 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
         }
 
         private List<Apprenticeship> ApprenticeshipCsvRecordToApprenticeship(
-            List<ApprenticeshipCsvRecord> records, int UKPRN)
+            List<ApprenticeshipCsvRecord> records, AuthUserDetails userDetails)
         {
             List<Apprenticeship> apprenticeships = new List<Apprenticeship>();
             foreach (var record in records)
             {
-                apprenticeships.Add(
-                    new Apprenticeship
-                    {
-                        id = new Guid(),
-                        //ApprenticeshipTitle = record //From Standard or Framework
-                        //ProviderId // From Provider
-                        ProviderUKPRN = UKPRN,
-                        ApprenticeshipType = record.STANDARD_CODE.HasValue ? ApprenticeshipType.StandardCode : ApprenticeshipType.FrameworkCode
-                    
+                var alreadyExists = DoesApprenticeshipExist(apprenticeships, record);
 
-                    });
+                if (alreadyExists != null)
+                {
+                    var apprenticeship = apprenticeships.FirstOrDefault(x => x == alreadyExists);
+                    apprenticeship?.ApprenticeshipLocations.AddRange(record.ApprenticeshipLocations);
+                }
+                else
+                {
+                    apprenticeships.Add(
+                        new Apprenticeship
+                        {
+                            id = new Guid(),
+                            ApprenticeshipTitle = record.Framework == null
+                                ? record.Standard.StandardName
+                                : record.Framework.NasTitle,
+                            ProviderId = userDetails.ProviderID ?? Guid.Empty,
+                            ProviderUKPRN = int.Parse(userDetails.UKPRN),
+                            ApprenticeshipLocations = record.ApprenticeshipLocations,
+                            ApprenticeshipType = record.ApprenticeshipType,
+                            FrameworkId = record.Framework?.id,
+                            StandardId = record.Standard?.id,
+                            FrameworkCode = record.Framework?.FrameworkCode,
+                            ProgType = record.Framework?.ProgType,
+                            PathwayCode = record.Framework?.PathwayCode,
+                            StandardCode = record.Standard?.StandardCode,
+                            Version = record.Standard?.Version,
+                            NotionalNVQLevelv2 = record.Framework == null
+                                ? record.Standard.NotionalEndLevel
+                                : record.Framework.NotionalEndLevel,
+                            MarketingInformation = record.APPRENTICESHIP_INFORMATION,
+                            Url = record.APPRENTICESHIP_WEBPAGE,
+                            ContactTelephone = record.CONTACT_PHONE,
+                            ContactEmail = record.CONTACT_EMAIL,
+                            ContactWebsite = record.CONTACT_URL,
+                            RecordStatus = record.ErrorsList.Any() ? RecordStatus.BulkUploadPending : RecordStatus.BulkUploadReadyToGoLive,
+                            CreatedDate = DateTime.Now,
+                            CreatedBy = userDetails.UserId.ToString(),
+                            BulkUploadErrors = record.ErrorsList
+                        });
+                }
+                
             }
             return apprenticeships;
         }
+
+        private Apprenticeship DoesApprenticeshipExist(List<Apprenticeship> apprenticeships, ApprenticeshipCsvRecord record)
+        {
+            if (record.ApprenticeshipType == ApprenticeshipType.StandardCode)
+            {
+                var existingApprenticeships = apprenticeships.Where(x =>
+                    x.StandardCode == record.STANDARD_CODE && x.Version == record.STANDARD_VERSION);
+                return existingApprenticeships.FirstOrDefault(x => x.ApprenticeshipLocations.Any(y => y.ApprenticeshipLocationType == (ApprenticeshipLocationType)record.DELIVERY_METHOD));
+            }
+            else
+            {
+                var existingApprenticeships = apprenticeships.Where(x =>
+                    x.FrameworkCode == record.FRAMEWORK_CODE && 
+                    x.ProgType == record.FRAMEWORK_PROG_TYPE && 
+                    x.PathwayCode ==  record.FRAMEWORK_PATHWAY_CODE);
+
+                return existingApprenticeships.FirstOrDefault(x => x.ApprenticeshipLocations.Any(y => y.ApprenticeshipLocationType == (ApprenticeshipLocationType)record.DELIVERY_METHOD));
+            }
+        }
+        private ApprenticeshipLocation CreateApprenticeshipLocation(ApprenticeshipCsvRecord record, AuthUserDetails authUserDetails)
+        {
+            Venue venue = null;
+            if (record.VENUE?.Count == 1)
+            {
+                venue = record.VENUE.FirstOrDefault();
+            }
+            return new ApprenticeshipLocation
+            {
+                Id = new Guid(),
+                Name = venue?.VenueName,
+                CreatedDate = DateTime.Now,
+                CreatedBy = authUserDetails.Email,
+                ApprenticeshipLocationType = (ApprenticeshipLocationType) record.DELIVERY_METHOD,
+                LocationType = LocationType.Venue,
+                RecordStatus = record.ErrorsList.Any() ? RecordStatus.BulkUploadPending : RecordStatus.BulkUploadReadyToGoLive,
+                Regions = record.RegionsList.ToArray(),
+                National = record.NATIONAL_DELIVERY,
+                TribalId = venue?.TribalLocationId,
+                ProviderId = venue?.ProviderID,
+                LocationId = venue?.LocationId,
+                VenueId = Guid.TryParse(venue?.ID, out var venueId) ? venueId : Guid.Empty,
+                Address = venue != null
+                    ? new Address
+                    {
+                        Address1 = venue.Address1,
+                        Address2 = venue.Address2,
+                        Town = venue.Town,
+                        County = venue.County,
+                        Postcode = venue.PostCode,
+                        Email = venue.Email,
+                        Phone = venue.Telephone,
+                        Website = venue.Website,
+                        Latitude = (double) venue.Latitude,
+                        Longitude = (double) venue.Longitude
+                    }
+                    : null,
+                LocationGuidId = Guid.TryParse(venue?.ID, out var locationGuid) ? locationGuid : Guid.Empty,
+                Radius = record.RADIUS,
+                DeliveryModes = record.DELIVERY_MODE
+            };
+          
+        }
+
     }
 }

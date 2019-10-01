@@ -3,10 +3,16 @@ using Dfc.CourseDirectory.Services.Tests.Unit.Helpers;
 using FluentAssertions;
 using Moq;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Security.Claims;
+using CsvHelper;
+using Dfc.CourseDirectory.Common;
+using Dfc.CourseDirectory.Models.Models.Auth;
 using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.Tests.Unit.Mocks;
+using Microsoft.AspNetCore.Http;
 using Xunit;
 namespace Dfc.CourseDirectory.Services.Tests.Unit
 {
@@ -15,8 +21,25 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
     /// </summary>
     public class ApprenticeshipBulkUploadServiceTests
     {
+        private readonly AuthUserDetails _authUserDetails;
+        public ApprenticeshipBulkUploadServiceTests()
+        {
+           _authUserDetails  = new AuthUserDetails(
+            
+                userId: Guid.NewGuid(),
+                email : "email@testEmail.com",
+                nameOfUser : "Test User",
+                providerType : "Provider",
+                roleId : Guid.NewGuid(),
+                roleName : "Developer",
+                ukPrn : "12345678",
+                userName: "email@testEmail.com",
+                providerId: Guid.NewGuid()
+            );
+        }
         public class CountCSVLines
         {
+            
             [Fact]
             public void When_File_Is_Empty_Then_Return0()
             {
@@ -60,6 +83,22 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
         public class ValidateCSVFormat
         {
+            private readonly AuthUserDetails _authUserDetails;
+            public ValidateCSVFormat()
+            {
+               _authUserDetails = new AuthUserDetails(
+            
+                    userId: Guid.NewGuid(),
+                    email : "email@testEmail.com",
+                    nameOfUser : "Test User",
+                    providerType : "Provider",
+                    roleId : Guid.NewGuid(),
+                    roleName : "Developer",
+                    ukPrn : "12345678",
+                    userName: "email@testEmail.com",
+                    providerId: Guid.NewGuid()
+                );
+            }
             [Fact]
             public void When_File_Is_Null_Then_ThrowException()
             {
@@ -73,7 +112,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                Action act = () => serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                Action act = () => serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
 
                 // Assert
 
@@ -91,9 +130,18 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = new MemoryStream();
 
+                List<string> errors = new List<string>();
                 // Act
+                try
+                {
+                    errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
+                }
+                catch (Exception e)
+                {
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                    errors.Add(e.Message);
+
+                }
 
                 // Assert
 
@@ -112,10 +160,18 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 var venueMock = VenueServiceMockFactory.GetVenueService(null);
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.No_Header_Row();
-
+                List<string> errors = new List<string>();
                 // Act
+                try
+                {
+                    errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
+                }
+                catch (Exception e)
+                {
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                    errors.Add($"Invalid header row. {e.Message.FirstSentence()}");
+
+                }
 
                 // Assert
 
@@ -135,9 +191,18 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.Only_Header_Row();
 
+                List<string> errors = new List<string>();
                 // Act
+                try
+                {
+                    errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
+                }
+                catch (Exception e)
+                {
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                    errors.Add(e.Message);
+
+                }
 
                 // Assert
 
@@ -151,6 +216,24 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
         public class ValidateCSVContents
         {
+            private readonly AuthUserDetails _authUserDetails;
+
+            public ValidateCSVContents()
+            {
+               _authUserDetails  = new AuthUserDetails(
+            
+                    userId: Guid.NewGuid(),
+                    email : "email@testEmail.com",
+                    nameOfUser : "Test User",
+                    providerType : "Provider",
+                    roleId : Guid.NewGuid(),
+                    roleName : "Developer",
+                    ukPrn : "12345678",
+                    userName : "email@testEmail.com",
+                    providerId : Guid.NewGuid()
+                );
+                
+            }
             [Fact]
             public void When_Field_STANDARD_CODE_Is_PresentAndNonNumeric_Then_ReturnError()
             {
@@ -162,9 +245,18 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 Stream stream = CsvStreams.InvalidField_STANDARD_CODE_MustBeNumericIfPresent();
 
+                List<string> errors = new List<string>();
                 // Act
+                try
+                {
+                    errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
+                }
+                catch (Exception e)
+                {
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                    errors.Add(e.Message);
+
+                }
 
                 // Assert
 
@@ -184,9 +276,18 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.InvalidField_STANDARD_VERSION_MustBeNumericIfPresent();
 
+                List<string> errors = new List<string>();
                 // Act
+                try
+                {
+                    errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
+                }
+                catch (Exception e)
+                {
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                    errors.Add(e.Message);
+
+                }
 
                 // Assert
 
@@ -206,9 +307,19 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.InvalidField_FRAMEWORK_CODE_MustBeNumericIfPresent();
 
+                List<string> errors = new List<string>();
                 // Act
-
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                try
+                {
+                    errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
+                }
+                catch (Exception e)
+                {
+                    
+                    errors.Add(e.Message);
+                    
+                }
+                
 
                 // Assert
 
@@ -228,9 +339,18 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.InvalidField_FRAMEWORK_PROG_TYPE_MustBeNumericIfPresent();
 
+                List<string> errors = new List<string>();
                 // Act
+                try
+                {
+                    errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
+                }
+                catch (Exception e)
+                {
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                    errors.Add(e.Message);
+
+                }
 
                 // Assert
 
@@ -250,9 +370,18 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.InvalidField_FRAMEWORK_PATHWAY_CODE_MustBeNumericIfPresent();
 
+                List<string> errors = new List<string>();
                 // Act
+                try
+                {
+                    errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
+                }
+                catch (Exception e)
+                {
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                    errors.Add(e.Message);
+
+                }
 
                 // Assert
 
@@ -272,9 +401,18 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.InvalidRow_StandardAndFrameworkValuesMissing();
 
+                List<string> errors = new List<string>();
                 // Act
+                try
+                {
+                    errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
+                }
+                catch (Exception e)
+                {
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                    errors.Add(e.Message);
+
+                }
 
                 // Assert
 
@@ -297,7 +435,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
 
                 // Assert
 
@@ -320,7 +458,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
 
                 // Assert
 
@@ -342,7 +480,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
 
                 // Assert
 
@@ -364,7 +502,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
 
                 // Assert
 
@@ -386,7 +524,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
 
                 // Assert
 
@@ -407,7 +545,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
 
                 // Assert
 
@@ -429,7 +567,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
 
                 // Assert
 
@@ -451,7 +589,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
 
                 // Assert
 
@@ -473,7 +611,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
 
                 // Assert
 
@@ -495,7 +633,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
 
                 // Assert
 
@@ -517,7 +655,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
 
                 // Assert
 
@@ -539,7 +677,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
 
                 // Assert
 
@@ -560,7 +698,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
 
                 // Assert
 
@@ -580,7 +718,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 Stream stream = CsvStreams.InvalidField_CONTACT_URL_Invalid_URL_Space();
 
                 // Act
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -599,7 +737,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 Stream stream = CsvStreams.InvalidField_CONTACT_URL_Invalid_URL_Format();
 
                 // Act
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -619,7 +757,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
 
                 // Assert
 
@@ -639,7 +777,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
 
                 // Assert
 
@@ -660,7 +798,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
 
                 // Assert
 
@@ -679,7 +817,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
 
                 // Assert
 
@@ -698,7 +836,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -718,7 +856,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
 
                 // Assert
 
@@ -735,9 +873,18 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.InvalidField_RADIUS_MustBeNumericIfPresent();
 
+                List<string> errors = new List<string>();
                 // Act
+                try
+                {
+                    errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
+                }
+                catch (Exception e)
+                {
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                    errors.Add(e.Message);
+
+                }
 
                 // Assert
 
@@ -759,7 +906,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
 
                 // Assert
 
@@ -781,7 +928,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
 
                 // Assert
 
@@ -803,7 +950,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
 
 
                 // Assert
@@ -823,7 +970,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
 
 
                 // Assert
@@ -834,17 +981,18 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
             [Fact]
             public void When_ACROSS_ENGLAND_Is_True_Return_Radius_600()
             {
-                // Arrange
+
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(null);
                 var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
                 var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
+           
                 Stream stream = CsvStreams.ValidRow_ACROSS_ENGLAND_TRUE();
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
 
 
                 // Assert
@@ -863,7 +1011,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -885,7 +1033,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -907,7 +1055,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -929,7 +1077,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -951,7 +1099,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -973,7 +1121,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);;
 
                 // Assert
                 errors.Should().BeNullOrEmpty();
@@ -995,7 +1143,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -1018,7 +1166,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -1029,6 +1177,23 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
         public class CheckForDuplicatesTest
         {
+            private readonly AuthUserDetails _authUserDetails;
+
+            public CheckForDuplicatesTest()
+            {
+               _authUserDetails  = new AuthUserDetails(
+            
+                    userId: Guid.NewGuid(),
+                    email : "email@testEmail.com",
+                    nameOfUser : "Test User",
+                    providerType : "Provider",
+                    roleId : Guid.NewGuid(),
+                    roleName : "Developer",
+                    ukPrn : "12345678",
+                    userName: "email@testEmail.com",
+                    providerId: Guid.NewGuid()
+                );
+            }
             [Fact]
             public void When_Duplicate_StandardCodes_Exist_Return_Error()
             {
@@ -1042,8 +1207,18 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.InvalidFile_Duplicate_STANDARD_CODES_SameDeliveryMethod_Same_Venue();
 
+                List<string> errors = new List<string>();
                 // Act
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                try
+                {
+                    errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
+                }
+                catch (Exception e)
+                {
+
+                    errors.Add(e.Message);
+
+                }
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -1063,8 +1238,18 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.InvalidRow_FrameworkCodes_DuplicateRows();
 
+                List<string> errors = new List<string>();
                 // Act
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                try
+                {
+                    errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
+                }
+                catch (Exception e)
+                {
+
+                    errors.Add(e.Message);
+
+                }
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -1074,6 +1259,22 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
         }
         public class StandardsAndFrameworksTests
         {
+            private readonly AuthUserDetails _authUserDetails;
+            public StandardsAndFrameworksTests()
+            {
+               _authUserDetails  = new AuthUserDetails(
+            
+                    userId: Guid.NewGuid(),
+                    email : "email@testEmail.com",
+                    nameOfUser : "Test User",
+                    providerType : "Provider",
+                    roleId : Guid.NewGuid(),
+                    roleName : "Developer",
+                    ukPrn : "12345678",
+                    userName: "email@testEmail.com",
+                    providerId: Guid.NewGuid()
+                );
+            }
             [Fact]
             public void When_StandardCode_Is_Not_Valid_Return_Error()
             {
@@ -1086,9 +1287,18 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.InvalidField_STANDARD_CODE_InvalidNumber();
 
+                List<string> errors = new List<string>();
                 // Act
+                try
+                {
+                    errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
+                }
+                catch (Exception e)
+                {
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                    errors.Add(e.Message);
+
+                }
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -1111,7 +1321,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
 
                 // Assert
                 errors.Should().BeNullOrEmpty();
@@ -1131,9 +1341,18 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.InvalidField_STANDARD_CODE_InvalidNumber();
 
+                List<string> errors = new List<string>();
                 // Act
+                try
+                {
+                    errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
+                }
+                catch (Exception e)
+                {
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                    errors.Add(e.Message);
+
+                }
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -1152,9 +1371,18 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
                 Stream stream = CsvStreams.InvalidField_FRAMEWORK_Values_Invalid();
 
+                List<string> errors = new List<string>();
                 // Act
+                try
+                {
+                    errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
+                }
+                catch (Exception e)
+                {
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                    errors.Add(e.Message);
+
+                }
 
                 // Assert
                 errors.Should().NotBeNull();
@@ -1176,13 +1404,33 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Act
 
-                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, 12345678);
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
 
                 // Assert
                 errors.Should().BeNullOrEmpty();
                 errors.Should().HaveCount(0);
             }
+            [Fact]
+            public void When_StandardCode_Version_DeliveryMethod_Are_Same_Are_Valid_Return_Success()
+            {
+                // Arrange
+                var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
+                var httpClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulStandardFile(), HttpStatusCode.OK);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile_Individual_Venues(), HttpStatusCode.OK);
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(httpClient);
 
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
+                Stream stream = CsvStreams.ValidRow_StandardCode_Different_Venues();
+
+                // Act
+
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails); ;
+
+                // Assert
+                errors.Should().BeNullOrEmpty();
+                errors.Should().HaveCount(0);
+            }
         }
     }
 }

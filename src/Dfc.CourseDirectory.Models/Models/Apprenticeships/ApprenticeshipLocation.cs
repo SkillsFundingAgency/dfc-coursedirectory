@@ -8,7 +8,7 @@ namespace Dfc.CourseDirectory.Models.Models.Apprenticeships
     public class ApprenticeshipLocation : IApprenticeshipLocation
     {
         public Guid Id { get; set; }
-        public Guid VenueId { get; set; }
+        public Guid? VenueId { get; set; }
         public int? TribalId { get; set; }
         public int ApprenticeshipLocationId { get; set; }
         public Guid? LocationGuidId { get; set; }
@@ -19,7 +19,7 @@ namespace Dfc.CourseDirectory.Models.Models.Apprenticeships
         public string Name { get; set; }
         public string Phone { get; set; }
         public int ProviderUKPRN { get; set; } // As we are trying to inforce unique UKPRN per Provider
-        public int ProviderId { get; set; }
+        public int? ProviderId { get; set; }
         public string[] Regions { get; set; }
         public ApprenticeshipLocationType ApprenticeshipLocationType { get; set; }
         public LocationType LocationType { get; set; }

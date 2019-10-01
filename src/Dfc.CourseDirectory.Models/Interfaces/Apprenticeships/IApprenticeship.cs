@@ -2,6 +2,7 @@
 using Dfc.CourseDirectory.Models.Models.Apprenticeships;
 using System;
 using System.Collections.Generic;
+using Dfc.CourseDirectory.Models.Models.Courses;
 
 
 namespace Dfc.CourseDirectory.Models.Interfaces.Apprenticeships
@@ -34,7 +35,7 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Apprenticeships
         string ContactEmail { get; set; }
         string ContactWebsite { get; set; }
 
-        IEnumerable<ApprenticeshipLocation> ApprenticeshipLocations { get; set; }
+        List<ApprenticeshipLocation> ApprenticeshipLocations { get; set; }
 
         // Standard auditing properties 
         RecordStatus RecordStatus { get; set; }
@@ -44,5 +45,6 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Apprenticeships
         string UpdatedBy { get; set; }
 
         string NotionalNVQLevelv2 { get; set; }
+        List<BulkUploadError> BulkUploadErrors { get; set; }
     }
 }

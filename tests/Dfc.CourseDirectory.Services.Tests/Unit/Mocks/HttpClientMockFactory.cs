@@ -32,7 +32,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit.Mocks
                 .Verifiable();
             return new HttpClient(handlerMock.Object)
             {
-                BaseAddress = new Uri("http://test.com/"),
+                BaseAddress = new Uri("http://test.com/")
             };
         }
     }
