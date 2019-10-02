@@ -230,6 +230,25 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return View("../BulkUploadApprenticeships/WhatDoYouWantToDoNext/Index", model);
         }
 
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> WhatDoYouWantToDoNext(WhatDoYouWantToDoNextViewModel model)
+        {
+            bool fromBulkUpload = !string.IsNullOrEmpty(model.Message);
+
+            switch (model.WhatDoYouWantToDoNext)
+            {
+                case Models.Enums.WhatDoYouWantToDoNext.OnScreen:
+                    return RedirectToAction("Index", "PublishCourses", new { publishMode = PublishMode.BulkUpload, fromBulkUpload });
+                case Models.Enums.WhatDoYouWantToDoNext.DownLoad:
+                    return RedirectToAction("DownloadErrorFile", "BulkUpload");
+                case Models.Enums.WhatDoYouWantToDoNext.Delete:
+                    return RedirectToAction("DeleteFile", "BulkUpload");
+                default:
+                    return RedirectToAction("WhatDoYouWantToDoNext", "BulkUpload");
+
+            }
+        }
           [Authorize]
         [HttpGet]
         public IActionResult DownloadErrorFile()
