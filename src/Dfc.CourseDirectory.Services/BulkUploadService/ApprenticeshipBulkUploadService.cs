@@ -1115,7 +1115,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
                     if(0 == processedRowCount)
                     {
-                        throw new Exception("No apprenticeship data present in the file.");
+                        throw new Exception("The selected file is empty");
                     }
 
                     var result = _apprenticeshipService.DeleteBulkUploadApprenticeships(int.Parse(userDetails.UKPRN)).Result;

@@ -208,7 +208,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 errors.Should().NotBeNull();
                 errors.Should().HaveCount(1);
-                errors[0].Should().Be("No apprenticeship data present in the file.");
+                errors[0].Should().Be("The selected file is empty");
             }
 
            
