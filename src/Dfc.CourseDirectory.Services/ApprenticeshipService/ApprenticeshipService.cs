@@ -21,7 +21,8 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
         private readonly ApprenticeshipServiceSettings _settings;
         private readonly HttpClient _httpClient;
         private readonly Uri _getStandardsAndFrameworksUri, _addApprenticeshipUri, _getApprenticeshipByUKPRNUri, 
-            _getApprenticeshipByIdUri, _updateApprenticshipUri, _getStandardByCodeUri, _getFrameworkByCodeUri, _deleteBulkUploadApprenticeshipsUri;
+            _getApprenticeshipByIdUri, _updateApprenticshipUri, _getStandardByCodeUri, _getFrameworkByCodeUri, _deleteBulkUploadApprenticeshipsUri,
+            _changeApprenticeshipStatusesForUKPRNSelectionUri;
 
         public ApprenticeshipService(
             ILogger<ApprenticeshipService> logger,
@@ -44,6 +45,8 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             _getStandardByCodeUri = settings.Value.GetStandardByCodeUri();
             _getFrameworkByCodeUri = settings.Value.GetFrameworkByCodeUri();
             _deleteBulkUploadApprenticeshipsUri = settings.Value.DeleteBulkUploadApprenticeshipsUri();
+            _changeApprenticeshipStatusesForUKPRNSelectionUri =
+                settings.Value.ChangeApprenticeshipStatusesForUKPRNSelectionUri();
         }
 
         public async Task<IResult<IEnumerable<IStandardsAndFrameworks>>> StandardsAndFrameworksSearch(string criteria, int UKPRN)
@@ -387,6 +390,27 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
                 return Result.Fail("Delete Bulk Upload Apprenticeship http response");
             }
         }
+        public async Task<IResult> ChangeApprenticeshipStatusesForUKPRNSelection(int UKPRN, int CurrentStatus, int StatusToBeChangedTo)
+        {
+            Throw.IfNull(UKPRN, nameof(UKPRN));
+            Throw.IfNull(CurrentStatus, nameof(CurrentStatus));
+            Throw.IfNull(StatusToBeChangedTo, nameof(StatusToBeChangedTo));
+
+            
+            
+            _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
+
+            var response = await _httpClient.GetAsync(new Uri(_changeApprenticeshipStatusesForUKPRNSelectionUri.AbsoluteUri + "?UKPRN=" + UKPRN + "&CurrentStatus=" + CurrentStatus + "&StatusToBeChangedTo=" + StatusToBeChangedTo));
+            _logger.LogHttpResponseMessage("ChangeApprenticeshipStatusesForUKPRNSelection service http response", response);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return Result.Ok();
+            }
+
+            return Result.Fail("ChangeApprenticeshipStatusesForUKPRNSelection service unsuccessful http response");
+            
+        }
     }
 
     internal static class ApprenticeshipServiceSettingsExtensions
@@ -441,6 +465,12 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             var uri = new Uri(extendee.ApiUrl);
             var trimmed = uri.AbsoluteUri.TrimEnd('/');
             return new Uri($"{trimmed}/UpdateApprenticeship");
+        }        
+        internal static Uri ChangeApprenticeshipStatusesForUKPRNSelectionUri(this IApprenticeshipServiceSettings extendee)
+        {
+            var uri = new Uri(extendee.ApiUrl);
+            var trimmed = uri.AbsoluteUri.TrimEnd('/');
+            return new Uri($"{trimmed}/ChangeApprenticeshipStatusForUKPRNSelection");
         }
     }
 }

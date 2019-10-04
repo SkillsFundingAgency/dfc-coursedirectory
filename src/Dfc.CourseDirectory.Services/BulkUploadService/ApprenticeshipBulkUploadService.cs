@@ -920,7 +920,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
             private int? ValueMustBeNumericIfPresent(IReaderRow row, string fieldName)
             {
-                if (!row.TryGetField<int?>(fieldName, out int? value))
+                if (!row.TryGetField<int?>(fieldName, out var value))
                 {
                     throw new FieldValidationException(row.Context, fieldName, $"Validation error on row {row.Context.Row}. Field {fieldName} must be numeric if present.");
                 }
