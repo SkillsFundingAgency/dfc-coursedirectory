@@ -167,9 +167,10 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             private IStandardsAndFrameworks Mandatory_Checks_GetStandard(IReaderRow row)
             {
                 var standardCode = Mandatory_Checks_STANDARD_CODE(row);
+                var standardVersion = Mandatory_Checks_STANDARD_VERSION(row);
+
                 if (standardCode.HasValue)
                 {
-                    var standardVersion = Mandatory_Checks_STANDARD_VERSION(row);
                     if (standardVersion.HasValue)
                     {
                         var result = GetStandard(standardCode, standardVersion);
@@ -180,6 +181,15 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
                         return result;
                     }
+                    else
+                    {
+                        throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Missing Standard Version.");
+                    }
+                }
+
+                if (!standardCode.HasValue && standardVersion.HasValue)
+                {
+                    throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Missing Standard Code.");
                 }
                 
                 return null;
@@ -207,12 +217,12 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             private IStandardsAndFrameworks Mandatory_Checks_GetFramework(IReaderRow row)
             {
                 var frameworkCode = Mandatory_Checks_FRAMEWORK_CODE(row);
+                var progType = Mandatory_Checks_FRAMEWORK_PROG_TYPE(row);
+                var pathwayCode = Mandatory_Checks_FRAMEWORK_PATHWAY_CODE(row);
                 if (frameworkCode.HasValue)
                 {
-                    var progType = Mandatory_Checks_FRAMEWORK_PROG_TYPE(row);
                     if (progType.HasValue)
                     {
-                        var pathwayCode = Mandatory_Checks_FRAMEWORK_PATHWAY_CODE(row);
                         if (pathwayCode.HasValue)
                         {
                             var result = GetFramework(frameworkCode, progType, pathwayCode);
@@ -223,8 +233,21 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
                             return result;
                         }
+                        else
+                        {
+                            throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Missing Pathway Type.");
+                        }
 
                     }
+                    else
+                    {
+                        throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Missing Prog Type.");
+                    }
+                }
+
+                if (!frameworkCode.HasValue && (pathwayCode.HasValue || progType.HasValue))
+                {
+                    throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Missing Framework Code.");
                 }
 
                 return null;

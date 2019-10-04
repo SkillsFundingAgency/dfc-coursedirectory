@@ -27,6 +27,7 @@ using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 using Dfc.CourseDirectory.Models.Models.Providers;
 using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
+using Dfc.CourseDirectory.Web.ViewModels.PublishApprenticeships;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -238,7 +239,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             switch (model.WhatDoYouWantToDoNext)
             {
                 case Models.Enums.WhatDoYouWantToDoNext.OnScreen:
-                    return RedirectToAction("Index", "PublishCourses", new { publishMode = PublishMode.ApprenticeshipBulkUpload, fromBulkUpload });
+                    return RedirectToAction("Index", "PublishApprenticeships");
                 case Models.Enums.WhatDoYouWantToDoNext.DownLoad:
                     return RedirectToAction("DownloadErrorFile", "BulkUploadApprenticeships");
                 case Models.Enums.WhatDoYouWantToDoNext.Delete:
