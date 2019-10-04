@@ -1186,7 +1186,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
                if (result.IsFailure)
                {
-                   errors.Add($"Unable to add Apprenticeship {apprenticeship.ApprenticeshipTitle}");
+                   throw new Exception($"Unable to add Apprenticeship {apprenticeship.ApprenticeshipTitle}");
                }
             }
             return errors;
@@ -1233,7 +1233,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                     apprenticeships.Add(
                         new Apprenticeship
                         {
-                            id = new Guid(),
+                            id = Guid.NewGuid(),
                             ApprenticeshipTitle = record.Framework == null
                                 ? record.Standard.StandardName
                                 : record.Framework.NasTitle,
@@ -1294,7 +1294,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             }
             return new ApprenticeshipLocation
             {
-                Id = new Guid(),
+                Id = Guid.NewGuid(),
                 Name = venue?.VenueName,
                 CreatedDate = DateTime.Now,
                 CreatedBy = authUserDetails.Email,
