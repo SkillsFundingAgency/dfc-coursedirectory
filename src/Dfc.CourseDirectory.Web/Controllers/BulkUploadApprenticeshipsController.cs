@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using CsvHelper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -25,6 +26,7 @@ using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 using Dfc.CourseDirectory.Models.Models.Providers;
+using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -33,6 +35,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly ILogger<BulkUploadApprenticeshipsController> _logger;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IApprenticeshipBulkUploadService _apprenticeshipBulkUploadService;
+        private readonly IApprenticeshipService _apprenticeshipService;
         private readonly IBlobStorageService _blobService;
         private readonly ICourseService _courseService;
         private readonly IProviderService _providerService;
@@ -45,6 +48,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             ILogger<BulkUploadApprenticeshipsController> logger,
             IHttpContextAccessor contextAccessor,
             IApprenticeshipBulkUploadService apprenticeshipBulkUploadService,
+            IApprenticeshipService apprenticeshipService,
             IBlobStorageService blobService,
             ICourseService courseService,
             IHostingEnvironment env,
@@ -60,6 +64,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             Throw.IfNull(courseService, nameof(courseService));
             Throw.IfNull(providerService, nameof(providerService));
             Throw.IfNull(userHelper, nameof(userHelper));
+            Throw.IfNull(apprenticeshipService, nameof(apprenticeshipService));
 
             _logger = logger;
             _contextAccessor = contextAccessor;
@@ -70,6 +75,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _courseService = courseService;
             _providerService = providerService;
             _userHelper = userHelper;
+            _apprenticeshipService = apprenticeshipService;
         }
 
         
@@ -167,7 +173,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     List<string> errors = new List<string>();
                     try
                     {
-                        errors = _apprenticeshipBulkUploadService.ValidateAndUploadCSV(ms, _userHelper.GetUserDetailsFromClaims(this.HttpContext.User.Claims, UKPRN));
+                        errors = _apprenticeshipBulkUploadService.ValidateAndUploadCSV(ms,
+                            _userHelper.GetUserDetailsFromClaims(this.HttpContext.User.Claims, UKPRN));
                     }
                     catch (Exception e)
                     {
@@ -176,27 +183,19 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         return View(vm);
                     }
 
-                    
-                    if (processInline)
-                    {
-                        
-                        if (errors.Any())
-                        {
-                            return RedirectToAction("WhatDoYouWantToDoNext", "BulkUploadApprenticeships",
-                                new { publishMode = PublishMode.BulkUpload, fromBulkUpload = true });
-                        }
-                        // All good => redirect to BulkApprenticeship action
-                        return RedirectToAction("Index", "PublishApprenticeships",
-                            new PublishViewModel
-                            {
-                                NumberOfCoursesInFiles = csvLineCount - 1
-                            });
 
+                    if (!processInline) return RedirectToAction("Pending");
+
+                    if (errors.Any())
+                    {
+                        return RedirectToAction("WhatDoYouWantToDoNext", "BulkUploadApprenticeships",
+                            new { publishMode = PublishMode.BulkUpload, fromBulkUpload = true });
                     }
 
-                    return RedirectToAction("Pending");
-                    
-                    
+                    // All good => redirect to BulkApprenticeship action
+                    return RedirectToAction("PublishYourFile", "BulkUploadApprenticeships", new {numberOfApprenticeships = csvLineCount - 1});
+
+
 
                 }
                 else
@@ -239,13 +238,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
             switch (model.WhatDoYouWantToDoNext)
             {
                 case Models.Enums.WhatDoYouWantToDoNext.OnScreen:
-                    return RedirectToAction("Index", "PublishCourses", new { publishMode = PublishMode.BulkUpload, fromBulkUpload });
+                    return RedirectToAction("Index", "PublishCourses", new { publishMode = PublishMode.ApprenticeshipBulkUpload, fromBulkUpload });
                 case Models.Enums.WhatDoYouWantToDoNext.DownLoad:
-                    return RedirectToAction("DownloadErrorFile", "BulkUpload");
+                    return RedirectToAction("DownloadErrorFile", "BulkUploadApprenticeships");
                 case Models.Enums.WhatDoYouWantToDoNext.Delete:
-                    return RedirectToAction("DeleteFile", "BulkUpload");
+                    return RedirectToAction("DeleteFile", "BulkUploadApprenticeships");
                 default:
-                    return RedirectToAction("WhatDoYouWantToDoNext", "BulkUpload");
+                    return RedirectToAction("WhatDoYouWantToDoNext", "BulkUploadApprenticeships");
 
             }
         }
@@ -338,13 +337,35 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> PublishYourFile(int NumberOfApprenticships)
+        public async Task<IActionResult> PublishYourFile(int numberOfApprenticeships)
         {
             var model = new ApprenticeshipsPublishYourFileViewModel();
 
-            model.NumberOfApprenticeships = NumberOfApprenticships;
+            model.NumberOfApprenticeships = numberOfApprenticeships;
 
             return View("../BulkUploadApprenticeships/PublishYourFile/Index", model);
+        }
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> PublishYourFile(ApprenticeshipsPublishYourFileViewModel model)
+        {
+            int? sUKPRN = _session.GetInt32("UKPRN");
+            int UKPRN;
+            if (!sUKPRN.HasValue)
+            {
+                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
+            }
+
+            UKPRN = sUKPRN ?? 0;
+            
+
+            var resultArchivingApprenticeships = await _apprenticeshipService.ChangeApprenticeshipStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.Live, (int)RecordStatus.Archived);
+            if (resultArchivingApprenticeships.IsSuccess)
+            {
+                await _apprenticeshipService.ChangeApprenticeshipStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.BulkUploadReadyToGoLive, (int)RecordStatus.Live);
+            }
+            //to publish stuff
+            return View("../BulkUploadApprenticeships/Complete/Index", new ApprenticeshipsPublishCompleteViewModel() { NumberOfApprenticeshipsPublished = model.NumberOfApprenticeships, Mode = PublishMode.ApprenticeshipBulkUpload });
         }
     
         private Provider FindProvider(int prn)

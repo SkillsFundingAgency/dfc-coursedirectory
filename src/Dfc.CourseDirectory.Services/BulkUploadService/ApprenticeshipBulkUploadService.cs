@@ -920,7 +920,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
             private int? ValueMustBeNumericIfPresent(IReaderRow row, string fieldName)
             {
-                if (!row.TryGetField<int?>(fieldName, out int? value))
+                if (!row.TryGetField<int?>(fieldName, out var value))
                 {
                     throw new FieldValidationException(row.Context, fieldName, $"Validation error on row {row.Context.Row}. Field {fieldName} must be numeric if present.");
                 }
@@ -1115,7 +1115,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
                     if(0 == processedRowCount)
                     {
-                        throw new Exception("No apprenticeship data present in the file.");
+                        throw new Exception("The selected file is empty");
                     }
 
                     var result = _apprenticeshipService.DeleteBulkUploadApprenticeships(int.Parse(userDetails.UKPRN)).Result;
@@ -1186,7 +1186,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
                if (result.IsFailure)
                {
-                   errors.Add($"Unable to add Apprenticeship {apprenticeship.ApprenticeshipTitle}");
+                   throw new Exception($"Unable to add Apprenticeship {apprenticeship.ApprenticeshipTitle}");
                }
             }
             return errors;
@@ -1233,7 +1233,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                     apprenticeships.Add(
                         new Apprenticeship
                         {
-                            id = new Guid(),
+                            id = Guid.NewGuid(),
                             ApprenticeshipTitle = record.Framework == null
                                 ? record.Standard.StandardName
                                 : record.Framework.NasTitle,
@@ -1294,7 +1294,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             }
             return new ApprenticeshipLocation
             {
-                Id = new Guid(),
+                Id = Guid.NewGuid(),
                 Name = venue?.VenueName,
                 CreatedDate = DateTime.Now,
                 CreatedBy = authUserDetails.Email,

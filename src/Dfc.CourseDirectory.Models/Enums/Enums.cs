@@ -78,7 +78,9 @@ namespace Dfc.CourseDirectory.Models.Enums
         [Description("DataQualityIndicator")]
         DataQualityIndicator = 3,
         [Description("Summary")]
-        Summary = 4
+        Summary = 4,
+        [Description("ApprenticeshipBulkUpload")]
+        ApprenticeshipBulkUpload = 5
 
     }
     public enum FundingOptions
