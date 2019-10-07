@@ -194,7 +194,7 @@ namespace Dfc.CourseDirectory.Web
             services.AddResponseCaching();
             services.AddSession(options =>
             {
-                options.IdleTimeout = TimeSpan.FromMinutes(30); //.FromSeconds(18);
+                options.IdleTimeout = TimeSpan.FromMinutes(40);
                 options.Cookie.HttpOnly = true;
                 options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
             });
@@ -227,7 +227,7 @@ namespace Dfc.CourseDirectory.Web
 
             }).AddCookie(options =>
             {
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(40);
                 options.SlidingExpiration = true;
                 options.LogoutPath = "/Auth/Logout";
                 options.Events = new CookieAuthenticationEvents
@@ -332,7 +332,7 @@ namespace Dfc.CourseDirectory.Web
                 options.SecurityTokenValidator = new JwtSecurityTokenHandler
                 {
                     InboundClaimTypeMap = new Dictionary<string, string>(),
-                    TokenLifetimeInMinutes = 60, //1,
+                    TokenLifetimeInMinutes = 90,
                     SetDefaultTimesOnTokenCreation = true,
                 };
                 options.ProtocolValidator = new OpenIdConnectProtocolValidator
