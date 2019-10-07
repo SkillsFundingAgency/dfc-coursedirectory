@@ -105,17 +105,18 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             if (result.IsSuccess && result.HasValue)
             {
-                if (string.IsNullOrEmpty(requestModel.SearchTerm))
+                if (string.IsNullOrWhiteSpace(requestModel.SearchTerm))
                 {
                     model.Items = result.Value.ToList();
                 }
                 else
                 {
+                    var searchTermWords = requestModel.SearchTerm.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
                     model.Items = result.Value
-                                    .Where(x => (!string.IsNullOrEmpty(x.ApprenticeshipTitle) ? x.ApprenticeshipTitle.ToLower() : "").Contains(requestModel.SearchTerm.ToLower())
-                                                        || (!string.IsNullOrEmpty(x.MarketingInformation) ? x.MarketingInformation.ToLower() : "").Contains(requestModel.SearchTerm.ToLower())
-                                                        || (!string.IsNullOrEmpty(x.NotionalNVQLevelv2) ? x.NotionalNVQLevelv2.ToLower() : "").Contains(requestModel.SearchTerm.ToLower())
-                                                        && x.RecordStatus == RecordStatus.Live).ToList();
+                        .Where(r => $"{r.ApprenticeshipTitle} {r.MarketingInformation} {r.NotionalNVQLevelv2}".Split(' ', StringSplitOptions.RemoveEmptyEntries)
+                            .Any(w => searchTermWords.Any(s => s.Equals(w, StringComparison.OrdinalIgnoreCase)))
+                            && r.RecordStatus == RecordStatus.Live).ToList();
                 }
             }
 
