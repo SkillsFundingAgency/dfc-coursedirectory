@@ -520,25 +520,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                             }
                         }
-                        List<string> delModes = new List<string>();
-                        foreach (int deliveryMode in loc.DeliveryModes)
-                        {
-                            switch (deliveryMode)
-                            {
-                                case 0:
-                                    delModes.Add(@WebHelper.GetEnumDescription(ApprenticeShipDeliveryLocation.Undefined));
-                                    break;
-                                case 1:
-                                    delModes.Add(@WebHelper.GetEnumDescription(ApprenticeShipDeliveryLocation.BlockRelease));
-                                    break;
-                                case 2:
-                                    delModes.Add(@WebHelper.GetEnumDescription(ApprenticeShipDeliveryLocation.DayRelease));
-                                    break;
-                                default:
-                                    break;
-                            }
 
-                        }
+                        var delModes = loc.DeliveryModes.Select(x =>
+                            WebHelper.GetEnumDescription(
+                                (ApprenticeShipDeliveryLocation) Enum.Parse(typeof(ApprenticeShipDeliveryLocation),
+                                    x.ToString())));
 
                         deliveryOptionsListItemModel.Delivery = string.Join(",", delModes);
 
@@ -1174,7 +1160,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             var RadiusValue = 0;
 
             var nationalRadiusValue = _apprenticeshipSettings.Value.NationalRadius;
- 
+
             RadiusValue = National ? nationalRadiusValue : Convert.ToInt32(Radius);
 
             var DeliveryOptionsCombinedViewModel = _session.GetObject<DeliveryOptionsCombinedViewModel>("DeliveryOptionsCombinedViewModel") ??
