@@ -8,24 +8,26 @@ namespace Dfc.CourseDirectory.Models.Models.Auth
 {
     public class AuthUserDetails : ValueObject<AuthUserDetails>, IAuthUserDetails
     {
-        public Guid UserId { get; set; }
+        public Guid? UserId { get; set; }
         public string Email { get; set; }
         public string UserName { get; set; }
         public string NameOfUser { get; set; }
-        public Guid RoleId { get; set; }
+        public Guid? RoleId { get; set; }
         public string RoleName { get; set; }
         public string UKPRN { get; set; }
         public string ProviderType { get; set; }
+        public Guid? ProviderID { get; set; }
 
         public AuthUserDetails(
-            Guid userId,
+            Guid? userId,
             string email,
             string userName,
             string nameOfUser,
-            Guid roleId,
+            Guid? roleId,
             string roleName,
             string ukPrn,
-            string providerType)
+            string providerType,
+            Guid? providerId)
         {
             UserId = userId;
             Email = email;
@@ -35,6 +37,7 @@ namespace Dfc.CourseDirectory.Models.Models.Auth
             RoleName = roleName;
             UKPRN = ukPrn;
             ProviderType = providerType;
+            ProviderID = providerId;
         }
         protected override IEnumerable<object> GetEqualityComponents()
         {
@@ -46,6 +49,7 @@ namespace Dfc.CourseDirectory.Models.Models.Auth
             yield return RoleName;
             yield return UKPRN;
             yield return ProviderType;
+            yield return ProviderID;
         }
     }
 }

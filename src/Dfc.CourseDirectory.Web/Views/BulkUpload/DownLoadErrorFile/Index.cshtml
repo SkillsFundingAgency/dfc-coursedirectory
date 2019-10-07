@@ -1,8 +1,8 @@
-﻿ 
+﻿
 @using Dfc.CourseDirectory.Models.Enums
 @using Dfc.CourseDirectory.Web.Helpers
 @{
-    ViewData["Title"] = "Download error file"; 
+    ViewData["Title"] = "Download error file";
     Layout = "_Layout_Your_Courses";
 }
 
@@ -10,26 +10,24 @@
 
 
 <div class="content-container">
-    <div class="govuk-grid-row" data-sf-element="Row">
-        <div class="govuk-grid-column-two-thirds">
 
-            <form class="govuk-!-margin-bottom-9" id="DownloadErrorFileForm" asp-controller="BulkUpload" asp-action="DownloadErrorFile" method="post">
 
-                <h1 class="govuk-heading-l">Resolve issues using a file</h1>
+    <form class="govuk-!-margin-bottom-9" id="DownloadErrorFileForm" asp-controller="BulkUpload" asp-action="DownloadErrorFile" method="post">
 
-                <p class="govuk-body govuk-!-padding-bottom-4">This file contains the issues with course information in your bulk upload on @Model.ErrorFileCreatedDate.ToString("dd MMM yyyy").</p>
-                <br />
+        <h1 class="govuk-heading-l">Resolve issues using a file</h1>
 
-                @*<button type="submit" class="govuk-button" id="next">Download</button>*@
-                <button class="govuk-button" onclick="location.href = '@Url.Action("GetBulkUploadErrors", "BlobStorage", new { UKPRN = Model.UKPRN })';return false;">Download file (CSV)</button>
-            </form>
-        </div>
-    </div>
+        <p class="govuk-body govuk-!-padding-bottom-4">This file contains the issues with course information in your bulk upload on @Model.ErrorFileCreatedDate.ToString("dd MMM yyyy").</p>
+        <br />
+
+        @*<button type="submit" class="govuk-button" id="next">Download</button>*@
+        <button class="govuk-button" onclick="location.href = '@Url.Action("GetBulkUploadErrors", "BlobStorage", new { UKPRN = Model.UKPRN })';return false;">Download file (CSV)</button>
+    </form>
 </div>
+
 
 <script>
     (function ($) {
-        $(function () {           
+        $(function () {
 
         });
     })(jQuery);

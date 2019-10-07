@@ -6298,19 +6298,6 @@
   font-size: 20px !important;
 }
 
-.sidebar .widget {
-  border-top: 5px solid #207E77;
-  background-color: #f8f8f8;
-}
-
-.sidebar .widget div {
-  margin-bottom: .5em;
-}
-
-.sidebar .widget h3 {
-  margin-top: 0;
-}
-
 .flat-list * {
   padding-right: 1em;
 }
@@ -8001,9 +7988,37 @@ select:disabled {
   padding-right: 1em;
 }
 
-.sidebar .widget {
+.teal-top-border {
   border-top: 5px solid #207E77;
+}
+
+.teal-top-border.bg-grey {
   background-color: #f8f8f8;
+}
+
+.container {
+  max-width: 1024px;
+}
+
+.no-margin {
+  margin: 0;
+}
+
+.no-padding-left {
+  padding-left: 0;
+}
+
+.no-padding {
+  padding: 0;
+}
+
+.sidebar .widget {
+  background-color: #f8f8f8;
+}
+
+.sidebar .widget__heading {
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
 }
 
 .sidebar .widget.white {
