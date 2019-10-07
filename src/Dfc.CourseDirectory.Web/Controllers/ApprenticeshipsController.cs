@@ -1268,7 +1268,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 case ApprenticeshipWhatWouldYouLikeToDo.Add:
                     return RedirectToAction("Index", "Apprenticeships");
                 case ApprenticeshipWhatWouldYouLikeToDo.Upload:
-                    return RedirectToAction("ApprenticeshipIndex", "BulkUpload");
+                    return RedirectToAction("Index", "BulkUploadApprenticeships");
                 case ApprenticeshipWhatWouldYouLikeToDo.View:
                     return RedirectToAction("Index", "ProviderApprenticeships");
                 default:

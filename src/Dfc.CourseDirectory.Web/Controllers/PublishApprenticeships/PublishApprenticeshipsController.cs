@@ -16,6 +16,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
+using Dfc.CourseDirectory.Web.ViewModels.PublishApprenticeships;
 
 
 namespace Dfc.CourseDirectory.Web.Controllers.PublishApprenticeships
@@ -25,36 +27,35 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishApprenticeships
         private readonly ILogger<PublishApprenticeshipsController> _logger;
         private readonly IHttpContextAccessor _contextAccessor;
         private ISession _session => _contextAccessor.HttpContext.Session;
-        private readonly ICourseService _courseService;
-        private readonly IVenueService _venueService;
-        private readonly IBlobStorageService _blobStorageService;
+        private readonly IApprenticeshipService _apprenticeshipService;
+
     
 
      public PublishApprenticeshipsController(ILogger<PublishApprenticeshipsController> logger,
-            IHttpContextAccessor contextAccessor, ICourseService courseService,
-            IVenueService venueService,IBlobStorageService blobStorageService)
+            IHttpContextAccessor contextAccessor, IApprenticeshipService apprenticeshipService)
     {
         Throw.IfNull(logger, nameof(logger));
-        Throw.IfNull(courseService, nameof(courseService));
-        Throw.IfNull(venueService, nameof(venueService));
-        Throw.IfNull(blobStorageService, nameof(blobStorageService));
+        Throw.IfNull(apprenticeshipService, nameof(apprenticeshipService));
         _logger = logger;
         _contextAccessor = contextAccessor;
-        _courseService = courseService;
-        _venueService = venueService;
-        _blobStorageService = blobStorageService;
+        _apprenticeshipService = apprenticeshipService;
+
     }
 
 
     [Authorize]
     [HttpGet]
-    public IActionResult Index(PublishViewModel vm)
+    public IActionResult Index()
     {
+        PublishApprenticeshipsViewModel vm = new PublishApprenticeshipsViewModel();
         int? UKPRN = _session.GetInt32("UKPRN");
         if (!UKPRN.HasValue)
             return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
+        var apprenticeships = _apprenticeshipService.GetApprenticeshipByUKPRN(UKPRN.Value.ToString()).Result.Value.Where(x => x.RecordStatus == RecordStatus.BulkUploadPending);
 
-        
+        vm.ListOfApprenticeships = apprenticeships;
+        vm.AreAllReadyToBePublished = false;
+
         return View("Index", vm);
     }
 
