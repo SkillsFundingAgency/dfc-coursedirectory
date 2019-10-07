@@ -1,14 +1,14 @@
 ﻿@using Dfc.CourseDirectory.Web.ViewComponents.PostcodeLookup
 @model Dfc.CourseDirectory.Web.ViewComponents.EditVenueAddress.EditVenueAddressModel
 @{
-    ViewData["Title"] = "Edit venue address";
+    ViewData["Title"] = "Edit location address";
     Layout = "_Layout_Your_Courses";
 }
 
 <div class="govuk-grid-row">
 
     <div class="govuk-grid-column-two-thirds">
-        <h1 class="govuk-heading-l">Edit venue address</h1>
+        <h1 class="govuk-heading-l">Edit location address</h1>
         <form method="post" id="edit-venue-form" asp-controller="Venues" asp-action="VenueAddressSelectionConfirmation">
 
             @Html.HiddenFor(x => x.VenueName)
@@ -21,7 +21,7 @@
                            Id = Model.Id,
                            VenueName = Model.VenueName,
                            Postcode = Model.Address.Postcode,
-                           PostcodeLabelText = "Venue postcode",
+                           PostcodeLabelText = "Location postcode",
                            PostcodeAriaDescribedBy = "Please enter the postcode.",
                            ButtonText = "Find address"
                        })

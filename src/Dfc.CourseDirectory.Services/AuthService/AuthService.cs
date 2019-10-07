@@ -73,7 +73,8 @@ namespace Dfc.CourseDirectory.Services.AuthService
                 roleId: ((string)dt.Rows[0]["RoleId"] != string.Empty) ? Guid.Parse(dt.Rows[0]["RoleId"].ToString()) : Guid.Empty,
                 roleName: roleName,
                 ukPrn: ukprn,
-                providerType: await GetProviderType(ukprn,roleName)
+                providerType: await GetProviderType(ukprn,roleName),
+                providerId: Guid.Empty
                 );
 
             return details;

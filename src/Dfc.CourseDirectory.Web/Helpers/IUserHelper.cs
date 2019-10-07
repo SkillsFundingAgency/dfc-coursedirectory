@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Models.Models.Auth;
 
 namespace Dfc.CourseDirectory.Web.Helpers
 {
@@ -9,5 +11,6 @@ namespace Dfc.CourseDirectory.Web.Helpers
     {
         bool CheckUserLoggedIn();
         Task<bool> IsUserAuthorised(string policy);
+        AuthUserDetails GetUserDetailsFromClaims(IEnumerable<Claim> claims, int? UKPRN);
     }
 }

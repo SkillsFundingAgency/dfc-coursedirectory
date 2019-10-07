@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using Microsoft.Azure.Storage.Blob;
 using Dfc.CourseDirectory.Common.Interfaces;
 using Dfc.CourseDirectory.Services.BlobStorageService;
-
+using Dfc.CourseDirectory.Models.Models.Providers;
 
 namespace Dfc.CourseDirectory.Services.Interfaces.BlobStorageService
 {
@@ -17,6 +17,7 @@ namespace Dfc.CourseDirectory.Services.Interfaces.BlobStorageService
         IEnumerable<BlobFileInfo> GetFileList(string filePath);
         IEnumerable<CloudBlockBlob> ArchiveFiles(string filePath);
         Task GetBulkUploadTemplateFileAsync(Stream stream);
+        Task GetBulkUploadTemplateFileAsync(Stream stream,ProviderType providerType);
         int InlineProcessingThreshold { get; }
     }
 }

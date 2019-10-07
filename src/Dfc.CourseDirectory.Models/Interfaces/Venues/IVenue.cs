@@ -10,7 +10,7 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Venues
     {
         string ID { get; }
         int UKPRN { get; }
-        int ProviderID { get; }
+        int? ProviderID { get; }
         int VenueID { get; }
         string VenueName { get; }
         string ProvVenueID { get; }

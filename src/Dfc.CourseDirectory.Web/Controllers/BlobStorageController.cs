@@ -30,6 +30,7 @@ using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 using Dfc.CourseDirectory.Services.ProviderService;
 using System.ComponentModel.DataAnnotations;
 using Dfc.CourseDirectory.Web.Helpers;
+using Dfc.CourseDirectory.Models.Models.Providers;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -83,6 +84,17 @@ namespace Dfc.CourseDirectory.Web.Controllers
             ms.Position = 0;
             FileStreamResult result = new FileStreamResult(ms, MediaTypeNames.Text.Plain);
             result.FileDownloadName = "bulk upload template.csv";
+            return result;
+        }
+
+         public FileStreamResult GetApprenticeshipBulkUploadTemplateFile()
+        {
+            MemoryStream ms = new MemoryStream();
+            Task task = _blobService.GetBulkUploadTemplateFileAsync(ms,ProviderType.Apprenticeship);
+            task.Wait();
+            ms.Position = 0;
+            FileStreamResult result = new FileStreamResult(ms, MediaTypeNames.Text.Plain);
+            result.FileDownloadName = "apprenticeships bulk upload template.csv";
             return result;
         }
         public FileStreamResult GetCurrentCoursesTemplateFile()

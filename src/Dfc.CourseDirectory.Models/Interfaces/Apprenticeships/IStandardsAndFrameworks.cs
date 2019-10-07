@@ -10,7 +10,7 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Apprenticeships
     {
         //Standard Model
         int? StandardCode { get; }
-        string Version { get; }
+        int? Version { get; }
         string StandardName { get; }
         string StandardSectorCode { get; }
         string URLLink { get; }
@@ -19,12 +19,12 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Apprenticeships
 
         //Generic
         ApprenticeshipType ApprenticeshipType { get; }
-        Guid id { get; set; } // Cosmos DB id
+        Guid id { get; } // Cosmos DB id
         DateTime EffectiveFrom { get; }
         DateTime? CreatedDateTimeUtc { get; }
         DateTime? ModifiedDateTimeUtc { get; }
         int? RecordStatusId { get; }
-        bool AlreadyCreated { get; set; }
+        bool AlreadyCreated { get; }
 
         //Framework Model
         int? FrameworkCode { get; }
