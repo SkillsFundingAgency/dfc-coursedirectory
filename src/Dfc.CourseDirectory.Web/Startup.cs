@@ -389,7 +389,7 @@ namespace Dfc.CourseDirectory.Web
                     // that event is called after the OIDC middleware received the authorisation code,
                     // redeemed it for an access token and a refresh token,
                     // and validated the identity token
-                    OnTokenValidated = x =>
+                    OnTokenValidated = async x =>
                     {
                         _logger.LogMethodEnter();
                         _logger.LogWarning("User has been authorised by DFE");
@@ -431,7 +431,7 @@ namespace Dfc.CourseDirectory.Web
 
                         HttpClient client = new HttpClient();
                         client.SetBearerToken(token);
-                        var response = client.GetAsync($"{apiUri}/organisations/{organisation.Id}/users/{userClaims.UserId}").Result;
+                        var response = await client.GetAsync($"{apiUri}/organisations/{organisation.Id}/users/{userClaims.UserId}");
 
                         if(response.IsSuccessStatusCode)
                         {
@@ -474,7 +474,8 @@ namespace Dfc.CourseDirectory.Web
                          
                         // so that we don't issue a session cookie but one with a fixed expiration
                         x.Properties.IsPersistent = true;
-                        return Task.CompletedTask;
+
+                        x.Properties.ExpiresUtc = DateTime.UtcNow.AddMinutes(90);
                     }
                 };
             });
