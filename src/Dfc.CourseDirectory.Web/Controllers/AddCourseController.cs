@@ -177,10 +177,28 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             Session.SetObject(SessionLastAddCoursePage, AddCoursePage.None);    // not come from another add course page
             Session.SetObject(SessionSummaryPageLoadedAtLeastOnce, false);      // not got to summary page yet
+            Session.SetObject("AddCourseViewModel", vm);
+
+
+
 
             if (courseId.HasValue)
             {
                 vm.CourseId = courseId.Value;
+            }
+            var addcoursesteponevalues = Session.GetObject<AddCourseSection1RequestModel>(SessionAddCourseSection1);
+            var DetailViewModel = Session.GetObject<AddCourseViewModel>("AddCourseViewModel");
+
+            if (addcoursesteponevalues != null && DetailViewModel != null)
+            {
+                vm.EntryRequirements.EntryRequirements = addcoursesteponevalues.EntryRequirements;
+                vm.CourseFor.CourseFor = addcoursesteponevalues.CourseFor;
+                vm.WhatWillLearn.WhatWillLearn = addcoursesteponevalues.WhatWillLearn;
+                vm.HowYouWillLearn.HowYouWillLearn = addcoursesteponevalues.HowYouWillLearn;
+                vm.WhatYouNeed.WhatYouNeed = addcoursesteponevalues.WhatYouNeed;
+                vm.HowAssessed.HowAssessed = addcoursesteponevalues.HowAssessed;
+                vm.WhereNext.WhereNext = addcoursesteponevalues.WhereNext;
+
             }
 
             return View(vm);
@@ -957,7 +975,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             Session.Remove("LearnAimRefTitle");
             Session.Remove("LearnAimRefTypeDesc");
 
-            Session.Remove(SessionAddCourseSection1);
+          //  Session.Remove(SessionAddCourseSection1);
             Session.Remove(SessionAddCourseSection2);
             Session.Remove(SessionLastAddCoursePage);
         }
