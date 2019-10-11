@@ -14,6 +14,7 @@ using Dfc.CourseDirectory.Web.ViewComponents.ZCodeFoundResult;
 using Dfc.CourseDirectory.Web.ViewComponents.ZCodeSearchResult;
 using Dfc.CourseDirectory.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -29,13 +30,19 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly ILarsSearchService _larsSearchService;
         private readonly ILarsSearchHelper _larsSearchHelper;
         private readonly IPaginationHelper _paginationHelper;
+        private readonly IHttpContextAccessor _contextAccessor;
+        private ISession Session => _contextAccessor.HttpContext.Session;
+
+        private const string SessionAddCourseSection1 = "AddCourseSection1";
+        private const string SessionAddCourseSection2 = "AddCourseSection2";
 
         public UnregulatedCoursesController(
             ILogger<UnregulatedCoursesController> logger,
             IOptions<LarsSearchSettings> larsSearchSettings,
             ILarsSearchService larsSearchService,
             ILarsSearchHelper larsSearchHelper,
-            IPaginationHelper paginationHelper)
+            IPaginationHelper paginationHelper,
+            IHttpContextAccessor contextAccessor)
         {
             Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(larsSearchSettings, nameof(larsSearchSettings));
@@ -48,6 +55,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _larsSearchService = larsSearchService;
             _larsSearchHelper = larsSearchHelper;
             _paginationHelper = paginationHelper;
+            _contextAccessor = contextAccessor;
         }
 
         [Authorize]
@@ -151,6 +159,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [Authorize]
         public IActionResult UnknownZCode()
         {
+            RemoveSessionVariables();
             SectorSubjectAreaTier s = new SectorSubjectAreaTier();
             var ssaLevel1 = s.SectorSubjectAreaTierAll.Select(y => new SSAOptions() { Id = y.Id, Description = y.Description }).ToList();
 
@@ -194,6 +203,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [Authorize]
         public async Task<IActionResult> ZCodeNotKnown([FromQuery] ZCodeNotKnownRequestModel request)
         {
+            RemoveSessionVariables();
             ZCodeSearchResultModel model = new ZCodeSearchResultModel();
 
             LarsSearchRequestModel requestModel = new LarsSearchRequestModel();
@@ -271,6 +281,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return ViewComponent(nameof(ViewComponents.ZCodeSearchResult.ZCodeSearchResult), model);
 
 
+        }
+
+        internal void RemoveSessionVariables()
+        {
+            Session.Remove(SessionAddCourseSection1);
+            Session.Remove(SessionAddCourseSection2);
         }
     }
 }
