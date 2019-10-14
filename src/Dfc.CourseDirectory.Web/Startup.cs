@@ -269,8 +269,17 @@ namespace Dfc.CourseDirectory.Web
                             }
                             var tokenEndpoint = Configuration.GetSection("DFESignInSettings:TokenEndpoint").Value;
 
-                            var client = new TokenClient(tokenEndpoint, clientId.ToString(), clientSecret.ToString());
-                            var response = await client.RequestRefreshTokenAsync(refreshToken, new { client_secret = clientSecret });
+                            TokenResponse response;
+                            using (var client = new HttpClient())
+                            {
+                                response = await client.RequestRefreshTokenAsync(new RefreshTokenRequest()
+                                {
+                                    Address = tokenEndpoint,
+                                    ClientId = clientId,
+                                    ClientSecret = clientSecret,
+                                    RefreshToken = refreshToken
+                                });
+                            }
 
                             if (!response.IsError)
                             {
@@ -326,6 +335,9 @@ namespace Dfc.CourseDirectory.Web
                 options.Scope.Add("profile");
                 options.Scope.Add("organisation");
                 options.Scope.Add("offline_access");
+
+                // Prompt=consent is required to be issued with a refresh token
+                options.Prompt = "consent";
 
                 options.SaveTokens = true;
                 options.CallbackPath = new PathString(Configuration.GetSection("DFESignInSettings:CallbackPath").Value);
@@ -457,6 +469,7 @@ namespace Dfc.CourseDirectory.Web
                             identity.AddClaims(new[]
                             {
                                 new Claim("access_token", x.TokenEndpointResponse.AccessToken),
+                                new Claim("refresh_token", x.TokenEndpointResponse.RefreshToken),
                                 new Claim("UKPRN", userClaims.UKPRN),
                                 new Claim("user_id", userClaims.UserId.ToString()),
                                 new Claim(ClaimTypes.Role, userClaims.RoleName),
