@@ -256,6 +256,11 @@ namespace Dfc.CourseDirectory.Web
                             var accessTokenClaim = identity.FindFirst("access_token");
                             var refreshTokenClaim = identity.FindFirst("refresh_token");
 
+                            if (refreshTokenClaim?.Value == null)
+                            {
+                                return;
+                            }
+
                             // if we have to refresh, grab the refresh token from the claims, and request
                             // new access token and refresh token
                             var refreshToken = refreshTokenClaim.Value;
