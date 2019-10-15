@@ -1379,7 +1379,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         [Authorize]
-        //public IActionResult AddNewVenue(Guid[] projectId)
+       
         public IActionResult AddNewVenue(AddCourseRequestModel model)
         {
             _session.SetString("Option", "AddNewVenueForApprenticeships");
