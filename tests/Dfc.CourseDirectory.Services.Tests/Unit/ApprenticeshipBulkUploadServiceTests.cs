@@ -1226,6 +1226,37 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 errors[0].Should().Be("Duplicate entries detected on rows 2, and 4.");
             }
             [Fact]
+            public void When_Multiple_Duplicate_StandardCodes_Exist_Return_Error()
+            {
+                // Arrange
+                var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
+                var httpClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulStandardFile(), HttpStatusCode.OK);
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(httpClient);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
+
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
+                Stream stream = CsvStreams.InvalidFile_Multiple_Duplicate_STANDARD_CODES_SameDeliveryMethod_Same_Venue();
+
+                List<string> errors = new List<string>();
+                // Act
+                try
+                {
+                    errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
+                }
+                catch (Exception e)
+                {
+
+                    errors.Add(e.Message);
+
+                }
+
+                // Assert
+                errors.Should().NotBeNull();
+                errors.Should().HaveCount(1);
+                errors[0].Should().Be("Duplicate entries detected on rows 2, and 5.;Duplicate entries detected on rows 3, and 6.");
+            }
+            [Fact]
             public void When_Duplicate_FrameworkCodes_Exist_Return_Error()
             {
                 // Arrange
