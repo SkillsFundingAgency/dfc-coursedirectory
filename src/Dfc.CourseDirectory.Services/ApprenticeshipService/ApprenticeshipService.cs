@@ -458,7 +458,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
         {
             var uri = new Uri(extendee.ApiUrl);
             var trimmed = uri.AbsoluteUri.TrimEnd('/');
-            return new Uri($"{trimmed}/GetFrameworkByCodeUri");
+            return new Uri($"{trimmed}/GetFrameworkByCode");
         }
         internal static Uri UpdateAprrenticeshipUri(this IApprenticeshipServiceSettings extendee)
         {
