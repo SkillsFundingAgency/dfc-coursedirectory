@@ -99,7 +99,6 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             public string Base64Row  { get; set; }
 
         }
-
         private class ApprenticeshipCsvRecordMap : ClassMap<ApprenticeshipCsvRecord>
         {
             private readonly IApprenticeshipService _apprenticeshipService;
@@ -1117,22 +1116,36 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
                         var classMap = new ApprenticeshipCsvRecordMap(_apprenticeshipService, _venueService, userDetails);
                         csv.Configuration.RegisterClassMap(classMap);
-
+                        bool containsDuplicates = false;
                         while (csv.Read())
                         {
-                           
                             var record = csv.GetRecord<ApprenticeshipCsvRecord>();
-                            record.ApprenticeshipLocations.Add(CreateApprenticeshipLocation(record, userDetails));
+
                             if (!duplicateCheck.TryAdd(record.Base64Row, record.RowNumber.ToString()))
                             {
+                                if(containsDuplicates == false)
+                                {
+                                    containsDuplicates = true;
+                                    errors = new List<string>();
+                                }
                                 var duplicateRow = duplicateCheck[record.Base64Row];
-                                throw new BadDataException(csv.Context,
-                                    $"Duplicate entries detected on rows {duplicateRow}, and {record.RowNumber}.");
+                                errors.Add($"Duplicate entries detected on rows {duplicateRow}, and {record.RowNumber}.");
+
                             }
-                            errors.AddRange(record.ErrorsList.Select(x => x.Error));
+
+                            if (containsDuplicates == false)
+                            {
+                                record.ApprenticeshipLocations.Add(CreateApprenticeshipLocation(record, userDetails));
+                                errors.AddRange(record.ErrorsList.Select(x => x.Error));
+                            }
 
                             records.Add(record);
                             processedRowCount++;
+                        }
+
+                        if (containsDuplicates)
+                        {
+                            throw new BadDataException(csv.Context, string.Join(";", errors));
                         }
                     }
 
@@ -1185,7 +1198,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
             return errors;
         }
-
+        
         private void ValidateHeader(CsvReader csv)
         {
             // Ignore whitespace in the headers.
