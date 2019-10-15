@@ -1378,6 +1378,18 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return RedirectToAction(model.Combined ? "DeliveryOptionsCombined" : "DeliveryOptions", "Apprenticeships", new { message = "Location " + model.LocationName + " deleted", mode = model.Mode });
         }
 
+        [Authorize]
+        //public IActionResult AddNewVenue(Guid[] projectId)
+        public IActionResult AddNewVenue(AddCourseRequestModel model)
+        {
+            _session.SetString("Option", "AddNewVenueForApprenticeships");
+            var DeliveryOptionsViewModel = _session.GetObject<DeliveryOptionsViewModel>("DeliveryOptionsViewModel");
+           
+            _session.SetObject("DeliveryOptionsViewModel", DeliveryOptionsViewModel);       
+
+            return Json(Url.Action("AddVenue", "Venues"));
+        }
+
         internal Dictionary<string, List<string>> SubRegionCodesToDictionary(string[] subRegions)
         {
             SelectRegionModel selectRegionModel = new SelectRegionModel();
