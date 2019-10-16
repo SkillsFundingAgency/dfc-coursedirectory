@@ -94,7 +94,7 @@
                                 @if (displayRadius)
                                  {
                                      
-                                     @if (Model.DeliveryOptionsListItemModel[i].Radius != null)
+                                     @if (!string.IsNullOrEmpty(Model.DeliveryOptionsListItemModel[i].Radius))
                                       {
                                           <td class="govuk-table__cell">@Model.DeliveryOptionsListItemModel[i].Radius Miles</td>
                                       }
