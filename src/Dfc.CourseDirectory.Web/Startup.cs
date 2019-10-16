@@ -215,6 +215,8 @@ namespace Dfc.CourseDirectory.Web
 
             //Auth Code
             //--------------------------------------
+            var overallSessionTimeout = TimeSpan.FromMinutes(90);
+
             var cookieSecurePolicy = _env.IsDevelopment() ? CookieSecurePolicy.SameAsRequest : CookieSecurePolicy.Always;
             services.AddAntiforgery(options =>
             {
@@ -343,6 +345,9 @@ namespace Dfc.CourseDirectory.Web
 
                 // Prompt=consent is required to be issued with a refresh token
                 options.Prompt = "consent";
+
+                // When we expire the session, ensure user is prompted to sign in again at DfE Sign In
+                options.MaxAge = overallSessionTimeout;
 
                 options.SaveTokens = true;
                 options.CallbackPath = new PathString(Configuration.GetSection("DFESignInSettings:CallbackPath").Value);
@@ -493,7 +498,7 @@ namespace Dfc.CourseDirectory.Web
                         // so that we don't issue a session cookie but one with a fixed expiration
                         x.Properties.IsPersistent = true;
 
-                        x.Properties.ExpiresUtc = DateTime.UtcNow.AddMinutes(90);
+                        x.Properties.ExpiresUtc = DateTime.UtcNow.Add(overallSessionTimeout);
                     }
                 };
             });
