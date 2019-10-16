@@ -40,6 +40,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
         private readonly Uri _deleteBulkUploadCoursesUri;
         private readonly Uri _getCourseMigrationReportByUKPRN;
         private readonly Uri _getAllDfcReports;
+        private readonly Uri _getTotalLiveCoursesUri;
 
         private readonly int _courseForTextFieldMaxChars;
         private readonly int _entryRequirementsTextFieldMaxChars;
@@ -93,6 +94,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             _deleteBulkUploadCoursesUri = settings.Value.ToDeleteBulkUploadCoursesUri();
             _getCourseMigrationReportByUKPRN = settings.Value.ToGetCourseMigrationReportByUKPRN();
             _getAllDfcReports = settings.Value.ToGetAllDfcReports();
+            _getTotalLiveCoursesUri = settings.Value.ToGetTotalLiveCourses();
 
             _courseForTextFieldMaxChars = courseForComponentSettings.Value.TextFieldMaxChars;
             _entryRequirementsTextFieldMaxChars = entryRequirementsComponentSettings.Value.TextFieldMaxChars;
@@ -1044,6 +1046,30 @@ namespace Dfc.CourseDirectory.Services.CourseService
                 _logger.LogMethodExit();
             }
         }
+
+        public async Task<IResult<int>> GetTotalLiveCourses()
+        {
+            using (var httpClient = new HttpClient())
+            {
+                httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
+
+                var response = await httpClient.GetAsync(_getTotalLiveCoursesUri);
+                _logger.LogHttpResponseMessage("GetTotalLiveCourses service http response", response);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+
+                    var total = JsonConvert.DeserializeObject<int>(json);
+
+                    return Result.Ok(total);
+                }
+                else
+                {
+                    return Result.Fail<int>("GetTotalLiveCourses service unsuccessful http response");
+                }
+            }
+        }
     }
 
     internal static class IGetCourseByIdCriteriaExtensions
@@ -1149,6 +1175,13 @@ namespace Dfc.CourseDirectory.Services.CourseService
             var uri = new Uri(extendee.ApiUrl);
             var trimmed = uri.AbsoluteUri.TrimEnd('/');
             return new Uri($"{trimmed}/GetAllDfcReports");
+        }
+
+        internal static Uri ToGetTotalLiveCourses(this ICourseServiceSettings extendee)
+        {
+            var uri = new Uri(extendee.ApiUrl);
+            var trimmed = uri.AbsoluteUri.TrimEnd('/');
+            return new Uri($"{trimmed}/GetTotalLiveCourses");
         }
     }
 

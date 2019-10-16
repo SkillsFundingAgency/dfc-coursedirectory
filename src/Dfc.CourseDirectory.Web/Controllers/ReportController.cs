@@ -42,8 +42,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 _session.Remove("UKPRN");
             }
 
-            var reportResults = await _courseService.GetAllDfcReports();
-            if (reportResults.IsFailure) throw new Exception("Unable to generate migration reports");
+            var reportResultsTask = _courseService.GetAllDfcReports();
+            var totalCoursesLiveTask = _courseService.GetTotalLiveCourses();
+            await Task.WhenAll(reportResultsTask, totalCoursesLiveTask);
+
+            var reportResults = reportResultsTask.Result;
+            var totalCoursesLive = totalCoursesLiveTask.Result;
+
+            if (reportResults.IsFailure || totalCoursesLive.IsFailure) throw new Exception("Unable to generate migration reports");
 
             // @ToDo: refactor this business logic away from the presentation layer
             int feProvidersMigrated = reportResults.Value.Count;
@@ -55,6 +61,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 FEProvidersMigrated = new MigrationReportDashboardPanelModel("FE providers migrated", value: feProvidersMigrated),
                 FECoursesMigrated = new MigrationReportDashboardPanelModel("FE courses migrated", value: feCoursesMigrated),
                 FECoursesMigratedWithErrors = new MigrationReportDashboardPanelModel("FE courses with errors", value: feCoursesMigratedWithErrors),
+                CoursesLive = new MigrationReportDashboardPanelModel("Total courses live", value: totalCoursesLive.Value),
 
                 ReportResults = new MigrationReportResultsModel(reportResults.Value)
             };

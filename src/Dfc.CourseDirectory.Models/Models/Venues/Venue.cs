@@ -24,7 +24,7 @@ namespace Dfc.CourseDirectory.Models.Models.Venues
         public int UKPRN { get; }
         [JsonProperty("PROVIDER_ID", Required = Required.AllowNull)]
         [JsonIgnore]
-        public int ProviderID { get; }
+        public int? ProviderID { get; }
         [JsonProperty("VENUE_ID", Required = Required.AllowNull)]
         [JsonIgnore]
         public int VenueID { get; }

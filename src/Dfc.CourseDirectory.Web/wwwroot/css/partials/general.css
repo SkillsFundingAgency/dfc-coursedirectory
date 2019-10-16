@@ -111,19 +111,6 @@
   font-size: 20px !important;
 }
 
-.sidebar .widget {
-  border-top: 5px solid #207E77;
-  background-color: #f8f8f8;
-}
-
-.sidebar .widget div {
-  margin-bottom: .5em;
-}
-
-.sidebar .widget h3 {
-  margin-top: 0;
-}
-
 .flat-list * {
   padding-right: 1em;
 }

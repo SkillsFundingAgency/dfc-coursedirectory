@@ -20,7 +20,9 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
         private readonly ILogger<ApprenticeshipService> _logger;
         private readonly ApprenticeshipServiceSettings _settings;
         private readonly HttpClient _httpClient;
-        private readonly Uri _getStandardsAndFrameworksUri, _addApprenticeshipUri, _getApprenticeshipByUKPRNUri, _getApprenticeshipByIdUri, _updateApprenticshipUri;
+        private readonly Uri _getStandardsAndFrameworksUri, _addApprenticeshipUri, _getApprenticeshipByUKPRNUri, 
+            _getApprenticeshipByIdUri, _updateApprenticshipUri, _getStandardByCodeUri, _getFrameworkByCodeUri, _deleteBulkUploadApprenticeshipsUri,
+            _changeApprenticeshipStatusesForUKPRNSelectionUri;
 
         public ApprenticeshipService(
             ILogger<ApprenticeshipService> logger,
@@ -40,6 +42,11 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             _getApprenticeshipByUKPRNUri = settings.Value.GetApprenticeshipByUKPRNUri();
             _getApprenticeshipByIdUri = settings.Value.GetApprenticeshipByIdUri();
             _updateApprenticshipUri = settings.Value.UpdateAprrenticeshipUri();
+            _getStandardByCodeUri = settings.Value.GetStandardByCodeUri();
+            _getFrameworkByCodeUri = settings.Value.GetFrameworkByCodeUri();
+            _deleteBulkUploadApprenticeshipsUri = settings.Value.DeleteBulkUploadApprenticeshipsUri();
+            _changeApprenticeshipStatusesForUKPRNSelectionUri =
+                settings.Value.ChangeApprenticeshipStatusesForUKPRNSelectionUri();
         }
 
         public async Task<IResult<IEnumerable<IStandardsAndFrameworks>>> StandardsAndFrameworksSearch(string criteria, int UKPRN)
@@ -85,7 +92,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             }
         }
 
-        public async Task<IResult<IApprenticeship>> AddApprenticeship(IApprenticeship apprenticeship)
+        public async Task<IResult> AddApprenticeship(IApprenticeship apprenticeship)
         {
             _logger.LogMethodEnter();
             Throw.IfNull(apprenticeship, nameof(apprenticeship));
@@ -109,17 +116,16 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
 
                     _logger.LogInformationObject("Apprenticeship add service json response", json);
 
-                    var apprenticeshipResult = JsonConvert.DeserializeObject<Apprenticeship>(json);
 
-                    return Result.Ok<IApprenticeship>(apprenticeshipResult);
+                    return Result.Ok();
                 }
                 else if (response.StatusCode == HttpStatusCode.TooManyRequests)
                 {
-                    return Result.Fail<IApprenticeship>("Apprenticeship add service unsuccessful http response - TooManyRequests");
+                    return Result.Fail("Apprenticeship add service unsuccessful http response - TooManyRequests");
                 }
                 else
                 {
-                    return Result.Fail<IApprenticeship>("Apprenticeship add service unsuccessful http response - ResponseStatusCode: " + response.StatusCode);
+                    return Result.Fail("Apprenticeship add service unsuccessful http response - ResponseStatusCode: " + response.StatusCode);
                 }
             }
             catch (HttpRequestException hre)
@@ -225,6 +231,91 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             }
         }
 
+        public async Task<IResult<IEnumerable<IStandardsAndFrameworks>>> GetStandardByCode(StandardSearchCriteria criteria)
+        {
+            Throw.IfNull(criteria, nameof(criteria));
+            _logger.LogMethodEnter();
+
+            try
+            {
+                _logger.LogInformationObject("StandardSearchCriteria Criteria", criteria);
+
+                _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
+                var response = await _httpClient.GetAsync(new Uri(_getStandardByCodeUri.AbsoluteUri + "?StandardCode=" + criteria.StandardCode + "&Version=" + criteria.Version));
+                _logger.LogHttpResponseMessage("GetStandardByCode service http response", response);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+
+                    _logger.LogInformationObject("GetStandardByCode service json response", json);
+                    IEnumerable<StandardsAndFrameworks> results = JsonConvert.DeserializeObject<IEnumerable<StandardsAndFrameworks>>(json);
+
+                    return Result.Ok<IEnumerable<IStandardsAndFrameworks>>(results);
+                }
+                else
+                {
+                    return Result.Fail<IEnumerable<IStandardsAndFrameworks>>("GetStandardByCode service unsuccessful http response");
+                }
+            }
+            catch (HttpRequestException hre)
+            {
+                _logger.LogException("GetStandardByCode service http request error", hre);
+                return Result.Fail<IEnumerable<IStandardsAndFrameworks>>("GetStandardByCode service http request error.");
+            }
+            catch (Exception e)
+            {
+                _logger.LogException("GetStandardByCode unknown error.", e);
+                return Result.Fail<IEnumerable<IStandardsAndFrameworks>>("GetStandardByCode service unknown error.");
+            }
+            finally
+            {
+                _logger.LogMethodExit();
+            }
+        }
+
+        public async Task<IResult<IEnumerable<IStandardsAndFrameworks>>> GetFrameworkByCode(FrameworkSearchCriteria criteria)
+        {
+            Throw.IfNull(criteria, nameof(criteria));
+            _logger.LogMethodEnter();
+
+            try
+            {
+                _logger.LogInformationObject("FrameworkSearchCriteria Criteria", criteria);
+
+                _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
+                var response = await _httpClient.GetAsync(new Uri(_getFrameworkByCodeUri.AbsoluteUri + "?FrameworkCode=" + criteria.FrameworkCode + "&ProgType=" + criteria.ProgType + "&PathwayCode=" + criteria.PathwayCode));
+                _logger.LogHttpResponseMessage("GetFrameworkByCode service http response", response);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+
+                    _logger.LogInformationObject("GetFrameworkByCode service json response", json);
+                    IEnumerable<StandardsAndFrameworks> results = JsonConvert.DeserializeObject<IEnumerable<StandardsAndFrameworks>>(json);
+
+                    return Result.Ok<IEnumerable<IStandardsAndFrameworks>>(results);
+                }
+                else
+                {
+                    return Result.Fail<IEnumerable<IStandardsAndFrameworks>>("GetFrameworkByCode service unsuccessful http response");
+                }
+            }
+            catch (HttpRequestException hre)
+            {
+                _logger.LogException("GetFrameworkByCode service http request error", hre);
+                return Result.Fail<IEnumerable<IStandardsAndFrameworks>>("GetFrameworkByCode service http request error.");
+            }
+            catch (Exception e)
+            {
+                _logger.LogException("GetStandardByCode unknown error.", e);
+                return Result.Fail<IEnumerable<IStandardsAndFrameworks>>("GetFrameworkByCode service unknown error.");
+            }
+            finally
+            {
+                _logger.LogMethodExit();
+            }
+        }
         public async Task<IResult<IApprenticeship>> UpdateApprenticeshipAsync(IApprenticeship apprenticeship)
         {
             _logger.LogMethodEnter();
@@ -274,6 +365,52 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
                 _logger.LogMethodExit();
             }
         }
+        public async Task<IResult> DeleteBulkUploadApprenticeships(int UKPRN)
+        {
+            Throw.IfLessThan(0, UKPRN, nameof(UKPRN));
+
+            try
+            {
+               
+                _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
+                var response = await _httpClient.GetAsync(new Uri(_deleteBulkUploadApprenticeshipsUri.AbsoluteUri + "?UKPRN=" + UKPRN));
+                _logger.LogHttpResponseMessage("Delete Bulk Upload Apprenticeship Status http response", response);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return Result.Ok();
+                }
+                else
+                {
+                    return Result.Fail("Delete Bulk Upload Apprenticeship unsuccessful: " + response.ReasonPhrase);
+                }
+            }
+            catch (Exception ex)
+            {
+                return Result.Fail("Delete Bulk Upload Apprenticeship http response");
+            }
+        }
+        public async Task<IResult> ChangeApprenticeshipStatusesForUKPRNSelection(int UKPRN, int CurrentStatus, int StatusToBeChangedTo)
+        {
+            Throw.IfNull(UKPRN, nameof(UKPRN));
+            Throw.IfNull(CurrentStatus, nameof(CurrentStatus));
+            Throw.IfNull(StatusToBeChangedTo, nameof(StatusToBeChangedTo));
+
+            
+            
+            _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
+
+            var response = await _httpClient.GetAsync(new Uri(_changeApprenticeshipStatusesForUKPRNSelectionUri.AbsoluteUri + "?UKPRN=" + UKPRN + "&CurrentStatus=" + CurrentStatus + "&StatusToBeChangedTo=" + StatusToBeChangedTo));
+            _logger.LogHttpResponseMessage("ChangeApprenticeshipStatusesForUKPRNSelection service http response", response);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return Result.Ok();
+            }
+
+            return Result.Fail("ChangeApprenticeshipStatusesForUKPRNSelection service unsuccessful http response");
+            
+        }
     }
 
     internal static class ApprenticeshipServiceSettingsExtensions
@@ -291,6 +428,12 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             var trimmed = uri.AbsoluteUri.TrimEnd('/');
             return new Uri($"{trimmed}/AddApprenticeship");
         }
+        internal static Uri DeleteBulkUploadApprenticeshipsUri(this IApprenticeshipServiceSettings extendee)
+        {
+            var uri = new Uri(extendee.ApiUrl);
+            var trimmed = uri.AbsoluteUri.TrimEnd('/');
+            return new Uri($"{trimmed}/DeleteBulkUploadApprenticeships");
+        }
 
         internal static Uri GetApprenticeshipByUKPRNUri(this IApprenticeshipServiceSettings extendee)
         {
@@ -305,12 +448,29 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             var trimmed = uri.AbsoluteUri.TrimEnd('/');
             return new Uri($"{trimmed}/GetApprenticeshipById");
         }
-
+        internal static Uri GetStandardByCodeUri(this IApprenticeshipServiceSettings extendee)
+        {
+            var uri = new Uri(extendee.ApiUrl);
+            var trimmed = uri.AbsoluteUri.TrimEnd('/');
+            return new Uri($"{trimmed}/GetStandardByCode");
+        }
+        internal static Uri GetFrameworkByCodeUri(this IApprenticeshipServiceSettings extendee)
+        {
+            var uri = new Uri(extendee.ApiUrl);
+            var trimmed = uri.AbsoluteUri.TrimEnd('/');
+            return new Uri($"{trimmed}/GetFrameworkByCode");
+        }
         internal static Uri UpdateAprrenticeshipUri(this IApprenticeshipServiceSettings extendee)
         {
             var uri = new Uri(extendee.ApiUrl);
             var trimmed = uri.AbsoluteUri.TrimEnd('/');
             return new Uri($"{trimmed}/UpdateApprenticeship");
+        }        
+        internal static Uri ChangeApprenticeshipStatusesForUKPRNSelectionUri(this IApprenticeshipServiceSettings extendee)
+        {
+            var uri = new Uri(extendee.ApiUrl);
+            var trimmed = uri.AbsoluteUri.TrimEnd('/');
+            return new Uri($"{trimmed}/ChangeApprenticeshipStatusForUKPRNSelection");
         }
     }
 }

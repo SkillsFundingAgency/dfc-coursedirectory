@@ -157,6 +157,7 @@ namespace Dfc.CourseDirectory.Web
             services.AddScoped<IApprenticeshipService, ApprenticeshipService>();
 
             services.AddScoped<IBulkUploadService, BulkUploadService>();
+            services.AddScoped<IApprenticeshipBulkUploadService, ApprenticeshipBulkUploadService>();
             services.Configure<BlobStorageSettings>(Configuration.GetSection(nameof(BlobStorageSettings)));
             services.AddScoped<IBlobStorageService, BlobStorageService>();
             services.Configure<EnvironmentSettings>(Configuration.GetSection(nameof(EnvironmentSettings)));
@@ -194,7 +195,7 @@ namespace Dfc.CourseDirectory.Web
             services.AddResponseCaching();
             services.AddSession(options =>
             {
-                options.IdleTimeout = TimeSpan.FromMinutes(30); //.FromSeconds(18);
+                options.IdleTimeout = TimeSpan.FromMinutes(40);
                 options.Cookie.HttpOnly = true;
                 options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
             });
@@ -227,7 +228,7 @@ namespace Dfc.CourseDirectory.Web
 
             }).AddCookie(options =>
             {
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(40);
                 options.SlidingExpiration = true;
                 options.LogoutPath = "/Auth/Logout";
                 options.Events = new CookieAuthenticationEvents
@@ -255,6 +256,11 @@ namespace Dfc.CourseDirectory.Web
                             var accessTokenClaim = identity.FindFirst("access_token");
                             var refreshTokenClaim = identity.FindFirst("refresh_token");
 
+                            if (refreshTokenClaim?.Value == null)
+                            {
+                                return;
+                            }
+
                             // if we have to refresh, grab the refresh token from the claims, and request
                             // new access token and refresh token
                             var refreshToken = refreshTokenClaim.Value;
@@ -268,8 +274,17 @@ namespace Dfc.CourseDirectory.Web
                             }
                             var tokenEndpoint = Configuration.GetSection("DFESignInSettings:TokenEndpoint").Value;
 
-                            var client = new TokenClient(tokenEndpoint, clientId.ToString(), clientSecret.ToString());
-                            var response = await client.RequestRefreshTokenAsync(refreshToken, new { client_secret = clientSecret });
+                            TokenResponse response;
+                            using (var client = new HttpClient())
+                            {
+                                response = await client.RequestRefreshTokenAsync(new RefreshTokenRequest()
+                                {
+                                    Address = tokenEndpoint,
+                                    ClientId = clientId,
+                                    ClientSecret = clientSecret,
+                                    RefreshToken = refreshToken
+                                });
+                            }
 
                             if (!response.IsError)
                             {
@@ -326,13 +341,16 @@ namespace Dfc.CourseDirectory.Web
                 options.Scope.Add("organisation");
                 options.Scope.Add("offline_access");
 
+                // Prompt=consent is required to be issued with a refresh token
+                options.Prompt = "consent";
+
                 options.SaveTokens = true;
                 options.CallbackPath = new PathString(Configuration.GetSection("DFESignInSettings:CallbackPath").Value);
                 options.SignedOutCallbackPath = new PathString(Configuration.GetSection("DFESignInSettings:SignedOutCallbackPath").Value);
                 options.SecurityTokenValidator = new JwtSecurityTokenHandler
                 {
                     InboundClaimTypeMap = new Dictionary<string, string>(),
-                    TokenLifetimeInMinutes = 60, //1,
+                    TokenLifetimeInMinutes = 90,
                     SetDefaultTimesOnTokenCreation = true,
                 };
                 options.ProtocolValidator = new OpenIdConnectProtocolValidator
@@ -388,7 +406,7 @@ namespace Dfc.CourseDirectory.Web
                     // that event is called after the OIDC middleware received the authorisation code,
                     // redeemed it for an access token and a refresh token,
                     // and validated the identity token
-                    OnTokenValidated = x =>
+                    OnTokenValidated = async x =>
                     {
                         _logger.LogMethodEnter();
                         _logger.LogWarning("User has been authorised by DFE");
@@ -430,7 +448,7 @@ namespace Dfc.CourseDirectory.Web
 
                         HttpClient client = new HttpClient();
                         client.SetBearerToken(token);
-                        var response = client.GetAsync($"{apiUri}/organisations/{organisation.Id}/users/{userClaims.UserId}").Result;
+                        var response = await client.GetAsync($"{apiUri}/organisations/{organisation.Id}/users/{userClaims.UserId}");
 
                         if(response.IsSuccessStatusCode)
                         {
@@ -456,6 +474,7 @@ namespace Dfc.CourseDirectory.Web
                             identity.AddClaims(new[]
                             {
                                 new Claim("access_token", x.TokenEndpointResponse.AccessToken),
+                                new Claim("refresh_token", x.TokenEndpointResponse.RefreshToken),
                                 new Claim("UKPRN", userClaims.UKPRN),
                                 new Claim("user_id", userClaims.UserId.ToString()),
                                 new Claim(ClaimTypes.Role, userClaims.RoleName),
@@ -473,7 +492,8 @@ namespace Dfc.CourseDirectory.Web
                          
                         // so that we don't issue a session cookie but one with a fixed expiration
                         x.Properties.IsPersistent = true;
-                        return Task.CompletedTask;
+
+                        x.Properties.ExpiresUtc = DateTime.UtcNow.AddMinutes(90);
                     }
                 };
             });
@@ -524,16 +544,28 @@ namespace Dfc.CourseDirectory.Web
                     
                 //CSP
                 context.Response.Headers.Add("Content-Security-Policy", 
-                                                "default-src    'self'  https://rainmaker.tiny.cloud/;" +
+                                                "default-src    'self' " + 
+                                                    " https://rainmaker.tiny.cloud/" +
+                                                    " https://www.google-analytics.com/" +
+                                                    ";" +
                                                 "style-src      'self' 'unsafe-inline' "+
-                                                    " https://cdn.tiny.cloud/" +
-                                                    " https://cloud.tinymce.com/;" +
-                                                "font-src       'self' data: https://cdn.tiny.cloud/;" +
+                                                    " https://cdn.tiny.cloud/" +                                                    
+                                                    " https://www.googletagmanager.com/" +
+                                                    " https://tagmanager.google.com/" +
+                                                    " https://fonts.googleapis.com/" +
+                                                    " https://cloud.tinymce.com/" +
+                                                    ";" +
+                                                "font-src       'self' data:" +
+                                                   " https://fonts.googleapis.com/" +
+                                                   " https://fonts.gstatic.com/" +
+                                                   " https://cdn.tiny.cloud/" +
+                                                   ";" +
                                                 "img-src        'self' * data: https://cdn.tiny.cloud/;" +
                                                 "script-src     'self' 'unsafe-eval' 'unsafe-inline'  " +
                                                     " https://cloud.tinymce.com/" +
                                                     " https://cdnjs.cloudflare.com/" +
                                                     " https://www.googletagmanager.com/" +
+                                                    " https://tagmanager.google.com/" +                                                    
                                                     " https://www.google-analytics.com/" +
                                                     " https://cdn.tiny.cloud/" +
                                                     ";"

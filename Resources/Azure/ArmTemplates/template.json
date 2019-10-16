@@ -673,6 +673,10 @@
               {
                 "name": "CourseServiceSettings__BulkUploadSecondsPerRecord",
                 "value": "[parameters('BulkUploadSecondsPerRecord')]"
+              },
+              {
+                "name": "BlobStorageSettings__ApprenticeshipsTemplatePath",
+                "value": "apprenticeshipsbulkuploadtemplate.csv"
               }
             ]
           },

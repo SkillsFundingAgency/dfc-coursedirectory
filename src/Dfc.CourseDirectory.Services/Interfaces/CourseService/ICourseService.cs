@@ -32,5 +32,6 @@ namespace Dfc.CourseDirectory.Services.Interfaces.CourseService
         Task<IResult> DeleteBulkUploadCourses(int UKPRN);
         Task<IResult<CourseMigrationReport>> GetCourseMigrationReport(int UKPRN);
         Task<IResult<IList<DfcMigrationReport>>> GetAllDfcReports();
+        Task<IResult<int>> GetTotalLiveCourses();
     }
 }

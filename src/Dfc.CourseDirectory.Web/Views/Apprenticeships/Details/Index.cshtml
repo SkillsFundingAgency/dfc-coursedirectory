@@ -540,7 +540,7 @@
                     $errorSummary.govUkErrorSummary("show");
                     validStates.push(false);
                 } else if (
-                    !$.maxLengthValidate({ max: $website.attr("val-max-length") }, websiteToValidate)) {
+                    !$.maxLengthValidate({ max: "255" }, websiteToValidate)) {
                     $website.govUkInput("invalidState", $website.attr("val-max-length-message"));
                     var websiteErrorHashLinks = $website.govUkInput("getErrorHashLinks");
                     $errorSummary.govUkErrorSummary("add", websiteErrorHashLinks);
@@ -569,8 +569,8 @@
                     $errorSummary.govUkErrorSummary("add", contactUsErrorHashLinks);
                     $errorSummary.govUkErrorSummary("show");
                     validStates.push(false);
-                } else if (
-                    !$.maxLengthValidate({ max: $contactUs.attr("val-max-length") }, contactUsToValidate)) {
+                 } else if (
+                     !$.maxLengthValidate({ max: $contactUs.attr("val-max-length") }, contactUsToValidate)) {
                     $contactUs.govUkInput("invalidState", $contactUs.attr("val-max-length-message"));
                     var contactUsErrorHashLinks = $contactUs.govUkInput("getErrorHashLinks");
                     $errorSummary.govUkErrorSummary("add", contactUsErrorHashLinks);

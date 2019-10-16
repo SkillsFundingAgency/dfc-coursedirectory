@@ -1717,7 +1717,7 @@ namespace Dfc.CourseDirectory.Models.Models.Regions
         }
         public string GetRegionNameForSubRegion(string subRegionCode)
         {
-            var regionItem = RegionItems.Where(x => x.SubRegion.Any(y => y.Id == subRegionCode)).FirstOrDefault();
+            var regionItem = RegionItems.FirstOrDefault(x => x.SubRegion.Any(y => y.Id == subRegionCode));
             return regionItem != null ? regionItem.RegionName : string.Empty;
         }
 
