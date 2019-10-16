@@ -177,9 +177,21 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         errors = _apprenticeshipBulkUploadService.ValidateAndUploadCSV(ms,
                             _userHelper.GetUserDetailsFromClaims(this.HttpContext.User.Claims, UKPRN));
                     }
+                    catch (HeaderValidationException he)
+                    {
+                        errors.Add(he.Message.FirstSentence());
+                        vm.errors = errors;
+                        return View(vm);
+                    }
+                    catch (BadDataException be)
+                    {
+                        errors.AddRange(be.Message.Split(';'));
+                        vm.errors = errors;
+                        return View(vm);
+                    }
                     catch (Exception e)
                     {
-                        errors.Add(e.Message.FirstSentence());
+                        errors.Add(e.Message);
                         vm.errors = errors;
                         return View(vm);
                     }

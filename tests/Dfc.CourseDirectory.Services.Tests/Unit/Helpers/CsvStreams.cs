@@ -537,6 +537,23 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit.Helpers
 
             return ms;
         }
+        public static Stream InvalidFile_Multiple_Duplicate_STANDARD_CODES_SameDeliveryMethod_Same_Venue()
+        {
+            MemoryStream ms = new MemoryStream();
+
+            TextWriter sw = new StreamWriter(ms);
+            sw.WriteLine("STANDARD_CODE,STANDARD_VERSION,FRAMEWORK_CODE,FRAMEWORK_PROG_TYPE,FRAMEWORK_PATHWAY_CODE,APPRENTICESHIP_INFORMATION,APPRENTICESHIP_WEBPAGE,CONTACT_EMAIL,CONTACT_PHONE,CONTACT_URL,DELIVERY_METHOD,VENUE,RADIUS,DELIVERY_MODE,ACROSS_ENGLAND, NATIONAL_DELIVERY, REGION, SUB_REGION");
+            sw.WriteLine("157,1,,,,STANDARD APPRENTICESHIP,HTTP://WWW.TETS.CO.UK,TEST@TEST.COM,1213456789,HTTP://WWW.CONTACTUS.COM,CLASSROOM,DUDLEY,,DAY,,,,");
+            sw.WriteLine("157,1,,,,STANDARD APPRENTICESHIP,HTTP://WWW.TETS.CO.UK,TEST@TEST.COM,1213456789,HTTP://WWW.CONTACTUS.COM,EMPLOYER,,,,YES,YES,,");
+            sw.WriteLine("157,1,,,,STANDARD APPRENTICESHIP,HTTP://WWW.TETS.CO.UK,TEST@TEST.COM,1213456789,HTTP://WWW.CONTACTUS.COM,BOTH,DUDLEY,,DAY,YES,YES,,");
+            sw.WriteLine("157,1,,,,STANDARD APPRENTICESHIP,HTTP://WWW.TETS.CO.UK,TEST@TEST.COM,1213456789,HTTP://WWW.CONTACTUS.COM,CLASSROOM,DUDLEY,,DAY,,,,");
+            sw.WriteLine("157,1,,,,STANDARD APPRENTICESHIP,HTTP://WWW.TETS.CO.UK,TEST@TEST.COM,1213456789,HTTP://WWW.CONTACTUS.COM,EMPLOYER,,,,YES,YES,,");
+
+
+            sw.Flush();
+
+            return ms;
+        }
         // VALIDATION RULE: STANDARD_CODE must be numeric if present
         public static Stream InvalidRow_FrameworkCodes_DuplicateRows()
         {
