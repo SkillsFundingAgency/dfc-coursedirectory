@@ -1041,7 +1041,8 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
                     {
                         var subRegions =
-                            availableSubRegions.Where(x => x.SubRegionName == subRegion);
+                            availableSubRegions.Where(x => string.Equals(x.SubRegionName, subRegion,
+                                StringComparison.InvariantCultureIgnoreCase));
 
                         if (!subRegions.Any())
                         {

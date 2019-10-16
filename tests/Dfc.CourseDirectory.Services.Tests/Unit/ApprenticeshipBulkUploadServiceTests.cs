@@ -1,18 +1,13 @@
-﻿using Dfc.CourseDirectory.Services.BulkUploadService;
+﻿using Dfc.CourseDirectory.Common;
+using Dfc.CourseDirectory.Models.Models.Auth;
+using Dfc.CourseDirectory.Services.BulkUploadService;
 using Dfc.CourseDirectory.Services.Tests.Unit.Helpers;
+using Dfc.CourseDirectory.Services.Tests.Unit.Mocks;
 using FluentAssertions;
-using Moq;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Security.Claims;
-using CsvHelper;
-using Dfc.CourseDirectory.Common;
-using Dfc.CourseDirectory.Models.Models.Auth;
-using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
-using Dfc.CourseDirectory.Services.Tests.Unit.Mocks;
-using Microsoft.AspNetCore.Http;
 using Xunit;
 namespace Dfc.CourseDirectory.Services.Tests.Unit
 {
@@ -233,6 +228,34 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                     providerId : Guid.NewGuid()
                 );
                 
+            }
+            [Fact]
+            public void When_Field_SUBREGION_Is_PresentAndIncorrectCase_Then_ReturnNoError()
+            {
+                // Arrange
+                var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(null);
+                var venueMock = VenueServiceMockFactory.GetVenueService(null);
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
+
+                Stream stream = CsvStreams.AppBUEmployer_Standard_ValidSubRegions();
+
+                List<string> errors = new List<string>();
+                // Act
+                try
+                {
+                    errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
+                }
+                catch (Exception e)
+                {
+
+                    errors.Add(e.Message);
+
+                }
+
+                // Assert
+
+                errors.Should().BeNullOrEmpty();
             }
             [Fact]
             public void When_Field_STANDARD_CODE_Is_PresentAndNonNumeric_Then_ReturnError()
