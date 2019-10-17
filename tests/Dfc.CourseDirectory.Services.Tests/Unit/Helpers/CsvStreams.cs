@@ -127,6 +127,19 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit.Helpers
 
             return ms;
         }
+        public static Stream ValidRow_ACROSS_ENGLAND_Standard_TRUE()
+        {
+            MemoryStream ms = new MemoryStream();
+
+            TextWriter sw = new StreamWriter(ms);
+            sw.WriteLine("STANDARD_CODE,STANDARD_VERSION,FRAMEWORK_CODE,FRAMEWORK_PROG_TYPE,FRAMEWORK_PATHWAY_CODE,APPRENTICESHIP_INFORMATION,APPRENTICESHIP_WEBPAGE,CONTACT_EMAIL,CONTACT_PHONE,CONTACT_URL,DELIVERY_METHOD,VENUE,RADIUS,DELIVERY_MODE,ACROSS_ENGLAND, NATIONAL_DELIVERY, REGION, SUB_REGION");
+            sw.WriteLine("157,1,,,,STANDARD APPRENTICESHIP,http://www.google.com,TEST@TEST.COM,12134567891,http://www.google.com,both,DUDLEY,,DAY,YES,,,");
+            sw.WriteLine("157,1,,,,STANDARD APPRENTICESHIP,http://www.google.com,TEST@TEST.COM,12134567891,http://www.google.com,both,DUDLEY 1,20,BLOCK,YES,,,");
+            sw.WriteLine("157,1,,,,STANDARD APPRENTICESHIP,http://www.google.com,TEST@TEST.COM,12134567891,http://www.google.com,both,DUDLEY 2,30,DAY;BLOCK,YES,,,");
+            sw.Flush();
+
+            return ms;
+        }
         public static Stream ValidRow_ACROSS_ENGLAND_FALSE()
         {
             MemoryStream ms = new MemoryStream();

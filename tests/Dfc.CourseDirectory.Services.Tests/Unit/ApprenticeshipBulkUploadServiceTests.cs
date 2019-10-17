@@ -1023,6 +1023,27 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 errors.Should().HaveCount(0);
             }
             [Fact]
+            public void When_ACROSS_ENGLAND_Is_True_Return_No_Error()
+            {
+
+                var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(null);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
+
+                Stream stream = CsvStreams.ValidRow_ACROSS_ENGLAND_Standard_TRUE();
+
+                // Act
+
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
+
+
+                // Assert
+                errors.Should().BeNullOrEmpty();
+                errors.Should().HaveCount(0);
+            }
+            [Fact]
             public void When_NATIONAL_DELIVERY_Is_Invalid_Return_Error()
             {
                 // Arrange

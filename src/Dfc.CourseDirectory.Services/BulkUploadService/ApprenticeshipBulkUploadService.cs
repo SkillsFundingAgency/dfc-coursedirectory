@@ -416,6 +416,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                         return true;
                     case "NO":
                         return false;
+                    
                 }
 
                 return null;
@@ -635,7 +636,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                     });
                     return errors;
                 }
-                if (!Int32.TryParse(value, out int numericalValue))
+                if (!long.TryParse(value, out long numericalValue))
                 {
                     errors.Add(new BulkUploadError
                     {
