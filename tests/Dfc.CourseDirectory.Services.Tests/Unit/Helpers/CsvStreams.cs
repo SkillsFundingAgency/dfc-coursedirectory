@@ -7,6 +7,22 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit.Helpers
     /// </summary>
     public static class CsvStreams
     {
+        // VALIDATION RULE: STANDARD_CODE must be numeric if present
+        public static Stream StringArrayToStream(string[] array)
+        {
+            MemoryStream ms = new MemoryStream();
+
+            TextWriter sw = new StreamWriter(ms);
+            sw.WriteLine("STANDARD_CODE,STANDARD_VERSION,FRAMEWORK_CODE,FRAMEWORK_PROG_TYPE,FRAMEWORK_PATHWAY_CODE,APPRENTICESHIP_INFORMATION,APPRENTICESHIP_WEBPAGE,CONTACT_EMAIL,CONTACT_PHONE,CONTACT_URL,DELIVERY_METHOD,VENUE,RADIUS,DELIVERY_MODE,ACROSS_ENGLAND, NATIONAL_DELIVERY, REGION, SUB_REGION");
+            foreach(var line in array)
+            {
+                sw.WriteLine(line);
+            }
+            
+            sw.Flush();
+
+            return ms;
+        }
         #region Happy Files
 
         // Example file provided by Mark P for TDD which is expected to pass validation.
@@ -358,7 +374,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit.Helpers
 
             TextWriter sw = new StreamWriter(ms);
             sw.WriteLine("STANDARD_CODE,STANDARD_VERSION,FRAMEWORK_CODE,FRAMEWORK_PROG_TYPE,FRAMEWORK_PATHWAY_CODE,APPRENTICESHIP_INFORMATION,APPRENTICESHIP_WEBPAGE,CONTACT_EMAIL,CONTACT_PHONE,CONTACT_URL,DELIVERY_METHOD,VENUE,RADIUS,DELIVERY_MODE,ACROSS_ENGLAND, NATIONAL_DELIVERY, REGION, SUB_REGION");
-            sw.WriteLine("157,1,,,,some text some text some text,www.thisisinvalid@com,service@college.org.uk,0121 345 6789,http://www.bbc.com/contactus,CLASSROOM,Venue 1,,Day;Block,,,,");
+            sw.WriteLine("157,1,,,,some text some text some text,www.thisisinvalid@\\com,service@college.org.uk,0121 345 6789,http://www.bbc.com/contactus,CLASSROOM,Venue 1,,Day;Block,,,,");
             sw.Flush();
 
             return ms;
@@ -450,7 +466,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit.Helpers
 
             TextWriter sw = new StreamWriter(ms);
             sw.WriteLine("STANDARD_CODE,STANDARD_VERSION,FRAMEWORK_CODE,FRAMEWORK_PROG_TYPE,FRAMEWORK_PATHWAY_CODE,APPRENTICESHIP_INFORMATION,APPRENTICESHIP_WEBPAGE,CONTACT_EMAIL,CONTACT_PHONE,CONTACT_URL,DELIVERY_METHOD,VENUE,RADIUS,DELIVERY_MODE,ACROSS_ENGLAND, NATIONAL_DELIVERY, REGION, SUB_REGION");
-            sw.WriteLine("157,1,,,,some text some text some text, http://www.bbc.com,service@college.org.uk,0121 345 6789,www.testemaul cd.org,CLASSROOM,Venue 1,,Day;Block,,,,");
+            sw.WriteLine("157,1,,,,some text some text some text,http://www.bbc.com,service@college.org.uk,0121 345 6789,www.testemaul cd.org,CLASSROOM,Venue 1,,Day;Block,,,,");
             sw.Flush();
 
 
@@ -462,7 +478,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit.Helpers
 
             TextWriter sw = new StreamWriter(ms);
             sw.WriteLine("STANDARD_CODE,STANDARD_VERSION,FRAMEWORK_CODE,FRAMEWORK_PROG_TYPE,FRAMEWORK_PATHWAY_CODE,APPRENTICESHIP_INFORMATION,APPRENTICESHIP_WEBPAGE,CONTACT_EMAIL,CONTACT_PHONE,CONTACT_URL,DELIVERY_METHOD,VENUE,RADIUS,DELIVERY_MODE,ACROSS_ENGLAND, NATIONAL_DELIVERY, REGION, SUB_REGION");
-            sw.WriteLine("157,1,,,,some text some text some text, http://www.bbc.com,service@college.org.uk,0121 345 6789,www.te@stemaulcd.org,CLASSROOM,Venue 1,,Day;Block,,,,");
+            sw.WriteLine("157,1,,,,some text some text some text,http://www.bbc.com,service@college.org.uk,0121 345 6789,wwwasd.te@stemaulcd@d\\\\org,CLASSROOM,Venue 1,,Day;Block,,,,");
             sw.Flush();
 
 
