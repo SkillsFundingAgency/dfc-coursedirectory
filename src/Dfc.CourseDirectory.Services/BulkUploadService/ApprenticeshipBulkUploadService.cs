@@ -447,7 +447,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                     }
 
                     var venues =_cachedVenues
-                        .Where(x => x.VenueName.ToUpper() == value.ToUpper() && x.Status == VenueStatus.Live).ToList();
+                        .Where(x => x.VenueName.ToUpper() == value.Trim().ToUpper() && x.Status == VenueStatus.Live).ToList();
 
                     if (venues.Any())
                     {
@@ -536,8 +536,10 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 row.TryGetField<string>(fieldName, out string value);
                 if (!String.IsNullOrWhiteSpace(value))
                 {
-                    var regex = @"^([-a-zA-Z0-9]{2,256}\.)+[a-z]{2,10}(\/.*)?";
-                    if (Regex.IsMatch(value, regex))
+
+                    value = HTTPCheck(value).Trim();
+                    var regex = @"^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$";
+                    if (!Regex.IsMatch(value, regex))
                     {
 
                         errors.Add(new BulkUploadError
@@ -667,8 +669,10 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                         Error = $"Validation error on row {row.Context.Row}. Field {fieldName} maximum length is 255 characters."
                     });
                 }
-                var urlRegex = @"^([-a-zA-Z0-9]{2,256}\.)+[a-z]{2,10}(\/.*)?";
-                if (Regex.IsMatch(value, urlRegex))
+
+                value = HTTPCheck(value).Trim();
+                var urlRegex = @"^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$";
+                if (!Regex.IsMatch(value, urlRegex))
                 {
                     errors.Add(new BulkUploadError
                     {
@@ -940,7 +944,17 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             }
             #endregion
 
+            private string HTTPCheck(string value)
+            {
+                value = value.ToLower();
+                if (value.Contains("http://") || value.Contains("https://"))
+                {
+                    return value;
+                }
 
+                return "https://" + value;
+                
+            }
             private int? ValueMustBeNumericIfPresent(IReaderRow row, string fieldName)
             {
                 if (!row.TryGetField<int?>(fieldName, out var value))

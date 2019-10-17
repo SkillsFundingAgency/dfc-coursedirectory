@@ -530,8 +530,9 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 // Assert
 
                 errors.Should().NotBeNull();
-                errors.Should().HaveCount(1);
-                errors[0].Should().Be("Validation error on row 2. Field APPRENTICESHIP_WEBPAGE maximum length is 255 characters.");
+                errors.Should().HaveCount(2);
+                errors[0].Should().Be("Validation error on row 2. Field APPRENTICESHIP_WEBPAGE format of URL is incorrect.");
+                errors[1].Should().Be("Validation error on row 2. Field APPRENTICESHIP_WEBPAGE maximum length is 255 characters.");
             }
             [Fact]
             public void When_Field_APPRENTICESHIP_WEBPAGE_Is_Empty_Then_ReturnNoErrors()
@@ -726,8 +727,10 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 // Assert
 
                 errors.Should().NotBeNull();
-                errors.Should().HaveCount(1);
+                errors.Should().HaveCount(2);
+
                 errors[0].Should().Be("Validation error on row 2. Field CONTACT_URL maximum length is 255 characters.");
+                errors[1].Should().Be("Validation error on row 2. Field CONTACT_URL format of URL is incorrect.");
             }
             [Fact]
             public void When_Field_CONTACT_URL_Is_Contains_Space_Then_Return_Error()
@@ -746,6 +749,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 // Assert
                 errors.Should().NotBeNull();
                 errors.Should().HaveCount(1);
+
                 errors[0].Should().Be("Validation error on row 2. Field CONTACT_URL format of URL is incorrect.");
             }
             [Fact]
@@ -1505,6 +1509,43 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 // Assert
                 errors.Should().BeNullOrEmpty();
                 errors.Should().HaveCount(0);
+            }
+            [Theory]
+            //COUR-2096
+            [
+                InlineData(
+                    ",,3,4,5,STANDARD APPRENTICESHIP,www.test.co.uk,test@tes.com,123456789012,www.contus.com,CLASSROOM,DUDLEY ,,BLOCK,,,,",
+                    ",,3,4,5,STANDARD APPRENTICESHIP,www.test.co.uk,test@tes.com,123456789012,www.contus.com,CLASSROOM,DUDLEY 1,,DAY,,,,",
+                    ",,3,4,5,STANDARD APPRENTICESHIP,www.test.co.uk,test@tes.com,123456789012,www.contus.com,CLASSROOM,DUDLEY 2,,DAY;BLOCK,,,,")
+            ]
+            public void Various_Frameworks_All_Should_Pass(params string[] csvLines)
+            {
+                // Arrange
+                var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
+                var httpClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulFrameworkFile(), HttpStatusCode.OK);
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(httpClient);
+
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
+                Stream stream = CsvStreams.StringArrayToStream(csvLines);
+
+                List<string> errors = new List<string>();
+                // Act
+                try
+                {
+                    errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
+                }
+                catch (Exception e)
+                {
+
+                    errors.Add(e.Message);
+
+                }
+
+                // Assert
+                errors.Should().BeNullOrEmpty();
+
             }
         }
     }
