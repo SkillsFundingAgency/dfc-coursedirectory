@@ -18,7 +18,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships
 {
     public class DeliveryOptionsList : ViewComponent
     {
-        public async Task<IViewComponentResult> InvokeAsync(DeliveryOptionsListModel model)
+        public async Task<IViewComponentResult> InvokeAsync(DeliveryOptions model)
         {
             return View("~/ViewComponents/Apprenticeships/DeliveryOptionsList/Default.cshtml", model);
 

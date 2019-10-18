@@ -175,17 +175,17 @@
 
                 @if (Model.DeliveryOptionsViewModel != null)
                 {
-                    @if (Model.DeliveryOptionsViewModel.DeliveryOptionsListItemModel != null)
+                    @if (Model.DeliveryOptionsViewModel.DeliveryOption != null)
                     {
-                        @await Component.InvokeAsync(nameof(DeliveryOptionsList), Model.DeliveryOptionsViewModel.DeliveryOptionsListItemModel)
+                        @await Component.InvokeAsync(nameof(DeliveryOptionsList), Model.DeliveryOptionsViewModel.DeliveryOption)
                     }
                 }
 
                 @if (Model.DeliveryOptionsCombinedViewModel != null)
                 {
-                    @if (Model.DeliveryOptionsCombinedViewModel.DeliveryOptionsListItemModel != null)
+                    @if (Model.DeliveryOptionsCombinedViewModel.DeliveryOptions != null)
                     {
-                        @await Component.InvokeAsync(nameof(DeliveryOptionsList), Model.DeliveryOptionsCombinedViewModel.DeliveryOptionsListItemModel)
+                        @await Component.InvokeAsync(nameof(DeliveryOptionsList), Model.DeliveryOptionsCombinedViewModel.DeliveryOptions)
                     }
                 }
 

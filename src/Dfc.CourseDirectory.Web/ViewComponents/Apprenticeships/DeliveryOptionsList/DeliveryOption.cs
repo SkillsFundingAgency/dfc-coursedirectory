@@ -9,7 +9,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships
 {
 
 
-    public class DeliveryOptionsListItemModel
+    public class DeliveryOption
     {
         public string LocationId { get; set; }
 

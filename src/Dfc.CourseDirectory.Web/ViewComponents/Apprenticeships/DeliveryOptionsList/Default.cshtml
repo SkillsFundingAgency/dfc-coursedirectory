@@ -1,15 +1,15 @@
 ﻿
 @using Dfc.CourseDirectory.Web.Helpers;
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-@model Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships.DeliveryOptionsListModel
+@model Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships.DeliveryOptions
 
 
-@if (Model.DeliveryOptionsListItemModel != null && Model.DeliveryOptionsListItemModel.Any())
+@if (Model.DeliveryOptionItems != null && Model.DeliveryOptionItems.Any())
 {
     <div class="govuk-form-group">
 
         @{
-            bool displayRadius = false || !string.IsNullOrEmpty(Model.DeliveryOptionsListItemModel.FirstOrDefault()?.Radius);
+            bool displayRadius = false || !string.IsNullOrEmpty(Model.DeliveryOptionItems.FirstOrDefault()?.Radius);
             }
 
         <span id="TooManyLocations" class="" style="display: none"
@@ -37,10 +37,10 @@
             <tbody>
                 @{
 
-                    for (int i = 0; i < Model.DeliveryOptionsListItemModel.Count; i++)
+                    for (int i = 0; i < Model.DeliveryOptionItems.Count; i++)
                     {
                         var baseId = "DeliveryOptionsListItemModel_DeliveryOptionsListItemModel_";
-                        var baseName = "DeliveryOptionsListItemModel.DeliveryOptionsListItemModel[";
+                        var baseName = "DeliveryOptions.DeliveryOptions[";
                         var locationFieldId = "__LocationName";
                         var locationIdFieldId = "__LocationId";
                         var postcodeFieldId = "__PostCode";
@@ -59,48 +59,48 @@
                                 var idValue = @baseId + @i.ToString() + @locationFieldId;
                                 var nameValue = @baseName + @i.ToString() + @locationFieldName;
 
-                                <input id="@idValue" name="@nameValue" type="hidden" value="@Model.DeliveryOptionsListItemModel[i].LocationName">
+                                <input id="@idValue" name="@nameValue" type="hidden" value="@Model.DeliveryOptionItems[i].LocationName">
 
                                 idValue = @baseId + @i.ToString() + @locationIdFieldId;
                                 nameValue = @baseName + @i.ToString() + @locationIdFieldName;
 
-                                <input id="@idValue" name="@nameValue" type="hidden" value="@Model.DeliveryOptionsListItemModel[i].LocationId">
+                                <input id="@idValue" name="@nameValue" type="hidden" value="@Model.DeliveryOptionItems[i].LocationId">
 
                                 idValue = @baseId + @i.ToString() + @postcodeFieldId;
                                 nameValue = @baseName + @i.ToString() + @postcodeFieldName;
 
-                                <input id="@idValue" name="@nameValue" type="hidden" value="@Model.DeliveryOptionsListItemModel[i].PostCode">
+                                <input id="@idValue" name="@nameValue" type="hidden" value="@Model.DeliveryOptionItems[i].PostCode">
 
                                 idValue = @baseId + @i.ToString() + @deliveryFieldId;
                                 nameValue = @baseName + @i.ToString() + @deliveryFieldName;
 
-                                <input id="@idValue" name="@nameValue" type="hidden" value="@Model.DeliveryOptionsListItemModel[i].Delivery">
+                                <input id="@idValue" name="@nameValue" type="hidden" value="@Model.DeliveryOptionItems[i].Delivery">
 
                                 idValue = @baseId + @i.ToString() + @radiusFieldId;
                                 nameValue = @baseName + @i.ToString() + @radiusFieldName;
-                                Html.HiddenFor(x => x.DeliveryOptionsListItemModel[i].Venue);
+                                Html.HiddenFor(x => x.DeliveryOptionItems[i].Venue);
                                 if (displayRadius)
                                  {
-                                     <input id="@idValue" name="@nameValue" type="hidden" value="@Model.DeliveryOptionsListItemModel[i].Radius">
+                                     <input id="@idValue" name="@nameValue" type="hidden" value="@Model.DeliveryOptionItems[i].Radius">
                                  }
 
                                 <td class="govuk-table__header" >
-                                    <span>@Model.DeliveryOptionsListItemModel[i].LocationName</span>
+                                    <span>@Model.DeliveryOptionItems[i].LocationName</span>
                                     <br>
-                                    <span class="govuk-hint">@Model.DeliveryOptionsListItemModel[i].PostCode</span>
+                                    <span class="govuk-hint">@Model.DeliveryOptionItems[i].PostCode</span>
                                 </td>
-                                <td class="govuk-table__cell">@Model.DeliveryOptionsListItemModel[i].Delivery</td>
+                                <td class="govuk-table__cell">@Model.DeliveryOptionItems[i].Delivery</td>
 
                                 @if (displayRadius)
                                  {
                                      
-                                     @if (Model.DeliveryOptionsListItemModel[i].Radius != null)
+                                     @if (Model.DeliveryOptionItems[i].Radius != null)
                                       {
-                                          <td class="govuk-table__cell">@Model.DeliveryOptionsListItemModel[i].Radius Miles</td>
+                                          <td class="govuk-table__cell">@Model.DeliveryOptionItems[i].Radius Miles</td>
                                       }
                                       else
                                       {
-                                          @if (Model.DeliveryOptionsListItemModel[i].National != null)
+                                          @if (Model.DeliveryOptionItems[i].National != null)
                                            {
                                                <td class="govuk-table__cell" >Across England</td>
                                            }
@@ -115,7 +115,7 @@
                                 {
                                     <td class="govuk-table__cell">
 
-                                        <a class="" asp-controller="Apprenticeships" asp-action="DeleteDeliveryOption" asp-route-LocationName=@Model.DeliveryOptionsListItemModel[i].LocationName asp-route-Mode=@ViewBag.Mode>Delete<span class="govuk-visually-hidden">@Model.DeliveryOptionsListItemModel[i].LocationName</span></a>
+                                        <a class="" asp-controller="Apprenticeships" asp-action="DeleteDeliveryOption" asp-route-LocationName=@Model.DeliveryOptionItems[i].LocationName asp-route-Mode=@ViewBag.Mode>Delete<span class="govuk-visually-hidden">@Model.DeliveryOptionItems[i].LocationName</span></a>
 
 
 
