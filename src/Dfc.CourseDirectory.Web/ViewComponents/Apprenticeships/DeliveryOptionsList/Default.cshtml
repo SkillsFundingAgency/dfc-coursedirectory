@@ -9,7 +9,7 @@
     <div class="govuk-form-group">
 
         @{
-            bool displayRadius = false || !string.IsNullOrEmpty(Model.DeliveryOptionItems.FirstOrDefault()?.Radius);
+            bool displayRadius = Model.DeliveryOptionsListItemModel.Any(x => string.IsNullOrEmpty(x.Radius));
             }
 
         <span id="TooManyLocations" class="" style="display: none"
@@ -94,7 +94,9 @@
                                 @if (displayRadius)
                                  {
                                      
-                                     @if (Model.DeliveryOptionItems[i].Radius != null)
+
+                                     @if (!string.IsNullOrEmpty(Model.DeliveryOptionsListItemModel[i].Radius))
+
                                       {
                                           <td class="govuk-table__cell">@Model.DeliveryOptionItems[i].Radius Miles</td>
                                       }
