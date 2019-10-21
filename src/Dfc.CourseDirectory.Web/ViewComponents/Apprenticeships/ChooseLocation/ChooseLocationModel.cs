@@ -16,6 +16,6 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships
 
         public bool DisplayLink { get; set; }
 
-        public DeliveryOptionsListModel DeliveryOptionsListItemModel { get; set; }
+        public DeliveryOptionSummary DeliveryOptionsListItemModel { get; set; }
     }
 }

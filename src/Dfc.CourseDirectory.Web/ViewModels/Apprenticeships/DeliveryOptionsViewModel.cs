@@ -25,7 +25,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels.Apprenticeships
 
         public bool BlockRelease { get; set; }
 
-        public DeliveryOptionsListModel DeliveryOptionsListItemModel { get; set; }
+        public DeliveryOptionSummary DeliveryOptionSummary { get; set; }
 
         public int? Radius { get; set; }
 
