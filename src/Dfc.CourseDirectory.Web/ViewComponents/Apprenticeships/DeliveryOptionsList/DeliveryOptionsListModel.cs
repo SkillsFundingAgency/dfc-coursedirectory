@@ -1,16 +1,12 @@
-﻿using System;
+﻿using Dfc.CourseDirectory.Models.Models.Apprenticeships;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using Dfc.CourseDirectory.Models.Models.Apprenticeships;
-using Dfc.CourseDirectory.Models.Models.Courses;
-using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships
 {
-    public class DeliveryOptionsListModel
+    public class DeliveryOptionSummary
     {
         public bool? SummaryPage { get; set; }
-        public List<DeliveryOptionsListItemModel> DeliveryOptionsListItemModel { get; set; }
+        public List<DeliveryOption> DeliveryOptions { get; set; }
 
         public ApprenticeshipMode Mode { get; set; }
 

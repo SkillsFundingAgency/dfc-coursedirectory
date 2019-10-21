@@ -43,7 +43,7 @@
             HintText = "Select a venue you can travel from to deliver training",
             LocationId = Model.LocationId ?? (Guid?)null,
             DisplayLink = true,
-            DeliveryOptionsListItemModel = Model.DeliveryOptionsListItemModel
+            DeliveryOptionsListItemModel = Model.DeliveryOptionSummary
 
         })
 
@@ -84,18 +84,18 @@
         </div>
 
 
-        @if (Model.DeliveryOptionsListItemModel.DeliveryOptionsListItemModel != null && Model.DeliveryOptionsListItemModel.DeliveryOptionsListItemModel.Count() > 0)
+        @if (Model.DeliveryOptionSummary.DeliveryOptions != null && Model.DeliveryOptionSummary.DeliveryOptions.Count() > 0)
         {
             <div class="summary--linked-title">
                 <h2 class="govuk-heading-s">Delivery options </h2>
             </div>
         }
         @{
-            Model.DeliveryOptionsListItemModel.SummaryPage = false;
+            Model.DeliveryOptionSummary.SummaryPage = false;
             ViewBag.Mode = Model.Mode;
 
         }
-        @await Component.InvokeAsync(nameof(DeliveryOptionsList), Model.DeliveryOptionsListItemModel)
+        @await Component.InvokeAsync(nameof(DeliveryOptionsList), Model.DeliveryOptionSummary)
 
 
 
