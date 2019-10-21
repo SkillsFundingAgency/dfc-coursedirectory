@@ -736,7 +736,7 @@
             "value": "providerportal"
           },
           "databaseNeedsCreation": {
-              "value": true
+              "value": false
           },
           "useSharedRequestUnits": {
               "value": false
