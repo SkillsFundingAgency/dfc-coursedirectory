@@ -1,6 +1,5 @@
 ﻿using Dfc.CourseDirectory.Models.Interfaces.Courses;
 using System;
-using System.Collections.Generic;
 
 namespace Dfc.CourseDirectory.Models.Models.Courses
 {

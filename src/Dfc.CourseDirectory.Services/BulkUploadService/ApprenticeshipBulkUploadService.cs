@@ -53,9 +53,9 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
         internal enum DeliveryMode
         {
             Undefined = 0,
-            Day = 1,
-            Block = 2,
-            Employer = 3
+            Employer = 1,
+            Day = 2,
+            Block = 3
         }
 
         internal class ApprenticeshipCsvRecord
