@@ -173,19 +173,19 @@
                 }
 
 
-                @if (Model.DeliveryOptionsViewModel != null)
+                @if (Model.DeliveryOptions != null)
                 {
-                    @if (Model.DeliveryOptionsViewModel.DeliveryOptionsListItemModel != null)
+                    @if (Model.DeliveryOptions.DeliveryOptionSummary != null)
                     {
-                        @await Component.InvokeAsync(nameof(DeliveryOptionsList), Model.DeliveryOptionsViewModel.DeliveryOptionsListItemModel)
+                        @await Component.InvokeAsync(nameof(DeliveryOptionsList), Model.DeliveryOptions.DeliveryOptionSummary)
                     }
                 }
 
-                @if (Model.DeliveryOptionsCombinedViewModel != null)
+                @if (Model.DeliveryOptionsCombined != null)
                 {
-                    @if (Model.DeliveryOptionsCombinedViewModel.DeliveryOptionsListItemModel != null)
+                    @if (Model.DeliveryOptionsCombined.DeliveryOptionSummary != null)
                     {
-                        @await Component.InvokeAsync(nameof(DeliveryOptionsList), Model.DeliveryOptionsCombinedViewModel.DeliveryOptionsListItemModel)
+                        @await Component.InvokeAsync(nameof(DeliveryOptionsList), Model.DeliveryOptionsCombined.DeliveryOptionSummary)
                     }
                 }
 
