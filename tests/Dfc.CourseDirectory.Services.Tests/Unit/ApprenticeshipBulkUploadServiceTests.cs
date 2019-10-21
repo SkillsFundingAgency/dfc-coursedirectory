@@ -1516,13 +1516,56 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 InlineData(
                     ",,3,4,5,STANDARD APPRENTICESHIP,www.test.co.uk,test@tes.com,123456789012,www.contus.com,CLASSROOM,DUDLEY ,,BLOCK,,,,",
                     ",,3,4,5,STANDARD APPRENTICESHIP,www.test.co.uk,test@tes.com,123456789012,www.contus.com,CLASSROOM,DUDLEY 1,,DAY,,,,",
-                    ",,3,4,5,STANDARD APPRENTICESHIP,www.test.co.uk,test@tes.com,123456789012,www.contus.com,CLASSROOM,DUDLEY 2,,DAY;BLOCK,,,,")
+                    ",,3,4,5,STANDARD APPRENTICESHIP,www.test.co.uk,test@tes.com,123456789012,www.contus.com,CLASSROOM,DUDLEY 2,,DAY;BLOCK,,,,"
+                ),
+                //COUR-2094
+                InlineData(",,3,4,5,STANDARD APPRENTICESHIP,http://www.tests.co.uk,test@testing.com,123456789012,http://www.tests.co.uk,CLASSROOM,DUDLEY ,,Day,,,,")
             ]
             public void Various_Frameworks_All_Should_Pass(params string[] csvLines)
             {
                 // Arrange
                 var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
                 var httpClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulFrameworkFile(), HttpStatusCode.OK);
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(httpClient);
+
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
+                Stream stream = CsvStreams.StringArrayToStream(csvLines);
+
+                List<string> errors = new List<string>();
+                // Act
+                try
+                {
+                    errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
+                }
+                catch (Exception e)
+                {
+
+                    errors.Add(e.Message);
+
+                }
+
+                // Assert
+                errors.Should().BeNullOrEmpty();
+
+            }
+            [Theory]
+            //COUR-2094
+            [
+                InlineData("157,1,,,,STANDARD APPRENTICESHIP,http://www.tests.co.uk,TEST@TEST.COM,12345678901,http://www.tests.co.uk,CLASSROOM,DUDLEY,,DAY,,,,"),
+                //COUR-2101
+                InlineData(
+                    "157,1,,,,STANDARD APPRENTICESHIP 1,HTTP://WWW.TETS.CO.UK,TEST@TEST.COM,12134567890,HTTP://WWW.CONTACTUS.COM,BOTH,DUDLEY 1,100,EMPLOYER;DAY,NO,,,",
+                    "157,1,,,,STANDARD APPRENTICESHIP 2,HTTP://WWW.TETS.CO.UK,TEST@TEST.COM,12134567890,HTTP://WWW.CONTACTUS.COM,BOTH,DUDLEY 2,100,EMPLOYER;BLOCK,NO,,,",
+                    "157,1,,,,STANDARD APPRENTICESHIP 3,HTTP://WWW.TETS.CO.UK,TEST@TEST.COM,12134567890,HTTP://WWW.CONTACTUS.COM,BOTH,DUDLEY 3,100,EMPLOYER;DAY;BLOCK,NO,,,"),
+
+            ]
+            public void Various_Standards_All_Should_Pass(params string[] csvLines)
+            {
+                // Arrange
+                var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
+                var httpClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulStandardFile(), HttpStatusCode.OK);
                 var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(httpClient);
 
                 var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
