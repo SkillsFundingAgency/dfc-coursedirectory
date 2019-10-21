@@ -717,6 +717,35 @@
     },
     {
       "apiVersion": "2017-05-10",
+      "name": "providerPortalCosmosSQLdatabase",
+      "type": "Microsoft.Resources/deployments",
+      "dependsOn": [
+        "providerPortalCosmosSQL"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('deploymentUrlBase'),'CosmosDb/cosmos-database.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "accountName": {
+            "value": "[variables('cosmosDbSQLName')]"
+          },
+          "databaseName": {
+            "value": "providerportal"
+          },
+          "databaseNeedsCreation": {
+              "value": false
+          },
+          "useSharedRequestUnits": {
+              "value": false
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "2017-05-10",
       "name": "providerPortalSearch",
       "type": "Microsoft.Resources/deployments",
       "properties": {
