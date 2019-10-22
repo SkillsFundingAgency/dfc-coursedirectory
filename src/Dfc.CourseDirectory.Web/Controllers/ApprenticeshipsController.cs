@@ -1210,9 +1210,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
 
         [Authorize]
-        public IActionResult Complete()
+        public IActionResult Complete(CompleteViewModel model)
         {
-            var model = new CompleteViewModel();
 
             var DetailViewModel = _session.GetObject<DetailViewModel>("DetailViewModel");
 

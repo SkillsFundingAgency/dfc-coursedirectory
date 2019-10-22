@@ -941,6 +941,29 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
                 errors.Should().NotBeNull();
                 errors.Should().HaveCount(1);
                 errors[0].Should().Be("Validation error on row 2. Field RADIUS must be a valid number");
+            }            
+            [Theory]
+            [InlineData("157,1,,,,STANDARD APPRENTICESHIP,HTTP://WWW.TETS.CO.UK,TEST@TEST.COM,1213456789,HTTP://WWW.CONTACTUS.COM,EMPLOYER,,100,,NO,NO,,")]
+            public void When_REGION_SUB_REGION_Are_Blank_Return_Error(params string[] csvLine)
+            {
+                // Arrange
+                var logger = Microsoft.Extensions.Logging.Abstractions.NullLogger<ApprenticeshipBulkUploadService>.Instance;
+                var apprenticeMock = ApprenticeshipServiceMockFactory.GetApprenticeshipService(null);
+                var venueClient = HttpClientMockFactory.GetClient(SampleJsons.SuccessfulVenueFile(), HttpStatusCode.OK);
+                var venueMock = VenueServiceMockFactory.GetVenueService(venueClient);
+                var serviceUnderTest = new ApprenticeshipBulkUploadService(logger, apprenticeMock, venueMock);
+                Stream stream = CsvStreams.StringArrayToStream(csvLine);
+
+                // Act
+
+                var errors = serviceUnderTest.ValidateAndUploadCSV(stream, _authUserDetails);
+
+                // Assert
+
+
+                errors.Should().NotBeNull();
+                errors.Should().HaveCount(1);
+                errors[0].Should().Be($"Validation error on row 2. Fields REGION/SUB_REGION are mandatory");
             }
             [Fact]
             public void When_Field_RADIUS_Is_Greater_Than_874_Return_Error()
@@ -1129,7 +1152,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit
 
                 // Assert
                 errors.Should().NotBeNull();
-                errors.Should().HaveCount(1);
+                errors.Should().HaveCount(2);
                 errors[0].Should().Be("Validation error on row 2. Field REGION contains invalid Region names");
             }
             [Fact]

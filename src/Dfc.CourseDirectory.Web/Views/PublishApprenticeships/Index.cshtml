@@ -12,6 +12,9 @@
         <p>
             Your file of @Model.ListOfApprenticeships @(Model.ListOfApprenticeships.Equals(1) ? "apprenticeship" : "apprenticeships") has no errors. Publish @(Model.ListOfApprenticeships.Equals(1) ? "it" : "them") to replace your current apprenticeships on the course directory.
         </p>
+        <button name="publishButton" type="submit" class="govuk-button" id="publish" asp-controller="PublishApprenticeships" asp-action="Index">
+            Publish all
+        </button>
     }
     else
     {
