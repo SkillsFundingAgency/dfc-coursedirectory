@@ -937,6 +937,18 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                                 return errors;
                             }
                         }
+
+                        var anyRegions = GetRegionList(row);
+                        if (!anyRegions.Any())
+                        {
+                            errors.Add(new BulkUploadError
+                            {
+                                LineNumber = row.Context.Row,
+                                Header = fieldName,
+                                Error = $"Validation error on row {row.Context.Row}. Fields REGION/SUB_REGION are mandatory"
+
+                            });
+                        }
                     }
                 }
 
