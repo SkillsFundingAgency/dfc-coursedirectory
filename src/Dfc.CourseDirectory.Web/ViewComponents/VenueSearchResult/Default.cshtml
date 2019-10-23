@@ -20,8 +20,8 @@
 <div id="LiveCoursesExistMessage" hidden="hidden">
     @await Component.InvokeAsync(nameof(Notification), new NotificationModel
                        {
-                           NotificationTitle = "Venue cannot be deleted for the for the following reasons:-",
-                           NotificationMessage = "There are live courses associated with this venue. Please delete these courses or assign a different venue to the courses before deleting the venue",
+                           NotificationTitle = "Location cannot be deleted for the for the following reasons:-",
+                           NotificationMessage = "There are live courses associated with this location. Please delete these courses or assign a different location to the courses before deleting the location",
                            ClassType = "error-summary"
                        })
 </div>
@@ -29,8 +29,8 @@
 <div id="PendingCoursesExistMessage" hidden="hidden">
     @await Component.InvokeAsync(nameof(Notification), new NotificationModel
                        {
-                           NotificationTitle = "Venue cannot be deleted for the for the following reasons:-",
-                           NotificationMessage = "There are pending courses associated with this venue. Please complete the outstanding bulk upload process or course migration process before deleting the venue",
+                           NotificationTitle = "Location cannot be deleted for the for the following reasons:-",
+                           NotificationMessage = "There are pending courses associated with this location. Please complete the outstanding bulk upload process or course migration process before deleting the location",
                            ClassType = "error-summary"
                        })
 </div>
@@ -41,7 +41,7 @@
 
         if (Model.Deleted)
         {
-            message = "Venue ";
+            message = "Location ";
             if (!string.IsNullOrWhiteSpace(Model.NewItem.VenueName))
             {
                 message += string.Concat(Model.NewItem.VenueName);
@@ -93,7 +93,7 @@
                 @await Component.InvokeAsync(nameof(Notification), new NotificationModel
                 {
 
-                    NotificationTitle = Model.Updated ? "Your venue updated:" : "New venue added:",
+                    NotificationTitle = Model.Updated ? "Your location updated:" : "New location added:",
                     NotificationMessage = message,
                     ClassType = "success-summary"
                 });
@@ -131,7 +131,7 @@
                 <table class="govuk-table">
                     <thead class="govuk-table__head">
                         <tr class="govuk-table__row">
-                            <th class="govuk-table__header" scope="col">Venue</th>
+                            <th class="govuk-table__header" scope="col">Location</th>
                             <th class="govuk-table__header" scope="col">Address</th>
                             <th class="govuk-table__header" scope="col">Postcode</th>
                             <th class="govuk-table__header" scope="col"></th>
