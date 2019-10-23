@@ -202,7 +202,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     if (errors.Any())
                     {
                         return RedirectToAction("WhatDoYouWantToDoNext", "BulkUploadApprenticeships",
-                            new { publishMode = PublishMode.BulkUpload, fromBulkUpload = true });
+                            new { message = $"Your file contained {errors.Count} error{(errors.Count > 1 ? "s" : "" )}. You must fix all errors before your courses can be published to the directory." });
                     }
 
                     // All good => redirect to BulkApprenticeship action
