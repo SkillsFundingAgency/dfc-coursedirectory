@@ -261,7 +261,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             }
         }
-          [Authorize]
+        [Authorize]
         [HttpGet]
         public IActionResult DownloadErrorFile()
         {
