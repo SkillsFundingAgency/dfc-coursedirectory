@@ -5,11 +5,11 @@
 @{
     if (Model.Id != null)
     {
-        ViewData["Title"] = "Edit venue";
+        ViewData["Title"] = "Edit location";
     }
     else
     {
-        ViewData["Title"] = "Add venue";
+        ViewData["Title"] = "Add location";
     }
     Layout = "_Layout_Your_Courses";
 }
@@ -21,13 +21,13 @@
             if (Model.Id != null)
             {
                 <h1 class="govuk-heading-l" style="padding-top: 20px;">
-                    Edit venue
+                    Edit location
                 </h1>
             }
             else
             {
                 <h1 class="govuk-heading-l" style="padding-top: 20px;">
-                    Add venue
+                    Add location
                 </h1>
             }
         }
@@ -37,8 +37,8 @@
 
             @await Component.InvokeAsync(nameof(VenueName), new VenueNameModel
             {
-                LabelText = "Venue name",
-                AriaDescribedBy = "Please enter the venue name."
+                LabelText = "Location name",
+                AriaDescribedBy = "Please enter the location name."
             })
 
             @await Component.InvokeAsync(nameof(ManualAddress), new ManualAddressModel
