@@ -29,8 +29,10 @@ using Dfc.CourseDirectory.Models.Models.Regions;
 using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 using Dfc.CourseDirectory.Services.ProviderService;
 using System.ComponentModel.DataAnnotations;
+using Dfc.CourseDirectory.Models.Models.Apprenticeships;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Models.Models.Providers;
+using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -40,6 +42,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly ILogger<BlobStorageController> _logger;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly ICourseService _courseService;
+        private readonly IApprenticeshipService _apprenticeshipService;
         private readonly IBlobStorageService _blobService;
         private ICourseProvisionHelper _courseProvisionHelper;
 
@@ -49,12 +52,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 ILogger<BlobStorageController> logger,
                 IHttpContextAccessor contextAccessor,
                 ICourseService courseService,
+                IApprenticeshipService apprenticeshipService,
                 IBlobStorageService blobService,
                 ICourseProvisionHelper courseProvisionHelper)
         {
             Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(contextAccessor, nameof(contextAccessor));
             Throw.IfNull(courseService, nameof(courseService));
+            Throw.IfNull(apprenticeshipService, nameof(apprenticeshipService));
             Throw.IfNull(blobService, nameof(blobService));
 
             _logger = logger;
@@ -62,6 +67,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _courseService = courseService;
             _blobService = blobService;
             _courseProvisionHelper = courseProvisionHelper;
+            _apprenticeshipService = apprenticeshipService;
 
         }
 
@@ -129,6 +135,35 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             IEnumerable<string> headers = new string[] { "Row Number,Column Name,Error Description" };
             IEnumerable<string> csvlines = totalErrorList.Select(i => string.Join(",", new string[] { i.LineNumber.ToString(), i.Header, i.Error.Replace(',', ' ') }));
+            string report = string.Join(Environment.NewLine, headers.Concat(csvlines));
+            byte[] data = Encoding.ASCII.GetBytes(report);
+            MemoryStream ms = new MemoryStream(data)
+            {
+                Position = 0
+            };
+
+            FileStreamResult result = new FileStreamResult(ms, MediaTypeNames.Text.Plain);
+            DateTime d = DateTime.Now;
+            result.FileDownloadName = $"Bulk_upload_errors_{UKPRN}_{d.Day.TwoChars()}_{d.Month.TwoChars()}_{d.Year}_{d.Hour.TwoChars()}_{d.Minute.TwoChars()}.csv";
+            return result;
+        }
+        [Authorize]
+        public FileStreamResult GetApprenticeshipBulkUploadErrors(int? UKPRN)
+        {
+            if (!UKPRN.HasValue)
+                return null;
+
+            var apprenticeships = _apprenticeshipService.GetApprenticeshipByUKPRN(UKPRN.ToString())
+                .Result.Value.Where((y => ((int)y.RecordStatus & (int)RecordStatus.BulkUploadPending) > 0
+                                          || ((int)y.RecordStatus & (int)RecordStatus.BulkUploadReadyToGoLive) > 0));
+            //.Where((y => ((int)y. & (int)RecordStatus.BulkUploadPending) > 0
+                                                        //|| ((int)y.CourseStatus & (int)RecordStatus.BulkUploadReadyToGoLive) > 0));
+
+            var apprenticeshipBUErrors = apprenticeships.Where(x => x.BulkUploadErrors != null).SelectMany(y => y.BulkUploadErrors).ToList();
+
+
+            IEnumerable<string> headers = new string[] { "Row Number,Column Name,Error Description" };
+            IEnumerable<string> csvlines = apprenticeshipBUErrors.Select(i => string.Join(",", new string[] { i.LineNumber.ToString(), i.Header, i.Error.Replace(',', ' ') }));
             string report = string.Join(Environment.NewLine, headers.Concat(csvlines));
             byte[] data = Encoding.ASCII.GetBytes(report);
             MemoryStream ms = new MemoryStream(data)

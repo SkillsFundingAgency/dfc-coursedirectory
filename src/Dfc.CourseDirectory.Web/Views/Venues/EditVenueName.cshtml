@@ -15,8 +15,8 @@
             @Html.HiddenFor(x => x.Id)
             @await Component.InvokeAsync(nameof(VenueName), new VenueNameModel
        {
-           LabelText = "Venue name",
-           AriaDescribedBy = "Please enter the venue name.",
+           LabelText = "Location name",
+           AriaDescribedBy = "Please enter the location name.",
            DuplicateFound = false
        })
 
