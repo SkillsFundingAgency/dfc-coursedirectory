@@ -17,7 +17,7 @@
                 <span class="govuk-caption-xl">Course Directory</span>
                 <h1 class="govuk-heading-l">Download error file</h1>
 
-                <p class="govuk-body govuk-!-padding-bottom-4">Your error file was created at your last bulk upload on @Model.ErrorFileCreatedDate.ToString("dd MMM yyyy")</p>
+                <p class="govuk-body govuk-!-padding-bottom-4">Your error file was created at your last bulk upload on @Model.ErrorFileCreatedDate.ToString("dd MMM yyyy hh:MM:ss")</p>
                 <br />
 
                 <button class="govuk-button" onclick="location.href = '@Url.Action("GetApprenticeshipBulkUploadErrors", "BlobStorage", new { UKPRN = Model.UKPRN })';return false;">Download</button>

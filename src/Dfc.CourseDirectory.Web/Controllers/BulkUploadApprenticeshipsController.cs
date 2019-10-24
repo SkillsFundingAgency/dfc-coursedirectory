@@ -42,7 +42,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly IProviderService _providerService;
         private readonly IUserHelper _userHelper;
         private IHostingEnvironment _env;
-        private const string _blobContainerPath = "/Apprenticeships Bulk Upload/Files/";
+        private const string _blobContainerPath = "/Apprenticeship Bulk Upload/Files/";
         private ISession _session => _contextAccessor.HttpContext.Session;
 
         public BulkUploadApprenticeshipsController(
@@ -321,8 +321,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 var archiveFilesResult = _blobService.ArchiveFiles($"{UKPRN.ToString()}{_blobContainerPath}");
             }
 
-            //TODO: GB DeleteBulkUploadCourses modify for Apprenticeships
-            var deleteBulkuploadResults = await _courseService.DeleteBulkUploadCourses(UKPRN);
+            var deleteBulkuploadResults = await _apprenticeshipService.DeleteBulkUploadApprenticeships(UKPRN);
 
             if (deleteBulkuploadResults.IsSuccess)
             {
