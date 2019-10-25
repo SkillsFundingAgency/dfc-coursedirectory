@@ -42,7 +42,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly IProviderService _providerService;
         private readonly IUserHelper _userHelper;
         private IHostingEnvironment _env;
-        private const string _blobContainerPath = "/Apprenticeships Bulk Upload/Files/";
+        private const string _blobContainerPath = "/Apprenticeship Bulk Upload/Files/";
         private ISession _session => _contextAccessor.HttpContext.Session;
 
         public BulkUploadApprenticeshipsController(
@@ -275,7 +275,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
             IEnumerable<BlobFileInfo> list = _blobService.GetFileList(UKPRN + _blobContainerPath).OrderByDescending(x => x.DateUploaded).ToList();
             if (list.Any())
             {
-                model.ErrorFileCreatedDate = list.FirstOrDefault().DateUploaded.Value.DateTime;
+                                
+                TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time");
+                DateTime dt1 = DateTime.Parse(list.FirstOrDefault().DateUploaded.Value.DateTime.ToString());
+                DateTime dt2 = TimeZoneInfo.ConvertTimeFromUtc(dt1, tzi);
+
+                model.ErrorFileCreatedDate = Convert.ToDateTime(dt2.ToString("dd MMM yyyy HH:mm"));
             }
 
             return View("../BulkUploadApprenticeships/DownloadErrorFile/Index", model);
@@ -321,8 +326,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 var archiveFilesResult = _blobService.ArchiveFiles($"{UKPRN.ToString()}{_blobContainerPath}");
             }
 
-            //TODO: GB DeleteBulkUploadCourses modify for Apprenticeships
-            var deleteBulkuploadResults = await _courseService.DeleteBulkUploadCourses(UKPRN);
+            var deleteBulkuploadResults = await _apprenticeshipService.DeleteBulkUploadApprenticeships(UKPRN);
 
             if (deleteBulkuploadResults.IsSuccess)
             {

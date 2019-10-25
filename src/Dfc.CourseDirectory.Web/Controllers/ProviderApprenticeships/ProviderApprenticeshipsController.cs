@@ -103,17 +103,20 @@ namespace Dfc.CourseDirectory.Web.Controllers
             int? UKPRN = _session.GetInt32("UKPRN");
             var result = await _apprenticeshipService.GetApprenticeshipByUKPRN(UKPRN.ToString());
 
+
             if (result.IsSuccess && result.HasValue)
             {
+                var liveApprenticeships = result.Value.Where(a => a.RecordStatus == RecordStatus.Live);
+
                 if (string.IsNullOrWhiteSpace(requestModel.SearchTerm))
                 {
-                    model.Items = result.Value.ToList();
+                    model.Items = liveApprenticeships.ToList();
                 }
                 else
                 {
                     var searchTermWords = requestModel.SearchTerm.Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
-                    model.Items = result.Value
+                    model.Items = liveApprenticeships
                         .Where(r => $"{r.ApprenticeshipTitle} {r.MarketingInformation} {r.NotionalNVQLevelv2}".Split(' ', StringSplitOptions.RemoveEmptyEntries)
                             .Any(w => searchTermWords.Any(s => s.Equals(w, StringComparison.OrdinalIgnoreCase)))
                             && r.RecordStatus == RecordStatus.Live).ToList();
