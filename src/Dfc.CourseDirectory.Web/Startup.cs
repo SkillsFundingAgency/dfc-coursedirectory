@@ -164,7 +164,7 @@ namespace Dfc.CourseDirectory.Web
 
             services.AddMvc(options =>
             {
-
+                options.Filters.Add(new DeactivatedProviderErrorActionFilter());
             }).SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddSessionStateTempDataProvider();
 
 
