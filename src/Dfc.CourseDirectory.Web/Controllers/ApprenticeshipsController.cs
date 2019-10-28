@@ -1389,7 +1389,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return Json(Url.Action("AddVenue", "Venues"));
         }
 
-        internal Dictionary<string, List<string>> SubRegionCodesToDictionary(string[] subRegions)
+        internal Dictionary<string, List<string>> SubRegionCodesToDictionary(IEnumerable<string> subRegions)
         {
             SelectRegionModel selectRegionModel = new SelectRegionModel();
             Dictionary<string, List<string>> regionsAndSubregions = new Dictionary<string, List<string>>();
