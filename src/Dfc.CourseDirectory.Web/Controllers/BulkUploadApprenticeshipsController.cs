@@ -156,16 +156,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 if (!Validate.isBinaryStream(ms))
                 {
                     int csvLineCount = _apprenticeshipBulkUploadService.CountCsvLines(ms);
-                    bool processInline = (csvLineCount <= _blobService.InlineProcessingThreshold);
-                    _logger.LogInformation(
-                        $"Csv line count = {csvLineCount} threshold = {_blobService.InlineProcessingThreshold} processInline = {processInline}");
 
-                    if (processInline)
-                    {
-                        bulkUploadFileNewName +=
-                            "." + DateTime.UtcNow.ToString("yyyyMMddHHmmss") +
-                            ".processed"; // stops the Azure trigger from processing the file
-                    }
 
                     Task task = _blobService.UploadFileAsync(
                         $"{UKPRN.ToString()}/Apprenticeship Bulk Upload/Files/{bulkUploadFileNewName}", ms);
@@ -196,9 +187,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         return View(vm);
                     }
 
-
-                    if (!processInline) return RedirectToAction("Pending");
-
                     if (errors.Any())
                     {
                         return RedirectToAction("WhatDoYouWantToDoNext", "BulkUploadApprenticeships",
@@ -206,7 +194,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     }
 
                     // All good => redirect to BulkApprenticeship action
-                    return RedirectToAction("PublishYourFile", "BulkUploadApprenticeships", new {numberOfApprenticeships = csvLineCount - 1});
+                    return RedirectToAction("PublishYourFile", "BulkUploadApprenticeships");
 
 
 
@@ -354,10 +342,24 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> PublishYourFile(int numberOfApprenticeships)
+        public async Task<IActionResult> PublishYourFile()
         {
+            int? sUKPRN = _session.GetInt32("UKPRN");
+            if (!sUKPRN.HasValue)
+            {
+                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
+            }
+
+            var numberOfApprenticeships = 0;
+
             var model = new ApprenticeshipsPublishYourFileViewModel();
 
+            var result = await _apprenticeshipService.GetApprenticeshipByUKPRN(sUKPRN.ToString());
+            if (result.IsSuccess && result.HasValue)
+            {
+                numberOfApprenticeships =
+                    result.Value.Where(x => x.RecordStatus == RecordStatus.BulkUploadReadyToGoLive).Count();
+            }
             model.NumberOfApprenticeships = numberOfApprenticeships;
 
             return View("../BulkUploadApprenticeships/PublishYourFile/Index", model);
