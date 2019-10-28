@@ -9,7 +9,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels.Apprenticeships
     public class DeliveryOptionsCombined
     {
 
-        public List<SelectListItem> Locations { get; set; }
+        public List<ApprenticeshipLocation> Locations { get; set; }
         public Guid? LocationId { get; set; }
 
         public bool DayRelease { get; set; }

@@ -21,7 +21,7 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Apprenticeships
         string Phone { get; }
         int ProviderUKPRN { get; } // As we are trying to inforce unique UKPRN per Provider
         int? ProviderId { get; }
-        string[] Regions { get; }
+        IEnumerable<string> Regions { get; }
         ApprenticeshipLocationType ApprenticeshipLocationType { get; }
         LocationType LocationType { get; }
         int? Radius { get; }
