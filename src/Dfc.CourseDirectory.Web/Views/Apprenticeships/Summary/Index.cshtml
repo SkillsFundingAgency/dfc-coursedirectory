@@ -2,6 +2,7 @@
 @using Dfc.CourseDirectory.Models.Models.Apprenticeships
 @using Dfc.CourseDirectory.Web.Helpers
 @using Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships
+@using Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships.ApprenticeshipLocationList
 @{
     if (Model.Mode == ApprenticeshipMode.EditYourApprenticeships)
     {
@@ -38,7 +39,7 @@
 
 
 
-                <h2 class="govuk-heading-m">@Model?.DetailViewModel?.ApprenticeshipTitle</h2>
+                <h2 class="govuk-heading-m">@Model?.Apprenticeship?.ApprenticeshipTitle</h2>
 
                 <dl class="govuk-summary-list ">
                     <div class="govuk-summary-list__row">
@@ -46,7 +47,7 @@
                             Apprenticeship information for employers
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            @Html.Raw(Model.DetailViewModel.Information)
+                            @Html.Raw(Model.Apprenticeship.MarketingInformation)
                         </dd>
                         <dd class="govuk-summary-list__actions">
                             <a class="govuk-link float-right" asp-controller="Apprenticeships" asp-action="Details" asp-route-Mode=@theMode asp-fragment="InformationContainer" asp-route-showcancelled=true>Change</a>
@@ -60,7 +61,7 @@
                             Apprenticeship webpage
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            @Model.DetailViewModel.Website
+                            @Model.Apprenticeship.ContactWebsite
                         </dd>
                         <dd class="govuk-summary-list__actions">
                             <a class="govuk-link float-right" asp-controller="Apprenticeships" asp-action="Details" asp-route-Mode=@theMode asp-fragment="WebsiteContainer" asp-route-showcancelled=true>Change</a>
@@ -74,7 +75,7 @@
                             Email
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            @Model.DetailViewModel.Email
+                            @Model.Apprenticeship.ContactEmail
                         </dd>
                         <dd class="govuk-summary-list__actions">
                             <a class="govuk-link float-right" asp-controller="Apprenticeships" asp-action="Details" asp-route-Mode=@theMode asp-fragment="EmailContainer" asp-route-showcancelled=true>Change</a>
@@ -88,7 +89,7 @@
                             Telephone
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            @Model.DetailViewModel.Telephone
+                            @Model.Apprenticeship.ContactTelephone
                         </dd>
                         <dd class="govuk-summary-list__actions">
                             <a class="govuk-link float-right" asp-controller="Apprenticeships" asp-action="Details" asp-route-Mode=@theMode asp-fragment="TelephoneContainer" asp-route-showcancelled=true>Change</a>
@@ -102,7 +103,7 @@
                             Contact URL
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            @Model.DetailViewModel.ContactUsIUrl
+                            @Model.Apprenticeship.ContactWebsite
                         </dd>
                         <dd class="govuk-summary-list__actions">
                             <a class="govuk-link float-right" asp-controller="Apprenticeships" asp-action="Details" asp-route-Mode=@theMode asp-fragment="ContactUsContainer" asp-route-showcancelled=true>Change</a>
@@ -112,26 +113,51 @@
                 </dl>
 
                 <div class="summary--linked-title">
-                    <h2 class="govuk-heading-s">Delivery options </h2>
                     
-                    @{
-                        switch (Model.DeliveryViewModel.ApprenticeshipDelivery)
-                        {
-                            case ApprenticeshipDelivery.YourLocation:
+                    <div class="govuk-summary-list">
+                        @{
+
+                            if (Model.Apprenticeship.ApprenticeshipLocations.Any(x => x.ApprenticeshipLocationType
+                                                                                      == ApprenticeshipLocationType.ClassroomBased))
+                            {
+                                <h3 class="govuk-heading-s">Classroom  based locations</h3>
                                 <a class="govuk-link float-right " asp-controller="Apprenticeships" asp-action="DeliveryOptions" asp-route-mode=@theMode>
                                     Change
                                 </a>
-                                break;
-                            case ApprenticeshipDelivery.Both: 
+                                @await Component.InvokeAsync(nameof(ApprenticeshipLocationList), new ApprenticeshipLocationListModel
+                                {
+                                    Locations = Model.Apprenticeship.ApprenticeshipLocations.Where(x => x.ApprenticeshipLocationType
+                                                                                                        == ApprenticeshipLocationType.ClassroomBased).ToList(),
+                                    Mode = Model.Mode,
+                                    SummaryPage = true
+                                })
+                            }
+
+                            if (Model.Apprenticeship.ApprenticeshipLocations.Any(x => x.ApprenticeshipLocationType
+                                                                                        == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased))
+                            {
+                                <h3 class="govuk-heading-s">Employer and classroom based locations</h3>
                                 <a class="govuk-link float-right" asp-controller="Apprenticeships" asp-action="DeliveryOptionsCombined" asp-route-mode=@theMode>
                                     Change
                                 </a>
-                                break;
-
-                            case ApprenticeshipDelivery.EmployersAddress:
-
-                                if (Model.LocationChoiceSelectionViewModel.NationalApprenticeship == NationalApprenticeship.Yes)
+                                @await Component.InvokeAsync(nameof(ApprenticeshipLocationList), new ApprenticeshipLocationListModel
                                 {
+                                    Locations = Model.Apprenticeship.ApprenticeshipLocations.Where(x => x.ApprenticeshipLocationType
+                                                                                                        == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased).ToList(),
+                                    Mode = Model.Mode,
+                                    SummaryPage = true
+                                })
+                            }
+
+                            if (Model.Apprenticeship.ApprenticeshipLocations.Any(x => x.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased))
+                            {
+                                <h3 class="govuk-heading-s">Employer based locations:</h3>
+
+                                var location = Model.Apprenticeship.ApprenticeshipLocations.FirstOrDefault(x => x.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased);
+
+                                if (location.National.HasValue && location.National.Value)
+                                {
+
                                     <a class="govuk-link float-right " asp-controller="Apprenticeships" asp-action="LocationChoiceSelection" asp-route-mode=@theMode>
                                         Change
                                     </a>
@@ -142,52 +168,47 @@
                                         Change
                                     </a>
                                 }
-                             
-                                break;
-                        }
-                    }
 
-                </div>
-                @if (Model.Regions != null && Model.Regions.Count > 0)
-                {
-                    <table class="govuk-table">
-                        <thead class="govuk-table__head">
-                            <tr class="govuk-table__row">
-                                <th class="govuk-table__header govuk-!-width-one-third">Location</th>
-                                <th class="govuk-table__header govuk-!-width-two-thirds">Sub region</th>
-                            </tr>
-                        </thead>
-                        <tbody class="govuk-table__body">
-                            @{
-                                foreach (var item in Model.Regions)
+                                @if (location.Regions != null && location.Regions.Length > 0)
                                 {
-                                    <tr class="govuk-table__row">
-                                        <th class="govuk-table__header">@item.Key</th>
-                                        <td class="govuk-table__cell">@string.Join(", ", item.Value)</td>
-                                    </tr>
+                                    <table class="govuk-table">
+                                        <thead class="govuk-table__head">
+                                            <tr class="govuk-table__row">
+                                                <th class="govuk-table__header govuk-!-width-one-third">Location</th>
+                                                <th class="govuk-table__header govuk-!-width-two-thirds">Sub region</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="govuk-table__body">
+                                            @{
+                                                if (location.National.HasValue && location.National.Value)
+                                                {
+                                                    <tr class="govuk-table__row">
+                                                        <th class="govuk-table__header">National</th>
+                                                        <td class="govuk-table__cell">All</td>
+                                                    </tr>
+                                                }
+                                                else
+                                                {
 
+                                                    foreach (var item in Model.Regions)
+                                                    {
+                                                        <tr class="govuk-table__row">
+                                                            <th class="govuk-table__header">@item.Key</th>
+                                                            <td class="govuk-table__cell">@string.Join(", ", item.Value)</td>
+                                                        </tr>
+
+                                                    }
+                                                }
+                                            }
+                                        </tbody>
+                                    </table>
                                 }
                             }
-                        </tbody>
-                    </table>
-                }
+                        }
+                    </div>
+                </div>
+              
 
-
-                @if (Model.DeliveryOptions != null)
-                {
-                    @if (Model.DeliveryOptions.DeliveryOptionSummary != null)
-                    {
-                        @await Component.InvokeAsync(nameof(DeliveryOptionsList), Model.DeliveryOptions.DeliveryOptionSummary)
-                    }
-                }
-
-                @if (Model.DeliveryOptionsCombined != null)
-                {
-                    @if (Model.DeliveryOptionsCombined.DeliveryOptionSummary != null)
-                    {
-                        @await Component.InvokeAsync(nameof(DeliveryOptionsList), Model.DeliveryOptionsCombined.DeliveryOptionSummary)
-                    }
-                }
 
 
                 @if (Model.Mode == ApprenticeshipMode.Add || Model.Mode == ApprenticeshipMode.EditApprenticeship)

@@ -1,6 +1,7 @@
 ﻿@using Dfc.CourseDirectory.Models.Enums
 @using Dfc.CourseDirectory.Web.Helpers
 @using Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships
+@using Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships.ApprenticeshipLocationList
 @using Dfc.CourseDirectory.Web.ViewComponents.Notification
 @{
     ViewData["Title"] = "Select delivery options"; 
@@ -84,7 +85,7 @@
         </div>
 
 
-        @if (Model.DeliveryOptionSummary.DeliveryOptions != null && Model.DeliveryOptionSummary.DeliveryOptions.Count() > 0)
+        @if (Model.locations != null && Model.locations.Any())
         {
             <div class="summary--linked-title">
                 <h2 class="govuk-heading-s">Delivery options </h2>
@@ -95,7 +96,12 @@
             ViewBag.Mode = Model.Mode;
 
         }
-        @await Component.InvokeAsync(nameof(DeliveryOptionsList), Model.DeliveryOptionSummary)
+        @await Component.InvokeAsync(nameof(ApprenticeshipLocationList), new ApprenticeshipLocationListModel
+        {
+            Locations = Model.locations,
+            SummaryPage = false,
+            Mode = Model.Mode
+        })
 
 
 
