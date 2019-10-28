@@ -26,10 +26,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Web.Helpers.Attributes;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
     [Authorize("Apprenticeship")]
+    [SelectedProviderNeeded]
     public class ApprenticeshipsController : Controller
     {
         private readonly ILogger<ApprenticeshipsController> _logger;
@@ -40,6 +42,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly IApprenticeshipService _apprenticeshipService;
         private readonly IProviderService _providerService;
         private readonly IOptions<ApprenticeshipSettings> _apprenticeshipSettings;
+
 
         public ApprenticeshipsController(
             ILogger<ApprenticeshipsController> logger,
@@ -150,10 +153,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             var model = new DetailViewModel();
 
-            var DetailViewModel = _session.GetObject<DetailViewModel>("DetailViewModel");
-            if (DetailViewModel != null)
+            var apprenticeship = _session.GetObject<Apprenticeship>("selectedApprenticeship");
+            if (apprenticeship != null)
             {
-                model = DetailViewModel;
+                model = MapToDetailViewModel(apprenticeship);
                 model.Mode = request.Mode;
                 model.Cancelled = request.Cancelled.HasValue && request.Cancelled.Value;
             }
@@ -198,7 +201,33 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpPost]
         public IActionResult Details(DetailViewModel model)
         {
-            _session.SetObject("DetailViewModel", model);
+            // create an apprenticeship Save it to session / db
+            // set the mode in session
+            var ukprn = _session.GetInt32("UKPRN").Value;
+            var apprenticeship = _session.GetObject<Apprenticeship>("selectedApprenticeship");
+            apprenticeship = apprenticeship ?? MapToApprenticeship(model, ukprn, new List<ApprenticeshipLocation>());
+
+
+
+
+            if (model.Mode == ApprenticeshipMode.EditApprenticeship ||
+                model.Mode == ApprenticeshipMode.EditYourApprenticeships && apprenticeship != null)
+            {
+                apprenticeship.ApprenticeshipTitle = model.ApprenticeshipTitle;
+                apprenticeship.ApprenticeshipType = model.ApprenticeshipType;
+                apprenticeship.StandardCode = model.StandardCode;
+                apprenticeship.FrameworkCode = model.FrameworkCode;
+                apprenticeship.ProgType = model.ProgType;
+                apprenticeship.MarketingInformation = model.Information;
+                apprenticeship.Url = model.Website;
+                apprenticeship.ContactTelephone = model.Telephone;
+                apprenticeship.ContactEmail = model.Email;
+                apprenticeship.ContactWebsite = model.ContactUsIUrl;
+                apprenticeship.PathwayCode = model.PathwayCode;
+                apprenticeship.NotionalNVQLevelv2 = model.NotionalNVQLevelv2;
+
+                _session.SetObject("selectedApprenticeship", apprenticeship);
+            }
 
             switch (model.Mode)
             {
@@ -227,13 +256,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             model.Mode = requestModel.Mode;
 
 
-
-            var DeliveryViewModel = _session.GetObject<DeliveryViewModel>("DeliveryViewModel");
-            if (DeliveryViewModel != null)
-            {
-                model = DeliveryViewModel;
-            }
-
             return View("../ApprenticeShips/Delivery/Index", model);
         }
 
@@ -241,23 +263,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpPost]
         public IActionResult Delivery(DeliveryViewModel model)
         {
-
-
-            var DeliveryViewModel = _session.GetObject<DeliveryViewModel>("DeliveryViewModel");
-
-            if (DeliveryViewModel != null)
-            {
-                if (DeliveryViewModel.ApprenticeshipDelivery != model.ApprenticeshipDelivery)
-                {
-                    _session.Remove("LocationChoiceSelectionViewModel");
-                    _session.Remove("DeliveryOptions");
-                    _session.Remove("DeliveryOptionsCombined");
-                }
-            }
-
-
-            _session.SetObject("DeliveryViewModel", model);
-
             switch (model.ApprenticeshipDelivery)
             {
                 case ApprenticeshipDelivery.Both:
@@ -274,18 +279,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         }
 
-
         [Authorize]
         public IActionResult LocationChoiceSelection(ApprenticeshipMode Mode)
         {
 
             var model = new LocationChoiceSelectionViewModel();
 
-            var LocationChoiceSelectionViewModel = _session.GetObject<LocationChoiceSelectionViewModel>("LocationChoiceSelectionViewModel");
-            if (LocationChoiceSelectionViewModel != null)
-            {
-                model = LocationChoiceSelectionViewModel;
-            }
             model.Mode = Mode;
             return View("../Apprenticeships/LocationChoiceSelection/Index", model);
         }
@@ -294,11 +293,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpPost]
         public IActionResult LocationChoiceSelection(LocationChoiceSelectionViewModel model)
         {
-            _session.Remove("RegionsViewModel");
-            _session.SetObject("LocationChoiceSelectionViewModel", model);
             switch (model.NationalApprenticeship)
             {
                 case NationalApprenticeship.Yes:
+
+                    var apprenticeship = _session.GetObject<Apprenticeship>("selectedApprenticeship");
+
+                    apprenticeship.ApprenticeshipLocations.Add(CreateRegionLocation(new string[0], true));
+
+                    _session.SetObject("selectedApprenticeship", apprenticeship);
                     return RedirectToAction("Summary", "Apprenticeships", new { Mode = model.Mode });
 
                 case NationalApprenticeship.No:
@@ -309,8 +312,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             }
         }
-
-
 
         [Authorize]
         public IActionResult DeliveryOptions(string message, ApprenticeshipMode mode)
@@ -324,22 +325,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             var model = new DeliveryOptionsViewModel();
 
-            var DeliveryOptionsViewModel = _session.GetObject<DeliveryOptionsViewModel>("DeliveryOptions");
-            if (DeliveryOptionsViewModel != null)
-            {
-                model = DeliveryOptionsViewModel;
-                model.BlockRelease = false;
-                model.DayRelease = false;
-                model.Radius = null;
-            }
-            else
-            {
-                model.DeliveryOptionSummary = new DeliveryOptionSummary();
-                model.DeliveryOptionSummary.DeliveryOptions = null;
-                model.BlockRelease = false;
-                model.DayRelease = false;
-                model.Radius = null;
-            }
+            var apprenticeship = _session.GetObject<Apprenticeship>("selectedApprenticeship");
+
+            model.DeliveryOptionSummary = new DeliveryOptionSummary();
+            model.DeliveryOptionSummary.DeliveryOptions = null;
+            model.BlockRelease = false;
+            model.DayRelease = false;
+            model.Radius = null;
+            model.locations = apprenticeship?.ApprenticeshipLocations.Where(x => x.ApprenticeshipLocationType == ApprenticeshipLocationType.ClassroomBased).ToList();
 
             ViewBag.Message = message;
 
@@ -359,31 +352,21 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             var model = new DeliveryOptionsCombined();
 
-            var DeliveryOptionsCombinedViewModel = _session.GetObject<DeliveryOptionsCombined>("DeliveryOptionsCombined");
-            if (DeliveryOptionsCombinedViewModel != null)
-            {
-                model = DeliveryOptionsCombinedViewModel;
-                model.BlockRelease = false;
-                model.DayRelease = false;
-                model.National = false;
-                model.Radius = null;
-            }
-            else
-            {
-                model.DeliveryOptionSummary = new DeliveryOptionSummary();
-                model.DeliveryOptionSummary.DeliveryOptions = null;
-                model.BlockRelease = false;
-                model.DayRelease = false;
-                model.National = false;
-                model.Radius = null;
-            }
+            var apprenticeship = _session.GetObject<Apprenticeship>("selectedApprenticeship");
+
+            model.DeliveryOptionSummary = new DeliveryOptionSummary();
+            model.DeliveryOptionSummary.DeliveryOptions = null;
+            model.BlockRelease = false;
+            model.DayRelease = false;
+            model.National = false;
+            model.Radius = null;
+            model.Locations = apprenticeship?.ApprenticeshipLocations.Where(x => x.ApprenticeshipLocationType == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased).ToList();
+
 
             ViewBag.Message = message;
             model.Mode = mode;
             return View("../Apprenticeships/DeliveryOptionsCombined/Index", model);
         }
-
-
 
         [Authorize]
         public async Task<IActionResult> ViewAndEdit(ViewAndEditRequestModel requestModel)
@@ -412,177 +395,24 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             if (getApprenticehipByIdResult.IsSuccess && getApprenticehipByIdResult.HasValue)
             {
+                var selectedApprenticeship = getApprenticehipByIdResult.Value;
 
-                var DetailViewModel = new DetailViewModel();
-                var DeliveryViewModel = new DeliveryViewModel();
-                var LocationChoiceSelectionViewModel = new LocationChoiceSelectionViewModel();
-
-                //var Regions = new String[];
-
-                DetailViewModel.ApprenticeshipTitle = getApprenticehipByIdResult.Value.ApprenticeshipTitle;
-                DetailViewModel.ApprenticeshipType = getApprenticehipByIdResult.Value.ApprenticeshipType;
-                DetailViewModel.ContactUsIUrl = getApprenticehipByIdResult.Value.ContactWebsite;
-                DetailViewModel.Email = getApprenticehipByIdResult.Value.ContactEmail;
-                DetailViewModel.FrameworkCode = getApprenticehipByIdResult.Value.FrameworkCode;
-                DetailViewModel.Id = getApprenticehipByIdResult.Value.id;
-                DetailViewModel.Information = getApprenticehipByIdResult.Value.MarketingInformation;
-                DetailViewModel.NotionalNVQLevelv2 = getApprenticehipByIdResult.Value.NotionalNVQLevelv2;
-                DetailViewModel.StandardCode = getApprenticehipByIdResult.Value.StandardCode;
-                DetailViewModel.Telephone = getApprenticehipByIdResult.Value.ContactTelephone;
-                DetailViewModel.Website = getApprenticehipByIdResult.Value.Url;
-                DetailViewModel.Mode = requestModel.Mode;
-                model.DetailViewModel = DetailViewModel;
-
-
-
-                model.DeliveryViewModel = DeliveryViewModel;
+                model.Mode = requestModel.Mode;
+                model.Apprenticeship = selectedApprenticeship;
 
                 var type = getApprenticehipByIdResult.Value.ApprenticeshipLocations.FirstOrDefault();
-
-                if (type != null)
-                {
-                    if (type.ApprenticeshipLocationType == ApprenticeshipLocationType.ClassroomBased)
-                    {
-                        model.DeliveryOptions = new DeliveryOptionsViewModel();
-                        DeliveryViewModel.ApprenticeshipDelivery = ApprenticeshipDelivery.YourLocation;
-                        DeliveryOptionSummary deliveryOptionSummary = new DeliveryOptionSummary();
-                        DeliveryOptionsViewModel deliveryOptionsViewModel = new DeliveryOptionsViewModel();
-                        deliveryOptionSummary.DeliveryOptions =
-                            new List<DeliveryOption>();
-
-                        deliveryOptionsViewModel.DeliveryOptionSummary = deliveryOptionSummary;
-                        model.DeliveryOptions = deliveryOptionsViewModel;
-                        model.DeliveryOptions.Mode = requestModel.Mode;
-                    }
-
-                    if (type.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased)
-                    {
-                        var national = getApprenticehipByIdResult.Value.ApprenticeshipLocations.Select(x => x.National).FirstOrDefault();
-                        if (type.National.HasValue && type.National.Value)
-                        {
-                            LocationChoiceSelectionViewModel.NationalApprenticeship =
-                                NationalApprenticeship.Yes;
-                            model.Regions = new Dictionary<string, List<string>>
-                            {
-                                {"National", new List<string>() {"All"}}
-                            };
-                        }
-                        else
-                        {
-                            LocationChoiceSelectionViewModel.NationalApprenticeship =
-                                NationalApprenticeship.No;
-
-                            var regions = getApprenticehipByIdResult.Value.ApprenticeshipLocations.Select(x => x.Regions).FirstOrDefault();
-                            model.Regions = regions != null ? SubRegionCodesToDictionary(regions) : null;
-                            _session.SetObject("SelectedRegions", regions);
-
-                        }
-
-                        LocationChoiceSelectionViewModel.Mode = requestModel.Mode;
-                        DeliveryViewModel.ApprenticeshipDelivery = ApprenticeshipDelivery.EmployersAddress;
-                        DeliveryViewModel.Mode = requestModel.Mode;
-
-                        LocationChoiceSelectionViewModel.Mode = requestModel.Mode;
-
-                        model.LocationChoiceSelectionViewModel = LocationChoiceSelectionViewModel;
-
-                    }
-
-                    if (type.ApprenticeshipLocationType == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased)
-                    {
-                        model.DeliveryOptionsCombined = new DeliveryOptionsCombined();
-                        model.DeliveryOptionsCombined.Mode = requestModel.Mode;
-                        DeliveryViewModel.ApprenticeshipDelivery = ApprenticeshipDelivery.Both;
-                        DeliveryOptionSummary deliveryOptionSummary = new DeliveryOptionSummary();
-                        DeliveryOptionsCombined deliveryOptionsCombined =
-                            new DeliveryOptionsCombined();
-                        deliveryOptionSummary.DeliveryOptions =
-                            new List<DeliveryOption>();
-
-                        deliveryOptionsCombined.DeliveryOptionSummary = deliveryOptionSummary;
-
-                        model.DeliveryOptionsCombined = deliveryOptionsCombined;
-                    }
-
-
-                    foreach (var loc in getApprenticehipByIdResult.Value.ApprenticeshipLocations)
-                    {
-                        var deliveryOptionsListItemModel = new DeliveryOption();
-                        if (loc.LocationGuidId.HasValue)
-                        {
-                            var venue = cachedLocations.Where(x => x.ID == loc.LocationGuidId.Value.ToString()).FirstOrDefault();
-
-                            if (venue != null)
-                            {
-                                deliveryOptionsListItemModel.LocationName = venue.VenueName;
-                                deliveryOptionsListItemModel.PostCode = venue.PostCode;
-                                deliveryOptionsListItemModel.Venue = venue;
-
-                            }
-                        }
-
-                        var delModes = loc.DeliveryModes.Select(x =>
-                            WebHelper.GetEnumDescription(
-                                (ApprenticeShipDeliveryLocation) Enum.Parse(typeof(ApprenticeShipDeliveryLocation),
-                                    x.ToString())));
-
-                        deliveryOptionsListItemModel.Delivery = string.Join(",", delModes);
-
-                        switch (loc.ApprenticeshipLocationType)
-                        {
-                            case ApprenticeshipLocationType.ClassroomBased:
-                                model.DeliveryOptions.DeliveryOptionSummary.DeliveryOptions
-                                    .Add(deliveryOptionsListItemModel);
-                                break;
-                            case ApprenticeshipLocationType.ClassroomBasedAndEmployerBased:
-
-                                deliveryOptionsListItemModel.LocationId = loc.LocationGuidId.ToString();
-                                deliveryOptionsListItemModel.LocationName = cachedLocations
-                                    .Where(x => x.ID == loc.LocationGuidId.ToString()).Select(x => x.VenueName)
-                                    .FirstOrDefault();
-                                deliveryOptionsListItemModel.Radius = loc.Radius.ToString();
-                                deliveryOptionsListItemModel.PostCode = cachedLocations
-                                    .Where(x => x.ID == loc.LocationGuidId.ToString()).Select(x => x.PostCode)
-                                    .FirstOrDefault();
-                                deliveryOptionsListItemModel.Venue = cachedLocations
-                                    .Where(x => x.ID == loc.LocationGuidId.ToString()).FirstOrDefault();
-
-                                model.DeliveryOptionsCombined.DeliveryOptionSummary
-                                    .DeliveryOptions
-                                    .Add(deliveryOptionsListItemModel);
-                                break;
-                            case ApprenticeshipLocationType.EmployerBased:
-                                break;
-                        }
-
-                    }
-
-                    // model.Regions = Regions;
-                    model.LocationChoiceSelectionViewModel = LocationChoiceSelectionViewModel;
-                }
-                else
-                {
-                    DeliveryViewModel.ApprenticeshipDelivery = ApprenticeshipDelivery.EmployersAddress;
-                    DeliveryViewModel.Mode = requestModel.Mode;
-
-                }
+                model.Regions = selectedApprenticeship.ApprenticeshipLocations.Any(x => x.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased)
+                    ? SubRegionCodesToDictionary(selectedApprenticeship.ApprenticeshipLocations.FirstOrDefault(x => x.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased)?.Regions) : null;
 
                 model.Mode = requestModel.Mode;
 
                 model.Cancelled = null;
-
-                _session.SetObject("DetailViewModel", model.DetailViewModel);
-                _session.SetObject("DeliveryViewModel", model.DeliveryViewModel);
-                _session.SetObject("LocationChoiceSelectionViewModel", model.LocationChoiceSelectionViewModel);
-                _session.SetObject("DeliveryOptions", model.DeliveryOptions);
-                _session.SetObject("DeliveryOptionsCombined", model.DeliveryOptionsCombined);
+                _session.SetObject("selectedApprenticeship", selectedApprenticeship);
 
             }
 
             return View("../Apprenticeships/Summary/Index", model);
         }
-
-
 
         [Authorize]
         public async Task<IActionResult> Summary(SummaryRequestModel requestModel)
@@ -598,130 +428,24 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
 
+            var selectedApprenticeship = _session.GetObject<Apprenticeship>("selectedApprenticeship");
+
+
             var model = new SummaryViewModel();
-            var DetailViewModel = _session.GetObject<DetailViewModel>("DetailViewModel");
-            var DeliveryViewModel = _session.GetObject<DeliveryViewModel>("DeliveryViewModel");
-            var LocationChoiceSelectionViewModel = _session.GetObject<LocationChoiceSelectionViewModel>("LocationChoiceSelectionViewModel");
-            var DeliveryOptionsViewModel = _session.GetObject<DeliveryOptionsViewModel>("DeliveryOptions");
-            var DeliveryOptionsCombinedViewModel = _session.GetObject<DeliveryOptionsCombined>("DeliveryOptionsCombined");
-            var Regions = _session.GetObject<string[]>("SelectedRegions");
 
-            model.DetailViewModel = DetailViewModel;
-            model.DeliveryViewModel = DeliveryViewModel;
-            model.DeliveryOptions = DeliveryOptionsViewModel;
-            model.DeliveryOptionsCombined = DeliveryOptionsCombinedViewModel;
-            if (LocationChoiceSelectionViewModel != null)
+            if (selectedApprenticeship != null)
             {
-                if (LocationChoiceSelectionViewModel.NationalApprenticeship == NationalApprenticeship.Yes)
-                {
-                    model.Regions = new Dictionary<string, List<string>>
-                    {
-                        {"National", new List<string>() {"All"}}
-                    };
-                }
-                else if (LocationChoiceSelectionViewModel.NationalApprenticeship == NationalApprenticeship.No ||
-                        LocationChoiceSelectionViewModel.NationalApprenticeship == NationalApprenticeship.Undefined)
-                {
-                    if (Regions != null)
-                    {
-                        model.Regions = SubRegionCodesToDictionary(Regions);
-                    }
+                model.Apprenticeship = selectedApprenticeship;
+                model.Regions = model.Regions = selectedApprenticeship.ApprenticeshipLocations.Any(x => x.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased)
+                    ? SubRegionCodesToDictionary(selectedApprenticeship.ApprenticeshipLocations.FirstOrDefault(x => x.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased)?.Regions) : null;
 
-                }
             }
 
-
-            model.LocationChoiceSelectionViewModel = LocationChoiceSelectionViewModel;
             model.Cancelled = requestModel.cancelled;
             model.Mode = requestModel.Mode;
 
 
             return View("../Apprenticeships/Summary/Index", model);
-        }
-
-
-        private ApprenticeshipLocation CreateDeliveryLocation(DeliveryOption loc, ApprenticeshipLocationType apprenticeshipLocationType)
-        {
-            List<int> deliveryModes = new List<int>();
-
-            ApprenticeshipLocation apprenticeshipLocation = new ApprenticeshipLocation()
-            {
-                Name = loc.LocationName,
-                CreatedDate = DateTime.Now,
-                CreatedBy =
-                    User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
-                ApprenticeshipLocationType = apprenticeshipLocationType,
-                Id = Guid.NewGuid(),
-                LocationType = LocationType.Venue,
-                RecordStatus = RecordStatus.Live,
-                Regions = loc.Regions,
-                National = loc.National ?? false,
-                UpdatedDate = DateTime.Now,
-                UpdatedBy =
-                    User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
-
-            };
-            if (loc.Venue != null)
-            {
-                apprenticeshipLocation.TribalId = loc.Venue.TribalLocationId ?? null;
-                apprenticeshipLocation.ProviderId = loc.Venue.ProviderID;
-                apprenticeshipLocation.LocationId = loc.Venue.LocationId ?? null;
-                apprenticeshipLocation.VenueId = Guid.Parse(loc.Venue.ID);
-                apprenticeshipLocation.Address = new Address
-                {
-                    Address1 = loc.Venue.Address1,
-                    Address2 = loc.Venue.Address2,
-                    Town = loc.Venue.Town,
-                    County = loc.Venue.County,
-                    Postcode = loc.Venue.PostCode,
-                    Email = loc.Venue.Email,
-                    Phone = loc.Venue.Telephone,
-                    Website = loc.Venue.Website,
-                    Latitude = (double)loc.Venue.Latitude,
-                    Longitude = (double)loc.Venue.Longitude
-                };
-            }
-            if (!string.IsNullOrEmpty(loc.LocationId))
-            {
-                apprenticeshipLocation.LocationGuidId = new Guid(loc.LocationId);
-            }
-
-            if (!string.IsNullOrEmpty(loc.Radius))
-            {
-                apprenticeshipLocation.Radius = Convert.ToInt32(loc.Radius);
-            }
-
-            if (!string.IsNullOrEmpty(loc.Delivery))
-            {
-                var delModes = loc.Delivery.Split(",");
-
-                foreach (var delMode in delModes)
-                {
-                    if (delMode.ToLower().Trim() ==
-                        @WebHelper.GetEnumDescription(ApprenticeShipDeliveryLocation.DayRelease).ToLower())
-                    {
-                        deliveryModes.Add((int)ApprenticeShipDeliveryLocation.DayRelease);
-                    }
-
-                    if (delMode.ToLower().Trim() == @WebHelper
-                            .GetEnumDescription(ApprenticeShipDeliveryLocation.BlockRelease).ToLower())
-                    {
-                        deliveryModes.Add((int)ApprenticeShipDeliveryLocation.BlockRelease);
-                    }
-
-
-                }
-
-            }
-
-            if (apprenticeshipLocationType == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased || apprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased)
-            {
-                deliveryModes.Add((int)ApprenticeShipDeliveryLocation.EmployerAddress);
-            }
-
-            apprenticeshipLocation.DeliveryModes = deliveryModes;
-
-            return apprenticeshipLocation;
         }
 
         [Authorize]
@@ -739,121 +463,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
 
+            var Apprenticeship = _session.GetObject<Apprenticeship>("selectedApprenticeship");
+
             var model = new SummaryViewModel();
-
-            var DetailViewModel = _session.GetObject<DetailViewModel>("DetailViewModel");
-            var DeliveryViewModel = _session.GetObject<DeliveryViewModel>("DeliveryViewModel");
-            var LocationChoiceSelectionViewModel = _session.GetObject<LocationChoiceSelectionViewModel>("LocationChoiceSelectionViewModel");
-            var DeliveryOptionsViewModel = _session.GetObject<DeliveryOptionsViewModel>("DeliveryOptions");
-            var DeliveryOptionsCombinedViewModel = _session.GetObject<DeliveryOptionsCombined>("DeliveryOptionsCombined");
-            var Regions = _session.GetObject<String[]>("SelectedRegions");
-
-            model.DetailViewModel = DetailViewModel;
-
-            model.DeliveryViewModel = DeliveryViewModel;
-
-            model.DeliveryOptions = DeliveryOptionsViewModel;
-
-            model.DeliveryOptionsCombined = DeliveryOptionsCombinedViewModel;
-
-            model.LocationChoiceSelectionViewModel = LocationChoiceSelectionViewModel;
-
-            ApprenticeshipLocationType apprenticeshipLocationType = new ApprenticeshipLocationType();
-
-            switch (model.DeliveryViewModel.ApprenticeshipDelivery)
-            {
-                case ApprenticeshipDelivery.YourLocation:
-                    apprenticeshipLocationType = ApprenticeshipLocationType.ClassroomBased;
-                    break;
-                case ApprenticeshipDelivery.EmployersAddress:
-                    apprenticeshipLocationType = ApprenticeshipLocationType.EmployerBased;
-                    break;
-                case ApprenticeshipDelivery.Both:
-                    apprenticeshipLocationType = ApprenticeshipLocationType.ClassroomBasedAndEmployerBased;
-                    break;
-            }
-
-            List<ApprenticeshipLocation> locations = new List<ApprenticeshipLocation>();
-
-            if (model.DeliveryOptions?.DeliveryOptionSummary != null)
-            {
-                var cachedLocations = new List<Venue>();
-                var locationsResult = await _venueService.SearchAsync(new VenueSearchCriteria(UKPRN.ToString(), ""));
-                if (locationsResult.IsSuccess && locationsResult.HasValue)
-                {
-                    cachedLocations = locationsResult.Value.Value.ToList();
-                }
-
-                foreach (var loc in model.DeliveryOptions.DeliveryOptionSummary
-                    .DeliveryOptions)
-                {
-                    loc.Venue = cachedLocations.Where(x => x.ID == loc.Venue.ID).FirstOrDefault();
-                    locations.Add(CreateDeliveryLocation(loc, apprenticeshipLocationType));
-                }
-            }
-
-
-            if (model.DeliveryOptionsCombined?.DeliveryOptionSummary != null)
-            {
-                foreach (var loc in model.DeliveryOptionsCombined.DeliveryOptionSummary
-                    .DeliveryOptions)
-                {
-                    locations.Add(CreateDeliveryLocation(loc, apprenticeshipLocationType));
-                }
-            }
-
-            if (model.DeliveryViewModel.ApprenticeshipDelivery == ApprenticeshipDelivery.EmployersAddress)
-            {
-                var nationalRadiusValue = _apprenticeshipSettings.Value.NationalRadius;
-                var subRegionRadiusValue = _apprenticeshipSettings.Value.SubRegionRadius;
-
-                DeliveryOption loc = new DeliveryOption
-                {
-
-                    Regions = Regions != null ? Regions : null,
-                    National = model.LocationChoiceSelectionViewModel.NationalApprenticeship ==
-                                NationalApprenticeship.Yes
-                        ? true
-                        : false,
-                    Radius = model.LocationChoiceSelectionViewModel.NationalApprenticeship ==
-                                NationalApprenticeship.Yes
-                        ? nationalRadiusValue.ToString()
-                        : subRegionRadiusValue.ToString(),
-                    Delivery = "Employer address"
-
-                };
-                locations.Add(CreateDeliveryLocation(loc, apprenticeshipLocationType));
-            }
-
-
-
-            Apprenticeship apprenticeship = new Apprenticeship
-            {
-                //ApprenticeshipId // For backwards compatibility with Tribal (Where does this come from?)
-                //TribalProviderId
-                ProviderId = _providerService.GetProviderByPRNAsync(new ProviderSearchCriteria(UKPRN.ToString())).Result.Value.Value.FirstOrDefault().id,
-                ProviderUKPRN = UKPRN,
-                ApprenticeshipTitle = model.DetailViewModel.ApprenticeshipTitle,
-                ApprenticeshipType = model.DetailViewModel.ApprenticeshipType,
-                StandardCode = model.DetailViewModel.StandardCode,
-                FrameworkCode = model.DetailViewModel.FrameworkCode,
-                ProgType = model.DetailViewModel.ProgType,
-                MarketingInformation = model.DetailViewModel.Information,
-                Url = model.DetailViewModel.Website,
-                ContactTelephone = model.DetailViewModel.Telephone,
-                ContactEmail = model.DetailViewModel.Email,
-                ContactWebsite = model.DetailViewModel.ContactUsIUrl,
-                CreatedDate = DateTime.Now,
-                CreatedBy = User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
-                RecordStatus = RecordStatus.Live,
-                PathwayCode = model.DetailViewModel.PathwayCode,
-                Version = model.DetailViewModel.Version ?? (int?)null,
-                NotionalNVQLevelv2 = model.DetailViewModel.NotionalNVQLevelv2,
-                ApprenticeshipLocations = locations,
-                UpdatedDate = DateTime.UtcNow,
-                UpdatedBy = User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault()
-            };
-
 
 
             if (theModel.Mode == ApprenticeshipMode.EditYourApprenticeships)
@@ -864,9 +476,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     return RedirectToAction("Index", "ProviderApprenticeships", new { });
                 }
 
-                apprenticeship.id = DetailViewModel.Id;
-
-                var result = await _apprenticeshipService.UpdateApprenticeshipAsync(apprenticeship);
+                var result = await _apprenticeshipService.UpdateApprenticeshipAsync(Apprenticeship);
 
                 if (result.IsSuccess)
                 {
@@ -881,8 +491,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
             else
             {
-                apprenticeship.id = Guid.NewGuid();
-                var result = await _apprenticeshipService.AddApprenticeship(apprenticeship);
+                Apprenticeship.id = Guid.NewGuid();
+                var result = await _apprenticeshipService.AddApprenticeship(Apprenticeship);
 
                 if (result.IsSuccess)
                 {
@@ -894,8 +504,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     return RedirectToAction("Summary", "Apprenticeships");
                 }
             }
-
-
         }
 
         [Authorize]
@@ -909,14 +517,16 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 UseNationalComponent = false
             };
 
-            var SelectedRegions = _session.GetObject<string[]>("SelectedRegions");
-            if (SelectedRegions != null)
+            var Apprenticeship = _session.GetObject<Apprenticeship>("selectedApprenticeship");
+            var employerBased = Apprenticeship?.ApprenticeshipLocations.FirstOrDefault(x =>
+                x.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased);
+            if (Apprenticeship != null && employerBased != null)
             {
                 foreach (var selectRegionRegionItem in model.ChooseRegion.Regions.RegionItems.OrderBy(x => x.RegionName))
                 {
                     foreach (var subRegionItemModel in selectRegionRegionItem.SubRegion)
                     {
-                        if (SelectedRegions.Contains(subRegionItemModel.Id))
+                        if (employerBased.Regions.Contains(subRegionItemModel.Id))
                         {
                             subRegionItemModel.Checked = true;
                         }
@@ -932,7 +542,23 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpPost]
         public IActionResult Regions(string[] SelectedRegions, RegionsViewModel model)
         {
-            _session.SetObject("SelectedRegions", SelectedRegions);
+            var Apprenticeship = _session.GetObject<Apprenticeship>("selectedApprenticeship");
+
+            var employerBased = Apprenticeship.ApprenticeshipLocations.FirstOrDefault(x =>
+                 x.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased);
+
+            if (employerBased != null)
+            {
+                employerBased.Regions = SelectedRegions;
+            }
+            else
+            {
+                Apprenticeship.ApprenticeshipLocations.Add(CreateRegionLocation(SelectedRegions, null));
+            }
+
+
+
+            _session.SetObject("selectedApprenticeship", Apprenticeship);
 
             return RedirectToAction("Summary", "Apprenticeships", new { Mode = model.Mode });
 
@@ -941,6 +567,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpPost]
         public ActionResult AddCombined(DeliveryOptionsCombined model)
         {
+            var apprenticeship = _session.GetObject<Apprenticeship>("selectedApprenticeship");
+
             var DeliveryOptionsCombinedViewModel = _session.GetObject<DeliveryOptionsCombined>("DeliveryOptionsCombined");
 
             if (DeliveryOptionsCombinedViewModel == null)
@@ -987,9 +615,22 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                     });
 
+                apprenticeship.ApprenticeshipLocations.Add(CreateDeliveryLocation(new DeliveryOption()
+                {
+                    Delivery = deliveryMethod,
+                    LocationId = venue.Result.Value.ID.ToString(),
+                    LocationName = venue.Result.Value.VenueName,
+                    PostCode = venue.Result.Value.PostCode,
+                    Radius = model.Radius,
+                    National = model.National,
+                    Venue = (Venue)venue.Result.Value
+
+                }, ApprenticeshipLocationType.ClassroomBasedAndEmployerBased));
+
                 DeliveryOptionsCombinedViewModel.Mode = model.Mode;
 
                 _session.SetObject("DeliveryOptionsCombined", DeliveryOptionsCombinedViewModel);
+                _session.SetObject("selectedApprenticeship", apprenticeship);
 
                 return RedirectToAction("DeliveryOptionsCombined", "Apprenticeships", new { Mode = model.Mode });
             }
@@ -1050,6 +691,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpPost]
         public ActionResult Add(DeliveryOptionsViewModel model)
         {
+            var apprenticeship = _session.GetObject<Apprenticeship>("selectedApprenticeship");
+
+            if (apprenticeship.ApprenticeshipLocations == null)
+            {
+                apprenticeship.ApprenticeshipLocations = new List<ApprenticeshipLocation>();
+            }
+
+
             var DeliveryOptionsViewModel = _session.GetObject<DeliveryOptionsViewModel>("DeliveryOptions");
 
             if (DeliveryOptionsViewModel == null)
@@ -1081,6 +730,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     deliveryMethod = model.DayRelease ? "Day release" : "Block release";
                 }
 
+
+
                 DeliveryOptionsViewModel.DeliveryOptionSummary.DeliveryOptions.Add(
                     new DeliveryOption()
                     {
@@ -1093,9 +744,22 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                     });
 
+
+                apprenticeship.ApprenticeshipLocations.Add(CreateDeliveryLocation(new DeliveryOption()
+                {
+                    Delivery = deliveryMethod,
+                    LocationId = venue.Result.Value.ID.ToString(),
+                    LocationName = venue.Result.Value.VenueName,
+                    PostCode = venue.Result.Value.PostCode,
+                    Venue = (Venue)venue.Result.Value,
+                    Radius = "10"
+
+                }, ApprenticeshipLocationType.ClassroomBased));
+
                 DeliveryOptionsViewModel.Mode = model.Mode;
 
                 _session.SetObject("DeliveryOptions", DeliveryOptionsViewModel);
+                _session.SetObject("selectedApprenticeship", apprenticeship);
 
                 return RedirectToAction("DeliveryOptions", "Apprenticeships", new { Mode = model.Mode });
             }
@@ -1107,6 +771,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         public IActionResult Continue(string LocationId, bool DayRelease, bool BlockRelease, int RowCount, ApprenticeshipMode Mode)
         {
+
+            var apprenticeship = _session.GetObject<Apprenticeship>("selectedApprenticeship");
+
+            if (apprenticeship.ApprenticeshipLocations == null)
+            {
+                apprenticeship.ApprenticeshipLocations = new List<ApprenticeshipLocation>();
+            }
+
             string RadiusValue = "10";
             var DeliveryOptionsViewModel = _session.GetObject<DeliveryOptionsViewModel>("DeliveryOptions");
 
@@ -1148,15 +820,28 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             });
 
+            apprenticeship.ApprenticeshipLocations.Add(CreateDeliveryLocation(new DeliveryOption()
+            {
+                Delivery = deliveryMethod,
+                LocationId = venue.Result.Value.ID.ToString(),
+                LocationName = venue.Result.Value.VenueName,
+                PostCode = venue.Result.Value.PostCode,
+                Venue = (Venue)venue.Result.Value,
+                Radius = "10"
+
+            }, ApprenticeshipLocationType.ClassroomBased));
+
             _session.SetObject("DeliveryOptions", DeliveryOptionsViewModel);
+            _session.SetObject("selectedApprenticeship", apprenticeship);
 
 
             return Json(Url.Action("Summary", "Apprenticeships", new { Mode = Mode }));
         }
 
-
         public IActionResult ContinueCombined(string LocationId, bool DayRelease, bool BlockRelease, bool National, string Radius, int RowCount, ApprenticeshipMode Mode)
         {
+            var apprenticeship = _session.GetObject<Apprenticeship>("selectedApprenticeship");
+
             var RadiusValue = 0;
 
             var nationalRadiusValue = _apprenticeshipSettings.Value.NationalRadius;
@@ -1199,15 +884,27 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             });
 
+            apprenticeship.ApprenticeshipLocations.Add(CreateDeliveryLocation(new DeliveryOption()
+            {
+                Delivery = deliveryMethod,
+                LocationId = venue.Result.Value.ID.ToString(),
+                LocationName = venue.Result.Value.VenueName,
+                PostCode = venue.Result.Value.PostCode,
+                National = National,
+                Radius = RadiusValue.ToString(),
+                Venue = (Venue)venue.Result.Value
+
+            }, ApprenticeshipLocationType.ClassroomBasedAndEmployerBased));
+
             if (Mode != ApprenticeshipMode.Undefined)
             {
                 DeliveryOptionsCombinedViewModel.Mode = Mode;
             }
             _session.SetObject("DeliveryOptionsCombined", DeliveryOptionsCombinedViewModel);
+            _session.SetObject("selectedApprenticeship", apprenticeship);
             //  }
             return Json(Url.Action("Summary", "Apprenticeships", new { Mode = Mode }));
         }
-
 
         [Authorize]
         public IActionResult Complete(CompleteViewModel model)
@@ -1232,7 +929,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             return RedirectToAction("Index", "Apprenticeships");
         }
-
 
 
         [Authorize]
@@ -1378,13 +1074,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         [Authorize]
-       
+
         public IActionResult AddNewVenue(AddCourseRequestModel model)
         {
             _session.SetString("Option", "AddNewVenueForApprenticeships");
             var DeliveryOptionsViewModel = _session.GetObject<DeliveryOptionsViewModel>("DeliveryOptionsViewModel");
-           
-            _session.SetObject("DeliveryOptionsViewModel", DeliveryOptionsViewModel);       
+
+            _session.SetObject("DeliveryOptionsViewModel", DeliveryOptionsViewModel);
 
             return Json(Url.Action("AddVenue", "Venues"));
         }
@@ -1409,6 +1105,149 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             }
             return regionsAndSubregions;
+        }
+
+
+        private ApprenticeshipLocation CreateDeliveryLocation(DeliveryOption loc, ApprenticeshipLocationType apprenticeshipLocationType)
+        {
+            List<int> deliveryModes = new List<int>();
+
+            ApprenticeshipLocation apprenticeshipLocation = new ApprenticeshipLocation()
+            {
+                Name = loc.LocationName,
+                CreatedDate = DateTime.Now,
+                CreatedBy =
+                    User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
+                ApprenticeshipLocationType = apprenticeshipLocationType,
+                Id = Guid.NewGuid(),
+                LocationType = LocationType.Venue,
+                RecordStatus = RecordStatus.Live,
+                Regions = loc.Regions,
+                National = loc.National ?? false,
+                UpdatedDate = DateTime.Now,
+                UpdatedBy =
+                    User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
+
+            };
+            if (loc.Venue != null)
+            {
+                apprenticeshipLocation.TribalId = loc.Venue.TribalLocationId ?? null;
+                apprenticeshipLocation.ProviderId = loc.Venue.ProviderID;
+                apprenticeshipLocation.LocationId = loc.Venue.LocationId ?? null;
+                apprenticeshipLocation.VenueId = Guid.Parse(loc.Venue.ID);
+                apprenticeshipLocation.Address = new Address
+                {
+                    Address1 = loc.Venue.Address1,
+                    Address2 = loc.Venue.Address2,
+                    Town = loc.Venue.Town,
+                    County = loc.Venue.County,
+                    Postcode = loc.Venue.PostCode,
+                    Email = loc.Venue.Email,
+                    Phone = loc.Venue.Telephone,
+                    Website = loc.Venue.Website,
+                    Latitude = (double)loc.Venue.Latitude,
+                    Longitude = (double)loc.Venue.Longitude
+                };
+            }
+            if (!string.IsNullOrEmpty(loc.LocationId))
+            {
+                apprenticeshipLocation.LocationGuidId = new Guid(loc.LocationId);
+            }
+
+            if (!string.IsNullOrEmpty(loc.Radius))
+            {
+                apprenticeshipLocation.Radius = Convert.ToInt32(loc.Radius);
+            }
+
+            if (!string.IsNullOrEmpty(loc.Delivery))
+            {
+                var delModes = loc.Delivery.Split(",");
+
+                foreach (var delMode in delModes)
+                {
+                    if (delMode.ToLower().Trim() ==
+                        @WebHelper.GetEnumDescription(ApprenticeShipDeliveryLocation.DayRelease).ToLower())
+                    {
+                        deliveryModes.Add((int)ApprenticeShipDeliveryLocation.DayRelease);
+                    }
+
+                    if (delMode.ToLower().Trim() == @WebHelper
+                            .GetEnumDescription(ApprenticeShipDeliveryLocation.BlockRelease).ToLower())
+                    {
+                        deliveryModes.Add((int)ApprenticeShipDeliveryLocation.BlockRelease);
+                    }
+
+
+                }
+
+            }
+
+            if (apprenticeshipLocationType == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased || apprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased)
+            {
+                deliveryModes.Add((int)ApprenticeShipDeliveryLocation.EmployerAddress);
+            }
+
+            apprenticeshipLocation.DeliveryModes = deliveryModes;
+
+            return apprenticeshipLocation;
+        }
+
+        private Apprenticeship MapToApprenticeship(DetailViewModel model, int ukprn, List<ApprenticeshipLocation> locations)
+        {
+            return new Apprenticeship
+            {
+                //ApprenticeshipId // For backwards compatibility with Tribal (Where does this come from?)
+                //TribalProviderId
+                ProviderId = _providerService.GetProviderByPRNAsync(new ProviderSearchCriteria(ukprn.ToString())).Result.Value.Value.FirstOrDefault().id,
+                ProviderUKPRN = ukprn,
+                ApprenticeshipTitle = model.ApprenticeshipTitle,
+                ApprenticeshipType = model.ApprenticeshipType,
+                StandardCode = model.StandardCode,
+                FrameworkCode = model.FrameworkCode,
+                ProgType = model.ProgType,
+                MarketingInformation = model.Information,
+                Url = model.Website,
+                ContactTelephone = model.Telephone,
+                ContactEmail = model.Email,
+                ContactWebsite = model.ContactUsIUrl,
+                CreatedDate = DateTime.Now,
+                CreatedBy = User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(),
+                RecordStatus = RecordStatus.Live,
+                PathwayCode = model.PathwayCode,
+                Version = model.Version ?? (int?)null,
+                NotionalNVQLevelv2 = model.NotionalNVQLevelv2,
+                ApprenticeshipLocations = locations,
+                UpdatedDate = DateTime.UtcNow,
+                UpdatedBy = User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault()
+            };
+        }
+
+        private DetailViewModel MapToDetailViewModel(Apprenticeship apprenticeship)
+        {
+            return new DetailViewModel
+            {
+                ApprenticeshipTitle = apprenticeship.ApprenticeshipTitle,
+                ApprenticeshipType = apprenticeship.ApprenticeshipType,
+                StandardCode = apprenticeship.StandardCode,
+                FrameworkCode = apprenticeship.FrameworkCode,
+                ProgType = apprenticeship.ProgType,
+                Information = apprenticeship.MarketingInformation,
+                Website = apprenticeship.Url,
+                Telephone = apprenticeship.ContactTelephone,
+                Email = apprenticeship.ContactEmail,
+                ContactUsIUrl = apprenticeship.ContactWebsite,
+                PathwayCode = apprenticeship.PathwayCode,
+                NotionalNVQLevelv2 = apprenticeship.NotionalNVQLevelv2
+            };
+        }
+
+        private ApprenticeshipLocation CreateRegionLocation(string[] regions, bool? national)
+        {
+            return CreateDeliveryLocation(new DeliveryOption
+            {
+                Regions = regions,
+                National = national
+            }, ApprenticeshipLocationType.EmployerBased);
         }
     }
 }
