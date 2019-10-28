@@ -61,7 +61,6 @@ namespace Dfc.CourseDirectory.Web
     public class Startup
     {
         public IConfiguration Configuration { get; }
-        private IAuthService AuthService;
         private readonly ILogger<Startup> _logger;
         private readonly IHostingEnvironment _env;
         //Undefined is only part of these policy until the batch import to update ProviderType is run
@@ -119,9 +118,7 @@ namespace Dfc.CourseDirectory.Web
 
             services.AddTransient((provider) => new HttpClient());
 
-            services.AddSingleton<IAuthService, AuthService>();
-            var authSp = services.BuildServiceProvider();
-            AuthService = authSp.GetService<IAuthService>();
+            services.AddScoped<IAuthService, AuthService>();
             services.Configure<GovukPhaseBannerSettings>(Configuration.GetSection(nameof(GovukPhaseBannerSettings)));
             services.Configure<ApprenticeshipSettings>(Configuration.GetSection(nameof(ApprenticeshipSettings)));
             services.AddScoped<IGovukPhaseBannerService, GovukPhaseBannerService>();
@@ -168,7 +165,7 @@ namespace Dfc.CourseDirectory.Web
 
             services.AddMvc(options =>
             {
-
+                options.Filters.Add(new DeactivatedProviderErrorActionFilter());
             }).SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddSessionStateTempDataProvider();
 
 
@@ -474,7 +471,8 @@ namespace Dfc.CourseDirectory.Web
                         //Course Directory Authorisation
                         try
                         {
-                            var providerType = AuthService.GetProviderType(UKPRN: userClaims.UKPRN, roleName: userClaims.RoleName).Result;
+                            var authService = x.HttpContext.RequestServices.GetRequiredService<IAuthService>();
+                            var providerType = await authService.GetProviderType(UKPRN: userClaims.UKPRN, roleName: userClaims.RoleName);
 
                             // store both access and refresh token in the claims - hence in the cookie
                             identity.AddClaims(new[]
@@ -494,6 +492,22 @@ namespace Dfc.CourseDirectory.Web
                         {
                             _logger.LogWarning("Error authorising user", ex);
                             throw new SystemException("Unable to authorise user");
+                        }
+
+                        // Check the provider status - a filter will show an error if the provider has been deactivated
+                        if (!string.IsNullOrEmpty(userClaims.UKPRN))
+                        {
+                            var providerService = x.HttpContext.RequestServices.GetRequiredService<IProviderService>();
+                            var provider = await providerService.GetProviderByPRNAsync(new Services.ProviderService.ProviderSearchCriteria(userClaims.UKPRN));
+
+                            if (provider.IsSuccess)
+                            {
+                                identity.AddClaim(new Claim("provider_status", provider.Value.Value.Single().ProviderStatus));
+                            }
+                            else
+                            {
+                                throw new Exception("Unable to retrieve provider details.");
+                            }
                         }
                          
                         // so that we don't issue a session cookie but one with a fixed expiration
