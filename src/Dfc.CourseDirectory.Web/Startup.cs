@@ -162,6 +162,7 @@ namespace Dfc.CourseDirectory.Web
             services.AddScoped<IBlobStorageService, BlobStorageService>();
             services.Configure<EnvironmentSettings>(Configuration.GetSection(nameof(EnvironmentSettings)));
             services.AddScoped<IEnvironmentHelper, EnvironmentHelper>();
+            services.AddScoped<IApprenticeshipProvisionHelper, ApprenticeshipProvisionHelper>();
             services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 

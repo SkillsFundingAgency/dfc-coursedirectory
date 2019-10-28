@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Models.Enums;
+using Dfc.CourseDirectory.Models.Interfaces.Apprenticeships;
 using Dfc.CourseDirectory.Models.Models.Apprenticeships;
 using Dfc.CourseDirectory.Models.Models.Courses;
 using Dfc.CourseDirectory.Models.Models.Regions;
@@ -22,13 +23,14 @@ using Microsoft.Extensions.Logging;
 
 namespace Dfc.CourseDirectory.Web.Helpers
 {
-    public class ApprenticeshipProvisionHelper
+    public class ApprenticeshipProvisionHelper : IApprenticeshipProvisionHelper
     {
         private readonly ILogger<ApprenticeshipProvisionHelper> _logger;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IApprenticeshipService _apprenticeshipService;
         private readonly IVenueService _venueService;
         private readonly IProviderService _providerService;
+
 
         private ICSVHelper _CSVHelper;
         private ISession _session => _contextAccessor.HttpContext.Session;
@@ -53,167 +55,156 @@ namespace Dfc.CourseDirectory.Web.Helpers
             _providerService = providerService;
             _CSVHelper = CSVHelper;
         }
-        //public FileStreamResult DownloadCurrentCourseProvisions()
-        //{
-        //    int? UKPRN;
-        //    IProviderSearchResult providerSearchResult = null;
-        //    string providerName = String.Empty;
-        //    if (_session.GetInt32("UKPRN").HasValue)
-        //    {
+        public FileStreamResult DownloadCurrentApprenticeshipProvisions()
+        {
+            int? UKPRN;
+            IProviderSearchResult providerSearchResult = null;
+            string providerName = String.Empty;
+            if (_session.GetInt32("UKPRN").HasValue)
+            {
 
-        //        UKPRN = _session.GetInt32("UKPRN").Value;
-        //        providerSearchResult = _providerService.GetProviderByPRNAsync(new Services.ProviderService.ProviderSearchCriteria(UKPRN.Value.ToString())).Result.Value;
-        //        providerName = providerSearchResult.Value.FirstOrDefault()?.ProviderName.Replace(" ", "");
-        //    }
-        //    else
-        //    {
-        //        return null;
-        //    }
+                UKPRN = _session.GetInt32("UKPRN").Value;
+                providerSearchResult = _providerService.GetProviderByPRNAsync(new Services.ProviderService.ProviderSearchCriteria(UKPRN.Value.ToString())).Result.Value;
+                providerName = providerSearchResult.Value.FirstOrDefault()?.ProviderName.Replace(" ", "");
+            }
+            else
+            {
+                return null;
+            }
 
-        //    var apprenticeships = _apprenticeshipService.GetApprenticeshipByUKPRN(UKPRN.ToString())
-        //                              .Result
-        //                              .Value
-        //                              .Where((y => (int)y.RecordStatus == (int)RecordStatus.Live));
+            var apprenticeships = _apprenticeshipService.GetApprenticeshipByUKPRN(UKPRN.ToString())
+                                      .Result
+                                      .Value
+                                      .Where((y => (int)y.RecordStatus == (int)RecordStatus.Live));
 
-        //    var csvApprenticeships = CoursesToCsvCourses(apprenticeships);
+            var csvApprenticeships = ApprenticeshipsToCsvApprenticeships(apprenticeships);
 
-        //    return CsvCoursesToFileStream(csvCourses, providerName);
-        //}
+            return CsvApprenticeshipsToFileStream(csvApprenticeships, providerName);
+        }
 
-        //internal IEnumerable<CsvCourse> CoursesToCsvApprenticeships(IEnumerable<Apprenticeship> apprenticeships)
-        //{
-        //    List<CsvCourse> csvApprenticeships = new List<CsvCourse>();
+        internal IEnumerable<CsvApprenticeship> ApprenticeshipsToCsvApprenticeships(IEnumerable<IApprenticeship> apprenticeships)
+        {
+            List<CsvApprenticeship> csvApprenticeships = new List<CsvApprenticeship>();
 
-        //    foreach (var apprenticeship in apprenticeships)
-        //    {
-        //        //First apprenticeship is on same line as course line in CSV
-        //        var firstApprenticeshipLocation = apprenticeship.ApprenticeshipLocations.First();
+            foreach (var apprenticeship in apprenticeships)
+            {
+                foreach (var apprenticeshipLocation in apprenticeship.ApprenticeshipLocations)
+                {
+                    //Sanitise regions
+                    if (apprenticeshipLocation.Regions != null)
+                        apprenticeshipLocation.Regions = _CSVHelper.SanitiseRegionTextForCSVOutput(apprenticeshipLocation.Regions);
+                    var csvApprenticeshipLocation = MapCsvApprenticeship(apprenticeship, apprenticeshipLocation);
 
-        //        if (firstApprenticeshipLocation.Regions != null)
-        //            firstApprenticeshipLocation.Regions = _CSVHelper.SanitiseRegionTextForCSVOutput(firstApprenticeshipLocation.Regions);
+                    csvApprenticeships.Add(csvApprenticeshipLocation);
+                }
+            }
+            return csvApprenticeships;
+        }
 
-        //        SelectRegionModel selectRegionModel = new SelectRegionModel();
+        internal CsvApprenticeship MapCsvApprenticeship(IApprenticeship apprenticeship, ApprenticeshipLocation location)
+        {
+            SelectRegionModel selectRegionModel = new SelectRegionModel();
 
-        //        CsvCourse csvCourse = new CsvCourse
-        //        {
-        //            LearnAimRef = course.LearnAimRef != null ? _CSVHelper.SanitiseTextForCSVOutput(course.LearnAimRef) : string.Empty,
-        //            CourseDescription = !string.IsNullOrWhiteSpace(course.CourseDescription) ? _CSVHelper.SanitiseTextForCSVOutput(course.CourseDescription) : string.Empty,
-        //            EntryRequirements = !string.IsNullOrWhiteSpace(course.EntryRequirements) ? _CSVHelper.SanitiseTextForCSVOutput(course.EntryRequirements) : string.Empty,
-        //            WhatYoullLearn = !string.IsNullOrWhiteSpace(course.WhatYoullLearn) ? _CSVHelper.SanitiseTextForCSVOutput(course.WhatYoullLearn) : string.Empty,
-        //            HowYoullLearn = !string.IsNullOrWhiteSpace(course.HowYoullLearn) ? _CSVHelper.SanitiseTextForCSVOutput(course.HowYoullLearn) : string.Empty,
-        //            WhatYoullNeed = !string.IsNullOrWhiteSpace(course.WhatYoullNeed) ? _CSVHelper.SanitiseTextForCSVOutput(course.WhatYoullNeed) : string.Empty,
-        //            HowYoullBeAssessed = !string.IsNullOrWhiteSpace(course.HowYoullBeAssessed) ? _CSVHelper.SanitiseTextForCSVOutput(course.HowYoullBeAssessed) : string.Empty,
-        //            WhereNext = !string.IsNullOrWhiteSpace(course.WhereNext) ? _CSVHelper.SanitiseTextForCSVOutput(course.WhereNext) : string.Empty,
-        //            AdvancedLearnerLoan = course.AdvancedLearnerLoan ? "Yes" : "No",
-        //            AdultEducationBudget = course.AdultEducationBudget ? "Yes" : "No",
-        //            CourseName = firstCourseRun.CourseName != null ? _CSVHelper.SanitiseTextForCSVOutput(firstCourseRun.CourseName) : string.Empty,
-        //            ProviderCourseID = firstCourseRun.ProviderCourseID != null ? _CSVHelper.SanitiseTextForCSVOutput(firstCourseRun.ProviderCourseID) : string.Empty,
-        //            DeliveryMode = firstCourseRun.DeliveryMode.ToDescription(),
-        //            StartDate = firstCourseRun.StartDate.HasValue ? firstCourseRun.StartDate.Value.ToString("dd/MM/yyyy") : string.Empty,
-        //            FlexibleStartDate = firstCourseRun.FlexibleStartDate ? "Yes" : string.Empty,
-        //            National = firstCourseRun.National.HasValue ? (firstCourseRun.National.Value ? "Yes" : "No") : string.Empty,
-        //            Regions = firstCourseRun.Regions != null ? _CSVHelper.SemiColonSplit(
-        //                                                        selectRegionModel.RegionItems
-        //                                                        .Where(x => firstCourseRun.Regions.Contains(x.Id))
-        //                                                        .Select(y => _CSVHelper.SanitiseTextForCSVOutput(y.RegionName).Replace(",","")).ToList())
-        //                                                        : string.Empty,
-        //            SubRegions = firstCourseRun.Regions != null ? _CSVHelper.SemiColonSplit(
-        //                                                            selectRegionModel.RegionItems.SelectMany(
-        //                                                                x => x.SubRegion.Where(
-        //                                                                    y => firstCourseRun.Regions.Contains(y.Id)).Select(
-        //                                                                        z => _CSVHelper.SanitiseTextForCSVOutput(z.SubRegionName).Replace(",","")).ToList())) : string.Empty,
-        //            CourseURL = firstCourseRun.CourseURL != null ? _CSVHelper.SanitiseTextForCSVOutput(firstCourseRun.CourseURL) : string.Empty,
-        //            Cost = firstCourseRun.Cost.HasValue ? firstCourseRun.Cost.Value.ToString() : string.Empty,
-        //            CostDescription = firstCourseRun.CostDescription != null ? _CSVHelper.SanitiseTextForCSVOutput(firstCourseRun.CostDescription) : string.Empty,
-        //            DurationValue = firstCourseRun.DurationValue.HasValue ? firstCourseRun.DurationValue.Value.ToString() : string.Empty,
-        //            DurationUnit = firstCourseRun.DurationUnit.ToDescription(),
-        //            StudyMode = firstCourseRun.StudyMode.ToDescription(),
-        //            AttendancePattern = firstCourseRun.AttendancePattern.ToDescription()
-        //        };
-        //        if(firstCourseRun.VenueId.HasValue)
-        //        {
-        //            var result = _venueService.GetVenueByIdAsync(new GetVenueByIdCriteria
-        //                (firstCourseRun.VenueId.Value.ToString())).Result;
-        //            if(result.HasValue && !string.IsNullOrWhiteSpace(result.Value.VenueName))
-        //            {
-        //                csvCourse.VenueName = result.Value.VenueName;
-        //            }
-        //        }
-        //        csvCourses.Add(csvCourse);
-        //        foreach (var courseRun in course.CourseRuns)
-        //        {
-        //            //Ignore the first course run as we've already captured it
-        //            if (courseRun.id == firstCourseRun.id)
-        //            {
-        //                continue;
-        //            }
+            return new CsvApprenticeship
+            {
+                StandardCode = apprenticeship.StandardCode?.ToString(),
+                Version = apprenticeship.Version?.ToString(),
+                FrameworkCode = apprenticeship.FrameworkCode?.ToString(),
+                ProgType =  apprenticeship.ProgType?.ToString(),
+                PathwayCode = apprenticeship.PathwayCode?.ToString(),
+                ApprenticeshipInformation = apprenticeship.ApprenticeshipTitle,
+                ApprenticeshipWebpage = apprenticeship.Url,
+                ContactEmail = apprenticeship.ContactEmail,
+                ContactPhone = apprenticeship.ContactTelephone,
+                ContactURL = apprenticeship.ContactWebsite,
+                DeliveryMethod = DeliveryMethodConvert(location.ApprenticeshipLocationType),
+                Venue = location.VenueId.HasValue ? _venueService.GetVenueByIdAsync(new GetVenueByIdCriteria
+                    (location.VenueId.Value.ToString())).Result.Value?.VenueName : String.Empty,
+                Radius = location.Radius?.ToString(),
+                DeliveryMode = DeliveryModeConvert(location.DeliveryModes),
+                AcrossEngland = location.ApprenticeshipLocationType == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased ?
+                    BoolConvert(location.National) : 
+                    String.Empty,
+                NationalDelivery = BoolConvert(location.National),
+                Region = location.Regions != null ? _CSVHelper.SemiColonSplit(
+                                                                    selectRegionModel.RegionItems
+                                                                    .Where(x => location.Regions.Contains(x.Id))
+                                                                    .Select(y => _CSVHelper.SanitiseTextForCSVOutput(y.RegionName).Replace(",", "")).ToList())
+                                                                    : string.Empty,
+                Subregion =  location.Regions != null ? _CSVHelper.SemiColonSplit(
+                                                                    selectRegionModel.RegionItems.SelectMany(
+                                                                        x => x.SubRegion.Where(
+                                                                            y => location.Regions.Contains(y.Id)).Select(
+                                                                                z => _CSVHelper.SanitiseTextForCSVOutput(z.SubRegionName).Replace(",", "")).ToList())) : string.Empty,
+            };
+        }
+        internal FileStreamResult CsvApprenticeshipsToFileStream(IEnumerable<CsvApprenticeship> csvApprenticeships, string providerName)
+        {
+            List<string> csvLines = new List<string>();
+            foreach (var line in _CSVHelper.ToCsv(csvApprenticeships))
+            {
+                csvLines.Add(line);
+            }
+            string report = string.Join(Environment.NewLine, csvLines);
+            byte[] data = Encoding.ASCII.GetBytes(report);
+            MemoryStream ms = new MemoryStream(data)
+            {
+                Position = 0
+            };
+            FileStreamResult result = new FileStreamResult(ms, MediaTypeNames.Text.Plain);
+            DateTime d = DateTime.Now;
+            result.FileDownloadName = $"{providerName}_Apprenticeships_{d.Day.TwoChars()}_{d.Month.TwoChars()}_{d.Year}_{d.Hour.TwoChars()}_{d.Minute.TwoChars()}.csv";
+            return result;
+        }
 
-        //            //Sanitise regions
-        //            if (courseRun.Regions != null)
-        //                courseRun.Regions = _CSVHelper.SanitiseRegionTextForCSVOutput(courseRun.Regions);
+        internal string BoolConvert(bool? input)
+        {
+            switch (input)
+            {
+                case true:
+                    return "Yes";
+                case false:
+                    return "No";
+                default:
+                    return String.Empty;
+            }
+        }
 
-        //            CsvCourse csvCourseRun = new CsvCourse
-        //            {
-        //                LearnAimRef = course.LearnAimRef != null ? _CSVHelper.SanitiseTextForCSVOutput(course.LearnAimRef) : string.Empty,
-        //                CourseName = courseRun.CourseName != null ? _CSVHelper.SanitiseTextForCSVOutput(courseRun.CourseName) : string.Empty,
-        //                ProviderCourseID = courseRun.ProviderCourseID != null ? _CSVHelper.SanitiseTextForCSVOutput(courseRun.ProviderCourseID) : string.Empty,
-        //                DeliveryMode = courseRun.DeliveryMode.ToDescription(),
-        //                StartDate = courseRun.StartDate.HasValue ? courseRun.StartDate.Value.ToString("dd/MM/yyyy") : string.Empty,
-        //                FlexibleStartDate = courseRun.FlexibleStartDate ? "Yes" : string.Empty,
-        //                National = courseRun.National.HasValue ? (courseRun.National.Value ? "Yes" : "No") : string.Empty,
-        //                Regions = courseRun.Regions != null ? _CSVHelper.SemiColonSplit(
-        //                                                        selectRegionModel.RegionItems
-        //                                                        .Where(x => courseRun.Regions.Contains(x.Id))
-        //                                                        .Select(y => _CSVHelper.SanitiseTextForCSVOutput(y.RegionName).Replace(",","")).ToList())
-        //                                                        : string.Empty,
-        //                SubRegions = courseRun.Regions != null ? _CSVHelper.SemiColonSplit(
-        //                                                            selectRegionModel.RegionItems.SelectMany(
-        //                                                                x => x.SubRegion.Where(
-        //                                                                    y => courseRun.Regions.Contains(y.Id)).Select(
-        //                                                                        z => _CSVHelper.SanitiseTextForCSVOutput(z.SubRegionName).Replace(",","")).ToList())) : string.Empty,
-        //                CourseURL = courseRun.CourseURL != null ? _CSVHelper.SanitiseTextForCSVOutput(courseRun.CourseURL) : string.Empty,
-        //                Cost = courseRun.Cost.HasValue ? courseRun.Cost.Value.ToString() : string.Empty,
-        //                CostDescription = courseRun.CostDescription != null ? _CSVHelper.SanitiseTextForCSVOutput(courseRun.CostDescription) : string.Empty,
-        //                DurationValue = courseRun.DurationValue.HasValue ? courseRun.DurationValue.Value.ToString() : string.Empty,
-        //                DurationUnit = courseRun.DurationUnit.ToDescription(),
-        //                StudyMode = courseRun.StudyMode.ToDescription(),
-        //                AttendancePattern = courseRun.AttendancePattern.ToDescription()
-        //            };
+        internal string DeliveryMethodConvert(ApprenticeshipLocationType input)
+        {
+            switch (input)
+            {
+                case ApprenticeshipLocationType.ClassroomBased:
+                    return "Classroom";
+                case ApprenticeshipLocationType.ClassroomBasedAndEmployerBased:
+                    return "Both";
+                case ApprenticeshipLocationType.EmployerBased:
+                    return "Employer";
+                default:
+                    return string.Empty;
+            }
+        }
 
-        //            if (courseRun.VenueId.HasValue)
-        //            {
-        //                var result = _venueService.GetVenueByIdAsync(new GetVenueByIdCriteria
-        //                (courseRun.VenueId.Value.ToString())).Result;
+        internal string DeliveryModeConvert(List<int> modes)
+        {
+            List<string> modeNames = new List<string>();
+            foreach (var mode in modes)
+            {
+                switch (mode)
+                {
+                    case (int)ApprenticeShipDeliveryLocation.DayRelease:
+                        modeNames.Add("Day");
+                        break;
+                    case (int)ApprenticeShipDeliveryLocation.BlockRelease:
+                        modeNames.Add("Block");
+                        break;
+                    case (int)ApprenticeShipDeliveryLocation.EmployerAddress:
+                        modeNames.Add("Employer");
+                        break;
+                }
+            }
 
-        //                if (result.HasValue && !string.IsNullOrWhiteSpace(result.Value.VenueName))
-        //                {
-        //                    csvCourseRun.VenueName = result.Value.VenueName;
-        //                }
-        //            }
-        //            csvCourses.Add(csvCourseRun);
-        //        }
-        //    }
-        //    return csvCourses;
-        //}
-
-        //internal FileStreamResult CsvCoursesToFileStream(IEnumerable<CsvCourse> csvCourses, string providerName)
-        //{
-        //    List<string> csvLines = new List<string>();
-        //    foreach (var line in _CSVHelper.ToCsv(csvCourses))
-        //    {
-        //        csvLines.Add(line);
-        //    }
-        //    string report = string.Join(Environment.NewLine, csvLines);
-        //    byte[] data = Encoding.ASCII.GetBytes(report);
-        //    MemoryStream ms = new MemoryStream(data)
-        //    {
-        //        Position = 0
-        //    };
-        //    FileStreamResult result = new FileStreamResult(ms, MediaTypeNames.Text.Plain);
-        //    DateTime d = DateTime.Now;
-        //    result.FileDownloadName = $"{providerName}_Courses_{d.Day.TwoChars()}_{d.Month.TwoChars()}_{d.Year}_{d.Hour.TwoChars()}_{d.Minute.TwoChars()}.csv";
-        //    return result;
-        //}
-
+            return string.Join(";", modeNames);
+        }
     }
 }
