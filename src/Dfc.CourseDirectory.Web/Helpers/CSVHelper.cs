@@ -28,7 +28,6 @@ namespace Dfc.CourseDirectory.Web.Helpers
             }
             foreach (var o in objectlist)
             {
-
                 yield return string.Join(separator, properties.Select(p => (p.GetValue(o, null) ?? "").ToString()));
             }
         }

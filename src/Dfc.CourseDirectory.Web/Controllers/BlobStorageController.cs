@@ -45,6 +45,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly IApprenticeshipService _apprenticeshipService;
         private readonly IBlobStorageService _blobService;
         private ICourseProvisionHelper _courseProvisionHelper;
+        private IApprenticeshipProvisionHelper _apprenticeshipProvisionHelper;
 
         private ISession _session => _contextAccessor.HttpContext.Session;
 
@@ -54,13 +55,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 ICourseService courseService,
                 IApprenticeshipService apprenticeshipService,
                 IBlobStorageService blobService,
-                ICourseProvisionHelper courseProvisionHelper)
+                ICourseProvisionHelper courseProvisionHelper,
+                IApprenticeshipProvisionHelper apprenticeshipProvisionHelper)
         {
             Throw.IfNull(logger, nameof(logger));
             Throw.IfNull(contextAccessor, nameof(contextAccessor));
             Throw.IfNull(courseService, nameof(courseService));
             Throw.IfNull(apprenticeshipService, nameof(apprenticeshipService));
             Throw.IfNull(blobService, nameof(blobService));
+            Throw.IfNull(apprenticeshipProvisionHelper, nameof(apprenticeshipProvisionHelper));
 
             _logger = logger;
             _contextAccessor = contextAccessor;
@@ -68,6 +71,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _blobService = blobService;
             _courseProvisionHelper = courseProvisionHelper;
             _apprenticeshipService = apprenticeshipService;
+            _apprenticeshipProvisionHelper = apprenticeshipProvisionHelper;
 
         }
 
@@ -112,7 +116,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             return _courseProvisionHelper.DownloadCurrentCourseProvisions();
         }
+        public FileStreamResult GetCurrentApprenticeshipsTemplateFile()
+        {
+            if (!_session.GetInt32("UKPRN").HasValue)
+            {
+                return null;
+            }
 
+            return _apprenticeshipProvisionHelper.DownloadCurrentApprenticeshipProvisions();
+        }
         [Authorize]
         public FileStreamResult GetBulkUploadErrors(int? UKPRN)
         {
