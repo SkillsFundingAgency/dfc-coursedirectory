@@ -226,8 +226,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 apprenticeship.PathwayCode = model.PathwayCode;
                 apprenticeship.NotionalNVQLevelv2 = model.NotionalNVQLevelv2;
 
-                _session.SetObject("selectedApprenticeship", apprenticeship);
             }
+
+            _session.SetObject("selectedApprenticeship", apprenticeship);
 
             switch (model.Mode)
             {
@@ -910,17 +911,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
         public IActionResult Complete(CompleteViewModel model)
         {
 
-            var DetailViewModel = _session.GetObject<DetailViewModel>("DetailViewModel");
+            var apprenticeship = _session.GetObject<Apprenticeship>("selectedApprenticeship");
 
-            model.ApprenticeshipName = DetailViewModel.ApprenticeshipTitle;
+            model.ApprenticeshipName = apprenticeship.ApprenticeshipTitle;
 
-            _session.Remove("DetailViewModel");
+            _session.Remove("selectedApprenticeship");
             _session.Remove("DeliveryViewModel");
-            _session.Remove("LocationChoiceSelectionViewModel");
-            _session.Remove("DeliveryOptions");
-            _session.Remove("DeliveryOptionsCombined");
-            _session.Remove("RegionsViewModel");
-            _session.Remove("SelectedRegions");
             return View("../Apprenticeships/Complete/Index", model);
         }
 
