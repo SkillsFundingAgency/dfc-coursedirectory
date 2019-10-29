@@ -1030,33 +1030,30 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             private IEnumerable<string> ParseRegionData(string regions)
             {
                 var availableRegions = new SelectRegionModel();
-                var subRegionList = new List<string>();
+                var regionCodes = new List<string>();
 
                 if (!string.IsNullOrEmpty(regions))
                 {
                     foreach (var region in regions.Trim().Split(";"))
 
                     {
-                        var subregionsForRegion =
+                        var regionCode =
                             availableRegions.RegionItems.Where(x =>
-                                string.Equals(x.RegionName, region, StringComparison.CurrentCultureIgnoreCase))
-                                .Select(y => y .SubRegion).FirstOrDefault();
+                                string.Equals(x.RegionName, region, StringComparison.CurrentCultureIgnoreCase)).Select(x => x.Id);
 
-                        if (subregionsForRegion == null)
+                        if (!regionCode.Any())
                         {
                             return new List<string>();
                         }
 
-                        var listOfSubRegionCodes = subregionsForRegion.Select(x => x.Id).ToList();
-                        if (listOfSubRegionCodes.Any())
-                        {
-                            subRegionList.AddRange(listOfSubRegionCodes);
-                        }
+
+                        regionCodes.AddRange(regionCode);
+                        
                     
                     }
                 }
 
-                return subRegionList.Distinct();
+                return regionCodes.Distinct();
             }
             private IEnumerable<string> ParseSubRegionData(string subRegionList)
             {
