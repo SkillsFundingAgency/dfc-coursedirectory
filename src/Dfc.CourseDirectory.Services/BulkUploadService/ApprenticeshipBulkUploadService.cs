@@ -141,14 +141,15 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 Map(m => m.SUB_REGION);
                 Map(m => m.ApprenticeshipType).ConvertUsing((row) =>
                 {
-                    if (row.TryGetField("STANDARD_CODE", out string standardCode))
+                    
+                    row.TryGetField("STANDARD_CODE", out string standardCode);
+                    if(!string.IsNullOrWhiteSpace(standardCode))
                     {
                         return ApprenticeshipType.StandardCode;
                     }
-                    else
-                    {
-                        return ApprenticeshipType.FrameworkCode;
-                    }
+
+                    return ApprenticeshipType.FrameworkCode;
+                    
                     
 
                 });
