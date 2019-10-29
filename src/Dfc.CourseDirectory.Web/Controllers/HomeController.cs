@@ -183,11 +183,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return View();
         }
 
+        [AllowDeactivatedProvider]
         public IActionResult Privacy()
         {
             return View("../Home/Privacy");
         }
 
+        [AllowDeactivatedProvider]
         public IActionResult Help()
         {
             return View("../Home/Help");

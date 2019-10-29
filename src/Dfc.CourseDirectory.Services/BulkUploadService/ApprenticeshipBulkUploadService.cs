@@ -1113,12 +1113,11 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
             int count = 0;
             stream.Position = 0;
-            StreamReader sr = new StreamReader(stream);  // don't dispose the stream we might need it later.
+            StreamReader sr = new StreamReader(stream, true);  // don't dispose the stream we might need it later.
             while (sr.ReadLine() != null)
             {
                 ++count;
             }
-
             return count;
         }
 
