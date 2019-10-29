@@ -310,7 +310,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
             IEnumerable<Services.BlobStorageService.BlobFileInfo> list = _blobService.GetFileList(UKPRN + _blobContainerPath).OrderByDescending(x => x.DateUploaded).ToList();
             if (list.Any())
             {
-                fileUploadDate = list.FirstOrDefault().DateUploaded.Value;
+                TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time");
+                DateTime dt1 = DateTime.Parse(list.FirstOrDefault().DateUploaded.Value.DateTime.ToString());
+                DateTime dt2 = TimeZoneInfo.ConvertTimeFromUtc(dt1, tzi);
+
+                fileUploadDate = Convert.ToDateTime(dt2.ToString("dd MMM yyyy HH:mm"));;
                 var archiveFilesResult = _blobService.ArchiveFiles($"{UKPRN.ToString()}{_blobContainerPath}");
             }
 
@@ -330,12 +334,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> DeleteFileConfirmation(DateTimeOffset fileUploadDate)
         {
-            var model = new DeleteFileConfirmationViewModel();
-
-            DateTime localDateTime = DateTime.Parse(fileUploadDate.ToString());
-            DateTime utcDateTime = localDateTime.ToUniversalTime();
-
-            model.FileUploadedDate = TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, TimeZoneInfo.Local).ToString("dd MMM yyyy HH:mm");
+            var model = new DeleteFileConfirmationViewModel
+            {
+                FileUploadedDate = fileUploadDate.ToString("dd MMM yyyy HH:mm")
+            };
 
             return View("../BulkUploadApprenticeships/DeleteFileConfirmation/Index", model);
         }
