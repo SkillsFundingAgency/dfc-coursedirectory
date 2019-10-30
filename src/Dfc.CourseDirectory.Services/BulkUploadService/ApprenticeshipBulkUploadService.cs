@@ -398,7 +398,12 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                         var regionCodes = ParseRegionData(regionList);
                         var subregionCodes = ParseSubRegionData(subRegionList);
                         regions.AddRange(regionCodes.Distinct());
-                        regions.AddRange(subregionCodes.Distinct());
+
+                        foreach (var regionCode in regionCodes)
+                        {
+                            subregionCodes = RemoveSubregionsOfExistingRegions(subregionCodes, regionCode);
+                        }
+                        regions.AddRange(subregionCodes);
                     }
 
                 }
@@ -923,9 +928,9 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 {
                     if (isNational == false)
                     {
+                        var results = ParseSubRegionData(value);
                         if(!string.IsNullOrEmpty(value))
                         {
-                            var results = ParseSubRegionData(value);
                             if(!results.Any())
                             {
                                 errors.Add(new BulkUploadError
@@ -940,7 +945,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                         }
 
                         var anyRegions = GetRegionList(row);
-                        if (!anyRegions.Any())
+                        if (!anyRegions.Any() && !results.Any())
                         {
                             errors.Add(new BulkUploadError
                             {
@@ -1085,7 +1090,29 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
                 return subRegionCodeList.Distinct();
             }
-            
+
+            private List<string> RemoveSubregionsOfExistingRegions(IEnumerable<string> subregionCodes, string regionCode)
+            {
+                var totalList = new List<string>();
+                totalList.AddRange(subregionCodes);
+
+                var selectRegionModel = new SelectRegionModel();
+
+                var subregionsForRegion =
+                    selectRegionModel.RegionItems.Where(x =>
+                            string.Equals(x.Id, regionCode, StringComparison.CurrentCultureIgnoreCase))
+                        .Select(y => y .SubRegion).FirstOrDefault();
+                var subregionIds = subregionsForRegion.Select(x => x.Id);
+
+                var matchingSubregionIds = subregionIds.Intersect(subregionCodes);
+
+                foreach (var item in matchingSubregionIds)
+                {
+                    totalList.Remove(item);
+                }
+
+                return totalList;
+            }
         }
         
     
