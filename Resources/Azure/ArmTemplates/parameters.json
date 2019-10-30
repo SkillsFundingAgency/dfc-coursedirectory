@@ -110,18 +110,6 @@
     "appServicePlanName": {
       "value": "__providerPortalAppServicePlan__"
     },
-    "appServicePlanInstances": {
-      "value": __aspInstances__
-    },
-    "aseHostingEnvironmentName": {
-      "value": "__AseHostingEnvironmentName__"
-    },
-    "aseResourceGroup": {
-      "value": "__aseResourceGroup__"
-    },
-    "appServicePlanSize": {
-      "value": "__aspPricingTierSize__"
-    },
     "blobStorageSettingsContainerName": {
       "value": "provider-files"
     },
