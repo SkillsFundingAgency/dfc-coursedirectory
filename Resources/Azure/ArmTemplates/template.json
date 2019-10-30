@@ -188,6 +188,9 @@
         "description": "Password for accessing the findacourse backend api"
       }
     },
+    "appServicePlanName": {
+      "type": "string"
+    },
     "appServicePlanSize": {
       "type": "string",
       "defaultValue": "1",
@@ -249,6 +252,9 @@
         "description": "Resource group the App Service Environment belongs to - only required if aseHostingEnvironmentName specified"
       }
     },
+    "blobStorageSettingsContainerName": {
+      "type": "string"
+    },
     "BlobStorageSettingsInlineProcessingThreshhold": {
       "type": "string",
       "metadata": {
@@ -273,7 +279,6 @@
     "appInsightsName": "[concat(parameters('projectPrefix'),'-ai')]",
     "appServiceName": "[concat(parameters('projectPrefix'),'-as')]",
     "appServicePlanName": "[concat(parameters('projectPrefix'),'-asp')]",
-    "blobStorageSettingsContainerName": "provider-files",
     "cosmosDbSQLName": "[concat(parameters('projectPrefix'),'-cdb')]",
     "azureSearchName": "[concat(parameters('projectPrefix'),'-sch')]"
   },
@@ -330,7 +335,7 @@
             "value": "[parameters('storageAccountName')]"
           },
           "storageContainerName": {
-            "value": "[variables('blobStorageSettingsContainerName')]"
+            "value": "[parameters('blobStorageSettingsContainerName')]"
           }
         }
       }
@@ -415,7 +420,7 @@
             "value": "[variables('appServiceName')]"
           },
           "appServicePlanName": {
-            "value": "[variables('appServicePlanName')]"
+            "value": "[parameters('appServicePlanName')]"
           },
           "appServicePlanResourceGroup": {
             "value": "[resourcegroup().name]"
@@ -644,11 +649,11 @@
               },
               {
                 "name": "BlobStorageSettings__AccountKey",
-                "value": "[reference('courseDirectoryStorage').outputs.storageKey.value]"
+                "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts',parameters('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]"
               },
               {
                 "name": "BlobStorageSettings__Container",
-                "value": "[variables('blobStorageSettingsContainerName')]"
+                "value": "[parameters('blobStorageSettingsContainerName')]"
               },
               {
                 "name": "BlobStorageSettings__TemplatePath",

@@ -107,6 +107,9 @@
     "certificateName": {
       "value": "__certificateName__"
     },
+    "appServicePlanName": {
+      "value": "__providerPortalAppServicePlan__"
+    },
     "appServicePlanInstances": {
       "value": __aspInstances__
     },
@@ -118,6 +121,9 @@
     },
     "appServicePlanSize": {
       "value": "__aspPricingTierSize__"
+    },
+    "blobStorageSettingsContainerName": {
+      "value": "provider-files"
     },
     "BlobStorageSettingsInlineProcessingThreshhold": {
       "value": "__BulkUploadInlineProcessingThreshhold__"
