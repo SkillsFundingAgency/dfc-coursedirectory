@@ -92,7 +92,11 @@ namespace Dfc.CourseDirectory.Web.Helpers
                 {
                     //Sanitise regions
                     if (apprenticeshipLocation.Regions != null)
-                        apprenticeshipLocation.Regions = _CSVHelper.SanitiseRegionTextForCSVOutput(apprenticeshipLocation.Regions);
+                    {
+                        if(apprenticeshipLocation.Regions.Any())
+                            apprenticeshipLocation.Regions = _CSVHelper.SanitiseRegionTextForCSVOutput(apprenticeshipLocation.Regions);
+                    }
+                        
                     var csvApprenticeshipLocation = MapCsvApprenticeship(apprenticeship, apprenticeshipLocation);
 
                     csvApprenticeships.Add(csvApprenticeshipLocation);
