@@ -116,7 +116,7 @@ namespace Dfc.CourseDirectory.Web.Helpers
                 FrameworkCode = apprenticeship.FrameworkCode?.ToString(),
                 ProgType =  apprenticeship.ProgType?.ToString(),
                 PathwayCode = apprenticeship.PathwayCode?.ToString(),
-                ApprenticeshipInformation = apprenticeship.ApprenticeshipTitle,
+                ApprenticeshipInformation = _CSVHelper.SanitiseTextForCSVOutput(apprenticeship.MarketingInformation),
                 ApprenticeshipWebpage = apprenticeship.Url,
                 ContactEmail = apprenticeship.ContactEmail,
                 ContactPhone = apprenticeship.ContactTelephone,
