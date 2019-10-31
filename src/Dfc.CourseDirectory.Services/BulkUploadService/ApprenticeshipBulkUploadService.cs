@@ -1390,7 +1390,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 LocationType = LocationType.Venue,
                 RecordStatus = record.ErrorsList.Any() ? RecordStatus.BulkUploadPending : RecordStatus.BulkUploadReadyToGoLive,
                 Regions = record.RegionsList.ToArray(),
-                National = record.NATIONAL_DELIVERY,
+                National = NationalOrAcrossEngland(record.NATIONAL_DELIVERY, record.ACROSS_ENGLAND),
                 TribalId = venue?.TribalLocationId,
                 ProviderId = venue?.ProviderID,
                 LocationId = venue?.LocationId,
@@ -1415,6 +1415,16 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 DeliveryModes = record.DELIVERY_MODE
             };
           
+        }
+
+        internal bool? NationalOrAcrossEngland(bool? national, bool? acrossEngland)
+        {
+            if (acrossEngland.HasValue)
+                return acrossEngland;
+
+            if (national.HasValue)
+                return national;
+            return null;
         }
 
     }
