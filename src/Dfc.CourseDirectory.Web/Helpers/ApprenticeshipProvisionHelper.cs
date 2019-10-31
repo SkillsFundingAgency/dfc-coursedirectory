@@ -220,8 +220,8 @@ namespace Dfc.CourseDirectory.Web.Helpers
 
             if (radius.Value == 600)
             {
-                if (national.Value == true)
-                    return "Yes";
+                if (national.Value)
+                    return BoolConvert(true);
             }
 
             return string.Empty;
