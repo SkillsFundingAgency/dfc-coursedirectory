@@ -127,9 +127,9 @@ namespace Dfc.CourseDirectory.Web.Helpers
                 Radius = location.Radius?.ToString(),
                 DeliveryMode = DeliveryModeConvert(location.DeliveryModes),
                 AcrossEngland = location.ApprenticeshipLocationType == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased ?
-                    BoolConvert(location.National) : 
+                    AcrossEnglandConvert(location.Radius, location.National) : 
                     String.Empty,
-                NationalDelivery = BoolConvert(location.National),
+                NationalDelivery = location.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased ?  BoolConvert(location.National) : string.Empty,
                 Region = location.Regions != null ? _CSVHelper.SemiColonSplit(
                                                                     selectRegionModel.RegionItems
                                                                     .Where(x => location.Regions.Contains(x.Id))
@@ -209,6 +209,22 @@ namespace Dfc.CourseDirectory.Web.Helpers
             }
 
             return string.Join(";", modeNames);
+        }
+        internal string AcrossEnglandConvert(int? radius, bool? national)
+        {
+            if (!radius.HasValue)
+                return string.Empty;
+
+            if (!national.HasValue)
+                return string.Empty;
+
+            if (radius.Value == 600)
+            {
+                if (national.Value == true)
+                    return "Yes";
+            }
+
+            return string.Empty;
         }
     }
 }
