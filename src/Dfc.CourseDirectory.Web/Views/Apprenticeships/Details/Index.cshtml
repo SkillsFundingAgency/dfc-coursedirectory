@@ -144,7 +144,7 @@
 
             </div>
 
-            @if (Model.Mode == ApprenticeshipMode.Add)
+            @if (Model.Mode == ApprenticeshipMode.Add || Model.Mode == ApprenticeshipMode.EditYourApprenticeships)
             {
                 <div class="cta-container">
                     <button type="submit" class="govuk-button" id="continue" value="continue">
@@ -157,24 +157,6 @@
                     }
                 </div>
             }
-
-            @if (Model.Mode == ApprenticeshipMode.EditYourApprenticeships)
-            {
-                <div class="cta-container">
-                    <button type="submit" class="govuk-button" id="continue" value="continue">
-                        Save
-                    </button>
-
-                    @if (Model.ShowCancelled.HasValue && Model.ShowCancelled.Value == true)
-                    {
-                        <a class="govuk-link govuk-!-margin-left-3" asp-controller="Apprenticeships" asp-action="Summary" asp-route-Id=@Model.Id asp-route-Mode=@Model.Mode asp-route-Cancelled=true>Cancel</a>
-                    }
-                </div>
-            }
-
-
-
-
         </div>
     </div>
 </form>
