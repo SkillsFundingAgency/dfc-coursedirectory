@@ -8,12 +8,12 @@ namespace Dfc.CourseDirectory.Web.ViewModels.Apprenticeships
     {
 
         public Dictionary<string, List<string>> Regions { get; set; }
-
-        public ApprenticeshipMode Mode { get; set; }
-
+        
         public bool SummaryOnly { get; set; }
 
         public IApprenticeship Apprenticeship { get; set; }
+
+        public ApprenticeshipMode Mode { get; set; }
 
 
     }

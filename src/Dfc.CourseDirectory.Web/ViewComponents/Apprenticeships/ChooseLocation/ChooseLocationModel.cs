@@ -18,5 +18,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships
         public bool DisplayLink { get; set; }
 
         public List<ApprenticeshipLocation> DeliveryLocations { get; set; }
+
+        public ApprenticeshipLocationType Type { get; set; }
     }
 }
