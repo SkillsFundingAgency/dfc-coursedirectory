@@ -212,8 +212,7 @@
                 @Html.HiddenFor(x => x.SummaryOnly)
                 @Html.HiddenFor(x => x.Mode)
 
-                @if ((Model.Mode == ApprenticeshipMode.Add || Model.Mode == ApprenticeshipMode.EditApprenticeship ||
-                     Model.Mode == ApprenticeshipMode.EditYourApprenticeships) && !Model.SummaryOnly)
+                @if (!Model.SummaryOnly)
                 {
                       <button type="submit" class="govuk-button" id="next">Publish</button>
                         @Html.ActionLink("Cancel", "Cancel", "Apprenticeships", new { }, new { @class = "govuk-button govuk-button--secondary" })
