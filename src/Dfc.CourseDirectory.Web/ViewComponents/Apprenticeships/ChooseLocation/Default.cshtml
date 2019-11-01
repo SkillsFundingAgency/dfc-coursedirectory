@@ -49,7 +49,7 @@
             $addNewVenueButton.on("click", function (e)
             {               
                 e.preventDefault();
-                makeRequestWithPayload({},onSucess);
+                makeRequestWithPayload({"type":"@(Model.Type)"},onSucess);
 
             });
 

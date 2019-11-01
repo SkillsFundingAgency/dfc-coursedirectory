@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Dfc.CourseDirectory.Models.Models.Apprenticeships;
-using Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships;
+﻿using Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships;
+using System;
 
 namespace Dfc.CourseDirectory.Web.ViewModels.Apprenticeships
 {
@@ -20,7 +16,5 @@ namespace Dfc.CourseDirectory.Web.ViewModels.Apprenticeships
         public int? Radius { get; set; }
 
         public bool? National { get; set; }
-
-        public ApprenticeshipMode Mode { get; set; }
     }
 }

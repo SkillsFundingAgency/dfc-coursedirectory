@@ -20,8 +20,5 @@ namespace Dfc.CourseDirectory.Web.ViewModels.Apprenticeships
 
         public string Radius { get; set; }
 
-        public ApprenticeshipMode Mode { get; set; }
-
-
     }
 }

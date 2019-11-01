@@ -147,11 +147,16 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             var model = new DetailViewModel();
 
+            if (_session.GetObject<ApprenticeshipMode>("ApprenticeshipMode") == ApprenticeshipMode.Undefined)
+            {
+                _session.SetObject("ApprenticeshipMode", request.Mode);
+            }
+
+
             var apprenticeship = _session.GetObject<Apprenticeship>("selectedApprenticeship");
             if (apprenticeship != null)
             {
                 model = MapToDetailViewModel(apprenticeship);
-                model.Mode = request.Mode;
                 model.Cancelled = request.Cancelled.HasValue && request.Cancelled.Value;
             }
             else
@@ -164,7 +169,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 model.PathwayCode = request.PathwayCode;
                 model.Version = request.Version.HasValue ? request.Version.Value : (int?)null;
                 model.NotionalNVQLevelv2 = request.NotionalNVQLevelv2;
-                model.Mode = request.Mode;
 
                 model.Cancelled = request.Cancelled.HasValue && request.Cancelled.Value;
 
@@ -199,7 +203,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             var apprenticeship = _session.GetObject<Apprenticeship>("selectedApprenticeship");
             apprenticeship = apprenticeship ?? MapToApprenticeship(model, ukprn, new List<ApprenticeshipLocation>());
 
-
+            var mode = _session.GetObject<ApprenticeshipMode>("ApprenticeshipMode");
 
 
             if (model.Mode == ApprenticeshipMode.EditApprenticeship ||
@@ -227,14 +231,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 case ApprenticeshipMode.Add:
                     if (model.ShowCancelled.HasValue && model.ShowCancelled.Value == true)
                     {
-                        return RedirectToAction("Summary", "Apprenticeships", new SummaryRequestModel() { Mode = model.Mode, Id = model.Id.ToString(), SummaryOnly = false });
+                        return RedirectToAction("Summary", "Apprenticeships", new SummaryRequestModel() { Id = model.Id.ToString(), SummaryOnly = false });
                     }
                     return RedirectToAction("Delivery", "Apprenticeships", new DeliveryRequestModel() { Mode = model.Mode });
                 case ApprenticeshipMode.EditApprenticeship:
                     return RedirectToAction("Summary", "Apprenticeships",
-                        new SummaryRequestModel() { Mode = model.Mode, SummaryOnly = false });
+                        new SummaryRequestModel() { SummaryOnly = false });
                 case ApprenticeshipMode.EditYourApprenticeships:
-                    return RedirectToAction("Summary", "Apprenticeships", new SummaryRequestModel() { Mode = model.Mode, Id = model.Id.ToString(), SummaryOnly = false });
+                    return RedirectToAction("Summary", "Apprenticeships", new SummaryRequestModel() { Id = model.Id.ToString(), SummaryOnly = false });
                 default:
                     return RedirectToAction("Delivery", "Apprenticeships", new DeliveryRequestModel() { Mode = model.Mode });
 
@@ -246,8 +250,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
         public IActionResult Delivery(DeliveryRequestModel requestModel)
         {
             var model = new DeliveryViewModel();
-            model.Mode = requestModel.Mode;
-
 
             return View("../ApprenticeShips/Delivery/Index", model);
         }
@@ -259,12 +261,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
             switch (model.ApprenticeshipDelivery)
             {
                 case ApprenticeshipDelivery.Both:
-                    return RedirectToAction("DeliveryOptionsCombined", "Apprenticeships", new { Mode = model.Mode });
+                    return RedirectToAction("DeliveryOptionsCombined", "Apprenticeships");
                 case ApprenticeshipDelivery.EmployersAddress:
-                    return RedirectToAction("LocationChoiceSelection", "Apprenticeships", new { Mode = model.Mode });
+                    return RedirectToAction("LocationChoiceSelection", "Apprenticeships");
 
                 case ApprenticeshipDelivery.YourLocation:
-                    return RedirectToAction("DeliveryOptions", "Apprenticeships", new { Mode = model.Mode });
+                    return RedirectToAction("DeliveryOptions", "Apprenticeships");
                 default:
                     return View("../ApprenticeShips/Delivery/Index");
 
@@ -278,7 +280,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             var model = new LocationChoiceSelectionViewModel();
 
-            model.Mode = Mode;
             return View("../Apprenticeships/LocationChoiceSelection/Index", model);
         }
 
@@ -286,19 +287,35 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpPost]
         public IActionResult LocationChoiceSelection(LocationChoiceSelectionViewModel model)
         {
+            var apprenticeship = _session.GetObject<Apprenticeship>("selectedApprenticeship");
+
+            var location = apprenticeship.ApprenticeshipLocations.FirstOrDefault(x =>
+                x.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased);
+
             switch (model.NationalApprenticeship)
             {
                 case NationalApprenticeship.Yes:
 
-                    var apprenticeship = _session.GetObject<Apprenticeship>("selectedApprenticeship");
-
-                    apprenticeship.ApprenticeshipLocations.Add(CreateRegionLocation(new string[0], true));
-
+                    if (location == null)
+                    {
+                        apprenticeship.ApprenticeshipLocations.Add(CreateRegionLocation(new string[0], true));
+                    }
+                    else
+                    {
+                        location = CreateRegionLocation(new string[0], true);
+                    }
+                    
                     _session.SetObject("selectedApprenticeship", apprenticeship);
-                    return RedirectToAction("Summary", "Apprenticeships", new { Mode = model.Mode });
+                    return RedirectToAction("Summary", "Apprenticeships", new {});
 
                 case NationalApprenticeship.No:
-                    return RedirectToAction("Regions", "Apprenticeships", new { Mode = model.Mode });
+
+                    if (location != null)
+                    {
+                        location = CreateRegionLocation(new string[0], false);
+                    }
+                    _session.SetObject("selectedApprenticeship", apprenticeship);
+                    return RedirectToAction("Regions", "Apprenticeships", new {});
 
                 default:
                     return View("../ApprenticeShips/Search/Index");
@@ -307,7 +324,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         [Authorize]
-        public IActionResult DeliveryOptions(string message, ApprenticeshipMode mode)
+        public IActionResult DeliveryOptions(string message)
         {
             int? UKPRN = _session.GetInt32("UKPRN");
 
@@ -326,12 +343,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             ViewBag.Message = message;
 
-            model.Mode = mode;
             return View("../Apprenticeships/DeliveryOptions/Index", model);
         }
 
         [Authorize]
-        public IActionResult DeliveryOptionsCombined(string message, ApprenticeshipMode mode)
+        public IActionResult DeliveryOptionsCombined(string message)
         {
             int? UKPRN = _session.GetInt32("UKPRN");
 
@@ -352,7 +368,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
 
             ViewBag.Message = message;
-            model.Mode = mode;
             return View("../Apprenticeships/DeliveryOptionsCombined/Index", model);
         }
 
@@ -370,6 +385,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
 
+            if (_session.GetObject<ApprenticeshipMode>("ApprenticeshipMode") == ApprenticeshipMode.Undefined) 
+            {
+                _session.SetObject("ApprenticeshipMode", requestModel.Mode);
+            }
+
+            
+
             var model = new SummaryViewModel();
 
             var cachedLocations = new List<Venue>();
@@ -385,14 +407,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 var selectedApprenticeship = getApprenticehipByIdResult.Value;
 
-                model.Mode = requestModel.Mode;
                 model.Apprenticeship = selectedApprenticeship;
 
                 var type = getApprenticehipByIdResult.Value.ApprenticeshipLocations.FirstOrDefault();
                 model.Regions = selectedApprenticeship.ApprenticeshipLocations.Any(x => x.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased)
                     ? SubRegionCodesToDictionary(selectedApprenticeship.ApprenticeshipLocations.FirstOrDefault(x => x.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased)?.Regions) : null;
 
-                model.Mode = requestModel.Mode;
                 model.SummaryOnly = true;
                 _session.SetObject("selectedApprenticeship", selectedApprenticeship);
 
@@ -422,6 +442,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
 
+            var mode = _session.GetObject<ApprenticeshipMode>("ApprenticeshipMode");
             var selectedApprenticeship = _session.GetObject<Apprenticeship>("selectedApprenticeship");
 
 
@@ -436,9 +457,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
 
             model.SummaryOnly = requestModel.SummaryOnly;
-
-            model.Mode = requestModel.Mode;
-
+            model.Mode = mode;
+            
             return View("../Apprenticeships/Summary/Index", model);
         }
 
@@ -460,9 +480,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
             var Apprenticeship = _session.GetObject<Apprenticeship>("selectedApprenticeship");
 
             var model = new SummaryViewModel();
+            var mode =_session.GetObject<ApprenticeshipMode>("ApprenticeshipMode");
+            
 
 
-            if (theModel.Mode == ApprenticeshipMode.EditYourApprenticeships)
+            if (mode == ApprenticeshipMode.EditYourApprenticeships)
             {
                 var result = await _apprenticeshipService.UpdateApprenticeshipAsync(Apprenticeship);
 
@@ -495,10 +517,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         [Authorize]
-        public IActionResult Regions(ApprenticeshipMode Mode)
+        public IActionResult Regions()
         {
             var model = new RegionsViewModel();
-            model.Mode = Mode;
             model.ChooseRegion = new ChooseRegionModel
             {
                 Regions = _courseService.GetRegions(),
@@ -548,7 +569,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             _session.SetObject("selectedApprenticeship", Apprenticeship);
 
-            return RedirectToAction("Summary", "Apprenticeships", new { Mode = model.Mode });
+            return RedirectToAction("Summary", "Apprenticeships");
 
         }
 
@@ -589,10 +610,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                 _session.SetObject("selectedApprenticeship", apprenticeship);
 
-                return RedirectToAction("DeliveryOptionsCombined", "Apprenticeships", new { Mode = model.Mode });
+                return RedirectToAction("DeliveryOptionsCombined", "Apprenticeships");
             }
 
-            return RedirectToAction("Summary", "Apprenticeships", new { Mode = model.Mode });
+            return RedirectToAction("Summary", "Apprenticeships");
         }
         
         [HttpPost]
@@ -635,13 +656,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                 _session.SetObject("selectedApprenticeship", apprenticeship);
 
-                return RedirectToAction("DeliveryOptions", "Apprenticeships", new { Mode = model.Mode });
+                return RedirectToAction("DeliveryOptions", "Apprenticeships");
             }
             
-            return RedirectToAction("Summary", "Apprenticeships", new { Mode = model.Mode });
+            return RedirectToAction("Summary", "Apprenticeships");
         }
 
-        public IActionResult Continue(string LocationId, bool DayRelease, bool BlockRelease, int RowCount, ApprenticeshipMode Mode)
+        public IActionResult Continue(string LocationId, bool DayRelease, bool BlockRelease, int RowCount)
         {
 
             var apprenticeship = _session.GetObject<Apprenticeship>("selectedApprenticeship");
@@ -679,10 +700,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _session.SetObject("selectedApprenticeship", apprenticeship);
 
 
-            return Json(Url.Action("Summary", "Apprenticeships", new { Mode = Mode }));
+            return Json(Url.Action("Summary", "Apprenticeships", new {}));
         }
 
-        public IActionResult ContinueCombined(string LocationId, bool DayRelease, bool BlockRelease, bool National, string Radius, int RowCount, ApprenticeshipMode Mode)
+        public IActionResult ContinueCombined(string LocationId, bool DayRelease, bool BlockRelease, bool National, string Radius, int RowCount)
         {
             var apprenticeship = _session.GetObject<Apprenticeship>("selectedApprenticeship");
 
@@ -719,7 +740,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             _session.SetObject("selectedApprenticeship", apprenticeship);
            
-            return Json(Url.Action("Summary", "Apprenticeships", new { Mode = Mode }));
+            return Json(Url.Action("Summary", "Apprenticeships", new {}));
         }
 
         [Authorize]
@@ -847,7 +868,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             model.Combined = Location.ApprenticeshipLocationType == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased;
             model.LocationName = LocationName;
-            model.Mode = Mode;
 
             model.ApprenticeshipTitle = Location?.Name;
 
@@ -869,22 +889,20 @@ namespace Dfc.CourseDirectory.Web.Controllers
             apprenticeship.ApprenticeshipLocations.RemoveAll(x => x.Id == model.Id);
 
             _session.SetObject("selectedApprenticeship", apprenticeship);
-            return RedirectToAction(model.Combined ? "DeliveryOptionsCombined" : "DeliveryOptions", "Apprenticeships", new { message = "Location " + model.LocationName + " deleted", mode = model.Mode });
+            return RedirectToAction(model.Combined ? "DeliveryOptionsCombined" : "DeliveryOptions", "Apprenticeships",
+                new { message = "Location " + model.LocationName + " deleted"});
         }
 
         [Authorize]
 
-        public IActionResult AddNewVenue(AddCourseRequestModel model)
+        public IActionResult AddNewVenue(ApprenticeshipLocationType type)
         {
-            //todo
-            _session.SetString("Option", "AddNewVenueForApprenticeships");
-            var DeliveryOptionsViewModel = _session.GetObject<DeliveryOptionsViewModel>("DeliveryOptionsViewModel");
-
-            _session.SetObject("DeliveryOptionsViewModel", DeliveryOptionsViewModel);
-
+            _session.SetString("Option", type == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased ?
+                "AddNewVenueForApprenticeshipsCombined" :"AddNewVenueForApprenticeships");
+            
             return Json(Url.Action("AddVenue", "Venues"));
         }
-
+        
         internal Dictionary<string, List<string>> SubRegionCodesToDictionary(IEnumerable<string> subRegions)
         {
             SelectRegionModel selectRegionModel = new SelectRegionModel();
