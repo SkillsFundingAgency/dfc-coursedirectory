@@ -147,16 +147,22 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             var model = new DetailViewModel();
 
-            if (_session.GetObject<ApprenticeshipMode>("ApprenticeshipMode") == ApprenticeshipMode.Undefined)
+            var mode = ApprenticeshipMode.Undefined;
+            if (request.Mode != ApprenticeshipMode.Undefined)
             {
                 _session.SetObject("ApprenticeshipMode", request.Mode);
+                mode = request.Mode;
+            }
+            else
+            {
+                mode = _session.GetObject<ApprenticeshipMode>("ApprenticeshipMode");
             }
 
 
             var apprenticeship = _session.GetObject<Apprenticeship>("selectedApprenticeship");
             if (apprenticeship != null)
             {
-                model = MapToDetailViewModel(apprenticeship);
+                model = MapToDetailViewModel(apprenticeship, mode);
                 model.Cancelled = request.Cancelled.HasValue && request.Cancelled.Value;
             }
             else
@@ -169,9 +175,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 model.PathwayCode = request.PathwayCode;
                 model.Version = request.Version.HasValue ? request.Version.Value : (int?)null;
                 model.NotionalNVQLevelv2 = request.NotionalNVQLevelv2;
-
                 model.Cancelled = request.Cancelled.HasValue && request.Cancelled.Value;
-
+                model.Mode = mode;
                 switch (request.ApprenticeshipType)
                 {
                     case ApprenticeshipType.StandardCode:
@@ -204,7 +209,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             apprenticeship = apprenticeship ?? MapToApprenticeship(model, ukprn, new List<ApprenticeshipLocation>());
 
             var mode = _session.GetObject<ApprenticeshipMode>("ApprenticeshipMode");
-
+            model.Mode = mode;
 
             if (model.Mode == ApprenticeshipMode.EditApprenticeship ||
                 model.Mode == ApprenticeshipMode.EditYourApprenticeships && apprenticeship != null)
@@ -385,15 +390,17 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
 
-            if (_session.GetObject<ApprenticeshipMode>("ApprenticeshipMode") == ApprenticeshipMode.Undefined) 
+            var model = new SummaryViewModel();
+
+            if (requestModel.Mode != ApprenticeshipMode.Undefined) 
             {
                 _session.SetObject("ApprenticeshipMode", requestModel.Mode);
             }
-
+            else
+            {
+                model.Mode = _session.GetObject<ApprenticeshipMode>("ApprenticeshipMode");
+            }
             
-
-            var model = new SummaryViewModel();
-
             var cachedLocations = new List<Venue>();
             var locationsResult = await _venueService.SearchAsync(new VenueSearchCriteria(UKPRN.ToString(), ""));
             if (locationsResult.IsSuccess && locationsResult.HasValue)
@@ -1040,7 +1047,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             };
         }
 
-        private DetailViewModel MapToDetailViewModel(Apprenticeship apprenticeship)
+        private DetailViewModel MapToDetailViewModel(Apprenticeship apprenticeship, ApprenticeshipMode mode)
         {
             return new DetailViewModel
             {
@@ -1055,7 +1062,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 Email = apprenticeship.ContactEmail,
                 ContactUsIUrl = apprenticeship.ContactWebsite,
                 PathwayCode = apprenticeship.PathwayCode,
-                NotionalNVQLevelv2 = apprenticeship.NotionalNVQLevelv2
+                NotionalNVQLevelv2 = apprenticeship.NotionalNVQLevelv2,
+                Mode = mode
+
             };
         }
 
