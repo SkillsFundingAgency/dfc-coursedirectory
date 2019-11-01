@@ -157,7 +157,7 @@
                             if (location.National.HasValue && location.National.Value)
                             {
 
-                                <a class="govuk-link float-right " asp-controller="Apprenticeships" asp-action="LocationChoiceSelection" asp-route-mode=@theMode>
+                                <a class="govuk-link float-right " asp-controller="Apprenticeships" asp-action="LocationChoiceSelection" asp-route-mode=@theMode asp-route-national="@location.National.Value">
                                     Change
                                 </a>
                             }
@@ -179,7 +179,7 @@
                                     </thead>
                                     <tbody class="govuk-table__body">
                                         @{
-                                            if (location.National.HasValue && location.National.Value)
+                                            if (location.National != null && location.National.HasValue)
                                             {
                                                 <tr class="govuk-table__row">
                                                     <th class="govuk-table__header">National</th>
