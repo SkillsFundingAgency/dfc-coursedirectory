@@ -1,11 +1,13 @@
-﻿using Dfc.CourseDirectory.Models.Models.Apprenticeships;
-using Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Dfc.CourseDirectory.Models.Models.Apprenticeships;
+using Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships;
 
 namespace Dfc.CourseDirectory.Web.ViewModels.Apprenticeships
 {
-    public class DeliveryOptionsViewModel
+    public class AddDeliveryOptionViewModel
     {
         public Guid? LocationId { get; set; }
 
@@ -13,14 +15,12 @@ namespace Dfc.CourseDirectory.Web.ViewModels.Apprenticeships
 
         public bool BlockRelease { get; set; }
 
+        public DeliveryOptionSummary DeliveryOptionSummary { get; set; }
+
         public int? Radius { get; set; }
 
         public bool? National { get; set; }
 
         public ApprenticeshipMode Mode { get; set; }
-
-        public List<ApprenticeshipLocation> locations { get; set; }
-
-
     }
 }
