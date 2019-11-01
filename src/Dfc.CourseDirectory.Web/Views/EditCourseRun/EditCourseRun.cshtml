@@ -60,7 +60,7 @@
 
         @await Component.InvokeAsync(nameof(Notification), new NotificationModel
    {
-       NotificationTitle = "New venue added:",
+       NotificationTitle = "New location added:",
        NotificationMessage = message,
        ClassType = "success-summary"
    })
@@ -164,9 +164,9 @@
         }
         @await Component.InvokeAsync(nameof(ChooseVenue), new ChooseVenueModel()
         {
-        LabelText = "Venue",
+        LabelText = "Location",
         AriaDescribedBy = "Venue",
-        HintText = "Select course run venue",
+        HintText = "Select course run location",
         VenueId = Model.VenueId ?? (Guid?)null,
         DisplayLink = displayLink
 

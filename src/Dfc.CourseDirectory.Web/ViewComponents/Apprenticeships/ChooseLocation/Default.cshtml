@@ -29,7 +29,29 @@
 
 <script>
     (function ($) {
-        $(function () {
+        $(function ()
+        {
+           var $addNewVenueButton = $("#addNewLocation");
+             var replaceAll = function (search, find, replace) {
+                return search.split(find).join(replace);
+            };
+            var makeRequestWithPayload = function (payload, success)
+            {
+                console.log(payload);
+                var qs = $.param(payload);
+                qs = replaceAll(qs, "%5B%5D", "");
+                $.get("/Apprenticeships/AddNewVenue?" + qs, success);
+            };
+            var onSucess = function (data)
+            {
+                window.location.href = data;
+            };
+            $addNewVenueButton.on("click", function (e)
+            {               
+                e.preventDefault();
+                makeRequestWithPayload({"type":"@(Model.Type)"},onSucess);
+
+            });
 
         });
     })(jQuery);

@@ -51,23 +51,12 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships
                     {
                         var item = new SelectListItem { Text = venue.VenueName, Value = venue.ID };
 
-                        DeliveryOption alreadyAdded = null;
-
-                        if (model.DeliveryOptionsListItemModel != null)
-                        {
-                            if (model.DeliveryOptionsListItemModel.DeliveryOptions != null)
-                            {
-                                alreadyAdded = model.DeliveryOptionsListItemModel.DeliveryOptions.Where(x => x.LocationId == item.Value).FirstOrDefault();
-                            }
-                        }
-                        if (alreadyAdded == null)
+                        if (model.DeliveryLocations == null || !model.DeliveryLocations.Any(x => x.LocationId.HasValue && x.LocationId.Value.ToString() == item.Value))
                         {
                             venues.Add(item);
                         }
                     };
 
-
-                   //venues.Insert(0, defaultItem);
                 }
 
             }

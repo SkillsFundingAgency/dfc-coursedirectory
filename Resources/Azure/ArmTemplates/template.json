@@ -188,23 +188,10 @@
         "description": "Password for accessing the findacourse backend api"
       }
     },
-    "appServicePlanSize": {
+    "appServicePlanName": {
       "type": "string",
-      "defaultValue": "1",
       "metadata": {
-          "description": "Size of the instances in the app service plan"
-      },
-      "allowedValues": [
-        "1",
-        "2",
-        "3"
-      ]
-    },
-    "appServicePlanInstances": {
-      "type": "int",
-      "defaultValue": 1,
-      "metadata": {
-          "description": "Number of instances in the app service plan"
+        "description": "The name of the provider portal shared ASP in this environment"
       }
     },
     "appHostName": {
@@ -235,18 +222,10 @@
           "description": "Name of the secret (certificate) as it appears in key vault - only used if appHostName is specified"
       }
     },
-    "aseHostingEnvironmentName": {
+    "blobStorageSettingsContainerName": {
       "type": "string",
-      "defaultValue": "",
       "metadata": {
-        "description": "Optional App Service Environment for the app service to exist within. If not supplied creates a stand alone app service plan."
-      }
-    },
-    "aseResourceGroup": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "Resource group the App Service Environment belongs to - only required if aseHostingEnvironmentName specified"
+        "description": "The name of the provider files container, this is hardcoded into the parameters.json file"
       }
     },
     "BlobStorageSettingsInlineProcessingThreshhold": {
@@ -271,11 +250,7 @@
   "variables": {
     "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/dfc-devops/master/ArmTemplates/",
     "appInsightsName": "[concat(parameters('projectPrefix'),'-ai')]",
-    "appServiceName": "[concat(parameters('projectPrefix'),'-as')]",
-    "appServicePlanName": "[concat(parameters('projectPrefix'),'-asp')]",
-    "blobStorageSettingsContainerName": "provider-files",
-    "cosmosDbSQLName": "[concat(parameters('projectPrefix'),'-cdb')]",
-    "azureSearchName": "[concat(parameters('projectPrefix'),'-sch')]"
+    "appServiceName": "[concat(parameters('projectPrefix'),'-as')]"
   },
   "resources": [
     {
@@ -299,79 +274,10 @@
       }
     },
     {
-      "apiVersion": "2017-05-10",
-      "name": "courseDirectoryStorage",
-      "type": "Microsoft.Resources/deployments",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'),'storage-account.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "storageAccountName": {
-            "value": "[parameters('storageAccountName')]"
-          }
-        }
-      }
-    },
-    {
-      "apiVersion": "2017-05-10",
-      "name": "courseDirectoryStorageContainer",
-      "type": "Microsoft.Resources/deployments",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'),'Storage/storage-account-arm-container.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "storageAccountName": {
-            "value": "[parameters('storageAccountName')]"
-          },
-          "storageContainerName": {
-            "value": "[variables('blobStorageSettingsContainerName')]"
-          }
-        }
-      }
-    },
-    {
-      "apiVersion": "2017-05-10",
-      "name": "courseDirectoryAppServicePlan",
-      "type": "Microsoft.Resources/deployments",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'),'app-service-plan.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "appServicePlanName": {
-            "value": "[variables('appServicePlanName')]"
-          },
-          "aspSize": {
-            "value": "[parameters('appServicePlanSize')]"
-          },
-          "aspInstances": {
-            "value": "[parameters('appServicePlanInstances')]"
-          },
-          "aseHostingEnvironmentName": {
-            "value": "[parameters('aseHostingEnvironmentName')]"
-          },
-          "aseResourceGroup": {
-            "value": "[parameters('aseResourceGroup')]"
-          }
-        }
-      }
-    },
-    {
       "name": "courseDirectoryCertificates",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2017-05-10",
       "condition": "[greater(length(parameters('appHostName')),0)]",
-      "dependsOn": [
-        "courseDirectoryAppServicePlan"
-      ],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -389,7 +295,7 @@
             "value": "[parameters('keyVaultResourceGroup')]"
           },
           "serverFarmId": {
-            "value": "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]"
+            "value": "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]"
           }
         }
       }
@@ -400,9 +306,7 @@
       "type": "Microsoft.Resources/deployments",
       "dependsOn": [
         "courseDirectoryCertificates",
-        "courseDirectoryAppInsights",
-        "courseDirectoryStorage",
-        "courseDirectoryAppServicePlan"
+        "courseDirectoryAppInsights"
       ],
       "properties": {
         "mode": "Incremental",
@@ -415,7 +319,7 @@
             "value": "[variables('appServiceName')]"
           },
           "appServicePlanName": {
-            "value": "[variables('appServicePlanName')]"
+            "value": "[parameters('appServicePlanName')]"
           },
           "appServicePlanResourceGroup": {
             "value": "[resourcegroup().name]"
@@ -644,11 +548,11 @@
               },
               {
                 "name": "BlobStorageSettings__AccountKey",
-                "value": "[reference('courseDirectoryStorage').outputs.storageKey.value]"
+                "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts',parameters('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]"
               },
               {
                 "name": "BlobStorageSettings__Container",
-                "value": "[variables('blobStorageSettingsContainerName')]"
+                "value": "[parameters('blobStorageSettingsContainerName')]"
               },
               {
                 "name": "BlobStorageSettings__TemplatePath",
@@ -691,60 +595,9 @@
           }
         }
       }
-    },
-    {
-      "apiVersion": "2017-05-10",
-      "name": "providerPortalCosmosSQL",
-      "type": "Microsoft.Resources/deployments",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'),'cosmos-db.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "cosmosDbName": {
-            "value": "[variables('cosmosDbSQLName')]"
-          },
-          "cosmosApiType": {
-            "value": "SQL"
-          },
-          "defaultConsistencyLevel": {
-            "value": "Eventual"
-          }
-        }
-      }
-    },
-    {
-      "apiVersion": "2017-05-10",
-      "name": "providerPortalSearch",
-      "type": "Microsoft.Resources/deployments",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'),'azure-search.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "azureSearchName": {
-            "value": "[variables('azureSearchName')]"
-          },
-          "azureSearchSku": {
-            "value": "standard"
-          }
-        }
-      }
     }
   ],
   "outputs": {
-    "storageConnectionString": {
-      "type": "string",
-      "value": "[reference('courseDirectoryStorage').outputs.storageConnectionString.value]"
-    },
-    "appServicePlanName": {
-      "type": "string",
-      "value": "[variables('appServicePlanName')]"
-    },
     "appInsightInstrumentationKey": {
       "type": "string",
       "value": "[reference('courseDirectoryAppInsights').outputs.InstrumentationKey.value]"
@@ -752,14 +605,6 @@
     "appServiceName": {
       "type": "string",
       "value": "[variables('appServiceName')]"
-    },
-    "cosmosDbSQLName": {
-      "type": "string",
-      "value": "[variables('cosmosDbSQLName')]"
-    },
-    "azureSearchName": {
-      "type": "string",
-      "value": "[variables('azureSearchName')]"
     }
   }
 }

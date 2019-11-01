@@ -58,7 +58,7 @@
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="2.1.1" />
     <PackageReference Include="Microsoft.Extensions.Caching.Redis" Version="2.1.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.ApplicationInsights" Version="2.9.1" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.9" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.10" />
     <PackageReference Include="routedebugger" Version="2.1.5" />
     <PackageReference Include="Sendgrid" Version="9.10.0" />
   </ItemGroup>
@@ -80,6 +80,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="ViewComponents\Apprenticeships\ApprenticeshipLocationList\Default.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="ViewComponents\Apprenticeships\DeliveryOptionsList\Default.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

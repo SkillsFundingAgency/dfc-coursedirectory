@@ -20,7 +20,7 @@ namespace Dfc.CourseDirectory.Models.Models.Apprenticeships
         public string Phone { get; set; }
         public int ProviderUKPRN { get; set; } // As we are trying to inforce unique UKPRN per Provider
         public int? ProviderId { get; set; }
-        public string[] Regions { get; set; }
+        public IEnumerable<string> Regions { get; set; }
         public ApprenticeshipLocationType ApprenticeshipLocationType { get; set; }
         public LocationType LocationType { get; set; }
         public int? Radius { get; set; }
