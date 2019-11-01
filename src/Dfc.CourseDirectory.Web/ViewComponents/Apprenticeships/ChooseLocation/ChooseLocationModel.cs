@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Dfc.CourseDirectory.Models.Models.Apprenticeships;
 using Dfc.CourseDirectory.Models.Models.Courses;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -16,6 +17,6 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships
 
         public bool DisplayLink { get; set; }
 
-        public DeliveryOptionSummary DeliveryOptionsListItemModel { get; set; }
+        public List<ApprenticeshipLocation> DeliveryLocations { get; set; }
     }
 }
