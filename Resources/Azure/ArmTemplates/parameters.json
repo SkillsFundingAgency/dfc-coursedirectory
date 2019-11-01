@@ -107,17 +107,11 @@
     "certificateName": {
       "value": "__certificateName__"
     },
-    "appServicePlanInstances": {
-      "value": __aspInstances__
+    "appServicePlanName": {
+      "value": "__providerPortalAppServicePlan__"
     },
-    "aseHostingEnvironmentName": {
-      "value": "__AseHostingEnvironmentName__"
-    },
-    "aseResourceGroup": {
-      "value": "__aseResourceGroup__"
-    },
-    "appServicePlanSize": {
-      "value": "__aspPricingTierSize__"
+    "blobStorageSettingsContainerName": {
+      "value": "provider-files"
     },
     "BlobStorageSettingsInlineProcessingThreshhold": {
       "value": "__BulkUploadInlineProcessingThreshhold__"

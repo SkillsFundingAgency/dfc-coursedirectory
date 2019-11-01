@@ -141,14 +141,15 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 Map(m => m.SUB_REGION);
                 Map(m => m.ApprenticeshipType).ConvertUsing((row) =>
                 {
-                    if (row.TryGetField("STANDARD_CODE", out string standardCode))
+                    
+                    row.TryGetField("STANDARD_CODE", out string standardCode);
+                    if(!string.IsNullOrWhiteSpace(standardCode))
                     {
                         return ApprenticeshipType.StandardCode;
                     }
-                    else
-                    {
-                        return ApprenticeshipType.FrameworkCode;
-                    }
+
+                    return ApprenticeshipType.FrameworkCode;
+                    
                     
 
                 });
@@ -397,7 +398,12 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                         var regionCodes = ParseRegionData(regionList);
                         var subregionCodes = ParseSubRegionData(subRegionList);
                         regions.AddRange(regionCodes.Distinct());
-                        regions.AddRange(subregionCodes.Distinct());
+
+                        foreach (var regionCode in regionCodes)
+                        {
+                            subregionCodes = RemoveSubregionsOfExistingRegions(subregionCodes, regionCode);
+                        }
+                        regions.AddRange(subregionCodes);
                     }
 
                 }
@@ -922,9 +928,9 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 {
                     if (isNational == false)
                     {
+                        var results = ParseSubRegionData(value);
                         if(!string.IsNullOrEmpty(value))
                         {
-                            var results = ParseSubRegionData(value);
                             if(!results.Any())
                             {
                                 errors.Add(new BulkUploadError
@@ -939,7 +945,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                         }
 
                         var anyRegions = GetRegionList(row);
-                        if (!anyRegions.Any())
+                        if (!anyRegions.Any() && !results.Any())
                         {
                             errors.Add(new BulkUploadError
                             {
@@ -1029,33 +1035,30 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             private IEnumerable<string> ParseRegionData(string regions)
             {
                 var availableRegions = new SelectRegionModel();
-                var subRegionList = new List<string>();
+                var regionCodes = new List<string>();
 
                 if (!string.IsNullOrEmpty(regions))
                 {
                     foreach (var region in regions.Trim().Split(";"))
 
                     {
-                        var subregionsForRegion =
+                        var regionCode =
                             availableRegions.RegionItems.Where(x =>
-                                string.Equals(x.RegionName, region, StringComparison.CurrentCultureIgnoreCase))
-                                .Select(y => y .SubRegion).FirstOrDefault();
+                                string.Equals(x.RegionName, region, StringComparison.CurrentCultureIgnoreCase)).Select(x => x.Id);
 
-                        if (subregionsForRegion == null)
+                        if (!regionCode.Any())
                         {
                             return new List<string>();
                         }
 
-                        var listOfSubRegionCodes = subregionsForRegion.Select(x => x.Id).ToList();
-                        if (listOfSubRegionCodes.Any())
-                        {
-                            subRegionList.AddRange(listOfSubRegionCodes);
-                        }
+
+                        regionCodes.AddRange(regionCode);
+                        
                     
                     }
                 }
 
-                return subRegionList.Distinct();
+                return regionCodes.Distinct();
             }
             private IEnumerable<string> ParseSubRegionData(string subRegionList)
             {
@@ -1087,7 +1090,29 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
                 return subRegionCodeList.Distinct();
             }
-            
+
+            private List<string> RemoveSubregionsOfExistingRegions(IEnumerable<string> subregionCodes, string regionCode)
+            {
+                var totalList = new List<string>();
+                totalList.AddRange(subregionCodes);
+
+                var selectRegionModel = new SelectRegionModel();
+
+                var subregionsForRegion =
+                    selectRegionModel.RegionItems.Where(x =>
+                            string.Equals(x.Id, regionCode, StringComparison.CurrentCultureIgnoreCase))
+                        .Select(y => y .SubRegion).FirstOrDefault();
+                var subregionIds = subregionsForRegion.Select(x => x.Id);
+
+                var matchingSubregionIds = subregionIds.Intersect(subregionCodes);
+
+                foreach (var item in matchingSubregionIds)
+                {
+                    totalList.Remove(item);
+                }
+
+                return totalList;
+            }
         }
         
     
@@ -1365,7 +1390,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 LocationType = LocationType.Venue,
                 RecordStatus = record.ErrorsList.Any() ? RecordStatus.BulkUploadPending : RecordStatus.BulkUploadReadyToGoLive,
                 Regions = record.RegionsList.ToArray(),
-                National = record.NATIONAL_DELIVERY,
+                National = NationalOrAcrossEngland(record.NATIONAL_DELIVERY, record.ACROSS_ENGLAND),
                 TribalId = venue?.TribalLocationId,
                 ProviderId = venue?.ProviderID,
                 LocationId = venue?.LocationId,
@@ -1390,6 +1415,16 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 DeliveryModes = record.DELIVERY_MODE
             };
           
+        }
+
+        internal bool? NationalOrAcrossEngland(bool? national, bool? acrossEngland)
+        {
+            if (acrossEngland.HasValue)
+                return acrossEngland;
+
+            if (national.HasValue)
+                return national;
+            return null;
         }
 
     }

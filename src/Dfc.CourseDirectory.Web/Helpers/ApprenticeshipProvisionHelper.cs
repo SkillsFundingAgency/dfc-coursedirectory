@@ -92,7 +92,11 @@ namespace Dfc.CourseDirectory.Web.Helpers
                 {
                     //Sanitise regions
                     if (apprenticeshipLocation.Regions != null)
-                        apprenticeshipLocation.Regions = _CSVHelper.SanitiseRegionTextForCSVOutput(apprenticeshipLocation.Regions);
+                    {
+                        if(apprenticeshipLocation.Regions.Any())
+                            apprenticeshipLocation.Regions = _CSVHelper.SanitiseRegionTextForCSVOutput(apprenticeshipLocation.Regions);
+                    }
+                        
                     var csvApprenticeshipLocation = MapCsvApprenticeship(apprenticeship, apprenticeshipLocation);
 
                     csvApprenticeships.Add(csvApprenticeshipLocation);
@@ -112,7 +116,7 @@ namespace Dfc.CourseDirectory.Web.Helpers
                 FrameworkCode = apprenticeship.FrameworkCode?.ToString(),
                 ProgType =  apprenticeship.ProgType?.ToString(),
                 PathwayCode = apprenticeship.PathwayCode?.ToString(),
-                ApprenticeshipInformation = apprenticeship.ApprenticeshipTitle,
+                ApprenticeshipInformation = _CSVHelper.SanitiseTextForCSVOutput(apprenticeship.MarketingInformation),
                 ApprenticeshipWebpage = apprenticeship.Url,
                 ContactEmail = apprenticeship.ContactEmail,
                 ContactPhone = apprenticeship.ContactTelephone,
@@ -123,9 +127,9 @@ namespace Dfc.CourseDirectory.Web.Helpers
                 Radius = location.Radius?.ToString(),
                 DeliveryMode = DeliveryModeConvert(location.DeliveryModes),
                 AcrossEngland = location.ApprenticeshipLocationType == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased ?
-                    BoolConvert(location.National) : 
+                    AcrossEnglandConvert(location.Radius, location.National) : 
                     String.Empty,
-                NationalDelivery = BoolConvert(location.National),
+                NationalDelivery = location.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased ?  BoolConvert(location.National) : string.Empty,
                 Region = location.Regions != null ? _CSVHelper.SemiColonSplit(
                                                                     selectRegionModel.RegionItems
                                                                     .Where(x => location.Regions.Contains(x.Id))
@@ -205,6 +209,22 @@ namespace Dfc.CourseDirectory.Web.Helpers
             }
 
             return string.Join(";", modeNames);
+        }
+        internal string AcrossEnglandConvert(int? radius, bool? national)
+        {
+            if (!radius.HasValue)
+                return string.Empty;
+
+            if (!national.HasValue)
+                return string.Empty;
+
+            if (radius.Value == 600)
+            {
+                if (national.Value)
+                    return BoolConvert(true);
+            }
+
+            return string.Empty;
         }
     }
 }
