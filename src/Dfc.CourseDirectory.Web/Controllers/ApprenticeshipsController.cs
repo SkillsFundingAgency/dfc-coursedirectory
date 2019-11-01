@@ -281,12 +281,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         [Authorize]
-        public IActionResult LocationChoiceSelection(ApprenticeshipMode Mode)
+        [HttpGet]
+        public IActionResult LocationChoiceSelection(ApprenticeshipMode mode, bool national)
         {
-
-            var model = new LocationChoiceSelectionViewModel();
-
-            model.Mode = Mode;
+            LocationChoiceSelectionViewModel model = new LocationChoiceSelectionViewModel
+            {
+                Mode = mode,
+                NationalApprenticeship = national ? NationalApprenticeship.Yes : NationalApprenticeship.No
+            };
             return View("../Apprenticeships/LocationChoiceSelection/Index", model);
         }
 

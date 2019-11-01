@@ -155,10 +155,10 @@
 
                                 var location = Model.Apprenticeship.ApprenticeshipLocations.FirstOrDefault(x => x.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased);
 
-                                if (location.National.HasValue && location.National.Value)
+                                if (location?.National != null)
                                 {
 
-                                    <a class="govuk-link float-right " asp-controller="Apprenticeships" asp-action="LocationChoiceSelection" asp-route-mode=@theMode>
+                                    <a class="govuk-link float-right " asp-controller="Apprenticeships" asp-action="LocationChoiceSelection" asp-route-mode=@theMode asp-route-national="@location.National.Value">
                                         Change
                                     </a>
                                 }
