@@ -3,6 +3,7 @@
 @using Dfc.CourseDirectory.Web.Helpers
 @using Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships
 @using Dfc.CourseDirectory.Web.ViewComponents.Apprenticeships.ApprenticeshipLocationList
+@using Microsoft.AspNetCore.Rewrite.Internal
 @{
     if (Model.Mode == ApprenticeshipMode.EditYourApprenticeships)
     {
@@ -17,220 +18,213 @@
 
 @model Dfc.CourseDirectory.Web.ViewModels.Apprenticeships.SummaryViewModel
 
-<form class="govuk-!-margin-bottom-9" id="ApprenticeshipSummaryForm" asp-controller="Apprenticeships" asp-action="Summary" method="post">
-    <div class="content-container">
-        <div class="" data-sf-element="Row">
-            <div class="govuk-grid-column">
-                @{
-                    var theMode = Model.Mode;
 
-                }
+<div class="content-container">
+    <div class="" data-sf-element="Row">
+        <div class="govuk-grid-column">
+            @{
+                var theMode = Model.Mode;
 
-                @Html.HiddenFor(x => x.Cancelled)
-                @Html.HiddenFor(x => x.Mode)
-                @if (Model.Mode == ApprenticeshipMode.EditYourApprenticeships)
-                {
-                    <h1 class="govuk-heading-l">View and edit this apprenticeship</h1>
-                }
-                else
-                {
-                    <h1 class="govuk-heading-l">Check and publish to the course directory</h1>
-                }
+            }
+
+            @if (Model.Mode == ApprenticeshipMode.EditYourApprenticeships)
+            {
+                <h1 class="govuk-heading-l">View and edit this apprenticeship</h1>
+            }
+            else
+            {
+                <h1 class="govuk-heading-l">Check and publish to the course directory</h1>
+            }
 
 
 
-                <h2 class="govuk-heading-m">@Model?.Apprenticeship?.ApprenticeshipTitle</h2>
+            <h2 class="govuk-heading-m">@Model?.Apprenticeship?.ApprenticeshipTitle</h2>
 
-                <dl class="govuk-summary-list ">
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Apprenticeship information for employers
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            @Html.Raw(Model.Apprenticeship.MarketingInformation)
-                        </dd>
-                        <dd class="govuk-summary-list__actions">
-                            <a class="govuk-link float-right" asp-controller="Apprenticeships" asp-action="Details" asp-route-Mode=@theMode asp-fragment="InformationContainer" asp-route-showcancelled=true>Change</a>
+            <dl class="govuk-summary-list ">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Apprenticeship information for employers
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Html.Raw(Model.Apprenticeship.MarketingInformation)
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        <a class="govuk-link float-right" asp-controller="Apprenticeships" asp-action="Details" asp-route-Mode=@theMode asp-fragment="InformationContainer" asp-route-showcancelled=true>Change</a>
 
-                        </dd>
-                    </div>
-                </dl>
-                <dl class="govuk-summary-list ">
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Apprenticeship webpage
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            @Model.Apprenticeship.ContactWebsite
-                        </dd>
-                        <dd class="govuk-summary-list__actions">
-                            <a class="govuk-link float-right" asp-controller="Apprenticeships" asp-action="Details" asp-route-Mode=@theMode asp-fragment="WebsiteContainer" asp-route-showcancelled=true>Change</a>
+                    </dd>
+                </div>
+            </dl>
+            <dl class="govuk-summary-list ">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Apprenticeship webpage
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.Apprenticeship.ContactWebsite
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        <a class="govuk-link float-right" asp-controller="Apprenticeships" asp-action="Details" asp-route-Mode=@theMode asp-fragment="WebsiteContainer" asp-route-showcancelled=true>Change</a>
 
-                        </dd>
-                    </div>
-                </dl>
-                <dl class="govuk-summary-list ">
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Email
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            @Model.Apprenticeship.ContactEmail
-                        </dd>
-                        <dd class="govuk-summary-list__actions">
-                            <a class="govuk-link float-right" asp-controller="Apprenticeships" asp-action="Details" asp-route-Mode=@theMode asp-fragment="EmailContainer" asp-route-showcancelled=true>Change</a>
+                    </dd>
+                </div>
+            </dl>
+            <dl class="govuk-summary-list ">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Email
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.Apprenticeship.ContactEmail
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        <a class="govuk-link float-right" asp-controller="Apprenticeships" asp-action="Details" asp-route-Mode=@theMode asp-fragment="EmailContainer" asp-route-showcancelled=true>Change</a>
 
-                        </dd>
-                    </div>
-                </dl>
-                <dl class="govuk-summary-list ">
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Telephone
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            @Model.Apprenticeship.ContactTelephone
-                        </dd>
-                        <dd class="govuk-summary-list__actions">
-                            <a class="govuk-link float-right" asp-controller="Apprenticeships" asp-action="Details" asp-route-Mode=@theMode asp-fragment="TelephoneContainer" asp-route-showcancelled=true>Change</a>
+                    </dd>
+                </div>
+            </dl>
+            <dl class="govuk-summary-list ">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Telephone
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.Apprenticeship.ContactTelephone
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        <a class="govuk-link float-right" asp-controller="Apprenticeships" asp-action="Details" asp-route-Mode=@theMode asp-fragment="TelephoneContainer" asp-route-showcancelled=true>Change</a>
 
-                        </dd>
-                    </div>
-                </dl>
-                <dl class="govuk-summary-list ">
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Contact URL
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            @Model.Apprenticeship.ContactWebsite
-                        </dd>
-                        <dd class="govuk-summary-list__actions">
-                            <a class="govuk-link float-right" asp-controller="Apprenticeships" asp-action="Details" asp-route-Mode=@theMode asp-fragment="ContactUsContainer" asp-route-showcancelled=true>Change</a>
+                    </dd>
+                </div>
+            </dl>
+            <dl class="govuk-summary-list ">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Contact URL
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.Apprenticeship.ContactWebsite
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        <a class="govuk-link float-right" asp-controller="Apprenticeships" asp-action="Details" asp-route-Mode=@theMode asp-fragment="ContactUsContainer" asp-route-showcancelled=true>Change</a>
 
-                        </dd>
-                    </div>
-                </dl>
+                    </dd>
+                </div>
+            </dl>
 
-                <div class="summary--linked-title">
-                    
-                    <div class="govuk-summary-list">
-                        @{
+            <div class="summary--linked-title">
 
-                            if (Model.Apprenticeship.ApprenticeshipLocations.Any(x => x.ApprenticeshipLocationType
-                                                                                      == ApprenticeshipLocationType.ClassroomBased))
+                <div class="govuk-summary-list">
+                    @{
+
+                        if (Model.Apprenticeship.ApprenticeshipLocations.Any(x => x.ApprenticeshipLocationType
+                                                                                  == ApprenticeshipLocationType.ClassroomBased))
+                        {
+                            <h3 class="govuk-heading-s">Classroom  based locations</h3>
+                            <a class="govuk-link float-right " asp-controller="Apprenticeships" asp-action="DeliveryOptions" asp-route-mode=@theMode>
+                                Change
+                            </a>
+                            @await Component.InvokeAsync(nameof(ApprenticeshipLocationList), new ApprenticeshipLocationListModel
                             {
-                                <h3 class="govuk-heading-s">Classroom  based locations</h3>
-                                <a class="govuk-link float-right " asp-controller="Apprenticeships" asp-action="DeliveryOptions" asp-route-mode=@theMode>
+                                Locations = Model.Apprenticeship.ApprenticeshipLocations.Where(x => x.ApprenticeshipLocationType
+                                                                                                    == ApprenticeshipLocationType.ClassroomBased).ToList(),
+                                Mode = Model.Mode,
+                                SummaryPage = true
+                            })
+                        }
+
+                        if (Model.Apprenticeship.ApprenticeshipLocations.Any(x => x.ApprenticeshipLocationType
+                                                                                    == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased))
+                        {
+                            <h3 class="govuk-heading-s">Employer and classroom based locations</h3>
+                            <a class="govuk-link float-right" asp-controller="Apprenticeships" asp-action="DeliveryOptionsCombined" asp-route-mode=@theMode>
+                                Change
+                            </a>
+                            @await Component.InvokeAsync(nameof(ApprenticeshipLocationList), new ApprenticeshipLocationListModel
+                            {
+                                Locations = Model.Apprenticeship.ApprenticeshipLocations.Where(x => x.ApprenticeshipLocationType
+                                                                                                    == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased).ToList(),
+                                Mode = Model.Mode,
+                                SummaryPage = true
+                            })
+                        }
+
+                        if (Model.Apprenticeship.ApprenticeshipLocations.Any(x => x.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased))
+                        {
+                            <h3 class="govuk-heading-s">Employer based locations:</h3>
+
+                            var location = Model.Apprenticeship.ApprenticeshipLocations.FirstOrDefault(x => x.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased);
+
+                            if (location.National.HasValue && location.National.Value)
+                            {
+
+                                <a class="govuk-link float-right " asp-controller="Apprenticeships" asp-action="LocationChoiceSelection" asp-route-mode=@theMode>
                                     Change
                                 </a>
-                                @await Component.InvokeAsync(nameof(ApprenticeshipLocationList), new ApprenticeshipLocationListModel
-                                {
-                                    Locations = Model.Apprenticeship.ApprenticeshipLocations.Where(x => x.ApprenticeshipLocationType
-                                                                                                        == ApprenticeshipLocationType.ClassroomBased).ToList(),
-                                    Mode = Model.Mode,
-                                    SummaryPage = true
-                                })
                             }
-
-                            if (Model.Apprenticeship.ApprenticeshipLocations.Any(x => x.ApprenticeshipLocationType
-                                                                                        == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased))
+                            else
                             {
-                                <h3 class="govuk-heading-s">Employer and classroom based locations</h3>
-                                <a class="govuk-link float-right" asp-controller="Apprenticeships" asp-action="DeliveryOptionsCombined" asp-route-mode=@theMode>
+                                <a class="govuk-link float-right " asp-controller="Apprenticeships" asp-action="Regions" asp-route-mode=@theMode>
                                     Change
                                 </a>
-                                @await Component.InvokeAsync(nameof(ApprenticeshipLocationList), new ApprenticeshipLocationListModel
-                                {
-                                    Locations = Model.Apprenticeship.ApprenticeshipLocations.Where(x => x.ApprenticeshipLocationType
-                                                                                                        == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased).ToList(),
-                                    Mode = Model.Mode,
-                                    SummaryPage = true
-                                })
                             }
 
-                            if (Model.Apprenticeship.ApprenticeshipLocations.Any(x => x.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased))
+                            @if (location.Regions != null && location.Regions.Any())
                             {
-                                <h3 class="govuk-heading-s">Employer based locations:</h3>
+                                <table class="govuk-table">
+                                    <thead class="govuk-table__head">
+                                        <tr class="govuk-table__row">
+                                            <th class="govuk-table__header govuk-!-width-one-third">Location</th>
+                                            <th class="govuk-table__header govuk-!-width-two-thirds">Sub region</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="govuk-table__body">
+                                        @{
+                                            if (location.National.HasValue && location.National.Value)
+                                            {
+                                                <tr class="govuk-table__row">
+                                                    <th class="govuk-table__header">National</th>
+                                                    <td class="govuk-table__cell">All</td>
+                                                </tr>
+                                            }
+                                            else
+                                            {
 
-                                var location = Model.Apprenticeship.ApprenticeshipLocations.FirstOrDefault(x => x.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased);
-
-                                if (location.National.HasValue && location.National.Value)
-                                {
-
-                                    <a class="govuk-link float-right " asp-controller="Apprenticeships" asp-action="LocationChoiceSelection" asp-route-mode=@theMode>
-                                        Change
-                                    </a>
-                                }
-                                else
-                                {
-                                    <a class="govuk-link float-right " asp-controller="Apprenticeships" asp-action="Regions" asp-route-mode=@theMode>
-                                        Change
-                                    </a>
-                                }
-
-                                @if (location.Regions != null && location.Regions.Any())
-                                {
-                                    <table class="govuk-table">
-                                        <thead class="govuk-table__head">
-                                            <tr class="govuk-table__row">
-                                                <th class="govuk-table__header govuk-!-width-one-third">Location</th>
-                                                <th class="govuk-table__header govuk-!-width-two-thirds">Sub region</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody class="govuk-table__body">
-                                            @{
-                                                if (location.National.HasValue && location.National.Value)
+                                                foreach (var item in Model.Regions)
                                                 {
                                                     <tr class="govuk-table__row">
-                                                        <th class="govuk-table__header">National</th>
-                                                        <td class="govuk-table__cell">All</td>
+                                                        <th class="govuk-table__header">@item.Key</th>
+                                                        <td class="govuk-table__cell">@string.Join(", ", item.Value)</td>
                                                     </tr>
-                                                }
-                                                else
-                                                {
 
-                                                    foreach (var item in Model.Regions)
-                                                    {
-                                                        <tr class="govuk-table__row">
-                                                            <th class="govuk-table__header">@item.Key</th>
-                                                            <td class="govuk-table__cell">@string.Join(", ", item.Value)</td>
-                                                        </tr>
-
-                                                    }
                                                 }
                                             }
-                                        </tbody>
-                                    </table>
-                                }
+                                        }
+                                    </tbody>
+                                </table>
                             }
                         }
-                    </div>
+                    }
                 </div>
-              
+            </div>
 
 
+            <form class="govuk-!-margin-bottom-9" id="ApprenticeshipSummaryForm" asp-controller="Apprenticeships" asp-action="Summary" method="post">
+                @Html.HiddenFor(x => x.SummaryOnly)
+                @Html.HiddenFor(x => x.Mode)
 
-                @if (Model.Mode == ApprenticeshipMode.Add || Model.Mode == ApprenticeshipMode.EditApprenticeship)
+                @if (!Model.SummaryOnly)
                 {
-                    <button type="submit" class="govuk-button" id="next">Publish</button>
+                      <button type="submit" class="govuk-button" id="next">Publish</button>
+                        @Html.ActionLink("Cancel", "Cancel", "Apprenticeships", new { }, new { @class = "govuk-button govuk-button--secondary" })
+                    
                 }
                 else
                 {
-                    @if (Model.Mode == ApprenticeshipMode.EditYourApprenticeships)
-                    {
-                        @if (Model.Cancelled == null || Model.Cancelled.Value == true)
-                        {
-                            <button type="submit" class="govuk-button" id="next">Close</button>
-                        }
-                        else
-                        {
-                            <button type="submit" class="govuk-button" id="next">Publish</button>
-                        }
-                    }
+                    @Html.ActionLink("Close", "Cancel", "Apprenticeships", new { }, new { @class = "govuk-button" })
                 }
 
-            </div>
+            </form>
         </div>
     </div>
-</form>
+</div>
+
