@@ -423,6 +423,17 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     mode = "Add"                    
                 });
             }
+            if (option.ToUpper() == "ADDNEWVENUEFORAPPRENTICESHIPSCOMBINED")
+            {
+                _session.SetObject("NewAddedVenue", addedVenueModel);
+                return RedirectToAction("DeliveryOptionsCombined", "Apprenticeships", new
+                {
+                    message = "",
+                    mode = "Add"
+                });
+            }
+
+            
 
             return View("VenueSearchResults", await GetVenues(UKPRN.Value, newItem, updated));
 

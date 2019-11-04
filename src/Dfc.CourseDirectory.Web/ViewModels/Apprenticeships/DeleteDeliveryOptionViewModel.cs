@@ -20,9 +20,6 @@ namespace Dfc.CourseDirectory.Web.ViewModels.Apprenticeships
         public Guid Id { get; set; }
 
        public bool Combined { get; set; }
-
-       public ApprenticeshipMode Mode { get; set; }
-
-
+        
     }
 }
