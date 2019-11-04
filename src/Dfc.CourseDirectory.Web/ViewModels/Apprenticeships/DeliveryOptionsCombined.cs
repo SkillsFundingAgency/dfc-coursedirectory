@@ -16,9 +16,14 @@ namespace Dfc.CourseDirectory.Web.ViewModels.Apprenticeships
 
         public bool BlockRelease { get; set; }
 
+        public DeliveryOptionSummary DeliveryOptionSummary { get; set; }
+
         public bool National { get; set; }
 
         public string Radius { get; set; }
+
+        public ApprenticeshipMode Mode { get; set; }
+
 
     }
 }

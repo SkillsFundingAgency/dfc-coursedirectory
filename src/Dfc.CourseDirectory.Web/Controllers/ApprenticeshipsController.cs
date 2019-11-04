@@ -376,7 +376,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             model.Radius = null;
             model.Locations = apprenticeship?.ApprenticeshipLocations.Where(x => x.ApprenticeshipLocationType == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased).ToList();
 
-
             ViewBag.Message = message;
             return View("../Apprenticeships/DeliveryOptionsCombined/Index", model);
         }
