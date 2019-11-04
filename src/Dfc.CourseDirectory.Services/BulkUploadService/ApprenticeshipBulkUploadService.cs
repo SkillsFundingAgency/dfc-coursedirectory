@@ -843,18 +843,23 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 var isAcrossEngland = Mandatory_Checks_Bool(row, fieldName);
                 if (deliveryMethod == DeliveryMethod.Both)
                 {
-                    if (!isAcrossEngland.HasValue)
+                    var radius = Mandatory_Checks_RADIUS(row);
+                    if (!radius.HasValue)
                     {
-                        errors.Add(new BulkUploadError
+                        if (!isAcrossEngland.HasValue)
                         {
-                            LineNumber = row.Context.Row,
-                            Header = fieldName,
-                            Error = $"Validation error on row {row.Context.Row}. Field {fieldName} must contain a value when Delivery Method is 'Both'"
+                            errors.Add(new BulkUploadError
+                            {
+                                LineNumber = row.Context.Row,
+                                Header = fieldName,
+                                Error = $"Validation error on row {row.Context.Row}. Field {fieldName} must contain a value when Delivery Method is 'Both'"
 
-                        });
-                       
-                        return errors;
+                            });
+
+                            return errors;
+                        }
                     }
+
                 }
 
 
