@@ -713,11 +713,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             var apprenticeship = _session.GetObject<Apprenticeship>("selectedApprenticeship");
 
-            var RadiusValue = 0;
+            var radiusValue = 0;
 
             var nationalRadiusValue = _apprenticeshipSettings.Value.NationalRadius;
 
-            RadiusValue = National ? nationalRadiusValue : Convert.ToInt32(Radius);
+            radiusValue = National ? nationalRadiusValue : Convert.ToInt32(Radius);
 
             var venue = _venueService.GetVenueByIdAsync(new GetVenueByIdCriteria(LocationId));
 
@@ -739,7 +739,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 LocationName = venue.Result.Value.VenueName,
                 PostCode = venue.Result.Value.PostCode,
                 National = National,
-                Radius = RadiusValue.ToString(),
+                Radius = radiusValue.ToString(),
                 Venue = (Venue)venue.Result.Value
 
             }, ApprenticeshipLocationType.ClassroomBasedAndEmployerBased));
@@ -758,7 +758,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             model.ApprenticeshipName = apprenticeship.ApprenticeshipTitle;
 
             _session.Remove("selectedApprenticeship");
-            _session.Remove("DeliveryViewModel");
+            _session.Remove("ApprenticeshipMode");
             return View("../Apprenticeships/Complete/Index", model);
         }
 
