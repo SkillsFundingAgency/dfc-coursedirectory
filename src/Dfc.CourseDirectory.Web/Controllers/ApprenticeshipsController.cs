@@ -280,10 +280,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         [Authorize]
-        public IActionResult LocationChoiceSelection(ApprenticeshipMode Mode)
+        [HttpGet]
+        public IActionResult LocationChoiceSelection(bool? national)
         {
+            LocationChoiceSelectionViewModel model = new LocationChoiceSelectionViewModel();
+            if (national == null)
+                model.NationalApprenticeship = NationalApprenticeship.Undefined;
 
-            var model = new LocationChoiceSelectionViewModel();
+            if (national.HasValue)
+                model.NationalApprenticeship = national.Value ? NationalApprenticeship.Yes : NationalApprenticeship.No;
 
             return View("../Apprenticeships/LocationChoiceSelection/Index", model);
         }
@@ -370,7 +375,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             model.National = false;
             model.Radius = null;
             model.Locations = apprenticeship?.ApprenticeshipLocations.Where(x => x.ApprenticeshipLocationType == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased).ToList();
-
 
             ViewBag.Message = message;
             return View("../Apprenticeships/DeliveryOptionsCombined/Index", model);
