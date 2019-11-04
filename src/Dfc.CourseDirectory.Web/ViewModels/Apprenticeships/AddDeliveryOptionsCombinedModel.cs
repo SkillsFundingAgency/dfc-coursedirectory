@@ -20,7 +20,5 @@ namespace Dfc.CourseDirectory.Web.ViewModels.Apprenticeships
         public bool National { get; set; }
 
         public string Radius { get; set; }
-
-        public ApprenticeshipMode Mode { get; set; }
     }
 }

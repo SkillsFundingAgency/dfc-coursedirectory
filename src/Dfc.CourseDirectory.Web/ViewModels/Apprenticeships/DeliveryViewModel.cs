@@ -17,7 +17,5 @@ namespace Dfc.CourseDirectory.Web.ViewModels.Apprenticeships
     {
 
         public ApprenticeshipDelivery ApprenticeshipDelivery { get; set; }
-        public ApprenticeshipMode Mode { get; set; }
-
     }
 }
