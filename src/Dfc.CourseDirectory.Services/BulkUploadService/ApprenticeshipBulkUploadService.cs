@@ -53,9 +53,9 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
         internal enum DeliveryMode
         {
             Undefined = 0,
-            Day = 1,
-            Block = 2,
-            Employer = 3
+            Employer = 1,
+            Day = 2,
+            Block = 3
         }
 
         internal class ApprenticeshipCsvRecord
@@ -99,7 +99,6 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             public string Base64Row  { get; set; }
 
         }
-
         private class ApprenticeshipCsvRecordMap : ClassMap<ApprenticeshipCsvRecord>
         {
             private readonly IApprenticeshipService _apprenticeshipService;
@@ -142,14 +141,15 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 Map(m => m.SUB_REGION);
                 Map(m => m.ApprenticeshipType).ConvertUsing((row) =>
                 {
-                    if (row.TryGetField("STANDARD_CODE", out string standardCode))
+                    
+                    row.TryGetField("STANDARD_CODE", out string standardCode);
+                    if(!string.IsNullOrWhiteSpace(standardCode))
                     {
                         return ApprenticeshipType.StandardCode;
                     }
-                    else
-                    {
-                        return ApprenticeshipType.FrameworkCode;
-                    }
+
+                    return ApprenticeshipType.FrameworkCode;
+                    
                     
 
                 });
@@ -398,7 +398,12 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                         var regionCodes = ParseRegionData(regionList);
                         var subregionCodes = ParseSubRegionData(subRegionList);
                         regions.AddRange(regionCodes.Distinct());
-                        regions.AddRange(subregionCodes.Distinct());
+
+                        foreach (var regionCode in regionCodes)
+                        {
+                            subregionCodes = RemoveSubregionsOfExistingRegions(subregionCodes, regionCode);
+                        }
+                        regions.AddRange(subregionCodes);
                     }
 
                 }
@@ -417,6 +422,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                         return true;
                     case "NO":
                         return false;
+                    
                 }
 
                 return null;
@@ -447,7 +453,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                     }
 
                     var venues =_cachedVenues
-                        .Where(x => x.VenueName.ToUpper() == value.ToUpper() && x.Status == VenueStatus.Live).ToList();
+                        .Where(x => x.VenueName.ToUpper() == value.Trim().ToUpper() && x.Status == VenueStatus.Live).ToList();
 
                     if (venues.Any())
                     {
@@ -536,8 +542,10 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 row.TryGetField<string>(fieldName, out string value);
                 if (!String.IsNullOrWhiteSpace(value))
                 {
-                    var regex = @"^([-a-zA-Z0-9]{2,256}\.)+[a-z]{2,10}(\/.*)?";
-                    if (Regex.IsMatch(value, regex))
+
+                    value = HTTPCheck(value).Trim();
+                    var regex = @"^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$";
+                    if (!Regex.IsMatch(value, regex))
                     {
 
                         errors.Add(new BulkUploadError
@@ -636,7 +644,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                     });
                     return errors;
                 }
-                if (!Int32.TryParse(value, out int numericalValue))
+                if (!long.TryParse(value, out long numericalValue))
                 {
                     errors.Add(new BulkUploadError
                     {
@@ -667,8 +675,10 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                         Error = $"Validation error on row {row.Context.Row}. Field {fieldName} maximum length is 255 characters."
                     });
                 }
-                var urlRegex = @"^([-a-zA-Z0-9]{2,256}\.)+[a-z]{2,10}(\/.*)?";
-                if (Regex.IsMatch(value, urlRegex))
+
+                value = HTTPCheck(value).Trim();
+                var urlRegex = @"^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$";
+                if (!Regex.IsMatch(value, urlRegex))
                 {
                     errors.Add(new BulkUploadError
                     {
@@ -918,9 +928,9 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 {
                     if (isNational == false)
                     {
+                        var results = ParseSubRegionData(value);
                         if(!string.IsNullOrEmpty(value))
                         {
-                            var results = ParseSubRegionData(value);
                             if(!results.Any())
                             {
                                 errors.Add(new BulkUploadError
@@ -933,6 +943,18 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                                 return errors;
                             }
                         }
+
+                        var anyRegions = GetRegionList(row);
+                        if (!anyRegions.Any() && !results.Any())
+                        {
+                            errors.Add(new BulkUploadError
+                            {
+                                LineNumber = row.Context.Row,
+                                Header = fieldName,
+                                Error = $"Validation error on row {row.Context.Row}. Fields REGION/SUB_REGION are mandatory"
+
+                            });
+                        }
                     }
                 }
 
@@ -940,7 +962,17 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             }
             #endregion
 
+            private string HTTPCheck(string value)
+            {
+                value = value.ToLower();
+                if (value.Contains("http://") || value.Contains("https://"))
+                {
+                    return value;
+                }
 
+                return "https://" + value;
+                
+            }
             private int? ValueMustBeNumericIfPresent(IReaderRow row, string fieldName)
             {
                 if (!row.TryGetField<int?>(fieldName, out var value))
@@ -1003,33 +1035,30 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             private IEnumerable<string> ParseRegionData(string regions)
             {
                 var availableRegions = new SelectRegionModel();
-                var subRegionList = new List<string>();
+                var regionCodes = new List<string>();
 
                 if (!string.IsNullOrEmpty(regions))
                 {
                     foreach (var region in regions.Trim().Split(";"))
 
                     {
-                        var subregionsForRegion =
+                        var regionCode =
                             availableRegions.RegionItems.Where(x =>
-                                string.Equals(x.RegionName, region, StringComparison.CurrentCultureIgnoreCase))
-                                .Select(y => y .SubRegion).FirstOrDefault();
+                                string.Equals(x.RegionName, region, StringComparison.CurrentCultureIgnoreCase)).Select(x => x.Id);
 
-                        if (subregionsForRegion == null)
+                        if (!regionCode.Any())
                         {
                             return new List<string>();
                         }
 
-                        var listOfSubRegionCodes = subregionsForRegion.Select(x => x.Id).ToList();
-                        if (listOfSubRegionCodes.Any())
-                        {
-                            subRegionList.AddRange(listOfSubRegionCodes);
-                        }
+
+                        regionCodes.AddRange(regionCode);
+                        
                     
                     }
                 }
 
-                return subRegionList.Distinct();
+                return regionCodes.Distinct();
             }
             private IEnumerable<string> ParseSubRegionData(string subRegionList)
             {
@@ -1042,7 +1071,8 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
                     {
                         var subRegions =
-                            availableSubRegions.Where(x => x.SubRegionName == subRegion);
+                            availableSubRegions.Where(x => string.Equals(x.SubRegionName, subRegion,
+                                StringComparison.InvariantCultureIgnoreCase));
 
                         if (!subRegions.Any())
                         {
@@ -1060,7 +1090,29 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
                 return subRegionCodeList.Distinct();
             }
-            
+
+            private List<string> RemoveSubregionsOfExistingRegions(IEnumerable<string> subregionCodes, string regionCode)
+            {
+                var totalList = new List<string>();
+                totalList.AddRange(subregionCodes);
+
+                var selectRegionModel = new SelectRegionModel();
+
+                var subregionsForRegion =
+                    selectRegionModel.RegionItems.Where(x =>
+                            string.Equals(x.Id, regionCode, StringComparison.CurrentCultureIgnoreCase))
+                        .Select(y => y .SubRegion).FirstOrDefault();
+                var subregionIds = subregionsForRegion.Select(x => x.Id);
+
+                var matchingSubregionIds = subregionIds.Intersect(subregionCodes);
+
+                foreach (var item in matchingSubregionIds)
+                {
+                    totalList.Remove(item);
+                }
+
+                return totalList;
+            }
         }
         
     
@@ -1086,12 +1138,11 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
             int count = 0;
             stream.Position = 0;
-            StreamReader sr = new StreamReader(stream);  // don't dispose the stream we might need it later.
+            StreamReader sr = new StreamReader(stream, true);  // don't dispose the stream we might need it later.
             while (sr.ReadLine() != null)
             {
                 ++count;
             }
-
             return count;
         }
 
@@ -1117,22 +1168,36 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
                         var classMap = new ApprenticeshipCsvRecordMap(_apprenticeshipService, _venueService, userDetails);
                         csv.Configuration.RegisterClassMap(classMap);
-
+                        bool containsDuplicates = false;
                         while (csv.Read())
                         {
-                           
                             var record = csv.GetRecord<ApprenticeshipCsvRecord>();
-                            record.ApprenticeshipLocations.Add(CreateApprenticeshipLocation(record, userDetails));
+
                             if (!duplicateCheck.TryAdd(record.Base64Row, record.RowNumber.ToString()))
                             {
+                                if(containsDuplicates == false)
+                                {
+                                    containsDuplicates = true;
+                                    errors = new List<string>();
+                                }
                                 var duplicateRow = duplicateCheck[record.Base64Row];
-                                throw new BadDataException(csv.Context,
-                                    $"Duplicate entries detected on rows {duplicateRow}, and {record.RowNumber}.");
+                                errors.Add($"Duplicate entries detected on rows {duplicateRow}, and {record.RowNumber}.");
+
                             }
-                            errors.AddRange(record.ErrorsList.Select(x => x.Error));
+
+                            if (containsDuplicates == false)
+                            {
+                                record.ApprenticeshipLocations.Add(CreateApprenticeshipLocation(record, userDetails));
+                                errors.AddRange(record.ErrorsList.Select(x => x.Error));
+                            }
 
                             records.Add(record);
                             processedRowCount++;
+                        }
+
+                        if (containsDuplicates)
+                        {
+                            throw new BadDataException(csv.Context, string.Join(";", errors));
                         }
                     }
 
@@ -1185,7 +1250,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
             return errors;
         }
-
+        
         private void ValidateHeader(CsvReader csv)
         {
             // Ignore whitespace in the headers.
@@ -1325,7 +1390,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 LocationType = LocationType.Venue,
                 RecordStatus = record.ErrorsList.Any() ? RecordStatus.BulkUploadPending : RecordStatus.BulkUploadReadyToGoLive,
                 Regions = record.RegionsList.ToArray(),
-                National = record.NATIONAL_DELIVERY,
+                National = NationalOrAcrossEngland(record.NATIONAL_DELIVERY, record.ACROSS_ENGLAND),
                 TribalId = venue?.TribalLocationId,
                 ProviderId = venue?.ProviderID,
                 LocationId = venue?.LocationId,
@@ -1350,6 +1415,16 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 DeliveryModes = record.DELIVERY_MODE
             };
           
+        }
+
+        internal bool? NationalOrAcrossEngland(bool? national, bool? acrossEngland)
+        {
+            if (acrossEngland.HasValue)
+                return acrossEngland;
+
+            if (national.HasValue)
+                return national;
+            return null;
         }
 
     }

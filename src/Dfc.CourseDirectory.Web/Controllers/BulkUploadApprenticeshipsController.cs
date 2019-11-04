@@ -42,7 +42,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly IProviderService _providerService;
         private readonly IUserHelper _userHelper;
         private IHostingEnvironment _env;
-        private const string _blobContainerPath = "/Apprenticeships Bulk Upload/Files/";
+        private const string _blobContainerPath = "/Apprenticeship Bulk Upload/Files/";
         private ISession _session => _contextAccessor.HttpContext.Session;
 
         public BulkUploadApprenticeshipsController(
@@ -156,16 +156,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 if (!Validate.isBinaryStream(ms))
                 {
                     int csvLineCount = _apprenticeshipBulkUploadService.CountCsvLines(ms);
-                    bool processInline = (csvLineCount <= _blobService.InlineProcessingThreshold);
-                    _logger.LogInformation(
-                        $"Csv line count = {csvLineCount} threshold = {_blobService.InlineProcessingThreshold} processInline = {processInline}");
 
-                    if (processInline)
-                    {
-                        bulkUploadFileNewName +=
-                            "." + DateTime.UtcNow.ToString("yyyyMMddHHmmss") +
-                            ".processed"; // stops the Azure trigger from processing the file
-                    }
 
                     Task task = _blobService.UploadFileAsync(
                         $"{UKPRN.ToString()}/Apprenticeship Bulk Upload/Files/{bulkUploadFileNewName}", ms);
@@ -177,9 +168,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         errors = _apprenticeshipBulkUploadService.ValidateAndUploadCSV(ms,
                             _userHelper.GetUserDetailsFromClaims(this.HttpContext.User.Claims, UKPRN));
                     }
-                    catch(HeaderValidationException he)
+                    catch (HeaderValidationException he)
                     {
                         errors.Add(he.Message.FirstSentence());
+                        vm.errors = errors;
+                        return View(vm);
+                    }
+                    catch (BadDataException be)
+                    {
+                        errors.AddRange(be.Message.Split(';'));
                         vm.errors = errors;
                         return View(vm);
                     }
@@ -190,17 +187,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         return View(vm);
                     }
 
-
-                    if (!processInline) return RedirectToAction("Pending");
-
                     if (errors.Any())
                     {
                         return RedirectToAction("WhatDoYouWantToDoNext", "BulkUploadApprenticeships",
-                            new { publishMode = PublishMode.BulkUpload, fromBulkUpload = true });
+                            new { message = $"Your file contained {errors.Count} error{(errors.Count > 1 ? "s" : "" )}. You must fix all errors before your courses can be published to the directory." });
                     }
 
                     // All good => redirect to BulkApprenticeship action
-                    return RedirectToAction("PublishYourFile", "BulkUploadApprenticeships", new {numberOfApprenticeships = csvLineCount - 1});
+                    return RedirectToAction("PublishYourFile", "BulkUploadApprenticeships");
 
 
 
@@ -255,7 +249,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             }
         }
-          [Authorize]
+        [Authorize]
         [HttpGet]
         public IActionResult DownloadErrorFile()
         {
@@ -269,7 +263,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
             IEnumerable<BlobFileInfo> list = _blobService.GetFileList(UKPRN + _blobContainerPath).OrderByDescending(x => x.DateUploaded).ToList();
             if (list.Any())
             {
-                model.ErrorFileCreatedDate = list.FirstOrDefault().DateUploaded.Value.DateTime;
+                                
+                TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time");
+                DateTime dt1 = DateTime.Parse(list.FirstOrDefault().DateUploaded.Value.DateTime.ToString());
+                DateTime dt2 = TimeZoneInfo.ConvertTimeFromUtc(dt1, tzi);
+
+                model.ErrorFileCreatedDate = Convert.ToDateTime(dt2.ToString("dd MMM yyyy HH:mm"));
             }
 
             return View("../BulkUploadApprenticeships/DownloadErrorFile/Index", model);
@@ -311,12 +310,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
             IEnumerable<Services.BlobStorageService.BlobFileInfo> list = _blobService.GetFileList(UKPRN + _blobContainerPath).OrderByDescending(x => x.DateUploaded).ToList();
             if (list.Any())
             {
-                fileUploadDate = list.FirstOrDefault().DateUploaded.Value;
+                TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time");
+                DateTime dt1 = DateTime.Parse(list.FirstOrDefault().DateUploaded.Value.DateTime.ToString());
+                DateTime dt2 = TimeZoneInfo.ConvertTimeFromUtc(dt1, tzi);
+
+                fileUploadDate = Convert.ToDateTime(dt2.ToString("dd MMM yyyy HH:mm"));;
                 var archiveFilesResult = _blobService.ArchiveFiles($"{UKPRN.ToString()}{_blobContainerPath}");
             }
 
-            //TODO: GB DeleteBulkUploadCourses modify for Apprenticeships
-            var deleteBulkuploadResults = await _courseService.DeleteBulkUploadCourses(UKPRN);
+            var deleteBulkuploadResults = await _apprenticeshipService.DeleteBulkUploadApprenticeships(UKPRN);
 
             if (deleteBulkuploadResults.IsSuccess)
             {
@@ -332,22 +334,34 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> DeleteFileConfirmation(DateTimeOffset fileUploadDate)
         {
-            var model = new DeleteFileConfirmationViewModel();
-
-            DateTime localDateTime = DateTime.Parse(fileUploadDate.ToString());
-            DateTime utcDateTime = localDateTime.ToUniversalTime();
-
-            model.FileUploadedDate = TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, TimeZoneInfo.Local).ToString("dd MMM yyyy HH:mm");
+            var model = new DeleteFileConfirmationViewModel
+            {
+                FileUploadedDate = fileUploadDate.ToString("dd MMM yyyy HH:mm")
+            };
 
             return View("../BulkUploadApprenticeships/DeleteFileConfirmation/Index", model);
         }
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> PublishYourFile(int numberOfApprenticeships)
+        public async Task<IActionResult> PublishYourFile()
         {
+            int? sUKPRN = _session.GetInt32("UKPRN");
+            if (!sUKPRN.HasValue)
+            {
+                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
+            }
+
+            var numberOfApprenticeships = 0;
+
             var model = new ApprenticeshipsPublishYourFileViewModel();
 
+            var result = await _apprenticeshipService.GetApprenticeshipByUKPRN(sUKPRN.ToString());
+            if (result.IsSuccess && result.HasValue)
+            {
+                numberOfApprenticeships =
+                    result.Value.Where(x => x.RecordStatus == RecordStatus.BulkUploadReadyToGoLive).Count();
+            }
             model.NumberOfApprenticeships = numberOfApprenticeships;
 
             return View("../BulkUploadApprenticeships/PublishYourFile/Index", model);

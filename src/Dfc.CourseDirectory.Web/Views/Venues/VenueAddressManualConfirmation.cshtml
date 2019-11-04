@@ -4,9 +4,9 @@
 @{
     if (Model.Id != null)
     {
-        ViewData["Title"] = "Edit venue details";
+        ViewData["Title"] = "Edit location details";
     } else {
-        ViewData["Title"] = "Add a venue";
+        ViewData["Title"] = "Add a location";
     }
     Layout = "_Layout_Your_Courses";
 }
@@ -18,9 +18,9 @@
     <div class="govuk-grid-column-two-thirds">
         @{
             if (Model.Id != null) {
-                <h1 class="govuk-heading-l">Edit venue details</h1>
+                <h1 class="govuk-heading-l">Edit location details</h1>
             } else {
-                <h1 class="govuk-heading-l">Add a venue</h1>
+                <h1 class="govuk-heading-l">Add a location</h1>
             }
         }
 

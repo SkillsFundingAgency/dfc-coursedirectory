@@ -7,6 +7,22 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit.Helpers
     /// </summary>
     public static class CsvStreams
     {
+        // VALIDATION RULE: STANDARD_CODE must be numeric if present
+        public static Stream StringArrayToStream(string[] array)
+        {
+            MemoryStream ms = new MemoryStream();
+
+            TextWriter sw = new StreamWriter(ms);
+            sw.WriteLine("STANDARD_CODE,STANDARD_VERSION,FRAMEWORK_CODE,FRAMEWORK_PROG_TYPE,FRAMEWORK_PATHWAY_CODE,APPRENTICESHIP_INFORMATION,APPRENTICESHIP_WEBPAGE,CONTACT_EMAIL,CONTACT_PHONE,CONTACT_URL,DELIVERY_METHOD,VENUE,RADIUS,DELIVERY_MODE,ACROSS_ENGLAND, NATIONAL_DELIVERY, REGION, SUB_REGION");
+            foreach(var line in array)
+            {
+                sw.WriteLine(line);
+            }
+            
+            sw.Flush();
+
+            return ms;
+        }
         #region Happy Files
 
         // Example file provided by Mark P for TDD which is expected to pass validation.
@@ -75,7 +91,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit.Helpers
             TextWriter sw = new StreamWriter(ms);
             sw.WriteLine("STANDARD_CODE,STANDARD_VERSION,FRAMEWORK_CODE,FRAMEWORK_PROG_TYPE,FRAMEWORK_PATHWAY_CODE,APPRENTICESHIP_INFORMATION,APPRENTICESHIP_WEBPAGE,CONTACT_EMAIL,CONTACT_PHONE,CONTACT_URL,DELIVERY_METHOD,VENUE,RADIUS,DELIVERY_MODE,ACROSS_ENGLAND, NATIONAL_DELIVERY, REGION, SUB_REGION");
             sw.WriteLine("157,1,,,,some text some text some text,,service@college.org.uk,0121 345 6789,,CLASsRooM,Venue 1,,Day;Block,No,No,,");
-            sw.WriteLine("157,1,,,,some text some text some text,,service@college.org.uk,0121 345 6789,,EmPloYeR,Venue 1,,Day;Block,No,No,,");
+            sw.WriteLine("157,1,,,,some text some text some text,,service@college.org.uk,0121 345 6789,,EmPloYeR,Venue 1,,Day;Block,No,No,,Dudley");
             sw.WriteLine("157,1,,,,some text some text some text,,service@college.org.uk,0121 345 6789,,BoTh,Venue 1,,Day;Block,No,No,,");
             sw.Flush();
 
@@ -127,6 +143,19 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit.Helpers
 
             return ms;
         }
+        public static Stream ValidRow_ACROSS_ENGLAND_Standard_TRUE()
+        {
+            MemoryStream ms = new MemoryStream();
+
+            TextWriter sw = new StreamWriter(ms);
+            sw.WriteLine("STANDARD_CODE,STANDARD_VERSION,FRAMEWORK_CODE,FRAMEWORK_PROG_TYPE,FRAMEWORK_PATHWAY_CODE,APPRENTICESHIP_INFORMATION,APPRENTICESHIP_WEBPAGE,CONTACT_EMAIL,CONTACT_PHONE,CONTACT_URL,DELIVERY_METHOD,VENUE,RADIUS,DELIVERY_MODE,ACROSS_ENGLAND, NATIONAL_DELIVERY, REGION, SUB_REGION");
+            sw.WriteLine("157,1,,,,STANDARD APPRENTICESHIP,http://www.google.com,TEST@TEST.COM,12134567891,http://www.google.com,both,DUDLEY,,DAY,YES,,,");
+            sw.WriteLine("157,1,,,,STANDARD APPRENTICESHIP,http://www.google.com,TEST@TEST.COM,12134567891,http://www.google.com,both,DUDLEY 1,20,BLOCK,YES,,,");
+            sw.WriteLine("157,1,,,,STANDARD APPRENTICESHIP,http://www.google.com,TEST@TEST.COM,12134567891,http://www.google.com,both,DUDLEY 2,30,DAY;BLOCK,YES,,,");
+            sw.Flush();
+
+            return ms;
+        }
         public static Stream ValidRow_ACROSS_ENGLAND_FALSE()
         {
             MemoryStream ms = new MemoryStream();
@@ -158,6 +187,17 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit.Helpers
             sw.WriteLine("157,1,,,,some text some text some text, http://www.bbc.com,service@college.org.uk,0121 345 6789,http://www.bbc.com/contactus,Employer,Venue 1,333,Day;Block,nO,No,East Midlands;London;East of England;North East;North West;South East;South West;West Midlands;Yorkshire and The Humber,Camden");
             sw.WriteLine("157,1,,,,some text some text some text, http://www.bbc.com,service@college.org.uk,0121 345 6789,http://www.bbc.com/contactus,Employer,Venue 2,333,Day;Block,nO,No,East Midlands;London;East of England;North East;North West;South East;South West;West Midlands;Yorkshire and The Humber,Camden");
             sw.WriteLine("157,1,,,,some text some text some text, http://www.bbc.com,service@college.org.uk,0121 345 6789,http://www.bbc.com/contactus,Both,Venue 2,333,Day;Block,nO,No,East Midlands;London;East of England;North East;North West;South East;South West;West Midlands;Yorkshire and The Humber,Camden");
+            sw.Flush();
+
+            return ms;
+        }
+        public static Stream AppBUEmployer_Standard_ValidSubRegions()
+        {
+            MemoryStream ms = new MemoryStream();
+
+            TextWriter sw = new StreamWriter(ms);
+            sw.WriteLine("STANDARD_CODE,STANDARD_VERSION,FRAMEWORK_CODE,FRAMEWORK_PROG_TYPE,FRAMEWORK_PATHWAY_CODE,APPRENTICESHIP_INFORMATION,APPRENTICESHIP_WEBPAGE,CONTACT_EMAIL,CONTACT_PHONE,CONTACT_URL,DELIVERY_METHOD,VENUE,RADIUS,DELIVERY_MODE,ACROSS_ENGLAND, NATIONAL_DELIVERY, REGION, SUB_REGION");
+            sw.WriteLine("157,1,,,,STANDARD APPRENTICESHIP,HTTP://WWW.TETS.CO.UK,TEST@TEST.COM,1213456789,HTTP://WWW.CONTACTUS.COM,EMPLOYER,,100,,NO,NO,west midlands,birmingham");
             sw.Flush();
 
             return ms;
@@ -334,7 +374,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit.Helpers
 
             TextWriter sw = new StreamWriter(ms);
             sw.WriteLine("STANDARD_CODE,STANDARD_VERSION,FRAMEWORK_CODE,FRAMEWORK_PROG_TYPE,FRAMEWORK_PATHWAY_CODE,APPRENTICESHIP_INFORMATION,APPRENTICESHIP_WEBPAGE,CONTACT_EMAIL,CONTACT_PHONE,CONTACT_URL,DELIVERY_METHOD,VENUE,RADIUS,DELIVERY_MODE,ACROSS_ENGLAND, NATIONAL_DELIVERY, REGION, SUB_REGION");
-            sw.WriteLine("157,1,,,,some text some text some text,www.thisisinvalid@com,service@college.org.uk,0121 345 6789,http://www.bbc.com/contactus,CLASSROOM,Venue 1,,Day;Block,,,,");
+            sw.WriteLine("157,1,,,,some text some text some text,www.thisisinvalid@\\com,service@college.org.uk,0121 345 6789,http://www.bbc.com/contactus,CLASSROOM,Venue 1,,Day;Block,,,,");
             sw.Flush();
 
             return ms;
@@ -426,7 +466,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit.Helpers
 
             TextWriter sw = new StreamWriter(ms);
             sw.WriteLine("STANDARD_CODE,STANDARD_VERSION,FRAMEWORK_CODE,FRAMEWORK_PROG_TYPE,FRAMEWORK_PATHWAY_CODE,APPRENTICESHIP_INFORMATION,APPRENTICESHIP_WEBPAGE,CONTACT_EMAIL,CONTACT_PHONE,CONTACT_URL,DELIVERY_METHOD,VENUE,RADIUS,DELIVERY_MODE,ACROSS_ENGLAND, NATIONAL_DELIVERY, REGION, SUB_REGION");
-            sw.WriteLine("157,1,,,,some text some text some text, http://www.bbc.com,service@college.org.uk,0121 345 6789,www.testemaul cd.org,CLASSROOM,Venue 1,,Day;Block,,,,");
+            sw.WriteLine("157,1,,,,some text some text some text,http://www.bbc.com,service@college.org.uk,0121 345 6789,www.testemaul cd.org,CLASSROOM,Venue 1,,Day;Block,,,,");
             sw.Flush();
 
 
@@ -438,7 +478,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit.Helpers
 
             TextWriter sw = new StreamWriter(ms);
             sw.WriteLine("STANDARD_CODE,STANDARD_VERSION,FRAMEWORK_CODE,FRAMEWORK_PROG_TYPE,FRAMEWORK_PATHWAY_CODE,APPRENTICESHIP_INFORMATION,APPRENTICESHIP_WEBPAGE,CONTACT_EMAIL,CONTACT_PHONE,CONTACT_URL,DELIVERY_METHOD,VENUE,RADIUS,DELIVERY_MODE,ACROSS_ENGLAND, NATIONAL_DELIVERY, REGION, SUB_REGION");
-            sw.WriteLine("157,1,,,,some text some text some text, http://www.bbc.com,service@college.org.uk,0121 345 6789,www.te@stemaulcd.org,CLASSROOM,Venue 1,,Day;Block,,,,");
+            sw.WriteLine("157,1,,,,some text some text some text,http://www.bbc.com,service@college.org.uk,0121 345 6789,wwwasd.te@stemaulcd@d\\\\org,CLASSROOM,Venue 1,,Day;Block,,,,");
             sw.Flush();
 
 
@@ -472,7 +512,7 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit.Helpers
 
             TextWriter sw = new StreamWriter(ms);
             sw.WriteLine("STANDARD_CODE,STANDARD_VERSION,FRAMEWORK_CODE,FRAMEWORK_PROG_TYPE,FRAMEWORK_PATHWAY_CODE,APPRENTICESHIP_INFORMATION,APPRENTICESHIP_WEBPAGE,CONTACT_EMAIL,CONTACT_PHONE,CONTACT_URL,DELIVERY_METHOD,VENUE,RADIUS,DELIVERY_MODE,ACROSS_ENGLAND, NATIONAL_DELIVERY, REGION, SUB_REGION");
-            sw.WriteLine("157,1,,,,some text some text some text, http://www.bbc.com,service@college.org.uk,0121 345 6789,http://www.bbc.com/contactus,employer,Venue 1,,Day;Block,,No,,");
+            sw.WriteLine("157,1,,,,some text some text some text, http://www.bbc.com,service@college.org.uk,0121 345 6789,http://www.bbc.com/contactus,employer,Venue 1,,Day;Block,,No,,dudley");
             sw.Flush();
 
             return ms;
@@ -531,6 +571,23 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit.Helpers
             sw.WriteLine("157,1,,,,some text some text some text, http://www.bbc.com,service@college.org.uk,0121 345 6789,http://www.bbc.com/contactus,CLASSROOM,Venue 1,,Day;Block,No,,,");
             sw.WriteLine("157,1,,,,some text some text some text, http://www.bbc.com,service@college.org.uk,0121 345 6789,http://www.bbc.com/contactus,Both,Venue 1,,Day;Block,No,,,");
             sw.WriteLine("157,1,,,,some text some text some text, http://www.bbc.com,service@college.org.uk,0121 345 6789,http://www.bbc.com/contactus,CLASSROOM,Venue 1,,Day;Block,No,,,");
+
+
+            sw.Flush();
+
+            return ms;
+        }
+        public static Stream InvalidFile_Multiple_Duplicate_STANDARD_CODES_SameDeliveryMethod_Same_Venue()
+        {
+            MemoryStream ms = new MemoryStream();
+
+            TextWriter sw = new StreamWriter(ms);
+            sw.WriteLine("STANDARD_CODE,STANDARD_VERSION,FRAMEWORK_CODE,FRAMEWORK_PROG_TYPE,FRAMEWORK_PATHWAY_CODE,APPRENTICESHIP_INFORMATION,APPRENTICESHIP_WEBPAGE,CONTACT_EMAIL,CONTACT_PHONE,CONTACT_URL,DELIVERY_METHOD,VENUE,RADIUS,DELIVERY_MODE,ACROSS_ENGLAND, NATIONAL_DELIVERY, REGION, SUB_REGION");
+            sw.WriteLine("157,1,,,,STANDARD APPRENTICESHIP,HTTP://WWW.TETS.CO.UK,TEST@TEST.COM,1213456789,HTTP://WWW.CONTACTUS.COM,CLASSROOM,DUDLEY,,DAY,,,,");
+            sw.WriteLine("157,1,,,,STANDARD APPRENTICESHIP,HTTP://WWW.TETS.CO.UK,TEST@TEST.COM,1213456789,HTTP://WWW.CONTACTUS.COM,EMPLOYER,,,,YES,YES,,");
+            sw.WriteLine("157,1,,,,STANDARD APPRENTICESHIP,HTTP://WWW.TETS.CO.UK,TEST@TEST.COM,1213456789,HTTP://WWW.CONTACTUS.COM,BOTH,DUDLEY,,DAY,YES,YES,,");
+            sw.WriteLine("157,1,,,,STANDARD APPRENTICESHIP,HTTP://WWW.TETS.CO.UK,TEST@TEST.COM,1213456789,HTTP://WWW.CONTACTUS.COM,CLASSROOM,DUDLEY,,DAY,,,,");
+            sw.WriteLine("157,1,,,,STANDARD APPRENTICESHIP,HTTP://WWW.TETS.CO.UK,TEST@TEST.COM,1213456789,HTTP://WWW.CONTACTUS.COM,EMPLOYER,,,,YES,YES,,");
 
 
             sw.Flush();

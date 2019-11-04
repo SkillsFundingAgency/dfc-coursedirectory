@@ -32,6 +32,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
         
         [Authorize]
+        [AllowDeactivatedProvider]
         public async Task Logout()
         {
             _session.Remove("UKPRN");

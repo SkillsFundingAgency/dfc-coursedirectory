@@ -107,17 +107,11 @@
     "certificateName": {
       "value": "certificate-name"
     },
-    "appServicePlanInstances": {
-      "value": 1
+    "appServicePlanName": {
+      "value": "dfc-foo-prov-shared-asp"
     },
-    "aseHostingEnvironmentName": {
-      "value": ""
-    },
-    "aseResourceGroup": {
-      "value": ""
-    },
-    "appServicePlanSize": {
-      "value": "1"
+    "blobStorageSettingsContainerName": {
+      "value": "provider-files"
     },
     "BlobStorageSettingsInlineProcessingThreshhold": {
       "value": "10000"

@@ -19,6 +19,5 @@ namespace Dfc.CourseDirectory.Web.ViewModels.Apprenticeships
 
         public ChooseRegionModel ChooseRegion { get; set; }
 
-        public ApprenticeshipMode Mode { get; set; }
     }
 }
