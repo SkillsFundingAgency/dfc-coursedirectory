@@ -153,7 +153,7 @@
                             if (location.National.HasValue && location.National.Value)
                             {
 
-                                <a class="govuk-link float-right " asp-controller="Apprenticeships" asp-action="LocationChoiceSelection">
+                                <a class="govuk-link float-right " asp-controller="Apprenticeships" asp-action="LocationChoiceSelection" asp-route-national="@location.National.Value">
                                     Change
                                 </a>
                             }
@@ -168,22 +168,22 @@
                             {
                                 <table class="govuk-table">
                                     <thead class="govuk-table__head">
-                                        <tr class="govuk-table__row">
-                                            <th class="govuk-table__header govuk-!-width-one-third">Location</th>
-                                            <th class="govuk-table__header govuk-!-width-two-thirds">Sub region</th>
-                                        </tr>
+                                    <tr class="govuk-table__row">
+                                        <th class="govuk-table__header govuk-!-width-one-third">Location</th>
+                                        <th class="govuk-table__header govuk-!-width-two-thirds">Sub region</th>
+                                    </tr>
                                     </thead>
                                     <tbody class="govuk-table__body">
-                                        @{
-                                            if (location.National != null && location.National.HasValue)
-                                            {
-                                                <tr class="govuk-table__row">
-                                                    <th class="govuk-table__header">National</th>
-                                                    <td class="govuk-table__cell">All</td>
-                                                </tr>
-                                            }
-                                            else
-                                            {
+                                    @{
+                                        if (location.National != null && location.National.HasValue)
+                                        {
+                                            <tr class="govuk-table__row">
+                                                <th class="govuk-table__header">National</th>
+                                                <td class="govuk-table__cell">All</td>
+                                            </tr>
+                                        }
+                                        else
+                                        {
 
                                             foreach (var item in Model.Regions)
                                             {
@@ -195,9 +195,9 @@
                                             }
                                         }
                                     }
-                                </tbody>
-                            </table>
-
+                                    </tbody>
+                                </table>
+                            }
                         }
                     }
                 </div>

@@ -281,12 +281,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult LocationChoiceSelection(ApprenticeshipMode mode, bool? national)
+        public IActionResult LocationChoiceSelection(bool? national)
         {
-            LocationChoiceSelectionViewModel model = new LocationChoiceSelectionViewModel
-            {
-                Mode = mode
-            };
+            LocationChoiceSelectionViewModel model = new LocationChoiceSelectionViewModel();
             if (national == null)
                 model.NationalApprenticeship = NationalApprenticeship.Undefined;
 
