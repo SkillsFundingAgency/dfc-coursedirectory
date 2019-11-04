@@ -307,7 +307,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     }
                     else
                     {
-                        location = CreateRegionLocation(new string[0], true);
+                        apprenticeship.ApprenticeshipLocations.RemoveAll(x =>
+                            x.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased);
+                        apprenticeship.ApprenticeshipLocations.Add(CreateRegionLocation(new string[0], true));
                     }
                     
                     _session.SetObject("selectedApprenticeship", apprenticeship);
@@ -317,7 +319,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                     if (location != null)
                     {
-                        location = CreateRegionLocation(new string[0], false);
+                        apprenticeship.ApprenticeshipLocations.RemoveAll(x =>
+                            x.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased);
+                        apprenticeship.ApprenticeshipLocations.Add(CreateRegionLocation(new string[0], false));
                     }
                     _session.SetObject("selectedApprenticeship", apprenticeship);
                     return RedirectToAction("Regions", "Apprenticeships", new {});
