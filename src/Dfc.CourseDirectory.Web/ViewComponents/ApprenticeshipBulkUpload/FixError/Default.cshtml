@@ -24,7 +24,7 @@
         <div class="govuk-grid-column-two-thirds m100 col">
             <div class="govuk-form-group--error">
                 <strong>@apprenticeship.ApprenticeshipTitle</strong>
-                <br />LEVEL: @apprenticeship.NotionalNVQLevelv2, @apprenticeship.NotionalNVQLevelv2
+                <br />LEVEL: @apprenticeship.NotionalNVQLevelv2
                 <span class="govuk-!-margin-left-3 govuk-tag">
                     @type
                 </span>
@@ -34,10 +34,11 @@
                         <div class="govuk-error-summary__body">
                             <ul class="govuk-list govuk-error-summary__list">
 
-                                @foreach (var error in apprenticeship.BulkUploadErrors)
+                                @if (apprenticeship.BulkUploadErrors.Any())
                                 {
-                                    <li class="govuk-error-message">@error</li>
+                                    <li class="govuk-error-message">Your apprenticeship contains one or more errors.</li>
                                 }
+
                             </ul>
                         </div>
 
@@ -57,62 +58,5 @@
                 </div>
             </div>
         </div>
-    
 
-
-    foreach (var apprenticeshipLocation in apprenticeship.ApprenticeshipLocations.OrderBy(x => x.Name))
-    {
-
-
-        <div style="display:none">@apprenticeship.id</div>
-
-        <div class="error-line" id="ApprenticeshipLocationId_@apprenticeshipLocation.Id">
-
-                <div class="govuk-grid-column-three-quarters col">
-                    <div class="govuk-form-group--error">
-                        <strong>@apprenticeshipLocation.Name</strong>
-                        <br />
-                        <div class="govuk-grid-column-one-quarter word-wrap-break">
-                            <span>@apprenticeship.ApprenticeshipType</span>
-                        </div>
-                        <div class="govuk-grid-column-one-quarter">
-
-                        <span>@apprenticeshipLocation.Name</span>
-
-
-                        </div>
-                        <div class="govuk-grid-column-one-quarter">
-
-                            <span>@apprenticeshipLocation.DeliveryModes</span>
-                        </div>
-                        <div class="govuk-grid-column-one-quarter">
-
-                            <span>&nbsp;</span>
-                        </div>
-
-                        @{
-                            if (apprenticeship.BulkUploadErrors.Any())
-                            {
-                                <div class="govuk-error-summary__body">
-                                    <ul class="govuk-list govuk-error-summary__list">
-
-
-                                        @foreach (var error in apprenticeship.BulkUploadErrors)
-                                        {
-                                            <li class="govuk-error-message">@error</li>
-                                        }
-                                    </ul>
-                                </div>
-
-                            }
-                        }
-                    </div>
-
-
-                </div>
-
-            </div>
-        
-        
-    }
 }
