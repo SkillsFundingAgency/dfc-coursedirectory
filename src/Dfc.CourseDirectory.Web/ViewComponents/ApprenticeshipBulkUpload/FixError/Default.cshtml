@@ -13,21 +13,23 @@
 
 @foreach (var apprenticeship in Model.ListOfApprenticeships)
 {
-    var type = "Framework";
-    if(apprenticeship.StandardCode.HasValue)
-    {
-        type = "Standard";
-    }
-
-
     <div class="error-line" id="ApprenticeshipId_@apprenticeship.id">
         <div class="govuk-grid-column-two-thirds m100 col">
             <div class="govuk-form-group--error">
-                <strong>@apprenticeship.ApprenticeshipTitle</strong>
-                <br />LEVEL: @apprenticeship.NotionalNVQLevelv2
-                <span class="govuk-!-margin-left-3 govuk-tag">
-                    @type
-                </span>
+                <h2 class="govuk-heading-m">
+                    @apprenticeship.ApprenticeshipTitle
+                    @if (apprenticeship.ApprenticeshipType == ApprenticeshipType.FrameworkCode)
+                    {
+                        <span class="govuk-!-margin-left-3 govuk-tag">Framework</span>
+                    }
+                </h2>
+                @if (!string.IsNullOrEmpty(apprenticeship.NotionalNVQLevelv2))
+                {
+                    <p class="govuk-body">Level: <span class="govuk-!-font-weight-bold">@apprenticeship.NotionalNVQLevelv2</span></p>
+                }
+
+
+
                 @{
                     if (apprenticeship.BulkUploadErrors.Any())
                     {
@@ -54,7 +56,7 @@
                     <a id="course-fix-@apprenticeship.id" class="error-link" asp-controller="Apprenticeships" asp-action="ViewAndEdit" style="display:block"
                        asp-route-Id="@apprenticeship.id"
                        asp-route-Cancelled=null
-                       asp-route-Mode="@ApprenticeshipMode.EditYourApprenticeships">Fix</a>
+                       asp-route-Mode="@ApprenticeshipMode.EditYourApprenticeships">Resolve</a>
                 </div>
             </div>
         </div>
