@@ -1,39 +1,27 @@
 ﻿using CsvHelper;
 using CsvHelper.Configuration;
-using Dfc.CourseDirectory.Common;
-using Dfc.CourseDirectory.Models.Helpers;
-using Dfc.CourseDirectory.Models.Models.Apprenticeships;
-using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
-using Dfc.CourseDirectory.Services.Interfaces.BulkUploadService;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Security.Claims;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
 using CsvHelper.Configuration.Attributes;
-using CsvHelper.Expressions;
-using Dfc.CourseDirectory.Common.Interfaces;
+using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Models.Enums;
+using Dfc.CourseDirectory.Models.Helpers;
 using Dfc.CourseDirectory.Models.Interfaces.Apprenticeships;
 using Dfc.CourseDirectory.Models.Interfaces.Auth;
+using Dfc.CourseDirectory.Models.Models.Apprenticeships;
 using Dfc.CourseDirectory.Models.Models.Auth;
 using Dfc.CourseDirectory.Models.Models.Courses;
 using Dfc.CourseDirectory.Models.Models.Regions;
 using Dfc.CourseDirectory.Models.Models.Venues;
-using Dfc.CourseDirectory.Services.Interfaces;
+using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
+using Dfc.CourseDirectory.Services.Interfaces.BulkUploadService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 using Dfc.CourseDirectory.Services.VenueService;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore.SqlServer.Query.ExpressionTranslators.Internal;
-using Remotion.Linq.Parsing.Structure.IntermediateModel;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 
 namespace Dfc.CourseDirectory.Services.BulkUploadService
@@ -1320,6 +1308,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 {
                     var apprenticeship = apprenticeships.FirstOrDefault(x => x == alreadyExists);
                     apprenticeship?.ApprenticeshipLocations.AddRange(record.ApprenticeshipLocations);
+                    apprenticeship?.BulkUploadErrors.AddRange(record.ErrorsList);
                 }
                 else
                 {
