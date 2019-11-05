@@ -120,8 +120,10 @@
             var $checkboxesdeliverymethod = $("#deliveryoptions").govUkCheckboxes();
             var $TooManyLoctions = $("#TooManyLocations");
             var $Continue = $("#continue");
+            var returnToSummery = @(Model.HasOtherDeliveryOptions.ToString().ToLower());
+        
 
-     var $DayRelease =$("#@nameof(Model.DayRelease)")
+        var $DayRelease = $("#@nameof(Model.DayRelease)")
     var $BlockRelease = $("#@nameof(Model.BlockRelease)")
 
             function isAllValid(currentValue) {
@@ -173,7 +175,7 @@
 
                 $checkboxesdeliverymethod.govUkCheckboxes("validState");
                 $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $checkboxesdeliverymethod[0].id);
-                $errorSummary.govUkErrorSummary("hideIfEmpty")
+                $errorSummary.govUkErrorSummary("hideIfEmpty");
                 validStates.push(true);
                 if ($.requiredValidate($checkboxesdeliverymethod.find("input[type='checkbox']:checked").val())) {
                     $checkboxesdeliverymethod.govUkCheckboxes("validState");
@@ -201,7 +203,7 @@
 
                 var rowCount = $('#ResultsTable tr').length;
 
-                if (rowCount >= 2) {
+                if (rowCount >= 2 || returnToSummery) {
 
                     if (($selectedVenue.val() === "" || $selectedVenue.val() === undefined) && ($("#BlockRelease")[0].checked === false) && ($("#DayRelease")[0].checked === false)) {
                         $("#ApprenticeshipDeliveryOptionsForm").submit();

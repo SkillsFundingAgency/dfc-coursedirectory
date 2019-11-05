@@ -24,7 +24,7 @@ namespace Dfc.CourseDirectory.Web.Helpers.Attributes
             if (controller != null && session == null && qsUKPRN == 0)
                 {
                     var enumerable = ukprnClaim.ToArray();
-                    if (enumerable.Any() && enumerable.FirstOrDefault()?.Value != null)
+                    if (enumerable.Any() && !string.IsNullOrEmpty(enumerable.FirstOrDefault()?.Value))
                     {
                         if(context.ActionArguments.TryGetValue("UKPRN", out object value))
                         {
