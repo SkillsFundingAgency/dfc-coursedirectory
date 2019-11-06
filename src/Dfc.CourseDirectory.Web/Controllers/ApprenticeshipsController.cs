@@ -428,6 +428,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 model.Apprenticeship = selectedApprenticeship;
 
                 var type = getApprenticehipByIdResult.Value.ApprenticeshipLocations.FirstOrDefault();
+
                 model.Regions = selectedApprenticeship.ApprenticeshipLocations.Any(x => x.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased)
                     ? SubRegionCodesToDictionary(selectedApprenticeship.ApprenticeshipLocations.FirstOrDefault(x => x.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased)?.Regions) : null;
 
@@ -946,21 +947,41 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             foreach (var subRegionCode in subRegions)
             {
-                var regionName = selectRegionModel.GetRegionNameForSubRegion(subRegionCode);
-                if (!string.IsNullOrWhiteSpace(regionName))
+                var isRegionCode = selectRegionModel.RegionItems.FirstOrDefault(x => String.Equals(x.Id, subRegionCode, StringComparison.CurrentCultureIgnoreCase));
+
+                if (isRegionCode != null)
                 {
+                    if (!regionsAndSubregions.ContainsKey(isRegionCode.RegionName))
+                    {
+                        var subRegionNamesList = isRegionCode.SubRegion.Select(x => x.SubRegionName).ToList();
+                        regionsAndSubregions.Add(isRegionCode.RegionName, subRegionNamesList);
+
+                    }
+                }
+                else
+                {
+                    var regionName = selectRegionModel.GetRegionNameForSubRegion(subRegionCode);
+                    if (string.IsNullOrWhiteSpace(regionName)) continue;
+
                     if (!regionsAndSubregions.ContainsKey(regionName))
                     {
                         regionsAndSubregions.Add(regionName, new List<string>());
                     }
                     var subRegionItem = selectRegionModel.GetSubRegionItemByRegionCode(subRegionCode);
-                    regionsAndSubregions[regionName].Add(subRegionItem.SubRegionName);
+                    var alreadyExists = CheckForExistingSubregions(subRegionItem.SubRegionName,
+                        regionsAndSubregions[regionName]);
+                    if(alreadyExists == false)
+                        regionsAndSubregions[regionName].Add(subRegionItem.SubRegionName);
                 }
 
             }
             return regionsAndSubregions;
         }
 
+        private bool CheckForExistingSubregions(string subregionName, List<string> subregions)
+        {
+            return subregions.Contains(subregionName);
+        }
 
         private ApprenticeshipLocation CreateDeliveryLocation(DeliveryOption loc, ApprenticeshipLocationType apprenticeshipLocationType)
         {
