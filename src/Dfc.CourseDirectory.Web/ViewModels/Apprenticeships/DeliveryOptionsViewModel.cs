@@ -21,6 +21,8 @@ namespace Dfc.CourseDirectory.Web.ViewModels.Apprenticeships
 
         public List<ApprenticeshipLocation> locations { get; set; }
 
+        public bool HasOtherDeliveryOptions { get; set; }
+
 
     }
 }

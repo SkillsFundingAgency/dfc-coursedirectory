@@ -168,6 +168,7 @@
             var $Continue = $("#continue");
             var $National = $("#@nameof(Model.National)")
             var $Radius = $("#@nameof(Model.Radius)").govUkInput();
+            var returnToSummery = @(Model.HasOtherDeliveryOptions.ToString().ToLower());
 
             var $DayRelease =$("#@nameof(Model.DayRelease)")
             var $BlockRelease = $("#@nameof(Model.BlockRelease)")
@@ -327,7 +328,7 @@
 
                 var rowCount = $('#ResultsTable tr').length;
 
-                if (rowCount >= 2) {
+                if (rowCount >= 2 || returnToSummery) {
 
                     if (($selectedVenue.val() === "" || $selectedVenue.val() === undefined) &&
                         ($("#BlockRelease")[0].checked === false) &&
