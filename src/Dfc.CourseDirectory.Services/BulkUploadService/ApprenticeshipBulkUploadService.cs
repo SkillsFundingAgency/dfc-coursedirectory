@@ -779,6 +779,26 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                         });
                         return errors;
                     }
+
+
+                }
+                if (Mandatory_Checks_DELIVERY_METHOD(row) == DeliveryMethod.Both)
+                {
+                    var acrossEngland = Mandatory_Checks_ACROSS_ENGLAND(row);
+                    if (acrossEngland == false)
+                    {
+                        if (!value.HasValue)
+                        {
+                            errors.Add(new BulkUploadError
+                            {
+                                LineNumber = row.Context.Row,
+                                Header = fieldName,
+                                Error = $"Validation error on row {row.Context.Row}. Field {fieldName} must have a value if not ACROSS_ENGLAND"
+
+                            });
+                            return errors;
+                        }
+                    }
                 }
                 return errors;
             }
@@ -793,7 +813,20 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 Dictionary<DeliveryMode, string> modes = new Dictionary<DeliveryMode, string>();
 
                 var modeArray = value.Split(";");
+                if(Mandatory_Checks_DELIVERY_METHOD(row) == DeliveryMethod.Both)
+                {
+                    if (modeArray.Length == 0)
+                    {
+                        errors.Add(new BulkUploadError
+                        {
+                            LineNumber = row.Context.Row,
+                            Header = fieldName,
+                            Error = $"Validation error on row {row.Context.Row}. Field {fieldName} contain delivery modes if Delivery Method is BOTH"
 
+                        });
+                        return errors;
+                    }
+                }
                 foreach (var mode in modeArray)
                 {
                     var deliveryMode = mode.ToEnum(DeliveryMode.Undefined);
@@ -827,25 +860,21 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             {
                 List<BulkUploadError> errors = new List<BulkUploadError>();
                 string fieldName = "ACROSS_ENGLAND";
-                var deliveryMethod = Mandatory_Checks_DELIVERY_METHOD(row);
-                var isAcrossEngland = Mandatory_Checks_Bool(row, fieldName);
-                if (deliveryMethod == DeliveryMethod.Both)
+
+                if (Mandatory_Checks_DELIVERY_METHOD(row) == DeliveryMethod.Both)
                 {
-                    var radius = Mandatory_Checks_RADIUS(row);
-                    if (!radius.HasValue)
+                    var isAcrossEngland = Mandatory_Checks_Bool(row, fieldName);
+                    if (!isAcrossEngland.HasValue)
                     {
-                        if (!isAcrossEngland.HasValue)
+                        errors.Add(new BulkUploadError
                         {
-                            errors.Add(new BulkUploadError
-                            {
-                                LineNumber = row.Context.Row,
-                                Header = fieldName,
-                                Error = $"Validation error on row {row.Context.Row}. Field {fieldName} must contain a value when Delivery Method is 'Both'"
+                            LineNumber = row.Context.Row,
+                            Header = fieldName,
+                            Error = $"Validation error on row {row.Context.Row}. Field {fieldName} must contain a value when Delivery Method is 'Both'"
 
-                            });
+                        });
 
-                            return errors;
-                        }
+                        return errors;
                     }
 
                 }
