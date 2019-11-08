@@ -70,7 +70,7 @@
                                 idValue = @baseId + @i.ToString() + @postcodeFieldId;
                                 nameValue = @baseName + @i.ToString() + @postcodeFieldName;
 
-                                <input id="@idValue" name="@nameValue" type="hidden" value="@Model.Locations[i].Address.Postcode">
+                                <input id="@idValue" name="@nameValue" type="hidden" value="@Model.Locations[i].Address?.Postcode">
 
                                 idValue = @baseId + @i.ToString() + @deliveryFieldId;
                                 nameValue = @baseName + @i.ToString() + @deliveryFieldName;
@@ -88,7 +88,7 @@
                                 <td class="govuk-table__header" >
                                     <span>@Model.Locations[i].Name</span>
                                     <br>
-                                    <span class="govuk-hint">@Model.Locations[i].Address.Postcode</span>
+                                    <span class="govuk-hint">@Model.Locations[i].Address?.Postcode</span>
                                 </td>
                                 <td class="govuk-table__cell">@string.Join(',', Model.Locations[i].DeliveryModes.Select(x => @WebHelper.GetEnumDescription((ApprenticeShipDeliveryLocation)x)))</td>
 
