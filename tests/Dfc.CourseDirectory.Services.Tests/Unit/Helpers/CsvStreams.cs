@@ -90,9 +90,9 @@ namespace Dfc.CourseDirectory.Services.Tests.Unit.Helpers
 
             TextWriter sw = new StreamWriter(ms);
             sw.WriteLine("STANDARD_CODE,STANDARD_VERSION,FRAMEWORK_CODE,FRAMEWORK_PROG_TYPE,FRAMEWORK_PATHWAY_CODE,APPRENTICESHIP_INFORMATION,APPRENTICESHIP_WEBPAGE,CONTACT_EMAIL,CONTACT_PHONE,CONTACT_URL,DELIVERY_METHOD,VENUE,RADIUS,DELIVERY_MODE,ACROSS_ENGLAND, NATIONAL_DELIVERY, REGION, SUB_REGION");
-            sw.WriteLine("157,1,,,,some text some text some text,,service@college.org.uk,0121 345 6789,,CLASsRooM,Venue 1,,Day;Block,No,No,,");
-            sw.WriteLine("157,1,,,,some text some text some text,,service@college.org.uk,0121 345 6789,,EmPloYeR,Venue 1,,Day;Block,No,No,,Dudley");
-            sw.WriteLine("157,1,,,,some text some text some text,,service@college.org.uk,0121 345 6789,,BoTh,Venue 1,,Day;Block,No,No,,");
+            sw.WriteLine("157,1,,,,some text some text some text,,service@college.org.uk,0121 345 6789,,CLASsRooM,Venue 1,1,Day;Block,No,No,,");
+            sw.WriteLine("157,1,,,,some text some text some text,,service@college.org.uk,0121 345 6789,,EmPloYeR,Venue 1,1,Day;Block,No,No,,Dudley");
+            sw.WriteLine("157,1,,,,some text some text some text,,service@college.org.uk,0121 345 6789,,BoTh,Venue 1,1,Day;Block,No,No,,");
             sw.Flush();
 
             return ms;
