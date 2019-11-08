@@ -36,6 +36,9 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             _logger = logger;
             _settings = settings.Value;
             _httpClient = httpClient;
+            _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
+
+
 
             _getStandardsAndFrameworksUri = settings.Value.GetStandardsAndFrameworksUri();
             _addApprenticeshipUri = settings.Value.AddApprenticeshipUri();
@@ -58,7 +61,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             {
                 _logger.LogInformationObject("Standards and Frameworks Criteria", criteria);
 
-                _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
+                
                 var response = await _httpClient.GetAsync(new Uri(_getStandardsAndFrameworksUri.AbsoluteUri + "?search=" + criteria + "&UKPRN=" + UKPRN));
                 _logger.LogHttpResponseMessage("Standards and Frameworks service http response", response);
 
@@ -105,7 +108,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
                 var apprenticeshipJson = JsonConvert.SerializeObject(apprenticeship);
 
                 var content = new StringContent(apprenticeshipJson, Encoding.UTF8, "application/json");
-                _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
+                
                 var response = await _httpClient.PostAsync(_addApprenticeshipUri, content);
 
                 _logger.LogHttpResponseMessage("Apprenticeship add service http response", response);
@@ -154,7 +157,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             {
                 _logger.LogInformationObject("Get Apprenticeship by Id", Id);
 
-                _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
+                
                 var response = await _httpClient.GetAsync(new Uri(_getApprenticeshipByIdUri.AbsoluteUri + "?id=" + Id));
                 _logger.LogHttpResponseMessage("Get Apprenticeship by Id service http response", response);
 
@@ -197,7 +200,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             {
                 _logger.LogInformationObject("Search Apprenticeship by UKPRN Criteria", criteria);
 
-                _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
+                
                 var response = await _httpClient.GetAsync(new Uri(_getApprenticeshipByUKPRNUri.AbsoluteUri + "?UKPRN=" + criteria));
                 _logger.LogHttpResponseMessage("Search Apprenticeship by UKPRN service http response", response);
 
@@ -240,7 +243,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             {
                 _logger.LogInformationObject("StandardSearchCriteria Criteria", criteria);
 
-                _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
+                
                 var response = await _httpClient.GetAsync(new Uri(_getStandardByCodeUri.AbsoluteUri + "?StandardCode=" + criteria.StandardCode + "&Version=" + criteria.Version));
                 _logger.LogHttpResponseMessage("GetStandardByCode service http response", response);
 
@@ -283,7 +286,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             {
                 _logger.LogInformationObject("FrameworkSearchCriteria Criteria", criteria);
 
-                _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
+                
                 var response = await _httpClient.GetAsync(new Uri(_getFrameworkByCodeUri.AbsoluteUri + "?FrameworkCode=" + criteria.FrameworkCode + "&ProgType=" + criteria.ProgType + "&PathwayCode=" + criteria.PathwayCode));
                 _logger.LogHttpResponseMessage("GetFrameworkByCode service http response", response);
 
@@ -329,7 +332,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
                 var apprenticeshipJson = JsonConvert.SerializeObject(apprenticeship);
 
                 var content = new StringContent(apprenticeshipJson, Encoding.UTF8, "application/json");
-                _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
+                
                 var response = await _httpClient.PostAsync(_updateApprenticshipUri, content);
 
                 _logger.LogHttpResponseMessage("Apprenticeship update service http response", response);
@@ -372,7 +375,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             try
             {
                
-                _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
+                
                 var response = await _httpClient.GetAsync(new Uri(_deleteBulkUploadApprenticeshipsUri.AbsoluteUri + "?UKPRN=" + UKPRN));
                 _logger.LogHttpResponseMessage("Delete Bulk Upload Apprenticeship Status http response", response);
 
@@ -398,8 +401,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
 
             
             
-            _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
-
+            
             var response = await _httpClient.GetAsync(new Uri(_changeApprenticeshipStatusesForUKPRNSelectionUri.AbsoluteUri + "?UKPRN=" + UKPRN + "&CurrentStatus=" + CurrentStatus + "&StatusToBeChangedTo=" + StatusToBeChangedTo));
             _logger.LogHttpResponseMessage("ChangeApprenticeshipStatusesForUKPRNSelection service http response", response);
 

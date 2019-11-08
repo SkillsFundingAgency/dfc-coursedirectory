@@ -1181,14 +1181,15 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 using (var reader = new StreamReader(stream))
                 {
                     if (0 == stream.Length) throw new Exception("File is empty.");
-                    stream.Seek(0,SeekOrigin.Begin);
+                    stream.Seek(0, SeekOrigin.Begin);
                     using (var csv = new CsvReader(reader))
                     {
 
                         // Validate the header row.
                         ValidateHeader(csv);
 
-                        var classMap = new ApprenticeshipCsvRecordMap(_apprenticeshipService, _venueService, userDetails);
+                        var classMap =
+                            new ApprenticeshipCsvRecordMap(_apprenticeshipService, _venueService, userDetails);
                         csv.Configuration.RegisterClassMap(classMap);
                         bool containsDuplicates = false;
                         while (csv.Read())
@@ -1197,13 +1198,15 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
                             if (!duplicateCheck.TryAdd(record.Base64Row, record.RowNumber.ToString()))
                             {
-                                if(containsDuplicates == false)
+                                if (containsDuplicates == false)
                                 {
                                     containsDuplicates = true;
                                     errors = new List<string>();
                                 }
+
                                 var duplicateRow = duplicateCheck[record.Base64Row];
-                                errors.Add($"Duplicate entries detected on rows {duplicateRow}, and {record.RowNumber}.");
+                                errors.Add(
+                                    $"Duplicate entries detected on rows {duplicateRow}, and {record.RowNumber}.");
 
                             }
 
@@ -1223,27 +1226,28 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                         }
                     }
 
-                    if(0 == processedRowCount)
+                    if (0 == processedRowCount)
                     {
                         throw new Exception("The selected file is empty");
                     }
-
-                    var result = _apprenticeshipService.DeleteBulkUploadApprenticeships(int.Parse(userDetails.UKPRN)).Result;
-
-                    if (result.IsSuccess)
-                    {
-                        var apprenticeships = ApprenticeshipCsvRecordToApprenticeship(records, userDetails);
-                        if (apprenticeships.Any())
-                        {
-                            errors.AddRange(UploadApprenticeships(apprenticeships));
-                        }
-                    }
-                    else
-                    {
-                        throw new Exception($"Unable to delete bulk upload apprenticeships for {int.Parse(userDetails.UKPRN)}");
-                    }
-
                 }
+
+                var result = _apprenticeshipService.DeleteBulkUploadApprenticeships(int.Parse(userDetails.UKPRN)).Result;
+
+                if (result.IsSuccess)
+                {
+                    var apprenticeships = ApprenticeshipCsvRecordToApprenticeship(records, userDetails);
+                    if (apprenticeships.Any())
+                    {
+                        errors.AddRange(UploadApprenticeships(apprenticeships));
+                    }
+                }
+                else
+                {
+                    throw new Exception($"Unable to delete bulk upload apprenticeships for {int.Parse(userDetails.UKPRN)}");
+                }
+
+                
             }
 
             catch (HeaderValidationException ex)
