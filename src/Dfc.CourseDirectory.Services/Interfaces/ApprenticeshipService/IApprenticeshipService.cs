@@ -20,5 +20,6 @@ namespace Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService
         Task<IResult> DeleteBulkUploadApprenticeships(int UKPRN);
         Task<IResult> ChangeApprenticeshipStatusesForUKPRNSelection(int ukprn, int currentStatus,
             int statusToBeChangedTo);
+        Task<IResult<ApprenticeshipDashboardCounts>> GetApprenticeshipDashboardCounts(int UKPRN);
     }
 }
