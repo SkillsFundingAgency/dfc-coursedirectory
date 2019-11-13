@@ -15,6 +15,6 @@ namespace Dfc.CourseDirectory.Web.ViewModels.Apprenticeships
 
         public ApprenticeshipMode Mode { get; set; }
 
-
+        public bool HasAllLocationTypes { get; set; }
     }
 }

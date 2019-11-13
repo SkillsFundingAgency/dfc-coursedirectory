@@ -1,39 +1,27 @@
 ﻿using CsvHelper;
 using CsvHelper.Configuration;
-using Dfc.CourseDirectory.Common;
-using Dfc.CourseDirectory.Models.Helpers;
-using Dfc.CourseDirectory.Models.Models.Apprenticeships;
-using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
-using Dfc.CourseDirectory.Services.Interfaces.BulkUploadService;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Security.Claims;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
 using CsvHelper.Configuration.Attributes;
-using CsvHelper.Expressions;
-using Dfc.CourseDirectory.Common.Interfaces;
+using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Models.Enums;
+using Dfc.CourseDirectory.Models.Helpers;
 using Dfc.CourseDirectory.Models.Interfaces.Apprenticeships;
 using Dfc.CourseDirectory.Models.Interfaces.Auth;
+using Dfc.CourseDirectory.Models.Models.Apprenticeships;
 using Dfc.CourseDirectory.Models.Models.Auth;
 using Dfc.CourseDirectory.Models.Models.Courses;
 using Dfc.CourseDirectory.Models.Models.Regions;
 using Dfc.CourseDirectory.Models.Models.Venues;
-using Dfc.CourseDirectory.Services.Interfaces;
+using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
+using Dfc.CourseDirectory.Services.Interfaces.BulkUploadService;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 using Dfc.CourseDirectory.Services.VenueService;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore.SqlServer.Query.ExpressionTranslators.Internal;
-using Remotion.Linq.Parsing.Structure.IntermediateModel;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 
 namespace Dfc.CourseDirectory.Services.BulkUploadService
@@ -791,6 +779,26 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                         });
                         return errors;
                     }
+
+
+                }
+                if (Mandatory_Checks_DELIVERY_METHOD(row) == DeliveryMethod.Both)
+                {
+                    var acrossEngland = Mandatory_Checks_ACROSS_ENGLAND(row);
+                    if (acrossEngland == false)
+                    {
+                        if (!value.HasValue)
+                        {
+                            errors.Add(new BulkUploadError
+                            {
+                                LineNumber = row.Context.Row,
+                                Header = fieldName,
+                                Error = $"Validation error on row {row.Context.Row}. Field {fieldName} must have a value if not ACROSS_ENGLAND"
+
+                            });
+                            return errors;
+                        }
+                    }
                 }
                 return errors;
             }
@@ -805,7 +813,20 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 Dictionary<DeliveryMode, string> modes = new Dictionary<DeliveryMode, string>();
 
                 var modeArray = value.Split(";");
+                if(Mandatory_Checks_DELIVERY_METHOD(row) == DeliveryMethod.Both)
+                {
+                    if (modeArray.Length == 0)
+                    {
+                        errors.Add(new BulkUploadError
+                        {
+                            LineNumber = row.Context.Row,
+                            Header = fieldName,
+                            Error = $"Validation error on row {row.Context.Row}. Field {fieldName} contain delivery modes if Delivery Method is BOTH"
 
+                        });
+                        return errors;
+                    }
+                }
                 foreach (var mode in modeArray)
                 {
                     var deliveryMode = mode.ToEnum(DeliveryMode.Undefined);
@@ -839,25 +860,21 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             {
                 List<BulkUploadError> errors = new List<BulkUploadError>();
                 string fieldName = "ACROSS_ENGLAND";
-                var deliveryMethod = Mandatory_Checks_DELIVERY_METHOD(row);
-                var isAcrossEngland = Mandatory_Checks_Bool(row, fieldName);
-                if (deliveryMethod == DeliveryMethod.Both)
+
+                if (Mandatory_Checks_DELIVERY_METHOD(row) == DeliveryMethod.Both)
                 {
-                    var radius = Mandatory_Checks_RADIUS(row);
-                    if (!radius.HasValue)
+                    var isAcrossEngland = Mandatory_Checks_Bool(row, fieldName);
+                    if (!isAcrossEngland.HasValue)
                     {
-                        if (!isAcrossEngland.HasValue)
+                        errors.Add(new BulkUploadError
                         {
-                            errors.Add(new BulkUploadError
-                            {
-                                LineNumber = row.Context.Row,
-                                Header = fieldName,
-                                Error = $"Validation error on row {row.Context.Row}. Field {fieldName} must contain a value when Delivery Method is 'Both'"
+                            LineNumber = row.Context.Row,
+                            Header = fieldName,
+                            Error = $"Validation error on row {row.Context.Row}. Field {fieldName} must contain a value when Delivery Method is 'Both'"
 
-                            });
+                        });
 
-                            return errors;
-                        }
+                        return errors;
                     }
 
                 }
@@ -1164,14 +1181,15 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 using (var reader = new StreamReader(stream))
                 {
                     if (0 == stream.Length) throw new Exception("File is empty.");
-                    stream.Seek(0,SeekOrigin.Begin);
+                    stream.Seek(0, SeekOrigin.Begin);
                     using (var csv = new CsvReader(reader))
                     {
 
                         // Validate the header row.
                         ValidateHeader(csv);
 
-                        var classMap = new ApprenticeshipCsvRecordMap(_apprenticeshipService, _venueService, userDetails);
+                        var classMap =
+                            new ApprenticeshipCsvRecordMap(_apprenticeshipService, _venueService, userDetails);
                         csv.Configuration.RegisterClassMap(classMap);
                         bool containsDuplicates = false;
                         while (csv.Read())
@@ -1180,13 +1198,15 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
                             if (!duplicateCheck.TryAdd(record.Base64Row, record.RowNumber.ToString()))
                             {
-                                if(containsDuplicates == false)
+                                if (containsDuplicates == false)
                                 {
                                     containsDuplicates = true;
                                     errors = new List<string>();
                                 }
+
                                 var duplicateRow = duplicateCheck[record.Base64Row];
-                                errors.Add($"Duplicate entries detected on rows {duplicateRow}, and {record.RowNumber}.");
+                                errors.Add(
+                                    $"Duplicate entries detected on rows {duplicateRow}, and {record.RowNumber}.");
 
                             }
 
@@ -1206,27 +1226,28 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                         }
                     }
 
-                    if(0 == processedRowCount)
+                    if (0 == processedRowCount)
                     {
                         throw new Exception("The selected file is empty");
                     }
-
-                    var result = _apprenticeshipService.DeleteBulkUploadApprenticeships(int.Parse(userDetails.UKPRN)).Result;
-
-                    if (result.IsSuccess)
-                    {
-                        var apprenticeships = ApprenticeshipCsvRecordToApprenticeship(records, userDetails);
-                        if (apprenticeships.Any())
-                        {
-                            errors.AddRange(UploadApprenticeships(apprenticeships));
-                        }
-                    }
-                    else
-                    {
-                        throw new Exception($"Unable to delete bulk upload apprenticeships for {int.Parse(userDetails.UKPRN)}");
-                    }
-
                 }
+
+                var result = _apprenticeshipService.DeleteBulkUploadApprenticeships(int.Parse(userDetails.UKPRN)).Result;
+
+                if (result.IsSuccess)
+                {
+                    var apprenticeships = ApprenticeshipCsvRecordToApprenticeship(records, userDetails);
+                    if (apprenticeships.Any())
+                    {
+                        errors.AddRange(UploadApprenticeships(apprenticeships));
+                    }
+                }
+                else
+                {
+                    throw new Exception($"Unable to delete bulk upload apprenticeships for {int.Parse(userDetails.UKPRN)}");
+                }
+
+                
             }
 
             catch (HeaderValidationException ex)
@@ -1320,6 +1341,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 {
                     var apprenticeship = apprenticeships.FirstOrDefault(x => x == alreadyExists);
                     apprenticeship?.ApprenticeshipLocations.AddRange(record.ApprenticeshipLocations);
+                    apprenticeship?.BulkUploadErrors.AddRange(record.ErrorsList);
                 }
                 else
                 {

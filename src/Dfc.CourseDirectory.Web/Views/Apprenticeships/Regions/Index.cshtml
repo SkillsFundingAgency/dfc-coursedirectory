@@ -45,6 +45,7 @@
             var $continue = $("#next");
             var $errorSummary = $("#errorsummary").govUkErrorSummary();
             var $regions = $("#SelectRegionCheckBoxes").govUkCheckboxes();
+            var returnToSummery = @(Model.ChooseRegion.HasOtherDeliveryOptions.ToString().ToLower());
 
             function isAllValid(currentValue) {
                 return currentValue === true;
@@ -79,9 +80,9 @@
               $continue.on("click", function (event) {
                 event.preventDefault();
                 validate();
-                if (validStates.every(isAllValid)) {
-                    $("#ApprenticeshipRegionsForm").submit();
-                }
+                  if (validStates.every(isAllValid) || returnToSummery) {
+                      $("#ApprenticeshipRegionsForm").submit();
+                  }
             });
         });
     })(jQuery);

@@ -108,16 +108,26 @@
             </dl>
 
             <div class="summary--linked-title">
-
+               
                 <div class="govuk-summary-list">
+                    @if (!Model.HasAllLocationTypes)
+                    {
+                        <div>
+                            <a class="govuk-link float-right " asp-controller="Apprenticeships" asp-action="Delivery">
+                                Add a different delivery type
+                            </a>
+                        </div>
+
+                    }
+
                     @{
 
                         if (Model.Apprenticeship.ApprenticeshipLocations.Any(x => x.ApprenticeshipLocationType
                                                                                   == ApprenticeshipLocationType.ClassroomBased))
                         {
-                            <h3 class="govuk-heading-s">Classroom  based locations</h3>
+                            <h3 class="govuk-heading-s">Classroom based locations</h3>
                             <a class="govuk-link float-right " asp-controller="Apprenticeships" asp-action="DeliveryOptions">
-                                Change
+                                Change classroom based locations
                             </a>
                             @await Component.InvokeAsync(nameof(ApprenticeshipLocationList), new ApprenticeshipLocationListModel
                             {
@@ -129,11 +139,11 @@
                         }
 
                         if (Model.Apprenticeship.ApprenticeshipLocations.Any(x => x.ApprenticeshipLocationType
-                                                                                    == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased))
+                                                                                  == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased))
                         {
                             <h3 class="govuk-heading-s">Employer and classroom based locations</h3>
                             <a class="govuk-link float-right" asp-controller="Apprenticeships" asp-action="DeliveryOptionsCombined">
-                                Change
+                                Change employer and classroom based locations
                             </a>
                             @await Component.InvokeAsync(nameof(ApprenticeshipLocationList), new ApprenticeshipLocationListModel
                             {
@@ -153,51 +163,50 @@
                             if (location.National.HasValue && location.National.Value)
                             {
 
-                                <a class="govuk-link float-right " asp-controller="Apprenticeships" asp-action="LocationChoiceSelection" asp-route-national="@location.National.Value">
-                                    Change
+                                <a class="govuk-link float-right " asp-controller="Apprenticeships" asp-action="LocationChoiceSelection">
+                                    Change employer based location
                                 </a>
                             }
                             else
                             {
                                 <a class="govuk-link float-right " asp-controller="Apprenticeships" asp-action="Regions">
-                                    Change
+                                    Change employer based location
                                 </a>
                             }
 
-                            @if (location.Regions != null && location.Regions.Any())
-                            {
-                                <table class="govuk-table">
-                                    <thead class="govuk-table__head">
-                                    <tr class="govuk-table__row">
-                                        <th class="govuk-table__header govuk-!-width-one-third">Location</th>
-                                        <th class="govuk-table__header govuk-!-width-two-thirds">Sub region</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody class="govuk-table__body">
-                                    @{
-                                        if (location.National != null && location.National.HasValue)
+
+                            <table class="govuk-table">
+                                <thead class="govuk-table__head">
+                                <tr class="govuk-table__row">
+                                    <th class="govuk-table__header govuk-!-width-one-third">Location</th>
+                                    <th class="govuk-table__header govuk-!-width-two-thirds">Sub region</th>
+                                </tr>
+                                </thead>
+                                <tbody class="govuk-table__body">
+                                @{
+                                    if (location.National.HasValue && location.National.Value)
+                                    {
+                                        <tr class="govuk-table__row">
+                                            <th class="govuk-table__header">National</th>
+                                            <td class="govuk-table__cell">All</td>
+                                        </tr>
+                                    }
+                                    else
+                                    {
+
+                                        foreach (var item in Model.Regions)
                                         {
                                             <tr class="govuk-table__row">
-                                                <th class="govuk-table__header">National</th>
-                                                <td class="govuk-table__cell">All</td>
+                                                <th class="govuk-table__header">@item.Key</th>
+                                                <td class="govuk-table__cell">@string.Join(", ", item.Value)</td>
                                             </tr>
-                                        }
-                                        else
-                                        {
 
-                                            foreach (var item in Model.Regions)
-                                            {
-                                                <tr class="govuk-table__row">
-                                                    <th class="govuk-table__header">@item.Key</th>
-                                                    <td class="govuk-table__cell">@string.Join(", ", item.Value)</td>
-                                                </tr>
-
-                                            }
                                         }
                                     }
-                                    </tbody>
-                                </table>
-                            }
+                                }
+                                </tbody>
+                            </table>
+
                         }
                     }
                 </div>

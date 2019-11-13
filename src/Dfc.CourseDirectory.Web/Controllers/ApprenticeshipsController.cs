@@ -354,7 +354,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
             model.DayRelease = false;
             model.Radius = null;
             model.locations = apprenticeship?.ApprenticeshipLocations.Where(x => x.ApprenticeshipLocationType == ApprenticeshipLocationType.ClassroomBased).ToList();
-
+            model.HasOtherDeliveryOptions = apprenticeship?.ApprenticeshipLocations.Any(x =>
+                x.ApprenticeshipLocationType != ApprenticeshipLocationType.ClassroomBased)?? false;
             ViewBag.Message = message;
 
             return View("../Apprenticeships/DeliveryOptions/Index", model);
@@ -379,6 +380,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
             model.National = false;
             model.Radius = null;
             model.Locations = apprenticeship?.ApprenticeshipLocations.Where(x => x.ApprenticeshipLocationType == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased).ToList();
+            model.HasOtherDeliveryOptions = apprenticeship?.ApprenticeshipLocations.Any(x =>
+                                                x.ApprenticeshipLocationType != ApprenticeshipLocationType.ClassroomBasedAndEmployerBased) ?? false;
 
             ViewBag.Message = message;
             return View("../Apprenticeships/DeliveryOptionsCombined/Index", model);
@@ -425,6 +428,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 model.Apprenticeship = selectedApprenticeship;
 
                 var type = getApprenticehipByIdResult.Value.ApprenticeshipLocations.FirstOrDefault();
+
                 model.Regions = selectedApprenticeship.ApprenticeshipLocations.Any(x => x.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased)
                     ? SubRegionCodesToDictionary(selectedApprenticeship.ApprenticeshipLocations.FirstOrDefault(x => x.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased)?.Regions) : null;
 
@@ -469,6 +473,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 model.Regions = model.Regions = selectedApprenticeship.ApprenticeshipLocations.Any(x => x.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased)
                     ? SubRegionCodesToDictionary(selectedApprenticeship.ApprenticeshipLocations.FirstOrDefault(x => x.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased)?.Regions) : null;
 
+                model.HasAllLocationTypes = model.Apprenticeship.ApprenticeshipLocations.Any(x =>
+                                                x.ApprenticeshipLocationType ==
+                                                ApprenticeshipLocationType.ClassroomBased) &&
+                                            model.Apprenticeship.ApprenticeshipLocations.Any(x =>
+                                                x.ApprenticeshipLocationType == ApprenticeshipLocationType
+                                                    .ClassroomBasedAndEmployerBased) &&
+                                            model.Apprenticeship.ApprenticeshipLocations.Any(x =>
+                                                x.ApprenticeshipLocationType ==
+                                                ApprenticeshipLocationType.EmployerBased);
             }
 
             model.SummaryOnly = requestModel.SummaryOnly;
@@ -544,6 +557,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
             var Apprenticeship = _session.GetObject<Apprenticeship>("selectedApprenticeship");
             var employerBased = Apprenticeship?.ApprenticeshipLocations.FirstOrDefault(x =>
                 x.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased);
+
+            model.ChooseRegion.HasOtherDeliveryOptions = Apprenticeship?.ApprenticeshipLocations.Any(x =>
+                                                      x.ApprenticeshipLocationType != ApprenticeshipLocationType.EmployerBased) ?? false;
             if (Apprenticeship != null && employerBased != null)
             {
                 foreach (var selectRegionRegionItem in model.ChooseRegion.Regions.RegionItems.OrderBy(x => x.RegionName))
@@ -571,16 +587,22 @@ namespace Dfc.CourseDirectory.Web.Controllers
             var employerBased = Apprenticeship.ApprenticeshipLocations.FirstOrDefault(x =>
                  x.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased);
 
-            if (employerBased != null)
+
+            if (SelectedRegions.Any())
             {
-                employerBased.Regions = SelectedRegions;
+                if (employerBased != null)
+                {
+                    employerBased.Regions = SelectedRegions;
+                }
+                else
+                {
+                    Apprenticeship.ApprenticeshipLocations.Add(CreateRegionLocation(SelectedRegions, null));
+                }
             }
             else
             {
-                Apprenticeship.ApprenticeshipLocations.Add(CreateRegionLocation(SelectedRegions, null));
+                Apprenticeship.ApprenticeshipLocations.RemoveAll(x=>x.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased);
             }
-
-
 
             _session.SetObject("selectedApprenticeship", Apprenticeship);
 
@@ -925,21 +947,41 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             foreach (var subRegionCode in subRegions)
             {
-                var regionName = selectRegionModel.GetRegionNameForSubRegion(subRegionCode);
-                if (!string.IsNullOrWhiteSpace(regionName))
+                var isRegionCode = selectRegionModel.RegionItems.FirstOrDefault(x => String.Equals(x.Id, subRegionCode, StringComparison.CurrentCultureIgnoreCase));
+
+                if (isRegionCode != null)
                 {
+                    if (!regionsAndSubregions.ContainsKey(isRegionCode.RegionName))
+                    {
+                        var subRegionNamesList = isRegionCode.SubRegion.Select(x => x.SubRegionName).ToList();
+                        regionsAndSubregions.Add(isRegionCode.RegionName, subRegionNamesList);
+
+                    }
+                }
+                else
+                {
+                    var regionName = selectRegionModel.GetRegionNameForSubRegion(subRegionCode);
+                    if (string.IsNullOrWhiteSpace(regionName)) continue;
+
                     if (!regionsAndSubregions.ContainsKey(regionName))
                     {
                         regionsAndSubregions.Add(regionName, new List<string>());
                     }
                     var subRegionItem = selectRegionModel.GetSubRegionItemByRegionCode(subRegionCode);
-                    regionsAndSubregions[regionName].Add(subRegionItem.SubRegionName);
+                    var alreadyExists = CheckForExistingSubregions(subRegionItem.SubRegionName,
+                        regionsAndSubregions[regionName]);
+                    if(alreadyExists == false)
+                        regionsAndSubregions[regionName].Add(subRegionItem.SubRegionName);
                 }
 
             }
             return regionsAndSubregions;
         }
 
+        private bool CheckForExistingSubregions(string subregionName, List<string> subregions)
+        {
+            return subregions.Contains(subregionName);
+        }
 
         private ApprenticeshipLocation CreateDeliveryLocation(DeliveryOption loc, ApprenticeshipLocationType apprenticeshipLocationType)
         {

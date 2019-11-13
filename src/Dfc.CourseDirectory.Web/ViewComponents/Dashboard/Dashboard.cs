@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Models.Models.Apprenticeships;
 using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 using Dfc.CourseDirectory.Web.ViewModels.Migration;
@@ -144,6 +145,23 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
 
                 var result = await _apprenticeshipService.GetApprenticeshipByUKPRN(UKPRN.ToString());
 
+                var appResult = await _apprenticeshipService.GetApprenticeshipDashboardCounts(UKPRN);
+
+                if (appResult.IsSuccess && appResult.HasValue)
+                {
+                    var counts = appResult.Value;
+                    IEnumerable<Services.BlobStorageService.BlobFileInfo> appList = _blobStorageService.GetFileList(UKPRN + "/Apprenticeship Bulk Upload/Files/").OrderByDescending(x => x.DateUploaded).ToList();
+                    if (list.Any())
+                        counts.FileUploadDate = list.FirstOrDefault().DateUploaded.Value;
+
+                    var appMessages = GenerateApprenticeshipDQIMessages(counts);
+
+                    if (appMessages.Any())
+                    {
+                        appMessages.AddRange(actualModel.ValidationMessages.ToList());
+                        actualModel.ValidationMessages = appMessages;
+                    }
+                }
 
                 actualModel.PublishedApprenticeshipsCount = result.Value.Count(x => x.RecordStatus == RecordStatus.Live);
 
@@ -156,7 +174,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
                     actualModel.BulkUploadBackgroundRowCount = provider.BulkUploadStatus.TotalRowCount;
                     actualModel.BulkUploadBackgroundStartTimestamp = provider.BulkUploadStatus.StartedTimestamp;
                         actualModel.BulkUploadPublishInProgress = provider.BulkUploadStatus.PublishInProgress;
-                    }
+                }
                 actualModel.ProviderType = provider.ProviderType;
             }
             actualModel.EnvironmentType = _environmentHelper.GetEnvironmentType();
@@ -189,6 +207,29 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
             return provider;
         }
 
+        private List<string> GenerateApprenticeshipDQIMessages(ApprenticeshipDashboardCounts counts)
+        {
+            var messages = new List<string>();
+            
+            int totalAppCount = 0;
+            if (counts.BulkUploadPendingCount.HasValue) totalAppCount += counts.BulkUploadPendingCount.Value;
+            if (counts.BulkUploadReadyToGoLiveCount.HasValue) totalAppCount += counts.BulkUploadReadyToGoLiveCount.Value;
+
+            if (counts.TotalErrors.HasValue && counts.TotalErrors.Value > 0)
+            {
+                messages.Add($"{totalAppCount} apprenticeship{(totalAppCount > 1 ? "s" : "")} uploaded in a file on {counts.FileUploadDate.Value:dd/MM/yyyy} {(totalAppCount > 1 ? "have" : "has")} {counts.TotalErrors} errors. " +
+                             $"Fix these to publish all of your apprenticeship{(totalAppCount > 1 ? "s" : "")}.");
+            }
+
+            if (counts.BulkUploadReadyToGoLiveCount.HasValue && counts.BulkUploadReadyToGoLiveCount.Value > 0)
+            {
+                if (!counts.BulkUploadPendingCount.HasValue || counts.BulkUploadPendingCount.Value == 0)
+                {
+                    messages.Add($"{totalAppCount} apprenticeship{(totalAppCount > 1 ? "s" : "")} uploaded in a file on {counts.FileUploadDate.Value:dd/MM/yyyy} {(totalAppCount > 1 ? "have" : "has")} no errors but are not listed on the Course directory because you have not published {(totalAppCount > 1 ? "them" : "it")}.");
+                }
+            }
+            return messages;
+        }
 
     }
 }
