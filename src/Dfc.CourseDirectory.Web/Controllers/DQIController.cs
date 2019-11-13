@@ -23,10 +23,21 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         [Authorize]
-        public IActionResult Index()
+        public IActionResult Index(string msg)
         {
-            _session.SetString("Option", "DQI");
-            return RedirectToAction("Index", "PublishCourses", new { publishMode = PublishMode.DataQualityIndicator });
+
+            //TODO: Refactor the DQI journey as to allow for expansion for other journeys
+
+            if (msg.Contains("apprenticeship"))
+            {
+                return RedirectToAction("Index", "PublishApprenticeships");
+            }
+            else
+            {
+                _session.SetString("Option", "DQI");
+                return RedirectToAction("Index", "PublishCourses", new { publishMode = PublishMode.DataQualityIndicator });
+            }
+            
         }
     }
 }

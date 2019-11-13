@@ -22,7 +22,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
         private readonly HttpClient _httpClient;
         private readonly Uri _getStandardsAndFrameworksUri, _addApprenticeshipUri, _getApprenticeshipByUKPRNUri, 
             _getApprenticeshipByIdUri, _updateApprenticshipUri, _getStandardByCodeUri, _getFrameworkByCodeUri, _deleteBulkUploadApprenticeshipsUri,
-            _changeApprenticeshipStatusesForUKPRNSelectionUri;
+            _changeApprenticeshipStatusesForUKPRNSelectionUri, _getApprenticeshipDashboardCountsUri;
 
         public ApprenticeshipService(
             ILogger<ApprenticeshipService> logger,
@@ -50,6 +50,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             _deleteBulkUploadApprenticeshipsUri = settings.Value.DeleteBulkUploadApprenticeshipsUri();
             _changeApprenticeshipStatusesForUKPRNSelectionUri =
                 settings.Value.ChangeApprenticeshipStatusesForUKPRNSelectionUri();
+            _getApprenticeshipDashboardCountsUri = settings.Value.GetApprenticeshipDashboardCountsUri();
         }
 
         public async Task<IResult<IEnumerable<IStandardsAndFrameworks>>> StandardsAndFrameworksSearch(string criteria, int UKPRN)
@@ -413,6 +414,44 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             return Result.Fail("ChangeApprenticeshipStatusesForUKPRNSelection service unsuccessful http response");
             
         }
+        public async Task<IResult<ApprenticeshipDashboardCounts>> GetApprenticeshipDashboardCounts(int UKPRN)
+        {
+            Throw.IfLessThan(0, UKPRN, nameof(UKPRN));
+
+            _logger.LogMethodEnter();
+
+            try
+            {
+                var response = await _httpClient.GetAsync(new Uri(_getApprenticeshipDashboardCountsUri.AbsoluteUri + "?UKPRN=" + UKPRN));
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+
+                    var results = JsonConvert.DeserializeObject<ApprenticeshipDashboardCounts>(json);
+
+                    return Result.Ok(results);
+                }
+                else
+                {
+                    return Result.Fail<ApprenticeshipDashboardCounts>("GetApprenticeshipDashboardCounts unsuccessful http response");
+                }
+            }
+            catch (HttpRequestException hre)
+            {
+                _logger.LogException("Get Apprenticeship by Id service http request error", hre);
+                return Result.Fail<ApprenticeshipDashboardCounts>("GetApprenticeshipDashboardCounts http request error.");
+            }
+            catch (Exception e)
+            {
+                _logger.LogException("Get apprenticeship unknown error.", e);
+                return Result.Fail<ApprenticeshipDashboardCounts>("GetApprenticeshipDashboardCounts unknown error.");
+            }
+            finally
+            {
+                _logger.LogMethodExit();
+            }
+        }
     }
 
     internal static class ApprenticeshipServiceSettingsExtensions
@@ -473,6 +512,12 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             var uri = new Uri(extendee.ApiUrl);
             var trimmed = uri.AbsoluteUri.TrimEnd('/');
             return new Uri($"{trimmed}/ChangeApprenticeshipStatusForUKPRNSelection");
+        }
+        internal static Uri GetApprenticeshipDashboardCountsUri(this IApprenticeshipServiceSettings extendee)
+        {
+            var uri = new Uri(extendee.ApiUrl);
+            var trimmed = uri.AbsoluteUri.TrimEnd('/');
+            return new Uri($"{trimmed}/GetApprenticeshipDashboardCounts");
         }
     }
 }
