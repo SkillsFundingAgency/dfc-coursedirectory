@@ -35,7 +35,8 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
         public bool DisplayMigrationButton { get; set; }
 
         public bool BulkUpLoadHasErrors { get; set; }
-
+        public bool ApprenticeshipHasErrors { get; set; }
+        public string ApprenticeshipMessages { get; set; }
         // Correspond with the new model changes on provider to track status of background bulk upload process
         public bool BulkUploadBackgroundInProgress { get; set; }
         public DateTime? BulkUploadBackgroundStartTimestamp { get; set; }
