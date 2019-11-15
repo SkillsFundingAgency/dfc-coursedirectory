@@ -4,6 +4,7 @@ using Dfc.CourseDirectory.Models.Interfaces.Apprenticeships;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Models.Models.Apprenticeships;
+using Dfc.CourseDirectory.Models.Models.Courses;
 
 namespace Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService
 {
@@ -21,5 +22,6 @@ namespace Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService
         Task<IResult> ChangeApprenticeshipStatusesForUKPRNSelection(int ukprn, int currentStatus,
             int statusToBeChangedTo);
         Task<IResult<ApprenticeshipDashboardCounts>> GetApprenticeshipDashboardCounts(int UKPRN);
+        Task<IResult<IList<DfcMigrationReport>>> GetAllDfcReports();
     }
 }
