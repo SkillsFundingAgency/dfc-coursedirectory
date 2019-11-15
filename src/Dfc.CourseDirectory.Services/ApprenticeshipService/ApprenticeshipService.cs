@@ -12,6 +12,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Models.Models.Courses;
 
 namespace Dfc.CourseDirectory.Services.ApprenticeshipService
 {
@@ -22,7 +23,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
         private readonly HttpClient _httpClient;
         private readonly Uri _getStandardsAndFrameworksUri, _addApprenticeshipUri, _getApprenticeshipByUKPRNUri, 
             _getApprenticeshipByIdUri, _updateApprenticshipUri, _getStandardByCodeUri, _getFrameworkByCodeUri, _deleteBulkUploadApprenticeshipsUri,
-            _changeApprenticeshipStatusesForUKPRNSelectionUri, _getApprenticeshipDashboardCountsUri;
+            _changeApprenticeshipStatusesForUKPRNSelectionUri, _getApprenticeshipDashboardCountsUri, _getAllDfcReports;
 
         public ApprenticeshipService(
             ILogger<ApprenticeshipService> logger,
@@ -51,6 +52,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             _changeApprenticeshipStatusesForUKPRNSelectionUri =
                 settings.Value.ChangeApprenticeshipStatusesForUKPRNSelectionUri();
             _getApprenticeshipDashboardCountsUri = settings.Value.GetApprenticeshipDashboardCountsUri();
+            _getAllDfcReports = settings.Value.ToGetAllDfcReports();
         }
 
         public async Task<IResult<IEnumerable<IStandardsAndFrameworks>>> StandardsAndFrameworksSearch(string criteria, int UKPRN)
@@ -452,6 +454,48 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
                 _logger.LogMethodExit();
             }
         }
+
+        public async Task<IResult<IList<DfcMigrationReport>>> GetAllDfcReports()
+        {
+            _logger.LogMethodEnter();
+
+            try
+            {
+                _logger.LogInformationObject("Get all dfc reports URI", _getAllDfcReports);
+
+                _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
+                var response = await _httpClient.GetAsync(new Uri(_getAllDfcReports.AbsoluteUri));
+                _logger.LogHttpResponseMessage("Get course migration report service http response", response);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+
+                    _logger.LogInformationObject("Get All Dfc migration reports service json response", json);
+                    IList<DfcMigrationReport> dfcReports = JsonConvert.DeserializeObject<IList<DfcMigrationReport>>(json);
+                    return Result.Ok<IList<DfcMigrationReport>>(dfcReports);
+                }
+                else
+                {
+                    return Result.Fail<IList<DfcMigrationReport>>("Get All Dfc migration report service unsuccessful http response");
+                }
+            }
+            catch (HttpRequestException hre)
+            {
+                _logger.LogException("Get course migration report service http request error", hre);
+                return Result.Fail<IList<DfcMigrationReport>>("Get All Dfc migration report service http request error.");
+            }
+            catch (Exception e)
+            {
+                _logger.LogException("Get course migration report service unknown error.", e);
+                return Result.Fail<IList<DfcMigrationReport>>("Get All Dfc migration report service unknown error.");
+            }
+            finally
+            {
+                _logger.LogMethodExit();
+            }
+        }
+
     }
 
     internal static class ApprenticeshipServiceSettingsExtensions
@@ -482,7 +526,12 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             var trimmed = uri.AbsoluteUri.TrimEnd('/');
             return new Uri($"{trimmed}/GetApprenticeshipByUKPRN");
         }
-
+        internal static Uri ToGetAllDfcReports(this IApprenticeshipServiceSettings extendee)
+        {
+            var uri = new Uri(extendee.ApiUrl);
+            var trimmed = uri.AbsoluteUri.TrimEnd('/');
+            return new Uri($"{trimmed}/GetAllDfcReports");
+        }
         internal static Uri GetApprenticeshipByIdUri(this IApprenticeshipServiceSettings extendee)
         {
             var uri = new Uri(extendee.ApiUrl);

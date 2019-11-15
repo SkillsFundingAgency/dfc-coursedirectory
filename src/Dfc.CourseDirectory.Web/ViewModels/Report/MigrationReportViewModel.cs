@@ -1,15 +1,18 @@
-﻿using Dfc.CourseDirectory.Web.ViewComponents.MigrationReportResults;
+﻿using Dfc.CourseDirectory.Models.Enums;
+using Dfc.CourseDirectory.Web.ViewComponents.MigrationReportResults;
 using Dfc.CourseDirectory.Web.ViewComponents.MigrationReportDashboardPanel;
 
 namespace Dfc.CourseDirectory.Web.ViewModels.Report
 {
     public class MigrationReportViewModel
     {
-        public MigrationReportDashboardPanelModel FEProvidersMigrated { get; set; }
-        public MigrationReportDashboardPanelModel FECoursesMigrated { get; set; }
-        public MigrationReportDashboardPanelModel FECoursesMigratedWithErrors { get; set; }
-        public MigrationReportDashboardPanelModel CoursesLive { get; set; }
+        public MigrationReportDashboardPanelModel ProvidersMigrated { get; set; }
+        public MigrationReportDashboardPanelModel Migrated { get; set; }
+        public MigrationReportDashboardPanelModel MigratedWithErrors { get; set; }
+        public MigrationReportDashboardPanelModel Live { get; set; }
 
         public MigrationReportResultsModel ReportResults { get; set; }
-    }
+
+        public ReportType ReportType { get; set; }
+}
 }
