@@ -37,6 +37,12 @@ namespace Dfc.CourseDirectory.Models.Enums
 
     }
 
+    public enum ReportType
+    {
+        Fe,
+        Apprenticeship
+    }
+
     //public enum ApprenticeShipMode
     //{
     //    [Display(Name = "Undefined")]

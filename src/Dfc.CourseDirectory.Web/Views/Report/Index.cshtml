@@ -15,24 +15,24 @@
             <div class="govuk-grid-row govuk-!-margin-bottom-6 homepage-item--container">
                 <div class="govuk-grid-column-one-third homepage-item ">
 
-                    @await Component.InvokeAsync(nameof(MigrationReportDashboardPanel), Model.FEProvidersMigrated)
+                    @await Component.InvokeAsync(nameof(MigrationReportDashboardPanel), Model.ProvidersMigrated)
 
                 </div>
                 <div class="govuk-grid-column-one-third homepage-item ">
 
-                    @await Component.InvokeAsync(nameof(MigrationReportDashboardPanel), Model.FECoursesMigrated)
+                    @await Component.InvokeAsync(nameof(MigrationReportDashboardPanel), Model.Migrated)
 
                 </div>
                 <div class="govuk-grid-column-one-third homepage-item ">
 
-                    @await Component.InvokeAsync(nameof(MigrationReportDashboardPanel), Model.FECoursesMigratedWithErrors)
+                    @await Component.InvokeAsync(nameof(MigrationReportDashboardPanel), Model.MigratedWithErrors)
 
                 </div>
             </div>
             <div class="govuk-grid-row govuk-!-margin-bottom-6 homepage-item--container">
                 <div class="govuk-grid-column-one-third homepage-item ">
-
-                    @await Component.InvokeAsync(nameof(MigrationReportDashboardPanel), Model.CoursesLive)
+                    
+                    @await Component.InvokeAsync(nameof(MigrationReportDashboardPanel), Model.Live)
 
                 </div>
             </div>
