@@ -156,10 +156,10 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
 
                     var appMessages = GenerateApprenticeshipDQIMessages(counts);
 
-                    if (appMessages.Any())
+                    if (!string.IsNullOrWhiteSpace(appMessages))
                     {
-                        appMessages.AddRange(actualModel.ValidationMessages.ToList());
-                        actualModel.ValidationMessages = appMessages;
+                        actualModel.ApprenticeshipMessages = appMessages;
+                        actualModel.ApprenticeshipHasErrors = true;
                     }
                 }
 
@@ -207,7 +207,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
             return provider;
         }
 
-        private List<string> GenerateApprenticeshipDQIMessages(ApprenticeshipDashboardCounts counts)
+        private string GenerateApprenticeshipDQIMessages(ApprenticeshipDashboardCounts counts)
         {
             var messages = new List<string>();
             
@@ -217,18 +217,18 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
 
             if (counts.TotalErrors.HasValue && counts.TotalErrors.Value > 0)
             {
-                messages.Add($"{totalAppCount} apprenticeship{(totalAppCount > 1 ? "s" : "")} uploaded in a file on {counts.FileUploadDate.Value:dd/MM/yyyy} {(totalAppCount > 1 ? "have" : "has")} {counts.TotalErrors} errors. " +
-                             $"Fix these to publish all of your apprenticeship{(totalAppCount > 1 ? "s" : "")}.");
+                return $"{totalAppCount} apprenticeship{(totalAppCount > 1 ? "s" : "")} uploaded in a file on {counts.FileUploadDate.Value:dd/MM/yyyy} {(totalAppCount > 1 ? "have" : "has")} {counts.TotalErrors} errors. " +
+                             $"Fix these to publish all of your apprenticeship{(totalAppCount > 1 ? "s" : "")}.";
             }
 
             if (counts.BulkUploadReadyToGoLiveCount.HasValue && counts.BulkUploadReadyToGoLiveCount.Value > 0)
             {
                 if (!counts.BulkUploadPendingCount.HasValue || counts.BulkUploadPendingCount.Value == 0)
                 {
-                    messages.Add($"{totalAppCount} apprenticeship{(totalAppCount > 1 ? "s" : "")} uploaded in a file on {counts.FileUploadDate.Value:dd/MM/yyyy} {(totalAppCount > 1 ? "have" : "has")} no errors but are not listed on the Course directory because you have not published {(totalAppCount > 1 ? "them" : "it")}.");
+                    return $"{totalAppCount} apprenticeship{(totalAppCount > 1 ? "s" : "")} uploaded in a file on {counts.FileUploadDate.Value:dd/MM/yyyy} {(totalAppCount > 1 ? "have" : "has")} no errors but are not listed on the Course directory because you have not published {(totalAppCount > 1 ? "them" : "it")}.";
                 }
             }
-            return messages;
+            return string.Empty;
         }
 
     }

@@ -56,6 +56,16 @@
         ClassType = "info-summary",
         Link = link
     })
+    if(Model.ApprenticeshipHasErrors)
+    {
+        @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+        {
+            NotificationTitle = "Bulk upload",
+            ClassType = "info-summary",
+            Link = $"<a class='govuk-link' href='/PublishApprenticeships/Index'>{Model.ApprenticeshipMessages}</a>"
+        })
+    }
+    
 }
 else
 {
@@ -100,74 +110,74 @@ else
         <div class="govuk-grid-column-two-thirds no-padding-left">
             @if (superUser.Succeeded || (feUser.Succeeded && apprenticeshipUser.Succeeded))
             {
-                
-                    @switch (Model.ProviderType)
-                    {
-                        case ProviderType.FE:
-                            <div class="govuk-grid-row govuk-!-margin-bottom-6 homepage-item--container">
-                                <div class="govuk-grid-column-one-half homepage-item ">
-                                    @await Html.PartialAsync("/ViewComponents/Dashboard/_CoursesCardPartial.cshtml")
-                                </div>
-                                <div class="govuk-grid-column-one-half homepage-item ">
-                                    @await Html.PartialAsync("/ViewComponents/Dashboard/_VenuesCardPartial.cshtml")
-                                </div>
+
+                @switch (Model.ProviderType)
+                {
+                    case ProviderType.FE:
+                        <div class="govuk-grid-row govuk-!-margin-bottom-6 homepage-item--container">
+                            <div class="govuk-grid-column-one-half homepage-item ">
+                                @await Html.PartialAsync("/ViewComponents/Dashboard/_CoursesCardPartial.cshtml")
                             </div>
-                            break;
-                        case ProviderType.Apprenticeship:
-                            <div class="govuk-grid-row govuk-!-margin-bottom-6 homepage-item--container">
-                                <div class="govuk-grid-column-one-half homepage-item ">
-                                    @await Html.PartialAsync("/ViewComponents/Dashboard/_ApprenticeshipsCardPartial.cshtml")
-                                </div>
-                                <div class="govuk-grid-column-one-half homepage-item ">
-                                    @await Html.PartialAsync("/ViewComponents/Dashboard/_VenuesCardPartial.cshtml")
-                                </div>
+                            <div class="govuk-grid-column-one-half homepage-item ">
+                                @await Html.PartialAsync("/ViewComponents/Dashboard/_VenuesCardPartial.cshtml")
                             </div>
-                            break;
-                        case ProviderType.Both:
-                            <div class="govuk-grid-row govuk-!-margin-bottom-6 homepage-item--container">
-                                <div class="govuk-grid-column-one-half homepage-item ">
-                                    @await Html.PartialAsync("/ViewComponents/Dashboard/_CoursesCardPartial.cshtml")
-                                </div>
-                                <div class="govuk-grid-column-one-half homepage-item ">
-                                    @await Html.PartialAsync("/ViewComponents/Dashboard/_ApprenticeshipsCardPartial.cshtml")
-                                </div>
+                        </div>
+                        break;
+                    case ProviderType.Apprenticeship:
+                        <div class="govuk-grid-row govuk-!-margin-bottom-6 homepage-item--container">
+                            <div class="govuk-grid-column-one-half homepage-item ">
+                                @await Html.PartialAsync("/ViewComponents/Dashboard/_ApprenticeshipsCardPartial.cshtml")
                             </div>
-                            <div class="govuk-grid-row govuk-!-margin-bottom-6 homepage-item--container">
-                                <div class="govuk-grid-column-one-half homepage-item ">
-                                    @await Html.PartialAsync("/ViewComponents/Dashboard/_VenuesCardPartial.cshtml")
-                                </div>
+                            <div class="govuk-grid-column-one-half homepage-item ">
+                                @await Html.PartialAsync("/ViewComponents/Dashboard/_VenuesCardPartial.cshtml")
                             </div>
-                            break;
-                    }
+                        </div>
+                        break;
+                    case ProviderType.Both:
+                        <div class="govuk-grid-row govuk-!-margin-bottom-6 homepage-item--container">
+                            <div class="govuk-grid-column-one-half homepage-item ">
+                                @await Html.PartialAsync("/ViewComponents/Dashboard/_CoursesCardPartial.cshtml")
+                            </div>
+                            <div class="govuk-grid-column-one-half homepage-item ">
+                                @await Html.PartialAsync("/ViewComponents/Dashboard/_ApprenticeshipsCardPartial.cshtml")
+                            </div>
+                        </div>
+                        <div class="govuk-grid-row govuk-!-margin-bottom-6 homepage-item--container">
+                            <div class="govuk-grid-column-one-half homepage-item ">
+                                @await Html.PartialAsync("/ViewComponents/Dashboard/_VenuesCardPartial.cshtml")
+                            </div>
+                        </div>
+                        break;
+                }
 
 
             }
             @*else
-            {
-                @if (feUser.Succeeded)
                 {
-                    <div class="govuk-grid-row govuk-!-margin-bottom-6 homepage-item--container">
-                        <div class="govuk-grid-column-one-half homepage-item ">
-                            @await Html.PartialAsync("/ViewComponents/Dashboard/_CoursesCardPartial.cshtml")
+                    @if (feUser.Succeeded)
+                    {
+                        <div class="govuk-grid-row govuk-!-margin-bottom-6 homepage-item--container">
+                            <div class="govuk-grid-column-one-half homepage-item ">
+                                @await Html.PartialAsync("/ViewComponents/Dashboard/_CoursesCardPartial.cshtml")
+                            </div>
+                            <div class="govuk-grid-column-one-half homepage-item ">
+                                @await Html.PartialAsync("/ViewComponents/Dashboard/_VenuesCardPartial.cshtml")
+                            </div>
                         </div>
-                        <div class="govuk-grid-column-one-half homepage-item ">
-                            @await Html.PartialAsync("/ViewComponents/Dashboard/_VenuesCardPartial.cshtml")
-                        </div>
-                    </div>
-                }
+                    }
 
-                @if (apprenticeshipUser.Succeeded)
-                {
-                    <div class="govuk-grid-row govuk-!-margin-bottom-6 homepage-item--container">
-                        <div class="govuk-grid-column-one-half homepage-item ">
-                            @await Html.PartialAsync("/ViewComponents/Dashboard/_ApprenticeshipsCardPartial.cshtml")
+                    @if (apprenticeshipUser.Succeeded)
+                    {
+                        <div class="govuk-grid-row govuk-!-margin-bottom-6 homepage-item--container">
+                            <div class="govuk-grid-column-one-half homepage-item ">
+                                @await Html.PartialAsync("/ViewComponents/Dashboard/_ApprenticeshipsCardPartial.cshtml")
+                            </div>
+                            <div class="govuk-grid-column-one-half homepage-item ">
+                                @await Html.PartialAsync("/ViewComponents/Dashboard/_VenuesCardPartial.cshtml")
+                            </div>
                         </div>
-                        <div class="govuk-grid-column-one-half homepage-item ">
-                            @await Html.PartialAsync("/ViewComponents/Dashboard/_VenuesCardPartial.cshtml")
-                        </div>
-                    </div>
-                }
-            }*@
+                    }
+                }*@
         </div>
         <div class="govuk-grid-column-one-third teal-top-border no-padding">
             <aside class="sidebar">
