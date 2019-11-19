@@ -151,6 +151,16 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 {
                     int csvLineCount = _apprenticeshipBulkUploadService.CountCsvLines(ms);
 
+                    bool processInline = (csvLineCount <= _blobService.InlineProcessingThreshold);
+                    _logger.LogInformation(
+                        $"Csv line count = {csvLineCount} threshold = {_blobService.InlineProcessingThreshold} processInline = {processInline}");
+
+                    if (processInline)
+                    {
+                        bulkUploadFileNewName +=
+                            "." + DateTime.UtcNow.ToString("yyyyMMddHHmmss") +
+                            ".processed"; // stops the Azure trigger from processing the file
+                    }
 
                     Task task = _blobService.UploadFileAsync(
                         $"{UKPRN.ToString()}/Apprenticeship Bulk Upload/Files/{bulkUploadFileNewName}", ms);
@@ -184,31 +194,37 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     if (errors.Any())
                     {
                         return RedirectToAction("WhatDoYouWantToDoNext", "BulkUploadApprenticeships",
-                            new { message = $"Your file contained {errors.Count} error{(errors.Count > 1 ? "s" : "" )}. You must fix all errors before your courses can be published to the directory." });
+                            new { message = $"Your file contained {errors.Count} error{(errors.Count > 1 ? "s" : "")}. You must fix all errors before your courses can be published to the directory." });
                     }
-
-                    // All good => redirect to BulkApprenticeship action
-                    return RedirectToAction("PublishYourFile", "BulkUploadApprenticeships");
-
-
-
+                    else
+                    {
+                        if (processInline)
+                        {
+                            // All good => redirect to BulkCourses action
+                            return RedirectToAction("PublishYourFile", "BulkUploadApprenticeships");
+                        }
+                        else
+                        {
+                            return RedirectToAction("Pending");
+                        }
+                    }
                 }
                 else
                 {
-                    vm.errors = new string[] {"Invalid file content."};
+                    vm.errors = new string[] { "Invalid file content." };
                 }
             }
 
             else
             {
-                vm.errors = new string[] {errorMessage};
+                vm.errors = new string[] { errorMessage };
             }
 
             return View(vm);
         }
 
-        
-       
+
+
 
         [Authorize]
         [HttpGet]
