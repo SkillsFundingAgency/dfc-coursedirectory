@@ -166,6 +166,7 @@ namespace Dfc.CourseDirectory.Web
             services.AddMvc(options =>
             {
                 options.Filters.Add(new DeactivatedProviderErrorActionFilter());
+                options.Filters.Add(new RedirectOnMissingUKPRNActionFilter());
             }).SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddSessionStateTempDataProvider();
 
 
