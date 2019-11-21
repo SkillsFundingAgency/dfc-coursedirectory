@@ -83,11 +83,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
 
             var reportResultsTask = _apprenticeshipService.GetAllDfcReports();
-            await Task.WhenAll(reportResultsTask);
+            var totalApprenticeshipsLiveTask = _apprenticeshipService.GetTotalLiveApprenticeships();
+            await Task.WhenAll(reportResultsTask, totalApprenticeshipsLiveTask);
 
             var reportResults = reportResultsTask.Result;
+            var totalApprenticeshipsLive = totalApprenticeshipsLiveTask.Result;
 
-            if (reportResults.IsFailure) throw new Exception("Unable to generate migration reports");
+            if (reportResults.IsFailure || totalApprenticeshipsLive.IsFailure) throw new Exception("Unable to generate migration reports");
 
             // @ToDo: refactor this business logic away from the presentation layer
             int feProvidersMigrated = reportResults.Value.Count;
@@ -99,7 +101,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 ProvidersMigrated = new MigrationReportDashboardPanelModel("Apprenticeship providers migrated", value: feProvidersMigrated),
                 Migrated = new MigrationReportDashboardPanelModel("Apprenticeships migrated", value: feCoursesMigrated),
                 MigratedWithErrors = new MigrationReportDashboardPanelModel("Apprenticeships with errors", value: feCoursesMigratedWithErrors),
-                Live = new MigrationReportDashboardPanelModel("Total Apprenticeships live", 0), //todo,
+                Live = new MigrationReportDashboardPanelModel("Total Apprenticeships live", totalApprenticeshipsLive.Value), //todo,
                 ReportResults = new MigrationReportResultsModel(reportResults.Value)
             };
             model.ReportType = ReportType.Apprenticeship;
