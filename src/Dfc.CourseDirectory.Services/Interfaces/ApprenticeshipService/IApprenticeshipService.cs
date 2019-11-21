@@ -23,5 +23,6 @@ namespace Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService
             int statusToBeChangedTo);
         Task<IResult<ApprenticeshipDashboardCounts>> GetApprenticeshipDashboardCounts(int UKPRN);
         Task<IResult<IList<DfcMigrationReport>>> GetAllDfcReports();
+        Task<IResult<int>> GetTotalLiveApprenticeships();
     }
 }

@@ -23,7 +23,8 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
         private readonly HttpClient _httpClient;
         private readonly Uri _getStandardsAndFrameworksUri, _addApprenticeshipUri, _getApprenticeshipByUKPRNUri, 
             _getApprenticeshipByIdUri, _updateApprenticshipUri, _getStandardByCodeUri, _getFrameworkByCodeUri, _deleteBulkUploadApprenticeshipsUri,
-            _changeApprenticeshipStatusesForUKPRNSelectionUri, _getApprenticeshipDashboardCountsUri, _getAllDfcReports;
+            _changeApprenticeshipStatusesForUKPRNSelectionUri, _getApprenticeshipDashboardCountsUri, _getAllDfcReports, _getTotalLiveCoursesUri;
+
 
         public ApprenticeshipService(
             ILogger<ApprenticeshipService> logger,
@@ -53,6 +54,7 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
                 settings.Value.ChangeApprenticeshipStatusesForUKPRNSelectionUri();
             _getApprenticeshipDashboardCountsUri = settings.Value.GetApprenticeshipDashboardCountsUri();
             _getAllDfcReports = settings.Value.ToGetAllDfcReports();
+            _getTotalLiveCoursesUri = settings.Value.ToGetTotalLiveCourses();
         }
 
         public async Task<IResult<IEnumerable<IStandardsAndFrameworks>>> StandardsAndFrameworksSearch(string criteria, int UKPRN)
@@ -496,6 +498,29 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             }
         }
 
+        public async Task<IResult<int>> GetTotalLiveApprenticeships()
+        {
+            using (var httpClient = new HttpClient())
+            {
+                httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
+
+                var response = await httpClient.GetAsync(_getTotalLiveCoursesUri);
+                _logger.LogHttpResponseMessage("GetTotalLiveApprenticeships service http response", response);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+
+                    var total = JsonConvert.DeserializeObject<int>(json);
+
+                    return Result.Ok(total);
+                }
+                else
+                {
+                    return Result.Fail<int>("GetTotalLiveApprenticeships service unsuccessful http response");
+                }
+            }
+        }
     }
 
     internal static class ApprenticeshipServiceSettingsExtensions
@@ -567,6 +592,13 @@ namespace Dfc.CourseDirectory.Services.ApprenticeshipService
             var uri = new Uri(extendee.ApiUrl);
             var trimmed = uri.AbsoluteUri.TrimEnd('/');
             return new Uri($"{trimmed}/GetApprenticeshipDashboardCounts");
+        }
+
+        internal static Uri ToGetTotalLiveCourses(this IApprenticeshipServiceSettings extendee)
+        {
+            var uri = new Uri(extendee.ApiUrl);
+            var trimmed = uri.AbsoluteUri.TrimEnd('/');
+            return new Uri($"{trimmed}/GetTotalLiveApprenticeships");
         }
     }
 }
