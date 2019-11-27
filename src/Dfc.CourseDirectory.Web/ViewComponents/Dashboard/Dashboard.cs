@@ -159,7 +159,17 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
                     if (!string.IsNullOrWhiteSpace(appMessages))
                     {
                         actualModel.ApprenticeshipMessages = appMessages;
-                        actualModel.ApprenticeshipHasErrors = true;
+                        actualModel.ApprenticeshipHasErrors = true;                        
+                        
+                    }
+
+                    if(counts.TotalErrors != null && counts.TotalErrors > 0 )
+                    {
+                        actualModel.ApprenticeshipBulkUploadHasErrors = true;
+                    }
+                    else
+                    {
+                        actualModel.ApprenticeshipBulkUploadHasErrors = false;
                     }
                 }
 
@@ -219,6 +229,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
             {
                 return $"{totalAppCount} apprenticeship{(totalAppCount > 1 ? "s" : "")} uploaded in a file on {counts.FileUploadDate.Value:dd/MM/yyyy} {(totalAppCount > 1 ? "have" : "has")} {counts.TotalErrors} errors. " +
                              $"Fix these to publish all of your apprenticeship{(totalAppCount > 1 ? "s" : "")}.";
+                
             }
 
             if (counts.BulkUploadReadyToGoLiveCount.HasValue && counts.BulkUploadReadyToGoLiveCount.Value > 0)
