@@ -48,8 +48,9 @@
         {
             link = $"<a class='govuk-link' href='/PublishCourses/Index?publishMode=Bulkupload'>{Model.BulkUploadMessage}</a>";
         }
-
-        @if(Model.ApprenticeshipHasErrors == true)
+         
+     
+        @if(Model.ApprenticeshipBulkUploadHasErrors == true)
         {
             link = $"<a class='govuk-link' href='/BulkUploadApprenticeships/WhatDoYouWantToDoNext/Index'>{Model.ApprenticeshipMessages}</a>";
         }
