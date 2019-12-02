@@ -234,7 +234,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
 
             if (counts.BulkUploadReadyToGoLiveCount.HasValue && counts.BulkUploadReadyToGoLiveCount.Value > 0)
             {
-                if (!counts.BulkUploadPendingCount.HasValue || counts.BulkUploadPendingCount.Value == 0)
+                if (counts.BulkUploadPendingCount.HasValue && counts.BulkUploadPendingCount.Value == 0)
                 {
                     return $"{totalAppCount} apprenticeship{(totalAppCount > 1 ? "s" : "")} uploaded in a file on {counts.FileUploadDate.Value:dd/MM/yyyy} {(totalAppCount > 1 ? "have" : "has")} no errors but are not listed on the Course directory because you have not published {(totalAppCount > 1 ? "them" : "it")}.";
                 }
