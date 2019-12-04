@@ -44,5 +44,6 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
         public bool BulkUploadPublishInProgress { get; set; }
         public EnvironmentType EnvironmentType { get; set; }
         public bool ApprenticeshipBulkUploadHasErrors { get; set; }
+        public int ApprenticeshipBulkUploadReadyToGoLiveCount { get; set; }
     }
 }

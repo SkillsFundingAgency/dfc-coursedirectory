@@ -29,7 +29,7 @@
     </div>
 }
 
-@if ((Model.BulkUploadReadyToGoLiveCount > 0 || Model.BulkUploadPendingCount > 0) && !Model.BulkUploadBackgroundInProgress)
+@if ((Model.BulkUploadReadyToGoLiveCount > 0 || Model.BulkUploadPendingCount > 0 || Model.ApprenticeshipBulkUploadReadyToGoLiveCount > 0) && !Model.BulkUploadBackgroundInProgress)
 {
     var link = "";
 
@@ -69,6 +69,7 @@
    
     
 }
+
 else
 {
 
