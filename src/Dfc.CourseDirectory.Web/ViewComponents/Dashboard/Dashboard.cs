@@ -94,7 +94,13 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
 
                 IEnumerable<Course> inValidCourses = courses.Where(c => c.IsValid == false);
 
-              
+                var getApprenticeshipResult = _apprenticeshipService.GetApprenticeshipByUKPRN(UKPRN.ToString()).Result;          
+
+               
+
+                var ApprenticeshipBulkUploadReadyToGoLive = _apprenticeshipService.GetApprenticeshipByUKPRN(UKPRN.ToString()).Result.Value.Where(x => x.RecordStatus == RecordStatus.BulkUploadReadyToGoLive);
+
+               actualModel.ApprenticeshipBulkUploadReadyToGoLiveCount = ApprenticeshipBulkUploadReadyToGoLive.Count();
 
                 actualModel.BulkUploadPendingCount = bulkUploadRunsPending.Count();
                 actualModel.BulkUploadReadyToGoLiveCount = bulkUploadReadyToGoLive.Count();
