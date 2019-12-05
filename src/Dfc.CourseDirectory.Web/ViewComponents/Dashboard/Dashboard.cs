@@ -138,6 +138,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
 
                 actualModel.BulkUploadMessage = (actualModel.BulkUploadTotalCount > 0 & actualModel.BulkUploadPendingCount == 0) ? BulkUpLoadNoErrorMessage : BulkUpLoadErrorMessage;
 
+
                 actualModel.ValidationMessages = messages;
                 actualModel.VenueCount = 0;
                 if (allVenues.Value != null)
@@ -178,7 +179,22 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
                         actualModel.ApprenticeshipBulkUploadHasErrors = false;
                     }
                 }
+                // provider has no apprenticeship but pending bulkupload 
+                if(appResult.IsFailure)
+                {
+                    var counts = appResult.Value;                 
 
+                    if (counts == null && actualModel.ApprenticeshipBulkUploadReadyToGoLiveCount > 0)
+                    {
+                      var appMessages =  actualModel.ApprenticeshipBulkUploadReadyToGoLiveCount.ToString() + WebHelper.GetCourseTextToUse(actualModel.ApprenticeshipBulkUploadReadyToGoLiveCount) + " uploaded on " + actualModel.FileUploadDate?.ToString("dd/MM/yyyy") + " have no errors, but are not listed on the Course directory because you have not published them.";
+                        if (!string.IsNullOrWhiteSpace(appMessages))
+                        {
+                            actualModel.ApprenticeshipMessages = appMessages;
+                        }                     
+                    }
+                }
+
+           
                 actualModel.PublishedApprenticeshipsCount = result.Value.Count(x => x.RecordStatus == RecordStatus.Live);
 
             Dfc.CourseDirectory.Models.Models.Providers.Provider provider = FindProvider(UKPRN);
@@ -247,6 +263,5 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
             }
             return string.Empty;
         }
-
     }
 }
