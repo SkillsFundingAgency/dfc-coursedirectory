@@ -121,8 +121,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return View("./Pending/Index");
         }
 
-        [Authorize] 
-        [HttpPost]
+        [Authorize]
+        [HttpPost("BulkUploadApprenticeships")]
         public async Task<IActionResult> Index(IFormFile bulkUploadFile)
         {
             int? UKPRN;
