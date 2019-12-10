@@ -245,6 +245,9 @@
       "metadata": {
         "description": "The CourseServiceSettings__BulkUploadSecondsPerRecord app setting"
       }
+    },
+    "ProviderPortalSharedResourceGroupName": {
+      "type": "string"
     }
   },
   "variables": {
@@ -276,6 +279,7 @@
     {
       "name": "courseDirectoryCertificates",
       "type": "Microsoft.Resources/deployments",
+      "resourceGroup": "[parameters('providerPortalSharedResourceGroupName')]",
       "apiVersion": "2017-05-10",
       "condition": "[greater(length(parameters('appHostName')),0)]",
       "properties": {
@@ -548,7 +552,7 @@
               },
               {
                 "name": "BlobStorageSettings__AccountKey",
-                "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts',parameters('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]"
+                "value": "[listKeys(resourceId(parameters('providerPortalSharedResourceGroupName'), 'Microsoft.Storage/storageAccounts',parameters('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]"
               },
               {
                 "name": "BlobStorageSettings__Container",

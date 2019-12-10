@@ -121,6 +121,9 @@
     },
     "BulkUploadSecondsPerRecord": {
       "value": "1"
+    },
+    "ProviderPortalSharedResourceGroupName": {
+      "value": "dfc-foo-prov-shared-rg"
     }
   }
 }
