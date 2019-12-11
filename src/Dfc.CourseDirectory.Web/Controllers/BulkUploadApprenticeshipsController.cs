@@ -122,7 +122,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         [Authorize]
-        [HttpPost("BulkUploadApprenticeships")]
+        [HttpPost]
         public async Task<IActionResult> Index(IFormFile bulkUploadFile)
         {
             int? UKPRN;
