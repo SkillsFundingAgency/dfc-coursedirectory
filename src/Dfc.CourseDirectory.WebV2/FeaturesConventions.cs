@@ -36,7 +36,9 @@ namespace Dfc.CourseDirectory.WebV2
 
         public IEnumerable<string> ExpandViewLocations(ViewLocationExpanderContext context, IEnumerable<string> viewLocations)
         {
-            if (context.Values.ContainsKey("Feature") && !context.ViewName.StartsWith("Components/"))
+            if (context.Values.ContainsKey("Feature") &&
+                !context.ViewName.StartsWith("Components/") &&
+                context.IsMainPage)
             {
                 var featureName = context.Values["Feature"];
 
