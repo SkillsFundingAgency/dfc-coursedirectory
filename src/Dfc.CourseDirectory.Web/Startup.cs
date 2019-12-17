@@ -30,6 +30,7 @@ using Dfc.CourseDirectory.Web.BackgroundWorkers;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.HostedServices;
 using Dfc.CourseDirectory.Web.ViewComponents;
+using Dfc.CourseDirectory.WebV2;
 using IdentityModel.Client;
 using JWT.Algorithms;
 using JWT.Builder;
@@ -162,6 +163,8 @@ namespace Dfc.CourseDirectory.Web
             services.AddScoped<IApprenticeshipProvisionHelper, ApprenticeshipProvisionHelper>();
             services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddCourseDirectory();
 
             services.AddMvc(options =>
             {
