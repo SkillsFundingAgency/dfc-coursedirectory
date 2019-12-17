@@ -17,7 +17,6 @@ namespace Dfc.CourseDirectory.WebV2
                 .AddApplicationPart(thisAssembly)
                 .AddRazorOptions(options =>
                 {
-                    options.FileProviders.Add(new ManifestEmbeddedFileProvider(thisAssembly));
                     options.ViewLocationExpanders.Add(new FeatureViewLocationExpander());
                 });
 
