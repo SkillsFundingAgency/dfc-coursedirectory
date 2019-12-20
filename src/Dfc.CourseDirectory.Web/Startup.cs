@@ -164,7 +164,7 @@ namespace Dfc.CourseDirectory.Web
             services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddCourseDirectory();
+            services.AddCourseDirectory(_env);
 
             services.AddMvc(options =>
             {

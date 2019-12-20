@@ -1,11 +1,13 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Dfc.CourseDirectory.WebV2
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddCourseDirectory(this IServiceCollection services)
+        public static IServiceCollection AddCourseDirectory(
+            this IServiceCollection services,
+            IHostingEnvironment environment)
         {
             var thisAssembly = typeof(ServiceCollectionExtensions).Assembly;
             
