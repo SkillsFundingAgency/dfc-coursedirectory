@@ -10,6 +10,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         protected override IWebHostBuilder CreateWebHostBuilder() => WebHost
             .CreateDefaultBuilder()
+            .UseEnvironment("Testing")
             .UseStartup<Startup>();
     }
 }
