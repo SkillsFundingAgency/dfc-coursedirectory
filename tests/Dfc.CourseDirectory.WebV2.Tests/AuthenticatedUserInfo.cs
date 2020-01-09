@@ -69,6 +69,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         public void Reset() => AsDeveloper();
 
-        public void SetNotAuthenticated() => IsAuthenticated = false;
+        public void SetNotAuthenticated()
+        {
+            IsAuthenticated = false;
+            Email = default;
+            UserId = default;
+            Role = default;
+            UKPRN = default;
+            ProviderType = default;
+        }
     }
 }
