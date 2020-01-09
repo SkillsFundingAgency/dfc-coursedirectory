@@ -29,6 +29,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
             services.AddCourseDirectory(HostingEnvironment);
 
+            // Make controllers defined in this assembly available
+            services.AddMvc().AddApplicationPart(typeof(Startup).Assembly);
+
             services.AddSingleton<AuthenticatedUserInfo>();
 
             return services.BuildServiceProvider(validateScopes: true);
