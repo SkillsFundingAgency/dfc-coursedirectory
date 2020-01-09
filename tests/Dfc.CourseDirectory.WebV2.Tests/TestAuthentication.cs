@@ -35,9 +35,24 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             {
                 var claims = new List<Claim>()
                 {
-                    new Claim(ClaimTypes.NameIdentifier, "Test User"),
-                    new Claim("name", "Test User")
+                    new Claim("user_id", _authenticatedUserInfo.UserId.ToString()),
+                    new Claim("sub", _authenticatedUserInfo.UserId.ToString()),
+                    new Claim("email", _authenticatedUserInfo.Email),
+                    new Claim(ClaimTypes.Role, _authenticatedUserInfo.Role)
                 };
+
+                if (_authenticatedUserInfo.UKPRN.HasValue)
+                {
+                    claims.AddRange(new List<Claim>()
+                    {
+                        new Claim("UKPRN", _authenticatedUserInfo.UKPRN.Value.ToString()),
+                        new Claim("ProviderType", _authenticatedUserInfo.ProviderType.Value.ToString())
+                        // These claims are populated in the real app but are not required here (yet):
+                        // organisation - JSON from DfE Sign In API call
+                        // OrganisationId - GUID Org ID for DfE API call
+                        // provider_status
+                    });
+                }
 
                 var identity = new ClaimsIdentity(claims, Scheme.Name);
                 var principal = new ClaimsPrincipal(identity);
