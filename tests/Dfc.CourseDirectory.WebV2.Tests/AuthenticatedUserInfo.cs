@@ -17,6 +17,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         public int? UKPRN { get; private set; }
         public ProviderType? ProviderType { get; private set; }
 
+        public void AsDeveloper() => AsDeveloper(DefaultEmail, DefaultUserId);
+
         public void AsDeveloper(string email, Guid userId)
         {
             IsAuthenticated = true;
@@ -26,6 +28,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             UKPRN = null;
             ProviderType = null;
         }
+
+        public void AsHelpDesk() => AsHelpdesk(DefaultEmail, DefaultUserId);
 
         public void AsHelpdesk(string email, Guid userId)
         {
@@ -37,6 +41,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             ProviderType = null;
         }
 
+        public void AsProviderUser(int ukprn, ProviderType providerType) =>
+            AsProviderUser(DefaultEmail, DefaultUserId, ukprn, providerType);
+
         public void AsProviderUser(string email, Guid userId, int ukprn, ProviderType providerType)
         {
             IsAuthenticated = true;
@@ -46,6 +53,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             UKPRN = ukprn;
             ProviderType = providerType;
         }
+
+        public void AsProviderSuperUser(int ukprn, ProviderType providerType) =>
+            AsProviderSuperUser(DefaultEmail, DefaultUserId, ukprn, providerType);
 
         public void AsProviderSuperUser(string email, Guid userId, int ukprn, ProviderType providerType)
         {
@@ -57,7 +67,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             ProviderType = providerType;
         }
 
-        public void Reset() => AsDeveloper(DefaultEmail, DefaultUserId);
+        public void Reset() => AsDeveloper();
 
         public void SetNotAuthenticated() => IsAuthenticated = false;
     }
