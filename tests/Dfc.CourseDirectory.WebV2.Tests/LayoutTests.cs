@@ -25,7 +25,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             response.EnsureSuccessStatusCode();
 
             var doc = await response.GetDocument();
-            Assert.Equal(0, doc.QuerySelectorAll("#ptcd__sign-out-link").Length);
+            Assert.Equal(0, doc.QuerySelectorAll("#pttcd__sign-out-link").Length);
         }
 
         [Fact]
@@ -42,7 +42,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             response.EnsureSuccessStatusCode();
 
             var doc = await response.GetDocument();
-            Assert.Equal(1, doc.QuerySelectorAll("#ptcd__sign-out-link").Length);
+            Assert.Equal(1, doc.QuerySelectorAll("#pttcd__sign-out-link").Length);
         }
     }
 }
