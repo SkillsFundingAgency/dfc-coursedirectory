@@ -16,12 +16,20 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         public void Configure(IApplicationBuilder app)
         {
+            app.UseAuthentication();
+
             app.UseMvc();
         }
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
+            services
+                .AddAuthentication("Test")
+                .AddScheme<TestAuthenticationOptions, TestAuthenticationHandler>("Test", _ => { });
+
             services.AddCourseDirectory(HostingEnvironment);
+
+            services.AddSingleton<AuthenticatedUserInfo>();
 
             return services.BuildServiceProvider(validateScopes: true);
         }

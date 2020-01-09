@@ -1,4 +1,6 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests
@@ -8,10 +10,17 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         public TestBase(CourseDirectoryApplicationFactory factory)
         {
             Factory = factory;
+
+            HttpClient = factory.CreateClient();
+            User.Reset();
         }
 
         protected CourseDirectoryApplicationFactory Factory { get; }
 
-        protected HttpClient CreateClient => Factory.CreateClient();
+        protected IServiceProvider Services => Factory.Server.Host.Services;
+
+        protected AuthenticatedUserInfo User => Services.GetRequiredService<AuthenticatedUserInfo>();
+
+        protected HttpClient HttpClient { get; }
     }
 }
