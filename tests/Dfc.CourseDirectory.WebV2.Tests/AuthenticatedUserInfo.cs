@@ -1,5 +1,6 @@
 ﻿using System;
 using Dfc.CourseDirectory.WebV2.Models;
+using Dfc.CourseDirectory.WebV2.Security;
 
 namespace Dfc.CourseDirectory.WebV2.Tests
 {
@@ -24,7 +25,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             IsAuthenticated = true;
             Email = email;
             UserId = userId;
-            Role = "Developer";
+            Role = RoleNames.Developer;
             UKPRN = null;
             ProviderType = null;
         }
@@ -36,7 +37,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             IsAuthenticated = true;
             Email = email;
             UserId = userId;
-            Role = "Helpdesk";
+            Role = RoleNames.Helpdesk;
             UKPRN = null;
             ProviderType = null;
         }
@@ -49,7 +50,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             IsAuthenticated = true;
             Email = email;
             UserId = userId;
-            Role = "Provider User";
+            Role = RoleNames.ProviderUser;
             UKPRN = ukprn;
             ProviderType = providerType;
         }
@@ -62,7 +63,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             IsAuthenticated = true;
             Email = email;
             UserId = userId;
-            Role = "Provider Superuser";
+            Role = RoleNames.ProviderSuperUser;
             UKPRN = ukprn;
             ProviderType = providerType;
         }
