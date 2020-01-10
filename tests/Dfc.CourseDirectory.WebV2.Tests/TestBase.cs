@@ -11,6 +11,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         {
             Factory = factory;
 
+            factory.ResetMocks();
+
             HttpClient = factory.CreateClient();
             User.Reset();
         }
