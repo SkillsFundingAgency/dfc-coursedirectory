@@ -14,6 +14,7 @@ namespace Dfc.CourseDirectory.WebV2.Filters
         public VerifyApprenticeshipExistsAttribute(string parameterName)
         {
             ParameterName = parameterName ?? throw new ArgumentNullException(nameof(parameterName));
+            Order = 0;
         }
 
         public VerifyApprenticeshipExistsAttribute()
@@ -44,8 +45,21 @@ namespace Dfc.CourseDirectory.WebV2.Filters
             }
             else
             {
+                // Stash the UKPRN so additional filters can use it
+                context.HttpContext.Features.Set(new ApprenticeshipProviderFeature(ukprn.Value));
+
                 await next();
             }
         }
+    }
+
+    public class ApprenticeshipProviderFeature
+    {
+        public ApprenticeshipProviderFeature(int ukprn)
+        {
+            UKPRN = ukprn;
+        }
+
+        public int UKPRN { get; }
     }
 }

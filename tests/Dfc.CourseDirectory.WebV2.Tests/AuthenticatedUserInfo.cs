@@ -30,7 +30,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             ProviderType = null;
         }
 
-        public void AsHelpDesk() => AsHelpdesk(DefaultEmail, DefaultUserId);
+        public void AsHelpdesk() => AsHelpdesk(DefaultEmail, DefaultUserId);
 
         public void AsHelpdesk(string email, Guid userId)
         {
