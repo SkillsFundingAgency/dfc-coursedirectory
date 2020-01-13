@@ -9,6 +9,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
     public class AuthenticatedUserInfo
     {
         public const string DefaultEmail = "test.user@place.com";
+        public const string DefaultFirstName = "Test";
+        public const string DefaultLastName = "User";
 
         public static readonly Guid DefaultUserId = new Guid("9b8adb2a-5a26-44b9-b6a0-52846f7a4555");  // Dummy ID
 
@@ -16,6 +18,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         public bool IsAuthenticated { get; private set; }
         public Guid UserId { get; private set; }  // GUID to mirror DfE Sign In
         public string Role { get; private set; }
+        public string FirstName { get; private set; }
+        public string LastName { get; private set; }
 
         public int? UKPRN { get; private set; }
         public ProviderType? ProviderType { get; private set; }
@@ -41,52 +45,72 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             }
         }
 
-        public void AsDeveloper() => AsDeveloper(DefaultEmail, DefaultUserId);
+        public void AsDeveloper() => AsDeveloper(DefaultEmail, DefaultUserId, DefaultFirstName, DefaultLastName);
 
-        public void AsDeveloper(string email, Guid userId)
+        public void AsDeveloper(string email, Guid userId, string firstName, string lastName)
         {
             IsAuthenticated = true;
             Email = email;
             UserId = userId;
             Role = RoleNames.Developer;
+            FirstName = firstName;
+            LastName = lastName;
             UKPRN = null;
             ProviderType = null;
         }
 
-        public void AsHelpdesk() => AsHelpdesk(DefaultEmail, DefaultUserId);
+        public void AsHelpdesk() => AsHelpdesk(DefaultEmail, DefaultUserId, DefaultFirstName, DefaultLastName);
 
-        public void AsHelpdesk(string email, Guid userId)
+        public void AsHelpdesk(string email, Guid userId, string firstName, string lastName)
         {
             IsAuthenticated = true;
             Email = email;
             UserId = userId;
             Role = RoleNames.Helpdesk;
+            FirstName = firstName;
+            LastName = lastName;
             UKPRN = null;
             ProviderType = null;
         }
 
         public void AsProviderUser(int ukprn, ProviderType providerType) =>
-            AsProviderUser(DefaultEmail, DefaultUserId, ukprn, providerType);
+            AsProviderUser(DefaultEmail, DefaultUserId, DefaultFirstName, DefaultLastName, ukprn, providerType);
 
-        public void AsProviderUser(string email, Guid userId, int ukprn, ProviderType providerType)
+        public void AsProviderUser(
+            string email,
+            Guid userId,
+            string firstName,
+            string lastName,
+            int ukprn,
+            ProviderType providerType)
         {
             IsAuthenticated = true;
             Email = email;
             UserId = userId;
             Role = RoleNames.ProviderUser;
+            FirstName = firstName;
+            LastName = lastName;
             UKPRN = ukprn;
             ProviderType = providerType;
         }
 
         public void AsProviderSuperUser(int ukprn, ProviderType providerType) =>
-            AsProviderSuperUser(DefaultEmail, DefaultUserId, ukprn, providerType);
+            AsProviderSuperUser(DefaultEmail, DefaultUserId, DefaultFirstName, DefaultLastName, ukprn, providerType);
 
-        public void AsProviderSuperUser(string email, Guid userId, int ukprn, ProviderType providerType)
+        public void AsProviderSuperUser(
+            string email,
+            Guid userId,
+            string firstName,
+            string lastName,
+            int ukprn,
+            ProviderType providerType)
         {
             IsAuthenticated = true;
             Email = email;
             UserId = userId;
             Role = RoleNames.ProviderSuperUser;
+            FirstName = firstName;
+            LastName = lastName;
             UKPRN = ukprn;
             ProviderType = providerType;
         }
@@ -98,6 +122,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             IsAuthenticated = false;
             Email = default;
             UserId = default;
+            FirstName = default;
+            LastName = default;
             Role = default;
             UKPRN = default;
             ProviderType = default;
