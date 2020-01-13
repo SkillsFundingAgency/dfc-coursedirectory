@@ -38,6 +38,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                     new Claim("user_id", _authenticatedUserInfo.UserId.ToString()),
                     new Claim("sub", _authenticatedUserInfo.UserId.ToString()),
                     new Claim("email", _authenticatedUserInfo.Email),
+                    new Claim("given_name", _authenticatedUserInfo.FirstName),
+                    new Claim("family_name", _authenticatedUserInfo.LastName),
                     new Claim(ClaimTypes.Role, _authenticatedUserInfo.Role)
                 };
 
