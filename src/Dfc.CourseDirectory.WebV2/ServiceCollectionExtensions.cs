@@ -30,6 +30,8 @@ namespace Dfc.CourseDirectory.WebV2
                 .AddMvc(options =>
                 {
                     options.Conventions.Add(new AddFeaturePropertyModelConvention());
+
+                    options.ModelBinderProviders.Insert(0, new CurrentProviderModelBinderProvider());
                 })
                 .AddApplicationPart(thisAssembly)
                 .AddRazorOptions(options =>
