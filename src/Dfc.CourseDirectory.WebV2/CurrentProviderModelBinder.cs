@@ -60,14 +60,14 @@ namespace Dfc.CourseDirectory.WebV2
             {
                 if (specifiedProviderIdBindingResult.Length == 0)
                 {
-                    bindingContext.Result = ModelBindingResult.Failed();
+                    OnBindingFailed();
                     return;
                 }
                 else
                 {
                     if (!int.TryParse(specifiedProviderIdBindingResult.FirstValue, out ukprn))
                     {
-                        bindingContext.Result = ModelBindingResult.Failed();
+                        OnBindingFailed();
                         return;
                     }
                 }
@@ -78,12 +78,18 @@ namespace Dfc.CourseDirectory.WebV2
             }
             else
             {
-                bindingContext.Result = ModelBindingResult.Failed();
+                OnBindingFailed();
                 return;
             }
 
             var providerInfo = await _providerInfoCache.GetProviderInfo(ukprn);
             bindingContext.Result = ModelBindingResult.Success(providerInfo);
+
+            void OnBindingFailed()
+            {
+                bindingContext.ModelState.AddModelError(bindingContext.FieldName, "Failed to determine current provider.");
+                bindingContext.Result = ModelBindingResult.Failed();
+            }
         }
     }
 }

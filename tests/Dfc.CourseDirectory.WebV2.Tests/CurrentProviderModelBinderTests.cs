@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.WebV2.Filters;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Newtonsoft.Json.Linq;
@@ -95,6 +96,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
     public class CurrentProviderModelBinderTestController : Controller
     {
         [HttpGet("currentprovidermodelbindertests")]
+        [AllowNoCurrentProvider]  // Prevent filter from modifying response
         public IActionResult Get(ProviderInfo providerInfo) => Json(providerInfo);
     }
 }
