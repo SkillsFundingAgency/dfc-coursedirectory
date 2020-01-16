@@ -4,6 +4,8 @@ using Dfc.CourseDirectory.WebV2.Security;
 
 namespace Dfc.CourseDirectory.WebV2.Tests
 {
+    public enum TestUserType { Developer, Helpdesk, ProviderUser, ProviderSuperUser }
+
     public class AuthenticatedUserInfo
     {
         public const string DefaultEmail = "test.user@place.com";
@@ -17,6 +19,27 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         public int? UKPRN { get; private set; }
         public ProviderType? ProviderType { get; private set; }
+
+        public void AsTestUser(TestUserType userType, int? ukprn = null)
+        {
+            switch (userType)
+            {
+                case TestUserType.Developer:
+                    AsDeveloper();
+                    break;
+                case TestUserType.Helpdesk:
+                    AsHelpdesk();
+                    break;
+                case TestUserType.ProviderSuperUser:
+                    AsProviderSuperUser(ukprn.Value, Models.ProviderType.Both);
+                    break;
+                case TestUserType.ProviderUser:
+                    AsProviderUser(ukprn.Value, Models.ProviderType.Both);
+                    break;
+                default:
+                    throw new ArgumentException($"Unknown test user type: '{userType}'.", nameof(userType));
+            }
+        }
 
         public void AsDeveloper() => AsDeveloper(DefaultEmail, DefaultUserId);
 
