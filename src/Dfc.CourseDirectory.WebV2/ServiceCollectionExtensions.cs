@@ -15,7 +15,9 @@ namespace Dfc.CourseDirectory.WebV2
 
             if (!environment.IsTesting())
             {
+                services.AddSingleton<IProviderOwnershipCache, ProviderOwnershipCache>();
                 services.AddTransient<ICosmosDbQueryDispatcher, CosmosDbQueryDispatcher>();
+                services.AddSingleton<Configuration>();
 
                 services.Scan(scan => scan
                     .FromAssembliesOf(typeof(ICosmosDbQuery<>))

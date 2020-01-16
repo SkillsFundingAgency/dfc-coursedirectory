@@ -2,6 +2,7 @@
 {
     public class Configuration
     {
-        public string DatabaseId { get; set; }
+        public string DatabaseId { get; set; } = "providerportal";
+        public string ApprenticeshipCollectionName { get; set; } = "apprenticeship";
     }
 }
