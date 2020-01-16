@@ -47,17 +47,17 @@ namespace Dfc.CourseDirectory.WebV2
             var user = bindingContext.HttpContext.User;
             var role = user.FindFirst(ClaimTypes.Role).Value;
 
-            var valueProvider = new QueryStringValueProvider(
-                BindingSource.Query,
-                bindingContext.HttpContext.Request.Query,
-                CultureInfo.InvariantCulture);
-
-            var specifiedProviderIdBindingResult = valueProvider.GetValue(QueryParameterName);
-
             int ukprn;
 
             if (role == RoleNames.Developer || role == RoleNames.Helpdesk)
             {
+                var valueProvider = new QueryStringValueProvider(
+                    BindingSource.Query,
+                    bindingContext.HttpContext.Request.Query,
+                    CultureInfo.InvariantCulture);
+
+                var specifiedProviderIdBindingResult = valueProvider.GetValue(QueryParameterName);
+
                 if (specifiedProviderIdBindingResult.Length == 0)
                 {
                     OnBindingFailed();
