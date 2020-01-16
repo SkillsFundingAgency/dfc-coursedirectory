@@ -1,4 +1,5 @@
 ﻿using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
+using Dfc.CourseDirectory.WebV2.Filters;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -30,6 +31,8 @@ namespace Dfc.CourseDirectory.WebV2
                 .AddMvc(options =>
                 {
                     options.Conventions.Add(new AddFeaturePropertyModelConvention());
+
+                    options.Filters.Add(new RedirectToProviderSelectionActionFilter());
 
                     options.ModelBinderProviders.Insert(0, new CurrentProviderModelBinderProvider());
                 })
