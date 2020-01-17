@@ -15,6 +15,11 @@ namespace Dfc.CourseDirectory.WebV2.Filters
 
     public class RedirectToProviderSelectionActionFilter : ActionFilterAttribute
     {
+        public RedirectToProviderSelectionActionFilter()
+        {
+            Order = 9;
+        }
+
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             if (context.ActionDescriptor is ControllerActionDescriptor controllerActionDescriptor &&
@@ -30,7 +35,7 @@ namespace Dfc.CourseDirectory.WebV2.Filters
 
             foreach (var p in providerInfoParameters)
             {
-                if ((context.ModelState[p.Name]?.Errors.Count ?? 0) != 0)
+                if (!context.ActionArguments.TryGetValue(p.Name, out var actionArg) || actionArg == null)
                 {
                     context.Result = new RedirectToActionResult(
                         "Index",

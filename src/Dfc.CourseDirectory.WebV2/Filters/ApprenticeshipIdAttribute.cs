@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -7,17 +8,17 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Dfc.CourseDirectory.WebV2.Filters
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
-    public class VerifyApprenticeshipExistsAttribute : ActionFilterAttribute
+    public class ApprenticeshipIdAttribute : ActionFilterAttribute
     {
         private const string DefaultParameterName = "apprenticeshipId";
 
-        public VerifyApprenticeshipExistsAttribute(string parameterName)
+        public ApprenticeshipIdAttribute(string parameterName)
         {
             ParameterName = parameterName ?? throw new ArgumentNullException(nameof(parameterName));
             Order = 0;
         }
 
-        public VerifyApprenticeshipExistsAttribute()
+        public ApprenticeshipIdAttribute()
             : this(DefaultParameterName)
         {
         }
@@ -47,6 +48,30 @@ namespace Dfc.CourseDirectory.WebV2.Filters
             {
                 // Stash the UKPRN so additional filters can use it
                 context.HttpContext.Features.Set(new ApprenticeshipProviderFeature(ukprn.Value));
+
+                // If the action has a ProviderInfo parameter, ensure it's bound and matches this UKPRN
+                var parameterInfoActionParameters = context.ActionDescriptor.Parameters
+                    .Where(p => p.ParameterType == typeof(ProviderInfo))
+                    .ToList();
+
+                foreach (var p in parameterInfoActionParameters)
+                {
+                    var boundValue = context.ActionArguments.ContainsKey(p.Name) ? (ProviderInfo)context.ActionArguments[p.Name] : null;
+                    if (boundValue == null)
+                    {
+                        var providerInfoCache = context.HttpContext.RequestServices.GetRequiredService<IProviderInfoCache>();
+                        var providerInfo = await providerInfoCache.GetProviderInfo(ukprn.Value);
+                        context.ActionArguments[p.Name] = providerInfo;
+                    }
+                    else if (boundValue.UKPRN != ukprn.Value)
+                    {
+                        // Bound provider doesn't match this apprenticeship's provider - return an error
+                        // (this is either a bug in a redirect or the end user messing with the URL)
+
+                        context.Result = new BadRequestResult();
+                        return;
+                    }
+                }
 
                 await next();
             }
