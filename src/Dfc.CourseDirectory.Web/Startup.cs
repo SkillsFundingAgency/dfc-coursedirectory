@@ -540,7 +540,7 @@ namespace Dfc.CourseDirectory.Web
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseCourseDirectoryErrorHandling();
                 app.UseHsts();
             }
 

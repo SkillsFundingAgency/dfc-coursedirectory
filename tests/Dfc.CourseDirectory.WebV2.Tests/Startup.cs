@@ -16,6 +16,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         public void Configure(IApplicationBuilder app)
         {
+            app.UseCourseDirectoryErrorHandling();
+
             app.UseAuthentication();
 
             app.UseMvc();
