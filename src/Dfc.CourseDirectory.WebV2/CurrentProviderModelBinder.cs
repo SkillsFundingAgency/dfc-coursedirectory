@@ -87,7 +87,6 @@ namespace Dfc.CourseDirectory.WebV2
 
             void OnBindingFailed()
             {
-                bindingContext.ModelState.AddModelError(bindingContext.FieldName, "Failed to determine current provider.");
                 bindingContext.Result = ModelBindingResult.Failed();
             }
         }
