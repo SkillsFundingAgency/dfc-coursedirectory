@@ -139,8 +139,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
     public class AuthorizeApprenticeshipAttributeTestController : Controller
     {
         [HttpGet("filtertests/authorizeapprenticeshipattribute/{apprenticeshipId}")]
-        [ApprenticeshipId]
         [AuthorizeApprenticeship]
-        public IActionResult Get(Guid apprenticeshipId) => Ok();
+        public IActionResult Get([ApprenticeshipId] Guid apprenticeshipId) => Ok();
     }
 }
