@@ -13,14 +13,19 @@ namespace Dfc.CourseDirectory.WebV2.Filters
     {
     }
 
-    public class RedirectToProviderSelectionActionFilter : ActionFilterAttribute
+    public class RedirectToProviderSelectionActionFilter : IActionFilter, IOrderedFilter
     {
         public RedirectToProviderSelectionActionFilter()
         {
-            Order = 9;
         }
 
-        public override void OnActionExecuting(ActionExecutingContext context)
+        public int Order => 9;
+
+        public void OnActionExecuted(ActionExecutedContext context)
+        {
+        }
+
+        public void OnActionExecuting(ActionExecutingContext context)
         {
             if (context.ActionDescriptor is ControllerActionDescriptor controllerActionDescriptor &&
                 (controllerActionDescriptor.MethodInfo.GetCustomAttribute<AllowNoCurrentProviderAttribute>() != null ||
