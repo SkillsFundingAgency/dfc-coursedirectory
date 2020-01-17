@@ -552,20 +552,20 @@ namespace Dfc.CourseDirectory.Web
             //Preventing ClickJacking Attacks
             app.Use(async (context, next) =>
             {
-                context.Response.Headers.Add("X-Frame-Options", "SAMEORIGIN");
-                context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
-                context.Response.Headers.Add("X-Xss-Protection", "1; mode=block");
-                context.Response.Headers.Add("Referrer-Policy", "strict-origin-when-cross-origin");
-                context.Response.Headers.Add("Feature-Policy", "accelerometer 'none'; camera 'none'; geolocation 'none'; gyroscope 'none'; magnetometer 'none'; microphone 'none'; payment 'none'; usb 'none'");
-                    
+                context.Response.Headers["X-Frame-Options"] = "SAMEORIGIN";
+                context.Response.Headers["X-Content-Type-Options"] ="nosniff";
+                context.Response.Headers["X-Xss-Protection"] = "1; mode=block";
+                context.Response.Headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
+                context.Response.Headers["Feature-Policy"] = "accelerometer 'none'; camera 'none'; geolocation 'none'; gyroscope 'none'; magnetometer 'none'; microphone 'none'; payment 'none'; usb 'none'";
+
                 //CSP
-                context.Response.Headers.Add("Content-Security-Policy", 
-                                                "default-src    'self' " + 
+                context.Response.Headers["Content-Security-Policy"] =
+                                                "default-src    'self' " +
                                                     " https://rainmaker.tiny.cloud/" +
                                                     " https://www.google-analytics.com/" +
                                                     ";" +
-                                                "style-src      'self' 'unsafe-inline' "+
-                                                    " https://cdn.tiny.cloud/" +                                                    
+                                                "style-src      'self' 'unsafe-inline' " +
+                                                    " https://cdn.tiny.cloud/" +
                                                     " https://www.googletagmanager.com/" +
                                                     " https://tagmanager.google.com/" +
                                                     " https://fonts.googleapis.com/" +
@@ -581,11 +581,10 @@ namespace Dfc.CourseDirectory.Web
                                                     " https://cloud.tinymce.com/" +
                                                     " https://cdnjs.cloudflare.com/" +
                                                     " https://www.googletagmanager.com/" +
-                                                    " https://tagmanager.google.com/" +                                                    
+                                                    " https://tagmanager.google.com/" +
                                                     " https://www.google-analytics.com/" +
                                                     " https://cdn.tiny.cloud/" +
-                                                    ";"
-                );
+                                                    ";";
 
                 context.Response.GetTypedHeaders().CacheControl =
                   new Microsoft.Net.Http.Headers.CacheControlHeaderValue()
