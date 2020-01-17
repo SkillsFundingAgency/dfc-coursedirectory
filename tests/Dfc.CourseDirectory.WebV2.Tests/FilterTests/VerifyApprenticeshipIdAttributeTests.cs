@@ -9,9 +9,9 @@ using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
 {
-    public class ApprenticeshipIdAttributeTests : TestBase
+    public class VerifyApprenticeshipIdAttributeTests : TestBase
     {
-        public ApprenticeshipIdAttributeTests(CourseDirectoryApplicationFactory factory)
+        public VerifyApprenticeshipIdAttributeTests(CourseDirectoryApplicationFactory factory)
             : base(factory)
         {
         }
@@ -27,7 +27,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
                 .ReturnsAsync((int?)null);
 
             // Act
-            var response = await HttpClient.GetAsync($"filtertests/apprenticeshipidattributetests/{apprenticeshipId}");
+            var response = await HttpClient.GetAsync($"filtertests/verifyapprenticeshipidattributetests/{apprenticeshipId}");
 
             // Assert
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
@@ -44,7 +44,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
                 .ReturnsAsync(1234);
 
             // Act
-            var response = await HttpClient.GetAsync($"filtertests/apprenticeshipidattributetests/{apprenticeshipId}");
+            var response = await HttpClient.GetAsync($"filtertests/verifyapprenticeshipidattributetests/{apprenticeshipId}");
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -73,7 +73,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
                 });
 
             // Act
-            var response = await HttpClient.GetAsync($"filtertests/apprenticeshipidattributetests/withproviderinfo/{apprenticeshipId}");
+            var response = await HttpClient.GetAsync($"filtertests/verifyapprenticeshipidattributetests/withproviderinfo/{apprenticeshipId}");
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -109,7 +109,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
                 });
 
             // Act
-            var response = await HttpClient.GetAsync($"filtertests/apprenticeshipidattributetests/withproviderinfo/{apprenticeshipId}?ukprn=56789");
+            var response = await HttpClient.GetAsync($"filtertests/verifyapprenticeshipidattributetests/withproviderinfo/{apprenticeshipId}?ukprn=56789");
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -118,12 +118,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
 
     public class ApprenticeshipIdAttributeTestController : Controller
     {
-        [HttpGet("filtertests/apprenticeshipidattributetests/{apprenticeshipId}")]
-        [ApprenticeshipId]
-        public IActionResult Get(Guid apprenticeshipId) => Ok();
+        [HttpGet("filtertests/verifyapprenticeshipidattributetests/{apprenticeshipId}")]
+        public IActionResult Get([ApprenticeshipId] Guid apprenticeshipId) => Ok();
 
-        [HttpGet("filtertests/apprenticeshipidattributetests/withproviderinfo/{apprenticeshipId}")]
-        [ApprenticeshipId]
-        public IActionResult GetWithProviderInfo(Guid apprenticeshipId, ProviderInfo providerInfo) => Json(providerInfo);
+        [HttpGet("filtertests/verifyapprenticeshipidattributetests/withproviderinfo/{apprenticeshipId}")]
+        public IActionResult GetWithProviderInfo([ApprenticeshipId] Guid apprenticeshipId, ProviderInfo providerInfo) => Json(providerInfo);
     }
 }

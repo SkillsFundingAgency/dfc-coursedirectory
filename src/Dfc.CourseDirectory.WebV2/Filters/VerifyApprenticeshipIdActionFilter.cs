@@ -1,36 +1,41 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Dfc.CourseDirectory.WebV2.Filters
 {
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
-    public class ApprenticeshipIdAttribute : ActionFilterAttribute
+    [AttributeUsage(AttributeTargets.Parameter, AllowMultiple = false, Inherited = true)]
+    public sealed class ApprenticeshipIdAttribute : Attribute
     {
-        private const string DefaultParameterName = "apprenticeshipId";
+    }
 
-        public ApprenticeshipIdAttribute(string parameterName)
+    public class VerifyApprenticeshipIdActionFilter : IAsyncActionFilter, IOrderedFilter
+    {
+        public int Order => 0;
+
+        public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
-            ParameterName = parameterName ?? throw new ArgumentNullException(nameof(parameterName));
-            Order = 0;
-        }
+            var apprenticeshipIdParameters = context.ActionDescriptor.Parameters
+                .OfType<ControllerParameterDescriptor>()
+                .Where(p => p.ParameterInfo.GetCustomAttribute<ApprenticeshipIdAttribute>() != null)
+                .ToList();
 
-        public ApprenticeshipIdAttribute()
-            : this(DefaultParameterName)
-        {
-        }
-
-        public string ParameterName { get; }
-
-        public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
-        {
-            if (!context.ActionArguments.TryGetValue(ParameterName, out var apprenticeshipId))
+            if (apprenticeshipIdParameters.Count > 1)
             {
-                throw new InvalidOperationException($"Action does not contain a parameter named '{ParameterName}'.");
+                throw new InvalidOperationException($"Only a single parameter can be annotated with {nameof(ApprenticeshipIdAttribute)}.");
             }
+            else if (apprenticeshipIdParameters.Count == 0)
+            {
+                await next();
+                return;
+            }
+
+            var apprenticeshipId = context.ActionArguments[apprenticeshipIdParameters.Single().Name];
 
             if (!(apprenticeshipId is Guid))
             {

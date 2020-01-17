@@ -23,7 +23,7 @@ namespace Dfc.CourseDirectory.WebV2.Filters
             {
                 throw new InvalidOperationException(
                     "Cannot resolve provider for apprenticeship. " +
-                    "Ensure the action is decorated with the VerifyApprenticeshipExistsAttribute.");
+                    "Ensure the action has a parameter decorated with the ApprenticeshipIdAttribute.");
             }
 
             var ukprn = appProviderFeature.UKPRN;

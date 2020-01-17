@@ -33,6 +33,7 @@ namespace Dfc.CourseDirectory.WebV2
                     options.Conventions.Add(new AddFeaturePropertyModelConvention());
 
                     options.Filters.Add(new RedirectToProviderSelectionActionFilter());
+                    options.Filters.Add(new VerifyApprenticeshipIdActionFilter());
 
                     options.ModelBinderProviders.Insert(0, new CurrentProviderModelBinderProvider());
                 })
