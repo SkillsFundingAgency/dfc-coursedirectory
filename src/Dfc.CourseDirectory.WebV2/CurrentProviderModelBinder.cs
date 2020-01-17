@@ -23,7 +23,7 @@ namespace Dfc.CourseDirectory.WebV2
 
     public class CurrentProviderModelBinder : IModelBinder
     {
-        private const string QueryParameterName = "ukprn";
+        public const string QueryParameterName = "ukprn";
 
         private readonly IProviderInfoCache _providerInfoCache;
 
