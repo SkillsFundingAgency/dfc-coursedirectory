@@ -6,7 +6,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Error
     public class Controller : Microsoft.AspNetCore.Mvc.Controller
     {
         [HttpGet("error")]
-        public IActionResult Error(int? code)
+        public IActionResult Error(int? code, [FromServices] HostingOptions hostingOptions)
         {
             // If there is no error, return a 404
             // (prevents browsing to this page directly)
@@ -21,7 +21,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Error
             var statusCode = code ?? 500;
 
             // Treat Forbidden as NotFound so we don't give away our internal URLs
-            if (code == 403)
+            if (code == 403 && hostingOptions.RewriteForbiddenToNotFound)
             {
                 statusCode = 404;
             }

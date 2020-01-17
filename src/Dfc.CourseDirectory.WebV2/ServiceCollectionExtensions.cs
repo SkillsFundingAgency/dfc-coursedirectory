@@ -51,6 +51,8 @@ namespace Dfc.CourseDirectory.WebV2
                     options.ViewLocationExpanders.Add(new FeatureViewLocationExpander());
                 });
 
+            services.AddSingleton<HostingOptions>();
+
             return services;
         }
     }
