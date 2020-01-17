@@ -11,13 +11,16 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         {
             Factory = factory;
 
-            factory.ResetMocks();
+            factory.ResetMocks();            
 
             HttpClient = factory.CreateClient();
             User.Reset();
+            HostingOptions.RewriteForbiddenToNotFound = true;
         }
 
         protected CourseDirectoryApplicationFactory Factory { get; }
+
+        protected HostingOptions HostingOptions => Services.GetRequiredService<HostingOptions>();
 
         protected IServiceProvider Services => Factory.Server.Host.Services;
 

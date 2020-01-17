@@ -13,6 +13,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         public AuthorizeApprenticeshipAttributeTests(CourseDirectoryApplicationFactory factory)
             : base(factory)
         {
+            HostingOptions.RewriteForbiddenToNotFound = false;
         }
 
         [Fact]

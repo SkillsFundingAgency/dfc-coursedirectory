@@ -194,19 +194,5 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             return View("../Home/Help");
         }
-
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            var exceptionHandlerPathFeature = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
-
-            return View(new ErrorViewModel
-            {
-                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier,
-                ErrorMessage = exceptionHandlerPathFeature.Error != null ? exceptionHandlerPathFeature.Error.Message : "There has been an error, please contact support",
-                ErrorPath = exceptionHandlerPathFeature.Path != null ? exceptionHandlerPathFeature.Path : string.Empty
-            });
-        }
     }
 }
