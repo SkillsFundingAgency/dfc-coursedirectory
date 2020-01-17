@@ -39,11 +39,44 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features
             // Assert
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
+
+        [Fact]
+        public async Task NotFound_ReturnsNotFoundView()
+        {
+            // Arrange
+
+            // Act
+            var response = await HttpClient.GetAsync("notarealurl");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+
+            var doc = await response.GetDocument();
+            Assert.Equal("Page not found", doc.QuerySelector("h1").TextContent);
+        }
+
+        [Fact]
+        public async Task Forbidden_ReturnsNotFoundView()
+        {
+            // Arrange
+
+            // Act
+            var response = await HttpClient.GetAsync("errortests/forbidden");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+
+            var doc = await response.GetDocument();
+            Assert.Equal("Page not found", doc.QuerySelector("h1").TextContent);
+        }
     }
 
     public class ErrorTestController : Controller
     {
         [HttpGet("errortests")]
         public IActionResult Get() => throw new Exception("Bang!");
+
+        [HttpGet("errortests/forbidden")]
+        public IActionResult Forbidden() => Forbid();
     }
 }
