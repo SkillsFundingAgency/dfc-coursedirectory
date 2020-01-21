@@ -87,9 +87,9 @@ namespace Dfc.CourseDirectory.WebV2.Filters
     {
         public ApprenticeshipProviderFeature(int ukprn)
         {
-            UKPRN = ukprn;
+            Ukprn = ukprn;
         }
 
-        public int UKPRN { get; }
+        public int Ukprn { get; }
     }
 }

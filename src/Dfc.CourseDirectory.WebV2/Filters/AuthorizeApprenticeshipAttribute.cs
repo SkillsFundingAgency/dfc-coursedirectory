@@ -26,7 +26,7 @@ namespace Dfc.CourseDirectory.WebV2.Filters
                     "Ensure the action has a parameter decorated with the ApprenticeshipIdAttribute.");
             }
 
-            var ukprn = appProviderFeature.UKPRN;
+            var ukprn = appProviderFeature.Ukprn;
 
             var role = context.HttpContext.User.FindFirst(ClaimTypes.Role)?.Value;
 
