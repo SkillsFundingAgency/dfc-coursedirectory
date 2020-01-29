@@ -31,17 +31,21 @@
 
 
                 @{
-                    if (apprenticeship.BulkUploadErrors.Any())
+                    if (apprenticeship.ValidationErrors.Any())
                     {
                         <div class="govuk-error-summary__body">
-                            <ul class="govuk-list govuk-error-summary__list">
+                                            <ul class="govuk-list govuk-error-summary__list">
 
-                                @if (apprenticeship.BulkUploadErrors.Any())
-                                {
-                                    <li class="govuk-error-message">Your apprenticeship contains one or more errors.</li>
-                                }
+                                                @if (apprenticeship.ValidationErrors.Any())
+                                                {
+                                                    
+                                                    @foreach (var error in apprenticeship.ValidationErrors)
+                                                    {
+                                                        <li class="govuk-error-message">@error</li>
+                                                    }
+                                                }
 
-                            </ul>
+                                            </ul>
                         </div>
 
                     }

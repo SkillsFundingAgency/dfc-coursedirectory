@@ -18,7 +18,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
 using Dfc.CourseDirectory.Web.ViewModels.PublishApprenticeships;
-
+using Dfc.CourseDirectory.Models.Models.Apprenticeships;
+using Dfc.CourseDirectory.Web.ViewModels.Apprenticeships;
+using System.Text.RegularExpressions;
+using Dfc.CourseDirectory.Models.Interfaces.Apprenticeships;
+using Dfc.CourseDirectory.Models.Interfaces.Courses;
 
 namespace Dfc.CourseDirectory.Web.Controllers.PublishApprenticeships
 {
@@ -58,6 +62,9 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishApprenticeships
             {
                 vm.AreAllReadyToBePublished = true;
             }
+           
+
+            vm.ListOfApprenticeships = GetErrorMessages(vm.ListOfApprenticeships, ValidationMode.BulkUploadCourse);
 
             if (vm.AreAllReadyToBePublished)
             {
@@ -104,6 +111,77 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishApprenticeships
 
         }
 
+        internal IEnumerable<IApprenticeship> GetErrorMessages(IEnumerable<IApprenticeship> apprenticeships, ValidationMode validationMode)
+        {
+            foreach (var apprentice in apprenticeships)
+            {
+                bool saveMe = false;
+                
+                apprentice.ValidationErrors = ValidateApprenticeships().Select(x => x.Value);
+
+                if (validationMode == ValidationMode.BulkUploadCourse && apprentice.BulkUploadErrors.Any() && !apprentice.ValidationErrors.Any())
+                {
+                    apprentice.BulkUploadErrors = new List<BulkUploadError> { };
+                    saveMe = true;
+                }
+               
+            }
+            return apprenticeships;
+        }
+
+        public IList<KeyValuePair<string, string>> ValidateApprenticeships()
+        {
+            DetailViewModel detailViewModel = new DetailViewModel();
+            List<KeyValuePair<string, string>> validationMessages = new List<KeyValuePair<string, string>>();
+
+            // CourseDescription
+            if (string.IsNullOrEmpty(detailViewModel.Information))
+            {
+                validationMessages.Add(new KeyValuePair<string, string>("APPRENTICESHIP_INFORMATION", "APPRENTICESHIP_INFORMATION is required"));
+            }
+            else
+            {
+                if (!HasOnlyFollowingValidCharacters(detailViewModel.Information))
+                    validationMessages.Add(new KeyValuePair<string, string>("APPRENTICESHIP_INFORMATION", "APPRENTICESHIP_INFORMATIONR contains invalid character"));
+                if (detailViewModel.Information.Length > 750)
+                    validationMessages.Add(new KeyValuePair<string, string>("APPRENTICESHIP_INFORMATIONR", $"APPRENTICESHIP_INFORMATIONR must be 750 characters or less"));
+            }                       
+
+            return validationMessages;
+        }
+
+
+        public bool HasOnlyFollowingValidCharacters(string value)
+        {
+            string regex = @"^[a-zA-Z0-9 /\n/\r/\\u/\¬\!\£\$\%\^\&\*\\é\\è\\ﬁ\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\•\·\●\\’\‘\“\”\—\-\–\‐\‐\…\:/\°\®\\â\\ç\\ñ\\ü\\ø\♦\™\\t/\s\¼\¾\½\" + "\"" + "\\\\]+$";
+            var validUKPRN = Regex.Match(value, regex, RegexOptions.IgnoreCase);
+
+            return validUKPRN.Success;
+        }
+
+        public bool IsValidUrl(string value)
+        {
+            string regex = @"^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$";
+            var validUKPRN = Regex.Match(value, regex, RegexOptions.IgnoreCase);
+
+            return validUKPRN.Success;
+        }
+
+        public bool IsCorrectCostFormatting(string value)
+        {
+            string regex = @"^[0-9]*(\.[0-9]{1,2})?$";
+            var validUKPRN = Regex.Match(value, regex, RegexOptions.IgnoreCase);
+
+            return validUKPRN.Success;
+        }
+
+        public bool ValidDurationValue(string value)
+        {
+            string regex = @"^([0-9]|[0-9][0-9]|[0-9][0-9][0-9])$";
+            var validUKPRN = Regex.Match(value, regex, RegexOptions.IgnoreCase);
+
+            return validUKPRN.Success;
+        }
 
     } 
 }
