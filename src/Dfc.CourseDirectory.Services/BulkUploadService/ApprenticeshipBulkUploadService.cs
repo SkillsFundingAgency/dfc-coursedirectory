@@ -183,7 +183,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 {
                     throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Missing Standard Code.");
                 }
-                else if (!standardCode.HasValue && !standardCode.HasValue)
+                else if (!standardCode.HasValue && !standardVersion.HasValue)
                 {
                     throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Missing Standard Code and Standard version.");
                 }
