@@ -64,7 +64,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishApprenticeships
             }
            
 
-            vm.ListOfApprenticeships = GetErrorMessages(vm.ListOfApprenticeships, ValidationMode.BulkUploadCourse);
+            vm.ListOfApprenticeships = GetErrorMessages(vm.ListOfApprenticeships);
 
             if (vm.AreAllReadyToBePublished)
             {
@@ -111,18 +111,16 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishApprenticeships
 
         }
 
-        internal IEnumerable<IApprenticeship> GetErrorMessages(IEnumerable<IApprenticeship> apprenticeships, ValidationMode validationMode)
+        internal IEnumerable<IApprenticeship> GetErrorMessages(IEnumerable<IApprenticeship> apprenticeships)
         {
             foreach (var apprentice in apprenticeships)
             {
-                bool saveMe = false;
                 
                 apprentice.ValidationErrors = ValidateApprenticeships().Select(x => x.Value);
 
-                if (validationMode == ValidationMode.BulkUploadCourse && apprentice.BulkUploadErrors.Any() && !apprentice.ValidationErrors.Any())
+                if (apprentice.BulkUploadErrors.Any() && !apprentice.ValidationErrors.Any())
                 {
-                    apprentice.BulkUploadErrors = new List<BulkUploadError> { };
-                    saveMe = true;
+                    apprentice.BulkUploadErrors = new List<BulkUploadError> { };                  
                 }
                
             }
@@ -134,7 +132,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishApprenticeships
             DetailViewModel detailViewModel = new DetailViewModel();
             List<KeyValuePair<string, string>> validationMessages = new List<KeyValuePair<string, string>>();
 
-            // CourseDescription
+            // APPRENTICESHIP_INFORMATION
             if (string.IsNullOrEmpty(detailViewModel.Information))
             {
                 validationMessages.Add(new KeyValuePair<string, string>("APPRENTICESHIP_INFORMATION", "APPRENTICESHIP_INFORMATION is required"));
