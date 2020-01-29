@@ -174,12 +174,20 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                         throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Missing Standard Version.");
                     }
                 }
-
-                if (!standardCode.HasValue && standardVersion.HasValue)
+                else if (!standardCode.HasValue)
                 {
                     throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Missing Standard Code.");
                 }
-                
+
+                else if (!standardCode.HasValue && standardVersion.HasValue)
+                {
+                    throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Missing Standard Code.");
+                }
+                else if (!standardCode.HasValue && !standardVersion.HasValue)
+                {
+                    throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Missing Standard Code and Standard version.");
+                }
+
                 return null;
             }
             private int? Mandatory_Checks_STANDARD_CODE(IReaderRow row)
