@@ -46,5 +46,7 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Apprenticeships
 
         string NotionalNVQLevelv2 { get; set; }
         List<BulkUploadError> BulkUploadErrors { get; set; }
+
+       IEnumerable<string> ValidationErrors { get; set; }
     }
 }
