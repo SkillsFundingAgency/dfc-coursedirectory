@@ -43,13 +43,15 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishApprenticeships
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             var apprenticeships = _apprenticeshipService.GetApprenticeshipByUKPRN(UKPRN.Value.ToString()).Result.Value.Where(x => x.RecordStatus == RecordStatus.BulkUploadPending);
 
+            var getApprenticeships = _apprenticeshipService.GetApprenticeshipByUKPRN(UKPRN.Value.ToString()).Result.Value.Where(x => x.ProviderUKPRN == UKPRN);
+
             vm.ListOfApprenticeships = apprenticeships;
-            if (!apprenticeships.Any(x => x.RecordStatus == RecordStatus.BulkUploadPending))
+            vm.ListOfApprenticeships = GetErrorMessages(vm.ListOfApprenticeships);
+
+            if (!getApprenticeships.Any(x => x.RecordStatus == RecordStatus.BulkUploadPending))
             {
                 vm.AreAllReadyToBePublished = true;
             }
-
-            vm.ListOfApprenticeships = GetErrorMessages(vm.ListOfApprenticeships);
 
             if (vm.AreAllReadyToBePublished)
             {
@@ -103,6 +105,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishApprenticeships
                 {
                     apprentice.BulkUploadErrors = new List<BulkUploadError> { };
                 }
+
+                _apprenticeshipService.UpdateApprenticeshipAsync(apprentice);
             }
             return apprenticeships;
         }
@@ -208,7 +212,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishApprenticeships
 
         public bool IsValidWebSite(string value)
         {
-            string regex = @"^([-a-zA-Z0-9]{2,256}\.)+[a-z]{2,10}(\/.*)?";
+            string regex = @"^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$";
             var validWebSite = Regex.Match(value, regex, RegexOptions.IgnoreCase);
 
             return validWebSite.Success;

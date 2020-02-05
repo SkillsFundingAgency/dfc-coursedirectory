@@ -1,5 +1,6 @@
 ﻿using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Models.Models.Apprenticeships;
+using Dfc.CourseDirectory.Models.Models.Courses;
 using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
 using Dfc.CourseDirectory.Web.ViewModels;
@@ -10,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -101,15 +103,21 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditApprenticeships
                     apprenticeshipForEdit.Value.ContactEmail = model?.Email;
                     apprenticeshipForEdit.Value.ContactWebsite = model?.WebSite;
                     apprenticeshipForEdit.Value.ContactTelephone = model?.Telephone;
-                    apprenticeshipForEdit.Value.Url = model?.ContactUsURL;                  
+                    apprenticeshipForEdit.Value.Url = model?.ContactUsURL;
                     apprenticeshipForEdit.Value.UpdatedBy = User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(); // User.Identity.Name;
-                    apprenticeshipForEdit.Value.UpdatedDate = DateTime.Now;                                    
+                    apprenticeshipForEdit.Value.UpdatedDate = DateTime.Now;
+                    apprenticeshipForEdit.Value.BulkUploadErrors = new List<BulkUploadError> { };
+                    if (apprenticeshipForEdit.Value.BulkUploadErrors.Count() == 0)
+                    {
+                        apprenticeshipForEdit.Value.RecordStatus = Models.Enums.RecordStatus.BulkUploadReadyToGoLive;
+                    }
                     var updatedApprenticeship = await _apprenticeshipService.UpdateApprenticeshipAsync(apprenticeshipForEdit.Value);
                 }
+
+                return RedirectToAction("Index", "PublishApprenticeships");
             }
 
             return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }
-
