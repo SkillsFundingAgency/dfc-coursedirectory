@@ -6,6 +6,7 @@
 @inject IAuthorizationService Authorization
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
+
 @{
     var adminLogin = await Authorization.AuthorizeAsync(User, "Admin");
 }
@@ -27,38 +28,41 @@
                     <p class="govuk-body">Level: <span class="govuk-!-font-weight-bold">@apprenticeship.NotionalNVQLevelv2</span></p>
                 }
 
+
+
                 @{
                     if (apprenticeship.ValidationErrors.Any())
                     {
                         <div class="govuk-error-summary__body">
-                            <ul class="govuk-list govuk-error-summary__list">
+                                            <ul class="govuk-list govuk-error-summary__list">
 
-                                @if (apprenticeship.ValidationErrors.Any())
-                                {
+                                                @if (apprenticeship.ValidationErrors.Any())
+                                                {
+                                                    
+                                                    @foreach (var error in apprenticeship.ValidationErrors)
+                                                    {
+                                                        <li class="govuk-error-message">@error</li>
+                                                    }
+                                                }
 
-                                    @foreach (var error in apprenticeship.ValidationErrors)
-                                    {
-                                        <li class="govuk-error-message">@error</li>
-                                    }
-                                }
-                            </ul>
+                                            </ul>
                         </div>
 
                     }
                 }
-            </div>
-        </div>
-        <div style="display:none">@apprenticeship.id</div>
 
-        <div class="govuk-grid-column-one-third">
-            <div class="align-right col right center">
-                <a id="course-fix-@apprenticeship.id" class="error-link" asp-controller="EditApprenticeship" asp-action="Index" style="display:block"
-                   asp-route-ApprenticeshipId="@apprenticeship.id"
-                   asp-route-MarketingInformation="@apprenticeship.MarketingInformation"
-                   asp-route-Cancelled=null
-                   asp-route-Mode="@ApprenticeshipMode.EditYourApprenticeships">Resolve</a>
+            </div>
+
+        </div>
+            <div style="display:none">@apprenticeship.id</div>
+            <div class="govuk-grid-column-one-third">
+                <div class="align-right col right center">
+                    <a id="course-fix-@apprenticeship.id" class="error-link" asp-controller="Apprenticeships" asp-action="ViewAndEdit" style="display:block"
+                       asp-route-Id="@apprenticeship.id"
+                       asp-route-Cancelled=null
+                       asp-route-Mode="@ApprenticeshipMode.EditYourApprenticeships">Resolve</a>
+                </div>
             </div>
         </div>
-    </div>
 
 }
