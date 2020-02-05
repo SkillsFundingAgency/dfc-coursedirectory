@@ -175,10 +175,10 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                     }
 
                 }
-                if (!standardCode.HasValue)
+                if (!standardCode.HasValue && standardVersion.HasValue)
                 {
-                        throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Missing Standard Code.");
-                }               
+                    throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Missing Standard Code.");
+                }
 
                 return null;
             }
