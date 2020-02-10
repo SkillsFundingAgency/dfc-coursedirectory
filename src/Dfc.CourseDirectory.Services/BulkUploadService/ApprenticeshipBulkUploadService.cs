@@ -1217,7 +1217,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 var archivingApprenticeships = _apprenticeshipService.ChangeApprenticeshipStatusesForUKPRNSelection(int.Parse(userDetails.UKPRN), (int)RecordStatus.Live, (int)RecordStatus.Archived);
 
                 var apprenticeships = ApprenticeshipCsvRecordToApprenticeship(records, userDetails);
-                errors = ValidateApprenticeshi(apprenticeships);
+                errors = ValidateApprenticeships(apprenticeships);
 
 
                 if (apprenticeships.Any())
