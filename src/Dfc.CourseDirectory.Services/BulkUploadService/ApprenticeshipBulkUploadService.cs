@@ -1217,7 +1217,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 var archivingApprenticeships = _apprenticeshipService.ChangeApprenticeshipStatusesForUKPRNSelection(int.Parse(userDetails.UKPRN), (int)RecordStatus.Live, (int)RecordStatus.Archived);
 
                 var apprenticeships = ApprenticeshipCsvRecordToApprenticeship(records, userDetails);
-                errors = ValidateApprenticehsips(apprenticeships);
+                errors = ValidateApprenticeshi(apprenticeships);
 
 
                 if (apprenticeships.Any())
@@ -1436,7 +1436,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
         }
 
          
-        public List<string> ValidateApprenticehsips(List<Apprenticeship> apprenticeships)
+        public List<string> ValidateApprenticeships(List<Apprenticeship> apprenticeships)
         {
             List<string> errors = new List<string>();
             var errorList = apprenticeships.Select(x => x.BulkUploadErrors);
