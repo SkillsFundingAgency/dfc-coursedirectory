@@ -194,7 +194,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     if (errors.Any())
                     {
                         return RedirectToAction("WhatDoYouWantToDoNext", "BulkUploadApprenticeships",
-                            new { message = $"Your file contained {errors.Count} error{(errors.Count > 1 ? "s" : "")}. You must fix all errors before your courses can be published to the directory." });
+                            new { message = $"Your file contained {errors.Count} error{(errors.Count > 1 ? "s" : "")}. You must fix all errors before your courses can be published to the directory.",
+                                  errorCount = errors.Count }   
+                            );
                     }
                     else
                     {
@@ -228,13 +230,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> WhatDoYouWantToDoNext(string message)
+        public async Task<IActionResult> WhatDoYouWantToDoNext(string message, int errorCount)
         {
             var model = new WhatDoYouWantToDoNextViewModel();
 
             if (!string.IsNullOrEmpty(message))
             {
                 model.Message = message;
+                model.ErrorCount = errorCount;
             }
            
             return View("../BulkUploadApprenticeships/WhatDoYouWantToDoNext/Index", model);

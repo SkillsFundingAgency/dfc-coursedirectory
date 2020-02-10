@@ -1171,8 +1171,8 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                         // Validate the header row.
                         ValidateHeader(csv);
 
-                        var classMap =
-                            new ApprenticeshipCsvRecordMap(_apprenticeshipService, _venueService, userDetails);
+                        var classMap = new ApprenticeshipCsvRecordMap(_apprenticeshipService, _venueService, userDetails);
+
                         csv.Configuration.RegisterClassMap(classMap);
                         bool containsDuplicates = false;
                         while (csv.Read())
@@ -1217,6 +1217,9 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 var archivingApprenticeships = _apprenticeshipService.ChangeApprenticeshipStatusesForUKPRNSelection(int.Parse(userDetails.UKPRN), (int)RecordStatus.Live, (int)RecordStatus.Archived);
 
                 var apprenticeships = ApprenticeshipCsvRecordToApprenticeship(records, userDetails);
+                errors = ValidateApprenticehsips(apprenticeships);
+
+
                 if (apprenticeships.Any())
                 {
                     errors.AddRange(UploadApprenticeships(apprenticeships));
@@ -1310,10 +1313,12 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             List<ApprenticeshipCsvRecord> records, AuthUserDetails userDetails)
         {
             List<Apprenticeship> apprenticeships = new List<Apprenticeship>();
+
             foreach (var record in records)
             {
+                            
                 var alreadyExists = DoesApprenticeshipExist(apprenticeships, record);
-
+            
                 if (alreadyExists != null)
                 {
                     var apprenticeship = apprenticeships.FirstOrDefault(x => x == alreadyExists);
@@ -1347,8 +1352,8 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                             Url = record.APPRENTICESHIP_WEBPAGE,
                             ContactTelephone = record.CONTACT_PHONE,
                             ContactEmail = record.CONTACT_EMAIL,
-                            ContactWebsite = record.CONTACT_URL,
-                            RecordStatus = record.ErrorsList.Any() ? RecordStatus.BulkUploadPending : RecordStatus.BulkUploadReadyToGoLive,
+                            ContactWebsite = record.CONTACT_URL,                            
+                            RecordStatus = record.ErrorsList.Any()? RecordStatus.BulkUploadPending : RecordStatus.BulkUploadReadyToGoLive,
                             CreatedDate = DateTime.Now,
                             CreatedBy = userDetails.UserId.ToString(),
                             BulkUploadErrors = record.ErrorsList
@@ -1429,5 +1434,22 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 return national;
             return null;
         }
+
+         
+        public List<string> ValidateApprenticehsips(List<Apprenticeship> apprenticeships)
+        {
+            List<string> errors = new List<string>();
+            var errorList = apprenticeships.Select(x => x.BulkUploadErrors);
+           
+
+            foreach (var apprentice in apprenticeships)
+            {
+                if (string.IsNullOrEmpty(apprentice.MarketingInformation))
+                    errors.Add("Marketing Information is required");
+            }
+
+            return errors;
+        }
+
     }
 }
