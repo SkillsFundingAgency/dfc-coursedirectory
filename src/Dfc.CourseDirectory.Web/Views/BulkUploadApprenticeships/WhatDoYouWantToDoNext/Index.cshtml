@@ -52,10 +52,13 @@
                     </legend>
                 }
                 <div class="govuk-radios" val-required-message="Select 'What do you want to do next?'" id="WhatDoYouWantToDoNext">
+                   @if (Model.ErrorCount < 10)
+                   {
                     <div class="govuk-radios__item">
                         @Html.RadioButtonFor(m => m.WhatDoYouWantToDoNext, WhatDoYouWantToDoNext.OnScreen, new { @class = "govuk-radios__input", id = WhatDoYouWantToDoNext.OnScreen })
                         <label class="govuk-label govuk-radios__label" for="@WhatDoYouWantToDoNext.OnScreen">@WebHelper.GetEnumDescription(WhatDoYouWantToDoNext.OnScreen)</label>
                     </div>
+                   }
                     <div class="govuk-radios__item">
                         @Html.RadioButtonFor(m => m.WhatDoYouWantToDoNext, WhatDoYouWantToDoNext.DownLoad, new { @class = "govuk-radios__input", id = WhatDoYouWantToDoNext.DownLoad })
                         <label class="govuk-label govuk-radios__label" for="@WhatDoYouWantToDoNext.DownLoad">@WebHelper.GetEnumDescription(WhatDoYouWantToDoNext.DownLoad)</label>
