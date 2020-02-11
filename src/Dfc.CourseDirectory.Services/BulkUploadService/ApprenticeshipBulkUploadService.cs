@@ -276,7 +276,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
                 if (String.IsNullOrWhiteSpace(value))
                 {
-                    return DeliveryMethod.Undefined;
+                    throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. DELIVERY_METHOD is required.");
                 }
                 var deliveryMethod = value.ToEnum(DeliveryMethod.Undefined);
                 if (deliveryMethod == DeliveryMethod.Undefined)
