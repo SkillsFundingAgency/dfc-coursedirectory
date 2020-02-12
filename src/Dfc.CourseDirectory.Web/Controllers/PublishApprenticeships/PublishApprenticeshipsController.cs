@@ -101,15 +101,22 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishApprenticeships
             {
                 apprentice.ValidationErrors = ValidateApprenticeships(apprentice).Select(x => x.Value);
 
+                apprentice.LocationValidationErrors = ValidateApprenticeshipLocations(apprentice).Select(x => x.Value);
+
                 if (apprentice.BulkUploadErrors.Any() && !apprentice.ValidationErrors.Any())
                 {
                     apprentice.BulkUploadErrors = new List<BulkUploadError> { };
-                }
+                }               
 
                 _apprenticeshipService.UpdateApprenticeshipAsync(apprentice);
             }
+
+
             return apprenticeships;
         }
+
+
+
 
         public IList<KeyValuePair<string, string>> ValidateApprenticeships(IApprenticeship apprenticeship)
         {
@@ -173,6 +180,22 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishApprenticeships
                     validationMessages.Add(new KeyValuePair<string, string>("Contact us page ", "Enter a real web page, like http://www.provider.com/apprenticeship"));
                     if (apprenticeship.Url.Length > 255)
                         validationMessages.Add(new KeyValuePair<string, string>("Contact us page ", $"Contact us page  must be 255 characters or less"));
+                }
+            }
+            return validationMessages;
+        }
+
+        public IList<KeyValuePair<string, string>> ValidateApprenticeshipLocations(IApprenticeship apprenticeship)
+        {
+            List<KeyValuePair<string, string>> validationMessages = new List<KeyValuePair<string, string>>();
+
+            var apprenticeshipsLocations = apprenticeship.ApprenticeshipLocations.Select(x => x.LocationId);
+            foreach (var location in apprenticeshipsLocations)
+            {
+                // APPRENTICESHIP_Locations
+                if (location == null)
+                {
+                    validationMessages.Add(new KeyValuePair<string, string>("APPRENTICESHIP_Location", "APPRENTICESHIP_Location is required"));
                 }
             }
             return validationMessages;
