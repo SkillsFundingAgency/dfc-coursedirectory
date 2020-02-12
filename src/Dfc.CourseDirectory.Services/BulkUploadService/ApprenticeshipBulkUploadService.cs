@@ -1446,6 +1446,16 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             {
                 if (string.IsNullOrEmpty(apprentice.MarketingInformation))
                     errors.Add("Marketing Information is required");
+
+                var locationIds = apprentice.ApprenticeshipLocations.Select(x => x.LocationId);
+
+                foreach (var locationId in locationIds)
+                {
+                    if (locationId == null)
+                    {
+                        errors.Add("Location/Venue is required");
+                    }
+                }
             }
 
             return errors;

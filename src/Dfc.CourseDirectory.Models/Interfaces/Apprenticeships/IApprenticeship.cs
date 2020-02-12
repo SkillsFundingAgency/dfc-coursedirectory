@@ -48,5 +48,8 @@ namespace Dfc.CourseDirectory.Models.Interfaces.Apprenticeships
         List<BulkUploadError> BulkUploadErrors { get; set; }
 
        IEnumerable<string> ValidationErrors { get; set; }
+       IEnumerable<string> LocationValidationErrors { get; set; }
+
+
     }
 }
