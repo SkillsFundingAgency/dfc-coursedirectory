@@ -136,28 +136,8 @@
                 $selectedVenue.govUkSelect("validState");
                 $checkboxesdeliverymethod.govUkCheckboxes("validState");
 
-                var rowCount = $('#ResultsTable tr').length;
-
-                if (rowCount === 250) {
-                    validStates.push(false);
-
-                    var element = $TooManyLoctions;
-                    var $anchor = document.createElement("a");
-                    $anchor.href = "#TooManyLocations";
-                    $anchor.innerHTML = element.text();
-                    $anchor.id = "error-hash-link-" + "a" + "-" + 1;
-
-                    $errorSummary.govUkErrorSummary("add", $anchor);
-                    $errorSummary.govUkErrorSummary("show");
-                    $TooManyLoctions.addClass("govuk-error-message");
-                    $TooManyLoctions.closest(".govuk-form-group").addClass("govuk-form-group--error");
-                    $TooManyLoctions.show();
-                }
-                else {
-                    $TooManyLoctions.closest(".govuk-form-group").removeClass("govuk-form-group--error");
-                    $TooManyLoctions.removeClass("govuk-error-message");
-                    $TooManyLoctions.hide();
-                }
+                            
+               
 
                 // venue
                 $selectedVenue.govUkSelect("validState");
@@ -197,61 +177,10 @@
                 }
             }
 
+           
+
+
             $Continue.on("click", function (event) {
-                event.preventDefault();
-
-                var rowCount = $('#ResultsTable tr').length;
-
-                if (rowCount >= 2 || returnToSummery) {
-
-                    if (($selectedVenue.val() === "" || $selectedVenue.val() === undefined) && ($("#BlockRelease")[0].checked === false) && ($("#DayRelease")[0].checked === false)) {
-                        $("#editDeliveryMethod").submit();
-                    } else {
-                        validate();
-                        //if (validStates.every(isAllValid)) {
-
-                        //    $.ajax({
-                        //        url: '/EditApprenticeship/Index',
-                        //        type: "Post",
-                        //        dataType: "json",
-                        //        data: { LocationId: $selectedVenue.val(), DayRelease: $("#DayRelease")[0].checked, BlockRelease: $("#BlockRelease")[0].checked, RowCount: rowCount,Mode:$("#Mode").val() },
-
-                        //        contentType: "application/json; charset=utf-8",
-                        //        success: function (data) {
-                        //            window.location.href = data;
-                        //        },
-                        //        error: function (xhr, ajaxOptions, thrownError) {
-
-                        //        }
-                        //    });
-                        //};
-                    }
-
-                } else {
-
-                    validate();
-                    //if (validStates.every(isAllValid)) {
-
-                    //    $.ajax({
-                    //        url: '/EditApprenticeship/Index',
-                    //        type: "Post",
-                    //        dataType: "json",
-                    //        data: { LocationId: $selectedVenue.val(), DayRelease: $("#DayRelease")[0].checked, BlockRelease: $("#BlockRelease")[0].checked, RowCount: rowCount,Mode:$("#Mode").val() },
-
-                    //        contentType: "application/json; charset=utf-8",
-                    //        success: function (data) {
-                    //            window.location.href = data;
-                    //        },
-                    //        error: function (xhr, ajaxOptions, thrownError) {
-
-                    //        }
-                    //    });
-                    //};
-                }
-            });
-
-
-            $AddAnother.on("click", function (event) {
                  event.preventDefault();
                  validate();
                 if (validStates.every(isAllValid)) {
