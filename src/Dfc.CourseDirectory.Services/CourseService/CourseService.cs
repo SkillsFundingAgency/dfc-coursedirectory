@@ -26,6 +26,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
     {
         private readonly ILogger<CourseService> _logger;
         private readonly CourseServiceSettings _settings;
+        private readonly FindACourseServiceSettings _facSettings;
         private readonly HttpClient _httpClient;
         private readonly Uri _addCourseUri;
         private readonly Uri _getYourCoursesUri;
@@ -79,6 +80,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
 
             _logger = logger;
             _settings = settings.Value;
+            _facSettings = facSettings.Value;
             _httpClient = httpClient;
 
             _addCourseUri = settings.Value.ToAddCourseUri();
@@ -198,7 +200,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
                                                           Encoding.UTF8,
                                                           "application/json");
 
-                _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
+                _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _facSettings.ApiKey);
                 var response = await _httpClient.PostAsync(_providerSearchUri, content);
 
                 _logger.LogHttpResponseMessage("Provider search service http response", response);
