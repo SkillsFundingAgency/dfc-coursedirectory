@@ -681,25 +681,15 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 row.TryGetField<string>(fieldName, out string value);
 
                 if (String.IsNullOrWhiteSpace(value))
-                {
-                    errors.Add(new BulkUploadError
-                    {
-                        LineNumber = row.Context.Row,
-                        Header = fieldName,
-                        Error = $"Validation error on row {row.Context.Row}. Field {fieldName} is required."
-                    });
-                    return errors;
+                {                  
+
+                    throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Field {fieldName} is required.");
                 }
 
                 var deliveryMethod = value.ToEnum(DeliveryMethod.Undefined);
                 if (deliveryMethod == DeliveryMethod.Undefined)
                 {
-                    errors.Add(new BulkUploadError
-                    {
-                        LineNumber = row.Context.Row,
-                        Header = fieldName,
-                        Error = $"Validation error on row {row.Context.Row}. Field {fieldName} is invalid."
-                    });
+                    throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Field {fieldName} is invalid.");
                 }
                 return errors;
             }
@@ -711,38 +701,22 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 string fieldName = "VENUE";
                 row.TryGetField(fieldName, out string value);
                 if (String.IsNullOrWhiteSpace(value))
-                {
-                    errors.Add(new BulkUploadError
-                    {
-                        LineNumber = row.Context.Row,
-                        Header = fieldName,
-                        Error = $"Validation error on row {row.Context.Row}. Field {fieldName} is required."
-                    });
-                    return errors;
+                {                   
+                   throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Venue is missing.");                  
+                   
                 }
 
                 var venues = Mandatory_Checks_VENUE(row);
 
                 if (venues == null)
                 {
-                    errors.Add(new BulkUploadError
-                    {
-                        LineNumber = row.Context.Row,
-                        Header = fieldName,
-                        Error = $"Validation error on row {row.Context.Row}. Field {fieldName} is invalid."
-                    });
-                    return errors;
+                    throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Field {fieldName} is invalid. Provide a Valid {fieldName}.");
+                    
                 }
 
                 if (venues.Count > 1)
-                {
-                    errors.Add(new BulkUploadError
-                    {
-                        LineNumber = row.Context.Row,
-                        Header = fieldName,
-                        Error = $"Validation error on row {row.Context.Row}. Field {fieldName} is invalid. Multiple venues identified with value entered."
-                    });
-                    return errors;
+                {                   
+                    throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Field {fieldName} is invalid. Multiple venues identified with value entered.");
                 }
                 return errors;
             }
@@ -757,24 +731,15 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 {
                     if (value <= 0)
                     {
-                        errors.Add(new BulkUploadError
-                        {
-                            LineNumber = row.Context.Row,
-                            Header = fieldName,
-                            Error = $"Validation error on row {row.Context.Row}. Field {fieldName} must be a valid number"
-                        });
-                        return errors;
+                       
+                        throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Field {fieldName} must be a valid number.");
                     }
 
                     if (value > 874)
-                    {
-                        errors.Add(new BulkUploadError
-                        {
-                            LineNumber = row.Context.Row,
-                            Header = fieldName,
-                            Error = $"Validation error on row {row.Context.Row}. Field {fieldName} must be between 1 and 874"
-                        });
-                        return errors;
+                    {                     
+                       
+                        throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Field {fieldName} must be between 1 and 874");
+                       
                     }
                 }
                 if (Mandatory_Checks_DELIVERY_METHOD(row) == DeliveryMethod.Both)
@@ -784,13 +749,8 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                     {
                         if (!value.HasValue)
                         {
-                            errors.Add(new BulkUploadError
-                            {
-                                LineNumber = row.Context.Row,
-                                Header = fieldName,
-                                Error = $"Validation error on row {row.Context.Row}. Field {fieldName} must have a value if not ACROSS_ENGLAND"
-                            });
-                            return errors;
+                          
+                            throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Field {fieldName} must have a value if not ACROSS_ENGLAND.");
                         }
                     }
                 }
@@ -811,38 +771,23 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 {
                     if (modeArray.Length == 0)
                     {
-                        errors.Add(new BulkUploadError
-                        {
-                            LineNumber = row.Context.Row,
-                            Header = fieldName,
-                            Error = $"Validation error on row {row.Context.Row}. Field {fieldName} contain delivery modes if Delivery Method is BOTH"
-                        });
-                        return errors;
+                      
+                        throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Field {fieldName} contain delivery modes if Delivery Method is BOTH");
                     }
                 }
                 foreach (var mode in modeArray)
                 {
                     var deliveryMode = mode.ToEnum(DeliveryMode.Undefined);
                     if (deliveryMode == DeliveryMode.Undefined)
-                    {
-                        errors.Add(new BulkUploadError
-                        {
-                            LineNumber = row.Context.Row,
-                            Header = fieldName,
-                            Error = $"Validation error on row {row.Context.Row}. Field {fieldName} must be a valid Delivery Mode"
-                        });
-                        return errors;
+                    {                        
+
+                        throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Field {fieldName} must be a valid Delivery Mode");
                     }
 
                     if (!modes.TryAdd(deliveryMode, deliveryMode.ToString()))
-                    {
-                        errors.Add(new BulkUploadError
-                        {
-                            LineNumber = row.Context.Row,
-                            Header = fieldName,
-                            Error = $"Validation error on row {row.Context.Row}. Field {fieldName} must contain unique Delivery Modes"
-                        });
-                        return errors;
+                    {                      
+
+                        throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Field {fieldName} must contain unique Delivery Modes");
                     }
                 }
                 return errors;
@@ -857,15 +802,9 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 {
                     var isAcrossEngland = Mandatory_Checks_Bool(row, fieldName);
                     if (!isAcrossEngland.HasValue)
-                    {
-                        errors.Add(new BulkUploadError
-                        {
-                            LineNumber = row.Context.Row,
-                            Header = fieldName,
-                            Error = $"Validation error on row {row.Context.Row}. Field {fieldName} must contain a value when Delivery Method is 'Both'"
-                        });
-
-                        return errors;
+                    {                        
+                        throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Field {fieldName} must contain a value when Delivery Method is 'Both");
+                        
                     }
                 }
 
@@ -882,14 +821,8 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 {
                     if (!isNational.HasValue)
                     {
-                        errors.Add(new BulkUploadError
-                        {
-                            LineNumber = row.Context.Row,
-                            Header = fieldName,
-                            Error = $"Validation error on row {row.Context.Row}. Field {fieldName} must contain a value when Delivery Method is 'Employer'"
-                        });
-
-                        return errors;
+                      
+                        throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Field {fieldName} must contain a value when Delivery Method is 'Employer'");
                     }
                 }
 
@@ -911,14 +844,8 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                         {
                             var results = ParseRegionData(value);
                             if (!results.Any())
-                            {
-                                errors.Add(new BulkUploadError
-                                {
-                                    LineNumber = row.Context.Row,
-                                    Header = fieldName,
-                                    Error = $"Validation error on row {row.Context.Row}. Field {fieldName} contains invalid Region names"
-                                });
-                                return errors;
+                            {                              
+                                throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Field {fieldName}  contains invalid Region names");
                             }
                         }
                     }
@@ -943,25 +870,16 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                         {
                             if (!results.Any())
                             {
-                                errors.Add(new BulkUploadError
-                                {
-                                    LineNumber = row.Context.Row,
-                                    Header = fieldName,
-                                    Error = $"Validation error on row {row.Context.Row}. Field {fieldName} contains invalid SubRegion names"
-                                });
-                                return errors;
+                               
+                                throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Field {fieldName}  contains invalid SubRegion names");
                             }
                         }
 
                         var anyRegions = GetRegionList(row);
                         if (!anyRegions.Any() && !results.Any())
                         {
-                            errors.Add(new BulkUploadError
-                            {
-                                LineNumber = row.Context.Row,
-                                Header = fieldName,
-                                Error = $"Validation error on row {row.Context.Row}. Fields REGION/SUB_REGION are mandatory"
-                            });
+                          
+                            throw new BadDataException(row.Context, $"Validation error on row {row.Context.Row}. Fields REGION/SUB_REGION are mandatory");
                         }
                     }
                 }
@@ -1445,17 +1363,19 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             foreach (var apprentice in apprenticeships)
             {
                 if (string.IsNullOrEmpty(apprentice.MarketingInformation))
-                    errors.Add("Marketing Information is required");
-
-                var locationIds = apprentice.ApprenticeshipLocations.Select(x => x.LocationId);
-
-                foreach (var locationId in locationIds)
                 {
-                    if (locationId == null)
-                    {
-                        errors.Add("Location/Venue is required");
-                    }
+                    errors.Add("Marketing Information is required");
                 }
+                if (string.IsNullOrEmpty(apprentice.ContactEmail))
+                {
+                    errors.Add("Email is required");
+                }
+                if (string.IsNullOrEmpty(apprentice.ContactTelephone))
+                {
+                    errors.Add("Telephone is required");
+                }
+
+               
             }
 
             return errors;

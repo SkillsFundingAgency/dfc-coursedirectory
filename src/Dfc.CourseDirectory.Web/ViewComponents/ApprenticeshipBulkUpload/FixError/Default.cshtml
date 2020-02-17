@@ -56,34 +56,7 @@
                         </div>
 
                     }
-                    if (apprenticeship.LocationValidationErrors.Any())
-                    {
-            <div class="govuk-error-summary__body">
-                <div class="govuk-grid-column-two-thirds m100 col">
-                    <ul class="govuk-list govuk-error-summary__list">
-
-                        @if (apprenticeship.LocationValidationErrors.Any())
-                        {
-
-                            @foreach (var error in apprenticeship.LocationValidationErrors)
-                            {
-                                <li class="govuk-error-message">@error</li>
-                            }
-                        }
-                    </ul>
-                </div>
-                </div>
-                <div class="govuk-grid-column">
-                    <div class="align-right col right center">
-                        <a id="course-fix-@apprenticeship.id" class="error-link" asp-controller="EditDeliveryMethod" asp-action="Index" style="display:block"
-                           asp-route-ApprenticeshipId="@apprenticeship.id"
-                           asp-route-MarketingInformation="@apprenticeship.MarketingInformation"
-                           asp-route-ApprenticeshipLocations="@apprenticeship.ApprenticeshipLocations"
-                           asp-route-Cancelled=null
-                           asp-route-Mode="@ApprenticeshipMode.EditYourApprenticeships">Resolve</a>
-                    </div>
-                </div>
-                }
+                   
                 }
             </div>
         </div>
