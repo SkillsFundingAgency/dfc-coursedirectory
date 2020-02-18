@@ -23,4 +23,8 @@
     <ProjectReference Include="..\..\src\Dfc.CourseDirectory.WebV2\Dfc.CourseDirectory.WebV2.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="DataStore\CosmosDb\QueryHandlers\" />
+  </ItemGroup>
+
 </Project>

@@ -1,8 +1,11 @@
 ﻿using System;
+using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
+using Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
+using CosmosDbQueryDispatcher = Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb.CosmosDbQueryDispatcher;
 
 namespace Dfc.CourseDirectory.WebV2.Tests
 {
@@ -36,6 +39,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             services.AddMvc().AddApplicationPart(typeof(Startup).Assembly);
 
             services.AddSingleton<AuthenticatedUserInfo>();
+            services.AddSingleton<InMemoryDocumentStore>();
+            services.AddTransient<ICosmosDbQueryDispatcher, CosmosDbQueryDispatcher>();
             services.AddSingleton<IMemoryCache, ClearableMemoryCache>();
 
             return services.BuildServiceProvider(validateScopes: true);
