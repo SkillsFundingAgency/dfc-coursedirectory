@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Dfc.CourseDirectory.WebV2.Tests
@@ -35,6 +36,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             services.AddMvc().AddApplicationPart(typeof(Startup).Assembly);
 
             services.AddSingleton<AuthenticatedUserInfo>();
+            services.AddSingleton<IMemoryCache, ClearableMemoryCache>();
 
             return services.BuildServiceProvider(validateScopes: true);
         }

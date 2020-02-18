@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.Http;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
@@ -11,16 +12,19 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         {
             Factory = factory;
 
-            factory.ResetMocks();            
+            factory.ResetMocks();
 
             HttpClient = factory.CreateClient();
             User.Reset();
+            MemoryCache.Clear();
             HostingOptions.RewriteForbiddenToNotFound = true;
         }
 
         protected CourseDirectoryApplicationFactory Factory { get; }
 
         protected HostingOptions HostingOptions => Services.GetRequiredService<HostingOptions>();
+
+        protected ClearableMemoryCache MemoryCache => Services.GetRequiredService<IMemoryCache>() as ClearableMemoryCache;
 
         protected IServiceProvider Services => Factory.Server.Host.Services;
 
