@@ -18,7 +18,7 @@
       "value": "__venueServiceApiUrl__"
     },
     "venueApiKey": {
-      "value": "__apimKey__"
+      "value": "__ApimPublishCourseDirectoryKey__"
     },
     "larsApiUrl": {
       "value": "__larsApiUrl__"
@@ -30,16 +30,16 @@
       "value": "__providerApiUrl__"
     },
     "providerApiKey": {
-      "value": "__apimKey__"
+      "value": "__ApimPublishCourseDirectoryKey__"
     },
     "courseApiUrl": {
       "value": "__courseApiUrl__"
     },
     "courseApiKey": {
-      "value": "__apimKey__"
+      "value": "__ApimPublishCourseDirectoryKey__"
     },
     "apprenticeshipApiKey": {
-      "value": "__apimKey__"
+      "value": "__ApimPublishCourseDirectoryKey__"
     },
     "apprenticeshipApiUrl": {
       "value": "__apprenticeshipApiUrl__"
@@ -84,13 +84,13 @@
       "value": "__courseTextApiUrl__"
     },
     "courseTextApiKey": {
-      "value": "__apimKey__"
+      "value": "__ApimPublishCourseDirectoryKey__"
     },
     "findCourseApiUrl": {
       "value": "__apimCoursesUrl__"
     },
     "findCourseApiKey": {
-      "value": "__apimKey__"
+      "value": "__ApimFindACourseKey__"
     },
     "findCourseApiPassword": {
       "value": "__findCourseApiPassword__"
