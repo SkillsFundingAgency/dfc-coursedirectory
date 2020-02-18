@@ -1,8 +1,6 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Moq;
 using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests
@@ -18,17 +16,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         public async Task WithCurrentProvider_AppendsUkprnToRouteValues()
         {
             // Arrange
-            var providerId = Guid.NewGuid();
             var ukprn = 12345;
-
-            Factory.ProviderInfoCache
-                .Setup(mock => mock.GetProviderInfo(ukprn))
-                .ReturnsAsync(new ProviderInfo()
-                {
-                    ProviderId = providerId,
-                    Ukprn = ukprn
-                });
-
+            var providerId = await TestData.CreateProvider(ukprn);
             User.AsDeveloper();  // Ensure ukprn is bound from query param
 
             var client = Factory.CreateClient(new Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactoryClientOptions()

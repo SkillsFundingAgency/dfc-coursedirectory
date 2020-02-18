@@ -8,8 +8,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb
 {
     public class InMemoryDocumentStore
     {
+        public InMemoryDocumentCollection<Apprenticeship> Apprenticeships { get; } = new InMemoryDocumentCollection<Apprenticeship>();
+        public InMemoryDocumentCollection<Provider> Providers { get; } = new InMemoryDocumentCollection<Provider>();
+
         public void Clear()
         {
+            Apprenticeships.Clear();
+            Providers.Clear();
         }
     }
 

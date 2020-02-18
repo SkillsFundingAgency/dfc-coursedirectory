@@ -32,6 +32,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         protected IServiceProvider Services => Factory.Server.Host.Services;
 
+        protected TestData TestData => Services.GetRequiredService<TestData>();
+
         protected AuthenticatedUserInfo User => Services.GetRequiredService<AuthenticatedUserInfo>();
 
         protected HttpClient HttpClient { get; }

@@ -22,10 +22,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             // Arrange
             var apprenticeshipId = Guid.NewGuid();
 
-            Factory.ProviderOwnershipCache
-                .Setup(mock => mock.GetProviderForApprenticeship(apprenticeshipId))
-                .ReturnsAsync((int?)null);
-
             // Act
             var response = await HttpClient.GetAsync($"filtertests/verifyapprenticeshipidattributetests/{apprenticeshipId}");
 
@@ -37,11 +33,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         public async Task ApprenticeshipDoesExist_ReturnsOk()
         {
             // Arrange
-            var apprenticeshipId = Guid.NewGuid();
-
-            Factory.ProviderOwnershipCache
-                .Setup(mock => mock.GetProviderForApprenticeship(apprenticeshipId))
-                .ReturnsAsync(1234);
+            var ukprn = 12345;
+            await TestData.CreateProvider(ukprn);
+            var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
 
             // Act
             var response = await HttpClient.GetAsync($"filtertests/verifyapprenticeshipidattributetests/{apprenticeshipId}");
@@ -54,23 +48,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         public async Task UnboundProviderInfo_IsPopulated()
         {
             // Arrange
-            User.AsDeveloper();  // Ensure UKPRN doesn't get bound from authentication ticket
-
-            var apprenticeshipId = Guid.NewGuid();
-            var providerId = Guid.NewGuid();
             var ukprn = 1234;
-
-            Factory.ProviderOwnershipCache
-                .Setup(mock => mock.GetProviderForApprenticeship(apprenticeshipId))
-                .ReturnsAsync(ukprn);
-
-            Factory.ProviderInfoCache
-                .Setup(mock => mock.GetProviderInfo(ukprn))
-                .ReturnsAsync(new ProviderInfo()
-                {
-                    ProviderId = providerId,
-                    Ukprn = ukprn
-                });
+            await TestData.CreateProvider(ukprn);
+            var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
+            User.AsDeveloper();  // Ensure UKPRN doesn't get bound from authentication ticket
 
             // Act
             var response = await HttpClient.GetAsync($"filtertests/verifyapprenticeshipidattributetests/withproviderinfo/{apprenticeshipId}");
@@ -90,23 +71,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         public async Task MismatchingProviderInfoUkprnAndApprenticeshipUkprn_ReturnsError(TestUserType userType)
         {
             // Arrange
-            var anotherUkprn = 56789;
-            User.AsTestUser(userType, anotherUkprn);
-
-            var apprenticeshipId = Guid.NewGuid();
             var ukprn = 1234;
-
-            Factory.ProviderOwnershipCache
-                .Setup(mock => mock.GetProviderForApprenticeship(apprenticeshipId))
-                .ReturnsAsync(ukprn);
-
-            Factory.ProviderInfoCache
-                .Setup(mock => mock.GetProviderInfo(anotherUkprn))
-                .ReturnsAsync(new ProviderInfo()
-                {
-                    ProviderId = Guid.NewGuid(),
-                    Ukprn = anotherUkprn
-                });
+            var anotherUkprn = 56789;
+            await TestData.CreateProvider(ukprn);
+            await TestData.CreateProvider(anotherUkprn);
+            var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
+            User.AsTestUser(userType, anotherUkprn);
 
             // Act
             var response = await HttpClient.GetAsync($"filtertests/verifyapprenticeshipidattributetests/withproviderinfo/{apprenticeshipId}?ukprn=56789");

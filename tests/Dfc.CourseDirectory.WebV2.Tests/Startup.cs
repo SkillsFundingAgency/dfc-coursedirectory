@@ -42,6 +42,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             services.AddSingleton<InMemoryDocumentStore>();
             services.AddTransient<ICosmosDbQueryDispatcher, CosmosDbQueryDispatcher>();
             services.AddSingleton<IMemoryCache, ClearableMemoryCache>();
+            services.AddTransient<TestData>();
+
+            services.Scan(scan => scan
+                .FromAssembliesOf(typeof(Startup))
+                .AddClasses(classes => classes.AssignableTo(typeof(DataStore.CosmosDb.ICosmosDbQueryHandler<,>)))
+                    .AsImplementedInterfaces()
+                    .WithTransientLifetime());
 
             return services.BuildServiceProvider(validateScopes: true);
         }

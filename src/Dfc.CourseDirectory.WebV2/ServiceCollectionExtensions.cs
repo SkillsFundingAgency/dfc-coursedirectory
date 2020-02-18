@@ -16,7 +16,6 @@ namespace Dfc.CourseDirectory.WebV2
 
             if (!environment.IsTesting())
             {
-                services.AddSingleton<IProviderOwnershipCache, ProviderOwnershipCache>();
                 services.AddTransient<ICosmosDbQueryDispatcher, CosmosDbQueryDispatcher>();
                 services.AddSingleton<Configuration>();
 
@@ -52,6 +51,8 @@ namespace Dfc.CourseDirectory.WebV2
                 });
 
             services.AddSingleton<HostingOptions>();
+            services.AddSingleton<IProviderOwnershipCache, ProviderOwnershipCache>();
+            services.AddSingleton<IProviderInfoCache, ProviderInfoCache>();
 
             return services;
         }
