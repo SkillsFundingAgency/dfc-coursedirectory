@@ -81,7 +81,6 @@ steps:
     command: test
     projects: 'tests/*Tests/*.csproj'
     arguments: '--configuration $(BuildConfiguration)'
-  continueOnError: true
 
 - task: DotNetCoreCLI@2
   displayName: Publish
