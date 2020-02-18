@@ -4,5 +4,6 @@
     {
         public string DatabaseId { get; set; } = "providerportal";
         public string ApprenticeshipCollectionName { get; set; } = "apprenticeship";
+        public string ProviderCollectionName { get; set; } = "ukrlp";
     }
 }

@@ -68,7 +68,7 @@ namespace Dfc.CourseDirectory.WebV2.Filters
                         var providerInfo = await providerInfoCache.GetProviderInfo(ukprn.Value);
                         context.ActionArguments[p.Name] = providerInfo;
                     }
-                    else if (boundValue.UKPRN != ukprn.Value)
+                    else if (boundValue.Ukprn != ukprn.Value)
                     {
                         // Bound provider doesn't match this apprenticeship's provider - return an error
                         // (this is either a bug in a redirect or the end user messing with the URL)

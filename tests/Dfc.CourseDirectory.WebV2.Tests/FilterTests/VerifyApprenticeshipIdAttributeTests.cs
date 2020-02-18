@@ -69,7 +69,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
                 .ReturnsAsync(new ProviderInfo()
                 {
                     ProviderId = providerId,
-                    UKPRN = ukprn
+                    Ukprn = ukprn
                 });
 
             // Act
@@ -105,7 +105,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
                 .ReturnsAsync(new ProviderInfo()
                 {
                     ProviderId = Guid.NewGuid(),
-                    UKPRN = anotherUkprn
+                    Ukprn = anotherUkprn
                 });
 
             // Act

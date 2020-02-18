@@ -29,7 +29,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                 .ReturnsAsync(new ProviderInfo()
                 {
                     ProviderId = providerId,
-                    UKPRN = ukprn
+                    Ukprn = ukprn
                 });
 
             User.AsTestUser(userType);
@@ -77,7 +77,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                 .ReturnsAsync(new ProviderInfo()
                 {
                     ProviderId = providerId,
-                    UKPRN = ukprn
+                    Ukprn = ukprn
                 });
 
             User.AsTestUser(userType, ukprn);
