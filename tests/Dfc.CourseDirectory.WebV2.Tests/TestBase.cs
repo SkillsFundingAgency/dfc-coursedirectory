@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.Http;
+using Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
@@ -16,6 +17,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
             HttpClient = factory.CreateClient();
             User.Reset();
+            InMemoryDocumentStore.Clear();
             MemoryCache.Clear();
             HostingOptions.RewriteForbiddenToNotFound = true;
         }
@@ -23,6 +25,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         protected CourseDirectoryApplicationFactory Factory { get; }
 
         protected HostingOptions HostingOptions => Services.GetRequiredService<HostingOptions>();
+
+        protected InMemoryDocumentStore InMemoryDocumentStore => Services.GetRequiredService<InMemoryDocumentStore>();
 
         protected ClearableMemoryCache MemoryCache => Services.GetRequiredService<IMemoryCache>() as ClearableMemoryCache;
 
