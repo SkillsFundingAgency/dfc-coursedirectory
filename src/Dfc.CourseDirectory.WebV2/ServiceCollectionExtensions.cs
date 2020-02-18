@@ -1,5 +1,6 @@
 ﻿using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
 using Dfc.CourseDirectory.WebV2.Filters;
+using GovUk.Frontend.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -53,6 +54,7 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddSingleton<HostingOptions>();
             services.AddSingleton<IProviderOwnershipCache, ProviderOwnershipCache>();
             services.AddSingleton<IProviderInfoCache, ProviderInfoCache>();
+            services.AddGovUkFrontend();
 
             return services;
         }
