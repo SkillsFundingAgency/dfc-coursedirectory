@@ -7,12 +7,12 @@ using Microsoft.Azure.Documents.Linq;
 
 namespace Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.QueryHandlers
 {
-    public class GetProviderUKPRNForApprenticeshipHandler : ICosmosDbQueryHandler<GetProviderUKPRNForApprenticeship, int?>
+    public class GetProviderUkprnForApprenticeshipHandler : ICosmosDbQueryHandler<GetProviderUkprnForApprenticeship, int?>
     {
         public async Task<int?> Execute(
             DocumentClient client,
             Configuration configuration,
-            GetProviderUKPRNForApprenticeship request)
+            GetProviderUkprnForApprenticeship request)
         {
             var collectionUri = UriFactory.CreateDocumentCollectionUri(
                 configuration.DatabaseId,

@@ -3,7 +3,6 @@ using System.Net;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.Filters;
 using Microsoft.AspNetCore.Mvc;
-using Moq;
 using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
@@ -20,13 +19,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         public async Task DeveloperUser_CanAccess()
         {
             // Arrange
-            var apprenticeshipId = Guid.NewGuid();
             var ukprn = 123456;
-
-            Factory.ProviderOwnershipCache
-                .Setup(mock => mock.GetProviderForApprenticeship(apprenticeshipId))
-                .ReturnsAsync(ukprn);
-
+            await TestData.CreateProvider(ukprn);
+            var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
             User.AsDeveloper();
 
             // Act
@@ -40,13 +35,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         public async Task HelpdeskUser_CanAccess()
         {
             // Arrange
-            var apprenticeshipId = Guid.NewGuid();
             var ukprn = 123456;
-
-            Factory.ProviderOwnershipCache
-                .Setup(mock => mock.GetProviderForApprenticeship(apprenticeshipId))
-                .ReturnsAsync(ukprn);
-
+            await TestData.CreateProvider(ukprn);
+            var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
             User.AsHelpdesk();
 
             // Act
@@ -60,13 +51,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         public async Task ProviderUserForApprenticeshipsProvider_CanAccess()
         {
             // Arrange
-            var apprenticeshipId = Guid.NewGuid();
             var ukprn = 123456;
-
-            Factory.ProviderOwnershipCache
-                .Setup(mock => mock.GetProviderForApprenticeship(apprenticeshipId))
-                .ReturnsAsync(ukprn);
-
+            await TestData.CreateProvider(ukprn);
+            var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
             User.AsProviderUser(ukprn, Models.ProviderType.Apprenticeships);
 
             // Act
@@ -80,13 +67,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         public async Task ProviderSuperUserForApprenticeshipsProvider_CanAccess()
         {
             // Arrange
-            var apprenticeshipId = Guid.NewGuid();
             var ukprn = 123456;
-
-            Factory.ProviderOwnershipCache
-                .Setup(mock => mock.GetProviderForApprenticeship(apprenticeshipId))
-                .ReturnsAsync(ukprn);
-
+            await TestData.CreateProvider(ukprn);
+            var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
             User.AsProviderSuperUser(ukprn, Models.ProviderType.Apprenticeships);
 
             // Act
@@ -100,13 +83,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         public async Task ProviderUserForDifferentProvider_CannotAccess()
         {
             // Arrange
-            var apprenticeshipId = Guid.NewGuid();
             var ukprn = 123456;
-
-            Factory.ProviderOwnershipCache
-                .Setup(mock => mock.GetProviderForApprenticeship(apprenticeshipId))
-                .ReturnsAsync(ukprn);
-
+            await TestData.CreateProvider(ukprn);
+            var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
             User.AsProviderUser(567890, Models.ProviderType.Apprenticeships);
 
             // Act
@@ -120,13 +99,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         public async Task ProviderSuperUserForDifferentProvider_CannotAccess()
         {
             // Arrange
-            var apprenticeshipId = Guid.NewGuid();
             var ukprn = 123456;
-
-            Factory.ProviderOwnershipCache
-                .Setup(mock => mock.GetProviderForApprenticeship(apprenticeshipId))
-                .ReturnsAsync(ukprn);
-
+            await TestData.CreateProvider(ukprn);
+            var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
             User.AsProviderSuperUser(567890, Models.ProviderType.Apprenticeships);
 
             // Act
