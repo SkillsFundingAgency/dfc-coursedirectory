@@ -3,6 +3,7 @@ using Dfc.CourseDirectory.WebV2.Filters;
 using GovUk.Frontend.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -12,7 +13,8 @@ namespace Dfc.CourseDirectory.WebV2
     {
         public static IServiceCollection AddCourseDirectory(
             this IServiceCollection services,
-            IHostingEnvironment environment)
+            IHostingEnvironment environment,
+            IConfiguration configuration)
         {
             var thisAssembly = typeof(ServiceCollectionExtensions).Assembly;
 
