@@ -1,4 +1,7 @@
-﻿using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
+﻿using System.Data;
+using System.Data.SqlClient;
+using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
+using Dfc.CourseDirectory.WebV2.DataStore.Sql;
 using Dfc.CourseDirectory.WebV2.Filters;
 using GovUk.Frontend.AspNetCore;
 using MediatR;
@@ -55,11 +58,28 @@ namespace Dfc.CourseDirectory.WebV2
                     options.ViewLocationExpanders.Add(new FeatureViewLocationExpander());
                 });
 
+            services.Scan(scan => scan
+                .FromAssembliesOf(typeof(ISqlQuery<>))
+                .AddClasses(classes => classes.AssignableTo(typeof(ISqlQueryHandler<,>)))
+                    .AsImplementedInterfaces()
+                    .WithTransientLifetime());
+
             services.AddSingleton<HostingOptions>();
             services.AddSingleton<IProviderOwnershipCache, ProviderOwnershipCache>();
             services.AddSingleton<IProviderInfoCache, ProviderInfoCache>();
             services.AddGovUkFrontend();
             services.AddMediatR(typeof(ServiceCollectionExtensions));
+            services.AddScoped<ISqlQueryDispatcher, SqlQueryDispatcher>();
+            services.AddScoped<SqlConnection>(_ => new SqlConnection(configuration.GetConnectionString("DefaultConnection")));
+            services.AddScoped<SqlTransaction>(sp =>
+            {
+                var connection = sp.GetRequiredService<SqlConnection>();
+                if (connection.State != ConnectionState.Open)
+                {
+                    connection.Open();
+                }
+                return connection.BeginTransaction(IsolationLevel.Snapshot);
+            });
 
             return services;
         }
