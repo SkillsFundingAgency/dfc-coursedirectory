@@ -277,7 +277,6 @@ __pycache__/
 /automatedtests/SecurityTests
 /automatedtests/ESFA.UI.Specflow.Framework/Project/Tests/TestSupport/SecurityTests.cs
 /automatedtests/APITests
-src/Dfc.CourseDirectory.Web/appsettings.Development.json
 c/source/repos/dfc-coursedirectory3/src/Dfc.CourseDirectory.Web/appsettings.Development.json
 /src/Dfc.CourseDirectory.Web/package-lock.json
 /src/Dfc.CourseDirectory.Web/Controllers/AccountController.cs
@@ -286,4 +285,3 @@ c/source/repos/dfc-coursedirectory3/src/Dfc.CourseDirectory.Web/appsettings.Deve
 /src/Dfc.CourseDirectory.Web/wwwroot/BulkUploads
 /src/Dfc.CourseDirectory.Web/Helpers/IFileHelper.cs
 /src/Dfc.CourseDirectory.Web/Properties/launchSettings.json
-**/appsettings*.json
