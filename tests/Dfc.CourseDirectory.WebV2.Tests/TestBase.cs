@@ -1,41 +1,29 @@
-﻿using System;
-using System.Net.Http;
-using Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb;
-using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.DependencyInjection;
+﻿using System.Net.Http;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests
 {
-    public abstract class TestBase : IClassFixture<CourseDirectoryApplicationFactory>
+    public abstract class TestBase : IClassFixture<CourseDirectoryApplicationFactory>, IAsyncLifetime
     {
         public TestBase(CourseDirectoryApplicationFactory factory)
         {
             Factory = factory;
 
-            factory.ResetMocks();
-
             HttpClient = factory.CreateClient();
-            User.Reset();
-            InMemoryDocumentStore.Clear();
-            MemoryCache.Clear();
-            HostingOptions.RewriteForbiddenToNotFound = true;
+            Factory.OnTestStarting();
         }
 
         protected CourseDirectoryApplicationFactory Factory { get; }
 
-        protected HostingOptions HostingOptions => Services.GetRequiredService<HostingOptions>();
-
-        protected InMemoryDocumentStore InMemoryDocumentStore => Services.GetRequiredService<InMemoryDocumentStore>();
-
-        protected ClearableMemoryCache MemoryCache => Services.GetRequiredService<IMemoryCache>() as ClearableMemoryCache;
-
-        protected IServiceProvider Services => Factory.Server.Host.Services;
-
-        protected TestData TestData => Services.GetRequiredService<TestData>();
-
-        protected AuthenticatedUserInfo User => Services.GetRequiredService<AuthenticatedUserInfo>();
-
         protected HttpClient HttpClient { get; }
+
+        protected TestData TestData => Factory.TestData;
+
+        protected AuthenticatedUserInfo User => Factory.User;
+
+        public Task DisposeAsync() => Task.CompletedTask;
+
+        public Task InitializeAsync() => Factory.OnTestStarted();
     }
 }
