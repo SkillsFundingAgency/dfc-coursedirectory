@@ -71,14 +71,7 @@ namespace Dfc.CourseDirectory.Web
         {
             _env = env;
             _logger = logger;
-
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(_env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{_env.EnvironmentName}.json", optional: true)
-                .AddEnvironmentVariables();
-
-            Configuration = builder.Build();
+            Configuration = config;
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -319,18 +312,11 @@ namespace Dfc.CourseDirectory.Web
             }).AddOpenIdConnect(options =>
             {
                 options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.MetadataAddress = Configuration.GetSection("DFESignInSettings:MetadataAddress").Value;
+                options.MetadataAddress = Configuration["DFESignInSettings:MetadataAddress"];
                 options.RequireHttpsMetadata = false;
 
-                options.ClientId = Configuration.GetSection("DFESignInSettings:ClientID").Value;
-                const string envKeyClientSecret = "DFESignInSettings:ClientSecret";
-                var clientSecret = Configuration.GetSection(envKeyClientSecret).Value;
-                if (string.IsNullOrWhiteSpace(clientSecret.ToString()))
-                {
-                    throw new Exception("Missing environment variable " + envKeyClientSecret + " - get this from the DfE Sign-in team.");
-                }
-
-                options.ClientSecret = clientSecret.ToString();
+                options.ClientId = Configuration["DFESignInSettings:ClientID"];
+                options.ClientSecret = Configuration["DFESignInSettings:ClientSecret"];
                 options.ResponseType = OpenIdConnectResponseType.Code;
                 options.GetClaimsFromUserInfoEndpoint = true;
 
@@ -352,8 +338,8 @@ namespace Dfc.CourseDirectory.Web
                 options.MaxAge = overallSessionTimeout;
 
                 options.SaveTokens = true;
-                options.CallbackPath = new PathString(Configuration.GetSection("DFESignInSettings:CallbackPath").Value);
-                options.SignedOutCallbackPath = new PathString(Configuration.GetSection("DFESignInSettings:SignedOutCallbackPath").Value);
+                options.CallbackPath = new PathString(Configuration["DFESignInSettings:CallbackPath"]);
+                options.SignedOutCallbackPath = new PathString(Configuration["DFESignInSettings:SignedOutCallbackPath"]);
                 options.SecurityTokenValidator = new JwtSecurityTokenHandler
                 {
                     InboundClaimTypeMap = new Dictionary<string, string>(),
@@ -417,10 +403,10 @@ namespace Dfc.CourseDirectory.Web
                     {
                         _logger.LogMethodEnter();
                         _logger.LogWarning("User has been authorised by DFE");
-                        var issuer =  Configuration.GetSection("DFESignInSettings:Issuer").Value;
-                        var audience = Configuration.GetSection("DFESignInSettings:Audience").Value;
-                        var apiSecret = Configuration.GetSection("DFESignInSettings:APISecret").Value;
-                        var apiUri = Configuration.GetSection("DFESignInSettings:APIUri").Value;
+                        var issuer =  Configuration["DFESignInSettings:Issuer"];
+                        var audience = Configuration["DFESignInSettings:Audience"];
+                        var apiSecret = Configuration["DFESignInSettings:APISecret"];
+                        var apiUri = Configuration["DFESignInSettings:APIUri"];
 
                         Throw.IfNull(issuer, nameof(issuer));
                         Throw.IfNull(audience, nameof(audience));
