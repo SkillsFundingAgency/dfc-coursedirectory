@@ -528,8 +528,14 @@ namespace Dfc.CourseDirectory.Web
         }
         
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(
+            IApplicationBuilder app,
+            IHostingEnvironment env,
+            ILoggerFactory loggerFactory,
+            IServiceProvider serviceProvider)
         {
+            RunStartupTasks().GetAwaiter().GetResult();
+
             loggerFactory.AddApplicationInsights(app.ApplicationServices, LogLevel.Debug);
             if (env.IsDevelopment())
             {
@@ -611,6 +617,14 @@ namespace Dfc.CourseDirectory.Web
                     template: "{controller=ProviderSearch}/{action=OnBoardProvider}/{id?}");
             });
 
+            async Task RunStartupTasks()
+            {
+                var startupTasks = serviceProvider.GetServices<IStartupTask>();
+                foreach (var t in startupTasks)
+                {
+                    await t.Execute();
+                }
+            }
         }
     }
 }
