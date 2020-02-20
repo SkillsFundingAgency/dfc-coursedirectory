@@ -41,6 +41,7 @@ namespace Dfc.CourseDirectory.WebV2
                     options.Filters.Add(new RedirectToProviderSelectionActionFilter());
                     options.Filters.Add(new VerifyApprenticeshipIdActionFilter());
                     options.Filters.Add(new ResourceDoesNotExistExceptionFilter());
+                    options.Filters.Add(new CommitSqlTransactionActionFilter());
 
                     options.ModelBinderProviders.Insert(0, new CurrentProviderModelBinderProvider());
                 })
@@ -78,8 +79,14 @@ namespace Dfc.CourseDirectory.WebV2
                 {
                     connection.Open();
                 }
-                return connection.BeginTransaction(IsolationLevel.Snapshot);
+                var transaction = connection.BeginTransaction(IsolationLevel.Snapshot);
+
+                var marker = sp.GetRequiredService<SqlTransactionMarker>();
+                marker.OnTransactionCreated(transaction);
+
+                return transaction;
             });
+            services.AddScoped<SqlTransactionMarker>();
 
             return services;
         }
