@@ -4,6 +4,7 @@ using Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using CosmosDbQueryDispatcher = Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb.CosmosDbQueryDispatcher;
 
@@ -11,11 +12,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 {
     public class Startup : IStartup
     {
-        public Startup(IHostingEnvironment environment)
+        public Startup(IHostingEnvironment environment, IConfiguration configuration)
         {
             HostingEnvironment = environment;
+            Configuration = configuration;
         }
 
+        public IConfiguration Configuration { get; }
         public IHostingEnvironment HostingEnvironment { get; }
 
         public void Configure(IApplicationBuilder app)
@@ -33,7 +36,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                 .AddAuthentication("Test")
                 .AddScheme<TestAuthenticationOptions, TestAuthenticationHandler>("Test", _ => { });
 
-            services.AddCourseDirectory(HostingEnvironment);
+            services.AddCourseDirectory(HostingEnvironment, Configuration);
 
             // Make controllers defined in this assembly available
             services.AddMvc().AddApplicationPart(typeof(Startup).Assembly);
