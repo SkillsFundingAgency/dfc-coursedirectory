@@ -1,0 +1,30 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using FluentValidation.Results;
+
+namespace Dfc.CourseDirectory.WebV2.Validation
+{
+    public class ModelWithErrors<T>
+    {
+        public ModelWithErrors(T model, ValidationResult validationResult)
+        {
+            if (model == null)
+            {
+                throw new ArgumentNullException(nameof(model));
+            }
+
+            if (validationResult == null)
+            {
+                throw new ArgumentNullException(nameof(validationResult));
+            }
+
+            Model = model;
+            Errors = validationResult.Errors.ToList();
+        }
+
+        public T Model { get; }
+
+        public IReadOnlyCollection<ValidationFailure> Errors { get; }
+    }
+}
