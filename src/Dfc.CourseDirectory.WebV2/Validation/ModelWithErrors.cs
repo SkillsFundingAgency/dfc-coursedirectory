@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using FluentValidation.Results;
 
 namespace Dfc.CourseDirectory.WebV2.Validation
@@ -20,11 +18,11 @@ namespace Dfc.CourseDirectory.WebV2.Validation
             }
 
             Model = model;
-            Errors = validationResult.Errors.ToList();
+            ValidationResult = validationResult;
         }
 
         public T Model { get; }
 
-        public IReadOnlyCollection<ValidationFailure> Errors { get; }
+        public ValidationResult ValidationResult { get; }
     }
 }
