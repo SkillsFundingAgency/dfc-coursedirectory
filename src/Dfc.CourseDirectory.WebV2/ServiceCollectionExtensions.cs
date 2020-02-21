@@ -3,6 +3,7 @@ using System.Data.SqlClient;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
 using Dfc.CourseDirectory.WebV2.DataStore.Sql;
 using Dfc.CourseDirectory.WebV2.Filters;
+using Dfc.CourseDirectory.WebV2.Security;
 using GovUk.Frontend.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Hosting;
@@ -88,6 +89,8 @@ namespace Dfc.CourseDirectory.WebV2
             });
             services.AddScoped<SqlTransactionMarker>();
             services.AddSingleton<IClock, SystemClock>();
+            services.AddSingleton<ICurrentUserProvider, ClaimsPrincipalCurrentUserProvider>();
+            services.AddHttpContextAccessor();
 
             return services;
         }
