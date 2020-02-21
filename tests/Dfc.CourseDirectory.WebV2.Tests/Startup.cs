@@ -46,6 +46,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             services.AddTransient<ICosmosDbQueryDispatcher, CosmosDbQueryDispatcher>();
             services.AddSingleton<IMemoryCache, ClearableMemoryCache>();
             services.AddTransient<TestData>();
+            services.AddSingleton<IClock, MutableClock>();
 
             services.Scan(scan => scan
                 .FromAssembliesOf(typeof(Startup))
