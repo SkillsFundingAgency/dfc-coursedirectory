@@ -21,6 +21,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             _sqlCheckpoint = CreateCheckpoint();
         }
 
+        public MutableClock Clock => Server.Host.Services.GetRequiredService<IClock>() as MutableClock;
+
         public IConfiguration Configuration => Server.Host.Services.GetRequiredService<IConfiguration>();
 
         public HostingOptions HostingOptions => Services.GetRequiredService<HostingOptions>();
@@ -51,6 +53,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
             // Restore HostingOptions values to default
             HostingOptions.RewriteForbiddenToNotFound = true;
+
+            // Reset the clock
+            Clock.UtcNow = MutableClock.Start;
         }
 
         public async Task OnTestStarted()

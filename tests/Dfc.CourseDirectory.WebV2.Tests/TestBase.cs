@@ -15,6 +15,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             Factory.OnTestStarting();
         }
 
+        protected MutableClock Clock => Factory.Clock;
+
         protected CourseDirectoryApplicationFactory Factory { get; }
 
         protected HttpClient HttpClient { get; }

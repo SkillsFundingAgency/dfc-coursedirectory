@@ -87,6 +87,7 @@ namespace Dfc.CourseDirectory.WebV2
                 return transaction;
             });
             services.AddScoped<SqlTransactionMarker>();
+            services.AddSingleton<IClock, SystemClock>();
 
             return services;
         }
