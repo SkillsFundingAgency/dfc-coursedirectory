@@ -4,6 +4,7 @@ using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests
 {
+    [Trait("SkipOnCI", "true")]  // Until we have SQL DB on CI
     public abstract class TestBase : IClassFixture<CourseDirectoryApplicationFactory>, IAsyncLifetime
     {
         public TestBase(CourseDirectoryApplicationFactory factory)
