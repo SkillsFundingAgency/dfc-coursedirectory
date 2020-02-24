@@ -44,6 +44,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Razor.TagHelpers;
+using Microsoft.Azure.Documents.Client;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -160,6 +161,13 @@ namespace Dfc.CourseDirectory.Web
             services.AddScoped<IApprenticeshipProvisionHelper, ApprenticeshipProvisionHelper>();
             services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+            {
+                var endpoint = new Uri(Configuration["CosmosDbSettings:EndpointUri"]);
+                var key = Configuration["CosmosDbSettings:PrimaryKey"];
+                var documentClient = new DocumentClient(endpoint, key);
+                services.AddSingleton(documentClient);
+            }
 
             services.AddCourseDirectory(_env, Configuration);
 
