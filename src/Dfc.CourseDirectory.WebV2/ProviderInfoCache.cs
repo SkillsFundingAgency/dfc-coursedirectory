@@ -25,6 +25,11 @@ namespace Dfc.CourseDirectory.WebV2
                 var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(
                     new GetProviderByUkprn() { Ukprn = ukprn });
 
+                if (provider == null)
+                {
+                    return null;
+                }
+
                 providerInfo = new ProviderInfo()
                 {
                     ProviderId = provider.Id,
