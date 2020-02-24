@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Net;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
 
@@ -24,6 +25,19 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             response.EnsureSuccessStatusCode();
             var textResponse = await response.Content.ReadAsStringAsync();
             Assert.Equal("Select Provider", textResponse);
+        }
+
+        [Fact]
+        public async Task ProviderDoesNotExist_ReturnsNotFound()
+        {
+            // Arrange
+            User.AsDeveloper();
+
+            // Act
+            var response = await HttpClient.GetAsync("RedirectToProviderSelectionActionFilterTest?ukprn=12345");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
     }
 

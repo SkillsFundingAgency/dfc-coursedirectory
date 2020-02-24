@@ -60,14 +60,14 @@ namespace Dfc.CourseDirectory.WebV2
 
                 if (specifiedProviderIdBindingResult.Length == 0)
                 {
-                    OnBindingFailed();
+                    bindingContext.Result = ModelBindingResult.Failed();
                     return;
                 }
                 else
                 {
                     if (!int.TryParse(specifiedProviderIdBindingResult.FirstValue, out ukprn))
                     {
-                        OnBindingFailed();
+                        bindingContext.Result = ModelBindingResult.Failed();
                         return;
                     }
                 }
@@ -78,16 +78,22 @@ namespace Dfc.CourseDirectory.WebV2
             }
             else
             {
-                OnBindingFailed();
+                bindingContext.Result = ModelBindingResult.Failed();
                 return;
             }
 
             var providerInfo = await _providerInfoCache.GetProviderInfo(ukprn);
-            bindingContext.Result = ModelBindingResult.Success(providerInfo);
-
-            void OnBindingFailed()
+            if (providerInfo == null)
             {
+                bindingContext.ModelState.AddModelError(
+                    bindingContext.FieldName,
+                    new ResourceDoesNotExistException(ResourceType.Provider),
+                    bindingContext.ModelMetadata);
                 bindingContext.Result = ModelBindingResult.Failed();
+            }
+            else
+            {
+                bindingContext.Result = ModelBindingResult.Success(providerInfo);
             }
         }
     }

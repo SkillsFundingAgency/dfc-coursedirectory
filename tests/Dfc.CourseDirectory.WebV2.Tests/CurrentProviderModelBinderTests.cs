@@ -71,6 +71,21 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             Assert.True(Guid.TryParse(responseJson["providerId"].ToString(), out var boundProviderId), "Binding failed.");
             Assert.Equal(providerId, boundProviderId);
         }
+
+        [Fact]
+        public async Task ProviderDoesNotExist_FailsBinding()
+        {
+            // Arrange
+            User.AsTestUser(TestUserType.Developer);
+
+            // Act
+            var response = await HttpClient.GetAsync($"currentprovidermodelbindertests?ukprn=12345");
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            var responseJson = JToken.Parse(await response.Content.ReadAsStringAsync());
+            Assert.Equal(JTokenType.Null, responseJson.Type);
+        }
     }
 
     public class CurrentProviderModelBinderTestController : Controller

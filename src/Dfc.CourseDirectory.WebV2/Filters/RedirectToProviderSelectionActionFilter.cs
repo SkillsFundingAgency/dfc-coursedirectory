@@ -40,7 +40,11 @@ namespace Dfc.CourseDirectory.WebV2.Filters
 
             foreach (var p in providerInfoParameters)
             {
-                if (!context.ActionArguments.TryGetValue(p.Name, out var actionArg) || actionArg == null)
+                if (context.ModelState[p.Name]?.Errors.Any(e => e.Exception is ResourceDoesNotExistException) ?? false)
+                {
+                    context.Result = new NotFoundResult();
+                }
+                else if (!context.ActionArguments.TryGetValue(p.Name, out var actionArg) || actionArg == null)
                 {
                     context.Result = new RedirectToActionResult(
                         "Index",
