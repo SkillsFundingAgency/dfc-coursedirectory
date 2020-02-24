@@ -70,7 +70,11 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddSingleton<HostingOptions>();
             services.AddSingleton<IProviderOwnershipCache, ProviderOwnershipCache>();
             services.AddSingleton<IProviderInfoCache, ProviderInfoCache>();
-            services.AddGovUkFrontend();
+            services.AddGovUkFrontend(new GovUkFrontendAspNetCoreOptions()
+            {
+                // Avoid import being added to old pages
+                AddImportsToHtml = false
+            });
             services.AddMediatR(typeof(ServiceCollectionExtensions));
             services.AddScoped<ISqlQueryDispatcher, SqlQueryDispatcher>();
             services.AddScoped<SqlConnection>(_ => new SqlConnection(configuration.GetConnectionString("DefaultConnection")));
