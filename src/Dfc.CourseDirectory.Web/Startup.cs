@@ -45,12 +45,14 @@ using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -159,11 +161,23 @@ namespace Dfc.CourseDirectory.Web
 
             services.AddCourseDirectory(_env, Configuration);
 
-            services.AddMvc(options =>
-            {
-                options.Filters.Add(new DeactivatedProviderErrorActionFilter());
-                options.Filters.Add(new RedirectOnMissingUKPRNActionFilter());
-            }).SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddSessionStateTempDataProvider();
+            services
+                .AddMvc(options =>
+                {
+                    options.Filters.Add(new DeactivatedProviderErrorActionFilter());
+                    options.Filters.Add(new RedirectOnMissingUKPRNActionFilter());
+                })
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+                .AddSessionStateTempDataProvider()
+                .AddRazorOptions(options =>
+                {
+#if DEBUG
+                    // Fix auto reload on IIS when views in V2 project are changed
+                    // (see https://github.com/aspnet/Razor/issues/2426#issuecomment-420750249)
+                    var v2ProjectPath = Path.Combine(Directory.GetParent(Environment.CurrentDirectory).FullName, "Dfc.CourseDirectory.WebV2");
+                    options.FileProviders.Add(new PhysicalFileProvider(v2ProjectPath));
+#endif
+                });
 
 
             services.AddAuthorization(options =>
