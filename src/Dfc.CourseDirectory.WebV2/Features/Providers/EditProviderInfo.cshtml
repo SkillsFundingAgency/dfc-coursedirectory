@@ -1,6 +1,6 @@
 ﻿@using Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderInfo
 @model CommandViewModel
-@{ 
+@{
     ViewBag.Title = "Edit your details";
 }
 
@@ -23,13 +23,46 @@
 
             @if (Model.ShowBriefOverview)
             {
-                @* TODO Read-only *@
-                <govuk-textarea asp-for="BriefOverview">
-                    <govuk-textarea-label>Brief overview of your organisation for employers</govuk-textarea-label>
-                </govuk-textarea>
+                <govuk-character-count max-length="@ProviderValidation.BriefOverviewMaxLength" threshold="10" asp-for="BriefOverview" data-pttcd-module="rich-text-editor">
+                    <govuk-character-count-label>Brief overview of your organisation for employers</govuk-character-count-label>
+                </govuk-character-count>
             }
 
             <govuk-button type="Submit">Save</govuk-button>
         </form>
     </div>
 </div>
+
+<my></my>
+
+@section Scripts {
+    <script type="text/javascript">
+        $('[data-pttcd-module="rich-text-editor"]').each(function (i, el) {
+            var $textarea = $(el).find('.govuk-textarea');
+
+            $textarea.hide();
+
+            var $editorElement = $('<div></div>').html($textarea.val()).insertAfter($textarea);
+
+            var readOnly = $textarea.prop('disabled') || $textarea.prop('readonly');
+            
+            var editor = new Quill($editorElement[0], {
+                formats: ['bold'],
+                readOnly: readOnly,
+                modules: {
+                    toolbar: [
+                        ['bold'],
+                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                        ['clean']
+                    ]
+                },
+                theme: 'snow'
+            });
+
+            editor.on('text-change', function () {
+                var newHtml = $editorElement.find('.ql-editor').html();
+                $textarea.val(newHtml);
+            });
+        });
+    </script>
+}

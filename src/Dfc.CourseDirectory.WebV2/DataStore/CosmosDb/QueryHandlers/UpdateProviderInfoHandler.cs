@@ -34,10 +34,12 @@ namespace Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.QueryHandlers
 
             provider.Alias = request.Alias;
             provider.DateUpdated = request.UpdatedOn;
-            provider.UpdatedBy = request.UpdatedBy.Email;  // REVIEW
+            provider.UpdatedBy = request.UpdatedBy.Email;
 
             request.BriefOverview.Switch(v => provider.MarketingInformation = v, _ => { });
             request.CourseDirectoryName.Switch(v => provider.CourseDirectoryName = v, _ => { });
+
+            await client.UpsertDocumentAsync(collectionUri, provider);
 
             return new Success();
         }

@@ -7,6 +7,7 @@ namespace Dfc.CourseDirectory.WebV2.Validation
     public static class ProviderValidation
     {
         public const int AliasMaxLength = 100;
+        public const int BriefOverviewMaxLength = 750;
         public const int CourseDirectoryNameMaxLength = 100;
 
         public static bool BriefOverviewIsEditable(ApprenticeshipQAStatus qaStatus, UserInfo user) =>
