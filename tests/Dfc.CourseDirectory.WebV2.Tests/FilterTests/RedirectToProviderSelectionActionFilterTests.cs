@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
@@ -7,9 +8,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
 {
     public class RedirectToProviderSelectionActionFilterTests : TestBase
     {
+        private readonly HttpClient _httpClientWithAutoRedirects;
+
         public RedirectToProviderSelectionActionFilterTests(CourseDirectoryApplicationFactory factory)
             : base(factory)
         {
+            _httpClientWithAutoRedirects = factory.CreateClient();
         }
 
         [Fact]
@@ -19,7 +23,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             User.AsDeveloper();
 
             // Act
-            var response = await HttpClient.GetAsync("RedirectToProviderSelectionActionFilterTest");
+            var response = await _httpClientWithAutoRedirects.GetAsync("RedirectToProviderSelectionActionFilterTest");
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -34,7 +38,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             User.AsDeveloper();
 
             // Act
-            var response = await HttpClient.GetAsync("RedirectToProviderSelectionActionFilterTest?ukprn=12345");
+            var response = await _httpClientWithAutoRedirects.GetAsync("RedirectToProviderSelectionActionFilterTest?ukprn=12345");
 
             // Assert
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);

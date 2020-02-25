@@ -1,5 +1,6 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests
@@ -11,7 +12,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         {
             Factory = factory;
 
-            HttpClient = factory.CreateClient();
+            HttpClient = factory.CreateClient(new WebApplicationFactoryClientOptions()
+            {
+                AllowAutoRedirect = false
+            });
             Factory.OnTestStarting();
         }
 
