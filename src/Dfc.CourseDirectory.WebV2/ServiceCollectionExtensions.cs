@@ -38,6 +38,7 @@ namespace Dfc.CourseDirectory.WebV2
                 .AddMvc(options =>
                 {
                     options.Conventions.Add(new AddFeaturePropertyModelConvention());
+                    options.Conventions.Add(new AuthorizeActionModelConvention());
 
                     options.Filters.Add(new RedirectToProviderSelectionActionFilter());
                     options.Filters.Add(new VerifyApprenticeshipIdActionFilter());
