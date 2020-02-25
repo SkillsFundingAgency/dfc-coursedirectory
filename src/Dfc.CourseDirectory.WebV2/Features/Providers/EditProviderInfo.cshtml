@@ -1,0 +1,35 @@
+﻿@using Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderInfo
+@model CommandViewModel
+@{ 
+    ViewBag.Title = "Edit your details";
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <span class="govuk-caption-l">Course Directory</span>
+        <h1 class="govuk-heading-l">Edit your details</h1>
+
+        <form asp-action="EditProviderInfo" asp-route-ukprn="@Model.Ukprn">
+            <govuk-input asp-for="Alias">
+                <govuk-input-label>Your alias</govuk-input-label>
+            </govuk-input>
+
+            @if (Model.ShowCourseDirectoryName)
+            {
+                <govuk-input asp-for="CourseDirectoryName">
+                    <govuk-input-label>Course directory name</govuk-input-label>
+                </govuk-input>
+            }
+
+            @if (Model.ShowBriefOverview)
+            {
+                @* TODO Read-only *@
+                <govuk-textarea asp-for="BriefOverview">
+                    <govuk-textarea-label>Brief overview of your organisation for employers</govuk-textarea-label>
+                </govuk-textarea>
+            }
+
+            <govuk-button type="Submit">Save</govuk-button>
+        </form>
+    </div>
+</div>

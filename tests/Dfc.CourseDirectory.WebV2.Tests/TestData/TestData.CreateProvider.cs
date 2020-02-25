@@ -11,6 +11,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests
     {
         public async Task<Guid> CreateProvider(
             int ukprn,
+            ProviderType providerType = ProviderType.Both,
+            string providerName = "Test Provider",
+            string alias = "",
+            string courseDirectoryName = "",
+            string marketingInformation = "",
             ApprenticeshipQAStatus apprenticeshipQAStatus = ApprenticeshipQAStatus.NotStarted)
         {
             var providerId = Guid.NewGuid();
@@ -18,7 +23,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             var result = await _cosmosDbQueryDispatcher.ExecuteQuery(new CreateProvider()
             {
                 ProviderId = providerId,
-                Ukprn = ukprn
+                Ukprn = ukprn,
+                ProviderType = providerType,
+                ProviderName = providerName,
+                Alias = alias,
+                CourseDirectoryName = courseDirectoryName,
+                MarketingInformation = marketingInformation
             });
             Assert.Equal(CreateProviderResult.Ok, result);
 

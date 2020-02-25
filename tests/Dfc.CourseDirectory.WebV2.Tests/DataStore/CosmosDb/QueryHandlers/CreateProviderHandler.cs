@@ -10,7 +10,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb.QueryHandlers
             var provider = new Provider()
             {
                 Id = request.ProviderId,
-                UnitedKingdomProviderReferenceNumber = request.Ukprn.ToString()
+                UnitedKingdomProviderReferenceNumber = request.Ukprn.ToString(),
+                ProviderType = request.ProviderType,
+                ProviderName = request.ProviderName,
+                Alias = request.Alias,
+                CourseDirectoryName = request.CourseDirectoryName,
+                MarketingInformation = request.MarketingInformation
             };
             inMemoryDocumentStore.Providers.Save(provider);
 
