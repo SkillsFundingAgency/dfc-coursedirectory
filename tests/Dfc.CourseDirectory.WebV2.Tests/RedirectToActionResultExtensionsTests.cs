@@ -20,13 +20,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             var providerId = await TestData.CreateProvider(ukprn);
             User.AsDeveloper();  // Ensure ukprn is bound from query param
 
-            var client = Factory.CreateClient(new Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactoryClientOptions()
-            {
-                AllowAutoRedirect = false
-            });
-
             // Act
-            var response = await client.GetAsync($"redirecttoactionresultextensionstestcontroller/first?ukprn={ukprn}");
+            var response = await HttpClient.GetAsync($"redirecttoactionresultextensionstestcontroller/first?ukprn={ukprn}");
 
             // Assert
             Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
