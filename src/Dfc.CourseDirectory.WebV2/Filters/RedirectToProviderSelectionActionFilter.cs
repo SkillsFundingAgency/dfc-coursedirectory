@@ -44,6 +44,10 @@ namespace Dfc.CourseDirectory.WebV2.Filters
                 {
                     context.Result = new NotFoundResult();
                 }
+                else if (context.ModelState[p.Name]?.Errors.Any(e => e.Exception is NotAuthorizedException) ?? false)
+                {
+                    context.Result = new ForbidResult();
+                }
                 else if (!context.ActionArguments.TryGetValue(p.Name, out var actionArg) || actionArg == null)
                 {
                     context.Result = new RedirectToActionResult(

@@ -58,12 +58,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         {
             // Arrange
             var ukprn = 12345;
-            var specifiedUkprn = 67890;
             var providerId = await TestData.CreateProvider(ukprn);
             User.AsTestUser(userType, ukprn);
 
             // Act
-            var response = await HttpClient.GetAsync($"currentprovidermodelbindertests?ukprn={specifiedUkprn}");
+            var response = await HttpClient.GetAsync($"currentprovidermodelbindertests");
 
             // Assert
             response.EnsureSuccessStatusCode();

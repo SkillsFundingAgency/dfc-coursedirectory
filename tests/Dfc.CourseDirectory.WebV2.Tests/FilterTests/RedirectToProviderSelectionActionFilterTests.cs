@@ -14,6 +14,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             : base(factory)
         {
             _httpClientWithAutoRedirects = factory.CreateClient();
+            Factory.HostingOptions.RewriteForbiddenToNotFound = false;
         }
 
         [Fact]
@@ -42,6 +43,20 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
 
             // Assert
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task ProviderDoesNotMatchUsersOwnProvider_ReturnsForbidden()
+        {
+            // Arrange
+            var ukprn = 12345;
+            User.AsProviderUser(ukprn, Models.ProviderType.Both);
+
+            // Act
+            var response = await _httpClientWithAutoRedirects.GetAsync("RedirectToProviderSelectionActionFilterTest?ukprn=45678");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
         }
     }
 
