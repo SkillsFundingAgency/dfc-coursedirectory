@@ -9,7 +9,7 @@ namespace Dfc.CourseDirectory.WebV2
         public void OnActionExecuted(ActionExecutedContext context)
         {
             var sqlTransactionMarker = context.HttpContext.RequestServices.GetRequiredService<SqlTransactionMarker>();
-            if (sqlTransactionMarker.GotTransaction)
+            if (sqlTransactionMarker.GotTransaction && !context.Canceled)
             {
                 sqlTransactionMarker.Transaction.Commit();
             }
