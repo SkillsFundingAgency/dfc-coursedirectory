@@ -31,11 +31,11 @@ namespace Dfc.CourseDirectory.WebV2.Filters
             }
 
             var sqlQueryDispatcher = context.HttpContext.RequestServices.GetRequiredService<ISqlQueryDispatcher>();
-            var currentStatus = (await sqlQueryDispatcher.ExecuteQuery(
+            var currentStatus = await sqlQueryDispatcher.ExecuteQuery(
                 new GetProviderApprenticeshipQAStatus()
                 {
                     ProviderId = providerInfo.ProviderId
-                })) ?? ApprenticeshipQAStatus.NotStarted;
+                });
 
             if (!AllowedStatuses.Contains(currentStatus))
             {

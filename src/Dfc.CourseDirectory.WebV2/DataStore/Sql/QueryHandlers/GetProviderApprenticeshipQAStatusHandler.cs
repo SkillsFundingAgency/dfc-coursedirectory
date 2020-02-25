@@ -7,9 +7,9 @@ using Dfc.CourseDirectory.WebV2.Models;
 namespace Dfc.CourseDirectory.WebV2.DataStore.Sql.QueryHandlers
 {
     public class GetProviderApprenticeshipQAStatusHandler :
-        ISqlQueryHandler<GetProviderApprenticeshipQAStatus, ApprenticeshipQAStatus?>
+        ISqlQueryHandler<GetProviderApprenticeshipQAStatus, ApprenticeshipQAStatus>
     {
-        public Task<ApprenticeshipQAStatus?> Execute(
+        public async Task<ApprenticeshipQAStatus> Execute(
             SqlTransaction transaction,
             GetProviderApprenticeshipQAStatus query)
         {
@@ -19,7 +19,8 @@ WHERE ProviderId = @ProviderId";
 
             var paramz = new { query.ProviderId };
 
-            return transaction.Connection.QuerySingleOrDefaultAsync<ApprenticeshipQAStatus?>(sql, paramz, transaction);
+            return (await transaction.Connection.QuerySingleOrDefaultAsync<ApprenticeshipQAStatus?>(sql, paramz, transaction))
+                ?? ApprenticeshipQAStatus.NotStarted;
         }
     }
 }
