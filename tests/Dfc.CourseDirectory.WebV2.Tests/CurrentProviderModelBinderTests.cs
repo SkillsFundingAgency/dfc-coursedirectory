@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.Filters;
 using Microsoft.AspNetCore.Mvc;
-using Moq;
 using Newtonsoft.Json.Linq;
 using Xunit;
 
@@ -21,17 +20,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         public async Task AdminUser_UsesProviderFromQueryParam(TestUserType userType)
         {
             // Arrange
-            var providerId = Guid.NewGuid();
             var ukprn = 12345;
-
-            Factory.ProviderInfoCache
-                .Setup(mock => mock.GetProviderInfo(ukprn))
-                .ReturnsAsync(new ProviderInfo()
-                {
-                    ProviderId = providerId,
-                    UKPRN = ukprn
-                });
-
+            var providerId = await TestData.CreateProvider(ukprn);
             User.AsTestUser(userType);
 
             // Act
@@ -67,29 +57,33 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         public async Task ProviderUser_UsesProviderFromAuthToken(TestUserType userType)
         {
             // Arrange
-            var providerId = Guid.NewGuid();
             var ukprn = 12345;
-
-            var specifiedUkprn = 67890;
-
-            Factory.ProviderInfoCache
-                .Setup(mock => mock.GetProviderInfo(ukprn))
-                .ReturnsAsync(new ProviderInfo()
-                {
-                    ProviderId = providerId,
-                    UKPRN = ukprn
-                });
-
+            var providerId = await TestData.CreateProvider(ukprn);
             User.AsTestUser(userType, ukprn);
 
             // Act
-            var response = await HttpClient.GetAsync($"currentprovidermodelbindertests?ukprn={specifiedUkprn}");
+            var response = await HttpClient.GetAsync($"currentprovidermodelbindertests");
 
             // Assert
             response.EnsureSuccessStatusCode();
             var responseJson = JToken.Parse(await response.Content.ReadAsStringAsync());
             Assert.True(Guid.TryParse(responseJson["providerId"].ToString(), out var boundProviderId), "Binding failed.");
             Assert.Equal(providerId, boundProviderId);
+        }
+
+        [Fact]
+        public async Task ProviderDoesNotExist_FailsBinding()
+        {
+            // Arrange
+            User.AsTestUser(TestUserType.Developer);
+
+            // Act
+            var response = await HttpClient.GetAsync($"currentprovidermodelbindertests?ukprn=12345");
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            var responseJson = JToken.Parse(await response.Content.ReadAsStringAsync());
+            Assert.Equal(JTokenType.Null, responseJson.Type);
         }
     }
 

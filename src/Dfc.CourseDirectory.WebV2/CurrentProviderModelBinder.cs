@@ -49,7 +49,58 @@ namespace Dfc.CourseDirectory.WebV2
 
             int ukprn;
 
+            var queryStringUkprn = TryGetUkprnFromQueryString();
+
             if (role == RoleNames.Developer || role == RoleNames.Helpdesk)
+            {
+                if (!queryStringUkprn.HasValue)
+                {
+                    bindingContext.Result = ModelBindingResult.Failed();
+                    return;
+                }
+                else
+                {
+                    ukprn = queryStringUkprn.Value;
+                }
+            }
+            else if (role == RoleNames.ProviderSuperUser || role == RoleNames.ProviderUser)
+            {
+                var usersOwnUkprn = int.Parse(user.FindFirst("UKPRN").Value);
+
+                // Query param, if specified, must match user's own org
+                if (queryStringUkprn.HasValue && queryStringUkprn.Value != usersOwnUkprn)
+                {
+                    bindingContext.ModelState.AddModelError(
+                        bindingContext.FieldName,
+                        new NotAuthorizedException(),
+                        bindingContext.ModelMetadata);
+                    bindingContext.Result = ModelBindingResult.Failed();
+                    return;
+                }
+
+                ukprn = usersOwnUkprn;
+            }
+            else
+            {
+                bindingContext.Result = ModelBindingResult.Failed();
+                return;
+            }
+
+            var providerInfo = await _providerInfoCache.GetProviderInfo(ukprn);
+            if (providerInfo == null)
+            {
+                bindingContext.ModelState.AddModelError(
+                    bindingContext.FieldName,
+                    new ResourceDoesNotExistException(ResourceType.Provider),
+                    bindingContext.ModelMetadata);
+                bindingContext.Result = ModelBindingResult.Failed();
+            }
+            else
+            {
+                bindingContext.Result = ModelBindingResult.Success(providerInfo);
+            }
+
+            int? TryGetUkprnFromQueryString()
             {
                 var valueProvider = new QueryStringValueProvider(
                     BindingSource.Query,
@@ -60,34 +111,17 @@ namespace Dfc.CourseDirectory.WebV2
 
                 if (specifiedProviderIdBindingResult.Length == 0)
                 {
-                    OnBindingFailed();
-                    return;
+                    return null;
                 }
                 else
                 {
                     if (!int.TryParse(specifiedProviderIdBindingResult.FirstValue, out ukprn))
                     {
-                        OnBindingFailed();
-                        return;
+                        return null;
                     }
                 }
-            }
-            else if (role == RoleNames.ProviderSuperUser || role == RoleNames.ProviderUser)
-            {
-                ukprn = int.Parse(user.FindFirst("UKPRN").Value);
-            }
-            else
-            {
-                OnBindingFailed();
-                return;
-            }
 
-            var providerInfo = await _providerInfoCache.GetProviderInfo(ukprn);
-            bindingContext.Result = ModelBindingResult.Success(providerInfo);
-
-            void OnBindingFailed()
-            {
-                bindingContext.Result = ModelBindingResult.Failed();
+                return ukprn;
             }
         }
     }

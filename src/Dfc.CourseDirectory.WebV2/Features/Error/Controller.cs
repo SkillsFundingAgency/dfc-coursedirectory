@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Diagnostics;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Dfc.CourseDirectory.WebV2.Features.Error
 {
+    [AllowAnonymous]
     public class Controller : Microsoft.AspNetCore.Mvc.Controller
     {
         [HttpGet("error")]

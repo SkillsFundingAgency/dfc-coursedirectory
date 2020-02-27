@@ -82,5 +82,7 @@ namespace Dfc.CourseDirectory.Models.Models.Apprenticeships
         
         public List<BulkUploadError> BulkUploadErrors { get; set; }
         public string NotionalNVQLevelv2 { get; set; }
+        public IEnumerable<string> ValidationErrors { get; set; }
+        public IEnumerable<string> LocationValidationErrors { get; set; }
     }
 }

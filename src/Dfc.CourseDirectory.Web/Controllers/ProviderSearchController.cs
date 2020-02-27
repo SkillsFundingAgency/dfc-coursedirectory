@@ -106,37 +106,37 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     {
                         if (null != provider.ProviderContact)
                         {
-                            var providerContactTypeL = provider.ProviderContact.Where(s => s.ContactType.Equals("L", StringComparison.InvariantCultureIgnoreCase));
+                            var providerContactTypeP = provider.ProviderContact.Where(s => s.ContactType.Equals("P", StringComparison.InvariantCultureIgnoreCase));
                             string AddressLine1 = string.Empty;
-                            if (!(string.IsNullOrEmpty(providerContactTypeL.FirstOrDefault()?.ContactAddress?.PAON?.Description)
-                                && string.IsNullOrEmpty(providerContactTypeL.FirstOrDefault()?.ContactAddress?.StreetDescription)))
+                            if (!(string.IsNullOrEmpty(providerContactTypeP.FirstOrDefault()?.ContactAddress?.PAON?.Description)
+                                && string.IsNullOrEmpty(providerContactTypeP.FirstOrDefault()?.ContactAddress?.StreetDescription)))
                             {
-                                AddressLine1 = providerContactTypeL.FirstOrDefault()?.ContactAddress?.PAON?.Description
-                                                + " " + providerContactTypeL.FirstOrDefault()?.ContactAddress?.StreetDescription + ", ";
+                                AddressLine1 = providerContactTypeP.FirstOrDefault()?.ContactAddress?.PAON?.Description
+                                                + " " + providerContactTypeP.FirstOrDefault()?.ContactAddress?.StreetDescription + ", ";
                             }
                             string AddressLine2 = string.Empty;
-                            if (providerContactTypeL.FirstOrDefault()?.ContactAddress?.Locality != null)
+                            if (providerContactTypeP.FirstOrDefault()?.ContactAddress?.Locality != null)
                             {
-                                AddressLine2 = providerContactTypeL.FirstOrDefault()?.ContactAddress?.Locality.ToString() + ", ";
+                                AddressLine2 = providerContactTypeP.FirstOrDefault()?.ContactAddress?.Locality.ToString() + ", ";
                             }
 
                             string AddressLine3 = string.Empty;
-                            if (!string.IsNullOrEmpty(providerContactTypeL.FirstOrDefault()?.ContactAddress?.Items?.FirstOrDefault()))
+                            if (!string.IsNullOrEmpty(providerContactTypeP.FirstOrDefault()?.ContactAddress?.Items?.FirstOrDefault()))
                             {
-                                AddressLine3 = providerContactTypeL.FirstOrDefault()?.ContactAddress?.Items?.FirstOrDefault() + ", ";
+                                AddressLine3 = providerContactTypeP.FirstOrDefault()?.ContactAddress?.Items?.FirstOrDefault() + ", ";
                             }
 
                             string PostCode = string.Empty;
-                            if (!string.IsNullOrEmpty(providerContactTypeL?.FirstOrDefault()?.ContactAddress?.PostCode))
+                            if (!string.IsNullOrEmpty(providerContactTypeP?.FirstOrDefault()?.ContactAddress?.PostCode))
                             {
-                                PostCode = providerContactTypeL?.FirstOrDefault()?.ContactAddress?.PostCode;
+                                PostCode = providerContactTypeP?.FirstOrDefault()?.ContactAddress?.PostCode;
                             }
                         
 
                             model.AddressTypeL = string.Concat(AddressLine1, AddressLine2, AddressLine3, PostCode);
-                            model.TelephoneTypeL = providerContactTypeL?.FirstOrDefault()?.ContactTelephone1;
-                            model.WebTypeL = providerContactTypeL?.FirstOrDefault()?.ContactWebsiteAddress;
-                            model.EmailTypeL = providerContactTypeL?.FirstOrDefault()?.ContactEmail;
+                            model.TelephoneTypeL = providerContactTypeP?.FirstOrDefault()?.ContactTelephone1;
+                            model.WebTypeL = providerContactTypeP?.FirstOrDefault()?.ContactWebsiteAddress;
+                            model.EmailTypeL = providerContactTypeP?.FirstOrDefault()?.ContactEmail;
                         }
                         if (provider.Status == Status.Onboarded)
                         {
