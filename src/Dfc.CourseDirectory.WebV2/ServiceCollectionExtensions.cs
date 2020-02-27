@@ -96,6 +96,7 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddSingleton<IClock, SystemClock>();
             services.AddSingleton<ICurrentUserProvider, ClaimsPrincipalCurrentUserProvider>();
             services.AddHttpContextAccessor();
+            services.AddSingleton<IFeatureFlagProvider, ConfigurationFeatureFlagProvider>();
 
             return services;
         }
