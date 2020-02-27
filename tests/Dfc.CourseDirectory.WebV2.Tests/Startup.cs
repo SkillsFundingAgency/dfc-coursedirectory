@@ -1,6 +1,7 @@
 ﻿using System;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
 using Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb;
+using GovUk.Frontend.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Caching.Memory;
@@ -24,6 +25,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         public void Configure(IApplicationBuilder app)
         {
             app.UseCourseDirectoryErrorHandling();
+
+            app.UseGdsFrontEnd();
 
             app.UseV2StaticFiles();
 

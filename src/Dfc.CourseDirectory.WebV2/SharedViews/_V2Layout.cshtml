@@ -12,7 +12,7 @@
     <link rel="apple-touch-icon" sizes="167x167" href="~/assets/images/govuk-apple-touch-icon-167x167.png">
     <link rel="apple-touch-icon" sizes="152x152" href="~/assets/images/govuk-apple-touch-icon-152x152.png">
     <link rel="apple-touch-icon" href="~/assets/images/govuk-apple-touch-icon.png">
-    <link href="~/dist/site.min.css" rel="stylesheet" />
+    @Html.Raw(GovUk.Frontend.AspNetCore.HtmlSnippets.StyleImports)
 </head>
 
 <body class="govuk-template__body">
@@ -92,12 +92,9 @@
         </div>
     </footer>
 
-    <script src="https://cloud.tinymce.com/4/tinymce.min.js?apiKey=v5fhwngsz8uph62nxa22obe2bi6kdv5k0zaxt4cx5j1lzh8b"></script>
+    @Html.Raw(GovUk.Frontend.AspNetCore.HtmlSnippets.ScriptImports)
     <environment include="Development">
         <script src="~/vendor/jquery/jquery.min.js"></script>
-        <script src="~/vendor/jquery-validation/jquery.validate.min.js"></script>
-        <script src="~/vendor/govuk-frontend/all.js"></script>
-        <script src="~/dist/site.js" asp-append-version="true"></script>
     </environment>
     <environment exclude="Development">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"
@@ -105,18 +102,9 @@
                 crossorigin="anonymous"
                 asp-fallback-src="~/vendor/js/jquery/jquery.min.js"
                 asp-fallback-test="window.jQuery"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.min.js"
-                integrity="sha256-F6h55Qw6sweK+t7SiOJX+2bpSAa3b/fnlrVCJvmEj1A= sha384-rZfj/ogBloos6wzLGpPkkOr/gpkBNLZ6b6yLy4o+ok+t/SAKlL5mvXLr0OXNi1Hp sha512-O/nUTF5mdFkhEoQHFn9N5wmgYyW323JO6v8kr6ltSRKriZyTr/8417taVWeabVS4iONGk2V444QD0P2cwhuTkg=="
-                crossorigin="anonymous"
-                asp-fallback-src="~/vendor/js/jquery-validation/jquery.validate.min.js"
-                asp-fallback-test="window.jQuery && window.jQuery.validator"></script>
-        <script src="~/vendor/govuk-frontend/all.min.js"></script>
-        <script src="~/dist/site.min.js" asp-append-version="true"></script>
     </environment>
 
-    <script>
-        window.GOVUKFrontend.initAll()
-    </script>
+    @RenderSection("Scripts", required: false)
 
 </body>
 </html>

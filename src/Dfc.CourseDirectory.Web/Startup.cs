@@ -31,6 +31,7 @@ using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.HostedServices;
 using Dfc.CourseDirectory.Web.ViewComponents;
 using Dfc.CourseDirectory.WebV2;
+using GovUk.Frontend.AspNetCore;
 using IdentityModel.Client;
 using JWT.Algorithms;
 using JWT.Builder;
@@ -552,6 +553,7 @@ namespace Dfc.CourseDirectory.Web
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseGdsFrontEnd();
             app.UseV2StaticFiles();
             app.UseSession();
             app.UseAuthentication();
