@@ -552,6 +552,7 @@ namespace Dfc.CourseDirectory.Web
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseV2StaticFiles();
             app.UseSession();
             app.UseAuthentication();
 

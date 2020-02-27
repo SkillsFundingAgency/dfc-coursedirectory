@@ -25,6 +25,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         {
             app.UseCourseDirectoryErrorHandling();
 
+            app.UseV2StaticFiles();
+
             app.UseAuthentication();
 
             app.UseMvc();
