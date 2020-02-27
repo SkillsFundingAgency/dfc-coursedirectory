@@ -2,7 +2,7 @@
 
 namespace Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries
 {
-    public class GetProviderUKPRNForApprenticeship : ICosmosDbQuery<int?>
+    public class GetProviderUkprnForApprenticeship : ICosmosDbQuery<int?>
     {
         public Guid ApprenticeshipId { get; set; }
     }

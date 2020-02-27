@@ -281,39 +281,39 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                 if (provider.ProviderContact != null)
                 {
-                    var providerContactTypeL = provider.ProviderContact.Where(s => s.ContactType.Equals("L", StringComparison.InvariantCultureIgnoreCase));
-                    if (providerContactTypeL.FirstOrDefault()?.ContactAddress?.SAON?.Description != null)
+                    var providerContactTypeP = provider.ProviderContact.Where(s => s.ContactType.Equals("P", StringComparison.InvariantCultureIgnoreCase));
+                    if (providerContactTypeP.FirstOrDefault()?.ContactAddress?.SAON?.Description != null)
                     {
-                        AddressLine1 = providerContactTypeL.FirstOrDefault()?.ContactAddress?.SAON?.Description.ToString();
+                        AddressLine1 = providerContactTypeP.FirstOrDefault()?.ContactAddress?.SAON?.Description.ToString();
                     }
 
-                    if (providerContactTypeL.FirstOrDefault()?.ContactAddress?.PAON?.Description != null)
+                    if (providerContactTypeP.FirstOrDefault()?.ContactAddress?.PAON?.Description != null)
                     {
-                        AddressLine2 = providerContactTypeL.FirstOrDefault()?.ContactAddress?.PAON?.Description.ToString();
-                    }
-
-
-                    if (providerContactTypeL.FirstOrDefault()?.ContactAddress?.StreetDescription != null)
-                    {
-                        AddressLine3 = providerContactTypeL.FirstOrDefault()?.ContactAddress?.StreetDescription.ToString();
+                        AddressLine2 = providerContactTypeP.FirstOrDefault()?.ContactAddress?.PAON?.Description.ToString();
                     }
 
 
-                    if (providerContactTypeL.FirstOrDefault()?.ContactAddress?.Locality != null)
+                    if (providerContactTypeP.FirstOrDefault()?.ContactAddress?.StreetDescription != null)
                     {
-                        AddressLine4 = providerContactTypeL.FirstOrDefault()?.ContactAddress?.Locality.ToString();
+                        AddressLine3 = providerContactTypeP.FirstOrDefault()?.ContactAddress?.StreetDescription.ToString();
                     }
 
 
-                    if (!string.IsNullOrEmpty(providerContactTypeL.FirstOrDefault()?.ContactAddress?.Items?.FirstOrDefault()))
+                    if (providerContactTypeP.FirstOrDefault()?.ContactAddress?.Locality != null)
                     {
-                        TownCity = providerContactTypeL.FirstOrDefault()?.ContactAddress?.Items?.FirstOrDefault();
+                        AddressLine4 = providerContactTypeP.FirstOrDefault()?.ContactAddress?.Locality.ToString();
                     }
 
 
-                    if (!string.IsNullOrEmpty(providerContactTypeL?.FirstOrDefault()?.ContactAddress?.PostCode))
+                    if (!string.IsNullOrEmpty(providerContactTypeP.FirstOrDefault()?.ContactAddress?.Items?.FirstOrDefault()))
                     {
-                        PostCode = providerContactTypeL?.FirstOrDefault()?.ContactAddress?.PostCode;
+                        TownCity = providerContactTypeP.FirstOrDefault()?.ContactAddress?.Items?.FirstOrDefault();
+                    }
+
+
+                    if (!string.IsNullOrEmpty(providerContactTypeP?.FirstOrDefault()?.ContactAddress?.PostCode))
+                    {
+                        PostCode = providerContactTypeP?.FirstOrDefault()?.ContactAddress?.PostCode;
                     }
 
 
@@ -325,9 +325,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                     model.PostCode = PostCode;
 
-                    model.Telephone = providerContactTypeL?.FirstOrDefault()?.ContactTelephone1;
-                    model.Web = providerContactTypeL?.FirstOrDefault()?.ContactWebsiteAddress;
-                    model.Email = providerContactTypeL?.FirstOrDefault()?.ContactEmail;
+                    model.Telephone = providerContactTypeP?.FirstOrDefault()?.ContactTelephone1;
+                    model.Web = providerContactTypeP?.FirstOrDefault()?.ContactWebsiteAddress;
+                    model.Email = providerContactTypeP?.FirstOrDefault()?.ContactEmail;
                 }
 
             }

@@ -24,7 +24,7 @@ namespace Dfc.CourseDirectory.WebV2
             if (!_cache.TryGetValue<int?>(cacheKey, out var ukprn))
             {
                 ukprn = await _cosmosDbQueryDispatcher.ExecuteQuery(
-                    new GetProviderUKPRNForApprenticeship() { ApprenticeshipId = apprenticeshipId });
+                    new GetProviderUkprnForApprenticeship() { ApprenticeshipId = apprenticeshipId });
 
                 _cache.Set(cacheKey, ukprn);
             }

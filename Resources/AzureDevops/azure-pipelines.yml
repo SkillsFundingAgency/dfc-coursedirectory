@@ -1,5 +1,5 @@
 pool:
-  name: Continuous Integration 02 - SSD - 160ACU
+  name: NCS - CI and CD
   demands:
   - azureps
   - npm
@@ -80,8 +80,7 @@ steps:
   inputs:
     command: test
     projects: 'tests/*Tests/*.csproj'
-    arguments: '--configuration $(BuildConfiguration)'
-  continueOnError: true
+    arguments: '--configuration $(BuildConfiguration) --filter SkipOnCI!=true'
 
 - task: DotNetCoreCLI@2
   displayName: Publish

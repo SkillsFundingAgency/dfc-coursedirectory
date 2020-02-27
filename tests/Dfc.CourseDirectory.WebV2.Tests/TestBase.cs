@@ -1,31 +1,36 @@
-﻿using System;
-using System.Net.Http;
-using Microsoft.Extensions.DependencyInjection;
+﻿using System.Net.Http;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests
 {
-    public abstract class TestBase : IClassFixture<CourseDirectoryApplicationFactory>
+    [Trait("SkipOnCI", "true")]  // Until we have SQL DB on CI
+    public abstract class TestBase : IClassFixture<CourseDirectoryApplicationFactory>, IAsyncLifetime
     {
         public TestBase(CourseDirectoryApplicationFactory factory)
         {
             Factory = factory;
 
-            factory.ResetMocks();            
-
-            HttpClient = factory.CreateClient();
-            User.Reset();
-            HostingOptions.RewriteForbiddenToNotFound = true;
+            HttpClient = factory.CreateClient(new WebApplicationFactoryClientOptions()
+            {
+                AllowAutoRedirect = false
+            });
+            Factory.OnTestStarting();
         }
+
+        protected MutableClock Clock => Factory.Clock;
 
         protected CourseDirectoryApplicationFactory Factory { get; }
 
-        protected HostingOptions HostingOptions => Services.GetRequiredService<HostingOptions>();
-
-        protected IServiceProvider Services => Factory.Server.Host.Services;
-
-        protected AuthenticatedUserInfo User => Services.GetRequiredService<AuthenticatedUserInfo>();
-
         protected HttpClient HttpClient { get; }
+
+        protected TestData TestData => Factory.TestData;
+
+        protected AuthenticatedUserInfo User => Factory.User;
+
+        public Task DisposeAsync() => Task.CompletedTask;
+
+        public Task InitializeAsync() => Factory.OnTestStarted();
     }
 }
