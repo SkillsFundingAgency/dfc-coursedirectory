@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Dfc.CourseDirectory.Common;
-
+using Dfc.CourseDirectory.WebV2.Filters;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
