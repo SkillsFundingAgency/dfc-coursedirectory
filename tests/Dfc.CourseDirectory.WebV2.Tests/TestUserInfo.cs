@@ -11,6 +11,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         public const string DefaultEmail = "test.user@place.com";
         public const string DefaultFirstName = "Test";
         public const string DefaultLastName = "User";
+        public const string DefaultProviderStatus = "Active";
 
         public static readonly Guid DefaultUserId = new Guid("9b8adb2a-5a26-44b9-b6a0-52846f7a4555");  // Dummy ID
 
@@ -23,6 +24,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         public int? UKPRN { get; private set; }
         public ProviderType? ProviderType { get; private set; }
+        public string ProviderStatus { get; set; }
 
         public void AsTestUser(TestUserType userType, int? ukprn = null)
         {
@@ -71,10 +73,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             LastName = lastName;
             UKPRN = null;
             ProviderType = null;
+            ProviderStatus = null;
         }
 
         public void AsProviderUser(int ukprn, ProviderType providerType) =>
-            AsProviderUser(DefaultEmail, DefaultUserId, DefaultFirstName, DefaultLastName, ukprn, providerType);
+            AsProviderUser(ukprn, providerType, DefaultProviderStatus);
+
+        public void AsProviderUser(int ukprn, ProviderType providerType, string providerStatus) =>
+            AsProviderUser(DefaultEmail, DefaultUserId, DefaultFirstName, DefaultLastName, ukprn, providerType, providerStatus);
 
         public void AsProviderUser(
             string email,
@@ -82,7 +88,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             string firstName,
             string lastName,
             int ukprn,
-            ProviderType providerType)
+            ProviderType providerType,
+            string providerStatus)
         {
             IsAuthenticated = true;
             Email = email;
@@ -92,10 +99,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             LastName = lastName;
             UKPRN = ukprn;
             ProviderType = providerType;
+            ProviderStatus = providerStatus;
         }
 
         public void AsProviderSuperUser(int ukprn, ProviderType providerType) =>
-            AsProviderSuperUser(DefaultEmail, DefaultUserId, DefaultFirstName, DefaultLastName, ukprn, providerType);
+            AsProviderSuperUser(ukprn, providerType, DefaultProviderStatus);
+
+        public void AsProviderSuperUser(int ukprn, ProviderType providerType, string providerStatus) =>
+            AsProviderSuperUser(DefaultEmail, DefaultUserId, DefaultFirstName, DefaultLastName, ukprn, providerType, providerStatus);
 
         public void AsProviderSuperUser(
             string email,
@@ -103,7 +114,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             string firstName,
             string lastName,
             int ukprn,
-            ProviderType providerType)
+            ProviderType providerType,
+            string providerStatus)
         {
             IsAuthenticated = true;
             Email = email;
@@ -113,6 +125,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             LastName = lastName;
             UKPRN = ukprn;
             ProviderType = providerType;
+            ProviderStatus = providerStatus;
         }
 
         public void Reset() => AsDeveloper();
@@ -127,6 +140,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             Role = default;
             UKPRN = default;
             ProviderType = default;
+            ProviderStatus = null;
         }
     }
 }
