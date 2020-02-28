@@ -6,6 +6,7 @@
         Submitted = 1,
         InProgress = 2,
         Failed = 3,
-        Passed = 4
+        Passed = 4,
+        UnableToComplete = 5
     }
 }
