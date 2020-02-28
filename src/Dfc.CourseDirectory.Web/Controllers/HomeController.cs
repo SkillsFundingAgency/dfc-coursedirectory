@@ -59,7 +59,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 if (_session.GetInt32("UKPRN") == null)
                 {
                     Claim UKPRNClaim = User.Claims.Where(x => x.Type == "UKPRN").SingleOrDefault();
-                    if (!String.IsNullOrEmpty(UKPRNClaim.Value))
+                    if (!String.IsNullOrEmpty(UKPRNClaim?.Value))
                     {
                         _session.SetInt32("UKPRN", Int32.Parse(UKPRNClaim.Value));
                     }
@@ -121,7 +121,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 if (_session.GetInt32("UKPRN") == null)
                 {
                     Claim UKPRN = User.Claims.Where(x => x.Type == "UKPRN").SingleOrDefault();
-                    if (!String.IsNullOrEmpty(UKPRN.Value))
+                    if (!String.IsNullOrEmpty(UKPRN?.Value))
                     {
                         _session.SetInt32("UKPRN", Int32.Parse(UKPRN.Value));
                     }

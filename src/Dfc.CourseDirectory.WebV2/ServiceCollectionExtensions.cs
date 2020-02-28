@@ -1,15 +1,23 @@
-﻿using System.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
+using System.IdentityModel.Tokens.Jwt;
+using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
 using Dfc.CourseDirectory.WebV2.DataStore.Sql;
 using Dfc.CourseDirectory.WebV2.Filters;
 using Dfc.CourseDirectory.WebV2.Security;
 using GovUk.Frontend.AspNetCore;
 using MediatR;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 namespace Dfc.CourseDirectory.WebV2
 {
@@ -33,7 +41,7 @@ namespace Dfc.CourseDirectory.WebV2
                         .AsImplementedInterfaces()
                         .WithTransientLifetime());
             }
-            
+
             services
                 .AddMvc(options =>
                 {
@@ -100,6 +108,106 @@ namespace Dfc.CourseDirectory.WebV2
             services.TryAddSingleton<IFeatureFlagProvider, ConfigurationFeatureFlagProvider>();
 
             return services;
+        }
+
+        public static void AddDfeSignIn(this IServiceCollection services, DfeSignInSettings settings)
+        {
+            var overallSessionTimeout = TimeSpan.FromMinutes(90);
+
+            services.AddSingleton<IClaimsTransformation, DfeSignInClaimsTransformation>();
+            services.TryAddSingleton(settings);
+
+            services
+                .AddAuthentication(options =>
+                {
+                    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+                })
+                .AddCookie(options =>
+                {
+                    options.ExpireTimeSpan = TimeSpan.FromMinutes(40);
+                    options.SlidingExpiration = true;
+                    options.LogoutPath = "/auth/logout";
+                })
+                .AddOpenIdConnect(options =>
+                {
+                    options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    options.MetadataAddress = settings.MetadataAddress;
+                    options.RequireHttpsMetadata = false;
+                    options.ClientId = settings.ClientId;
+                    options.ClientSecret = settings.ClientSecret;
+                    options.ResponseType = OpenIdConnectResponseType.Code;
+                    options.GetClaimsFromUserInfoEndpoint = true;
+
+                    options.Scope.Clear();
+                    options.Scope.Add("openid");
+                    options.Scope.Add("email");
+                    options.Scope.Add("profile");
+                    options.Scope.Add("organisation");
+                    options.Scope.Add("offline_access");
+
+                    // When we expire the session, ensure user is prompted to sign in again at DfE Sign In
+                    options.MaxAge = overallSessionTimeout;
+
+                    options.SaveTokens = true;
+                    options.CallbackPath = settings.CallbackPath;
+                    options.SignedOutCallbackPath = settings.SignedOutCallbackPath;
+                    options.SecurityTokenValidator = new JwtSecurityTokenHandler()
+                    {
+                        InboundClaimTypeMap = new Dictionary<string, string>(),
+                        TokenLifetimeInMinutes = 90,
+                        SetDefaultTimesOnTokenCreation = true
+                    };
+                    options.ProtocolValidator = new OpenIdConnectProtocolValidator
+                    {
+                        RequireSub = true,
+                        RequireStateValidation = false,
+                        NonceLifetime = TimeSpan.FromMinutes(60)
+                    };
+
+                    options.DisableTelemetry = true;
+                    options.Events = new OpenIdConnectEvents
+                    {
+                        // Sometimes, problems in the OIDC provider (such as session timeouts)
+                        // Redirect the user to the /auth/cb endpoint. ASP.NET Core middleware interprets this by default
+                        // as a successful authentication and throws in surprise when it doesn't find an authorization code.
+                        // This override ensures that these cases redirect to the root.
+                        OnMessageReceived = context =>
+                        {
+                            var isSpuriousAuthCbRequest =
+                                context.Request.Path == options.CallbackPath &&
+                                context.Request.Method == "GET" &&
+                                !context.Request.Query.ContainsKey("code");
+
+                            if (isSpuriousAuthCbRequest)
+                            {
+                                context.HandleResponse();
+                                context.Response.Redirect("/");
+                            }
+
+                            return Task.CompletedTask;
+                        },
+
+                        // Sometimes the auth flow fails. The most commonly observed causes for this are
+                        // Cookie correlation failures, caused by obscure load balancing stuff.
+                        // In these cases, rather than send user to a 500 page, prompt them to re-authenticate.
+                        // This is derived from the recommended approach: https://github.com/aspnet/Security/issues/1165
+                        OnRemoteFailure = ctx =>
+                        {
+                            ctx.HandleResponse();
+                            return Task.FromException(ctx.Failure);
+                        },
+
+                        OnTokenValidated = ctx =>
+                        {
+                            ctx.Properties.IsPersistent = true;
+                            ctx.Properties.ExpiresUtc = DateTime.UtcNow.Add(overallSessionTimeout);
+
+                            return Task.CompletedTask;
+                        }
+                    };
+                });
         }
     }
 }
