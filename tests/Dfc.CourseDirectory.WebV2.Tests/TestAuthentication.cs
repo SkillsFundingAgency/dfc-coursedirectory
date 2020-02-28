@@ -48,11 +48,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                     claims.AddRange(new List<Claim>()
                     {
                         new Claim("UKPRN", _authenticatedUserInfo.UKPRN.Value.ToString()),
-                        new Claim("ProviderType", _authenticatedUserInfo.ProviderType.Value.ToString())
+                        new Claim("ProviderType", _authenticatedUserInfo.ProviderType.Value.ToString()),
+                        new Claim("provider_status", _authenticatedUserInfo.ProviderStatus)
                         // These claims are populated in the real app but are not required here (yet):
                         // organisation - JSON from DfE Sign In API call
                         // OrganisationId - GUID Org ID for DfE API call
-                        // provider_status
                     });
                 }
 
