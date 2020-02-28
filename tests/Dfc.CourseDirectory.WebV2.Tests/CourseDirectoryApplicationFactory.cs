@@ -37,7 +37,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         public TestData TestData => Services.GetRequiredService<TestData>();
 
-        public AuthenticatedUserInfo User => Services.GetRequiredService<AuthenticatedUserInfo>();
+        public TestUserInfo User => Services.GetRequiredService<TestUserInfo>();
 
         public void OnTestStarting()
         {

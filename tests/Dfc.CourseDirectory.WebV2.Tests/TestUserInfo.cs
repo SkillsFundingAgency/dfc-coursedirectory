@@ -6,7 +6,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 {
     public enum TestUserType { Developer, Helpdesk, ProviderUser, ProviderSuperUser }
 
-    public class AuthenticatedUserInfo
+    public class TestUserInfo
     {
         public const string DefaultEmail = "test.user@place.com";
         public const string DefaultFirstName = "Test";
