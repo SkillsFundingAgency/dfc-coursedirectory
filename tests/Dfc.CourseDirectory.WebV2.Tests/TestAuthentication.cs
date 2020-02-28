@@ -14,10 +14,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
     public class TestAuthenticationHandler : AuthenticationHandler<TestAuthenticationOptions>
     {
-        private readonly AuthenticatedUserInfo _authenticatedUserInfo;
+        private readonly TestUserInfo _authenticatedUserInfo;
 
         public TestAuthenticationHandler(
-            AuthenticatedUserInfo authenticatedUserInfo,
+            TestUserInfo authenticatedUserInfo,
             IOptionsMonitor<TestAuthenticationOptions> options,
             ILoggerFactory logger,
             UrlEncoder encoder,

@@ -46,7 +46,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             // Make controllers defined in this assembly available
             services.AddMvc().AddApplicationPart(typeof(Startup).Assembly);
 
-            services.AddSingleton<AuthenticatedUserInfo>();
+            services.AddSingleton<TestUserInfo>();
             services.AddSingleton<InMemoryDocumentStore>();
             services.AddTransient<ICosmosDbQueryDispatcher, CosmosDbQueryDispatcher>();
             services.AddSingleton<IMemoryCache, ClearableMemoryCache>();
