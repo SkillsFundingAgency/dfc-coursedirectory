@@ -44,6 +44,7 @@ namespace Dfc.CourseDirectory.WebV2
                     options.Filters.Add(new VerifyApprenticeshipIdActionFilter());
                     options.Filters.Add(new ResourceDoesNotExistExceptionFilter());
                     options.Filters.Add(new CommitSqlTransactionActionFilter());
+                    options.Filters.Add(new DeactivatedProviderErrorActionFilter());
 
                     options.ModelBinderProviders.Insert(0, new CurrentProviderModelBinderProvider());
                 })
