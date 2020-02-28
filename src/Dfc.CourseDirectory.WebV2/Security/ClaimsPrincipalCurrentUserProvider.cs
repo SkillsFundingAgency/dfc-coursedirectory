@@ -12,11 +12,11 @@ namespace Dfc.CourseDirectory.WebV2.Security
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public UserInfo GetCurrentUser()
+        public AuthenticatedUserInfo GetCurrentUser()
         {
             var user = _httpContextAccessor.HttpContext.User;
 
-            return new UserInfo()
+            return new AuthenticatedUserInfo()
             {
                 Email = user.FindFirst("email").Value,
                 Role = user.FindFirst(ClaimTypes.Role).Value
