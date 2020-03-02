@@ -10,7 +10,6 @@ using Dfc.CourseDirectory.WebV2.Filters;
 using Dfc.CourseDirectory.WebV2.Security;
 using GovUk.Frontend.AspNetCore;
 using MediatR;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Hosting;
@@ -112,6 +111,7 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddSingleton<ICurrentUserProvider, ClaimsPrincipalCurrentUserProvider>();
             services.AddHttpContextAccessor();
             services.TryAddSingleton<IFeatureFlagProvider, ConfigurationFeatureFlagProvider>();
+            services.AddScoped<SignInTracker>();
 
             return services;
         }
@@ -212,6 +212,9 @@ namespace Dfc.CourseDirectory.WebV2
 
                             var helper = ctx.HttpContext.RequestServices.GetRequiredService<DfeUserInfoHelper>();
                             await helper.AppendAdditionalClaims(ctx.Principal);
+
+                            var signInTracker = ctx.HttpContext.RequestServices.GetRequiredService<SignInTracker>();
+                            await signInTracker.RecordSignIn(ctx.Principal);
                         }
                     };
                 });
