@@ -12,6 +12,7 @@ namespace Dfc.CourseDirectory.WebV2
             if (sqlTransactionMarker.GotTransaction && !context.Canceled)
             {
                 sqlTransactionMarker.Transaction.Commit();
+                sqlTransactionMarker.OnTransactionCompleted();
             }
         }
 
