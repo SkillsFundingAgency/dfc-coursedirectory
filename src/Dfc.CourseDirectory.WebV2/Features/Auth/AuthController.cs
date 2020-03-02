@@ -11,15 +11,23 @@ namespace Dfc.CourseDirectory.WebV2.Features.Auth
     [Route("auth")]
     public class AuthController : Controller
     {
+        [AllowAnonymous]
         [HttpGet("login")]
-        public async Task Login(string returnUrl)
+        public IActionResult Login(string returnUrl)
         {
-            if (returnUrl == null)
+            if (returnUrl == null || !Url.IsLocalUrl(returnUrl))
             {
                 returnUrl = Url.Action("Check", "Home");
             }
 
-            await HttpContext.ChallengeAsync(new AuthenticationProperties() { RedirectUri = returnUrl });
+            if (User.Identity.IsAuthenticated)
+            {
+                return Redirect(returnUrl);
+            }
+            else
+            {
+                return new ChallengeResult(new AuthenticationProperties() { RedirectUri = returnUrl });
+            }
         }
 
         [Authorize]
