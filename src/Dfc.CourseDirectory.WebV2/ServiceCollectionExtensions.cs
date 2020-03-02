@@ -114,7 +114,7 @@ namespace Dfc.CourseDirectory.WebV2
         {
             var overallSessionTimeout = TimeSpan.FromMinutes(90);
 
-            services.AddSingleton<IClaimsTransformation, DfeSignInClaimsTransformation>();
+            services.AddSingleton<DfeUserInfoHelper>();
             services.TryAddSingleton(settings);
 
             services
@@ -199,12 +199,13 @@ namespace Dfc.CourseDirectory.WebV2
                             return Task.FromException(ctx.Failure);
                         },
 
-                        OnTokenValidated = ctx =>
+                        OnTokenValidated = async ctx =>
                         {
                             ctx.Properties.IsPersistent = true;
                             ctx.Properties.ExpiresUtc = DateTime.UtcNow.Add(overallSessionTimeout);
 
-                            return Task.CompletedTask;
+                            var helper = ctx.HttpContext.RequestServices.GetRequiredService<DfeUserInfoHelper>();
+                            await helper.AppendAdditionalClaims(ctx.Principal);
                         }
                     };
                 });
