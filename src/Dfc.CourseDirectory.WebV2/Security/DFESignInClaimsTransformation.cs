@@ -70,6 +70,7 @@ namespace Dfc.CourseDirectory.WebV2.Security
                 }
 
                 additionalClaims.Add(new Claim("ProviderType", provider.ProviderType.ToString()));
+                additionalClaims.Add(new Claim("provider_status", provider.ProviderStatus));
             }
             else
             {
