@@ -169,8 +169,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     List<string> errors = new List<string>();
                     try
                     {
-                        errors = _apprenticeshipBulkUploadService.ValidateAndUploadCSV(ms,
-                            _userHelper.GetUserDetailsFromClaims(this.HttpContext.User.Claims, UKPRN));
+                        if (processInline)
+                        {
+                            errors = _apprenticeshipBulkUploadService.ValidateAndUploadCSV(ms,
+                                _userHelper.GetUserDetailsFromClaims(this.HttpContext.User.Claims, UKPRN));
+                        }
                     }
                     catch (HeaderValidationException he)
                     {
