@@ -21,10 +21,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         public async Task ProviderStatusNotPermitted_ReturnsProviderDeactivatedView(string providerStatus)
         {
             // Arrange
-            var ukprn = 12345;
-            await TestData.CreateProvider(ukprn);
+            var providerId = await TestData.CreateProvider(ukprn: 12345);
 
-            User.AsProviderUser(ukprn, Models.ProviderType.Both, providerStatus);
+            User.AsProviderUser(providerId, Models.ProviderType.Both, providerStatus);
 
             // Act
             var response = await HttpClient.GetAsync("deactivatedprovidererroractionfiltertests/deactivated-not-allowed");
@@ -41,10 +40,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         public async Task ProviderStatusPermitted_ReturnsOk(string providerStatus)
         {
             // Arrange
-            var ukprn = 12345;
-            await TestData.CreateProvider(ukprn);
+            var providerId = await TestData.CreateProvider(ukprn: 12345);
 
-            User.AsProviderUser(ukprn, Models.ProviderType.Both, providerStatus);
+            User.AsProviderUser(providerId, Models.ProviderType.Both, providerStatus);
 
             // Act
             var response = await HttpClient.GetAsync("deactivatedprovidererroractionfiltertests/deactivated-not-allowed");
@@ -58,10 +56,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         public async Task ProviderStatusIgnored_ReturnsOk(string providerStatus)
         {
             // Arrange
-            var ukprn = 12345;
-            await TestData.CreateProvider(ukprn);
+            var providerId = await TestData.CreateProvider(ukprn: 12345);
 
-            User.AsProviderUser(ukprn, Models.ProviderType.Both, providerStatus);
+            User.AsProviderUser(providerId, Models.ProviderType.Both, providerStatus);
 
             // Act
             var response = await HttpClient.GetAsync("deactivatedprovidererroractionfiltertests/deactivated-allowed");

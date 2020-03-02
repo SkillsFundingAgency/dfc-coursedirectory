@@ -25,7 +25,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             User.AsTestUser(userType);
 
             // Act
-            var response = await HttpClient.GetAsync($"currentprovidermodelbindertests?ukprn={ukprn}");
+            var response = await HttpClient.GetAsync($"currentprovidermodelbindertests?providerId={providerId}");
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -43,7 +43,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             User.AsTestUser(userType);
 
             // Act
-            var response = await HttpClient.GetAsync($"currentprovidermodelbindertests?ukprn=");
+            var response = await HttpClient.GetAsync($"currentprovidermodelbindertests?providerId=");
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -57,9 +57,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         public async Task ProviderUser_UsesProviderFromAuthToken(TestUserType userType)
         {
             // Arrange
-            var ukprn = 12345;
-            var providerId = await TestData.CreateProvider(ukprn);
-            User.AsTestUser(userType, ukprn);
+            var providerId = await TestData.CreateProvider(ukprn: 12345);
+            User.AsTestUser(userType, providerId);
 
             // Act
             var response = await HttpClient.GetAsync($"currentprovidermodelbindertests");
@@ -78,7 +77,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             User.AsTestUser(TestUserType.Developer);
 
             // Act
-            var response = await HttpClient.GetAsync($"currentprovidermodelbindertests?ukprn=12345");
+            var response = await HttpClient.GetAsync($"currentprovidermodelbindertests?providerId={Guid.NewGuid()}");
 
             // Assert
             response.EnsureSuccessStatusCode();

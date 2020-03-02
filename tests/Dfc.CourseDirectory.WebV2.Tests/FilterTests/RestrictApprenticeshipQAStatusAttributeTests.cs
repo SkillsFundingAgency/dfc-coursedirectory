@@ -21,12 +21,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         public async Task StatusNotInPermittedSet_ReturnsBadRequest(ApprenticeshipQAStatus status)
         {
             // Arrange
-            var ukprn = 12345;
-
-            await TestData.CreateProvider(ukprn, apprenticeshipQAStatus: status);
+            var providerId = await TestData.CreateProvider(ukprn: 12345, apprenticeshipQAStatus: status);
 
             // Act
-            var response = await HttpClient.GetAsync($"restrictapprenticeshipqastatusattributetests?ukprn={ukprn}");
+            var response = await HttpClient.GetAsync(
+                $"restrictapprenticeshipqastatusattributetests?providerId={providerId}");
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -38,12 +37,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         public async Task StatusInPermittedSet_ReturnsOk(ApprenticeshipQAStatus status)
         {
             // Arrange
-            var ukprn = 12345;
-
-            await TestData.CreateProvider(ukprn, apprenticeshipQAStatus: status);
+            var providerId = await TestData.CreateProvider(ukprn: 12345, apprenticeshipQAStatus: status);
 
             // Act
-            var response = await HttpClient.GetAsync($"restrictapprenticeshipqastatusattributetests?ukprn={ukprn}");
+            var response = await HttpClient.GetAsync(
+                $"restrictapprenticeshipqastatusattributetests?providerId={providerId}");
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);

@@ -10,6 +10,7 @@ using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries;
 using JWT.Algorithms;
 using JWT.Builder;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Hosting;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -19,12 +20,17 @@ namespace Dfc.CourseDirectory.WebV2.Security
     {
         private readonly DfeSignInSettings _settings;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+        private readonly IHostingEnvironment _environment;
         private readonly HttpClient _httpClient;
 
-        public DfeSignInClaimsTransformation(DfeSignInSettings settings, ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
+        public DfeSignInClaimsTransformation(
+            DfeSignInSettings settings,
+            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
+            IHostingEnvironment environment)
         {
             _settings = settings;
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
+            _environment = environment;
 
             _httpClient = new HttpClient();  // TODO Use HttpClientFactory
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {CreateApiToken(settings)}");
@@ -59,8 +65,6 @@ namespace Dfc.CourseDirectory.WebV2.Security
 
             if (ukprn.HasValue)
             {
-                additionalClaims.Add(new Claim("UKPRN", ukprn.Value.ToString()));
-
                 var provider = await GetProvider(ukprn.Value);
 
                 // TODO Handle this nicely
@@ -69,14 +73,25 @@ namespace Dfc.CourseDirectory.WebV2.Security
                     throw new Exception("Unknown provider");
                 }
 
+                additionalClaims.Add(new Claim("ProviderId", provider.Id.ToString()));
                 additionalClaims.Add(new Claim("ProviderType", provider.ProviderType.ToString()));
                 additionalClaims.Add(new Claim("provider_status", provider.ProviderStatus));
+
+                // This claim is kept around to keep the old UI bits working.
+                // New bits should use ProviderId instead
+                if (!_environment.IsTesting())
+                {
+                    additionalClaims.Add(new Claim("UKPRN", ukprn.Value.ToString()));
+                }
             }
             else
             {
                 // TODO: Old UI uses this to figure out what UI to show so we need to keep it around for now.
                 // New UI shouldn't depend on this so we should omit this after we've migrated all the UI
-                additionalClaims.Add(new Claim("ProviderType", "Both"));
+                if (!_environment.IsTesting())
+                {
+                    additionalClaims.Add(new Claim("ProviderType", "Both"));
+                }
             }
 
             var newPrincipal = principal.Clone();
