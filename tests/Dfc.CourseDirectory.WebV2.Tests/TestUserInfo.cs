@@ -22,11 +22,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         public string FirstName { get; private set; }
         public string LastName { get; private set; }
 
-        public int? UKPRN { get; private set; }
+        public Guid? ProviderId { get; private set; }
         public ProviderType? ProviderType { get; private set; }
         public string ProviderStatus { get; set; }
 
-        public void AsTestUser(TestUserType userType, int? ukprn = null)
+        public void AsTestUser(TestUserType userType, Guid? providerId = null)
         {
             switch (userType)
             {
@@ -37,10 +37,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                     AsHelpdesk();
                     break;
                 case TestUserType.ProviderSuperUser:
-                    AsProviderSuperUser(ukprn.Value, Models.ProviderType.Both);
+                    AsProviderSuperUser(providerId.Value, Models.ProviderType.Both);
                     break;
                 case TestUserType.ProviderUser:
-                    AsProviderUser(ukprn.Value, Models.ProviderType.Both);
+                    AsProviderUser(providerId.Value, Models.ProviderType.Both);
                     break;
                 default:
                     throw new ArgumentException($"Unknown test user type: '{userType}'.", nameof(userType));
@@ -57,7 +57,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             Role = RoleNames.Developer;
             FirstName = firstName;
             LastName = lastName;
-            UKPRN = null;
+            ProviderId = null;
             ProviderType = null;
         }
 
@@ -71,23 +71,23 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             Role = RoleNames.Helpdesk;
             FirstName = firstName;
             LastName = lastName;
-            UKPRN = null;
+            ProviderId = ProviderId;
             ProviderType = null;
             ProviderStatus = null;
         }
 
-        public void AsProviderUser(int ukprn, ProviderType providerType) =>
-            AsProviderUser(ukprn, providerType, DefaultProviderStatus);
+        public void AsProviderUser(Guid providerId, ProviderType providerType) =>
+            AsProviderUser(providerId, providerType, DefaultProviderStatus);
 
-        public void AsProviderUser(int ukprn, ProviderType providerType, string providerStatus) =>
-            AsProviderUser(DefaultEmail, DefaultUserId, DefaultFirstName, DefaultLastName, ukprn, providerType, providerStatus);
+        public void AsProviderUser(Guid providerId, ProviderType providerType, string providerStatus) =>
+            AsProviderUser(DefaultEmail, DefaultUserId, DefaultFirstName, DefaultLastName, providerId, providerType, providerStatus);
 
         public void AsProviderUser(
             string email,
             Guid userId,
             string firstName,
             string lastName,
-            int ukprn,
+            Guid providerId,
             ProviderType providerType,
             string providerStatus)
         {
@@ -97,23 +97,23 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             Role = RoleNames.ProviderUser;
             FirstName = firstName;
             LastName = lastName;
-            UKPRN = ukprn;
+            ProviderId = providerId;
             ProviderType = providerType;
             ProviderStatus = providerStatus;
         }
 
-        public void AsProviderSuperUser(int ukprn, ProviderType providerType) =>
-            AsProviderSuperUser(ukprn, providerType, DefaultProviderStatus);
+        public void AsProviderSuperUser(Guid providerId, ProviderType providerType) =>
+            AsProviderSuperUser(providerId, providerType, DefaultProviderStatus);
 
-        public void AsProviderSuperUser(int ukprn, ProviderType providerType, string providerStatus) =>
-            AsProviderSuperUser(DefaultEmail, DefaultUserId, DefaultFirstName, DefaultLastName, ukprn, providerType, providerStatus);
+        public void AsProviderSuperUser(Guid providerId, ProviderType providerType, string providerStatus) =>
+            AsProviderSuperUser(DefaultEmail, DefaultUserId, DefaultFirstName, DefaultLastName, providerId, providerType, providerStatus);
 
         public void AsProviderSuperUser(
             string email,
             Guid userId,
             string firstName,
             string lastName,
-            int ukprn,
+            Guid providerId,
             ProviderType providerType,
             string providerStatus)
         {
@@ -123,7 +123,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             Role = RoleNames.ProviderSuperUser;
             FirstName = firstName;
             LastName = lastName;
-            UKPRN = ukprn;
+            ProviderId = providerId;
             ProviderType = providerType;
             ProviderStatus = providerStatus;
         }
@@ -138,7 +138,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             FirstName = default;
             LastName = default;
             Role = default;
-            UKPRN = default;
+            ProviderId = default;
             ProviderType = default;
             ProviderStatus = null;
         }

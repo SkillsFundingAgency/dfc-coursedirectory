@@ -16,17 +16,17 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         public async Task WithCurrentProvider_AppendsUkprnToRouteValues()
         {
             // Arrange
-            var ukprn = 12345;
-            var providerId = await TestData.CreateProvider(ukprn);
+            var providerId = await TestData.CreateProvider(ukprn: 12345);
             User.AsDeveloper();  // Ensure ukprn is bound from query param
 
             // Act
-            var response = await HttpClient.GetAsync($"redirecttoactionresultextensionstestcontroller/first?ukprn={ukprn}");
+            var response = await HttpClient.GetAsync(
+                $"redirecttoactionresultextensionstestcontroller/first?providerId={providerId}");
 
             // Assert
             Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
             var location = response.Headers.Location;
-            Assert.Equal($"/redirecttoactionresultextensionstestcontroller/second?ukprn={ukprn}", location.OriginalString);
+            Assert.Equal($"/redirecttoactionresultextensionstestcontroller/second?providerId={providerId}", location.OriginalString);
         }
     }
 

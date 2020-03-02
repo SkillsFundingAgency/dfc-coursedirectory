@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.Security;
@@ -23,7 +24,7 @@ namespace Dfc.CourseDirectory.WebV2
 
     public class CurrentProviderModelBinder : IModelBinder
     {
-        public const string QueryParameterName = "ukprn";
+        public const string QueryParameterName = "providerId";
 
         private readonly IProviderInfoCache _providerInfoCache;
 
@@ -47,28 +48,28 @@ namespace Dfc.CourseDirectory.WebV2
             var user = bindingContext.HttpContext.User;
             var role = user.FindFirst(ClaimTypes.Role).Value;
 
-            int ukprn;
+            Guid providerId;
 
-            var queryStringUkprn = TryGetUkprnFromQueryString();
+            var queryStringProviderId = TryGetProviderIdFromQueryString();
 
             if (role == RoleNames.Developer || role == RoleNames.Helpdesk)
             {
-                if (!queryStringUkprn.HasValue)
+                if (!queryStringProviderId.HasValue)
                 {
                     bindingContext.Result = ModelBindingResult.Failed();
                     return;
                 }
                 else
                 {
-                    ukprn = queryStringUkprn.Value;
+                    providerId = queryStringProviderId.Value;
                 }
             }
             else if (role == RoleNames.ProviderSuperUser || role == RoleNames.ProviderUser)
             {
-                var usersOwnUkprn = int.Parse(user.FindFirst("UKPRN").Value);
+                var usersOwnProviderId = Guid.Parse(user.FindFirst("ProviderId").Value);
 
                 // Query param, if specified, must match user's own org
-                if (queryStringUkprn.HasValue && queryStringUkprn.Value != usersOwnUkprn)
+                if (queryStringProviderId.HasValue && queryStringProviderId.Value != usersOwnProviderId)
                 {
                     bindingContext.ModelState.AddModelError(
                         bindingContext.FieldName,
@@ -78,7 +79,7 @@ namespace Dfc.CourseDirectory.WebV2
                     return;
                 }
 
-                ukprn = usersOwnUkprn;
+                providerId = usersOwnProviderId;
             }
             else
             {
@@ -86,7 +87,7 @@ namespace Dfc.CourseDirectory.WebV2
                 return;
             }
 
-            var providerInfo = await _providerInfoCache.GetProviderInfo(ukprn);
+            var providerInfo = await _providerInfoCache.GetProviderInfo(providerId);
             if (providerInfo == null)
             {
                 bindingContext.ModelState.AddModelError(
@@ -100,7 +101,7 @@ namespace Dfc.CourseDirectory.WebV2
                 bindingContext.Result = ModelBindingResult.Success(providerInfo);
             }
 
-            int? TryGetUkprnFromQueryString()
+            Guid? TryGetProviderIdFromQueryString()
             {
                 var valueProvider = new QueryStringValueProvider(
                     BindingSource.Query,
@@ -115,13 +116,13 @@ namespace Dfc.CourseDirectory.WebV2
                 }
                 else
                 {
-                    if (!int.TryParse(specifiedProviderIdBindingResult.FirstValue, out ukprn))
+                    if (!Guid.TryParse(specifiedProviderIdBindingResult.FirstValue, out providerId))
                     {
                         return null;
                     }
                 }
 
-                return ukprn;
+                return providerId;
             }
         }
     }

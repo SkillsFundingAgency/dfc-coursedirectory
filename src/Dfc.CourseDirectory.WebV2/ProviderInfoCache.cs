@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries;
 using Microsoft.Extensions.Caching.Memory;
@@ -16,14 +17,14 @@ namespace Dfc.CourseDirectory.WebV2
             _cache = cache;
         }
 
-        public async Task<ProviderInfo> GetProviderInfo(int ukprn)
+        public async Task<ProviderInfo> GetProviderInfo(Guid providerId)
         {
-            var cacheKey = GetCacheKey(ukprn);
+            var cacheKey = GetCacheKey(providerId);
 
             if (!_cache.TryGetValue<ProviderInfo>(cacheKey, out var providerInfo))
             {
                 var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(
-                    new GetProviderByUkprn() { Ukprn = ukprn });
+                    new GetProviderById() { ProviderId = providerId });
 
                 if (provider == null)
                 {
@@ -33,7 +34,7 @@ namespace Dfc.CourseDirectory.WebV2
                 providerInfo = new ProviderInfo()
                 {
                     ProviderId = provider.Id,
-                    Ukprn = ukprn
+                    Ukprn = int.Parse(provider.UnitedKingdomProviderReferenceNumber)
                 };
 
                 _cache.Set(cacheKey, providerInfo);
@@ -42,6 +43,6 @@ namespace Dfc.CourseDirectory.WebV2
             return providerInfo;
         }
 
-        private static string GetCacheKey(int ukprn) => $"provider-info:{ukprn}";
+        private static string GetCacheKey(Guid providerId) => $"provider-info:{providerId}";
     }
 }

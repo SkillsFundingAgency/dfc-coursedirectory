@@ -72,14 +72,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         {
             // Arrange
             var ukprn = 1234;
-            var anotherUkprn = 56789;
-            await TestData.CreateProvider(ukprn);
-            await TestData.CreateProvider(anotherUkprn);
+            var providerId = await TestData.CreateProvider(ukprn);
+            var anotherProviderId = await TestData.CreateProvider(ukprn: 56789);
             var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
-            User.AsTestUser(userType, anotherUkprn);
+            User.AsTestUser(userType, anotherProviderId);
 
             // Act
-            var response = await HttpClient.GetAsync($"filtertests/verifyapprenticeshipidattributetests/withproviderinfo/{apprenticeshipId}?ukprn=56789");
+            var response = await HttpClient.GetAsync(
+                $"filtertests/verifyapprenticeshipidattributetests/withproviderinfo/{apprenticeshipId}?providerId={anotherProviderId}");
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);

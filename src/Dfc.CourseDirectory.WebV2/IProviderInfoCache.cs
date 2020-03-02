@@ -1,9 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 namespace Dfc.CourseDirectory.WebV2
 {
     public interface IProviderInfoCache
     {
-        Task<ProviderInfo> GetProviderInfo(int ukprn);
+        Task<ProviderInfo> GetProviderInfo(Guid providerId);
     }
 }

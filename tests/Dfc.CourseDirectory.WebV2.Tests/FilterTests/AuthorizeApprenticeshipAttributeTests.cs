@@ -52,9 +52,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         {
             // Arrange
             var ukprn = 123456;
-            await TestData.CreateProvider(ukprn);
+            var providerId = await TestData.CreateProvider(ukprn);
             var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
-            User.AsProviderUser(ukprn, Models.ProviderType.Apprenticeships);
+            User.AsProviderUser(providerId, Models.ProviderType.Apprenticeships);
 
             // Act
             var response = await HttpClient.GetAsync($"filtertests/authorizeapprenticeshipattribute/{apprenticeshipId}");
@@ -68,9 +68,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         {
             // Arrange
             var ukprn = 123456;
-            await TestData.CreateProvider(ukprn);
+            var providerId = await TestData.CreateProvider(ukprn);
             var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
-            User.AsProviderSuperUser(ukprn, Models.ProviderType.Apprenticeships);
+            User.AsProviderSuperUser(providerId, Models.ProviderType.Apprenticeships);
 
             // Act
             var response = await HttpClient.GetAsync($"filtertests/authorizeapprenticeshipattribute/{apprenticeshipId}");
@@ -85,8 +85,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             // Arrange
             var ukprn = 123456;
             await TestData.CreateProvider(ukprn);
+            var anotherProviderId = await TestData.CreateProvider(ukprn: 23456);
             var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
-            User.AsProviderUser(567890, Models.ProviderType.Apprenticeships);
+            User.AsProviderUser(anotherProviderId, Models.ProviderType.Apprenticeships);
 
             // Act
             var response = await HttpClient.GetAsync($"filtertests/authorizeapprenticeshipattribute/{apprenticeshipId}");
@@ -101,8 +102,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             // Arrange
             var ukprn = 123456;
             await TestData.CreateProvider(ukprn);
+            var anotherProviderId = await TestData.CreateProvider(ukprn: 23456);
             var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
-            User.AsProviderSuperUser(567890, Models.ProviderType.Apprenticeships);
+            User.AsProviderSuperUser(anotherProviderId, Models.ProviderType.Apprenticeships);
 
             // Act
             var response = await HttpClient.GetAsync($"filtertests/authorizeapprenticeshipattribute/{apprenticeshipId}");
