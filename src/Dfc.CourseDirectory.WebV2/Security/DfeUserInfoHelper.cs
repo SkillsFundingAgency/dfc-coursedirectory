@@ -9,21 +9,20 @@ using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries;
 using JWT.Algorithms;
 using JWT.Builder;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Dfc.CourseDirectory.WebV2.Security
 {
-    public class DfeSignInClaimsTransformation : IClaimsTransformation, IDisposable
+    public class DfeUserInfoHelper : IDisposable
     {
         private readonly DfeSignInSettings _settings;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly IHostingEnvironment _environment;
         private readonly HttpClient _httpClient;
 
-        public DfeSignInClaimsTransformation(
+        public DfeUserInfoHelper(
             DfeSignInSettings settings,
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             IHostingEnvironment environment)
@@ -41,13 +40,8 @@ namespace Dfc.CourseDirectory.WebV2.Security
             _httpClient.Dispose();
         }
 
-        public async Task<ClaimsPrincipal> TransformAsync(ClaimsPrincipal principal)
+        public async Task AppendAdditionalClaims(ClaimsPrincipal principal)
         {
-            if (principal.HasClaim(c => c.Type == "OrganisationId"))
-            {
-                return principal;
-            }
-
             var userId = principal.FindFirst("sub").Value;
 
             var organisation = JObject.Parse(principal.FindFirst("Organisation").Value);
@@ -94,10 +88,7 @@ namespace Dfc.CourseDirectory.WebV2.Security
                 }
             }
 
-            var newPrincipal = principal.Clone();
-            newPrincipal.AddIdentity(new ClaimsIdentity(additionalClaims));
-
-            return newPrincipal;
+            principal.AddIdentity(new ClaimsIdentity(additionalClaims));
         }
 
         private static string CreateApiToken(DfeSignInSettings settings) =>
