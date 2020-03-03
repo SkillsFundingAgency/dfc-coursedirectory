@@ -70,6 +70,13 @@ namespace Dfc.CourseDirectory.WebV2
                     options.ViewLocationExpanders.Add(new FeatureViewLocationExpander());
                 });
 
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy(
+                    AuthorizationPolicyNames.ApprenticeshipQA,
+                    policy => policy.RequireRole(RoleNames.Developer, RoleNames.Helpdesk));
+            });
+
             services.Scan(scan => scan
                 .FromAssembliesOf(typeof(ISqlQuery<>))
                 .AddClasses(classes => classes.AssignableTo(typeof(ISqlQueryHandler<,>)))
