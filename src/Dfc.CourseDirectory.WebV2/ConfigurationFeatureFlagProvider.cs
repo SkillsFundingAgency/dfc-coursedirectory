@@ -6,7 +6,7 @@ namespace Dfc.CourseDirectory.WebV2
 {
     public class ConfigurationFeatureFlagProvider : IFeatureFlagProvider
     {
-        private const string ConfigurationKey = "Features";
+        private const string ConfigurationKey = "FeatureFlags";
 
         private readonly IConfiguration _configuration;
 

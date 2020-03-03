@@ -12,6 +12,7 @@ namespace Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Models
         public Guid Id { get; set; }
         public string UnitedKingdomProviderReferenceNumber { get; set; }
         public ProviderType ProviderType { get; set; }
+        public string ProviderName { get; set; }
         public string ProviderStatus { get; set; }
         [JsonExtensionData]
         public IDictionary<string, JToken> AdditionalData { get; set; }

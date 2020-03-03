@@ -1,6 +1,6 @@
 ﻿namespace Dfc.CourseDirectory.WebV2.Security
 {
-    public class UserInfo
+    public class AuthenticatedUserInfo
     {
         public string Email { get; set; }
         public string Role { get; set; }
