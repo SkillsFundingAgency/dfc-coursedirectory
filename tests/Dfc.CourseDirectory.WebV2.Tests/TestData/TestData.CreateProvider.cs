@@ -10,7 +10,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
     public partial class TestData
     {
         public async Task<Guid> CreateProvider(
-            int ukprn,
+            int ukprn = 12345,
             ApprenticeshipQAStatus apprenticeshipQAStatus = ApprenticeshipQAStatus.NotStarted)
         {
             var providerId = Guid.NewGuid();
