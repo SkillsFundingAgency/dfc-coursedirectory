@@ -92,7 +92,7 @@ namespace Dfc.CourseDirectory.WebV2
             {
                 bindingContext.ModelState.AddModelError(
                     bindingContext.FieldName,
-                    new ResourceDoesNotExistException(ResourceType.Provider),
+                    new ResourceDoesNotExistException(ResourceType.Provider, providerId),
                     bindingContext.ModelMetadata);
                 bindingContext.Result = ModelBindingResult.Failed();
             }
