@@ -15,7 +15,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             : base(factory)
         {
             _httpClientWithAutoRedirects = factory.CreateClient();
-            Factory.HostingOptions.RewriteForbiddenToNotFound = false;
         }
 
         [Fact]

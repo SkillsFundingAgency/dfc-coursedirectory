@@ -54,7 +54,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             MemoryCache.Clear();
 
             // Restore HostingOptions values to default
-            HostingOptions.RewriteForbiddenToNotFound = true;
+            HostingOptions.RewriteForbiddenToNotFound = false;
 
             // Reset the clock
             Clock.UtcNow = MutableClock.Start;

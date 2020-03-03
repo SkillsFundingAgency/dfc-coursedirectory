@@ -11,6 +11,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features
         public ErrorTests(CourseDirectoryApplicationFactory factory)
             : base(factory)
         {
+            Factory.HostingOptions.RewriteForbiddenToNotFound = true;
         }
 
         [Fact]
