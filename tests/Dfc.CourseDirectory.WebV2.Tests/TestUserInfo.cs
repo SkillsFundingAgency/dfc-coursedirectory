@@ -28,6 +28,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         public void AsTestUser(TestUserType userType, Guid? providerId = null)
         {
+            if ((userType == TestUserType.ProviderSuperUser || userType == TestUserType.ProviderUser) &&
+                !providerId.HasValue)
+            {
+                throw new ArgumentNullException(nameof(providerId));
+            }
+
             switch (userType)
             {
                 case TestUserType.Developer:
