@@ -124,6 +124,12 @@
     },
     "ProviderPortalSharedResourceGroupName": {
       "value": "__providerPortalResourceGroup__"
+    },
+    "CosmosAccountEndpoint": {
+      "value": "__providerPortalCosmosDbFqdn__"
+    },
+    "CosmosAccountAccessKey": {
+      "value": "__providerPortalCosmosDBPrimaryKey__"
     }
   }
 }
