@@ -9,13 +9,15 @@ namespace Dfc.CourseDirectory.WebV2
 
     public class ResourceDoesNotExistException : Exception
     {
-        public ResourceDoesNotExistException(ResourceType resourceType)
+        public ResourceDoesNotExistException(ResourceType resourceType, object resourceId)
         {
             ResourceType = resourceType;
+            ResourceId = resourceId;
         }
 
+        public object ResourceId { get; }
         public ResourceType ResourceType { get; }
 
-        public override string Message => $"{ResourceType} resource does not exist.";
+        public override string Message => $"{ResourceType} resource with ID {ResourceId} does not exist.";
     }
 }
