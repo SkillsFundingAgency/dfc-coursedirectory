@@ -24,6 +24,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         public void Configure(IApplicationBuilder app)
         {
+            app.UseCommitSqlTransaction();
+
             app.UseCourseDirectoryErrorHandling();
 
             app.UseGdsFrontEnd();
