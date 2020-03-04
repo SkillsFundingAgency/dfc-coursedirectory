@@ -37,6 +37,45 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         [Theory]
         [InlineData(TestUserType.Developer)]
         [InlineData(TestUserType.Helpdesk)]
+        public async Task AdminUser_UsesProviderFromRoute(TestUserType userType)
+        {
+            // Arrange
+            var ukprn = 12345;
+            var providerId = await TestData.CreateProvider(ukprn);
+            User.AsTestUser(userType);
+
+            // Act
+            var response = await HttpClient.GetAsync($"currentprovidermodelbindertests/from-route/{providerId}");
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            var responseJson = JToken.Parse(await response.Content.ReadAsStringAsync());
+            Assert.True(Guid.TryParse(responseJson["providerId"].ToString(), out var boundProviderId), "Binding failed.");
+            Assert.Equal(providerId, boundProviderId);
+        }
+
+        [Theory]
+        [InlineData(TestUserType.Developer)]
+        [InlineData(TestUserType.Helpdesk)]
+        public async Task AdminUser_QueryParamAndRouteSpecifiedButDontMatchFailsBinding(TestUserType userType)
+        {
+            // Arrange
+            var ukprn = 12345;
+            var providerId = await TestData.CreateProvider(ukprn);
+            User.AsTestUser(userType);
+
+            // Act
+            var response = await HttpClient.GetAsync($"currentprovidermodelbindertests/from-route/{providerId}?providerId={Guid.NewGuid()}");
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            var responseJson = JToken.Parse(await response.Content.ReadAsStringAsync());
+            Assert.Equal(JTokenType.Null, responseJson.Type);
+        }
+
+        [Theory]
+        [InlineData(TestUserType.Developer)]
+        [InlineData(TestUserType.Helpdesk)]
         public async Task AdminUser_NoQueryParamFailsBinding(TestUserType userType)
         {
             // Arrange
@@ -70,6 +109,42 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             Assert.Equal(providerId, boundProviderId);
         }
 
+        [Theory]
+        [InlineData(TestUserType.ProviderUser)]
+        [InlineData(TestUserType.ProviderSuperUser)]
+        public async Task ProviderUser_QueryParamSpecifiedDoesntMatchAuthTokenFailsBinding(TestUserType userType)
+        {
+            // Arrange
+            var providerId = await TestData.CreateProvider(ukprn: 12345);
+            User.AsTestUser(userType, providerId);
+
+            // Act
+            var response = await HttpClient.GetAsync($"currentprovidermodelbindertests?providerId={Guid.NewGuid()}");
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            var responseJson = JToken.Parse(await response.Content.ReadAsStringAsync());
+            Assert.Equal(JTokenType.Null, responseJson.Type);
+        }
+
+        [Theory]
+        [InlineData(TestUserType.ProviderUser)]
+        [InlineData(TestUserType.ProviderSuperUser)]
+        public async Task ProviderUser_RouteParamSpecifiedDoesntMatchAuthTokenFailsBinding(TestUserType userType)
+        {
+            // Arrange
+            var providerId = await TestData.CreateProvider(ukprn: 12345);
+            User.AsTestUser(userType, providerId);
+
+            // Act
+            var response = await HttpClient.GetAsync($"currentprovidermodelbindertests/from-route/{Guid.NewGuid()}");
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            var responseJson = JToken.Parse(await response.Content.ReadAsStringAsync());
+            Assert.Equal(JTokenType.Null, responseJson.Type);
+        }
+
         [Fact]
         public async Task ProviderDoesNotExist_FailsBinding()
         {
@@ -91,5 +166,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         [HttpGet("currentprovidermodelbindertests")]
         [AllowNoCurrentProvider]  // Prevent filter from modifying response
         public IActionResult Get(ProviderInfo providerInfo) => Json(providerInfo);
+
+        [HttpGet("currentprovidermodelbindertests/from-route/{providerId}")]
+        [AllowNoCurrentProvider]  // Prevent filter from modifying response
+        public IActionResult GetFromRoute(ProviderInfo providerInfo) => Json(providerInfo);
     }
 }

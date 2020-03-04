@@ -258,6 +258,7 @@ namespace Dfc.CourseDirectory.Web
                 app.UseHsts();
             }
 
+            app.UseCommitSqlTransaction();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseGdsFrontEnd();

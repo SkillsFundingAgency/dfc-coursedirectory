@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.Security;
@@ -24,7 +25,7 @@ namespace Dfc.CourseDirectory.WebV2
 
     public class CurrentProviderModelBinder : IModelBinder
     {
-        public const string QueryParameterName = "providerId";
+        public const string RouteValueKey = "providerId";
 
         private readonly IProviderInfoCache _providerInfoCache;
 
@@ -42,34 +43,34 @@ namespace Dfc.CourseDirectory.WebV2
             }
 
             // For Provider {Super}Users the provider comes from their identity token.
-            // For Admin or Helpdesk users there should be a query param indicating the provider.
-            // If Provider {Super}Users specify the query param it's ignored.
+            // For Admin or Helpdesk users there should be a route value indicating the provider.
+            // If Provider {Super}Users specify the route value it's ignored.
 
             var user = bindingContext.HttpContext.User;
             var role = user.FindFirst(ClaimTypes.Role).Value;
 
             Guid providerId;
 
-            var queryStringProviderId = TryGetProviderIdFromQueryString();
+            var routeProviderId = TryGetProviderIdFromRouteValues();
 
             if (role == RoleNames.Developer || role == RoleNames.Helpdesk)
             {
-                if (!queryStringProviderId.HasValue)
+                if (!routeProviderId.HasValue)
                 {
                     bindingContext.Result = ModelBindingResult.Failed();
                     return;
                 }
                 else
                 {
-                    providerId = queryStringProviderId.Value;
+                    providerId = routeProviderId.Value;
                 }
             }
             else if (role == RoleNames.ProviderSuperUser || role == RoleNames.ProviderUser)
             {
                 var usersOwnProviderId = Guid.Parse(user.FindFirst("ProviderId").Value);
 
-                // Query param, if specified, must match user's own org
-                if (queryStringProviderId.HasValue && queryStringProviderId.Value != usersOwnProviderId)
+                // Route param, if specified, must match user's own org
+                if (routeProviderId.HasValue && routeProviderId.Value != usersOwnProviderId)
                 {
                     bindingContext.ModelState.AddModelError(
                         bindingContext.FieldName,
@@ -101,25 +102,32 @@ namespace Dfc.CourseDirectory.WebV2
                 bindingContext.Result = ModelBindingResult.Success(providerInfo);
             }
 
-            Guid? TryGetProviderIdFromQueryString()
+            Guid? TryGetProviderIdFromRouteValues()
             {
-                var valueProvider = new QueryStringValueProvider(
+                var routeValueProvider = new RouteValueProvider(
+                    BindingSource.Path,
+                    bindingContext.ActionContext.RouteData.Values);
+
+                var queryStringValueProvider = new QueryStringValueProvider(
                     BindingSource.Query,
                     bindingContext.HttpContext.Request.Query,
                     CultureInfo.InvariantCulture);
 
-                var specifiedProviderIdBindingResult = valueProvider.GetValue(QueryParameterName);
+                var matches = routeValueProvider.GetValue(RouteValueKey).Values
+                    .Concat(queryStringValueProvider.GetValue(RouteValueKey).Values)
+                    .Distinct()
+                    .ToList();
 
-                if (specifiedProviderIdBindingResult.Length == 0)
+                if (matches.Count == 1)
                 {
-                    return null;
-                }
-                else
-                {
-                    if (!Guid.TryParse(specifiedProviderIdBindingResult.FirstValue, out providerId))
+                    if (!Guid.TryParse(matches.Single(), out providerId))
                     {
                         return null;
                     }
+                }
+                else
+                {
+                    return null;
                 }
 
                 return providerId;
