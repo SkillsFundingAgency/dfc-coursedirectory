@@ -1070,7 +1070,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             return count;
         }
 
-        public List<string> ValidateAndUploadCSV(Stream stream, AuthUserDetails userDetails)
+        public List<string> ValidateAndUploadCSV(Stream stream, AuthUserDetails userDetails, bool updateApprenticeships)
         {
             Throw.IfNull(stream, nameof(stream));
             Throw.IfNull(userDetails, nameof(userDetails));
@@ -1133,18 +1133,20 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 }
 
                 var archivingApprenticeships = _apprenticeshipService.ChangeApprenticeshipStatusesForUKPRNSelection(int.Parse(userDetails.UKPRN), (int)RecordStatus.Live, (int)RecordStatus.Archived);
-
-                var apprenticeships = ApprenticeshipCsvRecordToApprenticeship(records, userDetails);
-                errors = ValidateApprenticeships(apprenticeships);
-
-
-                if (apprenticeships.Any())
+                if (updateApprenticeships)
                 {
-                    errors.AddRange(UploadApprenticeships(apprenticeships));
-                }
-                else
-                {
-                    throw new Exception($"Unable to archive apprenticeships for {int.Parse(userDetails.UKPRN)}");
+                    var apprenticeships = ApprenticeshipCsvRecordToApprenticeship(records, userDetails);
+                    errors = ValidateApprenticeships(apprenticeships);
+
+
+                    if (apprenticeships.Any())
+                    {
+                        errors.AddRange(UploadApprenticeships(apprenticeships));
+                    }
+                    else
+                    {
+                        throw new Exception($"Unable to archive apprenticeships for {int.Parse(userDetails.UKPRN)}");
+                    }
                 }
             }
             catch (HeaderValidationException ex)
