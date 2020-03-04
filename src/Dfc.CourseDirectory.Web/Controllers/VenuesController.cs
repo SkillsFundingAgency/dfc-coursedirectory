@@ -91,7 +91,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             _session.SetString("Option", "Venues");
             Claim providerUKPRN = User.Claims.Where(x => x.Type == "UKPRN").SingleOrDefault();
-            if (!String.IsNullOrEmpty(providerUKPRN.Value))
+            if (!String.IsNullOrEmpty(providerUKPRN?.Value))
             {
                 _session.SetInt32("UKPRN", Int32.Parse(providerUKPRN.Value));
             }

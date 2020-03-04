@@ -168,7 +168,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         }
 
                         Task task = _blobService.UploadFileAsync(
-                            $"{UKPRN.ToString()}/Bulk Upload/Files/{bulkUploadFileNewName}", ms);
+                            $"{UKPRN.ToString()}/Courses Bulk Upload/Files/{bulkUploadFileNewName}", ms);
                         task.Wait();
 
                         var errors = _bulkUploadService.ProcessBulkUpload(ms, providerUKPRN, userId, processInline);
