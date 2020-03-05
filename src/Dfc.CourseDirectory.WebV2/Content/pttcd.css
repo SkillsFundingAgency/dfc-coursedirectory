@@ -8,3 +8,8 @@
     padding: 30px;
     margin-bottom: 30px;
 }
+
+.pttcd-inset-text__info {
+    background-color: #eef4fa;
+    border-color: #5694ca;
+}
