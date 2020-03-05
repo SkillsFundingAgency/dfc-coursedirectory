@@ -11,6 +11,7 @@
     <PackageReference Include="GovUk.Frontend.AspNetCore" Version="0.1.0-pre-156" />
     <PackageReference Include="HtmlSanitizer" Version="5.0.274-beta" />
     <PackageReference Include="JWT" Version="5.2.1" />
+    <PackageReference Include="Mapster" Version="5.1.0" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="8.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.1.2" />
