@@ -7,7 +7,7 @@ using Dfc.CourseDirectory.WebV2.Security;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Dfc.CourseDirectory.WebV2
+namespace Dfc.CourseDirectory.WebV2.ModelBinding
 {
     public class CurrentProviderModelBinderProvider : IModelBinderProvider
     {
