@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Dfc.CourseDirectory.WebV2.ModelBinding;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 
