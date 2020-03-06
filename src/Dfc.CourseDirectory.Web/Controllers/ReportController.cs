@@ -29,7 +29,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly IApprenticeshipService _apprenticeshipService;
         private ICSVHelper _CSVHelper;
         private ISession _session => _contextAccessor.HttpContext.Session;
-        public ReportController(ILogger<ReportController> logger, ICourseService courseService, ICSVHelper csvHelper, 
+        public ReportController(ILogger<ReportController> logger, ICourseService courseService, ICSVHelper csvHelper,
             IHttpContextAccessor contextAccessor, IApprenticeshipService apprenticeshipService)
         {
             _logger = logger;
@@ -47,111 +47,113 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 _session.Remove("UKPRN");
             }
 
-            var reportResultsTask = _courseService.GetAllDfcReports();
-            var totalCoursesLiveTask = _courseService.GetTotalLiveCourses();
-            await Task.WhenAll(reportResultsTask, totalCoursesLiveTask);
+            string dateLastUpdate;
+            string appName = "MigrationReport";
+            MigrationReportViewModel2 model = new MigrationReportViewModel2();
 
-            var reportResults = reportResultsTask.Result;
-            var totalCoursesLive = totalCoursesLiveTask.Result;
+            // Get courses data
+            var couresesReportResultsTask = _courseService.GetAllDfcReports();
+            var appsReportResultsTask = _apprenticeshipService.GetAllDfcReports();
+            await Task.WhenAll(couresesReportResultsTask, appsReportResultsTask);
 
-            if (reportResults.IsFailure || totalCoursesLive.IsFailure) throw new Exception("Unable to generate migration reports");
+            var courseReportResults = couresesReportResultsTask.Result;
+            var appsReportResults = appsReportResultsTask.Result;
 
-            // @ToDo: refactor this business logic away from the presentation layer
-            int feProvidersMigrated = reportResults.Value.Count;
-            int feCoursesMigrated = (reportResults.Value.Sum(r => r.MigratedCount) ?? 0);
-            int feCoursesMigratedWithErrors = reportResults.Value.Sum(r => r.MigrationPendingCount);
+            if (courseReportResults.IsFailure || appsReportResults.IsFailure) throw new Exception("Unable to generate migration reports");
 
-            MigrationReportViewModel model = new MigrationReportViewModel()
-            {
-                ProvidersMigrated = new MigrationReportDashboardPanelModel("FE providers migrated", value: feProvidersMigrated),
-                 Migrated = new MigrationReportDashboardPanelModel("FE courses migrated", value: feCoursesMigrated),
-                MigratedWithErrors = new MigrationReportDashboardPanelModel("FE courses with errors", value: feCoursesMigratedWithErrors),
-                Live = new MigrationReportDashboardPanelModel("Total courses live", value: totalCoursesLive.Value),
+            var courseReportData = courseReportResults.Value.Where(c => c.CreatedBy == appName); // Only show records that have been updated by report migrator
+            var appReportData = appsReportResults.Value.Where(c => c.CreatedBy == appName); // Only show records that have been updated by report migrator
 
-                ReportResults = new MigrationReportResultsModel(reportResults.Value)
-            };
-            model.ReportType = ReportType.Fe;
+            // Get providers in both reports
+            var providersInBoth = from c in courseReportData
+                                  join a in appReportData
+                                         on c.ProviderUKPRN equals a.ProviderUKPRN
+                                  select c.ProviderUKPRN;
+
+            // Get providers in  courses reports only
+            var providersInCoursesOnly = from c in courseReportData
+                                         where !providersInBoth.Contains(c.ProviderUKPRN)
+                                         select c.ProviderUKPRN;
+
+            // Get providers in  apps reports only
+            var providersInAppsOnly = from a in appReportData
+                                      where !providersInBoth.Contains(a.ProviderUKPRN)
+                                      select a.ProviderUKPRN;
+
+
+            int totalProvidersMigrated = providersInBoth.Count()
+                                            + providersInCoursesOnly.Count()
+                                            + providersInAppsOnly.Count();
+
+            dateLastUpdate = appReportData.First().CreatedOn.ToString("dd/MM/yyyy H:mm");
+
+            // Perform course calculations
+            int feCoursesMigratedCount = (courseReportData.Sum(r => r.MigratedCount) ?? 0);
+            var feCoursesPendingCount = courseReportData.Sum(r => r.MigrationPendingCount);
+            var feCoursesLiveCount = courseReportData.Sum(r => r.LiveCount);
+
+            // Perform apps calculations
+            int appsMigratedCount = (appReportData.Sum(r => r.MigratedCount) ?? 0);
+            int appsPendingCount = appReportData.Sum(r => r.MigrationPendingCount);
+            int appsLiveCount = appReportData.Sum(r => r.LiveCount);
+
+            model.TotalProvidersMigrated = new MigrationReportDashboardPanelModel("Total Providers", value: totalProvidersMigrated);
+            model.DateLastUpdated = dateLastUpdate;
+
+            model.CoursesMigrated = new MigrationReportDashboardPanelModel("Migrated", value: feCoursesMigratedCount);
+            model.CoursesPending = new MigrationReportDashboardPanelModel("Pending", value: feCoursesPendingCount);
+            model.CoursesLive = new MigrationReportDashboardPanelModel("Live", value: feCoursesLiveCount);
+            model.CourseReportResults = new MigrationReportResultsModel(new List<DfcMigrationReport>());
+
+            model.ApprenticeshipMigrated = new MigrationReportDashboardPanelModel("Migrated", value: appsMigratedCount);
+            model.ApprenticeshipPending = new MigrationReportDashboardPanelModel("Pending", value: appsPendingCount);
+            model.ApprenticeshipLive = new MigrationReportDashboardPanelModel("Live", value: appsLiveCount);
+            model.ApprenticeshipReportResults = new MigrationReportResultsModel(new List<DfcMigrationReport>());
+
             return View(model);
         }
 
-        public async Task<IActionResult> Apprenticeship()
-        {
-            var ukPRN = _session.GetInt32("UKPRN");
-            if (ukPRN != null)
-            {
-                _session.Remove("UKPRN");
-            }
-
-            var reportResultsTask = _apprenticeshipService.GetAllDfcReports();
-            var totalApprenticeshipsLiveTask = _apprenticeshipService.GetTotalLiveApprenticeships();
-            await Task.WhenAll(reportResultsTask, totalApprenticeshipsLiveTask);
-
-            var reportResults = reportResultsTask.Result;
-            var totalApprenticeshipsLive = totalApprenticeshipsLiveTask.Result;
-
-            if (reportResults.IsFailure || totalApprenticeshipsLive.IsFailure) throw new Exception("Unable to generate migration reports");
-
-            // @ToDo: refactor this business logic away from the presentation layer
-            int feProvidersMigrated = reportResults.Value.Count;
-            int feCoursesMigrated = (reportResults.Value.Sum(r => r.MigratedCount) ?? 0);
-            int feCoursesMigratedWithErrors = reportResults.Value.Sum(r => r.MigrationPendingCount);
-
-            MigrationReportViewModel model = new MigrationReportViewModel()
-            {
-                ProvidersMigrated = new MigrationReportDashboardPanelModel("Apprenticeship providers migrated", value: feProvidersMigrated),
-                Migrated = new MigrationReportDashboardPanelModel("Apprenticeships migrated", value: feCoursesMigrated),
-                MigratedWithErrors = new MigrationReportDashboardPanelModel("Apprenticeships with errors", value: feCoursesMigratedWithErrors),
-                Live = new MigrationReportDashboardPanelModel("Total Apprenticeships live", totalApprenticeshipsLive.Value), //todo,
-                ReportResults = new MigrationReportResultsModel(reportResults.Value)
-            };
-            model.ReportType = ReportType.Apprenticeship;
-
-            return View("Index", model);
-        }
-
-        public async Task<IActionResult> ReportCSV(ReportType type)
+        public async Task<IActionResult> ReportCSVCourses()
         {
             var reportResults = await _courseService.GetAllDfcReports();
-
             if (reportResults.IsFailure) throw new Exception("Unable to generate migration reports");
 
+            var result = GetCSVData(reportResults.Value.ToList());
+            DateTime d = DateTime.Now;
+            result.FileDownloadName = $"Migration_Report_Courses_{d.ToString("dd-MM-yyyy_hhmmss")}.csv";
+            return result;
+        }
+
+        public async Task<IActionResult> ReportCSVApps()
+        {
+            var reportResults = await _apprenticeshipService.GetAllDfcReports();
+            if (reportResults.IsFailure) throw new Exception("Unable to generate migration reports");
+
+            var result = GetCSVData(reportResults.Value.ToList());
+            DateTime d = DateTime.Now;
+            result.FileDownloadName = $"Migration_Report_Apprenticeships_{d.ToString("dd-MM-yyyy_hhmmss")}.csv";
+            return result;
+        }
+
+        private FileStreamResult GetCSVData(List<DfcMigrationReport> dfcMigrationReports)
+        {
             var csvReports = new List<CsvDfcMigrationReport>();
 
-            switch (type)
+            csvReports = dfcMigrationReports.Select(x => new CsvDfcMigrationReport
             {
-                case ReportType.Apprenticeship:
-                    csvReports = reportResults.Value.Select(x => new CsvDfcMigrationReport
-                    {
-                        Errors = x.MigrationPendingCount,
-                        FailedMigrationCount = x.FailedMigrationCount,
-                        LiveCount = x.LiveCount,
-                        MigratedCount = x.MigratedCount,
-                        MigrationDate = x.MigrationDate.HasValue ? x.MigrationDate.Value.ToString("dd/MM/yyyy") : string.Empty,
-                        MigrationPendingCount = x.MigrationPendingCount,
-                        MigrationRate = x.MigrationRate,
-                        ProviderName = x.ProviderName,
-                        ProviderType = x.ProviderType,
-                        UKPRN = x.ProviderUKPRN
-                    }).ToList();
-                    break;
-                default:
-                    csvReports = reportResults.Value.Select(x => new CsvDfcMigrationReport
-                    {
-                        Errors = x.MigrationPendingCount,
-                        FailedMigrationCount = x.FailedMigrationCount,
-                        LiveCount = x.LiveCount,
-                        MigratedCount = x.MigratedCount,
-                        MigrationDate = x.MigrationDate.HasValue ? x.MigrationDate.Value.ToString("dd/MM/yyyy") : string.Empty,
-                        MigrationPendingCount = x.MigrationPendingCount,
-                        MigrationRate = x.MigrationRate,
-                        ProviderName = x.ProviderName,
-                        ProviderType = x.ProviderType,
-                        UKPRN = x.ProviderUKPRN
-                    }).ToList();
-                    break;
-            }
-
-
+                Errors = x.MigrationPendingCount,
+                FailedMigrationCount = x.FailedMigrationCount,
+                LiveCount = x.LiveCount,
+                MigratedCount = x.MigratedCount,
+                MigrationDate = x.MigrationDate.HasValue ? x.MigrationDate.Value.ToString("dd/MM/yyyy") : string.Empty,
+                MigrationPendingCount = x.MigrationPendingCount,
+                MigrationRate = x.MigrationRate,
+                ProviderName = x.ProviderName,
+                ProviderType = x.ProviderType,
+                UKPRN = x.ProviderUKPRN,
+                CreatedBy = x.CreatedBy,
+                CreatedOn = x.CreatedOn,
+            }).ToList();
 
             List<string> csvLines = new List<string>();
             foreach (var line in _CSVHelper.ToCsv(csvReports))
@@ -165,11 +167,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 Position = 0
             };
-            FileStreamResult result = new FileStreamResult(ms, MediaTypeNames.Text.Plain);
-            DateTime d = DateTime.Now;
-            result.FileDownloadName = $"Helpdesk_Migration _Report_{d.Day.TwoChars()}_{d.Month.TwoChars()}_{d.Year}_{d.Hour.TwoChars()}_{d.Minute.TwoChars()}.csv";
-            return result;
 
+            FileStreamResult result = new FileStreamResult(ms, MediaTypeNames.Text.Plain);
+            return result;
         }
+
     }
 }
