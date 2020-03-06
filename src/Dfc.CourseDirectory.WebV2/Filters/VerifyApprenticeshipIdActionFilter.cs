@@ -43,18 +43,18 @@ namespace Dfc.CourseDirectory.WebV2.Filters
             }
 
             var providerOwnershipCache = context.HttpContext.RequestServices.GetRequiredService<IProviderOwnershipCache>();
-            var ukprn = await providerOwnershipCache.GetProviderForApprenticeship((Guid)apprenticeshipId);
+            var providerId = await providerOwnershipCache.GetProviderForApprenticeship((Guid)apprenticeshipId);
 
-            if (!ukprn.HasValue)
+            if (!providerId.HasValue)
             {
                 context.Result = new NotFoundResult();
             }
             else
             {
-                // Stash the UKPRN so additional filters can use it
-                context.HttpContext.Features.Set(new ApprenticeshipProviderFeature(ukprn.Value));
+                // Stash the provider ID so additional filters can use it
+                context.HttpContext.Features.Set(new ApprenticeshipProviderFeature(providerId.Value));
 
-                // If the action has a ProviderInfo parameter, ensure it's bound and matches this UKPRN
+                // If the action has a ProviderInfo parameter, ensure it's bound and matches this provider ID
                 var parameterInfoActionParameters = context.ActionDescriptor.Parameters
                     .Where(p => p.ParameterType == typeof(ProviderInfo))
                     .ToList();
@@ -65,10 +65,10 @@ namespace Dfc.CourseDirectory.WebV2.Filters
                     if (boundValue == null)
                     {
                         var providerInfoCache = context.HttpContext.RequestServices.GetRequiredService<IProviderInfoCache>();
-                        var providerInfo = await providerInfoCache.GetProviderInfo(ukprn.Value);
+                        var providerInfo = await providerInfoCache.GetProviderInfo(providerId.Value);
                         context.ActionArguments[p.Name] = providerInfo;
                     }
-                    else if (boundValue.Ukprn != ukprn.Value)
+                    else if (boundValue.ProviderId != providerId.Value)
                     {
                         // Bound provider doesn't match this apprenticeship's provider - return an error
                         // (this is either a bug in a redirect or the end user messing with the URL)
@@ -85,11 +85,11 @@ namespace Dfc.CourseDirectory.WebV2.Filters
 
     public class ApprenticeshipProviderFeature
     {
-        public ApprenticeshipProviderFeature(int ukprn)
+        public ApprenticeshipProviderFeature(Guid providerId)
         {
-            Ukprn = ukprn;
+            ProviderId = providerId;
         }
 
-        public int Ukprn { get; }
+        public Guid ProviderId { get; }
     }
 }

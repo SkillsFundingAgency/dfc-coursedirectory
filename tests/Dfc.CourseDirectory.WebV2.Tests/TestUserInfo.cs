@@ -6,11 +6,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 {
     public enum TestUserType { Developer, Helpdesk, ProviderUser, ProviderSuperUser }
 
-    public class AuthenticatedUserInfo
+    public class TestUserInfo
     {
         public const string DefaultEmail = "test.user@place.com";
         public const string DefaultFirstName = "Test";
         public const string DefaultLastName = "User";
+        public const string DefaultProviderStatus = "Active";
 
         public static readonly Guid DefaultUserId = new Guid("9b8adb2a-5a26-44b9-b6a0-52846f7a4555");  // Dummy ID
 
@@ -21,11 +22,18 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         public string FirstName { get; private set; }
         public string LastName { get; private set; }
 
-        public int? UKPRN { get; private set; }
+        public Guid? ProviderId { get; private set; }
         public ProviderType? ProviderType { get; private set; }
+        public string ProviderStatus { get; set; }
 
-        public void AsTestUser(TestUserType userType, int? ukprn = null)
+        public void AsTestUser(TestUserType userType, Guid? providerId = null)
         {
+            if ((userType == TestUserType.ProviderSuperUser || userType == TestUserType.ProviderUser) &&
+                !providerId.HasValue)
+            {
+                throw new ArgumentNullException(nameof(providerId));
+            }
+
             switch (userType)
             {
                 case TestUserType.Developer:
@@ -35,10 +43,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                     AsHelpdesk();
                     break;
                 case TestUserType.ProviderSuperUser:
-                    AsProviderSuperUser(ukprn.Value, Models.ProviderType.Both);
+                    AsProviderSuperUser(providerId.Value, Models.ProviderType.Both);
                     break;
                 case TestUserType.ProviderUser:
-                    AsProviderUser(ukprn.Value, Models.ProviderType.Both);
+                    AsProviderUser(providerId.Value, Models.ProviderType.Both);
                     break;
                 default:
                     throw new ArgumentException($"Unknown test user type: '{userType}'.", nameof(userType));
@@ -55,7 +63,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             Role = RoleNames.Developer;
             FirstName = firstName;
             LastName = lastName;
-            UKPRN = null;
+            ProviderId = null;
             ProviderType = null;
         }
 
@@ -69,20 +77,25 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             Role = RoleNames.Helpdesk;
             FirstName = firstName;
             LastName = lastName;
-            UKPRN = null;
+            ProviderId = ProviderId;
             ProviderType = null;
+            ProviderStatus = null;
         }
 
-        public void AsProviderUser(int ukprn, ProviderType providerType) =>
-            AsProviderUser(DefaultEmail, DefaultUserId, DefaultFirstName, DefaultLastName, ukprn, providerType);
+        public void AsProviderUser(Guid providerId, ProviderType providerType) =>
+            AsProviderUser(providerId, providerType, DefaultProviderStatus);
+
+        public void AsProviderUser(Guid providerId, ProviderType providerType, string providerStatus) =>
+            AsProviderUser(DefaultEmail, DefaultUserId, DefaultFirstName, DefaultLastName, providerId, providerType, providerStatus);
 
         public void AsProviderUser(
             string email,
             Guid userId,
             string firstName,
             string lastName,
-            int ukprn,
-            ProviderType providerType)
+            Guid providerId,
+            ProviderType providerType,
+            string providerStatus)
         {
             IsAuthenticated = true;
             Email = email;
@@ -90,20 +103,25 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             Role = RoleNames.ProviderUser;
             FirstName = firstName;
             LastName = lastName;
-            UKPRN = ukprn;
+            ProviderId = providerId;
             ProviderType = providerType;
+            ProviderStatus = providerStatus;
         }
 
-        public void AsProviderSuperUser(int ukprn, ProviderType providerType) =>
-            AsProviderSuperUser(DefaultEmail, DefaultUserId, DefaultFirstName, DefaultLastName, ukprn, providerType);
+        public void AsProviderSuperUser(Guid providerId, ProviderType providerType) =>
+            AsProviderSuperUser(providerId, providerType, DefaultProviderStatus);
+
+        public void AsProviderSuperUser(Guid providerId, ProviderType providerType, string providerStatus) =>
+            AsProviderSuperUser(DefaultEmail, DefaultUserId, DefaultFirstName, DefaultLastName, providerId, providerType, providerStatus);
 
         public void AsProviderSuperUser(
             string email,
             Guid userId,
             string firstName,
             string lastName,
-            int ukprn,
-            ProviderType providerType)
+            Guid providerId,
+            ProviderType providerType,
+            string providerStatus)
         {
             IsAuthenticated = true;
             Email = email;
@@ -111,8 +129,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             Role = RoleNames.ProviderSuperUser;
             FirstName = firstName;
             LastName = lastName;
-            UKPRN = ukprn;
+            ProviderId = providerId;
             ProviderType = providerType;
+            ProviderStatus = providerStatus;
         }
 
         public void Reset() => AsDeveloper();
@@ -125,8 +144,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             FirstName = default;
             LastName = default;
             Role = default;
-            UKPRN = default;
+            ProviderId = default;
             ProviderType = default;
+            ProviderStatus = null;
         }
     }
 }

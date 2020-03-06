@@ -14,10 +14,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
     public class TestAuthenticationHandler : AuthenticationHandler<TestAuthenticationOptions>
     {
-        private readonly AuthenticatedUserInfo _authenticatedUserInfo;
+        private readonly TestUserInfo _authenticatedUserInfo;
 
         public TestAuthenticationHandler(
-            AuthenticatedUserInfo authenticatedUserInfo,
+            TestUserInfo authenticatedUserInfo,
             IOptionsMonitor<TestAuthenticationOptions> options,
             ILoggerFactory logger,
             UrlEncoder encoder,
@@ -43,16 +43,16 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                     new Claim(ClaimTypes.Role, _authenticatedUserInfo.Role)
                 };
 
-                if (_authenticatedUserInfo.UKPRN.HasValue)
+                if (_authenticatedUserInfo.ProviderId.HasValue)
                 {
                     claims.AddRange(new List<Claim>()
                     {
-                        new Claim("UKPRN", _authenticatedUserInfo.UKPRN.Value.ToString()),
-                        new Claim("ProviderType", _authenticatedUserInfo.ProviderType.Value.ToString())
+                        new Claim("ProviderId", _authenticatedUserInfo.ProviderId.Value.ToString()),
+                        new Claim("ProviderType", _authenticatedUserInfo.ProviderType.Value.ToString()),
+                        new Claim("provider_status", _authenticatedUserInfo.ProviderStatus)
                         // These claims are populated in the real app but are not required here (yet):
                         // organisation - JSON from DfE Sign In API call
                         // OrganisationId - GUID Org ID for DfE API call
-                        // provider_status
                     });
                 }
 

@@ -152,6 +152,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     int csvLineCount = _apprenticeshipBulkUploadService.CountCsvLines(ms);
 
                     bool processInline = (csvLineCount <= _blobService.InlineProcessingThreshold);
+                    
                     _logger.LogInformation(
                         $"Csv line count = {csvLineCount} threshold = {_blobService.InlineProcessingThreshold} processInline = {processInline}");
 
@@ -169,8 +170,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     List<string> errors = new List<string>();
                     try
                     {
-                        errors = _apprenticeshipBulkUploadService.ValidateAndUploadCSV(ms,
-                            _userHelper.GetUserDetailsFromClaims(this.HttpContext.User.Claims, UKPRN));
+                       
+                            errors = _apprenticeshipBulkUploadService.ValidateAndUploadCSV(ms,
+                                _userHelper.GetUserDetailsFromClaims(this.HttpContext.User.Claims, UKPRN), processInline);
+                        
                     }
                     catch (HeaderValidationException he)
                     {

@@ -248,6 +248,18 @@
     },
     "ProviderPortalSharedResourceGroupName": {
       "type": "string"
+    },
+    "CosmosAccountEndpoint": {
+      "type": "string",
+      "metadata": {
+        "description": "URL to the cosmos db account"
+      }
+    },
+    "CosmosAccountAccessKey": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Access key for the cosmos db account"
+      }
     }
   },
   "variables": {
@@ -585,6 +597,14 @@
               {
                 "name": "BlobStorageSettings__ApprenticeshipsTemplatePath",
                 "value": "apprenticeshipsbulkuploadtemplate.csv"
+              },
+              {
+                "name": "CosmosDbSettings__EndpointUri",
+                "value": "[parameters('CosmosAccountEndpoint')]"
+              },
+              {
+                "name": "CosmosDbSettings__PrimaryKey",
+                "value": "[parameters('CosmosAccountAccessKey')]"
               }
             ]
           },

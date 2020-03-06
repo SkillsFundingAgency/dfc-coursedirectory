@@ -39,37 +39,37 @@
     }
     else
     {
-        @if (Model.BulkUpLoadHasErrors == true)
+        @if (Model.BulkUpLoadHasErrors == true && !string.IsNullOrEmpty(Model.BulkUploadMessage))
         {
 
             link = $"<a class='govuk-link' href='/Bulkupload/WhatDoYouWantToDoNext'>{Model.BulkUploadMessage}</a>";
         }
-        else
+        else if (!string.IsNullOrEmpty(Model.BulkUploadMessage))
         {
             link = $"<a class='govuk-link' href='/PublishCourses/Index?publishMode=Bulkupload'>{Model.BulkUploadMessage}</a>";
         }
-         
-     
-        @if(Model.ApprenticeshipBulkUploadHasErrors == true)
+
+
+        @if (Model.ApprenticeshipBulkUploadHasErrors == true && !string.IsNullOrEmpty(Model.ApprenticeshipMessages))
         {
             link = $"<a class='govuk-link' href='/BulkUploadApprenticeships/WhatDoYouWantToDoNext/Index'>{Model.ApprenticeshipMessages}</a>";
         }
-        else
+        else if (!string.IsNullOrEmpty(Model.ApprenticeshipMessages))
         {
             link = $"<a class='govuk-link' href='/PublishApprenticeships/Index'>{Model.ApprenticeshipMessages}</a>";
         }
     }
-
-    @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+    if (!string.IsNullOrEmpty(link))
     {
+        @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+          {
         NotificationTitle = "Bulk upload",
         ClassType = "info-summary",
         Link = link
-    })
-   
-    
-}
+          })
+    }
 
+}
 else
 {
 

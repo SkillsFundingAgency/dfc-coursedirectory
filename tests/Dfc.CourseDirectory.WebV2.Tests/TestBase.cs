@@ -27,7 +27,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         protected TestData TestData => Factory.TestData;
 
-        protected AuthenticatedUserInfo User => Factory.User;
+        protected TestUserInfo User => Factory.User;
 
         public Task DisposeAsync() => Task.CompletedTask;
 

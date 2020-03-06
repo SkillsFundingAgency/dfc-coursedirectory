@@ -1,6 +1,7 @@
 ﻿using System;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
 using Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb;
+using GovUk.Frontend.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Caching.Memory;
@@ -23,7 +24,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         public void Configure(IApplicationBuilder app)
         {
+            app.UseCommitSqlTransaction();
+
             app.UseCourseDirectoryErrorHandling();
+
+            app.UseGdsFrontEnd();
 
             app.UseV2StaticFiles();
 
@@ -43,7 +48,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             // Make controllers defined in this assembly available
             services.AddMvc().AddApplicationPart(typeof(Startup).Assembly);
 
-            services.AddSingleton<AuthenticatedUserInfo>();
+            services.AddSingleton<TestUserInfo>();
             services.AddSingleton<InMemoryDocumentStore>();
             services.AddTransient<ICosmosDbQueryDispatcher, CosmosDbQueryDispatcher>();
             services.AddSingleton<IMemoryCache, ClearableMemoryCache>();

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace Dfc.CourseDirectory.Web
+namespace Dfc.CourseDirectory.WebV2.Filters
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
     public class AllowDeactivatedProviderAttribute : Attribute
@@ -32,12 +32,18 @@ namespace Dfc.CourseDirectory.Web
                 }
             }
 
+            // TODO: Store the status itself (not the description) i.e. A, V, PD1, PD2
+            // see https://skillsfundingagency.atlassian.net/wiki/spaces/DFC/pages/873136299/CD+Beta+-+UKRLP
             var providerIsDeactivated = !(providerStatus.Equals("Active", StringComparison.OrdinalIgnoreCase) ||
                 providerStatus.Equals("Verified", StringComparison.OrdinalIgnoreCase));
 
             if (providerIsDeactivated)
             {
-                context.Result = new ViewResult() { ViewName = "ProviderDeactivatedError" };
+                context.Result = new ViewResult()
+                {
+                    StatusCode = 400,
+                    ViewName = "ProviderDeactivatedError"
+                };
             }
         }
     }

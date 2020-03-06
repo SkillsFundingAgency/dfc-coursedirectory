@@ -26,7 +26,7 @@ namespace Dfc.CourseDirectory.WebV2.Filters
                     "Ensure the action has a parameter decorated with the ApprenticeshipIdAttribute.");
             }
 
-            var ukprn = appProviderFeature.Ukprn;
+            var providerId = appProviderFeature.ProviderId;
 
             var role = context.HttpContext.User.FindFirst(ClaimTypes.Role)?.Value;
 
@@ -41,8 +41,8 @@ namespace Dfc.CourseDirectory.WebV2.Filters
                     break;
                 case RoleNames.ProviderSuperUser:
                 case RoleNames.ProviderUser:
-                    var userUkprn = int.Parse(context.HttpContext.User.FindFirst("UKPRN").Value);
-                    isAuthorized = userUkprn == ukprn;
+                    var userProviderId = Guid.Parse(context.HttpContext.User.FindFirst("ProviderId").Value);
+                    isAuthorized = userProviderId == providerId;
                     break;
                 default:
                     isAuthorized = false;

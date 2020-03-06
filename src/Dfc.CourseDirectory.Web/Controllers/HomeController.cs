@@ -1,4 +1,8 @@
-﻿using Dfc.CourseDirectory.Common;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
+using Dfc.CourseDirectory.Common;
 using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Models.Models.Courses;
 using Dfc.CourseDirectory.Services.CourseService;
@@ -6,16 +10,11 @@ using Dfc.CourseDirectory.Services.Interfaces;
 using Dfc.CourseDirectory.Services.Interfaces.BlobStorageService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Web.ViewModels;
+using Dfc.CourseDirectory.WebV2.Filters;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Security.Claims;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -60,7 +59,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 if (_session.GetInt32("UKPRN") == null)
                 {
                     Claim UKPRNClaim = User.Claims.Where(x => x.Type == "UKPRN").SingleOrDefault();
-                    if (!String.IsNullOrEmpty(UKPRNClaim.Value))
+                    if (!String.IsNullOrEmpty(UKPRNClaim?.Value))
                     {
                         _session.SetInt32("UKPRN", Int32.Parse(UKPRNClaim.Value));
                     }
@@ -122,7 +121,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 if (_session.GetInt32("UKPRN") == null)
                 {
                     Claim UKPRN = User.Claims.Where(x => x.Type == "UKPRN").SingleOrDefault();
-                    if (!String.IsNullOrEmpty(UKPRN.Value))
+                    if (!String.IsNullOrEmpty(UKPRN?.Value))
                     {
                         _session.SetInt32("UKPRN", Int32.Parse(UKPRN.Value));
                     }

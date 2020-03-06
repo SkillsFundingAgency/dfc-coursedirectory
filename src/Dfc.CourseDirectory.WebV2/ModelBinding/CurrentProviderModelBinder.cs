@@ -1,11 +1,13 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.Security;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Dfc.CourseDirectory.WebV2
+namespace Dfc.CourseDirectory.WebV2.ModelBinding
 {
     public class CurrentProviderModelBinderProvider : IModelBinderProvider
     {
@@ -23,7 +25,7 @@ namespace Dfc.CourseDirectory.WebV2
 
     public class CurrentProviderModelBinder : IModelBinder
     {
-        public const string QueryParameterName = "ukprn";
+        public const string RouteValueKey = "providerId";
 
         private readonly IProviderInfoCache _providerInfoCache;
 
@@ -41,34 +43,34 @@ namespace Dfc.CourseDirectory.WebV2
             }
 
             // For Provider {Super}Users the provider comes from their identity token.
-            // For Admin or Helpdesk users there should be a query param indicating the provider.
-            // If Provider {Super}Users specify the query param it's ignored.
+            // For Admin or Helpdesk users there should be a route value indicating the provider.
+            // If Provider {Super}Users specify the route value it's ignored.
 
             var user = bindingContext.HttpContext.User;
             var role = user.FindFirst(ClaimTypes.Role).Value;
 
-            int ukprn;
+            Guid providerId;
 
-            var queryStringUkprn = TryGetUkprnFromQueryString();
+            var routeProviderId = TryGetProviderIdFromRouteValues();
 
             if (role == RoleNames.Developer || role == RoleNames.Helpdesk)
             {
-                if (!queryStringUkprn.HasValue)
+                if (!routeProviderId.HasValue)
                 {
                     bindingContext.Result = ModelBindingResult.Failed();
                     return;
                 }
                 else
                 {
-                    ukprn = queryStringUkprn.Value;
+                    providerId = routeProviderId.Value;
                 }
             }
             else if (role == RoleNames.ProviderSuperUser || role == RoleNames.ProviderUser)
             {
-                var usersOwnUkprn = int.Parse(user.FindFirst("UKPRN").Value);
+                var usersOwnProviderId = Guid.Parse(user.FindFirst("ProviderId").Value);
 
-                // Query param, if specified, must match user's own org
-                if (queryStringUkprn.HasValue && queryStringUkprn.Value != usersOwnUkprn)
+                // Route param, if specified, must match user's own org
+                if (routeProviderId.HasValue && routeProviderId.Value != usersOwnProviderId)
                 {
                     bindingContext.ModelState.AddModelError(
                         bindingContext.FieldName,
@@ -78,7 +80,7 @@ namespace Dfc.CourseDirectory.WebV2
                     return;
                 }
 
-                ukprn = usersOwnUkprn;
+                providerId = usersOwnProviderId;
             }
             else
             {
@@ -86,12 +88,12 @@ namespace Dfc.CourseDirectory.WebV2
                 return;
             }
 
-            var providerInfo = await _providerInfoCache.GetProviderInfo(ukprn);
+            var providerInfo = await _providerInfoCache.GetProviderInfo(providerId);
             if (providerInfo == null)
             {
                 bindingContext.ModelState.AddModelError(
                     bindingContext.FieldName,
-                    new ResourceDoesNotExistException(ResourceType.Provider),
+                    new ResourceDoesNotExistException(ResourceType.Provider, providerId),
                     bindingContext.ModelMetadata);
                 bindingContext.Result = ModelBindingResult.Failed();
             }
@@ -100,28 +102,35 @@ namespace Dfc.CourseDirectory.WebV2
                 bindingContext.Result = ModelBindingResult.Success(providerInfo);
             }
 
-            int? TryGetUkprnFromQueryString()
+            Guid? TryGetProviderIdFromRouteValues()
             {
-                var valueProvider = new QueryStringValueProvider(
+                var routeValueProvider = new RouteValueProvider(
+                    BindingSource.Path,
+                    bindingContext.ActionContext.RouteData.Values);
+
+                var queryStringValueProvider = new QueryStringValueProvider(
                     BindingSource.Query,
                     bindingContext.HttpContext.Request.Query,
                     CultureInfo.InvariantCulture);
 
-                var specifiedProviderIdBindingResult = valueProvider.GetValue(QueryParameterName);
+                var matches = routeValueProvider.GetValue(RouteValueKey).Values
+                    .Concat(queryStringValueProvider.GetValue(RouteValueKey).Values)
+                    .Distinct()
+                    .ToList();
 
-                if (specifiedProviderIdBindingResult.Length == 0)
+                if (matches.Count == 1)
                 {
-                    return null;
-                }
-                else
-                {
-                    if (!int.TryParse(specifiedProviderIdBindingResult.FirstValue, out ukprn))
+                    if (!Guid.TryParse(matches.Single(), out providerId))
                     {
                         return null;
                     }
                 }
+                else
+                {
+                    return null;
+                }
 
-                return ukprn;
+                return providerId;
             }
         }
     }

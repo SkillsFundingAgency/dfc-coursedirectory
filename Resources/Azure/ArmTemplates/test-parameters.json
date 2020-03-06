@@ -124,6 +124,12 @@
     },
     "ProviderPortalSharedResourceGroupName": {
       "value": "dfc-dev-prov-rg"
+    },
+    "CosmosAccountEndpoint": {
+      "value": "https://not-a-real-account.documents.azure.com/"
+    },
+    "CosmosAccountAccessKey": {
+      "value": "not-a-real-access-key"
     }
   }
 }

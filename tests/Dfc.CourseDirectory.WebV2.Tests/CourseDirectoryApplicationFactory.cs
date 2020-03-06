@@ -25,6 +25,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         public IConfiguration Configuration => Server.Host.Services.GetRequiredService<IConfiguration>();
 
+        public OverridableFeatureFlagProvider FeatureFlagProvider => Services.GetRequiredService<IFeatureFlagProvider>() as OverridableFeatureFlagProvider;
+
         public HostingOptions HostingOptions => Services.GetRequiredService<HostingOptions>();
 
         public InMemoryDocumentStore InMemoryDocumentStore => Services.GetRequiredService<InMemoryDocumentStore>();
@@ -35,7 +37,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         public TestData TestData => Services.GetRequiredService<TestData>();
 
-        public AuthenticatedUserInfo User => Services.GetRequiredService<AuthenticatedUserInfo>();
+        public TestUserInfo User => Services.GetRequiredService<TestUserInfo>();
 
         public void OnTestStarting()
         {
@@ -52,10 +54,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             MemoryCache.Clear();
 
             // Restore HostingOptions values to default
-            HostingOptions.RewriteForbiddenToNotFound = true;
+            HostingOptions.RewriteForbiddenToNotFound = false;
 
             // Reset the clock
             Clock.UtcNow = MutableClock.Start;
+
+            // Reset feature flag provider
+            FeatureFlagProvider.Reset();
         }
 
         public async Task OnTestStarted()
@@ -77,7 +82,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                     .AddJsonFile(fileProvider, "appsettings.Testing.json", optional: false, reloadOnChange: false)
                     .AddEnvironmentVariables();
             })
-            .UseStartup<Startup>();
+            .UseStartup<Startup>()
+            .ConfigureServices(services =>
+            {
+                services.AddSingleton<IFeatureFlagProvider, ConfigurationFeatureFlagProvider>();
+                services.Decorate<IFeatureFlagProvider, OverridableFeatureFlagProvider>();
+            });
 
         private void ResetMocks()
         {

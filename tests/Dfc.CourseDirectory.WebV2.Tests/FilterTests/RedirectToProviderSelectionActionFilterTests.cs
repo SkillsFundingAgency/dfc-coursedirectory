@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -14,7 +15,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             : base(factory)
         {
             _httpClientWithAutoRedirects = factory.CreateClient();
-            Factory.HostingOptions.RewriteForbiddenToNotFound = false;
         }
 
         [Fact]
@@ -39,7 +39,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             User.AsDeveloper();
 
             // Act
-            var response = await _httpClientWithAutoRedirects.GetAsync("RedirectToProviderSelectionActionFilterTest?ukprn=12345");
+            var response = await _httpClientWithAutoRedirects.GetAsync(
+                $"RedirectToProviderSelectionActionFilterTest?providerId={Guid.NewGuid()}");
 
             // Assert
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
@@ -49,11 +50,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         public async Task ProviderDoesNotMatchUsersOwnProvider_ReturnsForbidden()
         {
             // Arrange
-            var ukprn = 12345;
-            User.AsProviderUser(ukprn, Models.ProviderType.Both);
+            var providerId = Guid.NewGuid();
+            User.AsProviderUser(providerId, Models.ProviderType.Both);
 
             // Act
-            var response = await _httpClientWithAutoRedirects.GetAsync("RedirectToProviderSelectionActionFilterTest?ukprn=45678");
+            var response = await _httpClientWithAutoRedirects.GetAsync(
+                $"RedirectToProviderSelectionActionFilterTest?providerId={Guid.NewGuid()}");
 
             // Assert
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);

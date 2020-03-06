@@ -1,0 +1,142 @@
+﻿@model Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ListProviders.ViewModel
+@{
+    ViewBag.Title = "QA Submissions";
+}
+
+<h1 class="govuk-heading-xl">QA submissions</h1>
+
+<div class="govuk-tabs" data-module="govuk-tabs">
+    <h2 class="govuk-tabs__title">
+        Contents
+    </h2>
+    <ul class="govuk-tabs__list">
+        <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
+            <a class="govuk-tabs__tab" href="#ready-to-qa">
+                Ready to QA
+            </a>
+        </li>
+        <li class="govuk-tabs__list-item">
+            <a class="govuk-tabs__tab" href="#in-progress">
+                In progress
+            </a>
+        </li>
+        <li class="govuk-tabs__list-item">
+            <a class="govuk-tabs__tab" href="#fail">
+                Fail
+            </a>
+        </li>
+        <li class="govuk-tabs__list-item">
+            <a class="govuk-tabs__tab" href="#unable-to-complete">
+                Unable to complete
+            </a>
+        </li>
+    </ul>
+    <section class="govuk-tabs__panel" id="ready-to-qa">
+        <h2 class="govuk-heading-l">Select a provider</h2>
+        <table class="govuk-table">
+            <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    <th scope="col" class="govuk-table__header">Provider name</th>
+                    <th scope="col" class="govuk-table__header">UKPRN</th>
+                    <th scope="col" class="govuk-table__header">Date added</th>
+                </tr>
+            </thead>
+            <tbody class="govuk-table__body">
+                @foreach (var provider in Model.Submitted)
+                {
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell"><a href="#" class="govuk-link">@provider.ProviderName</a></td>
+                        <td class="govuk-table__cell">@provider.ProviderUkprn</td>
+                        <td class="govuk-table__cell">@provider.SubmittedOn.Value.ToString("dd MMM yyyy")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        @if (Model.Submitted.Count == 0)
+        {
+            <p>You have no providers ready to QA.</p>
+        }
+    </section>
+    <section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="in-progress">
+        <h2 class="govuk-heading-l">Select a provider</h2>
+        <table class="govuk-table">
+            <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    <th scope="col" class="govuk-table__header">Provider name</th>
+                    <th scope="col" class="govuk-table__header">UKPRN</th>
+                    <th scope="col" class="govuk-table__header">Date added</th>
+                    <th scope="col" class="govuk-table__header">Last QA'd by</th>
+                </tr>
+            </thead>
+            <tbody class="govuk-table__body">
+                @foreach (var provider in Model.InProgress)
+                {
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell"><a href="#" class="govuk-link">@provider.ProviderName</a></td>
+                        <td class="govuk-table__cell">@provider.ProviderUkprn</td>
+                        <td class="govuk-table__cell">@provider.SubmittedOn.Value.ToString("dd MMM yyyy")</td>
+                        <td class="govuk-table__cell">@provider.LastAssessedBy.FullName</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        @if (Model.InProgress.Count == 0)
+        {
+            <p>You have no providers in progress.</p>
+        }
+    </section>
+    <section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="fail">
+        <h2 class="govuk-heading-l">Select a provider</h2>
+        <table class="govuk-table">
+            <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    <th scope="col" class="govuk-table__header">Provider name</th>
+                    <th scope="col" class="govuk-table__header">UKPRN</th>
+                    <th scope="col" class="govuk-table__header">Date added</th>
+                    <th scope="col" class="govuk-table__header">Last QA'd by</th>
+                </tr>
+            </thead>
+            <tbody class="govuk-table__body">
+                @foreach (var provider in Model.Failed)
+                {
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell"><a href="#" class="govuk-link">@provider.ProviderName</a></td>
+                        <td class="govuk-table__cell">@provider.ProviderUkprn</td>
+                        <td class="govuk-table__cell">@provider.SubmittedOn.Value.ToString("dd MMM yyyy")</td>
+                        <td class="govuk-table__cell">@provider.LastAssessedBy.FullName</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        @if (Model.Failed.Count == 0)
+        {
+            <p>You have no providers that have failed QA.</p>
+        }
+    </section>
+    <section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="unable-to-complete">
+        <h2 class="govuk-heading-l">Select a provider</h2>
+        <table class="govuk-table">
+            <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    <th scope="col" class="govuk-table__header">Provider name</th>
+                    <th scope="col" class="govuk-table__header">UKPRN</th>
+                    <th scope="col" class="govuk-table__header">Date added</th>
+                </tr>
+            </thead>
+            <tbody class="govuk-table__body">
+                @foreach (var provider in Model.UnableToComplete)
+                {
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell"><a href="#" class="govuk-link">@provider.ProviderName</a></td>
+                        <td class="govuk-table__cell">@provider.ProviderUkprn</td>
+                        <td class="govuk-table__cell">@provider.SubmittedOn.Value.ToString("dd MMM yyyy")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        @if (Model.UnableToComplete.Count == 0)
+        {
+            <p>You have no providers unable to complete.</p>
+        }
+    </section>
+</div>

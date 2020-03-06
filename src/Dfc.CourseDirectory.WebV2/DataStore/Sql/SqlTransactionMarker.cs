@@ -7,6 +7,7 @@ namespace Dfc.CourseDirectory.WebV2.DataStore.Sql
         public bool GotTransaction => Transaction != null;
         public SqlTransaction Transaction { get; private set; }
 
+        public void OnTransactionCompleted() => Transaction = null;
         public void OnTransactionCreated(SqlTransaction transaction) => Transaction = transaction;
     }
 }
