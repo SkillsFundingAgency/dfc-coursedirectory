@@ -30,5 +30,26 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA
         [HttpGet("{providerId}")]
         public IActionResult ProviderDetail(Guid providerId) =>
             throw new System.NotImplementedException();
+
+        [HttpGet("{providerId}/provider-assessment")]
+        public async Task<IActionResult> ProviderAssessment(ProviderAssessment.Query query)
+        {
+            var result = await _mediator.Send(query);
+            return result.Match<IActionResult>(
+                error => BadRequest(),
+                vm => View(vm));
+        }
+
+        [HttpPost("{providerId}/provider-assessment")]
+        public async Task<IActionResult> ProviderAssessment(
+            Guid providerId,
+            ProviderAssessment.Command command)
+        {
+            command.ProviderId = providerId;
+            var result = await _mediator.Send(command);
+            return result.Match(
+                vm => View("ProviderAssessmentConfirmation", vm),
+                errors => this.ViewFromErrors(errors));
+        }
     }
 }
