@@ -1,5 +1,4 @@
-﻿using System;
-using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
+﻿using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
 using Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb;
 using GovUk.Frontend.AspNetCore;
 using Microsoft.AspNetCore.Builder;
@@ -11,16 +10,16 @@ using CosmosDbQueryDispatcher = Dfc.CourseDirectory.WebV2.Tests.DataStore.Cosmos
 
 namespace Dfc.CourseDirectory.WebV2.Tests
 {
-    public class Startup : IStartup
+    public class Startup
     {
-        public Startup(IHostingEnvironment environment, IConfiguration configuration)
+        public Startup(IWebHostEnvironment environment, IConfiguration configuration)
         {
             HostingEnvironment = environment;
             Configuration = configuration;
         }
 
         public IConfiguration Configuration { get; }
-        public IHostingEnvironment HostingEnvironment { get; }
+        public IWebHostEnvironment HostingEnvironment { get; }
 
         public void Configure(IApplicationBuilder app)
         {
@@ -32,12 +31,19 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
             app.UseV2StaticFiles();
 
+            app.UseRouting();
+
             app.UseAuthentication();
 
-            app.UseMvc();
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
         }
 
-        public IServiceProvider ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services)
         {
             services
                 .AddAuthentication("Test")
@@ -46,7 +52,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             services.AddCourseDirectory(HostingEnvironment, Configuration);
 
             // Make controllers defined in this assembly available
-            services.AddMvc().AddApplicationPart(typeof(Startup).Assembly);
+            //services.AddMvc().AddApplicationPart(typeof(Startup).Assembly);
+
+            services.AddRouting();
 
             services.AddSingleton<TestUserInfo>();
             services.AddSingleton<InMemoryDocumentStore>();
@@ -60,8 +68,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                 .AddClasses(classes => classes.AssignableTo(typeof(DataStore.CosmosDb.ICosmosDbQueryHandler<,>)))
                     .AsImplementedInterfaces()
                     .WithTransientLifetime());
-
-            return services.BuildServiceProvider(validateScopes: true);
         }
     }
 }

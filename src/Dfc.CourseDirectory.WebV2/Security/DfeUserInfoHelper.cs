@@ -9,7 +9,7 @@ using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries;
 using JWT.Algorithms;
 using JWT.Builder;
-using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -19,13 +19,13 @@ namespace Dfc.CourseDirectory.WebV2.Security
     {
         private readonly DfeSignInSettings _settings;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
-        private readonly IHostingEnvironment _environment;
+        private readonly IHostEnvironment _environment;
         private readonly HttpClient _httpClient;
 
         public DfeUserInfoHelper(
             DfeSignInSettings settings,
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
-            IHostingEnvironment environment)
+            IHostEnvironment environment)
         {
             _settings = settings;
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;

@@ -25,7 +25,7 @@ namespace Dfc.CourseDirectory.WebV2
     {
         public static IServiceCollection AddCourseDirectory(
             this IServiceCollection services,
-            IHostingEnvironment environment,
+            IWebHostEnvironment environment,
             IConfiguration configuration)
         {
             var thisAssembly = typeof(ServiceCollectionExtensions).Assembly;
@@ -45,6 +45,8 @@ namespace Dfc.CourseDirectory.WebV2
             services
                 .AddMvc(options =>
                 {
+                    options.EnableEndpointRouting = true;
+
                     options.Conventions.Add(new AddFeaturePropertyModelConvention());
                     options.Conventions.Add(new AuthorizeActionModelConvention());
 

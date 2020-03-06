@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
@@ -32,8 +31,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         public InMemoryDocumentStore InMemoryDocumentStore => Services.GetRequiredService<InMemoryDocumentStore>();
 
         public ClearableMemoryCache MemoryCache => Services.GetRequiredService<IMemoryCache>() as ClearableMemoryCache;
-
-        public IServiceProvider Services => Server.Host.Services;
 
         public TestData TestData => Services.GetRequiredService<TestData>();
 
