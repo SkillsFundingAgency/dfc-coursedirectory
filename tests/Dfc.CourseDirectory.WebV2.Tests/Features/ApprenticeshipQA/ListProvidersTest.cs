@@ -36,10 +36,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
 
             var provider1Ukprn = 12345;
             var provider1UserId = $"user-{provider1Ukprn}";
-            var provider1Id = await TestData.CreateProvider(ukprn: provider1Ukprn, providerName: "Provider 1");
+            var provider1Id = await TestData.CreateProvider(
+                ukprn: provider1Ukprn,
+                providerName: "Provider 1",
+                apprenticeshipQAStatus: Models.ApprenticeshipQAStatus.Submitted);
             await TestData.CreateUser(provider1UserId, "guy@provider1.com", "Provider 1", "User");
             var provider1ApprenticeshipId = await TestData.CreateApprenticeship(providerUkprn: provider1Ukprn);
-            var provider1QaSubmission = await TestData.CreateApprenticeshipQASubmission(
+            await TestData.CreateApprenticeshipQASubmission(
                 provider1Id,
                 submittedOn: new DateTime(2018, 4, 1, 12, 30, 37),
                 submittedByUserId: provider1UserId,
@@ -48,10 +51,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
 
             var provider2Ukprn = 23456;
             var provider2UserId = $"user-{provider2Ukprn}";
-            var provider2Id = await TestData.CreateProvider(ukprn: provider2Ukprn, providerName: "Provider 2");
+            var provider2Id = await TestData.CreateProvider(
+                ukprn: provider2Ukprn,
+                providerName: "Provider 2",
+                apprenticeshipQAStatus: Models.ApprenticeshipQAStatus.Submitted);
             await TestData.CreateUser(provider2UserId, "guy@provider2.com", "Provider 2", "User");
             var provider2ApprenticeshipId = await TestData.CreateApprenticeship(providerUkprn: provider2Ukprn);
-            var provider2QaSubmission = await TestData.CreateApprenticeshipQASubmission(
+            await TestData.CreateApprenticeshipQASubmission(
                 provider2Id,
                 submittedOn: new DateTime(2019, 5, 3, 15, 01, 23),
                 submittedByUserId: provider2UserId,
