@@ -14,5 +14,5 @@ namespace Dfc.CourseDirectory.Web.ViewModels.Report
         public MigrationReportResultsModel ReportResults { get; set; }
 
         public ReportType ReportType { get; set; }
-}
+    }
 }
