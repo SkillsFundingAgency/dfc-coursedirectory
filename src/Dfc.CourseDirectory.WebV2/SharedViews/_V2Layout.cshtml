@@ -1,5 +1,10 @@
 ﻿@{ 
     var title = (ViewBag.Title != null ? $"{ViewBag.Title} - " : "") + "Course Directory";
+
+    if (!ViewData.ModelState.IsValid)
+    {
+        title = "Error: " + title;
+    }
 }
 <!DOCTYPE html>
 <html lang="en" class="govuk-template">
