@@ -1,6 +1,10 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Data.SqlClient;
+using System.Net.Http;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.WebV2.DataStore.Sql;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests
@@ -32,5 +36,29 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         public Task DisposeAsync() => Task.CompletedTask;
 
         public Task InitializeAsync() => Factory.OnTestStarted();
+
+        protected Task WithSqlQueryDispatcher(Func<ISqlQueryDispatcher, Task> action) =>
+            WithSqlQueryDispatcher(async dispatcher =>
+            {
+                await action(dispatcher);
+                return 0;
+            });
+
+        protected async Task<TResult> WithSqlQueryDispatcher<TResult>(
+            Func<ISqlQueryDispatcher, Task<TResult>> action)
+        {
+            var serviceScopeFactory = Factory.Services.GetRequiredService<IServiceScopeFactory>();
+            using (var scope = serviceScopeFactory.CreateScope())
+            {
+                var transaction = scope.ServiceProvider.GetRequiredService<SqlTransaction>();
+                var queryDispatcher = scope.ServiceProvider.GetRequiredService<ISqlQueryDispatcher>();
+
+                var result = await action(queryDispatcher);
+
+                transaction.Commit();
+
+                return result;
+            }
+        }
     }
 }
