@@ -7,6 +7,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb.Queries
     {
         public Guid ApprenticeshipId { get; set; }
         public int ProviderUkprn { get; set; }
+        public string ApprenticeshipTitle { get; set; }
+        public string MarketingInformation { get; set; }
     }
 
     public enum CreateApprenticeshipStatus { Ok }

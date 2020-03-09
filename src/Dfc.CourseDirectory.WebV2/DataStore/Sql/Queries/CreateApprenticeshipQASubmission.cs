@@ -9,6 +9,13 @@ namespace Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries
         public DateTime SubmittedOn { get; set; }
         public string SubmittedByUserId { get; set; }
         public string ProviderMarketingInformation { get; set; }
-        public IEnumerable<Guid> ApprenticeshipIds { get; set; }
+        public IEnumerable<CreateApprenticeshipQASubmissionApprenticeship> Apprenticeships { get; set; }
+    }
+
+    public class CreateApprenticeshipQASubmissionApprenticeship
+    {
+        public Guid ApprenticeshipId { get; set; }
+        public string ApprenticeshipTitle { get; set; }
+        public string ApprenticeshipMarketingInformation { get; set; }
     }
 }

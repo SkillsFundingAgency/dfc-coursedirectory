@@ -1,15 +1,19 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
+using OneOf;
+using OneOf.Types;
 
 namespace Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.QueryHandlers
 {
-    public class GetProviderUkprnForApprenticeshipHandler : ICosmosDbQueryHandler<GetProviderUkprnForApprenticeship, int?>
+    public class GetProviderUkprnForApprenticeshipHandler
+        : ICosmosDbQueryHandler<GetProviderUkprnForApprenticeship, OneOf<NotFound, int>>
     {
-        public async Task<int?> Execute(
+        public async Task<OneOf<NotFound, int>> Execute(
             DocumentClient client,
             Configuration configuration,
             GetProviderUkprnForApprenticeship request)
@@ -25,11 +29,18 @@ namespace Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.QueryHandlers
                     new SqlParameter("@apprenticeshipId", request.ApprenticeshipId)
                 });
 
-            var response = await client.CreateDocumentQuery(collectionUri, query, new FeedOptions() { EnableCrossPartitionQuery = true })
+            var response = await client.CreateDocumentQuery<Apprenticeship>(collectionUri, query, new FeedOptions() { EnableCrossPartitionQuery = true })
                 .AsDocumentQuery()
-                .ExecuteNextAsync();
+                .ExecuteNextAsync<Apprenticeship>();
 
-            return response.Count > 0 ? (int?)response.Single().ProviderUKPRN : null;
+            if (response.Count == 0)
+            {
+                return new NotFound();
+            }
+            else
+            {
+                return response.Single().ProviderUKPRN;
+            }
         }
     }
 }
