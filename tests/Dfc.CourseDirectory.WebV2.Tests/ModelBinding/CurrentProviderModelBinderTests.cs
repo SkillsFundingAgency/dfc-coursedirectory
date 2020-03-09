@@ -22,7 +22,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ModelBinding
             // Arrange
             var ukprn = 12345;
             var providerId = await TestData.CreateProvider(ukprn);
-            User.AsTestUser(userType);
+            await User.AsTestUser(userType);
 
             // Act
             var response = await HttpClient.GetAsync($"currentprovidermodelbindertests?providerId={providerId}");
@@ -42,7 +42,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ModelBinding
             // Arrange
             var ukprn = 12345;
             var providerId = await TestData.CreateProvider(ukprn);
-            User.AsTestUser(userType);
+            await User.AsTestUser(userType);
 
             // Act
             var response = await HttpClient.GetAsync($"currentprovidermodelbindertests/from-route/{providerId}");
@@ -62,7 +62,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ModelBinding
             // Arrange
             var ukprn = 12345;
             var providerId = await TestData.CreateProvider(ukprn);
-            User.AsTestUser(userType);
+            await User.AsTestUser(userType);
 
             // Act
             var response = await HttpClient.GetAsync($"currentprovidermodelbindertests/from-route/{providerId}?providerId={Guid.NewGuid()}");
@@ -79,7 +79,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ModelBinding
         public async Task AdminUser_NoQueryParamFailsBinding(TestUserType userType)
         {
             // Arrange
-            User.AsTestUser(userType);
+            await User.AsTestUser(userType);
 
             // Act
             var response = await HttpClient.GetAsync($"currentprovidermodelbindertests?providerId=");
@@ -97,7 +97,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ModelBinding
         {
             // Arrange
             var providerId = await TestData.CreateProvider(ukprn: 12345);
-            User.AsTestUser(userType, providerId);
+            await User.AsTestUser(userType, providerId);
 
             // Act
             var response = await HttpClient.GetAsync($"currentprovidermodelbindertests");
@@ -116,7 +116,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ModelBinding
         {
             // Arrange
             var providerId = await TestData.CreateProvider(ukprn: 12345);
-            User.AsTestUser(userType, providerId);
+            await User.AsTestUser(userType, providerId);
 
             // Act
             var response = await HttpClient.GetAsync($"currentprovidermodelbindertests?providerId={Guid.NewGuid()}");
@@ -134,7 +134,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ModelBinding
         {
             // Arrange
             var providerId = await TestData.CreateProvider(ukprn: 12345);
-            User.AsTestUser(userType, providerId);
+            await User.AsTestUser(userType, providerId);
 
             // Act
             var response = await HttpClient.GetAsync($"currentprovidermodelbindertests/from-route/{Guid.NewGuid()}");
@@ -149,7 +149,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ModelBinding
         public async Task ProviderDoesNotExist_FailsBinding()
         {
             // Arrange
-            User.AsTestUser(TestUserType.Developer);
+            await User.AsTestUser(TestUserType.Developer);
 
             // Act
             var response = await HttpClient.GetAsync($"currentprovidermodelbindertests?providerId={Guid.NewGuid()}");

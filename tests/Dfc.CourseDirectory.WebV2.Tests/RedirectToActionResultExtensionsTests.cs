@@ -17,7 +17,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         {
             // Arrange
             var providerId = await TestData.CreateProvider(ukprn: 12345);
-            User.AsDeveloper();  // Ensure ukprn is bound from query param
+            await User.AsDeveloper();  // Ensure ukprn is bound from query param
 
             // Act
             var response = await HttpClient.GetAsync(

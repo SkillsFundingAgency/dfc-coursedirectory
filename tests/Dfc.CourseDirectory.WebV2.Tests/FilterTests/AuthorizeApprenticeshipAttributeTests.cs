@@ -21,7 +21,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             var ukprn = 123456;
             await TestData.CreateProvider(ukprn);
             var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
-            User.AsDeveloper();
+            await User.AsDeveloper();
 
             // Act
             var response = await HttpClient.GetAsync($"filtertests/authorizeapprenticeshipattribute/{apprenticeshipId}");
@@ -37,7 +37,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             var ukprn = 123456;
             await TestData.CreateProvider(ukprn);
             var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
-            User.AsHelpdesk();
+            await User.AsHelpdesk();
 
             // Act
             var response = await HttpClient.GetAsync($"filtertests/authorizeapprenticeshipattribute/{apprenticeshipId}");
@@ -53,7 +53,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             var ukprn = 123456;
             var providerId = await TestData.CreateProvider(ukprn);
             var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
-            User.AsProviderUser(providerId, Models.ProviderType.Apprenticeships);
+            await User.AsProviderUser(providerId, Models.ProviderType.Apprenticeships);
 
             // Act
             var response = await HttpClient.GetAsync($"filtertests/authorizeapprenticeshipattribute/{apprenticeshipId}");
@@ -69,7 +69,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             var ukprn = 123456;
             var providerId = await TestData.CreateProvider(ukprn);
             var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
-            User.AsProviderSuperUser(providerId, Models.ProviderType.Apprenticeships);
+            await User.AsProviderSuperUser(providerId, Models.ProviderType.Apprenticeships);
 
             // Act
             var response = await HttpClient.GetAsync($"filtertests/authorizeapprenticeshipattribute/{apprenticeshipId}");
@@ -86,7 +86,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             await TestData.CreateProvider(ukprn);
             var anotherProviderId = await TestData.CreateProvider(ukprn: 23456);
             var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
-            User.AsProviderUser(anotherProviderId, Models.ProviderType.Apprenticeships);
+            await User.AsProviderUser(anotherProviderId, Models.ProviderType.Apprenticeships);
 
             // Act
             var response = await HttpClient.GetAsync($"filtertests/authorizeapprenticeshipattribute/{apprenticeshipId}");
@@ -103,7 +103,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             await TestData.CreateProvider(ukprn);
             var anotherProviderId = await TestData.CreateProvider(ukprn: 23456);
             var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
-            User.AsProviderSuperUser(anotherProviderId, Models.ProviderType.Apprenticeships);
+            await User.AsProviderSuperUser(anotherProviderId, Models.ProviderType.Apprenticeships);
 
             // Act
             var response = await HttpClient.GetAsync($"filtertests/authorizeapprenticeshipattribute/{apprenticeshipId}");
