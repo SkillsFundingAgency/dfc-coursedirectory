@@ -29,6 +29,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly IApprenticeshipService _apprenticeshipService;
         private ICSVHelper _CSVHelper;
         private ISession _session => _contextAccessor.HttpContext.Session;
+
+        readonly string appName = "MigrationReport";
+
         public ReportController(ILogger<ReportController> logger, ICourseService courseService, ICSVHelper csvHelper,
             IHttpContextAccessor contextAccessor, IApprenticeshipService apprenticeshipService)
         {
@@ -48,7 +51,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
 
             string dateLastUpdate;
-            string appName = "MigrationReport";
             MigrationReportViewModel2 model = new MigrationReportViewModel2();
 
             // Get courses data
@@ -135,6 +137,62 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return result;
         }
 
+        public async Task<IActionResult> ReportCSVProviders()
+        {
+            // Get courses data
+            var couresesReportResultsTask = _courseService.GetAllDfcReports();
+            var appsReportResultsTask = _apprenticeshipService.GetAllDfcReports();
+            await Task.WhenAll(couresesReportResultsTask, appsReportResultsTask);
+
+            var courseReportResults = couresesReportResultsTask.Result;
+            var appsReportResults = appsReportResultsTask.Result;
+
+            if (courseReportResults.IsFailure || appsReportResults.IsFailure) throw new Exception("Unable to generate migration reports");
+
+            var courseReportData = courseReportResults.Value.Where(c => c.CreatedBy == appName); // Only show records that have been updated by report migrator
+            var appReportData = appsReportResults.Value.Where(c => c.CreatedBy == appName); // Only show records that have been updated by report migrator
+
+            // Get providers in both reports
+            var providersInBoth = from c in courseReportData
+                                  join a in appReportData
+                                         on c.ProviderUKPRN equals a.ProviderUKPRN
+                                  select new CsvProvider()
+                                  {
+                                      ProviderUKPRN = c.ProviderUKPRN,
+                                      ProviderName = c.ProviderName
+                                  };
+
+            // Get providers in  courses reports only
+            var providersInCoursesOnly = from c in courseReportData
+                                         where !providersInBoth.Select(p => p.ProviderUKPRN).Contains(c.ProviderUKPRN)
+                                         select new CsvProvider()
+                                         {
+                                             ProviderUKPRN = c.ProviderUKPRN,
+                                             ProviderName = c.ProviderName
+                                         };
+
+            // Get providers in  apps reports only
+            var providersInAppsOnly = from a in appReportData
+                                      where !providersInBoth.Select(p => p.ProviderUKPRN).Contains(a.ProviderUKPRN)
+                                      select new CsvProvider()
+                                      {
+                                          ProviderUKPRN = a.ProviderUKPRN,
+                                          ProviderName = a.ProviderName
+                                      };
+
+            List<CsvProvider> reportResults = new List<CsvProvider>();
+            reportResults.AddRange(providersInBoth);
+            reportResults.AddRange(providersInCoursesOnly);
+            reportResults.AddRange(providersInAppsOnly);
+
+
+            var result = GetCSVData(reportResults.Distinct().ToList());
+            DateTime d = DateTime.Now;
+            result.FileDownloadName = $"Migration_Report_Providers_{d.ToString("dd-MM-yyyy_hhmmss")}.csv";
+            return result;
+
+        }
+
         private FileStreamResult GetCSVData(List<DfcMigrationReport> dfcMigrationReports)
         {
             var csvReports = new List<CsvDfcMigrationReport>();
@@ -172,5 +230,23 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return result;
         }
 
+        private FileStreamResult GetCSVData(List<CsvProvider> prvoiderUkprn)
+        {
+            List<string> csvLines = new List<string>();
+            foreach (var line in _CSVHelper.ToCsv(prvoiderUkprn, ",", false))
+            {
+                csvLines.Add(line);
+            }
+
+            string report = string.Join(Environment.NewLine, csvLines);
+            byte[] data = Encoding.ASCII.GetBytes(report);
+            MemoryStream ms = new MemoryStream(data)
+            {
+                Position = 0
+            };
+
+            FileStreamResult result = new FileStreamResult(ms, MediaTypeNames.Text.Plain);
+            return result;
+        }
     }
 }
