@@ -1,4 +1,5 @@
-﻿using AngleSharp.Html.Dom;
+﻿using AngleSharp.Dom;
+using AngleSharp.Html.Dom;
 using Xunit;
 using Xunit.Sdk;
 
@@ -19,6 +20,21 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             var vht = errorElement.GetElementsByTagName("span")[0];
             var errorMessage = errorElement.InnerHtml.Substring(vht.OuterHtml.Length);
             Assert.Equal(expectedMessage, errorMessage);
+        }
+
+        public static IElement GetElementWithLabel(this IHtmlDocument doc, string label)
+        {
+            var allLabels = doc.QuerySelectorAll("label");
+
+            foreach (var l in allLabels)
+            {
+                if (l.TextContent.Trim() == label)
+                {
+                    return doc.GetElementById(l.GetAttribute("for"));
+                }
+            }
+
+            return null;
         }
     }
 }
