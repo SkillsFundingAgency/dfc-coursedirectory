@@ -37,6 +37,11 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         [JsonProperty(PropertyName = "Migration_Rate")]
         public decimal MigrationRate { get; set; }
 
-       
+        [JsonProperty(PropertyName = "Created_Date")]
+        public DateTime CreatedOn { get; set; }
+
+        [JsonProperty(PropertyName = "Created_By")]
+        public string CreatedBy { get; set; }
+
     }
 }

@@ -21,6 +21,8 @@ namespace Dfc.CourseDirectory.Models.Models.Courses
         public int MigrationPendingCount { get; set; }
         public int MigrationReadyToGoLive { get; set; }
         public decimal MigrationRate { get; set; }
+        public DateTime CreatedOn { get; set; }
+        public string CreatedBy { get; set; }
     }
 
 }

@@ -44,9 +44,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             // Clear calls on any mocks
             ResetMocks();
 
-            // Reset to the default calling user
-            User.Reset();
-
             // Clear in-memory DB
             InMemoryDocumentStore.Clear();
 
@@ -67,6 +64,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         {
             // Clear out all data from SQL database
             await _sqlCheckpoint.Reset(Configuration["ConnectionStrings:DefaultConnection"]);
+
+            // Reset to the default calling user
+            await User.Reset();
         }
 
         protected override void ConfigureWebHost(IWebHostBuilder builder) => builder.UseContentRoot(".");

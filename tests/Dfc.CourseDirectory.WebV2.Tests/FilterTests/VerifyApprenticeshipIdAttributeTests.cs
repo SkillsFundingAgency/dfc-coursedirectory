@@ -51,7 +51,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             var ukprn = 1234;
             await TestData.CreateProvider(ukprn);
             var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
-            User.AsDeveloper();  // Ensure UKPRN doesn't get bound from authentication ticket
+            await User.AsDeveloper();  // Ensure UKPRN doesn't get bound from authentication ticket
 
             // Act
             var response = await HttpClient.GetAsync($"filtertests/verifyapprenticeshipidattributetests/withproviderinfo/{apprenticeshipId}");
@@ -75,7 +75,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             var providerId = await TestData.CreateProvider(ukprn);
             var anotherProviderId = await TestData.CreateProvider(ukprn: 56789);
             var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
-            User.AsTestUser(userType, anotherProviderId);
+            await User.AsTestUser(userType, anotherProviderId);
 
             // Act
             var response = await HttpClient.GetAsync(
