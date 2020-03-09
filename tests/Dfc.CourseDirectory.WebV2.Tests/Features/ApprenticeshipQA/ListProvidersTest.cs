@@ -20,7 +20,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
             // Arrange
             var providerId = await TestData.CreateProvider();
 
-            User.AsTestUser(userType, providerId);
+            await User.AsTestUser(userType, providerId);
 
             // Act
             var response = await HttpClient.GetAsync("apprenticeship-qa");

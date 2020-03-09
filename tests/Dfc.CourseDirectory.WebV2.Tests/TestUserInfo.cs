@@ -1,6 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using Dfc.CourseDirectory.WebV2.DataStore.Sql;
 using Dfc.CourseDirectory.WebV2.Models;
 using Dfc.CourseDirectory.WebV2.Security;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Dfc.CourseDirectory.WebV2.Tests
 {
@@ -15,6 +21,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         public static readonly Guid DefaultUserId = new Guid("9b8adb2a-5a26-44b9-b6a0-52846f7a4555");  // Dummy ID
 
+        private readonly IServiceScopeFactory _serviceScopeFactory;
+
+        public TestUserInfo(IServiceScopeFactory serviceScopeFactory)
+        {
+            _serviceScopeFactory = serviceScopeFactory;
+        }
+
         public string Email { get; private set; }
         public bool IsAuthenticated { get; private set; }
         public Guid UserId { get; private set; }  // GUID to mirror DfE Sign In
@@ -26,7 +39,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         public ProviderType? ProviderType { get; private set; }
         public string ProviderStatus { get; set; }
 
-        public void AsTestUser(TestUserType userType, Guid? providerId = null)
+        public Task AsTestUser(TestUserType userType, Guid? providerId = null)
         {
             if ((userType == TestUserType.ProviderSuperUser || userType == TestUserType.ProviderUser) &&
                 !providerId.HasValue)
@@ -37,25 +50,21 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             switch (userType)
             {
                 case TestUserType.Developer:
-                    AsDeveloper();
-                    break;
+                    return AsDeveloper();
                 case TestUserType.Helpdesk:
-                    AsHelpdesk();
-                    break;
+                    return AsHelpdesk();
                 case TestUserType.ProviderSuperUser:
-                    AsProviderSuperUser(providerId.Value, Models.ProviderType.Both);
-                    break;
+                    return AsProviderSuperUser(providerId.Value, Models.ProviderType.Both);
                 case TestUserType.ProviderUser:
-                    AsProviderUser(providerId.Value, Models.ProviderType.Both);
-                    break;
+                    return AsProviderUser(providerId.Value, Models.ProviderType.Both);
                 default:
                     throw new ArgumentException($"Unknown test user type: '{userType}'.", nameof(userType));
             }
         }
 
-        public void AsDeveloper() => AsDeveloper(DefaultEmail, DefaultUserId, DefaultFirstName, DefaultLastName);
+        public Task AsDeveloper() => AsDeveloper(DefaultEmail, DefaultUserId, DefaultFirstName, DefaultLastName);
 
-        public void AsDeveloper(string email, Guid userId, string firstName, string lastName)
+        public Task AsDeveloper(string email, Guid userId, string firstName, string lastName)
         {
             IsAuthenticated = true;
             Email = email;
@@ -65,11 +74,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             LastName = lastName;
             ProviderId = null;
             ProviderType = null;
+
+            return RecordSignIn();
         }
 
-        public void AsHelpdesk() => AsHelpdesk(DefaultEmail, DefaultUserId, DefaultFirstName, DefaultLastName);
+        public Task AsHelpdesk() => AsHelpdesk(DefaultEmail, DefaultUserId, DefaultFirstName, DefaultLastName);
 
-        public void AsHelpdesk(string email, Guid userId, string firstName, string lastName)
+        public Task AsHelpdesk(string email, Guid userId, string firstName, string lastName)
         {
             IsAuthenticated = true;
             Email = email;
@@ -80,15 +91,17 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             ProviderId = ProviderId;
             ProviderType = null;
             ProviderStatus = null;
+
+            return RecordSignIn();
         }
 
-        public void AsProviderUser(Guid providerId, ProviderType providerType) =>
+        public Task AsProviderUser(Guid providerId, ProviderType providerType) =>
             AsProviderUser(providerId, providerType, DefaultProviderStatus);
 
-        public void AsProviderUser(Guid providerId, ProviderType providerType, string providerStatus) =>
+        public Task AsProviderUser(Guid providerId, ProviderType providerType, string providerStatus) =>
             AsProviderUser(DefaultEmail, DefaultUserId, DefaultFirstName, DefaultLastName, providerId, providerType, providerStatus);
 
-        public void AsProviderUser(
+        public Task AsProviderUser(
             string email,
             Guid userId,
             string firstName,
@@ -106,15 +119,17 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             ProviderId = providerId;
             ProviderType = providerType;
             ProviderStatus = providerStatus;
+
+            return RecordSignIn();
         }
 
-        public void AsProviderSuperUser(Guid providerId, ProviderType providerType) =>
+        public Task AsProviderSuperUser(Guid providerId, ProviderType providerType) =>
             AsProviderSuperUser(providerId, providerType, DefaultProviderStatus);
 
-        public void AsProviderSuperUser(Guid providerId, ProviderType providerType, string providerStatus) =>
+        public Task AsProviderSuperUser(Guid providerId, ProviderType providerType, string providerStatus) =>
             AsProviderSuperUser(DefaultEmail, DefaultUserId, DefaultFirstName, DefaultLastName, providerId, providerType, providerStatus);
 
-        public void AsProviderSuperUser(
+        public Task AsProviderSuperUser(
             string email,
             Guid userId,
             string firstName,
@@ -132,9 +147,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             ProviderId = providerId;
             ProviderType = providerType;
             ProviderStatus = providerStatus;
+
+            return RecordSignIn();
         }
 
-        public void Reset() => AsDeveloper();
+        public Task Reset() => AsDeveloper();
 
         public void SetNotAuthenticated()
         {
@@ -147,6 +164,50 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             ProviderId = default;
             ProviderType = default;
             ProviderStatus = null;
+        }
+
+        public ClaimsPrincipal ToPrincipal()
+        {
+            var claims = new List<Claim>()
+            {
+                new Claim("user_id", UserId.ToString()),
+                new Claim("sub", UserId.ToString()),
+                new Claim("email", Email),
+                new Claim("given_name", FirstName),
+                new Claim("family_name", LastName),
+                new Claim(ClaimTypes.Role, Role)
+            };
+
+            if (ProviderId.HasValue)
+            {
+                claims.AddRange(new List<Claim>()
+                {
+                    new Claim("ProviderId", ProviderId.Value.ToString()),
+                    new Claim("ProviderType", ProviderType.Value.ToString()),
+                    new Claim("provider_status", ProviderStatus)
+                    // These claims are populated in the real app but are not required here (yet):
+                    // organisation - JSON from DfE Sign In API call
+                    // OrganisationId - GUID Org ID for DfE API call
+                });
+            }
+
+            var identity = new ClaimsIdentity(claims, "Test");
+            return new ClaimsPrincipal(identity);
+        }
+
+        private async Task RecordSignIn()
+        {
+            using (var scope = _serviceScopeFactory.CreateScope())
+            {
+                var signInTracker = scope.ServiceProvider.GetRequiredService<SignInTracker>();
+
+                var principal = ToPrincipal();
+                await signInTracker.RecordSignIn(principal);
+
+                // REVIEW: Is there a better way of doing this?
+                var transaction = scope.ServiceProvider.GetRequiredService<SqlTransaction>();
+                transaction.Commit();
+            }
         }
     }
 }
