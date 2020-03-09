@@ -46,7 +46,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
                 provider1Id,
                 submittedOn: new DateTime(2018, 4, 1, 12, 30, 37),
                 submittedByUserId: provider1UserId,
-                providerBriefOverview: "Provider 1 overview",
+                providerMarketingInformation: "Provider 1 overview",
                 apprenticeshipIds: new[] { provider1ApprenticeshipId });
 
             var provider2Ukprn = 23456;
@@ -61,7 +61,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
                 provider2Id,
                 submittedOn: new DateTime(2019, 5, 3, 15, 01, 23),
                 submittedByUserId: provider2UserId,
-                providerBriefOverview: "Provider 2 overview",
+                providerMarketingInformation: "Provider 2 overview",
                 apprenticeshipIds: new[] { provider2ApprenticeshipId });
 
             // TODO Add more here once we have a way of modelling other statuses

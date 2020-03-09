@@ -8,7 +8,7 @@ namespace Dfc.CourseDirectory.WebV2.Models
         public Guid ProviderId { get; set; }
         public DateTime SubmittedOn { get; set; }
         public UserInfo SubmittedByUser { get; set; }
-        public string ProviderBriefOverview { get; set; }
+        public string ProviderMarketingInformation { get; set; }
         public bool? Passed { get; set; }
         public UserInfo LastAssessedBy { get; set; }
         public bool? ProviderAssessmentPassed { get; set; }

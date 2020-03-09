@@ -37,7 +37,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
                 providerId,
                 submittedOn: Clock.UtcNow,
                 submittedByUserId: providerUserId,
-                providerBriefOverview: "The overview",
+                providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
             await User.AsTestUser(userType, providerId);
@@ -108,7 +108,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
                 providerId,
                 submittedOn: Clock.UtcNow,
                 submittedByUserId: providerUserId,
-                providerBriefOverview: "The overview",
+                providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
             await User.AsHelpdesk();
@@ -140,7 +140,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
                 providerId,
                 submittedOn: Clock.UtcNow,
                 submittedByUserId: providerUserId,
-                providerBriefOverview: "The overview",
+                providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
             await User.AsHelpdesk();
@@ -176,7 +176,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
                 providerId,
                 submittedOn: Clock.UtcNow,
                 submittedByUserId: providerUserId,
-                providerBriefOverview: "The overview",
+                providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
             await TestData.CreateApprenticeshipQAProviderAssessment(
@@ -228,7 +228,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
                 providerId,
                 submittedOn: Clock.UtcNow,
                 submittedByUserId: providerUserId,
-                providerBriefOverview: "The overview",
+                providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
             await User.AsHelpdesk();
@@ -268,7 +268,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
                 providerId,
                 submittedOn: Clock.UtcNow,
                 submittedByUserId: providerUserId,
-                providerBriefOverview: "The overview",
+                providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
             await User.AsHelpdesk();
@@ -310,7 +310,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
                 providerId,
                 submittedOn: Clock.UtcNow,
                 submittedByUserId: providerUserId,
-                providerBriefOverview: "The overview",
+                providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
             await User.AsHelpdesk();
@@ -351,7 +351,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
                 providerId,
                 submittedOn: Clock.UtcNow,
                 submittedByUserId: providerUserId,
-                providerBriefOverview: "The overview",
+                providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
             await User.AsHelpdesk();
@@ -393,7 +393,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
                 providerId,
                 submittedOn: Clock.UtcNow,
                 submittedByUserId: providerUserId,
-                providerBriefOverview: "The overview",
+                providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
             await User.AsHelpdesk();
@@ -447,7 +447,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
                 providerId,
                 submittedOn: Clock.UtcNow,
                 submittedByUserId: providerUserId,
-                providerBriefOverview: "The overview",
+                providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
             await User.AsHelpdesk();
@@ -504,7 +504,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
                 providerId,
                 submittedOn: Clock.UtcNow,
                 submittedByUserId: providerUserId,
-                providerBriefOverview: "The overview",
+                providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
             await User.AsHelpdesk();
@@ -561,7 +561,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
                 providerId,
                 submittedOn: Clock.UtcNow,
                 submittedByUserId: providerUserId,
-                providerBriefOverview: "The overview",
+                providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
             await User.AsHelpdesk();

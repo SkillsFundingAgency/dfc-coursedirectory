@@ -11,13 +11,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             Guid providerId,
             DateTime submittedOn,
             string submittedByUserId,
-            string providerBriefOverview,
+            string providerMarketingInformation,
             IEnumerable<Guid> apprenticeshipIds)
         {
             return WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new Query()
             {
                 ApprenticeshipIds = apprenticeshipIds,
-                ProviderBriefOverview = providerBriefOverview,
+                ProviderMarketingInformation = providerMarketingInformation,
                 ProviderId = providerId,
                 SubmittedByUserId = submittedByUserId,
                 SubmittedOn = submittedOn

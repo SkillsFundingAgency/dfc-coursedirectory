@@ -8,7 +8,7 @@ namespace Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries
         public Guid ProviderId { get; set; }
         public DateTime SubmittedOn { get; set; }
         public string SubmittedByUserId { get; set; }
-        public string ProviderBriefOverview { get; set; }
+        public string ProviderMarketingInformation { get; set; }
         public IEnumerable<Guid> ApprenticeshipIds { get; set; }
     }
 }
