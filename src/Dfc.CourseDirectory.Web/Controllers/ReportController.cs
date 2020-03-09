@@ -90,14 +90,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
             dateLastUpdate = appReportData.First().CreatedOn.ToString("dd/MM/yyyy H:mm");
 
             // Perform course calculations
-            int feCoursesMigratedCount = (courseReportData.Sum(r => r.MigratedCount) ?? 0);
             var feCoursesPendingCount = courseReportData.Sum(r => r.MigrationPendingCount);
             var feCoursesLiveCount = courseReportData.Sum(r => r.LiveCount);
+            int feCoursesMigratedCount = feCoursesPendingCount + feCoursesLiveCount;
 
             // Perform apps calculations
-            int appsMigratedCount = (appReportData.Sum(r => r.MigratedCount) ?? 0);
             int appsPendingCount = appReportData.Sum(r => r.MigrationPendingCount);
             int appsLiveCount = appReportData.Sum(r => r.LiveCount);
+            int appsMigratedCount = appsPendingCount + appsLiveCount;
 
             model.TotalProvidersMigrated = new MigrationReportDashboardPanelModel("Total providers migrated", value: totalProvidersMigrated);
             model.DateLastUpdated = dateLastUpdate;
