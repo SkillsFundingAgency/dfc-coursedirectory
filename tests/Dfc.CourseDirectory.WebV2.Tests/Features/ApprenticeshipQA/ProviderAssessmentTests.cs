@@ -154,6 +154,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
             var doc = await response.GetDocument();
             Assert.Equal("QA Provider Information - Course Directory", doc.Title);
             Assert.Equal("Provider 1", doc.QuerySelector("h1").TextContent);
+            Assert.Equal(
+                "The overview",
+                doc.GetElementById("pttcd-apprenticeship-qa-provider-assessment-marketing-information").TextContent);
         }
 
         [Fact]
@@ -199,8 +202,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
             var doc = await response.GetDocument();
-            Assert.Equal("QA Provider Information - Course Directory", doc.Title);
-            Assert.Equal("Provider 1", doc.QuerySelector("h1").TextContent);
             Assert.Equal("checked", doc.GetElementById("CompliancePassed").GetAttribute("checked"));
             Assert.Null(doc.GetElementById("StylePassed").GetAttribute("checked"));
             Assert.Equal("checked", doc.GetElementWithLabel("Job roles included").GetAttribute("checked"));
@@ -248,6 +249,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
             var doc = await response.GetDocument();
             doc.AssertHasError("CompliancePassed", "PLACEHOLDER");
         }
+
         [Fact]
         public async Task Post_MissingComplianceFailedReasonsWhenFailedRendersErrorMessage()
         {
