@@ -99,7 +99,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             int appsPendingCount = appReportData.Sum(r => r.MigrationPendingCount);
             int appsLiveCount = appReportData.Sum(r => r.LiveCount);
 
-            model.TotalProvidersMigrated = new MigrationReportDashboardPanelModel("Total providers migrated", value: totalProvidersMigrated);
+            model.TotalProvidersMigrated = new MigrationReportDashboardPanelModel("Total Providers", value: totalProvidersMigrated);
             model.DateLastUpdated = dateLastUpdate;
 
             model.CoursesMigrated = new MigrationReportDashboardPanelModel("Migrated", value: feCoursesMigratedCount);
