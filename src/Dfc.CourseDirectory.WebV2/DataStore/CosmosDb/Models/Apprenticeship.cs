@@ -10,6 +10,8 @@ namespace Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Models
         [JsonProperty("id")]
         public Guid Id { get; set; }
         public int ProviderUKPRN { get; set; }
+        public string ApprenticeshipTitle { get; set; }
+        public string MarketingInformation { get; set; }
         [JsonExtensionData]
         public IDictionary<string, JToken> AdditionalData { get; set; }
     }

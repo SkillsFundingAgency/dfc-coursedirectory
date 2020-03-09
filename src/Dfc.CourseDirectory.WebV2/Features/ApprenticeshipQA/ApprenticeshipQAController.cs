@@ -51,5 +51,26 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA
                 vm => View("ProviderAssessmentConfirmation", vm),
                 errors => this.ViewFromErrors(errors));
         }
+
+        [HttpGet("apprenticeship-assessments/{apprenticeshipId}")]
+        public async Task<IActionResult> ApprenticeshipAssessment(ApprenticeshipAssessment.Query query)
+        {
+            var result = await _mediator.Send(query);
+            return result.Match<IActionResult>(
+                error => BadRequest(),
+                vm => View(vm));
+        }
+
+        [HttpPost("apprenticeship-assessments/{apprenticeshipId}")]
+        public async Task<IActionResult> ApprenticeshipAssessment(
+            Guid apprenticeshipId,
+            ApprenticeshipAssessment.Command command)
+        {
+            command.ApprenticeshipId = apprenticeshipId;
+            var result = await _mediator.Send(command);
+            return result.Match(
+                vm => View("ApprenticeshipAssessmentConfirmation", vm),
+                errors => this.ViewFromErrors(errors));
+        }
     }
 }

@@ -1,22 +1,45 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries;
 using Query = Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries.CreateApprenticeshipQASubmission;
 
 namespace Dfc.CourseDirectory.WebV2.Tests
 {
     public partial class TestData
     {
-        public Task<int> CreateApprenticeshipQASubmission(
+        public async Task<int> CreateApprenticeshipQASubmission(
             Guid providerId,
             DateTime submittedOn,
             string submittedByUserId,
             string providerMarketingInformation,
             IEnumerable<Guid> apprenticeshipIds)
         {
-            return WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new Query()
+            var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetProviderById()
             {
-                ApprenticeshipIds = apprenticeshipIds,
+                ProviderId = providerId
+            });
+
+            var apps = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetApprenticeshipsByIds()
+            {
+                Ukprn = int.Parse(provider.UnitedKingdomProviderReferenceNumber),
+                ApprenticeshipIds = apprenticeshipIds
+            });
+
+            var queryApps = apprenticeshipIds
+                .Select(id => apps[id])
+                .Select(a => new CreateApprenticeshipQASubmissionApprenticeship()
+                {
+                    ApprenticeshipId = a.Id,
+                    ApprenticeshipMarketingInformation = a.MarketingInformation,
+                    ApprenticeshipTitle = a.ApprenticeshipTitle
+                });
+
+            return await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new Query()
+            {
+                Apprenticeships = queryApps,
                 ProviderMarketingInformation = providerMarketingInformation,
                 ProviderId = providerId,
                 SubmittedByUserId = submittedByUserId,

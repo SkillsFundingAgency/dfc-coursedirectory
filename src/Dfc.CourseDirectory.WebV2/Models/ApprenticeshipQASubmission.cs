@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Dfc.CourseDirectory.WebV2.Models
 {
@@ -13,5 +14,14 @@ namespace Dfc.CourseDirectory.WebV2.Models
         public UserInfo LastAssessedBy { get; set; }
         public bool? ProviderAssessmentPassed { get; set; }
         public bool? ApprenticeshipAssessmentsPassed { get; set; }
+        public IReadOnlyCollection<ApprenticeshipQASubmissionApprenticeship> Apprenticeships { get; set; }
+    }
+
+    public class ApprenticeshipQASubmissionApprenticeship
+    {
+        public int ApprenticeshipQASubmissionApprenticeshipId { get; set; }
+        public Guid ApprenticeshipId { get; set; }
+        public string ApprenticeshipTitle { get; set; }
+        public string ApprenticeshipMarketingInformation { get; set; }
     }
 }

@@ -7,14 +7,19 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 {
     public partial class TestData
     {
-        public async Task<Guid> CreateApprenticeship(int providerUkprn)
+        public async Task<Guid> CreateApprenticeship(
+            int providerUkprn,
+            string apprenticeshipTitle = "Apprenticeship title",
+            string marketingInformation = "Marketing info")
         {
             var apprenticeshipId = Guid.NewGuid();
 
             var result = await _cosmosDbQueryDispatcher.ExecuteQuery(new CreateApprenticeship()
             {
                 ApprenticeshipId = apprenticeshipId,
-                ProviderUkprn = providerUkprn
+                ProviderUkprn = providerUkprn,
+                ApprenticeshipTitle = apprenticeshipTitle,
+                MarketingInformation = marketingInformation
             });
             Assert.Equal(CreateApprenticeshipStatus.Ok, result);
 
