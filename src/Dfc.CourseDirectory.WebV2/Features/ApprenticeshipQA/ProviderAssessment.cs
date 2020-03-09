@@ -30,7 +30,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
     public class ViewModel : Command
     {
         public string ProviderName { get; set; }
-        public string BriefOverview { get; set; }
+        public string MarketingInformation { get; set; }
     }
 
     public class Command : IRequest<OneOf<ConfirmationViewModel, ModelWithErrors<ViewModel>>>
@@ -207,7 +207,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
             return new ViewModel()
             {
                 ProviderId = providerId,
-                BriefOverview = latestSubmission.ProviderBriefOverview,
+                MarketingInformation = latestSubmission.ProviderMarketingInformation,
                 ProviderName = provider.ProviderName,
                 ComplianceComments = assessment.Match(_ => string.Empty, v => v.ComplianceComments),
                 ComplianceFailedReasons = assessment.Match(_ => ApprenticeshipQAProviderComplianceFailedReasons.None, v => v.ComplianceFailedReasons),

@@ -21,7 +21,7 @@ SELECT TOP 1
     s.ApprenticeshipQASubmissionId,
     s.ProviderId,
     s.SubmittedOn,
-    s.ProviderBriefOverview,
+    s.ProviderMarketingInformation,
     s.Passed,
     s.ProviderAssessmentPassed,
     s.ApprenticeshipAssessmentsPassed,

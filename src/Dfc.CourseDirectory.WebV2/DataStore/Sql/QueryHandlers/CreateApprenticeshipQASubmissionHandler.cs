@@ -11,8 +11,8 @@ namespace Dfc.CourseDirectory.WebV2.DataStore.Sql.QueryHandlers
         {
             var sql = @"
 INSERT INTO Pttcd.ApprenticeshipQASubmissions
-(ProviderId, SubmittedOn, SubmittedByUserId, ProviderBriefOverview)
-VALUES (@ProviderId, @SubmittedOn, @SubmittedByUserId, @ProviderBriefOverview)
+(ProviderId, SubmittedOn, SubmittedByUserId, ProviderMarketingInformation)
+VALUES (@ProviderId, @SubmittedOn, @SubmittedByUserId, @ProviderMarketingInformation)
 
 SELECT SCOPE_IDENTITY() ApprenticeshipQASubmissionId";
 
@@ -21,7 +21,7 @@ SELECT SCOPE_IDENTITY() ApprenticeshipQASubmissionId";
                 query.ProviderId,
                 query.SubmittedOn,
                 query.SubmittedByUserId,
-                query.ProviderBriefOverview
+                query.ProviderMarketingInformation
             };
 
             return transaction.Connection.QuerySingleAsync<int>(sql, paramz, transaction);
