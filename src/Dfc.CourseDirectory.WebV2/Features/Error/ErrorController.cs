@@ -6,7 +6,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Error
 {
     [AllowAnonymous]
     [Route("error")]
-    public class Controller : Microsoft.AspNetCore.Mvc.Controller
+    public class ErrorController : Microsoft.AspNetCore.Mvc.Controller
     {
         public IActionResult Error(int? code, [FromServices] HostingOptions hostingOptions)
         {
