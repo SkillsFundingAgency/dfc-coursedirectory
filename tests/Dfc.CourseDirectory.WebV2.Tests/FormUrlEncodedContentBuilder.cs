@@ -12,7 +12,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             _values = new List<KeyValuePair<string, string>>();
         }
 
-        public FormUrlEncodedContentBuilder With(string key, object value)
+        public FormUrlEncodedContentBuilder Add(string key, object value)
         {
             _values.Add(new KeyValuePair<string, string>(key, value.ToString()));
 
