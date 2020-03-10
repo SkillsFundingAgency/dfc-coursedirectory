@@ -245,7 +245,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
             await User.AsHelpdesk();
 
             var requestContent = new FormUrlEncodedContentBuilder()
-                .With("StylePassed", false)
+                .Add("StylePassed", false)
                 .ToContent();
 
             // Act
@@ -286,8 +286,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
             await User.AsHelpdesk();
 
             var requestContent = new FormUrlEncodedContentBuilder()
-                .With("CompliancePassed", false)
-                .With("StylePassed", true)
+                .Add("CompliancePassed", false)
+                .Add("StylePassed", true)
                 .ToContent();
 
             // Act
@@ -328,7 +328,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
             await User.AsHelpdesk();
 
             var requestContent = new FormUrlEncodedContentBuilder()
-                .With("CompliancePassed", false)
+                .Add("CompliancePassed", false)
                 .ToContent();
 
             // Act
@@ -369,8 +369,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
             await User.AsHelpdesk();
 
             var requestContent = new FormUrlEncodedContentBuilder()
-                .With("CompliancePassed", true)
-                .With("StylePassed", false)
+                .Add("CompliancePassed", true)
+                .Add("StylePassed", false)
                 .ToContent();
 
             // Act
@@ -411,8 +411,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
             await User.AsHelpdesk();
 
             var requestContent = new FormUrlEncodedContentBuilder()
-                .With("CompliancePassed", true)
-                .With("StylePassed", true)
+                .Add("CompliancePassed", true)
+                .Add("StylePassed", true)
                 .ToContent();
 
             // Act
@@ -465,11 +465,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
             await User.AsHelpdesk();
 
             var requestContent = new FormUrlEncodedContentBuilder()
-                .With("CompliancePassed", true)
-                .With("StylePassed", false)
-                .With("StyleFailedReasons", ApprenticeshipQAProviderStyleFailedReasons.JobRolesIncluded)
-                .With("StyleFailedReasons", ApprenticeshipQAProviderStyleFailedReasons.TermFrameworkUsed)
-                .With("StyleComments", "Some feedback")
+                .Add("CompliancePassed", true)
+                .Add("StylePassed", false)
+                .Add("StyleFailedReasons", ApprenticeshipQAProviderStyleFailedReasons.JobRolesIncluded)
+                .Add("StyleFailedReasons", ApprenticeshipQAProviderStyleFailedReasons.TermFrameworkUsed)
+                .Add("StyleComments", "Some feedback")
                 .ToContent();
 
             // Act
@@ -522,11 +522,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
             await User.AsHelpdesk();
 
             var requestContent = new FormUrlEncodedContentBuilder()
-                .With("CompliancePassed", false)
-                .With("ComplianceFailedReasons", ApprenticeshipQAProviderComplianceFailedReasons.IncorrectOfsetGradeUsed)
-                .With("ComplianceFailedReasons", ApprenticeshipQAProviderComplianceFailedReasons.UnverifiableClaim)
-                .With("ComplianceComments", "Some feedback")
-                .With("StylePassed", true)
+                .Add("CompliancePassed", false)
+                .Add("ComplianceFailedReasons", ApprenticeshipQAProviderComplianceFailedReasons.IncorrectOfsetGradeUsed)
+                .Add("ComplianceFailedReasons", ApprenticeshipQAProviderComplianceFailedReasons.UnverifiableClaim)
+                .Add("ComplianceComments", "Some feedback")
+                .Add("StylePassed", true)
                 .ToContent();
 
             // Act
@@ -579,14 +579,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
             await User.AsHelpdesk();
 
             var requestContent = new FormUrlEncodedContentBuilder()
-                .With("CompliancePassed", false)
-                .With("ComplianceFailedReasons", ApprenticeshipQAProviderComplianceFailedReasons.IncorrectOfsetGradeUsed)
-                .With("ComplianceFailedReasons", ApprenticeshipQAProviderComplianceFailedReasons.UnverifiableClaim)
-                .With("ComplianceComments", "Some compliance feedback")
-                .With("StylePassed", false)
-                .With("StyleFailedReasons", ApprenticeshipQAProviderStyleFailedReasons.JobRolesIncluded)
-                .With("StyleFailedReasons", ApprenticeshipQAProviderStyleFailedReasons.TermFrameworkUsed)
-                .With("StyleComments", "Some style feedback")
+                .Add("CompliancePassed", false)
+                .Add("ComplianceFailedReasons", ApprenticeshipQAProviderComplianceFailedReasons.IncorrectOfsetGradeUsed)
+                .Add("ComplianceFailedReasons", ApprenticeshipQAProviderComplianceFailedReasons.UnverifiableClaim)
+                .Add("ComplianceComments", "Some compliance feedback")
+                .Add("StylePassed", false)
+                .Add("StyleFailedReasons", ApprenticeshipQAProviderStyleFailedReasons.JobRolesIncluded)
+                .Add("StyleFailedReasons", ApprenticeshipQAProviderStyleFailedReasons.TermFrameworkUsed)
+                .Add("StyleComments", "Some style feedback")
                 .ToContent();
 
             // Act
@@ -663,18 +663,18 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
             await User.AsHelpdesk();
 
             var requestContentBuilder = new FormUrlEncodedContentBuilder()
-                .With("CompliancePassed", compliancePassed)
-                .With("ComplianceComments", "Some compliance feedback")
-                .With("StylePassed", stylePassed);
+                .Add("CompliancePassed", compliancePassed)
+                .Add("ComplianceComments", "Some compliance feedback")
+                .Add("StylePassed", stylePassed);
 
             if (!compliancePassed)
             {
-                requestContentBuilder.With("ComplianceFailedReasons", (ApprenticeshipQAApprenticeshipComplianceFailedReasons)1);
+                requestContentBuilder.Add("ComplianceFailedReasons", (ApprenticeshipQAApprenticeshipComplianceFailedReasons)1);
             }
 
             if (!stylePassed)
             {
-                requestContentBuilder.With("StyleFailedReasons", (ApprenticeshipQAApprenticeshipStyleFailedReasons)1);
+                requestContentBuilder.Add("StyleFailedReasons", (ApprenticeshipQAApprenticeshipStyleFailedReasons)1);
             }
 
             var requestContent = requestContentBuilder.ToContent();
