@@ -31,7 +31,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA
         public IActionResult ProviderDetail(Guid providerId) =>
             throw new System.NotImplementedException();
 
-        [HttpGet("{providerId}/provider-assessment")]
+        [HttpGet("provider-assessments/{providerId}")]
         public async Task<IActionResult> ProviderAssessment(ProviderAssessment.Query query)
         {
             var result = await _mediator.Send(query);
@@ -40,7 +40,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA
                 vm => View(vm));
         }
 
-        [HttpPost("{providerId}/provider-assessment")]
+        [HttpPost("provider-assessments/{providerId}")]
         public async Task<IActionResult> ProviderAssessment(
             Guid providerId,
             ProviderAssessment.Command command)
@@ -49,6 +49,27 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA
             var result = await _mediator.Send(command);
             return result.Match(
                 vm => View("ProviderAssessmentConfirmation", vm),
+                errors => this.ViewFromErrors(errors));
+        }
+
+        [HttpGet("apprenticeship-assessments/{apprenticeshipId}")]
+        public async Task<IActionResult> ApprenticeshipAssessment(ApprenticeshipAssessment.Query query)
+        {
+            var result = await _mediator.Send(query);
+            return result.Match<IActionResult>(
+                error => BadRequest(),
+                vm => View(vm));
+        }
+
+        [HttpPost("apprenticeship-assessments/{apprenticeshipId}")]
+        public async Task<IActionResult> ApprenticeshipAssessment(
+            Guid apprenticeshipId,
+            ApprenticeshipAssessment.Command command)
+        {
+            command.ApprenticeshipId = apprenticeshipId;
+            var result = await _mediator.Send(command);
+            return result.Match(
+                vm => View("ApprenticeshipAssessmentConfirmation", vm),
                 errors => this.ViewFromErrors(errors));
         }
     }

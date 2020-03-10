@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
@@ -14,44 +15,47 @@ using MediatR;
 using OneOf;
 using OneOf.Types;
 
-namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
+namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAssessment
 {
     public enum ErrorReason
     {
-        ProviderDoesNotExist,
+        ApprenticeshipDoesNotExist,
         NoValidSubmission,
     }
 
     public class Query : IRequest<OneOf<Error<ErrorReason>, ViewModel>>
     {
-        public Guid ProviderId { get; set; }
+        public Guid ApprenticeshipId { get; set; }
     }
 
     public class ViewModel : Command
     {
-        public string ProviderName { get; set; }
-        public string MarketingInformation { get; set; }
+        public Guid ProviderId { get; set; }
+        public string ApprenticeshipTitle { get; set; }
+        public string ApprenticeshipMarketingInformation { get; set; }
     }
 
     public class Command : IRequest<OneOf<ConfirmationViewModel, ModelWithErrors<ViewModel>>>
     {
-        public Guid ProviderId { get; set; }
+        public Guid ApprenticeshipId { get; set; }
         public bool? CompliancePassed { get; set; }
-        public ApprenticeshipQAProviderComplianceFailedReasons? ComplianceFailedReasons { get; set; }
+        public ApprenticeshipQAApprenticeshipComplianceFailedReasons? ComplianceFailedReasons { get; set; }
         public string ComplianceComments { get; set; }
         public bool? StylePassed { get; set; }
-        public ApprenticeshipQAProviderStyleFailedReasons? StyleFailedReasons { get; set; }
+        public ApprenticeshipQAApprenticeshipStyleFailedReasons? StyleFailedReasons { get; set; }
         public string StyleComments { get; set; }
     }
 
     public class ConfirmationViewModel
     {
+        public Guid ApprenticeshipId { get; set; }
         public Guid ProviderId { get; set; }
+        public string ApprenticeshipTitle { get; set; }
         public bool CompliancePassed { get; set; }
-        public ApprenticeshipQAProviderComplianceFailedReasons ComplianceFailedReasons { get; set; }
+        public ApprenticeshipQAApprenticeshipComplianceFailedReasons ComplianceFailedReasons { get; set; }
         public string ComplianceComments { get; set; }
         public bool StylePassed { get; set; }
-        public ApprenticeshipQAProviderStyleFailedReasons StyleFailedReasons { get; set; }
+        public ApprenticeshipQAApprenticeshipStyleFailedReasons StyleFailedReasons { get; set; }
         public string StyleComments { get; set; }
         public bool Passed { get; set; }
     }
@@ -78,7 +82,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
         }
 
         public Task<OneOf<Error<ErrorReason>, ViewModel>> Handle(Query request, CancellationToken cancellationToken) =>
-            CreateViewModel(request.ProviderId);
+            CreateViewModel(request.ApprenticeshipId);
 
         public async Task<OneOf<ConfirmationViewModel, ModelWithErrors<ViewModel>>> Handle(
             Command request,
@@ -89,7 +93,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
 
             if (!validationResult.IsValid)
             {
-                var errorVm = (await CreateViewModel(request.ProviderId)).AsT1;
+                var errorVm = (await CreateViewModel(request.ApprenticeshipId)).AsT1;
                 request.Adapt(errorVm);
 
                 return new ModelWithErrors<ViewModel>(errorVm, validationResult);
@@ -98,14 +102,17 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
             // Sanitize request
             if (request.CompliancePassed == true)
             {
-                request.ComplianceFailedReasons = ApprenticeshipQAProviderComplianceFailedReasons.None;
+                request.ComplianceFailedReasons = ApprenticeshipQAApprenticeshipComplianceFailedReasons.None;
                 request.ComplianceComments = null;
             }
             if (request.StylePassed == true)
             {
-                request.StyleFailedReasons = ApprenticeshipQAProviderStyleFailedReasons.None;
+                request.StyleFailedReasons = ApprenticeshipQAApprenticeshipStyleFailedReasons.None;
                 request.StyleComments = null;
             }
+
+            var maybeProviderId = await GetProviderIdForApprenticeship(request.ApprenticeshipId);
+            var providerId = maybeProviderId.AsT1;
 
             var currentUserId = _currentUserProvider.GetCurrentUser().UserId;
 
@@ -114,32 +121,33 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
             var submission = (await _sqlQueryDispatcher.ExecuteQuery(
                 new GetLatestApprenticeshipQASubmissionForProvider()
                 {
-                    ProviderId = request.ProviderId
+                    ProviderId = providerId
                 })).AsT1;
 
-            var overallPassed = submission.ApprenticeshipAssessmentsPassed.HasValue ?
-                submission.ApprenticeshipAssessmentsPassed.Value && passed :
+            var overallPassed = submission.ProviderAssessmentPassed.HasValue ?
+                submission.ProviderAssessmentPassed.Value && passed :
                 (bool?)null;
 
             await _sqlQueryDispatcher.ExecuteQuery(
                 new SetProviderApprenticeshipQAStatus()
                 {
-                    ProviderId = request.ProviderId,
+                    ProviderId = providerId,
                     ApprenticeshipQAStatus = ApprenticeshipQAStatus.InProgress
                 });
 
             await _sqlQueryDispatcher.ExecuteQuery(
-                new CreateApprenticeshipQAProviderAssessment()
+                new CreateApprenticeshipQAApprenticeshipAssessment()
                 {
                     ApprenticeshipQASubmissionId = submission.ApprenticeshipQASubmissionId,
+                    ApprenticeshipId = request.ApprenticeshipId,
                     AssessedByUserId = currentUserId,
                     AssessedOn = _clock.UtcNow,
                     ComplianceComments = request.ComplianceComments,
-                    ComplianceFailedReasons = request.ComplianceFailedReasons ?? ApprenticeshipQAProviderComplianceFailedReasons.None,
+                    ComplianceFailedReasons = request.ComplianceFailedReasons ?? ApprenticeshipQAApprenticeshipComplianceFailedReasons.None,
                     CompliancePassed = request.CompliancePassed.Value,
                     Passed = passed,
                     StyleComments = request.StyleComments,
-                    StyleFailedReasons = request.StyleFailedReasons ?? ApprenticeshipQAProviderStyleFailedReasons.None,
+                    StyleFailedReasons = request.StyleFailedReasons ?? ApprenticeshipQAApprenticeshipStyleFailedReasons.None,
                     StylePassed = request.StylePassed
                 });
 
@@ -150,8 +158,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
                     Passed = overallPassed,
                     LastAssessedByUserId = currentUserId,
                     LastAssessedOn = _clock.UtcNow,
-                    ProviderAssessmentPassed = passed,
-                    ApprenticeshipAssessmentsPassed = submission.ApprenticeshipAssessmentsPassed
+                    ProviderAssessmentPassed = submission.ProviderAssessmentPassed,
+                    ApprenticeshipAssessmentsPassed = passed
                 });
 
             var vm = request.Adapt<ConfirmationViewModel>();
@@ -160,18 +168,16 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
             return vm;
         }
 
-        private async Task<OneOf<Error<ErrorReason>, ViewModel>> CreateViewModel(Guid providerId)
+        private async Task<OneOf<Error<ErrorReason>, ViewModel>> CreateViewModel(Guid apprenticeshipId)
         {
-            var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(
-                new GetProviderById()
-                {
-                    ProviderId = providerId
-                });
+            var maybeProviderId = await GetProviderIdForApprenticeship(apprenticeshipId);
 
-            if (provider == null)
+            if (maybeProviderId.Value is NotFound)
             {
-                return new Error<ErrorReason>(ErrorReason.ProviderDoesNotExist);
+                return new Error<ErrorReason>(ErrorReason.ApprenticeshipDoesNotExist);
             }
+
+            var providerId = maybeProviderId.AsT1;
 
             var qaStatus = await _sqlQueryDispatcher.ExecuteQuery(
                 new GetProviderApprenticeshipQAStatus()
@@ -198,24 +204,57 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
 
             var latestSubmission = maybeLatestSubmission.AsT1;
 
+            var submissionApprenticeship = latestSubmission.Apprenticeships
+                .SingleOrDefault(a => a.ApprenticeshipId == apprenticeshipId);
+
+            if (submissionApprenticeship == null)
+            {
+                return new Error<ErrorReason>(ErrorReason.NoValidSubmission);
+            }
+
             var assessment = await _sqlQueryDispatcher.ExecuteQuery(
-                new GetLatestApprenticeshipQAProviderAssessmentForSubmission()
+                new GetLatestApprenticeshipQAApprenticeshipAssessmentForSubmission()
                 {
-                    ApprenticeshipQASubmissionId = latestSubmission.ApprenticeshipQASubmissionId
+                    ApprenticeshipQASubmissionId = latestSubmission.ApprenticeshipQASubmissionId,
+                    ApprenticeshipId = apprenticeshipId
                 });
 
             return new ViewModel()
             {
+                ApprenticeshipId = apprenticeshipId,
+                ApprenticeshipMarketingInformation = submissionApprenticeship.ApprenticeshipMarketingInformation,
+                ApprenticeshipTitle = submissionApprenticeship.ApprenticeshipTitle,
                 ProviderId = providerId,
-                MarketingInformation = latestSubmission.ProviderMarketingInformation,
-                ProviderName = provider.ProviderName,
                 ComplianceComments = assessment.Match(_ => string.Empty, v => v.ComplianceComments),
-                ComplianceFailedReasons = assessment.Match(_ => ApprenticeshipQAProviderComplianceFailedReasons.None, v => v.ComplianceFailedReasons),
+                ComplianceFailedReasons = assessment.Match(_ => ApprenticeshipQAApprenticeshipComplianceFailedReasons.None, v => v.ComplianceFailedReasons),
                 CompliancePassed = assessment.Match(_ => null, v => v.CompliancePassed),
                 StyleComments = assessment.Match(_ => string.Empty, v => v.StyleComments),
-                StyleFailedReasons = assessment.Match(_ => ApprenticeshipQAProviderStyleFailedReasons.None, v => v.StyleFailedReasons),
+                StyleFailedReasons = assessment.Match(_ => ApprenticeshipQAApprenticeshipStyleFailedReasons.None, v => v.StyleFailedReasons),
                 StylePassed = assessment.Match(_ => null, v => v.StylePassed),
             };
+        }
+
+        private async Task<OneOf<NotFound, Guid>> GetProviderIdForApprenticeship(Guid apprenticeshipId)
+        {
+            var providerUkprn = await _cosmosDbQueryDispatcher.ExecuteQuery(
+                new GetProviderUkprnForApprenticeship()
+                {
+                    ApprenticeshipId = apprenticeshipId
+                });
+
+            if (providerUkprn.Value is NotFound)
+            {
+                return new NotFound();
+            }
+
+            var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(
+                new GetProviderByUkprn()
+                {
+                    Ukprn = providerUkprn.AsT1
+                });
+            var providerId = provider.Id;
+
+            return providerId;
         }
 
         private static bool IsQAPassed(bool compliancePassed, bool stylePassed) =>
@@ -231,7 +270,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
 
                 RuleFor(c => c.ComplianceFailedReasons)
                     .NotNull()
-                    .NotEqual(ApprenticeshipQAProviderComplianceFailedReasons.None)
+                    .NotEqual(ApprenticeshipQAApprenticeshipComplianceFailedReasons.None)
                     .When(c => c.CompliancePassed == false)
                     .WithMessageForAllRules("A reason must be selected.");
 
@@ -246,7 +285,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
 
                 RuleFor(c => c.StyleFailedReasons)
                     .NotNull()
-                    .NotEqual(ApprenticeshipQAProviderStyleFailedReasons.None)
+                    .NotEqual(ApprenticeshipQAApprenticeshipStyleFailedReasons.None)
                     .When(c => c.StylePassed == false)
                     .WithMessageForAllRules("A reason must be selected.");
 

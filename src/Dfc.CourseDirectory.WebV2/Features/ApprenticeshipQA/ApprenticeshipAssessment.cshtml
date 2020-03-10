@@ -1,6 +1,6 @@
-﻿@model Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment.ViewModel
+﻿@model Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAssessment.ViewModel
 @{
-    ViewBag.Title = "QA Provider information";
+    ViewBag.Title = "QA Apprenticeship training course information";
 }
 
 @if (!ViewData.ModelState.IsValid)
@@ -18,18 +18,18 @@
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <form asp-action="ProviderAssessment" asp-route-providerId="@Model.ProviderId">
-            <h1 class="govuk-heading-xl">@Model.ProviderName</h1>
+        <form asp-action="ApprenticeshipAssessment" asp-route-apprenticeshipId="@Model.ApprenticeshipId">
+            <h1 class="govuk-heading-xl">@Model.ApprenticeshipTitle</h1>
             <div class="govuk-!-margin-bottom-9">
                 <h2 class="govuk-heading-l">Provider information</h2>
-                <p class="govuk-!-margin-bottom-6" id="pttcd-apprenticeship-qa-provider-assessment-marketing-information">@Model.MarketingInformation</p>
+                <p class="govuk-!-margin-bottom-6" id="pttcd-apprenticeship-qa-apprenticeship-assessment-marketing-information">@Model.ApprenticeshipMarketingInformation</p>
 
                 <govuk-radios asp-for="CompliancePassed" id-prefix="CompliancePassed">
                     <govuk-radios-fieldset>
                         <h2 class="govuk-heading-m">Compliance</h2>
                     </govuk-radios-fieldset>
                     <govuk-radios-hint>
-                        Provider information is quality assured against compliance guidance.
+                        Apprenticeship training course is quality assured against compliance guidance.
                     </govuk-radios-hint>
                     <govuk-radios-item value="@(true)">
                         Pass
@@ -44,25 +44,25 @@
                                 <govuk-checkboxes-hint>
                                     Select all that apply.
                                 </govuk-checkboxes-hint>
-                                <govuk-checkboxes-item value="@(ApprenticeshipQAProviderComplianceFailedReasons.UsedCapitalAForApprenticeships)" checked="@((Model.ComplianceFailedReasons ?? 0).HasFlag(ApprenticeshipQAProviderComplianceFailedReasons.UsedCapitalAForApprenticeships))">
+                                <govuk-checkboxes-item value="@(ApprenticeshipQAApprenticeshipComplianceFailedReasons.UsedCapitalAForApprenticeships)" checked="@((Model.ComplianceFailedReasons ?? 0).HasFlag(ApprenticeshipQAApprenticeshipComplianceFailedReasons.UsedCapitalAForApprenticeships))">
                                     Used capitalised A for apprenticeships
                                 </govuk-checkboxes-item>
-                                <govuk-checkboxes-item value="@(ApprenticeshipQAProviderComplianceFailedReasons.SpecificEmployerNamed)" checked="@((Model.ComplianceFailedReasons ?? 0).HasFlag(ApprenticeshipQAProviderComplianceFailedReasons.SpecificEmployerNamed))">
+                                <govuk-checkboxes-item value="@(ApprenticeshipQAApprenticeshipComplianceFailedReasons.SpecificEmployerNamed)" checked="@((Model.ComplianceFailedReasons ?? 0).HasFlag(ApprenticeshipQAApprenticeshipComplianceFailedReasons.SpecificEmployerNamed))">
                                     Specific employer named
                                 </govuk-checkboxes-item>
-                                <govuk-checkboxes-item value="@(ApprenticeshipQAProviderComplianceFailedReasons.UnverifiableClaim)" checked="@((Model.ComplianceFailedReasons ?? 0).HasFlag(ApprenticeshipQAProviderComplianceFailedReasons.UnverifiableClaim))">
+                                <govuk-checkboxes-item value="@(ApprenticeshipQAApprenticeshipComplianceFailedReasons.UnverifiableClaim)" checked="@((Model.ComplianceFailedReasons ?? 0).HasFlag(ApprenticeshipQAApprenticeshipComplianceFailedReasons.UnverifiableClaim))">
                                     Unverifiable claim
                                 </govuk-checkboxes-item>
-                                <govuk-checkboxes-item value="@(ApprenticeshipQAProviderComplianceFailedReasons.IncorrectOfsetGradeUsed)" checked="@((Model.ComplianceFailedReasons ?? 0).HasFlag(ApprenticeshipQAProviderComplianceFailedReasons.IncorrectOfsetGradeUsed))">
+                                <govuk-checkboxes-item value="@(ApprenticeshipQAApprenticeshipComplianceFailedReasons.IncorrectOfsetGradeUsed)" checked="@((Model.ComplianceFailedReasons ?? 0).HasFlag(ApprenticeshipQAApprenticeshipComplianceFailedReasons.IncorrectOfsetGradeUsed))">
                                     Incorrect Ofsted grade used
                                 </govuk-checkboxes-item>
-                                <govuk-checkboxes-item value="@(ApprenticeshipQAProviderComplianceFailedReasons.InsufficientDetail)" checked="@((Model.ComplianceFailedReasons ?? 0).HasFlag(ApprenticeshipQAProviderComplianceFailedReasons.InsufficientDetail))">
+                                <govuk-checkboxes-item value="@(ApprenticeshipQAApprenticeshipComplianceFailedReasons.InsufficientDetail)" checked="@((Model.ComplianceFailedReasons ?? 0).HasFlag(ApprenticeshipQAApprenticeshipComplianceFailedReasons.InsufficientDetail))">
                                     Insufficient detail used
                                 </govuk-checkboxes-item>
-                                <govuk-checkboxes-item value="@(ApprenticeshipQAProviderComplianceFailedReasons.NotAimedAtEmployer)" checked="@((Model.ComplianceFailedReasons ?? 0).HasFlag(ApprenticeshipQAProviderComplianceFailedReasons.NotAimedAtEmployer))">
+                                <govuk-checkboxes-item value="@(ApprenticeshipQAApprenticeshipComplianceFailedReasons.NotAimedAtEmployer)" checked="@((Model.ComplianceFailedReasons ?? 0).HasFlag(ApprenticeshipQAApprenticeshipComplianceFailedReasons.NotAimedAtEmployer))">
                                     Not aimed at employer
                                 </govuk-checkboxes-item>
-                                <govuk-checkboxes-item value="@(ApprenticeshipQAProviderComplianceFailedReasons.Other)" checked="@((Model.ComplianceFailedReasons ?? 0).HasFlag(ApprenticeshipQAProviderComplianceFailedReasons.Other))">
+                                <govuk-checkboxes-item value="@(ApprenticeshipQAApprenticeshipComplianceFailedReasons.Other)" checked="@((Model.ComplianceFailedReasons ?? 0).HasFlag(ApprenticeshipQAApprenticeshipComplianceFailedReasons.Other))">
                                     Other
                                 </govuk-checkboxes-item>
                             </govuk-checkboxes>
@@ -79,7 +79,7 @@
                         <h2 class="govuk-heading-m">Style</h2>
                     </govuk-radios-fieldset>
                     <govuk-radios-hint>
-                        Provider information is quality assured against style guidance.
+                        Apprenticeship training course is quality assured against style guidance.
                     </govuk-radios-hint>
                     <govuk-radios-item value="@(true)">
                         Pass
@@ -94,25 +94,25 @@
                                 <govuk-checkboxes-hint>
                                     Select all that apply.
                                 </govuk-checkboxes-hint>
-                                <govuk-checkboxes-item value="@(ApprenticeshipQAProviderStyleFailedReasons.SpecificApprenticeshipDetailsGiven)" checked="@((Model.StyleFailedReasons ?? 0).HasFlag(ApprenticeshipQAProviderStyleFailedReasons.SpecificApprenticeshipDetailsGiven))">
+                                <govuk-checkboxes-item value="@(ApprenticeshipQAApprenticeshipStyleFailedReasons.SpecificApprenticeshipDetailsGiven)" checked="@((Model.StyleFailedReasons ?? 0).HasFlag(ApprenticeshipQAApprenticeshipStyleFailedReasons.SpecificApprenticeshipDetailsGiven))">
                                     Specific apprenticeship details given
                                 </govuk-checkboxes-item>
-                                <govuk-checkboxes-item value="@(ApprenticeshipQAProviderStyleFailedReasons.JobRolesIncluded)" checked="@((Model.StyleFailedReasons ?? 0).HasFlag(ApprenticeshipQAProviderStyleFailedReasons.JobRolesIncluded))">
+                                <govuk-checkboxes-item value="@(ApprenticeshipQAApprenticeshipStyleFailedReasons.JobRolesIncluded)" checked="@((Model.StyleFailedReasons ?? 0).HasFlag(ApprenticeshipQAApprenticeshipStyleFailedReasons.JobRolesIncluded))">
                                     Job roles included
                                 </govuk-checkboxes-item>
-                                <govuk-checkboxes-item value="@(ApprenticeshipQAProviderStyleFailedReasons.TermStandardUsed)" checked="@((Model.StyleFailedReasons ?? 0).HasFlag(ApprenticeshipQAProviderStyleFailedReasons.TermStandardUsed))">
+                                <govuk-checkboxes-item value="@(ApprenticeshipQAApprenticeshipStyleFailedReasons.TermStandardUsed)" checked="@((Model.StyleFailedReasons ?? 0).HasFlag(ApprenticeshipQAApprenticeshipStyleFailedReasons.TermStandardUsed))">
                                     Term 'standard' used
                                 </govuk-checkboxes-item>
-                                <govuk-checkboxes-item value="@(ApprenticeshipQAProviderStyleFailedReasons.TermFrameworkUsed)" checked="@((Model.StyleFailedReasons ?? 0).HasFlag(ApprenticeshipQAProviderStyleFailedReasons.TermFrameworkUsed))">
+                                <govuk-checkboxes-item value="@(ApprenticeshipQAApprenticeshipStyleFailedReasons.TermFrameworkUsed)" checked="@((Model.StyleFailedReasons ?? 0).HasFlag(ApprenticeshipQAApprenticeshipStyleFailedReasons.TermFrameworkUsed))">
                                     Term 'framework' used
                                 </govuk-checkboxes-item>
-                                <govuk-checkboxes-item value="@(ApprenticeshipQAProviderStyleFailedReasons.TermLearnerOrStudentUsed)" checked="@((Model.StyleFailedReasons ?? 0).HasFlag(ApprenticeshipQAProviderStyleFailedReasons.TermLearnerOrStudentUsed))">
+                                <govuk-checkboxes-item value="@(ApprenticeshipQAApprenticeshipStyleFailedReasons.TermLearnerOrStudentUsed)" checked="@((Model.StyleFailedReasons ?? 0).HasFlag(ApprenticeshipQAApprenticeshipStyleFailedReasons.TermLearnerOrStudentUsed))">
                                     Term 'learner' or 'student' used
                                 </govuk-checkboxes-item>
-                                <govuk-checkboxes-item value="@(ApprenticeshipQAProviderStyleFailedReasons.TermCourseUsed)" checked="@((Model.StyleFailedReasons ?? 0).HasFlag(ApprenticeshipQAProviderStyleFailedReasons.TermCourseUsed))">
+                                <govuk-checkboxes-item value="@(ApprenticeshipQAApprenticeshipStyleFailedReasons.TermCourseUsed)" checked="@((Model.StyleFailedReasons ?? 0).HasFlag(ApprenticeshipQAApprenticeshipStyleFailedReasons.TermCourseUsed))">
                                     Term 'course' used
                                 </govuk-checkboxes-item>
-                                <govuk-checkboxes-item value="@(ApprenticeshipQAProviderStyleFailedReasons.Other)" checked="@((Model.StyleFailedReasons ?? 0).HasFlag(ApprenticeshipQAProviderStyleFailedReasons.Other))">
+                                <govuk-checkboxes-item value="@(ApprenticeshipQAApprenticeshipStyleFailedReasons.Other)" checked="@((Model.StyleFailedReasons ?? 0).HasFlag(ApprenticeshipQAApprenticeshipStyleFailedReasons.Other))">
                                     Other
                                 </govuk-checkboxes-item>
                             </govuk-checkboxes>

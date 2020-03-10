@@ -8,9 +8,9 @@ using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
 {
-    public class ProviderAssessmentTests : TestBase
+    public class ApprenticeshipAssessmentTests : TestBase
     {
-        public ProviderAssessmentTests(CourseDirectoryApplicationFactory factory)
+        public ApprenticeshipAssessmentTests(CourseDirectoryApplicationFactory factory)
             : base(factory)
         {
         }
@@ -43,22 +43,22 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
             await User.AsTestUser(userType, providerId);
 
             // Act
-            var response = await HttpClient.GetAsync($"apprenticeship-qa/provider-assessments/{providerId}");
+            var response = await HttpClient.GetAsync($"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}");
 
             // Assert
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
         }
 
         [Fact]
-        public async Task Get_ProviderDoesNotExistReturnsBadRequest()
+        public async Task Get_ApprenticeshipDoesNotExistReturnsBadRequest()
         {
             // Arrange
             await User.AsHelpdesk();
 
-            var providerId = Guid.NewGuid();
+            var apprenticeshipId = Guid.NewGuid();
 
             // Act
-            var response = await HttpClient.GetAsync($"apprenticeship-qa/provider-assessments/{providerId}");
+            var response = await HttpClient.GetAsync($"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}");
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -75,10 +75,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
                 providerName: "Provider 1",
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.Submitted);
 
+            var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
+
             await User.AsHelpdesk();
 
             // Act
-            var response = await HttpClient.GetAsync($"apprenticeship-qa/provider-assessments/{providerId}");
+            var response = await HttpClient.GetAsync($"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}");
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -114,7 +116,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
             await User.AsHelpdesk();
 
             // Act
-            var response = await HttpClient.GetAsync($"apprenticeship-qa/provider-assessments/{providerId}");
+            var response = await HttpClient.GetAsync($"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}");
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -134,7 +136,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
             var providerUserId = $"{ukprn}-user";
             await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person");
 
-            var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
+            var apprenticeshipId = await TestData.CreateApprenticeship(
+                ukprn,
+                apprenticeshipTitle: "Test title",
+                marketingInformation: "Test marketing info");
 
             await TestData.CreateApprenticeshipQASubmission(
                 providerId,
@@ -146,17 +151,17 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
             await User.AsHelpdesk();
 
             // Act
-            var response = await HttpClient.GetAsync($"apprenticeship-qa/provider-assessments/{providerId}");
+            var response = await HttpClient.GetAsync($"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}");
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
             var doc = await response.GetDocument();
-            Assert.Equal("QA Provider information - Course Directory", doc.Title);
-            Assert.Equal("Provider 1", doc.QuerySelector("h1").TextContent);
+            Assert.Equal("QA Apprenticeship training course information - Course Directory", doc.Title);
+            Assert.Equal("Test title", doc.QuerySelector("h1").TextContent);
             Assert.Equal(
-                "The overview",
-                doc.GetElementById("pttcd-apprenticeship-qa-provider-assessment-marketing-information").TextContent);
+                "Test marketing info",
+                doc.GetElementById("pttcd-apprenticeship-qa-apprenticeship-assessment-marketing-information").TextContent);
         }
 
         [Fact]
@@ -173,7 +178,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
             var providerUserId = $"{ukprn}-user";
             await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person");
 
-            var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
+            var apprenticeshipId = await TestData.CreateApprenticeship(
+                ukprn,
+                apprenticeshipTitle: "Test title",
+                marketingInformation: "Test marketing info");
 
             var submissionId = await TestData.CreateApprenticeshipQASubmission(
                 providerId,
@@ -182,26 +190,28 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
-            await TestData.CreateApprenticeshipQAProviderAssessment(
+            await TestData.CreateApprenticeshipQAApprenticeshipAssessment(
                 submissionId,
+                apprenticeshipId,
                 assessedByUserId: User.UserId.ToString(),
                 assessedOn: Clock.UtcNow,
                 compliancePassed: true,
-                complianceFailedReasons: ApprenticeshipQAProviderComplianceFailedReasons.None,
+                complianceFailedReasons: ApprenticeshipQAApprenticeshipComplianceFailedReasons.None,
                 complianceComments: null,
                 stylePassed: false,
-                styleFailedReasons: ApprenticeshipQAProviderStyleFailedReasons.JobRolesIncluded | ApprenticeshipQAProviderStyleFailedReasons.TermCourseUsed,
+                styleFailedReasons: ApprenticeshipQAApprenticeshipStyleFailedReasons.JobRolesIncluded | ApprenticeshipQAApprenticeshipStyleFailedReasons.TermCourseUsed,
                 styleComments: "Bad style, yo");
 
             await User.AsHelpdesk();
 
             // Act
-            var response = await HttpClient.GetAsync($"apprenticeship-qa/provider-assessments/{providerId}");
+            var response = await HttpClient.GetAsync($"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}");
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
             var doc = await response.GetDocument();
+            //
             Assert.Equal("checked", doc.GetElementById("CompliancePassed").GetAttribute("checked"));
             Assert.Null(doc.GetElementById("StylePassed").GetAttribute("checked"));
             Assert.Equal("checked", doc.GetElementWithLabel("Job roles included").GetAttribute("checked"));
@@ -240,7 +250,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/provider-assessments/{providerId}",
+                $"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}",
                 requestContent);
 
             // Assert
@@ -249,7 +259,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
             var doc = await response.GetDocument();
             doc.AssertHasError("CompliancePassed", "An outcome must be selected.");
         }
-
+        
         [Fact]
         public async Task Post_MissingComplianceFailedReasonsWhenFailedRendersErrorMessage()
         {
@@ -282,7 +292,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/provider-assessments/{providerId}",
+                $"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}",
                 requestContent);
 
             // Assert
@@ -324,7 +334,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/provider-assessments/{providerId}",
+                $"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}",
                 requestContent);
 
             // Assert
@@ -366,7 +376,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/provider-assessments/{providerId}",
+                $"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}",
                 requestContent);
 
             // Assert
@@ -409,26 +419,26 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/provider-assessments/{providerId}",
+                $"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}",
                 requestContent);
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
             var doc = await response.GetDocument();
-            Assert.Equal("QA Provider Information - Course Directory", doc.Title);
-            Assert.Equal("Pass", doc.GetElementById("pttcd-apprenticeship-qa-provider-submission-confirmation-compliance-status").TextContent.Trim());
-            Assert.Equal("Pass", doc.GetElementById("pttcd-apprenticeship-qa-provider-submission-confirmation-style-status").TextContent.Trim());
+            Assert.Equal("QA Apprenticeship training course information - Course Directory", doc.Title);
+            Assert.Equal("Pass", doc.GetElementById("pttcd-apprenticeship-qa-apprenticeship-submission-confirmation-compliance-status").TextContent.Trim());
+            Assert.Equal("Pass", doc.GetElementById("pttcd-apprenticeship-qa-apprenticeship-submission-confirmation-style-status").TextContent.Trim());
             Assert.Equal(
-                "The provider information has PASSED quality assurance.",
-                doc.GetElementById("pttcd-apprenticeship-qa-provider-submission-confirmation-overall-status-message").TextContent.Trim());
+                "This apprenticeship training course has PASSED quality assurance.",
+                doc.GetElementById("pttcd-apprenticeship-qa-apprenticeship-submission-confirmation-overall-status-message").TextContent.Trim());
 
             var submissionStatus = await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
                 new GetLatestApprenticeshipQASubmissionForProvider()
                 {
                     ProviderId = providerId
                 }));
-            Assert.True(submissionStatus.AsT1.ProviderAssessmentPassed.Value);
+            Assert.True(submissionStatus.AsT1.ApprenticeshipAssessmentsPassed.Value);
         }
 
         [Fact]
@@ -466,26 +476,26 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/provider-assessments/{providerId}",
+                $"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}",
                 requestContent);
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
             var doc = await response.GetDocument();
-            Assert.Equal("QA Provider Information - Course Directory", doc.Title);
-            Assert.Equal("Pass", doc.GetElementById("pttcd-apprenticeship-qa-provider-submission-confirmation-compliance-status").TextContent.Trim());
-            Assert.Equal("Fail", doc.GetElementById("pttcd-apprenticeship-qa-provider-submission-confirmation-style-status").TextContent.Trim());
+            Assert.Equal("QA Apprenticeship training course information - Course Directory", doc.Title);
+            Assert.Equal("Pass", doc.GetElementById("pttcd-apprenticeship-qa-apprenticeship-submission-confirmation-compliance-status").TextContent.Trim());
+            Assert.Equal("Fail", doc.GetElementById("pttcd-apprenticeship-qa-apprenticeship-submission-confirmation-style-status").TextContent.Trim());
             Assert.Equal(
-                "The provider information has FAILED quality assurance.",
-                doc.GetElementById("pttcd-apprenticeship-qa-provider-submission-confirmation-overall-status-message").TextContent.Trim());
+                "This apprenticeship training course has FAILED quality assurance.",
+                doc.GetElementById("pttcd-apprenticeship-qa-apprenticeship-submission-confirmation-overall-status-message").TextContent.Trim());
 
             var submissionStatus = await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
                 new GetLatestApprenticeshipQASubmissionForProvider()
                 {
                     ProviderId = providerId
                 }));
-            Assert.False(submissionStatus.AsT1.ProviderAssessmentPassed.Value);
+            Assert.False(submissionStatus.AsT1.ApprenticeshipAssessmentsPassed.Value);
         }
 
         [Fact]
@@ -523,26 +533,26 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/provider-assessments/{providerId}",
+                $"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}",
                 requestContent);
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
             var doc = await response.GetDocument();
-            Assert.Equal("QA Provider Information - Course Directory", doc.Title);
-            Assert.Equal("Fail", doc.GetElementById("pttcd-apprenticeship-qa-provider-submission-confirmation-compliance-status").TextContent.Trim());
-            Assert.Equal("Pass", doc.GetElementById("pttcd-apprenticeship-qa-provider-submission-confirmation-style-status").TextContent.Trim());
+            Assert.Equal("QA Apprenticeship training course information - Course Directory", doc.Title);
+            Assert.Equal("Fail", doc.GetElementById("pttcd-apprenticeship-qa-apprenticeship-submission-confirmation-compliance-status").TextContent.Trim());
+            Assert.Equal("Pass", doc.GetElementById("pttcd-apprenticeship-qa-apprenticeship-submission-confirmation-style-status").TextContent.Trim());
             Assert.Equal(
-                "The provider information has FAILED quality assurance.",
-                doc.GetElementById("pttcd-apprenticeship-qa-provider-submission-confirmation-overall-status-message").TextContent.Trim());
+                "This apprenticeship training course has FAILED quality assurance.",
+                doc.GetElementById("pttcd-apprenticeship-qa-apprenticeship-submission-confirmation-overall-status-message").TextContent.Trim());
 
             var submissionStatus = await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
                 new GetLatestApprenticeshipQASubmissionForProvider()
                 {
                     ProviderId = providerId
                 }));
-            Assert.False(submissionStatus.AsT1.ProviderAssessmentPassed.Value);
+            Assert.False(submissionStatus.AsT1.ApprenticeshipAssessmentsPassed.Value);
         }
 
         [Fact]
@@ -583,26 +593,26 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/provider-assessments/{providerId}",
+                $"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}",
                 requestContent);
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
             var doc = await response.GetDocument();
-            Assert.Equal("QA Provider Information - Course Directory", doc.Title);
-            Assert.Equal("Fail", doc.GetElementById("pttcd-apprenticeship-qa-provider-submission-confirmation-compliance-status").TextContent.Trim());
-            Assert.Equal("Fail", doc.GetElementById("pttcd-apprenticeship-qa-provider-submission-confirmation-style-status").TextContent.Trim());
+            Assert.Equal("QA Apprenticeship training course information - Course Directory", doc.Title);
+            Assert.Equal("Fail", doc.GetElementById("pttcd-apprenticeship-qa-apprenticeship-submission-confirmation-compliance-status").TextContent.Trim());
+            Assert.Equal("Fail", doc.GetElementById("pttcd-apprenticeship-qa-apprenticeship-submission-confirmation-style-status").TextContent.Trim());
             Assert.Equal(
-                "The provider information has FAILED quality assurance.",
-                doc.GetElementById("pttcd-apprenticeship-qa-provider-submission-confirmation-overall-status-message").TextContent.Trim());
+                "This apprenticeship training course has FAILED quality assurance.",
+                doc.GetElementById("pttcd-apprenticeship-qa-apprenticeship-submission-confirmation-overall-status-message").TextContent.Trim());
 
             var submissionStatus = await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
                 new GetLatestApprenticeshipQASubmissionForProvider()
                 {
                     ProviderId = providerId
                 }));
-            Assert.False(submissionStatus.AsT1.ProviderAssessmentPassed.Value);
+            Assert.False(submissionStatus.AsT1.ApprenticeshipAssessmentsPassed.Value);
         }
 
         [Theory]
@@ -621,7 +631,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
         public async Task Post_UpdatesSubmissionStatusCorrectly(
             bool compliancePassed,
             bool stylePassed,
-            bool? apprenticeshipAssessmentPassed,
+            bool? providerAssessmentPassed,
             bool? expectedSubmissionPassed)
         {
             // Arrange
@@ -647,28 +657,29 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
             await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpdateApprenticeshipQASubmission()
             {
                 ApprenticeshipQASubmissionId = submissionId,
-                ApprenticeshipAssessmentsPassed = apprenticeshipAssessmentPassed,
+                ApprenticeshipAssessmentsPassed = null,
                 Passed = null,
-                ProviderAssessmentPassed = null
+                ProviderAssessmentPassed = providerAssessmentPassed
             }));
 
             await User.AsHelpdesk();
 
             var requestContentBuilder = new FormUrlEncodedContentBuilder()
                 .Add("CompliancePassed", compliancePassed)
+                .Add("ComplianceComments", "Some compliance feedback")
                 .Add("StylePassed", stylePassed);
 
             if (!compliancePassed)
             {
                 requestContentBuilder
-                    .Add("ComplianceFailedReasons", (ApprenticeshipQAProviderComplianceFailedReasons)1)
+                    .Add("ComplianceFailedReasons", (ApprenticeshipQAApprenticeshipComplianceFailedReasons)1)
                     .Add("ComplianceComments", "Compliance feedback");
             }
 
             if (!stylePassed)
             {
                 requestContentBuilder
-                    .Add("StyleFailedReasons", (ApprenticeshipQAProviderStyleFailedReasons)1)
+                    .Add("StyleFailedReasons", (ApprenticeshipQAApprenticeshipStyleFailedReasons)1)
                     .Add("StyleComments", "Style feedback");
             }
 
@@ -676,7 +687,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/provider-assessments/{providerId}",
+                $"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}",
                 requestContent);
 
             // Assert

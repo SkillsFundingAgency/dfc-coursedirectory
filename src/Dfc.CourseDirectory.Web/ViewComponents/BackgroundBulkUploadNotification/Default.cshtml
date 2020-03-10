@@ -40,11 +40,11 @@
     {
         if (Model.BulkUploadBackgroundRowCount == 1)
         {
-            message.Append($"{Model.BulkUploadBackgroundRowCount} course ");
+            message.Append($"{Model.BulkUploadBackgroundRowCount} records ");
         }
         else
         {
-            message.Append($"{Model.BulkUploadBackgroundRowCount} courses ");
+            message.Append($"{Model.BulkUploadBackgroundRowCount} records ");
         }
 
         double uploadTime = Math.Round((Model.BulkUploadBackgroundRowCount.Value * 1.2) / 60, 0, MidpointRounding.AwayFromZero);  // cos averaged 1.2 seconds per row in test
