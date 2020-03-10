@@ -60,7 +60,7 @@
         @if (Model.ApprenticeshipQAStatus == ApprenticeshipQAStatus.Failed || Model.ApprenticeshipQAStatus == ApprenticeshipQAStatus.Passed)
         {
             <govuk-inset-text class="pttcd-inset-text__info">
-                Overall the provider information and apprenticeship training course has @(Model.ApprenticeshipQAStatus == ApprenticeshipQAStatus.Passed ? "PASSED" : "FAILED") quality assurance.
+                Overall the provider information and apprenticeship training course has <strong>@(Model.ApprenticeshipQAStatus == ApprenticeshipQAStatus.Passed ? "PASSED" : "FAILED")</strong> quality assurance.
             </govuk-inset-text>
         }
         else
