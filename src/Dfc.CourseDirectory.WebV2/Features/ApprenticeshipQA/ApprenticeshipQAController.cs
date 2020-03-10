@@ -79,6 +79,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA
         }
 
         [HttpPost("{providerId}/complete")]
-        public IActionResult Complete() => throw new NotImplementedException();
+        public async Task<IActionResult> Complete(Complete.Command command)
+        {
+            var result = await _mediator.Send(command);
+            return result.Match<IActionResult>(
+                error => BadRequest(),
+                vm => View(vm));
+        }
     }
 }
