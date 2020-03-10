@@ -5,9 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 namespace Dfc.CourseDirectory.WebV2.Features.Error
 {
     [AllowAnonymous]
+    [Route("error")]
     public class Controller : Microsoft.AspNetCore.Mvc.Controller
     {
-        [HttpGet("error")]
         public IActionResult Error(int? code, [FromServices] HostingOptions hostingOptions)
         {
             // If there is no error, return a 404
