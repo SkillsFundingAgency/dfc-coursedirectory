@@ -28,8 +28,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA
         }
 
         [HttpGet("{providerId}")]
-        public IActionResult ProviderDetail(Guid providerId) =>
-            throw new System.NotImplementedException();
+        public async Task<IActionResult> ProviderSelected(ProviderSelected.Query query)
+        {
+            var result = await _mediator.Send(query);
+            return result.Match<IActionResult>(
+                error => BadRequest(),
+                vm => View(vm));
+        }
 
         [HttpGet("provider-assessments/{providerId}")]
         public async Task<IActionResult> ProviderAssessment(ProviderAssessment.Query query)
@@ -72,5 +77,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA
                 vm => View("ApprenticeshipAssessmentConfirmation", vm),
                 errors => this.ViewFromErrors(errors));
         }
+
+        [HttpPost("{providerId}/complete")]
+        public IActionResult Complete() => throw new NotImplementedException();
     }
 }
