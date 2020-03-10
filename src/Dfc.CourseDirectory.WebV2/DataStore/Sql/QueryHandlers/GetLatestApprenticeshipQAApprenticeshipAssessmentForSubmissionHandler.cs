@@ -30,7 +30,8 @@ SELECT TOP 1
     u.UserId,
     u.Email,
     u.FirstName,
-    u.LastName
+    u.LastName,
+    u.ProviderId
 FROM Pttcd.ApprenticeshipQASubmissionApprenticeshipAssessments s
 JOIN Pttcd.ApprenticeshipQASubmissionApprenticeships x ON s.ApprenticeshipQASubmissionApprenticeshipId = x.ApprenticeshipQASubmissionApprenticeshipId
 LEFT JOIN Pttcd.Users u ON s.AssessedByUserId = u.UserId
