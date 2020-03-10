@@ -227,23 +227,33 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
             {
                 RuleFor(c => c.CompliancePassed)
                     .NotNull()
-                    .WithMessageForAllRules("PLACEHOLDER");
-
-                RuleFor(c => c.StylePassed)
-                    .NotNull()
-                    .WithMessageForAllRules("PLACEHOLDER");
+                    .WithMessageForAllRules("An outcome must be selected.");
 
                 RuleFor(c => c.ComplianceFailedReasons)
                     .NotNull()
                     .NotEqual(ApprenticeshipQAProviderComplianceFailedReasons.None)
                     .When(c => c.CompliancePassed == false)
-                    .WithMessageForAllRules("PLACEHOLDER");
+                    .WithMessageForAllRules("A reason must be selected.");
+
+                RuleFor(c => c.ComplianceComments)
+                    .NotEmpty()
+                    .When(c => c.CompliancePassed == false)
+                    .WithMessageForAllRules("Enter comments for the reason selected.");
+
+                RuleFor(c => c.StylePassed)
+                    .NotNull()
+                    .WithMessageForAllRules("An outcome must be selected.");
 
                 RuleFor(c => c.StyleFailedReasons)
                     .NotNull()
                     .NotEqual(ApprenticeshipQAProviderStyleFailedReasons.None)
                     .When(c => c.StylePassed == false)
-                    .WithMessageForAllRules("PLACEHOLDER");
+                    .WithMessageForAllRules("A reason must be selected.");
+
+                RuleFor(c => c.StyleComments)
+                    .NotEmpty()
+                    .When(c => c.StylePassed == false)
+                    .WithMessageForAllRules("Enter comments for the reason selected.");
             }
         }
     }

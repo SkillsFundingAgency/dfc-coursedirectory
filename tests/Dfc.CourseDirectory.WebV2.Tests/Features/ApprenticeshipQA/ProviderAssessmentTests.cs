@@ -247,7 +247,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
 
             var doc = await response.GetDocument();
-            doc.AssertHasError("CompliancePassed", "PLACEHOLDER");
+            doc.AssertHasError("CompliancePassed", "An outcome must be selected.");
         }
 
         [Fact]
@@ -289,7 +289,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
 
             var doc = await response.GetDocument();
-            doc.AssertHasError("ComplianceFailedReasons", "PLACEHOLDER");
+            doc.AssertHasError("ComplianceFailedReasons", "A reason must be selected.");
+            doc.AssertHasError("ComplianceComments", "Enter comments for the reason selected.");
         }
 
         [Fact]
@@ -330,7 +331,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
 
             var doc = await response.GetDocument();
-            doc.AssertHasError("StylePassed", "PLACEHOLDER");
+            doc.AssertHasError("StylePassed", "An outcome must be selected.");
         }
 
         [Fact]
@@ -372,7 +373,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
 
             var doc = await response.GetDocument();
-            doc.AssertHasError("StyleFailedReasons", "PLACEHOLDER");
+            doc.AssertHasError("StyleFailedReasons", "A reason must be selected.");
+            doc.AssertHasError("StyleComments", "Enter comments for the reason selected.");
         }
 
         [Fact]
@@ -654,17 +656,20 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
 
             var requestContentBuilder = new FormUrlEncodedContentBuilder()
                 .Add("CompliancePassed", compliancePassed)
-                .Add("ComplianceComments", "Some compliance feedback")
                 .Add("StylePassed", stylePassed);
 
             if (!compliancePassed)
             {
-                requestContentBuilder.Add("ComplianceFailedReasons", (ApprenticeshipQAProviderComplianceFailedReasons)1);
+                requestContentBuilder
+                    .Add("ComplianceFailedReasons", (ApprenticeshipQAProviderComplianceFailedReasons)1)
+                    .Add("ComplianceComments", "Compliance feedback");
             }
 
             if (!stylePassed)
             {
-                requestContentBuilder.Add("StyleFailedReasons", (ApprenticeshipQAProviderStyleFailedReasons)1);
+                requestContentBuilder
+                    .Add("StyleFailedReasons", (ApprenticeshipQAProviderStyleFailedReasons)1)
+                    .Add("StyleComments", "Style feedback");
             }
 
             var requestContent = requestContentBuilder.ToContent();
