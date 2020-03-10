@@ -152,7 +152,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
             var doc = await response.GetDocument();
-            Assert.Equal("QA Provider Information - Course Directory", doc.Title);
+            Assert.Equal("QA Provider information - Course Directory", doc.Title);
             Assert.Equal("Provider 1", doc.QuerySelector("h1").TextContent);
             Assert.Equal(
                 "The overview",
