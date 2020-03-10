@@ -48,6 +48,9 @@
             <div id="courseid" style="display:none">@course.id</div>
             <div class="govuk-grid-column-one-third">
                 <div class="align-right col right center">
+
+                    @if (course.ValidationErrors != null && course.ValidationErrors.Any())
+                    {
                         <a id="course-fix-@course.id" class="error-link" asp-controller="EditCourse" asp-action="Index" style="display:block"
                            asp-route-courseId="@course.id"
                            asp-route-learnAimRef="@course.LearnAimRef"
@@ -56,6 +59,7 @@
                            asp-route-learnAimRefTitle="@course.QualificationCourseTitle"
                            asp-route-learnAimRefTypeDesc="@course.QualificationType"
                            asp-route-mode=@Model.PublishMode>Fix<span class="govuk-visually-hidden">@course.QualificationCourseTitle</span></a>
+                    }
                 </div>
             </div>
         </div>
