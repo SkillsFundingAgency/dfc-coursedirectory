@@ -13,3 +13,20 @@
     background-color: #eef4fa;
     border-color: #5694ca;
 }
+
+.pttcd-apprenticeship-qa-provider-selected-summary {
+    border-top: 1px solid #b1b4b6;
+    border-bottom: 1px solid #b1b4b6;
+    display: flex;
+    line-height: 1.31579;
+    padding: 10px 0;
+}
+
+.pttcd-apprenticeship-qa-provider-selected-summary-label {
+    flex: 1;
+    padding-right: 20px;
+}
+
+.pttcd-apprenticeship-qa-provider-selected-summary-status {
+    flex: 0;
+}

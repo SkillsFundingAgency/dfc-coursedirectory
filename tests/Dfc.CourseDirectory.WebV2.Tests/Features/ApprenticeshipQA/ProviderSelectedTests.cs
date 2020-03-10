@@ -1,0 +1,527 @@
+﻿using System;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
+using Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.WebV2.Models;
+using Xunit;
+
+namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
+{
+    public class ProviderSelectedTests : TestBase
+    {
+        public ProviderSelectedTests(CourseDirectoryApplicationFactory factory)
+            : base(factory)
+        {
+        }
+
+        [Theory]
+        [InlineData(TestUserType.ProviderSuperUser)]
+        [InlineData(TestUserType.ProviderUser)]
+        public async Task Get_ProviderUserCannotAccess(TestUserType testUserType)
+        {
+            // Arrange
+            var ukprn = 12345;
+
+            var providerId = await TestData.CreateProvider(
+                ukprn: ukprn,
+                providerName: "Provider 1",
+                apprenticeshipQAStatus: ApprenticeshipQAStatus.Submitted);
+
+            var providerUserId = $"{ukprn}-user";
+            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person");
+
+            var apprenticeshipId = await TestData.CreateApprenticeship(
+                ukprn,
+                apprenticeshipTitle: "App title");
+
+            await TestData.CreateApprenticeshipQASubmission(
+                providerId,
+                submittedOn: Clock.UtcNow,
+                submittedByUserId: providerUserId,
+                providerMarketingInformation: "The overview",
+                apprenticeshipIds: new[] { apprenticeshipId });
+
+            await User.AsTestUser(testUserType, providerId);
+
+            // Act
+            var response = await HttpClient.GetAsync($"apprenticeship-qa/{providerId}");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task Get_ProviderDoesNotExistReturnsBadRequest()
+        {
+            // Arrange
+            var providerId = Guid.NewGuid();
+
+            await User.AsHelpdesk();
+
+            // Act
+            var response = await HttpClient.GetAsync($"apprenticeship-qa/{providerId}");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task Get_NoSubmissionReturnsBadRequest()
+        {
+            // Arrange
+            var ukprn = 12345;
+
+            var providerId = await TestData.CreateProvider(
+                ukprn: ukprn,
+                providerName: "Provider 1",
+                apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted);
+
+            await User.AsHelpdesk();
+
+            // Act
+            var response = await HttpClient.GetAsync($"apprenticeship-qa/{providerId}");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task Get_RendersExpectedOutput()
+        {
+            // Arrange
+            var ukprn = 12345;
+
+            var providerId = await TestData.CreateProvider(
+                ukprn: ukprn,
+                providerName: "Provider 1",
+                apprenticeshipQAStatus: ApprenticeshipQAStatus.Submitted);
+
+            var providerUserId = $"{ukprn}-user";
+            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person");
+
+            var apprenticeshipId = await TestData.CreateApprenticeship(
+                ukprn,
+                apprenticeshipTitle: "App title");
+
+            await TestData.CreateApprenticeshipQASubmission(
+                providerId,
+                submittedOn: Clock.UtcNow,
+                submittedByUserId: providerUserId,
+                providerMarketingInformation: "The overview",
+                apprenticeshipIds: new[] { apprenticeshipId });
+
+            await User.AsHelpdesk();
+
+            // Act
+            var response = await HttpClient.GetAsync($"apprenticeship-qa/{providerId}");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+            var doc = await response.GetDocument();
+            Assert.Equal("QA - Course Directory", doc.Title);
+            Assert.Equal("Provider 1", doc.QuerySelector("h1").TextContent);
+
+            var firstApp = doc.GetElementsByClassName("pttcd-apprenticeship-qa-provider-selected-apprenticeship").First();
+            var firstAppLabel = firstApp.GetElementsByClassName("pttcd-apprenticeship-qa-provider-selected-summary-label").Single().TextContent.Trim();
+            Assert.Equal("App title", firstAppLabel);
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task Get_ProviderAssessmentCompletedRendersBadge(bool passed)
+        {
+            // Arrange
+            var ukprn = 12345;
+
+            var providerId = await TestData.CreateProvider(
+                ukprn: ukprn,
+                providerName: "Provider 1",
+                apprenticeshipQAStatus: ApprenticeshipQAStatus.InProgress);
+
+            var providerUserId = $"{ukprn}-user";
+            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person");
+
+            var apprenticeshipId = await TestData.CreateApprenticeship(
+                ukprn,
+                apprenticeshipTitle: "App title");
+
+            var submissionId = await TestData.CreateApprenticeshipQASubmission(
+                providerId,
+                submittedOn: Clock.UtcNow,
+                submittedByUserId: providerUserId,
+                providerMarketingInformation: "The overview",
+                apprenticeshipIds: new[] { apprenticeshipId });
+
+            await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpdateApprenticeshipQASubmission()
+            {
+                ApprenticeshipQASubmissionId = submissionId,
+                ApprenticeshipAssessmentsPassed = null,
+                LastAssessedByUserId = User.UserId.ToString(),
+                LastAssessedOn = Clock.UtcNow,
+                Passed = null,
+                ProviderAssessmentPassed = passed
+            }));
+
+            await User.AsHelpdesk();
+
+            // Act
+            var response = await HttpClient.GetAsync($"apprenticeship-qa/{providerId}");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+            var doc = await response.GetDocument();
+            var providerElement = doc.GetElementsByClassName("pttcd-apprenticeship-qa-provider-selected-provider").First();
+            var providerBadge = providerElement.GetElementsByClassName("govuk-tag").SingleOrDefault();
+            Assert.NotNull(providerBadge);
+        }
+
+        [Fact]
+        public async Task Get_ProviderAssessmentNotCompletedDoesNotRenderBadge()
+        {
+            // Arrange
+            var ukprn = 12345;
+
+            var providerId = await TestData.CreateProvider(
+                ukprn: ukprn,
+                providerName: "Provider 1",
+                apprenticeshipQAStatus: ApprenticeshipQAStatus.InProgress);
+
+            var providerUserId = $"{ukprn}-user";
+            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person");
+
+            var apprenticeshipId = await TestData.CreateApprenticeship(
+                ukprn,
+                apprenticeshipTitle: "App title");
+
+            var submissionId = await TestData.CreateApprenticeshipQASubmission(
+                providerId,
+                submittedOn: Clock.UtcNow,
+                submittedByUserId: providerUserId,
+                providerMarketingInformation: "The overview",
+                apprenticeshipIds: new[] { apprenticeshipId });
+
+            await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpdateApprenticeshipQASubmission()
+            {
+                ApprenticeshipQASubmissionId = submissionId,
+                ApprenticeshipAssessmentsPassed = true,
+                LastAssessedByUserId = User.UserId.ToString(),
+                LastAssessedOn = Clock.UtcNow,
+                Passed = null,
+                ProviderAssessmentPassed = null
+            }));
+
+            await User.AsHelpdesk();
+
+            // Act
+            var response = await HttpClient.GetAsync($"apprenticeship-qa/{providerId}");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+            var doc = await response.GetDocument();
+            var providerElement = doc.GetElementsByClassName("pttcd-apprenticeship-qa-provider-selected-provider").First();
+            var providerBadge = providerElement.GetElementsByClassName("govuk-tag").SingleOrDefault();
+            Assert.Null(providerBadge);
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task Get_ApprenticeshipAssessmentCompletedRendersBadge(bool passed)
+        {
+            // Arrange
+            var ukprn = 12345;
+
+            var providerId = await TestData.CreateProvider(
+                ukprn: ukprn,
+                providerName: "Provider 1",
+                apprenticeshipQAStatus: ApprenticeshipQAStatus.InProgress);
+
+            var providerUserId = $"{ukprn}-user";
+            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person");
+
+            var apprenticeshipId = await TestData.CreateApprenticeship(
+                ukprn,
+                apprenticeshipTitle: "App title");
+
+            var submissionId = await TestData.CreateApprenticeshipQASubmission(
+                providerId,
+                submittedOn: Clock.UtcNow,
+                submittedByUserId: providerUserId,
+                providerMarketingInformation: "The overview",
+                apprenticeshipIds: new[] { apprenticeshipId });
+
+            await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpdateApprenticeshipQASubmission()
+            {
+                ApprenticeshipQASubmissionId = submissionId,
+                ApprenticeshipAssessmentsPassed = passed,
+                LastAssessedByUserId = User.UserId.ToString(),
+                LastAssessedOn = Clock.UtcNow,
+                Passed = null,
+                ProviderAssessmentPassed = null
+            }));
+
+            await User.AsHelpdesk();
+
+            // Act
+            var response = await HttpClient.GetAsync($"apprenticeship-qa/{providerId}");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+            var doc = await response.GetDocument();
+            var providerElement = doc.GetElementsByClassName("pttcd-apprenticeship-qa-provider-selected-apprenticeship").First();
+            var providerBadge = providerElement.GetElementsByClassName("govuk-tag").SingleOrDefault();
+            Assert.NotNull(providerBadge);
+        }
+
+        [Fact]
+        public async Task Get_ApprenticeshipAssessmentNotCompletedDoesNotRenderBadge()
+        {
+            // Arrange
+            var ukprn = 12345;
+
+            var providerId = await TestData.CreateProvider(
+                ukprn: ukprn,
+                providerName: "Provider 1",
+                apprenticeshipQAStatus: ApprenticeshipQAStatus.InProgress);
+
+            var providerUserId = $"{ukprn}-user";
+            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person");
+
+            var apprenticeshipId = await TestData.CreateApprenticeship(
+                ukprn,
+                apprenticeshipTitle: "App title");
+
+            var submissionId = await TestData.CreateApprenticeshipQASubmission(
+                providerId,
+                submittedOn: Clock.UtcNow,
+                submittedByUserId: providerUserId,
+                providerMarketingInformation: "The overview",
+                apprenticeshipIds: new[] { apprenticeshipId });
+
+            await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpdateApprenticeshipQASubmission()
+            {
+                ApprenticeshipQASubmissionId = submissionId,
+                ApprenticeshipAssessmentsPassed = null,
+                LastAssessedByUserId = User.UserId.ToString(),
+                LastAssessedOn = Clock.UtcNow,
+                Passed = null,
+                ProviderAssessmentPassed = true
+            }));
+
+            await User.AsHelpdesk();
+
+            // Act
+            var response = await HttpClient.GetAsync($"apprenticeship-qa/{providerId}");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+            var doc = await response.GetDocument();
+            var providerElement = doc.GetElementsByClassName("pttcd-apprenticeship-qa-provider-selected-apprenticeship").First();
+            var providerBadge = providerElement.GetElementsByClassName("govuk-tag").SingleOrDefault();
+            Assert.Null(providerBadge);
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task Get_InProgressStatusAndSubmissionOutcomeIsKnownRendersFinishButton(bool passed)
+        {
+            // Arrange
+            var ukprn = 12345;
+
+            var providerId = await TestData.CreateProvider(
+                ukprn: ukprn,
+                providerName: "Provider 1",
+                apprenticeshipQAStatus: ApprenticeshipQAStatus.InProgress);
+
+            var providerUserId = $"{ukprn}-user";
+            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person");
+
+            var apprenticeshipId = await TestData.CreateApprenticeship(
+                ukprn,
+                apprenticeshipTitle: "App title");
+
+            var submissionId = await TestData.CreateApprenticeshipQASubmission(
+                providerId,
+                submittedOn: Clock.UtcNow,
+                submittedByUserId: providerUserId,
+                providerMarketingInformation: "The overview",
+                apprenticeshipIds: new[] { apprenticeshipId });
+
+            await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpdateApprenticeshipQASubmission()
+            {
+                ApprenticeshipQASubmissionId = submissionId,
+                ApprenticeshipAssessmentsPassed = passed,
+                LastAssessedByUserId = User.UserId.ToString(),
+                LastAssessedOn = Clock.UtcNow,
+                Passed = passed,
+                ProviderAssessmentPassed = passed
+            }));
+
+            await User.AsHelpdesk();
+
+            // Act
+            var response = await HttpClient.GetAsync($"apprenticeship-qa/{providerId}");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+            var doc = await response.GetDocument();
+            var completeButton = doc.GetElementsByClassName("govuk-button").SingleOrDefault();
+            Assert.NotNull(completeButton);
+            Assert.Null(completeButton.GetAttribute("disabled"));
+        }
+
+        [Fact]
+        public async Task Get_InProgressStatusAndSubmissionOutcomeIsNotKnownRendersDisabledFinishButton()
+        {
+            // Arrange
+            var ukprn = 12345;
+
+            var providerId = await TestData.CreateProvider(
+                ukprn: ukprn,
+                providerName: "Provider 1",
+                apprenticeshipQAStatus: ApprenticeshipQAStatus.InProgress);
+
+            var providerUserId = $"{ukprn}-user";
+            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person");
+
+            var apprenticeshipId = await TestData.CreateApprenticeship(
+                ukprn,
+                apprenticeshipTitle: "App title");
+
+            await TestData.CreateApprenticeshipQASubmission(
+                providerId,
+                submittedOn: Clock.UtcNow,
+                submittedByUserId: providerUserId,
+                providerMarketingInformation: "The overview",
+                apprenticeshipIds: new[] { apprenticeshipId });
+
+            await User.AsHelpdesk();
+
+            // Act
+            var response = await HttpClient.GetAsync($"apprenticeship-qa/{providerId}");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+            var doc = await response.GetDocument();
+            var completeButton = doc.GetElementsByClassName("govuk-button").SingleOrDefault();
+            Assert.NotNull(completeButton);
+            Assert.Equal("disabled", completeButton.GetAttribute("disabled"));
+        }
+
+        [Fact]
+        public async Task Get_FailedStatusRendersText()
+        {
+            // Arrange
+            var ukprn = 12345;
+
+            var providerId = await TestData.CreateProvider(
+                ukprn: ukprn,
+                providerName: "Provider 1",
+                apprenticeshipQAStatus: ApprenticeshipQAStatus.Failed);
+
+            var providerUserId = $"{ukprn}-user";
+            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person");
+
+            var apprenticeshipId = await TestData.CreateApprenticeship(
+                ukprn,
+                apprenticeshipTitle: "App title");
+
+            var submissionId = await TestData.CreateApprenticeshipQASubmission(
+                providerId,
+                submittedOn: Clock.UtcNow,
+                submittedByUserId: providerUserId,
+                providerMarketingInformation: "The overview",
+                apprenticeshipIds: new[] { apprenticeshipId });
+
+            await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpdateApprenticeshipQASubmission()
+            {
+                ApprenticeshipQASubmissionId = submissionId,
+                ApprenticeshipAssessmentsPassed = false,
+                LastAssessedByUserId = User.UserId.ToString(),
+                LastAssessedOn = Clock.UtcNow,
+                Passed = false,
+                ProviderAssessmentPassed = false
+            }));
+
+            await User.AsHelpdesk();
+
+            // Act
+            var response = await HttpClient.GetAsync($"apprenticeship-qa/{providerId}");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+            var doc = await response.GetDocument();
+            var completeButton = doc.GetElementsByClassName("govuk-button").SingleOrDefault();
+            Assert.Null(completeButton);
+            var infoBox = doc.GetElementsByClassName("pttcd-inset-text__info").SingleOrDefault();
+            Assert.NotNull(infoBox);
+            Assert.Equal(
+                "Overall the provider information and apprenticeship training course has FAILED quality assurance.",
+                infoBox.TextContent.Trim());
+        }
+
+        [Fact]
+        public async Task Get_PassedStatusRendersText()
+        {
+            // Arrange
+            var ukprn = 12345;
+
+            var providerId = await TestData.CreateProvider(
+                ukprn: ukprn,
+                providerName: "Provider 1",
+                apprenticeshipQAStatus: ApprenticeshipQAStatus.Passed);
+
+            var providerUserId = $"{ukprn}-user";
+            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person");
+
+            var apprenticeshipId = await TestData.CreateApprenticeship(
+                ukprn,
+                apprenticeshipTitle: "App title");
+
+            var submissionId = await TestData.CreateApprenticeshipQASubmission(
+                providerId,
+                submittedOn: Clock.UtcNow,
+                submittedByUserId: providerUserId,
+                providerMarketingInformation: "The overview",
+                apprenticeshipIds: new[] { apprenticeshipId });
+
+            await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpdateApprenticeshipQASubmission()
+            {
+                ApprenticeshipQASubmissionId = submissionId,
+                ApprenticeshipAssessmentsPassed = true,
+                LastAssessedByUserId = User.UserId.ToString(),
+                LastAssessedOn = Clock.UtcNow,
+                Passed = true,
+                ProviderAssessmentPassed = true
+            }));
+
+            await User.AsHelpdesk();
+
+            // Act
+            var response = await HttpClient.GetAsync($"apprenticeship-qa/{providerId}");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+            var doc = await response.GetDocument();
+            var completeButton = doc.GetElementsByClassName("govuk-button").SingleOrDefault();
+            Assert.Null(completeButton);
+            var infoBox = doc.GetElementsByClassName("pttcd-inset-text__info").SingleOrDefault();
+            Assert.NotNull(infoBox);
+            Assert.Equal(
+                "Overall the provider information and apprenticeship training course has PASSED quality assurance.",
+                infoBox.TextContent.Trim());
+        }
+    }
+}

@@ -43,6 +43,6 @@
             The provider information has <strong>@(Model.Passed ? "PASSED" : "FAILED")</strong> quality assurance.
         </govuk-inset-text>
 
-        <govuk-button asp-action="ProviderDetail" asp-route-providerId="@Model.ProviderId">Confirm and continue</govuk-button>
+        <govuk-button asp-action="ProviderSelected" asp-route-providerId="@Model.ProviderId">Confirm and continue</govuk-button>
     </div>
 </div>
