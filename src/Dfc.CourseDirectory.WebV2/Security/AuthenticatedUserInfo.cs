@@ -5,7 +5,6 @@ namespace Dfc.CourseDirectory.WebV2.Security
 {
     public class AuthenticatedUserInfo : UserInfo
     {
-        public Guid? ProviderId { get; set; }
         public string Role { get; set; }
 
         public bool IsDeveloper => Role == RoleNames.Developer;

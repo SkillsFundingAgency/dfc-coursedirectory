@@ -37,10 +37,12 @@ SELECT TOP 1
     b.Email,
     b.FirstName,
     b.LastName,
+    b.ProviderId,
     a.UserId,
     a.Email,
     a.FirstName,
-    a.LastName
+    a.LastName,
+    a.ProviderId
 FROM Pttcd.ApprenticeshipQASubmissions s
 JOIN Pttcd.Users b ON s.SubmittedByUserId = b.UserId
 LEFT JOIN Pttcd.Users a ON s.LastAssessedByUserId = a.UserId

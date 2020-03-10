@@ -1,4 +1,6 @@
-﻿namespace Dfc.CourseDirectory.WebV2.Models
+﻿using System;
+
+namespace Dfc.CourseDirectory.WebV2.Models
 {
     public class UserInfo
     {
@@ -6,6 +8,7 @@
         public string Email { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public Guid? ProviderId { get; set; }
         public string FullName => $"{FirstName} {LastName}";
     }
 }
