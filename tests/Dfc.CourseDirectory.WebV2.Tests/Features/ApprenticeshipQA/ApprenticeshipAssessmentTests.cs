@@ -612,5 +612,87 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
                 }));
             Assert.False(submissionStatus.AsT1.ApprenticeshipAssessmentsPassed.Value);
         }
+
+        [Theory]
+        [InlineData(true, true, null, null)]
+        [InlineData(true, false, null, null)]
+        [InlineData(false, true, null, null)]
+        [InlineData(false, false, null, null)]
+        [InlineData(true, true, true, true)]
+        [InlineData(true, false, true, false)]
+        [InlineData(false, true, true, false)]
+        [InlineData(false, false, true, false)]
+        [InlineData(true, true, false, false)]
+        [InlineData(true, false, false, false)]
+        [InlineData(false, true, false, false)]
+        [InlineData(false, false, false, false)]
+        public async Task Post_UpdatesSubmissionStatusCorrectly(
+            bool compliancePassed,
+            bool stylePassed,
+            bool? providerAssessmentPassed,
+            bool? expectedSubmissionPassed)
+        {
+            // Arrange
+            var ukprn = 12345;
+
+            var providerId = await TestData.CreateProvider(
+                ukprn: ukprn,
+                providerName: "Provider 1",
+                apprenticeshipQAStatus: ApprenticeshipQAStatus.Submitted);
+
+            var providerUserId = $"{ukprn}-user";
+            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person");
+
+            var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
+
+            var submissionId = await TestData.CreateApprenticeshipQASubmission(
+                providerId,
+                submittedOn: Clock.UtcNow,
+                submittedByUserId: providerUserId,
+                providerMarketingInformation: "The overview",
+                apprenticeshipIds: new[] { apprenticeshipId });
+
+            await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpdateApprenticeshipQASubmission()
+            {
+                ApprenticeshipQASubmissionId = submissionId,
+                ApprenticeshipAssessmentsPassed = null,
+                Passed = null,
+                ProviderAssessmentPassed = providerAssessmentPassed
+            }));
+
+            await User.AsHelpdesk();
+
+            var requestContentBuilder = new FormUrlEncodedContentBuilder()
+                .With("CompliancePassed", compliancePassed)
+                .With("ComplianceComments", "Some compliance feedback")
+                .With("StylePassed", stylePassed);
+
+            if (!compliancePassed)
+            {
+                requestContentBuilder.With("ComplianceFailedReasons", (ApprenticeshipQAApprenticeshipComplianceFailedReasons)1);
+            }
+
+            if (!stylePassed)
+            {
+                requestContentBuilder.With("StyleFailedReasons", (ApprenticeshipQAApprenticeshipStyleFailedReasons)1);
+            }
+
+            var requestContent = requestContentBuilder.ToContent();
+
+            // Act
+            var response = await HttpClient.PostAsync(
+                $"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}",
+                requestContent);
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+
+            var submissionStatus = await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
+                new GetLatestApprenticeshipQASubmissionForProvider()
+                {
+                    ProviderId = providerId
+                }));
+            Assert.Equal(expectedSubmissionPassed, submissionStatus.AsT1.Passed);
+        }
     }
 }

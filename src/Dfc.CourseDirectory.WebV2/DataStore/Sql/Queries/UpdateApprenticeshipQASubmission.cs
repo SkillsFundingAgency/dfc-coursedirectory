@@ -9,7 +9,7 @@ namespace Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries
         public int ApprenticeshipQASubmissionId { get; set; }
         public bool? Passed { get; set; }
         public string LastAssessedByUserId { get; set; }
-        public DateTime LastAssessedOn { get; set; }
+        public DateTime? LastAssessedOn { get; set; }
         public bool? ProviderAssessmentPassed { get; set; }
         public bool? ApprenticeshipAssessmentsPassed { get; set; }
     }
