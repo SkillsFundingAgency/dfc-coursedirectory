@@ -1,0 +1,85 @@
+﻿@model Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderApprenticeshipQAInfoPanel.ViewModel
+
+<aside class="pttcd-apprenticeship-qa-info-panel pttcd-apprenticeship-qa-info-panel--first" role="complementary">
+    <h3 class="govuk-heading-m govuk-!-margin-bottom-6">
+        @Model.ProviderName
+    </h3>
+    <h3 class="govuk-heading-s govuk-!-margin-bottom-0">
+        UKPRN
+    </h3>
+    <ul class="govuk-list govuk-!-font-size-16">
+        <li>@Model.Ukprn</li>
+    </ul>
+    @if (Model.AddressParts.Count > 0)
+    {
+        <h3 class="govuk-heading-s govuk-!-margin-bottom-0">
+            Address
+        </h3>
+        <ul class="govuk-list govuk-!-font-size-16">
+            @foreach (var part in Model.AddressParts)
+            {
+                <li>@part</li>
+            }
+        </ul>
+    }
+    @if (!string.IsNullOrEmpty(Model.Website))
+    {
+        <h3 class="govuk-heading-s govuk-!-margin-bottom-0">
+            Web
+        </h3>
+        <ul class="govuk-list govuk-!-font-size-16">
+            <li><a href="@Model.Website" rel="noreferrer" target="_blank">@Model.Website</a></li>
+        </ul>
+    }
+    <h3 class="govuk-heading-s govuk-!-margin-bottom-0">
+        Contact name
+    </h3>
+    <ul class="govuk-list govuk-!-font-size-16">
+        <li>PLACEHOLDER</li>
+    </ul>
+    @if (!string.IsNullOrEmpty(Model.Email))
+    {
+        <h3 class="govuk-heading-s govuk-!-margin-bottom-0">
+            Email
+        </h3>
+        <ul class="govuk-list govuk-!-font-size-16">
+            <li><a href="mailto:@Model.Email">@Model.Email</a></li>
+        </ul>
+    }
+    @if (!string.IsNullOrEmpty(Model.Telephone))
+    {
+        <h3 class="govuk-heading-s govuk-!-margin-bottom-0">
+            Telephone
+        </h3>
+        <ul class="govuk-list govuk-!-font-size-16">
+            <li>@Model.Telephone</li>
+        </ul>
+    }
+    <h3 class="govuk-heading-s govuk-!-margin-bottom-0" id="subsection-title">
+        Last signed in
+    </h3>
+    <ul class="govuk-list govuk-!-font-size-16">
+        <li>@Model.LastSignedIn?.FullName</li>
+    </ul>
+    <h3 class="govuk-heading-s govuk-!-margin-bottom-0">
+        Date
+    </h3>
+    <ul class="govuk-list govuk-!-font-size-16">
+        <li>@Model.LastSignedInDate?.ToString("dd MMM yyyy")</li>
+    </ul>
+</aside>
+
+<aside class="pttcd-apprenticeship-qa-info-panel govuk-!-margin-top-6" role="complementary">
+    <h3 class="govuk-heading-s govuk-!-margin-bottom-0" id="subsection-title">
+        Quality assured by
+    </h3>
+    <ul class="govuk-list govuk-!-font-size-16">
+        <li>@Model.LastAssessedBy?.FullName</li>
+    </ul>
+    <h3 class="govuk-heading-s govuk-!-margin-bottom-0">
+        Date
+    </h3>
+    <ul class="govuk-list govuk-!-font-size-16">
+        <li>@Model.LastAssessedOn?.ToString("dd MMM yyyy")</li>
+    </ul>
+</aside>

@@ -31,6 +31,30 @@
     flex: 0;
 }
 
+.govuk-header__container {
+    border-bottom-color: #207E77;
+}
+
+.pttcd-helpdesk-dashboard-card {
+    background-color: #f8f8f8;
+    border-left: 3px solid #207E77;
+    padding: 30px;
+    margin-bottom: 30px;
+}
+
+.pttcd-inset-text__info {
+    background-color: #eef4fa;
+    border-color: #5694ca;
+}
+
+.pttcd-apprenticeship-qa-info-panel {
+    background-color: #f8f8f8;
+    padding: 1rem 1rem .5rem 1rem;
+}
+
+.pttcd-apprenticeship-qa-info-panel--first {
+    border-top: 2px solid #207E77;
+}
 .pttcd-\!-width-120px {
     width: 120px !important;
 }
