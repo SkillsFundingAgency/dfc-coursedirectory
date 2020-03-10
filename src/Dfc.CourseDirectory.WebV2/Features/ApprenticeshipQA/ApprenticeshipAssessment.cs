@@ -162,7 +162,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
                     ApprenticeshipAssessmentsPassed = passed
                 });
 
-            var vm = request.Adapt<ConfirmationViewModel>();
+            var vm = (await CreateViewModel(request.ApprenticeshipId)).AsT1.Adapt<ConfirmationViewModel>();
+            request.Adapt(vm);
             vm.Passed = IsQAPassed(request.CompliancePassed.Value, request.StylePassed.Value);
 
             return vm;
