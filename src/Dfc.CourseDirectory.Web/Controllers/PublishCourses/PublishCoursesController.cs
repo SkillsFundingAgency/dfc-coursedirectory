@@ -60,20 +60,24 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                    : _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(UKPRN))
                        .Result.Value);
             Courses = coursesByUKPRN.Value.SelectMany(o => o.Value).SelectMany(i => i.Value).ToList();
+            Courses = GetErrorMessages(Courses, ValidationMode.MigrateCourse).ToList();
+
             PublishViewModel vm = new PublishViewModel();
 
 
             switch (publishMode)
             {
                 case PublishMode.Migration:
-                   if (Courses.Where(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.MigrationPending)).Any())
+                   if (Courses.Where(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.MigrationPending) && x.IsValid == false).Any())
                     {
                         vm.PublishMode = PublishMode.Migration;
-                        var migratedCourses = Courses.Where(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.MigrationPending || cr.RecordStatus == RecordStatus.MigrationReadyToGoLive)).ToList();
-                        vm.NumberOfCoursesInFiles = migratedCourses.SelectMany(s => s.CourseRuns.Where(cr => cr.RecordStatus == RecordStatus.MigrationPending || cr.RecordStatus == RecordStatus.MigrationReadyToGoLive)).Count();
-                        vm.Courses = migratedCourses.OrderBy(x => x.QualificationCourseTitle);
-                        vm.AreAllReadyToBePublished = CheckAreAllReadyToBePublished(migratedCourses, PublishMode.Migration);
-                        vm.Courses = GetErrorMessages(vm.Courses, ValidationMode.MigrateCourse);
+
+                        var migratedCourses = Courses.Where(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.MigrationPending || cr.RecordStatus == RecordStatus.MigrationReadyToGoLive));
+                        var migratedCoursesWithErrors = GetErrorMessages(migratedCourses, ValidationMode.MigrateCourse).ToList();
+
+                        vm.NumberOfCoursesInFiles = migratedCoursesWithErrors.SelectMany(s => s.CourseRuns.Where(cr => cr.RecordStatus == RecordStatus.MigrationPending || cr.RecordStatus == RecordStatus.MigrationReadyToGoLive)).Count();
+                        vm.Courses = migratedCoursesWithErrors.OrderBy(x => x.QualificationCourseTitle);
+                        vm.AreAllReadyToBePublished = CheckAreAllReadyToBePublished(migratedCoursesWithErrors, PublishMode.Migration);
                         vm.Venues = VenueHelper.GetVenueNames(vm.Courses, _venueService).Result;
                         break;
                     }
@@ -149,8 +153,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                         return RedirectToAction("WhatDoYouWantToDoNext", "Bulkupload", new { message = message });
                     }
                   
-                   
-
                 }
             }
 
@@ -270,11 +272,13 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
             foreach (var course in courses)
             {
                 bool saveMe = false;
+
                 course.ValidationErrors = _courseService.ValidateCourse(course).Select(x => x.Value);
                 if (validationMode == ValidationMode.BulkUploadCourse && course.BulkUploadErrors.Any() && !course.ValidationErrors.Any()) {
                     course.BulkUploadErrors = new BulkUploadError[] { };
                     saveMe = true;
                 }
+
                 foreach (var courseRun in course.CourseRuns)
                 {
                     courseRun.ValidationErrors = _courseService.ValidateCourseRun(courseRun, validationMode).Select(x => x.Value);
@@ -285,6 +289,14 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                 // Save bulk upload fixed courses so that DQI stats will reflect new error counts
                 if (validationMode == ValidationMode.BulkUploadCourse && saveMe)
                     _courseService.UpdateCourseAsync(course);
+
+                var crErrors = course.CourseRuns.Select(cr => cr.ValidationErrors.Count()).Sum();
+                var cErrors = course.ValidationErrors.Count();
+
+                if(crErrors > 0 || cErrors > 0)
+                {
+                    course.IsValid = false;
+                }
             }
             return courses;
         }

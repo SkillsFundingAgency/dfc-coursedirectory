@@ -557,6 +557,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                             break;
                     }
 
+                    courseForEdit.Value.IsValid = !(courseForEdit.Value.ValidationErrors != null && courseForEdit.Value.ValidationErrors.Any());
+
                     //todo when real data
                     switch (model.Mode)
                     {
@@ -574,6 +576,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 
                     _session.Remove("NewAddedVenue");
                     _session.Remove("Option");
+
+                    var status = courseForEdit.Value.CourseStatus;
 
                     var updatedCourse = await _courseService.UpdateCourseAsync(courseForEdit.Value);
                     if (updatedCourse.IsSuccess && updatedCourse.HasValue)
