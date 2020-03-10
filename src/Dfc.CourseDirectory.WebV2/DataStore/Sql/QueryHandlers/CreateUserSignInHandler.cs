@@ -1,5 +1,4 @@
-﻿using System;
-using System.Data.SqlClient;
+﻿using System.Data.SqlClient;
 using System.Threading.Tasks;
 using Dapper;
 using Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries;
@@ -7,9 +6,9 @@ using OneOf.Types;
 
 namespace Dfc.CourseDirectory.WebV2.DataStore.Sql.QueryHandlers
 {
-    public class AddUserSignInHandler : ISqlQueryHandler<AddUserSignIn, None>
+    public class CreateUserSignInHandler : ISqlQueryHandler<CreateUserSignIn, None>
     {
-        public async Task<None> Execute(SqlTransaction transaction, AddUserSignIn query)
+        public async Task<None> Execute(SqlTransaction transaction, CreateUserSignIn query)
         {
             await MergeUser();
             await AddSignIn();
