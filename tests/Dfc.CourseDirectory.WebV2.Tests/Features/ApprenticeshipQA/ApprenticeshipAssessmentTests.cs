@@ -219,8 +219,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
             Assert.Equal("Bad style, yo", doc.GetElementById("StyleComments").TextContent);
         }
 
-        [Fact]
-        public async Task Get_QAStatusNotValidRendersReadOnly()
+        [Theory]
+        [InlineData(true, ApprenticeshipQAStatus.Passed)]
+        [InlineData(false, ApprenticeshipQAStatus.Failed)]
+        [InlineData(false, ApprenticeshipQAStatus.UnableToComplete)]
+        public async Task Get_QAStatusNotValidRendersReadOnly(bool passed, ApprenticeshipQAStatus qaStatus)
         {
             // Arrange
             var ukprn = 12345;
@@ -228,7 +231,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
             var providerId = await TestData.CreateProvider(
                 ukprn: ukprn,
                 providerName: "Provider 1",
-                apprenticeshipQAStatus: ApprenticeshipQAStatus.Submitted);
+                apprenticeshipQAStatus: qaStatus);
 
             var providerUserId = $"{ukprn}-user";
             await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person");
@@ -238,12 +241,22 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
                 apprenticeshipTitle: "Test title",
                 marketingInformation: "Test marketing info");
 
-            await TestData.CreateApprenticeshipQASubmission(
+            var submissionId = await TestData.CreateApprenticeshipQASubmission(
                 providerId,
                 submittedOn: Clock.UtcNow,
                 submittedByUserId: providerUserId,
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
+
+            await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpdateApprenticeshipQASubmission()
+            {
+                ApprenticeshipAssessmentsPassed = passed,
+                ApprenticeshipQASubmissionId = submissionId,
+                LastAssessedByUserId = User.UserId.ToString(),
+                LastAssessedOn = Clock.UtcNow,
+                Passed = passed,
+                ProviderAssessmentPassed = passed
+            }));
 
             await User.AsHelpdesk();
 

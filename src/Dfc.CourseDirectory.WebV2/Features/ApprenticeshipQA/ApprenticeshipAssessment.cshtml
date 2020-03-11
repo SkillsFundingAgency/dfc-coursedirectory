@@ -31,10 +31,10 @@
                     <govuk-radios-hint>
                         The apprenticeship training course is quality assured against compliance guidance.
                     </govuk-radios-hint>
-                    <govuk-radios-item value="@(true)">
+                    <govuk-radios-item disabled="@Model.IsReadOnly" value="@(true)">
                         Pass
                     </govuk-radios-item>
-                    <govuk-radios-item value="@(false)">
+                    <govuk-radios-item disabled="@Model.IsReadOnly" value="@(false)">
                         Reject
                         <govuk-radios-item-conditional>
                             <govuk-checkboxes asp-for="ComplianceFailedReasons" id-prefix="ComplianceFailedReasons">
@@ -81,10 +81,10 @@
                     <govuk-radios-hint>
                         The apprenticeship training course is quality assured against style guidance.
                     </govuk-radios-hint>
-                    <govuk-radios-item value="@(true)">
+                    <govuk-radios-item disabled="@Model.IsReadOnly" value="@(true)">
                         Pass
                     </govuk-radios-item>
-                    <govuk-radios-item value="@(false)">
+                    <govuk-radios-item disabled="@Model.IsReadOnly" value="@(false)">
                         Reject
                         <govuk-radios-item-conditional>
                             <govuk-checkboxes asp-for="StyleFailedReasons" id-prefix="StyleFailedReasons">
