@@ -74,7 +74,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
 
             var doc = await response.GetDocument();
 
-            var submitted = doc.QuerySelector("#ready-to-qa");
+            var submitted = doc.QuerySelector("#submitted");
             var submittedRows = submitted.QuerySelectorAll("tbody>tr");
 
             var firstSubmittedRow = submittedRows[0];
@@ -101,7 +101,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
 
             var doc = await response.GetDocument();
 
-            Assert.Equal("You have no providers ready to QA.", doc.QuerySelector("#ready-to-qa p").TextContent);
+            Assert.Equal("You have no providers ready to QA.", doc.QuerySelector("#submitted p").TextContent);
             Assert.Equal("You have no providers in progress.", doc.QuerySelector("#in-progress p").TextContent);
             Assert.Equal("You have no providers that have failed QA.", doc.QuerySelector("#fail p").TextContent);
             Assert.Equal("You have no providers unable to complete.", doc.QuerySelector("#unable-to-complete p").TextContent);
