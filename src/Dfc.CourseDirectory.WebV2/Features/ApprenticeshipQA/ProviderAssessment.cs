@@ -33,7 +33,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
         public string MarketingInformation { get; set; }
     }
 
-    public class Command : IRequest<OneOf<ConfirmationViewModel, ModelWithErrors<ViewModel>>>
+    public class Command : IRequest<OneOf<ModelWithErrors<ViewModel>, ConfirmationViewModel>>
     {
         public Guid ProviderId { get; set; }
         public bool? CompliancePassed { get; set; }
@@ -58,7 +58,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
 
     public class Handler :
         IRequestHandler<Query, OneOf<Error<ErrorReason>, ViewModel>>,
-        IRequestHandler<Command, OneOf<ConfirmationViewModel, ModelWithErrors<ViewModel>>>
+        IRequestHandler<Command, OneOf<ModelWithErrors<ViewModel>, ConfirmationViewModel>>
     {
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
@@ -80,7 +80,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
         public Task<OneOf<Error<ErrorReason>, ViewModel>> Handle(Query request, CancellationToken cancellationToken) =>
             CreateViewModel(request.ProviderId);
 
-        public async Task<OneOf<ConfirmationViewModel, ModelWithErrors<ViewModel>>> Handle(
+        public async Task<OneOf<ModelWithErrors<ViewModel>, ConfirmationViewModel>> Handle(
             Command request,
             CancellationToken cancellationToken)
         {
