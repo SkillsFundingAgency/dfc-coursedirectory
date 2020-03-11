@@ -464,7 +464,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
             var doc = await response.GetDocument();
             var completeButton = doc.GetElementsByClassName("govuk-button").SingleOrDefault();
             Assert.Null(completeButton);
-            var infoBox = doc.GetElementsByClassName("pttcd-inset-text__info").SingleOrDefault();
+            var infoBox = doc.GetElementsByClassName("govuk-inset-text").SingleOrDefault();
             Assert.NotNull(infoBox);
             Assert.Equal(
                 "Overall the provider information and apprenticeship training course has FAILED quality assurance.",
@@ -517,7 +517,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
             var doc = await response.GetDocument();
             var completeButton = doc.GetElementsByClassName("govuk-button").SingleOrDefault();
             Assert.Null(completeButton);
-            var infoBox = doc.GetElementsByClassName("pttcd-inset-text__info").SingleOrDefault();
+            var infoBox = doc.GetElementsByClassName("govuk-inset-text").SingleOrDefault();
             Assert.NotNull(infoBox);
             Assert.Equal(
                 "Overall the provider information and apprenticeship training course has PASSED quality assurance.",
