@@ -30,3 +30,7 @@
 .pttcd-apprenticeship-qa-provider-selected-summary-status {
     flex: 0;
 }
+
+.pttcd-\!-width-120px {
+    width: 120px !important;
+}
