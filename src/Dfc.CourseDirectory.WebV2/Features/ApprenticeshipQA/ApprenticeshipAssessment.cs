@@ -33,6 +33,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
         public Guid ProviderId { get; set; }
         public string ApprenticeshipTitle { get; set; }
         public string ApprenticeshipMarketingInformation { get; set; }
+        public bool IsReadOnly { get; set; }
     }
 
     public class Command : IRequest<OneOf<Error<ErrorReason>, ModelWithErrors<ViewModel>, ConfirmationViewModel>>
@@ -107,6 +108,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
             }
 
             var data = errorOrData.AsT1;
+
+            if (data.QAStatus != ApprenticeshipQAStatus.Submitted && data.QAStatus != ApprenticeshipQAStatus.InProgress)
+            {
+                return new Error<ErrorReason>(ErrorReason.NoValidSubmission);
+            }
 
             var validator = new CommandValidator();
             var validationResult = await validator.ValidateAsync(request);
@@ -200,8 +206,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
                     ProviderId = providerId
                 });
 
-            if (qaStatus != ApprenticeshipQAStatus.Submitted &&
-                qaStatus != ApprenticeshipQAStatus.InProgress)
+            if (qaStatus == ApprenticeshipQAStatus.NotStarted)
             {
                 return new Error<ErrorReason>(ErrorReason.NoValidSubmission);
             }
@@ -239,7 +244,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
                 QAStatus = qaStatus,
                 LatestSubmission = latestSubmission,
                 SubmissionApprenticeship = submissionApprenticeship,
-                LatestAssessment = assessment
+                LatestAssessment = assessment,
             };
         }
 
@@ -255,6 +260,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
             StyleComments = data.LatestAssessment.Match(_ => string.Empty, v => v.StyleComments),
             StyleFailedReasons = data.LatestAssessment.Match(_ => ApprenticeshipQAApprenticeshipStyleFailedReasons.None, v => v.StyleFailedReasons),
             StylePassed = data.LatestAssessment.Match(_ => null, v => v.StylePassed),
+            IsReadOnly = !(data.QAStatus == ApprenticeshipQAStatus.Submitted || data.QAStatus == ApprenticeshipQAStatus.InProgress)
         };
 
         private async Task<OneOf<NotFound, Guid>> GetProviderIdForApprenticeship(Guid apprenticeshipId)

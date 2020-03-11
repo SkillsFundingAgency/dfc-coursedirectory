@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using AngleSharp.Html.Dom;
 using Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.WebV2.Models;
 using Xunit;
@@ -87,10 +89,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
         }
 
         [Theory]
-        [InlineData(ApprenticeshipQAStatus.Failed)]
         [InlineData(ApprenticeshipQAStatus.NotStarted)]
-        [InlineData(ApprenticeshipQAStatus.Passed)]
-        [InlineData(ApprenticeshipQAStatus.UnableToComplete)]
         public async Task Get_SubmissionAtInvalidStatusReturnsBadRequest(ApprenticeshipQAStatus qaStatus)
         {
             // Arrange
@@ -162,6 +161,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
             Assert.Equal(
                 "Test marketing info",
                 doc.GetElementById("pttcd-apprenticeship-qa-apprenticeship-assessment-marketing-information").TextContent);
+            AssertFormFieldsDisabledState(doc, expectDisabled: false);
+            Assert.Empty(doc.GetElementsByClassName("govuk-back-link"));
         }
 
         [Fact]
@@ -211,12 +212,50 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
             var doc = await response.GetDocument();
-            //
             Assert.Equal("checked", doc.GetElementById("CompliancePassed").GetAttribute("checked"));
             Assert.Null(doc.GetElementById("StylePassed").GetAttribute("checked"));
             Assert.Equal("checked", doc.GetElementWithLabel("Job roles included").GetAttribute("checked"));
             Assert.Equal("checked", doc.GetElementWithLabel("Term 'course' used").GetAttribute("checked"));
             Assert.Equal("Bad style, yo", doc.GetElementById("StyleComments").TextContent);
+        }
+
+        [Fact]
+        public async Task Get_QAStatusNotValidRendersReadOnly()
+        {
+            // Arrange
+            var ukprn = 12345;
+
+            var providerId = await TestData.CreateProvider(
+                ukprn: ukprn,
+                providerName: "Provider 1",
+                apprenticeshipQAStatus: ApprenticeshipQAStatus.Submitted);
+
+            var providerUserId = $"{ukprn}-user";
+            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person");
+
+            var apprenticeshipId = await TestData.CreateApprenticeship(
+                ukprn,
+                apprenticeshipTitle: "Test title",
+                marketingInformation: "Test marketing info");
+
+            await TestData.CreateApprenticeshipQASubmission(
+                providerId,
+                submittedOn: Clock.UtcNow,
+                submittedByUserId: providerUserId,
+                providerMarketingInformation: "The overview",
+                apprenticeshipIds: new[] { apprenticeshipId });
+
+            await User.AsHelpdesk();
+
+            // Act
+            var response = await HttpClient.GetAsync($"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+            var doc = await response.GetDocument();
+            AssertFormFieldsDisabledState(doc, expectDisabled: true);
+            Assert.NotEmpty(doc.GetElementsByClassName("govuk-back-link"));
         }
 
         [Theory]
@@ -834,6 +873,81 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
                     ProviderId = providerId
                 }));
             Assert.Equal(expectedSubmissionPassed, submissionStatus.AsT1.Passed);
+        }
+
+        [Theory]
+        [InlineData(true, ApprenticeshipQAStatus.Passed)]
+        [InlineData(false, ApprenticeshipQAStatus.Failed)]
+        [InlineData(false, ApprenticeshipQAStatus.UnableToComplete)]
+        public async Task Post_QAStatusNotValidReturnsBadRequest(bool passed, ApprenticeshipQAStatus qaStatus)
+        {
+            // Arrange
+            var ukprn = 12345;
+
+            var providerId = await TestData.CreateProvider(
+                ukprn: ukprn,
+                providerName: "Provider 1",
+                apprenticeshipQAStatus: qaStatus);
+
+            var providerUserId = $"{ukprn}-user";
+            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person");
+
+            var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
+
+            var submissionId = await TestData.CreateApprenticeshipQASubmission(
+                providerId,
+                submittedOn: Clock.UtcNow,
+                submittedByUserId: providerUserId,
+                providerMarketingInformation: "The overview",
+                apprenticeshipIds: new[] { apprenticeshipId });
+
+            await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpdateApprenticeshipQASubmission()
+            {
+                ApprenticeshipAssessmentsPassed = passed,
+                ApprenticeshipQASubmissionId = submissionId,
+                LastAssessedByUserId = User.UserId.ToString(),
+                LastAssessedOn = Clock.UtcNow,
+                Passed = passed,
+                ProviderAssessmentPassed = passed
+            }));
+
+            await User.AsHelpdesk();
+
+            var requestContent = new FormUrlEncodedContentBuilder()
+                .Add("CompliancePassed", true)
+                .Add("StylePassed", true)
+                .ToContent();
+
+            // Act
+            var response = await HttpClient.PostAsync(
+                $"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}",
+                requestContent);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        private void AssertFormFieldsDisabledState(IHtmlDocument doc, bool expectDisabled)
+        {
+            var fields = doc.GetElementsByTagName("input")
+                .Concat(doc.GetElementsByTagName("textarea"));
+
+            foreach (var f in fields)
+            {
+                if (f.GetAttribute("name") == "__RequestVerificationToken")
+                {
+                    continue;
+                }
+
+                if (expectDisabled)
+                {
+                    Assert.Equal("disabled", f.GetAttribute("disabled"));
+                }
+                else
+                {
+                    Assert.Null(f.GetAttribute("disabled"));
+                }
+            }
         }
     }
 }
