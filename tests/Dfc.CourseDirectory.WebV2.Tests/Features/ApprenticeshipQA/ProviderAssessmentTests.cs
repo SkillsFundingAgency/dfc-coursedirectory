@@ -430,7 +430,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
 
             var doc = await response.GetDocument();
-            doc.AssertHasError("CompliancePassed", "An outcome must be selected.");
+            doc.AssertHasError("CompliancePassed", "An outcome must be selected");
         }
 
         [Fact]
@@ -472,8 +472,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
 
             var doc = await response.GetDocument();
-            doc.AssertHasError("ComplianceFailedReasons", "A reason must be selected.");
-            doc.AssertHasError("ComplianceComments", "Enter comments for the reason selected.");
+            doc.AssertHasError("ComplianceFailedReasons", "A reason must be selected");
+            doc.AssertHasError("ComplianceComments", "Enter comments for the reason selected");
         }
 
         [Fact]
@@ -514,7 +514,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
 
             var doc = await response.GetDocument();
-            doc.AssertHasError("StylePassed", "An outcome must be selected.");
+            doc.AssertHasError("StylePassed", "An outcome must be selected");
         }
 
         [Fact]
@@ -556,8 +556,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
 
             var doc = await response.GetDocument();
-            doc.AssertHasError("StyleFailedReasons", "A reason must be selected.");
-            doc.AssertHasError("StyleComments", "Enter comments for the reason selected.");
+            doc.AssertHasError("StyleFailedReasons", "A reason must be selected");
+            doc.AssertHasError("StyleComments", "Enter comments for the reason selected");
         }
 
         [Fact]
