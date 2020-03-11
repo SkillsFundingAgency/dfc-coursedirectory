@@ -21,8 +21,9 @@ namespace Dfc.CourseDirectory.Web.ViewModels.Migration
                 RecordStatus.MigrationReadyToGoLive
             };
 
-            ErrorsCount = courses.SelectMany(c => c.CourseRuns)
-                .Count(x=>x.RecordStatus == RecordStatus.MigrationPending || x.RecordStatus == RecordStatus.MigrationReadyToGoLive);
+            ErrorsCount = courses.Where(c => !string.IsNullOrEmpty(c.LearnAimRef) && !string.IsNullOrEmpty(c.QualificationCourseTitle)) // course does not haev Larns No or qualification title
+                                    .SelectMany(c => c.CourseRuns)
+                                    .Count(x => x.RecordStatus == RecordStatus.MigrationPending || x.RecordStatus == RecordStatus.MigrationReadyToGoLive);
 
             PublishedCount = courses.SelectMany(c => c.CourseRuns)
                 .Count(x => x.RecordStatus == RecordStatus.Live);

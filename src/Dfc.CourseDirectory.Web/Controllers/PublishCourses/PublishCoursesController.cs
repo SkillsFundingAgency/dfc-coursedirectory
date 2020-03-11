@@ -59,7 +59,12 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                    ? null
                    : _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(UKPRN))
                        .Result.Value);
-            Courses = coursesByUKPRN.Value.SelectMany(o => o.Value).SelectMany(i => i.Value).ToList();
+
+            // Only display courses that have Lars and Qualification titles
+            Courses = coursesByUKPRN.Value.SelectMany(o => o.Value).SelectMany(i => i.Value)
+                                                                    .Where(c => !string.IsNullOrWhiteSpace(c.LearnAimRef) 
+                                                                                && !string.IsNullOrWhiteSpace(c.QualificationCourseTitle)).ToList();
+
             Courses = GetErrorMessages(Courses, ValidationMode.MigrateCourse).ToList();
 
             PublishViewModel vm = new PublishViewModel();
@@ -75,7 +80,9 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                         var migratedCourses = Courses.Where(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.MigrationPending || cr.RecordStatus == RecordStatus.MigrationReadyToGoLive));
                         var migratedCoursesWithErrors = GetErrorMessages(migratedCourses, ValidationMode.MigrateCourse).ToList();
 
-                        vm.NumberOfCoursesInFiles = migratedCoursesWithErrors.SelectMany(s => s.CourseRuns.Where(cr => cr.RecordStatus == RecordStatus.MigrationPending || cr.RecordStatus == RecordStatus.MigrationReadyToGoLive)).Count();
+                        vm.NumberOfCoursesInFiles = migratedCoursesWithErrors.SelectMany(s => s.CourseRuns.Where(cr => cr.RecordStatus == RecordStatus.MigrationPending 
+                                                                                                                    || cr.RecordStatus == RecordStatus.MigrationReadyToGoLive)).Count();
+
                         vm.Courses = migratedCoursesWithErrors.OrderBy(x => x.QualificationCourseTitle);
                         vm.AreAllReadyToBePublished = CheckAreAllReadyToBePublished(migratedCoursesWithErrors, PublishMode.Migration);
                         vm.Venues = VenueHelper.GetVenueNames(vm.Courses, _venueService).Result;
