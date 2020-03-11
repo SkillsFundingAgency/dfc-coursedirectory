@@ -52,7 +52,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA
         {
             command.ProviderId = providerId;
             var result = await _mediator.Send(command);
-            return result.Match(
+            return result.Match<IActionResult>(
+                _ => BadRequest(),
                 errors => this.ViewFromErrors(errors),
                 vm => View("ProviderAssessmentConfirmation", vm));
         }
@@ -62,7 +63,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA
         {
             var result = await _mediator.Send(query);
             return result.Match<IActionResult>(
-                error => BadRequest(),
+                _ => BadRequest(),
                 vm => View(vm));
         }
 
@@ -73,7 +74,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA
         {
             command.ApprenticeshipId = apprenticeshipId;
             var result = await _mediator.Send(command);
-            return result.Match(
+            return result.Match<IActionResult>(
+                _ => BadRequest(),
                 errors => this.ViewFromErrors(errors),
                 vm => View("ApprenticeshipAssessmentConfirmation", vm));
         }
@@ -83,7 +85,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA
         {
             var result = await _mediator.Send(command);
             return result.Match<IActionResult>(
-                error => BadRequest(),
+                _ => BadRequest(),
                 vm => View(vm));
         }
     }

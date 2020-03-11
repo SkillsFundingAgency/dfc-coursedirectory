@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
+using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.WebV2.DataStore.Sql;
 using Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries;
@@ -33,7 +34,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
         public string MarketingInformation { get; set; }
     }
 
-    public class Command : IRequest<OneOf<ModelWithErrors<ViewModel>, ConfirmationViewModel>>
+    public class Command : IRequest<OneOf<Error<ErrorReason>, ModelWithErrors<ViewModel>, ConfirmationViewModel>>
     {
         public Guid ProviderId { get; set; }
         public bool? CompliancePassed { get; set; }
@@ -58,7 +59,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
 
     public class Handler :
         IRequestHandler<Query, OneOf<Error<ErrorReason>, ViewModel>>,
-        IRequestHandler<Command, OneOf<ModelWithErrors<ViewModel>, ConfirmationViewModel>>
+        IRequestHandler<Command, OneOf<Error<ErrorReason>, ModelWithErrors<ViewModel>, ConfirmationViewModel>>
     {
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
@@ -77,22 +78,42 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
             _clock = clock;
         }
 
-        public Task<OneOf<Error<ErrorReason>, ViewModel>> Handle(Query request, CancellationToken cancellationToken) =>
-            CreateViewModel(request.ProviderId);
+        public async Task<OneOf<Error<ErrorReason>, ViewModel>> Handle(Query request, CancellationToken cancellationToken)
+        {
+            var errorOrData = await CheckStatus(request.ProviderId);
 
-        public async Task<OneOf<ModelWithErrors<ViewModel>, ConfirmationViewModel>> Handle(
+            if (errorOrData.Value is Error<ErrorReason>)
+            {
+                return errorOrData.AsT0;
+            }
+            else
+            {
+                return CreateViewModel(errorOrData.AsT1);
+            }
+        }
+
+        public async Task<OneOf<Error<ErrorReason>, ModelWithErrors<ViewModel>, ConfirmationViewModel>> Handle(
             Command request,
             CancellationToken cancellationToken)
         {
+            var errorOrData = await CheckStatus(request.ProviderId);
+
+            if (errorOrData.Value is Error<ErrorReason>)
+            {
+                return errorOrData.AsT0;
+            }
+
+            var data = errorOrData.AsT1;
+
             var validator = new CommandValidator();
             var validationResult = await validator.ValidateAsync(request);
 
             if (!validationResult.IsValid)
             {
-                var errorVm = (await CreateViewModel(request.ProviderId)).AsT1;
-                request.Adapt(errorVm);
+                var vm = CreateViewModel(data);
+                request.Adapt(vm);
 
-                return new ModelWithErrors<ViewModel>(errorVm, validationResult);
+                return new ModelWithErrors<ViewModel>(vm, validationResult);
             }
 
             // Sanitize request
@@ -111,14 +132,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
 
             var passed = IsQAPassed(request.CompliancePassed.Value, request.StylePassed.Value);
 
-            var submission = (await _sqlQueryDispatcher.ExecuteQuery(
-                new GetLatestApprenticeshipQASubmissionForProvider()
-                {
-                    ProviderId = request.ProviderId
-                })).AsT1;
-
-            var overallPassed = submission.ApprenticeshipAssessmentsPassed.HasValue ?
-                submission.ApprenticeshipAssessmentsPassed.Value && passed :
+            var overallPassed = data.LatestSubmission.ApprenticeshipAssessmentsPassed.HasValue ?
+                data.LatestSubmission.ApprenticeshipAssessmentsPassed.Value && passed :
                 (bool?)null;
 
             await _sqlQueryDispatcher.ExecuteQuery(
@@ -131,7 +146,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
             await _sqlQueryDispatcher.ExecuteQuery(
                 new CreateApprenticeshipQAProviderAssessment()
                 {
-                    ApprenticeshipQASubmissionId = submission.ApprenticeshipQASubmissionId,
+                    ApprenticeshipQASubmissionId = data.LatestSubmission.ApprenticeshipQASubmissionId,
                     AssessedByUserId = currentUserId,
                     AssessedOn = _clock.UtcNow,
                     ComplianceComments = request.ComplianceComments,
@@ -146,21 +161,22 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
             await _sqlQueryDispatcher.ExecuteQuery(
                 new UpdateApprenticeshipQASubmission()
                 {
-                    ApprenticeshipQASubmissionId = submission.ApprenticeshipQASubmissionId,
+                    ApprenticeshipQASubmissionId = data.LatestSubmission.ApprenticeshipQASubmissionId,
                     Passed = overallPassed,
                     LastAssessedByUserId = currentUserId,
                     LastAssessedOn = _clock.UtcNow,
                     ProviderAssessmentPassed = passed,
-                    ApprenticeshipAssessmentsPassed = submission.ApprenticeshipAssessmentsPassed
+                    ApprenticeshipAssessmentsPassed = data.LatestSubmission.ApprenticeshipAssessmentsPassed
                 });
 
-            var vm = request.Adapt<ConfirmationViewModel>();
-            vm.Passed = IsQAPassed(request.CompliancePassed.Value, request.StylePassed.Value);
+            var confirmVm = CreateViewModel(data).Adapt<ConfirmationViewModel>();
+            request.Adapt(confirmVm);
+            confirmVm.Passed = IsQAPassed(request.CompliancePassed.Value, request.StylePassed.Value);
 
-            return vm;
+            return confirmVm;
         }
 
-        private async Task<OneOf<Error<ErrorReason>, ViewModel>> CreateViewModel(Guid providerId)
+        private async Task<OneOf<Error<ErrorReason>, Data>> CheckStatus(Guid providerId)
         {
             var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(
                 new GetProviderById()
@@ -204,22 +220,38 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
                     ApprenticeshipQASubmissionId = latestSubmission.ApprenticeshipQASubmissionId
                 });
 
-            return new ViewModel()
+            return new Data()
             {
-                ProviderId = providerId,
-                MarketingInformation = latestSubmission.ProviderMarketingInformation,
-                ProviderName = provider.ProviderName,
-                ComplianceComments = assessment.Match(_ => string.Empty, v => v.ComplianceComments),
-                ComplianceFailedReasons = assessment.Match(_ => ApprenticeshipQAProviderComplianceFailedReasons.None, v => v.ComplianceFailedReasons),
-                CompliancePassed = assessment.Match(_ => null, v => v.CompliancePassed),
-                StyleComments = assessment.Match(_ => string.Empty, v => v.StyleComments),
-                StyleFailedReasons = assessment.Match(_ => ApprenticeshipQAProviderStyleFailedReasons.None, v => v.StyleFailedReasons),
-                StylePassed = assessment.Match(_ => null, v => v.StylePassed),
+                Provider = provider,
+                QAStatus = qaStatus,
+                LatestSubmission = latestSubmission,
+                LatestAssessment = assessment
             };
         }
 
+        private ViewModel CreateViewModel(Data data) => new ViewModel()
+        {
+            ProviderId = data.Provider.Id,
+            MarketingInformation = data.LatestSubmission.ProviderMarketingInformation,
+            ProviderName = data.Provider.ProviderName,
+            ComplianceComments = data.LatestAssessment.Match(_ => string.Empty, v => v.ComplianceComments),
+            ComplianceFailedReasons = data.LatestAssessment.Match(_ => ApprenticeshipQAProviderComplianceFailedReasons.None, v => v.ComplianceFailedReasons),
+            CompliancePassed = data.LatestAssessment.Match(_ => null, v => v.CompliancePassed),
+            StyleComments = data.LatestAssessment.Match(_ => string.Empty, v => v.StyleComments),
+            StyleFailedReasons = data.LatestAssessment.Match(_ => ApprenticeshipQAProviderStyleFailedReasons.None, v => v.StyleFailedReasons),
+            StylePassed = data.LatestAssessment.Match(_ => null, v => v.StylePassed),
+        };
+
         private static bool IsQAPassed(bool compliancePassed, bool stylePassed) =>
             compliancePassed && stylePassed;
+
+        private class Data
+        {
+            public Provider Provider { get; set; }
+            public ApprenticeshipQAStatus QAStatus { get; set; }
+            public ApprenticeshipQASubmission LatestSubmission { get; set; }
+            public OneOf<None, ApprenticeshipQAProviderAssessment> LatestAssessment { get; set; }
+        }
 
         private class CommandValidator : AbstractValidator<Command>
         {
