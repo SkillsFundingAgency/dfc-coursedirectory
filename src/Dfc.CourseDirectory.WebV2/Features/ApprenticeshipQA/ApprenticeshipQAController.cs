@@ -88,5 +88,27 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA
                 _ => BadRequest(),
                 vm => View(vm));
         }
+
+        [HttpGet("{providerId}/status")]
+        public async Task<IActionResult> Status(Status.Query query)
+        {
+            var result = await _mediator.Send(query);
+            return result.Match<IActionResult>(
+                _ => BadRequest(),
+                vm => View(vm));
+        }
+
+        [HttpPost("{providerId}/status")]
+        public async Task<IActionResult> Status(
+            Guid providerId,
+            Status.Command command)
+        {
+            command.ProviderId = providerId;
+            var result = await _mediator.Send(command);
+            return result.Match<IActionResult>(
+                _ => BadRequest(),
+                errors => this.ViewFromErrors(errors),
+                _ => RedirectToAction("ProviderSelected", new { providerId }));
+        }
     }
 }
