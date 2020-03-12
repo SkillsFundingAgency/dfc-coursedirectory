@@ -83,7 +83,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
         [InlineData(ApprenticeshipQAStatus.NotStarted)]
         [InlineData(ApprenticeshipQAStatus.Passed)]
         [InlineData(ApprenticeshipQAStatus.Submitted)]
-        [InlineData(ApprenticeshipQAStatus.UnableToComplete)]
+        [InlineData(ApprenticeshipQAStatus.UnableToComplete | ApprenticeshipQAStatus.NotStarted)]
         public async Task Post_StatusNotInProgressReturnsBadRequest(ApprenticeshipQAStatus status)
         {
             // Arrange
@@ -110,7 +110,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
                     providerMarketingInformation: "The overview",
                     apprenticeshipIds: new[] { apprenticeshipId });
 
-                if (status != ApprenticeshipQAStatus.Submitted && status != ApprenticeshipQAStatus.UnableToComplete)
+                if (status != ApprenticeshipQAStatus.Submitted && !status.HasFlag(ApprenticeshipQAStatus.UnableToComplete))
                 {
                     var passed = status == ApprenticeshipQAStatus.Failed ? false : true;
 

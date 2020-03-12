@@ -213,7 +213,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
         [Theory]
         [InlineData(true, ApprenticeshipQAStatus.Passed)]
         [InlineData(false, ApprenticeshipQAStatus.Failed)]
-        [InlineData(false, ApprenticeshipQAStatus.UnableToComplete)]
+        [InlineData(false, ApprenticeshipQAStatus.UnableToComplete | ApprenticeshipQAStatus.NotStarted)]
         public async Task Get_QAStatusNotValidRendersReadOnly(bool passed, ApprenticeshipQAStatus qaStatus)
         {
             // Arrange
@@ -351,7 +351,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
         [InlineData(ApprenticeshipQAStatus.Failed)]
         [InlineData(ApprenticeshipQAStatus.NotStarted)]
         [InlineData(ApprenticeshipQAStatus.Passed)]
-        [InlineData(ApprenticeshipQAStatus.UnableToComplete)]
+        [InlineData(ApprenticeshipQAStatus.UnableToComplete | ApprenticeshipQAStatus.NotStarted)]
         public async Task Post_SubmissionAtInvalidStatusReturnsBadRequest(ApprenticeshipQAStatus qaStatus)
         {
             // Arrange
@@ -874,7 +874,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
         [Theory]
         [InlineData(true, ApprenticeshipQAStatus.Passed)]
         [InlineData(false, ApprenticeshipQAStatus.Failed)]
-        [InlineData(false, ApprenticeshipQAStatus.UnableToComplete)]
+        [InlineData(false, ApprenticeshipQAStatus.UnableToComplete | ApprenticeshipQAStatus.NotStarted)]
         public async Task Post_QAStatusNotValidReturnsBadRequest(bool passed, ApprenticeshipQAStatus qaStatus)
         {
             // Arrange
