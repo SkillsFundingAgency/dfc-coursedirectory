@@ -17,7 +17,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderSelected
     public enum ErrorReason
     {
         ProviderDoesNotExist,
-        NoValidSubmission
+        InvalidStatus
     }
 
     public class Query : IRequest<OneOf<Error<ErrorReason>, ViewModel>>
@@ -76,7 +76,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderSelected
 
             if (qaStatus == ApprenticeshipQAStatus.NotStarted)
             {
-                return new Error<ErrorReason>(ErrorReason.NoValidSubmission);
+                return new Error<ErrorReason>(ErrorReason.InvalidStatus);
             }
 
             var maybeLatestSubmission = await _sqlQueryDispatcher.ExecuteQuery(
@@ -87,7 +87,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderSelected
 
             if (maybeLatestSubmission.Value is None)
             {
-                return new Error<ErrorReason>(ErrorReason.NoValidSubmission);
+                return new Error<ErrorReason>(ErrorReason.InvalidStatus);
             }
 
             var latestSubmission = maybeLatestSubmission.AsT1;
