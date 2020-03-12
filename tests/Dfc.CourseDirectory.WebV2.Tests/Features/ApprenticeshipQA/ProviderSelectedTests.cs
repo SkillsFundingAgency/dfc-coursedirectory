@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.WebV2.Models;
 using Xunit;
 
@@ -155,15 +154,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
-            await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpdateApprenticeshipQASubmission()
-            {
-                ApprenticeshipQASubmissionId = submissionId,
-                ApprenticeshipAssessmentsPassed = null,
-                LastAssessedByUserId = User.UserId.ToString(),
-                LastAssessedOn = Clock.UtcNow,
-                Passed = null,
-                ProviderAssessmentPassed = passed
-            }));
+            await TestData.UpdateApprenticeshipQASubmission(
+                submissionId,
+                providerAssessmentPassed: passed,
+                apprenticeshipAssessmentsPassed: null,
+                passed: null,
+                lastAssessedByUserId: User.UserId.ToString(),
+                lastAssessedOn: Clock.UtcNow);
 
             await User.AsHelpdesk();
 
@@ -204,15 +201,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
-            await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpdateApprenticeshipQASubmission()
-            {
-                ApprenticeshipQASubmissionId = submissionId,
-                ApprenticeshipAssessmentsPassed = true,
-                LastAssessedByUserId = User.UserId.ToString(),
-                LastAssessedOn = Clock.UtcNow,
-                Passed = null,
-                ProviderAssessmentPassed = null
-            }));
+            await TestData.UpdateApprenticeshipQASubmission(
+                submissionId,
+                providerAssessmentPassed: null,
+                apprenticeshipAssessmentsPassed: true,
+                passed: null,
+                lastAssessedByUserId: User.UserId.ToString(),
+                lastAssessedOn: Clock.UtcNow);
 
             await User.AsHelpdesk();
 
@@ -255,15 +250,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
-            await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpdateApprenticeshipQASubmission()
-            {
-                ApprenticeshipQASubmissionId = submissionId,
-                ApprenticeshipAssessmentsPassed = passed,
-                LastAssessedByUserId = User.UserId.ToString(),
-                LastAssessedOn = Clock.UtcNow,
-                Passed = null,
-                ProviderAssessmentPassed = null
-            }));
+            await TestData.UpdateApprenticeshipQASubmission(
+                submissionId,
+                providerAssessmentPassed: null,
+                apprenticeshipAssessmentsPassed: passed,
+                passed: null,
+                lastAssessedByUserId: User.UserId.ToString(),
+                lastAssessedOn: Clock.UtcNow);
 
             await User.AsHelpdesk();
 
@@ -304,15 +297,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
-            await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpdateApprenticeshipQASubmission()
-            {
-                ApprenticeshipQASubmissionId = submissionId,
-                ApprenticeshipAssessmentsPassed = null,
-                LastAssessedByUserId = User.UserId.ToString(),
-                LastAssessedOn = Clock.UtcNow,
-                Passed = null,
-                ProviderAssessmentPassed = true
-            }));
+            await TestData.UpdateApprenticeshipQASubmission(
+                submissionId,
+                providerAssessmentPassed: true,
+                apprenticeshipAssessmentsPassed: null,
+                passed: null,
+                lastAssessedByUserId: User.UserId.ToString(),
+                lastAssessedOn: Clock.UtcNow);
 
             await User.AsHelpdesk();
 
@@ -355,15 +346,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
-            await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpdateApprenticeshipQASubmission()
-            {
-                ApprenticeshipQASubmissionId = submissionId,
-                ApprenticeshipAssessmentsPassed = passed,
-                LastAssessedByUserId = User.UserId.ToString(),
-                LastAssessedOn = Clock.UtcNow,
-                Passed = passed,
-                ProviderAssessmentPassed = passed
-            }));
+            await TestData.UpdateApprenticeshipQASubmission(
+                submissionId,
+                providerAssessmentPassed: passed,
+                apprenticeshipAssessmentsPassed: passed,
+                passed: passed,
+                lastAssessedByUserId: User.UserId.ToString(),
+                lastAssessedOn: Clock.UtcNow);
 
             await User.AsHelpdesk();
 
@@ -443,15 +432,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
-            await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpdateApprenticeshipQASubmission()
-            {
-                ApprenticeshipQASubmissionId = submissionId,
-                ApprenticeshipAssessmentsPassed = false,
-                LastAssessedByUserId = User.UserId.ToString(),
-                LastAssessedOn = Clock.UtcNow,
-                Passed = false,
-                ProviderAssessmentPassed = false
-            }));
+            await TestData.UpdateApprenticeshipQASubmission(
+                submissionId,
+                providerAssessmentPassed: false,
+                apprenticeshipAssessmentsPassed: false,
+                passed: false,
+                lastAssessedByUserId: User.UserId.ToString(),
+                lastAssessedOn: Clock.UtcNow);
 
             await User.AsHelpdesk();
 
@@ -496,15 +483,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
-            await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpdateApprenticeshipQASubmission()
-            {
-                ApprenticeshipQASubmissionId = submissionId,
-                ApprenticeshipAssessmentsPassed = true,
-                LastAssessedByUserId = User.UserId.ToString(),
-                LastAssessedOn = Clock.UtcNow,
-                Passed = true,
-                ProviderAssessmentPassed = true
-            }));
+            await TestData.UpdateApprenticeshipQASubmission(
+                submissionId,
+                providerAssessmentPassed: true,
+                apprenticeshipAssessmentsPassed: true,
+                passed: true,
+                lastAssessedByUserId: User.UserId.ToString(),
+                lastAssessedOn: Clock.UtcNow);
 
             await User.AsHelpdesk();
 
