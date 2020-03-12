@@ -180,13 +180,34 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                     courseForEdit.Value.UpdatedBy = User.Claims.Where(c => c.Type == "email").Select(c => c.Value).SingleOrDefault(); // User.Identity.Name;
                     courseForEdit.Value.UpdatedDate = DateTime.Now;
 
+                    courseForEdit.Value.ValidationErrors = _courseService.ValidateCourse(courseForEdit.Value).Select(x => x.Value);
+
                     if (model.Mode == PublishMode.Migration)
                     {
-                        foreach (var courseRun in courseForEdit.Value.CourseRuns.Where(x =>
-                            x.RecordStatus == RecordStatus.MigrationReadyToGoLive))
+                        if (!(courseForEdit.Value.ValidationErrors != null && courseForEdit.Value.ValidationErrors.Any()))
                         {
-                            courseRun.RecordStatus = RecordStatus.Live;
+                            // Change courseruns status of MigrationReadyToGoLive to Live so the entire course can go live
+                            foreach (var courseRun in courseForEdit.Value.CourseRuns.Where(x => x.RecordStatus == RecordStatus.MigrationReadyToGoLive))
+                            {
+                                courseRun.RecordStatus = RecordStatus.Live;
+                            }
                         }
+                    }
+
+                    var message = string.Empty;
+                    bool isCourseValid = !(courseForEdit.Value.ValidationErrors != null && courseForEdit.Value.ValidationErrors.Any());
+
+                    RecordStatus[] validStatuses = new[] { RecordStatus.MigrationReadyToGoLive, RecordStatus.Live };
+
+                    if (isCourseValid && !(courseForEdit.Value.CourseRuns.Where(x => !validStatuses.Contains(x.RecordStatus)).Any()))
+                    {
+                        // Course run was fixed
+                        message = $"'{courseForEdit.Value.QualificationCourseTitle}' was successfully fixed and published.";
+                    }
+                    else
+                    {
+                        // Course was fixed
+                        message = $"'{courseForEdit.Value.QualificationCourseTitle}' was successfully fixed.";
                     }
 
                     var updatedCourse = await _courseService.UpdateCourseAsync(courseForEdit.Value);
@@ -195,9 +216,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                     {
 
                         case PublishMode.Migration:
-                            var message =
-                                updatedCourse.Value.CourseRuns.Any(x => x.RecordStatus == RecordStatus.MigrationPending)
-                                    ? $"'{updatedCourse.Value.QualificationCourseTitle}' was successfully fixed" : $"'{updatedCourse.Value.QualificationCourseTitle}' was successfully fixed and published";
                            return RedirectToAction("Index", "PublishCourses",
                                 new
                                 {

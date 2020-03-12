@@ -557,7 +557,13 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                             break;
                     }
 
-                    courseForEdit.Value.IsValid = !(courseForEdit.Value.ValidationErrors != null && courseForEdit.Value.ValidationErrors.Any());
+                    // Check if courserun has any errors
+                    courseRunForEdit.ValidationErrors = _courseService.ValidateCourseRun(courseRunForEdit, ValidationMode.MigrateCourse).Select(x => x.Value);
+                    courseForEdit.Value.ValidationErrors = _courseService.ValidateCourse(courseForEdit.Value).Select(x => x.Value);
+
+                    // Check if course run has issues
+                    bool isCourseValid = !(courseForEdit.Value.ValidationErrors != null && courseForEdit.Value.ValidationErrors.Any());
+                    bool isValidCourseRun = !(courseRunForEdit.ValidationErrors != null && courseRunForEdit.ValidationErrors.Any());
 
                     //todo when real data
                     switch (model.Mode)
@@ -566,7 +572,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                             courseRunForEdit.RecordStatus = RecordStatus.BulkUploadReadyToGoLive;
                             break;
                         case PublishMode.Migration:
-                            courseRunForEdit.RecordStatus = courseForEdit.Value.IsValid ? RecordStatus.Live : RecordStatus.MigrationReadyToGoLive;
+                            // Set courserun status to Migration Ready to go live if no errors found
+                            courseRunForEdit.RecordStatus = isValidCourseRun ? RecordStatus.MigrationReadyToGoLive : RecordStatus.MigrationPending;
                             break;
                         case PublishMode.DataQualityIndicator:
                         default:
@@ -577,9 +584,40 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                     _session.Remove("NewAddedVenue");
                     _session.Remove("Option");
 
+                    // Check if course has no errors
+                    if (model.Mode == PublishMode.Migration)
+                    {
+                        if (isCourseValid)
+                        {
+                            // Change courseruns status of MigrationReadyToGoLive to Live so the entire course can go live
+                            foreach (var courseRun in courseForEdit.Value.CourseRuns.Where(x => x.RecordStatus == RecordStatus.MigrationReadyToGoLive))
+                            {
+                                courseRun.RecordStatus = RecordStatus.Live;
+                            }
+                        }
+                    }
+
                     var status = courseForEdit.Value.CourseStatus;
 
+                    var message = string.Empty;
+
+                    RecordStatus[] validStatuses = new[] { RecordStatus.MigrationReadyToGoLive, RecordStatus.Live };
+
+                    // Coures run is valid course is invalid, course run is fixed
+                    if(courseRunForEdit.RecordStatus == RecordStatus.MigrationReadyToGoLive && !isCourseValid)
+                    {
+                        message = $"'{courseRunForEdit.CourseName}' was successfully fixed";
+                    }
+                    
+                    // Course is valid and ALL course runs are fixed (course runs = Live), course can be publisehd
+                    if(isCourseValid && !(courseForEdit.Value.CourseRuns.Where(x => !validStatuses.Contains(x.RecordStatus)).Any()))
+                    {
+                        message = $"'{courseForEdit.Value.QualificationCourseTitle}' was successfully fixed and published.";
+                    }
+
+
                     var updatedCourse = await _courseService.UpdateCourseAsync(courseForEdit.Value);
+
                     if (updatedCourse.IsSuccess && updatedCourse.HasValue)
                     {
 
@@ -595,9 +633,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                                     notificationTitle = ""
                                 });
                             case PublishMode.Migration:
-                                var message =
-                                    updatedCourse.Value.CourseRuns.Any(x => x.id == model.CourseRunId && x.RecordStatus == RecordStatus.MigrationPending)
-                                        ? $"'{updatedCourse.Value.QualificationCourseTitle}' was successfully fixed" : $"'{updatedCourse.Value.QualificationCourseTitle}' was successfully fixed and published";
                                 return RedirectToAction("Index", "PublishCourses",
                                     new
                                     {

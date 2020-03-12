@@ -146,6 +146,7 @@
                 </div>
                 <div class="govuk-grid-column-one-quarter">
                     <div class="align-right col right center">
+
                         @if (adminLogin.Succeeded)
                         {
                             @if (Model.PublishMode == Dfc.CourseDirectory.Models.Enums.PublishMode.Migration)
@@ -163,6 +164,7 @@
                            asp-route-learnAimRefTitle="@course.QualificationCourseTitle"
                            asp-route-learnAimRefTypeDesc="@course.QualificationType"
                            asp-route-mode=@Model.PublishMode>Resolve<span class="govuk-visually-hidden">@courseRun.CourseName</span></a>
+
                     </div>
                 </div>
             </div>
