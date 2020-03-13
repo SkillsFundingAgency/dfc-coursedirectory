@@ -73,7 +73,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
             switch (publishMode)
             {
                 case PublishMode.Migration:
-                   if (Courses.Where(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.MigrationPending) && x.IsValid == false).Any())
+                   if (Courses.Where(x => x.CourseRuns.Any(cr => cr.RecordStatus == RecordStatus.MigrationPending || cr.RecordStatus == RecordStatus.MigrationReadyToGoLive) && x.IsValid == false).Any())
                     {
                         vm.PublishMode = PublishMode.Migration;
 
