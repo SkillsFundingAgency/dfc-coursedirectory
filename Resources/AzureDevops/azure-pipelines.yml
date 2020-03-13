@@ -77,7 +77,7 @@ steps:
   displayName: dotnet build
   inputs:
     command: build
-    projects: '**/*.csproj'
+    projects: 'Dfc.CourseDirectory.sln'
     configuration: ${{ variables.buildConfiguration }}
 
 # Test 
