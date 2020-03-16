@@ -26,7 +26,9 @@
 
                 <govuk-radios asp-for="CompliancePassed" id-prefix="CompliancePassed">
                     <govuk-radios-fieldset>
-                        <h2 class="govuk-heading-m">Compliance</h2>
+                        <govuk-radios-fieldset-legend>
+                            <h2 class="govuk-heading-m">Compliance</h2>
+                        </govuk-radios-fieldset-legend>
                     </govuk-radios-fieldset>
                     <govuk-radios-hint>
                         Provider information is quality assured against compliance guidance.
@@ -37,9 +39,11 @@
                     <govuk-radios-item disabled="@Model.IsReadOnly" value="@(false)">
                         Reject
                         <govuk-radios-item-conditional>
-                            <govuk-checkboxes asp-for="ComplianceFailedReasons" id-prefix="ComplianceFailedReasons">
+                            <govuk-checkboxes asp-for="ComplianceFailedReasons" id-prefix="ComplianceFailedReasons" checkboxes-class="govuk-checkboxes--small">
                                 <govuk-checkboxes-fieldset>
-                                    <h1 class="govuk-fieldset__heading">Reasons for rejection</h1>
+                                    <govuk-checkboxes-fieldset-legend>
+                                        <h1 class="govuk-fieldset__heading">Reasons for rejection</h1>
+                                    </govuk-checkboxes-fieldset-legend>
                                 </govuk-checkboxes-fieldset>
                                 <govuk-checkboxes-hint>
                                     Select all that apply.
@@ -76,7 +80,9 @@
 
                 <govuk-radios asp-for="StylePassed" id-prefix="StylePassed">
                     <govuk-radios-fieldset>
-                        <h2 class="govuk-heading-m">Style</h2>
+                        <govuk-radios-fieldset-legend>
+                            <h2 class="govuk-heading-m">Style</h2>
+                        </govuk-radios-fieldset-legend>
                     </govuk-radios-fieldset>
                     <govuk-radios-hint>
                         Provider information is quality assured against style guidance.
@@ -87,9 +93,11 @@
                     <govuk-radios-item disabled="@Model.IsReadOnly" value="@(false)">
                         Reject
                         <govuk-radios-item-conditional>
-                            <govuk-checkboxes asp-for="StyleFailedReasons" id-prefix="StyleFailedReasons">
+                            <govuk-checkboxes asp-for="StyleFailedReasons" id-prefix="StyleFailedReasons" checkboxes-class="govuk-checkboxes--small">
                                 <govuk-checkboxes-fieldset>
-                                    <h1 class="govuk-fieldset__heading">Reasons for rejection</h1>
+                                    <govuk-checkboxes-fieldset-legend>
+                                        <h1 class="govuk-fieldset__heading">Reasons for rejection</h1>
+                                    </govuk-checkboxes-fieldset-legend>
                                 </govuk-checkboxes-fieldset>
                                 <govuk-checkboxes-hint>
                                     Select all that apply.
