@@ -128,6 +128,7 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddSingleton<IStandardsAndFrameworksCache, StandardsAndFrameworksCache>();
             services.AddSingleton<MptxInstanceContextProvider>();
             services.AddMptxInstanceContext();
+            services.AddSingleton<IMptxStateProvider, SessionMptxStateProvider>();
 
             return services;
         }
