@@ -29,7 +29,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.InProgress);
 
             var providerUserId = $"{ukprn}-user";
-            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person");
+            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
 
             var apprenticeshipId = await TestData.CreateApprenticeship(
                 ukprn,
@@ -95,7 +95,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
                 apprenticeshipQAStatus: status);
 
             var providerUserId = $"{ukprn}-user";
-            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person");
+            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
 
             var apprenticeshipId = await TestData.CreateApprenticeship(
                 ukprn,
@@ -147,7 +147,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.InProgress);
 
             var providerUserId = $"{ukprn}-user";
-            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person");
+            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
 
             var apprenticeshipId = await TestData.CreateApprenticeship(
                 ukprn,
@@ -187,7 +187,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.InProgress);
 
             var providerUserId = $"{ukprn}-user";
-            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person");
+            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
 
             var apprenticeshipId = await TestData.CreateApprenticeship(
                 ukprn,
