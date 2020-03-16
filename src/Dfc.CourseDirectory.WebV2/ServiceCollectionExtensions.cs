@@ -9,6 +9,7 @@ using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
 using Dfc.CourseDirectory.WebV2.DataStore.Sql;
 using Dfc.CourseDirectory.WebV2.Filters;
 using Dfc.CourseDirectory.WebV2.ModelBinding;
+using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using Dfc.CourseDirectory.WebV2.Security;
 using GovUk.Frontend.AspNetCore;
 using MediatR;
@@ -58,8 +59,10 @@ namespace Dfc.CourseDirectory.WebV2
                     options.Filters.Add(new NotAuthorizedExceptionFilter());
                     options.Filters.Add(new ErrorExceptionFilter());
                     options.Filters.Add(new LocalUrlActionFilter());
+                    options.Filters.Add(new MptxResourceFilter());
 
                     options.ModelBinderProviders.Insert(0, new CurrentProviderModelBinderProvider());
+                    options.ModelBinderProviders.Insert(0, new MptxInstanceContextModelBinderProvider());
                     options.ModelBinderProviders.Insert(0, new MultiValueEnumModelBinderProvider());
                     options.ModelBinderProviders.Insert(0, new StandardOrFrameworkModelBinderProvider());
                 })
@@ -123,6 +126,8 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddScoped<SignInTracker>();
             services.AddBehaviors();
             services.AddSingleton<IStandardsAndFrameworksCache, StandardsAndFrameworksCache>();
+            services.AddSingleton<MptxInstanceContextProvider>();
+            services.AddMptxInstanceContext();
 
             return services;
         }
