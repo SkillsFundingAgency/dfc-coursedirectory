@@ -34,41 +34,10 @@
         //model.FileUploadedDate = dt2.ToString("dd MMM yyyy HH:mm");
     }
 
-    System.Text.StringBuilder message = new System.Text.StringBuilder($"Your file of ");
-    string uploadTimeMessage = string.Empty;
-    if (Model.BulkUploadBackgroundRowCount > 0)
-    {
-        if (Model.BulkUploadBackgroundRowCount == 1)
-        {
-            message.Append($"{Model.BulkUploadBackgroundRowCount} course ");
-        }
-        else
-        {
-            message.Append($"{Model.BulkUploadBackgroundRowCount} courses ");
-        }
-
-        double uploadTime = Math.Round((Model.BulkUploadBackgroundRowCount.Value * 1.2) / 60, 0, MidpointRounding.AwayFromZero);  // cos averaged 1.2 seconds per row in test
-        if (uploadTime > 0)
-        {
-            uploadTimeMessage = $"{uploadTime} minute";
-            if (uploadTime > 1)
-            {
-                uploadTimeMessage += "s";
-            }
-        }
-
-        if (!string.IsNullOrWhiteSpace(datestamp) && !string.IsNullOrWhiteSpace(timestamp))
-        {
-            //message.Append($" uploaded on {datestamp} at {timestamp}");
-            message.Append($" uploaded on {dateCombined}");
-
-        }
-        message.Append(" is still being processed");
-        if (!string.IsNullOrWhiteSpace(uploadTimeMessage))
-        {
-            message.Append($" and should complete in the next {uploadTimeMessage}.");
-        }
-    }
+    System.Text.StringBuilder message = new System.Text.StringBuilder
+        ($"Your bulk upload is in progress and may take a few minutes. Continue to refresh this page.Do not add a new course or another bulk upload during this process.Once your bulk upload is complete you will receive a notification to publish your courses.");
+    
+   
     @await Component.InvokeAsync(nameof(Notification), new NotificationModel
     {
         NotificationTitle = "Bulk upload processing",

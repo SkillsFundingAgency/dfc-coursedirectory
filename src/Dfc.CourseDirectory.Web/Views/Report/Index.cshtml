@@ -1,54 +1,105 @@
 ﻿@using Dfc.CourseDirectory.Web.ViewComponents.MigrationReportResults
 @using Dfc.CourseDirectory.Web.ViewComponents.MigrationReportDashboardPanel
-@model Dfc.CourseDirectory.Web.ViewModels.Report.MigrationReportViewModel
+@model Dfc.CourseDirectory.Web.ViewModels.Report.MigrationReportViewModel2
 
 @{
-    ViewData["Title"] = "Migration status report"; 
+    ViewData["Title"] = "Migration status report";
     Layout = "_Layout_Your_Courses";
 }
 
 
 
-    <div class="govuk-grid-row">
-        <main class="govuk-grid-column-full govuk-body ">
-            <h1 class="govuk-heading-l">Migration status report</h1>
-            <div class="govuk-grid-row govuk-!-margin-bottom-6 homepage-item--container">
-                <div class="govuk-grid-column-one-third homepage-item ">
+<div class="govuk-grid-row">
+    <main class="govuk-grid-column-full govuk-body ">
+        <h1 class="govuk-heading-l">Migration reports</h1>
+        <div class="govuk-grid-row govuk-!-margin-bottom-6 homepage-item--container">
+            <div class="govuk-grid-column-one-third homepage-item ">
 
-                    @await Component.InvokeAsync(nameof(MigrationReportDashboardPanel), Model.ProvidersMigrated)
+                @await Component.InvokeAsync(nameof(MigrationReportDashboardPanel), Model.TotalProvidersMigrated)
 
-                </div>
-                <div class="govuk-grid-column-one-third homepage-item ">
-
-                    @await Component.InvokeAsync(nameof(MigrationReportDashboardPanel), Model.Migrated)
-
-                </div>
-                <div class="govuk-grid-column-one-third homepage-item ">
-
-                    @await Component.InvokeAsync(nameof(MigrationReportDashboardPanel), Model.MigratedWithErrors)
-
-                </div>
             </div>
-            <div class="govuk-grid-row govuk-!-margin-bottom-6 homepage-item--container">
-                <div class="govuk-grid-column-one-third homepage-item ">
-                    
-                    @await Component.InvokeAsync(nameof(MigrationReportDashboardPanel), Model.Live)
+        </div>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <p><a asp-controller="Report" asp-action="ReportCSVProviders" class="govuk-link">Download report</a></p>
+            </div>
+        </div>
+        <div class="govuk-grid-row govuk-!-margin-bottom-6 ">
+            <div class="govuk-grid-column-one-third">
+            </div>
+        </div>
+        <div class="govuk-grid-row govuk-!-margin-bottom-6 homepage-item--container">
+            <div class="govuk-grid-column-full homepage-item ">
+                <h2 class="govuk-heading-m">Further education courses</h2>
+            </div>
+        </div>
+        <div class="govuk-grid-row govuk-!-margin-bottom-6 homepage-item--container">
 
-                </div>
+            <div class="govuk-grid-column-one-third homepage-item ">
+
+                @await Component.InvokeAsync(nameof(MigrationReportDashboardPanel), Model.CoursesMigrated)
+
             </div>
-            <div class="govuk-grid-row govuk-!-margin-bottom-6 ">
-                <div class="govuk-grid-column-one-third">
-                </div>
+            <div class="govuk-grid-column-one-third homepage-item ">
+
+                @await Component.InvokeAsync(nameof(MigrationReportDashboardPanel), Model.CoursesPending)
+
             </div>
-            <div class="govuk-grid-row">
-                <div class="govuk-grid-column-full">
-                    <h2>Migration data by provider</h2>
-                    <p><a asp-controller="Report" asp-action="ReportCSV" class="govuk-link">Download as csv</a></p>
-                    @await Component.InvokeAsync(nameof(MigrationReportResults), Model.ReportResults)
-                </div>
+            <div class="govuk-grid-column-one-third homepage-item ">
+
+                @await Component.InvokeAsync(nameof(MigrationReportDashboardPanel), Model.CoursesLive)
+
             </div>
-        </main>
-    </div>
+        </div>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <p><a asp-controller="Report" asp-action="ReportCSVCourses" class="govuk-link">Download report</a></p>
+            </div>
+        </div>
+
+        <div class="govuk-grid-row govuk-!-margin-bottom-6 ">
+            <div class="govuk-grid-column-one-third">
+            </div>
+        </div>
+        <div class="govuk-grid-row govuk-!-margin-bottom-6 homepage-item--container">
+            <div class="govuk-grid-column-full homepage-item ">
+                <h2 class="govuk-heading-m">Apprenticeship training courses</h2>
+            </div>
+        </div>
+        <div class="govuk-grid-row govuk-!-margin-bottom-6 homepage-item--container">
+
+            <div class="govuk-grid-column-one-third homepage-item ">
+
+                @await Component.InvokeAsync(nameof(MigrationReportDashboardPanel), Model.ApprenticeshipMigrated)
+
+            </div>
+            <div class="govuk-grid-column-one-third homepage-item ">
+
+                @await Component.InvokeAsync(nameof(MigrationReportDashboardPanel), Model.ApprenticeshipPending)
+
+            </div>
+            <div class="govuk-grid-column-one-third homepage-item ">
+
+                @await Component.InvokeAsync(nameof(MigrationReportDashboardPanel), Model.ApprenticeshipLive)
+
+            </div>
+        </div>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <p><a asp-controller="Report" asp-action="ReportCSVApps" class="govuk-link">Download report</a></p>
+            </div>
+        </div>
+        <div class="govuk-grid-row govuk-!-margin-bottom-6 ">
+            <div class="govuk-grid-column-one-third">
+            </div>
+        </div>
+        <div class="govuk-grid-row govuk-!-margin-bottom-6 ">
+            <div class="govuk-grid-column-one-third">
+                Last Updated On : @Model.DateLastUpdated
+            </div>
+        </div>
+    </main>
+</div>
 
 
 

@@ -9,6 +9,7 @@ variables:
   BuildPlatform: 'any cpu'
   BuildConfiguration: 'release'
   group: dfc-findacourse-build
+  DotNetCoreVersion: 3.1.x
 
 resources:
   repositories:
@@ -59,6 +60,11 @@ steps:
     gulpFile: 'src/Dfc.CourseDirectory.Web/gulpfile.js'
     targets: 'prod'
 
+- task: UseDotNet@2
+  displayName: 'Use .NET Core SDK ${{ variables.DotNetCoreVersion }}'
+  inputs:
+    version: ${{ variables.DotNetCoreVersion }}
+
 # restore
 - task: DotNetCoreCLI@2
   displayName: dotnet restore
@@ -71,7 +77,7 @@ steps:
   displayName: dotnet build
   inputs:
     command: build
-    projects: '**/*.csproj'
+    projects: 'Dfc.CourseDirectory.sln'
     configuration: ${{ variables.buildConfiguration }}
 
 # Test 

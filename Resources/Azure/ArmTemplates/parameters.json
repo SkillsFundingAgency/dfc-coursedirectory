@@ -130,6 +130,9 @@
     },
     "CosmosAccountAccessKey": {
       "value": "__providerPortalCosmosDBPrimaryKey__"
+    },
+    "FeatureFlags": {
+      "value": "__FeatureFlags__"
     }
   }
 }

@@ -364,12 +364,13 @@
                         
                         $regionSection.show();
 
+                        if ($flexibleStartDate.prop('checked')) {
+                            $("#govuk-label-start_date").hide();
+                            $("#Day").val("");
+                            $("#Month").val("");
+                            $("#Year").val("");
+                        }
 
-
-                        $("#govuk-label-start_date").hide();
-                        $("#Day").val("");
-                        $("#Month").val("");
-                        $("#Year").val("");
                         break;
                     }
             }

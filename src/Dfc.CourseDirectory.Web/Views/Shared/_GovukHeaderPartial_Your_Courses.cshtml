@@ -1,7 +1,6 @@
 @using Dfc.CourseDirectory.Models.Models.Providers
 @using Dfc.CourseDirectory.Services.Interfaces
 @using Microsoft.AspNetCore.Identity
-@using Dfc.CourseDirectory.Web.Areas.Identity.Data;
 @using Microsoft.AspNetCore.Authorization;
 @using Microsoft.AspNetCore.Http
 @using Dfc.CourseDirectory.Services.Interfaces.ProviderService
@@ -73,12 +72,7 @@
                                 </li>
                                 <li class="govuk-header__navigation-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Report" && ViewContext.RouteData.Values["Action"].ToString() == "Index" ? "govuk-header__navigation-item--active" : "")">
                                     <a class="govuk-header__link" href="/Report/Index">
-                                        FE migration
-                                    </a>
-                                </li>
-                                <li class="govuk-header__navigation-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Report" && ViewContext.RouteData.Values["Action"].ToString() == "Apprenticeship" ? "govuk-header__navigation-item--active" : "")">
-                                    <a class="govuk-header__link" href="/Report/Apprenticeship">
-                                        Apprenticeship migration
+                                        Migration Reports
                                     </a>
                                 </li>
                             }

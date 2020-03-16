@@ -260,6 +260,12 @@
       "metadata": {
         "description": "Access key for the cosmos db account"
       }
+    },
+    "FeatureFlags": {
+      "type": "string",
+      "metadata": {
+        "description": "Feature flags that are passed to the app settings"
+      }
     }
   },
   "variables": {
@@ -605,6 +611,10 @@
               {
                 "name": "CosmosDbSettings__PrimaryKey",
                 "value": "[parameters('CosmosAccountAccessKey')]"
+              },
+              {
+                "name": "FeatureFlags",
+                "value": "[parameters('FeatureFlags')]"
               }
             ]
           },

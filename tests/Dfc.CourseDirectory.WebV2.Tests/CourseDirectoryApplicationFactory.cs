@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
@@ -33,8 +32,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         public ClearableMemoryCache MemoryCache => Services.GetRequiredService<IMemoryCache>() as ClearableMemoryCache;
 
-        public IServiceProvider Services => Server.Host.Services;
-
         public TestData TestData => Services.GetRequiredService<TestData>();
 
         public TestUserInfo User => Services.GetRequiredService<TestUserInfo>();
@@ -43,9 +40,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         {
             // Clear calls on any mocks
             ResetMocks();
-
-            // Reset to the default calling user
-            User.Reset();
 
             // Clear in-memory DB
             InMemoryDocumentStore.Clear();
@@ -67,6 +61,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         {
             // Clear out all data from SQL database
             await _sqlCheckpoint.Reset(Configuration["ConnectionStrings:DefaultConnection"]);
+
+            // Reset to the default calling user
+            await User.Reset();
         }
 
         protected override void ConfigureWebHost(IWebHostBuilder builder) => builder.UseContentRoot(".");

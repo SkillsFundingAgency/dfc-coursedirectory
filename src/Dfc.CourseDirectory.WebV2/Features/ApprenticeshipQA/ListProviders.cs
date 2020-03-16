@@ -41,7 +41,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ListProviders
                     ApprenticeshipQAStatus.Submitted,
                     ApprenticeshipQAStatus.Failed,
                     ApprenticeshipQAStatus.InProgress,
-                    ApprenticeshipQAStatus.UnableToComplete
+                    ApprenticeshipQAStatus.UnableToComplete | ApprenticeshipQAStatus.InProgress
                 }
             });
 
@@ -62,17 +62,31 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ListProviders
                              SubmittedOn = r.SubmittedOn
                          }).ToList();
 
-            var submitted = infos.Where(i => i.ApprenticeshipQAStatus == ApprenticeshipQAStatus.Submitted);
-            var failed = infos.Where(i => i.ApprenticeshipQAStatus == ApprenticeshipQAStatus.Failed);
-            var inProgress = infos.Where(i => i.ApprenticeshipQAStatus == ApprenticeshipQAStatus.InProgress);
-            var unableToComplete = infos.Where(i => i.ApprenticeshipQAStatus == ApprenticeshipQAStatus.UnableToComplete);
+            var unableToComplete = infos
+                .Where(i => i.ApprenticeshipQAStatus.HasFlag(ApprenticeshipQAStatus.UnableToComplete))
+                .ToList();
+
+            var submitted = infos
+                .Where(i => !unableToComplete.Contains(i))
+                .Where(i => i.ApprenticeshipQAStatus == ApprenticeshipQAStatus.Submitted)
+                .ToList();
+
+            var failed = infos
+                .Where(i => !unableToComplete.Contains(i))
+                .Where(i => i.ApprenticeshipQAStatus == ApprenticeshipQAStatus.Failed)
+                .ToList();
+
+            var inProgress = infos
+                .Where(i => !unableToComplete.Contains(i))
+                .Where(i => i.ApprenticeshipQAStatus == ApprenticeshipQAStatus.InProgress)
+                .ToList();
 
             return new ViewModel()
             {
-                Submitted = submitted.ToList(),
-                Failed = failed.ToList(),
-                InProgress = inProgress.ToList(),
-                UnableToComplete = unableToComplete.ToList()
+                Submitted = submitted,
+                Failed = failed,
+                InProgress = inProgress,
+                UnableToComplete = unableToComplete
             };
         }
     }

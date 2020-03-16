@@ -28,7 +28,87 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA
         }
 
         [HttpGet("{providerId}")]
-        public IActionResult ProviderDetail(Guid providerId) =>
-            throw new System.NotImplementedException();
+        public async Task<IActionResult> ProviderSelected(ProviderSelected.Query query)
+        {
+            var result = await _mediator.Send(query);
+            return result.Match<IActionResult>(
+                error => BadRequest(),
+                vm => View(vm));
+        }
+
+        [HttpGet("provider-assessments/{providerId}")]
+        public async Task<IActionResult> ProviderAssessment(ProviderAssessment.Query query)
+        {
+            var result = await _mediator.Send(query);
+            return result.Match<IActionResult>(
+                error => BadRequest(),
+                vm => View(vm));
+        }
+
+        [HttpPost("provider-assessments/{providerId}")]
+        public async Task<IActionResult> ProviderAssessment(
+            Guid providerId,
+            ProviderAssessment.Command command)
+        {
+            command.ProviderId = providerId;
+            var result = await _mediator.Send(command);
+            return result.Match<IActionResult>(
+                _ => BadRequest(),
+                errors => this.ViewFromErrors(errors),
+                vm => View("ProviderAssessmentConfirmation", vm));
+        }
+
+        [HttpGet("apprenticeship-assessments/{apprenticeshipId}")]
+        public async Task<IActionResult> ApprenticeshipAssessment(ApprenticeshipAssessment.Query query)
+        {
+            var result = await _mediator.Send(query);
+            return result.Match<IActionResult>(
+                _ => BadRequest(),
+                vm => View(vm));
+        }
+
+        [HttpPost("apprenticeship-assessments/{apprenticeshipId}")]
+        public async Task<IActionResult> ApprenticeshipAssessment(
+            Guid apprenticeshipId,
+            ApprenticeshipAssessment.Command command)
+        {
+            command.ApprenticeshipId = apprenticeshipId;
+            var result = await _mediator.Send(command);
+            return result.Match<IActionResult>(
+                _ => BadRequest(),
+                errors => this.ViewFromErrors(errors),
+                vm => View("ApprenticeshipAssessmentConfirmation", vm));
+        }
+
+        [HttpPost("{providerId}/complete")]
+        public async Task<IActionResult> Complete(Complete.Command command)
+        {
+            var result = await _mediator.Send(command);
+            return result.Match<IActionResult>(
+                _ => BadRequest(),
+                vm => View(vm));
+        }
+
+        [HttpGet("{providerId}/status")]
+        public async Task<IActionResult> Status(Status.Query query)
+        {
+            var result = await _mediator.Send(query);
+            return result.Match<IActionResult>(
+                _ => BadRequest(),
+                vm => View(vm));
+        }
+
+        [HttpPost("{providerId}/status")]
+        public async Task<IActionResult> Status(
+            Guid providerId,
+            Status.Command command)
+        {
+            command.ProviderId = providerId;
+            var result = await _mediator.Send(command);
+            return result.Match<IActionResult>(
+                _ => BadRequest(),
+                errors => this.ViewFromErrors(errors),
+                _ => RedirectToAction("ProviderSelected", new { providerId }));
+        }
     }
 }

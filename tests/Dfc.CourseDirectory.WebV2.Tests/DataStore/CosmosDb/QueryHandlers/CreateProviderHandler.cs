@@ -1,4 +1,6 @@
-﻿using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Models;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb.Queries;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb.QueryHandlers
@@ -11,7 +13,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb.QueryHandlers
             {
                 Id = request.ProviderId,
                 UnitedKingdomProviderReferenceNumber = request.Ukprn.ToString(),
-                ProviderName = request.ProviderName
+                ProviderType = request.ProviderType,
+                ProviderName = request.ProviderName,
+                ProviderStatus = request.ProviderStatus,
+                ProviderContact = request.ProviderContact?.ToList() ?? new List<ProviderContact>(),
             };
             inMemoryDocumentStore.Providers.Save(provider);
 

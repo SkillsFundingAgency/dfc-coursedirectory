@@ -10,7 +10,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb.QueryHandlers
             var apprenticeship = new Apprenticeship()
             {
                 Id = request.ApprenticeshipId,
-                ProviderUKPRN = request.ProviderUkprn
+                ProviderUKPRN = request.ProviderUkprn,
+                ApprenticeshipTitle = request.ApprenticeshipTitle,
+                MarketingInformation = request.MarketingInformation
             };
             inMemoryDocumentStore.Apprenticeships.Save(apprenticeship);
 

@@ -1,0 +1,48 @@
+﻿@model Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAssessment.ConfirmationViewModel
+@{
+    ViewBag.Title = "QA Apprenticeship training course information";
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-xl">Review</h1>
+        <h2 class="govuk-heading-l">@Model.ApprenticeshipTitle</h2>
+        <h2 class="govuk-heading-m">Apprenticeship training course information for employers</h2>
+
+        @* TODO Use TagHelper *@
+        <dl class="govuk-summary-list qa-check govuk-!-margin-bottom-9">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Compliance
+                </dt>
+                <dd class="govuk-summary-list__value" id="pttcd-apprenticeship-qa-apprenticeship-submission-confirmation-compliance-status">
+                    @(Model.CompliancePassed ? "Pass" : "Fail")
+                </dd>
+                <dd class="govuk-summary-list__actions">
+                    <a class="govuk-link" asp-action="ApprenticeshipAssessment" asp-route-apprenticeshipId="@Model.ApprenticeshipId">
+                        Change
+                    </a>
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Style
+                </dt>
+                <dd class="govuk-summary-list__value" id="pttcd-apprenticeship-qa-apprenticeship-submission-confirmation-style-status">
+                    @(Model.StylePassed ? "Pass" : "Fail")
+                </dd>
+                <dd class="govuk-summary-list__actions">
+                    <a class="govuk-link" asp-action="ApprenticeshipAssessment" asp-route-apprenticeshipId="@Model.ApprenticeshipId">
+                        Change
+                    </a>
+                </dd>
+            </div>
+        </dl>
+
+        <govuk-inset-text inset-text-class="pttcd-inset-text__info" id="pttcd-apprenticeship-qa-apprenticeship-submission-confirmation-overall-status-message">
+            This apprenticeship training course has <strong>@(Model.Passed ? "PASSED" : "FAILED")</strong> quality assurance.
+        </govuk-inset-text>
+
+        <govuk-button asp-action="ProviderSelected" asp-route-providerId="@Model.ProviderId">Confirm and continue</govuk-button>
+    </div>
+</div>

@@ -1,6 +1,5 @@
 ﻿using System;
 using Dfc.CourseDirectory.Common;
-using Dfc.CourseDirectory.Web.Areas.Identity.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;

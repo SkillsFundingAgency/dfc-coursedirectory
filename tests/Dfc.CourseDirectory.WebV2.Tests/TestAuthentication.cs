@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Security.Claims;
-using System.Text.Encodings.Web;
+﻿using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
@@ -33,32 +31,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
             if (_authenticatedUserInfo.IsAuthenticated)
             {
-                var claims = new List<Claim>()
-                {
-                    new Claim("user_id", _authenticatedUserInfo.UserId.ToString()),
-                    new Claim("sub", _authenticatedUserInfo.UserId.ToString()),
-                    new Claim("email", _authenticatedUserInfo.Email),
-                    new Claim("given_name", _authenticatedUserInfo.FirstName),
-                    new Claim("family_name", _authenticatedUserInfo.LastName),
-                    new Claim(ClaimTypes.Role, _authenticatedUserInfo.Role)
-                };
-
-                if (_authenticatedUserInfo.ProviderId.HasValue)
-                {
-                    claims.AddRange(new List<Claim>()
-                    {
-                        new Claim("ProviderId", _authenticatedUserInfo.ProviderId.Value.ToString()),
-                        new Claim("ProviderType", _authenticatedUserInfo.ProviderType.Value.ToString()),
-                        new Claim("provider_status", _authenticatedUserInfo.ProviderStatus)
-                        // These claims are populated in the real app but are not required here (yet):
-                        // organisation - JSON from DfE Sign In API call
-                        // OrganisationId - GUID Org ID for DfE API call
-                    });
-                }
-
-                var identity = new ClaimsIdentity(claims, Scheme.Name);
-                var principal = new ClaimsPrincipal(identity);
-
+                var principal = _authenticatedUserInfo.ToPrincipal();
                 result = AuthenticateResult.Success(new AuthenticationTicket(principal, Scheme.Name));
             }
             else

@@ -22,7 +22,7 @@ namespace Dfc.CourseDirectory.WebV2.Security
         {
             var currentUser = ClaimsPrincipalCurrentUserProvider.MapUserInfoFromPrincipal(principal);
 
-            return _sqlQueryDispatcher.ExecuteQuery(new AddUserSignIn()
+            return _sqlQueryDispatcher.ExecuteQuery(new CreateUserSignIn()
             {
                 User = currentUser,
                 SignedInUtc = _clock.UtcNow

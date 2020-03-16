@@ -21,7 +21,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         public async Task ProviderInfoNotBound_ReturnsSelectProviderView()
         {
             // Arrange
-            User.AsDeveloper();
+            await User.AsDeveloper();
 
             // Act
             var response = await _httpClientWithAutoRedirects.GetAsync("RedirectToProviderSelectionActionFilterTest");
@@ -36,7 +36,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         public async Task ProviderDoesNotExist_ReturnsNotFound()
         {
             // Arrange
-            User.AsDeveloper();
+            await User.AsDeveloper();
 
             // Act
             var response = await _httpClientWithAutoRedirects.GetAsync(
@@ -51,7 +51,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         {
             // Arrange
             var providerId = Guid.NewGuid();
-            User.AsProviderUser(providerId, Models.ProviderType.Both);
+            await User.AsProviderUser(providerId, Models.ProviderType.Both);
 
             // Act
             var response = await _httpClientWithAutoRedirects.GetAsync(
