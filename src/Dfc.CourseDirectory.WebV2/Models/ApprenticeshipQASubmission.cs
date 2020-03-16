@@ -12,6 +12,7 @@ namespace Dfc.CourseDirectory.WebV2.Models
         public string ProviderMarketingInformation { get; set; }
         public bool? Passed { get; set; }
         public UserInfo LastAssessedBy { get; set; }
+        public DateTime? LastAssessedOn { get; set; }
         public bool? ProviderAssessmentPassed { get; set; }
         public bool? ApprenticeshipAssessmentsPassed { get; set; }
         public IReadOnlyCollection<ApprenticeshipQASubmissionApprenticeship> Apprenticeships { get; set; }
