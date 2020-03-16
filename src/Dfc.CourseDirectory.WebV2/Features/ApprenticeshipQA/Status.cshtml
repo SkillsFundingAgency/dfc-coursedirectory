@@ -18,7 +18,9 @@
         <form asp-action="Status">
             <govuk-radios asp-for="UnableToComplete">
                 <govuk-radios-fieldset is-page-heading="true">
-                    Quality assurance status
+                    <govuk-radios-fieldset-legend legend-class="govuk-fieldset__legend--xl">
+                        Quality assurance status
+                    </govuk-radios-fieldset-legend>
                 </govuk-radios-fieldset>
                 <govuk-radios-hint>
                     Edit the provider status.
@@ -29,9 +31,11 @@
                 <govuk-radios-item value="@(true)" id="UnableToComplete-true">
                     Unable to complete
                     <govuk-radios-item-conditional>
-                        <govuk-checkboxes asp-for="UnableToCompleteReasons">
+                        <govuk-checkboxes asp-for="UnableToCompleteReasons" checkboxes-class="govuk-checkboxes--small">
                             <govuk-checkboxes-fieldset>
-                                <h1 class="govuk-fieldset__heading">Reasons a provider is unable to complete</h1>
+                                <govuk-checkboxes-fieldset-legend>
+                                    <h1 class="govuk-fieldset__heading">Reasons a provider is unable to complete</h1>
+                                </govuk-checkboxes-fieldset-legend>
                             </govuk-checkboxes-fieldset>
                             <govuk-checkboxes-hint>Select all that apply.</govuk-checkboxes-hint>
                             <govuk-checkboxes-item id="@($"{Html.IdFor(m => m.UnableToCompleteReasons)}-{(int)ApprenticeshipQAUnableToCompleteReasons.StandardNotReady}")" value="@(ApprenticeshipQAUnableToCompleteReasons.StandardNotReady)" checked="@(Model.UnableToCompleteReasons.HasFlag(ApprenticeshipQAUnableToCompleteReasons.StandardNotReady))">
