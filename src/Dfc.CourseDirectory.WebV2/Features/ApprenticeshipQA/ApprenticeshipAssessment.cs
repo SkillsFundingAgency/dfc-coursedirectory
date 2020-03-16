@@ -241,6 +241,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
 
             return new Data()
             {
+                ApprenticeshipId = apprenticeshipId,
+                ProviderId = providerId,
                 QAStatus = qaStatus,
                 LatestSubmission = latestSubmission,
                 SubmissionApprenticeship = submissionApprenticeship,
