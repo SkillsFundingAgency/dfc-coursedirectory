@@ -12,15 +12,16 @@ namespace Dfc.CourseDirectory.WebV2.DataStore.Sql.QueryHandlers
         {
             var sql = @"
 INSERT INTO Pttcd.Users
-(UserId, Email, FirstName, LastName)
-VALUES (@UserId, @Email, @FirstName, @LastName)";
+(UserId, Email, FirstName, LastName, ProviderId)
+VALUES (@UserId, @Email, @FirstName, @LastName, @ProviderId)";
 
             var paramz = new
             {
                 query.UserId,
                 query.Email,
                 query.FirstName,
-                query.LastName
+                query.LastName,
+                query.ProviderId
             };
 
             await transaction.Connection.ExecuteAsync(sql, paramz, transaction);
