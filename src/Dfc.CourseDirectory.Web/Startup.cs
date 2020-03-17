@@ -282,6 +282,7 @@ namespace Dfc.CourseDirectory.Web
                                                     " https://tagmanager.google.com/" +
                                                     " https://fonts.googleapis.com/" +
                                                     " https://cloud.tinymce.com/" +
+                                                    " https://cdnjs.cloudflare.com/" +
                                                     ";" +
                                                 "font-src       'self' data:" +
                                                    " https://fonts.googleapis.com/" +
@@ -296,6 +297,7 @@ namespace Dfc.CourseDirectory.Web
                                                     " https://tagmanager.google.com/" +
                                                     " https://www.google-analytics.com/" +
                                                     " https://cdn.tiny.cloud/" +
+                                                    " https://cdnjs.cloudflare.com/" +
                                                     ";";
 
                 context.Response.GetTypedHeaders().CacheControl =
