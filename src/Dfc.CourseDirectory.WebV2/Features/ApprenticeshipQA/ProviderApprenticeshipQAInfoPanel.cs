@@ -16,7 +16,9 @@ using OneOf.Types;
 
 namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderApprenticeshipQAInfoPanel
 {
-    public class Query : IRequest<OneOf<NotFound, ViewModel>>
+    using QueryResponse = OneOf<NotFound, ViewModel>;
+
+    public class Query : IRequest<QueryResponse>
     {
         public Guid ProviderId { get; set; }
     }
@@ -37,7 +39,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderApprentice
         public DateTime? LastAssessedOn { get; set; }
     }
 
-    public class Handler : IRequestHandler<Query, OneOf<NotFound, ViewModel>>
+    public class Handler : IRequestHandler<Query, QueryResponse>
     {
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
@@ -56,7 +58,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderApprentice
             _currentUserProvider = currentUserProvider;
         }
 
-        public async Task<OneOf<NotFound, ViewModel>> Handle(Query request, CancellationToken cancellationToken)
+        public async Task<QueryResponse> Handle(Query request, CancellationToken cancellationToken)
         {
             var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(
                 new GetProviderById()

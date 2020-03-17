@@ -14,13 +14,15 @@ using OneOf.Types;
 
 namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderSelected
 {
+    using QueryResponse = OneOf<Error<ErrorReason>, ViewModel>;
+
     public enum ErrorReason
     {
         ProviderDoesNotExist,
         InvalidStatus
     }
 
-    public class Query : IRequest<OneOf<Error<ErrorReason>, ViewModel>>
+    public class Query : IRequest<QueryResponse>
     {
         public Guid ProviderId { get; set; }
     }
@@ -42,7 +44,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderSelected
         public bool AssessmentCompleted { get; set; }
     }
 
-    public class QueryHandler : IRequestHandler<Query, OneOf<Error<ErrorReason>, ViewModel>>
+    public class QueryHandler : IRequestHandler<Query, QueryResponse>
     {
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
@@ -55,7 +57,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderSelected
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
         }
 
-        public async Task<OneOf<Error<ErrorReason>, ViewModel>> Handle(Query request, CancellationToken cancellationToken)
+        public async Task<QueryResponse> Handle(Query request, CancellationToken cancellationToken)
         {
             var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(
                 new GetProviderById()

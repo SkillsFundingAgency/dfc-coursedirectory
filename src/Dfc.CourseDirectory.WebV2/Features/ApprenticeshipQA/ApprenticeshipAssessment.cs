@@ -17,13 +17,16 @@ using OneOf.Types;
 
 namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAssessment
 {
+    using QueryResponse = OneOf<Error<ErrorReason>, ViewModel>;
+    using CommandResponse = OneOf<Error<ErrorReason>, ModelWithErrors<ViewModel>, ConfirmationViewModel>;
+
     public enum ErrorReason
     {
         ApprenticeshipDoesNotExist,
         NoValidSubmission,
     }
 
-    public class Query : IRequest<OneOf<Error<ErrorReason>, ViewModel>>
+    public class Query : IRequest<QueryResponse>
     {
         public Guid ApprenticeshipId { get; set; }
     }
@@ -36,7 +39,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
         public bool IsReadOnly { get; set; }
     }
 
-    public class Command : IRequest<OneOf<Error<ErrorReason>, ModelWithErrors<ViewModel>, ConfirmationViewModel>>
+    public class Command : IRequest<CommandResponse>
     {
         public Guid ApprenticeshipId { get; set; }
         public bool? CompliancePassed { get; set; }
@@ -82,7 +85,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
             _clock = clock;
         }
 
-        public async Task<OneOf<Error<ErrorReason>, ViewModel>> Handle(Query request, CancellationToken cancellationToken)
+        public async Task<QueryResponse> Handle(Query request, CancellationToken cancellationToken)
         {
             var errorOrData = await CheckStatus(request.ApprenticeshipId);
 
@@ -96,7 +99,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
             }
         }
 
-        public async Task<OneOf<Error<ErrorReason>, ModelWithErrors<ViewModel>, ConfirmationViewModel>> Handle(
+        public async Task<CommandResponse> Handle(
             Command request,
             CancellationToken cancellationToken)
         {

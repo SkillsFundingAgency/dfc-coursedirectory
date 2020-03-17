@@ -15,18 +15,21 @@ using OneOf.Types;
 
 namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Status
 {
+    using QueryResponse = OneOf<Error<ErrorReason>, Command>;
+    using CommandResponse = OneOf<Error<ErrorReason>, ModelWithErrors<Command>, Success>;
+
     public enum ErrorReason
     {
         ProviderDoesNotExist,
         InvalidStatus
     }
 
-    public class Query : IRequest<OneOf<Error<ErrorReason>, Command>>
+    public class Query : IRequest<QueryResponse>
     {
         public Guid ProviderId { get; set; }
     }
     
-    public class Command : IRequest<OneOf<Error<ErrorReason>, ModelWithErrors<Command>, Success>>
+    public class Command : IRequest<CommandResponse>
     {
         public Guid ProviderId { get; set; }
         public bool UnableToComplete { get; set; }
@@ -35,8 +38,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Status
     }
 
     public class Handler :
-        IRequestHandler<Query, OneOf<Error<ErrorReason>, Command>>,
-        IRequestHandler<Command, OneOf<Error<ErrorReason>, ModelWithErrors<Command>, Success>>
+        IRequestHandler<Query, QueryResponse>,
+        IRequestHandler<Command, CommandResponse>
     {
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
@@ -55,7 +58,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Status
             _clock = clock;
         }
 
-        public async Task<OneOf<Error<ErrorReason>, Command>> Handle(
+        public async Task<QueryResponse> Handle(
             Query request,
             CancellationToken cancellationToken)
         {
@@ -85,7 +88,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Status
             };
         }
 
-        public async Task<OneOf<Error<ErrorReason>, ModelWithErrors<Command>, Success>> Handle(
+        public async Task<CommandResponse> Handle(
             Command request,
             CancellationToken cancellationToken)
         {
