@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Razor.TagHelpers;
 namespace Dfc.CourseDirectory.WebV2.TagHelpers
 {
     [HtmlTargetElement("pttcd-rich-text-editor")]
-    [RestrictChildren("govuk-textarea")]
+    [RestrictChildren("govuk-textarea", "govuk-character-count")]
     public class RichTextEditorTagHelper : TagHelper
     {
         public override async Task ProcessAsync(TagHelperContext context, TagHelperOutput output)
