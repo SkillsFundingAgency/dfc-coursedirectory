@@ -49,7 +49,7 @@
             <div class="cta-container">
                 @if (Model.PublishMode == Dfc.CourseDirectory.Models.Enums.PublishMode.Migration)
                 {
-                    @*@Html.ActionLink("Delete All", "Delete", "Migration", new { }, new { @class = "govuk-button govuk-!-margin-right-3" })*@
+                    @Html.ActionLink("Delete All", "Delete", "Migration", new { }, new { @class = "govuk-button govuk-!-margin-right-3" })
                 }
                 @if (Model.PublishMode != Dfc.CourseDirectory.Models.Enums.PublishMode.DataQualityIndicator)
                 {

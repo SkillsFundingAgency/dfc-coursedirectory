@@ -153,7 +153,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             switch (model.MigrationDeleteOptions)
             {
                 case MigrationDeleteOptions.DeleteMigrations:
-                    await _courseService.ChangeCourseRunStatusesForUKPRNSelection(UKPRN, (int)RecordStatus.MigrationPending, (int)RecordStatus.Archived);
+                    await _courseService.ArchiveCourseRunsByUKPRN(UKPRN);
                     return View("../Migration/DeleteConfirmed/Index");
                 case MigrationDeleteOptions.Cancel:
                     return RedirectToAction("Index", "PublishCourses", new { publishMode = PublishMode.Migration });

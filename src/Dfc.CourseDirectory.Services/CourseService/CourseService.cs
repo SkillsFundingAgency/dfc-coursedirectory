@@ -37,6 +37,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
         private readonly Uri _getCourseCountsByStatusForUKPRNUri;
         private readonly Uri _getRecentCourseChangesByUKPRNUri;
         private readonly Uri _changeCourseRunStatusesForUKPRNSelectionUri;
+        private readonly Uri _archiveCourseRunsByUKPRNUri;
         private readonly Uri _archiveLiveCoursesUri;
         private readonly Uri _deleteBulkUploadCoursesUri;
         private readonly Uri _getCourseMigrationReportByUKPRN;
@@ -93,6 +94,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             _getCourseCountsByStatusForUKPRNUri = settings.Value.ToGetCourseCountsByStatusForUKPRNUri();
             _getRecentCourseChangesByUKPRNUri = settings.Value.ToGetRecentCourseChangesByUKPRNUri();
             _changeCourseRunStatusesForUKPRNSelectionUri = settings.Value.ToChangeCourseRunStatusesForUKPRNSelectionUri();
+            _archiveCourseRunsByUKPRNUri = settings.Value.ToArchiveCourseRunsByUKPRNUri();
             _deleteBulkUploadCoursesUri = settings.Value.ToDeleteBulkUploadCoursesUri();
             _getCourseMigrationReportByUKPRN = settings.Value.ToGetCourseMigrationReportByUKPRN();
             _getAllDfcReports = settings.Value.ToGetAllDfcReports();
@@ -916,6 +918,28 @@ namespace Dfc.CourseDirectory.Services.CourseService
             }
         }
 
+        public async Task<IResult> ArchiveCourseRunsByUKPRN(int UKPRN)
+        {
+            Throw.IfNull(UKPRN, nameof(UKPRN));
+
+            // @ToDo: sort out this ugly hack that fixes the TaskCancelledException when this is called from the background worker in the CourseDirectory app per
+            HttpClient httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
+
+            //_httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.ApiKey);
+            var response = await httpClient.GetAsync(new Uri(_archiveCourseRunsByUKPRNUri.AbsoluteUri + "?UKPRN=" + UKPRN));
+            _logger.LogHttpResponseMessage("Archive courses service http response", response);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return Result.Ok();
+            }
+            else
+            {
+                return Result.Fail("ChangeCourseRunStatusesForUKPRNSelection service unsuccessful http response");
+            }
+        }
+
         public async Task<IResult> UpdateStatus(Guid courseId, Guid courseRunId, int statusToUpdateTo)
         {
             Throw.IfNullGuid(courseId, nameof(courseId));
@@ -1156,6 +1180,13 @@ namespace Dfc.CourseDirectory.Services.CourseService
             var uri = new Uri(extendee.ApiUrl);
             var trimmed = uri.AbsoluteUri.TrimEnd('/');
             return new Uri($"{trimmed}/ChangeCourseRunStatusesForUKPRNSelection");
+        }
+
+        internal static Uri ToArchiveCourseRunsByUKPRNUri(this ICourseServiceSettings extendee)
+        {
+            var uri = new Uri(extendee.ApiUrl);
+            var trimmed = uri.AbsoluteUri.TrimEnd('/');
+            return new Uri($"{trimmed}/ArchiveCourseRunsByUKPRN");
         }
 
         internal static Uri ToDeleteBulkUploadCoursesUri(this ICourseServiceSettings extendee)
