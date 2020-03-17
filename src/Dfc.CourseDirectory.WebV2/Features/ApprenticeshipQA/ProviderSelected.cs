@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.WebV2.Behaviors;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.WebV2.DataStore.Sql;
@@ -44,7 +45,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderSelected
         public bool AssessmentCompleted { get; set; }
     }
 
-    public class QueryHandler : IRequestHandler<Query, QueryResponse>
+    public class QueryHandler :
+        IRequestHandler<Query, QueryResponse>,
+        IRestrictQAStatus<Query, QueryResponse>
     {
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
@@ -56,6 +59,15 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderSelected
             _sqlQueryDispatcher = sqlQueryDispatcher;
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
         }
+
+        IEnumerable<ApprenticeshipQAStatus> IRestrictQAStatus<Query, QueryResponse>.PermittedStatuses { get; } = new[]
+        {
+            ApprenticeshipQAStatus.Submitted,
+            ApprenticeshipQAStatus.InProgress,
+            ApprenticeshipQAStatus.Failed,
+            ApprenticeshipQAStatus.Passed,
+            ApprenticeshipQAStatus.UnableToComplete
+        };
 
         public async Task<QueryResponse> Handle(Query request, CancellationToken cancellationToken)
         {
@@ -75,11 +87,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderSelected
                 {
                     ProviderId = request.ProviderId
                 });
-
-            if (qaStatus == ApprenticeshipQAStatus.NotStarted)
-            {
-                return new Error<ErrorReason>(ErrorReason.InvalidStatus);
-            }
 
             var maybeLatestSubmission = await _sqlQueryDispatcher.ExecuteQuery(
                 new GetLatestApprenticeshipQASubmissionForProvider()
@@ -113,5 +120,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderSelected
                 ProviderName = provider.ProviderName
             };
         }
+
+        QueryResponse IRestrictQAStatus<Query, QueryResponse>.CreateErrorResponse() =>
+            new Error<ErrorReason>(ErrorReason.InvalidStatus);
+
+        Task<Guid> IRestrictQAStatus<Query, QueryResponse>.GetProviderId(Query request) =>
+            Task.FromResult(request.ProviderId);
     }
 }
