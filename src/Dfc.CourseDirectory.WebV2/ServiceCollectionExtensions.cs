@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.WebV2.Behaviors;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
 using Dfc.CourseDirectory.WebV2.DataStore.Sql;
 using Dfc.CourseDirectory.WebV2.Filters;
@@ -116,6 +117,7 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddHttpContextAccessor();
             services.TryAddSingleton<IFeatureFlagProvider, ConfigurationFeatureFlagProvider>();
             services.AddScoped<SignInTracker>();
+            services.AddBehaviors();
 
             return services;
         }
