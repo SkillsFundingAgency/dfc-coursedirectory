@@ -12,13 +12,15 @@ using OneOf.Types;
 
 namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Complete
 {
+    using CommandResponse = OneOf<Error<ErrorReason>, ViewModel>;
+
     public enum ErrorReason
     {
         ProviderDoesNotExist,
         InvalidStatus
     }
 
-    public class Command : IRequest<OneOf<Error<ErrorReason>, ViewModel>>
+    public class Command : IRequest<CommandResponse>
     {
         public Guid ProviderId { get; set; }
     }
@@ -28,7 +30,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Complete
         public string ProviderName { get; set; }
     }
 
-    public class CommandHandler : IRequestHandler<Command, OneOf<Error<ErrorReason>, ViewModel>>
+    public class CommandHandler : IRequestHandler<Command, CommandResponse>
     {
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
@@ -41,7 +43,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Complete
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
         }
 
-        public async Task<OneOf<Error<ErrorReason>, ViewModel>> Handle(
+        public async Task<CommandResponse> Handle(
             Command request,
             CancellationToken cancellationToken)
         {
