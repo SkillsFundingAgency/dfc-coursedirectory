@@ -1,4 +1,5 @@
-﻿using OneOf.Types;
+﻿using System;
+using OneOf.Types;
 
 namespace Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries
 {
@@ -8,5 +9,6 @@ namespace Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries
         public string Email { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public Guid? ProviderId { get; set; }
     }
 }

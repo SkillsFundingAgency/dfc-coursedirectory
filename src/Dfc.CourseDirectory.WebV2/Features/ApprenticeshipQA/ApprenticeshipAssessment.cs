@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
-using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.WebV2.Behaviors;
 using Dfc.CourseDirectory.WebV2.DataStore.Sql;
 using Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.WebV2.Models;
@@ -17,13 +17,16 @@ using OneOf.Types;
 
 namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAssessment
 {
+    using CommandResponse = OneOf<Error<ErrorReason>, ModelWithErrors<ViewModel>, ConfirmationViewModel>;
+    using QueryResponse = OneOf<Error<ErrorReason>, ViewModel>;
+
     public enum ErrorReason
     {
         ApprenticeshipDoesNotExist,
         NoValidSubmission,
     }
 
-    public class Query : IRequest<OneOf<Error<ErrorReason>, ViewModel>>
+    public class Query : IRequest<QueryResponse>
     {
         public Guid ApprenticeshipId { get; set; }
     }
@@ -36,7 +39,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
         public bool IsReadOnly { get; set; }
     }
 
-    public class Command : IRequest<OneOf<Error<ErrorReason>, ModelWithErrors<ViewModel>, ConfirmationViewModel>>
+    public class Command : IRequest<CommandResponse>
     {
         public Guid ApprenticeshipId { get; set; }
         public bool? CompliancePassed { get; set; }
@@ -62,27 +65,34 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
     }
 
     public class Handler :
-        IRequestHandler<Query, OneOf<Error<ErrorReason>, ViewModel>>,
-        IRequestHandler<Command, OneOf<Error<ErrorReason>, ModelWithErrors<ViewModel>, ConfirmationViewModel>>
+        IRequestHandler<Query, QueryResponse>,
+        IRequestHandler<Command, CommandResponse>,
+        IRestrictQAStatus<Command, CommandResponse>
     {
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
-        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+        private readonly IProviderOwnershipCache _providerOwnershipCache;
         private readonly ICurrentUserProvider _currentUserProvider;
         private readonly IClock _clock;
 
         public Handler(
             ISqlQueryDispatcher sqlQueryDispatcher,
-            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
+            IProviderOwnershipCache providerOwnershipCache,
             ICurrentUserProvider currentUserProvider,
             IClock clock)
         {
             _sqlQueryDispatcher = sqlQueryDispatcher;
-            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
+            _providerOwnershipCache = providerOwnershipCache;
             _currentUserProvider = currentUserProvider;
             _clock = clock;
         }
 
-        public async Task<OneOf<Error<ErrorReason>, ViewModel>> Handle(Query request, CancellationToken cancellationToken)
+        public IEnumerable<ApprenticeshipQAStatus> PermittedStatuses { get; } = new[]
+        {
+            ApprenticeshipQAStatus.Submitted,
+            ApprenticeshipQAStatus.InProgress
+        };
+
+        public async Task<QueryResponse> Handle(Query request, CancellationToken cancellationToken)
         {
             var errorOrData = await CheckStatus(request.ApprenticeshipId);
 
@@ -96,7 +106,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
             }
         }
 
-        public async Task<OneOf<Error<ErrorReason>, ModelWithErrors<ViewModel>, ConfirmationViewModel>> Handle(
+        public async Task<CommandResponse> Handle(
             Command request,
             CancellationToken cancellationToken)
         {
@@ -108,11 +118,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
             }
 
             var data = errorOrData.AsT1;
-
-            if (data.QAStatus != ApprenticeshipQAStatus.Submitted && data.QAStatus != ApprenticeshipQAStatus.InProgress)
-            {
-                return new Error<ErrorReason>(ErrorReason.NoValidSubmission);
-            }
 
             var validator = new CommandValidator();
             var validationResult = await validator.ValidateAsync(request);
@@ -241,6 +246,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
 
             return new Data()
             {
+                ApprenticeshipId = apprenticeshipId,
+                ProviderId = providerId,
                 QAStatus = qaStatus,
                 LatestSubmission = latestSubmission,
                 SubmissionApprenticeship = submissionApprenticeship,
@@ -265,29 +272,35 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
 
         private async Task<OneOf<NotFound, Guid>> GetProviderIdForApprenticeship(Guid apprenticeshipId)
         {
-            var providerUkprn = await _cosmosDbQueryDispatcher.ExecuteQuery(
-                new GetProviderUkprnForApprenticeship()
-                {
-                    ApprenticeshipId = apprenticeshipId
-                });
+            var providerId = await _providerOwnershipCache.GetProviderForApprenticeship(apprenticeshipId);
 
-            if (providerUkprn.Value is NotFound)
+            if (providerId.HasValue)
+            {
+                return providerId.Value;
+            }
+            else
             {
                 return new NotFound();
             }
-
-            var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(
-                new GetProviderByUkprn()
-                {
-                    Ukprn = providerUkprn.AsT1
-                });
-            var providerId = provider.Id;
-
-            return providerId;
         }
 
         private static bool IsQAPassed(bool compliancePassed, bool stylePassed) =>
             compliancePassed && stylePassed;
+
+        CommandResponse IRestrictQAStatus<Command, CommandResponse>.CreateErrorResponse() =>
+            new Error<ErrorReason>(ErrorReason.NoValidSubmission);
+
+        async Task<Guid> IRestrictQAStatus<Command, CommandResponse>.GetProviderId(Command request)
+        {
+            var maybeProviderId = await GetProviderIdForApprenticeship(request.ApprenticeshipId);
+
+            if (maybeProviderId.Value is NotFound)
+            {
+                throw new ErrorException<ErrorReason>(ErrorReason.ApprenticeshipDoesNotExist);
+            }
+
+            return maybeProviderId.AsT1;
+        }
 
         private class Data
         {

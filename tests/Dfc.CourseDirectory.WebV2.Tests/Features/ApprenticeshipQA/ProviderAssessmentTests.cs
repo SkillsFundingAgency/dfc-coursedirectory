@@ -31,7 +31,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.Submitted);
 
             var providerUserId = $"{ukprn}-user";
-            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person");
+            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
 
             var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
 
@@ -99,7 +99,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
                 apprenticeshipQAStatus: qaStatus);
 
             var providerUserId = $"{ukprn}-user";
-            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person");
+            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
 
             var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
 
@@ -131,7 +131,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.Submitted);
 
             var providerUserId = $"{ukprn}-user";
-            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person");
+            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
 
             var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
 
@@ -172,7 +172,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.Submitted);
 
             var providerUserId = $"{ukprn}-user";
-            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person");
+            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
 
             var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
 
@@ -213,7 +213,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
         [Theory]
         [InlineData(true, ApprenticeshipQAStatus.Passed)]
         [InlineData(false, ApprenticeshipQAStatus.Failed)]
-        [InlineData(false, ApprenticeshipQAStatus.UnableToComplete)]
+        [InlineData(false, ApprenticeshipQAStatus.UnableToComplete | ApprenticeshipQAStatus.NotStarted)]
         public async Task Get_QAStatusNotValidRendersReadOnly(bool passed, ApprenticeshipQAStatus qaStatus)
         {
             // Arrange
@@ -225,7 +225,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
                 apprenticeshipQAStatus: qaStatus);
 
             var providerUserId = $"{ukprn}-user";
-            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person");
+            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
 
             var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
 
@@ -271,7 +271,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.Submitted);
 
             var providerUserId = $"{ukprn}-user";
-            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person");
+            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
 
             var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
 
@@ -351,7 +351,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
         [InlineData(ApprenticeshipQAStatus.Failed)]
         [InlineData(ApprenticeshipQAStatus.NotStarted)]
         [InlineData(ApprenticeshipQAStatus.Passed)]
-        [InlineData(ApprenticeshipQAStatus.UnableToComplete)]
+        [InlineData(ApprenticeshipQAStatus.UnableToComplete | ApprenticeshipQAStatus.NotStarted)]
         public async Task Post_SubmissionAtInvalidStatusReturnsBadRequest(ApprenticeshipQAStatus qaStatus)
         {
             // Arrange
@@ -363,7 +363,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
                 apprenticeshipQAStatus: qaStatus);
 
             var providerUserId = $"{ukprn}-user";
-            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person");
+            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
 
             var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
 
@@ -402,7 +402,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.Submitted);
 
             var providerUserId = $"{ukprn}-user";
-            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person");
+            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
 
             var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
 
@@ -443,7 +443,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.Submitted);
 
             var providerUserId = $"{ukprn}-user";
-            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person");
+            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
 
             var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
 
@@ -486,7 +486,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.Submitted);
 
             var providerUserId = $"{ukprn}-user";
-            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person");
+            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
 
             var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
 
@@ -527,7 +527,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.Submitted);
 
             var providerUserId = $"{ukprn}-user";
-            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person");
+            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
 
             var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
 
@@ -570,7 +570,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.Submitted);
 
             var providerUserId = $"{ukprn}-user";
-            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person");
+            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
 
             var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
 
@@ -624,7 +624,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.Submitted);
 
             var providerUserId = $"{ukprn}-user";
-            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person");
+            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
 
             var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
 
@@ -681,7 +681,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.Submitted);
 
             var providerUserId = $"{ukprn}-user";
-            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person");
+            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
 
             var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
 
@@ -738,7 +738,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.Submitted);
 
             var providerUserId = $"{ukprn}-user";
-            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person");
+            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
 
             var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
 
@@ -814,7 +814,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
                 apprenticeshipQAStatus: ApprenticeshipQAStatus.Submitted);
 
             var providerUserId = $"{ukprn}-user";
-            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person");
+            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
 
             var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
 
@@ -874,7 +874,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
         [Theory]
         [InlineData(true, ApprenticeshipQAStatus.Passed)]
         [InlineData(false, ApprenticeshipQAStatus.Failed)]
-        [InlineData(false, ApprenticeshipQAStatus.UnableToComplete)]
+        [InlineData(false, ApprenticeshipQAStatus.UnableToComplete | ApprenticeshipQAStatus.NotStarted)]
         public async Task Post_QAStatusNotValidReturnsBadRequest(bool passed, ApprenticeshipQAStatus qaStatus)
         {
             // Arrange
@@ -886,7 +886,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
                 apprenticeshipQAStatus: qaStatus);
 
             var providerUserId = $"{ukprn}-user";
-            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person");
+            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
 
             var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
 

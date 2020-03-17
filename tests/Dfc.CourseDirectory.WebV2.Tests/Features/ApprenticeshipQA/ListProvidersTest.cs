@@ -40,7 +40,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
                 ukprn: provider1Ukprn,
                 providerName: "Provider 1",
                 apprenticeshipQAStatus: Models.ApprenticeshipQAStatus.Submitted);
-            await TestData.CreateUser(provider1UserId, "guy@provider1.com", "Provider 1", "User");
+            await TestData.CreateUser(provider1UserId, "guy@provider1.com", "Provider 1", "User", provider1Id);
             var provider1ApprenticeshipId = await TestData.CreateApprenticeship(providerUkprn: provider1Ukprn);
             await TestData.CreateApprenticeshipQASubmission(
                 provider1Id,
@@ -55,7 +55,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
                 ukprn: provider2Ukprn,
                 providerName: "Provider 2",
                 apprenticeshipQAStatus: Models.ApprenticeshipQAStatus.Submitted);
-            await TestData.CreateUser(provider2UserId, "guy@provider2.com", "Provider 2", "User");
+            await TestData.CreateUser(provider2UserId, "guy@provider2.com", "Provider 2", "User", provider2Id);
             var provider2ApprenticeshipId = await TestData.CreateApprenticeship(providerUkprn: provider2Ukprn);
             await TestData.CreateApprenticeshipQASubmission(
                 provider2Id,

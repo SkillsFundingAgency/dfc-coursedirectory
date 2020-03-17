@@ -25,7 +25,6 @@ using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 using Dfc.CourseDirectory.Services.OnspdService;
 using Dfc.CourseDirectory.Services.ProviderService;
 using Dfc.CourseDirectory.Services.VenueService;
-using Dfc.CourseDirectory.Web.Areas.Identity.Data;
 using Dfc.CourseDirectory.Web.BackgroundWorkers;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.HostedServices;
@@ -45,7 +44,6 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.Azure.Documents.Client;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
@@ -68,11 +66,11 @@ namespace Dfc.CourseDirectory.Web
     {
         public IConfiguration Configuration { get; }
         private readonly ILogger<Startup> _logger;
-        private readonly IHostingEnvironment _env;
+        private readonly IWebHostEnvironment _env;
         //Undefined is only part of these policy until the batch import to update ProviderType is run
         private readonly List<string> _feClaims = new List<string> {"Fe", "Both", "Undefined" };
         private readonly List<string> _apprenticeshipClaims = new List<string> { "Apprenticeship", "Both", "Undefined" };
-        public Startup(IHostingEnvironment env, ILogger<Startup> logger, IConfiguration config)
+        public Startup(IWebHostEnvironment env, ILogger<Startup> logger, IConfiguration config)
         {
             _env = env;
             _logger = logger;
@@ -159,8 +157,6 @@ namespace Dfc.CourseDirectory.Web
             services.Configure<EnvironmentSettings>(Configuration.GetSection(nameof(EnvironmentSettings)));
             services.AddScoped<IEnvironmentHelper, EnvironmentHelper>();
             services.AddScoped<IApprenticeshipProvisionHelper, ApprenticeshipProvisionHelper>();
-            services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             {
                 var endpoint = new Uri(Configuration["CosmosDbSettings:EndpointUri"]);
@@ -171,23 +167,23 @@ namespace Dfc.CourseDirectory.Web
 
             services.AddCourseDirectory(_env, Configuration);
 
-            services
+            var mvcBuilder = services
                 .AddMvc(options =>
                 {
                     options.Filters.Add(new RedirectOnMissingUKPRNActionFilter());
                 })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
-                .AddSessionStateTempDataProvider()
-                .AddRazorOptions(options =>
-                {
-#if DEBUG
-                    // Fix auto reload on IIS when views in V2 project are changed
-                    // (see https://github.com/aspnet/Razor/issues/2426#issuecomment-420750249)
-                    var v2ProjectPath = Path.Combine(Directory.GetParent(Environment.CurrentDirectory).FullName, "Dfc.CourseDirectory.WebV2");
-                    options.FileProviders.Add(new PhysicalFileProvider(v2ProjectPath));
-#endif
-                });
+                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
+                .AddSessionStateTempDataProvider();
 
+#if DEBUG
+            mvcBuilder.AddRazorRuntimeCompilation(options =>
+            {
+                // Fix auto reload on IIS when views in V2 project are changed
+                // (see https://github.com/aspnet/Razor/issues/2426#issuecomment-420750249)
+                var v2ProjectPath = Path.Combine(Directory.GetParent(Environment.CurrentDirectory).FullName, "Dfc.CourseDirectory.WebV2");
+                options.FileProviders.Add(new PhysicalFileProvider(v2ProjectPath));
+            });
+#endif
 
             services.AddAuthorization(options =>
             {
@@ -264,7 +260,6 @@ namespace Dfc.CourseDirectory.Web
             app.UseGdsFrontEnd();
             app.UseV2StaticFiles();
             app.UseSession();
-            app.UseAuthentication();
 
             //Preventing ClickJacking Attacks
             app.Use(async (context, next) =>
@@ -316,16 +311,23 @@ namespace Dfc.CourseDirectory.Web
                 await next();
             });
 
+            app.UseRouting();
 
-            app.UseMvc(routes =>
+            app.UseAuthentication();
+
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapRoute(
+                endpoints.MapControllerRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
 
-                routes.MapRoute(
+                endpoints.MapControllerRoute(
                     name: "onboardprovider",
-                    template: "{controller=ProviderSearch}/{action=OnBoardProvider}/{id?}");
+                    pattern: "{controller=ProviderSearch}/{action=OnBoardProvider}/{id?}");
+
+                endpoints.MapControllers();
             });
 
             async Task RunStartupTasks()

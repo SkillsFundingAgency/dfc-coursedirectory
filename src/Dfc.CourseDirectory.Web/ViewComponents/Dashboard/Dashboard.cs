@@ -90,7 +90,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
                                                                         .Where(x => x.RecordStatus == RecordStatus.BulkUploadPending);
 
 
-                IEnumerable<CourseRun> migrationPendingCourses = courses.SelectMany(c => c.CourseRuns).Where(x => x.RecordStatus == RecordStatus.MigrationPending);
+                IEnumerable<CourseRun> migrationPendingCourses = courses.SelectMany(c => c.CourseRuns).Where(x => x.RecordStatus == RecordStatus.MigrationPending || x.RecordStatus == RecordStatus.MigrationReadyToGoLive);
 
                 IEnumerable<Course> inValidCourses = courses.Where(c => c.IsValid == false);
 

@@ -33,14 +33,17 @@ SELECT TOP 1
     s.Passed,
     s.ProviderAssessmentPassed,
     s.ApprenticeshipAssessmentsPassed,
+    s.LastAssessedOn,
     b.UserId,
     b.Email,
     b.FirstName,
     b.LastName,
+    b.ProviderId,
     a.UserId,
     a.Email,
     a.FirstName,
-    a.LastName
+    a.LastName,
+    a.ProviderId
 FROM Pttcd.ApprenticeshipQASubmissions s
 JOIN Pttcd.Users b ON s.SubmittedByUserId = b.UserId
 LEFT JOIN Pttcd.Users a ON s.LastAssessedByUserId = a.UserId
@@ -64,6 +67,7 @@ WHERE s.ApprenticeshipQASubmissionId = @LatestApprenticeshipQASubmissionId";
                         ApprenticeshipAssessmentsPassed = h.ApprenticeshipAssessmentsPassed,
                         ApprenticeshipQASubmissionId = h.ApprenticeshipQASubmissionId,
                         LastAssessedBy = assessedBy,
+                        LastAssessedOn = h.LastAssessedOn,
                         Passed = h.Passed,
                         ProviderAssessmentPassed = h.ProviderAssessmentPassed,
                         ProviderId = h.ProviderId,
@@ -92,6 +96,7 @@ WHERE s.ApprenticeshipQASubmissionId = @LatestApprenticeshipQASubmissionId";
             public DateTime SubmittedOn { get; set; }
             public string ProviderMarketingInformation { get; set; }
             public bool? Passed { get; set; }
+            public DateTime? LastAssessedOn { get; set; }
             public bool? ProviderAssessmentPassed { get; set; }
             public bool? ApprenticeshipAssessmentsPassed { get; set; }
         }

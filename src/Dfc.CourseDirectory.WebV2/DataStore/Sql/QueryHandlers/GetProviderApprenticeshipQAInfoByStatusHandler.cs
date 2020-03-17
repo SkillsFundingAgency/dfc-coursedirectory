@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries;
@@ -27,10 +28,14 @@ SELECT
 FROM Pttcd.ApprenticeshipQASubmissions s
 JOIN Pttcd.Providers p ON s.ProviderId = p.ProviderId
 LEFT JOIN Pttcd.Users u ON s.LastAssessedByUserId = u.UserId
-WHERE p.ApprenticeshipQAStatus IN @Statuses
+WHERE p.ApprenticeshipQAStatus & @StatusMask != 0
 ORDER BY s.SubmittedOn";
 
-            var paramz = new { query.Statuses };
+            var statusMask = query.Statuses.Aggregate(
+                (ApprenticeshipQAStatus)0,
+                (s, combined) => combined | s);
+
+            var paramz = new { StatusMask = statusMask };
 
             return (await transaction.Connection.QueryAsync<QASubmissionResult, UserInfo, GetProviderApprenticeshipQAInfoByStatusResult>(
                 sql,

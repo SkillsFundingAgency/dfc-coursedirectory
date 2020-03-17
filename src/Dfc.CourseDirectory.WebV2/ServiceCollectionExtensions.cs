@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.WebV2.Behaviors;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
 using Dfc.CourseDirectory.WebV2.DataStore.Sql;
 using Dfc.CourseDirectory.WebV2.Filters;
@@ -25,7 +26,7 @@ namespace Dfc.CourseDirectory.WebV2
     {
         public static IServiceCollection AddCourseDirectory(
             this IServiceCollection services,
-            IHostingEnvironment environment,
+            IWebHostEnvironment environment,
             IConfiguration configuration)
         {
             var thisAssembly = typeof(ServiceCollectionExtensions).Assembly;
@@ -45,6 +46,8 @@ namespace Dfc.CourseDirectory.WebV2
             services
                 .AddMvc(options =>
                 {
+                    options.EnableEndpointRouting = true;
+
                     options.Conventions.Add(new AddFeaturePropertyModelConvention());
                     options.Conventions.Add(new AuthorizeActionModelConvention());
 
@@ -114,6 +117,7 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddHttpContextAccessor();
             services.TryAddSingleton<IFeatureFlagProvider, ConfigurationFeatureFlagProvider>();
             services.AddScoped<SignInTracker>();
+            services.AddBehaviors();
 
             return services;
         }

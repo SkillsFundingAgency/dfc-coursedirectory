@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.WebV2.Behaviors;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.WebV2.DataStore.Sql;
@@ -14,13 +15,15 @@ using OneOf.Types;
 
 namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderSelected
 {
+    using QueryResponse = OneOf<Error<ErrorReason>, ViewModel>;
+
     public enum ErrorReason
     {
         ProviderDoesNotExist,
-        NoValidSubmission
+        InvalidStatus
     }
 
-    public class Query : IRequest<OneOf<Error<ErrorReason>, ViewModel>>
+    public class Query : IRequest<QueryResponse>
     {
         public Guid ProviderId { get; set; }
     }
@@ -42,7 +45,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderSelected
         public bool AssessmentCompleted { get; set; }
     }
 
-    public class QueryHandler : IRequestHandler<Query, OneOf<Error<ErrorReason>, ViewModel>>
+    public class QueryHandler :
+        IRequestHandler<Query, QueryResponse>,
+        IRestrictQAStatus<Query, QueryResponse>
     {
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
@@ -55,7 +60,16 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderSelected
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
         }
 
-        public async Task<OneOf<Error<ErrorReason>, ViewModel>> Handle(Query request, CancellationToken cancellationToken)
+        IEnumerable<ApprenticeshipQAStatus> IRestrictQAStatus<Query, QueryResponse>.PermittedStatuses { get; } = new[]
+        {
+            ApprenticeshipQAStatus.Submitted,
+            ApprenticeshipQAStatus.InProgress,
+            ApprenticeshipQAStatus.Failed,
+            ApprenticeshipQAStatus.Passed,
+            ApprenticeshipQAStatus.UnableToComplete
+        };
+
+        public async Task<QueryResponse> Handle(Query request, CancellationToken cancellationToken)
         {
             var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(
                 new GetProviderById()
@@ -74,11 +88,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderSelected
                     ProviderId = request.ProviderId
                 });
 
-            if (qaStatus == ApprenticeshipQAStatus.NotStarted)
-            {
-                return new Error<ErrorReason>(ErrorReason.NoValidSubmission);
-            }
-
             var maybeLatestSubmission = await _sqlQueryDispatcher.ExecuteQuery(
                 new GetLatestApprenticeshipQASubmissionForProvider()
                 {
@@ -87,7 +96,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderSelected
 
             if (maybeLatestSubmission.Value is None)
             {
-                return new Error<ErrorReason>(ErrorReason.NoValidSubmission);
+                return new Error<ErrorReason>(ErrorReason.InvalidStatus);
             }
 
             var latestSubmission = maybeLatestSubmission.AsT1;
@@ -111,5 +120,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderSelected
                 ProviderName = provider.ProviderName
             };
         }
+
+        QueryResponse IRestrictQAStatus<Query, QueryResponse>.CreateErrorResponse() =>
+            new Error<ErrorReason>(ErrorReason.InvalidStatus);
+
+        Task<Guid> IRestrictQAStatus<Query, QueryResponse>.GetProviderId(Query request) =>
+            Task.FromResult(request.ProviderId);
     }
 }
