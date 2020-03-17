@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.DataStore.Sql;
 using Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.WebV2.Models;
 using MediatR;
 
 namespace Dfc.CourseDirectory.WebV2.Behaviors
@@ -34,7 +35,11 @@ namespace Dfc.CourseDirectory.WebV2.Behaviors
                     ProviderId = providerId
                 });
 
-            if (!_descriptor.PermittedStatuses.Contains(qaStatus))
+            var isPermitted = qaStatus.HasFlag(ApprenticeshipQAStatus.UnableToComplete) ?
+                _descriptor.PermittedStatuses.Contains(ApprenticeshipQAStatus.UnableToComplete) :
+                _descriptor.PermittedStatuses.Contains(qaStatus);
+
+            if (!isPermitted)
             {
                 return _descriptor.CreateErrorResponse();
             }
