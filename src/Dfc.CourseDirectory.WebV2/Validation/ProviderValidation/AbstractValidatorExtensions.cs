@@ -8,7 +8,7 @@ namespace Dfc.CourseDirectory.WebV2.Validation.ProviderValidation
         {
             field
                 .MaximumLength(Constants.AliasMaxLength)
-                    .WithMessageForAllRules($"Alias must be {Constants.AliasMaxLength} characters or fewer");
+                    .WithMessage($"Alias must be {Constants.AliasMaxLength} characters or fewer");
         }
 
         public static void CourseDirectoryName<T>(this IRuleBuilderInitial<T, string> field)
