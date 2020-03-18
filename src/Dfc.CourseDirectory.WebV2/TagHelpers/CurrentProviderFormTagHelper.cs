@@ -1,4 +1,4 @@
-﻿using Dfc.CourseDirectory.WebV2.ModelBinding;
+﻿using Dfc.CourseDirectory.WebV2.Filters;
 using Dfc.CourseDirectory.WebV2.Security;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Razor.TagHelpers;
@@ -46,7 +46,7 @@ namespace Dfc.CourseDirectory.WebV2.TagHelpers
 
             var updatedAction = QueryHelpers.AddQueryString(
                 resolvedAction,
-                CurrentProviderModelBinder.RouteValueKey,
+                CurrentProviderResourceFilter.RouteValueKey,
                 currentProviderId.ToString());
 
             output.Attributes.SetAttribute("action", updatedAction);

@@ -51,6 +51,7 @@ namespace Dfc.CourseDirectory.WebV2
                     options.Conventions.Add(new AddFeaturePropertyModelConvention());
                     options.Conventions.Add(new AuthorizeActionModelConvention());
 
+                    options.Filters.Add(new CurrentProviderResourceFilter());
                     options.Filters.Add(new RedirectToProviderSelectionActionFilter());
                     options.Filters.Add(new VerifyApprenticeshipIdActionFilter());
                     options.Filters.Add(new ResourceDoesNotExistExceptionFilter());
