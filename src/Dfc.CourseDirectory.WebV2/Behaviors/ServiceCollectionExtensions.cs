@@ -11,37 +11,11 @@ namespace Dfc.CourseDirectory.WebV2.Behaviors
         {
             foreach (var type in typeof(ServiceCollectionExtensions).Assembly.GetTypes())
             {
-                RegisterRestrictQAStatusBehavior(type);
                 RegisterRequireUserCanSubmitQASubmissionBehavior(type);
+                RegisterRestrictQAStatusBehavior(type);
             }
 
             return services;
-
-            void RegisterRestrictQAStatusBehavior(Type type)
-            { 
-                // For any type implementing IRestrictQAStatus<TRequest, TResponse>
-                // add a RestrictQAStatusBehavior behavior for its request & response types
-
-                var restrictQaStatusType = typeof(IRestrictQAStatus<>);
-
-                var restrictTypes = type.GetInterfaces()
-                    .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == restrictQaStatusType)
-                    .ToList();
-
-                foreach (var t in restrictTypes)
-                {
-                    var requestType = t.GenericTypeArguments[0];
-                    var responseType = GetResponseTypeFromRequestType(requestType);
-
-                    var pipelineBehaviorType = typeof(IPipelineBehavior<,>).MakeGenericType(requestType, responseType);
-                    var behaviourType = typeof(RestrictQAStatusBehavior<,>).MakeGenericType(requestType, responseType);
-                    services.AddScoped(pipelineBehaviorType, behaviourType);
-
-                    // Register the handler as an IRestrictQAStatus<TRequest, TResponse>
-                    var handlerInterfaceType = typeof(IRequestHandler<,>).MakeGenericType(requestType, responseType);
-                    services.AddScoped(t, sp => sp.GetRequiredService(handlerInterfaceType));
-                }
-            }
 
             void RegisterRequireUserCanSubmitQASubmissionBehavior(Type type)
             {
@@ -64,6 +38,32 @@ namespace Dfc.CourseDirectory.WebV2.Behaviors
                     services.AddScoped(pipelineBehaviorType, behaviourType);
 
                     // Register the handler as an IRequireUserCanSubmitQASubmission<TRequest, TResponse>
+                    var handlerInterfaceType = typeof(IRequestHandler<,>).MakeGenericType(requestType, responseType);
+                    services.AddScoped(t, sp => sp.GetRequiredService(handlerInterfaceType));
+                }
+            }
+
+            void RegisterRestrictQAStatusBehavior(Type type)
+            { 
+                // For any type implementing IRestrictQAStatus<TRequest, TResponse>
+                // add a RestrictQAStatusBehavior behavior for its request & response types
+
+                var restrictQaStatusType = typeof(IRestrictQAStatus<>);
+
+                var restrictTypes = type.GetInterfaces()
+                    .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == restrictQaStatusType)
+                    .ToList();
+
+                foreach (var t in restrictTypes)
+                {
+                    var requestType = t.GenericTypeArguments[0];
+                    var responseType = GetResponseTypeFromRequestType(requestType);
+
+                    var pipelineBehaviorType = typeof(IPipelineBehavior<,>).MakeGenericType(requestType, responseType);
+                    var behaviourType = typeof(RestrictQAStatusBehavior<,>).MakeGenericType(requestType, responseType);
+                    services.AddScoped(pipelineBehaviorType, behaviourType);
+
+                    // Register the handler as an IRestrictQAStatus<TRequest, TResponse>
                     var handlerInterfaceType = typeof(IRequestHandler<,>).MakeGenericType(requestType, responseType);
                     services.AddScoped(t, sp => sp.GetRequiredService(handlerInterfaceType));
                 }
