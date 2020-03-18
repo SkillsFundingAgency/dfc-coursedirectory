@@ -27,7 +27,7 @@ namespace Dfc.CourseDirectory.WebV2.Behaviors
             var providerId = await _descriptor.GetProviderId(request);
             var currentUser = _currentUserProvider.GetCurrentUser();
 
-            if (!AuthorizationRules.UserCanSubmitQASubmission(currentUser, providerId))
+            if (!AuthorizationRules.CanSubmitQASubmission(currentUser, providerId))
             {
                 throw new NotAuthorizedException();
             }

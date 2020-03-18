@@ -18,6 +18,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb.QueryHandlers
                 ProviderStatus = request.ProviderStatus,
                 MarketingInformation = request.MarketingInformation,
                 CourseDirectoryName = request.CourseDirectoryName,
+                Alias = request.Alias,
                 ProviderContact = request.ProviderContact?.ToList() ?? new List<ProviderContact>(),
             };
             inMemoryDocumentStore.Providers.Save(provider);

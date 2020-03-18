@@ -20,6 +20,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             ApprenticeshipQAStatus apprenticeshipQAStatus = ApprenticeshipQAStatus.Passed,
             string marketingInformation = "",
             string courseDirectoryName = "",
+            string alias = "",
             IEnumerable<CreateProviderContact> contacts = null)
         {
             var providerId = Guid.NewGuid();
@@ -33,6 +34,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                 ProviderStatus = providerStatus,
                 MarketingInformation = marketingInformation,
                 CourseDirectoryName = courseDirectoryName,
+                Alias = alias,
                 ProviderContact = contacts?.Select(c => new ProviderContact()
                 {
                     ContactAddress = new ContactAddress()

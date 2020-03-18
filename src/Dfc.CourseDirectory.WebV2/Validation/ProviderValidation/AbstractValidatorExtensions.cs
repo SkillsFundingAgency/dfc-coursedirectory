@@ -4,12 +4,27 @@ namespace Dfc.CourseDirectory.WebV2.Validation.ProviderValidation
 {
     public static class AbstractValidatorExtensions
     {
+        public static void Alias<T>(this IRuleBuilderInitial<T, string> field)
+        {
+            field
+                .MaximumLength(Constants.AliasMaxLength)
+                    .WithMessageForAllRules($"Alias must be {Constants.AliasMaxLength} characters or fewer");
+        }
+
+        public static void CourseDirectoryName<T>(this IRuleBuilderInitial<T, string> field)
+        {
+            field
+                .MaximumLength(Constants.CourseDirectoryNameMaxLength)
+                .WithMessage($"Course Directory name must be {Constants.CourseDirectoryNameMaxLength} characters or fewer");
+        }
+
         public static void MarketingInformation<T>(this IRuleBuilderInitial<T, string> field)
         {
             field
                 .NotEmpty()
+                    .WithMessage("Enter provider marketing information")
                 .ValidHtml(maxLength: Constants.MarketingInformationStrippedMaxLength)
-                .WithMessageForAllRules("PLACEHOLDER");
+                    .WithMessage($"Marketing information must be {Constants.MarketingInformationStrippedMaxLength} characters or fewer");
         }
     }
 }

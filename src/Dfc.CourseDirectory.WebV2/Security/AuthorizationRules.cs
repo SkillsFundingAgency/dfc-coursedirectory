@@ -4,8 +4,14 @@ namespace Dfc.CourseDirectory.WebV2.Security
 {
     public static class AuthorizationRules
     {
-        public static bool UserCanSubmitQASubmission(AuthenticatedUserInfo userInfo, Guid providerId) =>
+        public static bool CanSubmitQASubmission(AuthenticatedUserInfo userInfo, Guid providerId) =>
             userInfo.IsDeveloper ||
             (userInfo.IsProvider && userInfo.ProviderId.Value == providerId);
+
+        public static bool CanUpdateProviderCourseDirectoryName(AuthenticatedUserInfo userInfo) =>
+            userInfo.IsDeveloper;
+
+        public static bool CanUpdateProviderMarketingInformation(AuthenticatedUserInfo userInfo) =>
+            userInfo.IsDeveloper;
     }
 }

@@ -90,7 +90,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Marketing
             }
 
             await _cosmosDbQueryDispatcher.ExecuteQuery(
-                new UpdateProviderMarketingInfo()
+                new UpdateProviderInfo()
                 {
                     ProviderId = request.ProviderId,
                     MarketingInformation = request.MarketingInformation,
