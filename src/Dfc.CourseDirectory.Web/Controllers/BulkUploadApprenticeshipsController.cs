@@ -197,7 +197,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     if (errors.Any())
                     {
                         return RedirectToAction("WhatDoYouWantToDoNext", "BulkUploadApprenticeships",
-                            new { message = $"Your file contained {errors.Count} error{(errors.Count > 1 ? "s" : "")}. You must fix all errors before your courses can be published to the directory.",
+                            new { message = $"Your file contained {errors.Count} error{(errors.Count > 1 ? "s" : "")}. You must resolve all errors before your apprenticeship training information can be published.",
                                   errorCount = errors.Count }   
                             );
                     }
