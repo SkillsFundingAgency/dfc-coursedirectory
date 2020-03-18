@@ -36,7 +36,9 @@ namespace Dfc.CourseDirectory.WebV2.Behaviors
                     var behaviourType = typeof(RestrictQAStatusBehavior<,>).MakeGenericType(requestType, responseType);
                     services.AddScoped(pipelineBehaviorType, behaviourType);
 
-                    services.AddScoped(t, type);
+                    // Register the handler as an IRestrictQAStatus<TRequest, TResponse>
+                    var handlerInterfaceType = typeof(IRequestHandler<,>).MakeGenericType(requestType, responseType);
+                    services.AddScoped(t, sp => sp.GetRequiredService(handlerInterfaceType));
                 }
             }
         }
