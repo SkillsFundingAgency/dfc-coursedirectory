@@ -1,5 +1,8 @@
-﻿namespace Dfc.CourseDirectory.WebV2.Models
+﻿using System;
+
+namespace Dfc.CourseDirectory.WebV2.Models
 {
+    [Flags]
     public enum ProviderType
     {
         FE = 1,
