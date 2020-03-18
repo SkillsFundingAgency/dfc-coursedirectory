@@ -26,7 +26,7 @@ namespace Dfc.CourseDirectory.WebV2
 #if DEBUG
             // Use a PhysicalFileProvider for local dev so we don't have to rebuild on every change
             var binPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var contentPath = Path.GetFullPath(Path.Combine(binPath, "../../../../Dfc.CourseDirectory.WebV2/Content"));
+            var contentPath = Path.GetFullPath(Path.Combine(binPath, "../../../../../src/Dfc.CourseDirectory.WebV2/Content"));
 #endif
 
             return app.UseStaticFiles(new StaticFileOptions()
