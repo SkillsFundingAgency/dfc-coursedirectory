@@ -36,7 +36,7 @@ namespace Dfc.CourseDirectory.WebV2.Validation
             var doc = new HtmlDocument();
             doc.LoadHtml(html);
 
-            return doc.DocumentNode.InnerText;
+            return HtmlEntity.DeEntitize(doc.DocumentNode.InnerText);
         }
     }
 }
