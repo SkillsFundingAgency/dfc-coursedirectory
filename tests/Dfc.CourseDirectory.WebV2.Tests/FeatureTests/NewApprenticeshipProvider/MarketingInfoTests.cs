@@ -204,7 +204,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
 
             var doc = await response.GetDocument();
-            doc.AssertHasError("MarketingInformation", "PLACEHOLDER");
+            doc.AssertHasError("MarketingInformation", "Marketing information must be 750 characters or fewer");
         }
 
         [Fact]

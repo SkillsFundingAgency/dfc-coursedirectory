@@ -16,6 +16,7 @@ namespace Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Models
         public string ProviderStatus { get; set; }
         public string MarketingInformation { get; set; }
         public string CourseDirectoryName { get; set; }
+        public string Alias { get; set; }
         public IList<ProviderContact> ProviderContact { get; set; } = new List<ProviderContact>();
         public DateTime DateUpdated { get; set; }
         public string UpdatedBy { get; set; }

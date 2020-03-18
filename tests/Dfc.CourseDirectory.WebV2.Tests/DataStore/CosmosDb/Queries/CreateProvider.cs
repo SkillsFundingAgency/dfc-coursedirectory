@@ -15,6 +15,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb.Queries
         public string ProviderStatus { get; set; }
         public string MarketingInformation { get; set; }
         public string CourseDirectoryName { get; set; }
+        public string Alias { get; set; }
         public IEnumerable<ProviderContact> ProviderContact { get; set; }
     }
 

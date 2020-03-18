@@ -6,12 +6,12 @@ using OneOf.Types;
 
 namespace Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.QueryHandlers
 {
-    public class UpdateProviderMarketingInfoHandler : ICosmosDbQueryHandler<UpdateProviderMarketingInfo, Success>
+    public class UpdateProviderInfoHandler : ICosmosDbQueryHandler<UpdateProviderInfo, Success>
     {
         public async Task<Success> Execute(
             DocumentClient client,
             Configuration configuration,
-            UpdateProviderMarketingInfo request)
+            UpdateProviderInfo request)
         {
             var documentUri = UriFactory.CreateDocumentUri(
                 configuration.DatabaseId,
@@ -22,7 +22,9 @@ namespace Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.QueryHandlers
 
             var provider = response.Document;
 
-            provider.MarketingInformation = request.MarketingInformation;
+            request.Alias.Switch(_ => { }, v => provider.Alias = v);
+            request.MarketingInformation.Switch(_ => { }, v => provider.MarketingInformation = v);
+            request.CourseDirectoryName.Switch(_ => { }, v => provider.CourseDirectoryName = v);
             provider.DateUpdated = request.UpdatedOn;
             provider.UpdatedBy = request.UpdatedBy.Email;
 
