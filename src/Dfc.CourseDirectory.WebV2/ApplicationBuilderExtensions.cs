@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System.IO;
+using System.Reflection;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.FileProviders;
 
 namespace Dfc.CourseDirectory.WebV2
@@ -21,10 +23,20 @@ namespace Dfc.CourseDirectory.WebV2
 
         public static IApplicationBuilder UseV2StaticFiles(this IApplicationBuilder app)
         {
+#if DEBUG
+            // Use a PhysicalFileProvider for local dev so we don't have to rebuild on every change
+            var binPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var contentPath = Path.GetFullPath(Path.Combine(binPath, "../../../../Dfc.CourseDirectory.WebV2/Content"));
+#endif
+
             return app.UseStaticFiles(new StaticFileOptions()
             {
+#if DEBUG
+                FileProvider = new PhysicalFileProvider(contentPath),
+#else
                 FileProvider = new ManifestEmbeddedFileProvider(
                     typeof(ApplicationBuilderExtensions).Assembly, "Content"),
+#endif
                 RequestPath = "/v2"
             });
         }
