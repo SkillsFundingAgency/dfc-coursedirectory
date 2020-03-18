@@ -33,6 +33,11 @@ namespace Dfc.CourseDirectory.WebV2.Security
         {
             var user = _httpContextAccessor.HttpContext.User;
 
+            if (!user.Identity.IsAuthenticated)
+            {
+                return null;
+            }
+
             return MapUserInfoFromPrincipal(user);
         }
     }
