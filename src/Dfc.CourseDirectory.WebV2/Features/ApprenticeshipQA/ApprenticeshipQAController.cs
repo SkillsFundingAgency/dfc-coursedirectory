@@ -21,29 +21,16 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA
         }
 
         [HttpGet("")]
-        public async Task<IActionResult> ListProviders()
-        {
-            var result = await _mediator.Send(new ListProviders.Query());
-            return View(result);
-        }
+        public async Task<IActionResult> ListProviders() =>
+            await _mediator.SendAndMapResponse(new ListProviders.Query(), vm => View(vm));
 
         [HttpGet("{providerId}")]
-        public async Task<IActionResult> ProviderSelected(ProviderSelected.Query query)
-        {
-            var result = await _mediator.Send(query);
-            return result.Match<IActionResult>(
-                error => BadRequest(),
-                vm => View(vm));
-        }
+        public async Task<IActionResult> ProviderSelected(ProviderSelected.Query query) =>
+            await _mediator.SendAndMapResponse(query, vm => View(vm));
 
         [HttpGet("provider-assessments/{providerId}")]
-        public async Task<IActionResult> ProviderAssessment(ProviderAssessment.Query query)
-        {
-            var result = await _mediator.Send(query);
-            return result.Match<IActionResult>(
-                error => BadRequest(),
-                vm => View(vm));
-        }
+        public async Task<IActionResult> ProviderAssessment(ProviderAssessment.Query query) =>
+            await _mediator.SendAndMapResponse(query, vm => View(vm));
 
         [HttpPost("provider-assessments/{providerId}")]
         public async Task<IActionResult> ProviderAssessment(
@@ -51,21 +38,16 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA
             ProviderAssessment.Command command)
         {
             command.ProviderId = providerId;
-            var result = await _mediator.Send(command);
-            return result.Match<IActionResult>(
-                _ => BadRequest(),
-                errors => this.ViewFromErrors(errors),
-                vm => View("ProviderAssessmentConfirmation", vm));
+            return await _mediator.SendAndMapResponse(
+                command,
+                response => response.Match(
+                    errors => this.ViewFromErrors(errors),
+                    vm => View("ProviderAssessmentConfirmation", vm)));
         }
 
         [HttpGet("apprenticeship-assessments/{apprenticeshipId}")]
-        public async Task<IActionResult> ApprenticeshipAssessment(ApprenticeshipAssessment.Query query)
-        {
-            var result = await _mediator.Send(query);
-            return result.Match<IActionResult>(
-                _ => BadRequest(),
-                vm => View(vm));
-        }
+        public async Task<IActionResult> ApprenticeshipAssessment(ApprenticeshipAssessment.Query query) =>
+            await _mediator.SendAndMapResponse(query, vm => View(vm));
 
         [HttpPost("apprenticeship-assessments/{apprenticeshipId}")]
         public async Task<IActionResult> ApprenticeshipAssessment(
@@ -73,30 +55,20 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA
             ApprenticeshipAssessment.Command command)
         {
             command.ApprenticeshipId = apprenticeshipId;
-            var result = await _mediator.Send(command);
-            return result.Match<IActionResult>(
-                _ => BadRequest(),
-                errors => this.ViewFromErrors(errors),
-                vm => View("ApprenticeshipAssessmentConfirmation", vm));
+            return await _mediator.SendAndMapResponse(
+                command,
+                response => response.Match(
+                    errors => this.ViewFromErrors(errors),
+                    vm => View("ApprenticeshipAssessmentConfirmation", vm)));
         }
 
         [HttpPost("{providerId}/complete")]
-        public async Task<IActionResult> Complete(Complete.Command command)
-        {
-            var result = await _mediator.Send(command);
-            return result.Match<IActionResult>(
-                _ => BadRequest(),
-                vm => View(vm));
-        }
+        public async Task<IActionResult> Complete(Complete.Command command) =>
+            await _mediator.SendAndMapResponse(command, vm => View(vm));
 
         [HttpGet("{providerId}/status")]
-        public async Task<IActionResult> Status(Status.Query query)
-        {
-            var result = await _mediator.Send(query);
-            return result.Match<IActionResult>(
-                _ => BadRequest(),
-                vm => View(vm));
-        }
+        public async Task<IActionResult> Status(Status.Query query) =>
+            await _mediator.SendAndMapResponse(query, vm => View(vm));
 
         [HttpPost("{providerId}/status")]
         public async Task<IActionResult> Status(
@@ -104,11 +76,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA
             Status.Command command)
         {
             command.ProviderId = providerId;
-            var result = await _mediator.Send(command);
-            return result.Match<IActionResult>(
-                _ => BadRequest(),
-                errors => this.ViewFromErrors(errors),
-                _ => RedirectToAction("ProviderSelected", new { providerId }));
+            return await _mediator.SendAndMapResponse(
+                command,
+                response => response.Match<IActionResult>(
+                    errors => this.ViewFromErrors(errors),
+                    _ => RedirectToAction("ProviderSelected", new { providerId })));
         }
     }
 }

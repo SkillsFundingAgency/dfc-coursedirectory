@@ -55,6 +55,8 @@ namespace Dfc.CourseDirectory.WebV2
                     options.Filters.Add(new VerifyApprenticeshipIdActionFilter());
                     options.Filters.Add(new ResourceDoesNotExistExceptionFilter());
                     options.Filters.Add(new DeactivatedProviderErrorActionFilter());
+                    options.Filters.Add(new NotAuthorizedExceptionFilter());
+                    options.Filters.Add(new ErrorExceptionFilter());
 
                     options.ModelBinderProviders.Insert(0, new CurrentProviderModelBinderProvider());
                     options.ModelBinderProviders.Insert(0, new MultiValueEnumModelBinderProvider());

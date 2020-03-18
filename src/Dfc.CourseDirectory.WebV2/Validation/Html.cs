@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using HtmlAgilityPack;
 using Sanitizer = Ganss.XSS.HtmlSanitizer;
 
 namespace Dfc.CourseDirectory.WebV2.Validation
 {
-    public static class HtmlSanitizer
+    public static class Html
     {
         public static readonly IReadOnlyCollection<string> DefaultAllowedTags = new[]
         {
@@ -28,6 +29,14 @@ namespace Dfc.CourseDirectory.WebV2.Validation
         {
             var sanitizer = new Sanitizer(allowedTags: allowedTags);
             return sanitizer.Sanitize(html);
+        }
+
+        public static string StripTags(string html)
+        {
+            var doc = new HtmlDocument();
+            doc.LoadHtml(html);
+
+            return HtmlEntity.DeEntitize(doc.DocumentNode.InnerText);
         }
     }
 }

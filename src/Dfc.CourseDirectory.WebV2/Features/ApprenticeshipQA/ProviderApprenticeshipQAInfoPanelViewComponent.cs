@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using OneOf.Types;
 
 namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA
 {
@@ -23,12 +22,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA
                     ProviderId = providerId
                 });
 
-            if (vm.Value is NotFound)
-            {
-                throw new InvalidOperationException("Specified provider does not exist.");
-            }
-
-            return View("~/Features/ApprenticeshipQA/ProviderApprenticeshipQAInfoPanel.cshtml", vm.AsT1);
+            return View("~/Features/ApprenticeshipQA/ProviderApprenticeshipQAInfoPanel.cshtml", vm);
         }
     }
 }

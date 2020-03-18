@@ -100,6 +100,7 @@ namespace Dfc.CourseDirectory.WebV2.ModelBinding
             else
             {
                 bindingContext.Result = ModelBindingResult.Success(providerInfo);
+                bindingContext.HttpContext.Features.Set(new CurrentProviderFeature(providerInfo));
             }
 
             Guid? TryGetProviderIdFromRouteValues()
@@ -133,5 +134,15 @@ namespace Dfc.CourseDirectory.WebV2.ModelBinding
                 return providerId;
             }
         }
+    }
+
+    public class CurrentProviderFeature
+    {
+        public CurrentProviderFeature(ProviderInfo providerInfo)
+        {
+            ProviderInfo = providerInfo;
+        }
+
+        public ProviderInfo ProviderInfo { get; }
     }
 }

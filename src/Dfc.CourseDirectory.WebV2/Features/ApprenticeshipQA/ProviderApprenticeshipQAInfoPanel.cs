@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.WebV2.Behaviors.Errors;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries;
@@ -11,14 +12,10 @@ using Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.WebV2.Models;
 using Dfc.CourseDirectory.WebV2.Security;
 using MediatR;
-using OneOf;
-using OneOf.Types;
 
 namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderApprenticeshipQAInfoPanel
 {
-    using QueryResponse = OneOf<NotFound, ViewModel>;
-
-    public class Query : IRequest<QueryResponse>
+    public class Query : IRequest<ViewModel>
     {
         public Guid ProviderId { get; set; }
     }
@@ -39,7 +36,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderApprentice
         public DateTime? LastAssessedOn { get; set; }
     }
 
-    public class Handler : IRequestHandler<Query, QueryResponse>
+    public class Handler : IRequestHandler<Query, ViewModel>
     {
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
@@ -58,7 +55,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderApprentice
             _currentUserProvider = currentUserProvider;
         }
 
-        public async Task<QueryResponse> Handle(Query request, CancellationToken cancellationToken)
+        public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
         {
             var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(
                 new GetProviderById()
@@ -68,7 +65,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderApprentice
 
             if (provider == null)
             {
-                return new NotFound();
+                throw new ErrorException<ProviderDoesNotExist>(new ProviderDoesNotExist());
             }
 
             var lastAssessment = await _sqlQueryDispatcher.ExecuteQuery(
