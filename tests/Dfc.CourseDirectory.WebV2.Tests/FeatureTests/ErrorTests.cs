@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
 
-namespace Dfc.CourseDirectory.WebV2.Tests.Features
+namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
 {
     public class ErrorTests : TestBase
     {

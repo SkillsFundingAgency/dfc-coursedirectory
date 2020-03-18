@@ -3,7 +3,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
+namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 {
     public class ListProvidersTest : TestBase
     {

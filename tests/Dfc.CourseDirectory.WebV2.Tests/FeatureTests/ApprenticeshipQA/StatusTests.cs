@@ -5,7 +5,7 @@ using Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.WebV2.Models;
 using Xunit;
 
-namespace Dfc.CourseDirectory.WebV2.Tests.Features.ApprenticeshipQA
+namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 {
     public class StatusTests : TestBase
     {
