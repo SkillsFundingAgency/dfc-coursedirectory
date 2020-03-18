@@ -21,7 +21,7 @@ $('*[data-pttcd-module="rich-text-editor"]').each(function (i, el) {
             var name = textarea.getAttribute('name');
             textarea.removeAttribute('name');
 
-            var initialHtml = $('<div >').html(textarea.innerHTML).text();
+            var initialHtml = $('<div />').html(textarea.innerHTML).text();
 
             var $backingField = $('<input>')
                 .attr('type', 'hidden')
@@ -32,7 +32,7 @@ $('*[data-pttcd-module="rich-text-editor"]').each(function (i, el) {
             var updateBackingFields = function (html) {
                 $backingField.val(html);
 
-                var stripped = $(html).text();
+                var stripped = $('<div />').html(html).text();
                 textarea.innerHTML = stripped;
 
                 triggerCharacterCountUpdate();
