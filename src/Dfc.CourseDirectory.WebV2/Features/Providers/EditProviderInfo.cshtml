@@ -1,5 +1,5 @@
-﻿@using Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderInfo
-@model CommandViewModel
+﻿@using Dfc.CourseDirectory.WebV2.Validation.ProviderValidation
+@model Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderInfo.CommandViewModel
 @{
     ViewBag.Title = "Edit your details";
 }
@@ -36,9 +36,9 @@
                 @if (Model.MarketingInformationIsEditable)
                 {
                     <pttcd-rich-text-editor>
-                        <govuk-textarea asp-for="MarketingInformation">
-                            <govuk-textarea-label>Brief overview of your organisation for employers</govuk-textarea-label>
-                        </govuk-textarea>
+                        <govuk-character-count asp-for="MarketingInformation" max-length="@Constants.MarketingInformationStrippedMaxLength">
+                            <govuk-character-count-label>Brief overview of your organisation for employers</govuk-character-count-label>
+                        </govuk-character-count>
                     </pttcd-rich-text-editor>
                 }
                 else
