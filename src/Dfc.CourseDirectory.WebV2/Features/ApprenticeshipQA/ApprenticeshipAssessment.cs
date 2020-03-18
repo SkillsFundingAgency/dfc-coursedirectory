@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.Behaviors;
+using Dfc.CourseDirectory.WebV2.Behaviors.Errors;
 using Dfc.CourseDirectory.WebV2.DataStore.Sql;
 using Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.WebV2.Models;
@@ -17,16 +18,13 @@ using OneOf.Types;
 
 namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAssessment
 {
-    using CommandResponse = OneOf<Error<ErrorReason>, ModelWithErrors<ViewModel>, ConfirmationViewModel>;
-    using QueryResponse = OneOf<Error<ErrorReason>, ViewModel>;
+    using CommandResponse = OneOf<ModelWithErrors<ViewModel>, ConfirmationViewModel>;
 
-    public enum ErrorReason
+    public struct NoValidSubmission
     {
-        ApprenticeshipDoesNotExist,
-        NoValidSubmission,
     }
 
-    public class Query : IRequest<QueryResponse>
+    public class Query : IRequest<ViewModel>
     {
         public Guid ApprenticeshipId { get; set; }
     }
@@ -65,7 +63,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
     }
 
     public class Handler :
-        IRequestHandler<Query, QueryResponse>,
+        IRequestHandler<Query, ViewModel>,
         IRequestHandler<Command, CommandResponse>,
         IRestrictQAStatus<Command>
     {
@@ -92,32 +90,17 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
             ApprenticeshipQAStatus.InProgress
         };
 
-        public async Task<QueryResponse> Handle(Query request, CancellationToken cancellationToken)
+        public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
         {
-            var errorOrData = await CheckStatus(request.ApprenticeshipId);
-
-            if (errorOrData.Value is Error<ErrorReason>)
-            {
-                return errorOrData.AsT0;
-            }
-            else
-            {
-                return CreateViewModel(errorOrData.AsT1);
-            }
+            var data = await CheckStatus(request.ApprenticeshipId);
+            return CreateViewModel(data);
         }
 
         public async Task<CommandResponse> Handle(
             Command request,
             CancellationToken cancellationToken)
         {
-            var errorOrData = await CheckStatus(request.ApprenticeshipId);
-
-            if (errorOrData.Value is Error<ErrorReason>)
-            {
-                return errorOrData.AsT0;
-            }
-
-            var data = errorOrData.AsT1;
+            var data = await CheckStatus(request.ApprenticeshipId);
 
             var validator = new CommandValidator();
             var validationResult = await validator.ValidateAsync(request);
@@ -194,13 +177,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
             return confirmVm;
         }
 
-        private async Task<OneOf<Error<ErrorReason>, Data>> CheckStatus(Guid apprenticeshipId)
+        private async Task<Data> CheckStatus(Guid apprenticeshipId)
         {
             var maybeProviderId = await GetProviderIdForApprenticeship(apprenticeshipId);
 
             if (maybeProviderId.Value is NotFound)
             {
-                return new Error<ErrorReason>(ErrorReason.ApprenticeshipDoesNotExist);
+                throw new ErrorException<ApprenticeshipDoesNotExist>(new ApprenticeshipDoesNotExist());
             }
 
             var providerId = maybeProviderId.AsT1;
@@ -213,7 +196,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
 
             if (qaStatus == ApprenticeshipQAStatus.NotStarted)
             {
-                return new Error<ErrorReason>(ErrorReason.NoValidSubmission);
+                throw new ErrorException<NoValidSubmission>(new NoValidSubmission());
             }
 
             var maybeLatestSubmission = await _sqlQueryDispatcher.ExecuteQuery(
@@ -224,7 +207,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
 
             if (maybeLatestSubmission.Value is None)
             {
-                return new Error<ErrorReason>(ErrorReason.NoValidSubmission);
+                throw new ErrorException<NoValidSubmission>(new NoValidSubmission());
             }
 
             var latestSubmission = maybeLatestSubmission.AsT1;
@@ -234,7 +217,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
 
             if (submissionApprenticeship == null)
             {
-                return new Error<ErrorReason>(ErrorReason.NoValidSubmission);
+                throw new ErrorException<NoValidSubmission>(new NoValidSubmission());
             }
 
             var assessment = await _sqlQueryDispatcher.ExecuteQuery(
@@ -293,7 +276,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
 
             if (maybeProviderId.Value is NotFound)
             {
-                throw new ErrorException<ErrorReason>(ErrorReason.ApprenticeshipDoesNotExist);
+                throw new ErrorException<ApprenticeshipDoesNotExist>(new ApprenticeshipDoesNotExist());
             }
 
             return maybeProviderId.AsT1;
