@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Dfc.CourseDirectory.WebV2.Tests.Features.HelpdeskDashboard
+namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.HelpdeskDashboard
 {
     public class DashboardTests : TestBase
     {
