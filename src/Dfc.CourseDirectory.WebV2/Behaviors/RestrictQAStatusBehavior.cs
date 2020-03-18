@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.WebV2.Behaviors.Errors;
 using Dfc.CourseDirectory.WebV2.DataStore.Sql;
 using Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.WebV2.Models;
@@ -11,11 +12,11 @@ namespace Dfc.CourseDirectory.WebV2.Behaviors
 {
     public class RestrictQAStatusBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     {
-        private readonly IRestrictQAStatus<TRequest, TResponse> _descriptor;
+        private readonly IRestrictQAStatus<TRequest> _descriptor;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
 
         public RestrictQAStatusBehavior(
-            IRestrictQAStatus<TRequest, TResponse> descriptor,
+            IRestrictQAStatus<TRequest> descriptor,
             ISqlQueryDispatcher sqlQueryDispatcher)
         {
             _descriptor = descriptor;
@@ -41,7 +42,7 @@ namespace Dfc.CourseDirectory.WebV2.Behaviors
 
             if (!isPermitted)
             {
-                return _descriptor.CreateErrorResponse();
+                throw new ErrorException<InvalidQAStatus>(new InvalidQAStatus());
             }
 
             return await next();

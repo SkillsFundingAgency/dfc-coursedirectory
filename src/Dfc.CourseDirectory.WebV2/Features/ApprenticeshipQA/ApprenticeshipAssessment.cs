@@ -67,7 +67,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
     public class Handler :
         IRequestHandler<Query, QueryResponse>,
         IRequestHandler<Command, CommandResponse>,
-        IRestrictQAStatus<Command, CommandResponse>
+        IRestrictQAStatus<Command>
     {
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly IProviderOwnershipCache _providerOwnershipCache;
@@ -86,7 +86,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
             _clock = clock;
         }
 
-        public IEnumerable<ApprenticeshipQAStatus> PermittedStatuses { get; } = new[]
+        IEnumerable<ApprenticeshipQAStatus> IRestrictQAStatus<Command>.PermittedStatuses { get; } = new[]
         {
             ApprenticeshipQAStatus.Submitted,
             ApprenticeshipQAStatus.InProgress
@@ -287,10 +287,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
         private static bool IsQAPassed(bool compliancePassed, bool stylePassed) =>
             compliancePassed && stylePassed;
 
-        CommandResponse IRestrictQAStatus<Command, CommandResponse>.CreateErrorResponse() =>
-            new Error<ErrorReason>(ErrorReason.NoValidSubmission);
-
-        async Task<Guid> IRestrictQAStatus<Command, CommandResponse>.GetProviderId(Command request)
+        async Task<Guid> IRestrictQAStatus<Command>.GetProviderId(Command request)
         {
             var maybeProviderId = await GetProviderIdForApprenticeship(request.ApprenticeshipId);
 
