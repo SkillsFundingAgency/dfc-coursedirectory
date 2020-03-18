@@ -34,7 +34,8 @@ namespace Dfc.CourseDirectory.WebV2
                 providerInfo = new ProviderInfo()
                 {
                     ProviderId = provider.Id,
-                    Ukprn = int.Parse(provider.UnitedKingdomProviderReferenceNumber)
+                    Ukprn = int.Parse(provider.UnitedKingdomProviderReferenceNumber),
+                    ProviderType = provider.ProviderType
                 };
 
                 _cache.Set(cacheKey, providerInfo);
