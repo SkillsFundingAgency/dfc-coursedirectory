@@ -22,7 +22,7 @@ namespace Dfc.CourseDirectory.WebV2.Behaviors
                 // For any type implementing IRestrictQAStatus<TRequest, TResponse>
                 // add a RestrictQAStatusBehavior behavior for its request & response types
 
-                var restrictQaStatusType = typeof(IRestrictQAStatus<,>);
+                var restrictQaStatusType = typeof(IRestrictQAStatus<>);
 
                 var restrictTypes = type.GetInterfaces()
                     .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == restrictQaStatusType)
@@ -31,7 +31,7 @@ namespace Dfc.CourseDirectory.WebV2.Behaviors
                 foreach (var t in restrictTypes)
                 {
                     var requestType = t.GenericTypeArguments[0];
-                    var responseType = t.GenericTypeArguments[1];
+                    var responseType = GetResponseTypeFromRequestType(requestType);
 
                     var pipelineBehaviorType = typeof(IPipelineBehavior<,>).MakeGenericType(requestType, responseType);
                     var behaviourType = typeof(RestrictQAStatusBehavior<,>).MakeGenericType(requestType, responseType);
@@ -57,7 +57,7 @@ namespace Dfc.CourseDirectory.WebV2.Behaviors
                 foreach (var t in restrictTypes)
                 {
                     var requestType = t.GenericTypeArguments[0];
-                    var responseType = t.GenericTypeArguments[1];
+                    var responseType = GetResponseTypeFromRequestType(requestType);
 
                     var pipelineBehaviorType = typeof(IPipelineBehavior<,>).MakeGenericType(requestType, responseType);
                     var behaviourType = typeof(RequireUserCanSubmitQASubmissionBehavior<,>).MakeGenericType(requestType, responseType);
@@ -68,6 +68,12 @@ namespace Dfc.CourseDirectory.WebV2.Behaviors
                     services.AddScoped(t, sp => sp.GetRequiredService(handlerInterfaceType));
                 }
             }
+
+            Type GetResponseTypeFromRequestType(Type requestType) =>
+                requestType
+                    .GetInterfaces()
+                    .Single(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IRequest<>))
+                    .GetGenericArguments()[0];
         }
     }
 }

@@ -47,7 +47,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderSelected
 
     public class QueryHandler :
         IRequestHandler<Query, QueryResponse>,
-        IRestrictQAStatus<Query, QueryResponse>
+        IRestrictQAStatus<Query>
     {
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
@@ -60,7 +60,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderSelected
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
         }
 
-        IEnumerable<ApprenticeshipQAStatus> IRestrictQAStatus<Query, QueryResponse>.PermittedStatuses { get; } = new[]
+        IEnumerable<ApprenticeshipQAStatus> IRestrictQAStatus<Query>.PermittedStatuses { get; } = new[]
         {
             ApprenticeshipQAStatus.Submitted,
             ApprenticeshipQAStatus.InProgress,
@@ -121,10 +121,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderSelected
             };
         }
 
-        QueryResponse IRestrictQAStatus<Query, QueryResponse>.CreateErrorResponse() =>
-            new Error<ErrorReason>(ErrorReason.InvalidStatus);
-
-        Task<Guid> IRestrictQAStatus<Query, QueryResponse>.GetProviderId(Query request) =>
+        Task<Guid> IRestrictQAStatus<Query>.GetProviderId(Query request) =>
             Task.FromResult(request.ProviderId);
     }
 }

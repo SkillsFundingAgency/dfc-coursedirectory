@@ -65,9 +65,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
 
     public class Handler :
         IRequestHandler<Query, QueryResponse>,
-        IRestrictQAStatus<Query, QueryResponse>,
+        IRestrictQAStatus<Query>,
         IRequestHandler<Command, CommandResponse>,
-        IRestrictQAStatus<Command, CommandResponse>
+        IRestrictQAStatus<Command>
     {
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
@@ -86,13 +86,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
             _clock = clock;
         }
 
-        IEnumerable<ApprenticeshipQAStatus> IRestrictQAStatus<Command, CommandResponse>.PermittedStatuses { get; } = new[]
+        IEnumerable<ApprenticeshipQAStatus> IRestrictQAStatus<Command>.PermittedStatuses { get; } = new[]
         {
             ApprenticeshipQAStatus.Submitted,
             ApprenticeshipQAStatus.InProgress
         };
 
-        IEnumerable<ApprenticeshipQAStatus> IRestrictQAStatus<Query, QueryResponse>.PermittedStatuses { get; } = new[]
+        IEnumerable<ApprenticeshipQAStatus> IRestrictQAStatus<Query>.PermittedStatuses { get; } = new[]
         {
             ApprenticeshipQAStatus.Submitted,
             ApprenticeshipQAStatus.InProgress,
@@ -268,17 +268,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
         private static bool IsQAPassed(bool compliancePassed, bool stylePassed) =>
             compliancePassed && stylePassed;
 
-        Task<Guid> IRestrictQAStatus<Command, CommandResponse>.GetProviderId(Command request) =>
+        Task<Guid> IRestrictQAStatus<Command>.GetProviderId(Command request) =>
             Task.FromResult(request.ProviderId);
 
-        Task<Guid> IRestrictQAStatus<Query, QueryResponse>.GetProviderId(Query request) =>
+        Task<Guid> IRestrictQAStatus<Query>.GetProviderId(Query request) =>
             Task.FromResult(request.ProviderId);
-
-        CommandResponse IRestrictQAStatus<Command, CommandResponse>.CreateErrorResponse() =>
-            new Error<ErrorReason>(ErrorReason.NoValidSubmission);
-
-        QueryResponse IRestrictQAStatus<Query, QueryResponse>.CreateErrorResponse() =>
-            new Error<ErrorReason>(ErrorReason.NoValidSubmission);
 
         private class Data
         {

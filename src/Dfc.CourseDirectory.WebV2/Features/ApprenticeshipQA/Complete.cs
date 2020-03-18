@@ -34,7 +34,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Complete
 
     public class CommandHandler :
         IRequestHandler<Command, CommandResponse>,
-        IRestrictQAStatus<Command, CommandResponse>
+        IRestrictQAStatus<Command>
     {
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
@@ -103,10 +103,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Complete
             };
         }
 
-        CommandResponse IRestrictQAStatus<Command, CommandResponse>.CreateErrorResponse() =>
-            new Error<ErrorReason>(ErrorReason.InvalidStatus);
-
-        Task<Guid> IRestrictQAStatus<Command, CommandResponse>.GetProviderId(Command request) =>
+        Task<Guid> IRestrictQAStatus<Command>.GetProviderId(Command request) =>
             Task.FromResult(request.ProviderId);
     }
 }
