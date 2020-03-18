@@ -3,26 +3,22 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.Behaviors;
+using Dfc.CourseDirectory.WebV2.Behaviors.Errors;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.WebV2.DataStore.Sql;
 using Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.WebV2.Models;
 using MediatR;
-using OneOf;
 using OneOf.Types;
 
 namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Complete
 {
-    using CommandResponse = OneOf<Error<ErrorReason>, ViewModel>;
-
-    public enum ErrorReason
+    public struct InvalidSubmission
     {
-        ProviderDoesNotExist,
-        InvalidStatus
     }
 
-    public class Command : IRequest<CommandResponse>
+    public class Command : IRequest<ViewModel>
     {
         public Guid ProviderId { get; set; }
     }
@@ -33,7 +29,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Complete
     }
 
     public class CommandHandler :
-        IRequestHandler<Command, CommandResponse>,
+        IRequestHandler<Command, ViewModel>,
         IRestrictQAStatus<Command>
     {
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
@@ -52,7 +48,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Complete
             ApprenticeshipQAStatus.InProgress
         };
 
-        public async Task<CommandResponse> Handle(
+        public async Task<ViewModel> Handle(
             Command request,
             CancellationToken cancellationToken)
         {
@@ -64,7 +60,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Complete
 
             if (provider == null)
             {
-                return new Error<ErrorReason>(ErrorReason.ProviderDoesNotExist);
+                throw new ErrorException<ProviderDoesNotExist>(new ProviderDoesNotExist());
             }
 
             var maybeLatestSubmission = await _sqlQueryDispatcher.ExecuteQuery(
@@ -76,14 +72,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Complete
             if (maybeLatestSubmission.Value is None)
             {
                 // Belt & braces - should never happen
-                return new Error<ErrorReason>(ErrorReason.InvalidStatus);
+                throw new ErrorException<InvalidSubmission>(new InvalidSubmission());
             }
 
             var latestSubmission = maybeLatestSubmission.AsT1;
 
             if (!latestSubmission.Passed.HasValue)
             {
-                return new Error<ErrorReason>(ErrorReason.InvalidStatus);
+                throw new ErrorException<InvalidSubmission>(new InvalidSubmission());
             }
 
             var newStatus = latestSubmission.Passed.Value ?

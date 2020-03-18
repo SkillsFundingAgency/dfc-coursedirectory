@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.WebV2.Behaviors;
+using Dfc.CourseDirectory.WebV2.Behaviors.Errors;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.WebV2.DataStore.Sql;
@@ -15,16 +18,9 @@ using OneOf.Types;
 
 namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Status
 {
-    using QueryResponse = OneOf<Error<ErrorReason>, Command>;
-    using CommandResponse = OneOf<Error<ErrorReason>, ModelWithErrors<Command>, Success>;
+    using CommandResponse = OneOf<ModelWithErrors<Command>, Success>;
 
-    public enum ErrorReason
-    {
-        ProviderDoesNotExist,
-        InvalidStatus
-    }
-
-    public class Query : IRequest<QueryResponse>
+    public class Query : IRequest<Command>
     {
         public Guid ProviderId { get; set; }
     }
@@ -38,8 +34,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Status
     }
 
     public class Handler :
-        IRequestHandler<Query, QueryResponse>,
-        IRequestHandler<Command, CommandResponse>
+        IRequestHandler<Query, Command>,
+        IRestrictQAStatus<Query>,
+        IRequestHandler<Command, CommandResponse>,
+        IRestrictQAStatus<Command>
     {
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
@@ -58,18 +56,29 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Status
             _clock = clock;
         }
 
-        public async Task<QueryResponse> Handle(
+        IEnumerable<ApprenticeshipQAStatus> IRestrictQAStatus<Command>.PermittedStatuses { get; } = new[]
+        {
+            ApprenticeshipQAStatus.NotStarted,
+            ApprenticeshipQAStatus.Submitted,
+            ApprenticeshipQAStatus.InProgress,
+            ApprenticeshipQAStatus.Failed,
+            ApprenticeshipQAStatus.UnableToComplete
+        };
+
+        IEnumerable<ApprenticeshipQAStatus> IRestrictQAStatus<Query>.PermittedStatuses { get; } = new[]
+        {
+            ApprenticeshipQAStatus.NotStarted,
+            ApprenticeshipQAStatus.Submitted,
+            ApprenticeshipQAStatus.InProgress,
+            ApprenticeshipQAStatus.Failed,
+            ApprenticeshipQAStatus.UnableToComplete
+        };
+
+        public async Task<Command> Handle(
             Query request,
             CancellationToken cancellationToken)
         {
-            var errorOrData = await CheckStatus(request.ProviderId);
-
-            if (errorOrData.Value is Error<ErrorReason>)
-            {
-                return errorOrData.AsT0;
-            }
-
-            var data = errorOrData.AsT1;
+            var data = await CheckStatus(request.ProviderId);
 
             var unableToComplete = data.ApprenticeshipQAStatus.HasFlag(ApprenticeshipQAStatus.UnableToComplete);
 
@@ -92,14 +101,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Status
             Command request,
             CancellationToken cancellationToken)
         {
-            var errorOrData = await CheckStatus(request.ProviderId);
-
-            if (errorOrData.Value is Error<ErrorReason>)
-            {
-                return errorOrData.AsT0;
-            }
-
-            var data = errorOrData.AsT1;
+            var data = await CheckStatus(request.ProviderId);
 
             var validator = new CommandValidator();
             var validationResult = await validator.ValidateAsync(request);
@@ -137,7 +139,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Status
             return new Success();
         }
 
-        private async Task<OneOf<Error<ErrorReason>, Data>> CheckStatus(Guid providerId)
+        private async Task<Data> CheckStatus(Guid providerId)
         {
             var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(
                 new GetProviderById()
@@ -147,7 +149,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Status
 
             if (provider == null)
             {
-                return new Error<ErrorReason>(ErrorReason.ProviderDoesNotExist);
+                throw new ErrorException<ProviderDoesNotExist>(new ProviderDoesNotExist());
             }
 
             var currentStatus = await _sqlQueryDispatcher.ExecuteQuery(
@@ -156,16 +158,17 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Status
                     ProviderId = providerId
                 });
 
-            if (currentStatus == ApprenticeshipQAStatus.Passed)
-            {
-                return new Error<ErrorReason>(ErrorReason.InvalidStatus);
-            }
-
             return new Data()
             {
                 ApprenticeshipQAStatus = currentStatus
             };
         }
+
+        Task<Guid> IRestrictQAStatus<Command>.GetProviderId(Command request) =>
+            Task.FromResult(request.ProviderId);
+
+        Task<Guid> IRestrictQAStatus<Query>.GetProviderId(Query request) =>
+            Task.FromResult(request.ProviderId);
 
         private class Data
         {

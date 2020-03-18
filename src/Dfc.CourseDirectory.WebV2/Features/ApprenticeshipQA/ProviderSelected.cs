@@ -4,26 +4,22 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.Behaviors;
+using Dfc.CourseDirectory.WebV2.Behaviors.Errors;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.WebV2.DataStore.Sql;
 using Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.WebV2.Models;
 using MediatR;
-using OneOf;
 using OneOf.Types;
 
 namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderSelected
 {
-    using QueryResponse = OneOf<Error<ErrorReason>, ViewModel>;
-
-    public enum ErrorReason
+    public struct NoSubmission
     {
-        ProviderDoesNotExist,
-        InvalidStatus
     }
 
-    public class Query : IRequest<QueryResponse>
+    public class Query : IRequest<ViewModel>
     {
         public Guid ProviderId { get; set; }
     }
@@ -46,7 +42,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderSelected
     }
 
     public class QueryHandler :
-        IRequestHandler<Query, QueryResponse>,
+        IRequestHandler<Query, ViewModel>,
         IRestrictQAStatus<Query>
     {
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
@@ -69,7 +65,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderSelected
             ApprenticeshipQAStatus.UnableToComplete
         };
 
-        public async Task<QueryResponse> Handle(Query request, CancellationToken cancellationToken)
+        public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
         {
             var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(
                 new GetProviderById()
@@ -79,7 +75,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderSelected
 
             if (provider == null)
             {
-                return new Error<ErrorReason>(ErrorReason.ProviderDoesNotExist);
+                throw new ErrorException<ProviderDoesNotExist>(new ProviderDoesNotExist());
             }
 
             var qaStatus = await _sqlQueryDispatcher.ExecuteQuery(
@@ -96,7 +92,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderSelected
 
             if (maybeLatestSubmission.Value is None)
             {
-                return new Error<ErrorReason>(ErrorReason.InvalidStatus);
+                throw new ErrorException<NoSubmission>(new NoSubmission());
             }
 
             var latestSubmission = maybeLatestSubmission.AsT1;
