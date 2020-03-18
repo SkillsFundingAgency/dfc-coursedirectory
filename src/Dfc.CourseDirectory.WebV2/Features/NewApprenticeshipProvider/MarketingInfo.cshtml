@@ -14,7 +14,7 @@
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <form asp-action="MarketingInfo" asp-route-providerId="@ViewContext.HttpContext.Request.Query["providerId"]">
+        <form asp-action="MarketingInfo" append-current-provider="true">
             <span class="govuk-caption-l">Course Directory</span>
             <h1 class="govuk-heading-l">Edit your details</h1>
 
