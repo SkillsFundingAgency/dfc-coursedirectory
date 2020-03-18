@@ -8,11 +8,11 @@ namespace Dfc.CourseDirectory.WebV2.Behaviors
     public class RequireUserCanSubmitQASubmissionBehavior<TRequest, TResponse>
         : IPipelineBehavior<TRequest, TResponse>
     {
-        private readonly IRequireUserCanSubmitQASubmission<TRequest, TResponse> _descriptor;
+        private readonly IRequireUserCanSubmitQASubmission<TRequest> _descriptor;
         private readonly ICurrentUserProvider _currentUserProvider;
 
         public RequireUserCanSubmitQASubmissionBehavior(
-            IRequireUserCanSubmitQASubmission<TRequest, TResponse> descriptor,
+            IRequireUserCanSubmitQASubmission<TRequest> descriptor,
             ICurrentUserProvider currentUserProvider)
         {
             _descriptor = descriptor;

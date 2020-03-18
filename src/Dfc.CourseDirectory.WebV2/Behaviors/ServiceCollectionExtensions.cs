@@ -48,7 +48,7 @@ namespace Dfc.CourseDirectory.WebV2.Behaviors
                 // For any type implementing IRequireUserCanSubmitQASubmission<TRequest, TResponse>
                 // add a RequireUserCanSubmitQASubmissionBehavior behavior for its request & response types
 
-                var requireCanSubmitQASubmissionType = typeof(IRequireUserCanSubmitQASubmission<,>);
+                var requireCanSubmitQASubmissionType = typeof(IRequireUserCanSubmitQASubmission<>);
 
                 var restrictTypes = type.GetInterfaces()
                     .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == requireCanSubmitQASubmissionType)
