@@ -2,7 +2,7 @@
 
 namespace Dfc.CourseDirectory.WebV2.Validation.ProviderValidation
 {
-    public static class AbstractValidatorExtensions
+    public static class RuleBuilderExtensions
     {
         public static void Alias<T>(this IRuleBuilderInitial<T, string> field)
         {
