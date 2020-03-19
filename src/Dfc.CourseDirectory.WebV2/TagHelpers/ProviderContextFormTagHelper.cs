@@ -1,4 +1,5 @@
 ﻿using Dfc.CourseDirectory.WebV2.Filters;
+using Dfc.CourseDirectory.WebV2.HttpContextFeatures;
 using Dfc.CourseDirectory.WebV2.Security;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Razor.TagHelpers;
