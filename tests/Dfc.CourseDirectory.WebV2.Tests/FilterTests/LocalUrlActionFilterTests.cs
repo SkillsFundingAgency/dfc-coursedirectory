@@ -6,9 +6,9 @@ using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
 {
-    public class ValidateLocalUrlActionFilterTests : TestBase
+    public class LocalUrlActionFilterTests : TestBase
     {
-        public ValidateLocalUrlActionFilterTests(CourseDirectoryApplicationFactory factory)
+        public LocalUrlActionFilterTests(CourseDirectoryApplicationFactory factory)
             : base(factory)
         {
         }
@@ -46,6 +46,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
     public class ValidateLocalUrlActionFilterTestsController : Controller
     {
         [HttpGet]
-        public IActionResult Get([ValidateLocalUrl] string returnUrl) => new EmptyResult();
+        public IActionResult Get([LocalUrl] string returnUrl) => new EmptyResult();
     }
 }
