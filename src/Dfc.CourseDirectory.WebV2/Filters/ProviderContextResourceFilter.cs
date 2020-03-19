@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.WebV2.HttpContextFeatures;
 using Dfc.CourseDirectory.WebV2.Security;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -125,20 +126,5 @@ namespace Dfc.CourseDirectory.WebV2.Filters
                 return null;
             }
         }
-    }
-
-    public class ProviderContextFeature
-    {
-        public ProviderContextFeature(ProviderInfo providerInfo)
-        {
-            if (providerInfo == null)
-            {
-                throw new ArgumentNullException(nameof(providerInfo));
-            }
-
-            ProviderInfo = providerInfo;
-        }
-
-        public ProviderInfo ProviderInfo { get; }
     }
 }

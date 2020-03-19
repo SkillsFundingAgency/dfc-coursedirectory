@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.Filters;
+using Dfc.CourseDirectory.WebV2.HttpContextFeatures;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Dfc.CourseDirectory.WebV2.ModelBinding

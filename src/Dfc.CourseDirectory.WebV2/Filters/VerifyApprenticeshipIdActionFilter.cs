@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.WebV2.HttpContextFeatures;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -83,15 +84,5 @@ namespace Dfc.CourseDirectory.WebV2.Filters
                 await next();
             }
         }
-    }
-
-    public class ApprenticeshipProviderFeature
-    {
-        public ApprenticeshipProviderFeature(Guid providerId)
-        {
-            ProviderId = providerId;
-        }
-
-        public Guid ProviderId { get; }
     }
 }

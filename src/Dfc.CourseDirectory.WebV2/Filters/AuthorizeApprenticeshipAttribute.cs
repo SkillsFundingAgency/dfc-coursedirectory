@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Security.Claims;
+using Dfc.CourseDirectory.WebV2.HttpContextFeatures;
 using Dfc.CourseDirectory.WebV2.Security;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
