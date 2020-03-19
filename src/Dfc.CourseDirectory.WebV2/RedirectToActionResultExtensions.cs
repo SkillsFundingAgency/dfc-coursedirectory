@@ -12,7 +12,7 @@ namespace Dfc.CourseDirectory.WebV2
             ProviderInfo providerInfo)
         {
             var routeValues = (IDictionary<string, object>)result.RouteValues ?? new Dictionary<string, object>();
-            routeValues[CurrentProviderResourceFilter.RouteValueKey] = providerInfo.ProviderId;
+            routeValues[ProviderContextResourceFilter.RouteValueKey] = providerInfo.ProviderId;
 
             result.RouteValues = new RouteValueDictionary(routeValues);
 

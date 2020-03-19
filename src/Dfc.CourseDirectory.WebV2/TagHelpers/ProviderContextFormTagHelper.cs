@@ -6,13 +6,13 @@ using Microsoft.AspNetCore.WebUtilities;
 
 namespace Dfc.CourseDirectory.WebV2.TagHelpers
 {
-    [HtmlTargetElement("form", Attributes = "append-current-provider")]
-    public class CurrentProviderFormTagHelper : TagHelper
+    [HtmlTargetElement("form", Attributes = "append-provider-context")]
+    public class ProviderContextFormTagHelper : TagHelper
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ICurrentUserProvider _currentUserProvider;
 
-        public CurrentProviderFormTagHelper(
+        public ProviderContextFormTagHelper(
             IHttpContextAccessor httpContextAccessor,
             ICurrentUserProvider currentUserProvider)
         {
@@ -20,21 +20,21 @@ namespace Dfc.CourseDirectory.WebV2.TagHelpers
             _currentUserProvider = currentUserProvider;
         }
 
-        [HtmlAttributeName("append-current-provider")]
-        public bool AppendCurrentProvider { get; set; }
+        [HtmlAttributeName("append-provider-context")]
+        public bool AppendProviderContext { get; set; }
 
         public override int Order => 100;
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
-            if (!AppendCurrentProvider ||
+            if (!AppendProviderContext ||
                 !output.Attributes.ContainsName("action") ||
                 _currentUserProvider.GetCurrentUser().IsProvider)
             {
                 return;
             }
 
-            var currentProviderFeature = _httpContextAccessor.HttpContext.Features.Get<CurrentProviderFeature>();
+            var currentProviderFeature = _httpContextAccessor.HttpContext.Features.Get<ProviderContextFeature>();
             if (currentProviderFeature == null)
             {
                 return;
@@ -46,7 +46,7 @@ namespace Dfc.CourseDirectory.WebV2.TagHelpers
 
             var updatedAction = QueryHelpers.AddQueryString(
                 resolvedAction,
-                CurrentProviderResourceFilter.RouteValueKey,
+                ProviderContextResourceFilter.RouteValueKey,
                 currentProviderId.ToString());
 
             output.Attributes.SetAttribute("action", updatedAction);

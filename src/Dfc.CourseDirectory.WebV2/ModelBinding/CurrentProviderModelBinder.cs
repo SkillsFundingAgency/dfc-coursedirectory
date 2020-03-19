@@ -27,7 +27,7 @@ namespace Dfc.CourseDirectory.WebV2.ModelBinding
                 return Task.CompletedTask;
             }
 
-            var feature = bindingContext.HttpContext.Features.Get<CurrentProviderFeature>();
+            var feature = bindingContext.HttpContext.Features.Get<ProviderContextFeature>();
 
             if (feature == null)
             {

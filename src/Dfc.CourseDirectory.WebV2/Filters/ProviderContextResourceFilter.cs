@@ -12,7 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Dfc.CourseDirectory.WebV2.Filters
 {
-    public class CurrentProviderResourceFilter : IAsyncResourceFilter
+    public class ProviderContextResourceFilter : IAsyncResourceFilter
     {
         public const string RouteValueKey = "providerId";
 
@@ -74,7 +74,7 @@ namespace Dfc.CourseDirectory.WebV2.Filters
                 var providerInfo = await providerInfoCache.GetProviderInfo(providerId);
                 if (providerInfo != null)
                 {
-                    context.HttpContext.Features.Set(new CurrentProviderFeature(providerInfo));
+                    context.HttpContext.Features.Set(new ProviderContextFeature(providerInfo));
 
                     if (!env.IsTesting())
                     {
@@ -127,9 +127,9 @@ namespace Dfc.CourseDirectory.WebV2.Filters
         }
     }
 
-    public class CurrentProviderFeature
+    public class ProviderContextFeature
     {
-        public CurrentProviderFeature(ProviderInfo providerInfo)
+        public ProviderContextFeature(ProviderInfo providerInfo)
         {
             ProviderInfo = providerInfo;
         }

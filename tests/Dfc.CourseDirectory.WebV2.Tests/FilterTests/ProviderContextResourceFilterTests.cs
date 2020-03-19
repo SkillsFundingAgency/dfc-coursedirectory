@@ -8,9 +8,9 @@ using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
 {
-    public class CurrentProviderResourceFilterTests : TestBase
+    public class ProviderContextResourceFilterTests : TestBase
     {
-        public CurrentProviderResourceFilterTests(CourseDirectoryApplicationFactory factory)
+        public ProviderContextResourceFilterTests(CourseDirectoryApplicationFactory factory)
             : base(factory)
         {
         }
