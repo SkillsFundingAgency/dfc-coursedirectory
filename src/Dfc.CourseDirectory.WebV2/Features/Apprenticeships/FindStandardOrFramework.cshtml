@@ -1,0 +1,82 @@
+﻿@model Dfc.CourseDirectory.WebV2.Features.Apprenticeships.FindStandardOrFramework.ViewModel
+@{
+    ViewBag.Title = "Find apprenticeship";
+}
+
+@if (!ViewContext.ModelState.IsValid)
+{
+    <govuk-error-summary>
+        <govuk-error-summary-title>There is a problem</govuk-error-summary-title>
+        <govuk-error-summary-item asp-for="Search" />
+    </govuk-error-summary>
+}
+
+<form asp-action="FindStandardOrFramework" method="get" append-provider-context="true">
+    <input name="returnUrl" type="hidden" value="@ViewBag.ReturnUrl" />
+
+    <h1 class="govuk-heading-l govuk-!-margin-top-4">Find apprenticeship</h1>
+
+    <pttcd-search-input asp-for="Search">
+        <pttcd-search-input-label>
+            Search by name or keyword for the apprenticeship this training is for.
+        </pttcd-search-input-label>
+        <pttcd-search-input-hint>Enter a minimum of 3 characters</pttcd-search-input-hint>
+    </pttcd-search-input>
+
+    @if (Model.SearchWasDone)
+    {
+        <div id="pttcd-apprenticeships__find-provision__results-count" class="govuk-!-margin-bottom-4">
+            Found <span class="govuk-!-font-weight-bold">@Model.Results.Count</span> results for <span class="govuk-!-font-weight-bold">@Model.Search</span>
+        </div>
+
+        @foreach (var result in Model.Results)
+        {
+            var resultReturnUrl = new UrlBuilder(ViewBag.returnUrl);
+
+            if (result.IsFramework)
+            {
+                resultReturnUrl
+                    .AddQueryParameter("type", "framework")
+                    .AddQueryParameter("frameworkCode", result.FrameworkCode)
+                    .AddQueryParameter("progType", result.FrameworkProgType)
+                    .AddQueryParameter("pathwayCode", result.FrameworkPathwayCode);
+            }
+            else
+            {
+                resultReturnUrl
+                    .AddQueryParameter("type", "standard")
+                    .AddQueryParameter("standardCode", result.StandardCode)
+                    .AddQueryParameter("version", result.StandardVersion);
+            }
+
+            <div class="pttcd-apprenticeships__find-standard-or-framework__search-result govuk-!-margin-bottom-4">
+                <h2 class="govuk-heading-m">
+                    @result.ApprenticeshipTitle
+
+                    @if (result.IsFramework)
+                    {
+                        <govuk-tag tag-class="govuk-!-margin-left-3">Framework</govuk-tag>
+                    }
+                </h2>
+
+                @if (result.OtherBodyApprovalRequired == true)
+                {
+                    <govuk-hint>
+                        You may need approval from the regulator of this occupation before you can deliver this training.<br />
+                        The <a href="https://www.instituteforapprenticeships.org/developing-new-apprenticeships/resources/regulated-occupations/" class="govuk-link" rel="noreferrer" target="_blank">Institute for Apprenticeships</a> can tell you more.
+                    </govuk-hint>
+                }
+
+                @if (!string.IsNullOrEmpty(result.NotionalNVQLevelv2))
+                {
+                    <p class="govuk-body">Level: <span class="govuk-!-font-weight-bold">@result.NotionalNVQLevelv2</span></p>
+                }
+
+                <a href="@resultReturnUrl" class="govuk-link">
+                    Choose this apprenticeship
+                    <span class="govuk-visually-hidden">@result.ApprenticeshipTitle</span>
+                </a>
+            </div>
+        }
+    }
+</form>
