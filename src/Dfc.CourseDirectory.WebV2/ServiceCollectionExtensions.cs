@@ -121,6 +121,7 @@ namespace Dfc.CourseDirectory.WebV2
             services.TryAddSingleton<IFeatureFlagProvider, ConfigurationFeatureFlagProvider>();
             services.AddScoped<SignInTracker>();
             services.AddBehaviors();
+            services.AddSingleton<IStandardsAndFrameworksCache, StandardsAndFrameworksCache>();
 
             return services;
         }
