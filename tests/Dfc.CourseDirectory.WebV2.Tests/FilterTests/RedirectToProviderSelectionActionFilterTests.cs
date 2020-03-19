@@ -29,11 +29,31 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             var textResponse = await response.Content.ReadAsStringAsync();
             Assert.Equal("Select Provider", textResponse);
         }
+
+        [Fact]
+        public async Task ActionDecoratedWithRequireProviderContext_ReturnsSelectProviderView()
+        {
+            // Arrange
+            await User.AsDeveloper();
+
+            // Act
+            var response = await _httpClientWithAutoRedirects.GetAsync(
+                "RedirectToProviderSelectionActionFilterTest/without-parameter");
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            var textResponse = await response.Content.ReadAsStringAsync();
+            Assert.Equal("Select Provider", textResponse);
+        }
     }
 
     public class RedirectToProviderSelectionActionFilterTestController : Controller
     {
         [HttpGet("RedirectToProviderSelectionActionFilterTest")]
         public IActionResult Get(ProviderInfo providerInfo) => Ok("Yay");
+
+        [HttpGet("RedirectToProviderSelectionActionFilterTest/without-parameter")]
+        [RequireProviderContext]
+        public IActionResult GetWithoutParameter() => Ok("Yay");
     }
 }

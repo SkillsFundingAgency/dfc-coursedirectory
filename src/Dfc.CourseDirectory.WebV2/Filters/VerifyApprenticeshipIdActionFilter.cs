@@ -67,6 +67,8 @@ namespace Dfc.CourseDirectory.WebV2.Filters
                         var providerInfoCache = context.HttpContext.RequestServices.GetRequiredService<IProviderInfoCache>();
                         var providerInfo = await providerInfoCache.GetProviderInfo(providerId.Value);
                         context.ActionArguments[p.Name] = providerInfo;
+
+                        context.HttpContext.Features.Set(new ProviderContextFeature(providerInfo));
                     }
                     else if (boundValue.ProviderId != providerId.Value)
                     {
