@@ -27,20 +27,26 @@ namespace Dfc.CourseDirectory.WebV2.Filters
 
         public void OnActionExecuting(ActionExecutingContext context)
         {
-            if (context.ActionDescriptor is ControllerActionDescriptor controllerActionDescriptor &&
-                (controllerActionDescriptor.MethodInfo.GetCustomAttribute<AllowNoCurrentProviderAttribute>() != null ||
-                controllerActionDescriptor.ControllerTypeInfo.GetCustomAttribute<AllowNoCurrentProviderAttribute>() != null))
+            var controllerActionDescriptor = context.ActionDescriptor as ControllerActionDescriptor;
+
+            if (controllerActionDescriptor?.MethodInfo.GetCustomAttribute<AllowNoCurrentProviderAttribute>() != null ||
+                controllerActionDescriptor?.ControllerTypeInfo.GetCustomAttribute<AllowNoCurrentProviderAttribute>() != null)
             {
                 return;
             }
 
-            var providerInfoParameters = context.ActionDescriptor.Parameters
+            var hasProviderInfoParameter = context.ActionDescriptor.Parameters
                 .Where(p => p.ParameterType == typeof(ProviderInfo))
-                .ToList();
+                .Any();
 
-            foreach (var p in providerInfoParameters)
+            var requiresProviderContext = controllerActionDescriptor
+                ?.MethodInfo.GetCustomAttribute<RequireProviderContextAttribute>() != null;
+
+            if (hasProviderInfoParameter || requiresProviderContext)
             {
-                if (!context.ActionArguments.TryGetValue(p.Name, out var actionArg) || actionArg == null)
+                var providerContextFeature = context.HttpContext.Features.Get<ProviderContextFeature>();
+
+                if (providerContextFeature?.ProviderInfo == null)
                 {
                     context.Result = new RedirectToActionResult(
                         "Index",

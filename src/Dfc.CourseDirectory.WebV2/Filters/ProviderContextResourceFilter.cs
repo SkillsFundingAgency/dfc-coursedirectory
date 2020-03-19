@@ -131,6 +131,11 @@ namespace Dfc.CourseDirectory.WebV2.Filters
     {
         public ProviderContextFeature(ProviderInfo providerInfo)
         {
+            if (providerInfo == null)
+            {
+                throw new ArgumentNullException(nameof(providerInfo));
+            }
+
             ProviderInfo = providerInfo;
         }
 
