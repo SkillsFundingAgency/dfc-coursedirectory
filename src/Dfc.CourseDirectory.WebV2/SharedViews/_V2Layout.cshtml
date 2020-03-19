@@ -11,7 +11,7 @@
     }
 
     var currentUser = CurrentUserProvider.GetCurrentUser();
-    var currentProvider = ViewContext.HttpContext.Features.Get<Dfc.CourseDirectory.WebV2.Filters.CurrentProviderFeature>();
+    var currentProvider = ViewContext.HttpContext.Features.Get<Dfc.CourseDirectory.WebV2.Filters.ProviderContextFeature>();
 
     var getsAdminNav = currentUser != null && (currentUser.IsDeveloper || currentUser.IsHelpdesk);
     var getsProviderNav = getsAdminNav;
