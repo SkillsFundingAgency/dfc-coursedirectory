@@ -44,7 +44,7 @@ namespace Dfc.CourseDirectory.WebV2.TagHelpers
 
             var currentProviderId = currentProviderFeature.ProviderInfo.ProviderId;
 
-            if (output.Attributes["action"]?.Value.ToString().ToLower() == "post")
+            if (output.Attributes["method"]?.Value.ToString().ToLower() == "post")
             {
                 var existingAction = output.Attributes["action"].Value.ToString();
 
