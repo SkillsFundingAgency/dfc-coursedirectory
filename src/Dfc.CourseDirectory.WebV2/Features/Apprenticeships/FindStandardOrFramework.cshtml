@@ -31,22 +31,22 @@
 
         @foreach (var result in Model.Results)
         {
-            var resultReturnUrl = new UrlBuilder(ViewBag.returnUrl);
+            var resultReturnUrl = new Flurl.Url(ViewBag.returnUrl);
 
             if (result.IsFramework)
             {
                 resultReturnUrl
-                    .AddQueryParameter("type", "framework")
-                    .AddQueryParameter("frameworkCode", result.FrameworkCode)
-                    .AddQueryParameter("progType", result.FrameworkProgType)
-                    .AddQueryParameter("pathwayCode", result.FrameworkPathwayCode);
+                    .SetQueryParam("standardOrFrameworkType", "framework")
+                    .SetQueryParam("frameworkCode", result.FrameworkCode)
+                    .SetQueryParam("progType", result.FrameworkProgType)
+                    .SetQueryParam("pathwayCode", result.FrameworkPathwayCode);
             }
             else
             {
                 resultReturnUrl
-                    .AddQueryParameter("type", "standard")
-                    .AddQueryParameter("standardCode", result.StandardCode)
-                    .AddQueryParameter("version", result.StandardVersion);
+                    .SetQueryParam("standardOrFrameworkType", "standard")
+                    .SetQueryParam("standardCode", result.StandardCode)
+                    .SetQueryParam("version", result.StandardVersion);
             }
 
             <div class="pttcd-apprenticeships__find-standard-or-framework__search-result govuk-!-margin-bottom-4">
