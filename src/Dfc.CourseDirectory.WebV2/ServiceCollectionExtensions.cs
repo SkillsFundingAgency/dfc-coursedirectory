@@ -49,7 +49,7 @@ namespace Dfc.CourseDirectory.WebV2
                     options.EnableEndpointRouting = true;
 
                     options.Conventions.Add(new AddFeaturePropertyModelConvention());
-                    options.Conventions.Add(new AuthorizeActionModelConvention());
+                    options.Conventions.Add(new V2ActionModelConvention());
 
                     options.Filters.Add(new ProviderContextResourceFilter());
                     options.Filters.Add(new RedirectToProviderSelectionActionFilter());
