@@ -14,6 +14,14 @@ namespace Dfc.CourseDirectory.WebV2.Models
         {
         }
 
+        public Framework Framework => AsT1;
+
+        public bool IsFramework => IsT1;
+
+        public bool IsStandard => IsT0;
+
+        public Standard Standard => AsT0;
+
         public string StandardOrFrameworkTitle => Match(
             s => s.StandardName,
             f => f.NasTitle);
