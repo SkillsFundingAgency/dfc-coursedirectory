@@ -23,11 +23,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships
         {
             var query = new FindStandardOrFramework.Query() { ProviderId = providerInfo.ProviderId };
             return await _mediator.SendAndMapResponse(query, response => View(response));
-        }
-            
+        }   
 
         [HttpGet("find-standard/search")]
-        public async Task<IActionResult> FindStandardOrFramework(
+        public async Task<IActionResult> FindStandardOrFrameworkSearch(
             FindStandardOrFramework.SearchQuery query,
             [LocalUrl(viewDataKey: "ReturnUrl")] string returnUrl,
             ProviderInfo providerInfo)
@@ -36,8 +35,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships
             return await _mediator.SendAndMapResponse(
                 query,
                 response => response.Match(
-                    errors => this.ViewFromErrors(errors),
-                    vm => View(vm)));
+                    errors => this.ViewFromErrors("FindStandardOrFramework", errors),
+                    vm => View("FindStandardOrFramework", vm)));
         }
     }
 }
