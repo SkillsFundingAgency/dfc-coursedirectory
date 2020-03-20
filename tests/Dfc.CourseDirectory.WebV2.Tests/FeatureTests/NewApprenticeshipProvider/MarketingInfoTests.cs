@@ -228,8 +228,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             // Assert
             Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
-            Assert.Equal(
-                "/new-apprenticeship-provider/apprenticeship/framework",
+            Assert.StartsWith(
+                "/apprenticeships/find-standard",
                 response.Headers.Location.OriginalString);
         }
     }
