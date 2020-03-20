@@ -9,7 +9,7 @@ namespace Dfc.CourseDirectory.WebV2
         public void Apply(ActionModel action)
         {
             // Check by namespace - can't check assembly as we need to include test project actions too
-            var isV2Action = action.GetType().Namespace.StartsWith("Dfc.CourseDirectory.WebV2");
+            var isV2Action = action.ActionMethod.DeclaringType.Namespace.StartsWith("Dfc.CourseDirectory.WebV2");
 
             if (isV2Action)
             {
