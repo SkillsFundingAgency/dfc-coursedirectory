@@ -1,4 +1,5 @@
 ﻿using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
+using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb;
 using GovUk.Frontend.AspNetCore;
 using Microsoft.AspNetCore.Builder;
@@ -43,16 +44,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddRouting();
+
             services
                 .AddAuthentication("Test")
                 .AddScheme<TestAuthenticationOptions, TestAuthenticationHandler>("Test", _ => { });
 
             services.AddCourseDirectory(HostingEnvironment, Configuration);
-
-            // Make controllers defined in this assembly available
-            //services.AddMvc().AddApplicationPart(typeof(Startup).Assembly);
-
-            services.AddRouting();
 
             services.AddSingleton<TestUserInfo>();
             services.AddSingleton<InMemoryDocumentStore>();
@@ -60,6 +58,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             services.AddSingleton<IMemoryCache, ClearableMemoryCache>();
             services.AddTransient<TestData>();
             services.AddSingleton<IClock, MutableClock>();
+            services.AddSingleton<IMptxStateProvider, InMemoryMptxStateProvider>();
 
             services.Scan(scan => scan
                 .FromAssembliesOf(typeof(Startup))
