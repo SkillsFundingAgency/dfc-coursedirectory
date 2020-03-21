@@ -32,7 +32,8 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             var request = context.HttpContext.Request;
 
             var flowName = mptxActionAttribute.FlowName;
-            var canStartFlow = mptxActionAttribute is StartsMptxAttribute;
+            var startsAttribute = mptxActionAttribute as StartsMptxAttribute;
+            var canStartFlow = startsAttribute != null;
 
             var ffiid = request.Query[InstanceIdQueryParameter];
             MptxInstance mptxInstance = null;
@@ -42,8 +43,9 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
                 if (canStartFlow)
                 {
                     // Begin a new flow
-                    var contextItems = GetContextItemsFromCaptures();
-                    mptxInstance = stateProvider.CreateInstance(flowName, contextItems);
+                    var newState = CreateNewState(startsAttribute);
+                    var contextItems = GetContextItemsFromCaptures(startsAttribute);
+                    mptxInstance = stateProvider.CreateInstance(flowName, contextItems, newState);
 
                     // Redirect, appending the new instance ID
                     var currentUrlWithInstanceParam = QueryHelpers.AddQueryString(
@@ -82,11 +84,18 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             var feature = new MptxInstanceFeature(mptxInstance);
             context.HttpContext.Features.Set(feature);
 
-            IReadOnlyDictionary<string, object> GetContextItemsFromCaptures()
+            object CreateNewState(StartsMptxAttribute startsAttribute)
+            {
+                var stateType = startsAttribute.StateType;
+                var services = context.HttpContext.RequestServices;
+                return ActivatorUtilities.CreateInstance(services, stateType);
+            }
+
+            IReadOnlyDictionary<string, object> GetContextItemsFromCaptures(StartsMptxAttribute startsAttribute)
             {
                 var dict = new Dictionary<string, object>();
 
-                var captures = (mptxActionAttribute as StartsMptxAttribute).CapturesQueryParams;
+                var captures = startsAttribute.CapturesQueryParams;
 
                 foreach (var capture in captures)
                 {

@@ -7,7 +7,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
     {
         public MptxActionAttribute(string flowName)
         {
-            FlowName = flowName;
+            FlowName = flowName ?? throw new ArgumentNullException(nameof(flowName));
         }
 
         public string FlowName { get; }

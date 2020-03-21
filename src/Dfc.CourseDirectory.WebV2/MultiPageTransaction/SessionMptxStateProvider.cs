@@ -25,7 +25,10 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public MptxInstance CreateInstance(string flowName, IReadOnlyDictionary<string, object> items)
+        public MptxInstance CreateInstance(
+            string flowName,
+            IReadOnlyDictionary<string, object> items,
+            object state)
         {
             var instanceId = CreateInstanceId();
 
@@ -33,7 +36,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             {
                 FlowName = flowName,
                 Items = items,
-                State = null
+                State = state
             };
             var serialized = Serialize(entry);
 

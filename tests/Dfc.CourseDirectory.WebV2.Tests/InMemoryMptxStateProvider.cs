@@ -22,13 +22,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         public void Clear() => _instances.Clear();
 
-        public MptxInstance CreateInstance(string flowName, IReadOnlyDictionary<string, object> items) =>
-            CreateInstance(flowName, items, state: null);
-
         public MptxInstance CreateInstance(
             string flowName,
             IReadOnlyDictionary<string, object> items,
-            object state = null)
+            object state)
         {
             var instanceId = Guid.NewGuid().ToString();
 
