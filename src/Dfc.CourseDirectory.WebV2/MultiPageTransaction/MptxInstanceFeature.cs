@@ -6,12 +6,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
     {
         public MptxInstanceFeature(MptxInstance instance)
         {
-            if (instance == null)
-            {
-                throw new ArgumentNullException(nameof(instance));
-            }
-
-            Instance = instance;
+            Instance = instance ?? throw new ArgumentNullException(nameof(instance));
         }
 
         public MptxInstance Instance { get; }

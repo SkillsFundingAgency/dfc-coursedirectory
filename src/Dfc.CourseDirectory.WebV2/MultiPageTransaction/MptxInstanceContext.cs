@@ -5,7 +5,7 @@ using Mapster;
 namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
 {
     public class MptxInstanceContext<TState>
-        where TState : IMptxState, new()
+        where TState : IMptxState
     {
         private readonly IMptxStateProvider _stateProvider;
         private readonly MptxInstance _instance;
@@ -14,8 +14,8 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             IMptxStateProvider stateProvider,
             MptxInstance instance)
         {
-            _stateProvider = stateProvider;
-            _instance = instance;
+            _stateProvider = stateProvider ?? throw new ArgumentNullException(nameof(stateProvider));
+            _instance = instance ?? throw new ArgumentNullException(nameof(instance));
         }
 
         public string FlowName => _instance.FlowName;
@@ -26,7 +26,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
 
         public IReadOnlyDictionary<string, object> Items => _instance.Items;
 
-        public TState State => (TState)_instance.State ?? new TState();
+        public TState State => (TState)_instance.State;
 
         public void Assign<TOther>(TOther newState) => Update(oldState => newState.Adapt(oldState));
 
@@ -45,10 +45,9 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
         {
             ThrowIfCompleted();
 
-            _stateProvider.UpdateInstanceState(InstanceId, s =>
+            _stateProvider.UpdateInstanceState(InstanceId, state =>
             {
-                var state = (TState)s ?? new TState();
-                update(state);
+                update((TState)state);
                 return state;
             });
         }

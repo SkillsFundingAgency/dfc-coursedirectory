@@ -7,7 +7,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
         public static RedirectToActionResult WithMptxInstanceId<T>(
             this RedirectToActionResult result,
             MptxInstanceContext<T> instanceContext)
-            where T : IMptxState, new()
+            where T : IMptxState
         {
             return WithMptxInstanceId(result, instanceContext.InstanceId);
         }

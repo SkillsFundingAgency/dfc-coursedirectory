@@ -16,7 +16,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
         }
 
         public MptxInstanceContext<T> GetContext<T>()
-            where T : IMptxState, new()
+            where T : IMptxState
         {
             var httpContext = _httpContextAccessor.HttpContext;
             var feature = httpContext.Features.Get<MptxInstanceFeature>();

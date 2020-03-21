@@ -28,6 +28,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             Assert.StartsWith(
                 "/MultiPageTransactionTests/starts?qp=value&ffiid=",
                 response.Headers.Location.OriginalString);
+
+            var state = Assert.IsType<MultiPageTransactionTestsFlowState>(
+                Factory.MptxStateProvider.Instances.Single().Value.State);
+            Assert.NotNull(state);
         }
 
         [Fact]
@@ -36,7 +40,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             // Arrange
             var instance = Factory.MptxStateProvider.CreateInstance(
                 MultiPageTransactionTestsController.FlowName,
-                new Dictionary<string, object>());
+                new Dictionary<string, object>(),
+                new MultiPageTransactionTestsFlowState());
 
             // Act
             var response = await HttpClient.GetAsync(
@@ -76,7 +81,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             // Arrange
             var instance = Factory.MptxStateProvider.CreateInstance(
                 MultiPageTransactionTestsController.FlowName,
-                new Dictionary<string, object>());
+                new Dictionary<string, object>(),
+                new MultiPageTransactionTestsFlowState());
 
             // Act
             var response = await HttpClient.GetAsync(
@@ -133,7 +139,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             // Arrange
             var instance = Factory.MptxStateProvider.CreateInstance(
                 MultiPageTransactionTestsController.FlowName,
-                new Dictionary<string, object>());
+                new Dictionary<string, object>(),
+                new MultiPageTransactionTestsFlowState());
 
             // Act
             var response = await HttpClient.GetAsync(
@@ -161,7 +168,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
     {
         public const string FlowName = "MultiPageTransactionTests";
 
-        [StartsMptx(FlowName, capturesQueryParams: "qp")]
+        [StartsMptx(FlowName, stateType: typeof(MultiPageTransactionTestsFlowState), capturesQueryParams: "qp")]
         [HttpGet("starts")]
         public IActionResult Starts() => Ok();
 

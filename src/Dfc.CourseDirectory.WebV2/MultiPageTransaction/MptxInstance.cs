@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
 {
@@ -10,10 +11,10 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             IReadOnlyDictionary<string, object> items,
             object state)
         {
-            FlowName = flowName;
-            InstanceId = instanceId;
-            Items = items;
-            State = state;
+            FlowName = flowName ?? throw new ArgumentNullException(nameof(flowName));
+            InstanceId = instanceId ?? throw new ArgumentNullException(nameof(instanceId));
+            Items = items ?? throw new ArgumentNullException(nameof(items));
+            State = state ?? throw new ArgumentNullException(nameof(state));
         }
 
         public string FlowName { get; }
