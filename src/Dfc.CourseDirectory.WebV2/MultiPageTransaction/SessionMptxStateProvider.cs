@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
@@ -13,7 +15,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
         private static readonly JsonSerializerSettings _serializerSettings = new JsonSerializerSettings()
         {
             Formatting = Formatting.None,
-            TypeNameHandling = TypeNameHandling.All
+            TypeNameHandling = TypeNameHandling.Auto
         };
 
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -82,8 +84,6 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             }
         }
 
-        private static string CreateInstanceId() => Guid.NewGuid().ToString("N");
-
         private static SessionEntry Deserialize(byte[] bytes) =>
             JsonConvert.DeserializeObject<SessionEntry>(_encoding.GetString(bytes), _serializerSettings);
 
@@ -91,6 +91,25 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
 
         private static byte[] Serialize(SessionEntry entry) =>
             _encoding.GetBytes(JsonConvert.SerializeObject(entry, _serializerSettings));
+
+        private string CreateInstanceId()
+        {
+            var session = _httpContextAccessor.HttpContext.Session;
+            var idBytes = new byte[6];
+
+            using var randomGenerator = RandomNumberGenerator.Create();
+            while (true)
+            {
+                randomGenerator.GetBytes(idBytes);
+                var instanceId = Convert.ToBase64String(idBytes);
+
+                var key = GetSessionKey(instanceId);
+                if (!session.Keys.Contains(key))
+                {
+                    return key;
+                }
+            }
+        }
 
         private class SessionEntry
         {
