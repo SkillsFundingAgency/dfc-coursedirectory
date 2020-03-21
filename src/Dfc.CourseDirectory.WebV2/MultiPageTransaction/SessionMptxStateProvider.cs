@@ -8,7 +8,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
 {
     public class SessionMptxStateProvider : IMptxStateProvider
     {
-        private static Encoding _encoding = Encoding.UTF8;
+        private static readonly Encoding _encoding = Encoding.UTF8;
 
         private static readonly JsonSerializerSettings _serializerSettings = new JsonSerializerSettings()
         {
