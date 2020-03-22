@@ -270,36 +270,6 @@ namespace Dfc.CourseDirectory.Web
                 context.Response.Headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
                 context.Response.Headers["Feature-Policy"] = "accelerometer 'none'; camera 'none'; geolocation 'none'; gyroscope 'none'; magnetometer 'none'; microphone 'none'; payment 'none'; usb 'none'";
 
-                //CSP
-                context.Response.Headers["Content-Security-Policy"] =
-                                                "default-src    'self' " +
-                                                    " https://rainmaker.tiny.cloud/" +
-                                                    " https://www.google-analytics.com/" +
-                                                    ";" +
-                                                "style-src      'self' 'unsafe-inline' " +
-                                                    " https://cdn.tiny.cloud/" +
-                                                    " https://www.googletagmanager.com/" +
-                                                    " https://tagmanager.google.com/" +
-                                                    " https://fonts.googleapis.com/" +
-                                                    " https://cloud.tinymce.com/" +
-                                                    " https://cdnjs.cloudflare.com/" +
-                                                    ";" +
-                                                "font-src       'self' data:" +
-                                                   " https://fonts.googleapis.com/" +
-                                                   " https://fonts.gstatic.com/" +
-                                                   " https://cdn.tiny.cloud/" +
-                                                   ";" +
-                                                "img-src        'self' * data: https://cdn.tiny.cloud/;" +
-                                                "script-src     'self' 'unsafe-eval' 'unsafe-inline'  " +
-                                                    " https://cloud.tinymce.com/" +
-                                                    " https://cdnjs.cloudflare.com/" +
-                                                    " https://www.googletagmanager.com/" +
-                                                    " https://tagmanager.google.com/" +
-                                                    " https://www.google-analytics.com/" +
-                                                    " https://cdn.tiny.cloud/" +
-                                                    " https://cdnjs.cloudflare.com/" +
-                                                    ";";
-
                 context.Response.GetTypedHeaders().CacheControl =
                   new Microsoft.Net.Http.Headers.CacheControlHeaderValue()
                   {
