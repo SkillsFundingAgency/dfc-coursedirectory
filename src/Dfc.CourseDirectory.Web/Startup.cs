@@ -244,9 +244,7 @@ namespace Dfc.CourseDirectory.Web
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-
-                //Uncomment to redirect to live error page
-                //app.UseExceptionHandler("/Home/Error");
+                app.UseBrowserLink();
             }
             else
             {

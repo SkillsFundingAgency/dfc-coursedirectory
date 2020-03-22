@@ -1,7 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace Dfc.CourseDirectory.WebV2.Filters
 {
@@ -17,14 +21,16 @@ namespace Dfc.CourseDirectory.WebV2.Filters
 
             string GetPolicy()
             {
-                var defaultSrc = new[]
+                var env = context.HttpContext.RequestServices.GetRequiredService<IWebHostEnvironment>();
+
+                var defaultSrc = new List<string>()
                 {
                     "'self'",
                     "https://rainmaker.tiny.cloud/",
                     "https://www.google-analytics.com/"
                 };
 
-                var styleSrc = new[]
+                var styleSrc = new List<string>()
                 {
                     "'self'",
                     "'unsafe-inline'",
@@ -36,7 +42,7 @@ namespace Dfc.CourseDirectory.WebV2.Filters
                     "https://cdnjs.cloudflare.com/"
                 };
 
-                var fontSrc = new[]
+                var fontSrc = new List<string>()
                 {
                     "'self'",
                     "data:",
@@ -45,7 +51,7 @@ namespace Dfc.CourseDirectory.WebV2.Filters
                     "https://cdn.tiny.cloud/"
                 };
 
-                var imgSrc = new[]
+                var imgSrc = new List<string>()
                 {
                     "'self'",
                     "*",
@@ -53,7 +59,7 @@ namespace Dfc.CourseDirectory.WebV2.Filters
                     "https://cdn.tiny.cloud/"
                 };
 
-                var scriptSrc = new[]
+                var scriptSrc = new List<string>()
                 {
                     "'self'",
                     "'unsafe-eval'",
@@ -66,6 +72,14 @@ namespace Dfc.CourseDirectory.WebV2.Filters
                     "https://cdn.tiny.cloud/",
                     "https://cdnjs.cloudflare.com/"
                 };
+
+                if (env.IsDevelopment())
+                {
+                    // For BrowserLink
+                    defaultSrc.Add("http://localhost:*");
+                    defaultSrc.Add("ws://localhost:*");
+                    scriptSrc.Add("http://localhost:*");
+                }
 
                 return $"default-src {string.Join(" ", defaultSrc)}; " +
                     $"style-src {string.Join(" ", styleSrc)}; " +
