@@ -256,7 +256,6 @@ namespace Dfc.CourseDirectory.Web
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseGdsFrontEnd();
-            app.UseV2StaticFiles();
             app.UseSession();
 
             //Preventing ClickJacking Attacks
