@@ -29,8 +29,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
             app.UseGdsFrontEnd();
 
-            app.UseV2StaticFiles();
-
             app.UseRouting();
 
             app.UseAuthentication();
