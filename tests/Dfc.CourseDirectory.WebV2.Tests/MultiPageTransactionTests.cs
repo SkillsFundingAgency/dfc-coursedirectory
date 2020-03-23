@@ -151,16 +151,41 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
             Assert.DoesNotContain(instance.InstanceId, Factory.MptxStateProvider.Instances.Keys);
         }
+
+        [Fact]
+        public async Task StartingAction_CreatesInstanceAndCallsInitializer()
+        {
+            // Arrange
+
+            // Act
+            var response = await HttpClient.GetAsync("MultiPageTransactionTests/starts?qp=value");
+
+            // Assert
+            var state = Assert.IsType<MultiPageTransactionTestsFlowState>(
+                Factory.MptxStateProvider.Instances.Single().Value.State);
+            Assert.Equal(69, state.Baz);
+        }
     }
 
     public class MultiPageTransactionTestsFlowState : IMptxState
     {
         public int Foo { get; set; }
         public int Bar { get; set; }
+        public int Baz { get; set; }
     }
 
     public class MultiPageTransactionTestsDifferentFlowState : IMptxState
     {
+    }
+
+    public class MultiPageTransactionTestsFlowStateInitializer : IInitializeMptxState<MultiPageTransactionTestsFlowState>
+    {
+        public Task Initialize(MultiPageTransactionTestsFlowState state)
+        {
+            state.Baz = 69;
+
+            return Task.CompletedTask;
+        }
     }
 
     [Route("MultiPageTransactionTests")]
