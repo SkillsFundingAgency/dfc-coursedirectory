@@ -44,6 +44,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         protected MptxInstance CreateMptxInstance<TState>(string flowName, TState state) =>
             MptxStateProvider.CreateInstance(flowName, new Dictionary<string, object>(), state);
 
+        protected TState GetMptxInstanceState<TState>(string instanceId) =>
+            (TState)MptxStateProvider.GetInstance(instanceId).State;
+
         protected Task WithSqlQueryDispatcher(Func<ISqlQueryDispatcher, Task> action) =>
             WithSqlQueryDispatcher(async dispatcher =>
             {

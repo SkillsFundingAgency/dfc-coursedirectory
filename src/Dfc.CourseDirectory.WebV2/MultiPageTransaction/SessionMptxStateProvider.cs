@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using Dfc.CourseDirectory.WebV2.MultiPageTransaction.Json;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
@@ -12,17 +13,13 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
     {
         private static readonly Encoding _encoding = Encoding.UTF8;
 
-        private static readonly JsonSerializerSettings _serializerSettings = new JsonSerializerSettings()
-        {
-            Formatting = Formatting.None,
-            TypeNameHandling = TypeNameHandling.Auto
-        };
-
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly JsonSerializerSettings _serializerSettings;
 
         public SessionMptxStateProvider(IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
+            _serializerSettings = GetJsonSerializerSettings();
         }
 
         public MptxInstance CreateInstance(
@@ -43,7 +40,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             var key = GetSessionKey(instanceId);
             _httpContextAccessor.HttpContext.Session.Set(key, serialized);
 
-            var instance = new MptxInstance(flowName, instanceId, items, null);
+            var instance = new MptxInstance(flowName, instanceId, items, state);
             return instance;
         }
 
@@ -87,12 +84,28 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             }
         }
 
-        private static SessionEntry Deserialize(byte[] bytes) =>
-            JsonConvert.DeserializeObject<SessionEntry>(_encoding.GetString(bytes), _serializerSettings);
+        private static JsonSerializerSettings GetJsonSerializerSettings()
+        {
+            var settings = new JsonSerializerSettings()
+            {
+                Formatting = Formatting.None,
+                TypeNameHandling = TypeNameHandling.Auto
+            };
+
+            foreach (var converter in Converters.All)
+            {
+                settings.Converters.Add(converter);
+            }
+
+            return settings;
+        }
 
         private static string GetSessionKey(string instanceId) => $"mtpx:{instanceId}";
 
-        private static byte[] Serialize(SessionEntry entry) =>
+        private SessionEntry Deserialize(byte[] bytes) =>
+            JsonConvert.DeserializeObject<SessionEntry>(_encoding.GetString(bytes), _serializerSettings);
+
+        private byte[] Serialize(SessionEntry entry) =>
             _encoding.GetBytes(JsonConvert.SerializeObject(entry, _serializerSettings));
 
         private string CreateInstanceId()
@@ -109,7 +122,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
                 var key = GetSessionKey(instanceId);
                 if (!session.Keys.Contains(key))
                 {
-                    return key;
+                    return instanceId;
                 }
             }
         }
