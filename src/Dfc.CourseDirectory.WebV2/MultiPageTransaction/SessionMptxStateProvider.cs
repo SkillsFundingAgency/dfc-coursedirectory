@@ -43,7 +43,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             var key = GetSessionKey(instanceId);
             _httpContextAccessor.HttpContext.Session.Set(key, serialized);
 
-            var instance = new MptxInstance(flowName, instanceId, items, null);
+            var instance = new MptxInstance(flowName, instanceId, items, state);
             return instance;
         }
 
