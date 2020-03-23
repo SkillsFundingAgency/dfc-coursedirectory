@@ -2,12 +2,13 @@
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.Models;
 using Xunit;
+using FlowModel = Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.FlowModel;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 {
-    public class MarketingInfoTests : TestBase
+    public class ProviderDetailTests : TestBase
     {
-        public MarketingInfoTests(CourseDirectoryApplicationFactory factory)
+        public ProviderDetailTests(CourseDirectoryApplicationFactory factory)
             : base(factory)
         {
         }
@@ -21,8 +22,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsHelpdesk();
 
+            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+
             // Act
-            var response = await HttpClient.GetAsync($"new-apprenticeship-provider/marketing-info?providerId={providerId}");
+            var response = await HttpClient.GetAsync(
+                $"new-apprenticeship-provider/provider-detail?providerId={providerId}&ffiid={mptxInstance.InstanceId}");
 
             // Assert
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
@@ -41,8 +45,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
+            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+
             // Act
-            var response = await HttpClient.GetAsync($"new-apprenticeship-provider/marketing-info?providerId={providerId}");
+            var response = await HttpClient.GetAsync(
+                $"new-apprenticeship-provider/provider-detail?providerId={providerId}&ffiid={mptxInstance.InstanceId}");
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -58,8 +65,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
+            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+
             // Act
-            var response = await HttpClient.GetAsync($"new-apprenticeship-provider/marketing-info?providerId={providerId}");
+            var response = await HttpClient.GetAsync(
+                $"new-apprenticeship-provider/provider-detail?providerId={providerId}&ffiid={mptxInstance.InstanceId}");
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -76,8 +86,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
+            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+
             // Act
-            var response = await HttpClient.GetAsync($"new-apprenticeship-provider/marketing-info?providerId={providerId}");
+            var response = await HttpClient.GetAsync(
+                $"new-apprenticeship-provider/provider-detail?providerId={providerId}&ffiid={mptxInstance.InstanceId}");
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -98,8 +111,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
+            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+
             // Act
-            var response = await HttpClient.GetAsync($"new-apprenticeship-provider/marketing-info?providerId={providerId}");
+            var response = await HttpClient.GetAsync(
+                $"new-apprenticeship-provider/provider-detail?providerId={providerId}&ffiid={mptxInstance.InstanceId}");
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -119,13 +135,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsHelpdesk();
 
+            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("MarketingInformation", "New marketing info")
                 .ToContent();
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"new-apprenticeship-provider/marketing-info?providerId={providerId}", requestContent);
+                $"new-apprenticeship-provider/provider-detail?providerId={providerId}&ffiid={mptxInstance.InstanceId}", requestContent);
 
             // Assert
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
@@ -147,13 +165,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.FE);
 
+            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("MarketingInformation", "New marketing info")
                 .ToContent();
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"new-apprenticeship-provider/marketing-info?providerId={providerId}", requestContent);
+                $"new-apprenticeship-provider/provider-detail?providerId={providerId}&ffiid={mptxInstance.InstanceId}", requestContent);
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -169,13 +189,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.FE);
 
+            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("MarketingInformation", "New marketing info")
                 .ToContent();
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"new-apprenticeship-provider/marketing-info?providerId={providerId}", requestContent);
+                $"new-apprenticeship-provider/provider-detail?providerId={providerId}&ffiid={mptxInstance.InstanceId}", requestContent);
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -192,13 +214,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
+            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("MarketingInformation", new string('x', 751))
                 .ToContent();
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"new-apprenticeship-provider/marketing-info?providerId={providerId}", requestContent);
+                $"new-apprenticeship-provider/provider-detail?providerId={providerId}&ffiid={mptxInstance.InstanceId}", requestContent);
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -218,13 +242,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
+            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("MarketingInformation", "New marketing info")
                 .ToContent();
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"new-apprenticeship-provider/marketing-info?providerId={providerId}", requestContent);
+                $"new-apprenticeship-provider/provider-detail?providerId={providerId}&ffiid={mptxInstance.InstanceId}", requestContent);
 
             // Assert
             Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);

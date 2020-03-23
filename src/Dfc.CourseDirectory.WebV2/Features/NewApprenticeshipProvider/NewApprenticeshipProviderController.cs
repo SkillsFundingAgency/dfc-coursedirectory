@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.Filters;
 using Dfc.CourseDirectory.WebV2.Models;
+using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using Flurl;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -11,6 +12,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
     [RequireFeatureFlag(FeatureFlags.ApprenticeshipQA)]
     public class NewApprenticeshipProviderController : Controller
     {
+        private const string FlowName = "NewApprenticeshipProvider";
+
         private readonly IMediator _mediator;
 
         public NewApprenticeshipProviderController(IMediator mediator)
@@ -18,6 +21,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
             _mediator = mediator;
         }
 
+        [MptxAction(FlowName)]
         [HttpGet("apprenticeship-details")]
         public async Task<IActionResult> ApprenticeshipDetails(
             StandardOrFramework standardOrFramework,
@@ -31,6 +35,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
             return await _mediator.SendAndMapResponse(query, vm => View(vm));
         }
 
+        [MptxAction(FlowName)]
         [HttpPost("apprenticeship-details")]
         public async Task<IActionResult> ApprenticeshipDetails(
             ApprenticeshipDetails.Command command,
@@ -49,31 +54,35 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
         [HttpGet("apprenticeship-locations")]
         public IActionResult ApprenticeshipLocations() => throw new System.NotImplementedException();
 
-        [HttpGet("marketing-info")]
-        public async Task<IActionResult> MarketingInfo(ProviderInfo providerInfo)
+        [StartsMptx(FlowName, typeof(FlowModel))]
+        [HttpGet("provider-detail")]
+        public async Task<IActionResult> ProviderDetail(ProviderInfo providerInfo)
         {
-            var query = new MarketingInfo.Query() { ProviderId = providerInfo.ProviderId };
+            var query = new ProviderDetail.Query() { ProviderId = providerInfo.ProviderId };
             return await _mediator.SendAndMapResponse(query, vm => View(vm));
         }
 
-        [HttpPost("marketing-info")]
-        public async Task<IActionResult> MarketingInfo(
+        [MptxAction(FlowName)]
+        [HttpPost("provider-detail")]
+        public async Task<IActionResult> ProviderDetail(
             ProviderInfo providerInfo,
-            MarketingInfo.Command command)
+            MptxInstanceContext<FlowModel> flow,
+            ProviderDetail.Command command)
         {
             command.ProviderId = providerInfo.ProviderId;
             return await _mediator.SendAndMapResponse(
                 command,
                 response => response.Match<IActionResult>(
                     errors => this.ViewFromErrors(errors),
-                    vm =>
-                    {
-                        var returnUrl = new Url(Url.Action("ApprenticeshipDetails")).WithProviderContext(providerInfo);
-                        return RedirectToAction(
-                            "FindStandardOrFramework",
-                            "Apprenticeships",
-                            new { returnUrl });
-                    }));
+                    success => RedirectToAction(
+                        "FindStandardOrFramework",
+                        "Apprenticeships",
+                        new
+                        {
+                            returnUrl = new Url(Url.Action("ApprenticeshipDetails"))
+                                .WithProviderContext(providerInfo)
+                                .WithMptxInstanceId(flow)
+                        })));
         }
     }
 }
