@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -8,15 +9,11 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
 {
-    public class MptxResourceFilter : IResourceFilter
+    public class MptxResourceFilter : IAsyncResourceFilter
     {
         public const string InstanceIdQueryParameter = "ffiid";
 
-        public void OnResourceExecuted(ResourceExecutedContext context)
-        {
-        }
-
-        public void OnResourceExecuting(ResourceExecutingContext context)
+        public async Task OnResourceExecutionAsync(ResourceExecutingContext context, ResourceExecutionDelegate next)
         {
             var mptxActionAttribute = (context.ActionDescriptor as ControllerActionDescriptor)
                 .MethodInfo
@@ -24,6 +21,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
 
             if (mptxActionAttribute == null)
             {
+                await next();
                 return;
             }
 
@@ -43,7 +41,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
                 if (canStartFlow)
                 {
                     // Begin a new flow
-                    var newState = CreateNewState(startsAttribute);
+                    var newState = await CreateNewState(startsAttribute);
                     var contextItems = GetContextItemsFromCaptures(startsAttribute);
                     mptxInstance = stateProvider.CreateInstance(flowName, contextItems, newState);
 
@@ -84,11 +82,24 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             var feature = new MptxInstanceFeature(mptxInstance);
             context.HttpContext.Features.Set(feature);
 
-            object CreateNewState(StartsMptxAttribute startsAttribute)
+            await next();
+
+            async Task<object> CreateNewState(StartsMptxAttribute startsAttribute)
             {
                 var stateType = startsAttribute.StateType;
                 var services = context.HttpContext.RequestServices;
-                return ActivatorUtilities.CreateInstance(services, stateType);
+
+                var state = ActivatorUtilities.CreateInstance(services, stateType);
+
+                var initializerType = typeof(IInitializeMptxState<>).MakeGenericType(stateType);
+                var initializer = services.GetService(initializerType);
+
+                if (initializer != null)
+                {
+                    await (Task)initializerType.GetMethod("Initialize").Invoke(initializer, new object[] { state });
+                }
+
+                return state;
             }
 
             IReadOnlyDictionary<string, object> GetContextItemsFromCaptures(StartsMptxAttribute startsAttribute)
