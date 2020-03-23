@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.DataStore.Sql;
+using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
@@ -29,6 +31,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         protected HttpClient HttpClient { get; }
 
+        protected InMemoryMptxStateProvider MptxStateProvider => Factory.MptxStateProvider;
+
         protected TestData TestData => Factory.TestData;
 
         protected TestUserInfo User => Factory.User;
@@ -36,6 +40,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         public Task DisposeAsync() => Task.CompletedTask;
 
         public Task InitializeAsync() => Factory.OnTestStarted();
+
+        protected MptxInstance CreateMptxInstance<TState>(string flowName, TState state) =>
+            MptxStateProvider.CreateInstance(flowName, new Dictionary<string, object>(), state);
 
         protected Task WithSqlQueryDispatcher(Func<ISqlQueryDispatcher, Task> action) =>
             WithSqlQueryDispatcher(async dispatcher =>
