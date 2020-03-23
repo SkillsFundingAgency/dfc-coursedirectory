@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.Behaviors;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries;
-using Dfc.CourseDirectory.WebV2.Models;
 using Dfc.CourseDirectory.WebV2.Security;
 using Dfc.CourseDirectory.WebV2.Validation;
 using Dfc.CourseDirectory.WebV2.Validation.ProviderValidation;
@@ -37,13 +35,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ProviderD
 
     public class Handler :
         IRequestHandler<Query, ViewModel>,
-        IRestrictProviderType<Query>,
         IRequireUserCanSubmitQASubmission<Query>,
-        IRestrictQAStatus<Query>,
         IRequestHandler<Command, CommandResponse>,
-        IRestrictProviderType<Command>,
-        IRequireUserCanSubmitQASubmission<Command>,
-        IRestrictQAStatus<Command>
+        IRequireUserCanSubmitQASubmission<Command>
     {
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly ICurrentUserProvider _currentUserProvider;
@@ -58,20 +52,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ProviderD
             _currentUserProvider = currentUserProvider;
             _clock = clock;
         }
-
-        IEnumerable<ApprenticeshipQAStatus> IRestrictQAStatus<Query>.PermittedStatuses { get; } = new[]
-        {
-            ApprenticeshipQAStatus.NotStarted
-        };
-
-        IEnumerable<ApprenticeshipQAStatus> IRestrictQAStatus<Command>.PermittedStatuses { get; } = new[]
-        {
-            ApprenticeshipQAStatus.NotStarted
-        };
-
-        ProviderType IRestrictProviderType<Query>.ProviderType => ProviderType.Apprenticeships;
-
-        ProviderType IRestrictProviderType<Command>.ProviderType => ProviderType.Apprenticeships;
 
         public Task<ViewModel> Handle(Query request, CancellationToken cancellationToken) =>
             CreateViewModel(request.ProviderId);
@@ -123,18 +103,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ProviderD
             Task.FromResult(request.ProviderId);
 
         Task<Guid> IRequireUserCanSubmitQASubmission<Command>.GetProviderId(Command request) =>
-            Task.FromResult(request.ProviderId);
-
-        Task<Guid> IRestrictQAStatus<Query>.GetProviderId(Query request) =>
-            Task.FromResult(request.ProviderId);
-
-        Task<Guid> IRestrictQAStatus<Command>.GetProviderId(Command request) =>
-            Task.FromResult(request.ProviderId);
-
-        Task<Guid> IRestrictProviderType<Query>.GetProviderId(Query request) =>
-            Task.FromResult(request.ProviderId);
-
-        Task<Guid> IRestrictProviderType<Command>.GetProviderId(Command request) =>
             Task.FromResult(request.ProviderId);
 
         private class CommandValidator : AbstractValidator<Command>
