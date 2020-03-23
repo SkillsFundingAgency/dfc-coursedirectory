@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
+using Dfc.CourseDirectory.WebV2.MultiPageTransaction.Json;
 using Newtonsoft.Json;
 
 namespace Dfc.CourseDirectory.WebV2.Tests
@@ -9,10 +10,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests
     public class InMemoryMptxStateProvider : IMptxStateProvider
     {
         private readonly Dictionary<string, Entry> _instances;
+        private readonly JsonSerializerSettings _serializerSettings;
 
         public InMemoryMptxStateProvider()
         {
             _instances = new Dictionary<string, Entry>();
+            _serializerSettings = GetSerializerSettings();
         }
 
         public IReadOnlyDictionary<string, MptxInstance> Instances =>
@@ -63,8 +66,23 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             instance.State = CloneState(updated);
         }
 
-        private static object CloneState(object state) =>
-            JsonConvert.DeserializeObject(JsonConvert.SerializeObject(state), state.GetType());
+        private object CloneState(object state) =>
+            JsonConvert.DeserializeObject(
+                JsonConvert.SerializeObject(state, _serializerSettings),
+                state.GetType(),
+                _serializerSettings);
+
+        private static JsonSerializerSettings GetSerializerSettings()
+        {
+            var settings = new JsonSerializerSettings();
+            
+            foreach (var converter in Converters.All)
+            {
+                settings.Converters.Add(converter);
+            }
+
+            return settings;
+        }
 
         private class Entry
         {
