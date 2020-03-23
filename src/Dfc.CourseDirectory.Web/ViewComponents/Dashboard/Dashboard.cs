@@ -221,8 +221,9 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
             }
             actualModel.EnvironmentType = _environmentHelper.GetEnvironmentType();
 
-                var qaFeatureIsEnabled = _featureFlagProvider.HaveFeature(FeatureFlags.ApprenticeshipQA);
-                if (qaFeatureIsEnabled)
+                actualModel.QAFeatureIsEnabled = _featureFlagProvider.HaveFeature(FeatureFlags.ApprenticeshipQA);
+
+                if (actualModel.QAFeatureIsEnabled)
                 {
                     var providerId = ViewContext.HttpContext.Features.Get<ProviderContextFeature>().ProviderInfo.ProviderId;
 
