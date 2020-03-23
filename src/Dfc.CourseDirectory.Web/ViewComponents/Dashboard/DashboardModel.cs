@@ -45,5 +45,6 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
         public EnvironmentType EnvironmentType { get; set; }
         public bool ApprenticeshipBulkUploadHasErrors { get; set; }
         public int ApprenticeshipBulkUploadReadyToGoLiveCount { get; set; }
+        public WebV2.Models.ApprenticeshipQAStatus ProviderQACurrentStatus { get; internal set; }
     }
 }
