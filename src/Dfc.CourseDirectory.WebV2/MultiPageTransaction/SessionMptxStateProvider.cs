@@ -109,7 +109,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
                 var key = GetSessionKey(instanceId);
                 if (!session.Keys.Contains(key))
                 {
-                    return key;
+                    return instanceId;
                 }
             }
         }
