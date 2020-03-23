@@ -107,12 +107,17 @@ namespace Dfc.CourseDirectory.WebV2.Filters
 
             public async Task ExecuteResultAsync(ActionContext context)
             {
-                await InnerResult.ExecuteResultAsync(context);
-
-                if (context.HttpContext.Response.GetTypedHeaders()?.ContentType.MediaType == "text/html")
+                context.HttpContext.Response.OnStarting(() =>
                 {
-                    context.HttpContext.Response.Headers["Content-Security-Policy"] = Policy;
-                }
+                    if (context.HttpContext.Response.GetTypedHeaders().ContentType?.MediaType == "text/html")
+                    {
+                        context.HttpContext.Response.Headers["Content-Security-Policy"] = Policy;
+                    }
+
+                    return Task.CompletedTask;
+                });
+
+                await InnerResult.ExecuteResultAsync(context);
             }
         }
     }
