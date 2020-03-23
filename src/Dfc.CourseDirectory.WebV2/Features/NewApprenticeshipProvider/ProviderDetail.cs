@@ -2,8 +2,12 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.Behaviors;
+using Dfc.CourseDirectory.WebV2.Behaviors.Errors;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
+using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.WebV2.Models;
+using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using Dfc.CourseDirectory.WebV2.Security;
 using Dfc.CourseDirectory.WebV2.Validation;
 using Dfc.CourseDirectory.WebV2.Validation.ProviderValidation;
@@ -33,22 +37,50 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ProviderD
         public string CourseDirectoryName { get; set; }
     }
 
+    public class ConfirmationQuery : IRequest<ConfirmationViewModel>
+    {
+        public Guid ProviderId { get; set; }
+    }
+
+    public class ConfirmationViewModel : ConfirmationCommand
+    {
+        public string ProviderName { get; set; }
+        public string CourseDirectoryName { get; set; }
+        public int Ukprn { get; set; }
+        public string LegalName { get; set; }
+        public string TradingName { get; set; }
+        public ProviderType ProviderType { get; set; }
+        public string MarketingInformation { get; set; }
+    }
+
+    public class ConfirmationCommand : IRequest<Success>
+    {
+        public Guid ProviderId { get; set; }
+    }
+
     public class Handler :
         IRequestHandler<Query, ViewModel>,
         IRequireUserCanSubmitQASubmission<Query>,
         IRequestHandler<Command, CommandResponse>,
-        IRequireUserCanSubmitQASubmission<Command>
+        IRequireUserCanSubmitQASubmission<Command>,
+        IRequestHandler<ConfirmationQuery, ConfirmationViewModel>,
+        IRequireUserCanSubmitQASubmission<ConfirmationQuery>,
+        IRequestHandler<ConfirmationCommand, Success>,
+        IRequireUserCanSubmitQASubmission<ConfirmationCommand>
     {
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+        private readonly MptxInstanceContext<FlowModel> _flow;
         private readonly ICurrentUserProvider _currentUserProvider;
         private readonly IClock _clock;
 
         public Handler(
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
+            MptxInstanceContext<FlowModel> flow,
             ICurrentUserProvider currentUserProvider,
             IClock clock)
         {
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
+            _flow = flow;
             _currentUserProvider = currentUserProvider;
             _clock = clock;
         }
@@ -69,17 +101,60 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ProviderD
                 return new ModelWithErrors<ViewModel>(vm, validationResult);
             }
 
+            _flow.Update(s => s.SetProviderDetail(Html.SanitizeHtml(request.MarketingInformation)));
+
+            return new Success();
+        }
+
+        public async Task<ConfirmationViewModel> Handle(ConfirmationQuery request, CancellationToken cancellationToken)
+        {
+            if (!_flow.State.GotProviderDetail)
+            {
+                throw new ErrorException<InvalidFlowState>(new InvalidFlowState());
+            }
+
+            var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(
+                new GetProviderById()
+                {
+                    ProviderId = request.ProviderId
+                });
+
+            return new ConfirmationViewModel()
+            {
+                ProviderId = request.ProviderId,
+                ProviderName = provider.ProviderName,
+                CourseDirectoryName = GetCourseDirectoryName(provider),
+                LegalName = provider.ProviderName,
+                MarketingInformation = _flow.State.ProviderMarketingInformation,
+                ProviderType = provider.ProviderType,
+                TradingName = provider.TradingName,
+                Ukprn = provider.Ukprn
+            };
+        }
+
+        public async Task<Success> Handle(ConfirmationCommand request, CancellationToken cancellationToken)
+        {
+            if (!_flow.State.GotProviderDetail)
+            {
+                throw new ErrorException<InvalidFlowState>(new InvalidFlowState());
+            }
+
             await _cosmosDbQueryDispatcher.ExecuteQuery(
                 new UpdateProviderInfo()
                 {
                     ProviderId = request.ProviderId,
-                    MarketingInformation = request.MarketingInformation,
+                    MarketingInformation = _flow.State.ProviderMarketingInformation,
                     UpdatedBy = _currentUserProvider.GetCurrentUser(),
                     UpdatedOn = _clock.UtcNow
                 });
 
             return new Success();
         }
+
+        private static string GetCourseDirectoryName(Provider provider) =>
+            !string.IsNullOrEmpty(provider.CourseDirectoryName) ?
+                provider.CourseDirectoryName :
+                provider.ProviderName;
 
         private async Task<ViewModel> CreateViewModel(Guid providerId)
         {
@@ -92,10 +167,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ProviderD
             return new ViewModel()
             {
                 ProviderId = provider.Id,
-                MarketingInformation = Html.SanitizeHtml(provider.MarketingInformation ?? string.Empty),
-                CourseDirectoryName = !string.IsNullOrEmpty(provider.CourseDirectoryName) ?
-                    provider.CourseDirectoryName :
-                    provider.ProviderName
+                MarketingInformation = _flow.State.ProviderMarketingInformation,
+                CourseDirectoryName = GetCourseDirectoryName(provider)
             };
         }
 
@@ -103,6 +176,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ProviderD
             Task.FromResult(request.ProviderId);
 
         Task<Guid> IRequireUserCanSubmitQASubmission<Command>.GetProviderId(Command request) =>
+            Task.FromResult(request.ProviderId);
+
+        Task<Guid> IRequireUserCanSubmitQASubmission<ConfirmationQuery>.GetProviderId(ConfirmationQuery request) =>
+            Task.FromResult(request.ProviderId);
+
+        Task<Guid> IRequireUserCanSubmitQASubmission<ConfirmationCommand>.GetProviderId(ConfirmationCommand request) =>
             Task.FromResult(request.ProviderId);
 
         private class CommandValidator : AbstractValidator<Command>

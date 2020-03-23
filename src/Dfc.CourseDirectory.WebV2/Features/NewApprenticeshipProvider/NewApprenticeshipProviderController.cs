@@ -74,15 +74,38 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
                 command,
                 response => response.Match<IActionResult>(
                     errors => this.ViewFromErrors(errors),
-                    success => RedirectToAction(
-                        "FindStandardOrFramework",
-                        "Apprenticeships",
-                        new
-                        {
-                            returnUrl = new Url(Url.Action("ApprenticeshipDetails"))
-                                .WithProviderContext(providerInfo)
-                                .WithMptxInstanceId(flow)
-                        })));
+                    success => RedirectToAction(nameof(ProviderDetailConfirmation))
+                        .WithCurrentProvider(providerInfo)
+                        .WithMptxInstanceId(flow)));
+        }
+
+        [MptxAction(FlowName)]
+        [HttpGet("provider-detail-confirmation")]
+        public async Task<IActionResult> ProviderDetailConfirmation(ProviderInfo providerInfo)
+        {
+            var query = new ProviderDetail.ConfirmationQuery() { ProviderId = providerInfo.ProviderId };
+            return await _mediator.SendAndMapResponse(query, vm => View(vm));
+        }
+
+        [MptxAction(FlowName)]
+        [HttpPost("provider-detail-confirmation")]
+        public async Task<IActionResult> ProviderDetailConfirmation(
+            ProviderInfo providerInfo,
+            MptxInstanceContext<FlowModel> flow,
+            ProviderDetail.ConfirmationCommand command)
+        {
+            command.ProviderId = providerInfo.ProviderId;
+            return await _mediator.SendAndMapResponse(
+                command,
+                success => RedirectToAction(
+                    "FindStandardOrFramework",
+                    "Apprenticeships",
+                    new
+                    {
+                        returnUrl = new Url(Url.Action("ApprenticeshipDetails"))
+                            .WithProviderContext(providerInfo)
+                            .WithMptxInstanceId(flow)
+                    }));
         }
     }
 }
