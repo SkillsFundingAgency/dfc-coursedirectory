@@ -127,14 +127,20 @@ else
                         </div>
                         break;
                     case ProviderType.Apprenticeship:
-                        <div class="govuk-grid-row govuk-!-margin-bottom-6 homepage-item--container">
-                            <div class="govuk-grid-column-one-half homepage-item ">
-                                @await Html.PartialAsync("/ViewComponents/Dashboard/_ApprenticeshipsCardPartial.cshtml")
-                            </div>
-                            <div class="govuk-grid-column-one-half homepage-item ">
-                                @await Html.PartialAsync("/ViewComponents/Dashboard/_VenuesCardPartial.cshtml")
-                            </div>
-                        </div>
+        <div class="govuk-grid-row govuk-!-margin-bottom-6 homepage-item--container">
+         
+            
+            @if (Model.ProviderQACurrentStatus == Dfc.CourseDirectory.WebV2.Models.ApprenticeshipQAStatus.Passed || !Model.QAFeatureIsEnabled)
+            {
+                <div class="govuk-grid-column-one-half homepage-item ">
+                    @await Html.PartialAsync("/ViewComponents/Dashboard/_ApprenticeshipsCardPartial.cshtml")
+                </div>
+             }
+            
+            <div class="govuk-grid-column-one-half homepage-item ">
+                @await Html.PartialAsync("/ViewComponents/Dashboard/_VenuesCardPartial.cshtml")
+            </div>
+        </div>
                         break;
                     case ProviderType.Both:
                         <div class="govuk-grid-row govuk-!-margin-bottom-6 homepage-item--container">
