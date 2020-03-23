@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.Models;
 using Xunit;
+using FlowModel = Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.FlowModel;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 {
@@ -24,9 +25,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsHelpdesk();
 
+            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+
             // Act
             var response = await HttpClient.GetAsync(
-                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&standardOrFrameworkType=standard&standardCode={standardCode}&version={standardVersion}");
+                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&ffiid={mptxInstance.InstanceId}&standardOrFrameworkType=standard&standardCode={standardCode}&version={standardVersion}");
 
             // Act
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
@@ -49,9 +52,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
+            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+
             // Act
             var response = await HttpClient.GetAsync(
-                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&standardOrFrameworkType=standard&standardCode={standardCode}&version={standardVersion}");
+                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&ffiid={mptxInstance.InstanceId}&standardOrFrameworkType=standard&standardCode={standardCode}&version={standardVersion}");
 
             // Act
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -71,9 +76,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.FE);
 
+            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+
             // Act
             var response = await HttpClient.GetAsync(
-                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&standardOrFrameworkType=standard&standardCode={standardCode}&version={standardVersion}");
+                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&ffiid={mptxInstance.InstanceId}&standardOrFrameworkType=standard&standardCode={standardCode}&version={standardVersion}");
 
             // Act
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -91,9 +98,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
+            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+
             // Act
             var response = await HttpClient.GetAsync(
-                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&standardOrFrameworkType=standard&standardCode={standardCode}&version={standardVersion}");
+                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&ffiid={mptxInstance.InstanceId}&standardOrFrameworkType=standard&standardCode={standardCode}&version={standardVersion}");
 
             // Act
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -116,6 +125,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsHelpdesk();
 
+            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("MarketingInformation", "Apprenticeship info")
                 .Add("ContactEmail", "guy@provider1.com")
@@ -124,7 +135,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&standardOrFrameworkType=standard&standardCode={standardCode}&version={standardVersion}",
+                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&ffiid={mptxInstance.InstanceId}&standardOrFrameworkType=standard&standardCode={standardCode}&version={standardVersion}",
                 requestContent);
 
             // Act
@@ -149,6 +160,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.FE);
 
+            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("MarketingInformation", "Apprenticeship info")
                 .Add("ContactEmail", "guy@provider1.com")
@@ -157,7 +170,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&standardOrFrameworkType=standard&standardCode={standardCode}&version={standardVersion}",
+                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&ffiid={mptxInstance.InstanceId}&standardOrFrameworkType=standard&standardCode={standardCode}&version={standardVersion}",
                 requestContent);
 
             // Act
@@ -178,6 +191,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.FE);
 
+            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("MarketingInformation", "Apprenticeship info")
                 .Add("ContactEmail", "guy@provider1.com")
@@ -186,7 +201,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&standardOrFrameworkType=standard&standardCode={standardCode}&version={standardVersion}",
+                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&ffiid={mptxInstance.InstanceId}&standardOrFrameworkType=standard&standardCode={standardCode}&version={standardVersion}",
                 requestContent);
 
             // Act
@@ -206,6 +221,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
+            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("MarketingInformation", marketingInfo)
                 .Add("ContactEmail", "guy@provider1.com")
@@ -214,7 +231,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&standardOrFrameworkType=standard&standardCode={standardCode}&version={standardVersion}",
+                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&ffiid={mptxInstance.InstanceId}&standardOrFrameworkType=standard&standardCode={standardCode}&version={standardVersion}",
                 requestContent);
 
             // Act
@@ -239,6 +256,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
+            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("MarketingInformation", "Apprenticeship info")
                 .Add("ContactEmail", "guy@provider1.com")
@@ -248,7 +267,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&standardOrFrameworkType=standard&standardCode={standardCode}&version={standardVersion}",
+                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&ffiid={mptxInstance.InstanceId}&standardOrFrameworkType=standard&standardCode={standardCode}&version={standardVersion}",
                 requestContent);
 
             // Act
@@ -276,6 +295,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
+            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("MarketingInformation", "Apprenticeship info")
                 .Add("ContactEmail", contactEmail)
@@ -284,7 +305,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&standardOrFrameworkType=standard&standardCode={standardCode}&version={standardVersion}",
+                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&ffiid={mptxInstance.InstanceId}&standardOrFrameworkType=standard&standardCode={standardCode}&version={standardVersion}",
                 requestContent);
 
             // Act
@@ -310,6 +331,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
+            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("MarketingInformation", "Apprenticeship info")
                 .Add("ContactEmail", "guy@provider1.com")
@@ -318,7 +341,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&standardOrFrameworkType=standard&standardCode={standardCode}&version={standardVersion}",
+                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&ffiid={mptxInstance.InstanceId}&standardOrFrameworkType=standard&standardCode={standardCode}&version={standardVersion}",
                 requestContent);
 
             // Act
@@ -341,6 +364,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
+            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("MarketingInformation", "Apprenticeship info")
                 .Add("ContactEmail", "guy@provider1.com")
@@ -350,7 +375,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&standardOrFrameworkType=standard&standardCode={standardCode}&version={standardVersion}",
+                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&ffiid={mptxInstance.InstanceId}&standardOrFrameworkType=standard&standardCode={standardCode}&version={standardVersion}",
                 requestContent);
 
             // Act
@@ -374,6 +399,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
+            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("MarketingInformation", "Apprenticeship info")
                 .Add("ContactEmail", "guy@provider1.com")
@@ -382,7 +409,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&standardOrFrameworkType=standard&standardCode={standardCode}&version={standardVersion}",
+                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&ffiid={mptxInstance.InstanceId}&standardOrFrameworkType=standard&standardCode={standardCode}&version={standardVersion}",
                 requestContent);
 
             // Act

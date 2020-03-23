@@ -15,7 +15,7 @@ using MediatR;
 using OneOf;
 using OneOf.Types;
 
-namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.MarketingInfo
+namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ProviderDetail
 {
     using CommandResponse = OneOf<ModelWithErrors<ViewModel>, Success>;
 
