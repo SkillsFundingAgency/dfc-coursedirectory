@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.Behaviors;
@@ -34,24 +33,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
 
     public class Handler :
         IRequestHandler<Query, Command>,
-        IRestrictProviderType<Query>,
         IRequireUserCanSubmitQASubmission<Query>,
-        IRestrictQAStatus<Query>,
         IRequestHandler<Command, CommandResponse>,
-        IRestrictProviderType<Command>,
-        IRequireUserCanSubmitQASubmission<Command>,
-        IRestrictQAStatus<Command>
+        IRequireUserCanSubmitQASubmission<Command>
     {
         public Handler()
         {
         }
-
-        public IEnumerable<ApprenticeshipQAStatus> PermittedStatuses { get; } = new[]
-        {
-            ApprenticeshipQAStatus.NotStarted
-        };
-
-        public ProviderType ProviderType => ProviderType.Apprenticeships;
 
         public Task<Command> Handle(Query request, CancellationToken cancellationToken)
         {
@@ -76,18 +64,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
 
             return new Success();
         }
-
-        Task<Guid> IRestrictProviderType<Query>.GetProviderId(Query request) =>
-            Task.FromResult(request.ProviderId);
-
-        Task<Guid> IRestrictProviderType<Command>.GetProviderId(Command request) =>
-            Task.FromResult(request.ProviderId);
-
-        Task<Guid> IRestrictQAStatus<Query>.GetProviderId(Query request) =>
-            Task.FromResult(request.ProviderId);
-
-        Task<Guid> IRestrictQAStatus<Command>.GetProviderId(Command request) =>
-            Task.FromResult(request.ProviderId);
 
         Task<Guid> IRequireUserCanSubmitQASubmission<Query>.GetProviderId(Query request) =>
             Task.FromResult(request.ProviderId);

@@ -1,5 +1,9 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.WebV2.Behaviors.Errors;
+using Dfc.CourseDirectory.WebV2.DataStore.Sql;
+using Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.WebV2.Models;
 using Dfc.CourseDirectory.WebV2.Security;
 using MediatR;
 
@@ -10,13 +14,19 @@ namespace Dfc.CourseDirectory.WebV2.Behaviors
     {
         private readonly IRequireUserCanSubmitQASubmission<TRequest> _descriptor;
         private readonly ICurrentUserProvider _currentUserProvider;
+        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
+        private readonly IProviderInfoCache _providerInfoCache;
 
         public RequireUserCanSubmitQASubmissionBehavior(
             IRequireUserCanSubmitQASubmission<TRequest> descriptor,
-            ICurrentUserProvider currentUserProvider)
+            ICurrentUserProvider currentUserProvider,
+            ISqlQueryDispatcher sqlQueryDispatcher,
+            IProviderInfoCache providerInfoCache)
         {
             _descriptor = descriptor;
             _currentUserProvider = currentUserProvider;
+            _sqlQueryDispatcher = sqlQueryDispatcher;
+            _providerInfoCache = providerInfoCache;
         }
 
         public async Task<TResponse> Handle(
@@ -30,6 +40,20 @@ namespace Dfc.CourseDirectory.WebV2.Behaviors
             if (!AuthorizationRules.CanSubmitQASubmission(currentUser, providerId))
             {
                 throw new NotAuthorizedException();
+            }
+
+            var qaStatus = await _sqlQueryDispatcher.ExecuteQuery(
+                new GetProviderApprenticeshipQAStatus()
+                {
+                    ProviderId = providerId
+                });
+
+            var providerInfo = await _providerInfoCache.GetProviderInfo(providerId);
+
+            if (qaStatus != ApprenticeshipQAStatus.NotStarted ||
+                !providerInfo.ProviderType.HasFlag(ProviderType.Apprenticeships))
+            {
+                throw new ErrorException<InvalidQAStatus>(new InvalidQAStatus());
             }
 
             return await next();
