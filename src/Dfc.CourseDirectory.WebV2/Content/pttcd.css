@@ -170,3 +170,8 @@
 .pttcd-checkboxes-\!-no-float .govuk-checkboxes__item {
     float: none;
 }
+
+.pttcd-c-notification {
+    border: 5px solid #005ea5;
+    padding: 20px;
+}
