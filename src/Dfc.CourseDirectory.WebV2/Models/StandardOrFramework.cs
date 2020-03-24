@@ -25,5 +25,9 @@ namespace Dfc.CourseDirectory.WebV2.Models
         public string StandardOrFrameworkTitle => Match(
             s => s.StandardName,
             f => f.NasTitle);
+
+        public static implicit operator StandardOrFramework(Framework framework) => new StandardOrFramework(framework);
+
+        public static implicit operator StandardOrFramework(Standard standard) => new StandardOrFramework(standard);
     }
 }
