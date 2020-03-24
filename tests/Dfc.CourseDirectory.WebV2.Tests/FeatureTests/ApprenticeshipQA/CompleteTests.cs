@@ -47,7 +47,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 providerAssessmentPassed: true,
                 apprenticeshipAssessmentsPassed: true,
                 passed: true,
-                lastAssessedByUserId: User.UserId.ToString(),
+                lastAssessedByUserId: User.UserId,
                 lastAssessedOn: Clock.UtcNow);
 
             await User.AsTestUser(testUserType, providerId);
@@ -119,7 +119,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                         providerAssessmentPassed: passed,
                         apprenticeshipAssessmentsPassed: passed,
                         passed: passed,
-                        lastAssessedByUserId: User.UserId.ToString(),
+                        lastAssessedByUserId: User.UserId,
                         lastAssessedOn: Clock.UtcNow);
                 }
             }
@@ -205,7 +205,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 providerAssessmentPassed: passed,
                 apprenticeshipAssessmentsPassed: passed,
                 passed: passed,
-                lastAssessedByUserId: User.UserId.ToString(),
+                lastAssessedByUserId: User.UserId,
                 lastAssessedOn: Clock.UtcNow);
 
             await User.AsHelpdesk();

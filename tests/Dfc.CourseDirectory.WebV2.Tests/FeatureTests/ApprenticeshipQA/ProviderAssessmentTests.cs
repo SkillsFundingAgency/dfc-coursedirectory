@@ -185,7 +185,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             await TestData.CreateApprenticeshipQAProviderAssessment(
                 submissionId,
-                assessedByUserId: User.UserId.ToString(),
+                assessedByUserId: User.UserId,
                 assessedOn: Clock.UtcNow,
                 compliancePassed: true,
                 complianceFailedReasons: ApprenticeshipQAProviderComplianceFailedReasons.None,
@@ -241,7 +241,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 providerAssessmentPassed: passed,
                 apprenticeshipAssessmentsPassed: passed,
                 passed: passed,
-                lastAssessedByUserId: User.UserId.ToString(),
+                lastAssessedByUserId: User.UserId,
                 lastAssessedOn: Clock.UtcNow);
 
             await User.AsHelpdesk();
@@ -830,7 +830,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 providerAssessmentPassed: null,
                 apprenticeshipAssessmentsPassed: apprenticeshipAssessmentsPassed,
                 passed: null,
-                lastAssessedByUserId: User.UserId.ToString(),
+                lastAssessedByUserId: User.UserId,
                 lastAssessedOn: Clock.UtcNow);
 
             await User.AsHelpdesk();
@@ -902,7 +902,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 providerAssessmentPassed: passed,
                 apprenticeshipAssessmentsPassed: passed,
                 passed: passed,
-                lastAssessedByUserId: User.UserId.ToString(),
+                lastAssessedByUserId: User.UserId,
                 lastAssessedOn: Clock.UtcNow);
 
             await User.AsHelpdesk();
