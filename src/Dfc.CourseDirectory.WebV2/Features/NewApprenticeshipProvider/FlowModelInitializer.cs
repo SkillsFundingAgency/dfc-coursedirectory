@@ -34,7 +34,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
 
             if (!string.IsNullOrEmpty(provider.MarketingInformation))
             {
-                context.Update(s => s.SetProviderDetail(Html.SanitizeHtml(provider.MarketingInformation)));
+                context.Update(s => s.SetProviderDetails(Html.SanitizeHtml(provider.MarketingInformation)));
             }
         }
     }

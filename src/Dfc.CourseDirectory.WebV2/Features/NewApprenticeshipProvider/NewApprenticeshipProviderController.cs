@@ -25,13 +25,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
         [HttpGet("apprenticeship-details")]
         public async Task<IActionResult> ApprenticeshipDetails(
             StandardOrFramework standardOrFramework,
-            ProviderInfo providerInfo)
+            ProviderInfo providerInfo,
+            MptxInstanceContext<FlowModel> flow)
         {
-            var query = new ApprenticeshipDetails.Query()
-            {
-                ProviderId = providerInfo.ProviderId,
-                StandardOrFramework = standardOrFramework
-            };
+            flow.Update(s => s.SetApprenticeshipStandardOrFramework(standardOrFramework));
+            var query = new ApprenticeshipDetails.Query() { ProviderId = providerInfo.ProviderId };
             return await _mediator.SendAndMapResponse(query, vm => View(vm));
         }
 
@@ -39,11 +37,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
         [HttpPost("apprenticeship-details")]
         public async Task<IActionResult> ApprenticeshipDetails(
             ApprenticeshipDetails.Command command,
-            StandardOrFramework standardOrFramework,
             ProviderInfo providerInfo)
         {
             command.ProviderId = providerInfo.ProviderId;
-            command.StandardOrFramework = standardOrFramework;
             return await _mediator.SendAndMapResponse(
                 command,
                 response => response.Match<IActionResult>(
