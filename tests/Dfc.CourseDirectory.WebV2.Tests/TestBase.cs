@@ -7,7 +7,9 @@ using Dfc.CourseDirectory.WebV2.DataStore.Sql;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
 using Xunit;
+using CosmosDbQueryDispatcher = Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb.CosmosDbQueryDispatcher;
 
 namespace Dfc.CourseDirectory.WebV2.Tests
 {
@@ -26,6 +28,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         }
 
         protected MutableClock Clock => Factory.Clock;
+
+        protected Mock<CosmosDbQueryDispatcher> CosmosDbQueryDispatcher => Factory.CosmosDbQueryDispatcher;
 
         protected CourseDirectoryApplicationFactory Factory { get; }
 
