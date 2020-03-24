@@ -1,4 +1,5 @@
 ﻿using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
+using Dfc.CourseDirectory.WebV2.DataStore.Sql;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb;
 using GovUk.Frontend.AspNetCore;
@@ -60,6 +61,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             services.AddTransient<TestData>();
             services.AddSingleton<IClock, MutableClock>();
             services.AddSingleton<IMptxStateProvider, InMemoryMptxStateProvider>();
+            services.AddSingleton<SqlQuerySpy>();
+            services.Decorate<ISqlQueryDispatcher, SqlQuerySpyDecorator>();
 
             services.Scan(scan => scan
                 .FromAssembliesOf(typeof(Startup))

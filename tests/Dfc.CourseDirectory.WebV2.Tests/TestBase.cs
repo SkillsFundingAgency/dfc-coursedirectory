@@ -37,6 +37,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         protected InMemoryMptxStateProvider MptxStateProvider => Factory.MptxStateProvider;
 
+        protected SqlQuerySpy SqlQuerySpy => Factory.SqlQuerySpy;
+
         protected TestData TestData => Factory.TestData;
 
         protected TestUserInfo User => Factory.User;

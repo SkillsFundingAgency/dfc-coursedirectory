@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
+using Dfc.CourseDirectory.WebV2.DataStore.Sql;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb;
 using Microsoft.AspNetCore;
@@ -42,6 +43,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         public InMemoryMptxStateProvider MptxStateProvider =>
             Services.GetRequiredService<IMptxStateProvider>() as InMemoryMptxStateProvider;
 
+        public SqlQuerySpy SqlQuerySpy => Services.GetRequiredService<SqlQuerySpy>();
+
         public TestData TestData => Services.GetRequiredService<TestData>();
 
         public TestUserInfo User => Services.GetRequiredService<TestUserInfo>();
@@ -68,6 +71,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
             // Reset MPTX state
             MptxStateProvider.Clear();
+
+            // Clear spy calls
+            SqlQuerySpy.Reset();
         }
 
         public async Task OnTestStarted()
