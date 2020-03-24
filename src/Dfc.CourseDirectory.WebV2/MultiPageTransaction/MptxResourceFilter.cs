@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -41,9 +42,10 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
                 if (canStartFlow)
                 {
                     // Begin a new flow
-                    var newState = await CreateNewState(startsAttribute);
+                    var newState = CreateNewState(startsAttribute);
                     var contextItems = GetContextItemsFromCaptures(startsAttribute);
                     mptxInstance = stateProvider.CreateInstance(flowName, contextItems, newState);
+                    await InitializeState(mptxInstance, startsAttribute.StateType);
 
                     // Redirect, appending the new instance ID
                     var currentUrlWithInstanceParam = QueryHelpers.AddQueryString(
@@ -84,22 +86,12 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
 
             await next();
 
-            async Task<object> CreateNewState(StartsMptxAttribute startsAttribute)
+            object CreateNewState(StartsMptxAttribute startsAttribute)
             {
                 var stateType = startsAttribute.StateType;
                 var services = context.HttpContext.RequestServices;
 
-                var state = ActivatorUtilities.CreateInstance(services, stateType);
-
-                var initializerType = typeof(IInitializeMptxState<>).MakeGenericType(stateType);
-                var initializer = services.GetService(initializerType);
-
-                if (initializer != null)
-                {
-                    await (Task)initializerType.GetMethod("Initialize").Invoke(initializer, new object[] { state });
-                }
-
-                return state;
+                return ActivatorUtilities.CreateInstance(services, stateType);
             }
 
             IReadOnlyDictionary<string, object> GetContextItemsFromCaptures(StartsMptxAttribute startsAttribute)
@@ -115,6 +107,24 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
                 }
 
                 return dict;
+            }
+
+            async Task InitializeState(MptxInstance instance, Type stateType)
+            {
+                var services = context.HttpContext.RequestServices;
+
+                var initializerType = typeof(IInitializeMptxState<>).MakeGenericType(stateType);
+                var initializer = services.GetService(initializerType);
+
+                if (initializer != null)
+                {
+                    var instanceContextFactory = services.GetRequiredService<MptxInstanceContextFactory>();
+                    var context = instanceContextFactory.CreateContext(instance);
+
+                    await (Task)initializerType.GetMethod("Initialize").Invoke(
+                        initializer,
+                        new object[] { context });
+                }
             }
         }
     }

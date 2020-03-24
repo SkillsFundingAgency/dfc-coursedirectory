@@ -3,7 +3,8 @@
 namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
 {
     public interface IInitializeMptxState<TState>
+        where TState : IMptxState
     {
-        Task Initialize(TState state);
+        Task Initialize(MptxInstanceContext<TState> context);
     }
 }

@@ -1,23 +1,21 @@
-﻿using System;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
 {
     public class MptxInstanceContextProvider
     {
-        private readonly IMptxStateProvider _stateProvider;
+        private readonly MptxInstanceContextFactory _contextFactory;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         public MptxInstanceContextProvider(
-            IMptxStateProvider stateProvider,
+            MptxInstanceContextFactory contextFactory,
             IHttpContextAccessor httpContextAccessor)
         {
-            _stateProvider = stateProvider;
+            _contextFactory = contextFactory;
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public MptxInstanceContext GetContext(Type stateType)
+        public MptxInstanceContext GetContext()
         {
             var httpContext = _httpContextAccessor.HttpContext;
             var feature = httpContext.Features.Get<MptxInstanceFeature>();
@@ -27,12 +25,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
                 return null;
             }
 
-            var contextType = typeof(MptxInstanceContext<>).MakeGenericType(stateType);
-            return (MptxInstanceContext)ActivatorUtilities.CreateInstance(
-                provider: null,
-                contextType,
-                _stateProvider,
-                feature.Instance);
+            return _contextFactory.CreateContext(feature.Instance);
         }
     }
 }

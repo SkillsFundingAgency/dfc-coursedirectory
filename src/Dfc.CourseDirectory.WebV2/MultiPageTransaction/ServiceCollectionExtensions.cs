@@ -19,7 +19,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
                 services.AddTransient(contextType, sp =>
                 {
                     var contextProvider = sp.GetRequiredService<MptxInstanceContextProvider>();
-                    return contextProvider.GetContext(t);
+                    return contextProvider.GetContext();
                 });
             }
 

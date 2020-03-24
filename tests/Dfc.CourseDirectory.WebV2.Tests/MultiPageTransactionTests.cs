@@ -180,9 +180,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
     public class MultiPageTransactionTestsFlowStateInitializer : IInitializeMptxState<MultiPageTransactionTestsFlowState>
     {
-        public Task Initialize(MultiPageTransactionTestsFlowState state)
+        public Task Initialize(MptxInstanceContext<MultiPageTransactionTestsFlowState> context)
         {
-            state.Baz = 69;
+            context.Update(state => state.Baz = 69);
 
             return Task.CompletedTask;
         }
