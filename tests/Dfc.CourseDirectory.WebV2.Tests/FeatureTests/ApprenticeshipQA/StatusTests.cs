@@ -325,6 +325,85 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             var doc = await response.GetDocument();
             doc.AssertHasError("UnableToCompleteReasons", "A reason must be selected");
+        }
+
+        [Fact]
+        public async Task Post_UnableToCompleteStandardNotReadyMissingStandardNameReturnsBadRequest()
+        {
+            // Arrange
+            var ukprn = 12345;
+
+            var providerId = await TestData.CreateProvider(
+                ukprn: ukprn,
+                providerName: "Provider 1",
+                apprenticeshipQAStatus: ApprenticeshipQAStatus.Submitted);
+
+            var providerUserId = $"{ukprn}-user";
+            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
+
+            var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
+
+            await TestData.CreateApprenticeshipQASubmission(
+                providerId,
+                submittedOn: Clock.UtcNow,
+                submittedByUserId: providerUserId,
+                providerMarketingInformation: "The overview",
+                apprenticeshipIds: new[] { apprenticeshipId });
+
+            await User.AsHelpdesk();
+
+            var requestContent = new FormUrlEncodedContentBuilder()
+                .Add("UnableToComplete", bool.TrueString)
+                .Add("UnableToCompleteReasons", "1")
+                .ToContent();
+
+            // Act
+            var response = await HttpClient.PostAsync($"apprenticeship-qa/{providerId}/status", requestContent);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+
+            var doc = await response.GetDocument();
+            doc.AssertHasError("StandardName", "Enter the standard name");
+        }
+
+        [Fact]
+        public async Task Post_UnableToCompleteOtherMissingCommentsReturnsBadRequest()
+        {
+            // Arrange
+            var ukprn = 12345;
+
+            var providerId = await TestData.CreateProvider(
+                ukprn: ukprn,
+                providerName: "Provider 1",
+                apprenticeshipQAStatus: ApprenticeshipQAStatus.Submitted);
+
+            var providerUserId = $"{ukprn}-user";
+            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
+
+            var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
+
+            await TestData.CreateApprenticeshipQASubmission(
+                providerId,
+                submittedOn: Clock.UtcNow,
+                submittedByUserId: providerUserId,
+                providerMarketingInformation: "The overview",
+                apprenticeshipIds: new[] { apprenticeshipId });
+
+            await User.AsHelpdesk();
+
+            var requestContent = new FormUrlEncodedContentBuilder()
+                .Add("UnableToComplete", bool.TrueString)
+                .Add("UnableToCompleteReasons", "16")
+                .ToContent();
+
+            // Act
+            var response = await HttpClient.PostAsync($"apprenticeship-qa/{providerId}/status", requestContent);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+
+            var doc = await response.GetDocument();
             doc.AssertHasError("Comments", "Enter comments for the reason selected");
         }
 
@@ -355,8 +434,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("UnableToComplete", bool.TrueString)
-                .Add("UnableToCompleteReasons", "1")
-                .Add("Comments", "Feedback")
+                .Add("UnableToCompleteReasons", "2")
                 .ToContent();
 
             // Act
@@ -371,6 +449,82 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                     ProviderId = providerId
                 }));
             Assert.Equal(ApprenticeshipQAStatus.Submitted | ApprenticeshipQAStatus.UnableToComplete, newStatus);
+        }
+
+        [Fact]
+        public async Task Post_ValidRequestUnableToCompleteStandardNotReadyReturnsBadRequest()
+        {
+            // Arrange
+            var ukprn = 12345;
+
+            var providerId = await TestData.CreateProvider(
+                ukprn: ukprn,
+                providerName: "Provider 1",
+                apprenticeshipQAStatus: ApprenticeshipQAStatus.Submitted);
+
+            var providerUserId = $"{ukprn}-user";
+            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
+
+            var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
+
+            await TestData.CreateApprenticeshipQASubmission(
+                providerId,
+                submittedOn: Clock.UtcNow,
+                submittedByUserId: providerUserId,
+                providerMarketingInformation: "The overview",
+                apprenticeshipIds: new[] { apprenticeshipId });
+
+            await User.AsHelpdesk();
+
+            var requestContent = new FormUrlEncodedContentBuilder()
+                .Add("UnableToComplete", bool.TrueString)
+                .Add("UnableToCompleteReasons", "2")
+                .Add("Standard Name", "The standard")
+                .ToContent();
+
+            // Act
+            var response = await HttpClient.PostAsync($"apprenticeship-qa/{providerId}/status", requestContent);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task Post_ValidRequestUnableToCompleteOtherReturnsBadRequest()
+        {
+            // Arrange
+            var ukprn = 12345;
+
+            var providerId = await TestData.CreateProvider(
+                ukprn: ukprn,
+                providerName: "Provider 1",
+                apprenticeshipQAStatus: ApprenticeshipQAStatus.Submitted);
+
+            var providerUserId = $"{ukprn}-user";
+            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
+
+            var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
+
+            await TestData.CreateApprenticeshipQASubmission(
+                providerId,
+                submittedOn: Clock.UtcNow,
+                submittedByUserId: providerUserId,
+                providerMarketingInformation: "The overview",
+                apprenticeshipIds: new[] { apprenticeshipId });
+
+            await User.AsHelpdesk();
+
+            var requestContent = new FormUrlEncodedContentBuilder()
+                .Add("UnableToComplete", bool.TrueString)
+                .Add("UnableToCompleteReasons", "16")
+                .Add("Comments", "Comments")
+                .ToContent();
+
+            // Act
+            var response = await HttpClient.PostAsync($"apprenticeship-qa/{providerId}/status", requestContent);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
         }
 
         [Fact]
