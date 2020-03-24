@@ -24,5 +24,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
         public IReadOnlyDictionary<string, object> Items { get; }
 
         public object State { get; }
+
+        public Type StateType => State.GetType();
     }
 }
