@@ -1,6 +1,9 @@
 ﻿using System;
+using System.IO;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.WebV2.Filters;
+using Dfc.CourseDirectory.WebV2.Helpers;
 using Dfc.CourseDirectory.WebV2.Security;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -83,6 +86,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA
                     _ => RedirectToAction("ProviderSelected", new { providerId })));
         }
 
-        //Add new action for returning report
+        [HttpGet("qareport")]
+        public async Task<IActionResult> QAREport()
+        {
+            var result = await _mediator.SendAndMapResponse(new Report.Query(), resp => resp);
+            var stream = ReportHelper.ConvertToStream(result);
+            var s = File(stream, "text/csv");
+            return s;
+        }
     }
 }
