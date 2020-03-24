@@ -34,8 +34,18 @@ WHERE aqasub.ProviderId = p.ProviderID
 ORDER BY aqasub.SubmittedOn DESC
 ) Assessment
 LEFT JOIN [Pttcd].[Users] users on users.UserId=RequestedAccess.SubmittedByUserId";
+            try
+            {
+                var paramz = new {  };
+                return (await transaction.Connection.QueryAsync<GetQAStatusReportResult>(sql,paramz,transaction)).AsList();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
 
-            return (await transaction.Connection.QueryAsync<GetQAStatusReportResult>(sql, transaction)).AsList();
+            return null;
+            
         }
     }
 }
