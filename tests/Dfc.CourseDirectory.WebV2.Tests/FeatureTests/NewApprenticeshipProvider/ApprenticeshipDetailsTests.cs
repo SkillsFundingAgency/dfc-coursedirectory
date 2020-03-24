@@ -121,11 +121,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var standardCode = 123;
             var standardVersion = 1;
-            await TestData.CreateStandard(standardCode, standardVersion, standardName: "My standard");
+            var standard = await TestData.CreateStandard(standardCode, standardVersion, standardName: "My standard");
 
             await User.AsHelpdesk();
 
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+            var flowModel = new FlowModel();
+            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", flowModel);
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("MarketingInformation", "Apprenticeship info")
@@ -135,13 +137,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&ffiid={mptxInstance.InstanceId}&standardOrFrameworkType=standard&standardCode={standardCode}&version={standardVersion}",
+                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&ffiid={mptxInstance.InstanceId}",
                 requestContent);
 
             // Act
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
         }
-
 
         [Theory]
         [InlineData(ApprenticeshipQAStatus.Submitted)]
@@ -156,11 +157,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var standardCode = 123;
             var standardVersion = 1;
-            await TestData.CreateStandard(standardCode, standardVersion, standardName: "My standard");
+            var standard = await TestData.CreateStandard(standardCode, standardVersion, standardName: "My standard");
 
             await User.AsProviderUser(providerId, ProviderType.FE);
 
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+            var flowModel = new FlowModel();
+            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", flowModel);
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("MarketingInformation", "Apprenticeship info")
@@ -170,7 +173,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&ffiid={mptxInstance.InstanceId}&standardOrFrameworkType=standard&standardCode={standardCode}&version={standardVersion}",
+                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&ffiid={mptxInstance.InstanceId}",
                 requestContent);
 
             // Act
@@ -187,11 +190,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var standardCode = 123;
             var standardVersion = 1;
-            await TestData.CreateStandard(standardCode, standardVersion, standardName: "My standard");
+            var standard = await TestData.CreateStandard(standardCode, standardVersion, standardName: "My standard");
 
             await User.AsProviderUser(providerId, ProviderType.FE);
 
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+            var flowModel = new FlowModel();
+            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", flowModel);
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("MarketingInformation", "Apprenticeship info")
@@ -201,7 +206,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&ffiid={mptxInstance.InstanceId}&standardOrFrameworkType=standard&standardCode={standardCode}&version={standardVersion}",
+                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&ffiid={mptxInstance.InstanceId}",
                 requestContent);
 
             // Act
@@ -217,11 +222,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var standardCode = 123;
             var standardVersion = 1;
-            await TestData.CreateStandard(standardCode, standardVersion, standardName: "My standard");
+            var standard = await TestData.CreateStandard(standardCode, standardVersion, standardName: "My standard");
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+            var flowModel = new FlowModel();
+            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", flowModel);
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("MarketingInformation", marketingInfo)
@@ -231,7 +238,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&ffiid={mptxInstance.InstanceId}&standardOrFrameworkType=standard&standardCode={standardCode}&version={standardVersion}",
+                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&ffiid={mptxInstance.InstanceId}",
                 requestContent);
 
             // Act
@@ -252,11 +259,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var standardCode = 123;
             var standardVersion = 1;
-            await TestData.CreateStandard(standardCode, standardVersion, standardName: "My standard");
+            var standard = await TestData.CreateStandard(standardCode, standardVersion, standardName: "My standard");
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+            var flowModel = new FlowModel();
+            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", flowModel);
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("MarketingInformation", "Apprenticeship info")
@@ -267,7 +276,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&ffiid={mptxInstance.InstanceId}&standardOrFrameworkType=standard&standardCode={standardCode}&version={standardVersion}",
+                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&ffiid={mptxInstance.InstanceId}",
                 requestContent);
 
             // Act
@@ -291,11 +300,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var standardCode = 123;
             var standardVersion = 1;
-            await TestData.CreateStandard(standardCode, standardVersion, standardName: "My standard");
+            var standard = await TestData.CreateStandard(standardCode, standardVersion, standardName: "My standard");
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+            var flowModel = new FlowModel();
+            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", flowModel);
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("MarketingInformation", "Apprenticeship info")
@@ -305,7 +316,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&ffiid={mptxInstance.InstanceId}&standardOrFrameworkType=standard&standardCode={standardCode}&version={standardVersion}",
+                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&ffiid={mptxInstance.InstanceId}",
                 requestContent);
 
             // Act
@@ -327,11 +338,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var standardCode = 123;
             var standardVersion = 1;
-            await TestData.CreateStandard(standardCode, standardVersion, standardName: "My standard");
+            var standard = await TestData.CreateStandard(standardCode, standardVersion, standardName: "My standard");
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+            var flowModel = new FlowModel();
+            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", flowModel);
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("MarketingInformation", "Apprenticeship info")
@@ -341,7 +354,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&ffiid={mptxInstance.InstanceId}&standardOrFrameworkType=standard&standardCode={standardCode}&version={standardVersion}",
+                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&ffiid={mptxInstance.InstanceId}",
                 requestContent);
 
             // Act
@@ -360,11 +373,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var standardCode = 123;
             var standardVersion = 1;
-            await TestData.CreateStandard(standardCode, standardVersion, standardName: "My standard");
+            var standard = await TestData.CreateStandard(standardCode, standardVersion, standardName: "My standard");
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+            var flowModel = new FlowModel();
+            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", flowModel);
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("MarketingInformation", "Apprenticeship info")
@@ -375,7 +390,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&ffiid={mptxInstance.InstanceId}&standardOrFrameworkType=standard&standardCode={standardCode}&version={standardVersion}",
+                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&ffiid={mptxInstance.InstanceId}",
                 requestContent);
 
             // Act
@@ -395,11 +410,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var standardCode = 123;
             var standardVersion = 1;
-            await TestData.CreateStandard(standardCode, standardVersion, standardName: "My standard");
+            var standard = await TestData.CreateStandard(standardCode, standardVersion, standardName: "My standard");
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+            var flowModel = new FlowModel();
+            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", flowModel);
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("MarketingInformation", "Apprenticeship info")
@@ -409,7 +426,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&ffiid={mptxInstance.InstanceId}&standardOrFrameworkType=standard&standardCode={standardCode}&version={standardVersion}",
+                $"new-apprenticeship-provider/apprenticeship-details?providerId={providerId}&ffiid={mptxInstance.InstanceId}",
                 requestContent);
 
             // Act

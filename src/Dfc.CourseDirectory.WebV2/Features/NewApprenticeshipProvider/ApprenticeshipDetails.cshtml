@@ -1,5 +1,5 @@
 ﻿@using Dfc.CourseDirectory.WebV2.Validation.ApprenticeshipValidation
-@model Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ApprenticeshipDetails.Command
+@model Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ApprenticeshipDetails.ViewModel
 @{
     ViewBag.Title = "Add apprenticeship training details";
 }
@@ -17,8 +17,6 @@
 }
 
 <form asp-action="ApprenticeshipDetails" append-provider-context="true" mptx-action="true">
-    <vc:standard-or-framework-id-inputs standard-or-framework="@Model.StandardOrFramework" />
-
     <span class="govuk-caption-l" id="pttcd-new-apprenticeship-provider__apprenticeship-details__standard-name">@Model.StandardOrFramework.StandardOrFrameworkTitle</span>
     <h1 class="govuk-heading-l">Add apprenticeship training details</h1>
 

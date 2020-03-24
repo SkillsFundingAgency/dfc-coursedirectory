@@ -101,14 +101,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ProviderD
                 return new ModelWithErrors<ViewModel>(vm, validationResult);
             }
 
-            _flow.Update(s => s.SetProviderDetail(Html.SanitizeHtml(request.MarketingInformation)));
+            _flow.Update(s => s.SetProviderDetails(Html.SanitizeHtml(request.MarketingInformation)));
 
             return new Success();
         }
 
         public async Task<ConfirmationViewModel> Handle(ConfirmationQuery request, CancellationToken cancellationToken)
         {
-            if (!_flow.State.GotProviderDetail)
+            if (!_flow.State.GotProviderDetails)
             {
                 throw new ErrorException<InvalidFlowState>(new InvalidFlowState());
             }
@@ -134,7 +134,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ProviderD
 
         public async Task<Success> Handle(ConfirmationCommand request, CancellationToken cancellationToken)
         {
-            if (!_flow.State.GotProviderDetail)
+            if (!_flow.State.GotProviderDetails)
             {
                 throw new ErrorException<InvalidFlowState>(new InvalidFlowState());
             }
