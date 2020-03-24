@@ -43,7 +43,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 providerId,
                 ApprenticeshipQAUnableToCompleteReasons.ProviderHasAppliedToTheWrongRoute | ApprenticeshipQAUnableToCompleteReasons.ProviderDevelopingProvision,
                 comments: "Some feedback",
-                addedByUserId: User.UserId.ToString(),
+                addedByUserId: User.UserId,
                 addedOn: Clock.UtcNow);
 
             await User.AsTestUser(testUserType, providerId);
@@ -172,7 +172,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 providerId,
                 ApprenticeshipQAUnableToCompleteReasons.ProviderHasAppliedToTheWrongRoute | ApprenticeshipQAUnableToCompleteReasons.ProviderDevelopingProvision,
                 comments: "Some feedback",
-                addedByUserId: User.UserId.ToString(),
+                addedByUserId: User.UserId,
                 addedOn: Clock.UtcNow);
 
             await User.AsHelpdesk();
@@ -400,7 +400,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 providerId,
                 ApprenticeshipQAUnableToCompleteReasons.ProviderHasAppliedToTheWrongRoute | ApprenticeshipQAUnableToCompleteReasons.ProviderDevelopingProvision,
                 comments: "Some feedback",
-                addedByUserId: User.UserId.ToString(),
+                addedByUserId: User.UserId,
                 addedOn: Clock.UtcNow);
 
             await User.AsHelpdesk();
