@@ -61,6 +61,10 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
                 update((TState)state);
                 return state;
             });
+
+            // Refresh the cached state object - required so multiple state updates
+            // in a single refresh are 'seen' everywhere
+            update(State);
         }
 
         private void ThrowIfCompleted()
