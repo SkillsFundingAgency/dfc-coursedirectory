@@ -61,7 +61,7 @@
                                     Incorrect Ofsted grade used
                                 </govuk-checkboxes-item>
                                 <govuk-checkboxes-item disabled="@Model.IsReadOnly" value="@(ApprenticeshipQAApprenticeshipComplianceFailedReasons.InsufficientDetail)" checked="@((Model.ComplianceFailedReasons ?? 0).HasFlag(ApprenticeshipQAApprenticeshipComplianceFailedReasons.InsufficientDetail))">
-                                    Insufficient detail used
+                                    Insufficient detail
                                 </govuk-checkboxes-item>
                                 <govuk-checkboxes-item disabled="@Model.IsReadOnly" value="@(ApprenticeshipQAApprenticeshipComplianceFailedReasons.NotAimedAtEmployer)" checked="@((Model.ComplianceFailedReasons ?? 0).HasFlag(ApprenticeshipQAApprenticeshipComplianceFailedReasons.NotAimedAtEmployer))">
                                     Not aimed at employer
