@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb;
 using Microsoft.AspNetCore;
@@ -8,7 +9,9 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
+using Moq;
 using Respawn;
+using CosmosDbQueryDispatcher = Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb.CosmosDbQueryDispatcher;
 
 namespace Dfc.CourseDirectory.WebV2.Tests
 {
@@ -24,6 +27,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         public MutableClock Clock => Server.Host.Services.GetRequiredService<IClock>() as MutableClock;
 
         public IConfiguration Configuration => Server.Host.Services.GetRequiredService<IConfiguration>();
+
+        public Mock<CosmosDbQueryDispatcher> CosmosDbQueryDispatcher =>
+            Mock.Get(Services.GetRequiredService<ICosmosDbQueryDispatcher>() as CosmosDbQueryDispatcher);
 
         public OverridableFeatureFlagProvider FeatureFlagProvider => Services.GetRequiredService<IFeatureFlagProvider>() as OverridableFeatureFlagProvider;
 

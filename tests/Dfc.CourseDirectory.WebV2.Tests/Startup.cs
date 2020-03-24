@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
 using CosmosDbQueryDispatcher = Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb.CosmosDbQueryDispatcher;
 
 namespace Dfc.CourseDirectory.WebV2.Tests
@@ -54,7 +55,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
             services.AddSingleton<TestUserInfo>();
             services.AddSingleton<InMemoryDocumentStore>();
-            services.AddTransient<ICosmosDbQueryDispatcher, CosmosDbQueryDispatcher>();
+            services.AddSingleton<ICosmosDbQueryDispatcher>(sp => new Mock<CosmosDbQueryDispatcher>(sp) { CallBase = true }.Object);
             services.AddSingleton<IMemoryCache, ClearableMemoryCache>();
             services.AddTransient<TestData>();
             services.AddSingleton<IClock, MutableClock>();
