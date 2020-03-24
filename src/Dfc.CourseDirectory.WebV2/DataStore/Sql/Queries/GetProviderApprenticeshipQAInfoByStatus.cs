@@ -4,7 +4,8 @@ using Dfc.CourseDirectory.WebV2.Models;
 
 namespace Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries
 {
-    public class GetProviderApprenticeshipQAInfoByStatus : ISqlQuery<IReadOnlyCollection<GetProviderApprenticeshipQAInfoByStatusResult>>
+    public class GetProviderApprenticeshipQAInfoByStatus
+        : ISqlQuery<IReadOnlyCollection<GetProviderApprenticeshipQAInfoByStatusResult>>
     {
         public IEnumerable<ApprenticeshipQAStatus> Statuses { get; set; }
     }
