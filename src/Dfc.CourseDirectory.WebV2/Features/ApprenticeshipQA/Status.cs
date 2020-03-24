@@ -31,6 +31,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Status
         public bool UnableToComplete { get; set; }
         public ApprenticeshipQAUnableToCompleteReasons UnableToCompleteReasons { get; set; }
         public string Comments { get; set; }
+        public string StandardName { get; set; }
     }
 
     public class Handler :
@@ -123,7 +124,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Status
                     {
                         ProviderId = request.ProviderId,
                         UnableToCompleteReasons = request.UnableToCompleteReasons,
-                        Comments = request.Comments,
+                        Comments = request.UnableToCompleteReasons.HasFlag(ApprenticeshipQAUnableToCompleteReasons.Other) ?
+                            request.Comments :
+                            null,
+                        StandardName = request.UnableToCompleteReasons.HasFlag(ApprenticeshipQAUnableToCompleteReasons.StandardNotReady) ?
+                            request.StandardName :
+                            null,
                         AddedByUserId = _currentUserProvider.GetCurrentUser().UserId,
                         AddedOn = _clock.UtcNow
                     });
@@ -187,8 +193,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Status
 
                 RuleFor(c => c.Comments)
                     .NotEmpty()
-                    .When(c => c.UnableToComplete)
+                    .When(c => c.UnableToComplete && c.UnableToCompleteReasons.HasFlag(ApprenticeshipQAUnableToCompleteReasons.Other))
                     .WithMessageForAllRules("Enter comments for the reason selected");
+
+                RuleFor(c => c.StandardName)
+                    .NotEmpty()
+                    .When(c => c.UnableToComplete && c.UnableToCompleteReasons.HasFlag(ApprenticeshipQAUnableToCompleteReasons.StandardNotReady))
+                    .WithMessageForAllRules("Enter the standard name");
             }
         }
     }
