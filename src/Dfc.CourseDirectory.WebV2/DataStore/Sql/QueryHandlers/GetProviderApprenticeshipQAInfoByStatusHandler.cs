@@ -26,6 +26,11 @@ SELECT
     u.FirstName,
     u.LastName
 FROM Pttcd.ApprenticeshipQASubmissions s
+JOIN (
+    SELECT ProviderId, MAX(ApprenticeshipQASubmissionId) LatestApprenticeshipQASubmissionId
+    FROM Pttcd.ApprenticeshipQASubmissions
+    GROUP BY ProviderId
+) x ON s.ApprenticeshipQASubmissionId = x.LatestApprenticeshipQASubmissionId AND s.ProviderId = x.ProviderId
 JOIN Pttcd.Providers p ON s.ProviderId = p.ProviderId
 LEFT JOIN Pttcd.Users u ON s.LastAssessedByUserId = u.UserId
 WHERE p.ApprenticeshipQAStatus & @StatusMask != 0
