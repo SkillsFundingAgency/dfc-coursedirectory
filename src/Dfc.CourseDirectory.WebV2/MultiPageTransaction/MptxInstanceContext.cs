@@ -4,29 +4,40 @@ using Mapster;
 
 namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
 {
-    public class MptxInstanceContext<TState>
-        where TState : IMptxState
+    public abstract class MptxInstanceContext
     {
-        private readonly IMptxStateProvider _stateProvider;
-        private readonly MptxInstance _instance;
-
-        public MptxInstanceContext(
+        protected MptxInstanceContext(
             IMptxStateProvider stateProvider,
             MptxInstance instance)
         {
-            _stateProvider = stateProvider ?? throw new ArgumentNullException(nameof(stateProvider));
-            _instance = instance ?? throw new ArgumentNullException(nameof(instance));
+            StateProvider = stateProvider ?? throw new ArgumentNullException(nameof(stateProvider));
+            Instance = instance ?? throw new ArgumentNullException(nameof(instance));
         }
 
-        public string FlowName => _instance.FlowName;
+        public string FlowName => Instance.FlowName;
 
-        public string InstanceId => _instance.InstanceId;
+        public string InstanceId => Instance.InstanceId;
+
+        public IReadOnlyDictionary<string, object> Items => Instance.Items;
+
+        public object State => Instance.State;
+
+        protected IMptxStateProvider StateProvider { get; }
+
+        protected MptxInstance Instance { get; }
+    }
+
+    public class MptxInstanceContext<TState> : MptxInstanceContext
+        where TState : IMptxState
+    {
+        public MptxInstanceContext(IMptxStateProvider stateProvider, MptxInstance instance)
+            : base(stateProvider, instance)
+        {
+        }
 
         public bool IsCompleted { get; private set; }
 
-        public IReadOnlyDictionary<string, object> Items => _instance.Items;
-
-        public TState State => (TState)_instance.State;
+        public new TState State => (TState)base.State;
 
         public void Assign<TOther>(TOther newState) => Update(oldState => newState.Adapt(oldState));
 
@@ -37,7 +48,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
                 return;
             }
 
-            _stateProvider.DeleteInstance(InstanceId);
+            StateProvider.DeleteInstance(InstanceId);
             IsCompleted = true;
         }
 
@@ -45,7 +56,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
         {
             ThrowIfCompleted();
 
-            _stateProvider.UpdateInstanceState(InstanceId, state =>
+            StateProvider.UpdateInstanceState(InstanceId, state =>
             {
                 update((TState)state);
                 return state;

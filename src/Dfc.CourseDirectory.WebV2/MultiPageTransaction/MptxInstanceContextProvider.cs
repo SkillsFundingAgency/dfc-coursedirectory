@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
 {
@@ -15,8 +17,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public MptxInstanceContext<T> GetContext<T>()
-            where T : IMptxState
+        public MptxInstanceContext GetContext(Type stateType)
         {
             var httpContext = _httpContextAccessor.HttpContext;
             var feature = httpContext.Features.Get<MptxInstanceFeature>();
@@ -26,7 +27,12 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
                 return null;
             }
 
-            return new MptxInstanceContext<T>(_stateProvider, feature.Instance);
+            var contextType = typeof(MptxInstanceContext<>).MakeGenericType(stateType);
+            return (MptxInstanceContext)ActivatorUtilities.CreateInstance(
+                provider: null,
+                contextType,
+                _stateProvider,
+                feature.Instance);
         }
     }
 }
