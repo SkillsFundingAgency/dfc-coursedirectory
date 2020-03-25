@@ -88,9 +88,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA
         public async Task<IActionResult> QAREport()
         {
             var result = await _mediator.SendAndMapResponse(new Report.Query(), resp => resp);
-            var stream = ReportHelper.ConvertToStream(result);
-            var s = File(stream, "text/csv", "QAReport.csv");
-            return s;
+            var bytes = ReportHelper.ConvertToBytes(result);
+            var file = File(bytes, "text/csv", "QAReport.csv");
+            return file;
         }
     }
 }

@@ -9,7 +9,7 @@ namespace Dfc.CourseDirectory.WebV2.Helpers
 {
     public class ReportHelper
     {
-        public static byte[]  ConvertToStream(Features.ApprenticeshipQA.Report.ViewModel model)
+        public static byte[]  ConvertToBytes(Features.ApprenticeshipQA.Report.ViewModel model)
         {
             using (var logStream = new MemoryStream())
             using (var logStreamWriter = new StreamWriter(logStream))
