@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Dfc.CourseDirectory.WebV2.Models;
+using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries
 {
@@ -11,6 +11,14 @@ namespace Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries
     public class GetQAStatusReportResult
     {
         public Guid ProviderId { get; set; }
-        public int UKPRN { get; set; }
+        public string UKPRN { get; set; }
+        public string ProviderName { get; set; }
+        public string Email { get; set; }
+        public DateTime? PassedQAOn { get; set; }
+        public DateTime? FailedQAOn { get; set; }
+        public ApprenticeshipQAUnableToCompleteReasons? UnableToCompleteReasons { get; set; }
+        public DateTime? UnabletoCompleteOn { get; set; }
+        public string Notes { get; set; }
+        public ApprenticeshipQAStatus? QAStatus { get; set; }
     }
 }

@@ -24,7 +24,7 @@ INSERT INTO Pttcd.ApprenticeshipQASubmissionApprenticeshipAssessments (
     StyleFailedReasons,
     StyleComments)
 SELECT
-    ApprenticeshipQASubmissionApprenticeshipId,
+    ApprenticeshipQASubmissionId,
     @AssessedOn,
     @AssessedByUserId,
     @Passed,
