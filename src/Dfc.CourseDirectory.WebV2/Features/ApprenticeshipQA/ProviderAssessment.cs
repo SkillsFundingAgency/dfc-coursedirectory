@@ -276,7 +276,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
 
                 RuleFor(c => c.ComplianceComments)
                     .NotEmpty()
-                    .When(c => c.CompliancePassed == false)
+                    .When(c => c.CompliancePassed == false &&
+                        (c.ComplianceFailedReasons?.HasFlag(ApprenticeshipQAProviderComplianceFailedReasons.Other) ?? false))
                     .WithMessageForAllRules("Enter comments for the reason selected");
 
                 RuleFor(c => c.StylePassed)
@@ -291,7 +292,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
 
                 RuleFor(c => c.StyleComments)
                     .NotEmpty()
-                    .When(c => c.StylePassed == false)
+                    .When(c => c.StylePassed == false &&
+                        (c.StyleFailedReasons?.HasFlag(ApprenticeshipQAProviderStyleFailedReasons.Other) ?? false))
                     .WithMessageForAllRules("Enter comments for the reason selected");
             }
         }

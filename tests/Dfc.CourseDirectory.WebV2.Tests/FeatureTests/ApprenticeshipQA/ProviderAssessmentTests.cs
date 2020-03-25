@@ -471,6 +471,48 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             var doc = await response.GetDocument();
             doc.AssertHasError("ComplianceFailedReasons", "A reason must be selected");
+        }
+
+        [Fact]
+        public async Task Post_MissingComplianceCommentsWhenReasonContainsOtherRendersErrorMessage()
+        {
+            // Arrange
+            var ukprn = 12345;
+
+            var providerId = await TestData.CreateProvider(
+                ukprn: ukprn,
+                providerName: "Provider 1",
+                apprenticeshipQAStatus: ApprenticeshipQAStatus.Submitted);
+
+            var providerUserId = $"{ukprn}-user";
+            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
+
+            var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
+
+            await TestData.CreateApprenticeshipQASubmission(
+                providerId,
+                submittedOn: Clock.UtcNow,
+                submittedByUserId: providerUserId,
+                providerMarketingInformation: "The overview",
+                apprenticeshipIds: new[] { apprenticeshipId });
+
+            await User.AsHelpdesk();
+
+            var requestContent = new FormUrlEncodedContentBuilder()
+                .Add("CompliancePassed", false)
+                .Add("ComplianceFailedReasons", ApprenticeshipQAProviderComplianceFailedReasons.Other)
+                .Add("StylePassed", true)
+                .ToContent();
+
+            // Act
+            var response = await HttpClient.PostAsync(
+                $"apprenticeship-qa/provider-assessments/{providerId}",
+                requestContent);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+
+            var doc = await response.GetDocument();
             doc.AssertHasError("ComplianceComments", "Enter comments for the reason selected");
         }
 
@@ -555,6 +597,48 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             var doc = await response.GetDocument();
             doc.AssertHasError("StyleFailedReasons", "A reason must be selected");
+        }
+
+        [Fact]
+        public async Task Post_MissingStyleCommentsWhenReasonContainsOtherRendersErrorMessage()
+        {
+            // Arrange
+            var ukprn = 12345;
+
+            var providerId = await TestData.CreateProvider(
+                ukprn: ukprn,
+                providerName: "Provider 1",
+                apprenticeshipQAStatus: ApprenticeshipQAStatus.Submitted);
+
+            var providerUserId = $"{ukprn}-user";
+            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
+
+            var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
+
+            await TestData.CreateApprenticeshipQASubmission(
+                providerId,
+                submittedOn: Clock.UtcNow,
+                submittedByUserId: providerUserId,
+                providerMarketingInformation: "The overview",
+                apprenticeshipIds: new[] { apprenticeshipId });
+
+            await User.AsHelpdesk();
+
+            var requestContent = new FormUrlEncodedContentBuilder()
+                .Add("CompliancePassed", true)
+                .Add("StylePassed", false)
+                .Add("StyleFailedReasons", ApprenticeshipQAApprenticeshipStyleFailedReasons.Other)
+                .ToContent();
+
+            // Act
+            var response = await HttpClient.PostAsync(
+                $"apprenticeship-qa/provider-assessments/{providerId}",
+                requestContent);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+
+            var doc = await response.GetDocument();
             doc.AssertHasError("StyleComments", "Enter comments for the reason selected");
         }
 
