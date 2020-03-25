@@ -91,7 +91,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA
         {
             var result = await _mediator.SendAndMapResponse(new Report.Query(), resp => resp);
             var stream = ReportHelper.ConvertToStream(result);
-            var s = File(stream, "text/csv");
+            var s = File(stream, "text/csv", "QAReport.csv");
             return s;
         }
     }
