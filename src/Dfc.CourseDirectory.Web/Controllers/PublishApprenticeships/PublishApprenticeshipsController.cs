@@ -5,6 +5,7 @@ using Dfc.CourseDirectory.Models.Models.Courses;
 using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
 using Dfc.CourseDirectory.Web.ViewModels.BulkUpload;
 using Dfc.CourseDirectory.Web.ViewModels.PublishApprenticeships;
+using Dfc.CourseDirectory.WebV2.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -16,6 +17,7 @@ using System.Threading.Tasks;
 
 namespace Dfc.CourseDirectory.Web.Controllers.PublishApprenticeships
 {
+    [RestrictApprenticeshipQAStatus(ApprenticeshipQAStatus.Passed, AllowWhenApprenticeshipQAFeatureDisabled = true)]
     public class PublishApprenticeshipsController : Controller
     {
         private readonly ILogger<PublishApprenticeshipsController> _logger;

@@ -27,11 +27,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Web.Helpers.Attributes;
+using Dfc.CourseDirectory.WebV2.Models;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
     [Authorize("Apprenticeship")]
     [SelectedProviderNeeded]
+    [RestrictApprenticeshipQAStatus(ApprenticeshipQAStatus.Passed, AllowWhenApprenticeshipQAFeatureDisabled = true)]
     public class ApprenticeshipsController : Controller
     {
         private readonly ILogger<ApprenticeshipsController> _logger;

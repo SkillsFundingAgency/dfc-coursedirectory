@@ -11,6 +11,9 @@ using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.ViewModels.BulkUpload;
+using Dfc.CourseDirectory.WebV2;
+using Dfc.CourseDirectory.WebV2.Filters;
+using Dfc.CourseDirectory.WebV2.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -25,6 +28,7 @@ using System.Threading.Tasks;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
+    [RestrictApprenticeshipQAStatus(ApprenticeshipQAStatus.Passed, AllowWhenApprenticeshipQAFeatureDisabled = true)]
     public class BulkUploadApprenticeshipsController : Controller
     {
         private readonly ILogger<BulkUploadApprenticeshipsController> _logger;

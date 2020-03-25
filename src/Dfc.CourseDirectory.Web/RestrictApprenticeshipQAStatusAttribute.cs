@@ -17,17 +17,23 @@ namespace Dfc.CourseDirectory.Web
         public RestrictApprenticeshipQAStatusAttribute(params ApprenticeshipQAStatus[] allowedStatuses)
         {
             AllowedStatuses = new HashSet<ApprenticeshipQAStatus>(allowedStatuses);
-            RequireApprenticeshipQAFeature = true;
+            AllowWhenApprenticeshipQAFeatureDisabled = true;
         }
 
         public ISet<ApprenticeshipQAStatus> AllowedStatuses { get; }
 
-        public bool RequireApprenticeshipQAFeature { get; set; }
+        public bool AllowWhenApprenticeshipQAFeatureDisabled { get; set; }
 
         public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
-            var sqlQueryDispatcher = context.HttpContext.RequestServices.GetRequiredService<ISqlQueryDispatcher>();
             var featureFlagProvider = context.HttpContext.RequestServices.GetRequiredService<IFeatureFlagProvider>();
+            var qaFeatureIsEnabled = featureFlagProvider.HaveFeature(FeatureFlags.ApprenticeshipQA);
+
+            if (!qaFeatureIsEnabled && AllowWhenApprenticeshipQAFeatureDisabled)
+            {
+                await next();
+                return;
+            }
 
             var providerContextFeature = context.HttpContext.Features.Get<ProviderContextFeature>();
 
@@ -38,19 +44,15 @@ namespace Dfc.CourseDirectory.Web
 
             var providerId = providerContextFeature.ProviderInfo.ProviderId;
 
+            var sqlQueryDispatcher = context.HttpContext.RequestServices.GetRequiredService<ISqlQueryDispatcher>();
+
             var currentStatus = await sqlQueryDispatcher.ExecuteQuery(
                 new GetProviderApprenticeshipQAStatus()
                 {
                     ProviderId = providerId
                 });
 
-            var qaFeatureIsEnabled = featureFlagProvider.HaveFeature(FeatureFlags.ApprenticeshipQA);
-
-            if (!qaFeatureIsEnabled && RequireApprenticeshipQAFeature)
-            {
-                context.Result = new NotFoundResult();
-            }
-            else if (RequireApprenticeshipQAFeature && !AllowedStatuses.Contains(currentStatus))
+            if (!AllowedStatuses.Contains(currentStatus))
             {
                 context.Result = new BadRequestResult();
             }

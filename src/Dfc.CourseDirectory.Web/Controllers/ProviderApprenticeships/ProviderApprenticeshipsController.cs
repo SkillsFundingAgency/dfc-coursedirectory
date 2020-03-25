@@ -22,6 +22,7 @@ using Dfc.CourseDirectory.Web.ViewComponents.ProviderApprenticeships.ProviderApp
 using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.Web.ViewModels.Apprenticeships;
 using Dfc.CourseDirectory.Web.ViewModels.ProviderApprenticeships;
+using Dfc.CourseDirectory.WebV2.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -30,6 +31,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
+    [RestrictApprenticeshipQAStatus(ApprenticeshipQAStatus.Passed, AllowWhenApprenticeshipQAFeatureDisabled = true)]
     public class ProviderApprenticeshipsController : Controller
     {
         private readonly ILogger<ProviderApprenticeshipsController> _logger;
