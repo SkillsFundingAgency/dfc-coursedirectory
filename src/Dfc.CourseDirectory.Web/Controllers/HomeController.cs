@@ -10,6 +10,7 @@ using Dfc.CourseDirectory.Services.Interfaces;
 using Dfc.CourseDirectory.Services.Interfaces.BlobStorageService;
 using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Web.ViewModels;
+using Dfc.CourseDirectory.WebV2;
 using Dfc.CourseDirectory.WebV2.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -101,7 +102,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
         }
 
-        public IActionResult Index(string errmsg)
+        public IActionResult Index(string errmsg, [FromServices] IFeatureFlagProvider featureFlagProvider)
         {
             _session.SetInt32("ProviderSearch", 1);
             _logger.LogMethodEnter();
@@ -131,8 +132,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                 if (authorised.Succeeded)
                 {
-                    // Making sure this change goes through...
-                    return RedirectToAction("Index", "SearchProvider");
+                    if (featureFlagProvider.HaveFeature(FeatureFlags.ApprenticeshipQA))
+                    {
+                        return RedirectToAction("Dashboard", "HelpdeskDashboard");
+                    }
+                    else
+                    {
+                        return RedirectToAction("Index", "SearchProvider");
+                    }
                 }
 
                 return View("../Provider/Dashboard");
