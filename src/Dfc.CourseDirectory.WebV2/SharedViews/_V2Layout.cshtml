@@ -28,6 +28,7 @@
     <link rel="apple-touch-icon" href="~/assets/images/govuk-apple-touch-icon.png">
     @Html.Raw(GovUk.Frontend.AspNetCore.HtmlSnippets.StyleImports)
     <link rel="stylesheet" href="~/v2/pttcd.css">
+    <link rel="stylesheet" href="~/v2/nav.css">
 </head>
 
 <body class="govuk-template__body govuk-body">
@@ -72,7 +73,10 @@
 
         @if (currentUser != null && !currentUser.IsProvider && providerContext != null)
         {
-            <vc:admin-provider-context-nav provider-info="@providerContext" />
+            @* FIXME: Move this class into component when legacy views don't need it *@
+            <div class="govuk-width-container">
+                <vc:admin-provider-context-nav provider-info="@providerContext" />
+            </div>
         }
 
         <main class="govuk-main-wrapper" id="main-content" role="main">
