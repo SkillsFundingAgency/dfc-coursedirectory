@@ -31,4 +31,8 @@
     <EmbeddedResource Include="Content/**/*" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Content\nav.css" />
+  </ItemGroup>
+
 </Project>
