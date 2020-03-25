@@ -1,14 +1,14 @@
-﻿@model Dfc.CourseDirectory.WebV2.ProviderInfo
+﻿@model Dfc.CourseDirectory.WebV2.SharedViews.Components.ProviderNavViewModel
 
 <div class="pttcd-subnav govuk-!-margin-top-6">
-    <div class="pttcd-subnav__provider-name">@Model.ProviderName</div>
+    <div class="pttcd-subnav__provider-name">@Model.ProviderContext.ProviderName</div>
     <ul class="pttcd-subnav__items">
         <li class="pttcd-subnav__item">
             <a asp-action="Index" asp-controller="Home" class="pttcd-subnav__item__link">
                 Home
             </a>
         </li>
-        @if (Model.ProviderType.HasFlag(ProviderType.FE))
+        @if (Model.ProviderContext.ProviderType.HasFlag(ProviderType.FE))
         {
             <li class="pttcd-subnav__item">
                 <a asp-action="LandingOptions" asp-controller="Qualifications" class="pttcd-subnav__item__link">
@@ -16,7 +16,8 @@
                 </a>
             </li>
         }
-        @if (Model.ProviderType.HasFlag(ProviderType.Apprenticeships))
+        @if (Model.ProviderContext.ProviderType.HasFlag(ProviderType.Apprenticeships) &&
+            (!Model.ApprenticeshipQAFeatureIsEnabled || Model.ApprenticeshipQAStatus == ApprenticeshipQAStatus.Passed))
         {
             <li class="pttcd-subnav__item">
                 <a asp-action="WhatWouldYouLikeToDo" asp-controller="Apprenticeships" class="pttcd-subnav__item__link">
@@ -29,7 +30,7 @@
                 Your locations
             </a>
         </li>
-        @if (Model.ProviderType == ProviderType.Both)
+        @if (Model.ProviderContext.ProviderType == ProviderType.Both)
         {
             <li class="pttcd-subnav__item">
                 <a asp-action="LandingOptions" asp-controller="BulkUpload" class="pttcd-subnav__item__link">
@@ -37,7 +38,7 @@
                 </a>
             </li>
         }
-        else if (Model.ProviderType == ProviderType.FE)
+        else if (Model.ProviderContext.ProviderType == ProviderType.FE)
         {
             <li class="pttcd-subnav__item">
                 <a asp-action="Index" asp-controller="BulkUpload" class="pttcd-subnav__item__link">
