@@ -1,16 +1,10 @@
-﻿@using Dfc.CourseDirectory.WebV2
-@inject Dfc.CourseDirectory.WebV2.Security.ICurrentUserProvider CurrentUserProvider
-@inject IProviderContextProvider ProviderContextProvider
-@{
+﻿@{
     var title = (ViewBag.Title != null ? $"{ViewBag.Title} - " : "") + "Course Directory";
 
     if (!ViewData.ModelState.IsValid)
     {
         title = "Error: " + title;
     }
-
-    var providerContext = ProviderContextProvider.GetProviderContext();
-    var currentUser = CurrentUserProvider.GetCurrentUser();
 }
 <!DOCTYPE html>
 <html lang="en" class="govuk-template">
@@ -30,6 +24,7 @@
     <link rel="stylesheet" href="~/v2/pttcd.css">
     <link rel="stylesheet" href="~/v2/nav.css">
     <link rel="stylesheet" href="~/v2/notification.css">
+    @RenderSection("Head", required: false)
 </head>
 
 <body class="govuk-template__body govuk-body">
@@ -46,17 +41,7 @@
                     Publish to the course directory
                 </a>
 
-                @if (currentUser != null)
-                {
-                    @if (currentUser.IsProvider)
-                    {
-                        <vc:provider-top-nav provider-info="@providerContext" />
-                    }
-                    else
-                    {
-                        <vc:admin-top-nav />
-                    }
-                }
+                @RenderSection("TopNav", required: false)
             </div>
         </div>
     </header>
@@ -72,13 +57,7 @@
             </p>
         </div>
 
-        @if (currentUser != null && !currentUser.IsProvider && providerContext != null)
-        {
-            @* FIXME: Move this class into component when legacy views don't need it *@
-            <div class="govuk-width-container">
-                <vc:admin-provider-context-nav provider-info="@providerContext" />
-            </div>
-        }
+        @RenderSection("PreMain", required: false)
 
         <main class="govuk-main-wrapper" id="main-content" role="main">
             @RenderBody()
@@ -138,7 +117,6 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/5.2.0/tinymce.min.js"></script>
     <script type="text/javascript" src="~/v2/pttcd.js"></script>
-
     @RenderSection("Scripts", required: false)
 
 </body>
