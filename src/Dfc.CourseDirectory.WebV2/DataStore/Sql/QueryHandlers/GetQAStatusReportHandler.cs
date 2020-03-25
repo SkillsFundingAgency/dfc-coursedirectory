@@ -30,18 +30,9 @@ GROUP BY ProviderId, SubmittedByUserId
 ) x ON  p.ProviderId = x.ProviderId
 LEFT JOIN [Pttcd].[ApprenticeshipQASubmissionProviderAssessments] assessment on x.LatestApprenticeshipQASubmissionId = assessment.ApprenticeshipQASubmissionId
 LEFT JOIN [Pttcd].[Users] users on users.UserId=x.SubmittedByUserId";
-            try
-            {
-                var paramz = new {  };
-                return (await transaction.Connection.QueryAsync<GetQAStatusReportResult>(sql,paramz,transaction)).AsList();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-            }
 
-            return null;
-            
+            var paramz = new { };
+            return (await transaction.Connection.QueryAsync<GetQAStatusReportResult>(sql, paramz, transaction)).AsList();
         }
     }
 }
