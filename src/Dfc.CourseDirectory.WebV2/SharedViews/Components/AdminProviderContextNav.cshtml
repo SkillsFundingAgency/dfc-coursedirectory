@@ -1,0 +1,59 @@
+﻿@model Dfc.CourseDirectory.WebV2.ProviderInfo
+
+<div class="govuk-width-container">
+    <div class="pttcd-subnav govuk-!-margin-top-6">
+        <div class="pttcd-subnav__provider-name">@Model.ProviderName</div>
+        <ul class="pttcd-subnav__items">
+            <li class="pttcd-subnav__item">
+                <a asp-action="Index" asp-controller="Home" class="pttcd-subnav__item__link">
+                    Home
+                </a>
+            </li>
+            @if (Model.ProviderType.HasFlag(ProviderType.FE))
+            {
+                <li class="pttcd-subnav__item">
+                    <a asp-action="LandingOptions" asp-controller="Qualifications" class="pttcd-subnav__item__link">
+                        Your courses
+                    </a>
+                </li>
+            }
+            @if (Model.ProviderType.HasFlag(ProviderType.Apprenticeships))
+            {
+                <li class="pttcd-subnav__item">
+                    <a asp-action="WhatWouldYouLikeToDo" asp-controller="Apprenticeships" class="pttcd-subnav__item__link">
+                        Your apprenticeships training
+                    </a>
+                </li>
+            }
+            <li class="pttcd-subnav__item">
+                <a asp-action="LandingOptions" asp-controller="Venues" class="pttcd-subnav__item__link">
+                    Your locations
+                </a>
+            </li>
+            @if (Model.ProviderType == ProviderType.Both)
+            {
+                <li class="pttcd-subnav__item">
+                    <a asp-action="LandingOptions" asp-controller="BulkUpload" class="pttcd-subnav__item__link">
+                        Bulk upload
+                    </a>
+                </li>
+            }
+            else if (Model.ProviderType == ProviderType.FE)
+            {
+                <li class="pttcd-subnav__item">
+                    <a asp-action="Index" asp-controller="BulkUpload" class="pttcd-subnav__item__link">
+                        Bulk upload
+                    </a>
+                </li>
+            }
+            else
+            {
+                <li class="pttcd-subnav__item">
+                    <a asp-action="Index" asp-controller="BulkUploadApprenticeships" class="pttcd-subnav__item__link">
+                        Bulk upload
+                    </a>
+                </li>
+            }
+        </ul>
+    </div>
+</div>

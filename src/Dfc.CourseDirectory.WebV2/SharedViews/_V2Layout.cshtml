@@ -139,21 +139,7 @@
 
         @if (getsProviderNav && providerLinks.Count > 0)
         {
-            <div class="govuk-width-container">
-                <div class="pttcd-subnav govuk-!-margin-top-6">
-                    <div class="pttcd-subnav__provider-name">@providerName</div>
-                    <ul class="pttcd-subnav__items">
-                        @foreach (var item in providerLinks)
-                        {
-                            <li class="pttcd-subnav__item">
-                                <a href="@item.link" class="pttcd-subnav__item__link">
-                                    @item.label
-                                </a>
-                            </li>
-                        }
-                    </ul>
-                </div>
-            </div>
+            <vc:admin-provider-context-nav />
         }
 
         <main class="govuk-main-wrapper" id="main-content" role="main">
