@@ -1,4 +1,4 @@
-﻿@model Dfc.CourseDirectory.WebV2.ProviderInfo
+﻿@model Dfc.CourseDirectory.WebV2.SharedViews.Components.ProviderNavViewModel
 @inject IFeatureFlagProvider FeatureFlagProvider
 @{
     var currentController = (string)ViewContext.RouteData.Values["Controller"];
@@ -13,7 +13,7 @@
                 Home
             </a>
         </li>
-        @if (Model.ProviderType.HasFlag(ProviderType.FE))
+        @if (Model.ProviderContext.ProviderType.HasFlag(ProviderType.FE))
         {
             <li class="govuk-header__navigation-item@(currentController == "Qualifications" ? " govuk-header__navigation-item--active" : null)">
                 <a asp-action="LandingOptions" asp-controller="Qualifications" class="govuk-header__link">
@@ -21,7 +21,8 @@
                 </a>
             </li>
         }
-        @if (Model.ProviderType.HasFlag(ProviderType.Apprenticeships))
+        @if (Model.ProviderContext.ProviderType.HasFlag(ProviderType.Apprenticeships) &&
+            (!Model.ApprenticeshipQAFeatureIsEnabled || Model.ApprenticeshipQAStatus == ApprenticeshipQAStatus.Passed))
         {
             <li class="govuk-header__navigation-item@(currentController == "Apprenticeships" ? " govuk-header__navigation-item--active" : null)">
                 <a asp-action="LandingOptions" asp-controller="Venues" class="govuk-header__link">
@@ -34,7 +35,7 @@
                 Your locations
             </a>
         </li>
-        @if (Model.ProviderType == ProviderType.Both)
+        @if (Model.ProviderContext.ProviderType == ProviderType.Both)
         {
             <li class="govuk-header__navigation-item@(currentController == "BulkUpload" || currentController == "BulkUploadApprenticeships" ? " govuk-header__navigation-item--active" : null)">
                 <a asp-action="LandingOptions" asp-controller="BulkUpload" class="govuk-header__link">
@@ -42,7 +43,7 @@
                 </a>
             </li>
         }
-        else if (Model.ProviderType == ProviderType.FE)
+        else if (Model.ProviderContext.ProviderType == ProviderType.FE)
         {
             <li class="govuk-header__navigation-item@(currentController == "BulkUpload" ? " govuk-header__navigation-item--active" : null)">
                 <a asp-action="Index" asp-controller="BulkUpload" class="govuk-header__link">
