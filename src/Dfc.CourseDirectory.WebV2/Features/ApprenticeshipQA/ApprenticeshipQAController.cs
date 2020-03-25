@@ -1,13 +1,11 @@
-﻿using System;
-using System.IO;
-using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries;
-using Dfc.CourseDirectory.WebV2.Filters;
+﻿using Dfc.CourseDirectory.WebV2.Filters;
 using Dfc.CourseDirectory.WebV2.Helpers;
 using Dfc.CourseDirectory.WebV2.Security;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Threading.Tasks;
 
 namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA
 {
