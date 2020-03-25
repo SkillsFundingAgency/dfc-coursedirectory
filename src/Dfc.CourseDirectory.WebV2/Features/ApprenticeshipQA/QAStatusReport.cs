@@ -33,7 +33,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Report
         public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
         {
             var results = await _sqlQueryDispatcher.ExecuteQuery(new GetQAStatusReport());
-
             var infos = (from r in results
                          select new QAStatusReport()
                          {
@@ -44,8 +43,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Report
                              UnableToCompleteReasons = r.UnableToCompleteReasons,
                              UnableToCompleteOn = r.UnabletoCompleteOn,
                              QAStatus = r.QAStatus,
-                             Notes = r.Notes //Tribal notes
-                             //
+                             Notes = r.Notes
                          }).ToList();
 
             var providers = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetProvidersByIds()
