@@ -33,6 +33,7 @@
 
   <ItemGroup>
     <None Remove="Content\nav.css" />
+    <None Remove="Content\notification.css" />
   </ItemGroup>
 
 </Project>

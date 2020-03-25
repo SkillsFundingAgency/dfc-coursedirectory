@@ -6,6 +6,7 @@
 @using Dfc.CourseDirectory.Models.Models.Providers
 @using Microsoft.AspNetCore.Hosting
 @using Dfc.CourseDirectory.Models.Enums
+@using ProviderType = Dfc.CourseDirectory.Models.Models.Providers.ProviderType
 @model Dfc.CourseDirectory.Web.ViewComponents.Dashboard.DashboardModel
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
@@ -14,6 +15,11 @@
 @inject IHttpContextAccessor HttpContextAccessor
 @inject IProviderService providerService
 @inject IHostingEnvironment env
+
+@if (Model.QAFeatureIsEnabled)
+{
+    <vc:qa-notifications />
+}
 
 @if (Model.ValidationMessages != null && Model.ValidationMessages.Any())
 {
