@@ -131,6 +131,7 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddMptxInstanceContext();
             services.AddSingleton<IMptxStateProvider, SessionMptxStateProvider>();
             services.AddSingleton<MptxInstanceContextFactory>();
+            services.AddSingleton<IProviderContextProvider, ProviderContextProvider>();
 
 #if DEBUG
             if (configuration["UseLocalFileMptxStateProvider"]?.Equals("true", StringComparison.OrdinalIgnoreCase) ?? false)
