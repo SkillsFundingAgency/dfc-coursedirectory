@@ -6,7 +6,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
     public class TestController : Controller
     {
         [AllowAnonymous]
-        [Route("tests/empty")]
-        public IActionResult Empty() => View("~/TestViews/Empty.cshtml");
+        [Route("tests/empty-provider-context")]
+        public IActionResult EmptyProviderContext() => View("~/TestViews/EmptyProviderContext.cshtml");
     }
 }

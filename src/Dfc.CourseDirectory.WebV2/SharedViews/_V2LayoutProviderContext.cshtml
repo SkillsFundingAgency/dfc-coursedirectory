@@ -1,0 +1,39 @@
+﻿@using Dfc.CourseDirectory.WebV2
+@inject Dfc.CourseDirectory.WebV2.Security.ICurrentUserProvider CurrentUserProvider
+@inject IProviderContextProvider ProviderContextProvider
+@{
+    Layout = "_V2LayoutCore";
+
+    var providerContext = ProviderContextProvider.GetProviderContext();
+    var currentUser = CurrentUserProvider.GetCurrentUser();
+}
+
+@section TopNav {
+    @if (currentUser != null)
+    {
+        @if (currentUser.IsProvider)
+        {
+            <vc:provider-top-nav provider-info="@providerContext" />
+        }
+        else
+        {
+            <vc:admin-top-nav />
+        }
+    }
+}
+
+@section PreMain {
+    @if (currentUser != null && !currentUser.IsProvider && providerContext != null)
+    {
+        @* FIXME: Move this class into component when legacy views don't need it *@
+        <div class="govuk-width-container">
+            <vc:admin-provider-context-nav provider-info="@providerContext" />
+        </div>
+    }
+}
+
+@RenderBody()
+
+@section Scripts {
+    @RenderSection("Scripts", required: false)
+}

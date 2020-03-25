@@ -19,7 +19,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         {
             // Arrange
             User.SetNotAuthenticated();
-            var request = new HttpRequestMessage(HttpMethod.Get, "/tests/empty");
+            var request = new HttpRequestMessage(HttpMethod.Get, "/tests/empty-provider-context");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -36,7 +36,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         {
             // Arrange
             // Default test setup runs with an authenticated user
-            var request = new HttpRequestMessage(HttpMethod.Get, "/tests/empty");
+            var request = new HttpRequestMessage(HttpMethod.Get, "/tests/empty-provider-context");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -57,7 +57,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             await User.AsTestUser(testUserType);
 
             // Act
-            var response = await HttpClient.GetAsync("/tests/empty");
+            var response = await HttpClient.GetAsync("/tests/empty-provider-context");
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -89,7 +89,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             await User.AsTestUser(testUserType);
 
             // Act
-            var response = await HttpClient.GetAsync($"/tests/empty?providerId={providerId}");
+            var response = await HttpClient.GetAsync($"/tests/empty-provider-context?providerId={providerId}");
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -125,7 +125,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             await User.AsTestUser(testUserType);
 
             // Act
-            var response = await HttpClient.GetAsync($"/tests/empty?providerId={providerId}");
+            var response = await HttpClient.GetAsync($"/tests/empty-provider-context?providerId={providerId}");
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -161,7 +161,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             await User.AsTestUser(testUserType);
 
             // Act
-            var response = await HttpClient.GetAsync($"/tests/empty?providerId={providerId}");
+            var response = await HttpClient.GetAsync($"/tests/empty-provider-context?providerId={providerId}");
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -198,7 +198,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             await User.AsTestUser(testUserType, providerId);
 
             // Act
-            var response = await HttpClient.GetAsync($"/tests/empty?providerId={providerId}");
+            var response = await HttpClient.GetAsync($"/tests/empty-provider-context?providerId={providerId}");
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -230,7 +230,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             await User.AsTestUser(testUserType, providerId);
 
             // Act
-            var response = await HttpClient.GetAsync($"/tests/empty?providerId={providerId}");
+            var response = await HttpClient.GetAsync($"/tests/empty-provider-context?providerId={providerId}");
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -262,7 +262,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             await User.AsTestUser(testUserType, providerId);
 
             // Act
-            var response = await HttpClient.GetAsync($"/tests/empty?providerId={providerId}");
+            var response = await HttpClient.GetAsync($"/tests/empty-provider-context?providerId={providerId}");
 
             // Assert
             response.EnsureSuccessStatusCode();
