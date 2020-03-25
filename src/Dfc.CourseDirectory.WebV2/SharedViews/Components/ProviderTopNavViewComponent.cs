@@ -2,9 +2,9 @@
 
 namespace Dfc.CourseDirectory.WebV2.SharedViews.Components
 {
-    public class AdminProviderContextNavViewComponent : ViewComponent
+    public class ProviderTopNavViewComponent : ViewComponent
     {
         public IViewComponentResult Invoke(ProviderInfo providerInfo) =>
-            View("~/SharedViews/Components/AdminProviderContextNav.cshtml", providerInfo);
+            View("~/SharedViews/Components/ProviderTopNav.cshtml", providerInfo);
     }
 }

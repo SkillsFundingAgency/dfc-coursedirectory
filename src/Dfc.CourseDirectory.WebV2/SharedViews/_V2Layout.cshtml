@@ -1,7 +1,6 @@
 ﻿@using Dfc.CourseDirectory.WebV2
-@inject IFeatureFlagProvider FeatureFlagProvider
-@inject IProviderInfoCache ProviderInfoCache
 @inject Dfc.CourseDirectory.WebV2.Security.ICurrentUserProvider CurrentUserProvider
+@inject IProviderContextProvider ProviderContextProvider
 @{
     var title = (ViewBag.Title != null ? $"{ViewBag.Title} - " : "") + "Course Directory";
 
@@ -10,64 +9,8 @@
         title = "Error: " + title;
     }
 
+    var providerContext = ProviderContextProvider.GetProviderContext();
     var currentUser = CurrentUserProvider.GetCurrentUser();
-    var currentProvider = ViewContext.HttpContext.Features.Get<Dfc.CourseDirectory.WebV2.HttpContextFeatures.ProviderContextFeature>();
-
-    var getsAdminNav = currentUser != null && (currentUser.IsDeveloper || currentUser.IsHelpdesk);
-    var getsProviderNav = getsAdminNav;
-
-    var currentController = (string)ViewContext.RouteData.Values["Controller"];
-    var currentAction = (string)ViewContext.RouteData.Values["Action"];
-
-    var adminNavLinks = new List<(string link, string label, bool isActive)>()
-    {
-        (Url.Action("Index", "SearchProvider"), "Search providers", isActive: currentController == "SearchProvider"),
-        (Url.Action("Index", "Report"), "Migration reports", isActive: currentController == "Report" && currentAction == "Index")
-    };
-
-    if (FeatureFlagProvider.HaveFeature(FeatureFlags.ApprenticeshipQA))
-    {
-        adminNavLinks.Insert(0, (Url.Action("Dashboard", "HelpdeskDashboard"), "Home", isActive: currentController == "HelpdeskDashboard" && currentAction == "Dashboard"));
-        adminNavLinks.Insert(1, (Url.Action("ListProviders", "ApprenticeshipQA"), "Quality assurance", isActive: currentController == "ApprenticeshipQA"));
-    }
-
-    var providerLinks = new List<(string link, string label, bool isActive)>();
-
-    string providerName = null;
-    if (currentProvider?.ProviderInfo != null)
-    {
-        var providerInfo = await ProviderInfoCache.GetProviderInfo(currentProvider.ProviderInfo.ProviderId);
-        providerName = providerInfo.ProviderName;
-
-        providerLinks.Add((Url.Action("Index", "Home"), "Home", isActive: currentController == "Home" && currentAction == "Index"));
-
-        if (providerInfo.ProviderType.HasFlag(ProviderType.FE))
-        {
-            providerLinks.Add((Url.Action("LandingOptions", "Qualifications"), "Your courses", isActive: currentController == "Qualifications"));
-        }
-
-        if (providerInfo.ProviderType.HasFlag(ProviderType.Apprenticeships))
-        {
-            providerLinks.Add((Url.Action("WhatWouldYouLIkeToDo", "Apprenticeships"), "Your apprenticeships training", isActive: currentController == "Apprenticeships"));
-        }
-
-        providerLinks.Add((Url.Action("LandingOptions", "Venues"), "Your locations", isActive: currentController == "Venues"));
-
-        if (providerInfo.ProviderType == ProviderType.Both)
-        {
-            providerLinks.Add((Url.Action("LandingOptions", "BulkUpload"), "Bulk upload", isActive: currentController == "BulkUpload"));
-        }
-        else if (providerInfo.ProviderType == ProviderType.FE)
-        {
-            providerLinks.Add((Url.Action("Index", "BulkUpload"), "Bulk upload", isActive: currentController == "BulkUpload"));
-        }
-        else if (providerInfo.ProviderType == ProviderType.Apprenticeships)
-        {
-            providerLinks.Add((Url.Action("Index", "BulkUploadApprenticeships"), "Bulk upload", isActive: currentController == "BulkUploadApprenticeships"));
-        }
-    }
-
-    var topLevelNavLinks = getsAdminNav ? adminNavLinks : providerLinks;
 }
 <!DOCTYPE html>
 <html lang="en" class="govuk-template">
@@ -101,27 +44,17 @@
                     Publish to the course directory
                 </a>
 
-                <button type="button" class="govuk-header__menu-button govuk-js-header-toggle" aria-controls="navigation" aria-label="Show or hide Top Level Navigation">Menu</button>
-                <nav>
-                    <ul id="navigation" class="govuk-header__navigation" aria-label="Top Level Navigation">
-                        @if (User.Identity.IsAuthenticated)
-                        {
-                            @foreach (var item in topLevelNavLinks)
-                            {
-                                <li class="govuk-header__navigation-item@(item.isActive ? " govuk-header__navigation-item--active" : null)">
-                                    <a class="govuk-header__link" href="@item.link">
-                                        @item.label
-                                    </a>
-                                </li>
-                            }
-                            <li class="govuk-header__navigation-item pttcd-sign-out-navigation-item">
-                                <a asp-action="Logout" asp-controller="Auth" class="govuk-header__link">
-                                    Sign out
-                                </a>
-                            </li>
-                        }
-                    </ul>
-                </nav>
+                @if (currentUser != null)
+                {
+                    @if (currentUser.IsProvider)
+                    {
+                        <vc:provider-top-nav provider-info="@providerContext" />
+                    }
+                    else
+                    {
+                        <vc:admin-top-nav />
+                    }
+                }
             </div>
         </div>
     </header>
@@ -137,9 +70,9 @@
             </p>
         </div>
 
-        @if (getsProviderNav && providerLinks.Count > 0)
+        @if (currentUser != null && !currentUser.IsProvider && providerContext != null)
         {
-            <vc:admin-provider-context-nav />
+            <vc:admin-provider-context-nav provider-info="@providerContext" />
         }
 
         <main class="govuk-main-wrapper" id="main-content" role="main">

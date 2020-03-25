@@ -1,0 +1,39 @@
+﻿@inject IFeatureFlagProvider FeatureFlagProvider
+@{
+    var currentController = (string)ViewContext.RouteData.Values["Controller"];
+    var currentAction = (string)ViewContext.RouteData.Values["Action"];
+}
+
+<button type="button" class="govuk-header__menu-button govuk-js-header-toggle" aria-controls="navigation" aria-label="Show or hide Top Level Navigation">Menu</button>
+<nav>
+    <ul id="navigation" class="govuk-header__navigation" aria-label="Top Level Navigation">
+        @if (FeatureFlagProvider.HaveFeature(FeatureFlags.ApprenticeshipQA))
+        {
+            <li class="govuk-header__navigation-item@(currentController == "HelpdeskDashboard" && currentAction == "Dashboard" ? " govuk-header__navigation-item--active" : null)">
+                <a asp-action="Dashboard" asp-controller="HelpdeskDashboard" class="govuk-header__link">
+                    Home
+                </a>
+            </li>
+            <li class="govuk-header__navigation-item@(currentController == "ApprenticeshipQA" ? " govuk-header__navigation-item--active" : null)">
+                <a asp-action="ListProviders" asp-controller="ApprenticeshipQA" class="govuk-header__link">
+                    Quality assurance
+                </a>
+            </li>
+        }
+        <li class="govuk-header__navigation-item@(currentController == "SearchProvider" ? " govuk-header__navigation-item--active" : null)">
+            <a asp-action="Index" asp-controller="SearchProvider" class="govuk-header__link">
+                Search providers
+            </a>
+        </li>
+        <li class="govuk-header__navigation-item@(currentController == "Report" && currentAction == "Index" ? " govuk-header__navigation-item--active" : null)">
+            <a asp-action="Index" asp-controller="Report" class="govuk-header__link">
+                Migration reports
+            </a>
+        </li>
+        <li class="govuk-header__navigation-item pttcd-sign-out-navigation-item">
+            <a asp-action="Logout" asp-controller="Auth" class="govuk-header__link">
+                Sign out
+            </a>
+        </li>
+    </ul>
+</nav>
