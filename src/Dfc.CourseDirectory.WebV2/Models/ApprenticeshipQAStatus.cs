@@ -38,5 +38,8 @@ namespace Dfc.CourseDirectory.WebV2.Models
                     throw new NotImplementedException($"Unknown value: '{status}'.");
             }
         }
+
+        public static ApprenticeshipQAStatus ValueOrDefault(this ApprenticeshipQAStatus? status) =>
+            status ?? ApprenticeshipQAStatus.NotStarted;
     }
 }

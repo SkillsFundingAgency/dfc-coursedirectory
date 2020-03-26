@@ -166,7 +166,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Status
 
             return new Data()
             {
-                ApprenticeshipQAStatus = currentStatus
+                ApprenticeshipQAStatus = currentStatus.ValueOrDefault()
             };
         }
 

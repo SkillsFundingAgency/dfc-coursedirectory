@@ -52,7 +52,7 @@ namespace Dfc.CourseDirectory.Web
                     ProviderId = providerId
                 });
 
-            if (!AllowedStatuses.Contains(currentStatus))
+            if (!AllowedStatuses.Contains(currentStatus ?? ApprenticeshipQAStatus.NotStarted))
             {
                 context.Result = new BadRequestResult();
             }

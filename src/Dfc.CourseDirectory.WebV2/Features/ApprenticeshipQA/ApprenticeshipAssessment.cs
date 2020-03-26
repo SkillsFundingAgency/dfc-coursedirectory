@@ -231,7 +231,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
             {
                 ApprenticeshipId = apprenticeshipId,
                 ProviderId = providerId,
-                QAStatus = qaStatus,
+                QAStatus = qaStatus.ValueOrDefault(),
                 LatestSubmission = latestSubmission,
                 SubmissionApprenticeship = submissionApprenticeship,
                 LatestAssessment = assessment,
