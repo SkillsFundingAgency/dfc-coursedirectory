@@ -30,7 +30,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 {
                     new CreateProviderContact()
                     {
-                        ContactType = "L",
+                        ContactType = "P",
                         AddressSaonDescription = "1st Line of Address",
                         AddressPaonDescription = "2nd Line of Address",
                         AddressStreetDescription = "The Street",
@@ -165,7 +165,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
         }
 
         [Fact]
-        public async Task NoLTypeContactRendersExpectedOutput()
+        public async Task NoPTypeContactRendersExpectedOutput()
         {
             // Arrange
             var ukprn = 12345;
@@ -178,7 +178,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 {
                     new CreateProviderContact()
                     {
-                        ContactType = "P",
+                        ContactType = "L",
                         AddressSaonDescription = "1st Line of Address",
                         AddressPaonDescription = "2nd Line of Address",
                         AddressStreetDescription = "The Street",
