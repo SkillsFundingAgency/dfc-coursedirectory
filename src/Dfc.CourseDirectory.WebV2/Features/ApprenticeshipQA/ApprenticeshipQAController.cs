@@ -1,10 +1,11 @@
-﻿using System;
-using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.Filters;
+﻿using Dfc.CourseDirectory.WebV2.Filters;
+using Dfc.CourseDirectory.WebV2.Helpers;
 using Dfc.CourseDirectory.WebV2.Security;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Threading.Tasks;
 
 namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA
 {
@@ -82,5 +83,15 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA
                     errors => this.ViewFromErrors(errors),
                     _ => RedirectToAction("ProviderSelected", new { providerId })));
         }
+
+        [HttpGet("qareport")]
+        public async Task<IActionResult> Report() => await _mediator.SendAndMapResponse(
+            new Report.Query(),
+            response =>
+            {
+                var bytes = ReportHelper.ConvertToBytes(response);
+                var file = File(bytes, "text/csv", "QAReport.csv");
+                return file;
+            });
     }
 }
