@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 namespace Dfc.CourseDirectory.WebV2.Filters
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false)]
-    public class AllowNoCurrentProviderAttribute : Attribute
+    public class AllowNoProviderContextAttribute : Attribute
     {
     }
 
@@ -30,8 +30,8 @@ namespace Dfc.CourseDirectory.WebV2.Filters
         {
             var controllerActionDescriptor = context.ActionDescriptor as ControllerActionDescriptor;
 
-            if (controllerActionDescriptor?.MethodInfo.GetCustomAttribute<AllowNoCurrentProviderAttribute>() != null ||
-                controllerActionDescriptor?.ControllerTypeInfo.GetCustomAttribute<AllowNoCurrentProviderAttribute>() != null)
+            if (controllerActionDescriptor?.MethodInfo.GetCustomAttribute<AllowNoProviderContextAttribute>() != null ||
+                controllerActionDescriptor?.ControllerTypeInfo.GetCustomAttribute<AllowNoProviderContextAttribute>() != null)
             {
                 return;
             }

@@ -63,7 +63,7 @@ namespace Dfc.CourseDirectory.WebV2
                     options.Filters.Add(new MptxResourceFilter());
                     options.Filters.Add(new ContentSecurityPolicyActionFilter());
 
-                    options.ModelBinderProviders.Insert(0, new CurrentProviderModelBinderProvider());
+                    options.ModelBinderProviders.Insert(0, new ProviderContextModelBinderProvider());
                     options.ModelBinderProviders.Insert(0, new MptxInstanceContextModelBinderProvider());
                     options.ModelBinderProviders.Insert(0, new MultiValueEnumModelBinderProvider());
                     options.ModelBinderProviders.Insert(0, new StandardOrFrameworkModelBinderProvider());
