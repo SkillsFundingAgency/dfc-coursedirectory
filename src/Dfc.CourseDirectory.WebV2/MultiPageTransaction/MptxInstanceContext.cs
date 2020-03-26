@@ -16,6 +16,8 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
 
         public string FlowName => Instance.FlowName;
 
+        public MptxInstance Instance { get; }
+
         public string InstanceId => Instance.InstanceId;
 
         public IReadOnlyDictionary<string, object> Items => Instance.Items;
@@ -23,8 +25,6 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
         public object State => Instance.State;
 
         protected IMptxStateProvider StateProvider { get; }
-
-        protected MptxInstance Instance { get; }
     }
 
     public class MptxInstanceContext<TState> : MptxInstanceContext

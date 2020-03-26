@@ -39,7 +39,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
 
             var newHref = QueryHelpers.AddQueryString(
                 existingHref,
-                MptxResourceFilter.InstanceIdQueryParameter,
+                Constants.InstanceIdQueryParameter,
                 instanceFeature.Instance.InstanceId);
 
             output.Attributes.SetAttribute("href", newHref);
