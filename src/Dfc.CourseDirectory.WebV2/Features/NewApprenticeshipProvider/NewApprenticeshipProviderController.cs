@@ -48,7 +48,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
                 command,
                 response => response.Match<IActionResult>(
                     errors => this.ViewFromErrors(errors),
-                    success => RedirectToAction("ApprenticeshipLocations").WithCurrentProvider(providerInfo)));
+                    success => RedirectToAction("ApprenticeshipLocations").WithProviderContext(providerInfo)));
         }
 
         [HttpGet("apprenticeship-locations")]
@@ -75,7 +75,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
                 response => response.Match<IActionResult>(
                     errors => this.ViewFromErrors(errors),
                     success => RedirectToAction(nameof(ProviderDetailConfirmation))
-                        .WithCurrentProvider(providerInfo)
+                        .WithProviderContext(providerInfo)
                         .WithMptxInstanceId(flow)));
         }
 

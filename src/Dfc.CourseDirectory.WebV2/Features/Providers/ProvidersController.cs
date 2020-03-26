@@ -37,7 +37,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers
                 command,
                 response => response.Match<IActionResult>(
                     errors => this.ViewFromErrors(errors),
-                    success => RedirectToAction("Details", "Provider").WithCurrentProvider(providerInfo)));
+                    success => RedirectToAction("Details", "Provider").WithProviderContext(providerInfo)));
         }
     }
 }

@@ -7,7 +7,7 @@ namespace Dfc.CourseDirectory.WebV2
 {
     public static class RedirectToActionResultExtensions
     {
-        public static RedirectToActionResult WithCurrentProvider(
+        public static RedirectToActionResult WithProviderContext(
             this RedirectToActionResult result,
             ProviderInfo providerInfo)
         {
