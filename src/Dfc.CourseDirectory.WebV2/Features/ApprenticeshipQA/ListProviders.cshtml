@@ -6,6 +6,30 @@
 <h1 class="govuk-heading-xl">Quality assurance</h1>
 
 <govuk-tabs title="Contents">
+    <govuk-tabs-item label="@(ApprenticeshipQAStatus.NotStarted.ToDisplayName())" id="notstarted">
+        <h2 class="govuk-heading-l">Select a provider</h2>
+        <table class="govuk-table">
+            <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    <th scope="col" class="govuk-table__header">Provider name</th>
+                    <th scope="col" class="govuk-table__header pttcd-!-width-120px">UKPRN</th>
+                </tr>
+            </thead>
+            <tbody class="govuk-table__body">
+                @foreach (var provider in Model.NotStarted)
+                {
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell"><a asp-action="ProviderSelected" asp-route-providerId="@provider.ProviderId" class="govuk-link">@provider.ProviderName</a></td>
+                        <td class="govuk-table__cell">@provider.ProviderUkprn</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        @if (Model.NotStarted.Count == 0)
+        {
+            <p>You have no new providers.</p>
+        }
+    </govuk-tabs-item>
     <govuk-tabs-item label="@(ApprenticeshipQAStatus.Submitted.ToDisplayName())" id="submitted">
         <h2 class="govuk-heading-l">Select a provider</h2>
         <table class="govuk-table">

@@ -25,7 +25,7 @@ namespace Dfc.CourseDirectory.WebV2.Models
             switch (status)
             {
                 case ApprenticeshipQAStatus.NotStarted:
-                    return "Not started";
+                    return "New providers";
                 case ApprenticeshipQAStatus.Submitted:
                     return "Ready for QA";
                 case ApprenticeshipQAStatus.InProgress:
