@@ -137,6 +137,7 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddSingleton<IAddressSearchService, AddressSearchService>();
             services.AddTransient<ISignInAction, DfeUserInfoHelper>();
             services.AddTransient<ISignInAction, SignInTracker>();
+            services.AddTransient<ISignInAction, EnsureApprenticeshipQAStatusSetSignInAction>();
 
 #if DEBUG
             if (configuration["UseLocalFileMptxStateProvider"]?.Equals("true", StringComparison.OrdinalIgnoreCase) ?? false)
