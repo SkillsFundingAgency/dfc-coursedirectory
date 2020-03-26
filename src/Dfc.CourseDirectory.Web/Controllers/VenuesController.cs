@@ -28,6 +28,7 @@ using Dfc.CourseDirectory.Web.ViewComponents.Shared;
 using Dfc.CourseDirectory.Web.ViewComponents.VenueName;
 using Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult;
 using Dfc.CourseDirectory.Web.ViewModels;
+using Dfc.CourseDirectory.WebV2.LoqateAddressSearch;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -40,7 +41,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
     public class VenuesController : Controller
     {
         private readonly ILogger<VenuesController> _logger;
-        private readonly IPostCodeSearchService _postCodeSearchService;
+        private readonly IAddressSearchService _addressSearchService;
         private readonly IVenueServiceSettings _venueServiceSettings;
         private readonly IVenueSearchHelper _venueSearchHelper;
         private readonly IHttpContextAccessor _contextAccessor;
@@ -54,7 +55,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         public VenuesController(
             ILogger<VenuesController> logger,
-            IPostCodeSearchService postCodeSearchService,
+            IAddressSearchService addressSearchService,
             IOptions<VenueServiceSettings> venueSearchSettings,
             IVenueSearchHelper venueSearchHelper,
             IHttpContextAccessor contextAccessor,
@@ -63,14 +64,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
             ICourseService courseService)
         {
             Throw.IfNull(logger, nameof(logger));
-            Throw.IfNull(postCodeSearchService, nameof(postCodeSearchService));
+            Throw.IfNull(addressSearchService, nameof(addressSearchService));
             Throw.IfNull(venueSearchSettings, nameof(venueSearchSettings));
             Throw.IfNull(contextAccessor, nameof(contextAccessor));
             Throw.IfNull(venueService, nameof(venueService));
             Throw.IfNull(courseService, nameof(courseService));
 
             _logger = logger;
-            _postCodeSearchService = postCodeSearchService;
+            _addressSearchService = addressSearchService;
             _venueServiceSettings = venueSearchSettings.Value;
             _venueSearchHelper = venueSearchHelper;
             _contextAccessor = contextAccessor;
@@ -258,25 +259,20 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             if (!string.IsNullOrEmpty(requestModel.PostcodeId))
             {
-                var criteria = new AddressSelectionCriteria(requestModel.PostcodeId);
-                var searchResult = await _postCodeSearchService.RetrieveAsync(criteria);
+                var searchResult = await _addressSearchService.GetById(requestModel.PostcodeId);
 
-                if (searchResult.IsSuccess && searchResult.HasValue)
+                if (searchResult != null)
                 {
                     viewModel.Address = new AddressModel
                     {
                         //Id = searchResult.Value.Id,
-                        AddressLine1 = searchResult.Value.Line1,
-                        AddressLine2 = searchResult.Value.Line2,
-                        TownOrCity = searchResult.Value.City,
-                        County = searchResult.Value.County,
-                        Postcode = searchResult.Value.PostCode
+                        AddressLine1 = searchResult.Line1,
+                        AddressLine2 = searchResult.Line2,
+                        TownOrCity = searchResult.PostTown,
+                        County = searchResult.County,
+                        Postcode = searchResult.Postcode
                     };
                     viewModel.Id = requestModel.Id;
-                }
-                else
-                {
-                    viewModel.Error = searchResult.Error;
                 }
             }
             else
