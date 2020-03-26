@@ -124,8 +124,6 @@ namespace Dfc.CourseDirectory.Web
             services.Configure<LarsSearchSettings>(Configuration.GetSection(nameof(LarsSearchSettings)));
             services.AddScoped<ILarsSearchService, LarsSearchService>();
 
-            services.Configure<PostCodeSearchSettings>(Configuration.GetSection(nameof(PostCodeSearchSettings)));
-            services.AddScoped<IPostCodeSearchService, PostCodeSearchService>();
             services.AddScoped<ILarsSearchHelper, LarsSearchHelper>();
             services.AddScoped<IPaginationHelper, PaginationHelper>();
 
