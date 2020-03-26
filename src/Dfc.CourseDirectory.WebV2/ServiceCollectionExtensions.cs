@@ -135,6 +135,8 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddSingleton<IProviderContextProvider, ProviderContextProvider>();
             services.AddSingleton(new LoqateAddressSearch.Options() { Key = configuration["PostCodeSearchSettings:Key"] });
             services.AddSingleton<IAddressSearchService, AddressSearchService>();
+            services.AddTransient<ISignInAction, DfeUserInfoHelper>();
+            services.AddTransient<ISignInAction, SignInTracker>();
 
 #if DEBUG
             if (configuration["UseLocalFileMptxStateProvider"]?.Equals("true", StringComparison.OrdinalIgnoreCase) ?? false)
@@ -240,11 +242,20 @@ namespace Dfc.CourseDirectory.WebV2
                             ctx.Properties.IsPersistent = true;
                             ctx.Properties.ExpiresUtc = DateTime.UtcNow.Add(overallSessionTimeout);
 
-                            var helper = ctx.HttpContext.RequestServices.GetRequiredService<DfeUserInfoHelper>();
-                            await helper.AppendAdditionalClaims(ctx.Principal);
+                            var userInfo = ClaimsPrincipalCurrentUserProvider.MapUserInfoFromPrincipal(ctx.Principal);
 
-                            var signInTracker = ctx.HttpContext.RequestServices.GetRequiredService<SignInTracker>();
-                            await signInTracker.RecordSignIn(ctx.Principal);
+                            var signInContext = new SignInContext(ctx.Principal)
+                            {
+                                UserInfo = userInfo
+                            };
+
+                            var signInActions = ctx.HttpContext.RequestServices.GetServices<ISignInAction>();
+                            foreach (var a in signInActions)
+                            {
+                                await a.OnUserSignedIn(signInContext);
+                            }
+
+                            ctx.Principal = ClaimsPrincipalCurrentUserProvider.GetPrincipalFromSignInContext(signInContext);
                         }
                     };
                 });

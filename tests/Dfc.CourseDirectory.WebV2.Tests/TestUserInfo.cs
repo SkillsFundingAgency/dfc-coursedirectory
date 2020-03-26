@@ -201,7 +201,16 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                 var signInTracker = scope.ServiceProvider.GetRequiredService<SignInTracker>();
 
                 var principal = ToPrincipal();
-                await signInTracker.RecordSignIn(principal);
+                await signInTracker.RecordSignIn(
+                    new AuthenticatedUserInfo()
+                    {
+                        Email = Email,
+                        FirstName = FirstName,
+                        LastName = LastName,
+                        ProviderId = ProviderId,
+                        Role = Role,
+                        UserId = UserId
+                    });
 
                 // REVIEW: Is there a better way of doing this?
                 var transaction = scope.ServiceProvider.GetRequiredService<SqlTransaction>();
