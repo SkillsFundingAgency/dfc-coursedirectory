@@ -15,6 +15,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ListProviders
 
     public class ViewModel
     {
+        public IReadOnlyCollection<ProviderApprenticeshipQAInfo> NotStarted { get; set; }
         public IReadOnlyCollection<ProviderApprenticeshipQAInfo> Submitted { get; set; }
         public IReadOnlyCollection<ProviderApprenticeshipQAInfo> InProgress { get; set; }
         public IReadOnlyCollection<ProviderApprenticeshipQAInfo> Failed { get; set; }
@@ -38,6 +39,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ListProviders
             {
                 Statuses = new[]
                 {
+                    ApprenticeshipQAStatus.NotStarted,
                     ApprenticeshipQAStatus.Submitted,
                     ApprenticeshipQAStatus.Failed,
                     ApprenticeshipQAStatus.InProgress,
@@ -66,6 +68,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ListProviders
                 .Where(i => i.ApprenticeshipQAStatus.HasFlag(ApprenticeshipQAStatus.UnableToComplete))
                 .ToList();
 
+            var notStarted = infos
+                .Where(i => !unableToComplete.Contains(i))
+                .Where(i => i.ApprenticeshipQAStatus == ApprenticeshipQAStatus.NotStarted)
+                .ToList();
+
             var submitted = infos
                 .Where(i => !unableToComplete.Contains(i))
                 .Where(i => i.ApprenticeshipQAStatus == ApprenticeshipQAStatus.Submitted)
@@ -83,6 +90,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ListProviders
 
             return new ViewModel()
             {
+                NotStarted = notStarted,
                 Submitted = submitted,
                 Failed = failed,
                 InProgress = inProgress,

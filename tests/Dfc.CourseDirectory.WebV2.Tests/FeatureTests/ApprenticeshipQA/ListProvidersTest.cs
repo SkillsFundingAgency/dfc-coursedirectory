@@ -101,6 +101,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             var doc = await response.GetDocument();
 
+            Assert.Equal("You have no new providers.", doc.QuerySelector("#notstarted p").TextContent);
             Assert.Equal("You have no providers ready to QA.", doc.QuerySelector("#submitted p").TextContent);
             Assert.Equal("You have no providers in progress.", doc.QuerySelector("#in-progress p").TextContent);
             Assert.Equal("You have no providers that have failed QA.", doc.QuerySelector("#fail p").TextContent);
