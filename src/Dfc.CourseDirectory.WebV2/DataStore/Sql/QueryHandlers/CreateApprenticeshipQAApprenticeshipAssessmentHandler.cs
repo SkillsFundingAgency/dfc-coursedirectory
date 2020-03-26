@@ -1,5 +1,4 @@
-﻿
-using System.Data.SqlClient;
+﻿using System.Data.SqlClient;
 using System.Threading.Tasks;
 using Dapper;
 using Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries;

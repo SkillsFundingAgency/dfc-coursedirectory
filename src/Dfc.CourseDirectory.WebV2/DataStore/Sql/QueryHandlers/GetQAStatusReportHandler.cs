@@ -11,7 +11,6 @@ namespace Dfc.CourseDirectory.WebV2.DataStore.Sql.QueryHandlers
     {
         public async Task<IReadOnlyCollection<GetQAStatusReportResult>> Execute(SqlTransaction transaction, GetQAStatusReport query)
         {
-
             var sql = @"
 SELECT p.ProviderID, 
 CASE  assessment.Passed WHEN 1 THEN assessment.AssessedOn ELSE null end AS PassedQAOn,
@@ -31,8 +30,7 @@ GROUP BY ProviderId, SubmittedByUserId
 LEFT JOIN [Pttcd].[ApprenticeshipQASubmissionProviderAssessments] assessment on x.LatestApprenticeshipQASubmissionId = assessment.ApprenticeshipQASubmissionId
 LEFT JOIN [Pttcd].[Users] users on users.UserId=x.SubmittedByUserId";
 
-            var paramz = new { };
-            return (await transaction.Connection.QueryAsync<GetQAStatusReportResult>(sql, paramz, transaction)).AsList();
+            return (await transaction.Connection.QueryAsync<GetQAStatusReportResult>(sql, transaction)).AsList();
         }
     }
 }

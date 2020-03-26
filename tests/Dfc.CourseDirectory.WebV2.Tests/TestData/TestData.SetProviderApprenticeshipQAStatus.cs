@@ -10,7 +10,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         public Task SetProviderApprenticeshipQAStatus(Guid providerId, ApprenticeshipQAStatus status) =>
             WithSqlQueryDispatcher(async dispatcher =>
             {
-                var user = await dispatcher.ExecuteQuery(new SetProviderApprenticeshipQAStatus()
+                await dispatcher.ExecuteQuery(new SetProviderApprenticeshipQAStatus()
                 {
                     ProviderId = providerId,
                     ApprenticeshipQAStatus = status
