@@ -158,14 +158,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         }
     }
 
-    public class CurrentProviderModelBinderTestController : Controller
+    public class ProviderContextModelBinderTestController : Controller
     {
         [HttpGet("currentprovideractionfiltertests")]
-        [AllowNoCurrentProvider]  // Prevent filter from modifying response
+        [AllowNoProviderContext]  // Prevent filter from modifying response
         public IActionResult Get(ProviderInfo providerInfo) => Json(providerInfo);
 
         [HttpGet("currentprovideractionfiltertests/from-route/{providerId}")]
-        [AllowNoCurrentProvider]  // Prevent filter from modifying response
+        [AllowNoProviderContext]  // Prevent filter from modifying response
         public IActionResult GetFromRoute(ProviderInfo providerInfo) => Json(providerInfo);
     }
 }

@@ -36,13 +36,13 @@ namespace Dfc.CourseDirectory.WebV2.TagHelpers
                 return;
             }
 
-            var currentProviderFeature = _httpContextAccessor.HttpContext.Features.Get<ProviderContextFeature>();
-            if (currentProviderFeature == null)
+            var providerContextFeature = _httpContextAccessor.HttpContext.Features.Get<ProviderContextFeature>();
+            if (providerContextFeature == null)
             {
                 return;
             }
 
-            var currentProviderId = currentProviderFeature.ProviderInfo.ProviderId;
+            var currentProviderId = providerContextFeature.ProviderInfo.ProviderId;
 
             if (output.Attributes["method"]?.Value.ToString().ToLower() == "post")
             {
