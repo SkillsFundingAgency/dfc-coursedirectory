@@ -8,6 +8,7 @@ using Dfc.CourseDirectory.WebV2.Behaviors;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
 using Dfc.CourseDirectory.WebV2.DataStore.Sql;
 using Dfc.CourseDirectory.WebV2.Filters;
+using Dfc.CourseDirectory.WebV2.LoqateAddressSearch;
 using Dfc.CourseDirectory.WebV2.ModelBinding;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using Dfc.CourseDirectory.WebV2.Security;
@@ -132,6 +133,8 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddSingleton<IMptxStateProvider, SessionMptxStateProvider>();
             services.AddSingleton<MptxInstanceContextFactory>();
             services.AddSingleton<IProviderContextProvider, ProviderContextProvider>();
+            services.AddSingleton(new LoqateAddressSearch.Options() { Key = configuration["PostCodeSearchSettings:Key"] });
+            services.AddSingleton<IAddressSearchService, AddressSearchService>();
 
 #if DEBUG
             if (configuration["UseLocalFileMptxStateProvider"]?.Equals("true", StringComparison.OrdinalIgnoreCase) ?? false)
