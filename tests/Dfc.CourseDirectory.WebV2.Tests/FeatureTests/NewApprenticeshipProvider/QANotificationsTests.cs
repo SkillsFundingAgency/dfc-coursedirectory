@@ -48,6 +48,32 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 Assert.Equal(expectedNotificationId, notification.Id);
             }
         }
+
+        [Theory]
+        [InlineData(ApprenticeshipQAStatus.NotStarted, "pttcd-new-apprenticeship-provider__qa-notifications-not-started")]
+        [InlineData(ApprenticeshipQAStatus.Submitted, "pttcd-new-apprenticeship-provider__qa-notifications-submitted")]
+        [InlineData(ApprenticeshipQAStatus.Submitted | ApprenticeshipQAStatus.UnableToComplete, "pttcd-new-apprenticeship-provider__qa-notifications-submitted")]
+        [InlineData(ApprenticeshipQAStatus.InProgress, "pttcd-new-apprenticeship-provider__qa-notifications-submitted")]
+        [InlineData(ApprenticeshipQAStatus.Failed, "pttcd-new-apprenticeship-provider__qa-notifications-failed")]
+        [InlineData(ApprenticeshipQAStatus.Passed, "pttcd-new-apprenticeship-provider__qa-notifications-passed")]
+        public async Task FEOnlyProviderRendersNoMessage(ApprenticeshipQAStatus qaStatus, string notificationId)
+        {
+            // Arrange
+            var providerId = await TestData.CreateProvider(
+                apprenticeshipQAStatus: qaStatus,
+                providerType: ProviderType.FE);
+
+            await User.AsProviderUser(providerId, ProviderType.FE);
+
+            // Act
+            var response = await HttpClient.GetAsync("QANotificationsTests");
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+
+            var doc = await response.GetDocument();
+            Assert.Null(doc.GetElementById(notificationId));
+        }
     }
 
     public class QANotificationsTestsController : Controller

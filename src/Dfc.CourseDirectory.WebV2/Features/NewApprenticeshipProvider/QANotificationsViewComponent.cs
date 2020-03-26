@@ -9,13 +9,16 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
     {
         private readonly IProviderContextProvider _providerContextProvider;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
+        private readonly IProviderInfoCache _providerInfoCache;
 
         public QANotificationsViewComponent(
             IProviderContextProvider providerContextProvider,
-            ISqlQueryDispatcher sqlQueryDispatcher)
+            ISqlQueryDispatcher sqlQueryDispatcher,
+            IProviderInfoCache providerInfoCache)
         {
             _providerContextProvider = providerContextProvider;
             _sqlQueryDispatcher = sqlQueryDispatcher;
+            _providerInfoCache = providerInfoCache;
         }
 
         public async Task<IViewComponentResult> InvokeAsync()
@@ -26,9 +29,17 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
                 new GetProviderApprenticeshipQAStatus()
                 {
                     ProviderId = providerId
-                }) ?? Models.ApprenticeshipQAStatus.NotStarted;
+                });
 
-            return View("~/Features/NewApprenticeshipProvider/QANotifications.cshtml", qaStatus);
+            var providerInfo = await _providerInfoCache.GetProviderInfo(providerId);
+
+            var vm = new QANotificationsViewModel()
+            {
+                ProviderType = providerInfo.ProviderType,
+                Status = qaStatus.Value
+            };
+
+            return View("~/Features/NewApprenticeshipProvider/QANotifications.cshtml", vm);
         }
     }
 }
