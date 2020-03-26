@@ -48,9 +48,11 @@ namespace Dfc.CourseDirectory.WebV2.Behaviors
                     ProviderId = providerId
                 });
 
+            var effectiveQaStatus = qaStatus.ValueOrDefault();
+
             var providerInfo = await _providerInfoCache.GetProviderInfo(providerId);
 
-            if (qaStatus != ApprenticeshipQAStatus.NotStarted ||
+            if (effectiveQaStatus != ApprenticeshipQAStatus.NotStarted ||
                 !providerInfo.ProviderType.HasFlag(ProviderType.Apprenticeships))
             {
                 throw new ErrorException<InvalidQAStatus>(new InvalidQAStatus());

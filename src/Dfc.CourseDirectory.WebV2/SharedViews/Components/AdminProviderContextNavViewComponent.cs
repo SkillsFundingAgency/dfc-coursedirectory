@@ -29,7 +29,7 @@ namespace Dfc.CourseDirectory.WebV2.SharedViews.Components
             var vm = new ProviderNavViewModel()
             {
                 ApprenticeshipQAFeatureIsEnabled = _featureFlagProvider.HaveFeature(FeatureFlags.ApprenticeshipQA),
-                ApprenticeshipQAStatus = qaStatus,
+                ApprenticeshipQAStatus = qaStatus ?? Models.ApprenticeshipQAStatus.NotStarted,
                 ProviderContext = providerInfo
             };
 

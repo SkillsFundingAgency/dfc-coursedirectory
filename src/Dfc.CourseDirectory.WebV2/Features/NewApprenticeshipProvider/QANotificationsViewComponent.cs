@@ -26,7 +26,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
                 new GetProviderApprenticeshipQAStatus()
                 {
                     ProviderId = providerId
-                });
+                }) ?? Models.ApprenticeshipQAStatus.NotStarted;
 
             return View("~/Features/NewApprenticeshipProvider/QANotifications.cshtml", qaStatus);
         }

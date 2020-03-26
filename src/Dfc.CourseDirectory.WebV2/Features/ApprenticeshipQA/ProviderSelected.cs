@@ -109,7 +109,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderSelected
                         AssessmentCompleted = latestSubmission.ApprenticeshipAssessmentsPassed != null
                     })
                     .ToList(),
-                ApprenticeshipQAStatus = qaStatus,
+                ApprenticeshipQAStatus = qaStatus.Value,
                 CanComplete = canComplete,
                 ProviderAssessmentCompleted = latestSubmission.ProviderAssessmentPassed != null,
                 ProviderId = request.ProviderId,

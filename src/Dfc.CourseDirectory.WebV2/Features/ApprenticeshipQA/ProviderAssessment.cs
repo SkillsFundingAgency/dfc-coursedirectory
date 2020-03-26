@@ -223,7 +223,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
             return new Data()
             {
                 Provider = provider,
-                QAStatus = qaStatus,
+                QAStatus = qaStatus.ValueOrDefault(),
                 LatestSubmission = latestSubmission,
                 LatestAssessment = assessment
             };

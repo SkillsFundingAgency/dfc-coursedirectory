@@ -36,9 +36,11 @@ namespace Dfc.CourseDirectory.WebV2.Behaviors
                     ProviderId = providerId
                 });
 
-            var isPermitted = qaStatus.HasFlag(ApprenticeshipQAStatus.UnableToComplete) ?
+            var effectiveQaStatus = qaStatus.ValueOrDefault();
+
+            var isPermitted = effectiveQaStatus.HasFlag(ApprenticeshipQAStatus.UnableToComplete) ?
                 _descriptor.PermittedStatuses.Contains(ApprenticeshipQAStatus.UnableToComplete) :
-                _descriptor.PermittedStatuses.Contains(qaStatus);
+                _descriptor.PermittedStatuses.Contains(effectiveQaStatus);
 
             if (!isPermitted)
             {
