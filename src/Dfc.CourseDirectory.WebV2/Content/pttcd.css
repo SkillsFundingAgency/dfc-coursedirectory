@@ -41,7 +41,7 @@
 }
 
 .pttcd-apprenticeship-qa-info-panel--first {
-    border-top: 8px solid #207E77;
+    border-top: 2px solid #207E77;
 }
 
 .mce-content-body {
@@ -123,6 +123,15 @@
 
 .pttcd-new-apprenticeship-provider__provider-detail-confirmation__marketing-information__header__link {
     flex: 0;
+}
+
+.pttcd-new-apprenticeship-provider__provider-detail-contact-info-panel {
+    background-color: #f8f8f8;
+    padding: 1rem 1rem .5rem 1rem;
+}
+
+.pttcd-new-apprenticeship-provider__provider-detail-contact-info-panel--first {
+    border-top: 8px solid #207E77;
 }
 
 .pttcd-radios--inline-conditionals .govuk-radios__conditional {
