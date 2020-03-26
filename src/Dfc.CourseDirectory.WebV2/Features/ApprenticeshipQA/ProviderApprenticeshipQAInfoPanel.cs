@@ -73,7 +73,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderApprentice
 
             var contact = provider.ProviderContact
                 .OrderByDescending(c => c.LastUpdated)
-                .SingleOrDefault(c => c.ContactType == "L");
+                .SingleOrDefault(c => c.ContactType == "P");
 
             var contactName = contact?.ContactPersonalDetails.PersonGivenName != null && contact?.ContactPersonalDetails.PersonFamilyName != null ?
                 string.Join(" ", contact.ContactPersonalDetails.PersonGivenName) + " " +
