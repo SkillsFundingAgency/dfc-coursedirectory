@@ -60,15 +60,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             });
             Assert.Equal(CreateProviderResult.Ok, result);
 
-            if (apprenticeshipQAStatus != ApprenticeshipQAStatus.NotStarted)
-            {
-                await WithSqlQueryDispatcher(
-                    dispatcher => dispatcher.ExecuteQuery(new SetProviderApprenticeshipQAStatus()
-                    {
-                        ProviderId = providerId,
-                        ApprenticeshipQAStatus = apprenticeshipQAStatus
-                    }));
-            }
+            await WithSqlQueryDispatcher(
+                dispatcher => dispatcher.ExecuteQuery(new SetProviderApprenticeshipQAStatus()
+                {
+                    ProviderId = providerId,
+                    ApprenticeshipQAStatus = apprenticeshipQAStatus
+                }));
 
             return providerId;
         }

@@ -25,9 +25,16 @@
         </h2>
         <div class="pttcd-apprenticeship-qa-provider-selected-summary pttcd-apprenticeship-qa-provider-selected-provider govuk-!-margin-bottom-9">
             <div class="pttcd-apprenticeship-qa-provider-selected-summary-label">
-                <a asp-action="ProviderAssessment" asp-route-providerId="@Model.ProviderId" class="govuk-link">
-                    Provider information
-                </a>
+                @if (Model.HaveSubmission)
+                {
+                    <a asp-action="ProviderAssessment" asp-route-providerId="@Model.ProviderId" class="govuk-link">
+                        Provider information
+                    </a>
+                }
+                else
+                {
+                    <text>Not submitted</text>
+                }
             </div>
             <div class="pttcd-apprenticeship-qa-provider-selected-summary-status">
                 @if (Model.ProviderAssessmentCompleted)
@@ -40,19 +47,32 @@
         <h2 class="govuk-heading-m">
             Apprenticeship training courses
         </h2>
-        @foreach (var app in Model.ApprenticeshipAssessments)
+        @if (Model.HaveSubmission)
+        {
+            @foreach (var app in Model.ApprenticeshipAssessments)
+            {
+                <div class="pttcd-apprenticeship-qa-provider-selected-summary pttcd-apprenticeship-qa-provider-selected-apprenticeship govuk-!-margin-bottom-9">
+                    <div class="pttcd-apprenticeship-qa-provider-selected-summary-label">
+                        <a asp-action="ApprenticeshipAssessment" asp-route-apprenticeshipId="@app.ApprenticeshipId" class="govuk-link">
+                            @app.ApprenticeshipTitle
+                        </a>
+                    </div>
+                    <div class="pttcd-apprenticeship-qa-provider-selected-summary-status">
+                        @if (app.AssessmentCompleted)
+                        {
+                            <govuk-tag>Completed</govuk-tag>
+                        }
+                    </div>
+                </div>
+            }
+        }
+        else
         {
             <div class="pttcd-apprenticeship-qa-provider-selected-summary pttcd-apprenticeship-qa-provider-selected-apprenticeship govuk-!-margin-bottom-9">
                 <div class="pttcd-apprenticeship-qa-provider-selected-summary-label">
-                    <a asp-action="ApprenticeshipAssessment" asp-route-apprenticeshipId="@app.ApprenticeshipId" class="govuk-link">
-                        @app.ApprenticeshipTitle
-                    </a>
+                    Not submitted
                 </div>
                 <div class="pttcd-apprenticeship-qa-provider-selected-summary-status">
-                    @if (app.AssessmentCompleted)
-                    {
-                        <govuk-tag>Completed</govuk-tag>
-                    }
                 </div>
             </div>
         }
