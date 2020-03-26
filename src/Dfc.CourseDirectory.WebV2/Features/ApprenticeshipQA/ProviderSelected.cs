@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.Behaviors;
 using Dfc.CourseDirectory.WebV2.Behaviors.Errors;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries;
@@ -11,7 +10,6 @@ using Dfc.CourseDirectory.WebV2.DataStore.Sql;
 using Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.WebV2.Models;
 using MediatR;
-using OneOf.Types;
 
 namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderSelected
 {
@@ -29,6 +27,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderSelected
         public Guid ProviderId { get; set; }
         public string ProviderName { get; set; }
         public ApprenticeshipQAStatus ApprenticeshipQAStatus { get; set; }
+        public bool HaveSubmission { get; set; }
         public bool ProviderAssessmentCompleted { get; set; }
         public IReadOnlyCollection<ViewModelApprenticeshipSubmission> ApprenticeshipAssessments { get; set; }
         public bool CanComplete { get; set; }
@@ -41,9 +40,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderSelected
         public bool AssessmentCompleted { get; set; }
     }
 
-    public class QueryHandler :
-        IRequestHandler<Query, ViewModel>,
-        IRestrictQAStatus<Query>
+    public class QueryHandler : IRequestHandler<Query, ViewModel>
     {
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
@@ -55,15 +52,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderSelected
             _sqlQueryDispatcher = sqlQueryDispatcher;
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
         }
-
-        IEnumerable<ApprenticeshipQAStatus> IRestrictQAStatus<Query>.PermittedStatuses { get; } = new[]
-        {
-            ApprenticeshipQAStatus.Submitted,
-            ApprenticeshipQAStatus.InProgress,
-            ApprenticeshipQAStatus.Failed,
-            ApprenticeshipQAStatus.Passed,
-            ApprenticeshipQAStatus.UnableToComplete
-        };
 
         public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
         {
@@ -90,18 +78,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderSelected
                     ProviderId = request.ProviderId
                 });
 
-            if (maybeLatestSubmission.Value is None)
-            {
-                throw new ErrorException<NoSubmission>(new NoSubmission());
-            }
-
-            var latestSubmission = maybeLatestSubmission.AsT1;
+            var latestSubmission = maybeLatestSubmission.Value as ApprenticeshipQASubmission;
 
             var canComplete = qaStatus == ApprenticeshipQAStatus.InProgress && latestSubmission.Passed != null;
 
             return new ViewModel()
             {
-                ApprenticeshipAssessments = latestSubmission.Apprenticeships
+                ApprenticeshipAssessments = latestSubmission?.Apprenticeships
                     .Select(a => new ViewModelApprenticeshipSubmission()
                     {
                         ApprenticeshipId = a.ApprenticeshipId,
@@ -109,15 +92,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderSelected
                         AssessmentCompleted = latestSubmission.ApprenticeshipAssessmentsPassed != null
                     })
                     .ToList(),
-                ApprenticeshipQAStatus = qaStatus.Value,
+                ApprenticeshipQAStatus = qaStatus.ValueOrDefault(),
+                HaveSubmission = latestSubmission != null,
                 CanComplete = canComplete,
-                ProviderAssessmentCompleted = latestSubmission.ProviderAssessmentPassed != null,
+                ProviderAssessmentCompleted = latestSubmission?.ProviderAssessmentPassed != null,
                 ProviderId = request.ProviderId,
                 ProviderName = provider.ProviderName
             };
         }
-
-        Task<Guid> IRestrictQAStatus<Query>.GetProviderId(Query request) =>
-            Task.FromResult(request.ProviderId);
     }
 }

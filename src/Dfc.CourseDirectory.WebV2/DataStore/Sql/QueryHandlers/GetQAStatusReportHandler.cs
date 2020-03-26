@@ -1,9 +1,8 @@
-﻿using Dapper;
-using Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
+using Dapper;
+using Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries;
 
 namespace Dfc.CourseDirectory.WebV2.DataStore.Sql.QueryHandlers
 {
@@ -28,7 +27,8 @@ FROM Pttcd.ApprenticeshipQASubmissions
 GROUP BY ProviderId, SubmittedByUserId
 ) x ON  p.ProviderId = x.ProviderId
 LEFT JOIN [Pttcd].[ApprenticeshipQASubmissionProviderAssessments] assessment on x.LatestApprenticeshipQASubmissionId = assessment.ApprenticeshipQASubmissionId
-LEFT JOIN [Pttcd].[Users] users on users.UserId=x.SubmittedByUserId";
+LEFT JOIN [Pttcd].[Users] users on users.UserId=x.SubmittedByUserId
+WHERE p.ApprenticeshipQAStatus <> 1";
 
             return (await transaction.Connection.QueryAsync<GetQAStatusReportResult>(sql, transaction: transaction)).AsList();
 

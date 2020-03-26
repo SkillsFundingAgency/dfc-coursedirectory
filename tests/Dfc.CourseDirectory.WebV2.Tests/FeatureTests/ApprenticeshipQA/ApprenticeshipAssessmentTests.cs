@@ -88,39 +88,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
-        [Theory]
-        [InlineData(ApprenticeshipQAStatus.NotStarted)]
-        public async Task Get_SubmissionAtInvalidStatusReturnsBadRequest(ApprenticeshipQAStatus qaStatus)
-        {
-            // Arrange
-            var ukprn = 12345;
-
-            var providerId = await TestData.CreateProvider(
-                ukprn: ukprn,
-                providerName: "Provider 1",
-                apprenticeshipQAStatus: qaStatus);
-
-            var providerUserId = $"{ukprn}-user";
-            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
-
-            var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
-
-            await TestData.CreateApprenticeshipQASubmission(
-                providerId,
-                submittedOn: Clock.UtcNow,
-                submittedByUserId: providerUserId,
-                providerMarketingInformation: "The overview",
-                apprenticeshipIds: new[] { apprenticeshipId });
-
-            await User.AsHelpdesk();
-
-            // Act
-            var response = await HttpClient.GetAsync($"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}");
-
-            // Assert
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        }
-
         [Fact]
         public async Task Get_NewSubmissionSucceeds()
         {

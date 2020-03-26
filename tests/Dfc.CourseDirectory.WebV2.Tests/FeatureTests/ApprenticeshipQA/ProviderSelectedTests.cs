@@ -66,26 +66,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
         }
 
         [Fact]
-        public async Task Get_NoSubmissionReturnsBadRequest()
-        {
-            // Arrange
-            var ukprn = 12345;
-
-            var providerId = await TestData.CreateProvider(
-                ukprn: ukprn,
-                providerName: "Provider 1",
-                apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted);
-
-            await User.AsHelpdesk();
-
-            // Act
-            var response = await HttpClient.GetAsync($"apprenticeship-qa/{providerId}");
-
-            // Assert
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        }
-
-        [Fact]
         public async Task Get_RendersExpectedOutput()
         {
             // Arrange
@@ -507,6 +487,29 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             Assert.Equal(
                 "Overall the provider information and apprenticeship training course has PASSED quality assurance.",
                 infoBox.TextContent.Trim());
+        }
+
+        [Fact]
+        public async Task Get_NoSubmissionReturnsOk()
+        {
+            // Arrange
+            var ukprn = 12345;
+
+            var providerId = await TestData.CreateProvider(
+                ukprn: ukprn,
+                providerName: "Provider 1",
+                apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted);
+
+            var providerUserId = $"{ukprn}-user";
+            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
+
+            await User.AsHelpdesk();
+
+            // Act
+            var response = await HttpClient.GetAsync($"apprenticeship-qa/{providerId}");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
     }
 }

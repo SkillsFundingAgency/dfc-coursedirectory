@@ -40,19 +40,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderApprentice
     {
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
-        private readonly IClock _clock;
-        private readonly ICurrentUserProvider _currentUserProvider;
 
         public Handler(
             ISqlQueryDispatcher sqlQueryDispatcher,
-            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
-            IClock clock,
-            ICurrentUserProvider currentUserProvider)
+            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
         {
             _sqlQueryDispatcher = sqlQueryDispatcher;
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
-            _clock = clock;
-            _currentUserProvider = currentUserProvider;
         }
 
         public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
@@ -68,14 +62,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderApprentice
                 throw new ErrorException<ProviderDoesNotExist>(new ProviderDoesNotExist());
             }
 
-            var lastAssessment = await _sqlQueryDispatcher.ExecuteQuery(
+            var lastSubmission = await _sqlQueryDispatcher.ExecuteQuery(
                 new GetLatestApprenticeshipQASubmissionForProvider()
                 {
                     ProviderId = request.ProviderId
                 });
 
-            var lastAssessedBy = lastAssessment.AsT1?.LastAssessedBy ?? _currentUserProvider.GetCurrentUser();
-            var lastAssessedOn = lastAssessment.AsT1?.LastAssessedOn ?? _clock.UtcNow;
+            var lastAssessedBy = (lastSubmission.Value as ApprenticeshipQASubmission)?.LastAssessedBy;
+            var lastAssessedOn = (lastSubmission.Value as ApprenticeshipQASubmission)?.LastAssessedOn;
 
             var contact = provider.ProviderContact
                 .OrderByDescending(c => c.LastUpdated)
