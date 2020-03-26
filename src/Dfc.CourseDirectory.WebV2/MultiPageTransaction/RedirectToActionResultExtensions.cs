@@ -17,7 +17,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             string instanceId)
         {
             result.RouteValues ??= new Microsoft.AspNetCore.Routing.RouteValueDictionary();
-            result.RouteValues.Add(MptxResourceFilter.InstanceIdQueryParameter, instanceId);
+            result.RouteValues.Add(Constants.InstanceIdQueryParameter, instanceId);
             return result;
         }
     }

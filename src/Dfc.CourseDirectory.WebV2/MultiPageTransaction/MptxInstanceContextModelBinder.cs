@@ -28,14 +28,15 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
         {
             var stateType = bindingContext.ModelType.GetGenericArguments()[0];
 
-            var feature = bindingContext.HttpContext.Features.Get<MptxInstanceFeature>();
+            var instanceContextProvider = bindingContext.HttpContext.RequestServices.GetRequiredService<MptxInstanceContextProvider>();
+            var instanceContext = instanceContextProvider.GetContext();
 
-            if (feature == null)
+            if (instanceContext == null)
             {
                 bindingContext.ModelState.AddModelError(bindingContext.ModelName, "No active MPTX instance.");
                 bindingContext.Result = ModelBindingResult.Failed();
             }
-            else if (feature.Instance.State != null && stateType != feature.Instance.State.GetType())
+            else if (stateType != instanceContext.State.GetType())
             {
                 bindingContext.ModelState.AddModelError(
                     bindingContext.ModelName,
@@ -47,7 +48,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
                 var model = ActivatorUtilities.CreateInstance(
                     bindingContext.HttpContext.RequestServices,
                     bindingContext.ModelType,
-                    feature.Instance);
+                    instanceContext.Instance);
                 bindingContext.Result = ModelBindingResult.Success(model);
             }
 

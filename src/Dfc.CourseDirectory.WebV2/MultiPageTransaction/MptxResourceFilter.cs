@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
@@ -12,7 +10,6 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
 {
     public class MptxResourceFilter : IAsyncResourceFilter
     {
-        public const string InstanceIdQueryParameter = "ffiid";
 
         public async Task OnResourceExecutionAsync(ResourceExecutingContext context, ResourceExecutionDelegate next)
         {
@@ -26,7 +23,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
                 return;
             }
 
-            var stateProvider = context.HttpContext.RequestServices.GetRequiredService<IMptxStateProvider>();
+            var mptxManager = context.HttpContext.RequestServices.GetRequiredService<MptxManager>();
 
             var request = context.HttpContext.Request;
 
@@ -34,23 +31,23 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             var startsAttribute = mptxActionAttribute as StartsMptxAttribute;
             var canStartFlow = startsAttribute != null;
 
-            var ffiid = request.Query[InstanceIdQueryParameter];
+            var ffiid = request.Query[Constants.InstanceIdQueryParameter];
             MptxInstance mptxInstance = null;
 
             if (ffiid.Count == 0)
             {
                 if (canStartFlow)
                 {
-                    // Begin a new flow
-                    var newState = CreateNewState(startsAttribute);
-                    var contextItems = GetContextItemsFromCaptures(startsAttribute);
-                    mptxInstance = stateProvider.CreateInstance(flowName, contextItems, newState);
-                    await InitializeState(mptxInstance, startsAttribute.StateType);
+                    mptxInstance = await mptxManager.CreateInstance(
+                        startsAttribute.FlowName,
+                        startsAttribute.StateType,
+                        request,
+                        startsAttribute.CapturesQueryParams);
 
                     // Redirect, appending the new instance ID
                     var currentUrlWithInstanceParam = QueryHelpers.AddQueryString(
                         request.Path + request.QueryString,
-                        InstanceIdQueryParameter,
+                        Constants.InstanceIdQueryParameter,
                         mptxInstance.InstanceId);
 
                     context.Result = new LocalRedirectResult(
@@ -62,7 +59,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             }
             else
             {
-                mptxInstance = stateProvider.GetInstance(ffiid);
+                mptxInstance = mptxManager.GetInstance(ffiid);
             }
 
             if (mptxInstance == null)
@@ -84,48 +81,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             var feature = new MptxInstanceFeature(mptxInstance);
             context.HttpContext.Features.Set(feature);
 
-            await next();
-
-            object CreateNewState(StartsMptxAttribute startsAttribute)
-            {
-                var stateType = startsAttribute.StateType;
-                var services = context.HttpContext.RequestServices;
-
-                return ActivatorUtilities.CreateInstance(services, stateType);
-            }
-
-            IReadOnlyDictionary<string, object> GetContextItemsFromCaptures(StartsMptxAttribute startsAttribute)
-            {
-                var dict = new Dictionary<string, object>();
-
-                var captures = startsAttribute.CapturesQueryParams;
-
-                foreach (var capture in captures)
-                {
-                    var val = (string)request.Query[capture];
-                    dict.Add(capture, val);
-                }
-
-                return dict;
-            }
-
-            async Task InitializeState(MptxInstance instance, Type stateType)
-            {
-                var services = context.HttpContext.RequestServices;
-
-                var initializerType = typeof(IInitializeMptxState<>).MakeGenericType(stateType);
-                var initializer = services.GetService(initializerType);
-
-                if (initializer != null)
-                {
-                    var instanceContextFactory = services.GetRequiredService<MptxInstanceContextFactory>();
-                    var context = instanceContextFactory.CreateContext(instance);
-
-                    await (Task)initializerType.GetMethod("Initialize").Invoke(
-                        initializer,
-                        new object[] { context });
-                }
-            }
+            await next();            
         }
     }
 }

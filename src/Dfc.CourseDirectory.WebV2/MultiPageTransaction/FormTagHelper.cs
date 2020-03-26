@@ -44,7 +44,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
 
                 var newAction = QueryHelpers.AddQueryString(
                     existingAction,
-                    MptxResourceFilter.InstanceIdQueryParameter,
+                    Constants.InstanceIdQueryParameter,
                     instanceId);
 
                 output.Attributes.SetAttribute("action", newAction);
@@ -53,7 +53,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             {
                 var hiddenField = new TagBuilder("input");
                 hiddenField.Attributes.Add("type", "hidden");
-                hiddenField.Attributes.Add("name", MptxResourceFilter.InstanceIdQueryParameter);
+                hiddenField.Attributes.Add("name", Constants.InstanceIdQueryParameter);
                 hiddenField.Attributes.Add("value", instanceId);
 
                 output.PreContent.AppendHtml(hiddenField);
