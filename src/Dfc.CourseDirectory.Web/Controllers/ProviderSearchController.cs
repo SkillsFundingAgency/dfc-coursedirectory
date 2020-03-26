@@ -19,6 +19,10 @@ using System.Collections.Generic;
 using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Web.ViewModels;
 using System.Diagnostics;
+using Dfc.CourseDirectory.WebV2.HttpContextFeatures;
+using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
+using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.WebV2;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -241,9 +245,19 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
 
         [Authorize(Policy = "ElevatedUserRole")]
-        public async Task<IActionResult> SearchProvider(string UKPRN)
+        public async Task<IActionResult> SearchProvider(
+            int UKPRN,
+            [FromServices] IProviderInfoCache providerInfoCache)
         {
-            _session.SetInt32("UKPRN", Convert.ToInt32(UKPRN));
+            if (HttpContext.Features.Get<ProviderContextFeature>() == null)
+            {
+                var providerId = await providerInfoCache.GetProviderIdForUkprn(UKPRN);
+                var providerInfo = await providerInfoCache.GetProviderInfo(providerId.Value);
+
+                HttpContext.Features.Set(new ProviderContextFeature(providerInfo));
+            }
+
+            _session.SetInt32("UKPRN", UKPRN);
             return View("../Provider/Dashboard");
         }
     }
