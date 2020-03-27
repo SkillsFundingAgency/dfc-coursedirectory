@@ -31,6 +31,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderSelected
         public bool ProviderAssessmentCompleted { get; set; }
         public IReadOnlyCollection<ViewModelApprenticeshipSubmission> ApprenticeshipAssessments { get; set; }
         public bool CanComplete { get; set; }
+        public bool? SubmissionPassed { get; set; }
     }
 
     public class ViewModelApprenticeshipSubmission
@@ -97,7 +98,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderSelected
                 CanComplete = canComplete,
                 ProviderAssessmentCompleted = latestSubmission?.ProviderAssessmentPassed != null,
                 ProviderId = request.ProviderId,
-                ProviderName = provider.ProviderName
+                ProviderName = provider.ProviderName,
+                SubmissionPassed = latestSubmission.Passed
             };
         }
     }
