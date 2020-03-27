@@ -35,8 +35,21 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Content\components\checkboxes.css" />
+    <None Remove="Content\components\inset-text.css" />
+    <None Remove="Content\components\radios.css" />
+    <None Remove="Content\components\search-input.css" />
+    <None Remove="Content\components\tinymce.css" />
+    <None Remove="Content\layout.css" />
     <None Remove="Content\nav.css" />
     <None Remove="Content\notification.css" />
+    <None Remove="Content\pages\apprenticeship-qa\apprenticeship-qa-info-panel.css" />
+    <None Remove="Content\pages\apprenticeship-qa\provider-selected.css" />
+    <None Remove="Content\pages\apprenticeships\find-standard-or-framework.css" />
+    <None Remove="Content\pages\helpdesk-dashboard.css" />
+    <None Remove="Content\pages\new-apprenticeship-provider\provider-detail-confirmation.css" />
+    <None Remove="Content\pages\new-apprenticeship-provider\provider-detail-info-panel.css" />
+    <None Remove="Content\utilities\width.css" />
   </ItemGroup>
 
 </Project>

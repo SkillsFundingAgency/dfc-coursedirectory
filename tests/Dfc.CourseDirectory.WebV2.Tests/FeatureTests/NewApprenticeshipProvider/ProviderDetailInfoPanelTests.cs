@@ -66,19 +66,19 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             Assert.Equal(
                 "1st Line of Address\n2nd Line of Address\nThe Street\nThe Town\nUnited Kingdom\nAB1 2CD",
-                GetBlockLabelContent(doc, "pttcd-detail-info-panel__provider-address"));
+                GetBlockLabelContent(doc, "pttcd-new-apprenticeship-provider__provider-detail-info-panel__provider-address"));
             Assert.Equal(
                 "http://provider1.com",
-                GetBlockLabelContent(doc, "pttcd-detail-info-panel__provider-website"));
+                GetBlockLabelContent(doc, "pttcd-new-apprenticeship-provider__provider-detail-info-panel__provider-website"));
             Assert.Equal(
                 "The Contact",
-                GetBlockLabelContent(doc, "pttcd-detail-info-panel__provider-contact-name"));
+                GetBlockLabelContent(doc, "pttcd-new-apprenticeship-provider__provider-detail-info-panel__provider-contact-name"));
             Assert.Equal(
                 "email@provider1.com",
-                GetBlockLabelContent(doc, "pttcd-detail-info-panel__provider-email"));
+                GetBlockLabelContent(doc, "pttcd-new-apprenticeship-provider__provider-detail-info-panel__provider-email"));
             Assert.Equal(
                 "01234 567890",
-                GetBlockLabelContent(doc, "pttcd-detail-info-panel__provider-telephone"));
+                GetBlockLabelContent(doc, "pttcd-new-apprenticeship-provider__provider-detail-info-panel__provider-telephone"));
         }
 
         [Fact]
