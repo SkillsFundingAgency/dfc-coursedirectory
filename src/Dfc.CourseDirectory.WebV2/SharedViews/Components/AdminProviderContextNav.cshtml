@@ -4,7 +4,7 @@
     <div class="pttcd-subnav__provider-name">@Model.ProviderContext.ProviderName</div>
     <ul class="pttcd-subnav__items">
         <li class="pttcd-subnav__item">
-            <a asp-action="Index" asp-controller="Home" class="pttcd-subnav__item__link">
+            <a asp-action="SearchProvider" asp-controller="ProviderSearch" asp-route-UKPRN="@Model.ProviderContext.Ukprn" class="pttcd-subnav__item__link">
                 Home
             </a>
         </li>
