@@ -78,14 +78,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             var submittedRows = submitted.QuerySelectorAll("tbody>tr");
 
             var firstSubmittedRow = submittedRows[0];
-            Assert.Equal("Provider 1", firstSubmittedRow.QuerySelector(":nth-child(1)").TextContent);
-            Assert.Equal("12345", firstSubmittedRow.QuerySelector(":nth-child(2)").TextContent);
-            Assert.Equal("01 Apr 2018", firstSubmittedRow.QuerySelector(":nth-child(3)").TextContent);
+            Assert.Equal("Provider 2", firstSubmittedRow.QuerySelector(":nth-child(1)").TextContent);
+            Assert.Equal("23456", firstSubmittedRow.QuerySelector(":nth-child(2)").TextContent);
+            Assert.Equal("03 May 2019", firstSubmittedRow.QuerySelector(":nth-child(3)").TextContent);
 
             var secondSubmittedRow = submittedRows[1];
-            Assert.Equal("Provider 2", secondSubmittedRow.QuerySelector(":nth-child(1)").TextContent);
-            Assert.Equal("23456", secondSubmittedRow.QuerySelector(":nth-child(2)").TextContent);
-            Assert.Equal("03 May 2019", secondSubmittedRow.QuerySelector(":nth-child(3)").TextContent);
+            Assert.Equal("Provider 1", secondSubmittedRow.QuerySelector(":nth-child(1)").TextContent);
+            Assert.Equal("12345", secondSubmittedRow.QuerySelector(":nth-child(2)").TextContent);
+            Assert.Equal("01 Apr 2018", secondSubmittedRow.QuerySelector(":nth-child(3)").TextContent);
         }
 
         [Fact]

@@ -17,6 +17,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -257,6 +258,12 @@ namespace Dfc.CourseDirectory.WebV2
                             }
 
                             ctx.Principal = ClaimsPrincipalCurrentUserProvider.GetPrincipalFromSignInContext(signInContext);
+
+                            if (signInContext.Provider != null)
+                            {
+                                // For driving legacy views
+                                ctx.HttpContext.Session.SetInt32("UKPRN", signInContext.Provider.Ukprn);
+                            }
                         }
                     };
                 });
