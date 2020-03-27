@@ -8,7 +8,6 @@ using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries;
 using JWT.Algorithms;
 using JWT.Builder;
-using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -62,9 +61,17 @@ namespace Dfc.CourseDirectory.WebV2.Security
             }
             else if (filteredRoles.Count > 1)
             {
-                throw new NotSupportedException(
-                    $"Too many roles: " +
-                    $"{string.Join(", ", filteredRoles.Select(r => r.Name))}.");
+                // If Developer is set then ignore anything else
+                if (filteredRoles.Any(r => r.Name == RoleNames.Developer))
+                {
+                    filteredRoles.RemoveAll(r => r.Name != RoleNames.Developer);
+                }
+                else
+                {
+                    throw new NotSupportedException(
+                        $"Too many roles: " +
+                        $"{string.Join(", ", filteredRoles.Select(r => r.Name))}.");
+                }
             }
 
             context.UserInfo.Role = userOrgDetails.Roles.Single().Name;
