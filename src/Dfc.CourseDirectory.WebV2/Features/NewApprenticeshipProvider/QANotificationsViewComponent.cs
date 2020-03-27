@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.DataStore.Sql;
 using Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.WebV2.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
@@ -36,7 +37,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
             var vm = new QANotificationsViewModel()
             {
                 ProviderType = providerInfo.ProviderType,
-                Status = qaStatus.Value
+                Status = qaStatus.ValueOrDefault()
             };
 
             return View("~/Features/NewApprenticeshipProvider/QANotifications.cshtml", vm);
