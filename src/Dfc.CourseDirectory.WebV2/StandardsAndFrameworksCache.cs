@@ -68,6 +68,7 @@ namespace Dfc.CourseDirectory.WebV2
                 f => (f.FrameworkCode, f.ProgType, f.PathwayCode),
                 f => new Framework()
                 {
+                    CosmosId = f.Id,
                     FrameworkCode = f.FrameworkCode,
                     ProgType = f.ProgType,
                     PathwayCode = f.PathwayCode,
@@ -83,6 +84,7 @@ namespace Dfc.CourseDirectory.WebV2
                 s => (s.StandardCode, s.Version),
                 s => new Standard()
                 {
+                    CosmosId = s.Id,
                     StandardCode = s.StandardCode,
                     Version = s.Version,
                     StandardName = s.StandardName,
