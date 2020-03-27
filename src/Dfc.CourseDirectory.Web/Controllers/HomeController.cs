@@ -28,8 +28,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly IBlobStorageService _blobStorageService;
         private readonly IAuthorizationService _authorizationService;
 
-        private ISession _session => _contextAccessor.HttpContext.Session;
-
         public HomeController(
             ILogger<HomeController> logger,
             ILarsSearchService larsSearchService,
@@ -52,34 +50,33 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _authorizationService = authorizationService;
         }
 
-        public IActionResult Check()
+        [Authorize]
+        public IActionResult Index(string errmsg, [FromServices] IFeatureFlagProvider featureFlagProvider)
         {
-            int UKPRN = 0;
-            if (User.Identity.IsAuthenticated)
+            HttpContext.Session.SetInt32("ProviderSearch", 1);
+            HttpContext.Session.SetString("Option", "Home");
+            ViewBag.StatusMessage = errmsg;
+
+            ViewBag.HideHeaderBackLink = true;
+
+            var admin = _authorizationService.AuthorizeAsync(User, "ElevatedUserRole").Result;
+
+            if (admin.Succeeded)
             {
-                if (_session.GetInt32("UKPRN") == null)
+                if (featureFlagProvider.HaveFeature(FeatureFlags.ApprenticeshipQA))
                 {
-                    Claim UKPRNClaim = User.Claims.Where(x => x.Type == "UKPRN").SingleOrDefault();
-                    if (!String.IsNullOrEmpty(UKPRNClaim?.Value))
-                    {
-                        _session.SetInt32("UKPRN", Int32.Parse(UKPRNClaim.Value));
-                    }
+                    return RedirectToAction("Dashboard", "HelpdeskDashboard");
                 }
-
-                if (_session.GetInt32("UKPRN").HasValue)
+                else
                 {
-                    UKPRN = _session.GetInt32("UKPRN").Value;
-                }
-
-                var authorised = _authorizationService.AuthorizeAsync(User, "ElevatedUserRole").Result;
-
-                if (authorised.Succeeded)
-                {
-                    // Making sure this change goes through...
                     return RedirectToAction("Index", "SearchProvider");
                 }
+            }
+            else
+            {
+                var ukprn = HttpContext.Session.GetInt32("UKPRN");
 
-                IEnumerable<Course> courses = _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(UKPRN))
+                IEnumerable<Course> courses = _courseService.GetYourCoursesByUKPRNAsync(new CourseSearchCriteria(ukprn))
                                             .Result
                                             .Value
                                             .Value
@@ -93,66 +90,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     return RedirectToAction("Report", "Migration");
                 }
 
-                // Making sure this change goes through...
-                return Redirect("/");
-            }
-            else
-            {
-                return View("../Provider/Landing");
-            }
-        }
-
-        public IActionResult Index(string errmsg, [FromServices] IFeatureFlagProvider featureFlagProvider)
-        {
-            _session.SetInt32("ProviderSearch", 1);
-            _logger.LogMethodEnter();
-            _logger.LogTrace("0");
-            _logger.LogDebug("1");
-            _logger.LogInformation("2");
-            _logger.LogWarning("3");
-            _logger.LogError("4");
-            _logger.LogCritical("5");
-            _session.SetString("Option", "Home");
-            ViewBag.StatusMessage = errmsg;
-
-            ViewBag.HideHeaderBackLink = true;
-
-            if (User.Identity.IsAuthenticated)
-            {
-                if (_session.GetInt32("UKPRN") == null)
-                {
-                    Claim UKPRN = User.Claims.Where(x => x.Type == "UKPRN").SingleOrDefault();
-                    if (!String.IsNullOrEmpty(UKPRN?.Value))
-                    {
-                        _session.SetInt32("UKPRN", Int32.Parse(UKPRN.Value));
-                    }
-                }
-
-                var authorised = _authorizationService.AuthorizeAsync(User, "ElevatedUserRole").Result;
-
-                if (authorised.Succeeded)
-                {
-                    if (featureFlagProvider.HaveFeature(FeatureFlags.ApprenticeshipQA))
-                    {
-                        return RedirectToAction("Dashboard", "HelpdeskDashboard");
-                    }
-                    else
-                    {
-                        return RedirectToAction("Index", "SearchProvider");
-                    }
-                }
-
                 return View("../Provider/Dashboard");
             }
-            else
-            {
-                return View("../Provider/Landing");
-            }
         }
 
+        [Authorize]
         public IActionResult IndexSuccess(DashboardViewModel vm)
         {
-            if (_session.GetInt32("UKPRN") == null)
+            if (HttpContext.Session.GetInt32("UKPRN") == null)
             {
                 return View();
             }
@@ -160,33 +105,19 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 if (vm == null)
                 {
-                    vm = DashboardController.GetDashboardViewModel(_courseService, _blobStorageService, _session.GetInt32("UKPRN"), "");
+                    vm = DashboardController.GetDashboardViewModel(_courseService, _blobStorageService, HttpContext.Session.GetInt32("UKPRN"), "");
                 }
                 if (vm.PendingCourseCount > 0)
                 {
-                    _session.SetString("PendingCourses", "true");
+                    HttpContext.Session.SetString("PendingCourses", "true");
                 }
                 else
                 {
-                    _session.SetString("PendingCourses", "false");
+                    HttpContext.Session.SetString("PendingCourses", "false");
                 }
 
                 return View("Index", vm);
             }
-        }
-
-        public IActionResult About()
-        {
-            ViewData["Message"] = "Your application description page.";
-
-            return View();
-        }
-
-        public IActionResult Contact()
-        {
-            ViewData["Message"] = "Your contact page.";
-
-            return View();
         }
 
         [AllowDeactivatedProvider]
