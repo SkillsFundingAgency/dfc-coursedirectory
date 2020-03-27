@@ -1,0 +1,8 @@
+﻿.pttcd-apprenticeship-qa-info-panel {
+    background-color: #f8f8f8;
+    padding: 1rem 1rem .5rem 1rem;
+}
+
+.pttcd-apprenticeship-qa-info-panel--first {
+    border-top: 2px solid #207E77;
+}
