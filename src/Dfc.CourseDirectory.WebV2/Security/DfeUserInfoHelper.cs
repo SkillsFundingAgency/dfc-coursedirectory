@@ -15,14 +15,6 @@ namespace Dfc.CourseDirectory.WebV2.Security
 {
     public class DfeUserInfoHelper : ISignInAction, IDisposable
     {
-        private static readonly ISet<string> _knownRoles = new HashSet<string>(new[]
-        {
-            RoleNames.Developer,
-            RoleNames.Helpdesk,
-            RoleNames.ProviderSuperUser,
-            RoleNames.ProviderUser
-        });
-
         private readonly DfeSignInSettings _settings;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly HttpClient _httpClient;
@@ -51,30 +43,31 @@ namespace Dfc.CourseDirectory.WebV2.Security
 
             var userOrgDetails = await GetUserOrganisationDetails(organisationId, context.UserInfo.UserId);
 
-            var filteredRoles = userOrgDetails.Roles.Where(r => _knownRoles.Contains(r.Name)).ToList();
+            var roleNames = new HashSet<string>(userOrgDetails.Roles.Select(r => r.Name));
+            var normalizedRoles = NormalizeRoles(roleNames, out var isProviderScoped);
 
-            if (filteredRoles.Count == 0)
+            if (normalizedRoles.Count == 0)
             {
                 throw new InvalidOperationException(
                     $"No recognised roles found. " +
-                    $"Received: ${(userOrgDetails.Roles.Count > 0 ? string.Join(", ", userOrgDetails.Roles.Select(r => r.Name)) : "<none>")}.");
+                    $"Received: ${(userOrgDetails.Roles.Count > 0 ? string.Join(", ", roleNames) : "<none>")}.");
             }
-            else if (filteredRoles.Count > 1)
+            else if (normalizedRoles.Count > 1)
             {
-                // If Developer is set then ignore anything else
-                if (filteredRoles.Any(r => r.Name == RoleNames.Developer))
-                {
-                    filteredRoles.RemoveAll(r => r.Name != RoleNames.Developer);
-                }
-                else
-                {
-                    throw new NotSupportedException(
+                throw new NotSupportedException(
                         $"Too many roles: " +
-                        $"{string.Join(", ", filteredRoles.Select(r => r.Name))}.");
-                }
+                        $"{string.Join(", ", normalizedRoles)}.");
             }
 
-            context.UserInfo.Role = userOrgDetails.Roles.Single().Name;
+            var role = normalizedRoles.Single();
+
+            if (isProviderScoped && !ukprn.HasValue)
+            {
+                throw new InvalidOperationException(
+                    $"Expected a UKPRN for user with role: {role} organisation: {organisationId}.");
+            }
+
+            context.UserInfo.Role = role;
             context.DfeSignInOrganisationId = organisationId;
             context.ProviderUkprn = ukprn;
 
@@ -115,12 +108,47 @@ namespace Dfc.CourseDirectory.WebV2.Security
             return JsonConvert.DeserializeObject<DFEUserInfo>(responseJson);
         }
 
+        private IReadOnlyCollection<string> NormalizeRoles(
+            IReadOnlyCollection<string> roleNames,
+            out bool isProviderScoped)
+        {
+            if (roleNames.Contains("Developer") ||
+                roleNames.Contains("Admin User") ||
+                roleNames.Contains("Admin Superuser"))
+            {
+                isProviderScoped = false;
+                return new[] { RoleNames.Developer };
+            }
+
+            if (roleNames.Contains("Helpdesk"))
+            {
+                isProviderScoped = false;
+                return new[] { RoleNames.Helpdesk };
+            }
+
+            if (roleNames.Contains("Provider Superuser"))
+            {
+                isProviderScoped = true;
+                return new[] { RoleNames.ProviderSuperUser };
+            }
+
+            if (roleNames.Contains("Provider User"))
+            {
+                isProviderScoped = true;
+                return new[] { RoleNames.ProviderUser };
+            }
+
+            // No valid roles...
+            isProviderScoped = default;
+            return Array.Empty<string>();
+        }
+
         private class DFEUserInfo
         {
             public Guid ServiceId { get; set; }
             public Guid OrganisationId { get; set; }
             public Guid UserId { get; set; }
-            public IList<Role> Roles { get; set; }
+            public IReadOnlyCollection<Role> Roles { get; set; }
         }
 
         private class Role
