@@ -16,19 +16,24 @@ namespace Dfc.CourseDirectory.WebV2.Security
 {
     public class DfeUserInfoHelper : ISignInAction, IDisposable
     {
+        private static readonly ISet<string> _knownRoles = new HashSet<string>(new[]
+        {
+            RoleNames.Developer,
+            RoleNames.Helpdesk,
+            RoleNames.ProviderSuperUser,
+            RoleNames.ProviderUser
+        });
+
         private readonly DfeSignInSettings _settings;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
-        private readonly IHostEnvironment _environment;
         private readonly HttpClient _httpClient;
 
         public DfeUserInfoHelper(
             DfeSignInSettings settings,
-            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
-            IHostEnvironment environment)
+            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
         {
             _settings = settings;
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
-            _environment = environment;
 
             _httpClient = new HttpClient();  // TODO Use HttpClientFactory
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {CreateApiToken(settings)}");
@@ -46,6 +51,21 @@ namespace Dfc.CourseDirectory.WebV2.Security
             var ukprn = organisation["ukprn"].ToObject<int?>();
 
             var userOrgDetails = await GetUserOrganisationDetails(organisationId, context.UserInfo.UserId);
+
+            var filteredRoles = userOrgDetails.Roles.Where(r => _knownRoles.Contains(r.Name)).ToList();
+
+            if (filteredRoles.Count == 0)
+            {
+                throw new InvalidOperationException(
+                    $"No recognised roles found. " +
+                    $"Received: ${(userOrgDetails.Roles.Count > 0 ? string.Join(", ", userOrgDetails.Roles.Select(r => r.Name)) : "<none>")}.");
+            }
+            else if (filteredRoles.Count > 1)
+            {
+                throw new NotSupportedException(
+                    $"Too many roles: " +
+                    $"{string.Join(", ", filteredRoles.Select(r => r.Name))}.");
+            }
 
             context.UserInfo.Role = userOrgDetails.Roles.Single().Name;
             context.DfeSignInOrganisationId = organisationId;
@@ -93,7 +113,7 @@ namespace Dfc.CourseDirectory.WebV2.Security
             public Guid ServiceId { get; set; }
             public Guid OrganisationId { get; set; }
             public Guid UserId { get; set; }
-            public IEnumerable<Role> Roles { get; set; }
+            public IList<Role> Roles { get; set; }
         }
 
         private class Role
