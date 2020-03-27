@@ -21,9 +21,7 @@
     <link rel="apple-touch-icon" sizes="152x152" href="~/assets/images/govuk-apple-touch-icon-152x152.png">
     <link rel="apple-touch-icon" href="~/assets/images/govuk-apple-touch-icon.png">
     @Html.Raw(GovUk.Frontend.AspNetCore.HtmlSnippets.StyleImports)
-    <link rel="stylesheet" href="~/v2/pttcd.css">
-    <link rel="stylesheet" href="~/v2/nav.css">
-    <link rel="stylesheet" href="~/v2/notification.css">
+    <partial name="~/SharedViews/Partials/_V2Styles.cshtml" />
     @RenderSection("Head", required: false)
 </head>
 
@@ -116,7 +114,7 @@
     </environment>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/5.2.0/tinymce.min.js"></script>
-    <script type="text/javascript" src="~/v2/pttcd.js"></script>
+    <partial name="~/SharedViews/Partials/_V2Scripts.cshtml" />
     @RenderSection("Scripts", required: false)
 
 </body>
