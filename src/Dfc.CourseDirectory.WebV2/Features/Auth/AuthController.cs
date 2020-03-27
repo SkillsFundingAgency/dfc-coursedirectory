@@ -17,7 +17,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Auth
         {
             if (returnUrl == null || !Url.IsLocalUrl(returnUrl))
             {
-                returnUrl = Url.Action("Check", "Home");
+                returnUrl = Url.Action("Index", "Home");
             }
 
             if (User.Identity.IsAuthenticated)
