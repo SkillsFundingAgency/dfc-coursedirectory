@@ -12,10 +12,16 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Moq;
 using Respawn;
+using Xunit;
 using CosmosDbQueryDispatcher = Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb.CosmosDbQueryDispatcher;
 
 namespace Dfc.CourseDirectory.WebV2.Tests
 {
+    [CollectionDefinition("Mvc")]
+    public class HttpCollection : ICollectionFixture<CourseDirectoryApplicationFactory>
+    {
+    }
+
     public class CourseDirectoryApplicationFactory : WebApplicationFactory<Startup>
     {
         private readonly Checkpoint _sqlCheckpoint;
