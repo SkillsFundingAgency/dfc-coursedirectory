@@ -8,7 +8,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb.QueryHandlers
     {
         public Success Execute(InMemoryDocumentStore inMemoryDocumentStore, CreateStandard request)
         {
-            var Standard = new Standard()
+            var standard = new Standard()
             {
                 Id = request.Id,
                 StandardCode = request.StandardCode,
@@ -18,7 +18,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb.QueryHandlers
                 OtherBodyApprovalRequired = request.OtherBodyApprovalRequired,
                 RecordStatusId = 2
             };
-            inMemoryDocumentStore.Standards.Save(Standard);
+            inMemoryDocumentStore.Standards.Save(standard);
 
             return new Success();
         }

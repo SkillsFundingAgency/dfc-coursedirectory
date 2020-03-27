@@ -80,6 +80,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
             // Clear spy calls
             SqlQuerySpy.Reset();
+
+            // Clear StandardsAndFrameworksCache
+            Services.GetRequiredService<IStandardsAndFrameworksCache>().Clear();
         }
 
         public async Task OnTestStarted()
