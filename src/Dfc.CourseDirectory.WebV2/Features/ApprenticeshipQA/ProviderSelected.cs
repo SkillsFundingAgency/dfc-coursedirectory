@@ -99,7 +99,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderSelected
                 ProviderAssessmentCompleted = latestSubmission?.ProviderAssessmentPassed != null,
                 ProviderId = request.ProviderId,
                 ProviderName = provider.ProviderName,
-                SubmissionPassed = latestSubmission.Passed
+                SubmissionPassed = latestSubmission?.Passed
             };
         }
     }

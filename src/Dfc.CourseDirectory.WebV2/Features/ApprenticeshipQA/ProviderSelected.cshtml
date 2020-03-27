@@ -83,7 +83,8 @@
                 Overall the provider information and apprenticeship training course has <strong>@(Model.SubmissionPassed == true ? "PASSED" : "FAILED")</strong> quality assurance.
             </govuk-inset-text>
         }
-        else
+
+        @if (Model.ApprenticeshipQAStatus != ApprenticeshipQAStatus.Passed && Model.ApprenticeshipQAStatus != ApprenticeshipQAStatus.Failed)
         {
             <form asp-action="Complete" asp-route-providerId="@Model.ProviderId">
                 <govuk-button type="Submit" disabled="@(!Model.CanComplete)">Finish</govuk-button>
