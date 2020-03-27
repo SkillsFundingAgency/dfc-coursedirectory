@@ -22,6 +22,12 @@ namespace Dfc.CourseDirectory.WebV2
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
         }
 
+        public void Clear()
+        {
+            _standards = null;
+            _frameworks = null;
+        }
+
         public async Task<IReadOnlyCollection<Framework>> GetAllFrameworks()
         {
             EnsureFrameworksCacheInitialized();

@@ -13,8 +13,9 @@ using CosmosDbQueryDispatcher = Dfc.CourseDirectory.WebV2.Tests.DataStore.Cosmos
 
 namespace Dfc.CourseDirectory.WebV2.Tests
 {
+    [Collection("Mvc")]
     [Trait("SkipOnCI", "true")]  // Until we have SQL DB on CI
-    public abstract class TestBase : IClassFixture<CourseDirectoryApplicationFactory>, IAsyncLifetime
+    public abstract class TestBase : IAsyncLifetime
     {
         public TestBase(CourseDirectoryApplicationFactory factory)
         {
