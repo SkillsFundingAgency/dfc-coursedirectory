@@ -10,7 +10,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
 {
     [Route("new-apprenticeship-provider")]
     [RequireFeatureFlag(FeatureFlags.ApprenticeshipQA)]
-    public class NewApprenticeshipProviderController : Controller, IRequiresProviderContextController
+    public class NewApprenticeshipProviderController :
+        Controller,
+        IMptxController<FlowModel>,
+        IRequiresProviderContextController
     {
         private const string FlowName = "NewApprenticeshipProvider";
 
@@ -21,15 +24,15 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
             _mediator = mediator;
         }
 
+        public MptxInstanceContext<FlowModel> Flow { get; set; }
+
         public ProviderInfo ProviderContext { get; set; }
 
         [MptxAction(FlowName)]
         [HttpGet("apprenticeship-details")]
-        public async Task<IActionResult> ApprenticeshipDetails(
-            StandardOrFramework standardOrFramework,
-            MptxInstanceContext<FlowModel> flow)
+        public async Task<IActionResult> ApprenticeshipDetails(StandardOrFramework standardOrFramework)
         {
-            flow.Update(s => s.SetApprenticeshipStandardOrFramework(standardOrFramework));
+            Flow.Update(s => s.SetApprenticeshipStandardOrFramework(standardOrFramework));
             var query = new ApprenticeshipDetails.Query() { ProviderId = ProviderContext.ProviderId };
             return await _mediator.SendAndMapResponse(query, vm => View(vm));
         }
@@ -73,7 +76,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
         [HttpPost("provider-detail")]
         public async Task<IActionResult> ProviderDetail(
             ProviderInfo providerInfo,
-            MptxInstanceContext<FlowModel> flow,
             ProviderDetail.Command command)
         {
             command.ProviderId = providerInfo.ProviderId;
@@ -83,7 +85,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
                     errors => this.ViewFromErrors(errors),
                     success => RedirectToAction(nameof(ProviderDetailConfirmation))
                         .WithProviderContext(providerInfo)
-                        .WithMptxInstanceId(flow)));
+                        .WithMptxInstanceId(Flow)));
         }
 
         [MptxAction(FlowName)]
@@ -98,7 +100,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
         [HttpPost("provider-detail-confirmation")]
         public async Task<IActionResult> ProviderDetailConfirmation(
             ProviderInfo providerInfo,
-            MptxInstanceContext<FlowModel> flow,
             ProviderDetail.ConfirmationCommand command)
         {
             command.ProviderId = providerInfo.ProviderId;
@@ -111,7 +112,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
                     {
                         returnUrl = new Url(Url.Action("ApprenticeshipDetails"))
                             .WithProviderContext(providerInfo)
-                            .WithMptxInstanceId(flow)
+                            .WithMptxInstanceId(Flow)
                     }));
         }
     }

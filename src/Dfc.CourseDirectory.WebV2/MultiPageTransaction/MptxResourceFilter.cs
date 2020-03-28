@@ -11,7 +11,9 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
     {
         public async Task OnResourceExecutionAsync(ResourceExecutingContext context, ResourceExecutionDelegate next)
         {
-            var mptxActionAttribute = (context.ActionDescriptor as ControllerActionDescriptor)
+            var controllerActionDescriptor = (ControllerActionDescriptor)context.ActionDescriptor;
+
+            var mptxActionAttribute = controllerActionDescriptor
                 .MethodInfo
                 .GetCustomAttribute<MptxActionAttribute>();
 
