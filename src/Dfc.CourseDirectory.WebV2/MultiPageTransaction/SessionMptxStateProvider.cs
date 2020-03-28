@@ -29,6 +29,8 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
         {
             var instanceId = CreateInstanceId();
 
+            items ??= new Dictionary<string, object>();
+
             var entry = new SessionEntry()
             {
                 FlowName = flowName,

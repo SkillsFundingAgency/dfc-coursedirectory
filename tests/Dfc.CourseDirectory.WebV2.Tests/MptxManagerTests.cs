@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Primitives;
 using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests
@@ -24,11 +21,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
             var manager = new MptxManager(stateProvider, instanceContextFactory, serviceProvider);
 
-            var httpContext = new DefaultHttpContext();
-            var request = httpContext.Request;
-
             // Act
-            var instance = await manager.CreateInstance("TestFlow", typeof(FlowModel), request, Array.Empty<string>());
+            var instance = await manager.CreateInstance("TestFlow", typeof(FlowModel), contextItems: null);
 
             // Assert
             Assert.IsType<FlowModel>(instance.State);
@@ -48,15 +42,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
             var manager = new MptxManager(stateProvider, instanceContextFactory, serviceProvider);
 
-            var httpContext = new DefaultHttpContext();
-            var request = httpContext.Request;
-
             // Act
             var instance = await manager.CreateInstance(
                 "TestFlow",
                 typeof(FlowModelWithDI),
-                request,
-                Array.Empty<string>());
+                contextItems: null);
 
             // Assert
             Assert.IsType<FlowModelWithDI>(instance.State);
@@ -76,46 +66,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
             var manager = new MptxManager(stateProvider, instanceContextFactory, serviceProvider);
 
-            var httpContext = new DefaultHttpContext();
-            var request = httpContext.Request;
-
             // Act
-            var instance = await manager.CreateInstance("TestFlow", typeof(FlowModelWithInitializer), request, Array.Empty<string>());
+            var instance = await manager.CreateInstance(
+                "TestFlow",
+                typeof(FlowModelWithInitializer),
+                contextItems: null);
 
             // Assert
             var state = Assert.IsType<FlowModelWithInitializer>(instance.State);
             Assert.Equal(42, state.Foo);
-        }
-
-        [Fact]
-        public async Task CreateInstance_AssignsItemsFromQueryParams()
-        {
-            // Arrange
-            var stateProvider = new InMemoryMptxStateProvider();
-
-            var services = new ServiceCollection();
-            var serviceProvider = services.BuildServiceProvider();
-
-            var instanceContextFactory = new MptxInstanceContextFactory(stateProvider);
-
-            var manager = new MptxManager(stateProvider, instanceContextFactory, serviceProvider);
-
-            var httpContext = new DefaultHttpContext();
-            httpContext.Request.Query = new QueryCollection(new Dictionary<string, StringValues>()
-            {
-                { "foo", "42" }
-            });
-            var request = httpContext.Request;
-
-            // Act
-            var instance = await manager.CreateInstance(
-                "TestFlow",
-                typeof(FlowModel),
-                request,
-                capturesQueryParams: new[] { "foo" });
-
-            // Assert
-            Assert.Equal("42", instance.Items["foo"]);
         }
 
         [Fact]
@@ -131,12 +90,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
             var manager = new MptxManager(stateProvider, instanceContextFactory, serviceProvider);
 
-            var httpContext = new DefaultHttpContext();
-            var request = httpContext.Request;
-
             // Act & Assert
             var ex = await Assert.ThrowsAsync<ArgumentException>(
-                () => manager.CreateInstance("TestFlow", typeof(BadFlowModel), request, Array.Empty<string>()));
+                () => manager.CreateInstance("TestFlow", typeof(BadFlowModel), contextItems: null));
 
             Assert.Equal($"State type must implement {typeof(IMptxState).FullName}. (Parameter 'stateType')", ex.Message);
         }
