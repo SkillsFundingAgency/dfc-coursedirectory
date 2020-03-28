@@ -136,9 +136,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests
     }
 
     [Route("MultiPageTransactionTests")]
-    public class MultiPageTransactionTestsController : Controller
+    public class MultiPageTransactionTestsController : Controller, IMptxController<MultiPageTransactionTestsFlowState>
     {
         public const string FlowName = "MultiPageTransactionTests";
+
+        public MptxInstanceContext<MultiPageTransactionTestsFlowState> Flow { get; set; }
 
         [StartsMptx]
         [HttpGet("starts")]
