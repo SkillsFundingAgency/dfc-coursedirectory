@@ -1,5 +1,7 @@
-﻿using System.Net.Http;
+﻿using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.WebV2.Features;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
 
@@ -7,43 +9,72 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
 {
     public class RedirectToProviderSelectionActionFilterTests : TestBase
     {
-        private readonly HttpClient _httpClientWithAutoRedirects;
-
         public RedirectToProviderSelectionActionFilterTests(CourseDirectoryApplicationFactory factory)
             : base(factory)
         {
-            _httpClientWithAutoRedirects = factory.CreateClient();
         }
 
         [Fact]
-        public async Task ProviderInfoNotBound_ReturnsSelectProviderView()
+        public async Task ProviderInfoNotBound_ReturnsRedirectToSelectProviderView()
         {
             // Arrange
             await User.AsDeveloper();
 
             // Act
-            var response = await _httpClientWithAutoRedirects.GetAsync("RedirectToProviderSelectionActionFilterTest");
+            var response = await HttpClient.GetAsync("RedirectToProviderSelectionActionFilterTest");
 
             // Assert
-            response.EnsureSuccessStatusCode();
-            var textResponse = await response.Content.ReadAsStringAsync();
-            Assert.Equal("Select Provider", textResponse);
+            Assert.Equal(HttpStatusCode.Found, response.StatusCode);
+            Assert.Equal("/SearchProvider", UrlHelper.StripQueryParams(response.Headers.Location.OriginalString));
         }
 
         [Fact]
-        public async Task ActionDecoratedWithRequireProviderContext_ReturnsSelectProviderView()
+        public async Task ActionDecoratedWithRequireProviderContext_ReturnsRedirectToSelectProviderView()
         {
             // Arrange
             await User.AsDeveloper();
 
             // Act
-            var response = await _httpClientWithAutoRedirects.GetAsync(
+            var response = await HttpClient.GetAsync(
                 "RedirectToProviderSelectionActionFilterTest/without-parameter");
 
             // Assert
-            response.EnsureSuccessStatusCode();
+            Assert.Equal(HttpStatusCode.Found, response.StatusCode);
+            Assert.Equal("/SearchProvider", UrlHelper.StripQueryParams(response.Headers.Location.OriginalString));
+        }
+
+
+        [Fact]
+        public async Task ControllerImplementingIRequiresProviderContextControllerWithNoContext_ReturnsRedirectToSelectProviderView()
+        {
+            // Arrange
+            await User.AsDeveloper();
+
+            // Act
+            var response = await HttpClient.GetAsync(
+                "RedirectToProviderSelectionActionFilterTest2");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.Found, response.StatusCode);
+            Assert.Equal("/SearchProvider", UrlHelper.StripQueryParams(response.Headers.Location.OriginalString));
+        }
+
+        [Fact]
+        public async Task ControllerImplementingIRequiresProviderContextController_HasProviderContextInjected()
+        {
+            // Arrange
+            var providerId = await TestData.CreateProvider();
+
+            await User.AsDeveloper();
+
+            // Act
+            var response = await HttpClient.GetAsync(
+                $"RedirectToProviderSelectionActionFilterTest2?providerId={providerId}");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             var textResponse = await response.Content.ReadAsStringAsync();
-            Assert.Equal("Select Provider", textResponse);
+            Assert.Equal(providerId.ToString(), textResponse);
         }
     }
 
@@ -53,7 +84,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         public IActionResult Get(ProviderInfo providerInfo) => Ok("Yay");
 
         [HttpGet("RedirectToProviderSelectionActionFilterTest/without-parameter")]
-        [RequireProviderContext]
+        [RequiresProviderContext]
         public IActionResult GetWithoutParameter() => Ok("Yay");
+    }
+
+    public class RedirectToProviderSelectionActionFilterTestController2 : Controller, IRequiresProviderContextController
+    {
+        public ProviderInfo ProviderContext { get; set; }
+
+        [HttpGet("RedirectToProviderSelectionActionFilterTest2")]
+        public IActionResult Get() => Content(ProviderContext.ProviderId.ToString());
     }
 }

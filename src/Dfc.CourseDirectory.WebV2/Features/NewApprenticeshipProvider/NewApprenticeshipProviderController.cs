@@ -10,7 +10,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
 {
     [Route("new-apprenticeship-provider")]
     [RequireFeatureFlag(FeatureFlags.ApprenticeshipQA)]
-    public class NewApprenticeshipProviderController : Controller
+    public class NewApprenticeshipProviderController : Controller, IRequiresProviderContextController
     {
         private const string FlowName = "NewApprenticeshipProvider";
 
@@ -21,30 +21,29 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
             _mediator = mediator;
         }
 
+        public ProviderInfo ProviderContext { get; set; }
+
         [MptxAction(FlowName)]
         [HttpGet("apprenticeship-details")]
         public async Task<IActionResult> ApprenticeshipDetails(
             StandardOrFramework standardOrFramework,
-            ProviderInfo providerInfo,
             MptxInstanceContext<FlowModel> flow)
         {
             flow.Update(s => s.SetApprenticeshipStandardOrFramework(standardOrFramework));
-            var query = new ApprenticeshipDetails.Query() { ProviderId = providerInfo.ProviderId };
+            var query = new ApprenticeshipDetails.Query() { ProviderId = ProviderContext.ProviderId };
             return await _mediator.SendAndMapResponse(query, vm => View(vm));
         }
 
         [MptxAction(FlowName)]
         [HttpPost("apprenticeship-details")]
-        public async Task<IActionResult> ApprenticeshipDetails(
-            ApprenticeshipDetails.Command command,
-            ProviderInfo providerInfo)
+        public async Task<IActionResult> ApprenticeshipDetails(ApprenticeshipDetails.Command command)
         {
-            command.ProviderId = providerInfo.ProviderId;
+            command.ProviderId = ProviderContext.ProviderId;
             return await _mediator.SendAndMapResponse(
                 command,
                 response => response.Match<IActionResult>(
                     errors => this.ViewFromErrors(errors),
-                    success => RedirectToAction("ApprenticeshipLocations").WithProviderContext(providerInfo)));
+                    success => RedirectToAction("ApprenticeshipLocations").WithProviderContext(ProviderContext)));
         }
 
         [HttpGet("apprenticeship-locations")]

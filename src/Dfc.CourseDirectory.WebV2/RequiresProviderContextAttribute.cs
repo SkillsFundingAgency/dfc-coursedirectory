@@ -3,7 +3,7 @@
 namespace Dfc.CourseDirectory.WebV2
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
-    public class RequireProviderContextAttribute : Attribute
+    public class RequiresProviderContextAttribute : Attribute
     {
     }
 }
