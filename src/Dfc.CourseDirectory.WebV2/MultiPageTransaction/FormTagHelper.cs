@@ -29,14 +29,14 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             }
 
             var httpContext = _httpContextAccessor.HttpContext;
-            var instanceFeature = httpContext.Features.Get<MptxInstanceFeature>();
+            var instanceFeature = httpContext.Features.Get<MptxInstanceContextFeature>();
 
             if (instanceFeature == null)
             {
                 throw new InvalidOperationException("No active MPTX instance found.");
             }
 
-            var instanceId = instanceFeature.Instance.InstanceId;
+            var instanceId = instanceFeature.InstanceContext.InstanceId;
 
             if (output.Attributes["method"]?.Value.ToString().ToLower() == "post")
             {
