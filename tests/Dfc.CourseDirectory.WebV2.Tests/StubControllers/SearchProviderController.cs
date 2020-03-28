@@ -2,9 +2,9 @@
 
 namespace Dfc.CourseDirectory.WebV2.Tests.StubControllers
 {
-    public class HomeController : Controller
+    public class SearchProviderController : Controller
     {
-        [HttpGet("")]
+        [HttpGet("SearchProvider")]
         public IActionResult Index() => Content("Select Provider");
     }
 }
