@@ -242,7 +242,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
         private ViewModel CreateViewModel(Data data) => new ViewModel()
         {
             ApprenticeshipId = data.ApprenticeshipId,
-            ApprenticeshipMarketingInformation = data.SubmissionApprenticeship.ApprenticeshipMarketingInformation,
+            ApprenticeshipMarketingInformation = Html.SanitizeHtml(data.SubmissionApprenticeship.ApprenticeshipMarketingInformation),
             ApprenticeshipTitle = data.SubmissionApprenticeship.ApprenticeshipTitle,
             ProviderId = data.ProviderId,
             ComplianceComments = data.LatestAssessment.Match(_ => string.Empty, v => v.ComplianceComments),

@@ -22,7 +22,7 @@
             <h1 class="govuk-heading-xl">@Model.ProviderName</h1>
             <div class="govuk-!-margin-bottom-9">
                 <h2 class="govuk-heading-l">Provider information</h2>
-                <p class="govuk-!-margin-bottom-6" id="pttcd-apprenticeship-qa-provider-assessment-marketing-information">@Model.MarketingInformation</p>
+                <p class="govuk-!-margin-bottom-6" id="pttcd-apprenticeship-qa-provider-assessment-marketing-information">@Html.Raw(Model.MarketingInformation)</p>
 
                 <govuk-radios asp-for="CompliancePassed" id-prefix="CompliancePassed">
                     <govuk-radios-fieldset>
