@@ -21,7 +21,24 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             _serviceProvider = serviceProvider;
         }
 
-        public async Task<MptxInstanceContext> CreateInstance(
+        public async Task<MptxInstanceContext<T>> CreateInstance<T>(
+            string flowName,
+            IReadOnlyDictionary<string, object> contextItems = null)
+            where T : IMptxState
+        {
+            return (MptxInstanceContext<T>)await CreateInstance(flowName, typeof(T), contextItems);
+        }
+
+        public async Task<MptxInstanceContext<T>> CreateInstance<T>(
+            string flowName,
+            T state,
+            IReadOnlyDictionary<string, object> contextItems = null)
+            where T : IMptxState
+        {
+            return (MptxInstanceContext<T>)await CreateInstance(flowName, typeof(T), state, contextItems);
+        }
+
+        public Task<MptxInstanceContext> CreateInstance(
             string flowName,
             Type stateType,
             IReadOnlyDictionary<string, object> contextItems = null)
@@ -35,7 +52,21 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
 
             var newState = CreateNewState(stateType);
 
-            var instance = _stateProvider.CreateInstance(flowName, contextItems, newState);
+            return CreateInstance(flowName, stateType, newState, contextItems);
+        }
+
+        private async Task<MptxInstanceContext> CreateInstance(
+            string flowName,
+            Type stateType,
+            object state,
+            IReadOnlyDictionary<string, object> contextItems = null)
+        {
+            if (state == null)
+            {
+                throw new ArgumentNullException(nameof(state));
+            }
+
+            var instance = _stateProvider.CreateInstance(flowName, contextItems, state);
             await InitializeState(instance, stateType);
 
             var instanceContext = _instanceContextFactory.CreateContext(instance);
