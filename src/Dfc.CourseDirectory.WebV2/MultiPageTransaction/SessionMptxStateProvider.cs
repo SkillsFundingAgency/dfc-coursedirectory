@@ -19,7 +19,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
         public SessionMptxStateProvider(IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
-            _serializerSettings = GetJsonSerializerSettings();
+            _serializerSettings = Settings.CreateSerializerSettings();
         }
 
         public MptxInstance CreateInstance(
@@ -82,22 +82,6 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             {
                 throw new ArgumentException("No instance with the specified ID exists.", nameof(instanceId));
             }
-        }
-
-        private static JsonSerializerSettings GetJsonSerializerSettings()
-        {
-            var settings = new JsonSerializerSettings()
-            {
-                Formatting = Formatting.None,
-                TypeNameHandling = TypeNameHandling.Auto
-            };
-
-            foreach (var converter in Converters.All)
-            {
-                settings.Converters.Add(converter);
-            }
-
-            return settings;
         }
 
         private static string GetSessionKey(string instanceId) => $"mtpx:{instanceId}";
