@@ -1,16 +1,19 @@
 ﻿using System;
+using Microsoft.AspNetCore.Mvc.ActionConstraints;
 
 namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
-    public class StartsMptxAttribute : MptxActionAttribute
+    public sealed class StartsMptxAttribute : Attribute, IActionConstraint
     {
-        public StartsMptxAttribute(string flowName, Type stateType)
-            : base(flowName)
-        {
-            StateType = stateType ?? throw new ArgumentNullException(nameof(stateType));
-        }
+        public int Order => 0;
 
-        public Type StateType { get; }
+        public bool Accept(ActionConstraintContext context)
+        {
+            var request = context.RouteContext.HttpContext.Request;
+            var gotInstanceId = request.Query[Constants.InstanceIdQueryParameter].Count > 0;
+
+            return !gotInstanceId;
+        }
     }
 }
