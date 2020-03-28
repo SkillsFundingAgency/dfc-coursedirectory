@@ -22,7 +22,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             _serviceProvider = serviceProvider;
         }
 
-        public async Task<MptxInstance> CreateInstance(
+        public async Task<MptxInstanceContext> CreateInstance(
             string flowName,
             Type stateType,
             HttpRequest request,
@@ -42,10 +42,15 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             var instance = _stateProvider.CreateInstance(flowName, contextItems, newState);
             await InitializeState(instance, stateType);
 
-            return instance;
+            var instanceContext = _instanceContextFactory.CreateContext(instance);
+            return instanceContext;
         }
 
-        public MptxInstance GetInstance(string instanceId) => _stateProvider.GetInstance(instanceId);
+        public MptxInstanceContext GetInstance(string instanceId)
+        {
+            var instance = _stateProvider.GetInstance(instanceId);
+            return _instanceContextFactory.CreateContext(instance);
+        }
 
         private object CreateNewState(Type stateType) =>
             ActivatorUtilities.CreateInstance(_serviceProvider, stateType);

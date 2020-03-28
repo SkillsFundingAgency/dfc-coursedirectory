@@ -32,13 +32,13 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             var canStartFlow = startsAttribute != null;
 
             var ffiid = request.Query[Constants.InstanceIdQueryParameter];
-            MptxInstance mptxInstance = null;
+            MptxInstanceContext mptxInstanceContext = null;
 
             if (ffiid.Count == 0)
             {
                 if (canStartFlow)
                 {
-                    mptxInstance = await mptxManager.CreateInstance(
+                    mptxInstanceContext = await mptxManager.CreateInstance(
                         startsAttribute.FlowName,
                         startsAttribute.StateType,
                         request,
@@ -48,7 +48,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
                     var currentUrlWithInstanceParam = QueryHelpers.AddQueryString(
                         request.Path + request.QueryString,
                         Constants.InstanceIdQueryParameter,
-                        mptxInstance.InstanceId);
+                        mptxInstanceContext.InstanceId);
 
                     context.Result = new LocalRedirectResult(
                         currentUrlWithInstanceParam,
@@ -59,10 +59,10 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             }
             else
             {
-                mptxInstance = mptxManager.GetInstance(ffiid);
+                mptxInstanceContext = mptxManager.GetInstance(ffiid);
             }
 
-            if (mptxInstance == null)
+            if (mptxInstanceContext == null)
             {
                 context.Result = new BadRequestResult();
                 return;
@@ -70,7 +70,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             else
             {
                 // Verify this state is for this flow
-                if (mptxInstance.FlowName != flowName)
+                if (mptxInstanceContext.FlowName != flowName)
                 {
                     context.Result = new BadRequestResult();
                     return;
@@ -78,7 +78,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             }
 
             // All good - add the feature
-            var feature = new MptxInstanceFeature(mptxInstance);
+            var feature = new MptxInstanceContextFeature(mptxInstanceContext);
             context.HttpContext.Features.Set(feature);
 
             await next();            

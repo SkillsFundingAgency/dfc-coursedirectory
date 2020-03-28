@@ -28,7 +28,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             }
 
             var httpContext = _httpContextAccessor.HttpContext;
-            var instanceFeature = httpContext.Features.Get<MptxInstanceFeature>();
+            var instanceFeature = httpContext.Features.Get<MptxInstanceContextFeature>();
 
             if (instanceFeature == null)
             {
@@ -40,7 +40,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             var newHref = QueryHelpers.AddQueryString(
                 existingHref,
                 Constants.InstanceIdQueryParameter,
-                instanceFeature.Instance.InstanceId);
+                instanceFeature.InstanceContext.InstanceId);
 
             output.Attributes.SetAttribute("href", newHref);
         }

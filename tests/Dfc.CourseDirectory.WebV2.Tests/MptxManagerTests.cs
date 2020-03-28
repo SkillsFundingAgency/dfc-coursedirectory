@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Primitives;
-using Moq;
 using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests
@@ -54,7 +52,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             var request = httpContext.Request;
 
             // Act
-            var instance = await manager.CreateInstance("TestFlow", typeof(FlowModelWithDI), request, Array.Empty<string>());
+            var instance = await manager.CreateInstance(
+                "TestFlow",
+                typeof(FlowModelWithDI),
+                request,
+                Array.Empty<string>());
 
             // Assert
             Assert.IsType<FlowModelWithDI>(instance.State);
