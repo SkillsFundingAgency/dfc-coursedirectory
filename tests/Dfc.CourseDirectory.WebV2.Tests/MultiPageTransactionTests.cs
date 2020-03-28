@@ -122,20 +122,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
             Assert.DoesNotContain(instance.InstanceId, Factory.MptxStateProvider.Instances.Keys);
         }
-
-        [Fact]
-        public async Task StartingAction_CreatesInstanceAndCallsInitializer()
-        {
-            // Arrange
-
-            // Act
-            var response = await HttpClient.GetAsync("MultiPageTransactionTests/starts?qp=value");
-
-            // Assert
-            var state = Assert.IsType<MultiPageTransactionTestsFlowState>(
-                Factory.MptxStateProvider.Instances.Single().Value.State);
-            Assert.Equal(69, state.Baz);
-        }
     }
 
     public class MultiPageTransactionTestsFlowState : IMptxState
@@ -149,16 +135,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests
     {
     }
 
-    public class MultiPageTransactionTestsFlowStateInitializer : IInitializeMptxState<MultiPageTransactionTestsFlowState>
-    {
-        public Task Initialize(MptxInstanceContext<MultiPageTransactionTestsFlowState> context)
-        {
-            context.Update(state => state.Baz = 69);
-
-            return Task.CompletedTask;
-        }
-    }
-
     [Route("MultiPageTransactionTests")]
     public class MultiPageTransactionTestsController : Controller
     {
@@ -166,9 +142,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         [StartsMptx]
         [HttpGet("starts")]
-        public async Task<IActionResult> Starts([FromServices] MptxManager mptxManager)
+        public IActionResult Starts([FromServices] MptxManager mptxManager)
         {
-            var flow = await mptxManager.CreateInstance(FlowName, typeof(MultiPageTransactionTestsFlowState));
+            var flow = mptxManager.CreateInstance(FlowName, typeof(MultiPageTransactionTestsFlowState));
             return RedirectToAction(nameof(First)).WithMptxInstanceId(flow);
         }
 

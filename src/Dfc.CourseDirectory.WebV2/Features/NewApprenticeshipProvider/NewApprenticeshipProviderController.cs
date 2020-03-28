@@ -50,9 +50,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
         public IActionResult ApprenticeshipLocations() => throw new System.NotImplementedException();
 
         [StartsMptx]
-        public async Task<IActionResult> ProviderDetail([FromServices] MptxManager mptxManager)
+        public async Task<IActionResult> ProviderDetail(
+            ProviderInfo providerInfo,
+            [FromServices] MptxManager mptxManager,
+            [FromServices] FlowModelInitializer initializer)
         {
-            var flow = await mptxManager.CreateInstance<FlowModel>(FlowName);
+            var flowModel = await initializer.Initialize(providerInfo.ProviderId);
+            var flow = mptxManager.CreateInstance(FlowName, flowModel);
             return RedirectToAction(nameof(ProviderDetail))
                 .WithMptxInstanceId(flow);
         }

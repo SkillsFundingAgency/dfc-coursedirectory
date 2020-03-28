@@ -69,12 +69,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                 .AddClasses(classes => classes.AssignableTo(typeof(DataStore.CosmosDb.ICosmosDbQueryHandler<,>)))
                     .AsImplementedInterfaces()
                     .WithTransientLifetime());
-
-            services.Scan(scan => scan
-                .FromAssembliesOf(typeof(Startup))
-                .AddClasses(classes => classes.AssignableTo(typeof(IInitializeMptxState<>)))
-                    .AsImplementedInterfaces()
-                    .WithTransientLifetime());
         }
     }
 }
