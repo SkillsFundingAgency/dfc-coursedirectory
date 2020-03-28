@@ -21,12 +21,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ProviderD
 {
     using CommandResponse = OneOf<ModelWithErrors<ViewModel>, Success>;
 
-    public class Query : IRequest<ViewModel>
+    public class Query : IRequest<ViewModel>, IProviderScopedRequest
     {
         public Guid ProviderId { get; set; }
     }
 
-    public class Command : IRequest<CommandResponse>
+    public class Command : IRequest<CommandResponse>, IProviderScopedRequest
     {
         public Guid ProviderId { get; set; }
         public string MarketingInformation { get; set; }
@@ -37,7 +37,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ProviderD
         public string CourseDirectoryName { get; set; }
     }
 
-    public class ConfirmationQuery : IRequest<ConfirmationViewModel>
+    public class ConfirmationQuery : IRequest<ConfirmationViewModel>, IProviderScopedRequest
     {
         public Guid ProviderId { get; set; }
     }
@@ -53,7 +53,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ProviderD
         public string MarketingInformation { get; set; }
     }
 
-    public class ConfirmationCommand : IRequest<Success>
+    public class ConfirmationCommand : IRequest<Success>, IProviderScopedRequest
     {
         public Guid ProviderId { get; set; }
     }
@@ -171,18 +171,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ProviderD
                 CourseDirectoryName = GetCourseDirectoryName(provider)
             };
         }
-
-        Task<Guid> IRequireUserCanSubmitQASubmission<Query>.GetProviderId(Query request) =>
-            Task.FromResult(request.ProviderId);
-
-        Task<Guid> IRequireUserCanSubmitQASubmission<Command>.GetProviderId(Command request) =>
-            Task.FromResult(request.ProviderId);
-
-        Task<Guid> IRequireUserCanSubmitQASubmission<ConfirmationQuery>.GetProviderId(ConfirmationQuery request) =>
-            Task.FromResult(request.ProviderId);
-
-        Task<Guid> IRequireUserCanSubmitQASubmission<ConfirmationCommand>.GetProviderId(ConfirmationCommand request) =>
-            Task.FromResult(request.ProviderId);
 
         private class CommandValidator : AbstractValidator<Command>
         {

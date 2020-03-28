@@ -1,12 +1,10 @@
-﻿using System;
-using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.Models;
+﻿using Dfc.CourseDirectory.WebV2.Models;
 
 namespace Dfc.CourseDirectory.WebV2.Behaviors
 {
     public interface IRestrictProviderType<in TRequest>
+        where TRequest : IProviderScopedRequest
     {
         ProviderType ProviderType { get; }
-        Task<Guid> GetProviderId(TRequest request);
     }
 }

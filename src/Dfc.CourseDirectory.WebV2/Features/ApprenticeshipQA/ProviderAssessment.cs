@@ -26,7 +26,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
     {
     }
 
-    public class Query : IRequest<ViewModel>
+    public class Query : IRequest<ViewModel>, IProviderScopedRequest
     {
         public Guid ProviderId { get; set; }
     }
@@ -38,7 +38,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
         public bool IsReadOnly { get; set; }
     }
 
-    public class Command : IRequest<CommandResponse>
+    public class Command : IRequest<CommandResponse>, IProviderScopedRequest
     {
         public Guid ProviderId { get; set; }
         public bool? CompliancePassed { get; set; }
@@ -245,12 +245,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
 
         private static bool IsQAPassed(bool compliancePassed, bool stylePassed) =>
             compliancePassed && stylePassed;
-
-        Task<Guid> IRestrictQAStatus<Command>.GetProviderId(Command request) =>
-            Task.FromResult(request.ProviderId);
-
-        Task<Guid> IRestrictQAStatus<Query>.GetProviderId(Query request) =>
-            Task.FromResult(request.ProviderId);
 
         private class Data
         {

@@ -11,6 +11,7 @@ using MediatR;
 namespace Dfc.CourseDirectory.WebV2.Behaviors
 {
     public class RestrictQAStatusBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+        where TRequest : IProviderScopedRequest
     {
         private readonly IRestrictQAStatus<TRequest> _descriptor;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
@@ -28,7 +29,7 @@ namespace Dfc.CourseDirectory.WebV2.Behaviors
             CancellationToken cancellationToken,
             RequestHandlerDelegate<TResponse> next)
         {
-            var providerId = await _descriptor.GetProviderId(request);
+            var providerId = request.ProviderId;
 
             var qaStatus = await _sqlQueryDispatcher.ExecuteQuery(
                 new GetProviderApprenticeshipQAStatus()

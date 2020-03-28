@@ -6,6 +6,7 @@ using MediatR;
 namespace Dfc.CourseDirectory.WebV2.Behaviors
 {
     public class RestrictProviderTypeBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+        where TRequest : IProviderScopedRequest
     {
         private readonly IRestrictProviderType<TRequest> _descriptor;
         private readonly IProviderInfoCache _providerInfoCache;
@@ -23,7 +24,7 @@ namespace Dfc.CourseDirectory.WebV2.Behaviors
             CancellationToken cancellationToken,
             RequestHandlerDelegate<TResponse> next)
         {
-            var providerId = await _descriptor.GetProviderId(request);
+            var providerId = request.ProviderId;
             var providerInfo = await _providerInfoCache.GetProviderInfo(providerId);
 
             if (providerInfo == null)
