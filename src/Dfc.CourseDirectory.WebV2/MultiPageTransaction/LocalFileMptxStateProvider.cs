@@ -21,7 +21,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
 
             EnsureDataFolderExists(_dbFilePath);
 
-            _serializerSettings = GetJsonSerializerSettings();
+            _serializerSettings = Settings.CreateSerializerSettings();
         }
 
         public MptxInstance CreateInstance(string flowName, IReadOnlyDictionary<string, object> items, object state)
@@ -70,22 +70,6 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             {
                 Directory.CreateDirectory(folder);
             }
-        }
-
-        private static JsonSerializerSettings GetJsonSerializerSettings()
-        {
-            var settings = new JsonSerializerSettings()
-            {
-                TypeNameHandling = TypeNameHandling.Auto,
-                Formatting = Formatting.Indented
-            };
-
-            foreach (var converter in Converters.All)
-            {
-                settings.Converters.Add(converter);
-            }
-
-            return settings;
         }
 
         private void UpdateDbFile(Action<DbFile> updateDb)
