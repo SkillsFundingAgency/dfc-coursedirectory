@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.HttpContextFeatures;
@@ -13,6 +14,7 @@ namespace Dfc.CourseDirectory.WebV2.Filters
     [AttributeUsage(AttributeTargets.Parameter, AllowMultiple = false, Inherited = true)]
     public sealed class ApprenticeshipIdAttribute : Attribute
     {
+        public int DoesNotExistResponseStatusCode { get; set; } = 404;
     }
 
     public class VerifyApprenticeshipIdActionFilter : IAsyncActionFilter, IOrderedFilter
@@ -36,6 +38,8 @@ namespace Dfc.CourseDirectory.WebV2.Filters
                 return;
             }
 
+            var attr = apprenticeshipIdParameters.Single().ParameterInfo.GetCustomAttribute<ApprenticeshipIdAttribute>();
+
             var apprenticeshipId = context.ActionArguments[apprenticeshipIdParameters.Single().Name];
 
             if (!(apprenticeshipId is Guid))
@@ -48,7 +52,7 @@ namespace Dfc.CourseDirectory.WebV2.Filters
 
             if (!providerId.HasValue)
             {
-                context.Result = new NotFoundResult();
+                context.Result = new StatusCodeResult(attr.DoesNotExistResponseStatusCode);
             }
             else
             {

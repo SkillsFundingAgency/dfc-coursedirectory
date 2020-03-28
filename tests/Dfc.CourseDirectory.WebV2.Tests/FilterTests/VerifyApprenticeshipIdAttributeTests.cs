@@ -84,6 +84,19 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
+
+        [Fact]
+        public async Task ApprenticeshipDoesNotExistWithOverridenStatusCode_ReturnsStatusCode()
+        {
+            // Arrange
+            var apprenticeshipId = Guid.NewGuid();
+
+            // Act
+            var response = await HttpClient.GetAsync($"filtertests/verifyapprenticeshipidattributetests/overridenstatus/{apprenticeshipId}");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
     }
 
     public class ApprenticeshipIdAttributeTestController : Controller
@@ -93,5 +106,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
 
         [HttpGet("filtertests/verifyapprenticeshipidattributetests/withproviderinfo/{apprenticeshipId}")]
         public IActionResult GetWithProviderInfo([ApprenticeshipId] Guid apprenticeshipId, ProviderInfo providerInfo) => Json(providerInfo);
+
+        [HttpGet("filtertests/verifyapprenticeshipidattributetests/overridenstatus/{apprenticeshipId}")]
+        public IActionResult GetWithOverridenStatus([ApprenticeshipId(DoesNotExistResponseStatusCode = 400)] Guid apprenticeshipId) => Ok();
     }
 }
