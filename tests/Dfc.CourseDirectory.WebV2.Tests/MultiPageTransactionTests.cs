@@ -64,18 +64,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         }
 
         [Fact]
-        public async Task StartsMptxActionWithCaptures_StoresCapturesInStore()
-        {
-            // Arrange
-
-            // Act
-            await HttpClient.GetAsync("MultiPageTransactionTests/starts?qp=value");
-
-            // Assert
-            Assert.Equal("value", Factory.MptxStateProvider.Instances.Single().Value.Items["qp"]);
-        }
-
-        [Fact]
         public async Task ModelBindingMptxInstanceContext_Succeeds()
         {
             // Arrange
@@ -193,7 +181,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
     {
         public const string FlowName = "MultiPageTransactionTests";
 
-        [StartsMptx(FlowName, stateType: typeof(MultiPageTransactionTestsFlowState), capturesQueryParams: "qp")]
+        [StartsMptx(FlowName, stateType: typeof(MultiPageTransactionTestsFlowState))]
         [HttpGet("starts")]
         public IActionResult Starts() => Ok();
 

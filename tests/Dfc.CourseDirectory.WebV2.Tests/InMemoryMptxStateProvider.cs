@@ -28,6 +28,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         {
             var instanceId = Guid.NewGuid().ToString();
 
+            items ??= new Dictionary<string, object>();
+
             var entry = new Entry()
             {
                 FlowName = flowName,

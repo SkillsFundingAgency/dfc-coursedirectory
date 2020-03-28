@@ -41,8 +41,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
                     mptxInstanceContext = await mptxManager.CreateInstance(
                         startsAttribute.FlowName,
                         startsAttribute.StateType,
-                        request,
-                        startsAttribute.CapturesQueryParams);
+                        contextItems: null);
 
                     // Redirect, appending the new instance ID
                     var currentUrlWithInstanceParam = QueryHelpers.AddQueryString(
