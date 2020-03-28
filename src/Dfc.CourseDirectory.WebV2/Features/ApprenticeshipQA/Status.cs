@@ -20,12 +20,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Status
 {
     using CommandResponse = OneOf<ModelWithErrors<Command>, Success>;
 
-    public class Query : IRequest<Command>
+    public class Query : IRequest<Command>, IProviderScopedRequest
     {
         public Guid ProviderId { get; set; }
     }
     
-    public class Command : IRequest<CommandResponse>
+    public class Command : IRequest<CommandResponse>, IProviderScopedRequest
     {
         public Guid ProviderId { get; set; }
         public bool UnableToComplete { get; set; }
@@ -169,12 +169,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Status
                 ApprenticeshipQAStatus = currentStatus.ValueOrDefault()
             };
         }
-
-        Task<Guid> IRestrictQAStatus<Command>.GetProviderId(Command request) =>
-            Task.FromResult(request.ProviderId);
-
-        Task<Guid> IRestrictQAStatus<Query>.GetProviderId(Query request) =>
-            Task.FromResult(request.ProviderId);
 
         private class Data
         {

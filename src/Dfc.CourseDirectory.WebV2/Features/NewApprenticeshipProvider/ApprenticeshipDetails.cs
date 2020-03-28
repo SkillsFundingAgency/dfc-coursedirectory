@@ -17,12 +17,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
 {
     using CommandResponse = OneOf<ModelWithErrors<Command>, Success>;
 
-    public class Query : IRequest<ViewModel>
+    public class Query : IRequest<ViewModel>, IProviderScopedRequest
     {
         public Guid ProviderId { get; set; }
     }
 
-    public class Command : IRequest<CommandResponse>
+    public class Command : IRequest<CommandResponse>, IProviderScopedRequest
     {
         public Guid ProviderId { get; set; }
         public string MarketingInformation { get; set; }
@@ -97,12 +97,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
 
             return new Success();
         }
-
-        Task<Guid> IRequireUserCanSubmitQASubmission<Query>.GetProviderId(Query request) =>
-            Task.FromResult(request.ProviderId);
-
-        Task<Guid> IRequireUserCanSubmitQASubmission<Command>.GetProviderId(Command request) =>
-            Task.FromResult(request.ProviderId);
 
         private class CommandValidator : AbstractValidator<Command>
         {

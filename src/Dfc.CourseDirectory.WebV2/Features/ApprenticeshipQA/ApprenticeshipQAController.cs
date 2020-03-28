@@ -47,15 +47,26 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA
         }
 
         [HttpGet("apprenticeship-assessments/{apprenticeshipId}")]
-        public async Task<IActionResult> ApprenticeshipAssessment(ApprenticeshipAssessment.Query query) =>
-            await _mediator.SendAndMapResponse(query, vm => View(vm));
+        public async Task<IActionResult> ApprenticeshipAssessment(
+            [ApprenticeshipId(DoesNotExistResponseStatusCode = 400)] Guid apprenticeshipId,
+            ProviderInfo providerInfo)
+        {
+            var query = new ApprenticeshipAssessment.Query()
+            {
+                ApprenticeshipId = apprenticeshipId,
+                ProviderId = providerInfo.ProviderId
+            };
+            return await _mediator.SendAndMapResponse(query, vm => View(vm));
+        }
 
         [HttpPost("apprenticeship-assessments/{apprenticeshipId}")]
         public async Task<IActionResult> ApprenticeshipAssessment(
-            Guid apprenticeshipId,
+            [ApprenticeshipId(DoesNotExistResponseStatusCode = 400)] Guid apprenticeshipId,
+            ProviderInfo providerInfo,
             ApprenticeshipAssessment.Command command)
         {
             command.ApprenticeshipId = apprenticeshipId;
+            command.ProviderId = providerInfo.ProviderId;
             return await _mediator.SendAndMapResponse(
                 command,
                 response => response.Match(

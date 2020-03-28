@@ -18,7 +18,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Complete
     {
     }
 
-    public class Command : IRequest<ViewModel>
+    public class Command : IRequest<ViewModel>, IProviderScopedRequest
     {
         public Guid ProviderId { get; set; }
     }
@@ -98,8 +98,5 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Complete
                 ProviderName = provider.ProviderName
             };
         }
-
-        Task<Guid> IRestrictQAStatus<Command>.GetProviderId(Command request) =>
-            Task.FromResult(request.ProviderId);
     }
 }

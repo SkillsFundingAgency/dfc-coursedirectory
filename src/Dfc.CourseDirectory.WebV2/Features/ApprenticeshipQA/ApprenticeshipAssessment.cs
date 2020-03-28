@@ -24,22 +24,23 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
     {
     }
 
-    public class Query : IRequest<ViewModel>
+    public class Query : IRequest<ViewModel>, IProviderScopedRequest
     {
         public Guid ApprenticeshipId { get; set; }
+        public Guid ProviderId { get; set; }
     }
 
     public class ViewModel : Command
     {
-        public Guid ProviderId { get; set; }
         public string ApprenticeshipTitle { get; set; }
         public string ApprenticeshipMarketingInformation { get; set; }
         public bool IsReadOnly { get; set; }
     }
 
-    public class Command : IRequest<CommandResponse>
+    public class Command : IRequest<CommandResponse>, IProviderScopedRequest
     {
         public Guid ApprenticeshipId { get; set; }
+        public Guid ProviderId { get; set; }
         public bool? CompliancePassed { get; set; }
         public ApprenticeshipQAApprenticeshipComplianceFailedReasons? ComplianceFailedReasons { get; set; }
         public string ComplianceComments { get; set; }
@@ -269,18 +270,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
 
         private static bool IsQAPassed(bool compliancePassed, bool stylePassed) =>
             compliancePassed && stylePassed;
-
-        async Task<Guid> IRestrictQAStatus<Command>.GetProviderId(Command request)
-        {
-            var maybeProviderId = await GetProviderIdForApprenticeship(request.ApprenticeshipId);
-
-            if (maybeProviderId.Value is NotFound)
-            {
-                throw new ErrorException<ApprenticeshipDoesNotExist>(new ApprenticeshipDoesNotExist());
-            }
-
-            return maybeProviderId.AsT1;
-        }
 
         private class Data
         {
