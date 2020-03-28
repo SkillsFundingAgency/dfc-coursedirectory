@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
@@ -21,24 +20,24 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             _serviceProvider = serviceProvider;
         }
 
-        public async Task<MptxInstanceContext<T>> CreateInstance<T>(
+        public MptxInstanceContext<TState> CreateInstance<TState>(
             string flowName,
             IReadOnlyDictionary<string, object> contextItems = null)
-            where T : IMptxState
+            where TState : IMptxState
         {
-            return (MptxInstanceContext<T>)await CreateInstance(flowName, typeof(T), contextItems);
+            return (MptxInstanceContext<TState>)CreateInstance(flowName, typeof(TState), contextItems);
         }
 
-        public async Task<MptxInstanceContext<T>> CreateInstance<T>(
+        public MptxInstanceContext<TState> CreateInstance<TState>(
             string flowName,
-            T state,
+            TState state,
             IReadOnlyDictionary<string, object> contextItems = null)
-            where T : IMptxState
+            where TState : IMptxState
         {
-            return (MptxInstanceContext<T>)await CreateInstance(flowName, typeof(T), state, contextItems);
+            return (MptxInstanceContext<TState>)CreateInstance(flowName, typeof(TState), state, contextItems);
         }
 
-        public Task<MptxInstanceContext> CreateInstance(
+        public MptxInstanceContext CreateInstance(
             string flowName,
             Type stateType,
             IReadOnlyDictionary<string, object> contextItems = null)
@@ -55,7 +54,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             return CreateInstance(flowName, stateType, newState, contextItems);
         }
 
-        private async Task<MptxInstanceContext> CreateInstance(
+        private MptxInstanceContext CreateInstance(
             string flowName,
             Type stateType,
             object state,
@@ -67,7 +66,6 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             }
 
             var instance = _stateProvider.CreateInstance(flowName, contextItems, state);
-            await InitializeState(instance, stateType);
 
             var instanceContext = _instanceContextFactory.CreateContext(instance);
             return instanceContext;
@@ -81,20 +79,5 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
 
         private object CreateNewState(Type stateType) =>
             ActivatorUtilities.CreateInstance(_serviceProvider, stateType);
-
-        private async Task InitializeState(MptxInstance instance, Type stateType)
-        {
-            var initializerType = typeof(IInitializeMptxState<>).MakeGenericType(stateType);
-            var initializer = _serviceProvider.GetService(initializerType);
-
-            if (initializer != null)
-            {
-                var context = _instanceContextFactory.CreateContext(instance);
-
-                await (Task)initializerType.GetMethod("Initialize").Invoke(
-                    initializer,
-                    new object[] { context });
-            }
-        }
     }
 }

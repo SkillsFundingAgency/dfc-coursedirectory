@@ -9,7 +9,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
     public class MptxManagerTests
     {
         [Fact]
-        public async Task CreateInstance_CreatesNewStateForTypeNotInServices()
+        public void CreateInstance_CreatesNewStateForTypeNotInServices()
         {
             // Arrange
             var stateProvider = new InMemoryMptxStateProvider();
@@ -22,14 +22,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             var manager = new MptxManager(stateProvider, instanceContextFactory, serviceProvider);
 
             // Act
-            var instance = await manager.CreateInstance("TestFlow", typeof(FlowModel), contextItems: null);
+            var instance = manager.CreateInstance("TestFlow", typeof(FlowModel), contextItems: null);
 
             // Assert
             Assert.IsType<FlowModel>(instance.State);
         }
 
         [Fact]
-        public async Task CreateInstance_CreatesNewStateWithDependencies()
+        public void CreateInstance_CreatesNewStateWithDependencies()
         {
             // Arrange
             var stateProvider = new InMemoryMptxStateProvider();
@@ -43,42 +43,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             var manager = new MptxManager(stateProvider, instanceContextFactory, serviceProvider);
 
             // Act
-            var instance = await manager.CreateInstance(
-                "TestFlow",
-                typeof(FlowModelWithDI),
-                contextItems: null);
+            var instance = manager.CreateInstance("TestFlow", typeof(FlowModelWithDI), contextItems: null);
 
             // Assert
             Assert.IsType<FlowModelWithDI>(instance.State);
         }
 
         [Fact]
-        public async Task CreateInstance_InitializesStateWithInitializerFromServices()
-        {
-            // Arrange
-            var stateProvider = new InMemoryMptxStateProvider();
-
-            var services = new ServiceCollection();
-            services.AddSingleton<IInitializeMptxState<FlowModelWithInitializer>, FlowModelInitializer>();
-            var serviceProvider = services.BuildServiceProvider();
-
-            var instanceContextFactory = new MptxInstanceContextFactory(stateProvider);
-
-            var manager = new MptxManager(stateProvider, instanceContextFactory, serviceProvider);
-
-            // Act
-            var instance = await manager.CreateInstance(
-                "TestFlow",
-                typeof(FlowModelWithInitializer),
-                contextItems: null);
-
-            // Assert
-            var state = Assert.IsType<FlowModelWithInitializer>(instance.State);
-            Assert.Equal(42, state.Foo);
-        }
-
-        [Fact]
-        public async Task CreateInstance_StateTypeDoesNotInheritFromIMptxStateThrowsInvalidOperationException()
+        public void CreateInstance_StateTypeDoesNotInheritFromIMptxStateThrowsInvalidOperationException()
         {
             // Arrange
             var stateProvider = new InMemoryMptxStateProvider();
@@ -91,31 +63,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             var manager = new MptxManager(stateProvider, instanceContextFactory, serviceProvider);
 
             // Act & Assert
-            var ex = await Assert.ThrowsAsync<ArgumentException>(
+            var ex = Assert.Throws<ArgumentException>(
                 () => manager.CreateInstance("TestFlow", typeof(BadFlowModel), contextItems: null));
 
             Assert.Equal($"State type must implement {typeof(IMptxState).FullName}. (Parameter 'stateType')", ex.Message);
-        }
-
-        [Fact]
-        public async Task CreateInstance_WithProvidedState_CallsInitializer()
-        {
-            // Arrange
-            var stateProvider = new InMemoryMptxStateProvider();
-
-            var services = new ServiceCollection();
-            services.AddSingleton<IInitializeMptxState<FlowModelWithInitializer>, FlowModelInitializer>();
-            var serviceProvider = services.BuildServiceProvider();
-
-            var instanceContextFactory = new MptxInstanceContextFactory(stateProvider);
-
-            var manager = new MptxManager(stateProvider, instanceContextFactory, serviceProvider);
-
-            // Act
-            var instance = await manager.CreateInstance("TestFlow", new FlowModelWithInitializer());
-
-            // Assert
-            Assert.Equal(42, instance.State.Foo);
         }
 
         private class BadFlowModel { }
@@ -138,11 +89,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             public int Foo { get; set; }
         }
 
-        private class FlowModelInitializer : IInitializeMptxState<FlowModelWithInitializer>
+        private class FlowModelInitializer
         {
-            public Task Initialize(MptxInstanceContext<FlowModelWithInitializer> context)
+            public Task Initialize(FlowModelWithInitializer state)
             {
-                context.Update(s => s.Foo = 42);
+                state.Foo = 42;
                 return Task.CompletedTask;
             }
         }

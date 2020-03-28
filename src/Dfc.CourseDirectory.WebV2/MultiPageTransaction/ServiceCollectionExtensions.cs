@@ -23,12 +23,6 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
                 });
             }
 
-            services.Scan(scan => scan
-                .FromAssembliesOf(typeof(IInitializeMptxState<>))
-                .AddClasses(classes => classes.AssignableTo(typeof(IInitializeMptxState<>)))
-                    .AsImplementedInterfaces()
-                    .WithTransientLifetime());
-
             return services;
         }
     }
