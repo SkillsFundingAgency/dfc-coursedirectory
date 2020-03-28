@@ -21,12 +21,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             // Arrange
 
             // Act
-            var response = await HttpClient.GetAsync("MultiPageTransactionTests/starts?qp=value");
+            var response = await HttpClient.GetAsync("MultiPageTransactionTests/starts");
 
             // Assert
-            Assert.Equal(HttpStatusCode.RedirectKeepVerb, response.StatusCode);
+            Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
             Assert.StartsWith(
-                "/MultiPageTransactionTests/starts?qp=value&ffiid=",
+                "/MultiPageTransactionTests/first?ffiid=",
                 response.Headers.Location.OriginalString);
 
             var state = Assert.IsType<MultiPageTransactionTestsFlowState>(
@@ -35,24 +35,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         }
 
         [Fact]
-        public async Task RequestWithInstanceIdToStartsMptxAction_DoesNotRedirect()
-        {
-            // Arrange
-            var instance = Factory.MptxStateProvider.CreateInstance(
-                MultiPageTransactionTestsController.FlowName,
-                new Dictionary<string, object>(),
-                new MultiPageTransactionTestsFlowState());
-
-            // Act
-            var response = await HttpClient.GetAsync(
-                $"MultiPageTransactionTests/starts?ffiid={instance.InstanceId}");
-
-            // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        }
-
-        [Fact]
-        public async Task RequestWithNoInstanceId_ReturnsBadRequest()
+        public async Task RequestWithNoInstanceId_ReturnsNotFound()
         {
             // Arrange
 
@@ -60,7 +43,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             var response = await HttpClient.GetAsync("MultiPageTransactionTests/second");
 
             // Assert
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
 
         [Fact]
@@ -181,9 +164,17 @@ namespace Dfc.CourseDirectory.WebV2.Tests
     {
         public const string FlowName = "MultiPageTransactionTests";
 
-        [StartsMptx(FlowName, stateType: typeof(MultiPageTransactionTestsFlowState))]
+        [StartsMptx]
         [HttpGet("starts")]
-        public IActionResult Starts() => Ok();
+        public async Task<IActionResult> Starts([FromServices] MptxManager mptxManager)
+        {
+            var flow = await mptxManager.CreateInstance(FlowName, typeof(MultiPageTransactionTestsFlowState));
+            return RedirectToAction(nameof(First)).WithMptxInstanceId(flow);
+        }
+
+        [MptxAction(FlowName)]
+        [HttpGet("first")]
+        public IActionResult First() => Ok();
 
         [MptxAction(FlowName)]
         [HttpGet("second")]

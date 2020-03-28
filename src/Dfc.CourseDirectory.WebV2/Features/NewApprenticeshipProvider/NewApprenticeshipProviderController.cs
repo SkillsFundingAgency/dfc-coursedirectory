@@ -49,7 +49,15 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
         [HttpGet("apprenticeship-locations")]
         public IActionResult ApprenticeshipLocations() => throw new System.NotImplementedException();
 
-        [StartsMptx(FlowName, typeof(FlowModel))]
+        [StartsMptx]
+        public async Task<IActionResult> ProviderDetail([FromServices] MptxManager mptxManager)
+        {
+            var flow = await mptxManager.CreateInstance<FlowModel>(FlowName);
+            return RedirectToAction(nameof(ProviderDetail))
+                .WithMptxInstanceId(flow);
+        }
+
+        [MptxAction(FlowName)]
         [HttpGet("provider-detail")]
         public async Task<IActionResult> ProviderDetail(ProviderInfo providerInfo)
         {
