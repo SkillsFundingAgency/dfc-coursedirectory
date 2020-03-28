@@ -97,6 +97,27 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             Assert.Equal($"State type must implement {typeof(IMptxState).FullName}. (Parameter 'stateType')", ex.Message);
         }
 
+        [Fact]
+        public async Task CreateInstance_WithProvidedState_CallsInitializer()
+        {
+            // Arrange
+            var stateProvider = new InMemoryMptxStateProvider();
+
+            var services = new ServiceCollection();
+            services.AddSingleton<IInitializeMptxState<FlowModelWithInitializer>, FlowModelInitializer>();
+            var serviceProvider = services.BuildServiceProvider();
+
+            var instanceContextFactory = new MptxInstanceContextFactory(stateProvider);
+
+            var manager = new MptxManager(stateProvider, instanceContextFactory, serviceProvider);
+
+            // Act
+            var instance = await manager.CreateInstance("TestFlow", new FlowModelWithInitializer());
+
+            // Assert
+            Assert.Equal(42, instance.State.Foo);
+        }
+
         private class BadFlowModel { }
 
         private class FlowModel : IMptxState
