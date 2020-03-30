@@ -88,7 +88,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
 
             if (apprenticeshipLocationType == Models.ApprenticeshipLocationType.ClassroomBased)
             {
-                ApprenticeshipIsNational = false;
+                ApprenticeshipIsNational = null;
             }
         }
 
