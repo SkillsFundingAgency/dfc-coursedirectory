@@ -1,0 +1,43 @@
+﻿@model Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ApprenticeshipEmployerLocationsRegions.Command
+@{
+    ViewBag.Title = "Select the regions where you provide this training";
+}
+
+@if (!ViewContext.ModelState.IsValid)
+{
+    <govuk-error-summary>
+        <govuk-error-summary-title>There is a problem</govuk-error-summary-title>
+        <govuk-error-summary-item asp-for="RegionIds" />
+    </govuk-error-summary>
+}
+
+<form asp-action="ApprenticeshipEmployerLocationsRegions" append-provider-context="true" mptx-action="true">
+    <govuk-fieldset>
+        <govuk-fieldset-legend>
+            <h1 class="govuk-heading-l">Select the regions where you provide this training</h1>
+        </govuk-fieldset-legend>
+
+        <span class="govuk-heading-m">Where do you deliver this course?</span>
+
+        <govuk-hint>Choose all of the areas in as many regions as you deliver this course</govuk-hint>
+
+        <govuk-accordion id="pttcd-new-apprenticeship-provider__apprenticeship-employer-locations">
+            @foreach (var region in Region.All.OrderBy(r => r.Name))
+            {
+                <govuk-accordion-item id="Region-@region.Id" class="pttcd-new-apprenticeship-provider__apprenticeship-employer-locations-regions__region" expanded="@(Model.RegionIds.Any(r => region.SubRegions.Select(sr => sr.Id).Contains(r)))">
+                    <govuk-accordion-item-heading>@region.Name</govuk-accordion-item-heading>
+                    <govuk-checkboxes asp-for="RegionIds" checkboxes-class="govuk-checkboxes--small" ignore-modelstate-errors="true">
+                        @foreach (var subRegion in region.SubRegions.OrderBy(sr => sr.Name))
+                        {
+                            <govuk-checkboxes-item value="@subRegion.Id" id="RegionIds-@subRegion.Id" checked="@(Model.RegionIds.Contains(subRegion.Id))">
+                                @subRegion.Name
+                            </govuk-checkboxes-item>
+                        }
+                    </govuk-checkboxes>
+                </govuk-accordion-item>
+            }
+        </govuk-accordion>
+    </govuk-fieldset>
+
+    <govuk-button type="submit">Continue</govuk-button>
+</form>

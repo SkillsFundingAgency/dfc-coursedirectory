@@ -1,0 +1,35 @@
+﻿@model Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ApprenticeshipLocations.Command
+@{
+    ViewBag.Title = "Apprenticeship location type";
+}
+
+@if (!ViewContext.ModelState.IsValid)
+{
+    <govuk-error-summary>
+        <govuk-error-summary-title>There is a problem</govuk-error-summary-title>
+        <govuk-error-summary-item asp-for="LocationType" />
+    </govuk-error-summary>
+}
+
+<form asp-action="ApprenticeshipLocations" append-provider-context="true" mptx-action="true">
+    <govuk-radios asp-for="LocationType">
+        <govuk-radios-fieldset is-page-heading="true">
+            <govuk-radios-fieldset-legend legend-class="govuk-fieldset__legend--xl">
+                <h1 class="govuk-fieldset__heading">
+                    Where will this apprenticeship training be delivered?
+                </h1>
+            </govuk-radios-fieldset-legend>
+        </govuk-radios-fieldset>
+        <govuk-radios-item value="@ApprenticeshipLocationType.ClassroomBased">
+            At one of your locations
+        </govuk-radios-item>
+        <govuk-radios-item value="@ApprenticeshipLocationType.EmployerBased">
+            At an employer's address
+        </govuk-radios-item>
+        <govuk-radios-item value="@ApprenticeshipLocationType.ClassroomBasedAndEmployerBased">
+            Both
+        </govuk-radios-item>
+    </govuk-radios>
+
+    <govuk-button type="submit">Continue</govuk-button>
+</form>
