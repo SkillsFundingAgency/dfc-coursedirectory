@@ -115,5 +115,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
                             .WithMptxInstanceId(Flow)
                     }));
         }
+
+
+        [HttpPost("hide-passed-notification")]
+        public async Task<IActionResult> HidePassedNotication(HidePassedNotification.Command command) =>
+            await _mediator.SendAndMapResponse(command, vm => View(vm));
     }
 }
