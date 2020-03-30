@@ -76,13 +76,20 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
 
         private void UpdateDbFile(Action<DbFile> updateDb)
         {
-            DbFile dbFile;
+            DbFile dbFile = null;
 
             if (File.Exists(_dbFilePath))
             {
-                dbFile = JsonConvert.DeserializeObject<DbFile>(File.ReadAllText(_dbFilePath), _serializerSettings);
+                try
+                {
+                    dbFile = JsonConvert.DeserializeObject<DbFile>(File.ReadAllText(_dbFilePath), _serializerSettings);
+                }
+                catch (JsonSerializationException)
+                {
+                }
             }
-            else
+
+            if (dbFile == null)
             {
                 dbFile = new DbFile() { Entries = new Dictionary<string, DbFileEntry>() };
             }
