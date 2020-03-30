@@ -141,6 +141,7 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddTransient<ISignInAction, SignInTracker>();
             services.AddTransient<ISignInAction, EnsureApprenticeshipQAStatusSetSignInAction>();
             services.AddTransient<MptxManager>();
+            services.AddTransient<Features.NewApprenticeshipProvider.FlowModelInitializer>();
 
 #if DEBUG
             if (configuration["UseLocalFileMptxStateProvider"]?.Equals("true", StringComparison.OrdinalIgnoreCase) ?? false)
