@@ -615,6 +615,10 @@
               {
                 "name": "FeatureFlags",
                 "value": "[parameters('FeatureFlags')]"
+              },
+              {
+                "name": "DataProtection__ContainerName",
+                "value": "data-protection-keys"
               }
             ]
           },
