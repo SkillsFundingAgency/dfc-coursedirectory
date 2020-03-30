@@ -32,12 +32,25 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
                     ProviderId = providerId
                 });
 
+            var submission = await _sqlQueryDispatcher.ExecuteQuery(
+                new GetLatestApprenticeshipQASubmissionForProvider()
+                {
+                    ProviderId = providerId
+                });
+
+
+            var sub = submission.Match(
+                _ => null,
+                submiss => submiss);
+
             var providerInfo = await _providerInfoCache.GetProviderInfo(providerId);
 
             var vm = new QANotificationsViewModel()
             {
                 ProviderType = providerInfo.ProviderType,
-                Status = qaStatus.ValueOrDefault()
+                Status = qaStatus.ValueOrDefault(),
+                HidePassedNotication = sub?.HidePassedNotification ?? false
+
             };
 
             return View("~/Features/NewApprenticeshipProvider/QANotifications.cshtml", vm);

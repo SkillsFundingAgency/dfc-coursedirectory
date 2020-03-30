@@ -118,7 +118,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
 
 
         [HttpPost("hide-passed-notification")]
-        public async Task<IActionResult> HidePassedNotication(HidePassedNotification.Command command) =>
-            await _mediator.SendAndMapResponse(command, vm => View(vm));
+        public async Task<IActionResult> HidePassedNotication([LocalUrl] string returnUrl, ProviderInfo providerInfo, HidePassedNotification.Command command)
+        {
+            command.ProviderId = providerInfo.ProviderId;
+            return await _mediator.SendAndMapResponse(command,
+                success => Redirect(returnUrl));
+        }
     }
 }

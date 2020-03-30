@@ -1,4 +1,5 @@
-﻿using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
+﻿using Dfc.CourseDirectory.WebV2.Behaviors.Errors;
+using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
 using Dfc.CourseDirectory.WebV2.DataStore.Sql;
 using Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.WebV2.Validation;
@@ -55,9 +56,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.HidePassedNotification
                     HidePassedNotification = true
                 });
 
-            return hideDialog.Match(
-                notfound => throw new Exception(""),
+            var resp = hideDialog.Match(
+                notfound => throw new ErrorException<InvalidQASubmission>(new InvalidQASubmission()),
                 success => success);
+
+            return resp;
         }
     }
 
