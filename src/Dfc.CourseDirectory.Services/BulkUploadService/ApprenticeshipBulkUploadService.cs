@@ -18,6 +18,7 @@ using Dfc.CourseDirectory.Services.VenueService;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -1084,7 +1085,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 {
                     if (0 == stream.Length) throw new Exception("File is empty.");
                     stream.Seek(0, SeekOrigin.Begin);
-                    using (var csv = new CsvReader(reader))
+                    using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
                     {
                         // Validate the header row.
                         ValidateHeader(csv);

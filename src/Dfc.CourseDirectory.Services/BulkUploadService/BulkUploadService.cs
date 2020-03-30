@@ -106,7 +106,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                 stream.Position = 0;
                 using (var reader = new StreamReader(stream))
                 {
-                    using (var csv = new CsvReader(reader))
+                    using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
                     {
                         csv.Read();
                         csv.ReadHeader();
