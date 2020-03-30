@@ -88,7 +88,25 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
 
         [MptxAction(FlowName)]
         [HttpGet("apprenticeship-employer-locations-regions")]
-        public IActionResult ApprenticeshipEmployerLocationsRegions() => throw new System.NotImplementedException();
+        public async Task<IActionResult> ApprenticeshipEmployerLocationsRegions()
+        {
+            var query = new ApprenticeshipEmployerLocationsRegions.Query() { ProviderId = ProviderContext.ProviderId };
+            return await _mediator.SendAndMapResponse(query, command => View(command));
+        }
+
+        [MptxAction(FlowName)]
+        [HttpPost("apprenticeship-employer-locations-regions")]
+        public async Task<IActionResult> ApprenticeshipEmployerLocationsRegions(ApprenticeshipEmployerLocationsRegions.Command command)
+        {
+            command.ProviderId = ProviderContext.ProviderId;
+            return await _mediator.SendAndMapResponse(
+                command,
+                response => response.Match<IActionResult>(
+                    errors => this.ViewFromErrors(errors),
+                    success => RedirectToAction(nameof(ApprenticeshipConfirmation))
+                        .WithProviderContext(ProviderContext)
+                        .WithMptxInstanceId(Flow)));
+        }
 
         [MptxAction(FlowName)]
         [HttpGet("apprenticeship-locations")]

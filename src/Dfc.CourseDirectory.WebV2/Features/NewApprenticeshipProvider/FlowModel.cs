@@ -15,6 +15,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
         public string ApprenticeshipContactWebsite { get; set; }
         public ApprenticeshipLocationType? ApprenticeshipLocationType { get; set; }
         public bool? ApprenticeshipIsNational { get; set; }
+        public IReadOnlyCollection<string> ApprenticeshipLocationRegionIds { get; set; } = new List<string>();
 
         public bool GotApprenticeshipDetails { get; set; }
         public bool GotProviderDetails { get; set; }
@@ -49,6 +50,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
         {
             ApprenticeshipIsNational = national;
         }
+
+        public void SetApprenticeshipLocationRegionIds(IReadOnlyCollection<string> regionIds) =>
+            ApprenticeshipLocationRegionIds = regionIds;
 
         public void SetApprenticeshipLocationType(ApprenticeshipLocationType apprenticeshipLocationType)
         {
