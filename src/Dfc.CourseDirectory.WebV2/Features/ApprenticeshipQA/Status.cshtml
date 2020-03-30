@@ -16,9 +16,9 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <form asp-action="Status">
-            <govuk-radios asp-for="UnableToComplete" radios-class="pttcd-radios--inline-conditionals">
+            <govuk-radios asp-for="UnableToComplete" class="pttcd-radios--inline-conditionals">
                 <govuk-radios-fieldset is-page-heading="true">
-                    <govuk-radios-fieldset-legend legend-class="govuk-fieldset__legend--xl">
+                    <govuk-radios-fieldset-legend class="govuk-fieldset__legend--xl">
                         Quality assurance status
                     </govuk-radios-fieldset-legend>
                 </govuk-radios-fieldset>
@@ -31,7 +31,7 @@
                 <govuk-radios-item value="@(true)" id="UnableToComplete-true">
                     Unable to complete
                     <govuk-radios-item-conditional>
-                        <govuk-checkboxes asp-for="UnableToCompleteReasons" checkboxes-class="govuk-checkboxes--small pttcd-checkboxes-!-no-float">
+                        <govuk-checkboxes asp-for="UnableToCompleteReasons" class="govuk-checkboxes--small pttcd-checkboxes-!-no-float">
                             <govuk-checkboxes-hint>Select all options that are relevant to you.</govuk-checkboxes-hint>
                             <govuk-checkboxes-item id="@($"{Html.IdFor(m => m.UnableToCompleteReasons)}-{(int)ApprenticeshipQAUnableToCompleteReasons.ProviderDevelopingProvision}")" value="@(ApprenticeshipQAUnableToCompleteReasons.ProviderDevelopingProvision)" checked="@(Model.UnableToCompleteReasons.HasFlag(ApprenticeshipQAUnableToCompleteReasons.ProviderDevelopingProvision))">
                                 Provider developing provision
