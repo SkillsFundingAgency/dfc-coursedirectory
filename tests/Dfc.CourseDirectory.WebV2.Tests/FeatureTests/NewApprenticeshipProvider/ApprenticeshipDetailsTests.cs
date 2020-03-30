@@ -403,7 +403,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
         }
 
         [Fact]
-        public async Task Post_ValidRequestRedirects()
+        public async Task Post_ValidRequestUpdatesStateRedirects()
         {
             // Arrange
             var providerId = await TestData.CreateProvider(apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted);
@@ -420,8 +420,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("MarketingInformation", "Apprenticeship info")
+                .Add("Website", "http://provider1.com/apprenticeship")
                 .Add("ContactEmail", "guy@provider1.com")
                 .Add("ContactTelephone", "01234 567890")
+                .Add("ContactWebsite", "http://provider1.com")
                 .ToContent();
 
             // Act
@@ -430,6 +432,18 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 requestContent);
 
             // Act
+            var state = GetMptxInstanceState<FlowModel>(mptxInstance.InstanceId);
+            Assert.True(state.ApprenticeshipStandardOrFramework.IsStandard);
+            Assert.Equal(123, state.ApprenticeshipStandardOrFramework.Standard.StandardCode);
+            Assert.Equal(1, state.ApprenticeshipStandardOrFramework.Standard.Version);
+            Assert.Equal("My standard", state.ApprenticeshipStandardOrFramework.Standard.StandardName);
+            Assert.Equal("Apprenticeship info", state.ApprenticeshipMarketingInformation);
+            Assert.Equal("http://provider1.com/apprenticeship", state.ApprenticeshipWebsite);
+            Assert.Equal("guy@provider1.com", state.ApprenticeshipContactEmail);
+            Assert.Equal("01234 567890", state.ApprenticeshipContactTelephone);
+            Assert.Equal("http://provider1.com", state.ApprenticeshipContactWebsite);
+            Assert.True(state.GotApprenticeshipDetails);
+
             Assert.Equal(HttpStatusCode.Found, response.StatusCode);
             Assert.StartsWith(
                 "/new-apprenticeship-provider/apprenticeship-locations",
