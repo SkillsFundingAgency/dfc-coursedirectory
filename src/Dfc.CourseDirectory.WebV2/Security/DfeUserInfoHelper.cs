@@ -78,7 +78,7 @@ namespace Dfc.CourseDirectory.WebV2.Security
                 // TODO Handle this nicely
                 if (provider != null)
                 {
-                    throw new Exception("Unknown provider");
+                    throw new Exception($"Cannot find provider with UKPRN: {ukprn.Value}.");
                 }
 
                 context.Provider = provider;
