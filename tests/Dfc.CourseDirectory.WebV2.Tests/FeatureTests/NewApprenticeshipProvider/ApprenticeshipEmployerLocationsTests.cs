@@ -254,8 +254,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             doc.AssertHasError("National", "Enter whether you can deliver this training at employers’ locations anywhere in England");
         }
 
-        [Fact]
-        public async Task Post_ValidRequestNationalUpdatesFlowStateAndRedirects()
+        [Theory]
+        [InlineData(ApprenticeshipLocationType.EmployerBased, "/new-apprenticeship-provider/apprenticeship-confirmation")]
+        [InlineData(ApprenticeshipLocationType.ClassroomBasedAndEmployerBased, "/new-apprenticeship-provider/apprenticeship-classroom-locations")]
+        public async Task Post_ValidRequestNationalUpdatesFlowStateAndRedirects(
+            ApprenticeshipLocationType locationType,
+            string expectedRedirectLocation)
         {
             // Arrange
             var providerId = await TestData.CreateProvider(apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted);
@@ -265,7 +269,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var mptxInstance = CreateMptxInstance(
                 new FlowModel()
                 {
-                    ApprenticeshipLocationType = ApprenticeshipLocationType.EmployerBased
+                    ApprenticeshipLocationType = locationType
                 });
 
             var requestContent = new FormUrlEncodedContentBuilder()
@@ -283,12 +287,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             Assert.Equal(HttpStatusCode.Found, response.StatusCode);
             Assert.Equal(
-                "/new-apprenticeship-provider/apprenticeship-confirmation",
+                expectedRedirectLocation,
                 UrlHelper.StripQueryParams(response.Headers.Location.OriginalString));
         }
 
-        [Fact]
-        public async Task Post_ValidRequestNotNationalUpdatesFlowStateAndRedirects()
+        [Theory]
+        [InlineData(ApprenticeshipLocationType.EmployerBased)]
+        [InlineData(ApprenticeshipLocationType.ClassroomBasedAndEmployerBased)]
+        public async Task Post_ValidRequestNotNationalUpdatesFlowStateAndRedirects(
+            ApprenticeshipLocationType locationType)
         {
             // Arrange
             var providerId = await TestData.CreateProvider(apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted);
@@ -298,7 +305,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var mptxInstance = CreateMptxInstance(
                 new FlowModel()
                 {
-                    ApprenticeshipLocationType = ApprenticeshipLocationType.EmployerBased
+                    ApprenticeshipLocationType = locationType
                 });
 
             var requestContent = new FormUrlEncodedContentBuilder()

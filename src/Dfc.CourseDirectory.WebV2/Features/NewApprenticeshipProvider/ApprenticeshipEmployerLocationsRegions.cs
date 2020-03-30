@@ -73,7 +73,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
 
         private void ValidateFlowState()
         {
-            if (_flow.State.ApprenticeshipLocationType != ApprenticeshipLocationType.EmployerBased ||
+            if ((_flow.State.ApprenticeshipLocationType != ApprenticeshipLocationType.EmployerBased &&
+                _flow.State.ApprenticeshipLocationType != ApprenticeshipLocationType.ClassroomBasedAndEmployerBased) ||
                 _flow.State.ApprenticeshipIsNational != false)
             {
                 throw new ErrorException<InvalidFlowState>(new InvalidFlowState());
