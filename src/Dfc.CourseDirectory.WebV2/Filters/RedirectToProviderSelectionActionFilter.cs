@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+using Dfc.CourseDirectory.WebV2.Features;
 using Dfc.CourseDirectory.WebV2.HttpContextFeatures;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
@@ -30,8 +31,13 @@ namespace Dfc.CourseDirectory.WebV2.Filters
         {
             var controllerActionDescriptor = context.ActionDescriptor as ControllerActionDescriptor;
 
-            if (controllerActionDescriptor?.MethodInfo.GetCustomAttribute<AllowNoProviderContextAttribute>() != null ||
-                controllerActionDescriptor?.ControllerTypeInfo.GetCustomAttribute<AllowNoProviderContextAttribute>() != null)
+            if (controllerActionDescriptor == null)
+            {
+                return;
+            }
+
+            if (controllerActionDescriptor.MethodInfo.GetCustomAttribute<AllowNoProviderContextAttribute>() != null ||
+                controllerActionDescriptor.ControllerTypeInfo.GetCustomAttribute<AllowNoProviderContextAttribute>() != null)
             {
                 return;
             }
@@ -40,19 +46,27 @@ namespace Dfc.CourseDirectory.WebV2.Filters
                 .Where(p => p.ParameterType == typeof(ProviderInfo))
                 .Any();
 
-            var requiresProviderContext = controllerActionDescriptor
-                ?.MethodInfo.GetCustomAttribute<RequireProviderContextAttribute>() != null;
+            var isRequiresProviderContextController = context.Controller is IRequiresProviderContextController;
+
+            var requiresProviderContext = 
+                controllerActionDescriptor.MethodInfo.GetCustomAttribute<RequiresProviderContextAttribute>() != null ||
+                isRequiresProviderContextController;
 
             if (hasProviderInfoParameter || requiresProviderContext)
             {
                 var providerContextFeature = context.HttpContext.Features.Get<ProviderContextFeature>();
+                var providerContext = providerContextFeature?.ProviderInfo;
 
-                if (providerContextFeature?.ProviderInfo == null)
+                if (providerContext == null)
                 {
                     context.Result = new RedirectToActionResult(
                         "Index",
-                        "Home",
+                        "SearchProvider",
                         new { returnUrl = context.HttpContext.Request.GetEncodedUrl() });
+                }
+                else if (isRequiresProviderContextController)
+                {
+                    ((IRequiresProviderContextController)context.Controller).ProviderContext = providerContext;
                 }
             }
         }

@@ -1,13 +1,11 @@
 ﻿using System.Threading.Tasks;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Dfc.CourseDirectory.WebV2.Features.Providers
 {
     [Route("providers")]
-    [Authorize]
-    public class ProvidersController : Controller
+    public class ProvidersController : Controller, IRequiresProviderContextController
     {
         private readonly IMediator _mediator;
 
@@ -16,10 +14,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers
             _mediator = mediator;
         }
 
+        public ProviderInfo ProviderContext { get; set; }
+
         [HttpGet("info")]
-        public async Task<IActionResult> EditProviderInfo(ProviderInfo providerInfo)
+        public async Task<IActionResult> EditProviderInfo()
         {
-            var query = new EditProviderInfo.Query() { ProviderId = providerInfo.ProviderId };
+            var query = new EditProviderInfo.Query() { ProviderId = ProviderContext.ProviderId };
             return await _mediator.SendAndMapResponse(
                 query,
                 response => response.Match(
@@ -28,16 +28,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers
         }
 
         [HttpPost("info")]
-        public async Task<IActionResult> EditProviderInfo(
-            ProviderInfo providerInfo,
-            EditProviderInfo.Command command)
+        public async Task<IActionResult> EditProviderInfo(EditProviderInfo.Command command)
         {
-            command.ProviderId = providerInfo.ProviderId;
+            command.ProviderId = ProviderContext.ProviderId;
             return await _mediator.SendAndMapResponse(
                 command,
                 response => response.Match<IActionResult>(
                     errors => this.ViewFromErrors(errors),
-                    success => RedirectToAction("Details", "Provider").WithProviderContext(providerInfo)));
+                    success => RedirectToAction("Details", "Provider").WithProviderContext(ProviderContext)));
         }
     }
 }

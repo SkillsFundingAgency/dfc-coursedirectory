@@ -15,7 +15,7 @@
     <PackageReference Include="Dapper" Version="2.0.30" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="8.6.2" />
     <PackageReference Include="Flurl" Version="2.8.2" />
-    <PackageReference Include="GovUk.Frontend.AspNetCore" Version="0.1.0-pre-204" />
+    <PackageReference Include="GovUk.Frontend.AspNetCore" Version="0.1.0-pre-235" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.22" />
     <PackageReference Include="HtmlSanitizer" Version="5.0.274-beta" />
     <PackageReference Include="JustEat.HttpClientInterception" Version="3.0.0" />

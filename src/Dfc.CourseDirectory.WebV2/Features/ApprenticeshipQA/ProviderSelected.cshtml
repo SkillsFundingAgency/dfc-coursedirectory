@@ -79,7 +79,7 @@
 
         @if (Model.SubmissionPassed != null)
         {
-            <govuk-inset-text inset-text-class="pttcd-inset-text--info">
+            <govuk-inset-text class="pttcd-inset-text--info">
                 Overall the provider information and apprenticeship training course has <strong>@(Model.SubmissionPassed == true ? "PASSED" : "FAILED")</strong> quality assurance.
             </govuk-inset-text>
         }
