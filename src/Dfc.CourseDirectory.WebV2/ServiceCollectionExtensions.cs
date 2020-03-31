@@ -96,6 +96,12 @@ namespace Dfc.CourseDirectory.WebV2
                 .AddClasses(classes => classes.AssignableTo(typeof(ISqlQueryHandler<,>)))
                     .AsImplementedInterfaces()
                     .WithTransientLifetime());
+            
+            // SignInActions - order here is the order they're executed in
+            services.AddTransient<ISignInAction, DfeUserInfoHelper>();
+            services.AddTransient<ISignInAction, EnsureProviderExists>();
+            services.AddTransient<ISignInAction, SignInTracker>();
+            services.AddTransient<ISignInAction, EnsureApprenticeshipQAStatusSetSignInAction>();
 
             services.AddSingleton<HostingOptions>();
             services.AddSingleton<IProviderOwnershipCache, ProviderOwnershipCache>();
@@ -137,9 +143,6 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddSingleton<IProviderContextProvider, ProviderContextProvider>();
             services.AddSingleton(new LoqateAddressSearch.Options() { Key = configuration["PostCodeSearchSettings:Key"] });
             services.AddSingleton<IAddressSearchService, AddressSearchService>();
-            services.AddTransient<ISignInAction, DfeUserInfoHelper>();
-            services.AddTransient<ISignInAction, SignInTracker>();
-            services.AddTransient<ISignInAction, EnsureApprenticeshipQAStatusSetSignInAction>();
             services.AddTransient<MptxManager>();
             services.AddTransient<Features.NewApprenticeshipProvider.FlowModelInitializer>();
 
