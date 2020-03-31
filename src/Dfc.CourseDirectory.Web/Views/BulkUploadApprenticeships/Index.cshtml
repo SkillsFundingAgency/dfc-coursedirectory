@@ -69,14 +69,14 @@
         <div class="govuk-grid-column-two-thirds">
             <div class="govuk-body">
                 <p>
-                    You can use a file to replace information about all of your published apprenticeship training. To create the file you can:
+                    Bulk upload allows you to upload and publish all of your apprenticeship training information in a single file. Your apprenticeship training information will be replaced and deleted each time you publish. To create the file:
                     <ul>
-                        <li>enter your apprenticeship training information in an empty template</li>
-                        <li>update a template containing your published apprenticeship training information</li>
+                        <li>Enter your apprenticeship training information in a blank template</li>
+                        <li>Update a template containing your published apprenticeship training information</li>
                     </ul>
                 </p>
                 <p>
-                    Your updated apprenticeship training information will be published after you have uploaded your file and fixed any errors.
+                    Your updated apprenticeship training information will be ready to publish after you have uploaded your file and resolved any errors.
                 </p>
 
                 <div id="groupServerSideError" class="govuk-form-group">
@@ -116,12 +116,12 @@
 
                     <ul class="govuk-list">
                         <li>
-                            @Html.ActionLink("Download a blank template", "GetApprenticeshipBulkUploadTemplateFile", "BlobStorage")
+                            @Html.ActionLink("Blank template", "GetApprenticeshipBulkUploadTemplateFile", "BlobStorage")
                         </li>
                         <li class="govuk-!-padding-bottom-4">
                           
                             
-                                @Html.ActionLink("Download a template containing your current apprenticeships", "GetCurrentApprenticeshipsTemplateFile", "BlobStorage")
+                                @Html.ActionLink("Template containing your current published apprenticeship training information", "GetCurrentApprenticeshipsTemplateFile", "BlobStorage")
                             
 
                         </li>

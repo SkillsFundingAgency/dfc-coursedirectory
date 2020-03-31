@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.WebV2.Behaviors;
+using Dfc.CourseDirectory.WebV2.Behaviors.Errors;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries;
@@ -17,13 +20,13 @@ using OneOf.Types;
 
 namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
 {
-    public enum ErrorReason
+    using CommandResponse = OneOf<ModelWithErrors<ViewModel>, ConfirmationViewModel>;
+
+    public struct NoValidSubmission
     {
-        ProviderDoesNotExist,
-        NoValidSubmission,
     }
 
-    public class Query : IRequest<OneOf<Error<ErrorReason>, ViewModel>>
+    public class Query : IRequest<ViewModel>, IProviderScopedRequest
     {
         public Guid ProviderId { get; set; }
     }
@@ -35,7 +38,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
         public bool IsReadOnly { get; set; }
     }
 
-    public class Command : IRequest<OneOf<Error<ErrorReason>, ModelWithErrors<ViewModel>, ConfirmationViewModel>>
+    public class Command : IRequest<CommandResponse>, IProviderScopedRequest
     {
         public Guid ProviderId { get; set; }
         public bool? CompliancePassed { get; set; }
@@ -59,8 +62,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
     }
 
     public class Handler :
-        IRequestHandler<Query, OneOf<Error<ErrorReason>, ViewModel>>,
-        IRequestHandler<Command, OneOf<Error<ErrorReason>, ModelWithErrors<ViewModel>, ConfirmationViewModel>>
+        IRequestHandler<Query, ViewModel>,
+        IRestrictQAStatus<Query>,
+        IRequestHandler<Command, CommandResponse>,
+        IRestrictQAStatus<Command>
     {
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
@@ -79,37 +84,32 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
             _clock = clock;
         }
 
-        public async Task<OneOf<Error<ErrorReason>, ViewModel>> Handle(Query request, CancellationToken cancellationToken)
+        IEnumerable<ApprenticeshipQAStatus> IRestrictQAStatus<Command>.PermittedStatuses { get; } = new[]
         {
-            var errorOrData = await CheckStatus(request.ProviderId);
+            ApprenticeshipQAStatus.Submitted,
+            ApprenticeshipQAStatus.InProgress
+        };
 
-            if (errorOrData.Value is Error<ErrorReason>)
-            {
-                return errorOrData.AsT0;
-            }
-            else
-            {
-                return CreateViewModel(errorOrData.AsT1);
-            }
+        IEnumerable<ApprenticeshipQAStatus> IRestrictQAStatus<Query>.PermittedStatuses { get; } = new[]
+        {
+            ApprenticeshipQAStatus.Submitted,
+            ApprenticeshipQAStatus.InProgress,
+            ApprenticeshipQAStatus.Failed,
+            ApprenticeshipQAStatus.Passed,
+            ApprenticeshipQAStatus.UnableToComplete
+        };
+
+        public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
+        {
+            var data = await CheckStatus(request.ProviderId);
+            return CreateViewModel(data);
         }
 
-        public async Task<OneOf<Error<ErrorReason>, ModelWithErrors<ViewModel>, ConfirmationViewModel>> Handle(
+        public async Task<CommandResponse> Handle(
             Command request,
             CancellationToken cancellationToken)
         {
-            var errorOrData = await CheckStatus(request.ProviderId);
-
-            if (errorOrData.Value is Error<ErrorReason>)
-            {
-                return errorOrData.AsT0;
-            }
-
-            var data = errorOrData.AsT1;
-
-            if (data.QAStatus != ApprenticeshipQAStatus.Submitted && data.QAStatus != ApprenticeshipQAStatus.InProgress)
-            {
-                return new Error<ErrorReason>(ErrorReason.NoValidSubmission);
-            }
+            var data = await CheckStatus(request.ProviderId);
 
             var validator = new CommandValidator();
             var validationResult = await validator.ValidateAsync(request);
@@ -182,7 +182,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
             return confirmVm;
         }
 
-        private async Task<OneOf<Error<ErrorReason>, Data>> CheckStatus(Guid providerId)
+        private async Task<Data> CheckStatus(Guid providerId)
         {
             var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(
                 new GetProviderById()
@@ -192,7 +192,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
 
             if (provider == null)
             {
-                return new Error<ErrorReason>(ErrorReason.ProviderDoesNotExist);
+                throw new ErrorException<ProviderDoesNotExist>(new ProviderDoesNotExist());
             }
 
             var qaStatus = await _sqlQueryDispatcher.ExecuteQuery(
@@ -200,11 +200,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
                 {
                     ProviderId = providerId
                 });
-
-            if (qaStatus == ApprenticeshipQAStatus.NotStarted)
-            {
-                return new Error<ErrorReason>(ErrorReason.NoValidSubmission);
-            }
 
             var maybeLatestSubmission = await _sqlQueryDispatcher.ExecuteQuery(
                 new GetLatestApprenticeshipQASubmissionForProvider()
@@ -214,7 +209,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
 
             if (maybeLatestSubmission.Value is None)
             {
-                return new Error<ErrorReason>(ErrorReason.NoValidSubmission);
+                throw new ErrorException<NoValidSubmission>(new NoValidSubmission());
             }
 
             var latestSubmission = maybeLatestSubmission.AsT1;
@@ -228,7 +223,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
             return new Data()
             {
                 Provider = provider,
-                QAStatus = qaStatus,
+                QAStatus = qaStatus.ValueOrDefault(),
                 LatestSubmission = latestSubmission,
                 LatestAssessment = assessment
             };
@@ -275,7 +270,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
 
                 RuleFor(c => c.ComplianceComments)
                     .NotEmpty()
-                    .When(c => c.CompliancePassed == false)
+                    .When(c => c.CompliancePassed == false &&
+                        (c.ComplianceFailedReasons?.HasFlag(ApprenticeshipQAProviderComplianceFailedReasons.Other) ?? false))
                     .WithMessageForAllRules("Enter comments for the reason selected");
 
                 RuleFor(c => c.StylePassed)
@@ -290,7 +286,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
 
                 RuleFor(c => c.StyleComments)
                     .NotEmpty()
-                    .When(c => c.StylePassed == false)
+                    .When(c => c.StylePassed == false &&
+                        (c.StyleFailedReasons?.HasFlag(ApprenticeshipQAProviderStyleFailedReasons.Other) ?? false))
                     .WithMessageForAllRules("Enter comments for the reason selected");
             }
         }

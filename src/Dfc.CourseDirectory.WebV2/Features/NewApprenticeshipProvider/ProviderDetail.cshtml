@@ -1,0 +1,36 @@
+﻿@using Dfc.CourseDirectory.WebV2.Validation.ProviderValidation
+@model Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ProviderDetail.ViewModel
+@{
+    ViewBag.Title = "Edit your details";
+}
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <govuk-error-summary>
+        <govuk-error-summary-title>There is a problem</govuk-error-summary-title>
+        <govuk-error-summary-item asp-for="MarketingInformation" />
+    </govuk-error-summary>
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <form asp-action="ProviderDetail" append-provider-context="true" mptx-action="true">
+            <span class="govuk-caption-l">Course Directory</span>
+            <h1 class="govuk-heading-l">Edit your details</h1>
+
+            <govuk-input asp-for="CourseDirectoryName" disabled="true">
+                <govuk-input-label>Course Directory name</govuk-input-label>
+            </govuk-input>
+
+            <pttcd-rich-text-editor>
+                <govuk-character-count asp-for="MarketingInformation" max-length="@Constants.MarketingInformationStrippedMaxLength">
+                    <govuk-character-count-label>
+                        Brief overview of your organisation for employers
+                    </govuk-character-count-label>
+                </govuk-character-count>
+            </pttcd-rich-text-editor>
+
+            <govuk-button type="submit">Continue</govuk-button>
+        </form>
+    </div>
+</div>

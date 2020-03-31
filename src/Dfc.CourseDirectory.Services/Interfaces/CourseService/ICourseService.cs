@@ -21,6 +21,7 @@ namespace Dfc.CourseDirectory.Services.Interfaces.CourseService
         Task<IResult<ICourse>> GetCourseByIdAsync(IGetCourseByIdCriteria criteria);
         Task<IResult> ArchiveProviderLiveCourses(int? UKPRN);
         Task<IResult> ChangeCourseRunStatusesForUKPRNSelection(int UKPRN, int CurrentStatus, int StatusToBeChangedTo);
+        Task<IResult> ArchiveCourseRunsByUKPRN(int UKPRN);
         SelectRegionModel GetRegions();
         Task<IResult<ICourseSearchResult>> GetCoursesByLevelForUKPRNAsync(ICourseSearchCriteria criteria);
         IList<KeyValuePair<string, string>> ValidateCourse(ICourse course);

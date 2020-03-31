@@ -39,7 +39,7 @@
                     <govuk-radios-item disabled="@Model.IsReadOnly" value="@(false)">
                         Reject
                         <govuk-radios-item-conditional>
-                            <govuk-checkboxes asp-for="ComplianceFailedReasons" id-prefix="ComplianceFailedReasons" checkboxes-class="govuk-checkboxes--small">
+                            <govuk-checkboxes asp-for="ComplianceFailedReasons" id-prefix="ComplianceFailedReasons" class="govuk-checkboxes--small">
                                 <govuk-checkboxes-fieldset>
                                     <govuk-checkboxes-fieldset-legend>
                                         <h1 class="govuk-fieldset__heading">Reasons for rejection</h1>
@@ -61,7 +61,7 @@
                                     Incorrect Ofsted grade used
                                 </govuk-checkboxes-item>
                                 <govuk-checkboxes-item disabled="@Model.IsReadOnly" value="@(ApprenticeshipQAProviderComplianceFailedReasons.InsufficientDetail)" checked="@((Model.ComplianceFailedReasons ?? 0).HasFlag(ApprenticeshipQAProviderComplianceFailedReasons.InsufficientDetail))">
-                                    Insufficient detail used
+                                    Insufficient detail
                                 </govuk-checkboxes-item>
                                 <govuk-checkboxes-item disabled="@Model.IsReadOnly" value="@(ApprenticeshipQAProviderComplianceFailedReasons.NotAimedAtEmployer)" checked="@((Model.ComplianceFailedReasons ?? 0).HasFlag(ApprenticeshipQAProviderComplianceFailedReasons.NotAimedAtEmployer))">
                                     Not aimed at employer
@@ -93,7 +93,7 @@
                     <govuk-radios-item disabled="@Model.IsReadOnly" value="@(false)">
                         Reject
                         <govuk-radios-item-conditional>
-                            <govuk-checkboxes asp-for="StyleFailedReasons" id-prefix="StyleFailedReasons" checkboxes-class="govuk-checkboxes--small">
+                            <govuk-checkboxes asp-for="StyleFailedReasons" id-prefix="StyleFailedReasons" class="govuk-checkboxes--small">
                                 <govuk-checkboxes-fieldset>
                                     <govuk-checkboxes-fieldset-legend>
                                         <h1 class="govuk-fieldset__heading">Reasons for rejection</h1>

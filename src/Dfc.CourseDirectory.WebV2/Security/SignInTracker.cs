@@ -1,11 +1,10 @@
-﻿using System.Security.Claims;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.DataStore.Sql;
 using Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries;
 
 namespace Dfc.CourseDirectory.WebV2.Security
 {
-    public class SignInTracker
+    public class SignInTracker : ISignInAction
     {
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly IClock _clock;
@@ -18,15 +17,13 @@ namespace Dfc.CourseDirectory.WebV2.Security
             _clock = clock;
         }
 
-        public Task RecordSignIn(ClaimsPrincipal principal)
-        {
-            var currentUser = ClaimsPrincipalCurrentUserProvider.MapUserInfoFromPrincipal(principal);
-
-            return _sqlQueryDispatcher.ExecuteQuery(new CreateUserSignIn()
+        public Task RecordSignIn(AuthenticatedUserInfo userInfo) =>
+            _sqlQueryDispatcher.ExecuteQuery(new CreateUserSignIn()
             {
-                User = currentUser,
+                User = userInfo,
                 SignedInUtc = _clock.UtcNow
             });
-        }
+
+        Task ISignInAction.OnUserSignedIn(SignInContext context) => RecordSignIn(context.UserInfo);
     }
 }

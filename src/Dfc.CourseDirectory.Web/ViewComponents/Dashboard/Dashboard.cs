@@ -18,6 +18,10 @@ using Dfc.CourseDirectory.Models.Models.Apprenticeships;
 using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
 using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 using Dfc.CourseDirectory.Web.ViewModels.Migration;
+using Dfc.CourseDirectory.WebV2;
+using Dfc.CourseDirectory.WebV2.HttpContextFeatures;
+using Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.WebV2.DataStore.Sql;
 
 namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
 {
@@ -31,9 +35,11 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
         private readonly IProviderService _providerService;
         private readonly IEnvironmentHelper _environmentHelper;
         private ISession _session => _contextAccessor.HttpContext.Session;
+        private readonly IFeatureFlagProvider _featureFlagProvider;
+        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
 
         public Dashboard(ICourseService courseService, IVenueService venueService, IHttpContextAccessor contextAccessor, IBlobStorageService blobStorageService, IApprenticeshipService apprenticeshipService, IProviderService providerService,
-            IEnvironmentHelper environmentHelper)
+            IEnvironmentHelper environmentHelper, IFeatureFlagProvider featureFlagProvider, ISqlQueryDispatcher sqlQueryDispatcher)
         {
             Throw.IfNull(courseService, nameof(courseService));
             Throw.IfNull(apprenticeshipService, nameof(apprenticeshipService));
@@ -41,6 +47,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
             Throw.IfNull(blobStorageService, nameof(blobStorageService));
             Throw.IfNull(providerService, nameof(providerService));
             Throw.IfNull(environmentHelper, nameof(environmentHelper));
+       
 
             _apprenticeshipService = apprenticeshipService;
             _courseService = courseService;
@@ -49,6 +56,8 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
             _blobStorageService = blobStorageService;
             _providerService = providerService;
             _environmentHelper = environmentHelper;
+            _featureFlagProvider = featureFlagProvider;
+            _sqlQueryDispatcher = sqlQueryDispatcher;
         }
 
         public async Task<IViewComponentResult> InvokeAsync(DashboardModel model)
@@ -211,6 +220,20 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Dashboard
                 actualModel.ProviderType = provider.ProviderType;
             }
             actualModel.EnvironmentType = _environmentHelper.GetEnvironmentType();
+
+                actualModel.QAFeatureIsEnabled = _featureFlagProvider.HaveFeature(FeatureFlags.ApprenticeshipQA);
+
+                if (actualModel.QAFeatureIsEnabled)
+                {
+                    var providerId = ViewContext.HttpContext.Features.Get<ProviderContextFeature>().ProviderInfo.ProviderId;
+
+                    actualModel.ProviderQACurrentStatus = await _sqlQueryDispatcher.ExecuteQuery(
+                        new GetProviderApprenticeshipQAStatus()
+                        {
+                            ProviderId = providerId
+                        }) ?? WebV2.Models.ApprenticeshipQAStatus.NotStarted;
+
+                }
 
             }
             catch (Exception ex)

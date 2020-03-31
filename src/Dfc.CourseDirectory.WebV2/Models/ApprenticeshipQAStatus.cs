@@ -25,7 +25,7 @@ namespace Dfc.CourseDirectory.WebV2.Models
             switch (status)
             {
                 case ApprenticeshipQAStatus.NotStarted:
-                    return "Not started";
+                    return "New provider";
                 case ApprenticeshipQAStatus.Submitted:
                     return "Ready for QA";
                 case ApprenticeshipQAStatus.InProgress:
@@ -38,5 +38,8 @@ namespace Dfc.CourseDirectory.WebV2.Models
                     throw new NotImplementedException($"Unknown value: '{status}'.");
             }
         }
+
+        public static ApprenticeshipQAStatus ValueOrDefault(this ApprenticeshipQAStatus? status) =>
+            status ?? ApprenticeshipQAStatus.NotStarted;
     }
 }

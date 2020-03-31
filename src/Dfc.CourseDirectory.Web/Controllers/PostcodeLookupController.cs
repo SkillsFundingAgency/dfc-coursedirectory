@@ -8,6 +8,7 @@ using Dfc.CourseDirectory.Services.Interfaces;
 using Dfc.CourseDirectory.Services.Interfaces.VenueService;
 using Dfc.CourseDirectory.Services.VenueService;
 using Dfc.CourseDirectory.Web.ViewComponents.PostcodeLookup;
+using Dfc.CourseDirectory.WebV2.LoqateAddressSearch;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,43 +20,40 @@ namespace Dfc.CourseDirectory.Web.Controllers
     public class PostcodeLookupController : Controller
     {
         private readonly ILogger<PostcodeLookupController> _logger;
-        private readonly IPostCodeSearchService _postCodeSearchService;
+        private readonly IAddressSearchService _addressSearchService;
         private readonly IVenueService _venueService;
         private readonly ISession _session;
 
         public PostcodeLookupController(
             ILogger<PostcodeLookupController> logger,
-            IPostCodeSearchService postCodeSearchService,
+            IAddressSearchService addressSearchService,
             IVenueService venueService,
             IHttpContextAccessor contextAccessor)
         {
             _logger = logger;
-            _postCodeSearchService = postCodeSearchService;
+            _addressSearchService = addressSearchService;
             _venueService = venueService;
             _session = contextAccessor.HttpContext.Session;
         }
         [Authorize]
         public async Task<IActionResult> Index(string postcode, string venuename, string id)
         {
-            var result = await _postCodeSearchService.SearchAsync(new PostCodeSearchCriteria(postcode));
+            var result = await _addressSearchService.SearchByPostcode(postcode);
 
             var listItems = new List<SelectListItem>();
 
-            if (result.IsSuccess)
+            if (result.Count == 0)
             {
-                if (result.Value.Value.Count() == 0)
-                {
-                    listItems = null;
-                }
-                else
-                {
+                listItems = null;
+            }
+            else
+            {
 
-                    foreach (var item in result.Value.Value)
-                    {
-                        listItems.Add(new SelectListItem(item.StreetAddress, item.Id));
-                    }
-
+                foreach (var item in result)
+                {
+                    listItems.Add(new SelectListItem(item.StreetAddress, item.Id));
                 }
+
             }
 
             var model = new PostcodeLookupModel

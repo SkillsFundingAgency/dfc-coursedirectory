@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.WebV2.Behaviors.Errors;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries;
@@ -11,12 +12,10 @@ using Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.WebV2.Models;
 using Dfc.CourseDirectory.WebV2.Security;
 using MediatR;
-using OneOf;
-using OneOf.Types;
 
 namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderApprenticeshipQAInfoPanel
 {
-    public class Query : IRequest<OneOf<NotFound, ViewModel>>
+    public class Query : IRequest<ViewModel>
     {
         public Guid ProviderId { get; set; }
     }
@@ -37,26 +36,20 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderApprentice
         public DateTime? LastAssessedOn { get; set; }
     }
 
-    public class Handler : IRequestHandler<Query, OneOf<NotFound, ViewModel>>
+    public class Handler : IRequestHandler<Query, ViewModel>
     {
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
-        private readonly IClock _clock;
-        private readonly ICurrentUserProvider _currentUserProvider;
 
         public Handler(
             ISqlQueryDispatcher sqlQueryDispatcher,
-            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
-            IClock clock,
-            ICurrentUserProvider currentUserProvider)
+            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
         {
             _sqlQueryDispatcher = sqlQueryDispatcher;
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
-            _clock = clock;
-            _currentUserProvider = currentUserProvider;
         }
 
-        public async Task<OneOf<NotFound, ViewModel>> Handle(Query request, CancellationToken cancellationToken)
+        public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
         {
             var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(
                 new GetProviderById()
@@ -66,21 +59,21 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderApprentice
 
             if (provider == null)
             {
-                return new NotFound();
+                throw new ErrorException<ProviderDoesNotExist>(new ProviderDoesNotExist());
             }
 
-            var lastAssessment = await _sqlQueryDispatcher.ExecuteQuery(
+            var lastSubmission = await _sqlQueryDispatcher.ExecuteQuery(
                 new GetLatestApprenticeshipQASubmissionForProvider()
                 {
                     ProviderId = request.ProviderId
                 });
 
-            var lastAssessedBy = lastAssessment.AsT1?.LastAssessedBy ?? _currentUserProvider.GetCurrentUser();
-            var lastAssessedOn = lastAssessment.AsT1?.LastAssessedOn ?? _clock.UtcNow;
+            var lastAssessedBy = (lastSubmission.Value as ApprenticeshipQASubmission)?.LastAssessedBy;
+            var lastAssessedOn = (lastSubmission.Value as ApprenticeshipQASubmission)?.LastAssessedOn;
 
             var contact = provider.ProviderContact
                 .OrderByDescending(c => c.LastUpdated)
-                .SingleOrDefault(c => c.ContactType == "L");
+                .SingleOrDefault(c => c.ContactType == "P");
 
             var contactName = contact?.ContactPersonalDetails.PersonGivenName != null && contact?.ContactPersonalDetails.PersonFamilyName != null ?
                 string.Join(" ", contact.ContactPersonalDetails.PersonGivenName) + " " +

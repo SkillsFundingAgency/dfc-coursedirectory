@@ -1,0 +1,23 @@
+﻿.pttcd-c-search-input {
+    position: relative;
+}
+
+.pttcd-c-search-input .govuk-input {
+    padding-right: 45px; /* base is 5px + 40px for button */
+}
+
+.pttcd-c-search-input__button {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    cursor: pointer;
+    text-indent: 50000px;
+    padding: 6px;
+    border: 0;
+    z-index: 900;
+    width: 40px;
+    overflow: hidden;
+    background: url(/v2/images/icon-search-2x.png) 60% 50% no-repeat #000;
+    background-size: 24px;
+}

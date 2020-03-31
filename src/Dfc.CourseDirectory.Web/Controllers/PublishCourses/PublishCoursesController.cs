@@ -156,7 +156,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.PublishCourses
                         var bulkUploadedPendingCourses = (Courses.SelectMany(c => c.CourseRuns)
                                            .Where(x => x.RecordStatus == RecordStatus.BulkUploadPending)
                                            .Count());
-                        message = "Your file contained " + bulkUploadedPendingCourses + @WebHelper.GetErrorTextValueToUse(bulkUploadedPendingCourses) + ". You must fix all errors before your courses can be published to the directory.";
+                        message = "Your file contained " + bulkUploadedPendingCourses + @WebHelper.GetErrorTextValueToUse(bulkUploadedPendingCourses) + ". You must resolve all errors before your courses information can be published.";
                         return RedirectToAction("WhatDoYouWantToDoNext", "Bulkupload", new { message = message });
                     }
                   

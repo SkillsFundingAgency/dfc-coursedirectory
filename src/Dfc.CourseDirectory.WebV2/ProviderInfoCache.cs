@@ -34,13 +34,30 @@ namespace Dfc.CourseDirectory.WebV2
                 providerInfo = new ProviderInfo()
                 {
                     ProviderId = provider.Id,
-                    Ukprn = int.Parse(provider.UnitedKingdomProviderReferenceNumber)
+                    Ukprn = int.Parse(provider.UnitedKingdomProviderReferenceNumber),
+                    ProviderType = provider.ProviderType,
+                    ProviderName = provider.ProviderName
                 };
 
                 _cache.Set(cacheKey, providerInfo);
             }
 
             return providerInfo;
+        }
+
+        public async Task<Guid?> GetProviderIdForUkprn(int ukprn)
+        {
+            var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(
+                new GetProviderByUkprn() { Ukprn = ukprn });
+
+            if (provider != null)
+            {
+                return provider.Id;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         private static string GetCacheKey(Guid providerId) => $"provider-info:{providerId}";

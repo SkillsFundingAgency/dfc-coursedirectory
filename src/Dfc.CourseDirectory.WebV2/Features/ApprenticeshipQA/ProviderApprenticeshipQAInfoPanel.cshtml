@@ -33,7 +33,7 @@
                 Web
             </h3>
             <div class="govuk-!-font-size-16">
-                <a href="@Model.Website" rel="noreferrer" target="_blank">@Model.Website</a>
+                <a href="@Model.Website" class="govuk-link" rel="noreferrer" target="_blank">@Model.Website</a>
             </div>
         </div>
     }
@@ -55,7 +55,7 @@
                 Email
             </h3>
             <div class="govuk-!-font-size-16">
-                <a href="mailto:@Model.Email">@Model.Email</a>
+                <a href="mailto:@Model.Email" class="govuk-link" >@Model.Email</a>
             </div>
         </div>
     }
@@ -88,21 +88,24 @@
     </div>
 </aside>
 
-<aside class="pttcd-apprenticeship-qa-info-panel govuk-!-margin-top-6" role="complementary">
-    <div class="govuk-!-margin-bottom-4" id="pttcd-apprenticeship-qa-info-panel__provider-last-qa-by">
-        <h3 class="govuk-heading-s govuk-!-margin-bottom-0" id="subsection-title">
-            Quality assured by
-        </h3>
-        <div class="govuk-!-font-size-16">
-            @Model.LastAssessedBy?.FullName
+@if (Model.LastAssessedBy != null)
+{
+    <aside class="pttcd-apprenticeship-qa-info-panel govuk-!-margin-top-6" role="complementary">
+        <div class="govuk-!-margin-bottom-4" id="pttcd-apprenticeship-qa-info-panel__provider-last-qa-by">
+            <h3 class="govuk-heading-s govuk-!-margin-bottom-0" id="subsection-title">
+                Quality assured by
+            </h3>
+            <div class="govuk-!-font-size-16">
+                @Model.LastAssessedBy?.FullName
+            </div>
         </div>
-    </div>
-    <div class="govuk-!-margin-bottom-4" id="pttcd-apprenticeship-qa-info-panel__provider-last-qa-date">
-        <h3 class="govuk-heading-s govuk-!-margin-bottom-0">
-            Date
-        </h3>
-        <div class="govuk-!-font-size-16">
-            @Model.LastAssessedOn?.ToString("dd MMM yyyy")
+        <div class="govuk-!-margin-bottom-4" id="pttcd-apprenticeship-qa-info-panel__provider-last-qa-date">
+            <h3 class="govuk-heading-s govuk-!-margin-bottom-0">
+                Date
+            </h3>
+            <div class="govuk-!-font-size-16">
+                @Model.LastAssessedOn?.ToString("dd MMM yyyy")
+            </div>
         </div>
-    </div>
-</aside>
+    </aside>
+}

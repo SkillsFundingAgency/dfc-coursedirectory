@@ -24,6 +24,9 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Web.Helpers.Attributes;
+using Dfc.CourseDirectory.WebV2;
+using Dfc.CourseDirectory.WebV2.DataStore.Sql;
+using Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -140,7 +143,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [Authorize("Admin")]
         [HttpPost]
         [SelectedProviderNeeded]
-        public async Task<IActionResult> AddOrEditProviderType(ProviderTypeAddOrEditViewModel model)
+        public async Task<IActionResult> AddOrEditProviderType(
+            ProviderTypeAddOrEditViewModel model,
+            [FromServices] IProviderInfoCache providerInfoCache,
+            [FromServices] ISqlQueryDispatcher sqlQueryDispatcher)
         {
             int? UKPRN = _session.GetInt32("UKPRN");
 
@@ -150,6 +156,18 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
 
                 Provider provider = providerSearchResult.Value.Value.FirstOrDefault();
+
+                var oldProviderType = provider.ProviderType;
+                if (oldProviderType == ProviderType.FE && model.ProviderType.HasFlag(ProviderType.Apprenticeship))
+                {
+                    var providerId = await providerInfoCache.GetProviderIdForUkprn(UKPRN.Value);
+                    await sqlQueryDispatcher.ExecuteQuery(
+                        new EnsureApprenticeshipQAStatusSetForProvider()
+                        {
+                            ProviderId = providerId.Value
+                        });
+                }
+
                 provider.ProviderType = model.ProviderType;
 
                 try

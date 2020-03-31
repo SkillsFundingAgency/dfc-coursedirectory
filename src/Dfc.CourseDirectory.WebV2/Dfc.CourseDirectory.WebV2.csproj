@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
     <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
   </PropertyGroup>
 
@@ -11,17 +10,21 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="BuildBundlerMinifier" Version="3.2.435" />
+    <PackageReference Include="CsvHelper" Version="15.0.2" />
     <PackageReference Include="Dapper" Version="2.0.30" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="8.6.2" />
-    <PackageReference Include="GovUk.Frontend.AspNetCore" Version="0.1.0-pre-201" />
+    <PackageReference Include="Flurl" Version="2.8.2" />
+    <PackageReference Include="GovUk.Frontend.AspNetCore" Version="0.1.0-pre-236" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.22" />
     <PackageReference Include="HtmlSanitizer" Version="5.0.274-beta" />
+    <PackageReference Include="JustEat.HttpClientInterception" Version="3.0.0" />
     <PackageReference Include="JWT" Version="5.2.1" />
     <PackageReference Include="Mapster" Version="5.1.0" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="8.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="3.1.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="3.1.3" />
     <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.4.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="3.1.2" />
-    <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="3.1.2" />  <!-- Required for build to succeed on CI -->
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="3.1.3" />
     <PackageReference Include="OneOf" Version="2.1.151" />
     <PackageReference Include="Scrutor" Version="3.1.0" />
     <PackageReference Include="System.Data.SqlClient" Version="4.6.0" />
@@ -29,6 +32,24 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Content/**/*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Content\components\checkboxes.css" />
+    <None Remove="Content\components\inset-text.css" />
+    <None Remove="Content\components\radios.css" />
+    <None Remove="Content\components\search-input.css" />
+    <None Remove="Content\components\tinymce.css" />
+    <None Remove="Content\layout.css" />
+    <None Remove="Content\nav.css" />
+    <None Remove="Content\notification.css" />
+    <None Remove="Content\pages\apprenticeship-qa\apprenticeship-qa-info-panel.css" />
+    <None Remove="Content\pages\apprenticeship-qa\provider-selected.css" />
+    <None Remove="Content\pages\apprenticeships\find-standard-or-framework.css" />
+    <None Remove="Content\pages\helpdesk-dashboard.css" />
+    <None Remove="Content\pages\new-apprenticeship-provider\provider-detail-confirmation.css" />
+    <None Remove="Content\pages\new-apprenticeship-provider\provider-detail-info-panel.css" />
+    <None Remove="Content\utilities\width.css" />
   </ItemGroup>
 
 </Project>

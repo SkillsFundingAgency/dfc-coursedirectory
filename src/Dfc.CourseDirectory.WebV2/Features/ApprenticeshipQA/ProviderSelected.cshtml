@@ -11,11 +11,11 @@
         <h2 class="govuk-heading-m">
             Quality assurance status
         </h2>
-        <div class="pttcd-apprenticeship-qa-provider-selected-summary govuk-!-margin-bottom-9">
-            <div class="pttcd-apprenticeship-qa-provider-selected-summary-label">
+        <div class="pttcd-apprenticeship-qa__provider-selected__summary govuk-!-margin-bottom-9">
+            <div class="pttcd-apprenticeship-qa__provider-selected__summary__label">
                 @Model.ApprenticeshipQAStatus.ToDisplayName()
             </div>
-            <div class="pttcd-apprenticeship-qa-provider-selected-summary-status">
+            <div class="pttcd-apprenticeship-qa__provider-selected__summary__status">
                 <a asp-action="Status" asp-route-providerId="@Model.ProviderId" class="govuk-link">Change</a>
             </div>
         </div>
@@ -23,13 +23,20 @@
         <h2 class="govuk-heading-m">
             Provider
         </h2>
-        <div class="pttcd-apprenticeship-qa-provider-selected-summary pttcd-apprenticeship-qa-provider-selected-provider govuk-!-margin-bottom-9">
-            <div class="pttcd-apprenticeship-qa-provider-selected-summary-label">
-                <a asp-action="ProviderAssessment" asp-route-providerId="@Model.ProviderId" class="govuk-link">
-                    Provider information
-                </a>
+        <div class="pttcd-apprenticeship-qa__provider-selected__summary pttcd-apprenticeship-qa__provider-selected__provider govuk-!-margin-bottom-9">
+            <div class="pttcd-apprenticeship-qa__provider-selected__summary__label">
+                @if (Model.HaveSubmission)
+                {
+                    <a asp-action="ProviderAssessment" asp-route-providerId="@Model.ProviderId" class="govuk-link">
+                        Provider information
+                    </a>
+                }
+                else
+                {
+                    <text>Not submitted</text>
+                }
             </div>
-            <div class="pttcd-apprenticeship-qa-provider-selected-summary-status">
+            <div class="pttcd-apprenticeship-qa__provider-selected__summary__status">
                 @if (Model.ProviderAssessmentCompleted)
                 {
                     <govuk-tag>Completed</govuk-tag>
@@ -40,30 +47,44 @@
         <h2 class="govuk-heading-m">
             Apprenticeship training courses
         </h2>
-        @foreach (var app in Model.ApprenticeshipAssessments)
+        @if (Model.HaveSubmission)
+        {
+            @foreach (var app in Model.ApprenticeshipAssessments)
+            {
+                <div class="pttcd-apprenticeship-qa__provider-selected__summary pttcd-apprenticeship-qa__provider-selected__apprenticeship govuk-!-margin-bottom-9">
+                    <div class="pttcd-apprenticeship-qa__provider-selected__summary__label">
+                        <a asp-action="ApprenticeshipAssessment" asp-route-apprenticeshipId="@app.ApprenticeshipId" class="govuk-link">
+                            @app.ApprenticeshipTitle
+                        </a>
+                    </div>
+                    <div class="pttcd-apprenticeship-qa__provider-selected__summary__status">
+                        @if (app.AssessmentCompleted)
+                        {
+                            <govuk-tag>Completed</govuk-tag>
+                        }
+                    </div>
+                </div>
+            }
+        }
+        else
         {
             <div class="pttcd-apprenticeship-qa-provider-selected-summary pttcd-apprenticeship-qa-provider-selected-apprenticeship govuk-!-margin-bottom-9">
-                <div class="pttcd-apprenticeship-qa-provider-selected-summary-label">
-                    <a asp-action="ApprenticeshipAssessment" asp-route-apprenticeshipId="@app.ApprenticeshipId" class="govuk-link">
-                        @app.ApprenticeshipTitle
-                    </a>
+                <div class="pttcd-apprenticeship-qa__provider-selected__summary__label">
+                    Not submitted
                 </div>
-                <div class="pttcd-apprenticeship-qa-provider-selected-summary-status">
-                    @if (app.AssessmentCompleted)
-                    {
-                        <govuk-tag>Completed</govuk-tag>
-                    }
+                <div class="pttcd-apprenticeship-qa__provider-selected__summary__status">
                 </div>
             </div>
         }
 
-        @if (Model.ApprenticeshipQAStatus == ApprenticeshipQAStatus.Failed || Model.ApprenticeshipQAStatus == ApprenticeshipQAStatus.Passed)
+        @if (Model.SubmissionPassed != null)
         {
-            <govuk-inset-text inset-text-class="pttcd-inset-text__info">
-                Overall the provider information and apprenticeship training course has <strong>@(Model.ApprenticeshipQAStatus == ApprenticeshipQAStatus.Passed ? "PASSED" : "FAILED")</strong> quality assurance.
+            <govuk-inset-text class="pttcd-inset-text--info">
+                Overall the provider information and apprenticeship training course has <strong>@(Model.SubmissionPassed == true ? "PASSED" : "FAILED")</strong> quality assurance.
             </govuk-inset-text>
         }
-        else
+
+        @if (Model.ApprenticeshipQAStatus != ApprenticeshipQAStatus.Passed && Model.ApprenticeshipQAStatus != ApprenticeshipQAStatus.Failed)
         {
             <form asp-action="Complete" asp-route-providerId="@Model.ProviderId">
                 <govuk-button type="Submit" disabled="@(!Model.CanComplete)">Finish</govuk-button>

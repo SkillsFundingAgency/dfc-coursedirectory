@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.WebV2.Behaviors;
+using Dfc.CourseDirectory.WebV2.Behaviors.Errors;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.WebV2.DataStore.Sql;
@@ -15,28 +18,27 @@ using OneOf.Types;
 
 namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Status
 {
-    public enum ErrorReason
-    {
-        ProviderDoesNotExist,
-        InvalidStatus
-    }
+    using CommandResponse = OneOf<ModelWithErrors<Command>, Success>;
 
-    public class Query : IRequest<OneOf<Error<ErrorReason>, Command>>
+    public class Query : IRequest<Command>, IProviderScopedRequest
     {
         public Guid ProviderId { get; set; }
     }
     
-    public class Command : IRequest<OneOf<Error<ErrorReason>, ModelWithErrors<Command>, Success>>
+    public class Command : IRequest<CommandResponse>, IProviderScopedRequest
     {
         public Guid ProviderId { get; set; }
         public bool UnableToComplete { get; set; }
         public ApprenticeshipQAUnableToCompleteReasons UnableToCompleteReasons { get; set; }
         public string Comments { get; set; }
+        public string StandardName { get; set; }
     }
 
     public class Handler :
-        IRequestHandler<Query, OneOf<Error<ErrorReason>, Command>>,
-        IRequestHandler<Command, OneOf<Error<ErrorReason>, ModelWithErrors<Command>, Success>>
+        IRequestHandler<Query, Command>,
+        IRestrictQAStatus<Query>,
+        IRequestHandler<Command, CommandResponse>,
+        IRestrictQAStatus<Command>
     {
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
@@ -55,18 +57,29 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Status
             _clock = clock;
         }
 
-        public async Task<OneOf<Error<ErrorReason>, Command>> Handle(
+        IEnumerable<ApprenticeshipQAStatus> IRestrictQAStatus<Command>.PermittedStatuses { get; } = new[]
+        {
+            ApprenticeshipQAStatus.NotStarted,
+            ApprenticeshipQAStatus.Submitted,
+            ApprenticeshipQAStatus.InProgress,
+            ApprenticeshipQAStatus.Failed,
+            ApprenticeshipQAStatus.UnableToComplete
+        };
+
+        IEnumerable<ApprenticeshipQAStatus> IRestrictQAStatus<Query>.PermittedStatuses { get; } = new[]
+        {
+            ApprenticeshipQAStatus.NotStarted,
+            ApprenticeshipQAStatus.Submitted,
+            ApprenticeshipQAStatus.InProgress,
+            ApprenticeshipQAStatus.Failed,
+            ApprenticeshipQAStatus.UnableToComplete
+        };
+
+        public async Task<Command> Handle(
             Query request,
             CancellationToken cancellationToken)
         {
-            var errorOrData = await CheckStatus(request.ProviderId);
-
-            if (errorOrData.Value is Error<ErrorReason>)
-            {
-                return errorOrData.AsT0;
-            }
-
-            var data = errorOrData.AsT1;
+            var data = await CheckStatus(request.ProviderId);
 
             var unableToComplete = data.ApprenticeshipQAStatus.HasFlag(ApprenticeshipQAStatus.UnableToComplete);
 
@@ -85,18 +98,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Status
             };
         }
 
-        public async Task<OneOf<Error<ErrorReason>, ModelWithErrors<Command>, Success>> Handle(
+        public async Task<CommandResponse> Handle(
             Command request,
             CancellationToken cancellationToken)
         {
-            var errorOrData = await CheckStatus(request.ProviderId);
-
-            if (errorOrData.Value is Error<ErrorReason>)
-            {
-                return errorOrData.AsT0;
-            }
-
-            var data = errorOrData.AsT1;
+            var data = await CheckStatus(request.ProviderId);
 
             var validator = new CommandValidator();
             var validationResult = await validator.ValidateAsync(request);
@@ -118,7 +124,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Status
                     {
                         ProviderId = request.ProviderId,
                         UnableToCompleteReasons = request.UnableToCompleteReasons,
-                        Comments = request.Comments,
+                        Comments = request.UnableToCompleteReasons.HasFlag(ApprenticeshipQAUnableToCompleteReasons.Other) ?
+                            request.Comments :
+                            null,
+                        StandardName = request.UnableToCompleteReasons.HasFlag(ApprenticeshipQAUnableToCompleteReasons.StandardNotReady) ?
+                            request.StandardName :
+                            null,
                         AddedByUserId = _currentUserProvider.GetCurrentUser().UserId,
                         AddedOn = _clock.UtcNow
                     });
@@ -134,7 +145,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Status
             return new Success();
         }
 
-        private async Task<OneOf<Error<ErrorReason>, Data>> CheckStatus(Guid providerId)
+        private async Task<Data> CheckStatus(Guid providerId)
         {
             var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(
                 new GetProviderById()
@@ -144,7 +155,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Status
 
             if (provider == null)
             {
-                return new Error<ErrorReason>(ErrorReason.ProviderDoesNotExist);
+                throw new ErrorException<ProviderDoesNotExist>(new ProviderDoesNotExist());
             }
 
             var currentStatus = await _sqlQueryDispatcher.ExecuteQuery(
@@ -153,14 +164,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Status
                     ProviderId = providerId
                 });
 
-            if (currentStatus == ApprenticeshipQAStatus.Passed)
-            {
-                return new Error<ErrorReason>(ErrorReason.InvalidStatus);
-            }
-
             return new Data()
             {
-                ApprenticeshipQAStatus = currentStatus
+                ApprenticeshipQAStatus = currentStatus.ValueOrDefault()
             };
         }
 
@@ -181,8 +187,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Status
 
                 RuleFor(c => c.Comments)
                     .NotEmpty()
-                    .When(c => c.UnableToComplete)
+                    .When(c => c.UnableToComplete && c.UnableToCompleteReasons.HasFlag(ApprenticeshipQAUnableToCompleteReasons.Other))
                     .WithMessageForAllRules("Enter comments for the reason selected");
+
+                RuleFor(c => c.StandardName)
+                    .NotEmpty()
+                    .When(c => c.UnableToComplete && c.UnableToCompleteReasons.HasFlag(ApprenticeshipQAUnableToCompleteReasons.StandardNotReady))
+                    .WithMessageForAllRules("Enter the standard name");
             }
         }
     }

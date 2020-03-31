@@ -16,9 +16,9 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <form asp-action="Status">
-            <govuk-radios asp-for="UnableToComplete">
+            <govuk-radios asp-for="UnableToComplete" class="pttcd-radios--inline-conditionals">
                 <govuk-radios-fieldset is-page-heading="true">
-                    <govuk-radios-fieldset-legend legend-class="govuk-fieldset__legend--xl">
+                    <govuk-radios-fieldset-legend class="govuk-fieldset__legend--xl">
                         Quality assurance status
                     </govuk-radios-fieldset-legend>
                 </govuk-radios-fieldset>
@@ -31,16 +31,8 @@
                 <govuk-radios-item value="@(true)" id="UnableToComplete-true">
                     Unable to complete
                     <govuk-radios-item-conditional>
-                        <govuk-checkboxes asp-for="UnableToCompleteReasons" checkboxes-class="govuk-checkboxes--small">
-                            <govuk-checkboxes-fieldset>
-                                <govuk-checkboxes-fieldset-legend>
-                                    <h1 class="govuk-fieldset__heading">Reasons a provider is unable to complete</h1>
-                                </govuk-checkboxes-fieldset-legend>
-                            </govuk-checkboxes-fieldset>
-                            <govuk-checkboxes-hint>Select all that apply.</govuk-checkboxes-hint>
-                            <govuk-checkboxes-item id="@($"{Html.IdFor(m => m.UnableToCompleteReasons)}-{(int)ApprenticeshipQAUnableToCompleteReasons.StandardNotReady}")" value="@(ApprenticeshipQAUnableToCompleteReasons.StandardNotReady)" checked="@(Model.UnableToCompleteReasons.HasFlag(ApprenticeshipQAUnableToCompleteReasons.StandardNotReady))">
-                                Standard not ready
-                            </govuk-checkboxes-item>
+                        <govuk-checkboxes asp-for="UnableToCompleteReasons" class="govuk-checkboxes--small pttcd-checkboxes-!-no-float">
+                            <govuk-checkboxes-hint>Select all options that are relevant to you.</govuk-checkboxes-hint>
                             <govuk-checkboxes-item id="@($"{Html.IdFor(m => m.UnableToCompleteReasons)}-{(int)ApprenticeshipQAUnableToCompleteReasons.ProviderDevelopingProvision}")" value="@(ApprenticeshipQAUnableToCompleteReasons.ProviderDevelopingProvision)" checked="@(Model.UnableToCompleteReasons.HasFlag(ApprenticeshipQAUnableToCompleteReasons.ProviderDevelopingProvision))">
                                 Provider developing provision
                             </govuk-checkboxes-item>
@@ -50,19 +42,29 @@
                             <govuk-checkboxes-item id="@($"{Html.IdFor(m => m.UnableToCompleteReasons)}-{(int)ApprenticeshipQAUnableToCompleteReasons.ProviderHasAppliedToTheWrongRoute}")" value="@(ApprenticeshipQAUnableToCompleteReasons.ProviderHasAppliedToTheWrongRoute)" checked="@(Model.UnableToCompleteReasons.HasFlag(ApprenticeshipQAUnableToCompleteReasons.ProviderHasAppliedToTheWrongRoute))">
                                 Provider has applied to the wrong route
                             </govuk-checkboxes-item>
+                            <govuk-checkboxes-item id="@($"{Html.IdFor(m => m.UnableToCompleteReasons)}-{(int)ApprenticeshipQAUnableToCompleteReasons.StandardNotReady}")" value="@(ApprenticeshipQAUnableToCompleteReasons.StandardNotReady)" checked="@(Model.UnableToCompleteReasons.HasFlag(ApprenticeshipQAUnableToCompleteReasons.StandardNotReady))">
+                                Standard not ready
+                                <govuk-checkboxes-item-conditional>
+                                    <govuk-textarea asp-for="StandardName">
+                                        <govuk-textarea-label>Standard name</govuk-textarea-label>
+                                        <govuk-textarea-hint>Give the name of the standard the provider would like to offer.</govuk-textarea-hint>
+                                    </govuk-textarea>
+                                </govuk-checkboxes-item-conditional>
+                            </govuk-checkboxes-item>
                             <govuk-checkboxes-item id="@($"{Html.IdFor(m => m.UnableToCompleteReasons)}-{(int)ApprenticeshipQAUnableToCompleteReasons.Other}")" value="@(ApprenticeshipQAUnableToCompleteReasons.Other)" checked="@(Model.UnableToCompleteReasons.HasFlag(ApprenticeshipQAUnableToCompleteReasons.Other))">
                                 Other
+                                <govuk-checkboxes-item-conditional>
+                                    <govuk-textarea asp-for="Comments">
+                                        <govuk-textarea-label>Comments</govuk-textarea-label>
+                                    </govuk-textarea>
+                                </govuk-checkboxes-item-conditional>
                             </govuk-checkboxes-item>
                         </govuk-checkboxes>
-                        
-                        <govuk-textarea asp-for="Comments">
-                            <govuk-textarea-label>Comments</govuk-textarea-label>
-                        </govuk-textarea>
                     </govuk-radios-item-conditional>
                 </govuk-radios-item>
             </govuk-radios>
 
-            <govuk-button typeof="submit">Save and continue</govuk-button>
+            <govuk-button type="submit">Save and continue</govuk-button>
         </form>
     </div>
     <div class="govuk-grid-column-one-third">

@@ -5,6 +5,7 @@ using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.Interfaces.ApprenticeshipService;
 using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.Web.ViewModels.EditApprenticeship;
+using Dfc.CourseDirectory.WebV2.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,6 +19,7 @@ using System.Threading.Tasks;
 
 namespace Dfc.CourseDirectory.Web.Controllers.EditApprenticeships
 {
+    [RestrictApprenticeshipQAStatus(ApprenticeshipQAStatus.Passed, AllowWhenApprenticeshipQAFeatureDisabled = true)]
     public class EditApprenticeshipController : Controller
     {
         private readonly ILogger<EditApprenticeshipController> _logger;
