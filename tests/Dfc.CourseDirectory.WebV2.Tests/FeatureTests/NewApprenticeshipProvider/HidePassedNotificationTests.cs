@@ -33,21 +33,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
         }
 
         [Fact]
-        public async Task Post_DeveloperUserReturnsBadRequest()
-        {
-            // Arrange
-            var providerId = await TestData.CreateProvider(apprenticeshipQAStatus: ApprenticeshipQAStatus.Passed, providerType: ProviderType.Apprenticeships);
-            await User.AsDeveloper();
-
-            // Act
-            var response = await HttpClient.PostAsync(
-                $"new-apprenticeship-provider/hide-passed-notification?providerId={providerId}&returnUrl=/", null);
-
-            // Assert
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        }
-
-        [Fact]
         public async Task Post_HelpdeskUserReturnsForbidden()
         {
             // Arrange
@@ -204,14 +189,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
-            await TestData.UpdateApprenticeshipQASubmission(
-                submissionId,
-                providerAssessmentPassed: null,
-                apprenticeshipAssessmentsPassed: null,
-                passed: null,
-                lastAssessedByUserId: User.UserId.ToString(),
-                lastAssessedOn: Clock.UtcNow);
-
             //create provider assessment
             Clock.UtcNow = Clock.UtcNow.AddDays(1);
             var PassedQAOn = Clock.UtcNow;
@@ -270,10 +247,22 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             await TestData.UpdateApprenticeshipQASubmission(
                 submissionId,
                 providerAssessmentPassed: null,
-                apprenticeshipAssessmentsPassed: null,
+                apprenticeshipAssessmentsPassed: true,
                 passed: null,
                 lastAssessedByUserId: User.UserId.ToString(),
                 lastAssessedOn: Clock.UtcNow);
+
+            await TestData.CreateApprenticeshipQAApprenticeshipAssessment(
+                submissionId,
+                apprenticeshipId,
+                adminUserId,
+                Clock.UtcNow,
+                true,
+                "",
+                ApprenticeshipQAApprenticeshipComplianceFailedReasons.None,
+                true,
+                "",
+                ApprenticeshipQAApprenticeshipStyleFailedReasons.None);
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
