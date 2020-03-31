@@ -28,6 +28,8 @@
     <PackageReference Include="OneOf" Version="2.1.151" />
     <PackageReference Include="Scrutor" Version="3.1.0" />
     <PackageReference Include="System.Data.SqlClient" Version="4.6.0" />
+    <PackageReference Include="System.Private.ServiceModel" Version="4.7.0" />
+    <PackageReference Include="System.ServiceModel.Http" Version="4.7.0" />
   </ItemGroup>
 
   <ItemGroup>
