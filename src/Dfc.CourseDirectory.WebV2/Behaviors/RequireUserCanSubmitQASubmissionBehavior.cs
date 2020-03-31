@@ -13,18 +13,15 @@ namespace Dfc.CourseDirectory.WebV2.Behaviors
         : IPipelineBehavior<TRequest, TResponse>
         where TRequest : IProviderScopedRequest
     {
-        private readonly IRequireUserCanSubmitQASubmission<TRequest> _descriptor;
         private readonly ICurrentUserProvider _currentUserProvider;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly IProviderInfoCache _providerInfoCache;
 
         public RequireUserCanSubmitQASubmissionBehavior(
-            IRequireUserCanSubmitQASubmission<TRequest> descriptor,
             ICurrentUserProvider currentUserProvider,
             ISqlQueryDispatcher sqlQueryDispatcher,
             IProviderInfoCache providerInfoCache)
         {
-            _descriptor = descriptor;
             _currentUserProvider = currentUserProvider;
             _sqlQueryDispatcher = sqlQueryDispatcher;
             _providerInfoCache = providerInfoCache;
@@ -50,11 +47,17 @@ namespace Dfc.CourseDirectory.WebV2.Behaviors
                 });
 
             var effectiveQaStatus = qaStatus.ValueOrDefault();
+            var qaStatusIsValid = effectiveQaStatus switch
+            {
+                ApprenticeshipQAStatus.NotStarted => true,
+                ApprenticeshipQAStatus.Failed => true,
+                _ => false
+            };
 
             var providerInfo = await _providerInfoCache.GetProviderInfo(providerId);
+            var providerTypeIsValid = providerInfo.ProviderType.HasFlag(ProviderType.Apprenticeships);
 
-            if (effectiveQaStatus != ApprenticeshipQAStatus.NotStarted ||
-                !providerInfo.ProviderType.HasFlag(ProviderType.Apprenticeships))
+            if (!qaStatusIsValid || !providerTypeIsValid)
             {
                 throw new ErrorException<InvalidQAStatus>(new InvalidQAStatus());
             }
