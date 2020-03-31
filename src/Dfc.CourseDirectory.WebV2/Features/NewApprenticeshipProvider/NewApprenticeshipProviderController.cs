@@ -53,6 +53,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
         public IActionResult ApprenticeshipLocations() => throw new System.NotImplementedException();
 
         [StartsMptx]
+        [HttpGet("provider-detail")]
         public async Task<IActionResult> ProviderDetail(
             ProviderInfo providerInfo,
             [FromServices] MptxManager mptxManager,
