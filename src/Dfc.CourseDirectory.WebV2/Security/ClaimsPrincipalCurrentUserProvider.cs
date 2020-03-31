@@ -60,7 +60,7 @@ namespace Dfc.CourseDirectory.WebV2.Security
                 LastName = principal.FindFirst("family_name").Value,
                 Role = principal.FindFirst(ClaimTypes.Role)?.Value,
                 UserId = principal.FindFirst("sub").Value,
-                ProviderId = providerId
+                CurrentProviderId = providerId
             };
         }
 

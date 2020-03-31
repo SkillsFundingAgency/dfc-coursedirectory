@@ -29,10 +29,10 @@ SELECT
     unableToCompleteReason.UnableToCompleteReasons
 FROM Pttcd.Providers p
 JOIN (
-    SELECT MIN(usi.SignedInUtc) SignedInUtc, u.ProviderId
+    SELECT MIN(usi.SignedInUtc) SignedInUtc, up.ProviderId
     FROM Pttcd.UserSignIns usi
-    JOIN Pttcd.Users u ON usi.UserId = u.UserId
-    GROUP BY u.ProviderId
+    JOIN Pttcd.UserProviders up ON usi.UserId = up.UserId
+    GROUP BY up.ProviderId
 ) FirstSignIn ON p.ProviderId = FirstSignIn.ProviderId
 LEFT JOIN Pttcd.ApprenticeshipQASubmissions s ON p.ProviderId = s.ProviderId
 LEFT JOIN (

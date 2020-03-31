@@ -207,7 +207,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                         Email = Email,
                         FirstName = FirstName,
                         LastName = LastName,
-                        ProviderId = ProviderId,
+                        CurrentProviderId = ProviderId,
                         Role = Role,
                         UserId = UserId
                     });

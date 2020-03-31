@@ -6,7 +6,7 @@ namespace Dfc.CourseDirectory.WebV2.Security
     {
         public static bool CanSubmitQASubmission(AuthenticatedUserInfo userInfo, Guid providerId) =>
             userInfo.IsDeveloper ||
-            (userInfo.IsProvider && userInfo.ProviderId.Value == providerId);
+            (userInfo.IsProvider && userInfo.CurrentProviderId.Value == providerId);
 
         public static bool CanUpdateProviderCourseDirectoryName(AuthenticatedUserInfo userInfo) =>
             userInfo.IsDeveloper;

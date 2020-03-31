@@ -8,5 +8,6 @@ namespace Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries
     {
         public UserInfo User { get; set; }
         public DateTime SignedInUtc { get; set; }
+        public Guid? CurrentProviderId { get; set; }
     }
 }
