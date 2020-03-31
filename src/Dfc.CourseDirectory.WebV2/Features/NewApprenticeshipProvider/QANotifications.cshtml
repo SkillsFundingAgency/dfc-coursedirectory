@@ -25,7 +25,7 @@
     else if (Model.Status == ApprenticeshipQAStatus.Passed && !Model.HidePassedNotication)
     {
         <pttcd-notification title="Quality assurance outcome" id="pttcd-new-apprenticeship-provider__qa-notifications-passed">
-            <form asp-route-returnUrl="@ViewContext.HttpContext.Request.GetEncodedPathAndQuery()" asp-controller="new-apprenticeship-provider" asp-action="hide-passed-notification" id="closeform" method="post" append-provider-context="true">
+            <form asp-route-returnUrl="@ViewContext.HttpContext.Request.GetEncodedPathAndQuery()" asp-controller="NewApprenticeship" asp-action="HidePassedNotication" id="closeform" method="post" append-provider-context="true">
 
                 <p>Your information has passed quality assurance against the style and compliance standards.</p>
                 <p>You can publish all of your apprenticeship training courses.</p>

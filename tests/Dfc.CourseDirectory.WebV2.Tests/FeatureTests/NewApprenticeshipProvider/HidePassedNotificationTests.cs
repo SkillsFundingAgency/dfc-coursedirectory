@@ -36,7 +36,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
         [InlineData(ApprenticeshipQAStatus.InProgress)]
         [InlineData(ApprenticeshipQAStatus.Failed)]
         [InlineData(ApprenticeshipQAStatus.UnableToComplete)]
-        public async Task Post_NonePassedQAStatusReturnsBadRequest(ApprenticeshipQAStatus status)
+        public async Task Post_NotPassedQAStatusReturnsBadRequest(ApprenticeshipQAStatus status)
         {
             // Arrange
             var ukprn = 12345;
@@ -99,7 +99,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
         }
 
         [Fact]
-        public async Task Post_HidePassedNotificationReturnsRedirectOnSuccess()
+        public async Task Post_ValidRequestReturnsRedirect()
         {
             // Arrange
             var ukprn = 12345;
@@ -162,7 +162,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
         }
 
         [Fact]
-        public async Task Post_PostingMoreThanOnceReturnsBadRequest()
+        public async Task Post_AlreadyHiddenReturnsBadRequest()
         {
             // Arrange
             var ukprn = 12345;
