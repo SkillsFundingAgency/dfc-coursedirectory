@@ -39,6 +39,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.HidePassedNotification
             Command request,
             CancellationToken cancellationToken)
         {
+            //either return a submission of throw if provider does not have a submission
             var qasubmission = await _sqlQueryDispatcher.ExecuteQuery(
                 new GetLatestApprenticeshipQASubmissionForProvider()
                 {
@@ -46,9 +47,22 @@ namespace Dfc.CourseDirectory.WebV2.Features.HidePassedNotification
                 });
 
             var submission = qasubmission.Match(
-                _ => throw new Exception(""),
-                sub => sub);
+                notfound => throw new ErrorException<InvalidQASubmission>(new InvalidQASubmission()),
+                found => found);
 
+            //cannot hide passed notification if qa status is not passed
+            if (submission.Passed != true)
+            {
+                throw new ErrorException<InvalidQAStatus>(new InvalidQAStatus());
+            }
+
+            //cannot hide notification if it has already been hidden
+            if (submission.HidePassedNotification)
+            {
+                throw new ErrorException<PassedNotificationAlreadyHidden>(new PassedNotificationAlreadyHidden());
+            }
+
+            //hide notification
             var hideDialog = await _sqlQueryDispatcher.ExecuteQuery(
                 new UpdateHidePassedNotification()
                 {
@@ -56,11 +70,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.HidePassedNotification
                     HidePassedNotification = true
                 });
 
-            var resp = hideDialog.Match(
+            return hideDialog.Match(
                 notfound => throw new ErrorException<InvalidQASubmission>(new InvalidQASubmission()),
                 success => success);
-
-            return resp;
         }
     }
 

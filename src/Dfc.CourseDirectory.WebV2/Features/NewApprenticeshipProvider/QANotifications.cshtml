@@ -1,5 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Http.Extensions
-@using System.Text.Encodings.Web;
+@using Microsoft.AspNetCore.Http;
 
 @model Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.QANotificationsViewModel
 
@@ -24,14 +24,14 @@
     }
     else if (Model.Status == ApprenticeshipQAStatus.Passed && !Model.HidePassedNotication)
     {
-<form asp-controller="new-apprenticeship-provider" asp-action="hide-passed-notification" id="closeform" method="post" append-provider-context="true">
-    <pttcd-notification title="Quality assurance outcome" id="pttcd-new-apprenticeship-provider__qa-notifications-passed">
-        <p>Your information has passed quality assurance against the style and compliance standards.</p>
-        <p>You can publish all of your apprenticeship training courses.</p>
-            <govuk-button type="submit" class="govuk-button--secondary" asp-route-returnUrl=@{ UrlEncoder.Default.Encode(ViewContext.HttpContext.Request.GetDisplayUrl());}>Close notification</govuk-button>
-    </pttcd-notification>
+        <pttcd-notification title="Quality assurance outcome" id="pttcd-new-apprenticeship-provider__qa-notifications-passed">
+            <form asp-route-returnUrl="@ViewContext.HttpContext.Request.GetEncodedPathAndQuery()" asp-controller="new-apprenticeship-provider" asp-action="hide-passed-notification" id="closeform" method="post" append-provider-context="true">
 
-</form>
+                <p>Your information has passed quality assurance against the style and compliance standards.</p>
+                <p>You can publish all of your apprenticeship training courses.</p>
+                <govuk-button class="govuk-button--secondary" type="submit">Close notification</govuk-button>
+            </form>
+        </pttcd-notification>
     }
     else if (Model.Status == ApprenticeshipQAStatus.NotStarted)
     {
