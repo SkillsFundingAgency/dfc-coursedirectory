@@ -2,34 +2,29 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries;
 using JWT.Algorithms;
 using JWT.Builder;
-using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Dfc.CourseDirectory.WebV2.Security
 {
-    public class DfeUserInfoHelper : IDisposable
+    public class DfeUserInfoHelper : ISignInAction, IDisposable
     {
         private readonly DfeSignInSettings _settings;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
-        private readonly IHostEnvironment _environment;
         private readonly HttpClient _httpClient;
 
         public DfeUserInfoHelper(
             DfeSignInSettings settings,
-            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
-            IHostEnvironment environment)
+            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
         {
             _settings = settings;
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
-            _environment = environment;
 
             _httpClient = new HttpClient();  // TODO Use HttpClientFactory
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {CreateApiToken(settings)}");
@@ -40,22 +35,41 @@ namespace Dfc.CourseDirectory.WebV2.Security
             _httpClient.Dispose();
         }
 
-        public async Task AppendAdditionalClaims(ClaimsPrincipal principal)
+        public async Task OnUserSignedIn(SignInContext context)
         {
-            var userId = principal.FindFirst("sub").Value;
-
-            var organisation = JObject.Parse(principal.FindFirst("Organisation").Value);
+            var organisation = JObject.Parse(context.OriginalPrincipal.FindFirst("Organisation").Value);
             var organisationId = organisation["id"].ToString();
             var ukprn = organisation["ukprn"].ToObject<int?>();
 
-            var userOrgDetails = await GetUserOrganisationDetails(organisationId, userId);
+            var userOrgDetails = await GetUserOrganisationDetails(organisationId, context.UserInfo.UserId);
 
-            var additionalClaims = new List<Claim>()
+            var roleNames = new HashSet<string>(userOrgDetails.Roles.Select(r => r.Name));
+            var normalizedRoles = NormalizeRoles(roleNames, out var isProviderScoped);
+
+            if (normalizedRoles.Count == 0)
             {
-                new Claim("OrganisationId", organisationId)
-            };
+                throw new InvalidOperationException(
+                    $"No recognised roles found. " +
+                    $"Received: ${(userOrgDetails.Roles.Count > 0 ? string.Join(", ", roleNames) : "<none>")}.");
+            }
+            else if (normalizedRoles.Count > 1)
+            {
+                throw new NotSupportedException(
+                        $"Too many roles: " +
+                        $"{string.Join(", ", normalizedRoles)}.");
+            }
 
-            additionalClaims.AddRange(userOrgDetails.Roles.Select(r => new Claim(ClaimTypes.Role, r.Name)));
+            var role = normalizedRoles.Single();
+
+            if (isProviderScoped && !ukprn.HasValue)
+            {
+                throw new InvalidOperationException(
+                    $"Expected a UKPRN for user with role: {role} organisation: {organisationId}.");
+            }
+
+            context.UserInfo.Role = role;
+            context.DfeSignInOrganisationId = organisationId;
+            context.ProviderUkprn = ukprn;
 
             if (ukprn.HasValue)
             {
@@ -64,31 +78,11 @@ namespace Dfc.CourseDirectory.WebV2.Security
                 // TODO Handle this nicely
                 if (provider != null)
                 {
-                    throw new Exception("Unknown provider");
+                    throw new Exception($"Cannot find provider with UKPRN: {ukprn.Value}.");
                 }
 
-                additionalClaims.Add(new Claim("ProviderId", provider.Id.ToString()));
-                additionalClaims.Add(new Claim("ProviderType", provider.ProviderType.ToString()));
-                additionalClaims.Add(new Claim("provider_status", provider.ProviderStatus));
-
-                // This claim is kept around to keep the old UI bits working.
-                // New bits should use ProviderId instead
-                if (!_environment.IsTesting())
-                {
-                    additionalClaims.Add(new Claim("UKPRN", ukprn.Value.ToString()));
-                }
+                context.Provider = provider;
             }
-            else
-            {
-                // TODO: Old UI uses this to figure out what UI to show so we need to keep it around for now.
-                // New UI shouldn't depend on this so we should omit this after we've migrated all the UI
-                if (!_environment.IsTesting())
-                {
-                    additionalClaims.Add(new Claim("ProviderType", "Both"));
-                }
-            }
-
-            principal.AddIdentity(new ClaimsIdentity(additionalClaims));
         }
 
         private static string CreateApiToken(DfeSignInSettings settings) =>
@@ -114,12 +108,47 @@ namespace Dfc.CourseDirectory.WebV2.Security
             return JsonConvert.DeserializeObject<DFEUserInfo>(responseJson);
         }
 
+        private IReadOnlyCollection<string> NormalizeRoles(
+            IReadOnlyCollection<string> roleNames,
+            out bool isProviderScoped)
+        {
+            if (roleNames.Contains("Developer") ||
+                roleNames.Contains("Admin User") ||
+                roleNames.Contains("Admin Superuser"))
+            {
+                isProviderScoped = false;
+                return new[] { RoleNames.Developer };
+            }
+
+            if (roleNames.Contains("Helpdesk"))
+            {
+                isProviderScoped = false;
+                return new[] { RoleNames.Helpdesk };
+            }
+
+            if (roleNames.Contains("Provider Superuser"))
+            {
+                isProviderScoped = true;
+                return new[] { RoleNames.ProviderSuperUser };
+            }
+
+            if (roleNames.Contains("Provider User"))
+            {
+                isProviderScoped = true;
+                return new[] { RoleNames.ProviderUser };
+            }
+
+            // No valid roles...
+            isProviderScoped = default;
+            return Array.Empty<string>();
+        }
+
         private class DFEUserInfo
         {
             public Guid ServiceId { get; set; }
             public Guid OrganisationId { get; set; }
             public Guid UserId { get; set; }
-            public IEnumerable<Role> Roles { get; set; }
+            public IReadOnlyCollection<Role> Roles { get; set; }
         }
 
         private class Role

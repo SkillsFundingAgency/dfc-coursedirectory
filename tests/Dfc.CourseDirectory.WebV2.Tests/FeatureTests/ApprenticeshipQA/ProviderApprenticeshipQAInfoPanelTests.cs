@@ -30,7 +30,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 {
                     new CreateProviderContact()
                     {
-                        ContactType = "L",
+                        ContactType = "P",
                         AddressSaonDescription = "1st Line of Address",
                         AddressPaonDescription = "2nd Line of Address",
                         AddressStreetDescription = "The Street",
@@ -121,7 +121,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
         }
 
         [Fact]
-        public async Task NotAssessedYetUsesCurrentUserAndTimeForLastQAFields()
+        public async Task NotAssessedYetUsesDoesNotRenderPanel()
         {
             // Arrange
             var ukprn = 12345;
@@ -157,15 +157,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             var doc = await response.GetDocument();
 
-            Assert.Equal(
-                $"{User.FirstName} {User.LastName}",
-                GetBlockLabelContent(doc, "pttcd-apprenticeship-qa-info-panel__provider-last-qa-by"));
-            Assert.Equal(Clock.UtcNow.ToString("dd MMM yyyy"),
-                GetBlockLabelContent(doc, "pttcd-apprenticeship-qa-info-panel__provider-last-qa-date"));
+            Assert.Null(doc.GetElementById("pttcd-apprenticeship-qa-info-panel__provider-last-qa-by"));
+            Assert.Null(doc.GetElementById("pttcd-apprenticeship-qa-info-panel__provider-last-qa-date"));
         }
 
         [Fact]
-        public async Task NoLTypeContactRendersExpectedOutput()
+        public async Task NoPTypeContactRendersExpectedOutput()
         {
             // Arrange
             var ukprn = 12345;
@@ -178,7 +175,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 {
                     new CreateProviderContact()
                     {
-                        ContactType = "P",
+                        ContactType = "L",
                         AddressSaonDescription = "1st Line of Address",
                         AddressPaonDescription = "2nd Line of Address",
                         AddressStreetDescription = "The Street",

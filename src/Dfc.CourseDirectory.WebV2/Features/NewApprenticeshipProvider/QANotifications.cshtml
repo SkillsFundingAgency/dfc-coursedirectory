@@ -1,0 +1,47 @@
+﻿@model Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.QANotificationsViewModel
+
+@if (Model.ProviderType.HasFlag(ProviderType.Apprenticeships))
+{
+    @if (Model.Status.HasFlag(ApprenticeshipQAStatus.Submitted) || Model.Status.HasFlag(ApprenticeshipQAStatus.InProgress))
+    {
+        <pttcd-notification title="Quality assurance in progress" id="pttcd-new-apprenticeship-provider__qa-notifications-submitted">
+            <p>Once your quality assurance is complete you will be contacted with the outcome.</p>
+        </pttcd-notification>
+    }
+    else if (Model.Status.HasFlag(ApprenticeshipQAStatus.Failed))
+    {
+        <pttcd-notification title="Quality assurance outcome" id="pttcd-new-apprenticeship-provider__qa-notifications-failed">
+            <p>Your information has not passed quality assurance against the style and compliance standards.</p>
+            <p>An email has been sent providing the reasons why your information has not met the standards, you will need to fix the errors and submit for quality assurance again.</p>
+            <a asp-action="ProviderDetail" asp-controller="NewApprenticeshipProvider" class="govuk-link" append-provider-context="true">
+                Fix errors and submit
+            </a>
+        </pttcd-notification>
+    }
+    else if (Model.Status == ApprenticeshipQAStatus.Passed)
+    {
+        <pttcd-notification title="Quality assurance outcome" id="pttcd-new-apprenticeship-provider__qa-notifications-passed">
+            <p>Your information has passed quality assurance against the style and compliance standards.</p>
+            <p>You can publish all of your apprenticeship training courses.</p>
+            <a>TODO: Close notification</a>
+        </pttcd-notification>
+    }
+    else if (Model.Status == ApprenticeshipQAStatus.NotStarted)
+    {
+        <pttcd-notification title="Apprenticeship training provider" id="pttcd-new-apprenticeship-provider__qa-notifications-not-started">
+            <p>As a new provider your information will need to be quality assured against style and compliance guidelines.</p>
+
+            <p>You will need to:</p>
+            <ol class="govuk-list govuk-list--number">
+                <li>Add your provider information.</li>
+                <li>Add one apprenticeship training course.</li>
+                <li>Submit your information for quality assurance.</li>
+            </ol>
+
+            <p>Once you have passed quality assurance you can publish all of your apprenticeship training courses.</p>
+            <a asp-action="ProviderDetail" asp-controller="NewApprenticeshipProvider" class="govuk-link" append-provider-context="true">
+                Add your information and one apprenticeship
+            </a>
+        </pttcd-notification>
+    }
+}

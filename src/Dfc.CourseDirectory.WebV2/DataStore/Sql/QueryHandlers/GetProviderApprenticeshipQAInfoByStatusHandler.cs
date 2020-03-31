@@ -18,18 +18,23 @@ namespace Dfc.CourseDirectory.WebV2.DataStore.Sql.QueryHandlers
         {
             var sql = @"
 SELECT
-    s.ProviderId,
+    p.ProviderId,
     p.ApprenticeshipQAStatus,
     s.SubmittedOn,
     u.UserId,
     u.Email,
     u.FirstName,
     u.LastName
-FROM Pttcd.ApprenticeshipQASubmissions s
-JOIN Pttcd.Providers p ON s.ProviderId = p.ProviderId
+FROM Pttcd.Providers p
+LEFT JOIN Pttcd.ApprenticeshipQASubmissions s ON p.ProviderId = s.ProviderId
+LEFT JOIN (
+    SELECT ProviderId, MAX(ApprenticeshipQASubmissionId) LatestApprenticeshipQASubmissionId
+    FROM Pttcd.ApprenticeshipQASubmissions
+    GROUP BY ProviderId
+) x ON s.ApprenticeshipQASubmissionId = x.LatestApprenticeshipQASubmissionId AND s.ProviderId = x.ProviderId
 LEFT JOIN Pttcd.Users u ON s.LastAssessedByUserId = u.UserId
 WHERE p.ApprenticeshipQAStatus & @StatusMask != 0
-ORDER BY s.SubmittedOn";
+ORDER BY s.SubmittedOn DESC";
 
             var statusMask = query.Statuses.Aggregate(
                 (ApprenticeshipQAStatus)0,

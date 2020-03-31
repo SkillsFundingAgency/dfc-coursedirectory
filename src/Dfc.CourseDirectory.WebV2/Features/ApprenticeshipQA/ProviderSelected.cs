@@ -3,24 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.WebV2.Behaviors.Errors;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.WebV2.DataStore.Sql;
 using Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.WebV2.Models;
 using MediatR;
-using OneOf;
-using OneOf.Types;
 
 namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderSelected
 {
-    public enum ErrorReason
+    public struct NoSubmission
     {
-        ProviderDoesNotExist,
-        InvalidStatus
     }
 
-    public class Query : IRequest<OneOf<Error<ErrorReason>, ViewModel>>
+    public class Query : IRequest<ViewModel>
     {
         public Guid ProviderId { get; set; }
     }
@@ -30,9 +27,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderSelected
         public Guid ProviderId { get; set; }
         public string ProviderName { get; set; }
         public ApprenticeshipQAStatus ApprenticeshipQAStatus { get; set; }
+        public bool HaveSubmission { get; set; }
         public bool ProviderAssessmentCompleted { get; set; }
         public IReadOnlyCollection<ViewModelApprenticeshipSubmission> ApprenticeshipAssessments { get; set; }
         public bool CanComplete { get; set; }
+        public bool? SubmissionPassed { get; set; }
     }
 
     public class ViewModelApprenticeshipSubmission
@@ -42,7 +41,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderSelected
         public bool AssessmentCompleted { get; set; }
     }
 
-    public class QueryHandler : IRequestHandler<Query, OneOf<Error<ErrorReason>, ViewModel>>
+    public class QueryHandler : IRequestHandler<Query, ViewModel>
     {
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
@@ -55,7 +54,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderSelected
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
         }
 
-        public async Task<OneOf<Error<ErrorReason>, ViewModel>> Handle(Query request, CancellationToken cancellationToken)
+        public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
         {
             var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(
                 new GetProviderById()
@@ -65,7 +64,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderSelected
 
             if (provider == null)
             {
-                return new Error<ErrorReason>(ErrorReason.ProviderDoesNotExist);
+                throw new ErrorException<ProviderDoesNotExist>(new ProviderDoesNotExist());
             }
 
             var qaStatus = await _sqlQueryDispatcher.ExecuteQuery(
@@ -74,29 +73,19 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderSelected
                     ProviderId = request.ProviderId
                 });
 
-            if (qaStatus == ApprenticeshipQAStatus.NotStarted)
-            {
-                return new Error<ErrorReason>(ErrorReason.InvalidStatus);
-            }
-
             var maybeLatestSubmission = await _sqlQueryDispatcher.ExecuteQuery(
                 new GetLatestApprenticeshipQASubmissionForProvider()
                 {
                     ProviderId = request.ProviderId
                 });
 
-            if (maybeLatestSubmission.Value is None)
-            {
-                return new Error<ErrorReason>(ErrorReason.InvalidStatus);
-            }
-
-            var latestSubmission = maybeLatestSubmission.AsT1;
+            var latestSubmission = maybeLatestSubmission.Value as ApprenticeshipQASubmission;
 
             var canComplete = qaStatus == ApprenticeshipQAStatus.InProgress && latestSubmission.Passed != null;
 
             return new ViewModel()
             {
-                ApprenticeshipAssessments = latestSubmission.Apprenticeships
+                ApprenticeshipAssessments = latestSubmission?.Apprenticeships
                     .Select(a => new ViewModelApprenticeshipSubmission()
                     {
                         ApprenticeshipId = a.ApprenticeshipId,
@@ -104,11 +93,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderSelected
                         AssessmentCompleted = latestSubmission.ApprenticeshipAssessmentsPassed != null
                     })
                     .ToList(),
-                ApprenticeshipQAStatus = qaStatus,
+                ApprenticeshipQAStatus = qaStatus.ValueOrDefault(),
+                HaveSubmission = latestSubmission != null,
                 CanComplete = canComplete,
-                ProviderAssessmentCompleted = latestSubmission.ProviderAssessmentPassed != null,
+                ProviderAssessmentCompleted = latestSubmission?.ProviderAssessmentPassed != null,
                 ProviderId = request.ProviderId,
-                ProviderName = provider.ProviderName
+                ProviderName = provider.ProviderName,
+                SubmissionPassed = latestSubmission?.Passed
             };
         }
     }

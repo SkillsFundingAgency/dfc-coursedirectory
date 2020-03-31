@@ -1,4 +1,7 @@
 ﻿using System.Threading.Tasks;
+using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
+using Dfc.CourseDirectory.WebV2.DataStore.Sql;
+using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
@@ -7,10 +10,18 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
+using Moq;
 using Respawn;
+using Xunit;
+using CosmosDbQueryDispatcher = Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb.CosmosDbQueryDispatcher;
 
 namespace Dfc.CourseDirectory.WebV2.Tests
 {
+    [CollectionDefinition("Mvc")]
+    public class HttpCollection : ICollectionFixture<CourseDirectoryApplicationFactory>
+    {
+    }
+
     public class CourseDirectoryApplicationFactory : WebApplicationFactory<Startup>
     {
         private readonly Checkpoint _sqlCheckpoint;
@@ -24,6 +35,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         public IConfiguration Configuration => Server.Host.Services.GetRequiredService<IConfiguration>();
 
+        public Mock<CosmosDbQueryDispatcher> CosmosDbQueryDispatcher =>
+            Mock.Get(Services.GetRequiredService<ICosmosDbQueryDispatcher>() as CosmosDbQueryDispatcher);
+
         public OverridableFeatureFlagProvider FeatureFlagProvider => Services.GetRequiredService<IFeatureFlagProvider>() as OverridableFeatureFlagProvider;
 
         public HostingOptions HostingOptions => Services.GetRequiredService<HostingOptions>();
@@ -31,6 +45,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         public InMemoryDocumentStore InMemoryDocumentStore => Services.GetRequiredService<InMemoryDocumentStore>();
 
         public ClearableMemoryCache MemoryCache => Services.GetRequiredService<IMemoryCache>() as ClearableMemoryCache;
+
+        public InMemoryMptxStateProvider MptxStateProvider =>
+            Services.GetRequiredService<IMptxStateProvider>() as InMemoryMptxStateProvider;
+
+        public SqlQuerySpy SqlQuerySpy => Services.GetRequiredService<SqlQuerySpy>();
 
         public TestData TestData => Services.GetRequiredService<TestData>();
 
@@ -55,6 +74,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
             // Reset feature flag provider
             FeatureFlagProvider.Reset();
+
+            // Reset MPTX state
+            MptxStateProvider.Clear();
+
+            // Clear spy calls
+            SqlQuerySpy.Reset();
+
+            // Clear StandardsAndFrameworksCache
+            Services.GetRequiredService<IStandardsAndFrameworksCache>().Clear();
         }
 
         public async Task OnTestStarted()

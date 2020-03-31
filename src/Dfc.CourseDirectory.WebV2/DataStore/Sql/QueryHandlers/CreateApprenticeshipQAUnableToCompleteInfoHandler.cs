@@ -12,8 +12,8 @@ namespace Dfc.CourseDirectory.WebV2.DataStore.Sql.QueryHandlers
         {
             var sql = @"
 INSERT INTO Pttcd.ApprenticeshipQAUnableToCompleteInfo
-(ProviderId, UnableToCompleteReasons, Comments, AddedOn, AddedByUserId)
-VALUES (@ProviderId, @UnableToCompleteReasons, @Comments, @AddedOn, @AddedByUserId)
+(ProviderId, UnableToCompleteReasons, Comments, StandardName, AddedOn, AddedByUserId)
+VALUES (@ProviderId, @UnableToCompleteReasons, @Comments, @StandardName, @AddedOn, @AddedByUserId)
 
 SELECT SCOPE_IDENTITY() ApprenticeshipQAUnableToCompleteId";
 

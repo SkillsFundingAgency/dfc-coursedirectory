@@ -190,11 +190,11 @@ namespace Dfc.CourseDirectory.Models.Enums
     {
         [Description("Undefined")]
         Undefined = 0,
-        [Description("Fix the errors on screen using this service")]
+        [Description("Resolve the errors on-screen in Publish to the course directory")]
         OnScreen = 1,
-        [Description("Download an error file to fix them at source and start again with a new bulk upload")]
+        [Description("Download an error file to resolve errors at source and start again with a new bulk upload")]
         DownLoad = 2,
-        [Description("Delete the file you uploaded and make no changes to the Course directory ")]
+        [Description("Delete the file you uploaded and make no changes to your published apprenticeship training information")]
         Delete = 3
     }
 

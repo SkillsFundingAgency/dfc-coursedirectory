@@ -11,6 +11,9 @@ using Dfc.CourseDirectory.Services.Interfaces.CourseService;
 using Dfc.CourseDirectory.Services.Interfaces.ProviderService;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.ViewModels.BulkUpload;
+using Dfc.CourseDirectory.WebV2;
+using Dfc.CourseDirectory.WebV2.Filters;
+using Dfc.CourseDirectory.WebV2.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -25,6 +28,7 @@ using System.Threading.Tasks;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
+    [RestrictApprenticeshipQAStatus(ApprenticeshipQAStatus.Passed, AllowWhenApprenticeshipQAFeatureDisabled = true)]
     public class BulkUploadApprenticeshipsController : Controller
     {
         private readonly ILogger<BulkUploadApprenticeshipsController> _logger;
@@ -197,7 +201,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     if (errors.Any())
                     {
                         return RedirectToAction("WhatDoYouWantToDoNext", "BulkUploadApprenticeships",
-                            new { message = $"Your file contained {errors.Count} error{(errors.Count > 1 ? "s" : "")}. You must fix all errors before your courses can be published to the directory.",
+                            new { message = $"Your file contained {errors.Count} error{(errors.Count > 1 ? "s" : "")}. You must resolve all errors before your apprenticeship training information can be published.",
                                   errorCount = errors.Count }   
                             );
                     }

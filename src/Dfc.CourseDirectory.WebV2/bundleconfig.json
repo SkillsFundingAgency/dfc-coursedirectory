@@ -1,0 +1,14 @@
+[
+  {
+    "outputFileName": "Content/dist/pttcd.min.css",
+    "inputFiles": [
+      "Content/**/*.css"
+    ]
+  },
+  {
+    "outputFileName": "Content/dist/pttcd.min.js",
+    "inputFiles": [
+      "Content/**/*.js"
+    ]
+  }
+]

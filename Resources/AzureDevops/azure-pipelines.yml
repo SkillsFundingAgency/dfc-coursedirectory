@@ -48,6 +48,13 @@ steps:
     Contents: 'Resources/AzureSearch/*'
     TargetFolder: '$(build.artifactstagingdirectory)'
 
+# restore symlink
+- script: |
+    del v2
+    mklink /D v2 ..\..\Dfc.CourseDirectory.WebV2\Content
+  displayName: 'Restore v2 content symlink'
+  workingDirectory: src/Dfc.CourseDirectory.Web/wwwroot
+
 - task: Npm@1
   displayName: 'npm install'
   inputs:
@@ -64,13 +71,6 @@ steps:
   displayName: 'Use .NET Core SDK ${{ variables.DotNetCoreVersion }}'
   inputs:
     version: ${{ variables.DotNetCoreVersion }}
-
-# restore
-- task: DotNetCoreCLI@2
-  displayName: dotnet restore
-  inputs:
-    command: restore
-    projects: '**/*.csproj'
 
 # build
 - task: DotNetCoreCLI@2

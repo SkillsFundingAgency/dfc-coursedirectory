@@ -6,7 +6,32 @@
 <h1 class="govuk-heading-xl">Quality assurance</h1>
 
 <govuk-tabs title="Contents">
-    <govuk-tabs-item label="@(ApprenticeshipQAStatus.Submitted.ToDisplayName())" id="submitted">
+    <govuk-tabs-item label="New providers" id="notstarted">
+        <h2 class="govuk-heading-l">Select a provider</h2>
+        <table class="govuk-table">
+            <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    <th scope="col" class="govuk-table__header">Provider name</th>
+                    <th scope="col" class="govuk-table__header pttcd-!-width-120px">UKPRN</th>
+                </tr>
+            </thead>
+            <tbody class="govuk-table__body">
+                @foreach (var provider in Model.NotStarted)
+                {
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell"><a asp-action="ProviderSelected" asp-route-providerId="@provider.ProviderId" class="govuk-link">@provider.ProviderName</a></td>
+                        <td class="govuk-table__cell">@provider.ProviderUkprn</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        @if (Model.NotStarted.Count == 0)
+        {
+            <p>You have no new providers.</p>
+        }
+    </govuk-tabs-item>
+    @* if this id changes be sure to update the fragment portion of link on Complete.cshtml view *@
+    <govuk-tabs-item label="Ready for QA" id="submitted">
         <h2 class="govuk-heading-l">Select a provider</h2>
         <table class="govuk-table">
             <thead class="govuk-table__head">
@@ -32,7 +57,7 @@
             <p>You have no providers ready to QA.</p>
         }
     </govuk-tabs-item>
-    <govuk-tabs-item label="@(ApprenticeshipQAStatus.InProgress.ToDisplayName())" id="in-progress">
+    <govuk-tabs-item label="In progress" id="in-progress">
         <h2 class="govuk-heading-l">Select a provider</h2>
         <table class="govuk-table">
             <thead class="govuk-table__head">
@@ -40,7 +65,7 @@
                     <th scope="col" class="govuk-table__header">Provider name</th>
                     <th scope="col" class="govuk-table__header pttcd-!-width-120px">UKPRN</th>
                     <th scope="col" class="govuk-table__header pttcd-!-width-120px">Date added</th>
-                    <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">QA by</th>
+                    <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">Last QA'd by</th>
                 </tr>
             </thead>
             <tbody class="govuk-table__body">
@@ -60,7 +85,7 @@
             <p>You have no providers in progress.</p>
         }
     </govuk-tabs-item>
-    <govuk-tabs-item label="@(ApprenticeshipQAStatus.Failed.ToDisplayName())" id="fail">
+    <govuk-tabs-item label="Failed" id="fail">
         <h2 class="govuk-heading-l">Select a provider</h2>
         <table class="govuk-table">
             <thead class="govuk-table__head">
@@ -68,7 +93,7 @@
                     <th scope="col" class="govuk-table__header">Provider name</th>
                     <th scope="col" class="govuk-table__header pttcd-!-width-120px">UKPRN</th>
                     <th scope="col" class="govuk-table__header pttcd-!-width-120px">Date added</th>
-                    <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">QA by</th>
+                    <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">Last QA'd by</th>
                 </tr>
             </thead>
             <tbody class="govuk-table__body">
@@ -88,7 +113,7 @@
             <p>You have no providers that have failed QA.</p>
         }
     </govuk-tabs-item>
-    <govuk-tabs-item label="@(ApprenticeshipQAStatus.UnableToComplete.ToDisplayName())" id="unable-to-complete">
+    <govuk-tabs-item label="Unable to complete" id="unable-to-complete">
         <h2 class="govuk-heading-l">Select a provider</h2>
         <table class="govuk-table">
             <thead class="govuk-table__head">
@@ -104,7 +129,7 @@
                     <tr class="govuk-table__row">
                         <td class="govuk-table__cell"><a asp-action="ProviderSelected" asp-route-providerId="@provider.ProviderId" class="govuk-link">@provider.ProviderName</a></td>
                         <td class="govuk-table__cell">@provider.ProviderUkprn</td>
-                        <td class="govuk-table__cell">@provider.SubmittedOn.Value.ToString("dd MMM yyyy")</td>
+                        <td class="govuk-table__cell">@(provider.SubmittedOn?.ToString("dd MMM yyyy"))</td>
                     </tr>
                 }
             </tbody>

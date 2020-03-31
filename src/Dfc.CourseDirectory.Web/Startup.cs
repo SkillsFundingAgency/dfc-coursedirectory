@@ -124,8 +124,6 @@ namespace Dfc.CourseDirectory.Web
             services.Configure<LarsSearchSettings>(Configuration.GetSection(nameof(LarsSearchSettings)));
             services.AddScoped<ILarsSearchService, LarsSearchService>();
 
-            services.Configure<PostCodeSearchSettings>(Configuration.GetSection(nameof(PostCodeSearchSettings)));
-            services.AddScoped<IPostCodeSearchService, PostCodeSearchService>();
             services.AddScoped<ILarsSearchHelper, LarsSearchHelper>();
             services.AddScoped<IPaginationHelper, PaginationHelper>();
 
@@ -244,9 +242,7 @@ namespace Dfc.CourseDirectory.Web
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-
-                //Uncomment to redirect to live error page
-                //app.UseExceptionHandler("/Home/Error");
+                app.UseBrowserLink();
             }
             else
             {
@@ -258,7 +254,6 @@ namespace Dfc.CourseDirectory.Web
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseGdsFrontEnd();
-            app.UseV2StaticFiles();
             app.UseSession();
 
             //Preventing ClickJacking Attacks
@@ -269,34 +264,6 @@ namespace Dfc.CourseDirectory.Web
                 context.Response.Headers["X-Xss-Protection"] = "1; mode=block";
                 context.Response.Headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
                 context.Response.Headers["Feature-Policy"] = "accelerometer 'none'; camera 'none'; geolocation 'none'; gyroscope 'none'; magnetometer 'none'; microphone 'none'; payment 'none'; usb 'none'";
-
-                //CSP
-                context.Response.Headers["Content-Security-Policy"] =
-                                                "default-src    'self' " +
-                                                    " https://rainmaker.tiny.cloud/" +
-                                                    " https://www.google-analytics.com/" +
-                                                    ";" +
-                                                "style-src      'self' 'unsafe-inline' " +
-                                                    " https://cdn.tiny.cloud/" +
-                                                    " https://www.googletagmanager.com/" +
-                                                    " https://tagmanager.google.com/" +
-                                                    " https://fonts.googleapis.com/" +
-                                                    " https://cloud.tinymce.com/" +
-                                                    ";" +
-                                                "font-src       'self' data:" +
-                                                   " https://fonts.googleapis.com/" +
-                                                   " https://fonts.gstatic.com/" +
-                                                   " https://cdn.tiny.cloud/" +
-                                                   ";" +
-                                                "img-src        'self' * data: https://cdn.tiny.cloud/;" +
-                                                "script-src     'self' 'unsafe-eval' 'unsafe-inline'  " +
-                                                    " https://cloud.tinymce.com/" +
-                                                    " https://cdnjs.cloudflare.com/" +
-                                                    " https://www.googletagmanager.com/" +
-                                                    " https://tagmanager.google.com/" +
-                                                    " https://www.google-analytics.com/" +
-                                                    " https://cdn.tiny.cloud/" +
-                                                    ";";
 
                 context.Response.GetTypedHeaders().CacheControl =
                   new Microsoft.Net.Http.Headers.CacheControlHeaderValue()

@@ -18,6 +18,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             ProviderType providerType = ProviderType.Both,
             string providerStatus = "Active",
             ApprenticeshipQAStatus apprenticeshipQAStatus = ApprenticeshipQAStatus.Passed,
+            string marketingInformation = "",
+            string courseDirectoryName = "",
+            string alias = "",
             IEnumerable<CreateProviderContact> contacts = null)
         {
             var providerId = Guid.NewGuid();
@@ -29,6 +32,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                 ProviderType = providerType,
                 ProviderName = providerName,
                 ProviderStatus = providerStatus,
+                MarketingInformation = marketingInformation,
+                CourseDirectoryName = courseDirectoryName,
+                Alias = alias,
                 ProviderContact = contacts?.Select(c => new ProviderContact()
                 {
                     ContactAddress = new ContactAddress()
@@ -50,19 +56,16 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                     ContactType = c.ContactType,
                     ContactWebsiteAddress = c.ContactWebsiteAddress,
                     LastUpdated = _clock.UtcNow
-                })
+                }),
             });
             Assert.Equal(CreateProviderResult.Ok, result);
 
-            if (apprenticeshipQAStatus != ApprenticeshipQAStatus.NotStarted)
-            {
-                await WithSqlQueryDispatcher(
-                    dispatcher => dispatcher.ExecuteQuery(new SetProviderApprenticeshipQAStatus()
-                    {
-                        ProviderId = providerId,
-                        ApprenticeshipQAStatus = apprenticeshipQAStatus
-                    }));
-            }
+            await WithSqlQueryDispatcher(
+                dispatcher => dispatcher.ExecuteQuery(new SetProviderApprenticeshipQAStatus()
+                {
+                    ProviderId = providerId,
+                    ApprenticeshipQAStatus = apprenticeshipQAStatus
+                }));
 
             return providerId;
         }

@@ -6,14 +6,21 @@
 @using Dfc.CourseDirectory.Models.Models.Providers
 @using Microsoft.AspNetCore.Hosting
 @using Dfc.CourseDirectory.Models.Enums
+@using ProviderType = Dfc.CourseDirectory.Models.Models.Providers.ProviderType
 @model Dfc.CourseDirectory.Web.ViewComponents.Dashboard.DashboardModel
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, Dfc.CourseDirectory.WebV2
 
 @inject IAuthorizationService Authorization
 @inject IHttpContextAccessor HttpContextAccessor
 @inject IProviderService providerService
 @inject IHostingEnvironment env
+
+@if (Model.QAFeatureIsEnabled)
+{
+    <vc:qa-notifications />
+}
 
 @if (Model.ValidationMessages != null && Model.ValidationMessages.Any())
 {
@@ -111,76 +118,27 @@ else
     <hr class="spacer" />
     <div class="govuk-grid-row no-margin">
         <div class="govuk-grid-column-two-thirds no-padding-left">
-            @if (superUser.Succeeded || (feUser.Succeeded && apprenticeshipUser.Succeeded))
-            {
-
-                @switch (Model.ProviderType)
+            <div class="govuk-grid-row govuk-!-margin-bottom-6 homepage-item--container">
+                @if (superUser.Succeeded || (feUser.Succeeded && apprenticeshipUser.Succeeded))
                 {
-                    case ProviderType.FE:
-                        <div class="govuk-grid-row govuk-!-margin-bottom-6 homepage-item--container">
-                            <div class="govuk-grid-column-one-half homepage-item ">
-                                @await Html.PartialAsync("/ViewComponents/Dashboard/_CoursesCardPartial.cshtml")
-                            </div>
-                            <div class="govuk-grid-column-one-half homepage-item ">
-                                @await Html.PartialAsync("/ViewComponents/Dashboard/_VenuesCardPartial.cshtml")
-                            </div>
+                    if (Model.ProviderType.HasFlag(ProviderType.FE))
+                    {
+                        <div class="govuk-grid-column-one-half homepage-item ">
+                            @await Html.PartialAsync("/ViewComponents/Dashboard/_CoursesCardPartial.cshtml")
                         </div>
-                        break;
-                    case ProviderType.Apprenticeship:
-                        <div class="govuk-grid-row govuk-!-margin-bottom-6 homepage-item--container">
-                            <div class="govuk-grid-column-one-half homepage-item ">
-                                @await Html.PartialAsync("/ViewComponents/Dashboard/_ApprenticeshipsCardPartial.cshtml")
-                            </div>
-                            <div class="govuk-grid-column-one-half homepage-item ">
-                                @await Html.PartialAsync("/ViewComponents/Dashboard/_VenuesCardPartial.cshtml")
-                            </div>
+                    }
+                    if (Model.ProviderType.HasFlag(ProviderType.Apprenticeship) &&
+                        (!Model.QAFeatureIsEnabled || Model.ProviderQACurrentStatus == Dfc.CourseDirectory.WebV2.Models.ApprenticeshipQAStatus.Passed))
+                    {
+                        <div class="govuk-grid-column-one-half homepage-item ">
+                            @await Html.PartialAsync("/ViewComponents/Dashboard/_ApprenticeshipsCardPartial.cshtml")
                         </div>
-                        break;
-                    case ProviderType.Both:
-                        <div class="govuk-grid-row govuk-!-margin-bottom-6 homepage-item--container">
-                            <div class="govuk-grid-column-one-half homepage-item ">
-                                @await Html.PartialAsync("/ViewComponents/Dashboard/_CoursesCardPartial.cshtml")
-                            </div>
-                            <div class="govuk-grid-column-one-half homepage-item ">
-                                @await Html.PartialAsync("/ViewComponents/Dashboard/_ApprenticeshipsCardPartial.cshtml")
-                            </div>
-                        </div>
-                        <div class="govuk-grid-row govuk-!-margin-bottom-6 homepage-item--container">
-                            <div class="govuk-grid-column-one-half homepage-item ">
-                                @await Html.PartialAsync("/ViewComponents/Dashboard/_VenuesCardPartial.cshtml")
-                            </div>
-                        </div>
-                        break;
+                    }
+                    <div class="govuk-grid-column-one-half homepage-item ">
+                        @await Html.PartialAsync("/ViewComponents/Dashboard/_VenuesCardPartial.cshtml")
+                    </div>
                 }
-
-
-            }
-            @*else
-                {
-                    @if (feUser.Succeeded)
-                    {
-                        <div class="govuk-grid-row govuk-!-margin-bottom-6 homepage-item--container">
-                            <div class="govuk-grid-column-one-half homepage-item ">
-                                @await Html.PartialAsync("/ViewComponents/Dashboard/_CoursesCardPartial.cshtml")
-                            </div>
-                            <div class="govuk-grid-column-one-half homepage-item ">
-                                @await Html.PartialAsync("/ViewComponents/Dashboard/_VenuesCardPartial.cshtml")
-                            </div>
-                        </div>
-                    }
-
-                    @if (apprenticeshipUser.Succeeded)
-                    {
-                        <div class="govuk-grid-row govuk-!-margin-bottom-6 homepage-item--container">
-                            <div class="govuk-grid-column-one-half homepage-item ">
-                                @await Html.PartialAsync("/ViewComponents/Dashboard/_ApprenticeshipsCardPartial.cshtml")
-                            </div>
-                            <div class="govuk-grid-column-one-half homepage-item ">
-                                @await Html.PartialAsync("/ViewComponents/Dashboard/_VenuesCardPartial.cshtml")
-                            </div>
-                        </div>
-                    }
-                }*@
+            </div>
         </div>
         <div class="govuk-grid-column-one-third teal-top-border no-padding">
             <aside class="sidebar">

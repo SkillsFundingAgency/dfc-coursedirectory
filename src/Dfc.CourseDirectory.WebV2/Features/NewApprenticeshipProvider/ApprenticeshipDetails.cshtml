@@ -1,0 +1,55 @@
+﻿@using Dfc.CourseDirectory.WebV2.Validation.ApprenticeshipValidation
+@model Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ApprenticeshipDetails.ViewModel
+@{
+    ViewBag.Title = "Add apprenticeship training details";
+}
+
+@if (!ViewContext.ModelState.IsValid)
+{
+    <govuk-error-summary>
+        <govuk-error-summary-title>There is a problem</govuk-error-summary-title>
+        <govuk-error-summary-item asp-for="MarketingInformation" />
+        <govuk-error-summary-item asp-for="Website" />
+        <govuk-error-summary-item asp-for="ContactEmail" />
+        <govuk-error-summary-item asp-for="ContactTelephone" />
+        <govuk-error-summary-item asp-for="ContactWebsite" />
+    </govuk-error-summary>
+}
+
+<form asp-action="ApprenticeshipDetails" append-provider-context="true" mptx-action="true">
+    <span class="govuk-caption-l" id="pttcd-new-apprenticeship-provider__apprenticeship-details__standard-name">@Model.StandardOrFramework.StandardOrFrameworkTitle</span>
+    <h1 class="govuk-heading-l">Add apprenticeship training details</h1>
+
+    <pttcd-rich-text-editor>
+        <govuk-character-count asp-for="MarketingInformation" max-length="@Constants.MarketingInformationStrippedMaxLength">
+            <govuk-character-count-label>Apprenticeship information for employers</govuk-character-count-label>
+            <govuk-character-count-hint>
+                Give information for employers about how you deliver this specific apprenticeship training.
+                For useful advice on how to fill out this section go to the <a class="govuk-link" href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/746087/course_directory_provider_portal_user_guide_v7.pdf" rel="noreferrer" target="_blank">guidance</a>.
+            </govuk-character-count-hint>
+        </govuk-character-count>
+    </pttcd-rich-text-editor>
+
+    <govuk-input asp-for="Website">
+        <govuk-input-label>Website</govuk-input-label>
+        <govuk-input-hint>Your web page for this apprenticeship</govuk-input-hint>
+    </govuk-input>
+
+    <h2>Contact details</h2>
+    <govuk-hint>Who can employers contact about this apprenticeship training?</govuk-hint>
+
+    <govuk-input asp-for="ContactEmail">
+        <govuk-input-label>Email</govuk-input-label>
+    </govuk-input>
+
+    <govuk-input asp-for="ContactTelephone" class="govuk-input--width-20" type="tel" autocomplete="tel">
+        <govuk-input-label>Telephone</govuk-input-label>
+    </govuk-input>
+
+    <govuk-input asp-for="ContactWebsite" type="url" autocomplete="url">
+        <govuk-input-label>Contact us page</govuk-input-label>
+        <govuk-input-hint>You can also add the url of any 'Contact us' page you have on your website</govuk-input-hint>
+    </govuk-input>
+
+    <govuk-button type="submit">Save and continue</govuk-button>
+</form>

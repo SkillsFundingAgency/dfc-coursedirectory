@@ -13,7 +13,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         }
 
         [Fact]
-        public async Task WithCurrentProvider_AppendsUkprnToRouteValues()
+        public async Task WithProviderContext_AppendsProviderIdToRouteValues()
         {
             // Arrange
             var providerId = await TestData.CreateProvider(ukprn: 12345);
@@ -33,7 +33,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
     public class RedirectToActionResultExtensionsTestController : Controller
     {
         [HttpGet("redirecttoactionresultextensionstestcontroller/first")]
-        public IActionResult First(ProviderInfo providerInfo) => RedirectToAction("Second").WithCurrentProvider(providerInfo);
+        public IActionResult First(ProviderInfo providerInfo) => RedirectToAction("Second").WithProviderContext(providerInfo);
 
         [HttpGet("redirecttoactionresultextensionstestcontroller/second")]
         public IActionResult Second(ProviderInfo providerInfo) => Json(providerInfo);

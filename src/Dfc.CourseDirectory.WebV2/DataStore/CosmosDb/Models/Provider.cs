@@ -11,10 +11,18 @@ namespace Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Models
         [JsonProperty("id")]
         public Guid Id { get; set; }
         public string UnitedKingdomProviderReferenceNumber { get; set; }
+        [JsonIgnore]
+        public int Ukprn => int.Parse(UnitedKingdomProviderReferenceNumber);
         public ProviderType ProviderType { get; set; }
         public string ProviderName { get; set; }
         public string ProviderStatus { get; set; }
+        public string MarketingInformation { get; set; }
+        public string CourseDirectoryName { get; set; }
+        public string TradingName { get; set; }
+        public string Alias { get; set; }
         public IList<ProviderContact> ProviderContact { get; set; } = new List<ProviderContact>();
+        public DateTime DateUpdated { get; set; }
+        public string UpdatedBy { get; set; }
         [JsonExtensionData]
         public IDictionary<string, JToken> AdditionalData { get; set; }
     }

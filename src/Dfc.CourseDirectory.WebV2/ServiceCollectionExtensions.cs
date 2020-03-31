@@ -4,16 +4,20 @@ using System.Data;
 using System.Data.SqlClient;
 using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.WebV2.Behaviors;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
 using Dfc.CourseDirectory.WebV2.DataStore.Sql;
 using Dfc.CourseDirectory.WebV2.Filters;
+using Dfc.CourseDirectory.WebV2.LoqateAddressSearch;
 using Dfc.CourseDirectory.WebV2.ModelBinding;
+using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using Dfc.CourseDirectory.WebV2.Security;
 using GovUk.Frontend.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -48,15 +52,23 @@ namespace Dfc.CourseDirectory.WebV2
                     options.EnableEndpointRouting = true;
 
                     options.Conventions.Add(new AddFeaturePropertyModelConvention());
-                    options.Conventions.Add(new AuthorizeActionModelConvention());
+                    options.Conventions.Add(new V2ActionModelConvention());
 
+                    options.Filters.Add(new ProviderContextResourceFilter());
                     options.Filters.Add(new RedirectToProviderSelectionActionFilter());
                     options.Filters.Add(new VerifyApprenticeshipIdActionFilter());
-                    options.Filters.Add(new ResourceDoesNotExistExceptionFilter());
                     options.Filters.Add(new DeactivatedProviderErrorActionFilter());
+                    options.Filters.Add(new NotAuthorizedExceptionFilter());
+                    options.Filters.Add(new ErrorExceptionFilter());
+                    options.Filters.Add(new LocalUrlActionFilter());
+                    options.Filters.Add(new MptxResourceFilter());
+                    options.Filters.Add(new ContentSecurityPolicyActionFilter());
+                    options.Filters.Add(new MptxControllerActionFilter());
 
-                    options.ModelBinderProviders.Insert(0, new CurrentProviderModelBinderProvider());
+                    options.ModelBinderProviders.Insert(0, new ProviderContextModelBinderProvider());
+                    options.ModelBinderProviders.Insert(0, new MptxInstanceContextModelBinderProvider());
                     options.ModelBinderProviders.Insert(0, new MultiValueEnumModelBinderProvider());
+                    options.ModelBinderProviders.Insert(0, new StandardOrFrameworkModelBinderProvider());
                 })
                 .AddApplicationPart(thisAssembly)
                 .AddRazorOptions(options =>
@@ -116,6 +128,26 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddHttpContextAccessor();
             services.TryAddSingleton<IFeatureFlagProvider, ConfigurationFeatureFlagProvider>();
             services.AddScoped<SignInTracker>();
+            services.AddBehaviors();
+            services.AddSingleton<IStandardsAndFrameworksCache, StandardsAndFrameworksCache>();
+            services.AddSingleton<MptxInstanceContextProvider>();
+            services.AddMptxInstanceContext();
+            services.AddSingleton<IMptxStateProvider, SessionMptxStateProvider>();
+            services.AddSingleton<MptxInstanceContextFactory>();
+            services.AddSingleton<IProviderContextProvider, ProviderContextProvider>();
+            services.AddSingleton(new LoqateAddressSearch.Options() { Key = configuration["PostCodeSearchSettings:Key"] });
+            services.AddSingleton<IAddressSearchService, AddressSearchService>();
+            services.AddTransient<ISignInAction, DfeUserInfoHelper>();
+            services.AddTransient<ISignInAction, SignInTracker>();
+            services.AddTransient<ISignInAction, EnsureApprenticeshipQAStatusSetSignInAction>();
+            services.AddTransient<MptxManager>();
+
+#if DEBUG
+            if (configuration["UseLocalFileMptxStateProvider"]?.Equals("true", StringComparison.OrdinalIgnoreCase) ?? false)
+            {
+                services.AddSingleton<IMptxStateProvider, LocalFileMptxStateProvider>();
+            }
+#endif
 
             return services;
         }
@@ -214,11 +246,26 @@ namespace Dfc.CourseDirectory.WebV2
                             ctx.Properties.IsPersistent = true;
                             ctx.Properties.ExpiresUtc = DateTime.UtcNow.Add(overallSessionTimeout);
 
-                            var helper = ctx.HttpContext.RequestServices.GetRequiredService<DfeUserInfoHelper>();
-                            await helper.AppendAdditionalClaims(ctx.Principal);
+                            var userInfo = ClaimsPrincipalCurrentUserProvider.MapUserInfoFromPrincipal(ctx.Principal);
 
-                            var signInTracker = ctx.HttpContext.RequestServices.GetRequiredService<SignInTracker>();
-                            await signInTracker.RecordSignIn(ctx.Principal);
+                            var signInContext = new SignInContext(ctx.Principal)
+                            {
+                                UserInfo = userInfo
+                            };
+
+                            var signInActions = ctx.HttpContext.RequestServices.GetServices<ISignInAction>();
+                            foreach (var a in signInActions)
+                            {
+                                await a.OnUserSignedIn(signInContext);
+                            }
+
+                            ctx.Principal = ClaimsPrincipalCurrentUserProvider.GetPrincipalFromSignInContext(signInContext);
+
+                            if (signInContext.Provider != null)
+                            {
+                                // For driving legacy views
+                                ctx.HttpContext.Session.SetInt32("UKPRN", signInContext.Provider.Ukprn);
+                            }
                         }
                     };
                 });
