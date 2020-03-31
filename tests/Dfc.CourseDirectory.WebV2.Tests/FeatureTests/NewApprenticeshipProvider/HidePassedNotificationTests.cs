@@ -16,12 +16,58 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
         {
         }
 
+
+        [Fact]
+        public async Task Post_FeOnlyProviderReturnsForbidden()
+        {
+            // Arrange
+            var providerId = await TestData.CreateProvider(apprenticeshipQAStatus: ApprenticeshipQAStatus.Passed, providerType: ProviderType.Apprenticeships);
+            await User.AsProviderUser(providerId, ProviderType.FE);
+
+            // Act
+            var response = await HttpClient.PostAsync(
+                $"new-apprenticeship-provider/hide-passed-notification?providerId={providerId}&returnUrl=/", null);
+
+            // Assert
+             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task Post_DeveloperUserReturnsBadRequest()
+        {
+            // Arrange
+            var providerId = await TestData.CreateProvider(apprenticeshipQAStatus: ApprenticeshipQAStatus.Passed, providerType: ProviderType.Apprenticeships);
+            await User.AsDeveloper();
+
+            // Act
+            var response = await HttpClient.PostAsync(
+                $"new-apprenticeship-provider/hide-passed-notification?providerId={providerId}&returnUrl=/", null);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task Post_HelpdeskUserReturnsBadRequest()
+        {
+            // Arrange
+            var providerId = await TestData.CreateProvider(apprenticeshipQAStatus: ApprenticeshipQAStatus.Passed, providerType: ProviderType.Apprenticeships);
+            await User.AsHelpdesk();
+
+            // Act
+            var response = await HttpClient.PostAsync(
+                $"new-apprenticeship-provider/hide-passed-notification?providerId={providerId}&returnUrl=/", null);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
         [Fact]
         public async Task Post_InvalidSubmissionReturnsBadRequest()
         {
             // Arrange
-            var providerId = await TestData.CreateProvider(apprenticeshipQAStatus: ApprenticeshipQAStatus.Passed);
-            await User.AsHelpdesk();
+            var providerId = await TestData.CreateProvider(apprenticeshipQAStatus: ApprenticeshipQAStatus.Passed, providerType: ProviderType.Apprenticeships);
+            await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
             // Act
             var response = await HttpClient.PostAsync(
@@ -50,7 +96,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var providerId = await TestData.CreateProvider(
                 ukprn: ukprn,
                 providerName: providerName,
-                apprenticeshipQAStatus: status);
+                apprenticeshipQAStatus: status,
+                providerType: ProviderType.Apprenticeships);
 
             await TestData.CreateUser(providerUserId, email, "Provider 1", "Person", providerId);
             await TestData.CreateUser(adminUserId, "admin", "admin", "admin", null);
@@ -88,7 +135,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 ApprenticeshipQAProviderStyleFailedReasons.TermCourseUsed
                 );
 
-            await User.AsHelpdesk();
+            await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
             // Act
             var response = await HttpClient.PostAsync(
@@ -113,7 +160,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var providerId = await TestData.CreateProvider(
                 ukprn: ukprn,
                 providerName: providerName,
-                apprenticeshipQAStatus:  ApprenticeshipQAStatus.Passed);
+                apprenticeshipQAStatus:  ApprenticeshipQAStatus.Passed,
+                providerType: ProviderType.Apprenticeships);
 
             await TestData.CreateUser(providerUserId, email, "Provider 1", "Person", providerId);
             await TestData.CreateUser(adminUserId, "admin", "admin", "admin", null);
@@ -151,7 +199,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 ApprenticeshipQAProviderStyleFailedReasons.None
                 );
 
-            await User.AsHelpdesk();
+            await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
             // Act
             var response = await HttpClient.PostAsync(
@@ -176,7 +224,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var providerId = await TestData.CreateProvider(
                 ukprn: ukprn,
                 providerName: providerName,
-                apprenticeshipQAStatus: ApprenticeshipQAStatus.Passed);
+                apprenticeshipQAStatus: ApprenticeshipQAStatus.Passed, 
+                providerType: ProviderType.Apprenticeships);
 
             await TestData.CreateUser(providerUserId, email, "Provider 1", "Person", providerId);
             await TestData.CreateUser(adminUserId, "admin", "admin", "admin", null);
@@ -215,7 +264,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 ApprenticeshipQAProviderStyleFailedReasons.None
                 );
 
-            await User.AsHelpdesk();
+            await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
             // Act
             var response = await HttpClient.PostAsync(

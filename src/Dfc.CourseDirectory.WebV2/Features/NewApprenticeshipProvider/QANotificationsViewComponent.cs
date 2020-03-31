@@ -38,19 +38,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
                     ProviderId = providerId
                 });
 
-
-            var sub = submission.Match(
-                _ => null,
-                submiss => submiss);
-
             var providerInfo = await _providerInfoCache.GetProviderInfo(providerId);
 
             var vm = new QANotificationsViewModel()
             {
                 ProviderType = providerInfo.ProviderType,
                 Status = qaStatus.ValueOrDefault(),
-                HidePassedNotication = sub?.HidePassedNotification ?? false
-
+                HidePassedNotication = submission.Match(none => false, sub => sub.HidePassedNotification)
             };
 
             return View("~/Features/NewApprenticeshipProvider/QANotifications.cshtml", vm);

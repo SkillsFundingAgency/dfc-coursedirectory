@@ -1,7 +1,9 @@
-﻿using Dfc.CourseDirectory.WebV2.Behaviors.Errors;
+﻿using Dfc.CourseDirectory.WebV2.Behaviors;
+using Dfc.CourseDirectory.WebV2.Behaviors.Errors;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
 using Dfc.CourseDirectory.WebV2.DataStore.Sql;
 using Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.WebV2.Models;
 using Dfc.CourseDirectory.WebV2.Validation;
 using MediatR;
 using OneOf;
@@ -13,7 +15,8 @@ using System.Threading.Tasks;
 namespace Dfc.CourseDirectory.WebV2.Features.HidePassedNotification
 {
     using CommandResponse = OneOf<ModelWithErrors<CommandViewModel>, Success>;
-    public class Command : IRequest<CommandResponse>
+    
+    public class Command : IRequest<CommandResponse>, IProviderScopedRequest
     {
         public Guid ProviderId { get; set; }
     }
@@ -22,7 +25,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.HidePassedNotification
     {
     }
 
-    public class CommandHandler : IRequestHandler<Command, CommandResponse>
+    public class CommandHandler : IRequestHandler<Command, CommandResponse>, IRestrictProviderType<Command>
     {
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
@@ -34,6 +37,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.HidePassedNotification
             _sqlQueryDispatcher = sqlQueryDispatcher;
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
         }
+
+        public ProviderType ProviderType => ProviderType.Apprenticeships;
 
         public async Task<CommandResponse> Handle(
             Command request,
