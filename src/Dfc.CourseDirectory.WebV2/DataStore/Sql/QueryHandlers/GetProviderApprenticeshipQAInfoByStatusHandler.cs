@@ -21,11 +21,18 @@ SELECT
     p.ProviderId,
     p.ApprenticeshipQAStatus,
     s.SubmittedOn,
+    FirstSignIn.SignedInUtc AddedOn,
     u.UserId,
     u.Email,
     u.FirstName,
     u.LastName
 FROM Pttcd.Providers p
+JOIN (
+    SELECT MIN(usi.SignedInUtc) SignedInUtc, u.ProviderId
+    FROM Pttcd.UserSignIns usi
+    JOIN Pttcd.Users u ON usi.UserId = u.UserId
+    GROUP BY u.ProviderId
+) FirstSignIn ON p.ProviderId = FirstSignIn.ProviderId
 LEFT JOIN Pttcd.ApprenticeshipQASubmissions s ON p.ProviderId = s.ProviderId
 LEFT JOIN (
     SELECT ProviderId, MAX(ApprenticeshipQASubmissionId) LatestApprenticeshipQASubmissionId
@@ -49,7 +56,8 @@ ORDER BY s.SubmittedOn DESC";
                     ApprenticeshipQAStatus = r.ApprenticeshipQAStatus,
                     LastAssessedBy = u,
                     ProviderId = r.ProviderId,
-                    SubmittedOn = r.SubmittedOn
+                    SubmittedOn = r.SubmittedOn,
+                    AddedOn = r.AddedOn
                 },
                 paramz,
                 transaction,
@@ -61,6 +69,7 @@ ORDER BY s.SubmittedOn DESC";
             public Guid ProviderId { get; set; }
             public ApprenticeshipQAStatus ApprenticeshipQAStatus { get; set; }
             public DateTime? SubmittedOn { get; set; }
+            public DateTime AddedOn { get; set; }
         }
     }
 }

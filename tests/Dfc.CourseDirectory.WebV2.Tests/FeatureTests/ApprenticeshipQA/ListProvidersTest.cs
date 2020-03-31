@@ -41,6 +41,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 providerName: "Provider 1",
                 apprenticeshipQAStatus: Models.ApprenticeshipQAStatus.Submitted);
             await TestData.CreateUser(provider1UserId, "guy@provider1.com", "Provider 1", "User", provider1Id);
+            await TestData.CreateUserSignIn(provider1UserId, new DateTime(2018, 4, 1, 10, 4, 3));
             var provider1ApprenticeshipId = await TestData.CreateApprenticeship(providerUkprn: provider1Ukprn);
             await TestData.CreateApprenticeshipQASubmission(
                 provider1Id,
@@ -56,6 +57,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 providerName: "Provider 2",
                 apprenticeshipQAStatus: Models.ApprenticeshipQAStatus.Submitted);
             await TestData.CreateUser(provider2UserId, "guy@provider2.com", "Provider 2", "User", provider2Id);
+            await TestData.CreateUserSignIn(provider2UserId, new DateTime(2019, 5, 3, 14, 55, 17));
             var provider2ApprenticeshipId = await TestData.CreateApprenticeship(providerUkprn: provider2Ukprn);
             await TestData.CreateApprenticeshipQASubmission(
                 provider2Id,
@@ -63,6 +65,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 submittedByUserId: provider2UserId,
                 providerMarketingInformation: "Provider 2 overview",
                 apprenticeshipIds: new[] { provider2ApprenticeshipId });
+
+            var provider3Ukprn = 345678;
+            var provider3UserId = $"user-{provider3Ukprn}";
+            var provider3Id = await TestData.CreateProvider(
+                ukprn: provider3Ukprn,
+                providerName: "Provider 3",
+                apprenticeshipQAStatus: Models.ApprenticeshipQAStatus.NotStarted);
+            await TestData.CreateUser(provider3UserId, "guy@provider3.com", "Provider 3", "User", provider3Id);
+            await TestData.CreateUserSignIn(provider3UserId, new DateTime(2019, 2, 6, 7, 22, 9));
 
             // TODO Add more here once we have a way of modelling other statuses
 
@@ -73,6 +84,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             response.EnsureSuccessStatusCode();
 
             var doc = await response.GetDocument();
+
+            var newProviders = doc.QuerySelector("#notstarted");
+            var newProviderRows = newProviders.QuerySelectorAll("tbody>tr");
+
+            var firstNewProviderRow = newProviderRows[0];
+            Assert.Equal("Provider 3", firstNewProviderRow.QuerySelector(":nth-child(1)").TextContent);
+            Assert.Equal("345678", firstNewProviderRow.QuerySelector(":nth-child(2)").TextContent);
+            Assert.Equal("06 Feb 2019", firstNewProviderRow.QuerySelector(":nth-child(3)").TextContent);
 
             var submitted = doc.QuerySelector("#submitted");
             var submittedRows = submitted.QuerySelectorAll("tbody>tr");
