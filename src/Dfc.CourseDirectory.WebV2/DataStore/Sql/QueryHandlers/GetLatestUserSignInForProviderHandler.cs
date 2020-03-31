@@ -23,11 +23,11 @@ SELECT TOP 1
     u.UserId,
     u.Email,
     u.FirstName,
-    u.LastName,
-    u.ProviderId
+    u.LastName
 FROM Pttcd.UserSignIns s
 JOIN Pttcd.Users u ON s.UserId = u.UserId
-WHERE u.ProviderId = @ProviderId
+JOIN Pttcd.UserProviders up ON u.UserId = up.UserId
+WHERE up.ProviderId = @ProviderId
 ORDER BY s.SignedInUtc DESC";
 
             var result = (await transaction.Connection.QueryAsync<DateTime, UserInfo, LatestUserSignInForProviderResult>(

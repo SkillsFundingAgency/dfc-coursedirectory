@@ -12,8 +12,11 @@ namespace Dfc.CourseDirectory.WebV2.DataStore.Sql.QueryHandlers
         {
             var sql = @"
 INSERT INTO Pttcd.Users
-(UserId, Email, FirstName, LastName, ProviderId)
-VALUES (@UserId, @Email, @FirstName, @LastName, @ProviderId)";
+(UserId, Email, FirstName, LastName)
+VALUES (@UserId, @Email, @FirstName, @LastName)
+
+IF @ProviderId IS NOT NULL
+    INSERT INTO Pttcd.UserProviders (UserId, ProviderId) VALUES (@UserId, @ProviderId)";
 
             var paramz = new
             {

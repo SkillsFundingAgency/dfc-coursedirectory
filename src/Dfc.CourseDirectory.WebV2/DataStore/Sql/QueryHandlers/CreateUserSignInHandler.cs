@@ -20,18 +20,23 @@ namespace Dfc.CourseDirectory.WebV2.DataStore.Sql.QueryHandlers
                 var sql = @"
 MERGE Pttcd.Users AS target
 USING (
-    SELECT @UserId UserId, @Email Email, @FirstName FirstName, @LastName LastName, @ProviderId ProviderId
+    SELECT @UserId UserId, @Email Email, @FirstName FirstName, @LastName LastName
 ) AS source
 ON target.UserId = source.UserId
 WHEN MATCHED THEN
     UPDATE SET
         target.Email = source.Email,
         target.FirstName = source.FirstName,
-        target.LastName = source.LastName,
-        target.ProviderId = source.ProviderId
+        target.LastName = source.LastName
 WHEN NOT MATCHED THEN
-    INSERT (UserId, Email, FirstName, LastName, ProviderId)
-    VALUES (source.UserId, source.Email, source.FirstName, source.LastName, source.ProviderId);";
+    INSERT (UserId, Email, FirstName, LastName)
+    VALUES (source.UserId, source.Email, source.FirstName, source.LastName);
+
+IF @ProviderId IS NOT NULL
+    MERGE Pttcd.UserProviders AS target
+    USING (SELECT @UserId UserId, @ProviderId ProviderId) AS source
+    ON target.UserId = source.UserId AND target.ProviderId = source.ProviderId
+    WHEN NOT MATCHED THEN INSERT (UserId, ProviderId) VALUES (source.UserId, source.ProviderId);";
 
                 var paramz = new
                 {
@@ -39,7 +44,7 @@ WHEN NOT MATCHED THEN
                     query.User.Email,
                     query.User.FirstName,
                     query.User.LastName,
-                    query.User.ProviderId,
+                    ProviderId = query.CurrentProviderId
                 };
 
                 await transaction.Connection.ExecuteAsync(sql, paramz, transaction);
