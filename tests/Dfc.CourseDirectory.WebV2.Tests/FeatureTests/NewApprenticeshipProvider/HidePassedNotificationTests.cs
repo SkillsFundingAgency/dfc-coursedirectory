@@ -48,7 +48,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
         }
 
         [Fact]
-        public async Task Post_HelpdeskUserReturnsBadRequest()
+        public async Task Post_HelpdeskUserReturnsForbidden()
         {
             // Arrange
             var providerId = await TestData.CreateProvider(apprenticeshipQAStatus: ApprenticeshipQAStatus.Passed, providerType: ProviderType.Apprenticeships);
@@ -59,7 +59,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 $"new-apprenticeship-provider/hide-passed-notification?providerId={providerId}&returnUrl=/", null);
 
             // Assert
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
         }
 
         [Fact]

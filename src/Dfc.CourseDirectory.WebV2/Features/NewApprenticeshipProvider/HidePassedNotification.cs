@@ -25,7 +25,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.HidePassedNotification
     {
     }
 
-    public class CommandHandler : IRequestHandler<Command, CommandResponse>, IRestrictProviderType<Command>
+    public class CommandHandler : IRequestHandler<Command, CommandResponse>, IRestrictProviderType<Command>, IRequireUserCanSubmitQASubmission<Command>
     {
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;

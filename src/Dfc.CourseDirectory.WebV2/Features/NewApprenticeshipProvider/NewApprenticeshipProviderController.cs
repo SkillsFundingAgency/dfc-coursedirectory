@@ -118,7 +118,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
                     }));
         }
 
-
         [HttpPost("hide-passed-notification")]
         public async Task<IActionResult> HidePassedNotication([LocalUrl] string returnUrl, HidePassedNotification.Command command)
         {
