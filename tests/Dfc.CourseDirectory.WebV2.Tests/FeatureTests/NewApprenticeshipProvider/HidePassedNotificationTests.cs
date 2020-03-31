@@ -29,7 +29,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 $"new-apprenticeship-provider/hide-passed-notification?providerId={providerId}&returnUrl=/", null);
 
             // Assert
-             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
         [Fact]
@@ -71,18 +71,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"new-apprenticeship-provider/hide-passed-notification?providerId={providerId}&returnUrl=/",null);
+                $"new-apprenticeship-provider/hide-passed-notification?providerId={providerId}&returnUrl=/", null);
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
-        [Theory]
-        [InlineData(ApprenticeshipQAStatus.Submitted)]
-        [InlineData(ApprenticeshipQAStatus.InProgress)]
-        [InlineData(ApprenticeshipQAStatus.Failed)]
-        [InlineData(ApprenticeshipQAStatus.UnableToComplete)]
-        public async Task Post_NotPassedQAStatusReturnsBadRequest(ApprenticeshipQAStatus status)
+
+        [Fact]
+        public async Task Post_NotStartedReturnsBadRequest()
         {
             // Arrange
             var ukprn = 12345;
@@ -96,7 +93,38 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var providerId = await TestData.CreateProvider(
                 ukprn: ukprn,
                 providerName: providerName,
-                apprenticeshipQAStatus: status,
+                apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted,
+                providerType: ProviderType.Apprenticeships);
+
+            await TestData.CreateUser(providerUserId, email, "Provider 1", "Person", providerId);
+            await TestData.CreateUser(adminUserId, "admin", "admin", "admin", null);
+            var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
+
+            await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
+
+            // Act
+            var response = await HttpClient.PostAsync(
+                $"new-apprenticeship-provider/hide-passed-notification?providerId={providerId}&returnUrl=/", null);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task Post_FailedQAReturnsBadRequest()
+        {
+            // Arrange
+            var ukprn = 12345;
+            var email = "somebody@provider1.com";
+            var providerName = "Provider 1";
+            var providerUserId = $"{ukprn}-user";
+            var adminUserId = $"admin-user";
+            Clock.UtcNow = new DateTime(2019, 5, 17, 9, 3, 27, DateTimeKind.Utc);
+
+            var providerId = await TestData.CreateProvider(
+                ukprn: ukprn,
+                providerName: providerName,
+                apprenticeshipQAStatus: ApprenticeshipQAStatus.Passed,
                 providerType: ProviderType.Apprenticeships);
 
             await TestData.CreateUser(providerUserId, email, "Provider 1", "Person", providerId);
@@ -114,9 +142,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             //update qa submission
             await TestData.UpdateApprenticeshipQASubmission(
                 submissionId,
-                providerAssessmentPassed: true,
-                apprenticeshipAssessmentsPassed: null,
-                passed: null,
+                providerAssessmentPassed: false,
+                apprenticeshipAssessmentsPassed: false,
+                passed: false,
                 lastAssessedByUserId: User.UserId.ToString(),
                 lastAssessedOn: Clock.UtcNow);
 
@@ -129,13 +157,171 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 Clock.UtcNow,
                 false,
                 null,   //Compliance Comments
-                ApprenticeshipQAProviderComplianceFailedReasons.InsufficientDetail,
+                ApprenticeshipQAProviderComplianceFailedReasons.SpecificEmployerNamed,
                 true, //Style passed,
                 null,   //Style Comments
-                ApprenticeshipQAProviderStyleFailedReasons.TermCourseUsed
+                ApprenticeshipQAProviderStyleFailedReasons.JobRolesIncluded
                 );
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
+
+            // Act
+            var response = await HttpClient.PostAsync(
+                $"new-apprenticeship-provider/hide-passed-notification?providerId={providerId}&returnUrl=/", null);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task Post_SubmittedQAStatusReturnsBadRequest()
+        {
+            // Arrange
+            var ukprn = 12345;
+            var email = "somebody@provider1.com";
+            var providerName = "Provider 1";
+            var providerUserId = $"{ukprn}-user";
+            var adminUserId = $"admin-user";
+            Clock.UtcNow = new DateTime(2019, 5, 17, 9, 3, 27, DateTimeKind.Utc);
+
+            var providerId = await TestData.CreateProvider(
+                ukprn: ukprn,
+                providerName: providerName,
+                apprenticeshipQAStatus: ApprenticeshipQAStatus.Submitted,
+                providerType: ProviderType.Apprenticeships);
+
+            await TestData.CreateUser(providerUserId, email, "Provider 1", "Person", providerId);
+            await TestData.CreateUser(adminUserId, "admin", "admin", "admin", null);
+            var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
+
+            //create submission
+            var submissionId = await TestData.CreateApprenticeshipQASubmission(
+                providerId,
+                submittedOn: Clock.UtcNow,
+                submittedByUserId: providerUserId,
+                providerMarketingInformation: "The overview",
+                apprenticeshipIds: new[] { apprenticeshipId });
+
+            await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
+
+            await TestData.UpdateApprenticeshipQASubmission(
+                submissionId,
+                providerAssessmentPassed: null,
+                apprenticeshipAssessmentsPassed: null,
+                passed: null,
+                lastAssessedByUserId: User.UserId.ToString(),
+                lastAssessedOn: Clock.UtcNow);
+
+            //create provider assessment
+            Clock.UtcNow = Clock.UtcNow.AddDays(1);
+            var PassedQAOn = Clock.UtcNow;
+            await TestData.CreateApprenticeshipQAProviderAssessment(
+                submissionId,
+                adminUserId,
+                Clock.UtcNow,
+                true,
+                null,   //Compliance Comments
+                ApprenticeshipQAProviderComplianceFailedReasons.None,
+                true, //Style passed,
+                null,   //Style Comments
+                ApprenticeshipQAProviderStyleFailedReasons.None
+                );
+
+            // Act
+            var response = await HttpClient.PostAsync(
+                $"new-apprenticeship-provider/hide-passed-notification?providerId={providerId}&returnUrl=/", null);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+
+        [Fact]
+        public async Task Post_InProgressQAReturnsRedirect()
+        {
+            // Arrange
+            var ukprn = 12345;
+            var email = "somebody@provider1.com";
+            var providerName = "Provider 1";
+            var providerUserId = $"{ukprn}-user";
+            var adminUserId = $"admin-user";
+            Clock.UtcNow = new DateTime(2019, 5, 17, 9, 3, 27, DateTimeKind.Utc);
+            var requestedOn = Clock.UtcNow;
+
+            var providerId = await TestData.CreateProvider(
+                ukprn: ukprn,
+                providerName: providerName,
+                apprenticeshipQAStatus: ApprenticeshipQAStatus.InProgress,
+                providerType: ProviderType.Apprenticeships);
+
+            await TestData.CreateUser(providerUserId, email, "Provider 1", "Person", providerId);
+            await TestData.CreateUser(adminUserId, "admin", "admin", "admin", null);
+            var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
+
+            //create submission
+            var submissionId = await TestData.CreateApprenticeshipQASubmission(
+                providerId,
+                submittedOn: Clock.UtcNow,
+                submittedByUserId: providerUserId,
+                providerMarketingInformation: "The overview",
+                apprenticeshipIds: new[] { apprenticeshipId });
+
+            //update qa submission
+            await TestData.UpdateApprenticeshipQASubmission(
+                submissionId,
+                providerAssessmentPassed: null,
+                apprenticeshipAssessmentsPassed: null,
+                passed: null,
+                lastAssessedByUserId: User.UserId.ToString(),
+                lastAssessedOn: Clock.UtcNow);
+
+            await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
+
+            // Act
+            var response = await HttpClient.PostAsync(
+                $"new-apprenticeship-provider/hide-passed-notification?providerId={providerId}&returnUrl=/", null);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task Post_UnableToCompleteQAStatusReturnsBadRequest()
+        {
+            // Arrange
+            var ukprn = 12345;
+            var email = "somebody@provider1.com";
+            var providerName = "Provider 1";
+            var providerUserId = $"{ukprn}-user";
+            var adminUserId = $"admin-user";
+            Clock.UtcNow = new DateTime(2019, 5, 17, 9, 3, 27, DateTimeKind.Utc);
+
+            var providerId = await TestData.CreateProvider(
+                ukprn: ukprn,
+                providerName: providerName,
+                apprenticeshipQAStatus: ApprenticeshipQAStatus.UnableToComplete,
+                providerType: ProviderType.Apprenticeships);
+
+            await TestData.CreateUser(providerUserId, email, "Provider 1", "Person", providerId);
+            await TestData.CreateUser(adminUserId, "admin", "admin", "admin", null);
+            var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
+
+            //create submission
+            var submissionId = await TestData.CreateApprenticeshipQASubmission(
+                providerId,
+                submittedOn: Clock.UtcNow,
+                submittedByUserId: providerUserId,
+                providerMarketingInformation: "The overview",
+                apprenticeshipIds: new[] { apprenticeshipId });
+
+            await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
+
+            //create unable to complete
+            await TestData.CreateApprenticeshipQAUnableToCompleteInfo(providerId, 
+                ApprenticeshipQAUnableToCompleteReasons.ProviderDevelopingProvision, 
+                "",
+                providerUserId, 
+                Clock.UtcNow);
 
             // Act
             var response = await HttpClient.PostAsync(
@@ -160,7 +346,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var providerId = await TestData.CreateProvider(
                 ukprn: ukprn,
                 providerName: providerName,
-                apprenticeshipQAStatus:  ApprenticeshipQAStatus.Passed,
+                apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted,
                 providerType: ProviderType.Apprenticeships);
 
             await TestData.CreateUser(providerUserId, email, "Provider 1", "Person", providerId);
@@ -224,7 +410,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var providerId = await TestData.CreateProvider(
                 ukprn: ukprn,
                 providerName: providerName,
-                apprenticeshipQAStatus: ApprenticeshipQAStatus.Passed, 
+                apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted,
                 providerType: ProviderType.Apprenticeships);
 
             await TestData.CreateUser(providerUserId, email, "Provider 1", "Person", providerId);
@@ -255,7 +441,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             await TestData.CreateApprenticeshipQAProviderAssessment(
                 submissionId,
                 adminUserId,
-                Clock.UtcNow,
+                PassedQAOn,
                 true,
                 null,   //Compliance Comments
                 ApprenticeshipQAProviderComplianceFailedReasons.None,
