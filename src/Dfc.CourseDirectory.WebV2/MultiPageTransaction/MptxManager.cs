@@ -74,6 +74,12 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
         public MptxInstanceContext GetInstance(string instanceId)
         {
             var instance = _stateProvider.GetInstance(instanceId);
+
+            if (instance == null)
+            {
+                return null;
+            }
+
             return _instanceContextFactory.CreateContext(instance);
         }
 
