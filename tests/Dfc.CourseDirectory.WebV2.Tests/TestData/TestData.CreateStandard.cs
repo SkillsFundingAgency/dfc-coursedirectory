@@ -14,7 +14,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             string notionalEndLevel = null,
             bool otherBodyApprovalRequired = false)
         {
-            var id = Guid.NewGuid().ToString();
+            var id = Guid.NewGuid();
 
             await _cosmosDbQueryDispatcher.ExecuteQuery(
                 new Query()
