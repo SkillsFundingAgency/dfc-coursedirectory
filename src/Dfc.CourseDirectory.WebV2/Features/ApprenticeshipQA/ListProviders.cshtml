@@ -122,6 +122,7 @@
                 <tr class="govuk-table__row">
                     <th scope="col" class="govuk-table__header">Provider name</th>
                     <th scope="col" class="govuk-table__header pttcd-!-width-120px">UKPRN</th>
+                    <th scope="col" class="govuk-table__header pttcd-!-width-120px">Reason for not completing</th>
                     <th scope="col" class="govuk-table__header pttcd-!-width-120px">Date added</th>
                 </tr>
             </thead>
@@ -131,6 +132,7 @@
                     <tr class="govuk-table__row">
                         <td class="govuk-table__cell"><a asp-action="ProviderSelected" asp-route-providerId="@provider.ProviderId" class="govuk-link">@provider.ProviderName</a></td>
                         <td class="govuk-table__cell">@provider.ProviderUkprn</td>
+                        <td class="govuk-table__cell">@provider.UnableToCompleteReasons?.ToDisplayName()</td>
                         <td class="govuk-table__cell">@(provider.SubmittedOn?.ToString("dd MMM yyyy"))</td>
                     </tr>
                 }

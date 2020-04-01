@@ -25,7 +25,8 @@ SELECT
     u.UserId,
     u.Email,
     u.FirstName,
-    u.LastName
+    u.LastName,
+    unableToCompleteReason.UnableToCompleteReasons
 FROM Pttcd.Providers p
 JOIN (
     SELECT MIN(usi.SignedInUtc) SignedInUtc, u.ProviderId
@@ -39,6 +40,11 @@ LEFT JOIN (
     FROM Pttcd.ApprenticeshipQASubmissions
     GROUP BY ProviderId
 ) x ON s.ApprenticeshipQASubmissionId = x.LatestApprenticeshipQASubmissionId AND s.ProviderId = x.ProviderId
+LEFT JOIN (
+    SELECT TOP 1 ProviderId,ApprenticeshipQAUnableToCompleteId, UnableToCompleteReasons
+    FROM Pttcd.ApprenticeshipQAUnableToCompleteInfo
+    ORDER BY ApprenticeshipQAUnableToCompleteId DESC
+) unableToCompleteReason ON s.ProviderId = x.ProviderId
 LEFT JOIN Pttcd.Users u ON s.LastAssessedByUserId = u.UserId
 WHERE p.ApprenticeshipQAStatus & @StatusMask != 0
 ORDER BY s.SubmittedOn DESC";
@@ -49,19 +55,20 @@ ORDER BY s.SubmittedOn DESC";
 
             var paramz = new { StatusMask = statusMask };
 
-            return (await transaction.Connection.QueryAsync<QASubmissionResult, UserInfo, GetProviderApprenticeshipQAInfoByStatusResult>(
+            return (await transaction.Connection.QueryAsync<QASubmissionResult, UserInfo, ApprenticeshipQAUnableToCompleteReasons?, GetProviderApprenticeshipQAInfoByStatusResult>(
                 sql,
-                (r, u) => new GetProviderApprenticeshipQAInfoByStatusResult()
+                (r, u, utcr) => new GetProviderApprenticeshipQAInfoByStatusResult()
                 {
                     ApprenticeshipQAStatus = r.ApprenticeshipQAStatus,
                     LastAssessedBy = u,
                     ProviderId = r.ProviderId,
                     SubmittedOn = r.SubmittedOn,
-                    AddedOn = r.AddedOn
+                    AddedOn = r.AddedOn,
+                    UnableToCompleteReasons = utcr
                 },
                 paramz,
                 transaction,
-                splitOn: "UserId")).AsList();
+                splitOn: "UserId,UnableToCompleteReasons")).AsList();
         }
 
         private class QASubmissionResult
@@ -70,6 +77,7 @@ ORDER BY s.SubmittedOn DESC";
             public ApprenticeshipQAStatus ApprenticeshipQAStatus { get; set; }
             public DateTime? SubmittedOn { get; set; }
             public DateTime AddedOn { get; set; }
+            public ApprenticeshipQAUnableToCompleteReasons UnableToCompleteReasons { get; set; }
         }
     }
 }
