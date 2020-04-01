@@ -232,13 +232,12 @@ namespace Dfc.CourseDirectory.Web
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(
             IApplicationBuilder app,
-            IHostingEnvironment env,
+            IWebHostEnvironment env,
             ILoggerFactory loggerFactory,
             IServiceProvider serviceProvider)
         {
             RunStartupTasks().GetAwaiter().GetResult();
 
-            loggerFactory.AddApplicationInsights(app.ApplicationServices, LogLevel.Debug);
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
