@@ -41,9 +41,9 @@ LEFT JOIN (
     GROUP BY ProviderId
 ) x ON s.ApprenticeshipQASubmissionId = x.LatestApprenticeshipQASubmissionId AND s.ProviderId = x.ProviderId
 LEFT JOIN (
-    SELECT TOP 1 ProviderId,ApprenticeshipQAUnableToCompleteId, UnableToCompleteReasons
+    SELECT ProviderId, MAX(ApprenticeshipQAUnableToCompleteId) ApprenticeshipQAUnableToCompleteId, UnableToCompleteReasons
     FROM Pttcd.ApprenticeshipQAUnableToCompleteInfo
-    ORDER BY ApprenticeshipQAUnableToCompleteId DESC
+    GROUP BY ProviderId,UnableToCompleteReasons
 ) unableToCompleteReason ON s.ProviderId = x.ProviderId
 LEFT JOIN Pttcd.Users u ON s.LastAssessedByUserId = u.UserId
 WHERE p.ApprenticeshipQAStatus & @StatusMask != 0
