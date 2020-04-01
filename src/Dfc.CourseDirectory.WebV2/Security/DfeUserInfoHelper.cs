@@ -76,7 +76,7 @@ namespace Dfc.CourseDirectory.WebV2.Security
                 var provider = await GetProvider(ukprn.Value);
 
                 // TODO Handle this nicely
-                if (provider != null)
+                if (provider == null)
                 {
                     throw new Exception($"Cannot find provider with UKPRN: {ukprn.Value}.");
                 }
