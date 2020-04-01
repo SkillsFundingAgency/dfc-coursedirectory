@@ -16,6 +16,7 @@ namespace Dfc.CourseDirectory.WebV2.Models
         public bool? ProviderAssessmentPassed { get; set; }
         public bool? ApprenticeshipAssessmentsPassed { get; set; }
         public IReadOnlyCollection<ApprenticeshipQASubmissionApprenticeship> Apprenticeships { get; set; }
+        public bool HidePassedNotification { get; set; }
     }
 
     public class ApprenticeshipQASubmissionApprenticeship
