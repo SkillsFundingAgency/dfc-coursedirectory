@@ -17,5 +17,6 @@ namespace Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries
         public DateTime? SubmittedOn { get; set; }
         public UserInfo LastAssessedBy { get; set; }
         public DateTime AddedOn { get; set; }
+        public ApprenticeshipQAUnableToCompleteReasons? UnableToCompleteReasons { get; set; }
     }
 }

@@ -32,6 +32,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ListProviders
         public DateTime? SubmittedOn { get; set; }
         public UserInfo LastAssessedBy { get; set; }
         public DateTime AddedOn { get; set; }
+        public ApprenticeshipQAUnableToCompleteReasons? UnableToCompleteReasons { get; set; }
     }
 
     public class QueryHandler : IRequestHandler<Query, ViewModel>
@@ -44,7 +45,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ListProviders
             _sqlQueryDispatcher = sqlQueryDispatcher;
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
         }
-        
+
         public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
         {
             var results = await _sqlQueryDispatcher.ExecuteQuery(new GetProviderApprenticeshipQAInfoByStatus()
@@ -74,12 +75,22 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ListProviders
                              ProviderName = provider.ProviderName,
                              ProviderUkprn = int.Parse(provider.UnitedKingdomProviderReferenceNumber),
                              SubmittedOn = r.SubmittedOn,
-                             AddedOn = r.AddedOn
+                             AddedOn = r.AddedOn,
+                             UnableToCompleteReasons = r.UnableToCompleteReasons
                          }).ToList();
 
             var unableToComplete = infos
                 .Where(i => i.ApprenticeshipQAStatus.HasFlag(ApprenticeshipQAStatus.UnableToComplete))
                 .ToList();
+
+            //foreach (var item in unableToComplete)
+            //{
+            //    var unabletoCompleteReason = await _sqlQueryDispatcher.ExecuteQuery(new GetLatestApprenticeshipQAUnableToCompleteInfoForProvider()
+            //    {
+            //        ProviderId = item.ProviderId
+            //    });
+            //    item.UnableToCompleteReason = unabletoCompleteReason.AsT1.UnableToCompleteReasons;
+            //}
 
             var notStarted = infos
                 .Where(i => !unableToComplete.Contains(i))
