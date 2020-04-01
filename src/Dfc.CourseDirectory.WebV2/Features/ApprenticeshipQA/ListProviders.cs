@@ -83,15 +83,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ListProviders
                 .Where(i => i.ApprenticeshipQAStatus.HasFlag(ApprenticeshipQAStatus.UnableToComplete))
                 .ToList();
 
-            //foreach (var item in unableToComplete)
-            //{
-            //    var unabletoCompleteReason = await _sqlQueryDispatcher.ExecuteQuery(new GetLatestApprenticeshipQAUnableToCompleteInfoForProvider()
-            //    {
-            //        ProviderId = item.ProviderId
-            //    });
-            //    item.UnableToCompleteReason = unabletoCompleteReason.AsT1.UnableToCompleteReasons;
-            //}
-
             var notStarted = infos
                 .Where(i => !unableToComplete.Contains(i))
                 .Where(i => i.ApprenticeshipQAStatus == ApprenticeshipQAStatus.NotStarted)
