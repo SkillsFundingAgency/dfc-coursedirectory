@@ -47,6 +47,7 @@ using Microsoft.Azure.Documents.Client;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Newtonsoft.Json;
@@ -200,7 +201,18 @@ namespace Dfc.CourseDirectory.Web
                                                                              x.User.Claims.Any(c => c.Type == "ProviderType" && 
                                                                                                     _feClaims.Contains(c.Value, StringComparer.OrdinalIgnoreCase))));
             });
-            services.AddDistributedMemoryCache();
+
+            if (_env.IsProduction())
+            {
+                services.AddStackExchangeRedisCache(options =>
+                {
+                    options.Configuration = Configuration.GetConnectionString("Redis");
+                });
+            }
+            else
+            {
+                services.AddDistributedMemoryCache();
+            }
 
             services.Configure<FormOptions>(x => x.ValueCountLimit = 2048);
 
@@ -232,7 +244,7 @@ namespace Dfc.CourseDirectory.Web
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(
             IApplicationBuilder app,
-            IHostingEnvironment env,
+            IWebHostEnvironment env,
             ILoggerFactory loggerFactory,
             IServiceProvider serviceProvider)
         {
