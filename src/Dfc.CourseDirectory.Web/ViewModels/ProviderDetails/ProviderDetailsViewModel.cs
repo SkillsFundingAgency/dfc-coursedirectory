@@ -1,13 +1,4 @@
-﻿
-using Dfc.CourseDirectory.Models.Models.Courses;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Dfc.CourseDirectory.Models.Models.Providers;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Dfc.CourseDirectory.Services.Interfaces.CourseService;
-
+﻿using Dfc.CourseDirectory.Models.Models.Providers;
 
 namespace Dfc.CourseDirectory.Web.ViewModels
 {
