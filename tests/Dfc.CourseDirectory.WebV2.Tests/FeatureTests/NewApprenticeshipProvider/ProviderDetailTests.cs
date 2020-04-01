@@ -37,7 +37,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
         [Theory]
         [InlineData(ApprenticeshipQAStatus.Submitted)]
         [InlineData(ApprenticeshipQAStatus.InProgress)]
-        [InlineData(ApprenticeshipQAStatus.Failed)]
         [InlineData(ApprenticeshipQAStatus.Passed)]
         [InlineData(ApprenticeshipQAStatus.UnableToComplete)]
         public async Task Get_QAStatusNotValidReturnsBadRequest(ApprenticeshipQAStatus qaStatus)
@@ -157,7 +156,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
         [Theory]
         [InlineData(ApprenticeshipQAStatus.Submitted)]
         [InlineData(ApprenticeshipQAStatus.InProgress)]
-        [InlineData(ApprenticeshipQAStatus.Failed)]
         [InlineData(ApprenticeshipQAStatus.Passed)]
         [InlineData(ApprenticeshipQAStatus.UnableToComplete)]
         public async Task Post_QAStatusNotValidReturnsBadRequest(ApprenticeshipQAStatus qaStatus)
@@ -298,7 +296,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
         [Theory]
         [InlineData(ApprenticeshipQAStatus.Submitted)]
         [InlineData(ApprenticeshipQAStatus.InProgress)]
-        [InlineData(ApprenticeshipQAStatus.Failed)]
         [InlineData(ApprenticeshipQAStatus.Passed)]
         [InlineData(ApprenticeshipQAStatus.UnableToComplete)]
         public async Task GetConfirmation_QAStatusNotValidReturnsBadRequest(ApprenticeshipQAStatus qaStatus)
@@ -409,7 +406,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
         [Theory]
         [InlineData(ApprenticeshipQAStatus.Submitted)]
         [InlineData(ApprenticeshipQAStatus.InProgress)]
-        [InlineData(ApprenticeshipQAStatus.Failed)]
         [InlineData(ApprenticeshipQAStatus.Passed)]
         [InlineData(ApprenticeshipQAStatus.UnableToComplete)]
         public async Task PostConfirmation_QAStatusNotValidReturnsBadRequest(ApprenticeshipQAStatus qaStatus)
