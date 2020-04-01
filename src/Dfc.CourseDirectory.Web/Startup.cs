@@ -191,7 +191,18 @@ namespace Dfc.CourseDirectory.Web
                                                                              x.User.Claims.Any(c => c.Type == "ProviderType" && 
                                                                                                     _feClaims.Contains(c.Value, StringComparer.OrdinalIgnoreCase))));
             });
-            services.AddDistributedMemoryCache();
+
+            if (_env.IsProduction())
+            {
+                services.AddStackExchangeRedisCache(options =>
+                {
+                    options.Configuration = Configuration.GetConnectionString("Redis");
+                });
+            }
+            else
+            {
+                services.AddDistributedMemoryCache();
+            }
 
             services.Configure<FormOptions>(x => x.ValueCountLimit = 2048);
 
