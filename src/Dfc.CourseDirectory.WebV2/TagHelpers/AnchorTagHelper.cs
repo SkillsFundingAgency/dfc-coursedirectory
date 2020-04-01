@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Dfc.CourseDirectory.WebV2.TagHelpers
 {
-    [HtmlTargetElement("anchor")]
+    [HtmlTargetElement("a")]
     public class AnchorTagHelper : TagHelperComponentTagHelper
     {
         public AnchorTagHelper(ITagHelperComponentManager manager, ILoggerFactory loggerFactory)
