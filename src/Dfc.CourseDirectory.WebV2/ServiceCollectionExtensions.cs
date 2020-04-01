@@ -148,6 +148,7 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddTransient<MptxManager>();
             services.AddTransient<Features.NewApprenticeshipProvider.FlowModelInitializer>();
             services.AddTransient<ITagHelperComponent, AppendProviderContextTagHelperComponent>();
+            services.AddTransient<ITagHelperComponent, AppendMptxInstanceTagHelperComponent>();
 
 #if DEBUG
             if (configuration["UseLocalFileMptxStateProvider"]?.Equals("true", StringComparison.OrdinalIgnoreCase) ?? false)
