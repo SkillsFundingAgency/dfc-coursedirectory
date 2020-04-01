@@ -1,8 +1,10 @@
-﻿namespace Dfc.CourseDirectory.WebV2.Models
+﻿using System;
+
+namespace Dfc.CourseDirectory.WebV2.Models
 {
     public class Standard
     {
-        public string CosmosId { get; set; }
+        public Guid CosmosId { get; set; }
         public int StandardCode { get; set; }
         public int Version { get; set; }
         public string StandardName { get; set; }

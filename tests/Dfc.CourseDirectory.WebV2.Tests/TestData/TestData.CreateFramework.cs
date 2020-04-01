@@ -13,7 +13,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             int pathwayCode,
             string nasTitle)
         {
-            var id = Guid.NewGuid().ToString();
+            var id = Guid.NewGuid();
 
             await _cosmosDbQueryDispatcher.ExecuteQuery(
                 new Query()
