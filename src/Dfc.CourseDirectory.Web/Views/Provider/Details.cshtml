@@ -57,7 +57,7 @@
                         @if (adminLogin.Succeeded)
                         {
                             <a class="govuk-link" style="padding-right: 1em"
-                               asp-controller="Providers"
+                               asp-controller="Providers" append-provider-context
                                asp-action="EditProviderInfo">Edit</a>
 
                         }
@@ -127,13 +127,13 @@
                             @if (string.IsNullOrEmpty(Model.Alias))
                             {
                                 <a class="govuk-link" style="padding-right: 1em"
-                                   asp-controller="Providers"
+                                   asp-controller="Providers" append-provider-context
                                    asp-action="EditProviderInfo">Add</a>
                             }
                             else
                             {
                                 <a class="govuk-link" style="padding-right: 1em"
-                                   asp-controller="Providers"
+                                   asp-controller="Providers" append-provider-context
                                    asp-action="EditProviderInfo">Edit</a>
                             }
                         }
@@ -181,13 +181,13 @@
                             @if (string.IsNullOrEmpty(Model.BriefOverview))
                             {
                                 <a class="govuk-link" style="padding-right: 1em"
-                                   asp-controller="Providers"
+                                   asp-controller="Providers" append-provider-context
                                    asp-action="EditProviderInfo">Add</a>
                             }
                             else
                             {
                                 <a class="govuk-link" style="padding-right: 1em"
-                                   asp-controller="Providers"
+                                   asp-controller="Providers" append-provider-context
                                    asp-action="EditProviderInfo">Edit</a>
                             }
                         </td>
