@@ -77,7 +77,7 @@ ORDER BY s.SubmittedOn DESC";
             public ApprenticeshipQAStatus ApprenticeshipQAStatus { get; set; }
             public DateTime? SubmittedOn { get; set; }
             public DateTime AddedOn { get; set; }
-            public ApprenticeshipQAUnableToCompleteReasons UnableToCompleteReasons { get; set; }
+            public ApprenticeshipQAUnableToCompleteReasons? UnableToCompleteReasons { get; set; }
         }
     }
 }
