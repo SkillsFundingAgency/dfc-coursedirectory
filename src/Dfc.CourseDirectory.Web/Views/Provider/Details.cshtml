@@ -57,8 +57,8 @@
                         @if (adminLogin.Succeeded)
                         {
                             <a class="govuk-link" style="padding-right: 1em"
-                               asp-controller="Provider"
-                               asp-action="AddOrEditDetails">Edit</a>
+                               asp-controller="Providers"
+                               asp-action="EditProviderInfo">Edit</a>
 
                         }
                     </td>
@@ -127,14 +127,14 @@
                             @if (string.IsNullOrEmpty(Model.Alias))
                             {
                                 <a class="govuk-link" style="padding-right: 1em"
-                                   asp-controller="Provider"
-                                   asp-action="AddOrEditDetails">Add</a>
+                                   asp-controller="Providers"
+                                   asp-action="EditProviderInfo">Add</a>
                             }
                             else
                             {
                                 <a class="govuk-link" style="padding-right: 1em"
-                                   asp-controller="Provider"
-                                   asp-action="AddOrEditDetails">Edit</a>
+                                   asp-controller="Providers"
+                                   asp-action="EditProviderInfo">Edit</a>
                             }
                         }
                     </td>
@@ -143,7 +143,7 @@
                     <td class="govuk-table__header">Provider Type</td>
                     <td class="govuk-table__cell">
 
-                        @if (Model.ProviderType == ProviderType.Undefined)
+                        @if (Model.ProviderType ==  ProviderType.Undefined)
                         {
                             <span class="govuk-visually-hidden">Data Unavailable</span>
                         }
@@ -181,14 +181,14 @@
                             @if (string.IsNullOrEmpty(Model.BriefOverview))
                             {
                                 <a class="govuk-link" style="padding-right: 1em"
-                                   asp-controller="Provider"
-                                   asp-action="AddOrEditDetails">Add</a>
+                                   asp-controller="Providers"
+                                   asp-action="EditProviderInfo">Add</a>
                             }
                             else
                             {
                                 <a class="govuk-link" style="padding-right: 1em"
-                                   asp-controller="Provider"
-                                   asp-action="AddOrEditDetails">Edit</a>
+                                   asp-controller="Providers"
+                                   asp-action="EditProviderInfo">Edit</a>
                             }
                         </td>
                     </tr>
