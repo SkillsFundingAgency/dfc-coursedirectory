@@ -274,9 +274,6 @@
     <Content Update="Views\SearchProvider\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\Provider\AddOrEditDetails.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
     <Content Update="Views\Provider\Details.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
