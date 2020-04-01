@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using AngleSharp.Html.Dom;
@@ -198,7 +199,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             await User.AsTestUser(testUserType, providerId);
 
             // Act
-            var response = await HttpClient.GetAsync($"/tests/empty-provider-context?providerId={providerId}");
+            var response = await HttpClient.GetAsync($"/tests/empty-provider-context");
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -230,7 +231,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             await User.AsTestUser(testUserType, providerId);
 
             // Act
-            var response = await HttpClient.GetAsync($"/tests/empty-provider-context?providerId={providerId}");
+            var response = await HttpClient.GetAsync($"/tests/empty-provider-context");
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -262,7 +263,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             await User.AsTestUser(testUserType, providerId);
 
             // Act
-            var response = await HttpClient.GetAsync($"/tests/empty-provider-context?providerId={providerId}");
+            var response = await HttpClient.GetAsync($"/tests/empty-provider-context");
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -280,6 +281,58 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             Assert.Equal("Sign out", topLevelLinks[5].label);
 
             Assert.Equal(0, subNavLinks.Count);
+        }
+
+        [Theory]
+        [InlineData(ProviderType.FE, "/BulkUpload")]
+        [InlineData(ProviderType.Apprenticeships, "/BulkUploadApprenticeships")]
+        [InlineData(ProviderType.Both, "/BulkUpload/LandingOptions")]
+        public async Task AdminProviderContextNavBulkUploadLinksAreCorrect(
+            ProviderType providerType,
+            string expectedHref)
+        {
+            // Arrange
+            var providerId = await TestData.CreateProvider(
+                providerType: providerType,
+                providerName: "Test Provider");
+
+            await User.AsDeveloper();
+
+            // Act
+            var response = await HttpClient.GetAsync($"/tests/empty-provider-context?providerId={providerId}");
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+
+            var doc = await response.GetDocument();
+            var bulkUploadLink = doc.GetElementsByTagName("a").Single(a => a.TextContent.Trim() == "Bulk upload");
+            Assert.Equal(expectedHref, bulkUploadLink.GetAttribute("href"));
+        }
+
+        [Theory]
+        [InlineData(ProviderType.FE, "/BulkUpload")]
+        [InlineData(ProviderType.Apprenticeships, "/BulkUploadApprenticeships")]
+        [InlineData(ProviderType.Both, "/BulkUpload/LandingOptions")]
+        public async Task ProviderTopNavBulkUploadLinksAreCorrect(
+            ProviderType providerType,
+            string expectedHref)
+        {
+            // Arrange
+            var providerId = await TestData.CreateProvider(
+                providerType: providerType,
+                providerName: "Test Provider");
+
+            await User.AsProviderUser(providerId, providerType);
+
+            // Act
+            var response = await HttpClient.GetAsync($"/tests/empty-provider-context");
+            
+            // Assert
+            response.EnsureSuccessStatusCode();
+
+            var doc = await response.GetDocument();
+            var bulkUploadLink = doc.GetElementsByTagName("a").Single(a => a.TextContent.Trim() == "Bulk upload");
+            Assert.Equal(expectedHref, bulkUploadLink.GetAttribute("href"));
         }
 
         private IReadOnlyList<(string href, string label)> GetTopLevelNavLinks(IHtmlDocument doc)
