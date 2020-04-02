@@ -1,7 +1,10 @@
-﻿
-using Dfc.CourseDirectory.Common;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 using Dfc.CourseDirectory.Common.Settings;
-using Dfc.CourseDirectory.Models.Models.Auth;
 using Dfc.CourseDirectory.Models.Models.Environment;
 using Dfc.CourseDirectory.Services;
 using Dfc.CourseDirectory.Services.ApprenticeshipService;
@@ -32,34 +35,21 @@ using Dfc.CourseDirectory.Web.ViewComponents;
 using Dfc.CourseDirectory.WebV2;
 using Dfc.CourseDirectory.WebV2.Security;
 using GovUk.Frontend.AspNetCore;
-using IdentityModel.Client;
-using JWT.Algorithms;
-using JWT.Builder;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.Azure.Documents.Client;
+using Microsoft.Azure.Storage;
+using Microsoft.Azure.Storage.Blob;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace Dfc.CourseDirectory.Web
 {
@@ -224,6 +214,12 @@ namespace Dfc.CourseDirectory.Web
                 options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
             });
 
+            var dataProtectionBuilder = services.AddDataProtection();
+            if (_env.IsProduction())
+            {
+                dataProtectionBuilder.PersistKeysToAzureBlobStorage(GetDataProtectionBlobToken());
+            }
+
             //TODO
             //services.Configure<GoogleAnalyticsOptions>(options => Configuration.GetSection("GoogleAnalytics").Bind(options));
 
@@ -239,6 +235,31 @@ namespace Dfc.CourseDirectory.Web
             var dfeSettings = new DfeSignInSettings();
             Configuration.GetSection("DFESignInSettings").Bind(dfeSettings);
             services.AddDfeSignIn(dfeSettings);
+
+            Uri GetDataProtectionBlobToken()
+            {
+                var cloudStorageAccount = new CloudStorageAccount(
+                    new Microsoft.Azure.Storage.Auth.StorageCredentials(
+                        Configuration["BlobStorageSettings:AccountName"],
+                        Configuration["BlobStorageSettings:AccountKey"]),
+                    useHttps: true);
+
+                var blobClient = cloudStorageAccount.CreateCloudBlobClient();
+
+                var container = blobClient.GetContainerReference(Configuration["DataProtection:ContainerName"]);
+
+                var blob = container.GetBlockBlobReference(Configuration["DataProtection:BlobName"]);
+
+                var sharedAccessPolicy = new SharedAccessBlobPolicy()
+                {
+                    SharedAccessExpiryTime = DateTime.UtcNow.AddYears(1),
+                    Permissions = SharedAccessBlobPermissions.Read | SharedAccessBlobPermissions.Write | SharedAccessBlobPermissions.Create
+                };
+
+                var sasToken = blob.GetSharedAccessSignature(sharedAccessPolicy);
+
+                return new Uri(blob.Uri + sasToken);
+            }
         }
         
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -250,7 +271,6 @@ namespace Dfc.CourseDirectory.Web
         {
             RunStartupTasks().GetAwaiter().GetResult();
 
-            loggerFactory.AddApplicationInsights(app.ApplicationServices, LogLevel.Debug);
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
