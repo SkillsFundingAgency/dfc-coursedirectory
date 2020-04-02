@@ -15,7 +15,6 @@
             <a href="@Model.ValueHref" class="govuk-link">@Model.Value <span> @Model.Description</span></a>
         }
     </span>
-    @*<span> @Model.Description</span>*@
     <br />
     <br />
 </div>
@@ -28,7 +27,14 @@
             if (!string.IsNullOrWhiteSpace(item.Href))
             {
                 <li class="cd-homepage__list--item">
-                    <a href="@item.Href" class="govuk-link">@item.Description</a>
+                    @if (item.Disabled)
+                    {
+                        <span class="govuk-link--muted">@item.Description</span>
+                    }
+                    else
+                    {
+                        <a href="@item.Href" class="govuk-link">@item.Description</a>
+                    }
                 </li>
             }
         }
