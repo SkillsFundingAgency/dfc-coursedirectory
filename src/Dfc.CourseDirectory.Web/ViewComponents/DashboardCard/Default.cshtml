@@ -28,7 +28,14 @@
             if (!string.IsNullOrWhiteSpace(item.Href))
             {
                 <li class="cd-homepage__list--item">
-                    <a href="@item.Href" class="govuk-link">@item.Description</a>
+                    @if (item.Disabled)
+                    {
+                        <span class="govuk-link--muted">@item.Description</span>
+                    }
+                    else
+                    {
+                        <a href="@item.Href" class="govuk-link">@item.Description</a>
+                    }
                 </li>
             }
         }
