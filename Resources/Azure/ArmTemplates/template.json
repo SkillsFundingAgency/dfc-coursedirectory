@@ -266,6 +266,12 @@
       "metadata": {
         "description": "Feature flags that are passed to the app settings"
       }
+    },
+    "RedisCacheName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the project-wide shared redis cache instance"
+      }
     }
   },
   "variables": {
@@ -619,6 +625,10 @@
               {
                 "name": "DataProtection__ContainerName",
                 "value": "data-protection-keys"
+              },
+              {
+                "name": "ConnectionStrings__Redis",
+                "value": "[concat(parameters('RedisCacheName'), '.redis.cache.windows.net:6380,ssl=True,abortConnect=False,password=', listKeys(resourceId(parameters('ProviderPortalSharedResourceGroupName'), 'Microsoft.Cache/Redis', parameters('RedisCacheName')), '2015-08-01').primaryKey)]"
               }
             ]
           },
