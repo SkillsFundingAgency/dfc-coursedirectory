@@ -60,7 +60,7 @@ namespace Dfc.CourseDirectory.Web
         private readonly IWebHostEnvironment _env;
         //Undefined is only part of these policy until the batch import to update ProviderType is run
         private readonly List<string> _feClaims = new List<string> {"Fe", "Both", "Undefined" };
-        private readonly List<string> _apprenticeshipClaims = new List<string> { "Apprenticeship", "Both", "Undefined" };
+        private readonly List<string> _apprenticeshipClaims = new List<string> { "Apprenticeships", "Both", "Undefined" };
         public Startup(IWebHostEnvironment env, ILogger<Startup> logger, IConfiguration config)
         {
             _env = env;
