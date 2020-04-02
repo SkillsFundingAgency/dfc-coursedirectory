@@ -9,7 +9,6 @@
     Title2="your locations",
     Value = Model.VenueCount,
     Description = @WebHelper.GetLocationsTextToUse(Model.VenueCount),
-    ValueHref = Url.Action("index", "venues"),
     Links = new List<DashboardCardModel.Link>()
     {
         new DashboardCardModel.Link(Url.Action("AddVenue","Venues"),"Add a new location"),
