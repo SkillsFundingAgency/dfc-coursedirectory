@@ -22,12 +22,11 @@ else
         Title2 = "your courses",
         Value = Model.PublishedCourseCount,
         Description = @WebHelper.GetCourseTextToUse(Model.PublishedCourseCount),
-        ValueHref = Url.Action("index", "providercourses"),
         Links = new List<DashboardCardModel.Link>()
         {
         new DashboardCardModel.Link(Url.Action("Index","RegulatedQualification"),"Add a new course"),
         new DashboardCardModel.Link((0 == Model.PublishedCourseCount)?"":Url.Action("Index","Providercourses"),"View, edit, copy or delete a course"),
-        new DashboardCardModel.Link(Url.Action("Index","Bulkupload"),"Bulk upload course information"),
+        new DashboardCardModel.Link(Url.Action("Index","Bulkupload"),"Bulk upload course information")
         }
     })
 }
