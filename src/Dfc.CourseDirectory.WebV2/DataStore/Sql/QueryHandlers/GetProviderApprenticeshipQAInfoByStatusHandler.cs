@@ -26,7 +26,7 @@ SELECT
     u.Email,
     u.FirstName,
     u.LastName,
-    unableToCompleteReason.UnableToCompleteReasons
+    utci.UnableToCompleteReasons
 FROM Pttcd.Providers p
 JOIN (
     SELECT MIN(usi.SignedInUtc) SignedInUtc, up.ProviderId
@@ -34,17 +34,19 @@ JOIN (
     JOIN Pttcd.UserProviders up ON usi.UserId = up.UserId
     GROUP BY up.ProviderId
 ) FirstSignIn ON p.ProviderId = FirstSignIn.ProviderId
-LEFT JOIN Pttcd.ApprenticeshipQASubmissions s ON p.ProviderId = s.ProviderId
 LEFT JOIN (
-    SELECT ProviderId, MAX(ApprenticeshipQASubmissionId) LatestApprenticeshipQASubmissionId
+    SELECT ProviderId, MAX(ApprenticeshipQASubmissionId) ApprenticeshipQASubmissionId
     FROM Pttcd.ApprenticeshipQASubmissions
     GROUP BY ProviderId
-) x ON s.ApprenticeshipQASubmissionId = x.LatestApprenticeshipQASubmissionId AND s.ProviderId = x.ProviderId
+) LatestSubmissions ON p.ProviderId = LatestSubmissions.ProviderId
+LEFT JOIN Pttcd.ApprenticeshipQASubmissions s ON p.ProviderId = s.ProviderId
+AND s.ApprenticeshipQASubmissionId = LatestSubmissions.ApprenticeshipQASubmissionId
 LEFT JOIN (
-    SELECT ProviderId, MAX(ApprenticeshipQAUnableToCompleteId) ApprenticeshipQAUnableToCompleteId, UnableToCompleteReasons
+    SELECT ProviderId, MAX(ApprenticeshipQAUnableToCompleteId) ApprenticeshipQAUnableToCompleteId
     FROM Pttcd.ApprenticeshipQAUnableToCompleteInfo
-    GROUP BY ProviderId,UnableToCompleteReasons
-) unableToCompleteReason ON s.ProviderId = x.ProviderId
+    GROUP BY ProviderId
+) LatestUnableToComplete ON s.ProviderId = LatestUnableToComplete.ProviderId
+LEFT JOIN Pttcd.ApprenticeshipQAUnableToCompleteInfo utci ON LatestUnableToComplete.ApprenticeshipQAUnableToCompleteId = utci.ApprenticeshipQAUnableToCompleteId
 LEFT JOIN Pttcd.Users u ON s.LastAssessedByUserId = u.UserId
 WHERE p.ApprenticeshipQAStatus & @StatusMask != 0
 ORDER BY s.SubmittedOn DESC";
