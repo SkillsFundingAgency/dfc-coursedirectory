@@ -45,7 +45,7 @@ LEFT JOIN (
     SELECT ProviderId, MAX(ApprenticeshipQAUnableToCompleteId) ApprenticeshipQAUnableToCompleteId
     FROM Pttcd.ApprenticeshipQAUnableToCompleteInfo
     GROUP BY ProviderId
-) LatestUnableToComplete ON s.ProviderId = LatestUnableToComplete.ProviderId
+) LatestUnableToComplete ON p.ProviderId = LatestUnableToComplete.ProviderId
 LEFT JOIN Pttcd.ApprenticeshipQAUnableToCompleteInfo utci ON LatestUnableToComplete.ApprenticeshipQAUnableToCompleteId = utci.ApprenticeshipQAUnableToCompleteId
 LEFT JOIN Pttcd.Users u ON s.LastAssessedByUserId = u.UserId
 WHERE p.ApprenticeshipQAStatus & @StatusMask != 0
