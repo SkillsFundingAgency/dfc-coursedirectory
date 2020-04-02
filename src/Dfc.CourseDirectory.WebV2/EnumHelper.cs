@@ -18,7 +18,7 @@ namespace Dfc.CourseDirectory.WebV2
 
                 // If the value is not a power of two treat it as a combination of other options
                 // and don't return it
-                if ((optionAsInt != 0) && ((optionAsInt & (optionAsInt - 1)) == 0))
+                if (!(optionAsInt != 0) && ((optionAsInt & (optionAsInt - 1)) == 0))
                 {
                     continue;
                 }
