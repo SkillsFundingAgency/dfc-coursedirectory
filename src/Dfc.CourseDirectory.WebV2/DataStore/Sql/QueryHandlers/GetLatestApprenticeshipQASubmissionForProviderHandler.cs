@@ -34,16 +34,15 @@ SELECT TOP 1
     s.ProviderAssessmentPassed,
     s.ApprenticeshipAssessmentsPassed,
     s.LastAssessedOn,
+    s.HidePassedNotification,
     b.UserId,
     b.Email,
     b.FirstName,
     b.LastName,
-    b.ProviderId,
     a.UserId,
     a.Email,
     a.FirstName,
-    a.LastName,
-    a.ProviderId
+    a.LastName
 FROM Pttcd.ApprenticeshipQASubmissions s
 JOIN Pttcd.Users b ON s.SubmittedByUserId = b.UserId
 LEFT JOIN Pttcd.Users a ON s.LastAssessedByUserId = a.UserId
@@ -73,7 +72,8 @@ WHERE s.ApprenticeshipQASubmissionId = @LatestApprenticeshipQASubmissionId";
                         ProviderId = h.ProviderId,
                         ProviderMarketingInformation = h.ProviderMarketingInformation,
                         SubmittedByUser = submittedBy,
-                        SubmittedOn = h.SubmittedOn
+                        SubmittedOn = h.SubmittedOn,
+                        HidePassedNotification = h.HidePassedNotification
                     },
                     splitOn: "UserId,UserId").SingleOrDefault();
 
@@ -99,6 +99,7 @@ WHERE s.ApprenticeshipQASubmissionId = @LatestApprenticeshipQASubmissionId";
             public DateTime? LastAssessedOn { get; set; }
             public bool? ProviderAssessmentPassed { get; set; }
             public bool? ApprenticeshipAssessmentsPassed { get; set; }
+            public bool HidePassedNotification { get; set; }
         }
     }
 }

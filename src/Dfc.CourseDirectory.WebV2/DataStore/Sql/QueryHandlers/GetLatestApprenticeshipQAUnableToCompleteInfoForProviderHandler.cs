@@ -25,8 +25,7 @@ SELECT TOP 1
     u.UserId,
     u.Email,
     u.FirstName,
-    u.LastName,
-    u.ProviderId
+    u.LastName
 FROM Pttcd.ApprenticeshipQAUnableToCompleteInfo r
 JOIN Pttcd.Users u ON r.AddedByUserId = u.UserId
 WHERE r.ProviderId = @ProviderId

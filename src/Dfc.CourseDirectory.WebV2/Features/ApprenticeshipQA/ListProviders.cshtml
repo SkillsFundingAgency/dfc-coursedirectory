@@ -12,7 +12,8 @@
             <thead class="govuk-table__head">
                 <tr class="govuk-table__row">
                     <th scope="col" class="govuk-table__header">Provider name</th>
-                    <th scope="col" class="govuk-table__header pttcd-!-width-120px">UKPRN</th>
+                    <th scope="col" class="govuk-table__header" style="width: 120px">UKPRN</th>
+                    <th scope="col" class="govuk-table__header" style="width: 120px">Date added</th>
                 </tr>
             </thead>
             <tbody class="govuk-table__body">
@@ -21,6 +22,7 @@
                     <tr class="govuk-table__row">
                         <td class="govuk-table__cell"><a asp-action="ProviderSelected" asp-route-providerId="@provider.ProviderId" class="govuk-link">@provider.ProviderName</a></td>
                         <td class="govuk-table__cell">@provider.ProviderUkprn</td>
+                        <td class="govuk-table__cell">@provider.AddedOn.ToString("dd MMM yyyy")</td>
                     </tr>
                 }
             </tbody>
@@ -37,8 +39,8 @@
             <thead class="govuk-table__head">
                 <tr class="govuk-table__row">
                     <th scope="col" class="govuk-table__header">Provider name</th>
-                    <th scope="col" class="govuk-table__header pttcd-!-width-120px">UKPRN</th>
-                    <th scope="col" class="govuk-table__header pttcd-!-width-120px">Date added</th>
+                    <th scope="col" class="govuk-table__header" style="width: 120px">UKPRN</th>
+                    <th scope="col" class="govuk-table__header" style="width: 135px">Date submitted</th>
                 </tr>
             </thead>
             <tbody class="govuk-table__body">
@@ -63,8 +65,8 @@
             <thead class="govuk-table__head">
                 <tr class="govuk-table__row">
                     <th scope="col" class="govuk-table__header">Provider name</th>
-                    <th scope="col" class="govuk-table__header pttcd-!-width-120px">UKPRN</th>
-                    <th scope="col" class="govuk-table__header pttcd-!-width-120px">Date added</th>
+                    <th scope="col" class="govuk-table__header" style="width: 120px">UKPRN</th>
+                    <th scope="col" class="govuk-table__header" style="width: 135px">Date submitted</th>
                     <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">Last QA'd by</th>
                 </tr>
             </thead>
@@ -91,8 +93,8 @@
             <thead class="govuk-table__head">
                 <tr class="govuk-table__row">
                     <th scope="col" class="govuk-table__header">Provider name</th>
-                    <th scope="col" class="govuk-table__header pttcd-!-width-120px">UKPRN</th>
-                    <th scope="col" class="govuk-table__header pttcd-!-width-120px">Date added</th>
+                    <th scope="col" class="govuk-table__header" style="width: 120px">UKPRN</th>
+                    <th scope="col" class="govuk-table__header" style="width: 135px">Date submitted</th>
                     <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">Last QA'd by</th>
                 </tr>
             </thead>
@@ -120,7 +122,8 @@
                 <tr class="govuk-table__row">
                     <th scope="col" class="govuk-table__header">Provider name</th>
                     <th scope="col" class="govuk-table__header pttcd-!-width-120px">UKPRN</th>
-                    <th scope="col" class="govuk-table__header pttcd-!-width-120px">Date added</th>
+                    <th scope="col" class="govuk-table__header pttcd-!-width-120px">Reason for not completing</th>
+                    <th scope="col" class="govuk-table__header pttcd-!-width-120px">Date Submitted</th>
                 </tr>
             </thead>
             <tbody class="govuk-table__body">
@@ -129,6 +132,7 @@
                     <tr class="govuk-table__row">
                         <td class="govuk-table__cell"><a asp-action="ProviderSelected" asp-route-providerId="@provider.ProviderId" class="govuk-link">@provider.ProviderName</a></td>
                         <td class="govuk-table__cell">@provider.ProviderUkprn</td>
+                        <td class="govuk-table__cell">@provider.UnableToCompleteReasons?.ToDisplayName()</td>
                         <td class="govuk-table__cell">@(provider.SubmittedOn?.ToString("dd MMM yyyy"))</td>
                     </tr>
                 }

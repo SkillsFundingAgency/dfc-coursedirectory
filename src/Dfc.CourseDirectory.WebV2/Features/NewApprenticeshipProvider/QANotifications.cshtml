@@ -1,4 +1,8 @@
-﻿@model Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.QANotificationsViewModel
+﻿@using Microsoft.AspNetCore.Http.Extensions
+@using Microsoft.AspNetCore.Http;
+
+@model Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.QANotificationsViewModel
+
 
 @if (Model.ProviderType.HasFlag(ProviderType.Apprenticeships))
 {
@@ -13,17 +17,19 @@
         <pttcd-notification title="Quality assurance outcome" id="pttcd-new-apprenticeship-provider__qa-notifications-failed">
             <p>Your information has not passed quality assurance against the style and compliance standards.</p>
             <p>An email has been sent providing the reasons why your information has not met the standards, you will need to fix the errors and submit for quality assurance again.</p>
-            <a asp-action="ProviderDetail" asp-controller="NewApprenticeshipProvider" class="govuk-link" append-provider-context="true">
+            <a asp-action="ProviderDetail" asp-controller="NewApprenticeshipProvider" class="govuk-link" append-provider-context>
                 Fix errors and submit
             </a>
         </pttcd-notification>
     }
-    else if (Model.Status == ApprenticeshipQAStatus.Passed)
+    else if (Model.Status == ApprenticeshipQAStatus.Passed && !Model.HidePassedNotication)
     {
         <pttcd-notification title="Quality assurance outcome" id="pttcd-new-apprenticeship-provider__qa-notifications-passed">
-            <p>Your information has passed quality assurance against the style and compliance standards.</p>
-            <p>You can publish all of your apprenticeship training courses.</p>
-            <a>TODO: Close notification</a>
+            <form asp-route-returnUrl="@ViewContext.HttpContext.Request.GetEncodedPathAndQuery()" asp-controller="NewApprenticeship" asp-action="HidePassedNotication" method="post" append-provider-context>
+                <p>Your information has passed quality assurance against the style and compliance standards.</p>
+                <p>You can publish all of your apprenticeship training courses.</p>
+                <govuk-button class="govuk-button--secondary govuk-!-margin-bottom-0" type="submit">Close notification</govuk-button>
+            </form>
         </pttcd-notification>
     }
     else if (Model.Status == ApprenticeshipQAStatus.NotStarted)
@@ -39,7 +45,7 @@
             </ol>
 
             <p>Once you have passed quality assurance you can publish all of your apprenticeship training courses.</p>
-            <a asp-action="ProviderDetail" asp-controller="NewApprenticeshipProvider" class="govuk-link" append-provider-context="true">
+            <a asp-action="ProviderDetail" asp-controller="NewApprenticeshipProvider" class="govuk-link" append-provider-context>
                 Add your information and one apprenticeship
             </a>
         </pttcd-notification>

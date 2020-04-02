@@ -2,8 +2,10 @@
 using Dfc.CourseDirectory.WebV2.Filters;
 using Dfc.CourseDirectory.WebV2.Models;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
+using Dfc.CourseDirectory.WebV2.Security;
 using Flurl;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
@@ -53,6 +55,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
         public IActionResult ApprenticeshipLocations() => throw new System.NotImplementedException();
 
         [StartsMptx]
+        [HttpGet("provider-detail")]
         public async Task<IActionResult> ProviderDetail(
             ProviderInfo providerInfo,
             [FromServices] MptxManager mptxManager,
@@ -114,6 +117,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
                             .WithProviderContext(providerInfo)
                             .WithMptxInstanceId(Flow)
                     }));
+        }
+
+        [HttpPost("hide-passed-notification")]
+        public async Task<IActionResult> HidePassedNotication([LocalUrl] string returnUrl, HidePassedNotification.Command command)
+        {
+            command.ProviderId = ProviderContext.ProviderId;
+            return await _mediator.SendAndMapResponse(command,
+                success => Redirect(returnUrl));
         }
     }
 }

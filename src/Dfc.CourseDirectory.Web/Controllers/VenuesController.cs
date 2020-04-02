@@ -181,8 +181,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
         }
 
         [Authorize]
-        public IActionResult AddVenue()
+        public IActionResult AddVenue([FromQuery] string returnUrl)
         {
+            if (!string.IsNullOrEmpty(returnUrl))
+            {
+                _contextAccessor.HttpContext.Session.SetString("ADDNEWVENUERETURNURL", returnUrl);
+            }
+
             //_session.SetString("IsEdit", "false");
             return View();
         }
@@ -389,6 +394,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 Town = requestModel.TownOrCity
             };
 
+
+            var returnUrl = _contextAccessor.HttpContext.Session.GetString("ADDNEWVENUERETURNURL");
+            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
 
 
             string option = _contextAccessor.HttpContext.Session.GetString("Option");

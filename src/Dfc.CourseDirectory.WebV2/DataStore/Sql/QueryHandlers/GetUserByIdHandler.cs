@@ -13,7 +13,7 @@ namespace Dfc.CourseDirectory.WebV2.DataStore.Sql.QueryHandlers
         public async Task<OneOf<NotFound, UserInfo>> Execute(SqlTransaction transaction, GetUserById query)
         {
             var sql = @"
-SELECT UserId, Email, FirstName, LastName, ProviderId
+SELECT UserId, Email, FirstName, LastName
 FROM Pttcd.Users
 WHERE UserId = @UserId";
 

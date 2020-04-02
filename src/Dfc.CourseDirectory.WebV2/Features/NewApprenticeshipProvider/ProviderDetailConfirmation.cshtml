@@ -36,7 +36,7 @@
                     <div class="pttcd-new-apprenticeship-provider__provider-detail-confirmation__marketing-information__header__label">
                         Brief overview of your organisation for employers
                     </div>
-                    <a asp-action="ProviderDetail" class="govuk-link pttcd-new-apprenticeship-provider__provider-detail-confirmation__marketing-information__header__link" append-provider-context="true" mptx-href="true">Change</a>
+                    <a asp-action="ProviderDetail" class="govuk-link pttcd-new-apprenticeship-provider__provider-detail-confirmation__marketing-information__header__link" append-provider-context mptx-href="true">Change</a>
                 </div>
                 <div class="pttcd-new-apprenticeship-provider__provider-detail-confirmation__marketing-information__value">
                     @Html.Raw(Model.MarketingInformation)
@@ -44,7 +44,7 @@
             </div>
         </div>
 
-        <form asp-action="ProviderDetailConfirmation" append-provider-context="true" mptx-action="true">
+        <form asp-action="ProviderDetailConfirmation" append-provider-context append-mptx-id>
             <govuk-button type="submit">Save and continue</govuk-button>
         </form>
     </div>
