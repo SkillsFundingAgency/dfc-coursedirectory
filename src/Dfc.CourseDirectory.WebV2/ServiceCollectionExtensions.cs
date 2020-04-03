@@ -130,10 +130,7 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddSingleton<IProviderContextProvider, ProviderContextProvider>();
             services.AddSingleton(new LoqateAddressSearch.Options() { Key = configuration["PostCodeSearchSettings:Key"] });
             services.AddSingleton<IAddressSearchService, AddressSearchService>();
-            services.AddTransient<ISignInAction, DfeUserInfoHelper>();
-            services.AddTransient<ISignInAction, SignInTracker>();
-            services.AddTransient<ISignInAction, EnsureApprenticeshipQAStatusSetSignInAction>();
-            services.AddTransient<ISignInAction, SyncUserProviderSignInAction>();
+
             services.AddTransient<IUkrlpSyncHelper, UkrlpSyncHelper>();
             services.AddTransient<IUkrlpWcfService, UkrlpWcfService>();
             services.AddTransient<MptxManager>();
