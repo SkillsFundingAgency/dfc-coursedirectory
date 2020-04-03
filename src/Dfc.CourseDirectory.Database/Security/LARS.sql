@@ -1,0 +1,3 @@
+﻿CREATE SCHEMA [LARS]
+    AUTHORIZATION [dbo];
+

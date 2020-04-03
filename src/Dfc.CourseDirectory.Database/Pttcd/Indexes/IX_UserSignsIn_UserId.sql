@@ -1,0 +1,1 @@
+﻿CREATE INDEX [IX_UserSignIns_UserId] ON [Pttcd].[UserSignIns] ([UserId]) INCLUDE ([SignedInUtc])
