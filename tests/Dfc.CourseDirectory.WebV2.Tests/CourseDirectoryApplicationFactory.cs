@@ -55,7 +55,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         public TestData TestData => Services.GetRequiredService<TestData>();
 
         public TestUserInfo User => Services.GetRequiredService<TestUserInfo>();
-        public Mock<UkrlpWcfService> UkrlpWcfService => Mock.Get(Services.GetRequiredService<IUkrlpWcfService>() as UkrlpWcfService);
+        public Mock<IUkrlpWcfService> UkrlpWcfService => new Mock<IUkrlpWcfService>();
 
         public void OnTestStarting()
         {
