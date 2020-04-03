@@ -2,6 +2,8 @@
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
 using Dfc.CourseDirectory.WebV2.DataStore.Sql;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
+using Dfc.CourseDirectory.WebV2.Services;
+using Dfc.CourseDirectory.WebV2.Services.Interfaces;
 using Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
@@ -54,6 +56,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         public TestData TestData => Services.GetRequiredService<TestData>();
 
         public TestUserInfo User => Services.GetRequiredService<TestUserInfo>();
+        public Mock<UkrlpWcfService> UkrlpWcfService => Mock.Get(Services.GetRequiredService<IUkrlpWcfService>() as UkrlpWcfService);
 
         public void OnTestStarting()
         {
