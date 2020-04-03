@@ -78,6 +78,8 @@ namespace Dfc.CourseDirectory.WebV2
             }
         }
 
+        public Task Remove(Guid providerId) => _cache.RemoveAsync(GetCacheKey(providerId));
+
         private static ProviderInfo Deserialize(string value) => JsonConvert.DeserializeObject<ProviderInfo>(value);
 
         private static string GetCacheKey(Guid providerId) => $"provider-info:{providerId}";
