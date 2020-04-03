@@ -25,7 +25,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb.QueryHandlers
                     provider.Alias = request.Alias;
                     provider.ProviderStatus = request.ProviderStatus;
                     provider.DateUpdated = request.DateUpdated;
-                    request.UpdatedBy = request.UpdatedBy;
+                    provider.UpdatedBy = request.UpdatedBy;
 
                     inMemoryDocumentStore.Providers.Save(provider);
                 }
