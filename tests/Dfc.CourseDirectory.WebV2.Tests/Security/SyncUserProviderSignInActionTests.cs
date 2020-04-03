@@ -31,10 +31,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Security
             // Arrange
             int providerUkprn = 01234566;
             var providerData = this.GenerateProviderData(providerUkprn);
+            providerData.Id = await TestData.CreateProvider(providerData);
             var signInContext = GetSignInContext(providerUkprn);
             var ukrlpProviderData = this.GenerateUkrlpProviderData(providerUkprn);
-            await TestData.CreateProvider(providerData);
-
+            
             var mockUkrlpWcfService = base.Factory.UkrlpWcfService;
             mockUkrlpWcfService.Setup(w => w.GetProviderData(providerUkprn)).Returns(ukrlpProviderData);
             var mockCosmosDbQueryDispatcher = base.Factory.CosmosDbQueryDispatcher;
@@ -63,13 +63,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Security
             // Arrange
             int providerUkprn = 01234566;
             var providerData = this.GenerateProviderData(providerUkprn);
+            providerData.Id = await TestData.CreateProvider(providerData);
             var signInContext = GetSignInContext(providerUkprn);
 
             signInContext.ProviderUkprn = null;
             signInContext.Provider = null;
 
             var ukrlpProviderData = this.GenerateUkrlpProviderData(providerUkprn);
-            await TestData.CreateProvider(providerData);
 
             var mockUkrlpWcfService = base.Factory.UkrlpWcfService;
             mockUkrlpWcfService.Setup(w => w.GetProviderData(providerUkprn)).Returns(ukrlpProviderData);
@@ -84,7 +84,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Security
             var updatedProvider = mockCosmosDbQueryDispatcher.Object.ExecuteQuery(new GetProviderByUkprn() { Ukprn = providerUkprn }).Result;
 
             Assert.False(ukrlpProviderData.ProviderName == updatedProvider.ProviderName);
-            Assert.True(signInContext.UserInfo.Email == updatedProvider.UpdatedBy);
+            Assert.True(updatedProvider.UpdatedBy == null);
             Assert.False(ukrlpProviderData.ProviderContact.First().ContactAddress.Locality == updatedProvider.ProviderContact.First().ContactAddress.Locality);
             Assert.False(ukrlpProviderData.ProviderContact.First().ContactPersonalDetails.PersonFamilyName == updatedProvider.ProviderContact.First().ContactPersonalDetails.PersonFamilyName);
         }
