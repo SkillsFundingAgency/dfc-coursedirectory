@@ -1,25 +1,45 @@
-﻿using System.Reflection;
+﻿using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Dfc.CourseDirectory.WebV2.Tests
 {
-    public class ClearableMemoryCache : MemoryCache
+    public class ClearableMemoryCache : MemoryDistributedCache, IDistributedCache
     {
-        public ClearableMemoryCache(IOptions<MemoryCacheOptions> optionsAccessor)
-            : base(optionsAccessor)
+        private readonly HashSet<string> _keys;
+
+        public ClearableMemoryCache(IOptions<MemoryDistributedCacheOptions> optionsAccessor, ILoggerFactory loggerFactory)
+            : base(optionsAccessor, loggerFactory)
         {
+            _keys = new HashSet<string>();
         }
 
         public void Clear()
         {
-            // HACK
+            foreach (var key in _keys)
+            {
+                Remove(key);
+            }
 
-            var entriesDict = typeof(MemoryCache)
-                .GetField("_entries", BindingFlags.NonPublic | BindingFlags.Instance)
-                .GetValue(this);
+            _keys.Clear();
+        }
 
-            entriesDict.GetType().GetMethod("Clear").Invoke(entriesDict, new object[0]);
+        void IDistributedCache.Set(string key, byte[] value, DistributedCacheEntryOptions options)
+        {
+            Set(key, value, options);
+
+            _keys.Add(key);
+        }
+
+        async Task IDistributedCache.SetAsync(string key, byte[] value, DistributedCacheEntryOptions options, CancellationToken token)
+        {
+            await SetAsync(key, value, options, token);
+
+            _keys.Add(key);
         }
     }
 }
