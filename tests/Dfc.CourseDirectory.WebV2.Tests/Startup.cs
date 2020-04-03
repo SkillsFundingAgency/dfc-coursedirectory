@@ -5,6 +5,7 @@ using Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb;
 using GovUk.Frontend.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -57,7 +58,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             services.AddSingleton<TestUserInfo>();
             services.AddSingleton<InMemoryDocumentStore>();
             services.AddSingleton<ICosmosDbQueryDispatcher>(sp => new Mock<CosmosDbQueryDispatcher>(sp) { CallBase = true }.Object);
-            services.AddSingleton<IMemoryCache, ClearableMemoryCache>();
+            services.AddSingleton<IDistributedCache, ClearableMemoryCache>();
             services.AddTransient<TestData>();
             services.AddSingleton<IClock, MutableClock>();
             services.AddSingleton<IMptxStateProvider, InMemoryMptxStateProvider>();
