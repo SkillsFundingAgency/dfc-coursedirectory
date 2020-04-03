@@ -51,6 +51,7 @@ namespace Dfc.CourseDirectory.WebV2.Helpers
                     upsertCommand.DateUpdated = _clock.UtcNow;
                     upsertCommand.UpdatedBy = updatedBy;
                     upsertCommand.UnitedKingdomProviderReferenceNumber = ukprn.ToString();
+                    upsertCommand.ProviderType = Models.ProviderType.FE; //Set to FE by default
                     upsertCommand.Update = false;
                 }
 
@@ -105,7 +106,6 @@ namespace Dfc.CourseDirectory.WebV2.Helpers
 
                 //Add to provider
                 updateCommand.ProviderContact = providercontacts;
-
             }
 
             updateCommand.ProviderName = providerData.ProviderName;

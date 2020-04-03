@@ -14,6 +14,7 @@ using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using Dfc.CourseDirectory.WebV2.Security;
 using Dfc.CourseDirectory.WebV2.Services;
 using Dfc.CourseDirectory.WebV2.Services.Interfaces;
+using Dfc.CourseDirectory.WebV2.TagHelpers;
 using GovUk.Frontend.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.Cookies;
