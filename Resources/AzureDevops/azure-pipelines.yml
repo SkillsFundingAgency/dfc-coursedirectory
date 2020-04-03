@@ -72,15 +72,13 @@ steps:
   inputs:
     version: ${{ variables.DotNetCoreVersion }}
 
-# build
-- task: DotNetCoreCLI@2
-  displayName: dotnet build
+- task: MSBuild@1
+  displayName: Build
   inputs:
-    command: build
-    projects: 'Dfc.CourseDirectory.sln'
-    configuration: ${{ variables.buildConfiguration }}
+    solution: 'Dfc.CourseDirectory.sln'
+    platform: '${{ variables.BuildPlatform }}'
+    configuration: '${{ variables.BuildConfiguration }}'
 
-# Test 
 - task: DotNetCoreCLI@2
   displayName: Test
   inputs:
@@ -89,14 +87,20 @@ steps:
     arguments: '--configuration $(BuildConfiguration) --filter SkipOnCI!=true'
 
 - task: DotNetCoreCLI@2
-  displayName: Publish
+  displayName: Publish Dfc.CourseDirectory.Web
   inputs:
     command: publish
     publishWebProjects: True
     arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)'
     zipAfterPublish: True
 
-# Publish
+- task: CopyFiles@2
+  displayName: 'Copy files: database'
+  inputs:
+    SourceFolder: 'src/Dfc.CourseDirectory.Database/bin/$(BuildConfiguration)'
+    Contents: '*'
+    TargetFolder: '$(build.artifactstagingdirectory)/database'
+
 - task: PublishBuildArtifacts@1
   displayName: Publish Artifact
   inputs:
