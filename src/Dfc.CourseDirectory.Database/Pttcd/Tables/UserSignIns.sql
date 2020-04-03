@@ -1,0 +1,6 @@
+﻿CREATE TABLE [Pttcd].[UserSignIns]
+(
+	[UserSignInId] BIGINT IDENTITY NOT NULL CONSTRAINT [PK_UserSignIns] PRIMARY KEY,
+	[UserId] VARCHAR(100) NOT NULL CONSTRAINT [FK_UserSignIns_User] FOREIGN KEY REFERENCES [Pttcd].[Users] ([UserId]),
+	[SignedInUtc] DATETIME NOT NULL
+)

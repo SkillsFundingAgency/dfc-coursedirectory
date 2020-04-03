@@ -1,0 +1,1 @@
+﻿CREATE SCHEMA [Pttcd] AUTHORIZATION [dbo]

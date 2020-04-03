@@ -1,0 +1,1 @@
+﻿CREATE UNIQUE INDEX [IX_UserProviders_Provider] ON [Pttcd].[UserProviders] ([ProviderId], [UserId])

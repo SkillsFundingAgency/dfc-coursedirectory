@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Operations Version="1.0" xmlns="http://schemas.microsoft.com/sqlserver/dac/Serialization/2012/02">
+  <Operation Name="Rename Refactor" Key="38c300be-ec8f-43bc-ba35-4120524d410a" ChangeDateTime="10/09/2019 08:58:19">
+    <Property Name="ElementName" Value="[Tribal].[ApprenticeshipQAComplianceFailureReason].[QAComplianceFailureReasonId]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[Tribal].[ApprenticeshipQAComplianceFailureReason]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="QAComplianceFailureReason" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="a8db4a1e-2940-49de-a2c1-74ec2ed89b70" ChangeDateTime="10/09/2019 09:36:07">
+    <Property Name="ElementName" Value="[Tribal].[ApprenticeshipQACompliance].[CreatedByUserId]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[Tribal].[ApprenticeshipQACompliance]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="CreatedByUserEmail" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="b64cf01f-9368-4b4c-bec7-13d946830b4a" ChangeDateTime="10/09/2019 10:20:45">
+    <Property Name="ElementName" Value="[Tribal].[ApprenticeshipQAStyleFailureReason].[QAStyleFailureReasonId]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[Tribal].[ApprenticeshipQAStyleFailureReason]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="QAStyleFailureReason" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="87a245ca-28df-49ff-b809-1097504644f4" ChangeDateTime="10/10/2019 08:03:04">
+    <Property Name="ElementName" Value="[Tribal].[ApprenticeshipQAStyle].[CreatedByUserId]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[Tribal].[ApprenticeshipQAStyle]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="CreatedByUserEmail" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="92f0638e-98da-4765-8b87-5c415700441f" ChangeDateTime="03/04/2020 15:57:03">
+    <Property Name="ElementName" Value="[Pttcd].[ApprenticeshipQASubmissionProviderAssessments].[AssessedBy]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[Pttcd].[ApprenticeshipQASubmissionProviderAssessments]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[AssessedByUserId]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="ae0df30d-a0c8-4d19-a717-955674ed57d5" ChangeDateTime="03/04/2020 15:57:24">
+    <Property Name="ElementName" Value="[dbo].[ApprenticeshipQASubmissionApprenticeshipAssessments].[AssessedBy]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[ApprenticeshipQASubmissionApprenticeshipAssessments]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[AssessedByUserId]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="3c3b75b8-a044-43b7-9376-6c661c85e20e" ChangeDateTime="03/04/2020 15:58:40">
+    <Property Name="ElementName" Value="[Pttcd].[ApprenticeshipQASubmissions].[LastAssessedBy]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[Pttcd].[ApprenticeshipQASubmissions]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[LastAssessedByUserId]" />
+  </Operation>
+  <Operation Name="Move Schema" Key="2a6e12d9-1308-42ab-bd7c-42f1e2344c53" ChangeDateTime="03/04/2020 16:04:59">
+    <Property Name="ElementName" Value="[dbo].[ApprenticeshipQASubmissionApprenticeshipAssessments]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="NewSchema" Value="Pttcd" />
+    <Property Name="IsNewSchemaExternal" Value="False" />
+  </Operation>
+  <Operation Name="Move Schema" Key="a31e76c8-3138-4c94-a21c-e6c43878dd31" ChangeDateTime="03/04/2020 16:05:21">
+    <Property Name="ElementName" Value="[dbo].[ApprenticeshipQASubmissionApprenticeships]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="NewSchema" Value="Pttcd" />
+    <Property Name="IsNewSchemaExternal" Value="False" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="c51c0970-1020-4bd6-9cec-39b264b8f117" ChangeDateTime="03/09/2020 12:47:18">
+    <Property Name="ElementName" Value="[Pttcd].[ApprenticeshipQASubmissions].[ProviderBriefOverview]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[Pttcd].[ApprenticeshipQASubmissions]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[ProviderMarketingInformation]" />
+  </Operation>
+</Operations>
