@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace Dfc.CourseDirectory.WebV2
@@ -11,13 +12,18 @@ namespace Dfc.CourseDirectory.WebV2
     {
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly IDistributedCache _cache;
+        private readonly ILogger<ProviderInfoCache> _logger;
 
         private static readonly TimeSpan _slidingExpiration = TimeSpan.FromHours(1);
 
-        public ProviderInfoCache(ICosmosDbQueryDispatcher cosmosDbQueryDispatcher, IDistributedCache cache)
+        public ProviderInfoCache(
+            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
+            IDistributedCache cache,
+            ILoggerFactory loggerFactory)
         {
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
             _cache = cache;
+            _logger = loggerFactory.CreateLogger<ProviderInfoCache>();
         }
 
         public async Task<ProviderInfo> GetProviderInfo(Guid providerId)
@@ -33,11 +39,13 @@ namespace Dfc.CourseDirectory.WebV2
                 try
                 {
                     result = Deserialize(cacheResult);
+                    _logger.LogDebug($"Got ProviderInfo from cache for provider {providerId}.");
                 }
-                catch (JsonSerializationException)
+                catch (JsonSerializationException ex)
                 {
                     // If we make a breaking change to ProviderInfo serialization could fail;
                     // force a reload in that case
+                    _logger.LogWarning(ex, $"Failed deserializing ProviderInfo for provider {providerId}.");
                 }
             }
 
@@ -61,6 +69,7 @@ namespace Dfc.CourseDirectory.WebV2
 
                 var entryOptions = new DistributedCacheEntryOptions() { SlidingExpiration = _slidingExpiration };
                 await _cache.SetStringAsync(cacheKey, Serialize(result), entryOptions);
+                _logger.LogDebug($"Added ProviderInfo to cache for provider {providerId}.");
             }
 
             return result;
