@@ -12,6 +12,8 @@ namespace Dfc.CourseDirectory.WebV2
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly IDistributedCache _cache;
 
+        private static readonly TimeSpan _slidingExpiration = TimeSpan.FromHours(1);
+
         public ProviderInfoCache(ICosmosDbQueryDispatcher cosmosDbQueryDispatcher, IDistributedCache cache)
         {
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
@@ -57,7 +59,8 @@ namespace Dfc.CourseDirectory.WebV2
                     ProviderName = provider.ProviderName
                 };
 
-                await _cache.SetStringAsync(cacheKey, Serialize(result));
+                var entryOptions = new DistributedCacheEntryOptions() { SlidingExpiration = _slidingExpiration };
+                await _cache.SetStringAsync(cacheKey, Serialize(result), entryOptions);
             }
 
             return result;
