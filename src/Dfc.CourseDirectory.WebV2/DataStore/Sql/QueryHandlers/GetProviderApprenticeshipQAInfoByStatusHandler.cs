@@ -49,7 +49,7 @@ LEFT JOIN (
 LEFT JOIN Pttcd.ApprenticeshipQAUnableToCompleteInfo utci ON LatestUnableToComplete.ApprenticeshipQAUnableToCompleteId = utci.ApprenticeshipQAUnableToCompleteId
 LEFT JOIN Pttcd.Users u ON s.LastAssessedByUserId = u.UserId
 WHERE p.ApprenticeshipQAStatus & @StatusMask != 0
-ORDER BY s.SubmittedOn DESC";
+ORDER BY s.SubmittedOn DESC, FirstSignIn.SignedInUtc DESC";
 
             var statusMask = query.Statuses.Aggregate(
                 (ApprenticeshipQAStatus)0,
