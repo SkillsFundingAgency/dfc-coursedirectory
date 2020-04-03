@@ -11,8 +11,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.Common"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.Models", "src\Dfc.CourseDirectory.Models\Dfc.CourseDirectory.Models.csproj", "{37C43756-89CC-46FC-A397-2A68740DD08C}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "New", "New", "{ED77C6F2-A944-4285-9EB1-6240606ED53A}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.WebV2", "src\Dfc.CourseDirectory.WebV2\Dfc.CourseDirectory.WebV2.csproj", "{A2BD0AC2-271B-463C-87F0-B358B546DDDA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.WebV2.Tests", "tests\Dfc.CourseDirectory.WebV2.Tests\Dfc.CourseDirectory.WebV2.Tests.csproj", "{F145F6A2-3B4B-47DB-8E72-D90DE8007F7B}"
@@ -55,10 +53,6 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{A2BD0AC2-271B-463C-87F0-B358B546DDDA} = {ED77C6F2-A944-4285-9EB1-6240606ED53A}
-		{F145F6A2-3B4B-47DB-8E72-D90DE8007F7B} = {ED77C6F2-A944-4285-9EB1-6240606ED53A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0079CB89-A4F8-4056-BBC0-FDFBF72BC50C}
