@@ -4,6 +4,7 @@ using Dfc.CourseDirectory.WebV2.DataStore.Sql;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Dfc.CourseDirectory.WebV2.Tests
 {
@@ -14,11 +15,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
     public class DatabaseTestBaseFixture
     {
-        public DatabaseTestBaseFixture()
+        public DatabaseTestBaseFixture(IMessageSink messageSink)
         {
             var config = GetConfiguration();
             Services = CreateServiceProvider(config);
-            DatabaseFixture = new DatabaseFixture(config, Services);
+            DatabaseFixture = new DatabaseFixture(config, Services, messageSink);
         }
 
         public DatabaseFixture DatabaseFixture { get; }
