@@ -1,8 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
-using Dfc.CourseDirectory.WebV2.Services;
-using Dfc.CourseDirectory.WebV2.Services.Interfaces;
-using Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -11,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Xunit;
+using Xunit.Abstractions;
 using CosmosDbQueryDispatcher = Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb.CosmosDbQueryDispatcher;
 
 namespace Dfc.CourseDirectory.WebV2.Tests
@@ -22,9 +20,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
     public class CourseDirectoryApplicationFactory : WebApplicationFactory<Startup>
     {
-        public CourseDirectoryApplicationFactory()
+        public CourseDirectoryApplicationFactory(IMessageSink messageSink)
         {
-            DatabaseFixture = new DatabaseFixture(Configuration, Server.Host.Services);
+            DatabaseFixture = new DatabaseFixture(Configuration, Server.Host.Services, messageSink);
         }
 
         public MutableClock Clock => DatabaseFixture.Clock;
@@ -51,6 +49,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         public TestData TestData => DatabaseFixture.TestData;
 
         public TestUserInfo User => Services.GetRequiredService<TestUserInfo>();
+
+        private string SqlConnectionString => Configuration["ConnectionStrings:DefaultConnection"];
 
         public void OnTestStarting()
         {
