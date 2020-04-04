@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction.Json;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
@@ -15,11 +16,15 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
 
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly JsonSerializerSettings _serializerSettings;
+        private readonly ILogger<SessionMptxStateProvider> _logger;
 
-        public SessionMptxStateProvider(IHttpContextAccessor httpContextAccessor)
+        public SessionMptxStateProvider(
+            IHttpContextAccessor httpContextAccessor,
+            ILoggerFactory loggerFactory)
         {
             _httpContextAccessor = httpContextAccessor;
             _serializerSettings = Settings.CreateSerializerSettings();
+            _logger = loggerFactory.CreateLogger<SessionMptxStateProvider>();
         }
 
         public MptxInstance CreateInstance(
@@ -56,9 +61,9 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
         {
             var key = GetSessionKey(instanceId);
 
-            if (_httpContextAccessor.HttpContext.Session.TryGetValue(key, out var serialized))
+            if (_httpContextAccessor.HttpContext.Session.TryGetValue(key, out var serialized) &&
+                TryDeserialize(serialized, out var entry))
             {
-                var entry = Deserialize(serialized);
                 var instance = new MptxInstance(entry.FlowName, instanceId, entry.Items, entry.State);
                 return instance;
             }
@@ -72,9 +77,9 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
         {
             var key = GetSessionKey(instanceId);
 
-            if (_httpContextAccessor.HttpContext.Session.TryGetValue(key, out var serialized))
+            if (_httpContextAccessor.HttpContext.Session.TryGetValue(key, out var serialized) &&
+                TryDeserialize(serialized, out var entry))
             {
-                var entry = Deserialize(serialized);
                 entry.State = update(entry.State);
 
                 var reserialized = Serialize(entry);
@@ -82,14 +87,27 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             }
             else
             {
-                throw new ArgumentException("No instance with the specified ID exists.", nameof(instanceId));
+                throw new ArgumentException("No valid instance with the specified ID exists.", nameof(instanceId));
             }
         }
 
         private static string GetSessionKey(string instanceId) => $"mtpx:{instanceId}";
 
-        private SessionEntry Deserialize(byte[] bytes) =>
-            JsonConvert.DeserializeObject<SessionEntry>(_encoding.GetString(bytes), _serializerSettings);
+        private bool TryDeserialize(byte[] bytes, out SessionEntry entry)
+        {
+            try
+            {
+                entry = JsonConvert.DeserializeObject<SessionEntry>(_encoding.GetString(bytes), _serializerSettings);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Failed to deserialize MPTX state.");
+
+                entry = default;
+                return false;
+            }
+        }
 
         private byte[] Serialize(SessionEntry entry) =>
             _encoding.GetBytes(JsonConvert.SerializeObject(entry, _serializerSettings));
