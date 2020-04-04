@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.DataStore.Sql;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Xunit;
 using CosmosDbQueryDispatcher = Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb.CosmosDbQueryDispatcher;
@@ -46,7 +44,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         public Task DisposeAsync() => Task.CompletedTask;
 
-        public Task InitializeAsync() => Factory.OnTestStarted();
+        public Task InitializeAsync() => Factory.OnTestStartingAsync();
 
         protected MptxInstanceContext<TState> CreateMptxInstance<TState>(string flowName, TState state)
             where TState : IMptxState =>
@@ -57,27 +55,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             (MptxInstanceContext<TState>)MptxManager.GetInstance(instanceId);
 
         protected Task WithSqlQueryDispatcher(Func<ISqlQueryDispatcher, Task> action) =>
-            WithSqlQueryDispatcher(async dispatcher =>
-            {
-                await action(dispatcher);
-                return 0;
-            });
+            Factory.DatabaseFixture.WithSqlQueryDispatcher(action);
 
-        protected async Task<TResult> WithSqlQueryDispatcher<TResult>(
-            Func<ISqlQueryDispatcher, Task<TResult>> action)
-        {
-            var serviceScopeFactory = Factory.Services.GetRequiredService<IServiceScopeFactory>();
-            using (var scope = serviceScopeFactory.CreateScope())
-            {
-                var transaction = scope.ServiceProvider.GetRequiredService<SqlTransaction>();
-                var queryDispatcher = scope.ServiceProvider.GetRequiredService<ISqlQueryDispatcher>();
-
-                var result = await action(queryDispatcher);
-
-                transaction.Commit();
-
-                return result;
-            }
-        }
+        protected Task<TResult> WithSqlQueryDispatcher<TResult>(
+            Func<ISqlQueryDispatcher, Task<TResult>> action) =>
+            Factory.DatabaseFixture.WithSqlQueryDispatcher(action);
     }
 }
