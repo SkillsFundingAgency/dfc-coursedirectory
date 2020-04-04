@@ -36,7 +36,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         protected HttpClient HttpClient { get; }
 
-        protected InMemoryMptxStateProvider MptxStateProvider => Factory.MptxStateProvider;
+        protected MptxManager MptxManager => Factory.MptxManager;
 
         protected SqlQuerySpy SqlQuerySpy => Factory.SqlQuerySpy;
 
@@ -48,11 +48,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         public Task InitializeAsync() => Factory.OnTestStarted();
 
-        protected MptxInstance CreateMptxInstance<TState>(string flowName, TState state) =>
-            MptxStateProvider.CreateInstance(flowName, new Dictionary<string, object>(), state);
+        protected MptxInstanceContext<TState> CreateMptxInstance<TState>(string flowName, TState state)
+            where TState : IMptxState =>
+            MptxManager.CreateInstance(flowName, state);
 
-        protected TState GetMptxInstanceState<TState>(string instanceId) =>
-            (TState)MptxStateProvider.GetInstance(instanceId).State;
+        protected MptxInstanceContext<TState> GetMptxInstance<TState>(string instanceId)
+            where TState : IMptxState =>
+            (MptxInstanceContext<TState>)MptxManager.GetInstance(instanceId);
 
         protected Task WithSqlQueryDispatcher(Func<ISqlQueryDispatcher, Task> action) =>
             WithSqlQueryDispatcher(async dispatcher =>

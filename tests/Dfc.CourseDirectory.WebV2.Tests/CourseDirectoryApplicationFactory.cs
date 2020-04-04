@@ -45,6 +45,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         public ClearableMemoryCache MemoryCache => Services.GetRequiredService<IDistributedCache>() as ClearableMemoryCache;
 
+        public MptxManager MptxManager => Services.GetRequiredService<MptxManager>();
+
         public InMemoryMptxStateProvider MptxStateProvider =>
             Services.GetRequiredService<IMptxStateProvider>() as InMemoryMptxStateProvider;
 
