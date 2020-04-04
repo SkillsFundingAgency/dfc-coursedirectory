@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
 using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.Behaviors;
@@ -36,18 +34,6 @@ namespace Dfc.CourseDirectory.WebV2
             IConfiguration configuration)
         {
             var thisAssembly = typeof(ServiceCollectionExtensions).Assembly;
-
-            if (!environment.IsTesting())
-            {
-                services.AddTransient<ICosmosDbQueryDispatcher, CosmosDbQueryDispatcher>();
-                services.AddSingleton<Configuration>();
-
-                services.Scan(scan => scan
-                    .FromAssembliesOf(typeof(ICosmosDbQuery<>))
-                    .AddClasses(classes => classes.AssignableTo(typeof(ICosmosDbQueryHandler<,>)))
-                        .AsImplementedInterfaces()
-                        .WithTransientLifetime());
-            }
 
             services
                 .AddMvc(options =>
@@ -93,12 +79,6 @@ namespace Dfc.CourseDirectory.WebV2
                     AuthorizationPolicyNames.ApprenticeshipQA,
                     policy => policy.RequireRole(RoleNames.Developer, RoleNames.Helpdesk));
             });
-
-            services.Scan(scan => scan
-                .FromAssembliesOf(typeof(ISqlQuery<>))
-                .AddClasses(classes => classes.AssignableTo(typeof(ISqlQueryHandler<,>)))
-                    .AsImplementedInterfaces()
-                    .WithTransientLifetime());
             
             // SignInActions - order here is the order they're executed in
             services.AddTransient<ISignInAction, DfeUserInfoHelper>();
@@ -106,6 +86,15 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddTransient<ISignInAction, SignInTracker>();
             services.AddTransient<ISignInAction, EnsureApprenticeshipQAStatusSetSignInAction>();
 
+            services.AddSqlDataStore(configuration.GetConnectionString("DefaultConnection"));
+
+            if (!environment.IsTesting())
+            {
+                services.AddCosmosDbDataStore(
+                    endpoint: new Uri(configuration["CosmosDbSettings:EndpointUri"]),
+                    key: configuration["CosmosDbSettings:PrimaryKey"]);
+            }
+			
             // HostedService to execute startup tasks.
             // N.B. it's important this is the first HostedService to run; it may set up dependencies for other services.
             services.Insert(
@@ -122,23 +111,6 @@ namespace Dfc.CourseDirectory.WebV2
                 AddImportsToHtml = false
             });
             services.AddMediatR(typeof(ServiceCollectionExtensions));
-            services.AddScoped<ISqlQueryDispatcher, SqlQueryDispatcher>();
-            services.AddScoped<SqlConnection>(_ => new SqlConnection(configuration.GetConnectionString("DefaultConnection")));
-            services.AddScoped<SqlTransaction>(sp =>
-            {
-                var connection = sp.GetRequiredService<SqlConnection>();
-                if (connection.State != ConnectionState.Open)
-                {
-                    connection.Open();
-                }
-                var transaction = connection.BeginTransaction(IsolationLevel.Snapshot);
-
-                var marker = sp.GetRequiredService<SqlTransactionMarker>();
-                marker.OnTransactionCreated(transaction);
-
-                return transaction;
-            });
-            services.AddScoped<SqlTransactionMarker>();
             services.AddSingleton<IClock, SystemClock>();
             services.AddSingleton<ICurrentUserProvider, ClaimsPrincipalCurrentUserProvider>();
             services.AddHttpContextAccessor();
