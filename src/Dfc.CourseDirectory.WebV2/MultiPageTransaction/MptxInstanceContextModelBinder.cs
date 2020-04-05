@@ -45,11 +45,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             }
             else
             {
-                var model = ActivatorUtilities.CreateInstance(
-                    bindingContext.HttpContext.RequestServices,
-                    bindingContext.ModelType,
-                    instanceContext.Instance);
-                bindingContext.Result = ModelBindingResult.Success(model);
+                bindingContext.Result = ModelBindingResult.Success(instanceContext);
             }
 
             return Task.CompletedTask;
