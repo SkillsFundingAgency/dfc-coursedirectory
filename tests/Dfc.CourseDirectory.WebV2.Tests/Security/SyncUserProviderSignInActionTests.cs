@@ -15,7 +15,7 @@ using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.Security
 {
-    public class SyncUserProviderSignInActionTests : TestBase
+    public class SyncUserProviderSignInActionTests : MvcTestBase
     {
         private SyncUserProviderSignInAction signInActionToTest;
         private IUkrlpSyncHelper _ukrlpSyncHelper;
