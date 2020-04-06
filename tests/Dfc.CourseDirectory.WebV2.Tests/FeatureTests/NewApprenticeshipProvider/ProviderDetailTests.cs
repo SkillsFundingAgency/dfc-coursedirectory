@@ -260,7 +260,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 requestContent);
 
             // Assert
-            var state = GetMptxInstanceState<FlowModel>(mptxInstance.InstanceId);
+            var state = GetMptxInstance<FlowModel>(mptxInstance.InstanceId).State;
             Assert.True(state.GotProviderDetails);
             Assert.Equal("<p>New marketing info</p>", state.ProviderMarketingInformation);
 
