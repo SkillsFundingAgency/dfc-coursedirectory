@@ -33,9 +33,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         public async Task ApprenticeshipDoesExist_ReturnsOk()
         {
             // Arrange
-            var ukprn = 12345;
-            await TestData.CreateProvider(ukprn);
-            var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
+            var providerId = await TestData.CreateProvider();
+            var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
+            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard);
 
             // Act
             var response = await HttpClient.GetAsync($"filtertests/verifyapprenticeshipidattributetests/{apprenticeshipId}");
@@ -49,8 +49,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
         {
             // Arrange
             var ukprn = 1234;
-            await TestData.CreateProvider(ukprn);
-            var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
+            var providerId = await TestData.CreateProvider(ukprn);
+            var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
+            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard);
             await User.AsDeveloper();  // Ensure UKPRN doesn't get bound from authentication ticket
 
             // Act
@@ -74,7 +75,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             var ukprn = 1234;
             var providerId = await TestData.CreateProvider(ukprn);
             var anotherProviderId = await TestData.CreateProvider(ukprn: 56789);
-            var apprenticeshipId = await TestData.CreateApprenticeship(ukprn);
+            var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
+            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard);
             await User.AsTestUser(userType, anotherProviderId);
 
             // Act
