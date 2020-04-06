@@ -95,14 +95,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA
                     _ => RedirectToAction("ProviderSelected", new { providerId })));
         }
 
-        [HttpGet("qareport")]
+        [HttpGet("report")]
         public async Task<IActionResult> Report() => await _mediator.SendAndMapResponse(
             new Report.Query(),
             response =>
             {
                 var bytes = ReportHelper.ConvertToBytes(response);
-                var file = File(bytes, "text/csv", "QAReport.csv");
-                return file;
+                return File(bytes, "text/csv", "QAReport.csv");
             });
     }
 }
