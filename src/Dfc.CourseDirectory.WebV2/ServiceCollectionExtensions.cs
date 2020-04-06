@@ -23,6 +23,7 @@ using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 namespace Dfc.CourseDirectory.WebV2
@@ -104,6 +105,13 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddTransient<ISignInAction, EnsureProviderExists>();
             services.AddTransient<ISignInAction, SignInTracker>();
             services.AddTransient<ISignInAction, EnsureApprenticeshipQAStatusSetSignInAction>();
+
+            // HostedService to execute startup tasks.
+            // N.B. it's important this is the first HostedService to run; it may set up dependencies for other services.
+            services.Insert(
+                0,
+                new ServiceDescriptor(typeof(IHostedService), typeof(RunStartupTasksHostedService),
+                ServiceLifetime.Transient));
 
             services.AddSingleton<HostingOptions>();
             services.AddSingleton<IProviderOwnershipCache, ProviderOwnershipCache>();
