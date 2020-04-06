@@ -29,11 +29,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA
         public async Task<IActionResult> ProviderSelected(ProviderSelected.Query query) =>
             await _mediator.SendAndMapResponse(query, vm => View(vm));
 
-        [HttpGet("provider-assessments/{providerId}")]
+        [HttpGet("{providerId}/provider-assessment")]
         public async Task<IActionResult> ProviderAssessment(ProviderAssessment.Query query) =>
             await _mediator.SendAndMapResponse(query, vm => View(vm));
 
-        [HttpPost("provider-assessments/{providerId}")]
+        [HttpPost("{providerId}/provider-assessment")]
         public async Task<IActionResult> ProviderAssessment(
             Guid providerId,
             ProviderAssessment.Command command)
@@ -46,7 +46,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA
                     vm => View("ProviderAssessmentConfirmation", vm)));
         }
 
-        [HttpGet("apprenticeship-assessments/{apprenticeshipId}")]
+        [HttpGet("{providerId}/apprenticeship-assessments/{apprenticeshipId}")]
         public async Task<IActionResult> ApprenticeshipAssessment(
             [ApprenticeshipId(DoesNotExistResponseStatusCode = 400)] Guid apprenticeshipId,
             ProviderInfo providerInfo)
@@ -59,7 +59,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA
             return await _mediator.SendAndMapResponse(query, vm => View(vm));
         }
 
-        [HttpPost("apprenticeship-assessments/{apprenticeshipId}")]
+        [HttpPost("{providerId}/apprenticeship-assessments/{apprenticeshipId}")]
         public async Task<IActionResult> ApprenticeshipAssessment(
             [ApprenticeshipId(DoesNotExistResponseStatusCode = 400)] Guid apprenticeshipId,
             ProviderInfo providerInfo,
