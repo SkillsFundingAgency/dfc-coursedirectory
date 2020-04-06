@@ -1,8 +1,4 @@
 ﻿@model Dfc.CourseDirectory.WebV2.SharedViews.Components.ProviderNavViewModel
-@{
-    var currentController = (string)ViewContext.RouteData.Values["Controller"];
-    var currentAction = (string)ViewContext.RouteData.Values["Action"];
-}
 
 <div class="pttcd-subnav govuk-!-margin-top-6">
     <div class="pttcd-subnav__provider-name">@Model.ProviderContext.ProviderName</div>
