@@ -12,15 +12,18 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly IServiceProvider _serviceProvider;
         private readonly IClock _clock;
+        private readonly TestUserInfo _user;
 
         public TestData(
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             IServiceProvider serviceProvider,
-            IClock clock)
+            IClock clock,
+            TestUserInfo user)
         {
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
             _serviceProvider = serviceProvider;
             _clock = clock;
+            _user = user;
         }
 
         protected Task WithSqlQueryDispatcher(Func<ISqlQueryDispatcher, Task> action) =>
