@@ -26,7 +26,7 @@ namespace Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.QueryHandlers
             newProvider.ProviderContact = request.ProviderContact;
             newProvider.Alias = request.Alias;
             newProvider.ProviderStatus = request.ProviderStatus;
-            newProvider.ProviderType = WebV2.Models.ProviderType.FE; //Default to FE
+            newProvider.ProviderType = request.ProviderType;
             newProvider.DateUpdated = request.DateUpdated;
             newProvider.UpdatedBy = request.UpdatedBy;
 
