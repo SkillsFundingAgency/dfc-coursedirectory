@@ -194,6 +194,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             return new ClaimsPrincipal(identity);
         }
 
+        public UserInfo ToUserInfo() => new UserInfo()
+        {
+            UserId = UserId,
+            Email = Email,
+            FirstName = FirstName,
+            LastName = LastName
+        };
+
         private async Task RecordSignIn()
         {
             using (var scope = _serviceScopeFactory.CreateScope())
