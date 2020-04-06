@@ -47,7 +47,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             await User.AsTestUser(userType, providerId);
 
             // Act
-            var response = await HttpClient.GetAsync($"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}");
+            var response = await HttpClient.GetAsync($"apprenticeship-qa/{providerId}/apprenticeship-assessments/{apprenticeshipId}");
 
             // Assert
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
@@ -59,10 +59,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             // Arrange
             await User.AsHelpdesk();
 
+            var providerId = await TestData.CreateProvider(
+                providerName: "Provider 1",
+                apprenticeshipQAStatus: ApprenticeshipQAStatus.Submitted);
+
             var apprenticeshipId = Guid.NewGuid();
 
             // Act
-            var response = await HttpClient.GetAsync($"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}");
+            var response = await HttpClient.GetAsync(
+                $"apprenticeship-qa/{providerId}/apprenticeship-assessments/{apprenticeshipId}");
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -86,7 +91,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             await User.AsHelpdesk();
 
             // Act
-            var response = await HttpClient.GetAsync($"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}");
+            var response = await HttpClient.GetAsync(
+                $"apprenticeship-qa/{providerId}/apprenticeship-assessments/{apprenticeshipId}");
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -123,7 +129,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             await User.AsHelpdesk();
 
             // Act
-            var response = await HttpClient.GetAsync($"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}");
+            var response = await HttpClient.GetAsync(
+                $"apprenticeship-qa/{providerId}/apprenticeship-assessments/{apprenticeshipId}");
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -181,7 +188,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             await User.AsHelpdesk();
 
             // Act
-            var response = await HttpClient.GetAsync($"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}");
+            var response = await HttpClient.GetAsync(
+                $"apprenticeship-qa/{providerId}/apprenticeship-assessments/{apprenticeshipId}");
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -236,7 +244,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             await User.AsHelpdesk();
 
             // Act
-            var response = await HttpClient.GetAsync($"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}");
+            var response = await HttpClient.GetAsync(
+                $"apprenticeship-qa/{providerId}/apprenticeship-assessments/{apprenticeshipId}");
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -282,7 +291,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}",
+                $"apprenticeship-qa/{providerId}/apprenticeship-assessments/{apprenticeshipId}",
                 requestContent);
 
             // Assert
@@ -295,6 +304,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             // Arrange
             await User.AsHelpdesk();
 
+            var providerId = await TestData.CreateProvider(
+                providerName: "Provider 1",
+                apprenticeshipQAStatus: ApprenticeshipQAStatus.Submitted);
+
             var apprenticeshipId = Guid.NewGuid();
 
             var requestContent = new FormUrlEncodedContentBuilder()
@@ -304,7 +317,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}",
+                $"apprenticeship-qa/{providerId}/apprenticeship-assessments/{apprenticeshipId}",
                 requestContent);
 
             // Assert
@@ -335,7 +348,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}",
+                $"apprenticeship-qa/{providerId}/apprenticeship-assessments/{apprenticeshipId}",
                 requestContent);
 
             // Assert
@@ -380,7 +393,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}",
+                $"apprenticeship-qa/{providerId}/apprenticeship-assessments/{apprenticeshipId}",
                 requestContent);
 
             // Assert
@@ -420,7 +433,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}",
+                $"apprenticeship-qa/{providerId}/apprenticeship-assessments/{apprenticeshipId}",
                 requestContent);
 
             // Assert
@@ -464,7 +477,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}",
+                $"apprenticeship-qa/{providerId}/apprenticeship-assessments/{apprenticeshipId}",
                 requestContent);
 
             // Assert
@@ -509,7 +522,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}",
+                $"apprenticeship-qa/{providerId}/apprenticeship-assessments/{apprenticeshipId}",
                 requestContent);
 
             // Assert
@@ -552,7 +565,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}",
+                $"apprenticeship-qa/{providerId}/apprenticeship-assessments/{apprenticeshipId}",
                 requestContent);
 
             // Assert
@@ -596,7 +609,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}",
+                $"apprenticeship-qa/{providerId}/apprenticeship-assessments/{apprenticeshipId}",
                 requestContent);
 
             // Assert
@@ -641,7 +654,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}",
+                $"apprenticeship-qa/{providerId}/apprenticeship-assessments/{apprenticeshipId}",
                 requestContent);
 
             // Assert
@@ -685,7 +698,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}",
+                $"apprenticeship-qa/{providerId}/apprenticeship-assessments/{apprenticeshipId}",
                 requestContent);
 
             // Assert
@@ -744,7 +757,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}",
+                $"apprenticeship-qa/{providerId}/apprenticeship-assessments/{apprenticeshipId}",
                 requestContent);
 
             // Assert
@@ -803,7 +816,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}",
+                $"apprenticeship-qa/{providerId}/apprenticeship-assessments/{apprenticeshipId}",
                 requestContent);
 
             // Assert
@@ -865,7 +878,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}",
+                $"apprenticeship-qa/{providerId}/apprenticeship-assessments/{apprenticeshipId}",
                 requestContent);
 
             // Assert
@@ -961,7 +974,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}",
+                $"apprenticeship-qa/{providerId}/apprenticeship-assessments/{apprenticeshipId}",
                 requestContent);
 
             // Assert
@@ -1020,7 +1033,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}",
+                $"apprenticeship-qa/{providerId}/apprenticeship-assessments/{apprenticeshipId}",
                 requestContent);
 
             // Assert
