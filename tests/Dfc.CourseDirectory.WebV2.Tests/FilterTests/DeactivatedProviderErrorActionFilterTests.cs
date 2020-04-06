@@ -9,7 +9,7 @@ using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
 {
-    public class DeactivatedProviderErrorActionFilterTests : TestBase
+    public class DeactivatedProviderErrorActionFilterTests : MvcTestBase
     {
         public DeactivatedProviderErrorActionFilterTests(CourseDirectoryApplicationFactory factory)
             : base(factory)

@@ -4,7 +4,7 @@ using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.HelpdeskDashboard
 {
-    public class DashboardTests : TestBase
+    public class DashboardTests : MvcTestBase
     {
         public DashboardTests(CourseDirectoryApplicationFactory factory)
             : base(factory)

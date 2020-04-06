@@ -9,7 +9,7 @@ using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
 {
-    public class VerifyApprenticeshipIdAttributeTests : TestBase
+    public class VerifyApprenticeshipIdAttributeTests : MvcTestBase
     {
         public VerifyApprenticeshipIdAttributeTests(CourseDirectoryApplicationFactory factory)
             : base(factory)
