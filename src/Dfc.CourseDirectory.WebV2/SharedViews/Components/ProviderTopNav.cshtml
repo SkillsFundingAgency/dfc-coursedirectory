@@ -20,13 +20,13 @@
         </li>
         @if (Model.ProviderContext.ProviderType == ProviderType.Both && (Model.ApprenticeshipQAStatus == ApprenticeshipQAStatus.Passed || !Model.ApprenticeshipQAFeatureIsEnabled))
         {
-            <li class="govuk-header__navigation-item@(currentController == "BulkUpload" || currentController == "BulkUploadApprenticeships" ? " govuk-header__navigation-item--active" : null)">
-                <a asp-action="LandingOptions" asp-controller="BulkUpload" class="govuk-header__link">
-                    Bulk upload
+            <li class="govuk-header__navigation-item@(currentController == "Apprenticeships" ? " govuk-header__navigation-item--active" : null)">
+                <a asp-action="LandingOptions" asp-controller="Venues" class="govuk-header__link">
+                    Your apprenticeships training
                 </a>
             </li>
-            <li class="govuk-header__navigation-item@(currentController == "BulkUploadApprenticeships" ? " govuk-header__navigation-item--active" : null)">
-                <a asp-action="Index" asp-controller="BulkUploadApprenticeships" class="govuk-header__link">
+            <li class="govuk-header__navigation-item@(currentController == "BulkUpload" || currentController == "BulkUploadApprenticeships" ? " govuk-header__navigation-item--active" : null)">
+                <a asp-action="LandingOptions" asp-controller="BulkUpload" class="govuk-header__link">
                     Bulk upload
                 </a>
             </li>
