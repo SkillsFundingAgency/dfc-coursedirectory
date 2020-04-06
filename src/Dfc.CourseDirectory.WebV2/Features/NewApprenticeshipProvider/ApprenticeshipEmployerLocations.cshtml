@@ -1,0 +1,29 @@
+﻿@model Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ApprenticeshipEmployerLocations.Command
+@{
+    ViewBag.Title = "Apprenticeship location type";
+}
+
+@if (!ViewContext.ModelState.IsValid)
+{
+    <govuk-error-summary>
+        <govuk-error-summary-title>There is a problem</govuk-error-summary-title>
+        <govuk-error-summary-item asp-for="National" />
+    </govuk-error-summary>
+}
+
+<form asp-action="ApprenticeshipEmployerLocations" append-provider-context append-mptx-id>
+    <govuk-radios asp-for="National">
+        <govuk-radios-fieldset is-page-heading="true">
+            <govuk-radios-fieldset-legend legend-class="govuk-fieldset__legend--xl">
+                <h1 class="govuk-heading-l">Can you deliver this training at employers’ locations anywhere in England?</h1>
+            </govuk-radios-fieldset-legend>
+        </govuk-radios-fieldset>
+        <govuk-radios-hint>
+            This will flag you as a national provider to people searching for apprenticeship training
+        </govuk-radios-hint>
+        <govuk-radios-item value="@(true)">Yes</govuk-radios-item>
+        <govuk-radios-item value="@(false)">No</govuk-radios-item>
+    </govuk-radios>
+
+    <govuk-button type="submit">Continue</govuk-button>
+</form>
