@@ -6,7 +6,7 @@ using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
 {
-    public class LocalUrlActionFilterTests : TestBase
+    public class LocalUrlActionFilterTests : MvcTestBase
     {
         public LocalUrlActionFilterTests(CourseDirectoryApplicationFactory factory)
             : base(factory)

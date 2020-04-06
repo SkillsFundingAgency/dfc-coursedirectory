@@ -7,7 +7,7 @@ using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
 {
-    public class EditProviderInfo : TestBase
+    public class EditProviderInfo : MvcTestBase
     {
         public EditProviderInfo(CourseDirectoryApplicationFactory factory)
             : base(factory)

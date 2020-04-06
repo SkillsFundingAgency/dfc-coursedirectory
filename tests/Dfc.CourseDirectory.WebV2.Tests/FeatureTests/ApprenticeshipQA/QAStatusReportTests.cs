@@ -7,7 +7,7 @@ using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 {
-    public class QAStatusReportTests : TestBase
+    public class QAStatusReportTests : MvcTestBase
     {
         public QAStatusReportTests(CourseDirectoryApplicationFactory factory) : base(factory)
         {

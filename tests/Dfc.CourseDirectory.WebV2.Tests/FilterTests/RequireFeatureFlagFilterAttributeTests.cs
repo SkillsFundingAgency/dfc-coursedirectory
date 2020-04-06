@@ -6,7 +6,7 @@ using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
 {
-    public class RequireFeatureFlagFilterAttributeTests : TestBase
+    public class RequireFeatureFlagFilterAttributeTests : MvcTestBase
     {
         public RequireFeatureFlagFilterAttributeTests(CourseDirectoryApplicationFactory factory)
             : base(factory)

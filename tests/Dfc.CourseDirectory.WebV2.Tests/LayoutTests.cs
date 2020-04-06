@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests
 {
-    public class LayoutTests : TestBase
+    public class LayoutTests : MvcTestBase
     {
         public LayoutTests(CourseDirectoryApplicationFactory factory)
             : base(factory)

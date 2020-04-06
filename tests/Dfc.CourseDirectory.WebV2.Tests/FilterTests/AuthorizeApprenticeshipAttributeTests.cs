@@ -7,7 +7,7 @@ using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
 {
-    public class AuthorizeApprenticeshipAttributeTests : TestBase
+    public class AuthorizeApprenticeshipAttributeTests : MvcTestBase
     {
         public AuthorizeApprenticeshipAttributeTests(CourseDirectoryApplicationFactory factory)
             : base(factory)

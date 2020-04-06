@@ -5,7 +5,7 @@ using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests
 {
-    public class RedirectToActionResultExtensionsTests : TestBase
+    public class RedirectToActionResultExtensionsTests : MvcTestBase
     {
         public RedirectToActionResultExtensionsTests(CourseDirectoryApplicationFactory factory)
             : base(factory)
