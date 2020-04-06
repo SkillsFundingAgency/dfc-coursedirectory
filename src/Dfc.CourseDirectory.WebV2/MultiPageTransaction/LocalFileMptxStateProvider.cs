@@ -76,20 +76,50 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
 
         private void UpdateDbFile(Action<DbFile> updateDb)
         {
-            DbFile dbFile;
+            DbFile dbFile = null;
 
-            if (File.Exists(_dbFilePath))
+            var serializer = JsonSerializer.Create(_serializerSettings);
+            serializer.Error += Serializer_Error;
+
+            try
             {
-                dbFile = JsonConvert.DeserializeObject<DbFile>(File.ReadAllText(_dbFilePath), _serializerSettings);
+                if (File.Exists(_dbFilePath))
+                {
+                    using (var streamReader = File.OpenText(_dbFilePath))
+                    using (var jsonReader = new JsonTextReader(streamReader))
+                    {
+                        dbFile = serializer.Deserialize<DbFile>(jsonReader);
+                    }
+                }
+
+                // Maybe the outermost object failed to deserialize (or file didn't exist)
+                dbFile ??= new DbFile();
+                dbFile.Entries ??= new Dictionary<string, DbFileEntry>();
+
+                // If serializing any entries failed they will be null - remove them
+                foreach (var e in dbFile.Entries)
+                {
+                    if (e.Value == null)
+                    {
+                        dbFile.Entries.Remove(e.Key);
+                    }
+                }
+
+                updateDb(dbFile);
+
+                using (var streamWriter = File.CreateText(_dbFilePath))
+                using (var jsonWriter = new JsonTextWriter(streamWriter))
+                {
+                    serializer.Serialize(jsonWriter, dbFile);
+                }
             }
-            else
+            finally
             {
-                dbFile = new DbFile() { Entries = new Dictionary<string, DbFileEntry>() };
+                serializer.Error -= Serializer_Error;
             }
 
-            updateDb(dbFile);
-
-            File.WriteAllText(_dbFilePath, JsonConvert.SerializeObject(dbFile, _serializerSettings));
+            void Serializer_Error(object sender, Newtonsoft.Json.Serialization.ErrorEventArgs e) =>
+                e.ErrorContext.Handled = true;
         }
 
         private class DbFile

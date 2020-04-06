@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Threading.Tasks;
 using Dfc.CourseDirectory.Common.Settings;
 using Dfc.CourseDirectory.Models.Models.Environment;
 using Dfc.CourseDirectory.Services;
@@ -269,8 +268,6 @@ namespace Dfc.CourseDirectory.Web
             ILoggerFactory loggerFactory,
             IServiceProvider serviceProvider)
         {
-            RunStartupTasks().GetAwaiter().GetResult();
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -328,15 +325,6 @@ namespace Dfc.CourseDirectory.Web
 
                 endpoints.MapControllers();
             });
-
-            async Task RunStartupTasks()
-            {
-                var startupTasks = serviceProvider.GetServices<IStartupTask>();
-                foreach (var t in startupTasks)
-                {
-                    await t.Execute();
-                }
-            }
         }
     }
 }
