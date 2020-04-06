@@ -10,7 +10,7 @@ namespace Dfc.CourseDirectory.WebV2.Services
 {
     public class UkrlpWcfService : IUkrlpWcfService
     {
-        public ProviderRecordStructure GetProviderData(int ukprn)
+        public async Task<ProviderRecordStructure> GetProviderData(int ukprn)
         {
             string[] statusesToFetch =
             {
@@ -26,10 +26,9 @@ namespace Dfc.CourseDirectory.WebV2.Services
 
                 var providerClient = new ProviderQueryPortTypeClient();
                 providerClient.InnerChannel.OperationTimeout = new TimeSpan(0, 10, 0);
-                Task<response> x = providerClient.retrieveAllProvidersAsync(request);
-                x.Wait();
+                var x = await providerClient.retrieveAllProvidersAsync(request);
 
-                results.AddRange(x.Result?.ProviderQueryResponse?.MatchingProviderRecords ?? new ProviderRecordStructure[] { });
+                results.AddRange(x?.ProviderQueryResponse?.MatchingProviderRecords ?? new ProviderRecordStructure[] { });
             }
 
             if(results.Any())

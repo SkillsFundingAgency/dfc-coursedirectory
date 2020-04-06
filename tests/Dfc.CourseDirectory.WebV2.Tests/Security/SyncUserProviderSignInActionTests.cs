@@ -31,12 +31,39 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Security
             // Arrange
             int providerUkprn = 01234566;
             var providerData = this.GenerateProviderData(providerUkprn);
-            providerData.Id = await TestData.CreateProvider(providerData);
+
+            var createProviderContacts = new List<CreateProviderContact>();
+            providerData.ProviderContact.ToList().ForEach(c => createProviderContacts.Add(new CreateProviderContact()
+            {
+                ContactType = c.ContactType,
+                ContactTelephone1 = c.ContactTelephone1,
+                ContactWebsiteAddress = c.ContactWebsiteAddress,
+                ContactEmail = c.ContactEmail,
+                AddressSaonDescription = c.ContactAddress.SAON?.Description,
+                AddressPaonDescription = c.ContactAddress.PAON?.Description,
+                AddressStreetDescription = c.ContactAddress.StreetDescription,
+                AddressLocality = c.ContactAddress.Locality,
+                AddressItems = c.ContactAddress.Items,
+                AddressPostCode = c.ContactAddress.PostCode,
+                PersonalDetailsGivenName = c.ContactPersonalDetails?.PersonGivenName.FirstOrDefault(),
+                PersonalDetailsFamilyName = c.ContactPersonalDetails?.PersonFamilyName,
+            }));
+
+            providerData.Id = await TestData.CreateProvider(providerUkprn,
+                                                            providerData.ProviderName,
+                                                            providerData.ProviderType,
+                                                            providerData.ProviderStatus,
+                                                            Models.ApprenticeshipQAStatus.Passed,
+                                                            "",
+                                                            "",
+                                                            providerData.Alias,
+                                                            createProviderContacts);
+
             var signInContext = GetSignInContext(providerUkprn);
             var ukrlpProviderData = this.GenerateUkrlpProviderData(providerUkprn);
             
             var mockUkrlpWcfService = base.Factory.UkrlpWcfService;
-            mockUkrlpWcfService.Setup(w => w.GetProviderData(providerUkprn)).Returns(ukrlpProviderData);
+            mockUkrlpWcfService.Setup(w => w.GetProviderData(providerUkprn)).Returns(Task.FromResult(ukrlpProviderData));
             var mockCosmosDbQueryDispatcher = base.Factory.CosmosDbQueryDispatcher;
             _ukrlpSyncHelper = new UkrlpSyncHelper(mockUkrlpWcfService.Object, mockCosmosDbQueryDispatcher.Object, base.Factory.Clock);
             signInActionToTest = new SyncUserProviderSignInAction(_ukrlpSyncHelper);
@@ -63,7 +90,34 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Security
             // Arrange
             int providerUkprn = 01234566;
             var providerData = this.GenerateProviderData(providerUkprn);
-            providerData.Id = await TestData.CreateProvider(providerData);
+
+            var createProviderContacts = new List<CreateProviderContact>();
+            providerData.ProviderContact.ToList().ForEach(c => createProviderContacts.Add(new CreateProviderContact()
+            {
+                ContactType = c.ContactType,
+                ContactTelephone1 = c.ContactTelephone1,
+                ContactWebsiteAddress = c.ContactWebsiteAddress,
+                ContactEmail = c.ContactEmail,
+                AddressSaonDescription = c.ContactAddress.SAON?.Description,
+                AddressPaonDescription = c.ContactAddress.PAON?.Description,
+                AddressStreetDescription = c.ContactAddress.StreetDescription,
+                AddressLocality = c.ContactAddress.Locality,
+                AddressItems = c.ContactAddress.Items,
+                AddressPostCode = c.ContactAddress.PostCode,
+                PersonalDetailsGivenName = c.ContactPersonalDetails?.PersonGivenName.FirstOrDefault(),
+                PersonalDetailsFamilyName = c.ContactPersonalDetails?.PersonFamilyName,
+            }));
+
+            providerData.Id = await TestData.CreateProvider(providerUkprn,
+                                                            providerData.ProviderName,
+                                                            providerData.ProviderType,
+                                                            providerData.ProviderStatus,
+                                                            Models.ApprenticeshipQAStatus.Passed,
+                                                            "",
+                                                            "",
+                                                            providerData.Alias,
+                                                            createProviderContacts);
+
             var signInContext = GetSignInContext(providerUkprn);
 
             signInContext.ProviderUkprn = null;
@@ -72,7 +126,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Security
             var ukrlpProviderData = this.GenerateUkrlpProviderData(providerUkprn);
 
             var mockUkrlpWcfService = base.Factory.UkrlpWcfService;
-            mockUkrlpWcfService.Setup(w => w.GetProviderData(providerUkprn)).Returns(ukrlpProviderData);
+            mockUkrlpWcfService.Setup(w => w.GetProviderData(providerUkprn)).Returns(Task.FromResult(ukrlpProviderData));
             var mockCosmosDbQueryDispatcher = base.Factory.CosmosDbQueryDispatcher;
             _ukrlpSyncHelper = new UkrlpSyncHelper(mockUkrlpWcfService.Object, mockCosmosDbQueryDispatcher.Object, base.Factory.Clock);
             signInActionToTest = new SyncUserProviderSignInAction(_ukrlpSyncHelper);
@@ -100,7 +154,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Security
             var ukrlpProviderData = this.GenerateUkrlpProviderData(providerUkprn);
 
             var mockUkrlpWcfService = base.Factory.UkrlpWcfService;
-            mockUkrlpWcfService.Setup(w => w.GetProviderData(providerUkprn)).Returns(ukrlpProviderData);
+            mockUkrlpWcfService.Setup(w => w.GetProviderData(providerUkprn)).Returns(Task.FromResult(ukrlpProviderData));
             var mockCosmosDbQueryDispatcher = base.Factory.CosmosDbQueryDispatcher;
             _ukrlpSyncHelper = new UkrlpSyncHelper(mockUkrlpWcfService.Object, mockCosmosDbQueryDispatcher.Object, base.Factory.Clock);
             signInActionToTest = new SyncUserProviderSignInAction(_ukrlpSyncHelper);

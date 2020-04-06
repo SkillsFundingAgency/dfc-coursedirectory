@@ -30,38 +30,46 @@ namespace Dfc.CourseDirectory.WebV2.Helpers
 
         public async Task SyncProviderData(Guid providerId, int ukprn, string updatedBy)
         {
-            var providerData = this._ukrlpWcfService.GetProviderData(ukprn);
+            var providerData = await _ukrlpWcfService.GetProviderData(ukprn);
 
             if(providerData != null)
             {
-                var upsertCommand = this.GetUpdateCommand(providerData);
+                var upsertCommand = GetUpdateCommand(providerData);
 
-                var existingProvider = await this.GetProvider(ukprn);
+                var existingProvider = await GetProvider(ukprn);
 
+                // Update
                 if(existingProvider != null)
                 {
                     upsertCommand.Id = existingProvider.Id;
                     upsertCommand.DateUpdated = _clock.UtcNow;
                     upsertCommand.UpdatedBy = updatedBy;
-                    upsertCommand.Update = true;
+
+                    await _cosmosDbQueryDispatcher.ExecuteQuery(upsertCommand);
                 }
+                // Insert
                 else
                 {
-                    upsertCommand.Id = Guid.NewGuid();
-                    upsertCommand.DateUpdated = _clock.UtcNow;
-                    upsertCommand.UpdatedBy = updatedBy;
-                    upsertCommand.UnitedKingdomProviderReferenceNumber = ukprn.ToString();
-                    upsertCommand.ProviderType = Models.ProviderType.FE; //Set to FE by default
-                    upsertCommand.Update = false;
+                    var insertCommand = new InsertProviderFromUkrlpData();
+
+                    insertCommand.Id = Guid.NewGuid();
+                    insertCommand.DateUpdated = _clock.UtcNow;
+                    insertCommand.UpdatedBy = updatedBy;
+                    insertCommand.UnitedKingdomProviderReferenceNumber = ukprn.ToString();
+                    insertCommand.ProviderType = Models.ProviderType.FE; //Set to FE by default
+                    insertCommand.ProviderContact = upsertCommand.ProviderContact;
+                    insertCommand.ProviderName = upsertCommand.ProviderName;
+                    insertCommand.ProviderStatus = upsertCommand.ProviderStatus;
+
+                    await _cosmosDbQueryDispatcher.ExecuteQuery(insertCommand);
                 }
 
-                await _cosmosDbQueryDispatcher.ExecuteQuery(upsertCommand);
             }
         }
 
-        private UpsertProviderUkrlpData GetUpdateCommand(ProviderRecordStructure providerData)
+        private UpdateProviderFromUkrlpData GetUpdateCommand(ProviderRecordStructure providerData)
         {
-            var updateCommand = new UpsertProviderUkrlpData();
+            var updateCommand = new UpdateProviderFromUkrlpData();
 
             // Build contacts
             List<ProviderContact> providercontacts = new List<ProviderContact>();

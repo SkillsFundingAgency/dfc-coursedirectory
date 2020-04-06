@@ -15,7 +15,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Dfc.CourseDirectory.WebV2.Security
 {
-    public class SyncUserProviderSignInAction : ISignInAction, IDisposable
+    public class SyncUserProviderSignInAction : ISignInAction
     {
         private readonly IUkrlpSyncHelper _ukrlpSyncHelper;
 
@@ -26,15 +26,11 @@ namespace Dfc.CourseDirectory.WebV2.Security
             _ukrlpSyncHelper = ukrlpSyncHelper;
         }
 
-        public void Dispose()
-        {
-        }
-
         public async Task OnUserSignedIn(SignInContext context)
         {
             if(context.ProviderUkprn.HasValue)
             {
-                await this._ukrlpSyncHelper.SyncProviderData(context.Provider.Id, context.Provider.Ukprn, context.UserInfo.Email);
+                await _ukrlpSyncHelper.SyncProviderData(context.Provider.Id, context.Provider.Ukprn, context.UserInfo.Email);
             }
         }
     }

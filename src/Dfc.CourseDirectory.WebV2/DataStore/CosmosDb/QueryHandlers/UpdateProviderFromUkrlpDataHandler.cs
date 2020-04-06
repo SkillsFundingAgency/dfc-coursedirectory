@@ -1,0 +1,42 @@
+﻿using System;
+using System.Threading.Tasks;
+using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Models;
+using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries;
+using Microsoft.Azure.Documents.Client;
+using OneOf.Types;
+
+namespace Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.QueryHandlers
+{
+    public class UpdateProviderFromUkrlpDataHandler : ICosmosDbQueryHandler<UpdateProviderFromUkrlpData, Success>
+    {
+        public async Task<Success> Execute(
+            DocumentClient client,
+            Configuration configuration,
+            UpdateProviderFromUkrlpData request)
+        {
+            var documentUri = UriFactory.CreateDocumentUri(
+                configuration.DatabaseId,
+                configuration.ProviderCollectionName,
+                request.Id.ToString());
+
+            var response = await client.ReadDocumentAsync<Provider>(documentUri);
+
+            var provider = response.Document;
+
+            if (provider != null)
+            {
+                provider.ProviderName = request.ProviderName;
+                // Only update if supplied
+                provider.ProviderContact = request.ProviderContact;
+                provider.Alias = request.Alias;
+                provider.ProviderStatus = request.ProviderStatus;
+                provider.DateUpdated = request.DateUpdated;
+                provider.UpdatedBy = request.UpdatedBy;
+
+                await client.ReplaceDocumentAsync(documentUri, provider);
+            }
+
+            return new Success();
+        }
+    }
+}
