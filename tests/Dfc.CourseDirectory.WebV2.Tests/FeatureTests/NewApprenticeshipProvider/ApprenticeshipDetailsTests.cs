@@ -6,7 +6,7 @@ using FlowModel = Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.F
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 {
-    public class ApprenticeshipDetailsTests : TestBase
+    public class ApprenticeshipDetailsTests : MvcTestBase
     {
         public ApprenticeshipDetailsTests(CourseDirectoryApplicationFactory factory)
             : base(factory)

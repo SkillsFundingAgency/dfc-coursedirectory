@@ -6,7 +6,7 @@ using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 {
-    public class QANotificationsTests : TestBase
+    public class QANotificationsTests : MvcTestBase
     {
         public QANotificationsTests(CourseDirectoryApplicationFactory factory)
             : base(factory)

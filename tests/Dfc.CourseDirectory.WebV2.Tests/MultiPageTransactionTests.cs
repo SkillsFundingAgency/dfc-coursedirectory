@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests
 {
-    public class MultiPageTransactionTests : TestBase
+    public class MultiPageTransactionTests : MvcTestBase
     {
         public MultiPageTransactionTests(CourseDirectoryApplicationFactory factory)
             : base(factory)

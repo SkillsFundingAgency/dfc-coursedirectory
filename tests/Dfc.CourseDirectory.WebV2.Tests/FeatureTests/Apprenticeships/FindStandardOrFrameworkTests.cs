@@ -5,7 +5,7 @@ using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
 {
-    public class FindStandardOrFrameworkTests : TestBase
+    public class FindStandardOrFrameworkTests : MvcTestBase
     {
         public FindStandardOrFrameworkTests(CourseDirectoryApplicationFactory factory)
             : base(factory)
