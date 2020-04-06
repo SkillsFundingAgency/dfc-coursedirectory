@@ -170,6 +170,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Status
             };
         }
 
+        Guid IRestrictQAStatus<Query>.GetProviderId(Query request) => request.ProviderId;
+
+        Guid IRestrictQAStatus<Command>.GetProviderId(Command request) => request.ProviderId;
+
         private class Data
         {
             public ApprenticeshipQAStatus ApprenticeshipQAStatus { get; set; }

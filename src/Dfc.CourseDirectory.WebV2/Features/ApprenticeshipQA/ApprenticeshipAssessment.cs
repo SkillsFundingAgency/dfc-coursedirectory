@@ -65,6 +65,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
 
     public class Handler :
         IRequestHandler<Query, ViewModel>,
+        IRestrictQAStatus<Query>,
         IRequestHandler<Command, CommandResponse>,
         IRestrictQAStatus<Command>
     {
@@ -89,6 +90,15 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
         {
             ApprenticeshipQAStatus.Submitted,
             ApprenticeshipQAStatus.InProgress
+        };
+
+        IEnumerable<ApprenticeshipQAStatus> IRestrictQAStatus<Query>.PermittedStatuses { get; } = new[]
+        {
+            ApprenticeshipQAStatus.Submitted,
+            ApprenticeshipQAStatus.InProgress,
+            ApprenticeshipQAStatus.Failed,
+            ApprenticeshipQAStatus.Passed,
+            ApprenticeshipQAStatus.UnableToComplete
         };
 
         public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
@@ -270,6 +280,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAsse
 
         private static bool IsQAPassed(bool compliancePassed, bool stylePassed) =>
             compliancePassed && stylePassed;
+
+        Guid IRestrictQAStatus<Command>.GetProviderId(Command request) => request.ProviderId;
+
+        Guid IRestrictQAStatus<Query>.GetProviderId(Query request) => request.ProviderId;
 
         private class Data
         {

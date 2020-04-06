@@ -246,6 +246,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment
         private static bool IsQAPassed(bool compliancePassed, bool stylePassed) =>
             compliancePassed && stylePassed;
 
+        Guid IRestrictQAStatus<Query>.GetProviderId(Query request) => request.ProviderId;
+
+        Guid IRestrictQAStatus<Command>.GetProviderId(Command request) => request.ProviderId;
+
         private class Data
         {
             public Provider Provider { get; set; }
