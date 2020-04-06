@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Report;
 using Dfc.CourseDirectory.WebV2.Models;
 using Xunit;
 
@@ -89,7 +90,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             var response = await HttpClient.GetAsync($"apprenticeship-qa/qareport");
 
             // Assert
-            var results = await response.AsCsvListOf<QAStatusReport>();
+            var results = await response.AsCsvListOf<ReportModel>();
             
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Collection(results, item =>
@@ -98,12 +99,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 Assert.Equal(ukprn.ToString(), item.UKPRN);
                 Assert.Equal(providerName, item.ProviderName);
                 Assert.Equal(email, item.Email);
-                Assert.True(item.PassedQA);
-                Assert.Equal(passedProviderAssessmentOn, item.PassedQAOn);
-                Assert.False(item.FailedQA);
-                Assert.Null(item.FailedQAOn);
-                Assert.False(item.UnableToComplete);
-                Assert.Null(item.UnableToCompleteOn);
+                Assert.Equal("Yes",item.PassedQA);
+                Assert.Equal(passedProviderAssessmentOn.ToString("dd MMM yyyy"), item.PassedQAOn);
+                Assert.Equal("No",item.FailedQA);
+                Assert.Empty(item.FailedQAOn);
+                Assert.Equal("No", item.UnableToComplete);
+                Assert.Empty(item.UnableToCompleteOn);
                 Assert.Equal("", item.Notes);
                 Assert.Null(item.UnableToCompleteReasons);
                 Assert.Equal(ApprenticeshipQAStatus.Passed, item.QAStatus);
@@ -196,7 +197,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             var response = await HttpClient.GetAsync($"apprenticeship-qa/qareport");
 
             // Assert
-            var results = await response.AsCsvListOf<QAStatusReport>();
+            var results = await response.AsCsvListOf<ReportModel>();
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Collection(results, item =>
@@ -205,12 +206,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 Assert.Equal(ukprn.ToString(), item.UKPRN);
                 Assert.Equal(providerName, item.ProviderName);
                 Assert.Equal(email, item.Email);
-                Assert.True(item.PassedQA);
-                Assert.Equal(passedAssessmentOn, item.PassedQAOn);
-                Assert.False(item.FailedQA);
-                Assert.Null(item.FailedQAOn);
-                Assert.False(item.UnableToComplete);
-                Assert.Null(item.UnableToCompleteOn);
+                Assert.Equal("Yes", item.PassedQA);
+                Assert.Equal(passedAssessmentOn.ToString("dd MMM yyyy"), item.PassedQAOn);
+                Assert.Equal("No", item.FailedQA);
+                Assert.Empty(item.FailedQAOn);
+                Assert.Equal("No", item.UnableToComplete);
+                Assert.Empty(item.UnableToCompleteOn);
                 Assert.Equal("", item.Notes);
                 Assert.Null(item.UnableToCompleteReasons);
                 Assert.Equal(ApprenticeshipQAStatus.Passed, item.QAStatus);
@@ -276,7 +277,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             var response = await HttpClient.GetAsync($"apprenticeship-qa/qareport");
 
             // Assert
-            var results = await response.AsCsvListOf<QAStatusReport>();
+            var results = await response.AsCsvListOf<ReportModel>();
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Collection(results, item =>
@@ -285,12 +286,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 Assert.Equal(ukprn.ToString(), item.UKPRN);
                 Assert.Equal(providerName, item.ProviderName);
                 Assert.Equal(email, item.Email);
-                Assert.False(item.PassedQA);
-                Assert.Null(item.PassedQAOn);
-                Assert.True(item.FailedQA);
-                Assert.Equal(failedAssessmentOn, item.FailedQAOn);
-                Assert.False(item.UnableToComplete);
-                Assert.Null(item.UnableToCompleteOn);
+                Assert.Equal("No", item.PassedQA);
+                Assert.Empty(item.PassedQAOn);
+                Assert.Equal("Yes", item.FailedQA);
+                Assert.Equal(failedAssessmentOn.ToString("dd MMM yyyy"), item.FailedQAOn);
+                Assert.Equal("No", item.UnableToComplete);
+                Assert.Empty(item.UnableToCompleteOn);
                 Assert.Equal("", item.Notes);
                 Assert.Null(item.UnableToCompleteReasons);
                 Assert.Equal(ApprenticeshipQAStatus.Failed, item.QAStatus);
@@ -358,7 +359,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             var response = await HttpClient.GetAsync($"apprenticeship-qa/qareport");
 
             // Assert
-            var results = await response.AsCsvListOf<QAStatusReport>();
+            var results = await response.AsCsvListOf<ReportModel>();
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Collection(results, item =>
@@ -367,12 +368,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 Assert.Equal(ukprn.ToString(), item.UKPRN);
                 Assert.Equal(providerName, item.ProviderName);
                 Assert.Equal(email, item.Email);
-                Assert.False(item.PassedQA);
-                Assert.Null(item.PassedQAOn);
-                Assert.False(item.FailedQA);
-                Assert.Null(item.FailedQAOn);
-                Assert.True(item.UnableToComplete);
-                Assert.Equal(unableToCompleteOn, item.UnableToCompleteOn);
+                Assert.Equal("No", item.PassedQA);
+                Assert.Empty(item.PassedQAOn);
+                Assert.Equal("No",item.FailedQA);
+                Assert.Empty(item.FailedQAOn);
+                Assert.Equal("Yes", item.UnableToComplete);
+                Assert.Equal(unableToCompleteOn.ToString("dd MMM yyyy"), item.UnableToCompleteOn);
                 Assert.Equal(unableToCompleteComments, item.Notes);
                 Assert.Equal(unableReason, item.UnableToCompleteReasons);
                 Assert.Equal(ApprenticeshipQAStatus.UnableToComplete, item.QAStatus);
