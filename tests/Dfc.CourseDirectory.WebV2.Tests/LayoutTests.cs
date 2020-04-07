@@ -108,9 +108,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
             Assert.Equal(4, subNavLinks.Count);
             Assert.Equal("Home", subNavLinks[0].label);
-            Assert.Equal("Your courses", subNavLinks[1].label);
-            Assert.Equal("Your locations", subNavLinks[2].label);
-            Assert.Equal("Bulk upload", subNavLinks[3].label);
+            Assert.Equal("Your locations", subNavLinks[1].label);
+            Assert.Equal("Bulk upload", subNavLinks[2].label);
+            Assert.Equal("/BulkUpload/LandingOptions", subNavLinks[2].href);
         }
 
         [Theory]
@@ -144,9 +144,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
             Assert.Equal(4, subNavLinks.Count);
             Assert.Equal("Home", subNavLinks[0].label);
-            Assert.Equal("Your apprenticeships training", subNavLinks[1].label);
-            Assert.Equal("Your locations", subNavLinks[2].label);
-            Assert.Equal("Bulk upload", subNavLinks[3].label);
+            Assert.Equal("Your locations", subNavLinks[1].label);
+            Assert.Equal("Bulk upload", subNavLinks[2].label);
+            Assert.Equal("/BulkUploadApprenticeships", subNavLinks[2].href);
         }
 
         [Theory]
@@ -182,8 +182,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             Assert.Equal("Home", subNavLinks[0].label);
             Assert.Equal("Your courses", subNavLinks[1].label);
             Assert.Equal("Your apprenticeships training", subNavLinks[2].label);
-            Assert.Equal("Your locations", subNavLinks[3].label);
-            Assert.Equal("Bulk upload", subNavLinks[4].label);
+            Assert.Equal("Bulk upload", subNavLinks[3].label);
+            Assert.Equal("/BulkUpload/LandingOptions", subNavLinks[3].href);
         }
 
         [Theory(Skip = "Waiting for fix")]
@@ -210,11 +210,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
             Assert.Equal(5, topLevelLinks.Count);
             Assert.Equal("Home", topLevelLinks[0].label);
-            Assert.Equal("Your courses", topLevelLinks[1].label);
-            Assert.Equal("Your locations", topLevelLinks[2].label);
-            Assert.Equal("Bulk upload", topLevelLinks[3].label);
-            Assert.Equal("Sign out", topLevelLinks[4].label);
-
+            Assert.Equal("Your locations", topLevelLinks[1].label);
+            Assert.Equal("Bulk upload", topLevelLinks[2].label);
+            Assert.Equal("Sign out", topLevelLinks[3].label);
+            Assert.Equal("/BulkUpload", topLevelLinks[2].href);
+            
             Assert.Equal(0, subNavLinks.Count);
         }
 
@@ -242,10 +242,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
             Assert.Equal(5, topLevelLinks.Count);
             Assert.Equal("Home", topLevelLinks[0].label);
-            Assert.Equal("Your apprenticeships training", topLevelLinks[1].label);
-            Assert.Equal("Your locations", topLevelLinks[2].label);
-            Assert.Equal("Bulk upload", topLevelLinks[3].label);
-            Assert.Equal("Sign out", topLevelLinks[4].label);
+            Assert.Equal("Your locations", topLevelLinks[1].label);
+            Assert.Equal("Bulk upload", topLevelLinks[2].label);
+            Assert.Equal("/BulkUploadApprenticeships", topLevelLinks[2].href);
+            Assert.Equal("Sign out", topLevelLinks[3].label);
 
             Assert.Equal(0, subNavLinks.Count);
         }
@@ -276,9 +276,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             Assert.Equal("Home", topLevelLinks[0].label);
             Assert.Equal("Your courses", topLevelLinks[1].label);
             Assert.Equal("Your apprenticeships training", topLevelLinks[2].label);
-            Assert.Equal("Your locations", topLevelLinks[3].label);
-            Assert.Equal("Bulk upload", topLevelLinks[4].label);
-            Assert.Equal("Sign out", topLevelLinks[5].label);
+            Assert.Equal("Bulk upload", topLevelLinks[3].label);
+            Assert.Equal("/BulkUpload/LandingOptions", topLevelLinks[3].href);
+            Assert.Equal("Sign out", topLevelLinks[4].label);
 
             Assert.Equal(0, subNavLinks.Count);
         }
@@ -288,7 +288,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         [InlineData(ProviderType.Apprenticeships, "/BulkUploadApprenticeships")]
         [InlineData(ProviderType.Both, "/BulkUpload/LandingOptions")]
         public async Task AdminProviderContextNavBulkUploadLinksAreCorrect(
-            ProviderType providerType,
+             ProviderType providerType,
             string expectedHref)
         {
             // Arrange
