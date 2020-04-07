@@ -23,18 +23,14 @@ namespace Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.QueryHandlers
 
             var provider = response.Document;
 
-            if (provider != null)
-            {
-                provider.ProviderName = request.ProviderName;
-                // Only update if supplied
-                provider.ProviderContact = request.ProviderContact;
-                provider.Alias = request.Alias;
-                provider.ProviderStatus = request.ProviderStatus;
-                provider.DateUpdated = request.DateUpdated;
-                provider.UpdatedBy = request.UpdatedBy;
+            provider.ProviderName = request.ProviderName;
+            provider.ProviderContact = request.ProviderContact;
+            provider.Alias = request.Alias;
+            provider.ProviderStatus = request.ProviderStatus;
+            provider.DateUpdated = request.DateUpdated;
+            provider.UpdatedBy = request.UpdatedBy;
 
-                await client.ReplaceDocumentAsync(documentUri, provider);
-            }
+            await client.ReplaceDocumentAsync(documentUri, provider);
 
             return new Success();
         }

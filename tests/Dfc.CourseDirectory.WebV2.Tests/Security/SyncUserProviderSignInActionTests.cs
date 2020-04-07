@@ -17,9 +17,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Security
 {
     public class SyncUserProviderSignInActionTests : MvcTestBase
     {
-        private SyncUserProviderSignInAction signInActionToTest;
-        private IUkrlpSyncHelper _ukrlpSyncHelper;
-
         public SyncUserProviderSignInActionTests(CourseDirectoryApplicationFactory factory)
             : base(factory)
         {
@@ -33,41 +30,37 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Security
             var providerData = this.GenerateProviderData(providerUkprn);
 
             var createProviderContacts = new List<CreateProviderContact>();
-            providerData.ProviderContact.ToList().ForEach(c => createProviderContacts.Add(new CreateProviderContact()
-            {
-                ContactType = c.ContactType,
-                ContactTelephone1 = c.ContactTelephone1,
-                ContactWebsiteAddress = c.ContactWebsiteAddress,
-                ContactEmail = c.ContactEmail,
-                AddressSaonDescription = c.ContactAddress.SAON?.Description,
-                AddressPaonDescription = c.ContactAddress.PAON?.Description,
-                AddressStreetDescription = c.ContactAddress.StreetDescription,
-                AddressLocality = c.ContactAddress.Locality,
-                AddressItems = c.ContactAddress.Items,
-                AddressPostCode = c.ContactAddress.PostCode,
-                PersonalDetailsGivenName = c.ContactPersonalDetails?.PersonGivenName.FirstOrDefault(),
-                PersonalDetailsFamilyName = c.ContactPersonalDetails?.PersonFamilyName,
-            }));
 
             providerData.Id = await TestData.CreateProvider(providerUkprn,
                                                             providerData.ProviderName,
                                                             providerData.ProviderType,
                                                             providerData.ProviderStatus,
                                                             Models.ApprenticeshipQAStatus.Passed,
-                                                            "",
-                                                            "",
-                                                            providerData.Alias,
-                                                            createProviderContacts);
+                                                            alias: providerData.Alias,
+                                                            contacts: providerData.ProviderContact.ToList().Select(c => new CreateProviderContact()
+                                                            {
+                                                                ContactType = c.ContactType,
+                                                                ContactTelephone1 = c.ContactTelephone1,
+                                                                ContactWebsiteAddress = c.ContactWebsiteAddress,
+                                                                ContactEmail = c.ContactEmail,
+                                                                AddressSaonDescription = c.ContactAddress.SAON?.Description,
+                                                                AddressPaonDescription = c.ContactAddress.PAON?.Description,
+                                                                AddressStreetDescription = c.ContactAddress.StreetDescription,
+                                                                AddressLocality = c.ContactAddress.Locality,
+                                                                AddressItems = c.ContactAddress.Items,
+                                                                AddressPostCode = c.ContactAddress.PostCode,
+                                                                PersonalDetailsGivenName = c.ContactPersonalDetails?.PersonGivenName.FirstOrDefault(),
+                                                                PersonalDetailsFamilyName = c.ContactPersonalDetails?.PersonFamilyName,
+                                                            }));
 
             var signInContext = GetSignInContext(providerUkprn);
             var ukrlpProviderData = this.GenerateUkrlpProviderData(providerUkprn);
-            
-            var mockUkrlpWcfService = base.Factory.UkrlpWcfService;
+            var mockUkrlpWcfService = new Mock<IUkrlpWcfService>();
             mockUkrlpWcfService.Setup(w => w.GetProviderData(providerUkprn)).Returns(Task.FromResult(ukrlpProviderData));
             var mockCosmosDbQueryDispatcher = base.Factory.CosmosDbQueryDispatcher;
-            _ukrlpSyncHelper = new UkrlpSyncHelper(mockUkrlpWcfService.Object, mockCosmosDbQueryDispatcher.Object, base.Factory.Clock);
-            signInActionToTest = new SyncUserProviderSignInAction(_ukrlpSyncHelper);
-            
+            var _ukrlpSyncHelper = new UkrlpSyncHelper(mockUkrlpWcfService.Object, mockCosmosDbQueryDispatcher.Object, base.Factory.Clock);
+            var signInActionToTest = new SyncUserProviderSignInAction(_ukrlpSyncHelper);
+
             // Act
             await signInActionToTest.OnUserSignedIn(signInContext);
 
@@ -91,32 +84,27 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Security
             int providerUkprn = 01234566;
             var providerData = this.GenerateProviderData(providerUkprn);
 
-            var createProviderContacts = new List<CreateProviderContact>();
-            providerData.ProviderContact.ToList().ForEach(c => createProviderContacts.Add(new CreateProviderContact()
-            {
-                ContactType = c.ContactType,
-                ContactTelephone1 = c.ContactTelephone1,
-                ContactWebsiteAddress = c.ContactWebsiteAddress,
-                ContactEmail = c.ContactEmail,
-                AddressSaonDescription = c.ContactAddress.SAON?.Description,
-                AddressPaonDescription = c.ContactAddress.PAON?.Description,
-                AddressStreetDescription = c.ContactAddress.StreetDescription,
-                AddressLocality = c.ContactAddress.Locality,
-                AddressItems = c.ContactAddress.Items,
-                AddressPostCode = c.ContactAddress.PostCode,
-                PersonalDetailsGivenName = c.ContactPersonalDetails?.PersonGivenName.FirstOrDefault(),
-                PersonalDetailsFamilyName = c.ContactPersonalDetails?.PersonFamilyName,
-            }));
-
             providerData.Id = await TestData.CreateProvider(providerUkprn,
                                                             providerData.ProviderName,
                                                             providerData.ProviderType,
                                                             providerData.ProviderStatus,
                                                             Models.ApprenticeshipQAStatus.Passed,
-                                                            "",
-                                                            "",
-                                                            providerData.Alias,
-                                                            createProviderContacts);
+                                                            alias: providerData.Alias,
+                                                            contacts: providerData.ProviderContact.ToList().Select(c => new CreateProviderContact()
+                                                            {
+                                                                ContactType = c.ContactType,
+                                                                ContactTelephone1 = c.ContactTelephone1,
+                                                                ContactWebsiteAddress = c.ContactWebsiteAddress,
+                                                                ContactEmail = c.ContactEmail,
+                                                                AddressSaonDescription = c.ContactAddress.SAON?.Description,
+                                                                AddressPaonDescription = c.ContactAddress.PAON?.Description,
+                                                                AddressStreetDescription = c.ContactAddress.StreetDescription,
+                                                                AddressLocality = c.ContactAddress.Locality,
+                                                                AddressItems = c.ContactAddress.Items,
+                                                                AddressPostCode = c.ContactAddress.PostCode,
+                                                                PersonalDetailsGivenName = c.ContactPersonalDetails?.PersonGivenName.FirstOrDefault(),
+                                                                PersonalDetailsFamilyName = c.ContactPersonalDetails?.PersonFamilyName,
+                                                            }));
 
             var signInContext = GetSignInContext(providerUkprn);
 
@@ -125,11 +113,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Security
 
             var ukrlpProviderData = this.GenerateUkrlpProviderData(providerUkprn);
 
-            var mockUkrlpWcfService = base.Factory.UkrlpWcfService;
+            var mockUkrlpWcfService = new Mock<IUkrlpWcfService>();
             mockUkrlpWcfService.Setup(w => w.GetProviderData(providerUkprn)).Returns(Task.FromResult(ukrlpProviderData));
             var mockCosmosDbQueryDispatcher = base.Factory.CosmosDbQueryDispatcher;
-            _ukrlpSyncHelper = new UkrlpSyncHelper(mockUkrlpWcfService.Object, mockCosmosDbQueryDispatcher.Object, base.Factory.Clock);
-            signInActionToTest = new SyncUserProviderSignInAction(_ukrlpSyncHelper);
+            var _ukrlpSyncHelper = new UkrlpSyncHelper(mockUkrlpWcfService.Object, mockCosmosDbQueryDispatcher.Object, base.Factory.Clock);
+            var signInActionToTest = new SyncUserProviderSignInAction(_ukrlpSyncHelper);
 
             // Act
             await signInActionToTest.OnUserSignedIn(signInContext);
@@ -153,11 +141,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Security
 
             var ukrlpProviderData = this.GenerateUkrlpProviderData(providerUkprn);
 
-            var mockUkrlpWcfService = base.Factory.UkrlpWcfService;
+            var mockUkrlpWcfService = new Mock<IUkrlpWcfService>();
             mockUkrlpWcfService.Setup(w => w.GetProviderData(providerUkprn)).Returns(Task.FromResult(ukrlpProviderData));
             var mockCosmosDbQueryDispatcher = base.Factory.CosmosDbQueryDispatcher;
-            _ukrlpSyncHelper = new UkrlpSyncHelper(mockUkrlpWcfService.Object, mockCosmosDbQueryDispatcher.Object, base.Factory.Clock);
-            signInActionToTest = new SyncUserProviderSignInAction(_ukrlpSyncHelper);
+            var _ukrlpSyncHelper = new UkrlpSyncHelper(mockUkrlpWcfService.Object, mockCosmosDbQueryDispatcher.Object, base.Factory.Clock);
+            var signInActionToTest = new SyncUserProviderSignInAction(_ukrlpSyncHelper);
 
             // Act
             await signInActionToTest.OnUserSignedIn(signInContext);
@@ -175,38 +163,39 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Security
 
         private Provider GenerateProviderData(int providerUkprn)
         {
-            Provider provider = new Provider();
-
-            provider.Id = Guid.NewGuid();
-            provider.UnitedKingdomProviderReferenceNumber = providerUkprn.ToString();
-            provider.ProviderName = "Test Provider";
-            provider.ProviderStatus = "Active";
-            provider.ProviderType = Models.ProviderType.Both;
-            provider.ProviderContact = new List<ProviderContact>()
+            Provider provider = new Provider()
             {
-                new ProviderContact()
+                Id = Guid.NewGuid(),
+                UnitedKingdomProviderReferenceNumber = providerUkprn.ToString(),
+                ProviderName = "Test Provider",
+                ProviderStatus = "Active",
+                ProviderType = Models.ProviderType.Both,
+                ProviderContact = new List<ProviderContact>()
                 {
-                    ContactType = "P",
-                    ContactTelephone1 = "0123456789",
-                    ContactFax = "0123456789",
-                    ContactWebsiteAddress = "http://www.testing.com",
-                    ContactEmail = "test@test.com",
-                    LastUpdated = DateTime.Now,
-                    ContactPersonalDetails = new ContactPersonalDetails()
+                    new ProviderContact()
                     {
-                        PersonFamilyName = "Familynme",
-                        PersonGivenName = new List<string>{ "GivenName"},
-                        PersonNameTitle = new List<string>{ "Title"},
-                    },
-                    ContactAddress = new ContactAddress()
-                    {
-                        Items = new List<string>{ "ItemDescription" },
-                        Locality = "Locality",
-                        PAON  = new PAON(){ Description = "PAON Description"},
-                        SAON  = new SAON(){ Description = "PAON Description"},
-                        PostCode = "Postcode",
-                        StreetDescription = "Street"
+                        ContactType = "P",
+                        ContactTelephone1 = "0123456789",
+                        ContactFax = "0123456789",
+                        ContactWebsiteAddress = "http://www.testing.com",
+                        ContactEmail = "test@test.com",
+                        LastUpdated = DateTime.Now,
+                        ContactPersonalDetails = new ContactPersonalDetails()
+                        {
+                            PersonFamilyName = "Familynme",
+                            PersonGivenName = new List<string>{ "GivenName"},
+                            PersonNameTitle = new List<string>{ "Title"},
+                        },
+                        ContactAddress = new ContactAddress()
+                        {
+                            Items = new List<string>{ "ItemDescription" },
+                            Locality = "Locality",
+                            PAON  = new PAON(){ Description = "PAON Description"},
+                            SAON  = new SAON(){ Description = "PAON Description"},
+                            PostCode = "Postcode",
+                            StreetDescription = "Street"
 
+                        }
                     }
                 }
             };
@@ -218,7 +207,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Security
         {
             var signInContext = new SignInContext(this.Factory.User.ToPrincipal());
             signInContext.DfeSignInOrganisationId = Guid.NewGuid().ToString();
-            
+
             // add provider data
             var provider = GenerateProviderData(providerUkprn);
             signInContext.ProviderUkprn = providerUkprn;
@@ -247,7 +236,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Security
             contactAddress.PostCode = "Ukrlp PostCode";
 
             var contactPersonalDetails = new PersonNameStructure();
-            contactPersonalDetails.PersonNameTitle = new string[] { "Ukrlp Mr" }; 
+            contactPersonalDetails.PersonNameTitle = new string[] { "Ukrlp Mr" };
             contactPersonalDetails.PersonGivenName = new string[] { "Ukrlp Given name" };
             contactPersonalDetails.PersonFamilyName = "Ukrlp Family name";
 
@@ -258,7 +247,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Security
                 ProviderStatus = "Active",
                 ProviderAliases = new ProviderAliasesStructure[] { new ProviderAliasesStructure() { ProviderAlias = "ProviderAlias" } },
 
-                ProviderContact = new ProviderContactStructure[] 
+                ProviderContact = new ProviderContactStructure[]
                 {
                     new ProviderContactStructure() {
                             ContactType = "P",
@@ -268,7 +257,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Security
                             ContactWebsiteAddress = "http://www.ukrlptest.com",
                             ContactEmail = "Ukrlptest@test.com   ",
                             LastUpdated = DateTime.Now,
-                    } 
+                    }
                 }
             };
         }

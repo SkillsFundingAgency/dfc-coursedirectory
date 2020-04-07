@@ -18,7 +18,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb.QueryHandlers
             if (provider != null)
             {
                 provider.ProviderName = request.ProviderName;
-                // Only update if supplied
                 provider.ProviderContact = request.ProviderContact;
                 provider.Alias = request.Alias;
                 provider.ProviderStatus = request.ProviderStatus;

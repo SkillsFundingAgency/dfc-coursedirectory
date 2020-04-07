@@ -15,8 +15,6 @@ namespace Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries
         public string Alias { get; set; }
         public DateTime DateUpdated { get; set; }
         public string UpdatedBy { get; set; }
-
-        // Create proper Object Type for this
         public List<ProviderContact> ProviderContact { get; set; }
 
     }

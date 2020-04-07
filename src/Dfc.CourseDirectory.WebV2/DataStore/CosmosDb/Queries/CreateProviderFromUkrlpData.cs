@@ -9,7 +9,7 @@ using OneOf.Types;
 
 namespace Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries
 {
-    public class InsertProviderFromUkrlpData : ICosmosDbQuery<Success>
+    public class CreateProviderFromUkrlpData : ICosmosDbQuery<Success>
     {
         public Guid Id { get; set; }
         public string ProviderName { get; set; }

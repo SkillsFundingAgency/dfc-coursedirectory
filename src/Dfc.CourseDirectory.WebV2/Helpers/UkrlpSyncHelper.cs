@@ -39,7 +39,7 @@ namespace Dfc.CourseDirectory.WebV2.Helpers
                 var existingProvider = await GetProvider(ukprn);
 
                 // Update
-                if(existingProvider != null)
+                if (existingProvider != null)
                 {
                     upsertCommand.Id = existingProvider.Id;
                     upsertCommand.DateUpdated = _clock.UtcNow;
@@ -50,16 +50,17 @@ namespace Dfc.CourseDirectory.WebV2.Helpers
                 // Insert
                 else
                 {
-                    var insertCommand = new InsertProviderFromUkrlpData();
-
-                    insertCommand.Id = Guid.NewGuid();
-                    insertCommand.DateUpdated = _clock.UtcNow;
-                    insertCommand.UpdatedBy = updatedBy;
-                    insertCommand.UnitedKingdomProviderReferenceNumber = ukprn.ToString();
-                    insertCommand.ProviderType = Models.ProviderType.FE; //Set to FE by default
-                    insertCommand.ProviderContact = upsertCommand.ProviderContact;
-                    insertCommand.ProviderName = upsertCommand.ProviderName;
-                    insertCommand.ProviderStatus = upsertCommand.ProviderStatus;
+                    var insertCommand = new CreateProviderFromUkrlpData()
+                    {
+                        Id = Guid.NewGuid(),
+                        DateUpdated = _clock.UtcNow,
+                        UpdatedBy = updatedBy,
+                        UnitedKingdomProviderReferenceNumber = ukprn.ToString(),
+                        ProviderType = Models.ProviderType.FE, //Set to FE by default
+                        ProviderContact = upsertCommand.ProviderContact,
+                        ProviderName = upsertCommand.ProviderName,
+                        ProviderStatus = upsertCommand.ProviderStatus,
+                    };
 
                     await _cosmosDbQueryDispatcher.ExecuteQuery(insertCommand);
                 }

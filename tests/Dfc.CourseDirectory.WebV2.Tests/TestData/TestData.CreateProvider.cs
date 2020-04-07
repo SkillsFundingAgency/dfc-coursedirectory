@@ -69,34 +69,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
             return providerId;
         }
-
-        //public async Task<Guid> CreateProvider(Provider providerToAdd)
-        //{
-        //    var createProviderContacts = providerToAdd.ProviderContact?.Select(c => new CreateProviderContact()
-        //    {
-        //        ContactType = c.ContactType,
-        //        ContactTelephone1 = c.ContactTelephone1,
-        //        ContactWebsiteAddress = c.ContactWebsiteAddress,
-        //        ContactEmail = c.ContactEmail,
-        //        AddressSaonDescription = c.ContactAddress.SAON.Description,
-        //        AddressPaonDescription = c.ContactAddress.PAON.Description,
-        //        AddressLocality = c.ContactAddress.Locality,
-        //        AddressItems = c.ContactAddress.Items,
-        //        AddressPostCode = c.ContactAddress.PostCode,
-        //        PersonalDetailsFamilyName = c.ContactPersonalDetails.PersonFamilyName,
-        //        PersonalDetailsGivenName = c.ContactPersonalDetails.PersonGivenName.FirstOrDefault(),
-        //    });
-
-        //    return await this.CreateProvider(providerToAdd.Ukprn, 
-        //                                        providerToAdd.ProviderName, 
-        //                                        providerToAdd.ProviderType, 
-        //                                        providerToAdd.ProviderStatus, 
-        //                                        ApprenticeshipQAStatus.Passed, 
-        //                                        providerToAdd.MarketingInformation, 
-        //                                        providerToAdd.CourseDirectoryName, 
-        //                                        providerToAdd.Alias, 
-        //                                        createProviderContacts);
-        //}
     }
 
     public class CreateProviderContact

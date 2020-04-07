@@ -22,7 +22,7 @@ namespace Dfc.CourseDirectory.WebV2.Services
             {
                 var request = BuildRequest(ukprn.ToString());
                 request.SelectionCriteria.ProviderStatus = status;
-                request.QueryId = GetNextQueryId();
+                request.QueryId = "1";
 
                 var providerClient = new ProviderQueryPortTypeClient();
                 providerClient.InnerChannel.OperationTimeout = new TimeSpan(0, 10, 0);
@@ -54,13 +54,6 @@ namespace Dfc.CourseDirectory.WebV2.Services
             };
 
             return new ProviderQueryStructure { SelectionCriteria = scs };
-        }
-
-        private static String GetNextQueryId()
-        {
-            Int32 id = 0;
-            id++;
-            return id.ToString();
         }
     }
 }
