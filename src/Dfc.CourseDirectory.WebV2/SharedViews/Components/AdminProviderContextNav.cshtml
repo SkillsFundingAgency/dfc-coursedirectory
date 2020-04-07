@@ -1,52 +1,57 @@
 ﻿@model Dfc.CourseDirectory.WebV2.SharedViews.Components.ProviderNavViewModel
-    @{
-        var currentController = (string)ViewContext.RouteData.Values["Controller"];
-        var currentAction = (string)ViewContext.RouteData.Values["Action"];
-    }
+@{
+    var currentController = (string)ViewContext.RouteData.Values["Controller"];
+    var currentAction = (string)ViewContext.RouteData.Values["Action"];
+}
 
-    <div class="pttcd-subnav govuk-!-margin-top-6">
-        <div class="pttcd-subnav__provider-name">@Model.ProviderContext.ProviderName</div>
-        <ul class="pttcd-subnav__items">
-            <li class="pttcd-subnav__item">
-                <a asp-action="SearchProvider" asp-controller="ProviderSearch" asp-route-UKPRN="@Model.ProviderContext.Ukprn" class="pttcd-subnav__item__link">
-                    Home
-                </a>
-            </li>
-            <li class="pttcd-subnav__item">
+<div class="pttcd-subnav govuk-!-margin-top-6">
+    <div class="pttcd-subnav__provider-name">@Model.ProviderContext.ProviderName</div>
+    <ul class="pttcd-subnav__items">
+        <li class="pttcd-subnav__item">
+            <a asp-action="SearchProvider" asp-controller="ProviderSearch" asp-route-UKPRN="@Model.ProviderContext.Ukprn" class="pttcd-subnav__item__link">
+                Home
+            </a>
+        </li>
+        <li class="pttcd-subnav__item">
+            <a asp-action="LandingOptions" asp-controller="Venues" class="pttcd-subnav__item__link">
+                Your locations
+            </a>
+        </li>
+
+
+        @if (Model.ProviderContext.ProviderType == ProviderType.Both && (Model.ApprenticeshipQAStatus == ApprenticeshipQAStatus.Passed || !Model.ApprenticeshipQAFeatureIsEnabled))
+        {
+            <li class="pttcd-subnav__item@(currentController == "Apprenticeships" ? " govuk-header__navigation-item--active" : null)">
                 <a asp-action="LandingOptions" asp-controller="Venues" class="pttcd-subnav__item__link">
-                    Your locations
+                    Your apprenticeships training
                 </a>
             </li>
-
-
-            @if (Model.ProviderContext.ProviderType == ProviderType.Both && (Model.ApprenticeshipQAStatus == ApprenticeshipQAStatus.Passed || !Model.ApprenticeshipQAFeatureIsEnabled))
-            {
-                <li class="pttcd-subnav__item@(currentController == "Apprenticeships" ? " govuk-header__navigation-item--active" : null)">
-                    <a asp-action="LandingOptions" asp-controller="Venues" class="pttcd-subnav__item__link">
-                        Your apprenticeships training
-                    </a>
-                </li>
-                <li class="pttcd-subnav__item@(currentController == "BulkUpload" || currentController == "BulkUploadApprenticeships" ? " govuk-header__navigation-item--active" : null)">
-                    <a asp-action="LandingOptions" asp-controller="BulkUpload" class="pttcd-subnav__item__link">
-                        Bulk upload
-                    </a>
-                </li>
-            }
-            else if (Model.ProviderContext.ProviderType == ProviderType.Both || Model.ProviderContext.ProviderType == ProviderType.FE)
-            {
-                <li class="pttcd-subnav__item@(currentController == "BulkUpload" || currentController == "BulkUploadApprenticeships" ? " govuk-header__navigation-item--active" : null)">
-                    <a asp-action="LandingOptions" asp-controller="BulkUpload" class="pttcd-subnav__item__link">
-                        Bulk upload
-                    </a>
-                </li>
-            }
-            else if (Model.ProviderContext.ProviderType == ProviderType.Apprenticeships && (Model.ApprenticeshipQAStatus == ApprenticeshipQAStatus.Passed || !Model.ApprenticeshipQAFeatureIsEnabled))
-            {
-                <li class="pttcd-subnav__item@(currentController == "BulkUploadApprenticeships" ? " govuk-header__navigation-item--active" : null)">
-                    <a asp-action="Index" asp-controller="BulkUploadApprenticeships" class="pttcd-subnav__item__link">
-                        Bulk upload
-                    </a>
-                </li>
-            }
-        </ul>
-    </div>
+            <li class="pttcd-subnav__item@(currentController == "BulkUpload" || currentController == "BulkUploadApprenticeships" ? " govuk-header__navigation-item--active" : null)">
+                <a asp-action="LandingOptions" asp-controller="BulkUpload" class="pttcd-subnav__item__link">
+                    Bulk upload
+                </a>
+            </li>
+        }
+        else if (Model.ProviderContext.ProviderType == ProviderType.Both || Model.ProviderContext.ProviderType == ProviderType.FE)
+        {
+            <li class="pttcd-subnav__item">
+                <a asp-action="LandingOptions" asp-controller="Qualifications" class="pttcd-subnav__item__link">
+                    Your courses
+                </a>
+            </li>
+            <li class="pttcd-subnav__item@(currentController == "BulkUpload" || currentController == "BulkUploadApprenticeships" ? " govuk-header__navigation-item--active" : null)">
+                <a asp-action="LandingOptions" asp-controller="BulkUpload" class="pttcd-subnav__item__link">
+                    Bulk upload
+                </a>
+            </li>
+        }
+        else if (Model.ProviderContext.ProviderType == ProviderType.Apprenticeships && (Model.ApprenticeshipQAStatus == ApprenticeshipQAStatus.Passed || !Model.ApprenticeshipQAFeatureIsEnabled))
+        {
+            <li class="pttcd-subnav__item@(currentController == "BulkUploadApprenticeships" ? " govuk-header__navigation-item--active" : null)">
+                <a asp-action="Index" asp-controller="BulkUploadApprenticeships" class="pttcd-subnav__item__link">
+                    Bulk upload
+                </a>
+            </li>
+        }
+    </ul>
+</div>
