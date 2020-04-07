@@ -187,7 +187,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             Assert.Equal("/BulkUpload/LandingOptions", subNavLinks[3].href);
         }
 
-        [Theory(Skip = "Waiting for fix")]
+        [Theory]
         [InlineData(TestUserType.ProviderSuperUser)]
         [InlineData(TestUserType.ProviderUser)]
         public async Task ProviderUserForFEOnlyProvider_RendersExpectedNav(TestUserType testUserType)
@@ -220,7 +220,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             Assert.Equal(0, subNavLinks.Count);
         }
 
-        [Theory(Skip = "Waiting for fix")]
+        [Theory]
         [InlineData(TestUserType.ProviderSuperUser)]
         [InlineData(TestUserType.ProviderUser)]
         public async Task ProviderUserForApprenticeshipsOnlyProvider_RendersExpectedNav(TestUserType testUserType)
@@ -252,7 +252,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             Assert.Equal(0, subNavLinks.Count);
         }
 
-        [Theory(Skip = "Waiting for fix")]
+        [Theory]
         [InlineData(TestUserType.ProviderSuperUser)]
         [InlineData(TestUserType.ProviderUser)]
         public async Task ProviderUserForBothFEAndApprenticeships_RendersExpectedNav(TestUserType testUserType)
@@ -310,7 +310,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             Assert.Equal(expectedHref, bulkUploadLink.GetAttribute("href"));
         }
 
-        [Theory(Skip = "Waiting for fix")]
+        [Theory]
         [InlineData(ProviderType.FE, "/BulkUpload")]
         [InlineData(ProviderType.Apprenticeships, "/BulkUploadApprenticeships")]
         [InlineData(ProviderType.Both, "/BulkUpload/LandingOptions")]
