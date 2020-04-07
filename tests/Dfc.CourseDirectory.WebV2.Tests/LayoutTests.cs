@@ -212,11 +212,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             Assert.Equal(4, topLevelLinks.Count);
             Assert.Equal("Home", topLevelLinks[0].label);
             Assert.Equal("Your locations", topLevelLinks[1].label);
-            Assert.Equal("Your courses", topLevelLinks[2].label);
-            Assert.Equal("Bulk upload", topLevelLinks[3].label);
-            Assert.Equal("Sign out", topLevelLinks[4].label);
-            Assert.Equal("/BulkUpload", topLevelLinks[3].href);
-            
+            Assert.Equal("Bulk upload", topLevelLinks[2].label);
+            Assert.Equal("Sign out", topLevelLinks[3].label);
+
             Assert.Equal(0, subNavLinks.Count);
         }
 
