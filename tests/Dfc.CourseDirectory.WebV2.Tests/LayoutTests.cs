@@ -106,7 +106,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             Assert.Equal("Migration reports", topLevelLinks[3].label);
             Assert.Equal("Sign out", topLevelLinks[4].label);
 
-            Assert.Equal(3, subNavLinks.Count);
+            Assert.Equal(4, subNavLinks.Count);
             Assert.Equal("Home", subNavLinks[0].label);
             Assert.Equal("Your locations", subNavLinks[1].label);
             Assert.Equal("Your courses", subNavLinks[2].label);
@@ -209,12 +209,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             var topLevelLinks = GetTopLevelNavLinks(doc);
             var subNavLinks = GetSubNavLinks(doc);
 
-            Assert.Equal(4, topLevelLinks.Count);
+            Assert.Equal(5, topLevelLinks.Count);
             Assert.Equal("Home", topLevelLinks[0].label);
             Assert.Equal("Your locations", topLevelLinks[1].label);
-            Assert.Equal("Bulk upload", topLevelLinks[2].label);
-            Assert.Equal("Sign out", topLevelLinks[3].label);
-
+            Assert.Equal("Your courses", topLevelLinks[2].label);
+            Assert.Equal("Bulk upload", topLevelLinks[3].label);
+            Assert.Equal("Sign out", topLevelLinks[4].label);
+            Assert.Equal("/BulkUpload", topLevelLinks[3].href);
+            
             Assert.Equal(0, subNavLinks.Count);
         }
 
