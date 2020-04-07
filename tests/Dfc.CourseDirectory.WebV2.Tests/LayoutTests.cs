@@ -109,8 +109,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             Assert.Equal(4, subNavLinks.Count);
             Assert.Equal("Home", subNavLinks[0].label);
             Assert.Equal("Your locations", subNavLinks[1].label);
-            Assert.Equal("Bulk upload", subNavLinks[2].label);
-            Assert.Equal("/BulkUpload/LandingOptions", subNavLinks[2].href);
+            Assert.Equal("Your courses", subNavLinks[2].label);
+            Assert.Equal("Bulk upload", subNavLinks[3].label);
+            Assert.Equal("/BulkUpload/LandingOptions", subNavLinks[3].href);
         }
 
         [Theory]
@@ -211,9 +212,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             Assert.Equal(5, topLevelLinks.Count);
             Assert.Equal("Home", topLevelLinks[0].label);
             Assert.Equal("Your locations", topLevelLinks[1].label);
-            Assert.Equal("Bulk upload", topLevelLinks[2].label);
-            Assert.Equal("Sign out", topLevelLinks[3].label);
-            Assert.Equal("/BulkUpload", topLevelLinks[2].href);
+            Assert.Equal("Your courses", topLevelLinks[2].label);
+            Assert.Equal("Bulk upload", topLevelLinks[3].label);
+            Assert.Equal("Sign out", topLevelLinks[4].label);
+            Assert.Equal("/BulkUpload", topLevelLinks[3].href);
             
             Assert.Equal(0, subNavLinks.Count);
         }
