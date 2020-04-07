@@ -33,16 +33,23 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
                 var mptxManager = context.HttpContext.RequestServices.GetRequiredService<MptxManager>();
                 var instanceContext = mptxManager.GetInstance(ffiid);
 
-                if (instanceContext != null && instanceContext.FlowName == flowName)
+                if (instanceContext == null)
                 {
-                    var feature = new MptxInstanceContextFeature(instanceContext);
-                    context.HttpContext.Features.Set(feature);
+                    context.Result = new ViewResult()
+                    {
+                        ViewName = "GenericError",
+                        StatusCode = 404
+                    };
+                    return;
                 }
-                else
+                else if (instanceContext.FlowName != flowName)
                 {
                     context.Result = new BadRequestResult();
                     return;
                 }
+                
+                var feature = new MptxInstanceContextFeature(instanceContext);
+                context.HttpContext.Features.Set(feature);
             }
 
             await next();            

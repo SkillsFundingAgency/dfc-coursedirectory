@@ -7,7 +7,7 @@ namespace Dfc.CourseDirectory.WebV2.Models
     {
         FE = 1,
         Apprenticeships = 2,
-        Both = FE | Apprenticeships
+        Both = FE | Apprenticeships,
     }
 
     public static class ProviderTypeExtensions

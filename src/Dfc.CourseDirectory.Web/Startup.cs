@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Threading.Tasks;
 using Dfc.CourseDirectory.Common.Settings;
 using Dfc.CourseDirectory.Models.Models.Environment;
 using Dfc.CourseDirectory.Services;
@@ -42,7 +41,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Razor.TagHelpers;
-using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Storage;
 using Microsoft.Azure.Storage.Blob;
 using Microsoft.Extensions.Configuration;
@@ -146,13 +144,6 @@ namespace Dfc.CourseDirectory.Web
             services.Configure<EnvironmentSettings>(Configuration.GetSection(nameof(EnvironmentSettings)));
             services.AddScoped<IEnvironmentHelper, EnvironmentHelper>();
             services.AddScoped<IApprenticeshipProvisionHelper, ApprenticeshipProvisionHelper>();
-
-            {
-                var endpoint = new Uri(Configuration["CosmosDbSettings:EndpointUri"]);
-                var key = Configuration["CosmosDbSettings:PrimaryKey"];
-                var documentClient = new DocumentClient(endpoint, key);
-                services.AddSingleton(documentClient);
-            }
 
             services.AddCourseDirectory(_env, Configuration);
 
@@ -269,8 +260,6 @@ namespace Dfc.CourseDirectory.Web
             ILoggerFactory loggerFactory,
             IServiceProvider serviceProvider)
         {
-            RunStartupTasks().GetAwaiter().GetResult();
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -328,15 +317,6 @@ namespace Dfc.CourseDirectory.Web
 
                 endpoints.MapControllers();
             });
-
-            async Task RunStartupTasks()
-            {
-                var startupTasks = serviceProvider.GetServices<IStartupTask>();
-                foreach (var t in startupTasks)
-                {
-                    await t.Execute();
-                }
-            }
         }
     }
 }

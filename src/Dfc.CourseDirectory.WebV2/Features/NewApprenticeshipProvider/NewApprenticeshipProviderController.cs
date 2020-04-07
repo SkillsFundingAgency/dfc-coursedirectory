@@ -2,10 +2,8 @@
 using Dfc.CourseDirectory.WebV2.Filters;
 using Dfc.CourseDirectory.WebV2.Models;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
-using Dfc.CourseDirectory.WebV2.Security;
 using Flurl;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
@@ -30,6 +28,15 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
 
         public ProviderInfo ProviderContext { get; set; }
 
+        [HttpGet("apprenticeship-classroom-locations")]
+        public IActionResult ApprenticeshipClassroomLocations() => throw new System.NotImplementedException();
+
+        [HttpGet("apprenticeship-mixed-locations")]
+        public IActionResult ApprenticeshipClassroomBasedAndEmployerBased() => throw new System.NotImplementedException();
+
+        [HttpGet("apprenticeship-confirmation")]
+        public IActionResult ApprenticeshipConfirmation() => throw new System.NotImplementedException();
+
         [MptxAction(FlowName)]
         [HttpGet("apprenticeship-details")]
         public async Task<IActionResult> ApprenticeshipDetails(StandardOrFramework standardOrFramework)
@@ -48,11 +55,86 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
                 command,
                 response => response.Match<IActionResult>(
                     errors => this.ViewFromErrors(errors),
-                    success => RedirectToAction("ApprenticeshipLocations").WithProviderContext(ProviderContext)));
+                    success => RedirectToAction("ApprenticeshipLocations")
+                        .WithProviderContext(ProviderContext)
+                        .WithMptxInstanceId(Flow.InstanceId)));
         }
 
+        [MptxAction(FlowName)]
+        [HttpGet("apprenticeship-employer-locations")]
+        public async Task<IActionResult> ApprenticeshipEmployerLocations()
+        {
+            var query = new ApprenticeshipEmployerLocations.Query() { ProviderId = ProviderContext.ProviderId };
+            return await _mediator.SendAndMapResponse(
+                query,
+                response => View(response));
+        }
+
+        [MptxAction(FlowName)]
+        [HttpPost("apprenticeship-employer-locations")]
+        public async Task<IActionResult> ApprenticeshipEmployerLocations(ApprenticeshipEmployerLocations.Command command)
+        {
+            command.ProviderId = ProviderContext.ProviderId;
+            return await _mediator.SendAndMapResponse(
+                command,
+                response => response.Match<IActionResult>(
+                    errors => this.ViewFromErrors(errors),
+                    success =>
+                        (command.National.Value ?
+                            RedirectToAction(nameof(ApprenticeshipConfirmation)) :
+                            RedirectToAction(nameof(ApprenticeshipEmployerLocationsRegions)))
+                        .WithProviderContext(ProviderContext).WithMptxInstanceId(Flow.InstanceId)));
+        }
+
+        [MptxAction(FlowName)]
+        [HttpGet("apprenticeship-employer-locations-regions")]
+        public async Task<IActionResult> ApprenticeshipEmployerLocationsRegions()
+        {
+            var query = new ApprenticeshipEmployerLocationsRegions.Query() { ProviderId = ProviderContext.ProviderId };
+            return await _mediator.SendAndMapResponse(query, command => View(command));
+        }
+
+        [MptxAction(FlowName)]
+        [HttpPost("apprenticeship-employer-locations-regions")]
+        public async Task<IActionResult> ApprenticeshipEmployerLocationsRegions(ApprenticeshipEmployerLocationsRegions.Command command)
+        {
+            command.ProviderId = ProviderContext.ProviderId;
+            return await _mediator.SendAndMapResponse(
+                command,
+                response => response.Match<IActionResult>(
+                    errors => this.ViewFromErrors(errors),
+                    success => RedirectToAction(nameof(ApprenticeshipConfirmation))
+                        .WithProviderContext(ProviderContext)
+                        .WithMptxInstanceId(Flow)));
+        }
+
+        [MptxAction(FlowName)]
         [HttpGet("apprenticeship-locations")]
-        public IActionResult ApprenticeshipLocations() => throw new System.NotImplementedException();
+        public async Task<IActionResult> ApprenticeshipLocations()
+        {
+            var query = new ApprenticeshipLocations.Query() { ProviderId = ProviderContext.ProviderId };
+            return await _mediator.SendAndMapResponse(
+                query,
+                response => View(response));
+        }
+
+        [MptxAction(FlowName)]
+        [HttpPost("apprenticeship-locations")]
+        public async Task<IActionResult> ApprenticeshipLocations(ApprenticeshipLocations.Command command)
+        {
+            command.ProviderId = ProviderContext.ProviderId;
+            return await _mediator.SendAndMapResponse(
+                command,
+                response => response.Match<IActionResult>(
+                    errors => this.ViewFromErrors(errors),
+                    success =>
+                        (command.LocationType.Value switch
+                        {
+                            ApprenticeshipLocationType.ClassroomBased => RedirectToAction(nameof(ApprenticeshipClassroomLocations)),
+                            ApprenticeshipLocationType.EmployerBased => RedirectToAction(nameof(ApprenticeshipEmployerLocations)),
+                            _ => RedirectToAction(nameof(ApprenticeshipClassroomBasedAndEmployerBased))
+                        }).WithProviderContext(ProviderContext).WithMptxInstanceId(Flow.InstanceId)));
+        }
 
         [StartsMptx]
         [HttpGet("provider-detail")]

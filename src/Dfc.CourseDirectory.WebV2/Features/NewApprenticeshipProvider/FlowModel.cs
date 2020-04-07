@@ -1,4 +1,5 @@
-﻿using Dfc.CourseDirectory.WebV2.Models;
+﻿using System.Collections.Generic;
+using Dfc.CourseDirectory.WebV2.Models;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 
 namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
@@ -12,12 +13,17 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
         public string ApprenticeshipContactTelephone { get; set; }
         public string ApprenticeshipContactEmail { get; set; }
         public string ApprenticeshipContactWebsite { get; set; }
+        public ApprenticeshipLocationType? ApprenticeshipLocationType { get; set; }
         public bool? ApprenticeshipIsNational { get; set; }
+        public IReadOnlyCollection<string> ApprenticeshipLocationRegionIds { get; set; } = new List<string>();
 
         public bool GotApprenticeshipDetails { get; set; }
         public bool GotProviderDetails { get; set; }
 
-        public bool IsValid => GotProviderDetails && GotApprenticeshipDetails; // FIXME
+        public bool IsValid => GotProviderDetails &&
+            ApprenticeshipStandardOrFramework != null &&
+            ApprenticeshipLocationType != null &&
+            GotApprenticeshipDetails; // FIXME
 
         public void SetProviderDetails(string marketingInformation)
         {
@@ -43,6 +49,19 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
 		public void SetApprenticeshipIsNational(bool national)
         {
             ApprenticeshipIsNational = national;
+        }
+
+        public void SetApprenticeshipLocationRegionIds(IReadOnlyCollection<string> regionIds) =>
+            ApprenticeshipLocationRegionIds = regionIds;
+
+        public void SetApprenticeshipLocationType(ApprenticeshipLocationType apprenticeshipLocationType)
+        {
+            ApprenticeshipLocationType = apprenticeshipLocationType;
+
+            if (apprenticeshipLocationType == Models.ApprenticeshipLocationType.ClassroomBased)
+            {
+                ApprenticeshipIsNational = false;
+            }
         }
 
         public void SetApprenticeshipStandardOrFramework(StandardOrFramework standardOrFramework) =>

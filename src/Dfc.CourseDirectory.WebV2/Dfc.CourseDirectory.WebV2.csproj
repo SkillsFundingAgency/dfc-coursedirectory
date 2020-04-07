@@ -28,6 +28,8 @@
     <PackageReference Include="OneOf" Version="2.1.151" />
     <PackageReference Include="Scrutor" Version="3.1.0" />
     <PackageReference Include="System.Data.SqlClient" Version="4.6.0" />
+    <PackageReference Include="System.Private.ServiceModel" Version="4.7.0" />
+    <PackageReference Include="System.ServiceModel.Http" Version="4.7.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -47,6 +49,8 @@
     <None Remove="Content\pages\apprenticeship-qa\provider-selected.css" />
     <None Remove="Content\pages\apprenticeships\find-standard-or-framework.css" />
     <None Remove="Content\pages\helpdesk-dashboard.css" />
+    <None Remove="Content\pages\new-apprenticeship-provider\apprenticeship-employer-locations.css" />
+    <None Remove="Content\pages\new-apprenticeship-provider\apprenticeship-employer-locations.js" />
     <None Remove="Content\pages\new-apprenticeship-provider\provider-detail-confirmation.css" />
     <None Remove="Content\pages\new-apprenticeship-provider\provider-detail-info-panel.css" />
     <None Remove="Content\utilities\width.css" />

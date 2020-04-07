@@ -9,7 +9,7 @@ using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 {
-    public class ProviderDetailInfoPanelTests : TestBase
+    public class ProviderDetailInfoPanelTests : MvcTestBase
     {
         public ProviderDetailInfoPanelTests(CourseDirectoryApplicationFactory factory)
             : base(factory)

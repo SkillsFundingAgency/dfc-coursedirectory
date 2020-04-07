@@ -8,7 +8,7 @@ using FlowModel = Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.F
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 {
-    public class ProviderDetailTests : TestBase
+    public class ProviderDetailTests : MvcTestBase
     {
         public ProviderDetailTests(CourseDirectoryApplicationFactory factory)
             : base(factory)
@@ -260,7 +260,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 requestContent);
 
             // Assert
-            var state = GetMptxInstanceState<FlowModel>(mptxInstance.InstanceId);
+            var state = GetMptxInstance<FlowModel>(mptxInstance.InstanceId).State;
             Assert.True(state.GotProviderDetails);
             Assert.Equal("<p>New marketing info</p>", state.ProviderMarketingInformation);
 

@@ -7,7 +7,7 @@ using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests
 {
-    public class ErrorTests : TestBase
+    public class ErrorTests : MvcTestBase
     {
         public ErrorTests(CourseDirectoryApplicationFactory factory)
             : base(factory)

@@ -1,0 +1,12 @@
+﻿.pttcd-new-apprenticeship-provider__apprenticeship-employer-locations-regions__region {
+    color: red !important;
+}
+
+.pttcd-new-apprenticeship-provider__apprenticeship-employer-locations-regions__region .govuk-checkboxes {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.pttcd-new-apprenticeship-provider__apprenticeship-employer-locations-regions__region .govuk-checkboxes__item {
+    width: 25%;
+}

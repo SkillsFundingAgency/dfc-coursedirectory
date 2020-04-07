@@ -7,7 +7,7 @@ using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
 {
-    public class RedirectToProviderSelectionActionFilterTests : TestBase
+    public class RedirectToProviderSelectionActionFilterTests : MvcTestBase
     {
         public RedirectToProviderSelectionActionFilterTests(CourseDirectoryApplicationFactory factory)
             : base(factory)
