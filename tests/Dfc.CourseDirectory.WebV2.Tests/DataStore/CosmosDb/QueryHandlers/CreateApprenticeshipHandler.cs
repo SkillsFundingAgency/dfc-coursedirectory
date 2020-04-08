@@ -23,25 +23,30 @@ namespace Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb.QueryHandlers
                 ContactTelephone = request.ContactTelephone,
                 ContactEmail = request.ContactEmail,
                 ContactWebsite = request.ContactWebsite,
-                ApprenticeshipLocations = request.ApprenticeshipLocations.Select(l => l.ApprenticeshipLocationType switch
+                ApprenticeshipLocations = request.ApprenticeshipLocations.Select(l => new ApprenticeshipLocation()
                 {
-                    ApprenticeshipLocationType.EmployerBased => new ApprenticeshipLocation()
+                    ApprenticeshipLocationType = l.ApprenticeshipLocationType,
+                    CreatedBy = request.CreatedByUser.Email,
+                    CreatedDate = request.CreatedDate,
+                    DeliveryModes = l.ApprenticeshipLocationType switch
                     {
-                        Id = Guid.NewGuid(),
-                        National = true,  // FIXME when we support regions
-                        DeliveryModes = new List<int>() { 1 },
-                        ProviderUKPRN = request.ProviderUkprn,
-                        Regions = Array.Empty<string>(),
-                        ApprenticeshipLocationType = l.ApprenticeshipLocationType
+                        ApprenticeshipLocationType.EmployerBased => new List<int>() { 1 },
+                        _ => throw new NotImplementedException(),
                     },
-                    _ => throw new NotImplementedException()
+                    Id = Guid.NewGuid(),
+                    LocationType = l.LocationType,
+                    National = l.National,
+                    RecordStatus = 1,
+                    Regions = l.Regions,
+                    UpdatedBy = request.CreatedByUser.Email,
+                    UpdatedDate = request.CreatedDate
                 }).ToList(),
                 RecordStatus = 1,
                 CreatedDate = request.CreatedDate,
                 CreatedBy = request.CreatedByUser.Email,
                 UpdatedDate = request.CreatedDate,
                 UpdatedBy = request.CreatedByUser.Email,
-                BulkUploadErrors = new System.Collections.Generic.List<BulkUploadError>(),
+                BulkUploadErrors = new List<BulkUploadError>(),
                 ValidationErrors = Array.Empty<string>(),
                 LocationValidationErrors = Array.Empty<string>()
             };

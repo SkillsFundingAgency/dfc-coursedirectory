@@ -98,14 +98,17 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
             var providerId = request.ProviderId;
             var providerUkprn = (await _providerInfoCache.GetProviderInfo(providerId)).Ukprn;
 
+            IEnumerable<CreateApprenticeshipLocation> locations = _flow.State.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased ?
+                _flow.State.ApprenticeshipIsNational.Value ?
+                new[] { CreateApprenticeshipLocation.CreateNational() } :
+                new[] { CreateApprenticeshipLocation.CreateRegions(_flow.State.ApprenticeshipLocationRegionIds) } :
+                throw new NotImplementedException();
+
             // Create apprenticeship
             await _cosmosDbQueryDispatcher.ExecuteQuery(
                 new CreateApprenticeship()
                 {
-                    ApprenticeshipLocations = new[]
-                    {
-                        CreateApprenticeshipLocation.CreateNational()
-                    },
+                    ApprenticeshipLocations = locations,
                     ApprenticeshipTitle = _flow.State.ApprenticeshipStandardOrFramework.StandardOrFrameworkTitle,
                     ApprenticeshipType = _flow.State.ApprenticeshipStandardOrFramework.IsStandard ?
                         ApprenticeshipType.StandardCode :
