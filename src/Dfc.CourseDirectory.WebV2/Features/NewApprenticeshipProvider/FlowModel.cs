@@ -51,8 +51,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
             ApprenticeshipIsNational = national;
         }
 
-        public void SetApprenticeshipLocationRegionIds(IReadOnlyCollection<string> regionIds) =>
+        public void SetApprenticeshipLocationRegionIds(IReadOnlyCollection<string> regionIds)
+        {
+            ApprenticeshipIsNational = false;
             ApprenticeshipLocationRegionIds = regionIds;
+        }
 
         public void SetApprenticeshipLocationType(ApprenticeshipLocationType apprenticeshipLocationType)
         {

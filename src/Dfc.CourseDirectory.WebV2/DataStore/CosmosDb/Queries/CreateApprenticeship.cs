@@ -44,8 +44,16 @@ namespace Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries
             National = true,
             DeliveryModes = ApprenticeshipDeliveryMode.EmployerAddress,
             Regions = Array.Empty<string>(),
-            ApprenticeshipLocationType = ApprenticeshipLocationType.EmployerBased,
-            LocationType = LocationType.Venue  // fishy
+            ApprenticeshipLocationType = ApprenticeshipLocationType.EmployerBased
+        };
+
+        public static CreateApprenticeshipLocation CreateRegions(IEnumerable<string> regionIds) => new CreateApprenticeshipLocation()
+        {
+            Id = Guid.NewGuid(),
+            National = false,
+            DeliveryModes = ApprenticeshipDeliveryMode.EmployerAddress,
+            Regions = regionIds,
+            ApprenticeshipLocationType = ApprenticeshipLocationType.EmployerBased
         };
     }
 }
