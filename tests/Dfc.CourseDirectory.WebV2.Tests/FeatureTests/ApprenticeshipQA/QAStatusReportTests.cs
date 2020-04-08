@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -24,7 +25,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             var response = await HttpClient.GetAsync($"apprenticeship-qa/qareport");
 
             // Assert
-            var results = await response.AsCsvListOf<QAStatusReport>();
+            var results = await response.AsCsvListOf<ReportModel>();
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Empty(results);
@@ -106,7 +107,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 Assert.Equal("No", item.UnableToComplete);
                 Assert.Empty(item.UnableToCompleteOn);
                 Assert.Equal("", item.Notes);
-                Assert.Null(item.UnableToCompleteReasons);
+                Assert.Empty(item.UnableToCompleteReasons);
                 Assert.Equal(ApprenticeshipQAStatus.Passed, item.QAStatus);
             });
         }
@@ -213,7 +214,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 Assert.Equal("No", item.UnableToComplete);
                 Assert.Empty(item.UnableToCompleteOn);
                 Assert.Equal("", item.Notes);
-                Assert.Null(item.UnableToCompleteReasons);
+                Assert.Empty(item.UnableToCompleteReasons);
                 Assert.Equal(ApprenticeshipQAStatus.Passed, item.QAStatus);
             });
         }
@@ -293,8 +294,89 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 Assert.Equal("No", item.UnableToComplete);
                 Assert.Empty(item.UnableToCompleteOn);
                 Assert.Equal("", item.Notes);
-                Assert.Null(item.UnableToCompleteReasons);
+                Assert.Empty(item.UnableToCompleteReasons);
                 Assert.Equal(ApprenticeshipQAStatus.Failed, item.QAStatus);
+            });
+        }
+
+        [Theory]
+        [InlineData(ApprenticeshipQAUnableToCompleteReasons.ProviderDevelopingProvision, ApprenticeshipQAUnableToCompleteReasons.ProviderDevelopingProvision, ApprenticeshipQAUnableToCompleteReasons.StandardNotReady)]
+        [InlineData(ApprenticeshipQAUnableToCompleteReasons.Other, ApprenticeshipQAUnableToCompleteReasons.ProviderHasWithdrawnApplication, ApprenticeshipQAUnableToCompleteReasons.StandardNotReady)]
+        public async Task Get_QAReport_For_Unable_To_CompleteQA_HasMultipleReasons (ApprenticeshipQAUnableToCompleteReasons unableReason1, ApprenticeshipQAUnableToCompleteReasons unableReason2, ApprenticeshipQAUnableToCompleteReasons unableReason3)
+        {
+            //arange
+            var ukprn = 12345;
+            var email = "somebody@provider1.com";
+            var providerName = "Provider 1";
+            var providerUserId = $"{ukprn}-user";
+            var adminUserId = $"admin-user";
+            Clock.UtcNow = new DateTime(2019, 5, 17, 9, 3, 27, DateTimeKind.Utc);
+            var requestedOn = Clock.UtcNow;
+            var unableToCompleteComments = "QA Cannot be completed because x";
+
+            var providerId = await TestData.CreateProvider(
+                ukprn: ukprn,
+                providerName: providerName,
+                apprenticeshipQAStatus: ApprenticeshipQAStatus.UnableToComplete);
+
+            var providerUser = await TestData.CreateUser(providerUserId, email, "Provider 1", "Person", providerId);
+            var adminUser = await TestData.CreateUser(adminUserId, "admin", "admin", "admin", null);
+
+            var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
+
+            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard, createdBy: providerUser);
+
+            // Create submission
+            var submissionId = await TestData.CreateApprenticeshipQASubmission(
+                providerId,
+                submittedOn: Clock.UtcNow,
+                submittedByUserId: providerUserId,
+                providerMarketingInformation: "The overview",
+                apprenticeshipIds: new[] { apprenticeshipId });
+
+            // Create provider assessment
+            Clock.UtcNow = Clock.UtcNow.AddDays(5);
+            var unableToCompleteOn = Clock.UtcNow;
+            await TestData.CreateApprenticeshipQAUnableToCompleteInfo(
+                providerId,
+                unableToCompleteReasons: unableReason1 | unableReason2 | unableReason3,
+                comments: unableToCompleteComments,
+                addedByUserId: adminUserId,
+                unableToCompleteOn);
+
+            // Update submission
+            await TestData.UpdateApprenticeshipQASubmission(
+                submissionId,
+                providerAssessmentPassed: false,
+                apprenticeshipAssessmentsPassed: null,
+                passed: null,
+                lastAssessedByUserId: adminUserId,
+                lastAssessedOn: unableToCompleteOn);
+
+            // Act
+            var response = await HttpClient.GetAsync($"apprenticeship-qa/qareport");
+
+            // Assert
+            var results = await response.AsCsvListOf<ReportModel>();
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Collection(results, item =>
+            {
+                Assert.Equal(providerId, item.ProviderId);
+                Assert.Equal(ukprn.ToString(), item.UKPRN);
+                Assert.Equal(providerName, item.ProviderName);
+                Assert.Equal(email, item.Email);
+                Assert.Equal("No", item.PassedQA);
+                Assert.Empty(item.PassedQAOn);
+                Assert.Equal("No",item.FailedQA);
+                Assert.Empty(item.FailedQAOn);
+                Assert.Equal("Yes", item.UnableToComplete);
+                Assert.Equal(unableToCompleteOn.ToString("dd MMM yyyy"), item.UnableToCompleteOn);
+                Assert.Equal(unableToCompleteComments, item.Notes);
+                Assert.Contains(unableReason1.ToDisplayName(), item.UnableToCompleteReasons);
+                Assert.Contains(unableReason2.ToDisplayName(), item.UnableToCompleteReasons);
+                Assert.Contains(unableReason3.ToDisplayName(), item.UnableToCompleteReasons);
+                Assert.Equal(ApprenticeshipQAStatus.UnableToComplete, item.QAStatus);
             });
         }
 
@@ -370,12 +452,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 Assert.Equal(email, item.Email);
                 Assert.Equal("No", item.PassedQA);
                 Assert.Empty(item.PassedQAOn);
-                Assert.Equal("No",item.FailedQA);
+                Assert.Equal("No", item.FailedQA);
                 Assert.Empty(item.FailedQAOn);
                 Assert.Equal("Yes", item.UnableToComplete);
                 Assert.Equal(unableToCompleteOn.ToString("dd MMM yyyy"), item.UnableToCompleteOn);
                 Assert.Equal(unableToCompleteComments, item.Notes);
-                Assert.Equal(unableReason, item.UnableToCompleteReasons);
+                Assert.Equal(item.UnableToCompleteReasons, unableReason.ToDisplayName());
                 Assert.Equal(ApprenticeshipQAStatus.UnableToComplete, item.QAStatus);
             });
         }
