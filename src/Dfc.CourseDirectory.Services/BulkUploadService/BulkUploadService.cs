@@ -606,7 +606,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                     validationMessages.Add($"Cost is NULL, because you have entered ( { bulkUploadCourse.Cost } ), Line { bulkUploadCourse.BulkUploadLineNumber },  LARS_QAN = { bulkUploadCourse.LearnAimRef }, ID = { bulkUploadCourse.ProviderCourseID }");
                 }
 
-                courseRun.CostDescription = bulkUploadCourse.CostDescription;
+                courseRun.CostDescription = ReplaceSpecialCharacters(bulkUploadCourse.CostDescription);
                 courseRun.DurationUnit = GetValueFromDescription<DurationUnit>(bulkUploadCourse.DurationUnit);
                 if (courseRun.DurationUnit.Equals(DurationUnit.Undefined))
                 {
@@ -718,6 +718,11 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
             }
 
             return courses;
+        }
+        public string ReplaceSpecialCharacters(string value)
+        {
+            var replacedString = value.Replace("â€™", "'").Replace("â€“", "–").Replace("�", "£");
+            return replacedString;
         }
 
         public string InvalidLARSLineNumbersToString(List<int> invalidLARSLineNumbers)
