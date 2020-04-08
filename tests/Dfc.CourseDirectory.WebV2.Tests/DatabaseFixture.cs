@@ -32,7 +32,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         public InMemoryDocumentStore InMemoryDocumentStore => _services.GetRequiredService<InMemoryDocumentStore>();
 
-        public SqlQuerySpy SqlQuerySpy { get; } = new SqlQuerySpy();
+        public SqlQuerySpy SqlQuerySpy => _services.GetRequiredService<SqlQuerySpy>();
 
         public TestData TestData => _services.GetRequiredService<TestData>();
 
