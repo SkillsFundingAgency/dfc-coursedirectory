@@ -87,13 +87,21 @@ steps:
     projects: 'tests/*Tests/*.csproj'
     arguments: '--configuration $(BuildConfiguration) --filter SkipOnCI!=true'
 
-- task: DotNetCoreCLI@2
+- task: MSBuild@1
   displayName: Publish Dfc.CourseDirectory.Web
   inputs:
-    command: publish
-    publishWebProjects: True
-    arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)'
-    zipAfterPublish: True
+    solution: 'src/Dfc.CourseDirectory.Web/Dfc.CourseDirectory.Web.csproj'
+    platform: '${{ variables.BuildPlatform }}'
+    configuration: '${{ variables.BuildConfiguration }}'
+    msbuildArguments: '-t:Publish -p:PublishDir=$(System.DefaultWorkingDirectory)/dist/Dfc.CourseDirectory.Web'
+  
+- task: ArchiveFiles@2
+  displayName: Zip Dfc.CourseDirectory.Web
+  inputs:
+    rootFolderOrFile: 'dist/Dfc.CourseDirectory.Web'
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(build.artifactstagingdirectory)/Dfc.CourseDirectory.Web.zip'
 
 - task: CopyFiles@2
   displayName: 'Copy files: database'

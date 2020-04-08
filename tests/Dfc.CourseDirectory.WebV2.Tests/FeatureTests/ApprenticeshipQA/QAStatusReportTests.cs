@@ -22,7 +22,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             // nothing to arrange
 
             // Act
-            var response = await HttpClient.GetAsync($"apprenticeship-qa/qareport");
+            var response = await HttpClient.GetAsync($"apprenticeship-qa/report");
 
             // Assert
             var results = await response.AsCsvListOf<ReportModel>();
@@ -88,7 +88,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 lastAssessedOn: Clock.UtcNow);
 
             // Act
-            var response = await HttpClient.GetAsync($"apprenticeship-qa/qareport");
+            var response = await HttpClient.GetAsync($"apprenticeship-qa/report");
 
             // Assert
             var results = await response.AsCsvListOf<ReportModel>();
@@ -195,7 +195,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             await TestData.SetProviderApprenticeshipQAStatus(providerId, ApprenticeshipQAStatus.Passed);
 
             // Act
-            var response = await HttpClient.GetAsync($"apprenticeship-qa/qareport");
+            var response = await HttpClient.GetAsync($"apprenticeship-qa/report");
 
             // Assert
             var results = await response.AsCsvListOf<ReportModel>();
@@ -275,7 +275,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 lastAssessedOn: failedAssessmentOn);
 
             // Act
-            var response = await HttpClient.GetAsync($"apprenticeship-qa/qareport");
+            var response = await HttpClient.GetAsync($"apprenticeship-qa/report");
 
             // Assert
             var results = await response.AsCsvListOf<ReportModel>();
@@ -354,7 +354,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 lastAssessedOn: unableToCompleteOn);
 
             // Act
-            var response = await HttpClient.GetAsync($"apprenticeship-qa/qareport");
+            var response = await HttpClient.GetAsync($"apprenticeship-qa/report");
 
             // Assert
             var results = await response.AsCsvListOf<ReportModel>();
@@ -438,7 +438,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 lastAssessedOn: unableToCompleteOn);
 
             // Act
-            var response = await HttpClient.GetAsync($"apprenticeship-qa/qareport");
+            var response = await HttpClient.GetAsync($"apprenticeship-qa/report");
 
             // Assert
             var results = await response.AsCsvListOf<ReportModel>();
@@ -632,7 +632,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
 
         //    // Act
-        //    var response = await HttpClient.GetAsync($"apprenticeship-qa/qareport");
+        //    var response = await HttpClient.GetAsync($"apprenticeship-qa/report");
         //    var results = await response.AsCsvListOf<QAStatusReport>();
 
         //    //Assert
@@ -736,7 +736,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
         //    await User.AsHelpdesk();
 
         //    // Act
-        //    var response = await HttpClient.GetAsync($"apprenticeship-qa/qareport");
+        //    var response = await HttpClient.GetAsync($"apprenticeship-qa/report");
         //    var results = await response.AsCsvListOf<QAStatusReport>();
 
         //    // Assert

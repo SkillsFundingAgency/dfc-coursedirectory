@@ -24,7 +24,9 @@ namespace Dfc.CourseDirectory.WebV2.Validation
 
             if (maxLength.HasValue)
             {
-                builder = builder.Must(value => Html.StripTags(Html.SanitizeHtml(value)).Length <= maxLength);
+                builder = builder.Must(value =>
+                    value == null ||
+                    Html.StripTags(Html.SanitizeHtml(value)).Length <= maxLength);
             }
 
             return builder;
