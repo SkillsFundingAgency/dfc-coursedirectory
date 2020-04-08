@@ -72,15 +72,8 @@ namespace Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.QueryHandlers
                     apprenticeship.ProgType = framework.ProgType;
                     apprenticeship.PathwayCode = framework.PathwayCode;
                 });
-            try
-            {
-                await client.CreateDocumentAsync(documentUri, apprenticeship);
-            } catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
 
-
+            await client.CreateDocumentAsync(documentUri, apprenticeship);
 
             return new Success();
         }
