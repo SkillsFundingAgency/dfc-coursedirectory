@@ -814,10 +814,10 @@ namespace Dfc.CourseDirectory.Services.CourseService
             if (string.IsNullOrEmpty(courseRun.CostDescription) && courseRun.Cost.Equals(null))
                 validationMessages.Add(new KeyValuePair<string, string>("COST", $"Enter cost or cost description"));
 
-            if (!string.IsNullOrEmpty(SpecialCharacters(courseRun.CostDescription)))
+            if (!string.IsNullOrEmpty(ReplaceSpecialCharacters(courseRun.CostDescription)))
             {
                 
-                if (!HasOnlyFollowingValidCharacters(SpecialCharacters(courseRun.CostDescription)))
+                if (!HasOnlyFollowingValidCharacters(ReplaceSpecialCharacters(courseRun.CostDescription)))
                     validationMessages.Add(new KeyValuePair<string, string>("COST_DESCRIPTION", "Cost Description contains invalid characters"));
                 if (courseRun.CostDescription.Length > 255)
                     validationMessages.Add(new KeyValuePair<string, string>("COST_DESCRIPTION", $"Cost description must be 255 characters or less"));
@@ -877,7 +877,7 @@ namespace Dfc.CourseDirectory.Services.CourseService
             return validUKPRN.Success;
         }
 
-        public string SpecialCharacters(string value)
+        public string ReplaceSpecialCharacters(string value)
         {
             var replacedString = value.Replace("â€™", "'").Replace("â€“", "–").Replace("�", "£");
             return replacedString;

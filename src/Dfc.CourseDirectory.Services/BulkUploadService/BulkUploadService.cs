@@ -606,7 +606,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
                     validationMessages.Add($"Cost is NULL, because you have entered ( { bulkUploadCourse.Cost } ), Line { bulkUploadCourse.BulkUploadLineNumber },  LARS_QAN = { bulkUploadCourse.LearnAimRef }, ID = { bulkUploadCourse.ProviderCourseID }");
                 }
 
-                courseRun.CostDescription = SpecialCharacters(bulkUploadCourse.CostDescription);
+                courseRun.CostDescription = ReplaceSpecialCharacters(bulkUploadCourse.CostDescription);
                 courseRun.DurationUnit = GetValueFromDescription<DurationUnit>(bulkUploadCourse.DurationUnit);
                 if (courseRun.DurationUnit.Equals(DurationUnit.Undefined))
                 {
@@ -719,7 +719,7 @@ namespace Dfc.CourseDirectory.Services.BulkUploadService
 
             return courses;
         }
-        public string SpecialCharacters(string value)
+        public string ReplaceSpecialCharacters(string value)
         {
             var replacedString = value.Replace("â€™", "'").Replace("â€“", "–").Replace("�", "£");
             return replacedString;
