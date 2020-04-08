@@ -50,7 +50,7 @@ steps:
 
 # restore symlink
 - script: |
-    del v2
+    del v2 /F /Q
     mklink /D v2 ..\..\Dfc.CourseDirectory.WebV2\Content
   displayName: 'Restore v2 content symlink'
   workingDirectory: src/Dfc.CourseDirectory.Web/wwwroot
@@ -78,6 +78,7 @@ steps:
     solution: 'Dfc.CourseDirectory.sln'
     platform: '${{ variables.BuildPlatform }}'
     configuration: '${{ variables.BuildConfiguration }}'
+    msbuildArguments: '-t:Restore,Build'
 
 - task: DotNetCoreCLI@2
   displayName: Test
