@@ -93,12 +93,12 @@ steps:
     solution: 'src/Dfc.CourseDirectory.Web/Dfc.CourseDirectory.Web.csproj'
     platform: '${{ variables.BuildPlatform }}'
     configuration: '${{ variables.BuildConfiguration }}'
-    msbuildArguments: '-t:Publish'
+    msbuildArguments: '-t:Publish -p:PublishDir=$(System.DefaultWorkingDirectory)/dist/Dfc.CourseDirectory.Web'
   
 - task: ArchiveFiles@2
   displayName: Zip Dfc.CourseDirectory.Web
   inputs:
-    rootFolderOrFile: 'src/Dfc.CourseDirectory.Web/bin/$(BuildConfiguration)/netcoreapp3.1/Publish'
+    rootFolderOrFile: 'dist/Dfc.CourseDirectory.Web'
     includeRootFolder: false
     archiveType: 'zip'
     archiveFile: '$(build.artifactstagingdirectory)/Dfc.CourseDirectory.Web.zip'
