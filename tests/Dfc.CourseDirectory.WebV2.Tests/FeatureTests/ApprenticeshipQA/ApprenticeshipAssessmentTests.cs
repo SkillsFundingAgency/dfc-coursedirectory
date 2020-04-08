@@ -5,7 +5,9 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using AngleSharp.Html.Dom;
 using Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ApprenticeshipAssessment;
 using Dfc.CourseDirectory.WebV2.Models;
+using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
@@ -20,7 +22,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
         [Theory]
         [InlineData(TestUserType.ProviderSuperUser)]
         [InlineData(TestUserType.ProviderUser)]
-        public async Task Get_ProviderUserCannotAccess(TestUserType userType)
+        public async Task GetStart_ProviderUser_ReturnsForbidden(TestUserType userType)
         {
             // Arrange
             var ukprn = 12345;
@@ -47,29 +49,51 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             await User.AsTestUser(userType, providerId);
 
             // Act
-            var response = await HttpClient.GetAsync($"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}");
+            var response = await HttpClient.GetAsync(
+                $"apprenticeship-qa/{providerId}/apprenticeship-assessment/{apprenticeshipId}");
 
             // Assert
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
         }
 
         [Fact]
-        public async Task Get_ApprenticeshipDoesNotExistReturnsBadRequest()
+        public async Task GetStart_ProviderDoesNotExist_ReturnsBadRequest()
         {
             // Arrange
             await User.AsHelpdesk();
 
+            var providerId = Guid.NewGuid();
+
             var apprenticeshipId = Guid.NewGuid();
 
             // Act
-            var response = await HttpClient.GetAsync($"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}");
+            var response = await HttpClient.GetAsync(
+                $"apprenticeship-qa/{providerId}/apprenticeship-assessment/{apprenticeshipId}");
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
         [Fact]
-        public async Task Get_NoSubmissionReturnsBadRequest()
+        public async Task GetStart_ApprenticeshipDoesNotExist_ReturnsBadRequest()
+        {
+            // Arrange
+            await User.AsHelpdesk();
+
+            var providerId = await TestData.CreateProvider();
+
+            var apprenticeshipId = Guid.NewGuid();
+
+            // Act
+            var response = await HttpClient.GetAsync(
+                $"apprenticeship-qa/{providerId}/apprenticeship-assessment/{apprenticeshipId}");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task GetStart_NoSubmission_ReturnsBadRequest()
         {
             // Arrange
             var ukprn = 12345;
@@ -86,14 +110,16 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             await User.AsHelpdesk();
 
             // Act
-            var response = await HttpClient.GetAsync($"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}");
+            var response = await HttpClient.GetAsync(
+                $"apprenticeship-qa/{providerId}/apprenticeship-assessment/{apprenticeshipId}");
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
-        [Fact]
-        public async Task Get_NewSubmissionSucceeds()
+        [Theory]
+        [InlineData(ApprenticeshipQAStatus.NotStarted)]
+        public async Task Get_InvalidQAStatus_ReturnsBadRequest(ApprenticeshipQAStatus qaStatus)
         {
             // Arrange
             var ukprn = 12345;
@@ -101,17 +127,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             var providerId = await TestData.CreateProvider(
                 ukprn: ukprn,
                 providerName: "Provider 1",
-                apprenticeshipQAStatus: ApprenticeshipQAStatus.Submitted);
+                apprenticeshipQAStatus: qaStatus);
 
             var providerUserId = $"{ukprn}-user";
             await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
 
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
 
-            var apprenticeshipId = await TestData.CreateApprenticeship(
-                providerId,
-                standard,
-                marketingInformation: "Test marketing info");
+            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard);
 
             await TestData.CreateApprenticeshipQASubmission(
                 providerId,
@@ -120,26 +143,20 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
+            var mptxInstance = await CreateMptxInstance(apprenticeshipId);
+
             await User.AsHelpdesk();
 
             // Act
-            var response = await HttpClient.GetAsync($"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}");
+            var response = await HttpClient.GetAsync(
+                $"apprenticeship-qa/apprenticeship-assessment/?ffiid={mptxInstance.InstanceId}");
 
             // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-
-            var doc = await response.GetDocument();
-            Assert.Equal("QA Apprenticeship training course information - Course Directory", doc.Title);
-            Assert.Equal("Test Standard", doc.QuerySelector("h1").TextContent);
-            Assert.Equal(
-                "Test marketing info",
-                doc.GetElementById("pttcd-apprenticeship-qa-apprenticeship-assessment-marketing-information").TextContent);
-            AssertFormFieldsDisabledState(doc, expectDisabled: false);
-            Assert.Empty(doc.GetElementsByClassName("govuk-back-link"));
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
         [Fact]
-        public async Task Get_AlreadyAssessedSubmissionRendersExpectedOutput()
+        public async Task Get_NewSubmission_RendersExpectedOutput()
         {
             // Arrange
             var ukprn = 12345;
@@ -154,10 +171,53 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
 
-            var apprenticeshipId = await TestData.CreateApprenticeship(
+            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard);
+
+            await TestData.CreateApprenticeshipQASubmission(
                 providerId,
-                standard,
-                marketingInformation: "Test marketing info");
+                submittedOn: Clock.UtcNow,
+                submittedByUserId: providerUserId,
+                providerMarketingInformation: "The overview",
+                apprenticeshipIds: new[] { apprenticeshipId });
+
+            var mptxInstance = await CreateMptxInstance(apprenticeshipId);
+
+            await User.AsHelpdesk();
+
+            // Act
+            var response = await HttpClient.GetAsync(
+                $"apprenticeship-qa/apprenticeship-assessment/?ffiid={mptxInstance.InstanceId}");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+            var doc = await response.GetDocument();
+            Assert.Equal("QA Apprenticeship training course information - Course Directory", doc.Title);
+            Assert.Equal("Test Standard", doc.QuerySelector("h1").TextContent);
+            Assert.Equal(
+                "Marketing info",
+                doc.GetElementById("pttcd-apprenticeship-qa-apprenticeship-assessment-marketing-information").TextContent);
+            AssertFormFieldsDisabledState(doc, expectDisabled: false);
+            Assert.Empty(doc.GetElementsByClassName("govuk-back-link"));
+        }
+
+        [Fact]
+        public async Task Get_AlreadyAssessedSubmission_RendersExpectedOutput()
+        {
+            // Arrange
+            var ukprn = 12345;
+
+            var providerId = await TestData.CreateProvider(
+                ukprn: ukprn,
+                providerName: "Provider 1",
+                apprenticeshipQAStatus: ApprenticeshipQAStatus.Submitted);
+
+            var providerUserId = $"{ukprn}-user";
+            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
+
+            var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
+
+            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard);
 
             var submissionId = await TestData.CreateApprenticeshipQASubmission(
                 providerId,
@@ -168,7 +228,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             await TestData.CreateApprenticeshipQAApprenticeshipAssessment(
                 submissionId,
-                apprenticeshipId,
+                apprenticeshipId: apprenticeshipId,
                 assessedByUserId: User.UserId,
                 assessedOn: Clock.UtcNow,
                 compliancePassed: true,
@@ -178,10 +238,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 styleFailedReasons: ApprenticeshipQAApprenticeshipStyleFailedReasons.JobRolesIncluded | ApprenticeshipQAApprenticeshipStyleFailedReasons.TermCourseUsed,
                 styleComments: "Bad style, yo");
 
+            var mptxInstance = await CreateMptxInstance(apprenticeshipId);
+
             await User.AsHelpdesk();
 
             // Act
-            var response = await HttpClient.GetAsync($"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}");
+            var response = await HttpClient.GetAsync(
+                $"apprenticeship-qa/apprenticeship-assessment/?ffiid={mptxInstance.InstanceId}");
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -198,7 +261,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
         [InlineData(true, ApprenticeshipQAStatus.Passed)]
         [InlineData(false, ApprenticeshipQAStatus.Failed)]
         [InlineData(false, ApprenticeshipQAStatus.UnableToComplete | ApprenticeshipQAStatus.NotStarted)]
-        public async Task Get_QAStatusNotValidRendersReadOnly(bool passed, ApprenticeshipQAStatus qaStatus)
+        public async Task Get_CannotCreateSubmission_RendersReadOnly(bool passed, ApprenticeshipQAStatus qaStatus)
         {
             // Arrange
             var ukprn = 12345;
@@ -213,10 +276,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
 
-            var apprenticeshipId = await TestData.CreateApprenticeship(
-                providerId,
-                standard,
-                marketingInformation: "Test marketing info");
+            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard);
 
             var submissionId = await TestData.CreateApprenticeshipQASubmission(
                 providerId,
@@ -233,10 +293,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 lastAssessedByUserId: User.UserId,
                 lastAssessedOn: Clock.UtcNow);
 
+            var mptxInstance = await CreateMptxInstance(apprenticeshipId);
+
             await User.AsHelpdesk();
 
             // Act
-            var response = await HttpClient.GetAsync($"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}");
+            var response = await HttpClient.GetAsync(
+                $"apprenticeship-qa/apprenticeship-assessment/?ffiid={mptxInstance.InstanceId}");
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -249,7 +312,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
         [Theory]
         [InlineData(TestUserType.ProviderSuperUser)]
         [InlineData(TestUserType.ProviderUser)]
-        public async Task Post_ProviderUserCannotAccess(TestUserType userType)
+        public async Task Post_ProviderUser_ReturnsForbidden(TestUserType userType)
         {
             // Arrange
             var ukprn = 12345;
@@ -273,73 +336,22 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
+            var mptxInstance = await CreateMptxInstance(apprenticeshipId);
+
             await User.AsTestUser(userType, providerId);
 
             var requestContent = new FormUrlEncodedContentBuilder()
-                 .Add("CompliancePassed", true)
-                 .Add("StylePassed", true)
-                 .ToContent();
+                .Add("CompliancePassed", false)
+                .Add("StylePassed", false)
+                .ToContent();
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}",
+                $"apprenticeship-qa/apprenticeship-assessment/?ffiid={mptxInstance.InstanceId}",
                 requestContent);
 
             // Assert
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
-        }
-
-        [Fact]
-        public async Task Post_ApprenticeshipDoesNotExistReturnsBadRequest()
-        {
-            // Arrange
-            await User.AsHelpdesk();
-
-            var apprenticeshipId = Guid.NewGuid();
-
-            var requestContent = new FormUrlEncodedContentBuilder()
-                 .Add("CompliancePassed", true)
-                 .Add("StylePassed", true)
-                 .ToContent();
-
-            // Act
-            var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}",
-                requestContent);
-
-            // Assert
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        }
-
-        [Fact]
-        public async Task Post_NoSubmissionReturnsBadRequest()
-        {
-            // Arrange
-            var ukprn = 12345;
-
-            var providerId = await TestData.CreateProvider(
-                ukprn: ukprn,
-                providerName: "Provider 1",
-                apprenticeshipQAStatus: ApprenticeshipQAStatus.Submitted);
-
-            var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
-
-            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard);
-
-            await User.AsHelpdesk();
-
-            var requestContent = new FormUrlEncodedContentBuilder()
-                 .Add("CompliancePassed", true)
-                 .Add("StylePassed", true)
-                 .ToContent();
-
-            // Act
-            var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}",
-                requestContent);
-
-            // Assert
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
         [Theory]
@@ -347,7 +359,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
         [InlineData(ApprenticeshipQAStatus.NotStarted)]
         [InlineData(ApprenticeshipQAStatus.Passed)]
         [InlineData(ApprenticeshipQAStatus.UnableToComplete | ApprenticeshipQAStatus.NotStarted)]
-        public async Task Post_SubmissionAtInvalidStatusReturnsBadRequest(ApprenticeshipQAStatus qaStatus)
+        public async Task Post_InvalidQAStatus_ReturnsBadRequest(ApprenticeshipQAStatus qaStatus)
         {
             // Arrange
             var ukprn = 12345;
@@ -371,16 +383,18 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
+            var mptxInstance = await CreateMptxInstance(apprenticeshipId);
+
             await User.AsHelpdesk();
-            
+
             var requestContent = new FormUrlEncodedContentBuilder()
-                 .Add("CompliancePassed", true)
-                 .Add("StylePassed", true)
-                 .ToContent();
+                .Add("CompliancePassed", false)
+                .Add("StylePassed", false)
+                .ToContent();
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}",
+                $"apprenticeship-qa/apprenticeship-assessment/?ffiid={mptxInstance.InstanceId}",
                 requestContent);
 
             // Assert
@@ -388,7 +402,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
         }
 
         [Fact]
-        public async Task Post_MissingCompliancePassedRendersErrorMessage()
+        public async Task Post_MissingCompliancePassed_RendersErrorMessage()
         {
             // Arrange
             var ukprn = 12345;
@@ -411,6 +425,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 submittedByUserId: providerUserId,
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
+
+            var mptxInstance = await CreateMptxInstance(apprenticeshipId);
 
             await User.AsHelpdesk();
 
@@ -420,7 +436,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}",
+                $"apprenticeship-qa/apprenticeship-assessment/?ffiid={mptxInstance.InstanceId}",
                 requestContent);
 
             // Assert
@@ -429,9 +445,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
             var doc = await response.GetDocument();
             doc.AssertHasError("CompliancePassed", "An outcome must be selected");
         }
-        
+
         [Fact]
-        public async Task Post_MissingComplianceFailedReasonsWhenFailedRendersErrorMessage()
+        public async Task Post_MissingComplianceFailedReasonsWhenFailed_RendersErrorMessage()
         {
             // Arrange
             var ukprn = 12345;
@@ -454,6 +470,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 submittedByUserId: providerUserId,
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
+
+            var mptxInstance = await CreateMptxInstance(apprenticeshipId);
 
             await User.AsHelpdesk();
 
@@ -464,7 +482,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}",
+                $"apprenticeship-qa/apprenticeship-assessment/?ffiid={mptxInstance.InstanceId}",
                 requestContent);
 
             // Assert
@@ -475,7 +493,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
         }
 
         [Fact]
-        public async Task Post_MissingComplianceCommentsWhenReasonContainsOtherRendersErrorMessage()
+        public async Task Post_MissingComplianceCommentsWhenReasonContainsOther_RendersErrorMessage()
         {
             // Arrange
             var ukprn = 12345;
@@ -498,6 +516,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 submittedByUserId: providerUserId,
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
+
+            var mptxInstance = await CreateMptxInstance(apprenticeshipId);
 
             await User.AsHelpdesk();
 
@@ -509,7 +529,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}",
+                $"apprenticeship-qa/apprenticeship-assessment/?ffiid={mptxInstance.InstanceId}",
                 requestContent);
 
             // Assert
@@ -520,7 +540,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
         }
 
         [Fact]
-        public async Task Post_MissingStylePassedRendersErrorMessage()
+        public async Task Post_MissingStylePassed_RendersErrorMessage()
         {
             // Arrange
             var ukprn = 12345;
@@ -544,6 +564,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
+            var mptxInstance = await CreateMptxInstance(apprenticeshipId);
+
             await User.AsHelpdesk();
 
             var requestContent = new FormUrlEncodedContentBuilder()
@@ -552,7 +574,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}",
+                $"apprenticeship-qa/apprenticeship-assessment/?ffiid={mptxInstance.InstanceId}",
                 requestContent);
 
             // Assert
@@ -563,7 +585,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
         }
 
         [Fact]
-        public async Task Post_MissingStyleFailedReasonsWhenFailedRendersErrorMessage()
+        public async Task Post_MissingStyleFailedReasonsWhenFailed_RendersErrorMessage()
         {
             // Arrange
             var ukprn = 12345;
@@ -586,6 +608,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 submittedByUserId: providerUserId,
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
+
+            var mptxInstance = await CreateMptxInstance(apprenticeshipId);
 
             await User.AsHelpdesk();
 
@@ -596,7 +620,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}",
+                $"apprenticeship-qa/apprenticeship-assessment/?ffiid={mptxInstance.InstanceId}",
                 requestContent);
 
             // Assert
@@ -607,7 +631,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
         }
 
         [Fact]
-        public async Task Post_MissingStyleCommentsWhenReasonContainsOtherRendersErrorMessage()
+        public async Task Post_MissingStyleCommentsWhenReasonContainsOther_RendersErrorMessage()
         {
             // Arrange
             var ukprn = 12345;
@@ -630,6 +654,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 submittedByUserId: providerUserId,
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
+
+            var mptxInstance = await CreateMptxInstance(apprenticeshipId);
 
             await User.AsHelpdesk();
 
@@ -641,7 +667,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}",
+                $"apprenticeship-qa/apprenticeship-assessment/?ffiid={mptxInstance.InstanceId}",
                 requestContent);
 
             // Assert
@@ -652,7 +678,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
         }
 
         [Fact]
-        public async Task Post_ComplianceAndStylePassedUpdatesSubmissionStatusAndRendersConfirmationPage()
+        public async Task Post_CompliancePassedAndStylePassed_RedirectsToConfirmationPage()
         {
             // Arrange
             var ukprn = 12345;
@@ -675,6 +701,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 submittedByUserId: providerUserId,
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
+
+            var mptxInstance = await CreateMptxInstance(apprenticeshipId);
 
             await User.AsHelpdesk();
 
@@ -685,30 +713,18 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}",
+                $"apprenticeship-qa/apprenticeship-assessment/?ffiid={mptxInstance.InstanceId}",
                 requestContent);
 
             // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-
-            var doc = await response.GetDocument();
-            Assert.Equal("QA Apprenticeship training course information - Course Directory", doc.Title);
-            Assert.Equal("Pass", doc.GetElementById("pttcd-apprenticeship-qa-apprenticeship-submission-confirmation-compliance-status").TextContent.Trim());
-            Assert.Equal("Pass", doc.GetElementById("pttcd-apprenticeship-qa-apprenticeship-submission-confirmation-style-status").TextContent.Trim());
+            Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
             Assert.Equal(
-                "This apprenticeship training course has PASSED quality assurance.",
-                doc.GetElementById("pttcd-apprenticeship-qa-apprenticeship-submission-confirmation-overall-status-message").TextContent.Trim());
-
-            var submissionStatus = await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
-                new GetLatestApprenticeshipQASubmissionForProvider()
-                {
-                    ProviderId = providerId
-                }));
-            Assert.True(submissionStatus.AsT1.ApprenticeshipAssessmentsPassed.Value);
+                "/apprenticeship-qa/apprenticeship-assessment-confirmation",
+                UrlHelper.StripQueryParams(response.Headers.Location.OriginalString));
         }
 
         [Fact]
-        public async Task Post_CompliancePassedAndStyleFailedUpdatesSubmissionStatusAndRendersConfirmationPage()
+        public async Task Post_CompliancePassedAndStyleFailed_RedirectsToConfirmationPage()
         {
             // Arrange
             var ukprn = 12345;
@@ -731,43 +747,33 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 submittedByUserId: providerUserId,
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
+
+            var mptxInstance = await CreateMptxInstance(apprenticeshipId);
 
             await User.AsHelpdesk();
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("CompliancePassed", true)
                 .Add("StylePassed", false)
-                .Add("StyleFailedReasons", ApprenticeshipQAProviderStyleFailedReasons.JobRolesIncluded)
-                .Add("StyleFailedReasons", ApprenticeshipQAProviderStyleFailedReasons.TermFrameworkUsed)
+                .Add("StyleFailedReasons", ApprenticeshipQAApprenticeshipStyleFailedReasons.JobRolesIncluded)
+                .Add("StyleFailedReasons", ApprenticeshipQAApprenticeshipStyleFailedReasons.TermFrameworkUsed)
                 .Add("StyleComments", "Some feedback")
                 .ToContent();
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}",
+                $"apprenticeship-qa/apprenticeship-assessment/?ffiid={mptxInstance.InstanceId}",
                 requestContent);
 
             // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-
-            var doc = await response.GetDocument();
-            Assert.Equal("QA Apprenticeship training course information - Course Directory", doc.Title);
-            Assert.Equal("Pass", doc.GetElementById("pttcd-apprenticeship-qa-apprenticeship-submission-confirmation-compliance-status").TextContent.Trim());
-            Assert.Equal("Fail", doc.GetElementById("pttcd-apprenticeship-qa-apprenticeship-submission-confirmation-style-status").TextContent.Trim());
+            Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
             Assert.Equal(
-                "This apprenticeship training course has FAILED quality assurance.",
-                doc.GetElementById("pttcd-apprenticeship-qa-apprenticeship-submission-confirmation-overall-status-message").TextContent.Trim());
-
-            var submissionStatus = await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
-                new GetLatestApprenticeshipQASubmissionForProvider()
-                {
-                    ProviderId = providerId
-                }));
-            Assert.False(submissionStatus.AsT1.ApprenticeshipAssessmentsPassed.Value);
+                "/apprenticeship-qa/apprenticeship-assessment-confirmation",
+                UrlHelper.StripQueryParams(response.Headers.Location.OriginalString));
         }
 
         [Fact]
-        public async Task Post_ComplianceFailedAndStylePassedUpdatesSubmissionStatusAndRendersConfirmationPage()
+        public async Task Post_ComplianceFailedAndStylePassed_RedirectsToConfirmationPage()
         {
             // Arrange
             var ukprn = 12345;
@@ -791,42 +797,32 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
 
+            var mptxInstance = await CreateMptxInstance(apprenticeshipId);
+
             await User.AsHelpdesk();
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("CompliancePassed", false)
-                .Add("ComplianceFailedReasons", ApprenticeshipQAProviderComplianceFailedReasons.IncorrectOfsetGradeUsed)
-                .Add("ComplianceFailedReasons", ApprenticeshipQAProviderComplianceFailedReasons.UnverifiableClaim)
+                .Add("ComplianceFailedReasons", ApprenticeshipQAApprenticeshipComplianceFailedReasons.IncorrectOfsetGradeUsed)
+                .Add("ComplianceFailedReasons", ApprenticeshipQAApprenticeshipComplianceFailedReasons.UnverifiableClaim)
                 .Add("ComplianceComments", "Some feedback")
                 .Add("StylePassed", true)
                 .ToContent();
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}",
+                $"apprenticeship-qa/apprenticeship-assessment/?ffiid={mptxInstance.InstanceId}",
                 requestContent);
 
             // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-
-            var doc = await response.GetDocument();
-            Assert.Equal("QA Apprenticeship training course information - Course Directory", doc.Title);
-            Assert.Equal("Fail", doc.GetElementById("pttcd-apprenticeship-qa-apprenticeship-submission-confirmation-compliance-status").TextContent.Trim());
-            Assert.Equal("Pass", doc.GetElementById("pttcd-apprenticeship-qa-apprenticeship-submission-confirmation-style-status").TextContent.Trim());
+            Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
             Assert.Equal(
-                "This apprenticeship training course has FAILED quality assurance.",
-                doc.GetElementById("pttcd-apprenticeship-qa-apprenticeship-submission-confirmation-overall-status-message").TextContent.Trim());
-
-            var submissionStatus = await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
-                new GetLatestApprenticeshipQASubmissionForProvider()
-                {
-                    ProviderId = providerId
-                }));
-            Assert.False(submissionStatus.AsT1.ApprenticeshipAssessmentsPassed.Value);
+                "/apprenticeship-qa/apprenticeship-assessment-confirmation",
+                UrlHelper.StripQueryParams(response.Headers.Location.OriginalString));
         }
 
         [Fact]
-        public async Task Post_ComplianceAndStyleFailedUpdatesSubmissionStatusAndRendersConfirmationPage()
+        public async Task Post_ComplianceFailedAndStyleFailed_RedirectsToConfirmationPage()
         {
             // Arrange
             var ukprn = 12345;
@@ -849,130 +845,32 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 submittedByUserId: providerUserId,
                 providerMarketingInformation: "The overview",
                 apprenticeshipIds: new[] { apprenticeshipId });
+
+            var mptxInstance = await CreateMptxInstance(apprenticeshipId);
 
             await User.AsHelpdesk();
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("CompliancePassed", false)
-                .Add("ComplianceFailedReasons", ApprenticeshipQAProviderComplianceFailedReasons.IncorrectOfsetGradeUsed)
-                .Add("ComplianceFailedReasons", ApprenticeshipQAProviderComplianceFailedReasons.UnverifiableClaim)
+                .Add("ComplianceFailedReasons", ApprenticeshipQAApprenticeshipComplianceFailedReasons.IncorrectOfsetGradeUsed)
+                .Add("ComplianceFailedReasons", ApprenticeshipQAApprenticeshipComplianceFailedReasons.UnverifiableClaim)
                 .Add("ComplianceComments", "Some compliance feedback")
                 .Add("StylePassed", false)
-                .Add("StyleFailedReasons", ApprenticeshipQAProviderStyleFailedReasons.JobRolesIncluded)
-                .Add("StyleFailedReasons", ApprenticeshipQAProviderStyleFailedReasons.TermFrameworkUsed)
+                .Add("StyleFailedReasons", ApprenticeshipQAApprenticeshipStyleFailedReasons.JobRolesIncluded)
+                .Add("StyleFailedReasons", ApprenticeshipQAApprenticeshipStyleFailedReasons.TermFrameworkUsed)
                 .Add("StyleComments", "Some style feedback")
                 .ToContent();
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}",
+                $"apprenticeship-qa/apprenticeship-assessment/?ffiid={mptxInstance.InstanceId}",
                 requestContent);
 
             // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-
-            var doc = await response.GetDocument();
-            Assert.Equal("QA Apprenticeship training course information - Course Directory", doc.Title);
-            Assert.Equal("Fail", doc.GetElementById("pttcd-apprenticeship-qa-apprenticeship-submission-confirmation-compliance-status").TextContent.Trim());
-            Assert.Equal("Fail", doc.GetElementById("pttcd-apprenticeship-qa-apprenticeship-submission-confirmation-style-status").TextContent.Trim());
+            Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
             Assert.Equal(
-                "This apprenticeship training course has FAILED quality assurance.",
-                doc.GetElementById("pttcd-apprenticeship-qa-apprenticeship-submission-confirmation-overall-status-message").TextContent.Trim());
-
-            var submissionStatus = await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
-                new GetLatestApprenticeshipQASubmissionForProvider()
-                {
-                    ProviderId = providerId
-                }));
-            Assert.False(submissionStatus.AsT1.ApprenticeshipAssessmentsPassed.Value);
-        }
-
-        [Theory]
-        [InlineData(true, true, null, null)]
-        [InlineData(true, false, null, null)]
-        [InlineData(false, true, null, null)]
-        [InlineData(false, false, null, null)]
-        [InlineData(true, true, true, true)]
-        [InlineData(true, false, true, false)]
-        [InlineData(false, true, true, false)]
-        [InlineData(false, false, true, false)]
-        [InlineData(true, true, false, false)]
-        [InlineData(true, false, false, false)]
-        [InlineData(false, true, false, false)]
-        [InlineData(false, false, false, false)]
-        public async Task Post_UpdatesSubmissionStatusCorrectly(
-            bool compliancePassed,
-            bool stylePassed,
-            bool? providerAssessmentPassed,
-            bool? expectedSubmissionPassed)
-        {
-            // Arrange
-            var ukprn = 12345;
-
-            var providerId = await TestData.CreateProvider(
-                ukprn: ukprn,
-                providerName: "Provider 1",
-                apprenticeshipQAStatus: ApprenticeshipQAStatus.Submitted);
-
-            var providerUserId = $"{ukprn}-user";
-            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
-
-            var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
-
-            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard);
-
-            var submissionId = await TestData.CreateApprenticeshipQASubmission(
-                providerId,
-                submittedOn: Clock.UtcNow,
-                submittedByUserId: providerUserId,
-                providerMarketingInformation: "The overview",
-                apprenticeshipIds: new[] { apprenticeshipId });
-
-            await TestData.UpdateApprenticeshipQASubmission(
-                submissionId,
-                providerAssessmentPassed: providerAssessmentPassed,
-                apprenticeshipAssessmentsPassed: null,
-                passed: null,
-                lastAssessedByUserId: User.UserId,
-                lastAssessedOn: Clock.UtcNow);
-
-            await User.AsHelpdesk();
-
-            var requestContentBuilder = new FormUrlEncodedContentBuilder()
-                .Add("CompliancePassed", compliancePassed)
-                .Add("ComplianceComments", "Some compliance feedback")
-                .Add("StylePassed", stylePassed);
-
-            if (!compliancePassed)
-            {
-                requestContentBuilder
-                    .Add("ComplianceFailedReasons", (ApprenticeshipQAApprenticeshipComplianceFailedReasons)1)
-                    .Add("ComplianceComments", "Compliance feedback");
-            }
-
-            if (!stylePassed)
-            {
-                requestContentBuilder
-                    .Add("StyleFailedReasons", (ApprenticeshipQAApprenticeshipStyleFailedReasons)1)
-                    .Add("StyleComments", "Style feedback");
-            }
-
-            var requestContent = requestContentBuilder.ToContent();
-
-            // Act
-            var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}",
-                requestContent);
-
-            // Assert
-            response.EnsureSuccessStatusCode();
-
-            var submissionStatus = await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
-                new GetLatestApprenticeshipQASubmissionForProvider()
-                {
-                    ProviderId = providerId
-                }));
-            Assert.Equal(expectedSubmissionPassed, submissionStatus.AsT1.Passed);
+                "/apprenticeship-qa/apprenticeship-assessment-confirmation",
+                UrlHelper.StripQueryParams(response.Headers.Location.OriginalString));
         }
 
         [Theory]
@@ -1011,6 +909,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 lastAssessedByUserId: User.UserId,
                 lastAssessedOn: Clock.UtcNow);
 
+            var mptxInstance = MptxManager.CreateInstance("ApprenticeshipAssessment", new FlowModel()
+            {
+                ProviderId = providerId
+            });
+
             await User.AsHelpdesk();
 
             var requestContent = new FormUrlEncodedContentBuilder()
@@ -1020,11 +923,440 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 
             // Act
             var response = await HttpClient.PostAsync(
-                $"apprenticeship-qa/apprenticeship-assessments/{apprenticeshipId}",
+                $"apprenticeship-qa/apprenticeship-assessment/?ffiid={mptxInstance.InstanceId}",
                 requestContent);
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task GetConfirmation_NotGotOutcome_ReturnsBadRequest()
+        {
+            // Arrange
+            var ukprn = 12345;
+
+            var providerId = await TestData.CreateProvider(
+                ukprn: ukprn,
+                providerName: "Provider 1",
+                apprenticeshipQAStatus: ApprenticeshipQAStatus.Submitted);
+
+            var providerUserId = $"{ukprn}-user";
+            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
+
+            var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
+
+            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard);
+
+            await TestData.CreateApprenticeshipQASubmission(
+                providerId,
+                submittedOn: Clock.UtcNow,
+                submittedByUserId: providerUserId,
+                providerMarketingInformation: "The overview",
+                apprenticeshipIds: new[] { apprenticeshipId });
+
+            var mptxInstance = await CreateMptxInstance(apprenticeshipId);
+            Assert.False(mptxInstance.State.GotAssessmentOutcome);
+
+            await User.AsHelpdesk();
+
+            // Act
+            var response = await HttpClient.GetAsync(
+                $"apprenticeship-qa/apprenticeship-assessment-confirmation/?ffiid={mptxInstance.InstanceId}");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task GetConfirmation_PassedComplianceAndPassedStyle_RendersExpectedContent()
+        {
+            // Arrange
+            var ukprn = 12345;
+
+            var providerId = await TestData.CreateProvider(
+                ukprn: ukprn,
+                providerName: "Provider 1",
+                apprenticeshipQAStatus: ApprenticeshipQAStatus.Submitted);
+
+            var providerUserId = $"{ukprn}-user";
+            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
+
+            var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
+
+            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard);
+
+            await TestData.CreateApprenticeshipQASubmission(
+                providerId,
+                submittedOn: Clock.UtcNow,
+                submittedByUserId: providerUserId,
+                providerMarketingInformation: "The overview",
+                apprenticeshipIds: new[] { apprenticeshipId });
+
+            var mptxInstance = await CreateMptxInstance(apprenticeshipId);
+            mptxInstance.Update(s => s.SetAssessmentOutcome(
+                compliancePassed: true,
+                complianceFailedReasons: ApprenticeshipQAApprenticeshipComplianceFailedReasons.None,
+                complianceComments: null,
+                stylePassed: true,
+                styleFailedReasons: ApprenticeshipQAApprenticeshipStyleFailedReasons.None,
+                styleComments: null));
+
+            await User.AsHelpdesk();
+
+            // Act
+            var response = await HttpClient.GetAsync(
+                $"apprenticeship-qa/apprenticeship-assessment-confirmation/?ffiid={mptxInstance.InstanceId}");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+            var doc = await response.GetDocument();
+            Assert.Equal("QA Apprenticeship training course information - Course Directory", doc.Title);
+            Assert.Equal("Pass", doc.GetSummaryListValueWithKey("Compliance"));
+            Assert.Equal("Pass", doc.GetSummaryListValueWithKey("Style"));
+            Assert.Equal(
+                "This apprenticeship training course has PASSED quality assurance.",
+                doc.GetElementById("pttcd-apprenticeship-qa-apprenticeship-submission-confirmation-overall-status-message").TextContent.Trim());
+        }
+
+        [Fact]
+        public async Task GetConfirmation_PassedComplianceAndFailedStyle_RendersExpectedContent()
+        {
+            // Arrange
+            var ukprn = 12345;
+
+            var providerId = await TestData.CreateProvider(
+                ukprn: ukprn,
+                providerName: "Provider 1",
+                apprenticeshipQAStatus: ApprenticeshipQAStatus.Submitted);
+
+            var providerUserId = $"{ukprn}-user";
+            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
+
+            var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
+
+            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard);
+
+            await TestData.CreateApprenticeshipQASubmission(
+                providerId,
+                submittedOn: Clock.UtcNow,
+                submittedByUserId: providerUserId,
+                providerMarketingInformation: "The overview",
+                apprenticeshipIds: new[] { apprenticeshipId });
+
+            var mptxInstance = await CreateMptxInstance(apprenticeshipId);
+            mptxInstance.Update(s => s.SetAssessmentOutcome(
+                compliancePassed: true,
+                complianceFailedReasons: ApprenticeshipQAApprenticeshipComplianceFailedReasons.None,
+                complianceComments: null,
+                stylePassed: false,
+                styleFailedReasons: ApprenticeshipQAApprenticeshipStyleFailedReasons.JobRolesIncluded,
+                styleComments: "Feedback"));
+
+            await User.AsHelpdesk();
+
+            // Act
+            var response = await HttpClient.GetAsync(
+                $"apprenticeship-qa/apprenticeship-assessment-confirmation/?ffiid={mptxInstance.InstanceId}");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+            var doc = await response.GetDocument();
+            Assert.Equal("QA Apprenticeship training course information - Course Directory", doc.Title);
+            Assert.Equal("Pass", doc.GetSummaryListValueWithKey("Compliance"));
+            Assert.Equal("Fail", doc.GetSummaryListValueWithKey("Style"));
+            Assert.Equal(
+                "This apprenticeship training course has FAILED quality assurance.",
+                doc.GetElementById("pttcd-apprenticeship-qa-apprenticeship-submission-confirmation-overall-status-message").TextContent.Trim());
+        }
+
+        [Fact]
+        public async Task GetConfirmation_FailedComplianceAndPassedStyle_RendersExpectedContent()
+        {
+            // Arrange
+            var ukprn = 12345;
+
+            var providerId = await TestData.CreateProvider(
+                ukprn: ukprn,
+                providerName: "Provider 1",
+                apprenticeshipQAStatus: ApprenticeshipQAStatus.Submitted);
+
+            var providerUserId = $"{ukprn}-user";
+            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
+
+            var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
+
+            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard);
+
+            await TestData.CreateApprenticeshipQASubmission(
+                providerId,
+                submittedOn: Clock.UtcNow,
+                submittedByUserId: providerUserId,
+                providerMarketingInformation: "The overview",
+                apprenticeshipIds: new[] { apprenticeshipId });
+
+            var mptxInstance = await CreateMptxInstance(apprenticeshipId);
+            mptxInstance.Update(s => s.SetAssessmentOutcome(
+                compliancePassed: false,
+                complianceFailedReasons: ApprenticeshipQAApprenticeshipComplianceFailedReasons.UnverifiableClaim,
+                complianceComments: "Feedback",
+                stylePassed: true,
+                styleFailedReasons: ApprenticeshipQAApprenticeshipStyleFailedReasons.None,
+                styleComments: null));
+
+            await User.AsHelpdesk();
+
+            // Act
+            var response = await HttpClient.GetAsync(
+                $"apprenticeship-qa/apprenticeship-assessment-confirmation/?ffiid={mptxInstance.InstanceId}");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+            var doc = await response.GetDocument();
+            Assert.Equal("QA Apprenticeship training course information - Course Directory", doc.Title);
+            Assert.Equal("Fail", doc.GetSummaryListValueWithKey("Compliance"));
+            Assert.Equal("Pass", doc.GetSummaryListValueWithKey("Style"));
+            Assert.Equal(
+                "This apprenticeship training course has FAILED quality assurance.",
+                doc.GetElementById("pttcd-apprenticeship-qa-apprenticeship-submission-confirmation-overall-status-message").TextContent.Trim());
+        }
+
+        [Fact]
+        public async Task GetConfirmation_FailedComplianceAndFailedStyle_RendersExpectedContent()
+        {
+            // Arrange
+            var ukprn = 12345;
+
+            var providerId = await TestData.CreateProvider(
+                ukprn: ukprn,
+                providerName: "Provider 1",
+                apprenticeshipQAStatus: ApprenticeshipQAStatus.Submitted);
+
+            var providerUserId = $"{ukprn}-user";
+            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
+
+            var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
+
+            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard);
+
+            await TestData.CreateApprenticeshipQASubmission(
+                providerId,
+                submittedOn: Clock.UtcNow,
+                submittedByUserId: providerUserId,
+                providerMarketingInformation: "The overview",
+                apprenticeshipIds: new[] { apprenticeshipId });
+
+            var mptxInstance = await CreateMptxInstance(apprenticeshipId);
+            mptxInstance.Update(s => s.SetAssessmentOutcome(
+                compliancePassed: false,
+                complianceFailedReasons: ApprenticeshipQAApprenticeshipComplianceFailedReasons.UnverifiableClaim,
+                complianceComments: "Feedback",
+                stylePassed: false,
+                styleFailedReasons: ApprenticeshipQAApprenticeshipStyleFailedReasons.JobRolesIncluded,
+                styleComments: "Feedback"));
+
+            await User.AsHelpdesk();
+
+            // Act
+            var response = await HttpClient.GetAsync(
+                $"apprenticeship-qa/apprenticeship-assessment-confirmation/?ffiid={mptxInstance.InstanceId}");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+            var doc = await response.GetDocument();
+            Assert.Equal("QA Apprenticeship training course information - Course Directory", doc.Title);
+            Assert.Equal("Fail", doc.GetSummaryListValueWithKey("Compliance"));
+            Assert.Equal("Fail", doc.GetSummaryListValueWithKey("Style"));
+            Assert.Equal(
+                "This apprenticeship training course has FAILED quality assurance.",
+                doc.GetElementById("pttcd-apprenticeship-qa-apprenticeship-submission-confirmation-overall-status-message").TextContent.Trim());
+        }
+
+        [Theory]
+        [InlineData(TestUserType.ProviderSuperUser)]
+        [InlineData(TestUserType.ProviderUser)]
+        public async Task PostConfirmation_ProviderUser_ReturnsForbidden(TestUserType userType)
+        {
+            // Arrange
+            var ukprn = 12345;
+
+            var providerId = await TestData.CreateProvider(
+                ukprn: ukprn,
+                providerName: "Provider 1",
+                apprenticeshipQAStatus: ApprenticeshipQAStatus.Submitted);
+
+            var providerUserId = $"{ukprn}-user";
+            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
+
+            var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
+
+            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard);
+
+            var submissionId = await TestData.CreateApprenticeshipQASubmission(
+                providerId,
+                submittedOn: Clock.UtcNow,
+                submittedByUserId: providerUserId,
+                providerMarketingInformation: "The overview",
+                apprenticeshipIds: new[] { apprenticeshipId });
+
+            var mptxInstance = await CreateMptxInstance(apprenticeshipId);
+            mptxInstance.Update(s => s.SetAssessmentOutcome(
+                compliancePassed: true,
+                complianceFailedReasons: ApprenticeshipQAApprenticeshipComplianceFailedReasons.None,
+                complianceComments: null,
+                stylePassed: true,
+                styleFailedReasons: ApprenticeshipQAApprenticeshipStyleFailedReasons.None,
+                styleComments: null));
+
+            await User.AsTestUser(userType, providerId);
+
+            var requestContent = new FormUrlEncodedContentBuilder().ToContent();
+
+            // Act
+            var response = await HttpClient.PostAsync(
+                $"apprenticeship-qa/apprenticeship-assessment-confirmation/?ffiid={mptxInstance.InstanceId}",
+                requestContent);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+        }
+
+        [Theory]
+        [InlineData(ApprenticeshipQAStatus.Failed)]
+        [InlineData(ApprenticeshipQAStatus.NotStarted)]
+        [InlineData(ApprenticeshipQAStatus.Passed)]
+        [InlineData(ApprenticeshipQAStatus.UnableToComplete | ApprenticeshipQAStatus.NotStarted)]
+        public async Task PostConfirmation_InvalidQAStatus_ReturnsBadRequest(ApprenticeshipQAStatus qaStatus)
+        {
+            // Arrange
+            var ukprn = 12345;
+
+            var providerId = await TestData.CreateProvider(
+                ukprn: ukprn,
+                providerName: "Provider 1",
+                apprenticeshipQAStatus: qaStatus);
+
+            var providerUserId = $"{ukprn}-user";
+            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
+
+            var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
+
+            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard);
+
+            var submissionId = await TestData.CreateApprenticeshipQASubmission(
+                providerId,
+                submittedOn: Clock.UtcNow,
+                submittedByUserId: providerUserId,
+                providerMarketingInformation: "The overview",
+                apprenticeshipIds: new[] { apprenticeshipId });
+
+            var mptxInstance = await CreateMptxInstance(apprenticeshipId);
+            mptxInstance.Update(s => s.SetAssessmentOutcome(
+                compliancePassed: true,
+                complianceFailedReasons: ApprenticeshipQAApprenticeshipComplianceFailedReasons.None,
+                complianceComments: null,
+                stylePassed: true,
+                styleFailedReasons: ApprenticeshipQAApprenticeshipStyleFailedReasons.None,
+                styleComments: null));
+
+            await User.AsHelpdesk();
+
+            var requestContent = new FormUrlEncodedContentBuilder().ToContent();
+
+            // Act
+            var response = await HttpClient.PostAsync(
+                $"apprenticeship-qa/apprenticeship-assessment-confirmation/?ffiid={mptxInstance.InstanceId}",
+                requestContent);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Theory]
+        [InlineData(true, true, null, null)]
+        [InlineData(true, false, null, null)]
+        [InlineData(false, true, null, null)]
+        [InlineData(false, false, null, null)]
+        [InlineData(true, true, true, true)]
+        [InlineData(true, false, true, false)]
+        [InlineData(false, true, true, false)]
+        [InlineData(false, false, true, false)]
+        [InlineData(true, true, false, false)]
+        [InlineData(true, false, false, false)]
+        [InlineData(false, true, false, false)]
+        [InlineData(false, false, false, false)]
+        public async Task PostConfirmation_UpdatesSubmissionStatusCorrectlyAndRedirects(
+            bool compliancePassed,
+            bool stylePassed,
+            bool? providerAssessmentsPassed,
+            bool? expectedSubmissionPassed)
+        {
+            // Arrange
+            var ukprn = 12345;
+
+            var providerId = await TestData.CreateProvider(
+                ukprn: ukprn,
+                providerName: "Provider 1",
+                apprenticeshipQAStatus: ApprenticeshipQAStatus.Submitted);
+
+            var providerUserId = $"{ukprn}-user";
+            await TestData.CreateUser(providerUserId, "somebody@provider1.com", "Provider 1", "Person", providerId);
+
+            var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
+
+            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard);
+
+            var submissionId = await TestData.CreateApprenticeshipQASubmission(
+                providerId,
+                submittedOn: Clock.UtcNow,
+                submittedByUserId: providerUserId,
+                providerMarketingInformation: "The overview",
+                apprenticeshipIds: new[] { apprenticeshipId });
+
+            await TestData.UpdateApprenticeshipQASubmission(
+                submissionId,
+                providerAssessmentPassed: providerAssessmentsPassed,
+                apprenticeshipAssessmentsPassed: null,
+                passed: null,
+                lastAssessedByUserId: User.UserId,
+                lastAssessedOn: Clock.UtcNow);
+
+            var mptxInstance = await CreateMptxInstance(apprenticeshipId);
+            mptxInstance.Update(s => s.SetAssessmentOutcome(
+                compliancePassed: compliancePassed,
+                complianceFailedReasons: compliancePassed ?
+                    ApprenticeshipQAApprenticeshipComplianceFailedReasons.None :
+                    ApprenticeshipQAApprenticeshipComplianceFailedReasons.UnverifiableClaim,
+                complianceComments: compliancePassed ? null : "Feedback",
+                stylePassed: stylePassed,
+                styleFailedReasons: stylePassed ?
+                    ApprenticeshipQAApprenticeshipStyleFailedReasons.None :
+                    ApprenticeshipQAApprenticeshipStyleFailedReasons.JobRolesIncluded,
+                styleComments: stylePassed ? null : "Feedback"));
+
+            await User.AsHelpdesk();
+
+            var requestContent = new FormUrlEncodedContentBuilder().ToContent();
+
+            // Act
+            var response = await HttpClient.PostAsync(
+                $"apprenticeship-qa/apprenticeship-assessment-confirmation/?ffiid={mptxInstance.InstanceId}",
+                requestContent);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.Found, response.StatusCode);
+            Assert.Equal($"/apprenticeship-qa/{providerId}", response.Headers.Location.OriginalString);
+
+            var submissionStatus = await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
+                new GetLatestApprenticeshipQASubmissionForProvider()
+                {
+                    ProviderId = providerId
+                }));
+            Assert.Equal(expectedSubmissionPassed, submissionStatus.AsT1.Passed);
         }
 
         private void AssertFormFieldsDisabledState(IHtmlDocument doc, bool expectDisabled)
@@ -1048,6 +1380,17 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                     Assert.Null(f.GetAttribute("disabled"));
                 }
             }
+        }
+
+        private async Task<MptxInstanceContext<FlowModel>> CreateMptxInstance(Guid apprenticeshipId)
+        {
+            var state = await WithSqlQueryDispatcher(async dispatcher =>
+            {
+                var initializer = CreateInstance<FlowModelInitializer>(dispatcher);
+                return await initializer.Initialize(apprenticeshipId);
+            });
+
+            return CreateMptxInstance<FlowModel>("ApprenticeshipAssessment", state);
         }
     }
 }

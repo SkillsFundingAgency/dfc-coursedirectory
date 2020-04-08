@@ -43,7 +43,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Complete
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
         }
 
-        public IEnumerable<ApprenticeshipQAStatus> PermittedStatuses { get; } = new[]
+        IEnumerable<ApprenticeshipQAStatus> IRestrictQAStatus<Command>.PermittedStatuses => new[]
         {
             ApprenticeshipQAStatus.InProgress
         };
@@ -98,5 +98,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Complete
                 ProviderName = provider.ProviderName
             };
         }
+
+        Guid IRestrictQAStatus<Command>.GetProviderId(Command request) => request.ProviderId;
     }
 }

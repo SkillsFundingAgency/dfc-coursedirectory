@@ -8,6 +8,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Respawn;
+using Xunit.Abstractions;
+using Xunit.Sdk;
 using CosmosDbQueryDispatcher = Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb.CosmosDbQueryDispatcher;
 
 namespace Dfc.CourseDirectory.WebV2.Tests
@@ -17,12 +19,16 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         private readonly Checkpoint _sqlCheckpoint;
         private readonly IConfiguration _configuration;
         private readonly IServiceProvider _services;
+        private readonly IMessageSink _messageSink;
 
-        public DatabaseFixture(IConfiguration configuration, IServiceProvider services)
+        public DatabaseFixture(IConfiguration configuration, IServiceProvider services, IMessageSink messageSink)
         {
-            _sqlCheckpoint = CreateCheckpoint();
             _configuration = configuration;
             _services = services;
+            _messageSink = messageSink;
+
+            DeploySqlDb();
+            _sqlCheckpoint = CreateCheckpoint();
         }
 
         public MutableClock Clock => _services.GetRequiredService<IClock>() as MutableClock;
@@ -94,5 +100,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         {
             SchemasToInclude = new[] { "Pttcd" }
         };
+        
+        private void DeploySqlDb()
+        {
+            var helper = new SqlDeployHelper();
+            helper.Deploy(
+                ConnectionString,
+                writeMessage: message => _messageSink?.OnMessage(new DiagnosticMessage(message)));
+        }
     }
 }
