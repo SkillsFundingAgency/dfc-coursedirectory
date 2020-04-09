@@ -12,8 +12,8 @@ namespace Dfc.CourseDirectory.WebV2.DataStore.Sql.QueryHandlers
         {
             var sql = @"
 SELECT p.ProviderID, 
-CASE  assessment.Passed WHEN 1 THEN assessment.AssessedOn ELSE null end AS PassedQAOn,
-CASE  assessment.Passed WHEN 0 THEN assessment.AssessedOn ELSE null end AS FailedQAOn,
+CASE  assessment.Passed WHEN 1 THEN provassess.AssessedOn ELSE null end AS PassedQAOn,
+CASE  assessment.Passed WHEN 0 THEN provassess.AssessedOn ELSE null end AS FailedQAOn,
 reasons.AddedOn as UnableToCompleteOn, 
 reasons.Comments as Notes, 
 reasons.UnableToCompleteReasons, 
@@ -36,7 +36,8 @@ LEFT JOIN (
     FROM Pttcd.ApprenticeshipQASubmissionProviderAssessments
     GROUP BY ApprenticeshipQASubmissionId
 ) LatestAssessment ON LatestAssessment.ApprenticeshipQASubmissionId = LatestSubmissions.ApprenticeshipQASubmissionId
-LEFT JOIN [Pttcd].ApprenticeshipQASubmissionProviderAssessments assessment on assessment.ApprenticeshipQASubmissionProviderAssessmentsId = LatestAssessment.ApprenticeshipQASubmissionProviderAssessmentsId
+LEFT JOIN [Pttcd].ApprenticeshipQASubmissions assessment on assessment.ApprenticeshipQASubmissionId = LatestAssessment.ApprenticeshipQASubmissionId
+LEFT JOIN [Pttcd].ApprenticeshipQASubmissionProviderAssessments provassess on provassess.ApprenticeshipQASubmissionProviderAssessmentsId=LatestAssessment.ApprenticeshipQASubmissionProviderAssessmentsId
 LEFT JOIN [Pttcd].[Users] users on users.UserId=LatestSubmissions.SubmittedByUserId
 WHERE p.ApprenticeshipQAStatus <> 1";
 
