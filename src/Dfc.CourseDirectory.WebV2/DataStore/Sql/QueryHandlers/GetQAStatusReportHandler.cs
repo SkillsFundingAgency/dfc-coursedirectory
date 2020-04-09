@@ -38,8 +38,7 @@ LEFT JOIN (
 ) LatestAssessment ON LatestAssessment.ApprenticeshipQASubmissionId = LatestSubmissions.ApprenticeshipQASubmissionId
 LEFT JOIN [Pttcd].ApprenticeshipQASubmissionProviderAssessments assessment on assessment.ApprenticeshipQASubmissionProviderAssessmentsId = LatestAssessment.ApprenticeshipQASubmissionProviderAssessmentsId
 LEFT JOIN [Pttcd].[Users] users on users.UserId=LatestSubmissions.SubmittedByUserId
-WHERE p.ApprenticeshipQAStatus <> 1
-";
+WHERE p.ApprenticeshipQAStatus <> 1";
 
             return (await transaction.Connection.QueryAsync<GetQAStatusReportResult>(sql, transaction: transaction)).AsList();
 
