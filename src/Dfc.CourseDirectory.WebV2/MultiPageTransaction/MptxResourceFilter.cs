@@ -28,10 +28,10 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
 
             if (ffiid.Count > 0)
             {
-                var mptxManager = context.HttpContext.RequestServices.GetRequiredService<MptxManager>();
-                var instanceContext = mptxManager.GetInstance(ffiid);
+                var stateProvider = context.HttpContext.RequestServices.GetRequiredService<IMptxStateProvider>();
+                var instance = stateProvider.GetInstance(ffiid);
 
-                if (instanceContext == null)
+                if (instance == null)
                 {
                     context.Result = new ViewResult()
                     {
@@ -41,7 +41,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
                     return;
                 }
                 
-                var feature = new MptxInstanceContextFeature(instanceContext);
+                var feature = new MptxInstanceFeature(instance);
                 context.HttpContext.Features.Set(feature);
             }
 

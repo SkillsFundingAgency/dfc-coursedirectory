@@ -54,8 +54,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.MultiPageTransaction
         [HttpGet("")]
         public IActionResult Get()
         {
-            var feature = HttpContext.Features.Get<MptxInstanceContextFeature>();
-            return Content(feature.InstanceContext.InstanceId);
+            var feature = HttpContext.Features.Get<MptxInstanceFeature>();
+            return Content(feature.Instance.InstanceId);
         }
     }
 

@@ -123,7 +123,7 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddScoped<SignInTracker>();
             services.AddBehaviors();
             services.AddSingleton<IStandardsAndFrameworksCache, StandardsAndFrameworksCache>();
-            services.AddSingleton<MptxInstanceContextProvider>();
+            services.AddSingleton<MptxInstanceProvider>();
             services.AddMptxInstanceContext();
             services.AddSingleton<IMptxStateProvider, SessionMptxStateProvider>();
             services.AddSingleton<MptxInstanceContextFactory>();

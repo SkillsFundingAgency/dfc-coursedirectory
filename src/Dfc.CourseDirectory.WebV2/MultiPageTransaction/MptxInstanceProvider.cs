@@ -2,26 +2,26 @@
 
 namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
 {
-    public class MptxInstanceContextProvider
+    public class MptxInstanceProvider
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public MptxInstanceContextProvider(IHttpContextAccessor httpContextAccessor)
+        public MptxInstanceProvider(IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public MptxInstanceContext GetContext()
+        public MptxInstance GetInstance()
         {
             var httpContext = _httpContextAccessor.HttpContext;
-            var feature = httpContext.Features.Get<MptxInstanceContextFeature>();
+            var feature = httpContext.Features.Get<MptxInstanceFeature>();
 
             if (feature == null)
             {
                 return null;
             }
 
-            return feature.InstanceContext;
+            return feature.Instance;
         }
     }
 }

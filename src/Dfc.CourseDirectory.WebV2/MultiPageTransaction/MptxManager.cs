@@ -63,7 +63,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
 
             var instance = _stateProvider.CreateInstance(stateType, contextItems, state);
 
-            var instanceContext = _instanceContextFactory.CreateContext(instance);
+            var instanceContext = _instanceContextFactory.CreateContext(instance, stateType);
             return instanceContext;
         }
 
@@ -76,7 +76,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
                 return null;
             }
 
-            return _instanceContextFactory.CreateContext(instance);
+            return _instanceContextFactory.CreateContext(instance, instance.StateType);
         }
 
         private object CreateNewState(Type stateType) =>
