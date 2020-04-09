@@ -14,8 +14,6 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             Instance = instance ?? throw new ArgumentNullException(nameof(instance));
         }
 
-        public string FlowName => Instance.FlowName;
-
         public MptxInstance Instance { get; }
 
         public string InstanceId => Instance.InstanceId;
@@ -23,6 +21,8 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
         public IReadOnlyDictionary<string, object> Items => Instance.Items;
 
         public object State => Instance.State;
+
+        public Type StateType => Instance.StateType;
 
         protected IMptxStateProvider StateProvider { get; }
     }

@@ -21,24 +21,21 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
         }
 
         public MptxInstanceContext<TState> CreateInstance<TState>(
-            string flowName,
             IReadOnlyDictionary<string, object> contextItems = null)
             where TState : IMptxState
         {
-            return (MptxInstanceContext<TState>)CreateInstance(flowName, typeof(TState), contextItems);
+            return (MptxInstanceContext<TState>)CreateInstance(typeof(TState), contextItems);
         }
 
         public MptxInstanceContext<TState> CreateInstance<TState>(
-            string flowName,
             TState state,
             IReadOnlyDictionary<string, object> contextItems = null)
             where TState : IMptxState
         {
-            return (MptxInstanceContext<TState>)CreateInstance(flowName, typeof(TState), state, contextItems);
+            return (MptxInstanceContext<TState>)CreateInstance(typeof(TState), state, contextItems);
         }
 
         public MptxInstanceContext CreateInstance(
-            string flowName,
             Type stateType,
             IReadOnlyDictionary<string, object> contextItems = null)
         {
@@ -51,11 +48,10 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
 
             var newState = CreateNewState(stateType);
 
-            return CreateInstance(flowName, stateType, newState, contextItems);
+            return CreateInstance(stateType, newState, contextItems);
         }
 
         private MptxInstanceContext CreateInstance(
-            string flowName,
             Type stateType,
             object state,
             IReadOnlyDictionary<string, object> contextItems = null)
@@ -65,7 +61,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
                 throw new ArgumentNullException(nameof(state));
             }
 
-            var instance = _stateProvider.CreateInstance(flowName, contextItems, state);
+            var instance = _stateProvider.CreateInstance(stateType, contextItems, state);
 
             var instanceContext = _instanceContextFactory.CreateContext(instance);
             return instanceContext;

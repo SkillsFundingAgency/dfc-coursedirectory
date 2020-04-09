@@ -51,7 +51,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         {
             // Arrange
             var instance = Factory.MptxStateProvider.CreateInstance(
-                MultiPageTransactionTestsController.FlowName,
+                typeof(MultiPageTransactionTestsFlowState),
                 new Dictionary<string, object>(),
                 new MultiPageTransactionTestsFlowState());
 
@@ -71,7 +71,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         {
             // Arrange
             var instance = Factory.MptxStateProvider.CreateInstance(
-                MultiPageTransactionTestsController.FlowName,
+                typeof(MultiPageTransactionTestsFlowState),
                 new Dictionary<string, object>(),
                 state: new MultiPageTransactionTestsFlowState());
 
@@ -88,7 +88,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         {
             // Arrange
             var instance = Factory.MptxStateProvider.CreateInstance(
-                MultiPageTransactionTestsController.FlowName,
+                typeof(MultiPageTransactionTestsFlowState),
                 new Dictionary<string, object>(),
                 new MultiPageTransactionTestsFlowState());
 
@@ -109,7 +109,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         {
             // Arrange
             var instance = Factory.MptxStateProvider.CreateInstance(
-                MultiPageTransactionTestsController.FlowName,
+                typeof(MultiPageTransactionTestsFlowState),
                 new Dictionary<string, object>(),
                 new MultiPageTransactionTestsFlowState());
 
@@ -138,27 +138,25 @@ namespace Dfc.CourseDirectory.WebV2.Tests
     [Route("MultiPageTransactionTests")]
     public class MultiPageTransactionTestsController : Controller, IMptxController<MultiPageTransactionTestsFlowState>
     {
-        public const string FlowName = "MultiPageTransactionTests";
-
         public MptxInstanceContext<MultiPageTransactionTestsFlowState> Flow { get; set; }
 
         [StartsMptx]
         [HttpGet("starts")]
         public IActionResult Starts([FromServices] MptxManager mptxManager)
         {
-            var flow = mptxManager.CreateInstance(FlowName, typeof(MultiPageTransactionTestsFlowState));
+            var flow = mptxManager.CreateInstance(typeof(MultiPageTransactionTestsFlowState));
             return RedirectToAction(nameof(First)).WithMptxInstanceId(flow);
         }
 
-        [MptxAction(FlowName)]
+        [MptxAction]
         [HttpGet("first")]
         public IActionResult First() => Ok();
 
-        [MptxAction(FlowName)]
+        [MptxAction]
         [HttpGet("second")]
         public IActionResult Second() => Ok();
 
-        [MptxAction(FlowName)]
+        [MptxAction]
         [HttpGet("modelbinds")]
         public IActionResult ModelBinds(MptxInstanceContext<MultiPageTransactionTestsFlowState> flowState)
         {
@@ -166,12 +164,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             return Ok(flowState.InstanceId);
         }
 
-        [MptxAction(FlowName)]
+        [MptxAction]
         [HttpGet("modelbindswrongtype")]
         public IActionResult ModelBindsWrongType(
             MptxInstanceContext<MultiPageTransactionTestsDifferentFlowState> flowState) => Ok();
 
-        [MptxAction(FlowName)]
+        [MptxAction]
         [HttpGet("updatesstate")]
         public IActionResult UpdatesState(
             MptxInstanceContext<MultiPageTransactionTestsFlowState> flowState)
@@ -180,7 +178,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             return Ok();
         }
 
-        [MptxAction(FlowName)]
+        [MptxAction]
         [HttpGet("final")]
         public IActionResult Final(MptxInstanceContext<MultiPageTransactionTestsFlowState> flowState)
         {

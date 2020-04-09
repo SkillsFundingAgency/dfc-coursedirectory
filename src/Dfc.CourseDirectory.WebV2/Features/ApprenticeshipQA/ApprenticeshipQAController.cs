@@ -15,9 +15,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA
     [RequireFeatureFlag(FeatureFlags.ApprenticeshipQA)]
     public class ApprenticeshipQAController : Controller
     {
-        private const string ApprenticeshipAssessmentFlowName = "ApprenticeshipAssessment";
-        private const string ProviderAssessmentFlowName = "ProviderAssessment";
-
         private readonly IMediator _mediator;
 
         public ApprenticeshipQAController(IMediator mediator)
@@ -41,17 +38,17 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA
             [FromServices] ProviderAssessment.FlowModelInitializer flowModelInitializer)
         {
             var flowModel = await flowModelInitializer.Initialize(providerId);
-            var flow = mptxManager.CreateInstance(ProviderAssessmentFlowName, flowModel);
+            var flow = mptxManager.CreateInstance(flowModel);
             return RedirectToAction(nameof(ProviderAssessment))
                 .WithMptxInstanceId(flow);
         }
 
-        [MptxAction(ProviderAssessmentFlowName)]
+        [MptxAction]
         [HttpGet("provider-assessment")]
         public async Task<IActionResult> ProviderAssessment(ProviderAssessment.Query query) =>
             await _mediator.SendAndMapResponse(query, vm => View(vm));
 
-        [MptxAction(ProviderAssessmentFlowName)]
+        [MptxAction]
         [HttpPost("provider-assessment")]
         public async Task<IActionResult> ProviderAssessment(
             ProviderAssessment.Command command,
@@ -65,12 +62,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA
                         .WithMptxInstanceId(flow.InstanceId)));
         }
 
-        [MptxAction(ProviderAssessmentFlowName)]
+        [MptxAction]
         [HttpGet("provider-assessment-confirmation")]
         public async Task<IActionResult> ProviderAssessmentConfirmation(ProviderAssessment.ConfirmationQuery query) =>
             await _mediator.SendAndMapResponse(query, vm => View(vm));
 
-        [MptxAction(ProviderAssessmentFlowName)]
+        [MptxAction]
         [HttpPost("provider-assessment-confirmation")]
         public async Task<IActionResult> ProviderAssessmentConfirmation(
             ProviderAssessment.ConfirmationCommand command,
@@ -88,17 +85,17 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA
             [FromServices] ApprenticeshipAssessment.FlowModelInitializer flowModelInitializer)
         {
             var flowModel = await flowModelInitializer.Initialize(apprenticeshipId);
-            var flow = mptxManager.CreateInstance(ApprenticeshipAssessmentFlowName, flowModel);
+            var flow = mptxManager.CreateInstance(flowModel);
             return RedirectToAction(nameof(ApprenticeshipAssessment))
                 .WithMptxInstanceId(flow);
         }
 
-        [MptxAction(ApprenticeshipAssessmentFlowName)]
+        [MptxAction]
         [HttpGet("apprenticeship-assessment")]
         public async Task<IActionResult> ApprenticeshipAssessment(ApprenticeshipAssessment.Query query) =>
             await _mediator.SendAndMapResponse(query, vm => View(vm));
 
-        [MptxAction(ApprenticeshipAssessmentFlowName)]
+        [MptxAction]
         [HttpPost("apprenticeship-assessment")]
         public async Task<IActionResult> ApprenticeshipAssessment(
             ApprenticeshipAssessment.Command command,
@@ -112,12 +109,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA
                         .WithMptxInstanceId(flow.InstanceId)));
         }
 
-        [MptxAction(ApprenticeshipAssessmentFlowName)]
+        [MptxAction]
         [HttpGet("apprenticeship-assessment-confirmation")]
         public async Task<IActionResult> ApprenticeshipAssessmentConfirmation(ApprenticeshipAssessment.ConfirmationQuery query) =>
             await _mediator.SendAndMapResponse(query, vm => View(vm));
 
-        [MptxAction(ApprenticeshipAssessmentFlowName)]
+        [MptxAction]
         [HttpPost("apprenticeship-assessment-confirmation")]
         public async Task<IActionResult> ApprenticeshipAssessmentConfirmation(
             ApprenticeshipAssessment.ConfirmationCommand command,

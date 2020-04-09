@@ -881,7 +881,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 lastAssessedByUserId: User.UserId,
                 lastAssessedOn: Clock.UtcNow);
 
-            var mptxInstance = MptxManager.CreateInstance("ProviderAssessment", new FlowModel()
+            var mptxInstance = MptxManager.CreateInstance(new FlowModel()
             {
                 ProviderId = providerId
             });
@@ -1362,7 +1362,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 return await initializer.Initialize(providerId);
             });
 
-            return CreateMptxInstance<FlowModel>("ProviderAssessment", state);
+            return CreateMptxInstance<FlowModel>(state);
         }
     }
 }

@@ -50,9 +50,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         public Task InitializeAsync() => Factory.OnTestStartingAsync();
 
-        protected MptxInstanceContext<TState> CreateMptxInstance<TState>(string flowName, TState state)
+        protected MptxInstanceContext<TState> CreateMptxInstance<TState>(TState state)
             where TState : IMptxState =>
-            MptxManager.CreateInstance(flowName, state);
+            MptxManager.CreateInstance(state);
 
         protected MptxInstanceContext<TState> GetMptxInstance<TState>(string instanceId)
             where TState : IMptxState =>

@@ -21,7 +21,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsHelpdesk();
 
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+            var mptxInstance = CreateMptxInstance(new FlowModel());
 
             // Act
             var response = await HttpClient.GetAsync(
@@ -43,7 +43,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+            var mptxInstance = CreateMptxInstance(new FlowModel());
 
             // Act
             var response = await HttpClient.GetAsync(
@@ -63,7 +63,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.FE);
 
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+            var mptxInstance = CreateMptxInstance(new FlowModel());
 
             // Act
             var response = await HttpClient.GetAsync(
@@ -81,7 +81,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+            var mptxInstance = CreateMptxInstance(new FlowModel());
 
             // Act
             var response = await HttpClient.GetAsync(
@@ -105,7 +105,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
             var mptxInstance = CreateMptxInstance(
-                "NewApprenticeshipProvider",
                 new FlowModel()
                 {
                     ApprenticeshipLocationType = ApprenticeshipLocationType.EmployerBased
@@ -132,7 +131,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsHelpdesk();
 
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+            var mptxInstance = CreateMptxInstance(new FlowModel());
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("LocationType", "EmployerBased")
@@ -159,7 +158,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+            var mptxInstance = CreateMptxInstance(new FlowModel());
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("LocationType", "EmployerBased")
@@ -184,7 +183,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.FE);
 
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+            var mptxInstance = CreateMptxInstance(new FlowModel());
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("LocationType", "EmployerBased")
@@ -207,7 +206,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+            var mptxInstance = CreateMptxInstance(new FlowModel());
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .ToContent();
@@ -237,7 +236,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+            var mptxInstance = CreateMptxInstance(new FlowModel());
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("LocationType", locationType.ToString())

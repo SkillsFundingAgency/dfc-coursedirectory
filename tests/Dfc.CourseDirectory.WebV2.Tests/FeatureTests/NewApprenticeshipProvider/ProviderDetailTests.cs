@@ -24,7 +24,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsHelpdesk();
 
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+            var mptxInstance = CreateMptxInstance(new FlowModel());
 
             // Act
             var response = await HttpClient.GetAsync(
@@ -46,7 +46,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+            var mptxInstance = CreateMptxInstance(new FlowModel());
 
             // Act
             var response = await HttpClient.GetAsync(
@@ -66,7 +66,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+            var mptxInstance = CreateMptxInstance(new FlowModel());
 
             // Act
             var response = await HttpClient.GetAsync(
@@ -89,7 +89,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var flowModel = new FlowModel();
             flowModel.SetProviderDetails("<p>Existing marketing info</p>");
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", flowModel);
+            var mptxInstance = CreateMptxInstance(flowModel);
 
             // Act
             var response = await HttpClient.GetAsync(
@@ -114,7 +114,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+            var mptxInstance = CreateMptxInstance(new FlowModel());
 
             // Act
             var response = await HttpClient.GetAsync(
@@ -138,7 +138,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsHelpdesk();
 
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+            var mptxInstance = CreateMptxInstance(new FlowModel());
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("MarketingInformation", "<p>New marketing info</p>")
@@ -168,7 +168,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.FE);
 
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+            var mptxInstance = CreateMptxInstance(new FlowModel());
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("MarketingInformation", "<p>New marketing info</p>")
@@ -193,7 +193,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.FE);
 
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+            var mptxInstance = CreateMptxInstance(new FlowModel());
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("MarketingInformation", "<p>New marketing info</p>")
@@ -219,7 +219,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+            var mptxInstance = CreateMptxInstance(new FlowModel());
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("MarketingInformation", new string('x', 751))
@@ -248,7 +248,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+            var mptxInstance = CreateMptxInstance(new FlowModel());
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("MarketingInformation", "<p>New marketing info</p>")
@@ -283,7 +283,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var flowModel = new FlowModel();
             flowModel.SetProviderDetails("<p>New marketing info</p>");
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", flowModel);
+            var mptxInstance = CreateMptxInstance(flowModel);
 
             // Act
             var response = await HttpClient.GetAsync(
@@ -307,7 +307,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var flowModel = new FlowModel();
             flowModel.SetProviderDetails("<p>New marketing info</p>");
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", flowModel);
+            var mptxInstance = CreateMptxInstance(flowModel);
 
             // Act
             var response = await HttpClient.GetAsync(
@@ -329,7 +329,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var flowModel = new FlowModel();
             flowModel.SetProviderDetails("<p>New marketing info</p>");
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", flowModel);
+            var mptxInstance = CreateMptxInstance(flowModel);
 
             // Act
             var response = await HttpClient.GetAsync(
@@ -347,7 +347,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+            var mptxInstance = CreateMptxInstance(new FlowModel());
 
             // Act
             var response = await HttpClient.GetAsync(
@@ -370,7 +370,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var flowModel = new FlowModel();
             flowModel.SetProviderDetails("<p>New marketing info</p>");
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", flowModel);
+            var mptxInstance = CreateMptxInstance(flowModel);
 
             // Act
             var response = await HttpClient.GetAsync(
@@ -390,7 +390,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var flowModel = new FlowModel();
             flowModel.SetProviderDetails("<p>New marketing info</p>");
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", flowModel);
+            var mptxInstance = CreateMptxInstance(flowModel);
 
             var requestContent = new FormUrlEncodedContentBuilder().ToContent();
 
@@ -417,7 +417,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var flowModel = new FlowModel();
             flowModel.SetProviderDetails("<p>New marketing info</p>");
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", flowModel);
+            var mptxInstance = CreateMptxInstance(flowModel);
 
             var requestContent = new FormUrlEncodedContentBuilder().ToContent();
 
@@ -442,7 +442,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var flowModel = new FlowModel();
             flowModel.SetProviderDetails("<p>New marketing info</p>");
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", flowModel);
+            var mptxInstance = CreateMptxInstance(flowModel);
 
             var requestContent = new FormUrlEncodedContentBuilder().ToContent();
 
@@ -463,7 +463,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", new FlowModel());
+            var mptxInstance = CreateMptxInstance(new FlowModel());
 
             var requestContent = new FormUrlEncodedContentBuilder().ToContent();
 
@@ -486,7 +486,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             var flowModel = new FlowModel();
             flowModel.SetProviderDetails("<p>New marketing info</p>");
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", flowModel);
+            var mptxInstance = CreateMptxInstance(flowModel);
 
             var requestContent = new FormUrlEncodedContentBuilder().ToContent();
 
