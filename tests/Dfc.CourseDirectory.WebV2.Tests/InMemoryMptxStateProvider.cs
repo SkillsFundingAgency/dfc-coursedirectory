@@ -34,6 +34,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             object state,
             IReadOnlyDictionary<string, object> items)
         {
+            var instanceId = Guid.NewGuid().ToString();
+
             object parentState = null;
             Type parentStateType = null;
 
@@ -46,9 +48,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
                 parentState = parentEntry.State;
                 parentStateType = parentEntry.StateType;
-            }
 
-            var instanceId = Guid.NewGuid().ToString();
+                parentEntry.ChildInstanceIds.Add(instanceId);
+            }
 
             items ??= new Dictionary<string, object>();
 
@@ -57,7 +59,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                 StateType = stateType,
                 Items = items,
                 State = state,
-                ParentInstanceId = parentInstanceId
+                ParentInstanceId = parentInstanceId,
+                ChildInstanceIds = new HashSet<string>()
             };
             _instances.Add(instanceId, entry);
 
@@ -71,7 +74,18 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                 items);
         }
 
-        public void DeleteInstance(string instanceId) => _instances.Remove(instanceId);
+        public void DeleteInstance(string instanceId)
+        {
+            if (_instances.TryGetValue(instanceId, out var entry))
+            {
+                foreach (var child in entry.ChildInstanceIds)
+                {
+                    _instances.Remove(child);
+                }
+
+                _instances.Remove(instanceId);
+            }
+        }
 
         public MptxInstance GetInstance(string instanceId)
         {
@@ -115,6 +129,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             public IReadOnlyDictionary<string, object> Items { get; set; }
             public object State { get; set; }
             public string ParentInstanceId { get; set; }
+            public HashSet<string> ChildInstanceIds { get; set; }
         }
     }
 }
