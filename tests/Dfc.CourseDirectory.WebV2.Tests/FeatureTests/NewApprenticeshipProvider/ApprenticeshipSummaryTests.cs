@@ -42,7 +42,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 contactWebsite: "http://provider.com");
             flowModel.SetApprenticeshipLocationType(ApprenticeshipLocationType.EmployerBased);
             flowModel.SetApprenticeshipIsNational(true);
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", flowModel);
+            var mptxInstance = CreateMptxInstance(flowModel);
 
             // Act
             var response = await HttpClient.GetAsync(
@@ -79,7 +79,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 contactWebsite: "http://provider.com");
             flowModel.SetApprenticeshipLocationType(ApprenticeshipLocationType.EmployerBased);
             flowModel.SetApprenticeshipIsNational(true);
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", flowModel);
+            var mptxInstance = CreateMptxInstance(flowModel);
 
             // Act
             var response = await HttpClient.GetAsync(
@@ -114,7 +114,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 contactWebsite: "http://provider.com");
             flowModel.SetApprenticeshipLocationType(ApprenticeshipLocationType.EmployerBased);
             flowModel.SetApprenticeshipIsNational(true);
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", flowModel);
+            var mptxInstance = CreateMptxInstance(flowModel);
 
             // Act
             var response = await HttpClient.GetAsync(
@@ -133,7 +133,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
             var flowModel = new FlowModel();
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", flowModel);
+            var mptxInstance = CreateMptxInstance(flowModel);
 
             // Act
             var response = await HttpClient.GetAsync(
@@ -166,7 +166,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 contactWebsite: "http://provider.com");
             flowModel.SetApprenticeshipLocationType(ApprenticeshipLocationType.EmployerBased);
             flowModel.SetApprenticeshipIsNational(true);
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", flowModel);
+            var mptxInstance = CreateMptxInstance(flowModel);
 
             // Act
             var response = await HttpClient.GetAsync(
@@ -206,7 +206,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 contactWebsite: "http://provider.com");
             flowModel.SetApprenticeshipLocationType(ApprenticeshipLocationType.EmployerBased);
             flowModel.SetApprenticeshipIsNational(true);
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", flowModel);
+            var mptxInstance = CreateMptxInstance(flowModel);
 
             var requestContent = new FormUrlEncodedContentBuilder().ToContent();
 
@@ -246,7 +246,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 contactWebsite: "http://provider.com");
             flowModel.SetApprenticeshipLocationType(ApprenticeshipLocationType.EmployerBased);
             flowModel.SetApprenticeshipIsNational(true);
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", flowModel);
+            var mptxInstance = CreateMptxInstance(flowModel);
 
             var requestContent = new FormUrlEncodedContentBuilder().ToContent();
 
@@ -284,7 +284,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 contactWebsite: "http://provider.com");
             flowModel.SetApprenticeshipLocationType(ApprenticeshipLocationType.EmployerBased);
             flowModel.SetApprenticeshipIsNational(true);
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", flowModel);
+            var mptxInstance = CreateMptxInstance(flowModel);
 
             var requestContent = new FormUrlEncodedContentBuilder().ToContent();
 
@@ -306,7 +306,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
             var flowModel = new FlowModel();
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", flowModel);
+            var mptxInstance = CreateMptxInstance(flowModel);
 
             var requestContent = new FormUrlEncodedContentBuilder().ToContent();
 
@@ -342,7 +342,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 contactWebsite: "http://provider.com");
             flowModel.SetApprenticeshipLocationType(ApprenticeshipLocationType.EmployerBased);
             flowModel.SetApprenticeshipIsNational(true);
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", flowModel);
+            var mptxInstance = CreateMptxInstance(flowModel);
 
             Guid apprenticeshipId = default;
             CosmosDbQueryDispatcher.Callback<CreateApprenticeship, Success>(q => apprenticeshipId = q.Id);
@@ -413,7 +413,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 contactWebsite: "http://provider.com");
             flowModel.SetApprenticeshipLocationType(ApprenticeshipLocationType.EmployerBased);
             flowModel.SetApprenticeshipIsNational(true);
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", flowModel);
+            var mptxInstance = CreateMptxInstance(flowModel);
 
             Guid apprenticeshipId = default;
             CosmosDbQueryDispatcher.Callback<CreateApprenticeship, Success>(q => apprenticeshipId = q.Id);
@@ -461,7 +461,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 "E06000001",  // County Durham
                 "E10000009" // Dorset
             });
-            var mptxInstance = CreateMptxInstance("NewApprenticeshipProvider", flowModel);
+            var mptxInstance = CreateMptxInstance(flowModel);
 
             Guid apprenticeshipId = default;
             CosmosDbQueryDispatcher.Callback<CreateApprenticeship, Success>(q => apprenticeshipId = q.Id);

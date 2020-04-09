@@ -28,7 +28,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
         }
 
         public MptxInstance CreateInstance(
-            string flowName,
+            Type stateType,
             IReadOnlyDictionary<string, object> items,
             object state)
         {
@@ -38,7 +38,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
 
             var entry = new SessionEntry()
             {
-                FlowName = flowName,
+                StateType = stateType,
                 Items = items,
                 State = state
             };
@@ -47,7 +47,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             var key = GetSessionKey(instanceId);
             _httpContextAccessor.HttpContext.Session.Set(key, serialized);
 
-            var instance = new MptxInstance(flowName, instanceId, items, state);
+            var instance = new MptxInstance(stateType, instanceId, items, state);
             return instance;
         }
 
@@ -64,7 +64,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             if (_httpContextAccessor.HttpContext.Session.TryGetValue(key, out var serialized) &&
                 TryDeserialize(serialized, out var entry))
             {
-                var instance = new MptxInstance(entry.FlowName, instanceId, entry.Items, entry.State);
+                var instance = new MptxInstance(entry.StateType, instanceId, entry.Items, entry.State);
                 return instance;
             }
             else
@@ -133,7 +133,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
 
         private class SessionEntry
         {
-            public string FlowName { get; set; }
+            public Type StateType { get; set; }
             public IReadOnlyDictionary<string, object> Items { get; set; }
             public object State { get; set; }
         }

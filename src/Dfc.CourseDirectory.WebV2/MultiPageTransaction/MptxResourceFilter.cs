@@ -28,8 +28,6 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
 
             if (ffiid.Count > 0)
             {
-                var flowName = mptxActionAttribute.FlowName;
-
                 var mptxManager = context.HttpContext.RequestServices.GetRequiredService<MptxManager>();
                 var instanceContext = mptxManager.GetInstance(ffiid);
 
@@ -40,11 +38,6 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
                         ViewName = "GenericError",
                         StatusCode = 404
                     };
-                    return;
-                }
-                else if (instanceContext.FlowName != flowName)
-                {
-                    context.Result = new BadRequestResult();
                     return;
                 }
                 

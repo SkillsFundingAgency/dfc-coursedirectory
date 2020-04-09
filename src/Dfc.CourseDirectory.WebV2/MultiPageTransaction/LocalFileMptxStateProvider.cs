@@ -24,7 +24,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             _serializerSettings = Settings.CreateSerializerSettings();
         }
 
-        public MptxInstance CreateInstance(string flowName, IReadOnlyDictionary<string, object> items, object state)
+        public MptxInstance CreateInstance(Type stateType, IReadOnlyDictionary<string, object> items, object state)
         {
             var instanceId = CreateInstanceId();
 
@@ -32,14 +32,14 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
 
             var entry = new DbFileEntry()
             {
-                FlowName = flowName,
+                StateType = stateType,
                 Items = items,
                 State = state
             };
 
             UpdateDbFile(dbFile => dbFile.Entries.Add(instanceId, entry));
 
-            var instance = new MptxInstance(flowName, instanceId, items, state);
+            var instance = new MptxInstance(stateType, instanceId, items, state);
             return instance;
         }
 
@@ -56,7 +56,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
                 return null;
             }
 
-            return new MptxInstance(entry.FlowName, instanceId, entry.Items, entry.State);
+            return new MptxInstance(entry.StateType, instanceId, entry.Items, entry.State);
         }
 
         public void UpdateInstanceState(string instanceId, Func<object, object> update) =>
@@ -129,7 +129,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
 
         private class DbFileEntry
         {
-            public string FlowName { get; set; }
+            public Type StateType { get; set; }
             public IReadOnlyDictionary<string, object> Items { get; set; }
             public object State { get; set; }
         }
