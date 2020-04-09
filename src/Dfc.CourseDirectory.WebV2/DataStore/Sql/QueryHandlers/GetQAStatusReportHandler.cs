@@ -31,7 +31,12 @@ LEFT JOIN (
     GROUP BY ProviderId
 ) LatestUnableToComplete ON p.ProviderId = LatestUnableToComplete.ProviderId
 LEFT JOIN Pttcd.ApprenticeshipQAUnableToCompleteInfo reasons on reasons.ApprenticeshipQAUnableToCompleteId = LatestUnableToComplete.ApprenticeshipQAUnableToCompleteId
-LEFT JOIN [Pttcd].[ApprenticeshipQASubmissionProviderAssessments] assessment on LatestSubmissions.ApprenticeshipQASubmissionId = assessment.ApprenticeshipQASubmissionId
+LEFT JOIN (
+    SELECT ApprenticeshipQASubmissionId, MAX(ApprenticeshipQASubmissionProviderAssessmentsId) ApprenticeshipQASubmissionProviderAssessmentsId
+    FROM Pttcd.ApprenticeshipQASubmissionProviderAssessments
+    GROUP BY ApprenticeshipQASubmissionId
+) LatestAssessment ON LatestAssessment.ApprenticeshipQASubmissionId = LatestSubmissions.ApprenticeshipQASubmissionId
+LEFT JOIN [Pttcd].ApprenticeshipQASubmissionProviderAssessments assessment on assessment.ApprenticeshipQASubmissionProviderAssessmentsId = LatestAssessment.ApprenticeshipQASubmissionProviderAssessmentsId
 LEFT JOIN [Pttcd].[Users] users on users.UserId=LatestSubmissions.SubmittedByUserId
 WHERE p.ApprenticeshipQAStatus <> 1";
 
