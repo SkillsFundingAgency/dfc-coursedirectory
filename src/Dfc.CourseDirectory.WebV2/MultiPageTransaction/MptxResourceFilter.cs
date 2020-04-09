@@ -17,7 +17,11 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
                 .MethodInfo
                 .GetCustomAttribute<MptxActionAttribute>();
 
-            if (mptxActionAttribute == null)
+            var startsMptxAttribute = controllerActionDescriptor
+                .MethodInfo
+                .GetCustomAttribute<StartsMptxAttribute>();
+
+            if (mptxActionAttribute == null && startsMptxAttribute == null)
             {
                 await next();
                 return;

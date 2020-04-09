@@ -24,7 +24,11 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             _serializerSettings = Settings.CreateSerializerSettings();
         }
 
-        public MptxInstance CreateInstance(Type stateType, IReadOnlyDictionary<string, object> items, object state)
+        public MptxInstance CreateInstance(
+            Type stateType,
+            string parentInstanceId,
+            object state,
+            IReadOnlyDictionary<string, object> items)
         {
             var instanceId = CreateInstanceId();
 
@@ -34,33 +38,81 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             {
                 StateType = stateType,
                 Items = items,
-                State = state
+                State = state,
+                ParentInstanceId = parentInstanceId
             };
 
-            UpdateDbFile(dbFile => dbFile.Entries.Add(instanceId, entry));
+            object parentState = null;
+            Type parentStateType = null;
 
-            var instance = new MptxInstance(stateType, instanceId, items, state);
-            return instance;
+            WithDbFile(dbFile =>
+            {
+                if (parentInstanceId != null)
+                {
+                    if (dbFile.Entries.TryGetValue(parentInstanceId, out var parentEntry))
+                    {
+                        parentState = parentEntry.State;
+                        parentStateType = parentEntry.StateType;
+                    }
+                    else
+                    {
+                        throw new InvalidParentException(parentInstanceId);
+                    }
+                }
+
+                dbFile.Entries.Add(instanceId, entry);
+            });
+
+            return new MptxInstance(
+                instanceId,
+                stateType,
+                state,
+                parentInstanceId,
+                parentStateType,
+                parentState,
+                items);
         }
 
         public void DeleteInstance(string instanceId) =>
-            UpdateDbFile(dbFile => dbFile.Entries.Remove(instanceId));
+            WithDbFile(dbFile => dbFile.Entries.Remove(instanceId));
 
         public MptxInstance GetInstance(string instanceId)
         {
             DbFileEntry entry = null;
-            UpdateDbFile(dbFile => dbFile.Entries.TryGetValue(instanceId, out entry));
 
-            if (entry == null)
+            object parentState = null;
+            Type parentStateType = null;
+
+            WithDbFile(dbFile =>
+            {
+                dbFile.Entries.TryGetValue(instanceId, out entry);
+
+                if (entry != null && entry.ParentInstanceId != null)
+                {
+                    var parentEntry = dbFile.Entries[entry.ParentInstanceId];
+
+                    parentState = parentEntry.State;
+                    parentStateType = parentEntry.StateType;
+                }
+            });
+
+            if (entry == null || (entry.ParentInstanceId != null && parentState == null))
             {
                 return null;
             }
 
-            return new MptxInstance(entry.StateType, instanceId, entry.Items, entry.State);
+            return new MptxInstance(
+                instanceId,
+                entry.StateType,
+                entry.State,
+                entry.ParentInstanceId,
+                parentStateType,
+                parentState,
+                entry.Items);
         }
 
         public void UpdateInstanceState(string instanceId, Func<object, object> update) =>
-            UpdateDbFile(dbFile => update(dbFile.Entries[instanceId].State));
+            WithDbFile(dbFile => update(dbFile.Entries[instanceId].State));
 
         private static string CreateInstanceId() => Guid.NewGuid().ToString();
 
@@ -74,7 +126,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             }
         }
 
-        private void UpdateDbFile(Action<DbFile> updateDb)
+        private void WithDbFile(Action<DbFile> updateDb)
         {
             DbFile dbFile = null;
 
@@ -132,6 +184,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             public Type StateType { get; set; }
             public IReadOnlyDictionary<string, object> Items { get; set; }
             public object State { get; set; }
+            public string ParentInstanceId { get; set; }
         }
     }
 }

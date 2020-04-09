@@ -2,6 +2,9 @@
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.MultiPageTransaction
@@ -60,6 +63,30 @@ namespace Dfc.CourseDirectory.WebV2.Tests.MultiPageTransaction
             var content = await response.Content.ReadAsStringAsync();
             Assert.Equal("42", content);
         }
+
+        [Fact]
+        public async Task InstanceContextWithParent_BindsSuccessfully()
+        {
+            // Arrange
+            var parentInstance = MptxManager.CreateInstance(
+                new MptxInstanceContextModelBinderTestsFlowState() { Foo = 42 });
+
+            var instance = MptxManager.CreateInstance(
+                parentInstance,
+                new MptxInstanceContextModelBinderTestsChildFlowState() { Bar = 69 });
+
+            // Act
+            var response = await HttpClient.GetAsync(
+                $"MptxInstanceContextModelBinderTests/child?ffiid={instance.InstanceId}");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+            var content = await response.Content.ReadAsStringAsync();
+            var contentJson = JObject.Parse(content);
+            Assert.Equal(42, contentJson["foo"]);
+            Assert.Equal(69, contentJson["bar"]);
+        }
     }
 
     [Route("MptxInstanceContextModelBinderTests")]
@@ -79,6 +106,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests.MultiPageTransaction
         [HttpGet("derived")]
         public IActionResult Derived(MptxInstanceContext<IMptxInstanceContextModelBinderTestsFlowState> flow) =>
             Content(flow.State.Foo.ToString());
+
+        [MptxAction]
+        [HttpGet("child")]
+        public IActionResult Child(MptxInstanceContext<MptxInstanceContextModelBinderTestsChildFlowState, MptxInstanceContextModelBinderTestsFlowState> flow) =>
+            Json(new
+            {
+                flow.ParentState.Foo,
+                flow.State.Bar
+            });
     }
 
     public interface IMptxInstanceContextModelBinderTestsFlowState : IMptxState
@@ -93,5 +129,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.MultiPageTransaction
 
     public class MptxInstanceContextModelBinderTestsDifferentFlowState : IMptxState
     {
+    }
+
+    public class MptxInstanceContextModelBinderTestsChildFlowState : IMptxState<MptxInstanceContextModelBinderTestsFlowState>
+    {
+        public int Bar { get; set; }
     }
 }
