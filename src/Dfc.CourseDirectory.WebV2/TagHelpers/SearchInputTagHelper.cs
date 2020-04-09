@@ -14,9 +14,12 @@ namespace Dfc.CourseDirectory.WebV2.TagHelpers
         {
         }
 
-        protected override TagBuilder GenerateElement(FormGroupBuilder builder, FormGroupElementContext context)
+        protected override TagBuilder GenerateElement(
+            TagHelperContext context,
+            FormGroupBuilder builder,
+            FormGroupElementContext elementContext)
         {
-            var input = base.GenerateElement(builder, context);
+            var input = base.GenerateElement(context, builder, elementContext);
 
             var wrapper = new TagBuilder("div");
             wrapper.AddCssClass("pttcd-c-search-input");
