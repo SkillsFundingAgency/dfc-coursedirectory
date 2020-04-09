@@ -83,7 +83,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 submissionId,
                 providerAssessmentPassed: true,
                 apprenticeshipAssessmentsPassed: null,
-                passed: null,
+                passed: true,
                 lastAssessedByUserId: User.UserId.ToString(),
                 lastAssessedOn: Clock.UtcNow);
 
@@ -266,7 +266,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 submissionId,
                 providerAssessmentPassed: false,
                 apprenticeshipAssessmentsPassed: null,
-                passed: null,
+                passed: false,
                 lastAssessedByUserId: User.UserId.ToString(),
                 lastAssessedOn: failedAssessmentOn);
 
