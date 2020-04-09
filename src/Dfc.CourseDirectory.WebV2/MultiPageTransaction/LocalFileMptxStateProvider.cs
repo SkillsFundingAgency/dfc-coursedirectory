@@ -39,7 +39,8 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
                 StateType = stateType,
                 Items = items,
                 State = state,
-                ParentInstanceId = parentInstanceId
+                ParentInstanceId = parentInstanceId,
+                ChildInstanceIds = new HashSet<string>()
             };
 
             object parentState = null;
@@ -53,6 +54,8 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
                     {
                         parentState = parentEntry.State;
                         parentStateType = parentEntry.StateType;
+
+                        parentEntry.ChildInstanceIds.Add(instanceId);
                     }
                     else
                     {
@@ -73,8 +76,22 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
                 items);
         }
 
-        public void DeleteInstance(string instanceId) =>
-            WithDbFile(dbFile => dbFile.Entries.Remove(instanceId));
+        public void DeleteInstance(string instanceId) => WithDbFile(
+            dbFile =>
+            {
+                if (dbFile.Entries.TryGetValue(instanceId, out var entry))
+                {
+                    if (entry.ChildInstanceIds != null)
+                    {
+                        foreach (var child in entry.ChildInstanceIds)
+                        {
+                            dbFile.Entries.Remove(child);
+                        }
+                    }
+
+                    dbFile.Entries.Remove(instanceId);
+                }
+            });
 
         public MptxInstance GetInstance(string instanceId)
         {
@@ -185,6 +202,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             public IReadOnlyDictionary<string, object> Items { get; set; }
             public object State { get; set; }
             public string ParentInstanceId { get; set; }
+            public HashSet<string> ChildInstanceIds { get; set; }
         }
     }
 }

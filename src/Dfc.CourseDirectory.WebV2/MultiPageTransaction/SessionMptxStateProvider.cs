@@ -33,12 +33,15 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             object state,
             IReadOnlyDictionary<string, object> items)
         {
+            var instanceId = CreateInstanceId();
+
             object parentState = null;
             Type parentStateType = null;
 
             if (parentInstanceId != null)
             {
-                var parentEntry = GetEntry(GetSessionKey(parentInstanceId));
+                var parentKey = GetSessionKey(parentInstanceId);
+                var parentEntry = GetEntry(parentKey);
 
                 if (parentEntry == null)
                 {
@@ -47,9 +50,12 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
 
                 parentState = parentEntry.State;
                 parentStateType = parentEntry.StateType;
-            }
 
-            var instanceId = CreateInstanceId();
+                parentEntry.ChildInstanceIds ??= new HashSet<string>();
+                parentEntry.ChildInstanceIds.Add(instanceId);
+
+                SetEntry(parentKey, parentEntry);
+            }
 
             items ??= new Dictionary<string, object>();
 
@@ -58,12 +64,12 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
                 StateType = stateType,
                 Items = items,
                 State = state,
-                ParentInstanceId = parentInstanceId
+                ParentInstanceId = parentInstanceId,
+                ChildInstanceIds = new HashSet<string>()
             };
-            var serialized = Serialize(entry);
 
             var key = GetSessionKey(instanceId);
-            _httpContextAccessor.HttpContext.Session.Set(key, serialized);
+            SetEntry(key, entry);
 
             return new MptxInstance(
                 instanceId,
@@ -77,8 +83,24 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
 
         public void DeleteInstance(string instanceId)
         {
+            var session = _httpContextAccessor.HttpContext.Session;
+
             var key = GetSessionKey(instanceId);
-            _httpContextAccessor.HttpContext.Session.Remove(key);
+            var entry = GetEntry(key);
+
+            if (entry != null)
+            {
+                if (entry.ChildInstanceIds != null)
+                {
+                    foreach (var child in entry.ChildInstanceIds)
+                    {
+                        var childKey = GetSessionKey(child);
+                        session.Remove(childKey);
+                    }
+                }
+
+                session.Remove(key);
+            }
         }
 
         public MptxInstance GetInstance(string instanceId)
@@ -123,8 +145,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             {
                 entry.State = update(entry.State);
 
-                var reserialized = Serialize(entry);
-                _httpContextAccessor.HttpContext.Session.Set(key, reserialized);
+                SetEntry(key, entry);
             }
             else
             {
@@ -155,7 +176,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
 
         private SessionEntry GetEntry(string key)
         {
-            if(_httpContextAccessor.HttpContext.Session.TryGetValue(key, out var serialized) &&
+            if (_httpContextAccessor.HttpContext.Session.TryGetValue(key, out var serialized) &&
                 TryDeserialize(serialized, out var entry))
             {
                 return entry;
@@ -164,6 +185,12 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             {
                 return null;
             }
+        }
+
+        private void SetEntry(string key, SessionEntry entry)
+        {
+            var serialized = Serialize(entry);
+            _httpContextAccessor.HttpContext.Session.Set(key, serialized);
         }
 
         private bool TryDeserialize(byte[] bytes, out SessionEntry entry)
@@ -191,6 +218,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             public IReadOnlyDictionary<string, object> Items { get; set; }
             public object State { get; set; }
             public string ParentInstanceId { get; set; }
+            public HashSet<string> ChildInstanceIds { get; set; }
         }
     }
 }
