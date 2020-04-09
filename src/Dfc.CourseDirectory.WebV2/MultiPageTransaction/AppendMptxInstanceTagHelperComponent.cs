@@ -9,9 +9,9 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
     {
         private const string AttributeName = "append-mptx-id";
 
-        private readonly MptxInstanceContextProvider _mptxInstanceContextProvider;
+        private readonly MptxInstanceProvider _mptxInstanceContextProvider;
 
-        public AppendMptxInstanceTagHelperComponent(MptxInstanceContextProvider mptxInstanceContextProvider)
+        public AppendMptxInstanceTagHelperComponent(MptxInstanceProvider mptxInstanceContextProvider)
         {
             _mptxInstanceContextProvider = mptxInstanceContextProvider;
         }
@@ -23,13 +23,13 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
                 return;
             }
 
-            var mptxInstanceContext = _mptxInstanceContextProvider.GetContext();
-            if (mptxInstanceContext == null)
+            var mptxInstance = _mptxInstanceContextProvider.GetInstance();
+            if (mptxInstance == null)
             {
                 throw new InvalidOperationException("No active MPTX instance.");
             }
 
-            var mptxInstanceId = mptxInstanceContext.InstanceId;
+            var mptxInstanceId = mptxInstance.InstanceId;
 
             if (output.Attributes.ContainsName("href"))
             {

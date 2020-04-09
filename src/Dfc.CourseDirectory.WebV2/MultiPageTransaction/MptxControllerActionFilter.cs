@@ -26,10 +26,10 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
                 return;
             }
 
-            var instanceContextProvider = context.HttpContext.RequestServices
-                    .GetRequiredService<MptxInstanceContextProvider>();
+            var instanceProvider = context.HttpContext.RequestServices.GetRequiredService<MptxInstanceProvider>();
+            var instanceContextFactory = context.HttpContext.RequestServices.GetRequiredService<MptxInstanceContextFactory>();
 
-            var instance = instanceContextProvider.GetContext();
+            var instance = instanceProvider.GetInstance();
 
             if (instance == null)
             {
@@ -43,8 +43,10 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
 
                 if (closedStateType == instance.StateType)
                 {
+                    var instanceContext = instanceContextFactory.CreateContext(instance, closedStateType);
+
                     var setInstanceMethod = t.GetProperty("Flow").SetMethod;
-                    setInstanceMethod.Invoke(controller, new[] { instance });
+                    setInstanceMethod.Invoke(controller, new[] { instanceContext });
 
                     return;
                 }

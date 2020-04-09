@@ -28,15 +28,17 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
         {
             var stateType = bindingContext.ModelType.GetGenericArguments()[0];
 
-            var instanceContextProvider = bindingContext.HttpContext.RequestServices.GetRequiredService<MptxInstanceContextProvider>();
-            var instanceContext = instanceContextProvider.GetContext();
+            var instanceProvider = bindingContext.HttpContext.RequestServices.GetRequiredService<MptxInstanceProvider>();
+            var instanceContextFactory = bindingContext.HttpContext.RequestServices.GetRequiredService<MptxInstanceContextFactory>();
 
-            if (instanceContext == null)
+            var instance = instanceProvider.GetInstance();
+
+            if (instance == null)
             {
                 bindingContext.ModelState.AddModelError(bindingContext.ModelName, "No active MPTX instance.");
                 bindingContext.Result = ModelBindingResult.Failed();
             }
-            else if (stateType != instanceContext.State.GetType())
+            else if (!stateType.IsAssignableFrom(instance.StateType))
             {
                 bindingContext.ModelState.AddModelError(
                     bindingContext.ModelName,
@@ -45,7 +47,8 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             }
             else
             {
-                bindingContext.Result = ModelBindingResult.Success(instanceContext);
+                var context = instanceContextFactory.CreateContext(instance, stateType);
+                bindingContext.Result = ModelBindingResult.Success(context);
             }
 
             return Task.CompletedTask;

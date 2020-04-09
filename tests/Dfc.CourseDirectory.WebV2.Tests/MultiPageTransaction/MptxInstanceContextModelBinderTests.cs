@@ -14,7 +14,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.MultiPageTransaction
         }
 
         [Fact]
-        public async Task InstanceContext_BoundSuccessfully()
+        public async Task InstanceContext_BindsSuccessfully()
         {
             // Arrange
             var instance = MptxManager.CreateInstance(new MptxInstanceContextModelBinderTestsFlowState() { Foo = 42 });
@@ -43,6 +43,23 @@ namespace Dfc.CourseDirectory.WebV2.Tests.MultiPageTransaction
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
+
+        [Fact]
+        public async Task InstanceContextForDerivedType_BindsSuccessfully()
+        {
+            // Arrange
+            var instance = MptxManager.CreateInstance(new MptxInstanceContextModelBinderTestsFlowState() { Foo = 42 });
+
+            // Act
+            var response = await HttpClient.GetAsync(
+                $"MptxInstanceContextModelBinderTests/derived?ffiid={instance.InstanceId}");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+            var content = await response.Content.ReadAsStringAsync();
+            Assert.Equal("42", content);
+        }
     }
 
     [Route("MptxInstanceContextModelBinderTests")]
@@ -57,9 +74,19 @@ namespace Dfc.CourseDirectory.WebV2.Tests.MultiPageTransaction
         [HttpGet("wrong-state-type")]
         public IActionResult WrongStateType(MptxInstanceContext<MptxInstanceContextModelBinderTestsDifferentFlowState> flow) =>
             Ok();
+
+        [MptxAction]
+        [HttpGet("derived")]
+        public IActionResult Derived(MptxInstanceContext<IMptxInstanceContextModelBinderTestsFlowState> flow) =>
+            Content(flow.State.Foo.ToString());
     }
 
-    public class MptxInstanceContextModelBinderTestsFlowState : IMptxState
+    public interface IMptxInstanceContextModelBinderTestsFlowState : IMptxState
+    {
+        int Foo { get; set; }
+    }
+
+    public class MptxInstanceContextModelBinderTestsFlowState : IMptxInstanceContextModelBinderTestsFlowState
     {
         public int Foo { get; set; }
     }
