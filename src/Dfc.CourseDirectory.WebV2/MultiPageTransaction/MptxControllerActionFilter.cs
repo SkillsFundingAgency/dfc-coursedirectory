@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Reflection;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -20,16 +21,37 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
                 .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IMptxController<>))
                 .ToList();
 
-            if (mptxControllerClosedTypes.Count == 1)
+            if (mptxControllerClosedTypes.Count == 0)
             {
-                var instanceContextProvider = context.HttpContext.RequestServices
+                return;
+            }
+
+            var instanceContextProvider = context.HttpContext.RequestServices
                     .GetRequiredService<MptxInstanceContextProvider>();
 
-                var instance = instanceContextProvider.GetContext();
+            var instance = instanceContextProvider.GetContext();
 
-                var setInstanceMethod = mptxControllerClosedTypes.Single().GetProperty("Flow").SetMethod;
-                setInstanceMethod.Invoke(controller, new[] { instance });
+            if (instance == null)
+            {
+                return;
             }
+
+            // Look for an implementation of IMptxController<T> where T matches state type
+            foreach (var t in mptxControllerClosedTypes)
+            {
+                var closedStateType = t.GetGenericArguments()[0];
+
+                if (closedStateType == instance.StateType)
+                {
+                    var setInstanceMethod = t.GetProperty("Flow").SetMethod;
+                    setInstanceMethod.Invoke(controller, new[] { instance });
+
+                    return;
+                }
+            }
+
+            // No implementation of IMptxController<T> for given state type - error
+            context.Result = new StatusCodeResult(400);
         }
     }
 }
