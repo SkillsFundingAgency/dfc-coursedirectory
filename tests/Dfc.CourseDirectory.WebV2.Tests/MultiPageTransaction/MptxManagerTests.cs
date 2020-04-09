@@ -4,7 +4,7 @@ using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
-namespace Dfc.CourseDirectory.WebV2.Tests
+namespace Dfc.CourseDirectory.WebV2.Tests.MultiPageTransaction
 {
     public class MptxManagerTests
     {
