@@ -32,7 +32,12 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             IReadOnlyDictionary<string, object> contextItems = null)
             where TState : IMptxState
         {
-            return (MptxInstanceContext<TState>)CreateInstance(typeof(TState), state, contextItems);
+            return (MptxInstanceContext<TState>)CreateInstance(
+                typeof(TState),
+                parentInstanceId: null,
+                parentStateType: null,
+                state,
+                contextItems);
         }
 
         public MptxInstanceContext CreateInstance(
@@ -48,11 +53,87 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
 
             var newState = CreateNewState(stateType);
 
-            return CreateInstance(stateType, newState, contextItems);
+            return CreateInstance(stateType, parentInstanceId: null, parentStateType: null, newState, contextItems);
+        }
+
+        public MptxInstanceContext<TState, TParentState> CreateInstance<TState, TParentState>(
+            string parentInstanceId,
+            IReadOnlyDictionary<string, object> contextItems = null)
+            where TState : IMptxState<TParentState>
+            where TParentState : IMptxState
+        {
+            return (MptxInstanceContext<TState, TParentState>)CreateInstance(
+                typeof(TState),
+                parentInstanceId,
+                typeof(TParentState),
+                contextItems);
+        }
+
+        public MptxInstanceContext<TState, TParentState> CreateInstance<TState, TParentState>(
+            MptxInstanceContext<TParentState> parent,
+            IReadOnlyDictionary<string, object> contextItems = null)
+            where TState : IMptxState<TParentState>
+            where TParentState : IMptxState
+        {
+            return (MptxInstanceContext<TState, TParentState>)CreateInstance(
+                typeof(TState),
+                parent.InstanceId,
+                typeof(TParentState),
+                contextItems);
+        }
+
+        public MptxInstanceContext<TState, TParentState> CreateInstance<TState, TParentState>(
+            string parentInstanceId,
+            TState state,
+            IReadOnlyDictionary<string, object> contextItems = null)
+            where TState : IMptxState<TParentState>
+            where TParentState : IMptxState
+        {
+            return (MptxInstanceContext<TState, TParentState>)CreateInstance(
+                typeof(TState),
+                parentInstanceId,
+                typeof(TParentState),
+                state,
+                contextItems);
+        }
+
+        public MptxInstanceContext<TState, TParentState> CreateInstance<TState, TParentState>(
+            MptxInstanceContext<TParentState> parent,
+            TState state,
+            IReadOnlyDictionary<string, object> contextItems = null)
+            where TState : IMptxState<TParentState>
+            where TParentState : IMptxState
+        {
+            return (MptxInstanceContext<TState, TParentState>)CreateInstance(
+                typeof(TState),
+                parent.InstanceId,
+                typeof(TParentState),
+                state,
+                contextItems);
+        }
+
+        public MptxInstanceContext CreateInstance(
+            Type stateType,
+            string parentInstanceId,
+            Type parentStateType,
+            IReadOnlyDictionary<string, object> contextItems = null)
+        {
+            if (!typeof(IMptxState).IsAssignableFrom(stateType))
+            {
+                throw new ArgumentException(
+                    $"State type must implement {typeof(IMptxState).FullName}.",
+                    nameof(stateType));
+            }
+
+            var newState = CreateNewState(stateType);
+
+            return CreateInstance(stateType, parentInstanceId, parentStateType, newState, contextItems);
         }
 
         private MptxInstanceContext CreateInstance(
             Type stateType,
+            string parentInstanceId,
+            Type parentStateType,
             object state,
             IReadOnlyDictionary<string, object> contextItems = null)
         {
@@ -61,10 +142,9 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
                 throw new ArgumentNullException(nameof(state));
             }
 
-            var instance = _stateProvider.CreateInstance(stateType, contextItems, state);
+            var instance = _stateProvider.CreateInstance(stateType, parentInstanceId, state, contextItems);
 
-            var instanceContext = _instanceContextFactory.CreateContext(instance, stateType);
-            return instanceContext;
+            return _instanceContextFactory.CreateContext(instance, stateType, parentStateType);
         }
 
         public MptxInstanceContext GetInstance(string instanceId)
@@ -76,7 +156,11 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
                 return null;
             }
 
-            return _instanceContextFactory.CreateContext(instance, instance.StateType);
+            var parentStateType = instance.ParentInstanceId != null ?
+                instance.ParentStateType :
+                null;
+
+            return _instanceContextFactory.CreateContext(instance, instance.StateType, parentStateType);
         }
 
         private object CreateNewState(Type stateType) =>

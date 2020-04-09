@@ -6,20 +6,32 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
     public class MptxInstance
     {
         public MptxInstance(
-            Type stateType,
             string instanceId,
-            IReadOnlyDictionary<string, object> items,
-            object state)
+            Type stateType,
+            object state,
+            string parentInstanceId,
+            Type parentStateType,
+            object parentState,
+            IReadOnlyDictionary<string, object> items)
         {
             StateType = stateType ?? throw new ArgumentNullException(nameof(stateType));
             InstanceId = instanceId ?? throw new ArgumentNullException(nameof(instanceId));
             Items = items ?? throw new ArgumentNullException(nameof(items));
             State = state ?? throw new ArgumentNullException(nameof(state));
+            ParentInstanceId = parentInstanceId;
+            ParentState = parentState;
+            ParentStateType = parentStateType;
         }
 
         public string InstanceId { get; }
 
         public IReadOnlyDictionary<string, object> Items { get; }
+
+        public string ParentInstanceId { get; }
+
+        public object ParentState { get; }
+
+        public Type ParentStateType { get; }
 
         public object State { get; }
 
