@@ -30,7 +30,7 @@ namespace Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries
         public Guid? VenueId { get; set; }
         public bool? National { get; set; }
         public ApprenticeshipLocationAddress Address { get; set; }
-        public ApprenticeshipDeliveryMode DeliveryModes { get; set; }
+        public ApprenticeshipDeliveryModes DeliveryModes { get; set; }
         public string Name { get; set; }
         public string Phone { get; set; }
         public IEnumerable<string> Regions { get; set; }
@@ -42,7 +42,7 @@ namespace Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries
         {
             Id = Guid.NewGuid(),
             National = true,
-            DeliveryModes = ApprenticeshipDeliveryMode.EmployerAddress,
+            DeliveryModes = ApprenticeshipDeliveryModes.EmployerAddress,
             Regions = Array.Empty<string>(),
             ApprenticeshipLocationType = ApprenticeshipLocationType.EmployerBased
         };
@@ -51,7 +51,7 @@ namespace Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries
         {
             Id = Guid.NewGuid(),
             National = false,
-            DeliveryModes = ApprenticeshipDeliveryMode.EmployerAddress,
+            DeliveryModes = ApprenticeshipDeliveryModes.EmployerAddress,
             Regions = regionIds,
             ApprenticeshipLocationType = ApprenticeshipLocationType.EmployerBased
         };
