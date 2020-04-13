@@ -12,6 +12,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb
         public InMemoryDocumentCollection<Framework> Frameworks { get; } = new InMemoryDocumentCollection<Framework>();
         public InMemoryDocumentCollection<Provider> Providers { get; } = new InMemoryDocumentCollection<Provider>();
         public InMemoryDocumentCollection<Standard> Standards { get; } = new InMemoryDocumentCollection<Standard>();
+        public InMemoryDocumentCollection<Venue> Venues { get; } = new InMemoryDocumentCollection<Venue>();
 
         public void Clear()
         {
@@ -19,6 +20,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb
             Frameworks.Clear();
             Providers.Clear();
             Standards.Clear();
+            Venues.Clear();
         }
     }
 
