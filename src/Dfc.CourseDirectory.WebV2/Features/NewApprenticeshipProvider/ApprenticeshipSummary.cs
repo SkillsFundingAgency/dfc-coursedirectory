@@ -154,13 +154,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
 
             async Task<IEnumerable<CreateApprenticeshipLocation>> CreateLocations(int providerUkprn)
             {
-                var providerVenues = await _cosmosDbQueryDispatcher.ExecuteQuery(
-                    new GetAllVenuesForProvider()
-                    {
-                        ProviderUkprn = providerUkprn
-                    });
-
-                List<CreateApprenticeshipLocation> locations = new List<CreateApprenticeshipLocation>();
+                var locations = new List<CreateApprenticeshipLocation>();
 
                 var locationType = _flow.State.ApprenticeshipLocationType.Value;
 
@@ -173,15 +167,29 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
 
                 if (locationType.HasFlag(ApprenticeshipLocationType.ClassroomBased))
                 {
+                    var providerVenues = await _cosmosDbQueryDispatcher.ExecuteQuery(
+                        new GetAllVenuesForProvider()
+                        {
+                            ProviderUkprn = providerUkprn
+                        });
+
                     locations.AddRange(_flow.State.ApprenticeshipClassroomLocations.Select(l =>
                     {
                         var venue = providerVenues.Single(v => v.Id == l.Value.VenueId);
+
+                        // REVIEW: This is likely a data modeling error;
+                        // duplicating here to ensure legacy UI works
+                        var deliveryModes = l.Value.DeliveryModes;
+                        if (locationType.HasFlag(ApprenticeshipLocationType.EmployerBased))
+                        {
+                            deliveryModes |= ApprenticeshipDeliveryModes.EmployerAddress;
+                        }
 
                         return CreateApprenticeshipLocation.CreateFromVenue(
                             venue,
                             l.Value.National,
                             l.Value.Radius,
-                            l.Value.DeliveryModes,
+                            deliveryModes,
                             locationType);
                     }));
                 }
