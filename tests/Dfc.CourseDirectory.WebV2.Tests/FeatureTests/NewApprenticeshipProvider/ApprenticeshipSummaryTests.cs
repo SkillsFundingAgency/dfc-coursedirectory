@@ -478,6 +478,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             CosmosDbQueryDispatcher.Verify(mock => mock.ExecuteQuery(It.Is<CreateApprenticeship>(q =>
                 q.ApprenticeshipLocations.Single().ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased &&
+                q.ApprenticeshipLocations.Single().DeliveryModes == ApprenticeshipDeliveryModes.EmployerAddress &&
                 q.ApprenticeshipLocations.Single().National == false &&
                 q.ApprenticeshipLocations.Single().VenueId == null &&
                 q.ApprenticeshipLocations.Single().Regions.Contains("E06000001") &&
@@ -526,9 +527,71 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             CosmosDbQueryDispatcher.Verify(mock => mock.ExecuteQuery(It.Is<CreateApprenticeship>(q =>
                 q.ApprenticeshipLocations.Single().ApprenticeshipLocationType == ApprenticeshipLocationType.ClassroomBased &&
+                q.ApprenticeshipLocations.Single().DeliveryModes == ApprenticeshipDeliveryModes.BlockRelease &&
                 q.ApprenticeshipLocations.Single().National == false &&
                 q.ApprenticeshipLocations.Single().Radius == 5 &&
                 q.ApprenticeshipLocations.Single().VenueId == venueId)));
+        }
+
+        [Fact]
+        public async Task PostConfirmation_ValidRequestWithRegionsAndVenue_CreatesValidApprenticeship()
+        {
+            // Arrange
+            var providerId = await TestData.CreateProvider(apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted);
+
+            var standardCode = 123;
+            var standardVersion = 1;
+            var standard = await TestData.CreateStandard(standardCode, standardVersion, standardName: "My standard");
+
+            var venueId = await TestData.CreateVenue(providerId);
+
+            await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
+
+            var flowModel = new FlowModel();
+            flowModel.SetProviderDetails("Provider 1 rocks");
+            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            flowModel.SetApprenticeshipDetails(
+                marketingInformation: "My apprenticeship",
+                website: "http://provider.com/apprenticeship",
+                contactTelephone: "01234 5678902",
+                contactEmail: "guy@provider.com",
+                contactWebsite: "http://provider.com");
+            flowModel.SetApprenticeshipLocationType(ApprenticeshipLocationType.ClassroomBasedAndEmployerBased);
+            flowModel.SetApprenticeshipLocationRegionIds(new[]
+            {
+                "E06000001",  // County Durham
+                "E10000009" // Dorset
+            });
+            flowModel.AddClassroomLocation(venueId, national: false, radius: 5, deliveryModes: ApprenticeshipDeliveryModes.BlockRelease);
+            var mptxInstance = CreateMptxInstance(flowModel);
+
+            Guid apprenticeshipId = default;
+            CosmosDbQueryDispatcher.Callback<CreateApprenticeship, Success>(q => apprenticeshipId = q.Id);
+
+            var requestContent = new FormUrlEncodedContentBuilder().ToContent();
+
+            // Act
+            var response = await HttpClient.PostAsync(
+                $"new-apprenticeship-provider/apprenticeship-confirmation?providerId={providerId}&ffiid={mptxInstance.InstanceId}",
+                requestContent);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+            CosmosDbQueryDispatcher.Verify(mock => mock.ExecuteQuery(It.Is<CreateApprenticeship>(q =>
+                q.ApprenticeshipLocations.Any(l =>
+                    l.ApprenticeshipLocationType == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased &&
+                    l.DeliveryModes == (ApprenticeshipDeliveryModes.BlockRelease | ApprenticeshipDeliveryModes.EmployerAddress) &&
+                    l.National == false &&
+                    l.Radius == 5 &&
+                    l.VenueId == venueId) &&
+                q.ApprenticeshipLocations.Any(l =>
+                    l.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased &&
+                    l.DeliveryModes == ApprenticeshipDeliveryModes.EmployerAddress &&
+                    l.National == false &&
+                    l.VenueId == null &&
+                    l.Regions.Contains("E06000001") &&
+                    l.Regions.Contains("E10000009")))));
         }
     }
 }
