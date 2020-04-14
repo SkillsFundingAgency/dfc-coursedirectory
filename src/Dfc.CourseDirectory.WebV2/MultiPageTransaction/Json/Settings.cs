@@ -13,6 +13,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction.Json
             };
 
             settings.Converters.Add(new StandardOrFrameworkJsonConverter());
+            settings.Converters.Add(new UrlJsonConverter());
 
             return settings;
         }
