@@ -48,7 +48,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
             var command = new Command()
             {
                 ProviderId = request.ProviderId,
-                RegionIds = _flow.State.ApprenticeshipLocationRegionIds
+                RegionIds = _flow.State.ApprenticeshipLocationRegionIds ?? Array.Empty<string>()
             };
             return Task.FromResult(command);
         }
@@ -92,9 +92,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
                             return v;
                         }
 
-                        // Remove any IDs that are not regions or sub-regions
+                        var regionIds = Region.All.Select(r => r.Id);
                         var subRegionIds = Region.All.SelectMany(r => r.SubRegions).Select(sr => sr.Id);
-                        return v.Intersect(subRegionIds).ToList();
+                        var allRegionIds = regionIds.Concat(subRegionIds).ToList();
+
+                        // Remove any IDs that are not regions or sub-regions
+                        return v.Intersect(allRegionIds).ToList();
                     })
                     .NotEmpty()
                     .WithMessage("Select at least one sub-region");

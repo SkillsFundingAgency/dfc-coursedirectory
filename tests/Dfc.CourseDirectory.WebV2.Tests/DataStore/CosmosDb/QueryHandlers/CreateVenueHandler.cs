@@ -12,7 +12,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb.QueryHandlers
             {
                 Id = request.VenueId,
                 Status = 1,
-                UKPRN = request.ProviderUkprn,
+                Ukprn = request.ProviderUkprn,
                 VenueName = request.VenueName
             };
             inMemoryDocumentStore.Venues.Save(venue);

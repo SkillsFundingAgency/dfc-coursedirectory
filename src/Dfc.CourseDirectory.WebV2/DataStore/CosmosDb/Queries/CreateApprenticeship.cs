@@ -38,6 +38,37 @@ namespace Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries
         public LocationType LocationType { get; set; }
         public int? Radius { get; set; }
 
+        public static CreateApprenticeshipLocation CreateFromVenue(
+            Venue venue,
+            bool national,
+            int? radius,
+            ApprenticeshipDeliveryModes deliveryModes,
+            ApprenticeshipLocationType locationType /* HACK to ensure legacy UI works */) =>
+            new CreateApprenticeshipLocation()
+            {
+                Id = Guid.NewGuid(),
+                VenueId = venue.Id,
+                National = national,
+                Address = new ApprenticeshipLocationAddress()
+                {
+                    Address1 = venue.AddressLine1,
+                    Address2 = venue.AddressLine2,
+                    County = venue.County,
+                    Email = venue.Email,
+                    Latitude = venue.Latitude,
+                    Longitude = venue.Longitude,
+                    Phone = venue.Telephone,
+                    Postcode = venue.Postcode,
+                    Town = venue.Town,
+                    Website = venue.Website
+                },
+                DeliveryModes = deliveryModes,
+                Name = venue.VenueName,
+                ApprenticeshipLocationType = locationType,
+                LocationType = LocationType.Venue,
+                Radius = radius
+            };
+
         public static CreateApprenticeshipLocation CreateNational() => new CreateApprenticeshipLocation()
         {
             Id = Guid.NewGuid(),
