@@ -1,17 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Models;
+﻿using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.WebV2.Models;
+using Microsoft.Azure.Documents.Client;
 using OneOf.Types;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb.QueryHandlers
+namespace Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.QueryHandlers
 {
     public class CreateApprenticeshipHandler : ICosmosDbQueryHandler<CreateApprenticeship, Success>
     {
-        public Success Execute(InMemoryDocumentStore inMemoryDocumentStore, CreateApprenticeship request)
+        public async Task<Success> Execute(DocumentClient client, Configuration configuration, CreateApprenticeship request)
         {
+            var documentUri = UriFactory.CreateDocumentCollectionUri(
+                configuration.DatabaseId,
+                configuration.ApprenticeshipCollectionName);
+
             var apprenticeship = new Apprenticeship()
             {
                 Id = request.Id,
@@ -67,7 +73,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb.QueryHandlers
                     apprenticeship.PathwayCode = framework.PathwayCode;
                 });
 
-            inMemoryDocumentStore.Apprenticeships.Save(apprenticeship);
+            await client.CreateDocumentAsync(documentUri, apprenticeship);
 
             return new Success();
         }

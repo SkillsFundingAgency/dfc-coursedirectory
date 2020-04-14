@@ -28,12 +28,10 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
 
             if (ffiid.Count > 0)
             {
-                var flowName = mptxActionAttribute.FlowName;
+                var stateProvider = context.HttpContext.RequestServices.GetRequiredService<IMptxStateProvider>();
+                var instance = stateProvider.GetInstance(ffiid);
 
-                var mptxManager = context.HttpContext.RequestServices.GetRequiredService<MptxManager>();
-                var instanceContext = mptxManager.GetInstance(ffiid);
-
-                if (instanceContext == null)
+                if (instance == null)
                 {
                     context.Result = new ViewResult()
                     {
@@ -42,13 +40,8 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
                     };
                     return;
                 }
-                else if (instanceContext.FlowName != flowName)
-                {
-                    context.Result = new BadRequestResult();
-                    return;
-                }
                 
-                var feature = new MptxInstanceContextFeature(instanceContext);
+                var feature = new MptxInstanceFeature(instance);
                 context.HttpContext.Features.Set(feature);
             }
 

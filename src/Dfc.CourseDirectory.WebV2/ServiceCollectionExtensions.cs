@@ -123,7 +123,7 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddScoped<SignInTracker>();
             services.AddBehaviors();
             services.AddSingleton<IStandardsAndFrameworksCache, StandardsAndFrameworksCache>();
-            services.AddSingleton<MptxInstanceContextProvider>();
+            services.AddSingleton<MptxInstanceProvider>();
             services.AddMptxInstanceContext();
             services.AddSingleton<IMptxStateProvider, SessionMptxStateProvider>();
             services.AddSingleton<MptxInstanceContextFactory>();
@@ -137,6 +137,8 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddTransient<Features.NewApprenticeshipProvider.FlowModelInitializer>();
             services.AddTransient<ITagHelperComponent, AppendProviderContextTagHelperComponent>();
             services.AddTransient<ITagHelperComponent, AppendMptxInstanceTagHelperComponent>();
+            services.AddTransient<Features.ApprenticeshipQA.ProviderAssessment.FlowModelInitializer>();
+            services.AddTransient<Features.ApprenticeshipQA.ApprenticeshipAssessment.FlowModelInitializer>();
 
 #if DEBUG
             if (configuration["UseLocalFileMptxStateProvider"]?.Equals("true", StringComparison.OrdinalIgnoreCase) ?? false)

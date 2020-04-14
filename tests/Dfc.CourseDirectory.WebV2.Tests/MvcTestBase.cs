@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.DataStore.Sql;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Xunit;
 using CosmosDbQueryDispatcher = Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb.CosmosDbQueryDispatcher;
@@ -30,6 +31,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         protected Mock<CosmosDbQueryDispatcher> CosmosDbQueryDispatcher => Factory.CosmosDbQueryDispatcher;
 
+        protected T CreateInstance<T>(params object[] parameters) =>
+            ActivatorUtilities.CreateInstance<T>(Factory.Services, parameters);
+
         protected CourseDirectoryApplicationFactory Factory { get; }
 
         protected HttpClient HttpClient { get; }
@@ -46,9 +50,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         public Task InitializeAsync() => Factory.OnTestStartingAsync();
 
-        protected MptxInstanceContext<TState> CreateMptxInstance<TState>(string flowName, TState state)
+        protected MptxInstanceContext<TState> CreateMptxInstance<TState>(TState state)
             where TState : IMptxState =>
-            MptxManager.CreateInstance(flowName, state);
+            MptxManager.CreateInstance(state);
 
         protected MptxInstanceContext<TState> GetMptxInstance<TState>(string instanceId)
             where TState : IMptxState =>

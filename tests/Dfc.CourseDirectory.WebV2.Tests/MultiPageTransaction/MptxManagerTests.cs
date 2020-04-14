@@ -4,7 +4,7 @@ using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
-namespace Dfc.CourseDirectory.WebV2.Tests
+namespace Dfc.CourseDirectory.WebV2.Tests.MultiPageTransaction
 {
     public class MptxManagerTests
     {
@@ -22,7 +22,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             var manager = new MptxManager(stateProvider, instanceContextFactory, serviceProvider);
 
             // Act
-            var instance = manager.CreateInstance("TestFlow", typeof(FlowModel), contextItems: null);
+            var instance = manager.CreateInstance(typeof(FlowModel), contextItems: null);
 
             // Assert
             Assert.IsType<FlowModel>(instance.State);
@@ -43,7 +43,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             var manager = new MptxManager(stateProvider, instanceContextFactory, serviceProvider);
 
             // Act
-            var instance = manager.CreateInstance("TestFlow", typeof(FlowModelWithDI), contextItems: null);
+            var instance = manager.CreateInstance(typeof(FlowModelWithDI), contextItems: null);
 
             // Assert
             Assert.IsType<FlowModelWithDI>(instance.State);
@@ -64,7 +64,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
             // Act & Assert
             var ex = Assert.Throws<ArgumentException>(
-                () => manager.CreateInstance("TestFlow", typeof(BadFlowModel), contextItems: null));
+                () => manager.CreateInstance(typeof(BadFlowModel), contextItems: null));
 
             Assert.Equal($"State type must implement {typeof(IMptxState).FullName}. (Parameter 'stateType')", ex.Message);
         }

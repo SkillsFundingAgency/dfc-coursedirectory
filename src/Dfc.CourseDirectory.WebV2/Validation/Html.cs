@@ -27,12 +27,22 @@ namespace Dfc.CourseDirectory.WebV2.Validation
 
         public static string SanitizeHtml(string html, IEnumerable<string> allowedTags)
         {
+            if (string.IsNullOrWhiteSpace(html))
+            {
+                return html;
+            }
+
             var sanitizer = new Sanitizer(allowedTags: allowedTags);
             return sanitizer.Sanitize(html);
         }
 
         public static string StripTags(string html)
         {
+            if (html == null)
+            {
+                return null;
+            }
+
             var doc = new HtmlDocument();
             doc.LoadHtml(html);
 

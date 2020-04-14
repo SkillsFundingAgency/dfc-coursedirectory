@@ -14,7 +14,7 @@ namespace Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries
         public bool CompliancePassed { get; set; }
         public ApprenticeshipQAApprenticeshipComplianceFailedReasons ComplianceFailedReasons { get; set; }
         public string ComplianceComments { get; set; }
-        public bool? StylePassed { get; set; }
+        public bool StylePassed { get; set; }
         public ApprenticeshipQAApprenticeshipStyleFailedReasons StyleFailedReasons { get; set; }
         public string StyleComments { get; set; }
     }

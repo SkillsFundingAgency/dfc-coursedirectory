@@ -17,12 +17,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         public IReadOnlyDictionary<string, MptxInstance> Instances =>
             _instances.ToDictionary(
                 kvp => kvp.Key,
-                kvp => new MptxInstance(kvp.Value.FlowName, kvp.Key, kvp.Value.Items, kvp.Value.State));
+                kvp => new MptxInstance(kvp.Value.StateType, kvp.Key, kvp.Value.Items, kvp.Value.State));
 
         public void Clear() => _instances.Clear();
 
         public MptxInstance CreateInstance(
-            string flowName,
+            Type stateType,
             IReadOnlyDictionary<string, object> items,
             object state)
         {
@@ -32,13 +32,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
             var entry = new Entry()
             {
-                FlowName = flowName,
+                StateType = stateType,
                 Items = items,
                 State = state
             };
             _instances.Add(instanceId, entry);
 
-            var instance = new MptxInstance(flowName, instanceId, items, state);
+            var instance = new MptxInstance(stateType, instanceId, items, state);
 
             return instance;
         }
@@ -49,7 +49,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         {
             if (_instances.TryGetValue(instanceId, out var entry))
             {
-                return new MptxInstance(entry.FlowName, instanceId, entry.Items, entry.State);
+                return new MptxInstance(entry.StateType, instanceId, entry.Items, entry.State);
             }
             else
             {
@@ -65,7 +65,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         private class Entry
         {
-            public string FlowName { get; set; }
+            public Type StateType { get; set; }
             public IReadOnlyDictionary<string, object> Items { get; set; }
             public object State { get; set; }
         }
