@@ -104,8 +104,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation
             _flow.UpdateParent(s => s.ReceiveLocation(
                 _flow.InstanceId,
                 _flow.State.VenueId.Value,
-                _flow.State.National.Value,
-                !_flow.State.National.Value ? _flow.State.Radius : null,
+                _flow.State.National.GetValueOrDefault(),
+                !_flow.State.National.GetValueOrDefault() ? _flow.State.Radius : null,
                 _flow.State.DeliveryModes.Value));
 
             return new Success();

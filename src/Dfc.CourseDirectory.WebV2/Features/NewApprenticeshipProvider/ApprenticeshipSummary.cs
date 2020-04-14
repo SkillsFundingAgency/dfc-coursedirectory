@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.Behaviors;
@@ -98,17 +99,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
             var providerId = request.ProviderId;
             var providerUkprn = (await _providerInfoCache.GetProviderInfo(providerId)).Ukprn;
 
-            IEnumerable<CreateApprenticeshipLocation> locations = _flow.State.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased ?
-                _flow.State.ApprenticeshipIsNational.Value ?
-                new[] { CreateApprenticeshipLocation.CreateNational() } :
-                new[] { CreateApprenticeshipLocation.CreateRegions(_flow.State.ApprenticeshipLocationRegionIds) } :
-                throw new NotImplementedException();
-
             // Create apprenticeship
             await _cosmosDbQueryDispatcher.ExecuteQuery(
                 new CreateApprenticeship()
                 {
-                    ApprenticeshipLocations = locations,
+                    ApprenticeshipLocations = await CreateLocations(providerUkprn),
                     ApprenticeshipTitle = _flow.State.ApprenticeshipStandardOrFramework.StandardOrFrameworkTitle,
                     ApprenticeshipType = _flow.State.ApprenticeshipStandardOrFramework.IsStandard ?
                         ApprenticeshipType.StandardCode :
@@ -156,6 +151,43 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
             _flow.Complete();
 
             return new Success();
+
+            async Task<IEnumerable<CreateApprenticeshipLocation>> CreateLocations(int providerUkprn)
+            {
+                var providerVenues = await _cosmosDbQueryDispatcher.ExecuteQuery(
+                    new GetAllVenuesForProvider()
+                    {
+                        ProviderUkprn = providerUkprn
+                    });
+
+                List<CreateApprenticeshipLocation> locations = new List<CreateApprenticeshipLocation>();
+
+                var locationType = _flow.State.ApprenticeshipLocationType.Value;
+
+                if (locationType.HasFlag(ApprenticeshipLocationType.EmployerBased))
+                {
+                    locations.Add(_flow.State.ApprenticeshipIsNational.Value ?
+                        CreateApprenticeshipLocation.CreateNational() :
+                        CreateApprenticeshipLocation.CreateRegions(_flow.State.ApprenticeshipLocationRegionIds));
+                }
+
+                if (locationType.HasFlag(ApprenticeshipLocationType.ClassroomBased))
+                {
+                    locations.AddRange(_flow.State.ApprenticeshipClassroomLocations.Select(l =>
+                    {
+                        var venue = providerVenues.Single(v => v.Id == l.Value.VenueId);
+
+                        return CreateApprenticeshipLocation.CreateFromVenue(
+                            venue,
+                            l.Value.National,
+                            l.Value.Radius,
+                            l.Value.DeliveryModes,
+                            locationType);
+                    }));
+                }
+
+                return locations;
+            }
         }
 
         private void ValidateFlowState()

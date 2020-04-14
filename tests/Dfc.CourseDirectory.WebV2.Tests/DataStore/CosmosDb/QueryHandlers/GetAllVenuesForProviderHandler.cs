@@ -12,7 +12,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.DataStore.CosmosDb.QueryHandlers
             InMemoryDocumentStore inMemoryDocumentStore,
             GetAllVenuesForProvider request)
         {
-            return inMemoryDocumentStore.Venues.All.Where(v => v.UKPRN == request.ProviderUkprn).ToList();
+            return inMemoryDocumentStore.Venues.All.Where(v => v.Ukprn == request.ProviderUkprn).ToList();
         }
     }
 }
