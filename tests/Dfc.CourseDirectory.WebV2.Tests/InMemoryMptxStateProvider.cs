@@ -117,10 +117,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             }
         }
 
-        public void UpdateInstanceState(string instanceId, Func<object, object> update)
+        public void SetInstanceState(string instanceId, object state)
         {
             var instance = _instances[instanceId];
-            update(instance.State);
+            instance.State = state;
         }
 
         private class Entry
