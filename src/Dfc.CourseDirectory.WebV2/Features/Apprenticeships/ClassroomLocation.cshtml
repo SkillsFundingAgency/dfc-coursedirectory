@@ -26,7 +26,9 @@
         <govuk-select-item value="">Please select</govuk-select-item>
         @foreach (var venue in Model.Venues)
         {
-            <govuk-select-item value="@venue.venueId" selected="@(Model.VenueId == venue.venueId)">@venue.name</govuk-select-item>
+            <govuk-select-item value="@venue.venueId" selected="@(Model.VenueId == venue.venueId)" disabled="@venue.blocked">
+                @venue.name
+            </govuk-select-item>
         }
     </govuk-select>
 

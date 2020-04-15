@@ -33,6 +33,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
                     (ApprenticeshipIsNational.GetValueOrDefault() || (ApprenticeshipLocationSubRegionIds?.Count ?? 0) > 0))) &&
             GotApprenticeshipDetails;
 
+        IReadOnlyCollection<Guid> IFlowModelCallback.BlockedVenueIds => ApprenticeshipClassroomLocations?.Keys;
+
         public void AddClassroomLocation(
             Guid venueId,
             bool national,
