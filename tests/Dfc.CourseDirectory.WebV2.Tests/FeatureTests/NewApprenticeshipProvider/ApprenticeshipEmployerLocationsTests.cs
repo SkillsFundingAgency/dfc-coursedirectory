@@ -278,8 +278,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             {
                 var venueId = await TestData.CreateVenue(providerId);
 
-                mptxInstance.Update(s =>
-                    s.AddClassroomLocation(venueId, national: true, radius: null, ApprenticeshipDeliveryModes.BlockRelease));
+                mptxInstance.Update(s => s.SetClassroomLocationForVenue(
+                    venueId,
+                    originalVenueId: null,
+                    national: true,
+                    radius: null,
+                    ApprenticeshipDeliveryModes.BlockRelease));
             }
 
             var requestContent = new FormUrlEncodedContentBuilder()

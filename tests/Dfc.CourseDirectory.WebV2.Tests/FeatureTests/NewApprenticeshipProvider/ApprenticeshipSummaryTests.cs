@@ -509,7 +509,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 contactEmail: "guy@provider.com",
                 contactWebsite: "http://provider.com");
             flowModel.SetApprenticeshipLocationType(ApprenticeshipLocationType.ClassroomBased);
-            flowModel.AddClassroomLocation(venueId, national: false, radius: 5, deliveryModes: ApprenticeshipDeliveryModes.BlockRelease);
+            flowModel.SetClassroomLocationForVenue(
+                venueId,
+                originalVenueId: null,
+                national: false,
+                radius: 5,
+                deliveryModes: ApprenticeshipDeliveryModes.BlockRelease);
             var mptxInstance = CreateMptxInstance(flowModel);
 
             Guid apprenticeshipId = default;
@@ -562,7 +567,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 "E06000001",  // County Durham
                 "E10000009" // Dorset
             });
-            flowModel.AddClassroomLocation(venueId, national: false, radius: 5, deliveryModes: ApprenticeshipDeliveryModes.BlockRelease);
+            flowModel.SetClassroomLocationForVenue(
+                venueId,
+                originalVenueId: null,
+                national: false,
+                radius: 5,
+                deliveryModes: ApprenticeshipDeliveryModes.BlockRelease);
             var mptxInstance = CreateMptxInstance(flowModel);
 
             Guid apprenticeshipId = default;

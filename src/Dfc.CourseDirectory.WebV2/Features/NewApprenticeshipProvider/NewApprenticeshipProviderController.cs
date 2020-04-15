@@ -36,10 +36,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
         {
             var childFlow = mptxManager.CreateInstance<ClassroomLocation.FlowModel, ClassroomLocation.IFlowModelCallback>(
                 Flow.InstanceId,
-                new ClassroomLocation.FlowModel()
-                {
-                    ProviderId = ProviderContext.ProviderId
-                },
+                ClassroomLocation.FlowModel.Add(ProviderContext.ProviderId),
                 contextItems: new Dictionary<string, object>()
                 {
                     {
@@ -190,14 +187,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
 
             var childFlow = mptxManager.CreateInstance<ClassroomLocation.FlowModel, ClassroomLocation.IFlowModelCallback>(
                 Flow.InstanceId,
-                new ClassroomLocation.FlowModel()
-                {
-                    ProviderId = ProviderContext.ProviderId,
-                    DeliveryModes = location.DeliveryModes,
-                    National = location.National,
-                    Radius = location.Radius,
-                    VenueId = location.VenueId
-                },
+                ClassroomLocation.FlowModel.Edit(
+                    ProviderContext.ProviderId,
+                    location.VenueId,
+                    location.National,
+                    location.Radius,
+                    location.DeliveryModes
+                ),
                 contextItems: new Dictionary<string, object>()
                 {
                     {
