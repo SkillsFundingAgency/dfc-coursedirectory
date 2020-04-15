@@ -1,12 +1,11 @@
-﻿using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Models;
-using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries;
-using Dfc.CourseDirectory.WebV2.Models;
-using Microsoft.Azure.Documents.Client;
-using OneOf.Types;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Models;
+using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries;
+using Microsoft.Azure.Documents.Client;
+using OneOf.Types;
 
 namespace Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.QueryHandlers
 {
@@ -31,21 +30,23 @@ namespace Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.QueryHandlers
                 ContactWebsite = request.ContactWebsite,
                 ApprenticeshipLocations = request.ApprenticeshipLocations.Select(l => new ApprenticeshipLocation()
                 {
+                    Address = l.Address,
                     ApprenticeshipLocationType = l.ApprenticeshipLocationType,
                     CreatedBy = request.CreatedByUser.Email,
                     CreatedDate = request.CreatedDate,
-                    DeliveryModes = l.ApprenticeshipLocationType switch
-                    {
-                        ApprenticeshipLocationType.EmployerBased => new List<int>() { 1 },
-                        _ => throw new NotImplementedException(),
-                    },
+                    DeliveryModes = EnumHelper.SplitFlags(l.ApprenticeshipLocationType).Cast<int>().ToList(),
                     Id = Guid.NewGuid(),
                     LocationType = l.LocationType,
+                    Name = l.Name,
                     National = l.National,
+                    Phone = l.Phone,
+                    ProviderUKPRN = request.ProviderUkprn,
+                    Radius = l.Radius,
                     RecordStatus = 1,
                     Regions = l.Regions,
                     UpdatedBy = request.CreatedByUser.Email,
-                    UpdatedDate = request.CreatedDate
+                    UpdatedDate = request.CreatedDate,
+                    VenueId = l.VenueId
                 }).ToList(),
                 RecordStatus = 1,
                 CreatedDate = request.CreatedDate,

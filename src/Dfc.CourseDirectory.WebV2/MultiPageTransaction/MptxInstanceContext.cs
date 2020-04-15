@@ -67,12 +67,41 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             update(State);
         }
 
-        private void ThrowIfCompleted()
+        protected void ThrowIfCompleted()
         {
             if (IsCompleted)
             {
                 throw new InvalidOperationException("Instance has been completed.");
             }
+        }
+    }
+
+    public class MptxInstanceContext<TState, TParentState> : MptxInstanceContext<TState>
+        where TState : IMptxState<TParentState>
+        where TParentState : IMptxState
+    {
+        public MptxInstanceContext(IMptxStateProvider stateProvider, MptxInstance instance)
+            : base(stateProvider, instance)
+        {
+        }
+
+        public string ParentInstanceId => Instance.ParentInstanceId;
+
+        public TParentState ParentState => (TParentState)Instance.ParentState;
+
+        public void UpdateParent(Action<TParentState> update)
+        {
+            ThrowIfCompleted();
+
+            StateProvider.UpdateInstanceState(ParentInstanceId, state =>
+            {
+                update((TParentState)state);
+                return state;
+            });
+
+            // Refresh the cached state object - required so multiple state updates
+            // in a single refresh are 'seen' everywhere
+            update(ParentState);
         }
     }
 }

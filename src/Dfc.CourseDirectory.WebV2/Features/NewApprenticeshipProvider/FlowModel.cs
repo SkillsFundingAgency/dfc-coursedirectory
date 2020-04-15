@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation;
 using Dfc.CourseDirectory.WebV2.Models;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 
 namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
 {
-    public class FlowModel : IMptxState
+    public class FlowModel : IMptxState, IFlowModelCallback
     {
         public string ProviderMarketingInformation { get; set; }
         public StandardOrFramework ApprenticeshipStandardOrFramework { get; set; }
@@ -15,7 +17,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
         public string ApprenticeshipContactWebsite { get; set; }
         public ApprenticeshipLocationType? ApprenticeshipLocationType { get; set; }
         public bool? ApprenticeshipIsNational { get; set; }
-        public IReadOnlyCollection<string> ApprenticeshipLocationRegionIds { get; set; } = new List<string>();
+        public IReadOnlyCollection<string> ApprenticeshipLocationRegionIds { get; set; }
+        public Dictionary<Guid, ClassroomLocation> ApprenticeshipClassroomLocations { get; set; }
 
         public bool GotApprenticeshipDetails { get; set; }
         public bool GotProviderDetails { get; set; }
@@ -23,7 +26,29 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
         public bool IsValid => GotProviderDetails &&
             ApprenticeshipStandardOrFramework != null &&
             ApprenticeshipLocationType != null &&
-            GotApprenticeshipDetails; // FIXME
+            (
+                (ApprenticeshipLocationType.Value.HasFlag(Models.ApprenticeshipLocationType.ClassroomBased) &&
+                    (ApprenticeshipClassroomLocations?.Count ?? 0) > 0) ||
+                (ApprenticeshipLocationType.Value.HasFlag(Models.ApprenticeshipLocationType.EmployerBased) &&
+                    (ApprenticeshipIsNational.GetValueOrDefault() || (ApprenticeshipLocationRegionIds?.Count ?? 0) > 0))) &&
+            GotApprenticeshipDetails;
+
+        public void AddClassroomLocation(
+            Guid venueId,
+            bool national,
+            int? radius,
+            ApprenticeshipDeliveryModes deliveryModes)
+        {
+            ApprenticeshipClassroomLocations ??= new Dictionary<Guid, ClassroomLocation>();
+
+            ApprenticeshipClassroomLocations[venueId] = new ClassroomLocation()
+            {
+                VenueId = venueId,
+                National = national,
+                Radius = radius,
+                DeliveryModes = deliveryModes
+            };
+        }
 
         public void SetProviderDetails(string marketingInformation)
         {
@@ -63,11 +88,27 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
 
             if (apprenticeshipLocationType == Models.ApprenticeshipLocationType.ClassroomBased)
             {
-                ApprenticeshipIsNational = false;
+                ApprenticeshipIsNational = null;
             }
         }
 
         public void SetApprenticeshipStandardOrFramework(StandardOrFramework standardOrFramework) =>
             ApprenticeshipStandardOrFramework = standardOrFramework;
+
+        void IFlowModelCallback.ReceiveLocation(
+            string instanceId,
+            Guid venueId,
+            bool national,
+            int? radius,
+            ApprenticeshipDeliveryModes deliveryModes) =>
+            AddClassroomLocation(venueId, national, radius, deliveryModes);
+
+        public class ClassroomLocation
+        {
+            public Guid VenueId { get; set; }
+            public bool National { get; set; }
+            public int? Radius { get; set; }
+            public ApprenticeshipDeliveryModes DeliveryModes { get; set; }
+        }
     }
 }

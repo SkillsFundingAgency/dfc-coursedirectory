@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,13 +8,32 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships
     [Route("apprenticeships")]
     public class ApprenticeshipsController : Controller
     {
-        private const string FindStandardOrFrameworkFlowName = nameof(FindStandardOrFramework);
-        
         private readonly IMediator _mediator;
 
         public ApprenticeshipsController(IMediator mediator)
         {
             _mediator = mediator;
+        }
+
+        [MptxAction]
+        [HttpGet("classroom-location")]
+        public async Task<IActionResult> ClassroomLocation(
+            ClassroomLocation.Query query)
+        {
+            return await _mediator.SendAndMapResponse(query, vm => View(vm));
+        }
+
+        [MptxAction]
+        [HttpPost("classroom-location")]
+        public async Task<IActionResult> ClassroomLocation(
+            ClassroomLocation.Command command,
+            [FromServices] MptxInstanceContext<ClassroomLocation.FlowModel, ClassroomLocation.IFlowModelCallback> flow)
+        {
+            return await _mediator.SendAndMapResponse(
+                command,
+                response => response.Match<IActionResult>(
+                    errors => this.ViewFromErrors(errors),
+                    success => Redirect(flow.Items["ReturnUrl"].ToString())));
         }
 
         [HttpGet("find-standard")]
@@ -23,7 +43,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships
         {
             var query = new FindStandardOrFramework.Query() { ProviderId = providerInfo.ProviderId };
             return await _mediator.SendAndMapResponse(query, response => View(response));
-        }   
+        }
 
         [HttpGet("find-standard/search")]
         public async Task<IActionResult> FindStandardOrFrameworkSearch(

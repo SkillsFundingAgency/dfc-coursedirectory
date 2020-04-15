@@ -320,8 +320,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 e => e.TextContent.Trim() == "Select at least one sub-region");
         }
 
-        [Fact]
-        public async Task Post_ValidRequestUpdatesStateAndRedirects()
+        [Theory]
+        [InlineData(ApprenticeshipLocationType.EmployerBased, "/new-apprenticeship-provider/apprenticeship-confirmation")]
+        [InlineData(ApprenticeshipLocationType.ClassroomBasedAndEmployerBased, "/new-apprenticeship-provider/apprenticeship-classroom-locations")]
+        public async Task Post_ValidRequestUpdatesStateAndRedirects(
+            ApprenticeshipLocationType locationType,
+            string expectedRedirectLocation)
         {
             // Arrange
             var providerId = await TestData.CreateProvider(apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted);
@@ -331,7 +335,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             var mptxInstance = CreateMptxInstance(
                 new FlowModel()
                 {
-                    ApprenticeshipLocationType = ApprenticeshipLocationType.EmployerBased,
+                    ApprenticeshipLocationType = locationType,
                     ApprenticeshipIsNational = false
                 });
 
@@ -354,7 +358,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             Assert.Equal(HttpStatusCode.Found, response.StatusCode);
             Assert.Equal(
-                "/new-apprenticeship-provider/apprenticeship-confirmation",
+                expectedRedirectLocation,
                 UrlHelper.StripQueryParams(response.Headers.Location.OriginalString));
         }
 

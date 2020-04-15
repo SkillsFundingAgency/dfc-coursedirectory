@@ -43,7 +43,10 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
 
                 if (closedStateType == instance.StateType)
                 {
-                    var instanceContext = instanceContextFactory.CreateContext(instance, closedStateType);
+                    var instanceContext = instanceContextFactory.CreateContext(
+                        instance,
+                        closedStateType,
+                        parentStateType: null);
 
                     var setInstanceMethod = t.GetProperty("Flow").SetMethod;
                     setInstanceMethod.Invoke(controller, new[] { instanceContext });

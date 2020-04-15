@@ -2,11 +2,12 @@
 
 namespace Dfc.CourseDirectory.WebV2.Models
 {
+    [Flags]
     public enum ApprenticeshipLocationType
     {
         ClassroomBased = 1,
         EmployerBased = 2,
-        ClassroomBasedAndEmployerBased = 3
+        ClassroomBasedAndEmployerBased = ClassroomBased | EmployerBased
     }
 
     public static class ApprenticeshipLocationTypeExtensions

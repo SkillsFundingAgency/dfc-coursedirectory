@@ -3,7 +3,7 @@
 namespace Dfc.CourseDirectory.WebV2.Models
 {
     [Flags]
-    public enum ApprenticeshipDeliveryMode
+    public enum ApprenticeshipDeliveryModes
     {
         None = 0,
         EmployerAddress = 1,

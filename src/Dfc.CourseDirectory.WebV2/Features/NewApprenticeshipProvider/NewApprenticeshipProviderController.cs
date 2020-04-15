@@ -1,10 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.Filters;
 using Dfc.CourseDirectory.WebV2.Models;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using Flurl;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using ClassroomLocation = Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation;
 
 namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
 {
@@ -26,11 +28,26 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
 
         public ProviderInfo ProviderContext { get; set; }
 
+        [MptxAction]
         [HttpGet("apprenticeship-classroom-locations")]
-        public IActionResult ApprenticeshipClassroomLocations() => throw new System.NotImplementedException();
-
-        [HttpGet("apprenticeship-mixed-locations")]
-        public IActionResult ApprenticeshipClassroomBasedAndEmployerBased() => throw new System.NotImplementedException();
+        public IActionResult ApprenticeshipClassroomLocations([FromServices] MptxManager mptxManager)
+        {
+            var childFlow = mptxManager.CreateInstance<ClassroomLocation.FlowModel, ClassroomLocation.IFlowModelCallback>(
+                Flow.InstanceId,
+                new ClassroomLocation.FlowModel()
+                {
+                    ProviderId = ProviderContext.ProviderId
+                },
+                contextItems: new Dictionary<string, object>()
+                {
+                    {
+                        "ReturnUrl",
+                        new Url(Url.Action(nameof(ApprenticeshipSummary))).WithMptxInstanceId(Flow.InstanceId)
+                    }
+                });
+            return RedirectToAction("ClassroomLocation", "Apprenticeships")
+                .WithMptxInstanceId(childFlow.InstanceId);
+        }
 
         [MptxAction]
         [HttpGet("apprenticeship-details")]
@@ -76,7 +93,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
                     errors => this.ViewFromErrors(errors),
                     success =>
                         (command.National.Value ?
+                            Flow.State.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased ?
                             RedirectToAction(nameof(ApprenticeshipSummary)) :
+                            RedirectToAction(nameof(ApprenticeshipClassroomLocations)) :
                             RedirectToAction(nameof(ApprenticeshipEmployerLocationsRegions)))
                         .WithProviderContext(ProviderContext).WithMptxInstanceId(Flow.InstanceId)));
         }
@@ -129,8 +148,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
                         (command.LocationType.Value switch
                         {
                             ApprenticeshipLocationType.ClassroomBased => RedirectToAction(nameof(ApprenticeshipClassroomLocations)),
-                            ApprenticeshipLocationType.EmployerBased => RedirectToAction(nameof(ApprenticeshipEmployerLocations)),
-                            _ => RedirectToAction(nameof(ApprenticeshipClassroomBasedAndEmployerBased))
+                            _ => RedirectToAction(nameof(ApprenticeshipEmployerLocations))
                         }).WithProviderContext(ProviderContext).WithMptxInstanceId(Flow.InstanceId)));
         }
         [MptxAction]
