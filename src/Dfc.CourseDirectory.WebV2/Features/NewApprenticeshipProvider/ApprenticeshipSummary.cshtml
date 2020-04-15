@@ -48,6 +48,13 @@
             <a asp-action="ApprenticeshipDetails" asp-fragment="ContactWebsite" append-provider-context append-mptx-id class="govuk-link">Change</a>
         </govuk-summary-list-row-action>
     </govuk-summary-list-row>
+    <govuk-summary-list-row>
+        <govuk-summary-list-row-key>Location type</govuk-summary-list-row-key>
+        <govuk-summary-list-row-value>@Model.ApprenticeshipLocationType.ToDisplayName()</govuk-summary-list-row-value>
+        <govuk-summary-list-row-action>
+            <a asp-action="ApprenticeshipLocations" append-provider-context append-mptx-id class="govuk-link">Change</a>
+        </govuk-summary-list-row-action>
+    </govuk-summary-list-row>
 </govuk-summary-list>
 
 <form asp-action="ApprenticeshipSummaryConfirmation" append-provider-context append-mptx-id>
