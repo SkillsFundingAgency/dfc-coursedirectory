@@ -14,7 +14,7 @@
         var createSelectAllCheckbox = function () {
             var $selectAllCheckboxWrapper = $('<div />')
                 .addClass('govuk-checkboxes__item')
-                .addClass('govuk-!-margin-top-3')
+                .addClass('govuk-!-margin-bottom-3')
                 .css('width', '100%');
 
             var $checkbox = $('<input />')
@@ -31,7 +31,7 @@
                 .html('All');
             $selectAllCheckboxWrapper.append($label);
 
-            $(el).find('.govuk-checkboxes').append($selectAllCheckboxWrapper);
+            $(el).find('.govuk-checkboxes').prepend($selectAllCheckboxWrapper);
         };
 
         var refreshSelectAllCheckbox = function () {
