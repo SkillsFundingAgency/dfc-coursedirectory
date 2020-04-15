@@ -30,7 +30,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
                 (ApprenticeshipLocationType.Value.HasFlag(Models.ApprenticeshipLocationType.ClassroomBased) &&
                     (ApprenticeshipClassroomLocations?.Count ?? 0) > 0) ||
                 (ApprenticeshipLocationType.Value.HasFlag(Models.ApprenticeshipLocationType.EmployerBased) &&
-                    (ApprenticeshipIsNational.Value || (ApprenticeshipLocationRegionIds?.Count ?? 0) > 0))) &&
+                    (ApprenticeshipIsNational.GetValueOrDefault() || (ApprenticeshipLocationRegionIds?.Count ?? 0) > 0))) &&
             GotApprenticeshipDetails;
 
         public void AddClassroomLocation(
