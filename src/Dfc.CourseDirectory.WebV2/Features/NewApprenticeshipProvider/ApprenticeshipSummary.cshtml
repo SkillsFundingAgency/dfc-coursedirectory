@@ -9,6 +9,11 @@
 
 <govuk-summary-list>
     <govuk-summary-list-row>
+        <govuk-summary-list-row-key>Standard/framework</govuk-summary-list-row-key>
+        <govuk-summary-list-row-value>@Model.StandardOrFrameworkTitle</govuk-summary-list-row-value>
+        <govuk-summary-list-row-action href="@ViewBag.SelectStandardOrFrameworkUrl">Change</govuk-summary-list-row-action>
+    </govuk-summary-list-row>
+    <govuk-summary-list-row>
         <govuk-summary-list-row-key>Apprenticeship information for employers</govuk-summary-list-row-key>
         <govuk-summary-list-row-value>@Html.Raw(Model.MarketingInformation)</govuk-summary-list-row-value>
         <govuk-summary-list-row-action asp-action="ApprenticeshipDetails" asp-fragment="MarketingInformation" mptx-href>Change</govuk-summary-list-row-action>
@@ -16,7 +21,7 @@
     <govuk-summary-list-row>
         <govuk-summary-list-row-key>Apprenticeship website</govuk-summary-list-row-key>
         <govuk-summary-list-row-value>@Model.Website</govuk-summary-list-row-value>
-            <govuk-summary-list-row-action asp-action="ApprenticeshipDetails" asp-fragment="Website" mptx-href>Change</govuk-summary-list-row-action>
+        <govuk-summary-list-row-action asp-action="ApprenticeshipDetails" asp-fragment="Website" mptx-href>Change</govuk-summary-list-row-action>
     </govuk-summary-list-row>
     <govuk-summary-list-row>
         <govuk-summary-list-row-key>Email</govuk-summary-list-row-key>
