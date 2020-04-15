@@ -84,7 +84,8 @@ namespace Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries
             National = false,
             DeliveryModes = ApprenticeshipDeliveryModes.EmployerAddress,
             Regions = regionIds,
-            ApprenticeshipLocationType = ApprenticeshipLocationType.EmployerBased
+            ApprenticeshipLocationType = ApprenticeshipLocationType.EmployerBased,
+            LocationType = LocationType.SubRegion
         };
     }
 }

@@ -107,6 +107,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 Assert.Empty(item.UnableToCompleteOn);
                 Assert.Equal("", item.Notes);
                 Assert.Empty(item.UnableToCompleteReasons);
+                Assert.Equal(ApprenticeshipQAStatus.Passed.ToDisplayName(), item.QAStatus);
             });
         }
 
@@ -212,6 +213,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 Assert.Empty(item.UnableToCompleteOn);
                 Assert.Equal("", item.Notes);
                 Assert.Empty(item.UnableToCompleteReasons);
+                Assert.Equal(ApprenticeshipQAStatus.Passed.ToDisplayName(), item.QAStatus);
             });
         }
 
@@ -290,6 +292,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 Assert.Empty(item.UnableToCompleteOn);
                 Assert.Equal("", item.Notes);
                 Assert.Empty(item.UnableToCompleteReasons);
+                Assert.Equal(ApprenticeshipQAStatus.Failed.ToDisplayName(), item.QAStatus);
             });
         }
 
@@ -369,6 +372,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 Assert.Contains(unableReason1.ToDisplayName(), item.UnableToCompleteReasons);
                 Assert.Contains(unableReason2.ToDisplayName(), item.UnableToCompleteReasons);
                 Assert.Contains(unableReason3.ToDisplayName(), item.UnableToCompleteReasons);
+                Assert.Equal(ApprenticeshipQAStatus.UnableToComplete.ToDisplayName(), item.QAStatus);
             });
         }
 
@@ -449,6 +453,47 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 Assert.Equal(unableToCompleteOn.ToString("dd MMM yyyy"), item.UnableToCompleteOn);
                 Assert.Equal(unableToCompleteComments, item.Notes);
                 Assert.Equal(item.UnableToCompleteReasons, unableReason.ToDisplayName());
+                Assert.Equal(ApprenticeshipQAStatus.UnableToComplete.ToDisplayName(), item.QAStatus);
+            });
+        }
+
+        [Fact]
+        public async Task Get_QAReport_Returns_NewProviders()
+        {
+            //arange
+            var ukprn = 12345;
+            var email = "somebody@provider1.com";
+            var providerName = "Provider 1";
+            var providerUserId = $"{ukprn}-user";
+            var adminUserId = $"admin-user";
+            Clock.UtcNow = new DateTime(2019, 5, 17, 9, 3, 27, DateTimeKind.Utc);
+            var requestedOn = Clock.UtcNow;
+
+            var providerId = await TestData.CreateProvider(
+                ukprn: ukprn,
+                providerName: providerName,
+                apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted);
+
+            var providerUser = await TestData.CreateUser(providerUserId, email, "Provider 1", "Person", providerId);
+
+            //act
+            var response = await HttpClient.GetAsync($"apprenticeship-qa/report");
+
+            // Assert
+            var results = await response.AsCsvListOf<ReportModel>();
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Collection(results, item =>
+            {
+                Assert.Equal(ukprn.ToString(), item.UKPRN);
+                Assert.Equal(providerName, item.ProviderName);
+                Assert.Equal("", item.Email);
+                Assert.Equal("No", item.PassedQA);
+                Assert.Empty(item.PassedQAOn);
+                Assert.Equal("No", item.FailedQA);
+                Assert.Empty(item.FailedQAOn);
+                Assert.Equal("No", item.UnableToComplete);
+                Assert.Equal(ApprenticeshipQAStatus.NotStarted.ToDisplayName(), item.QAStatus);
             });
         }
 

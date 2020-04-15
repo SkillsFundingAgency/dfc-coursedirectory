@@ -32,8 +32,7 @@ LEFT JOIN (
 ) LatestUnableToComplete ON p.ProviderId = LatestUnableToComplete.ProviderId
 LEFT JOIN Pttcd.ApprenticeshipQAUnableToCompleteInfo reasons on reasons.ApprenticeshipQAUnableToCompleteId = LatestUnableToComplete.ApprenticeshipQAUnableToCompleteId
 LEFT JOIN [Pttcd].ApprenticeshipQASubmissions submission on submission.ApprenticeshipQASubmissionId = LatestSubmissions.ApprenticeshipQASubmissionId
-LEFT JOIN [Pttcd].[Users] users on users.UserId=submission.SubmittedByUserId
-WHERE p.ApprenticeshipQAStatus <> 1";
+LEFT JOIN [Pttcd].[Users] users on users.UserId=submission.SubmittedByUserId";
 
             return (await transaction.Connection.QueryAsync<GetQAStatusReportResult>(sql, transaction: transaction)).AsList();
 
