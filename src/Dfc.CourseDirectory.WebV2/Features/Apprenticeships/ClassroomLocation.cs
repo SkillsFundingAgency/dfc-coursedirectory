@@ -73,8 +73,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation
             _flow = flow;
         }
 
-        public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken) =>
-            CreateViewModel(await GetProviderVenues());
+        public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
+        {
+            var vm = CreateViewModel(await GetProviderVenues());
+            request.Adapt(vm);
+            return vm;
+        }
 
         public async Task<OneOf<ModelWithErrors<ViewModel>, Success>> Handle(
             Command request,
