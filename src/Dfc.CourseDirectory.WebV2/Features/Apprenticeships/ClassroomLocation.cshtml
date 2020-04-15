@@ -68,8 +68,5 @@
 
     <govuk-button type="submit">Continue</govuk-button>
 
-    @if (Model.Mode == Mode.Edit)
-    {
-        <govuk-button href="@ViewBag.CompletionUrl" class="govuk-button--secondary govuk-!-margin-left-1">Cancel</govuk-button>
-    }
+    <govuk-button href="@ViewBag.CompletionUrl" class="govuk-button--secondary govuk-!-margin-left-1">Cancel</govuk-button>
 </form>
