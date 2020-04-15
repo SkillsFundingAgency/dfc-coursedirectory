@@ -255,10 +255,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
         }
 
         [Theory]
-        [InlineData(ApprenticeshipLocationType.EmployerBased, "/new-apprenticeship-provider/apprenticeship-confirmation")]
-        [InlineData(ApprenticeshipLocationType.ClassroomBasedAndEmployerBased, "/new-apprenticeship-provider/add-apprenticeship-classroom-location")]
+        [InlineData(ApprenticeshipLocationType.EmployerBased, false, "/new-apprenticeship-provider/apprenticeship-confirmation")]
+        [InlineData(ApprenticeshipLocationType.ClassroomBasedAndEmployerBased, false, "/new-apprenticeship-provider/add-apprenticeship-classroom-location")]
+        [InlineData(ApprenticeshipLocationType.ClassroomBasedAndEmployerBased, true, "/new-apprenticeship-provider/apprenticeship-confirmation")]
         public async Task Post_ValidRequestNationalUpdatesFlowStateAndRedirects(
             ApprenticeshipLocationType locationType,
+            bool gotClassroomLocation,
             string expectedRedirectLocation)
         {
             // Arrange
@@ -271,6 +273,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 {
                     ApprenticeshipLocationType = locationType
                 });
+
+            if (gotClassroomLocation)
+            {
+                var venueId = await TestData.CreateVenue(providerId);
+
+                mptxInstance.Update(s =>
+                    s.AddClassroomLocation(venueId, national: true, radius: null, ApprenticeshipDeliveryModes.BlockRelease));
+            }
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("National", true)

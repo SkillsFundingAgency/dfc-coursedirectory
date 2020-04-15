@@ -97,7 +97,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
                     errors => this.ViewFromErrors(errors),
                     success =>
                         (command.National.Value ?
-                            Flow.State.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased ?
+                            Flow.State.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased ||
+                                (Flow.State.ApprenticeshipClassroomLocations?.Count ?? 0) > 0 ?
                             RedirectToAction(nameof(ApprenticeshipSummary)) :
                             RedirectToAction(nameof(AddApprenticeshipClassroomLocation)) :
                             RedirectToAction(nameof(ApprenticeshipEmployerLocationsRegions)))
@@ -122,7 +123,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
                 response => response.Match<IActionResult>(
                     errors => this.ViewFromErrors(errors),
                     success =>
-                        (Flow.State.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased ?
+                        (Flow.State.ApprenticeshipLocationType == ApprenticeshipLocationType.EmployerBased ||
+                            (Flow.State.ApprenticeshipClassroomLocations?.Count ?? 0) > 0 ?
                             RedirectToAction(nameof(ApprenticeshipSummary)) :
                             RedirectToAction(nameof(AddApprenticeshipClassroomLocation)))
                                 .WithProviderContext(ProviderContext)
