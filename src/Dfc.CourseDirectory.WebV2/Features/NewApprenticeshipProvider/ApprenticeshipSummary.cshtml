@@ -16,27 +16,37 @@
     <govuk-summary-list-row>
         <govuk-summary-list-row-key>Apprenticeship information for employers</govuk-summary-list-row-key>
         <govuk-summary-list-row-value>@Html.Raw(Model.MarketingInformation)</govuk-summary-list-row-value>
-        <govuk-summary-list-row-action asp-action="ApprenticeshipDetails" asp-fragment="MarketingInformation" mptx-href>Change</govuk-summary-list-row-action>
+        <govuk-summary-list-row-action>
+            <a asp-action="ApprenticeshipDetails" asp-fragment="MarketingInformation" append-provider-context append-mptx-id class="govuk-link">Change</a>
+        </govuk-summary-list-row-action>
     </govuk-summary-list-row>
     <govuk-summary-list-row>
         <govuk-summary-list-row-key>Apprenticeship website</govuk-summary-list-row-key>
         <govuk-summary-list-row-value>@Model.Website</govuk-summary-list-row-value>
-        <govuk-summary-list-row-action asp-action="ApprenticeshipDetails" asp-fragment="Website" mptx-href>Change</govuk-summary-list-row-action>
+        <govuk-summary-list-row-action>
+            <a asp-action="ApprenticeshipDetails" asp-fragment="Website" append-provider-context append-mptx-id class="govuk-link">Change</a>
+        </govuk-summary-list-row-action>
     </govuk-summary-list-row>
     <govuk-summary-list-row>
         <govuk-summary-list-row-key>Email</govuk-summary-list-row-key>
         <govuk-summary-list-row-value>@Model.ContactEmail</govuk-summary-list-row-value>
-        <govuk-summary-list-row-action asp-action="ApprenticeshipDetails" asp-fragment="ContactEmail" mptx-href>Change</govuk-summary-list-row-action>
+        <govuk-summary-list-row-action>
+            <a asp-action="ApprenticeshipDetails" asp-fragment="ContactEmail" append-provider-context append-mptx-id class="govuk-link">Change</a>
+        </govuk-summary-list-row-action>
     </govuk-summary-list-row>
     <govuk-summary-list-row>
         <govuk-summary-list-row-key>Telephone</govuk-summary-list-row-key>
         <govuk-summary-list-row-value>@Model.ContactTelephone</govuk-summary-list-row-value>
-        <govuk-summary-list-row-action asp-action="ApprenticeshipDetails" asp-fragment="ContactTelephone" mptx-href>Change</govuk-summary-list-row-action>
+        <govuk-summary-list-row-action>
+            <a asp-action="ApprenticeshipDetails" asp-fragment="ContactTelephone" append-provider-context append-mptx-id class="govuk-link">Change</a>
+        </govuk-summary-list-row-action>
     </govuk-summary-list-row>
     <govuk-summary-list-row>
         <govuk-summary-list-row-key>Contact URL</govuk-summary-list-row-key>
         <govuk-summary-list-row-value>@Model.ContactWebsite</govuk-summary-list-row-value>
-        <govuk-summary-list-row-action asp-action="ApprenticeshipDetails" asp-fragment="ContactWebsite" mptx-href>Change</govuk-summary-list-row-action>
+        <govuk-summary-list-row-action>
+            <a asp-action="ApprenticeshipDetails" asp-fragment="ContactWebsite" append-provider-context append-mptx-id class="govuk-link">Change</a>
+        </govuk-summary-list-row-action>
     </govuk-summary-list-row>
 </govuk-summary-list>
 
