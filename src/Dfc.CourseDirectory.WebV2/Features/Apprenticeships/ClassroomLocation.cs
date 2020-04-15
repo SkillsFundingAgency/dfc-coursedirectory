@@ -17,13 +17,46 @@ using OneOf.Types;
 
 namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation
 {
+    public enum Mode
+    {
+        Add,
+        Edit
+    }
+
     public class FlowModel : IMptxState<IFlowModelCallback>
     {
+        private FlowModel() { }
+
+        public Mode Mode { get; set; }
         public Guid ProviderId { get; set; }
         public Guid? VenueId { get; set; }
+        public Guid? OriginalVenueId { get; set; }
         public int? Radius { get; set; }
         public bool? National { get; set; }
         public ApprenticeshipDeliveryModes? DeliveryModes { get; set; }
+
+        public static FlowModel Add(Guid providerId) => new FlowModel()
+        {
+            Mode = Mode.Add,
+            ProviderId = providerId
+        };
+
+        public static FlowModel Edit(
+            Guid providerId,
+            Guid venueId,
+            bool national,
+            int? radius,
+            ApprenticeshipDeliveryModes deliveryModes) =>
+            new FlowModel()
+            {
+                Mode = Mode.Edit,
+                DeliveryModes = deliveryModes,
+                National = national,
+                ProviderId = providerId,
+                Radius = radius,
+                VenueId = venueId,
+                OriginalVenueId = venueId
+            };
     }
 
     public interface IFlowModelCallback : IMptxState
@@ -32,6 +65,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation
         void ReceiveLocation(
             string instanceId,
             Guid venueId,
+            Guid? originalVenueId,
             bool national,
             int? radius,
             ApprenticeshipDeliveryModes deliveryModes);
@@ -118,6 +152,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation
             _flow.UpdateParent(s => s.ReceiveLocation(
                 _flow.InstanceId,
                 _flow.State.VenueId.Value,
+                _flow.State.OriginalVenueId,
                 _flow.State.National.GetValueOrDefault(),
                 !_flow.State.National.GetValueOrDefault() ? _flow.State.Radius : null,
                 _flow.State.DeliveryModes.Value));
@@ -168,8 +203,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation
             public Validator(IReadOnlyCollection<Venue> providerVenues, ISet<Guid> blockedVenueIds)
             {
                 RuleFor(c => c.VenueId)
-                    .NotEmpty()
-                    .Must(id => providerVenues.Select(v => v.Id).Except(blockedVenueIds).Contains(id.Value))
+                    .Must(id => providerVenues.Select(v => v.Id).Except(blockedVenueIds).Contains(id.GetValueOrDefault()))
                     .WithMessageForAllRules("Select the location");
 
                 RuleFor(c => c.Radius)

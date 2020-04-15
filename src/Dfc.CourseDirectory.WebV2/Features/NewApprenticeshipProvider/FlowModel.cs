@@ -35,21 +35,30 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
 
         IReadOnlyCollection<Guid> IFlowModelCallback.BlockedVenueIds => ApprenticeshipClassroomLocations?.Keys;
 
-        public void AddClassroomLocation(
+        public void SetClassroomLocationForVenue(
             Guid venueId,
+            Guid? originalVenueId,
             bool national,
             int? radius,
             ApprenticeshipDeliveryModes deliveryModes)
         {
             ApprenticeshipClassroomLocations ??= new Dictionary<Guid, ClassroomLocation>();
 
-            ApprenticeshipClassroomLocations[venueId] = new ClassroomLocation()
+            // This may be an amendment - ensure we remove original record since venue ID may have changed
+            if (originalVenueId.HasValue)
             {
-                VenueId = venueId,
-                National = national,
-                Radius = radius,
-                DeliveryModes = deliveryModes
-            };
+                ApprenticeshipClassroomLocations.Remove(originalVenueId.Value);
+            }
+
+            ApprenticeshipClassroomLocations.Add(
+                venueId,
+                new ClassroomLocation()
+                {
+                    VenueId = venueId,
+                    National = national,
+                    Radius = radius,
+                    DeliveryModes = deliveryModes
+                });
         }
 
         public void SetProviderDetails(string marketingInformation)
@@ -100,10 +109,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
         void IFlowModelCallback.ReceiveLocation(
             string instanceId,
             Guid venueId,
+            Guid? originalVenueId,
             bool national,
             int? radius,
             ApprenticeshipDeliveryModes deliveryModes) =>
-            AddClassroomLocation(venueId, national, radius, deliveryModes);
+            SetClassroomLocationForVenue(venueId, originalVenueId, national, radius, deliveryModes);
 
         public class ClassroomLocation
         {
