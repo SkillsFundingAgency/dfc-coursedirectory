@@ -37,6 +37,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Report
         public string FailedQA { get; set; }
         [CsvHelper.Configuration.Attributes.Name("Date Failed")]
         public string FailedQAOn { get; set; }
+        [CsvHelper.Configuration.Attributes.Name("QA Status")]
+        public string QAStatus { get; set; }
         [CsvHelper.Configuration.Attributes.Name("Unable to complete")]
         public string UnableToComplete { get; set; }
         [CsvHelper.Configuration.Attributes.Name("Date Unable to complete")]
@@ -45,8 +47,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Report
         public string Notes { get; set; }
         [CsvHelper.Configuration.Attributes.Name("Why can't they complete")]
         public string UnableToCompleteReasons { get; set; }
-        [CsvHelper.Configuration.Attributes.Ignore]
-        public ApprenticeshipQAStatus? QAStatus { get; set; }
+
     }
 
     public class QueryHandler : IRequestHandler<Query, ViewModel>
@@ -73,10 +74,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.Report
                              UnableToCompleteReasons = r.UnableToCompleteReasons.HasValue ? string.Join(",", EnumHelper.SplitFlags(r.UnableToCompleteReasons.Value).ToList().Select(x => x.ToDisplayName()).ToList()) : null,
                              UnableToCompleteOn = r.UnabletoCompleteOn.HasValue ? r.UnabletoCompleteOn.Value.ToString("dd MMM yyyy") : null,
                              Notes = r.Notes,
-                             QAStatus = r.QAStatus,
+                             QAStatus = r.QAStatus.HasValue ? r.QAStatus.Value.ToDisplayName() : null,
                              PassedQA = r.QAStatus == ApprenticeshipQAStatus.Passed ? "Yes" : "No",
                              FailedQA = r.QAStatus == ApprenticeshipQAStatus.Failed ? "Yes" : "No",
-                             UnableToComplete = r.QAStatus == ApprenticeshipQAStatus.UnableToComplete ? "Yes" : "No"
+                             UnableToComplete = r.QAStatus.HasValue ? (r.QAStatus.Value.HasFlag(ApprenticeshipQAStatus.UnableToComplete) ? "Yes" : "No") : "No"
                          }).ToList();
 
             var providers = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetProvidersByIds()
