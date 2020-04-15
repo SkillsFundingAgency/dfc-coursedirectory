@@ -33,6 +33,23 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
         public string ContactWebsite { get; set; }
         public ApprenticeshipLocationType ApprenticeshipLocationType { get; set; }
         public bool? ApprenticeshipIsNational { get; set; }
+        public IReadOnlyCollection<ViewModelEmployerBasedLocationRegion> EmployerBasedLocationRegions { get; set; }
+        public IReadOnlyCollection<ViewModelClassroomBasedLocation> ClassroomBasedLocations { get; set; }
+    }
+
+    public class ViewModelEmployerBasedLocationRegion
+    {
+        public string RegionId { get; set; }
+        public string Name { get; set; }
+    }
+
+    public class ViewModelClassroomBasedLocation
+    {
+        public Guid VenueId { get; set; }
+        public string VenueName { get; set; }
+        public bool National { get; set; }
+        public int? Radius { get; set; }
+        public ApprenticeshipDeliveryModes DeliveryModes { get; set; }
     }
 
     public class CompleteCommand : IRequest<Success>, IProviderScopedRequest
@@ -69,11 +86,19 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
             _providerInfoCache = providerInfoCache;
         }
 
-        public Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
+        public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
         {
             ValidateFlowState();
 
-            var vm = new ViewModel()
+            var provider = await _providerInfoCache.GetProviderInfo(request.ProviderId);
+
+            var providerVenues = await _cosmosDbQueryDispatcher.ExecuteQuery(
+                new GetAllVenuesForProvider()
+                {
+                    ProviderUkprn = provider.Ukprn
+                });
+
+            return new ViewModel()
             {
                 ProviderId = request.ProviderId,
                 StandardOrFrameworkTitle = _flow.State.ApprenticeshipStandardOrFramework.StandardOrFrameworkTitle,
@@ -83,9 +108,27 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
                 ContactEmail = _flow.State.ApprenticeshipContactEmail,
                 ContactWebsite = _flow.State.ApprenticeshipContactWebsite,
                 ApprenticeshipLocationType = _flow.State.ApprenticeshipLocationType.Value,
-                ApprenticeshipIsNational = _flow.State.ApprenticeshipIsNational
+                ApprenticeshipIsNational = _flow.State.ApprenticeshipIsNational,
+                EmployerBasedLocationRegions = _flow.State?.ApprenticeshipLocationSubRegionIds
+                    ?.Select(id => new ViewModelEmployerBasedLocationRegion()
+                    {
+                        RegionId = id,
+                        Name = Region.All.SelectMany(r => r.SubRegions).Single(sr => sr.Id == id).Name
+                    })
+                    ?.OrderBy(l => l.Name)
+                    ?.ToList(),
+                ClassroomBasedLocations = _flow.State?.ApprenticeshipClassroomLocations
+                    ?.Values
+                    ?.Select(l => new ViewModelClassroomBasedLocation()
+                    {
+                        DeliveryModes = l.DeliveryModes,
+                        National = l.National,
+                        Radius = l.Radius,
+                        VenueId = l.VenueId,
+                        VenueName = providerVenues.Single(v => v.Id == l.VenueId).VenueName
+                    })
+                    ?.ToList()
             };
-            return Task.FromResult(vm);
         }
 
         public async Task<Success> Handle(CompleteCommand request, CancellationToken cancellationToken)
@@ -162,7 +205,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
                 {
                     locations.Add(_flow.State.ApprenticeshipIsNational.Value ?
                         CreateApprenticeshipLocation.CreateNational() :
-                        CreateApprenticeshipLocation.CreateRegions(_flow.State.ApprenticeshipLocationRegionIds));
+                        CreateApprenticeshipLocation.CreateRegions(_flow.State.ApprenticeshipLocationSubRegionIds));
                 }
 
                 if (locationType.HasFlag(ApprenticeshipLocationType.ClassroomBased))

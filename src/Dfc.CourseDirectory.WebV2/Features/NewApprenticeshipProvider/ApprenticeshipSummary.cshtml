@@ -57,6 +57,57 @@
     </govuk-summary-list-row>
 </govuk-summary-list>
 
+<h2 class="govuk-heading-m govuk-!-margin-top-7">Locations</h2>
+@if (Model.ApprenticeshipLocationType.HasFlag(ApprenticeshipLocationType.EmployerBased))
+{
+    <table class="govuk-table">
+        <caption class="govuk-table__caption">
+            <a asp-action="ApprenticeshipEmployerLocations" append-mptx-id class="govuk-link govuk-body" style="float:right">Change</a>
+            @ApprenticeshipLocationType.EmployerBased.ToDisplayName()
+        </caption>
+        <tbody class="govuk-table__body">
+            @if (Model.ApprenticeshipIsNational == true)
+            {
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">National</td>
+                </tr>
+            }
+            else
+            {
+                @foreach (var region in Model.EmployerBasedLocationRegions)
+                {
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell">@region.Name</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+}
+@if (Model.ApprenticeshipLocationType.HasFlag(ApprenticeshipLocationType.ClassroomBased))
+{
+    <table class="govuk-table">
+        <caption class="govuk-table__caption">@ApprenticeshipLocationType.ClassroomBased.ToDisplayName()</caption>
+        <thead>
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header">Location</th>
+                <th scope="col" class="govuk-table__header" style="width:20%"></th>
+            </tr>
+        </thead>
+        <tbody class="govuk-table__body">
+            @foreach (var location in Model.ClassroomBasedLocations)
+            {
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">@location.VenueName</td>
+                    <td class="govuk-table__cell" style="text-align:right">
+                        <a asp-action="EditApprenticeshipClassroomLocation" asp-route-venueId="@location.VenueId" append-mptx-id class="govuk-link">Change</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
 <form asp-action="ApprenticeshipSummaryConfirmation" append-provider-context append-mptx-id>
     <govuk-button type="submit" class="govuk-!-margin-right-1">Submit for quality assurance</govuk-button>
     <govuk-button asp-action="Index" asp-controller="Home" class="govuk-button--secondary">Cancel</govuk-button>

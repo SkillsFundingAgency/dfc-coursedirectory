@@ -48,7 +48,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
             var command = new Command()
             {
                 ProviderId = request.ProviderId,
-                RegionIds = _flow.State.ApprenticeshipLocationRegionIds ?? Array.Empty<string>()
+                RegionIds = _flow.State.ApprenticeshipLocationSubRegionIds ?? Array.Empty<string>()
             };
             return Task.FromResult(command);
         }

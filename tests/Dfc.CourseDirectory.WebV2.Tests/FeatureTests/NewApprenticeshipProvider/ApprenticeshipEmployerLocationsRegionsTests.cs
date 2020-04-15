@@ -130,7 +130,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 {
                     ApprenticeshipLocationType = ApprenticeshipLocationType.EmployerBased,
                     ApprenticeshipIsNational = false,
-                    ApprenticeshipLocationRegionIds = new[] { "E06000001" }  // County Durham
+                    ApprenticeshipLocationSubRegionIds = new[] { "E06000001" }  // County Durham
                 });
 
             // Act
@@ -322,7 +322,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
         [Theory]
         [InlineData(ApprenticeshipLocationType.EmployerBased, "/new-apprenticeship-provider/apprenticeship-confirmation")]
-        [InlineData(ApprenticeshipLocationType.ClassroomBasedAndEmployerBased, "/new-apprenticeship-provider/apprenticeship-classroom-locations")]
+        [InlineData(ApprenticeshipLocationType.ClassroomBasedAndEmployerBased, "/new-apprenticeship-provider/add-apprenticeship-classroom-location")]
         public async Task Post_ValidRequestUpdatesStateAndRedirects(
             ApprenticeshipLocationType locationType,
             string expectedRedirectLocation)
@@ -389,7 +389,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             // Assert
             var region = Region.All.Single(r => r.Id == "E12000001");
             var state = GetMptxInstance<FlowModel>(mptxInstance.InstanceId).State;
-            Assert.All(region.SubRegions, sr => state.ApprenticeshipLocationRegionIds.Contains(sr.Id));
+            Assert.All(region.SubRegions, sr => state.ApprenticeshipLocationSubRegionIds.Contains(sr.Id));
         }
     }
 }
