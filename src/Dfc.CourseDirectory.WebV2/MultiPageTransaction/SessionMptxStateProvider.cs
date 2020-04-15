@@ -136,14 +136,14 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             }
         }
 
-        public void UpdateInstanceState(string instanceId, Func<object, object> update)
+        public void SetInstanceState(string instanceId, object state)
         {
             var key = GetSessionKey(instanceId);
 
             if (_httpContextAccessor.HttpContext.Session.TryGetValue(key, out var serialized) &&
                 TryDeserialize(serialized, out var entry))
             {
-                entry.State = update(entry.State);
+                entry.State = state;
 
                 SetEntry(key, entry);
             }

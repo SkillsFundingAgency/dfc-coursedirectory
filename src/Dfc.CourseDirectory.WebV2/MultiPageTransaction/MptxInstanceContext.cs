@@ -56,15 +56,9 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
         {
             ThrowIfCompleted();
 
-            StateProvider.UpdateInstanceState(InstanceId, state =>
-            {
-                update((TState)state);
-                return state;
-            });
-
-            // Refresh the cached state object - required so multiple state updates
-            // in a single refresh are 'seen' everywhere
             update(State);
+
+            StateProvider.SetInstanceState(InstanceId, State);
         }
 
         protected void ThrowIfCompleted()
@@ -93,15 +87,9 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
         {
             ThrowIfCompleted();
 
-            StateProvider.UpdateInstanceState(ParentInstanceId, state =>
-            {
-                update((TParentState)state);
-                return state;
-            });
-
-            // Refresh the cached state object - required so multiple state updates
-            // in a single refresh are 'seen' everywhere
             update(ParentState);
+
+            StateProvider.SetInstanceState(ParentInstanceId, ParentState);
         }
     }
 }

@@ -12,6 +12,6 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
             IReadOnlyDictionary<string, object> items);
         void DeleteInstance(string instanceId);
         MptxInstance GetInstance(string instanceId);
-        void UpdateInstanceState(string instanceId, Func<object, object> update);
+        void SetInstanceState(string instanceId, object update);
     }
 }
