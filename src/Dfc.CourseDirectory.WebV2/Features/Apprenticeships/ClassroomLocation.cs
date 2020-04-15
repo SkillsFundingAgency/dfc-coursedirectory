@@ -87,6 +87,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation
 
     public class ViewModel : Command
     {
+        public Mode Mode { get; set; }
         public IReadOnlyCollection<(Guid venueId, string name, bool blocked)> Venues { get; set; }
     }
 
@@ -163,6 +164,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation
         private ViewModel CreateViewModel(IReadOnlyCollection<Venue> providerVenues, ISet<Guid> blockedVenueIds) =>
             new ViewModel()
             {
+                Mode = _flow.State.Mode,
                 Venues = providerVenues
                     .Select(v => (v.Id, v.VenueName, blocked: blockedVenueIds.Contains(v.Id)))
                     .OrderBy(v => v.VenueName)
