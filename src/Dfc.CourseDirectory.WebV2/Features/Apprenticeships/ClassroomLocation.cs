@@ -28,6 +28,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation
 
     public interface IFlowModelCallback : IMptxState
     {
+        IReadOnlyCollection<Guid> BlockedVenueIds { get; }
         void ReceiveLocation(
             string instanceId,
             Guid venueId,
@@ -52,7 +53,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation
 
     public class ViewModel : Command
     {
-        public IReadOnlyCollection<(Guid venueId, string name)> Venues { get; set; }
+        public IReadOnlyCollection<(Guid venueId, string name, bool blocked)> Venues { get; set; }
     }
 
     public class Handler :
@@ -75,7 +76,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation
 
         public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
         {
-            var vm = CreateViewModel(await GetProviderVenues());
+            var providerVenues = await GetProviderVenues();
+            var blockedVenueIds = GetNormalizedBlockedVenueIds();
+
+            var vm = CreateViewModel(providerVenues, blockedVenueIds);
             
             if (request.VenueId.HasValue)
             {
@@ -90,13 +94,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation
             CancellationToken cancellationToken)
         {
             var providerVenues = await GetProviderVenues();
+            var blockedVenueIds = GetNormalizedBlockedVenueIds();
 
-            var validator = new Validator(providerVenues);
+            var validator = new Validator(providerVenues, blockedVenueIds);
             var validationResult = await validator.ValidateAsync(request);
 
             if (!validationResult.IsValid)
             {
-                var vm = CreateViewModel(providerVenues);
+                var vm = CreateViewModel(providerVenues, blockedVenueIds);
                 request.Adapt(vm);
 
                 return new ModelWithErrors<ViewModel>(vm, validationResult);
@@ -120,16 +125,32 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation
             return new Success();
         }
 
-        private ViewModel CreateViewModel(IReadOnlyCollection<Venue> providerVenues) => new ViewModel()
+        private ViewModel CreateViewModel(IReadOnlyCollection<Venue> providerVenues, ISet<Guid> blockedVenueIds) =>
+            new ViewModel()
+            {
+                Venues = providerVenues
+                    .Select(v => (v.Id, v.VenueName, blocked: blockedVenueIds.Contains(v.Id)))
+                    .OrderBy(v => v.VenueName)
+                    .ToList(),
+                VenueId = _flow.State.VenueId.HasValue && providerVenues.Any(v => v.Id == _flow.State.VenueId) ?
+                    _flow.State.VenueId :
+                    null,
+                    Radius = _flow.State.Radius,
+                    National = _flow.State.National,
+                    DeliveryModes = _flow.State.DeliveryModes.GetValueOrDefault()
+            };
+
+        private ISet<Guid> GetNormalizedBlockedVenueIds()
         {
-            Venues = providerVenues.Select(v => (v.Id, v.VenueName)).OrderBy(v => v.VenueName).ToList(),
-            VenueId = _flow.State.VenueId.HasValue && providerVenues.Any(v => v.Id == _flow.State.VenueId) ?
-                _flow.State.VenueId :
-                null,
-            Radius = _flow.State.Radius,
-            National = _flow.State.National,
-            DeliveryModes = _flow.State.DeliveryModes
-        };
+            var set = new HashSet<Guid>(_flow.ParentState.BlockedVenueIds ?? Array.Empty<Guid>());
+
+            if (_flow.State.VenueId.HasValue)
+            {
+                set.Remove(_flow.State.VenueId.Value);
+            }
+
+            return set;
+        }
 
         private async Task<IReadOnlyCollection<Venue>> GetProviderVenues()
         {
@@ -144,11 +165,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation
 
         private class Validator : AbstractValidator<Command>
         {
-            public Validator(IReadOnlyCollection<Venue> providerVenues)
+            public Validator(IReadOnlyCollection<Venue> providerVenues, ISet<Guid> blockedVenueIds)
             {
                 RuleFor(c => c.VenueId)
                     .NotEmpty()
-                    .Must(id => providerVenues.Any(v => v.Id == id))
+                    .Must(id => providerVenues.Select(v => v.Id).Except(blockedVenueIds).Contains(id.Value))
                     .WithMessageForAllRules("Select the location");
 
                 RuleFor(c => c.Radius)

@@ -126,6 +126,49 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
         }
 
         [Fact]
+        public async Task Post_BlockedVenueId_RendersErrorMessage()
+        {
+            // Arrange
+            var providerId = await TestData.CreateProvider(providerType: ProviderType.Apprenticeships);
+
+            var venueId = Guid.NewGuid();
+
+            var parentMptxInstance = MptxManager.CreateInstance(
+                new ParentFlow()
+                {
+                    BlockedVenueIds = new[] { venueId }
+                });
+            var childMptxInstance = MptxManager.CreateInstance<FlowModel, IFlowModelCallback>(
+                parentMptxInstance.InstanceId,
+                new FlowModel() { ProviderId = providerId },
+                new Dictionary<string, object>()
+                {
+                    { "ReturnUrl", "callback" }
+                });
+
+            await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
+
+            var requestContent = new FormUrlEncodedContentBuilder()
+                .Add("VenueId", venueId)
+                .Add("Radius", 15)
+                .Add("National", false)
+                .Add("DeliveryModes", ApprenticeshipDeliveryModes.DayRelease)
+                .Add("DeliveryModes", ApprenticeshipDeliveryModes.BlockRelease)
+                .ToContent();
+
+            // Act
+            var response = await HttpClient.PostAsync(
+                $"/apprenticeships/classroom-location?ffiid={childMptxInstance.InstanceId}",
+                requestContent);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+
+            var doc = await response.GetDocument();
+            doc.AssertHasError("VenueId", "Select the location");
+        }
+
+        [Fact]
         public async Task Post_NotNationalMissingRadius_RendersErrorMessage()
         {
             // Arrange
@@ -250,6 +293,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
             public bool National { get; set; }
             public int? Radius { get; set; }
             public ApprenticeshipDeliveryModes DeliveryModes { get; set; }
+
+            public IReadOnlyCollection<Guid> BlockedVenueIds { get; set; }
 
             public void ReceiveLocation(
                 string instanceId,
