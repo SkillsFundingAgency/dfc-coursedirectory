@@ -127,6 +127,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
                         VenueId = l.VenueId,
                         VenueName = providerVenues.Single(v => v.Id == l.VenueId).VenueName
                     })
+                    ?.OrderBy(l => l.VenueName)
                     ?.ToList()
             };
         }
