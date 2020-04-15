@@ -48,7 +48,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation
         public Guid? VenueId { get; set; }
         public int? Radius { get; set; }
         public bool? National { get; set; }
-        public ApprenticeshipDeliveryModes? DeliveryModes { get; set; }
+        public ApprenticeshipDeliveryModes DeliveryModes { get; set; }
     }
 
     public class ViewModel : Command

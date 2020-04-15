@@ -57,10 +57,10 @@
             </govuk-checkboxes-fieldset-legend>
         </govuk-checkboxes-fieldset>
         <govuk-checkboxes-hint>Select all that apply</govuk-checkboxes-hint>
-        <govuk-checkboxes-item value="@ApprenticeshipDeliveryModes.DayRelease">
+        <govuk-checkboxes-item value="@ApprenticeshipDeliveryModes.DayRelease" checked="@Model.DeliveryModes.HasFlag(ApprenticeshipDeliveryModes.DayRelease)">
             Day Release
         </govuk-checkboxes-item>
-        <govuk-checkboxes-item value="@ApprenticeshipDeliveryModes.BlockRelease">
+        <govuk-checkboxes-item value="@ApprenticeshipDeliveryModes.BlockRelease" checked="@Model.DeliveryModes.HasFlag(ApprenticeshipDeliveryModes.BlockRelease)">
             Block Release
         </govuk-checkboxes-item>
     </govuk-checkboxes>
