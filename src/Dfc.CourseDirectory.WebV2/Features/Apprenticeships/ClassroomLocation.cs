@@ -76,7 +76,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation
         public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
         {
             var vm = CreateViewModel(await GetProviderVenues());
-            request.Adapt(vm);
+            
+            if (request.VenueId.HasValue)
+            {
+                vm.VenueId = request.VenueId;
+            }
+
             return vm;
         }
 

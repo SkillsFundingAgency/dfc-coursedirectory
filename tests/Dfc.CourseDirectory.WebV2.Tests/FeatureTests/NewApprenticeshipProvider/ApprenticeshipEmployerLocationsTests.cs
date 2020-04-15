@@ -256,7 +256,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
         [Theory]
         [InlineData(ApprenticeshipLocationType.EmployerBased, "/new-apprenticeship-provider/apprenticeship-confirmation")]
-        [InlineData(ApprenticeshipLocationType.ClassroomBasedAndEmployerBased, "/new-apprenticeship-provider/apprenticeship-classroom-locations")]
+        [InlineData(ApprenticeshipLocationType.ClassroomBasedAndEmployerBased, "/new-apprenticeship-provider/add-apprenticeship-classroom-location")]
         public async Task Post_ValidRequestNationalUpdatesFlowStateAndRedirects(
             ApprenticeshipLocationType locationType,
             string expectedRedirectLocation)

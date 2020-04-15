@@ -17,7 +17,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
         public string ApprenticeshipContactWebsite { get; set; }
         public ApprenticeshipLocationType? ApprenticeshipLocationType { get; set; }
         public bool? ApprenticeshipIsNational { get; set; }
-        public IReadOnlyCollection<string> ApprenticeshipLocationRegionIds { get; set; }
+        public IReadOnlyCollection<string> ApprenticeshipLocationSubRegionIds { get; set; }
         public Dictionary<Guid, ClassroomLocation> ApprenticeshipClassroomLocations { get; set; }
 
         public bool GotApprenticeshipDetails { get; set; }
@@ -30,7 +30,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
                 (ApprenticeshipLocationType.Value.HasFlag(Models.ApprenticeshipLocationType.ClassroomBased) &&
                     (ApprenticeshipClassroomLocations?.Count ?? 0) > 0) ||
                 (ApprenticeshipLocationType.Value.HasFlag(Models.ApprenticeshipLocationType.EmployerBased) &&
-                    (ApprenticeshipIsNational.GetValueOrDefault() || (ApprenticeshipLocationRegionIds?.Count ?? 0) > 0))) &&
+                    (ApprenticeshipIsNational.GetValueOrDefault() || (ApprenticeshipLocationSubRegionIds?.Count ?? 0) > 0))) &&
             GotApprenticeshipDetails;
 
         public void AddClassroomLocation(
@@ -79,7 +79,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
         public void SetApprenticeshipLocationRegionIds(IReadOnlyCollection<string> regionIds)
         {
             ApprenticeshipIsNational = false;
-            ApprenticeshipLocationRegionIds = regionIds;
+            ApprenticeshipLocationSubRegionIds = regionIds;
         }
 
         public void SetApprenticeshipLocationType(ApprenticeshipLocationType apprenticeshipLocationType)
