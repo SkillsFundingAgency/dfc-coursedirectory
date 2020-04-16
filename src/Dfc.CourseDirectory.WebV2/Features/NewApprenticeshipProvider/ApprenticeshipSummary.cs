@@ -12,12 +12,15 @@ using Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.WebV2.Models;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using Dfc.CourseDirectory.WebV2.Security;
+using Dfc.CourseDirectory.WebV2.Validation;
+using FluentValidation;
 using MediatR;
+using OneOf;
 using OneOf.Types;
 
 namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ApprenticeshipSummary
 {
-    public class Query : IRequest<ViewModel>, IProviderScopedRequest
+    public class Query : IRequest<OneOf<ModelWithErrors<ViewModel>, ViewModel>>, IProviderScopedRequest
     {
         public Guid ProviderId { get; set; }
     }
@@ -52,15 +55,15 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
         public ApprenticeshipDeliveryModes DeliveryModes { get; set; }
     }
 
-    public class CompleteCommand : IRequest<Success>, IProviderScopedRequest
+    public class CompleteCommand : IRequest<OneOf<ModelWithErrors<ViewModel>, Success>>, IProviderScopedRequest
     {
         public Guid ProviderId { get; set; }
     }
 
     public class Handler :
-        IRequestHandler<Query, ViewModel>,
+        IRequestHandler<Query, OneOf<ModelWithErrors<ViewModel>, ViewModel>>,
         IRequireUserCanSubmitQASubmission<Query>,
-        IRequestHandler<CompleteCommand, Success>,
+        IRequestHandler<CompleteCommand, OneOf<ModelWithErrors<ViewModel>, Success>>,
         IRequireUserCanSubmitQASubmission<CompleteCommand>
     {
         private readonly MptxInstanceContext<FlowModel> _flow;
@@ -86,62 +89,53 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
             _providerInfoCache = providerInfoCache;
         }
 
-        public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
+        public async Task<OneOf<ModelWithErrors<ViewModel>, ViewModel>> Handle(
+            Query request,
+            CancellationToken cancellationToken)
         {
             ValidateFlowState();
 
-            var provider = await _providerInfoCache.GetProviderInfo(request.ProviderId);
+            var providerId = request.ProviderId;
+            var provider = await _providerInfoCache.GetProviderInfo(providerId);
 
-            var providerVenues = await _cosmosDbQueryDispatcher.ExecuteQuery(
-                new GetAllVenuesForProvider()
-                {
-                    ProviderUkprn = provider.Ukprn
-                });
+            ViewModel vm = await CreateViewModel(provider);
 
-            return new ViewModel()
+            var validator = new CompleteValidator();
+            var validationResult = await validator.ValidateAsync(_flow.State);
+
+            if (!validationResult.IsValid)
             {
-                ProviderId = request.ProviderId,
-                StandardOrFrameworkTitle = _flow.State.ApprenticeshipStandardOrFramework.StandardOrFrameworkTitle,
-                MarketingInformation = _flow.State.ApprenticeshipMarketingInformation,
-                Website = _flow.State.ApprenticeshipWebsite,
-                ContactTelephone = _flow.State.ApprenticeshipContactTelephone,
-                ContactEmail = _flow.State.ApprenticeshipContactEmail,
-                ContactWebsite = _flow.State.ApprenticeshipContactWebsite,
-                ApprenticeshipLocationType = _flow.State.ApprenticeshipLocationType.Value,
-                ApprenticeshipIsNational = _flow.State.ApprenticeshipIsNational,
-                EmployerBasedLocationRegions = _flow.State?.ApprenticeshipLocationSubRegionIds
-                    ?.Select(id => new ViewModelEmployerBasedLocationRegion()
-                    {
-                        RegionId = id,
-                        Name = Region.All.SelectMany(r => r.SubRegions).Single(sr => sr.Id == id).Name
-                    })
-                    ?.OrderBy(l => l.Name)
-                    ?.ToList(),
-                ClassroomBasedLocations = _flow.State?.ApprenticeshipClassroomLocations
-                    ?.Values
-                    ?.Select(l => new ViewModelClassroomBasedLocation()
-                    {
-                        DeliveryModes = l.DeliveryModes,
-                        National = l.National,
-                        Radius = l.Radius,
-                        VenueId = l.VenueId,
-                        VenueName = providerVenues.Single(v => v.Id == l.VenueId).VenueName
-                    })
-                    ?.OrderBy(l => l.VenueName)
-                    ?.ToList()
-            };
+                return new ModelWithErrors<ViewModel>(vm, validationResult);
+            }
+            else
+            {
+                return vm;
+            }
         }
 
-        public async Task<Success> Handle(CompleteCommand request, CancellationToken cancellationToken)
+        public async Task<OneOf<ModelWithErrors<ViewModel>, Success>> Handle(
+            CompleteCommand request,
+            CancellationToken cancellationToken)
         {
             ValidateFlowState();
+
+            var providerId = request.ProviderId;
+            var provider = await _providerInfoCache.GetProviderInfo(providerId);
+
+            var validator = new CompleteValidator();
+            var validationResult = await validator.ValidateAsync(_flow.State);
+
+            if (!validationResult.IsValid)
+            {
+                var vm = await CreateViewModel(provider);
+                return new ModelWithErrors<ViewModel>(vm, validationResult);
+            }
 
             var currentUser = _currentUserProvider.GetCurrentUser();
             var now = _clock.UtcNow;
 
             var apprenticeshipId = Guid.NewGuid();
-            var providerId = request.ProviderId;
-            var providerUkprn = (await _providerInfoCache.GetProviderInfo(providerId)).Ukprn;
+            var providerUkprn = provider.Ukprn;
 
             // Create apprenticeship
             await _cosmosDbQueryDispatcher.ExecuteQuery(
@@ -242,11 +236,79 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
             }
         }
 
+        private async Task<ViewModel> CreateViewModel(ProviderInfo provider)
+        {
+            var providerVenues = await _cosmosDbQueryDispatcher.ExecuteQuery(
+                new GetAllVenuesForProvider()
+                {
+                    ProviderUkprn = provider.Ukprn
+                });
+
+            return new ViewModel()
+            {
+                ProviderId = provider.ProviderId,
+                StandardOrFrameworkTitle = _flow.State.ApprenticeshipStandardOrFramework.StandardOrFrameworkTitle,
+                MarketingInformation = _flow.State.ApprenticeshipMarketingInformation,
+                Website = _flow.State.ApprenticeshipWebsite,
+                ContactTelephone = _flow.State.ApprenticeshipContactTelephone,
+                ContactEmail = _flow.State.ApprenticeshipContactEmail,
+                ContactWebsite = _flow.State.ApprenticeshipContactWebsite,
+                ApprenticeshipLocationType = _flow.State.ApprenticeshipLocationType.Value,
+                ApprenticeshipIsNational = _flow.State.ApprenticeshipIsNational,
+                EmployerBasedLocationRegions = _flow.State?.ApprenticeshipLocationSubRegionIds
+                    ?.Select(id => new ViewModelEmployerBasedLocationRegion()
+                    {
+                        RegionId = id,
+                        Name = Region.All.SelectMany(r => r.SubRegions).Single(sr => sr.Id == id).Name
+                    })
+                    ?.OrderBy(l => l.Name)
+                    ?.ToList(),
+                ClassroomBasedLocations = _flow.State?.ApprenticeshipClassroomLocations
+                    ?.Values
+                    ?.Select(l => new ViewModelClassroomBasedLocation()
+                    {
+                        DeliveryModes = l.DeliveryModes,
+                        National = l.National,
+                        Radius = l.Radius,
+                        VenueId = l.VenueId,
+                        VenueName = providerVenues.Single(v => v.Id == l.VenueId).VenueName
+                    })
+                    ?.OrderBy(l => l.VenueName)
+                    ?.ToList()
+            };
+        }
+
         private void ValidateFlowState()
         {
-            if (!_flow.State.IsValid)
+            // Require everything to be set here to create a valid apprenticeship
+            // *except* classroom locations - we need to handle that being empty
+
+            var state = _flow.State;
+
+            var isValid = state.GotProviderDetails &&
+                state.ApprenticeshipStandardOrFramework != null &&
+                state.ApprenticeshipLocationType != null &&
+                (
+                    (state.ApprenticeshipLocationType.Value.HasFlag(ApprenticeshipLocationType.ClassroomBased)) ||
+                    (state.ApprenticeshipLocationType.Value.HasFlag(ApprenticeshipLocationType.EmployerBased) &&
+                        (state.ApprenticeshipIsNational.GetValueOrDefault() || (state.ApprenticeshipLocationSubRegionIds?.Count ?? 0) > 0))) &&
+                state.GotApprenticeshipDetails;
+
+            if (!isValid)
             {
                 throw new ErrorException<InvalidFlowState>(new InvalidFlowState());
+            }
+        }
+
+        private class CompleteValidator : AbstractValidator<FlowModel>
+        {
+            public CompleteValidator()
+            {
+                // Require at least one classroom location when ApprenticeshipLocationType includes ClassroomBased
+                RuleFor(m => m)
+                    .Must(m => (m.ApprenticeshipClassroomLocations?.Count ?? 0) > 0)
+                    .When(m => m.ApprenticeshipLocationType.Value.HasFlag(ApprenticeshipLocationType.ClassroomBased))
+                    .WithMessageForAllRules("Add at least one classroom based location");
             }
         }
     }

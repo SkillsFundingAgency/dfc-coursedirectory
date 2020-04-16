@@ -23,17 +23,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
         public bool GotApprenticeshipDetails { get; set; }
         public bool GotProviderDetails { get; set; }
 
-        public bool IsValid => GotProviderDetails &&
-            ApprenticeshipStandardOrFramework != null &&
-            ApprenticeshipLocationType != null &&
-            (
-                (ApprenticeshipLocationType.Value.HasFlag(Models.ApprenticeshipLocationType.ClassroomBased) &&
-                    (ApprenticeshipClassroomLocations?.Count ?? 0) > 0) ||
-                (ApprenticeshipLocationType.Value.HasFlag(Models.ApprenticeshipLocationType.EmployerBased) &&
-                    (ApprenticeshipIsNational.GetValueOrDefault() || (ApprenticeshipLocationSubRegionIds?.Count ?? 0) > 0))) &&
-            GotApprenticeshipDetails;
-
         IReadOnlyCollection<Guid> IFlowModelCallback.BlockedVenueIds => ApprenticeshipClassroomLocations?.Keys;
+
+        public void RemoveLocation(Guid venueId) => ApprenticeshipClassroomLocations.Remove(venueId);
 
         public void SetClassroomLocationForVenue(
             Guid venueId,
@@ -112,8 +104,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
             int? radius,
             ApprenticeshipDeliveryModes deliveryModes) =>
             SetClassroomLocationForVenue(venueId, originalVenueId, national, radius, deliveryModes);
-
-        void IFlowModelCallback.RemoveLocation(Guid venueId) => ApprenticeshipClassroomLocations.Remove(venueId);
 
         public class ClassroomLocation
         {
