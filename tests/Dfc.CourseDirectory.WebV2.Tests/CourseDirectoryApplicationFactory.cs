@@ -50,8 +50,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         public TestUserInfo User => Services.GetRequiredService<TestUserInfo>();
 
-        private string SqlConnectionString => Configuration["ConnectionStrings:DefaultConnection"];
-
         public void OnTestStarting()
         {
             DatabaseFixture.OnTestStarting();
@@ -81,9 +79,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         public async Task OnTestStartingAsync()
         {
             await DatabaseFixture.OnTestStartingAsync();
-
-            // Reset to the default calling user
-            await User.Reset();
         }
 
         protected override void ConfigureWebHost(IWebHostBuilder builder) => builder.UseContentRoot(".");

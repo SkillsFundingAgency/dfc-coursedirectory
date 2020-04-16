@@ -49,7 +49,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
             services.AddCourseDirectory(HostingEnvironment, Configuration);
 
-            services.AddSingleton<TestUserInfo>();
             services.AddSingleton<IDistributedCache, ClearableMemoryCache>();
             services.AddSingleton<IMptxStateProvider, InMemoryMptxStateProvider>();
             services.AddSingleton<IFeatureFlagProvider, ConfigurationFeatureFlagProvider>();

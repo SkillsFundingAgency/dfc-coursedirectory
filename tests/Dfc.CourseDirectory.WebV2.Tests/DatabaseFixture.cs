@@ -42,6 +42,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         public TestData TestData => _services.GetRequiredService<TestData>();
 
+        public TestUserInfo User => _services.GetRequiredService<TestUserInfo>();
+
         private string ConnectionString => _configuration["ConnectionStrings:DefaultConnection"];
 
         public static void ConfigureServices(IServiceCollection services)
@@ -52,6 +54,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             services.AddTransient<TestData>();
             services.AddSingleton<SqlQuerySpy>();
             services.Decorate<ISqlQueryDispatcher, SqlQuerySpyDecorator>();
+            services.AddSingleton<TestUserInfo>();
         }
 
         public void OnTestStarting()
@@ -70,6 +73,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         {
             // Clear out all data from SQL database
             await _sqlCheckpoint.Reset(ConnectionString);
+
+            // Reset to the default calling user
+            await User.Reset();
         }
 
         public Task WithSqlQueryDispatcher(Func<ISqlQueryDispatcher, Task> action) =>

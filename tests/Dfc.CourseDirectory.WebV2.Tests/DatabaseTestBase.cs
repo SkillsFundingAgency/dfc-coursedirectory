@@ -26,6 +26,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         public IServiceProvider Services { get; }
 
+        public TestUserInfo User => DatabaseFixture.User;
+
         public void OnTestStarting()
         {
             DatabaseFixture.OnTestStarting();
