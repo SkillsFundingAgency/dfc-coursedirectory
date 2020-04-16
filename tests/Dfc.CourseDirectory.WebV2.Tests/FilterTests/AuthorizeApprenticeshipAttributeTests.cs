@@ -20,7 +20,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             // Arrange
             var providerId = await TestData.CreateProvider();
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
-            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard);
+            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard, createdBy: User.ToUserInfo());
             await User.AsDeveloper();
 
             // Act
@@ -36,7 +36,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             // Arrange
             var providerId = await TestData.CreateProvider();
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
-            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard);
+            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard, createdBy: User.ToUserInfo());
             await User.AsHelpdesk();
 
             // Act
@@ -52,7 +52,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             // Arrange
             var providerId = await TestData.CreateProvider();
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
-            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard);
+            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard, createdBy: User.ToUserInfo());
             await User.AsProviderUser(providerId, Models.ProviderType.Apprenticeships);
 
             // Act
@@ -68,7 +68,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             // Arrange
             var providerId = await TestData.CreateProvider();
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
-            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard);
+            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard, createdBy: User.ToUserInfo());
             await User.AsProviderSuperUser(providerId, Models.ProviderType.Apprenticeships);
 
             // Act
@@ -86,7 +86,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             var providerId = await TestData.CreateProvider(ukprn);
             var anotherProviderId = await TestData.CreateProvider(ukprn: 23456);
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
-            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard);
+            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard, createdBy: User.ToUserInfo());
             await User.AsProviderUser(anotherProviderId, Models.ProviderType.Apprenticeships);
 
             // Act
@@ -104,7 +104,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             var providerId = await TestData.CreateProvider(ukprn);
             var anotherProviderId = await TestData.CreateProvider(ukprn: 23456);
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
-            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard);
+            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard, createdBy: User.ToUserInfo());
             await User.AsProviderSuperUser(anotherProviderId, Models.ProviderType.Apprenticeships);
 
             // Act
