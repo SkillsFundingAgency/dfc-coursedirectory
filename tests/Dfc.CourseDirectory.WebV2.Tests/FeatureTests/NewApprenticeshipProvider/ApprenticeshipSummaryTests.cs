@@ -144,6 +144,41 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
         }
 
         [Fact]
+        public async Task Get_MissingClassroomLocations_RendersExpectedOutput()
+        {
+            // Arrange
+            var providerId = await TestData.CreateProvider(apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted);
+
+            var standardCode = 123;
+            var standardVersion = 1;
+            var standard = await TestData.CreateStandard(standardCode, standardVersion, standardName: "My standard");
+
+            await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
+
+            var flowModel = new FlowModel();
+            flowModel.SetProviderDetails("Provider 1 rocks");
+            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            flowModel.SetApprenticeshipDetails(
+                marketingInformation: "My apprenticeship",
+                website: "http://provider.com/apprenticeship",
+                contactTelephone: "01234 5678902",
+                contactEmail: "guy@provider.com",
+                contactWebsite: "http://provider.com");
+            flowModel.SetApprenticeshipLocationType(ApprenticeshipLocationType.ClassroomBased);
+            var mptxInstance = CreateMptxInstance(flowModel);
+
+            // Act
+            var response = await HttpClient.GetAsync(
+                $"new-apprenticeship-provider/apprenticeship-confirmation?providerId={providerId}&ffiid={mptxInstance.InstanceId}");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+
+            var doc = await response.GetDocument();
+            Assert.NotNull(doc.GetElementsByClassName("govuk-error-summary"));
+        }
+
+        [Fact]
         public async Task Get_ValidRequest_RendersExpectedOutput()
         {
             // Arrange
@@ -317,6 +352,47 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task Post_MissingClassroomLocations_RendersErrorMessage()
+        {
+            // Arrange
+            var providerId = await TestData.CreateProvider(apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted);
+
+            var standardCode = 123;
+            var standardVersion = 1;
+            var standard = await TestData.CreateStandard(standardCode, standardVersion, standardName: "My standard");
+
+            await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
+
+            var flowModel = new FlowModel();
+            flowModel.SetProviderDetails("Provider 1 rocks");
+            flowModel.SetApprenticeshipStandardOrFramework(standard);
+            flowModel.SetApprenticeshipDetails(
+                marketingInformation: "My apprenticeship",
+                website: "http://provider.com/apprenticeship",
+                contactTelephone: "01234 5678902",
+                contactEmail: "guy@provider.com",
+                contactWebsite: "http://provider.com");
+            flowModel.SetApprenticeshipLocationType(ApprenticeshipLocationType.ClassroomBased);
+            var mptxInstance = CreateMptxInstance(flowModel);
+
+            Guid apprenticeshipId = default;
+            CosmosDbQueryDispatcher.Callback<CreateApprenticeship, Success>(q => apprenticeshipId = q.Id);
+
+            var requestContent = new FormUrlEncodedContentBuilder().ToContent();
+
+            // Act
+            var response = await HttpClient.PostAsync(
+                $"new-apprenticeship-provider/apprenticeship-confirmation?providerId={providerId}&ffiid={mptxInstance.InstanceId}",
+                requestContent);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+
+            var doc = await response.GetDocument();
+            Assert.NotNull(doc.GetElementsByClassName("govuk-error-summary"));
         }
 
         [Fact]

@@ -1,6 +1,17 @@
-﻿@model Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ApprenticeshipSummary.ViewModel
+﻿@using Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.ApprenticeshipSummary
+@model ViewModel
 @{
     ViewBag.Title = "Check and publish to the course directory";
+}
+
+@if (!ViewContext.ModelState.IsValid)
+{
+    <govuk-error-summary>
+        <govuk-error-summary-title>There is a problem</govuk-error-summary-title>
+        <govuk-error-summary-item>
+            @ViewContext.ModelState[""].Errors.First().ErrorMessage
+        </govuk-error-summary-item>
+    </govuk-error-summary>
 }
 
 <h1 class="govuk-heading-l">Check and publish to the course directory</h1>
@@ -98,7 +109,7 @@
             </tr>
         </thead>
         <tbody class="govuk-table__body">
-            @foreach (var location in Model.ClassroomBasedLocations)
+            @foreach (var location in Model.ClassroomBasedLocations ?? Array.Empty<ViewModelClassroomBasedLocation>())
             {
                 <tr class="govuk-table__row">
                     <td class="govuk-table__cell">@location.VenueName</td>

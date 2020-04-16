@@ -159,7 +159,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
         public async Task<IActionResult> ApprenticeshipSummary()
         {
             var query = new ApprenticeshipSummary.Query() { ProviderId = ProviderContext.ProviderId };
-            return await _mediator.SendAndMapResponse(query, vm => View(vm));
+            return await _mediator.SendAndMapResponse(
+                query,
+                response => response.Match(
+                    errors => this.ViewFromErrors(errors),
+                    vm => View(vm)));
         }
 
         [MptxAction]
@@ -169,7 +173,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
             var command = new ApprenticeshipSummary.CompleteCommand() { ProviderId = ProviderContext.ProviderId };
             return await _mediator.SendAndMapResponse(
                 command,
-                success => View("Submitted"));
+                response => response.Match(
+                    errors => this.ViewFromErrors("ApprenticeshipSummary", errors),
+                    vm => View("Submitted")));
         }
 
         [MptxAction]
