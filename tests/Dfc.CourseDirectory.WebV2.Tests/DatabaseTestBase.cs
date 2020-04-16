@@ -67,6 +67,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         public IServiceProvider Services => Fixture.Services;
 
+        public TestData TestData => Fixture.DatabaseFixture.TestData;
+
         public Task DisposeAsync() => Task.CompletedTask;
 
         public Task InitializeAsync() => Fixture.OnTestStartingAsync();
