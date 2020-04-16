@@ -27,7 +27,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.Core", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Legacy", "Legacy", "{260DB60D-49B4-4B94-A6E8-53069B9FC1BB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dfc.CourseDirectory.Testing", "tests\Dfc.CourseDirectory.Testing\Dfc.CourseDirectory.Testing.csproj", "{6CF1AD20-2EA1-4275-8E99-BAF0B07D364E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.Testing", "tests\Dfc.CourseDirectory.Testing\Dfc.CourseDirectory.Testing.csproj", "{6CF1AD20-2EA1-4275-8E99-BAF0B07D364E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.Functions", "src\Dfc.CourseDirectory.Functions\Dfc.CourseDirectory.Functions.csproj", "{AAE6A3E9-5CD4-4435-85AC-2D7CE86A22B1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -71,6 +73,10 @@ Global
 		{6CF1AD20-2EA1-4275-8E99-BAF0B07D364E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6CF1AD20-2EA1-4275-8E99-BAF0B07D364E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6CF1AD20-2EA1-4275-8E99-BAF0B07D364E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AAE6A3E9-5CD4-4435-85AC-2D7CE86A22B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AAE6A3E9-5CD4-4435-85AC-2D7CE86A22B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AAE6A3E9-5CD4-4435-85AC-2D7CE86A22B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AAE6A3E9-5CD4-4435-85AC-2D7CE86A22B1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
