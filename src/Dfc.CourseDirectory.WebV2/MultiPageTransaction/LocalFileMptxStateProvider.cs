@@ -128,8 +128,8 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
                 entry.Items);
         }
 
-        public void UpdateInstanceState(string instanceId, Func<object, object> update) =>
-            WithDbFile(dbFile => update(dbFile.Entries[instanceId].State));
+        public void SetInstanceState(string instanceId, object state) =>
+            WithDbFile(dbFile => dbFile.Entries[instanceId].State = state);
 
         private static string CreateInstanceId() => Guid.NewGuid().ToString();
 

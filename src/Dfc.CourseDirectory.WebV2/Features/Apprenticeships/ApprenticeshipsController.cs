@@ -18,9 +18,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships
         [MptxAction]
         [HttpGet("classroom-location")]
         public async Task<IActionResult> ClassroomLocation(
-            ClassroomLocation.Query query)
+            ClassroomLocation.Query query,
+            [FromServices] MptxInstanceContext<ClassroomLocation.FlowModel, ClassroomLocation.IFlowModelCallback> flow)
         {
-            return await _mediator.SendAndMapResponse(query, vm => View(vm));
+            return await _mediator.SendAndMapResponse(
+                query,
+                vm => View(vm).WithViewData("CompletionUrl", flow.Items["ReturnUrl"]));
         }
 
         [MptxAction]
@@ -32,7 +35,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships
             return await _mediator.SendAndMapResponse(
                 command,
                 response => response.Match<IActionResult>(
-                    errors => this.ViewFromErrors(errors),
+                    errors => this.ViewFromErrors(errors).WithViewData("CompletionUrl", flow.Items["ReturnUrl"]),
                     success => Redirect(flow.Items["ReturnUrl"].ToString())));
         }
 
@@ -58,5 +61,18 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships
                     errors => this.ViewFromErrors("FindStandardOrFramework", errors),
                     vm => View("FindStandardOrFramework", vm)));
         }
+
+        [MptxAction]
+        [HttpGet("remove-classroom-location")]
+        public async Task<IActionResult> RemoveClassroomLocation() =>
+            await _mediator.SendAndMapResponse(new ClassroomLocation.RemoveQuery(), response => View(response));
+
+        [MptxAction]
+        [HttpPost("remove-classroom-location")]
+        public async Task<IActionResult> RemoveClassroomLocationPost(
+            [FromServices] MptxInstanceContext<ClassroomLocation.FlowModel, ClassroomLocation.IFlowModelCallback> flow) =>
+            await _mediator.SendAndMapResponse(
+                new ClassroomLocation.RemoveCommand(),
+                success => Redirect(flow.Items["ReturnUrl"].ToString()));
     }
 }

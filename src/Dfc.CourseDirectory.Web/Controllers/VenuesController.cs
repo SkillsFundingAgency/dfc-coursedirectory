@@ -29,6 +29,7 @@ using Dfc.CourseDirectory.Web.ViewComponents.VenueName;
 using Dfc.CourseDirectory.Web.ViewComponents.VenueSearchResult;
 using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.WebV2.LoqateAddressSearch;
+using Flurl;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -398,7 +399,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             var returnUrl = _contextAccessor.HttpContext.Session.GetString("ADDNEWVENUERETURNURL");
             if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
             {
-                return Redirect(returnUrl);
+                return Redirect(new Url(returnUrl).SetQueryParam("venueId", venueID));
             }
 
 

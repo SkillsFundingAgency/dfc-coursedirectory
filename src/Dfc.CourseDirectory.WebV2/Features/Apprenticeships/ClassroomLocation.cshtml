@@ -1,5 +1,6 @@
-﻿@using Flurl
-@model Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation.ViewModel
+﻿@using Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation
+@using Flurl
+@model ViewModel
 @{
     ViewBag.Title = "Select delivery options";
 
@@ -26,7 +27,9 @@
         <govuk-select-item value="">Please select</govuk-select-item>
         @foreach (var venue in Model.Venues)
         {
-            <govuk-select-item value="@venue.venueId" selected="@(Model.VenueId == venue.venueId)">@venue.name</govuk-select-item>
+            <govuk-select-item value="@venue.venueId" selected="@(Model.VenueId == venue.venueId)" disabled="@venue.blocked">
+                @venue.name
+            </govuk-select-item>
         }
     </govuk-select>
 
@@ -55,13 +58,20 @@
             </govuk-checkboxes-fieldset-legend>
         </govuk-checkboxes-fieldset>
         <govuk-checkboxes-hint>Select all that apply</govuk-checkboxes-hint>
-        <govuk-checkboxes-item value="@ApprenticeshipDeliveryModes.DayRelease">
+        <govuk-checkboxes-item value="@ApprenticeshipDeliveryModes.DayRelease" checked="@Model.DeliveryModes.HasFlag(ApprenticeshipDeliveryModes.DayRelease)">
             Day Release
         </govuk-checkboxes-item>
-        <govuk-checkboxes-item value="@ApprenticeshipDeliveryModes.BlockRelease">
+        <govuk-checkboxes-item value="@ApprenticeshipDeliveryModes.BlockRelease" checked="@Model.DeliveryModes.HasFlag(ApprenticeshipDeliveryModes.BlockRelease)">
             Block Release
         </govuk-checkboxes-item>
     </govuk-checkboxes>
 
     <govuk-button type="submit">Continue</govuk-button>
+
+    @if (Model.Mode == Mode.Edit)
+    {
+        <govuk-button asp-action="RemoveClassroomLocation" append-mptx-id class="govuk-button--secondary">Remove</govuk-button>
+    }
+
+    <govuk-button href="@ViewBag.CompletionUrl" class="govuk-button--secondary">Cancel</govuk-button>
 </form>

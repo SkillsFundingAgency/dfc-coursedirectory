@@ -130,7 +130,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 {
                     ApprenticeshipLocationType = ApprenticeshipLocationType.EmployerBased,
                     ApprenticeshipIsNational = false,
-                    ApprenticeshipLocationRegionIds = new[] { "E06000001" }  // County Durham
+                    ApprenticeshipLocationSubRegionIds = new[] { "E06000001" }  // County Durham
                 });
 
             // Act
@@ -321,10 +321,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
         }
 
         [Theory]
-        [InlineData(ApprenticeshipLocationType.EmployerBased, "/new-apprenticeship-provider/apprenticeship-confirmation")]
-        [InlineData(ApprenticeshipLocationType.ClassroomBasedAndEmployerBased, "/new-apprenticeship-provider/apprenticeship-classroom-locations")]
+        [InlineData(ApprenticeshipLocationType.EmployerBased, false, "/new-apprenticeship-provider/apprenticeship-confirmation")]
+        [InlineData(ApprenticeshipLocationType.ClassroomBasedAndEmployerBased, false, "/new-apprenticeship-provider/add-apprenticeship-classroom-location")]
+        [InlineData(ApprenticeshipLocationType.ClassroomBasedAndEmployerBased, true, "/new-apprenticeship-provider/apprenticeship-confirmation")]
         public async Task Post_ValidRequestUpdatesStateAndRedirects(
             ApprenticeshipLocationType locationType,
+            bool gotClassroomLocation,
             string expectedRedirectLocation)
         {
             // Arrange
@@ -338,6 +340,18 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                     ApprenticeshipLocationType = locationType,
                     ApprenticeshipIsNational = false
                 });
+
+            if (gotClassroomLocation)
+            {
+                var venueId = await TestData.CreateVenue(providerId);
+
+                mptxInstance.Update(s => s.SetClassroomLocationForVenue(
+                    venueId,
+                    originalVenueId: null,
+                    national: true,
+                    radius: null,
+                    ApprenticeshipDeliveryModes.BlockRelease));
+            }
 
             var subRegion1Id = "E06000001";  // County Durham
             var subRegion2Id = "E06000009";  // Blackpool
@@ -389,7 +403,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             // Assert
             var region = Region.All.Single(r => r.Id == "E12000001");
             var state = GetMptxInstance<FlowModel>(mptxInstance.InstanceId).State;
-            Assert.All(region.SubRegions, sr => state.ApprenticeshipLocationRegionIds.Contains(sr.Id));
+            Assert.All(region.SubRegions, sr => state.ApprenticeshipLocationSubRegionIds.Contains(sr.Id));
         }
     }
 }
