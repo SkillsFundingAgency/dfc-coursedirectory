@@ -103,6 +103,22 @@ steps:
     archiveType: 'zip'
     archiveFile: '$(build.artifactstagingdirectory)/Dfc.CourseDirectory.Web.zip'
 
+- task: MSBuild@1
+  displayName: Publish Dfc.CourseDirectory.Functions
+  inputs:
+    solution: 'src/Dfc.CourseDirectory.Functions/Dfc.CourseDirectory.Functions.csproj'
+    platform: '${{ variables.BuildPlatform }}'
+    configuration: '${{ variables.BuildConfiguration }}'
+    msbuildArguments: '-t:Publish -p:PublishDir=$(System.DefaultWorkingDirectory)/dist/Dfc.CourseDirectory.Functions'
+  
+- task: ArchiveFiles@2
+  displayName: Zip Dfc.CourseDirectory.Functions
+  inputs:
+    rootFolderOrFile: 'dist/Dfc.CourseDirectory.Functions'
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(build.artifactstagingdirectory)/Dfc.CourseDirectory.Functions.zip'
+
 - task: CopyFiles@2
   displayName: 'Copy files: database'
   inputs:
