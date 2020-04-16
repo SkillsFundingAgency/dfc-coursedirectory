@@ -50,15 +50,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
                 ApprenticeshipClassroomLocations.Remove(originalVenueId.Value);
             }
 
-            ApprenticeshipClassroomLocations.Add(
-                venueId,
-                new ClassroomLocation()
-                {
-                    VenueId = venueId,
-                    National = national,
-                    Radius = radius,
-                    DeliveryModes = deliveryModes
-                });
+            ApprenticeshipClassroomLocations[venueId] = new ClassroomLocation()
+            {
+                VenueId = venueId,
+                National = national,
+                Radius = radius,
+                DeliveryModes = deliveryModes
+            };
         }
 
         public void SetProviderDetails(string marketingInformation)
@@ -114,6 +112,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
             int? radius,
             ApprenticeshipDeliveryModes deliveryModes) =>
             SetClassroomLocationForVenue(venueId, originalVenueId, national, radius, deliveryModes);
+
+        void IFlowModelCallback.RemoveLocation(Guid venueId) => ApprenticeshipClassroomLocations.Remove(venueId);
 
         public class ClassroomLocation
         {

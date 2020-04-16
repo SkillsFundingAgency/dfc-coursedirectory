@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation;
@@ -287,13 +288,144 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
                 parentMptxInstance.State.DeliveryModes);
         }
 
+        [Fact]
+        public async Task GetRemove_ModeNotEdit_ReturnsBadRequest()
+        {
+            // Arrange
+            var providerId = await TestData.CreateProvider(providerType: ProviderType.Apprenticeships);
+
+            var venueId = await TestData.CreateVenue(providerId, venueName: "The Venue");
+
+            var parentMptxInstance = MptxManager.CreateInstance(new ParentFlow());
+            var childMptxInstance = MptxManager.CreateInstance<FlowModel, IFlowModelCallback>(
+                parentMptxInstance.InstanceId,
+                FlowModel.Add(providerId),
+                new Dictionary<string, object>()
+                {
+                    { "ReturnUrl", "callback" }
+                });
+
+            await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
+
+            // Act
+            var response = await HttpClient.GetAsync(
+                $"apprenticeships/remove-classroom-location?ffiid={childMptxInstance.InstanceId}");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task GetRemove_ValidRequest_ReturnsExpectedContent()
+        {
+            // Arrange
+            var providerId = await TestData.CreateProvider(providerType: ProviderType.Apprenticeships);
+
+            var venueId = await TestData.CreateVenue(providerId, venueName: "The Venue");
+
+            var parentMptxInstance = MptxManager.CreateInstance(new ParentFlow());
+            var childMptxInstance = MptxManager.CreateInstance<FlowModel, IFlowModelCallback>(
+                parentMptxInstance.InstanceId,
+                FlowModel.Edit(
+                    providerId,
+                    venueId,
+                    national: true,
+                    radius: null,
+                    ApprenticeshipDeliveryModes.BlockRelease),
+                new Dictionary<string, object>()
+                {
+                    { "ReturnUrl", "callback" }
+                });
+
+            await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
+
+            // Act
+            var response = await HttpClient.GetAsync(
+                $"apprenticeships/remove-classroom-location?ffiid={childMptxInstance.InstanceId}");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+            var doc = await response.GetDocument();
+            Assert.Equal("The Venue", doc.GetElementsByTagName("h2").First().TextContent);
+        }
+
+        [Fact]
+        public async Task PostRemove_ModeNotEdit_ReturnsBadRequest()
+        {
+            // Arrange
+            var providerId = await TestData.CreateProvider(providerType: ProviderType.Apprenticeships);
+
+            var parentMptxInstance = MptxManager.CreateInstance(new ParentFlow());
+            var childMptxInstance = MptxManager.CreateInstance<FlowModel, IFlowModelCallback>(
+                parentMptxInstance.InstanceId,
+                FlowModel.Add(providerId),
+                new Dictionary<string, object>()
+                {
+                    { "ReturnUrl", "callback" }
+                });
+
+            await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
+
+            var requestContent = new FormUrlEncodedContentBuilder().ToContent();
+
+            // Act
+            var response = await HttpClient.PostAsync(
+                $"apprenticeships/remove-classroom-location?ffiid={childMptxInstance.InstanceId}",
+                requestContent);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task PostRemove_ValidRequest_UpdatesParentStateAndRedirects()
+        {
+            // Arrange
+            var providerId = await TestData.CreateProvider(providerType: ProviderType.Apprenticeships);
+
+            var venueId = await TestData.CreateVenue(providerId);
+
+            var parentMptxInstance = MptxManager.CreateInstance(new ParentFlow());
+            var childMptxInstance = MptxManager.CreateInstance<FlowModel, IFlowModelCallback>(
+                parentMptxInstance.InstanceId,
+                FlowModel.Edit(
+                    providerId,
+                    venueId,
+                    national: true,
+                    radius: null,
+                    ApprenticeshipDeliveryModes.BlockRelease),
+                new Dictionary<string, object>()
+                {
+                    { "ReturnUrl", "callback" }
+                });
+
+            await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
+
+            var requestContent = new FormUrlEncodedContentBuilder().ToContent();
+
+            // Act
+            var response = await HttpClient.PostAsync(
+                $"apprenticeships/remove-classroom-location?ffiid={childMptxInstance.InstanceId}",
+                requestContent);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.Found, response.StatusCode);
+            Assert.Equal("callback", response.Headers.Location.OriginalString);
+
+            Assert.Null(parentMptxInstance.State.VenueId);
+            Assert.Null(parentMptxInstance.State.National);
+            Assert.Null(parentMptxInstance.State.Radius);
+            Assert.Null(parentMptxInstance.State.DeliveryModes);
+        }
+
         private class ParentFlow : IFlowModelCallback
         {
-            public Guid VenueId { get; set; }
+            public Guid? VenueId { get; set; }
             public Guid? OriginalVenueId { get; set; }
-            public bool National { get; set; }
+            public bool? National { get; set; }
             public int? Radius { get; set; }
-            public ApprenticeshipDeliveryModes DeliveryModes { get; set; }
+            public ApprenticeshipDeliveryModes? DeliveryModes { get; set; }
 
             public IReadOnlyCollection<Guid> BlockedVenueIds { get; set; }
 
@@ -310,6 +442,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
                 National = national;
                 Radius = radius;
                 DeliveryModes = deliveryModes;
+            }
+
+            public void RemoveLocation(Guid venueId)
+            {
+                VenueId = null;
+                OriginalVenueId = null;
+                National = null;
+                Radius = null;
+                DeliveryModes = null;
             }
         }
     }

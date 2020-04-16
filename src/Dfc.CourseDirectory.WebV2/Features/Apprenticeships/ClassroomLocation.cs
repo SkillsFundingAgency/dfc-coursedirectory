@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.WebV2.Behaviors.Errors;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries;
@@ -62,6 +63,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation
     public interface IFlowModelCallback : IMptxState
     {
         IReadOnlyCollection<Guid> BlockedVenueIds { get; }
+        void RemoveLocation(Guid venueId);
         void ReceiveLocation(
             string instanceId,
             Guid venueId,
@@ -91,9 +93,24 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation
         public IReadOnlyCollection<(Guid venueId, string name, bool blocked)> Venues { get; set; }
     }
 
+    public class RemoveQuery : IRequest<RemoveViewModel>
+    {
+    }
+
+    public class RemoveCommand : IRequest<Success>
+    {
+    }
+
+    public class RemoveViewModel : RemoveCommand
+    {
+        public string VenueName { get; set; }
+    }
+
     public class Handler :
         IRequestHandler<Query, ViewModel>,
-        IRequestHandler<Command, OneOf<ModelWithErrors<ViewModel>, Success>>
+        IRequestHandler<Command, OneOf<ModelWithErrors<ViewModel>, Success>>,
+        IRequestHandler<RemoveQuery, RemoveViewModel>,
+        IRequestHandler<RemoveCommand, Success>
     {
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly IProviderInfoCache _providerInfoCache;
@@ -159,6 +176,36 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation
                 _flow.State.DeliveryModes.Value));
 
             return new Success();
+        }
+
+        public async Task<RemoveViewModel> Handle(RemoveQuery request, CancellationToken cancellationToken)
+        {
+            if (_flow.State.Mode != Mode.Edit)
+            {
+                throw new ErrorException<InvalidFlowState>(new InvalidFlowState());
+            }
+
+            var providerVenues = await GetProviderVenues();
+            var thisVenue = providerVenues.Single(v => v.Id == _flow.State.VenueId);
+
+            return new RemoveViewModel()
+            {
+                VenueName = thisVenue.VenueName
+            };
+        }
+
+        public Task<Success> Handle(RemoveCommand request, CancellationToken cancellationToken)
+        {
+            if (_flow.State.Mode != Mode.Edit)
+            {
+                throw new ErrorException<InvalidFlowState>(new InvalidFlowState());
+            }
+
+            _flow.UpdateParent(s => s.RemoveLocation(_flow.State.VenueId.Value));
+
+            _flow.Complete();
+
+            return Task.FromResult(new Success());
         }
 
         private ViewModel CreateViewModel(IReadOnlyCollection<Venue> providerVenues, ISet<Guid> blockedVenueIds) =>

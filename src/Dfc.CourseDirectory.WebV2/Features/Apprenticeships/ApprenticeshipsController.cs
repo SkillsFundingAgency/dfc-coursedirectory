@@ -61,5 +61,18 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships
                     errors => this.ViewFromErrors("FindStandardOrFramework", errors),
                     vm => View("FindStandardOrFramework", vm)));
         }
+
+        [MptxAction]
+        [HttpGet("remove-classroom-location")]
+        public async Task<IActionResult> RemoveClassroomLocation() =>
+            await _mediator.SendAndMapResponse(new ClassroomLocation.RemoveQuery(), response => View(response));
+
+        [MptxAction]
+        [HttpPost("remove-classroom-location")]
+        public async Task<IActionResult> RemoveClassroomLocationPost(
+            [FromServices] MptxInstanceContext<ClassroomLocation.FlowModel, ClassroomLocation.IFlowModelCallback> flow) =>
+            await _mediator.SendAndMapResponse(
+                new ClassroomLocation.RemoveCommand(),
+                success => Redirect(flow.Items["ReturnUrl"].ToString()));
     }
 }

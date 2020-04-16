@@ -68,5 +68,10 @@
 
     <govuk-button type="submit">Continue</govuk-button>
 
-    <govuk-button href="@ViewBag.CompletionUrl" class="govuk-button--secondary govuk-!-margin-left-1">Cancel</govuk-button>
+    @if (Model.Mode == Mode.Edit)
+    {
+        <govuk-button asp-action="RemoveClassroomLocation" append-mptx-id class="govuk-button--secondary">Remove</govuk-button>
+    }
+
+    <govuk-button href="@ViewBag.CompletionUrl" class="govuk-button--secondary">Cancel</govuk-button>
 </form>

@@ -1,0 +1,14 @@
+﻿@model Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation.RemoveViewModel
+@{ 
+    ViewBag.Title = "Remove your delivery location";
+}
+
+<form asp-action="RemoveClassroomLocationPost" append-mptx-id>
+    <h2 class="govuk-heading-s govuk-!-margin-bottom-0">@Model.VenueName</h2>
+    <h1 class="govuk-heading-l govuk-!-margin-top-0">Delete your delivery location</h1>
+
+    <p class="govuk-body">You are about to remove this delivery location.</p>
+
+    <govuk-button type="submit">Remove</govuk-button>
+    <govuk-button asp-action="ClassroomLocation" class="govuk-button--secondary" append-mptx-id>Cancel</govuk-button>
+</form>
