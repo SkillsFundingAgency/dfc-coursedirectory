@@ -44,7 +44,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 apprenticeshipQAStatus: Models.ApprenticeshipQAStatus.Submitted);
             await TestData.CreateUser(provider1UserId, "guy@provider1.com", "Provider 1", "User", provider1Id);
             await TestData.CreateUserSignIn(provider1UserId, new DateTime(2018, 4, 1, 10, 4, 3));
-            var provider1ApprenticeshipId = await TestData.CreateApprenticeship(provider1Id, standard);
+            var provider1ApprenticeshipId = await TestData.CreateApprenticeship(provider1Id, standard, createdBy: User.ToUserInfo());
             await TestData.CreateApprenticeshipQASubmission(
                 provider1Id,
                 submittedOn: new DateTime(2018, 4, 1, 12, 30, 37),
@@ -60,7 +60,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
                 apprenticeshipQAStatus: Models.ApprenticeshipQAStatus.Submitted);
             await TestData.CreateUser(provider2UserId, "guy@provider2.com", "Provider 2", "User", provider2Id);
             await TestData.CreateUserSignIn(provider2UserId, new DateTime(2019, 5, 3, 14, 55, 17));
-            var provider2ApprenticeshipId = await TestData.CreateApprenticeship(provider2Id, standard);
+            var provider2ApprenticeshipId = await TestData.CreateApprenticeship(provider2Id, standard, createdBy: User.ToUserInfo());
             await TestData.CreateApprenticeshipQASubmission(
                 provider2Id,
                 submittedOn: new DateTime(2019, 5, 3, 15, 01, 23),

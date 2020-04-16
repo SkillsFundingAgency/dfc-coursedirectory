@@ -35,7 +35,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             // Arrange
             var providerId = await TestData.CreateProvider();
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
-            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard);
+            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard, createdBy: User.ToUserInfo());
 
             // Act
             var response = await HttpClient.GetAsync($"filtertests/verifyapprenticeshipidattributetests/{apprenticeshipId}");
@@ -51,7 +51,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             var ukprn = 1234;
             var providerId = await TestData.CreateProvider(ukprn);
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
-            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard);
+            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard, createdBy: User.ToUserInfo());
             await User.AsDeveloper();  // Ensure UKPRN doesn't get bound from authentication ticket
 
             // Act
@@ -76,7 +76,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             var providerId = await TestData.CreateProvider(ukprn);
             var anotherProviderId = await TestData.CreateProvider(ukprn: 56789);
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
-            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard);
+            var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard, createdBy: User.ToUserInfo());
             await User.AsTestUser(userType, anotherProviderId);
 
             // Act
