@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using Dfc.CourseDirectory.Models.Models.Auth;
-using Microsoft.AspNetCore.Http;
 
 namespace Dfc.CourseDirectory.Services.Interfaces.BulkUploadService
 {

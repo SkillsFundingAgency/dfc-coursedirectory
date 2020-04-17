@@ -13,7 +13,6 @@
         <govuk-error-summary-title>There is a problem</govuk-error-summary-title>
         <govuk-error-summary-item asp-for="VenueId" />
         <govuk-error-summary-item asp-for="Radius" />
-        <govuk-error-summary-item asp-for="National" />
         <govuk-error-summary-item asp-for="DeliveryModes" />
     </govuk-error-summary>
 }
@@ -41,15 +40,6 @@
         <govuk-input-label>How far are you willing to travel from the selected location?</govuk-input-label>
         <govuk-input-hint>Enter number of miles</govuk-input-hint>
     </govuk-input>
-
-    <p class="pttcd-apprenticeships__classroom-location__distance-or">Or</p>
-
-    <govuk-checkboxes asp-for="National">
-        <govuk-checkboxes-item value="@true">
-            <govuk-checkboxes-item-hint>Your apprenticeship will be advertised across the whole of England.</govuk-checkboxes-item-hint>
-            Across England
-        </govuk-checkboxes-item>
-    </govuk-checkboxes>
 
     <govuk-checkboxes asp-for="DeliveryModes" class="govuk-checkboxes--small">
         <govuk-checkboxes-fieldset>

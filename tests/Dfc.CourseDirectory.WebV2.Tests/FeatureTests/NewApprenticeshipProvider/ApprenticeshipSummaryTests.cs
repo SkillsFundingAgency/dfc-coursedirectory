@@ -588,7 +588,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             flowModel.SetClassroomLocationForVenue(
                 venueId,
                 originalVenueId: null,
-                national: false,
                 radius: 5,
                 deliveryModes: ApprenticeshipDeliveryModes.BlockRelease);
             var mptxInstance = CreateMptxInstance(flowModel);
@@ -609,7 +608,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             CosmosDbQueryDispatcher.Verify(mock => mock.ExecuteQuery(It.Is<CreateApprenticeship>(q =>
                 q.ApprenticeshipLocations.Single().ApprenticeshipLocationType == ApprenticeshipLocationType.ClassroomBased &&
                 q.ApprenticeshipLocations.Single().DeliveryModes == ApprenticeshipDeliveryModes.BlockRelease &&
-                q.ApprenticeshipLocations.Single().National == false &&
                 q.ApprenticeshipLocations.Single().Radius == 5 &&
                 q.ApprenticeshipLocations.Single().VenueId == venueId)));
         }
@@ -646,7 +644,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
             flowModel.SetClassroomLocationForVenue(
                 venueId,
                 originalVenueId: null,
-                national: false,
                 radius: 5,
                 deliveryModes: ApprenticeshipDeliveryModes.BlockRelease);
             var mptxInstance = CreateMptxInstance(flowModel);
@@ -668,7 +665,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 q.ApprenticeshipLocations.Any(l =>
                     l.ApprenticeshipLocationType == ApprenticeshipLocationType.ClassroomBasedAndEmployerBased &&
                     l.DeliveryModes == (ApprenticeshipDeliveryModes.BlockRelease | ApprenticeshipDeliveryModes.EmployerAddress) &&
-                    l.National == false &&
                     l.Radius == 5 &&
                     l.VenueId == venueId) &&
                 q.ApprenticeshipLocations.Any(l =>

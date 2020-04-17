@@ -30,8 +30,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
         public void SetClassroomLocationForVenue(
             Guid venueId,
             Guid? originalVenueId,
-            bool national,
-            int? radius,
+            int radius,
             ApprenticeshipDeliveryModes deliveryModes)
         {
             ApprenticeshipClassroomLocations ??= new Dictionary<Guid, ClassroomLocation>();
@@ -45,7 +44,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
             ApprenticeshipClassroomLocations[venueId] = new ClassroomLocation()
             {
                 VenueId = venueId,
-                National = national,
                 Radius = radius,
                 DeliveryModes = deliveryModes
             };
@@ -100,16 +98,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
             string instanceId,
             Guid venueId,
             Guid? originalVenueId,
-            bool national,
-            int? radius,
+            int radius,
             ApprenticeshipDeliveryModes deliveryModes) =>
-            SetClassroomLocationForVenue(venueId, originalVenueId, national, radius, deliveryModes);
+            SetClassroomLocationForVenue(venueId, originalVenueId, radius, deliveryModes);
 
         public class ClassroomLocation
         {
             public Guid VenueId { get; set; }
-            public bool National { get; set; }
-            public int? Radius { get; set; }
+            public int Radius { get; set; }
             public ApprenticeshipDeliveryModes DeliveryModes { get; set; }
         }
     }

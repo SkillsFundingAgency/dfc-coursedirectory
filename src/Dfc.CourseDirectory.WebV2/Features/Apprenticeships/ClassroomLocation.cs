@@ -33,7 +33,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation
         public Guid? VenueId { get; set; }
         public Guid? OriginalVenueId { get; set; }
         public int? Radius { get; set; }
-        public bool? National { get; set; }
         public ApprenticeshipDeliveryModes? DeliveryModes { get; set; }
 
         public static FlowModel Add(Guid providerId) => new FlowModel()
@@ -45,14 +44,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation
         public static FlowModel Edit(
             Guid providerId,
             Guid venueId,
-            bool national,
-            int? radius,
+            int radius,
             ApprenticeshipDeliveryModes deliveryModes) =>
             new FlowModel()
             {
                 Mode = Mode.Edit,
                 DeliveryModes = deliveryModes,
-                National = national,
                 ProviderId = providerId,
                 Radius = radius,
                 VenueId = venueId,
@@ -68,8 +65,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation
             string instanceId,
             Guid venueId,
             Guid? originalVenueId,
-            bool national,
-            int? radius,
+            int radius,
             ApprenticeshipDeliveryModes deliveryModes);
     }
 
@@ -83,7 +79,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation
     {
         public Guid? VenueId { get; set; }
         public int? Radius { get; set; }
-        public bool? National { get; set; }
         public ApprenticeshipDeliveryModes DeliveryModes { get; set; }
     }
 
@@ -162,7 +157,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation
             _flow.Update(s =>
             {
                 s.DeliveryModes = request.DeliveryModes;
-                s.National = request.National;
                 s.Radius = request.Radius;
                 s.VenueId = request.VenueId;
             });
@@ -171,8 +165,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation
                 _flow.InstanceId,
                 _flow.State.VenueId.Value,
                 _flow.State.OriginalVenueId,
-                _flow.State.National.GetValueOrDefault(),
-                !_flow.State.National.GetValueOrDefault() ? _flow.State.Radius : null,
+                _flow.State.Radius.Value,
                 _flow.State.DeliveryModes.Value));
 
             return new Success();
@@ -219,9 +212,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation
                 VenueId = _flow.State.VenueId.HasValue && providerVenues.Any(v => v.Id == _flow.State.VenueId) ?
                     _flow.State.VenueId :
                     null,
-                    Radius = _flow.State.Radius,
-                    National = _flow.State.National,
-                    DeliveryModes = _flow.State.DeliveryModes.GetValueOrDefault()
+                Radius = _flow.State.Radius,
+                DeliveryModes = _flow.State.DeliveryModes.GetValueOrDefault()
             };
 
         private ISet<Guid> GetNormalizedBlockedVenueIds()
@@ -257,7 +249,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.Apprenticeships.ClassroomLocation
 
                 RuleFor(c => c.Radius)
                     .NotEmpty()
-                    .When(c => c.National.GetValueOrDefault() == false)
                     .WithMessage("Enter how far you are willing to travel from the selected location");
 
                 RuleFor(c => c.DeliveryModes)

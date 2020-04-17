@@ -50,8 +50,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
     {
         public Guid VenueId { get; set; }
         public string VenueName { get; set; }
-        public bool National { get; set; }
-        public int? Radius { get; set; }
+        public int Radius { get; set; }
         public ApprenticeshipDeliveryModes DeliveryModes { get; set; }
     }
 
@@ -225,7 +224,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
 
                         return CreateApprenticeshipLocation.CreateFromVenue(
                             venue,
-                            l.Value.National,
                             l.Value.Radius,
                             deliveryModes,
                             locationType);
@@ -268,7 +266,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
                     ?.Select(l => new ViewModelClassroomBasedLocation()
                     {
                         DeliveryModes = l.DeliveryModes,
-                        National = l.National,
                         Radius = l.Radius,
                         VenueId = l.VenueId,
                         VenueName = providerVenues.Single(v => v.Id == l.VenueId).VenueName
