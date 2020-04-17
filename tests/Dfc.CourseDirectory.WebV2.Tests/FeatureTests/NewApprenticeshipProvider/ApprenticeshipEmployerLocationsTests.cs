@@ -281,8 +281,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.NewApprenticeshipProvider
                 mptxInstance.Update(s => s.SetClassroomLocationForVenue(
                     venueId,
                     originalVenueId: null,
-                    national: true,
-                    radius: null,
+                    radius: 5,
                     ApprenticeshipDeliveryModes.BlockRelease));
             }
 

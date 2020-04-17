@@ -196,7 +196,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
                 ClassroomLocation.FlowModel.Edit(
                     ProviderContext.ProviderId,
                     location.VenueId,
-                    location.National,
                     location.Radius,
                     location.DeliveryModes
                 ),

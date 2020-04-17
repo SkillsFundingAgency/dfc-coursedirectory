@@ -70,7 +70,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("Radius", 15)
-                .Add("National", false)
                 .Add("DeliveryModes", ApprenticeshipDeliveryModes.DayRelease)
                 .Add("DeliveryModes", ApprenticeshipDeliveryModes.BlockRelease)
                 .ToContent();
@@ -109,7 +108,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("VenueId", invalidVenueId)
                 .Add("Radius", 15)
-                .Add("National", false)
                 .Add("DeliveryModes", ApprenticeshipDeliveryModes.DayRelease)
                 .Add("DeliveryModes", ApprenticeshipDeliveryModes.BlockRelease)
                 .ToContent();
@@ -152,7 +150,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("VenueId", venueId)
                 .Add("Radius", 15)
-                .Add("National", false)
                 .Add("DeliveryModes", ApprenticeshipDeliveryModes.DayRelease)
                 .Add("DeliveryModes", ApprenticeshipDeliveryModes.BlockRelease)
                 .ToContent();
@@ -190,7 +187,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
 
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("VenueId", venueId)
-                .Add("National", false)
                 .Add("DeliveryModes", ApprenticeshipDeliveryModes.DayRelease)
                 .Add("DeliveryModes", ApprenticeshipDeliveryModes.BlockRelease)
                 .ToContent();
@@ -229,7 +225,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("VenueId", venueId)
                 .Add("Radius", 15)
-                .Add("National", false)
                 .ToContent();
 
             // Act
@@ -266,7 +261,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
             var requestContent = new FormUrlEncodedContentBuilder()
                 .Add("VenueId", venueId)
                 .Add("Radius", 15)
-                .Add("National", false)
                 .Add("DeliveryModes", ApprenticeshipDeliveryModes.DayRelease)
                 .Add("DeliveryModes", ApprenticeshipDeliveryModes.BlockRelease)
                 .ToContent();
@@ -282,7 +276,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
 
             Assert.Equal(venueId, parentMptxInstance.State.VenueId);
             Assert.Equal(15, parentMptxInstance.State.Radius);
-            Assert.False(parentMptxInstance.State.National);
             Assert.Equal(
                 ApprenticeshipDeliveryModes.BlockRelease | ApprenticeshipDeliveryModes.DayRelease,
                 parentMptxInstance.State.DeliveryModes);
@@ -329,8 +322,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
                 FlowModel.Edit(
                     providerId,
                     venueId,
-                    national: true,
-                    radius: null,
+                    radius: 5,
                     ApprenticeshipDeliveryModes.BlockRelease),
                 new Dictionary<string, object>()
                 {
@@ -392,8 +384,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
                 FlowModel.Edit(
                     providerId,
                     venueId,
-                    national: true,
-                    radius: null,
+                    radius: 5,
                     ApprenticeshipDeliveryModes.BlockRelease),
                 new Dictionary<string, object>()
                 {
@@ -414,7 +405,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
             Assert.Equal("callback", response.Headers.Location.OriginalString);
 
             Assert.Null(parentMptxInstance.State.VenueId);
-            Assert.Null(parentMptxInstance.State.National);
             Assert.Null(parentMptxInstance.State.Radius);
             Assert.Null(parentMptxInstance.State.DeliveryModes);
         }
@@ -423,7 +413,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
         {
             public Guid? VenueId { get; set; }
             public Guid? OriginalVenueId { get; set; }
-            public bool? National { get; set; }
             public int? Radius { get; set; }
             public ApprenticeshipDeliveryModes? DeliveryModes { get; set; }
 
@@ -433,13 +422,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
                 string instanceId,
                 Guid venueId,
                 Guid? originalVenueId,
-                bool national,
-                int? radius,
+                int radius,
                 ApprenticeshipDeliveryModes deliveryModes)
             {
                 VenueId = venueId;
                 OriginalVenueId = originalVenueId;
-                National = national;
                 Radius = radius;
                 DeliveryModes = deliveryModes;
             }
@@ -448,7 +435,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Apprenticeships
             {
                 VenueId = null;
                 OriginalVenueId = null;
-                National = null;
                 Radius = null;
                 DeliveryModes = null;
             }

@@ -40,15 +40,13 @@ namespace Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries
 
         public static CreateApprenticeshipLocation CreateFromVenue(
             Venue venue,
-            bool national,
-            int? radius,
+            int radius,
             ApprenticeshipDeliveryModes deliveryModes,
             ApprenticeshipLocationType locationType /* HACK to ensure legacy UI works */) =>
             new CreateApprenticeshipLocation()
             {
                 Id = Guid.NewGuid(),
                 VenueId = venue.Id,
-                National = national,
                 Address = new ApprenticeshipLocationAddress()
                 {
                     Address1 = venue.AddressLine1,
