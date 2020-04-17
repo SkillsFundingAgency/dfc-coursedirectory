@@ -60,4 +60,8 @@
     <None Remove="Content\utilities\width.css" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Dfc.CourseDirectory.Core\Dfc.CourseDirectory.Core.csproj" />
+  </ItemGroup>
+
 </Project>
