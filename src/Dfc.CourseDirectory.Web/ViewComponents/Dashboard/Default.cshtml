@@ -123,7 +123,7 @@ else
                     </div>
                 }
                 @if (Model.ProviderType.HasFlag(ProviderType.Apprenticeship) &&
-              (!Model.QAFeatureIsEnabled || Model.ProviderQACurrentStatus == Dfc.CourseDirectory.WebV2.Models.ApprenticeshipQAStatus.Passed))
+              (!Model.QAFeatureIsEnabled || Model.ProviderQACurrentStatus == Dfc.CourseDirectory.Core.Models.ApprenticeshipQAStatus.Passed))
                 {
                     <div class="govuk-grid-column-one-half homepage-item disabled ">
                         @await Html.PartialAsync("/ViewComponents/Dashboard/_ApprenticeshipsCardPartial.cshtml")

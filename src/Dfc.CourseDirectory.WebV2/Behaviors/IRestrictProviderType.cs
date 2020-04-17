@@ -1,4 +1,4 @@
-﻿using Dfc.CourseDirectory.WebV2.Models;
+﻿using Dfc.CourseDirectory.Core.Models;
 
 namespace Dfc.CourseDirectory.WebV2.Behaviors
 {

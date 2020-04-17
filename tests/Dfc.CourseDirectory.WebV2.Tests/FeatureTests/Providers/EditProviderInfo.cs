@@ -2,7 +2,8 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using AngleSharp.Html.Dom;
-using Dfc.CourseDirectory.WebV2.Models;
+using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Testing;
 using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers

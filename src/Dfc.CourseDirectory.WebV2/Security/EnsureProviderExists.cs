@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.DataStore.Sql;
-using Query = Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries.EnsureProviderExists;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Query = Dfc.CourseDirectory.Core.DataStore.Sql.Queries.EnsureProviderExists;
 
 namespace Dfc.CourseDirectory.WebV2.Security
 {

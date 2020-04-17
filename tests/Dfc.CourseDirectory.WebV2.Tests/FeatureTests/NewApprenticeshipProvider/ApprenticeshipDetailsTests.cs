@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.Models;
+using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Testing;
 using Xunit;
 using FlowModel = Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.FlowModel;
 

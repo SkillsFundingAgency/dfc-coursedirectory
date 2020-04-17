@@ -1,6 +1,8 @@
-﻿using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
-using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Models;
-using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries;
+﻿using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.WebV2.Helpers;
 using Dfc.CourseDirectory.WebV2.Helpers.Interfaces;
 using Dfc.CourseDirectory.WebV2.Security;
@@ -35,7 +37,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Security
                                                             providerData.ProviderName,
                                                             providerData.ProviderType,
                                                             providerData.ProviderStatus,
-                                                            Models.ApprenticeshipQAStatus.Passed,
+                                                            ApprenticeshipQAStatus.Passed,
                                                             alias: providerData.Alias,
                                                             contacts: providerData.ProviderContact.ToList().Select(c => new CreateProviderContact()
                                                             {
@@ -88,7 +90,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Security
                                                             providerData.ProviderName,
                                                             providerData.ProviderType,
                                                             providerData.ProviderStatus,
-                                                            Models.ApprenticeshipQAStatus.Passed,
+                                                            ApprenticeshipQAStatus.Passed,
                                                             alias: providerData.Alias,
                                                             contacts: providerData.ProviderContact.ToList().Select(c => new CreateProviderContact()
                                                             {
@@ -169,7 +171,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Security
                 UnitedKingdomProviderReferenceNumber = providerUkprn.ToString(),
                 ProviderName = "Test Provider",
                 ProviderStatus = "Active",
-                ProviderType = Models.ProviderType.Both,
+                ProviderType = Core.Models.ProviderType.Both,
                 ProviderContact = new List<ProviderContact>()
                 {
                     new ProviderContact()

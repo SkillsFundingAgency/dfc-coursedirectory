@@ -13,6 +13,6 @@
     {
         new DashboardCardModel.Link(Url.Action("Index","Apprenticeships"),"Add a new apprenticeship"),
         new DashboardCardModel.Link((0 == Model.PublishedApprenticeshipsCount)?"":Url.Action("Index","ProviderApprenticeships"),"View, edit or delete apprenticeship training"),
-        new DashboardCardModel.Link(Url.Action("Index","BulkuploadApprenticeships"),"Bulk upload apprenticeship information", Model.ProviderQACurrentStatus != Dfc.CourseDirectory.WebV2.Models.ApprenticeshipQAStatus.Passed),
+        new DashboardCardModel.Link(Url.Action("Index","BulkuploadApprenticeships"),"Bulk upload apprenticeship information", Model.ProviderQACurrentStatus != Dfc.CourseDirectory.Core.Models.ApprenticeshipQAStatus.Passed),
     }
 })

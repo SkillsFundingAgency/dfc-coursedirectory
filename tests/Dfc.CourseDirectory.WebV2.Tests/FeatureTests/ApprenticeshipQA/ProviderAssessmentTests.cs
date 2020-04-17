@@ -4,11 +4,12 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using AngleSharp.Html.Dom;
-using Dfc.CourseDirectory.WebV2.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.WebV2.Features.ApprenticeshipQA.ProviderAssessment;
-using Dfc.CourseDirectory.WebV2.Models;
+using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using Xunit;
+using Dfc.CourseDirectory.Testing;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ApprenticeshipQA
 {

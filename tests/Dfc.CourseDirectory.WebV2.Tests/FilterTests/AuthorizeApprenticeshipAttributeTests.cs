@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.WebV2.Filters;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
@@ -53,7 +54,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             var providerId = await TestData.CreateProvider();
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
             var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard, createdBy: User.ToUserInfo());
-            await User.AsProviderUser(providerId, Models.ProviderType.Apprenticeships);
+            await User.AsProviderUser(providerId, ProviderType.Apprenticeships);
 
             // Act
             var response = await HttpClient.GetAsync($"filtertests/authorizeapprenticeshipattribute/{apprenticeshipId}");
@@ -69,7 +70,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             var providerId = await TestData.CreateProvider();
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
             var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard, createdBy: User.ToUserInfo());
-            await User.AsProviderSuperUser(providerId, Models.ProviderType.Apprenticeships);
+            await User.AsProviderSuperUser(providerId, ProviderType.Apprenticeships);
 
             // Act
             var response = await HttpClient.GetAsync($"filtertests/authorizeapprenticeshipattribute/{apprenticeshipId}");
@@ -87,7 +88,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             var anotherProviderId = await TestData.CreateProvider(ukprn: 23456);
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
             var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard, createdBy: User.ToUserInfo());
-            await User.AsProviderUser(anotherProviderId, Models.ProviderType.Apprenticeships);
+            await User.AsProviderUser(anotherProviderId, ProviderType.Apprenticeships);
 
             // Act
             var response = await HttpClient.GetAsync($"filtertests/authorizeapprenticeshipattribute/{apprenticeshipId}");
@@ -105,7 +106,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
             var anotherProviderId = await TestData.CreateProvider(ukprn: 23456);
             var standard = await TestData.CreateStandard(standardCode: 1234, version: 1, standardName: "Test Standard");
             var apprenticeshipId = await TestData.CreateApprenticeship(providerId, standard, createdBy: User.ToUserInfo());
-            await User.AsProviderSuperUser(anotherProviderId, Models.ProviderType.Apprenticeships);
+            await User.AsProviderSuperUser(anotherProviderId, ProviderType.Apprenticeships);
 
             // Act
             var response = await HttpClient.GetAsync($"filtertests/authorizeapprenticeshipattribute/{apprenticeshipId}");

@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.WebV2.Behaviors;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
-using Dfc.CourseDirectory.WebV2.Validation;
+using Dfc.CourseDirectory.Core.Validation;
 using FluentValidation;
 using MediatR;
 using OneOf;
@@ -19,7 +20,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider.Apprentic
     public class Command : IRequest<OneOf<ModelWithErrors<Command>, Success>>, IProviderScopedRequest
     {
         public Guid ProviderId { get; set; }
-        public Models.ApprenticeshipLocationType? LocationType { get; set; }
+        public ApprenticeshipLocationType? LocationType { get; set; }
     }
 
     public class Handler :

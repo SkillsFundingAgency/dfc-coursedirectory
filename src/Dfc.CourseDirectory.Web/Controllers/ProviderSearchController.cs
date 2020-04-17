@@ -20,8 +20,8 @@ using Dfc.CourseDirectory.Models.Enums;
 using Dfc.CourseDirectory.Web.ViewModels;
 using System.Diagnostics;
 using Dfc.CourseDirectory.WebV2.HttpContextFeatures;
-using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb;
-using Dfc.CourseDirectory.WebV2.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.WebV2;
 
 namespace Dfc.CourseDirectory.Web.Controllers
